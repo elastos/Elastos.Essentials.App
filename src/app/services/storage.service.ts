@@ -10,17 +10,27 @@ export type Preference<T> = {
   providedIn: 'root'
 })
 export class StorageService {
-  constructor(private platform: Platform) {
-    this.platform.ready().then(() => {
-    });
+
+  constructor(
+    private storage: Storage,
+    private platform: Platform
+  ) {
   }
 
   public async setSetting<T>(did: string, context: string, key: string, value: T): Promise<void> {
-    // TODO @chad
+    return this.storage.set(key, JSON.stringify(value)).then((res) => {
+      console.log('setSetting', res);
+    }, (err) => {
+      console.error('setSetting', err);
+    });
   }
 
   public getSetting<T>(did: string, context: string, key: string, defaultValue: T): Promise<T> {
-    // TODO @chad
-    return null;
+    return this.storage.get(key).then((res) => {
+      console.log('getSetting', res);
+      return JSON.parse(res);
+    }, (err) => {
+      console.error('getSetting', err);
+    });
   }
 }

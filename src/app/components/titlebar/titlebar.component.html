@@ -1,20 +1,23 @@
 <ion-header class="ion-no-border" [class.dark-header]="theme.darkMode">
   <ion-toolbar mode="ios" [class.dark-header]="theme.darkMode">
     <ion-buttons slot="start">
-      <ion-button (click)="onOuterLeftIcon()">
+      <ion-button>
         <img [src]="!theme.darkMode ? '/assets/components/titlebar/elastos.svg' : '/assets/components/titlebar/darkmode/elastos.svg'">
       </ion-button>
-      <ion-button *ngIf="innerLeftIcon" (click)="onInnerLeftIcon()">
-        <img [src]="innerLeftIcon">
+      <ion-button *ngIf="titlebarService.innerLeftIcon.visibile">
+        <img [src]="titlebarService.innerLeftIcon.iconPath">
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ title | translate }}</ion-title>
+    <ion-title>{{ titlebarService.title | translate }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button *ngIf="innerRightIcon" (click)="onInnerRightIcon()">
-        <img [src]="innerRightIcon">
+      <ion-button [class.hidden]="!titlebarService.innerRightIcon.visibile">
+        <img *ngIf="titlebarService.innerRightIcon.visibile" [src]="titlebarService.innerRightIcon.iconPath">
       </ion-button>
-      <ion-button *ngIf="outerRightIcon" (click)="onOuterRightIcon()">
-        <img [src]="outerRightIcon">
+      <ion-button *ngIf="!titlebarService.menuVisible && titlebarService.outerRightIcon.visibile">
+        <img [src]="titlebarService.outerRightIcon.iconPath">
+      </ion-button>
+      <ion-button *ngIf="titlebarService.menuVisible && titlebarService.outerRightIcon.visibile">
+        <img [src]="titlebarService.outerRightIcon.iconPath">
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
