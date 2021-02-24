@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="prefix__Component_411_39" width="18.054" height="24.351" data-name="Component 411 – 39" viewBox="0 0 18.054 24.351">
+    <defs>
+        <style>
+            .prefix__cls-1{fill:#fdfeff}
+        </style>
+    </defs>
+    <path id="prefix__Union_6" d="M3.976 15.859H2.482A2.484 2.484 0 0 1 0 13.382v-10.9A2.484 2.484 0 0 1 2.482 0h1.37a.677.677 0 1 1 0 1.354h-1.37a1.13 1.13 0 0 0-1.128 1.128v10.894A1.129 1.129 0 0 0 2.482 14.5h13.089a1.13 1.13 0 0 0 1.129-1.124V9.121 2.482a1.131 1.131 0 0 0-1.129-1.129H14.34a.677.677 0 1 1 0-1.353h1.232a2.484 2.484 0 0 1 2.482 2.482v10.895a2.484 2.484 0 0 1-2.482 2.482z" class="prefix__cls-1" data-name="Union 6" transform="translate(0 8.492)"/>
+    <path id="prefix__Path_2126" d="M6.544 7.221a.677.677 0 0 1-.677-.677v-5.19H.677A.677.677 0 1 1 .677 0h5.867a.677.677 0 0 1 .677.677v5.867a.677.677 0 0 1-.677.677z" class="prefix__cls-1" data-name="Path 2126" transform="rotate(-45 8.13 -2.19)"/>
+    <path id="prefix__Path_2127" d="M.677 11.735A.677.677 0 0 1 .2 10.579L10.579.2a.677.677 0 0 1 .958.958L1.156 11.537a.675.675 0 0 1-.479.198z" class="prefix__cls-1" data-name="Path 2127" transform="rotate(-45 10.386 3.258)"/>
+</svg>

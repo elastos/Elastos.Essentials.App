@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96.106" height="96.106" viewBox="0 0 96.106 96.106">
+    <defs>
+        <filter id="prefix__Path_21728" width="96.106" height="96.106" x="0" y="0" filterUnits="userSpaceOnUse">
+            <feOffset dy="3"/>
+            <feGaussianBlur result="blur" stdDeviation="7.5"/>
+            <feFlood flood-color="#eaeaea"/>
+            <feComposite in2="blur" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+    </defs>
+    <g id="prefix__Component_820_1" data-name="Component 820 – 1" transform="translate(22.5 19.5)">
+        <g filter="url(#prefix__Path_21728)" transform="translate(-22.5 -19.5)">
+            <path id="prefix__Path_21728-2" fill="#fff" d="M11.959 0h27.188a11.959 11.959 0 0 1 11.959 11.959v27.188a11.959 11.959 0 0 1-11.959 11.959H11.959A11.959 11.959 0 0 1 0 39.147V11.959A11.959 11.959 0 0 1 11.959 0z" data-name="Path 21728" transform="translate(22.5 19.5)"/>
+        </g>
+        <g id="prefix__Component_779_19" data-name="Component 779 – 19" transform="translate(15 15.394)">
+            <path id="prefix__Path_2356" d="M22.217 12.867h4.433a2.223 2.223 0 0 0 2.217-2.217V6.217A2.223 2.223 0 0 0 26.65 4h-4.433A2.223 2.223 0 0 0 20 6.217v4.433a2.223 2.223 0 0 0 2.217 2.217z" data-name="Path 2356" transform="translate(-20 -4)"/>
+            <path id="prefix__Path_2363" d="M22.217 12.867h4.433a2.223 2.223 0 0 0 2.217-2.217V6.217A2.223 2.223 0 0 0 26.65 4h-4.433A2.223 2.223 0 0 0 20 6.217v4.433a2.223 2.223 0 0 0 2.217 2.217z" data-name="Path 2363" transform="translate(-7.867 -4)"/>
+            <path id="prefix__Path_2367" d="M22.217 12.867h4.433a2.223 2.223 0 0 0 2.217-2.217V6.217A2.223 2.223 0 0 0 26.65 4h-4.433A2.223 2.223 0 0 0 20 6.217v4.433a2.223 2.223 0 0 0 2.217 2.217z" data-name="Path 2367" transform="translate(-20 8.133)"/>
+            <path id="prefix__Path_21779" d="M22.217 12.867h4.433a2.223 2.223 0 0 0 2.217-2.217V6.217A2.223 2.223 0 0 0 26.65 4h-4.433A2.223 2.223 0 0 0 20 6.217v4.433a2.223 2.223 0 0 0 2.217 2.217z" data-name="Path 21779" transform="translate(-7.867 8.133)"/>
+        </g>
+    </g>
+</svg>

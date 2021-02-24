@@ -1,0 +1,52 @@
+<app-titlebar
+    #titleBar
+    [title]="'elastos-essentials'"
+    [outerRightIcon]="!theme.darkMode ? 'assets/components/titlebar/notification.svg' : 'assets/components/titlebar/darkmode/notification.svg'"
+    (outerRightIconClicked)="appService.toggleNotifications()"
+></app-titlebar>
+
+<ion-content>
+    <ion-grid [class.dark-container]="theme.darkMode">
+        <ion-row class="header-row">
+            <ion-col size="12">
+                <ion-label>{{ 'notifications' | translate }}</ion-label>
+            </ion-col>
+        </ion-row>
+        <div *ngIf="notificationService.notifications.length > 0">
+            <ion-item-sliding *ngFor="let notification of notificationService.notifications">
+                <ion-item
+                    class="notif-item ion-activatable ripple"
+                    [class.removeBorder]="notificationService.notifications.length !== 1 && notificationService.notifications.indexOf(notification) === notificationService.notifications.length - 1"
+                    lines="none"
+                >
+                    <ion-row class="notif-row">
+                        <ion-col class="name-col" size="7.5">
+                            <img [src]="getNotificationIcon(notification)"/>
+                            <h2>{{ getNotificationHeader(notification) }}</h2>
+                        </ion-col>
+                        <ion-col class="date-col" size="4.5" (click)="close(notification)">
+                            <p>{{ getNotificationDate(notification) }}</p>
+                        </ion-col>
+                        <ion-col size="12" class="title-col" (click)="start(notification)">
+                            <p>{{ getNotificationTitle(notification) }}</p>
+                        </ion-col>
+                        <ion-col size="12" class="message-col" (click)="start(notification)">
+                            <p>{{ getNotificationMessage(notification) }}</p>
+                        </ion-col>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-row>
+                </ion-item>
+                <ion-item-options side="end" (ionSwipe)="close(notification)">
+                    <ion-item-option class="notifications-swipe-button" expandable>&nbsp;</ion-item-option>
+                </ion-item-options>
+            </ion-item-sliding>
+            <ion-row *ngIf="notificationService.notifications.length > 1" class="close-all-row ion-margin-top" (click)="closeAllNotifications()">
+                {{ 'close-notifs' | translate }}
+            </ion-row>
+        </div>
+        <div *ngIf="notificationService.notifications.length === 0" class="empty-container">
+            <h1>{{ 'no-empty' | translate }}</h1>
+            <p>{{ 'no-notif' | translate }}</p>
+        </div>
+    </ion-grid>
+</ion-content>

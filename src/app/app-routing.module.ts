@@ -1,21 +1,19 @@
-import { NgModule } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+@Component({ template: "<div>Default root empty page</div>" })
+export class EmptyPage  {}
+
 const routes: Routes = [
-  {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
-  },
-  {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
-  },
+  { path: 'launcher', loadChildren: './launcher/launcher.module#LauncherModule' },
+
+  { path: '**', component: EmptyPage },
+  // Prevent angular from calling a random default route sometimes when starting, leading to crashes if platform is not ready yet
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes/*, { preloadingStrategy: PreloadAllModules }*/)
   ],
   exports: [RouterModule]
 })

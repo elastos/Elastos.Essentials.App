@@ -1,5 +1,7 @@
 {
-  "name": "essentials",
-  "integrations": {},
+  "name": "Launcher",
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

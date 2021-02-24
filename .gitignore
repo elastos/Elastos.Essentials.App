@@ -1,0 +1,14 @@
+.sourcemaps/
+node_modules/
+www/
+.DS_Store
+package-lock.json
+resources/
+.vscode/
+typings/
+/config.xml
+
+# Temporary cordova test during the initial essentials 2.0 merge
+/platforms/
+/plugins/
+/resources/
