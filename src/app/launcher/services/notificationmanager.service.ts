@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { ContactAvatar } from 'src/app/services/contactnotifier.service';
+import { TitlebarService } from 'src/app/services/titlebar.service';
 
 /**
  * TODO @chad - Finalize merging types and methods I have imported from the notification plugin, with
@@ -61,7 +62,8 @@ export class NotificationManagerService {
 
   constructor(
     private platform: Platform,
-    private zone: NgZone
+    private zone: NgZone,
+    private titlebarService: TitlebarService
   ) {
     this.platform.ready().then(() => {
       this.setNotificationListener();
@@ -78,7 +80,18 @@ export class NotificationManagerService {
   * @returns A promise that can be awaited and catched in case or error.
   */
   public async sendNotification(request: NotificationRequest): Promise<void> {
-    // TODO @chad
+    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    this.notifications.push({
+      key: request.key,
+      title: request.title,
+      message: request.message,
+      url: request.url,
+      emitter: request.emitter,
+      notificationId: characters.charAt(Math.floor(Math.random() * characters.length)),
+      appId: request.url,
+      sent_date: Date.now(),
+    });
+
     return null;
   }
 
@@ -108,7 +121,7 @@ export class NotificationManagerService {
    * @param notificationId Notification ID
    */
   public clearNotification(notificationId: string) {
-    // TODO @chad
+    this.notifications = this.notifications.filter((notification) => notification.notificationId !== notificationId);
   }
 
 
