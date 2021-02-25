@@ -7,7 +7,7 @@ import { UXService } from './ux.service';
 @Injectable({
   providedIn: 'root'
 })
-export class DIDSessionsModuleService {
+export class DIDSessionsInitService {
   constructor(
     private identityService: IdentityService,
     private uxService: UXService,

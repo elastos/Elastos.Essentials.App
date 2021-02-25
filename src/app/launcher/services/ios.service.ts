@@ -13,8 +13,6 @@ export class IosService {
     public init() {
         console.log("IOS Service is initializing home screen items with language:", this.translate.currentLang);
 
-        console.log("IOS TEST", this.translate.instant('app-wallet'));
-
         this.iosApps = [
             {
                 type: 'main',

@@ -50,10 +50,6 @@ export class UXService {
         console.log("UXService init");
         // this.theme.getTheme();
 
-        this.platform.ready().then(()=>{
-            this.navigateRoot();
-        });
-
         /* TODO @chad titleBarManager.addOnItemClickedListener((menuItem)=>{
             // Dimiss controllers before using titlebar icons
             if(this.popover) {

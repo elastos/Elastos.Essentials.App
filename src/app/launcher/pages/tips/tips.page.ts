@@ -3,8 +3,8 @@ import { NavParams, ModalController } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Tip } from '../../models/tip.model';
-import { TipAudience } from '../../models/tipaudience.model';
+import { Tip } from '../../model/tip.model';
+import { TipAudience } from '../../model/tipaudience.model';
 import { TipsService } from '../../services/tips.service';
 
 @Component({

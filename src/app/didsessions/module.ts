@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
-import { DIDSessionsRoutingModule } from './routing.module';
+import { DIDSessionsRoutingModule } from './routing';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IonicImageLoader } from 'ionic-image-loader';
@@ -77,6 +77,7 @@ export function TranslateLoaderFactory() {
     PrintoptionsComponent
   ],
   imports: [
+    IonicModule.forRoot(),
     CommonModule,
     DIDSessionsRoutingModule,
     FormsModule,

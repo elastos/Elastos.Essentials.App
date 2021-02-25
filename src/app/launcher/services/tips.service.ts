@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Tip } from '../models/tip.model';
-import { TipAudience } from '../models/tipaudience.model';
+import { Tip } from '../model/tip.model';
+import { TipAudience } from '../model/tipaudience.model';
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { NotificationManagerService } from './notificationmanager.service';

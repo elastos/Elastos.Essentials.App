@@ -4,12 +4,13 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 import { StorageService } from './services/storage.service';
 import { ThemeService } from './services/theme.service';
-import { LauncherModuleService } from './launcher/services/launcher.service';
-import { DIDSessionsModuleService } from './didsessions/services/didsessions.service';
+import { LauncherInitService } from './launcher/services/init.service';
+import { DIDSessionsInitService } from './didsessions/services/init.service';
+import { DIDSessionsService } from './services/didsessions.service';
 
 @Component({
     selector: 'app-root',
-    templateUrl: 'app.component.html',
+    template: '<ion-app><ion-router-outlet></ion-router-outlet></ion-app>',
 })
 export class AppComponent {
     constructor(
@@ -19,8 +20,9 @@ export class AppComponent {
         public splashScreen: SplashScreen,
         public storage: StorageService,
         public theme: ThemeService,
-        private launcherService: LauncherModuleService,
-        private didSessionsService: DIDSessionsModuleService
+        private launcherService: LauncherInitService,
+        private didSessionsService: DIDSessionsInitService,
+        private didSessions: DIDSessionsService
     ) {
     }
 
@@ -32,13 +34,21 @@ export class AppComponent {
         this.platform.ready().then(async () => {
             console.log("Main app component initialization is starting");
 
-            //screen.orientation.lock('portrait');
+            // TODO screen.orientation.lock('portrait');
 
             await this.didSessionsService.init();
             await this.launcherService.init();
 
-            console.log("Navigating to home screen")
-            this.navController.navigateRoot(['/launcher/home']);
+            // Navigate to the right startup screen
+            console.log("Navigating to start screen");
+            let entry = await this.didSessions.getSignedInIdentity();
+            if (entry != null) {
+                console.log("An active DID exists, navigating to launcher home");
+                this.navController.navigateRoot(['/launcher/home']);
+            } else {
+                console.log("No active DID, navigating to DID sessions");
+                this.navController.navigateRoot(['/didsessions/pickidentity']);
+            }
         });
     }
 }

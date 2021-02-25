@@ -67,11 +67,12 @@ export class DIDSessionsService {
    * @returns The signed in identity if any, null otherwise.
    */
   public async getSignedInIdentity(): Promise<IdentityEntry | null> {
-    return {
+    /*return {
       didStoreId: "12345",
       didString: "did:elastos:abcde",
       name: "Tmp user"
-    };
+    };*/
+    return null;
   }
 
   /**

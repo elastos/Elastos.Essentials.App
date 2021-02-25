@@ -12,7 +12,7 @@ import { zh } from '../../assets/launcher/languages/zh';
 import { en } from '../../assets/launcher/languages/en';
 import { fr } from '../../assets/launcher/languages/fr';
 
-import { LauncherRoutingModule, EmptyPage } from './routing.module';
+import { LauncherRoutingModule, EmptyPage } from './routing';
 import { TipsPage } from './pages/tips/tips.page';
 import { NotificationsPage } from './pages/notifications/notifications.page';
 

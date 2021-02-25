@@ -24,6 +24,7 @@ export class PreferencesService {
    * @param key Unique key identifying the preference data.
    */
   public getPreference<T>(key: string): Promise<T> {
+    console.log("GET PREF ", key)
     // TODO @chad: add a did parameter to simulate DID session context, as explained in the clickup task
     return null; // TODO @chad
   }

@@ -13,12 +13,12 @@ import { IonicStorageModule } from '@ionic/storage';
 import { DragulaModule } from 'ng2-dragula';
 import { AngularFittextModule } from 'angular-fittext';
 import { AppComponent } from './app.component';
-import { LauncherModule } from './launcher/launcher.module';
+import { LauncherModule } from './launcher/module';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedComponentsModule } from './components/sharedcomponents.module';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
-import { DIDSessionsModule } from './didsessions/didsessions.module';
+import { DIDSessionsModule } from './didsessions/module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Injectable()

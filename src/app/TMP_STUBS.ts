@@ -42,32 +42,32 @@ export class TemporaryAppManagerPlugin {
   }
 
   public setListener(listener: (ret) => any) {
-    console.log("setListener() NOT IMPLEMENTED");
+    //console.log("setListener() NOT IMPLEMENTED");
   }
 
   public setIntentListener(listener: (ret) => any) {
-    console.log("setIntentListener() NOT IMPLEMENTED");
+    //console.log("setIntentListener() NOT IMPLEMENTED");
   }
 
   public sendIntent(action: string, data: any) {
-    console.log("sendIntent() NOT IMPLEMENTED");
+    //console.log("sendIntent() NOT IMPLEMENTED");
   }
 
   public getLocale(listener: (defaultLang, currentLang, systemLang) => any) {
-    console.log("getLocale() NOT IMPLEMENTED");
+    //console.log("getLocale() NOT IMPLEMENTED");
     listener("en", "en", "en");
   }
 
   public setCurrentLocale(locale: string) {
-    console.log("setCurrentLocale() NOT IMPLEMENTED");
+    //console.log("setCurrentLocale() NOT IMPLEMENTED");
   }
 
   public sendUrlIntent(url: string, onSuccess: any, onError: any) {
-    console.log("sendUrlIntent() NOT IMPLEMENTED");
+    //console.log("sendUrlIntent() NOT IMPLEMENTED");
   }
 
   public start(appID: string) {
-    console.log("start() NOT IMPLEMENTED");
+    //console.log("start() NOT IMPLEMENTED");
   }
 }
 

@@ -21,7 +21,7 @@ import { Events } from './events.service';
 import { NotificationsPage } from '../pages/notifications/notifications.page';
 import { TipsPage } from '../pages/tips/tips.page';
 
-import { Tip } from '../models/tip.model';
+import { Tip } from '../model/tip.model';
 
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
