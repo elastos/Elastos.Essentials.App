@@ -49,6 +49,7 @@ export class AppComponent {
             } else {
                 console.log("No active DID, navigating to DID sessions");
                 this.navController.navigateRoot(['/didsessions/pickidentity']);
+                //this.navController.navigateRoot(['/launcher/home']);
             }
         });
     }

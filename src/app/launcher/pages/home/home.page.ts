@@ -11,7 +11,6 @@ import { NotificationManagerService } from '../../services/notificationmanager.s
 import { OptionsComponent } from '../../components/options/options.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { DidmanagerService } from '../../services/didmanager.service';
-import { IosService } from '../../services/ios.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TitlebarService } from 'src/app/services/titlebar.service';
 
@@ -34,7 +33,6 @@ export class HomePage implements OnInit {
     public splashScreen: SplashScreen,
     private notification: NotificationManagerService,
     private appManager: TemporaryAppManagerPlugin,
-    public iosService: IosService,
     public appService: AppmanagerService,
     public didService: DidmanagerService,
     public titlebarService: TitlebarService

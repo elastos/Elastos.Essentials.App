@@ -26,7 +26,7 @@
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
     <!--------- Apps ---------->
-    <ion-row *ngFor="let category of iosService.iosApps" class="apps-row">
+    <ion-row *ngFor="let category of appService.runnableApps" class="apps-row">
       <ion-col size="12" class="title-col">
         <ion-label>{{ category.type | translate }}</ion-label>
       </ion-col>
@@ -36,7 +36,7 @@
         [class.other]="category.type === 'other'"
         [id]="app.cssId"
         size="5.75"
-        (click)="appService.startApp(app.id)"
+        (click)="appService.startApp(app)"
       >
         <ion-row class="top-row">
           <ion-col class="left-col" size="10">

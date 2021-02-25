@@ -77,6 +77,7 @@ export function TranslateLoaderFactory() {
     PrintoptionsComponent
   ],
   imports: [
+    IonicModule.forRoot(), // Warning "Ionic Angular was already initialized. Make sure IonicModule.forRoot() is just called once" but getSwiper() can't be found without this.
     CommonModule,
     DIDSessionsRoutingModule,
     FormsModule,

@@ -14,7 +14,6 @@ import { NotificationManagerService } from './notificationmanager.service';
 import { DidmanagerService } from './didmanager.service';
 import { ThemeService } from '../../services/theme.service';
 import { NativeService } from './native.service';
-import { IosService } from './ios.service';
 import { BackupService } from './backup.service';
 import { Events } from './events.service';
 
@@ -39,10 +38,26 @@ enum MessageType {
     EX_RETURN = 14,
 }
 
+type RunnableApp = {
+    cssId:string;
+    name: string;
+    description: string;
+    icon: string;
+    id: string;
+    routerPath: string;
+}
+
+type RunnableAppCategory = {
+    type: string,
+    apps: RunnableApp[];
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class AppmanagerService {
+    // List of runnable apps
+    private runnableApps: RunnableAppCategory[] = null;
 
     /* Popups */
     private notificationsShown = false;
@@ -63,16 +78,16 @@ export class AppmanagerService {
         private router: Router,
         private events: Events,
         private didService: DidmanagerService,
-        public iosService: IosService,
         private native: NativeService,
         private storage: StorageService,
         private appManager: TemporaryAppManagerPlugin,
         private didSessions: DIDSessionsService
-    ) { }
+    ) {}
 
     public async init() {
         console.log('AppmanagerService init');
 
+        this.initAppsList();
         await this.initTranslateConfig();
 
         await this.getLanguage();
@@ -90,6 +105,74 @@ export class AppmanagerService {
         this.events.subscribe("updateNotifications", () => {
             // TODO @chad this.notification.fillAppInfoToNotification(this.installService.appInfos);
         });
+    }
+
+    private initAppsList() {
+        this.runnableApps = [
+            {
+                type: 'main',
+                apps: [
+                    {
+                        cssId: 'Wallet',
+                        name: this.translate.instant('app-wallet'),
+                        description: this.translate.instant('app-wallet-description'),
+                        icon: '/assets/launcher/ios/app-icons/wallet.svg',
+                        id: 'wallet',
+                        routerPath: '/wallet/home'
+                    },
+                    {
+                        cssId: 'Identity',
+                        name: this.translate.instant('app-identity'),
+                        description: this.translate.instant('app-identity-description'),
+                        icon: '/assets/launcher/ios/app-icons/identity.svg',
+                        id: 'org.elastos.trinity.dapp.did',
+                        routerPath: '/identity/home'
+                    },
+                    {
+                        cssId: 'Contacts',
+                        name: this.translate.instant('app-contacts'),
+                        description: this.translate.instant('app-contacts-description'),
+                        icon: '/assets/launcher/ios/app-icons/contacts.svg',
+                        id: 'org.elastos.trinity.dapp.friends',
+                        routerPath: '/contacts/home'
+                    },
+                ]
+            },
+            {
+                type: 'utilities',
+                apps: [
+                    {
+                        cssId: 'Hive',
+                        name: this.translate.instant('app-hive'),
+                        description: this.translate.instant('app-hive-description'),
+                        icon: '/assets/launcher/ios/app-icons/hive.svg',
+                        id: 'org.elastos.trinity.dapp.hivemanager',
+                        routerPath: '/hivemanager/home'
+                    }
+                ]
+            },
+            {
+                type: 'other',
+                apps: [
+                    {
+                        cssId: 'Scanner',
+                        name: this.translate.instant('app-scanner'),
+                        description: this.translate.instant('app-scanner-description'),
+                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        id: 'org.elastos.trinity.dapp.qrcodescanner',
+                        routerPath: '/scanner/home'
+                    },
+                    {
+                        cssId: 'Settings',
+                        name: this.translate.instant('app-settings'),
+                        description: this.translate.instant('app-settings-description'),
+                        icon: '/assets/launcher/ios/app-icons/settings.svg',
+                        id: 'org.elastos.trinity.dapp.settings',
+                        routerPath: '/settings/home'
+                    },
+                ]
+            }
+        ];
     }
 
     async getVisit() {
@@ -236,8 +319,8 @@ export class AppmanagerService {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
-    startApp(id: string) {
-        // TODO @chad - replace with standard ionic navigation - we don't "start" apps any more - appManager.start(id);
+    startApp(app: RunnableApp) {
+        this.navController.navigateRoot(app.routerPath);
     }
 
     /******************************** Notifications Manager ********************************/
@@ -327,10 +410,6 @@ export class AppmanagerService {
                 } else {
                     moment.locale(lang);
                 }
-
-                // Translate dapp name and description
-                this.iosService.init();
-
                 resolve();
             });
         });
