@@ -13,7 +13,7 @@ import {
 import { not } from '@angular/compiler/src/output/output_ast';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TipsService } from '../../services/tips.service';
-import { AppManagerPlugin } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 
 @Component({
   selector: 'app-notifications',
@@ -33,7 +33,7 @@ export class NotificationsPage implements OnInit {
     public translate: TranslateService,
     public appService: AppmanagerService,
     private tipsService: TipsService,
-    private appManager: AppManagerPlugin
+    private appManager: TemporaryAppManagerPlugin
   ) {
   }
 

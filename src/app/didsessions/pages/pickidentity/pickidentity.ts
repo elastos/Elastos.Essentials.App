@@ -1,12 +1,12 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { IdentityService, IdentityGroup } from 'src/app/didSessions/services/identity.service';
-import { UXService } from 'src/app/didSessions/services/ux.service';
+import { IdentityService, IdentityGroup } from 'src/app/didsessions/services/identity.service';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from 'src/app/didSessions/services/events.service';
-import { PopupProvider } from 'src/app/didSessions/services/popup';
+import { Events } from 'src/app/didsessions/services/events.service';
+import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
 
 @Component({

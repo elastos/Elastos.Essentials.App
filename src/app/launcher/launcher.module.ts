@@ -21,6 +21,9 @@ import { CommonModule } from '@angular/common';
 import { HomePage } from './pages/home/home.page';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { SharedServicesModule } from '../services/sharedservices.module';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { OnboardPage } from './pages/onboard/onboard.page';
 
 export class CustomTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -52,6 +55,7 @@ export function TranslateLoaderFactory() {
     HomePage,
     NotificationsPage,
     TipsPage,
+    OnboardPage,
     //SafePipe,
   ],
   entryComponents: [
@@ -61,6 +65,7 @@ export function TranslateLoaderFactory() {
     TipsPage
   ],
   imports: [
+    IonicModule.forRoot(),
     CommonModule,
     HttpClientModule,
     AngularFittextModule,
@@ -78,6 +83,7 @@ export function TranslateLoaderFactory() {
   providers: [
     //LauncherService
   ],
-  bootstrap: []
+  bootstrap: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LauncherModule { }

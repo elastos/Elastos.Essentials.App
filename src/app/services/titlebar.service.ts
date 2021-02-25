@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppTheme, ThemeService } from './theme.service';
-  
+
   /**
    * Built-in convenience icons that can be used as icon paths instead fo providing a custom icon path.
    */
@@ -33,7 +33,7 @@ import { AppTheme, ThemeService } from './theme.service';
     backgroundColor: string;
     color: string;
   }
-  
+
   /**
    * Type used to configure icons on the title bar, with their respective actions.
    * An icon "configuration" is made of an icon picture (custom, or predefined), and
@@ -50,10 +50,10 @@ import { AppTheme, ThemeService } from './theme.service';
   }
 
   export type TitleBarSlotItem = TitleBarIcon & {
-    visibile: boolean
+    visible: boolean
     badgeCount: number
   }
-  
+
   /**
    * Type describing a context menu entry opened from the title bar. This is a standard icon type, with
    * an additional title.
@@ -62,7 +62,7 @@ import { AppTheme, ThemeService } from './theme.service';
     /** Localized menu item display title. */
     title: String
   }
-  
+
   export const enum TitleBarDisplayMode {
     /** The title bar is visible and large (default mode). */
     DEFAULT = 0,
@@ -71,7 +71,7 @@ import { AppTheme, ThemeService } from './theme.service';
     /** The title bar is totally hidden and the space is given back to main app content (restricted to some apps). */
     HIDDEN = 2
   }
-  
+
   /**
    * Title bar organization:
    * | Navigation icon or outer_left | inner_left | Title | inner_right | outer_right or menu |
@@ -97,12 +97,12 @@ export class TitlebarService {
   public visibile: boolean = true;
   public menuVisible: boolean = false;
 
-  public theme: TitleBarTheme;
+  public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
 
-  public outerLeftIcon: TitleBarSlotItem;
-  public innerLeftIcon: TitleBarSlotItem;
-  public innerRightIcon: TitleBarSlotItem;
-  public outerRightIcon: TitleBarSlotItem;
+  public outerLeftIcon: TitleBarSlotItem = TitlebarService.makeDefaultIcon();
+  public innerLeftIcon: TitleBarSlotItem = TitlebarService.makeDefaultIcon();
+  public innerRightIcon: TitleBarSlotItem = TitlebarService.makeDefaultIcon();
+  public outerRightIcon: TitleBarSlotItem = TitlebarService.makeDefaultIcon();
 
   public menuItems: TitleBarMenuItem[] = [];
 
@@ -112,6 +112,10 @@ export class TitlebarService {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);
     });
+  }
+
+  private static makeDefaultIcon(): TitleBarSlotItem {
+    return { visible: false, key: null, iconPath: null, badgeCount: 0 };
   }
 
   /**
@@ -168,44 +172,44 @@ export class TitlebarService {
     switch (iconSlot) {
       case TitleBarIconSlot.OUTER_LEFT:
         if(icon) {
-          this.outerLeftIcon.visibile = true;
+          this.outerLeftIcon.visible = true;
           this.outerLeftIcon.key = icon.key;
           this.outerLeftIcon.iconPath = icon.iconPath;
         } else {
-          this.outerLeftIcon.visibile = false;
+          this.outerLeftIcon.visible = false;
           this.outerLeftIcon.key = null;
           this.outerLeftIcon.iconPath = null;
         }
         break;
       case TitleBarIconSlot.INNER_LEFT:
         if(icon) {
-          this.innerLeftIcon.visibile = true;
+          this.innerLeftIcon.visible = true;
           this.innerLeftIcon.key = icon.key;
           this.innerLeftIcon.iconPath = icon.iconPath;
         } else {
-          this.innerLeftIcon.visibile = false;
+          this.innerLeftIcon.visible = false;
           this.innerLeftIcon.key = null;
           this.innerLeftIcon.iconPath = null;
         }
         break;
       case TitleBarIconSlot.INNER_RIGHT:
         if(icon) {
-          this.innerRightIcon.visibile = true;
+          this.innerRightIcon.visible = true;
           this.innerRightIcon.key = icon.key;
           this.innerRightIcon.iconPath = icon.iconPath;
         } else {
-          this.innerRightIcon.visibile = false;
+          this.innerRightIcon.visible = false;
           this.innerRightIcon.key = null;
           this.innerRightIcon.iconPath = null;
         }
         break;
       case TitleBarIconSlot.OUTER_RIGHT:
         if(icon) {
-          this.outerRightIcon.visibile = true;
+          this.outerRightIcon.visible = true;
           this.outerRightIcon.key = icon.key;
           this.outerRightIcon.iconPath = icon.iconPath;
         } else {
-          this.outerRightIcon.visibile = false;
+          this.outerRightIcon.visible = false;
           this.outerRightIcon.key = null;
           this.outerRightIcon.iconPath = null;
         }

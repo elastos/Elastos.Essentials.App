@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Tip } from '../models/tip.model';
 import { TipAudience } from '../models/tipaudience.model';
 import * as moment from 'moment';
-import { AppManagerPlugin } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { NotificationManagerService } from './notificationmanager.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { PreferencesService } from 'src/app/services/preferences.service';
@@ -75,7 +75,7 @@ export class TipsService {
 
   constructor(
     private translate: TranslateService,
-    private appManager: AppManagerPlugin,
+    private appManager: TemporaryAppManagerPlugin,
     private storage: StorageService,
     private prefs: PreferencesService,
     private notificationManager: NotificationManagerService) { }

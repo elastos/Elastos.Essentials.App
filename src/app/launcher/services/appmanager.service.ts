@@ -24,7 +24,7 @@ import { TipsPage } from '../pages/tips/tips.page';
 import { Tip } from '../models/tip.model';
 
 import * as moment from 'moment';
-import { AppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
 import { StorageService } from 'src/app/services/storage.service';
 
 enum MessageType {
@@ -65,7 +65,7 @@ export class AppmanagerService {
         public iosService: IosService,
         private native: NativeService,
         private storage: StorageService,
-        private appManager: AppManagerPlugin
+        private appManager: TemporaryAppManagerPlugin
     ) { }
 
     public async init() {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { AppManagerPlugin } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 
 let selfLanguageService: LanguageService = null;
 
@@ -39,7 +39,7 @@ export class LanguageService {
 
   constructor(
     private translate: TranslateService,
-    private appManager: AppManagerPlugin
+    private appManager: TemporaryAppManagerPlugin
   ) {
     selfLanguageService = this;
   }

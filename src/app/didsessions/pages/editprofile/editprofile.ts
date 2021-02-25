@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, IonInput, ModalController } from '@ionic/angular';
-import { UXService } from 'src/app/didSessions/services/ux.service';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { TranslateService } from '@ngx-translate/core';
-import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didSessions/services/identity.service';
+import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didsessions/services/identity.service';
 import { ThemeService } from 'src/app/services/theme.service';
 
 export type EditProfileStateParams = {
@@ -39,7 +39,6 @@ export class EditProfilePage {
   }
 
   ionViewWillEnter() {
-    this.uxService.makeAppVisible();
     this.uxService.setTitleBarBackKeyShown(true);
     // TODO @chad titleBarManager.setTitle(this.translate.instant('identity-name'));
   }

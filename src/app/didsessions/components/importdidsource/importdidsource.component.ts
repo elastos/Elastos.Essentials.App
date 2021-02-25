@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, NavParams, IonInput } from '@ionic/angular';
-import { UXService } from 'src/app/services/ux.service';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { ThemeService } from 'src/app/services/theme.service';
 
 export enum ImportDIDSource {

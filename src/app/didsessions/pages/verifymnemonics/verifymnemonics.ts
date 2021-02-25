@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { Util } from '../../services/util';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { UXService } from 'src/app/didSessions/services/ux.service';
-import { IdentityService } from 'src/app/didSessions/services/identity.service';
+import { UXService } from 'src/app/didsessions/services/ux.service';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { ThemeService } from 'src/app/services/theme.service';
 
 type MnemonicWord = {

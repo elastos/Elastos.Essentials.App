@@ -1,8 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
-import { UXService } from 'src/app/didSessions/services/ux.service';
-import { IdentityService } from 'src/app/didSessions/services/identity.service';
-import { Events } from 'src/app/didSessions/services/events.service';
+import { UXService } from 'src/app/didsessions/services/ux.service';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
+import { Events } from 'src/app/didsessions/services/events.service';
 
 @Component({
   selector: 'app-scan',

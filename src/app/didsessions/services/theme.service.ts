@@ -1,26 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { PreferencesService } from 'src/app/services/preferences.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-
+// TODO @chad - Remove this didsessions specific theme service and use the global theme service
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
   public darkMode = false;
 
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private prefs: PreferencesService) {
     this.platform.ready().then(() => {
       this.getTheme();
     });
   }
 
-  getTheme() {
-    appManager.getPreference("ui.darkmode", (value) => {
-      this.darkMode = value;
-      this.setTheme(this.darkMode);
-    });
+  async getTheme() {
+    let value = await this.prefs.getPreference<boolean>("ui.darkmode");
+    this.darkMode = value;
+    this.setTheme(this.darkMode);
   }
 
   setTheme(dark) {
@@ -30,16 +28,16 @@ export class ThemeService {
       document.body.classList.add("dark");
 
       // Set dark mode to native header
-      titleBarManager.setBackgroundColor("#191a2f");
-      titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT);
+      // TODO @chad - titleBarManager.setBackgroundColor("#191a2f");
+      // TODO @chad - titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT);
 
     } else {
       // Remove dark mode globally
       document.body.classList.remove("dark");
 
       // Remove dark mode to native header
-      titleBarManager.setBackgroundColor("#f8f8ff");
-      titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
+      // TODO @chad - titleBarManager.setBackgroundColor("#f8f8ff");
+      // TODO @chad - titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
     }
   }
 }

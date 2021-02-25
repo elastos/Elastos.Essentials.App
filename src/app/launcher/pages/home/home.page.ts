@@ -9,7 +9,7 @@ import { AppTheme, ThemeService } from 'src/app/services/theme.service';
 import * as moment from 'moment';
 import { NotificationManagerService } from '../../services/notificationmanager.service';
 import { OptionsComponent } from '../../components/options/options.component';
-import { AppManagerPlugin } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { DidmanagerService } from '../../services/didmanager.service';
 import { IosService } from '../../services/ios.service';
 import { AppmanagerService } from '../../services/appmanager.service';
@@ -33,7 +33,7 @@ export class HomePage implements OnInit {
     public theme: ThemeService,
     public splashScreen: SplashScreen,
     private notification: NotificationManagerService,
-    private appManager: AppManagerPlugin,
+    private appManager: TemporaryAppManagerPlugin,
     public iosService: IosService,
     public appService: AppmanagerService,
     public didService: DidmanagerService,

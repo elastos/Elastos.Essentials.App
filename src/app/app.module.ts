@@ -18,6 +18,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { SharedComponentsModule } from './components/sharedcomponents.module';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
+import { DIDSessionsModule } from './didsessions/didsessions.module';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -56,6 +58,7 @@ export class SentryErrorHandler implements ErrorHandler {
     //HttpClientModule,
     //AngularFittextModule,
     LauncherModule,
+    DIDSessionsModule,
     SharedComponentsModule,
     IonicModule.forRoot(),
     AppRoutingModule,
@@ -72,6 +75,7 @@ export class SentryErrorHandler implements ErrorHandler {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: SentryErrorHandler },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

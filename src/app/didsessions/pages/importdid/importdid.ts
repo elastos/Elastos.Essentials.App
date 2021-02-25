@@ -4,12 +4,12 @@ import { NavController, IonInput, ModalController, Platform } from '@ionic/angul
 import { TranslateService } from '@ngx-translate/core';
 
 import { Util } from '../../services/util';
-import { MnemonicPassCheckComponent } from 'src/app/didSessions/components/mnemonicpasscheck/mnemonicpasscheck.component';
-import { UXService } from 'src/app/didSessions/services/ux.service';
+import { MnemonicPassCheckComponent } from 'src/app/didsessions/components/mnemonicpasscheck/mnemonicpasscheck.component';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { ThemeService } from 'src/app/services/theme.service';
-import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didSessions/services/identity.service';
-import { PopupProvider } from 'src/app/didSessions/services/popup';
-import { Events } from 'src/app/didSessions/services/events.service';
+import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didsessions/services/identity.service';
+import { PopupProvider } from 'src/app/didsessions/services/popup';
+import { Events } from 'src/app/didsessions/services/events.service';
 
 /**
  * Import algorithm:
@@ -84,7 +84,6 @@ export class ImportDIDPage {
     }
 
     ionViewWillEnter() {
-        this.uxService.makeAppVisible();
         this.uxService.setTitleBarEditKeyShown(true);
         /* TODO @chad titleBarManager.setTitle(this.translate.instant('import-my-did'));
 

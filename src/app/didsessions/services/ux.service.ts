@@ -6,10 +6,8 @@ import { ThemeService } from './theme.service';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 import { Events } from './events.service';
-
-declare let appManager: AppManagerPlugin.AppManager;
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
+import { TitleBarIcon } from 'src/app/services/titlebar.service';
+import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
 
 let selfUxService: UXService = null;
 
@@ -35,7 +33,8 @@ export class UXService {
         private router: Router,
         private theme: ThemeService,
         private events: Events,
-        private loadingCtrl: LoadingController
+        private loadingCtrl: LoadingController,
+        private didSessions: DIDSessionsService
     ) {
         selfUxService = this;
         UXService.instance = this;
@@ -55,7 +54,7 @@ export class UXService {
             this.navigateRoot();
         });
 
-        titleBarManager.addOnItemClickedListener((menuItem)=>{
+        /* TODO @chad titleBarManager.addOnItemClickedListener((menuItem)=>{
             // Dimiss controllers before using titlebar icons
             if(this.popover) {
               this.popover.dismiss();
@@ -71,10 +70,10 @@ export class UXService {
             }
 
             this.onTitleBarItemClicked(menuItem);
-        });
+        });*/
     }
 
-    onTitleBarItemClicked(icon: TitleBarPlugin.TitleBarIcon) {
+    onTitleBarItemClicked(icon: TitleBarIcon) {
       console.log('Titlebar item clicked', icon);
       switch (icon.key) {
         // When in import-did pg
@@ -96,7 +95,7 @@ export class UXService {
 
     async navigateRoot() {
         // Redirect to the appropriate screen depending on available identities
-        let identities = await didSessionManager.getIdentityEntries();
+        let identities = await this.didSessions.getIdentityEntries();
         if (identities.length == 0) {
             console.log("No existing identity. Navigating to language chooser then createidentity");
             this.navCtrl.navigateRoot("language");
@@ -118,11 +117,8 @@ export class UXService {
         });
     }
 
-    makeAppVisible() {
-        appManager.setVisible("show");
-    }
-
     setTitleBarBackKeyShown(show: boolean) {
+        /* TODO @chad
         if (show) {
             titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
                 key: "back",
@@ -132,9 +128,11 @@ export class UXService {
         else {
             titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
         }
+        */
     }
 
     setTitleBarEditKeyShown(show: boolean) {
+      /* TODO @chad
         if (show) {
           titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
             key: "language",
@@ -144,6 +142,7 @@ export class UXService {
         else {
           titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
         }
+        */
     }
 
     public translateInstant(key: string): string {
@@ -171,7 +170,7 @@ export class UXService {
         }).then(toast => toast.present());
     }
 
-    async showOptions(ev: any, identityEntry: DIDSessionManagerPlugin.IdentityEntry) {
+    async showOptions(ev: any, identityEntry: IdentityEntry) {
       console.log('Opening profile options');
 
       this.options = await this.popoverCtrl.create({

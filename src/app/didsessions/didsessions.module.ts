@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
-import { AppRoutingModule, EmptyPage } from './routing.module';
+import { DIDSessionsRoutingModule } from './routing.module';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IonicImageLoader } from 'ionic-image-loader';
@@ -63,7 +63,6 @@ export function TranslateLoaderFactory() {
 
 @NgModule({
   declarations: [
-    EmptyPage,
     LanguagePage,
     PickIdentityPage,
     CreateIdentityPage,
@@ -79,7 +78,7 @@ export function TranslateLoaderFactory() {
   ],
   imports: [
     CommonModule,
-    AppRoutingModule,
+    DIDSessionsRoutingModule,
     FormsModule,
     ComponentsModule,
     IonicImageLoader.forRoot(),
@@ -91,7 +90,6 @@ export function TranslateLoaderFactory() {
     })
   ],
   entryComponents: [
-    EmptyPage,
     LanguagePage,
     PickIdentityPage,
     CreateIdentityPage,

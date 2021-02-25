@@ -10,9 +10,6 @@ import { LanguagePage } from './pages/language/language.page';
 import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimporteddid.page';
 import { ScanPage } from './pages/scan/scan.page';
 
-@Component({ template: "<div></div>" })
-export class EmptyPage  {}
-
 const routes: Routes = [
   { path: 'language', component: LanguagePage },
   { path: 'pickidentity', component: PickIdentityPage },
@@ -22,16 +19,13 @@ const routes: Routes = [
   { path: 'backupdid', component: BackupDIDPage },
   { path: 'editprofile', component: EditProfilePage },
   { path: 'chooseimporteddid', component: ChooseImportedDIDPage },
-  { path: 'scan', component: ScanPage },
-
-  { path: '**', component: EmptyPage },
-  // Prevent angular from calling a random default route sometimes when starting, leading to crashes if platform is not ready yet
+  { path: 'scan', component: ScanPage }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forChild(routes)
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class DIDSessionsRoutingModule {}

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 
 export type Preference<T> = {
   key: string;
@@ -10,7 +11,6 @@ export type Preference<T> = {
   providedIn: 'root'
 })
 export class StorageService {
-
   constructor(
     private storage: Storage,
     private platform: Platform

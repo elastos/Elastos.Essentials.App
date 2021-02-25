@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { LanguageService } from 'src/app/services/language.service';
+import { LanguageService } from 'src/app/didsessions/services/language.service';
 import { ThemeService } from 'src/app/services/theme.service';
-import { UXService } from 'src/app/services/ux.service';
-import { IdentityService } from 'src/app/services/identity.service';
-
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
+import { UXService } from 'src/app/didsessions/services/ux.service';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
+import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 @Component({
   selector: 'app-language',
@@ -24,7 +22,8 @@ export class LanguagePage implements OnInit {
     public translate: TranslateService,
     private identityService: IdentityService,
     private uxService: UXService,
-    private splashScreen: SplashScreen
+    private splashScreen: SplashScreen,
+    private didSessions: DIDSessionsService
   ) { }
 
   ngOnInit() {
@@ -36,7 +35,7 @@ export class LanguagePage implements OnInit {
   ionViewWillEnter() {
     this.updateTitle();
     this.uxService.setTitleBarBackKeyShown(false);
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
+    // TODO @chad - titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
 
     this.checkForIdentities();
   }
@@ -50,11 +49,11 @@ export class LanguagePage implements OnInit {
   }
 
   updateTitle() {
-    titleBarManager.setTitle(' ');
+    // TODO @chad - titleBarManager.setTitle(' ');
   }
 
   async checkForIdentities() {
-    this.identities = await didSessionManager.getIdentityEntries();
+    this.identities = await this.didSessions.getIdentityEntries();
   }
 
   continue() {
