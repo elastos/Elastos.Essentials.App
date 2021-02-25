@@ -16,8 +16,8 @@
       <ion-button *ngIf="!titlebarService.menuVisible && titlebarService.outerRightIcon.visibile">
         <img [src]="titlebarService.outerRightIcon.iconPath">
       </ion-button>
-      <ion-button *ngIf="titlebarService.menuVisible && titlebarService.outerRightIcon.visibile">
-        <img [src]="titlebarService.outerRightIcon.iconPath">
+      <ion-button *ngIf="titlebarService.menuVisible" (click)="openMenu($event)">
+        <img [src]="!theme.darkMode ? '/assets/components/titlebar/menu.svg' : '/assets/components/titlebar/darkmode/menu.svg'">
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

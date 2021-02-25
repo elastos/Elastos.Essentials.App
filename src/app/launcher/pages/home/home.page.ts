@@ -13,6 +13,7 @@ import { AppManagerPlugin } from 'src/app/TMP_STUBS';
 import { DidmanagerService } from '../../services/didmanager.service';
 import { IosService } from '../../services/ios.service';
 import { AppmanagerService } from '../../services/appmanager.service';
+import { TitlebarService } from 'src/app/services/titlebar.service';
 
 @Component({
   selector: 'app-home',
@@ -35,7 +36,8 @@ export class HomePage implements OnInit {
     private appManager: AppManagerPlugin,
     public iosService: IosService,
     public appService: AppmanagerService,
-    public didService: DidmanagerService
+    public didService: DidmanagerService,
+    public titlebarService: TitlebarService
   ) {
     console.log("Launcher home screen component is being constructed");
   }
@@ -47,6 +49,7 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
     // Show badge if there are notifications.
     this.notification.getNotifications();
+    this.titlebarService.setTitle('elastOS Essentials');
   }
 
   ionViewDidEnter() {
