@@ -7,6 +7,7 @@ package-lock.json
 typings/
 *.tmp
 
-# Temporary cordova test during the initial essentials 2.0 merge
-/platforms/
-/plugins/
+origin_platforms/
+platforms/
+origin_plugins/
+plugins/

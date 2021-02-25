@@ -1,0 +1,27 @@
+--- origin_platforms/android/app/build.gradle	2021-02-25 16:29:34.000000000 +0800
++++ platforms/android/app/build.gradle	2021-02-25 16:37:02.000000000 +0800
+@@ -233,11 +233,12 @@
+ 
+ android {
+     defaultConfig {
+-        versionCode cdvVersionCode ?: new BigInteger("" + privateHelpers.extractIntFromManifest("versionCode"))
+         applicationId privateHelpers.extractStringFromManifest("package")
+ 
+         if (cdvMinSdkVersion != null) {
+             minSdkVersion cdvMinSdkVersion
++        } else {
++            minSdkVersion 24
+         }
+ 
+         if (cdvMaxSdkVersion != null) {
+@@ -247,6 +248,10 @@
+         if(cdvTargetSdkVersion != null) {
+             targetSdkVersion cdvTargetSdkVersion
+         }
++
++        targetSdkVersion 29
++        versionCode 10016
++        versionName "2.0.0"
+     }
+ 
+     lintOptions {

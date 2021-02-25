@@ -23,6 +23,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="SplashMaintainAspectRatio" value="true" />
+    <hook src="scripts/apply_patches.js" type="after_platform_add" />
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
             <manifest xmlns:tools="http://schemas.android.com/tools" />
