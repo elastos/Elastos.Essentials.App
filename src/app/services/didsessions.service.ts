@@ -35,6 +35,7 @@ export type SignInOptions = {
 export class DIDSessionsService {
   private identities: IdentityEntry[] = null;
   private signedInIdentity: IdentityEntry | null = null;
+  public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
   constructor(private storage: StorageService) {
   }
@@ -44,6 +45,8 @@ export class DIDSessionsService {
 
     this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", "identities", []);
     this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
+    if (this.signedInIdentity)
+      DIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
   }
 
   private getIdentityIndex(didString: string): number {
@@ -108,6 +111,7 @@ export class DIDSessionsService {
    */
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
     this.signedInIdentity = entry;
+    DIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
@@ -118,6 +122,7 @@ export class DIDSessionsService {
    */
   public async signOut(): Promise<void> {
     this.signedInIdentity = null;
+    DIDSessionsService.signedInDIDString = null;
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);

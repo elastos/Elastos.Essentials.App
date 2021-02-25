@@ -4,6 +4,7 @@ import { StorageService } from 'src/app/services/storage.service';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 @Component({
   selector: 'app-onboard',
@@ -30,7 +31,8 @@ export class OnboardPage implements OnInit {
     private storage: StorageService,
     private router: Router,
     private platform: Platform,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private didSessions: DIDSessionsService
   ) { }
 
   ngOnInit() {
@@ -70,7 +72,7 @@ export class OnboardPage implements OnInit {
   }
 
   async exit() {
-    await this.storage.setSetting("todo-did", "launcher", "visit", true);
+    await this.storage.setSetting(DIDSessionsService.signedInDIDString, "launcher", "visit", true);
     this.router.navigate(['launcher/home']);
   }
 }

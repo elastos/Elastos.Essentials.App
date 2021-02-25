@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AppmanagerService } from '../launcher/services/appmanager.service';
+import { DIDSessionsService } from './didsessions.service';
 import { PreferencesService } from './preferences.service';
 
 export enum AppTheme {
@@ -18,7 +19,7 @@ export class ThemeService {
   //public darkMode = false;
   public isAndroid = false;
 
-  constructor(private platform: Platform, /*private backupService: BackupService,*/ private prefs: PreferencesService) {
+  constructor(private platform: Platform, /*private backupService: BackupService,*/ private prefs: PreferencesService, private didSessions: DIDSessionsService) {
     this.platform.ready().then(() => {
       this.fetchThemeFromPreferences();
     });
@@ -34,7 +35,7 @@ export class ThemeService {
       // this.backupService.init();
     }
 
-    let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>("ui.darkmode");
+    let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "ui.darkmode");
     if (currentlyUsingDarkMode)
       this.activeTheme.next(AppTheme.DARK);
     else

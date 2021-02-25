@@ -77,7 +77,6 @@ export function TranslateLoaderFactory() {
     PrintoptionsComponent
   ],
   imports: [
-    IonicModule.forRoot(),
     CommonModule,
     DIDSessionsRoutingModule,
     FormsModule,

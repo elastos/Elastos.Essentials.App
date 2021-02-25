@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
+import { StorageService } from './storage.service';
+
+export type AllPreferences = {[key:string]:any};
 
 export type Preference<T> = {
   key: string;
@@ -13,9 +16,26 @@ export type Preference<T> = {
 export class PreferencesService {
   public preferenceListener = new Subject<Preference<any>>();
 
-  constructor(private platform: Platform) {
-    this.platform.ready().then(() => {
-    });
+  constructor(private storage: StorageService) {
+  }
+
+  private getDefaultPreferences(): AllPreferences {
+    return {
+      "locale.language": "native system",
+      "developer.mode": false,
+      "developer.install.verifyDigest": false,
+      "developer.backgroundservices.startonboot": true,
+      "ui.darkmode": false,
+      "chain.network.type": "MainNet",
+      "chain.network.config": "",
+      "chain.network.configurl": "",
+      "mainchain.rpcapi": "http://api.elastos.io:20336",
+      "sidechain.id.rpcapi": "http://api.elastos.io:20606",
+      "sidechain.eth.oracle": "http://api.elastos.io:20632",
+      "sidechain.eth.apimisc": "http://api.elastos.io:20634",
+      "sidechain.eth.rpcapi": "http://api.elastos.io:20636",
+      "trinitycli.runaddress": ""
+    };
   }
 
   /**
@@ -23,18 +43,21 @@ export class PreferencesService {
    *
    * @param key Unique key identifying the preference data.
    */
-  public getPreference<T>(key: string): Promise<T> {
-    console.log("GET PREF ", key)
-    // TODO @chad: add a did parameter to simulate DID session context, as explained in the clickup task
-    return null; // TODO @chad
+  public async getPreference<T>(did: string, key: string): Promise<T> {
+    let preferences = await this.getPreferences(did);
+    if (!(key in preferences))
+      throw new Error("Preference "+key+" is not a registered preference!");
+    return preferences[key];
   }
 
   /**
    * Get all system preferences.
    */
-  public getPreferences(): Promise <Preference<any>[]> {
-    // TODO @chad: add a did parameter to simulate DID session context, as explained in the clickup task
-    return null; // TODO @chad
+  public async getPreferences(did: string): Promise <AllPreferences> {
+    let diskPreferences = await this.storage.getSetting<AllPreferences>(did, "prefservice", "preferences", {});
+
+    // Merge saved preferences with default values
+    return Object.assign({}, this.getDefaultPreferences(), diskPreferences);
   }
 
   /**
@@ -43,9 +66,14 @@ export class PreferencesService {
    * @param key   Unique key identifying the preference data.
    * @param value The data to be stored. If null is passed, the preference is restored to system default value.
    */
-  public async setPreference(key: string, value: any): Promise<void> {
-    // TODO @chad: add a did parameter to simulate DID session context, as explained in the clickup task
-    // TODO @chad
+  public async setPreference(did: string, key: string, value: any): Promise<void> {
+    if (!(key in this.getDefaultPreferences()))
+      throw new Error("Preference "+key+" is not a registered preference!");
+
+    let preferences = await this.getPreferences(did);
+    preferences[key] = value;
+
+    await this.storage.setSetting<AllPreferences>(did, "prefservice", "preferences", preferences);
 
     // Notify listeners about a preference change
     this.preferenceListener.next({key, value});

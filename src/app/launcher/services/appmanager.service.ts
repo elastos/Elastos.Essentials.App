@@ -26,6 +26,7 @@ import { Tip } from '../model/tip.model';
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
 import { StorageService } from 'src/app/services/storage.service';
+import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 enum MessageType {
     INTERNAL = 1,
@@ -65,7 +66,8 @@ export class AppmanagerService {
         public iosService: IosService,
         private native: NativeService,
         private storage: StorageService,
-        private appManager: TemporaryAppManagerPlugin
+        private appManager: TemporaryAppManagerPlugin,
+        private didSessions: DIDSessionsService
     ) { }
 
     public async init() {
@@ -91,7 +93,7 @@ export class AppmanagerService {
     }
 
     async getVisit() {
-        let visit = await this.storage.getSetting<boolean>("todo-did", "launcher", 'visit', false);
+        let visit = await this.storage.getSetting<boolean>(DIDSessionsService.signedInDIDString, "launcher", 'visit', false);
         if (visit || visit === true) {
             this.firstVisit = false;
             console.log('First visit?', this.firstVisit);

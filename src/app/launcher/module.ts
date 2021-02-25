@@ -64,7 +64,6 @@ export function TranslateLoaderFactory() {
     TipsPage
   ],
   imports: [
-    IonicModule.forRoot(),
     CommonModule,
     HttpClientModule,
     AngularFittextModule,

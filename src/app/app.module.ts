@@ -65,7 +65,7 @@ export class SentryErrorHandler implements ErrorHandler {
     FormsModule,
     DragulaModule.forRoot(),
     IonicStorageModule.forRoot({
-      name: '__launcher.db',
+      name: '__essentials.db',
       driverOrder: ['localstorage', 'indexeddb', 'sqlite', 'websql']
     }),
     BrowserAnimationsModule,
