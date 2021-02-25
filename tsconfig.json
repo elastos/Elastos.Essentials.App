@@ -17,7 +17,8 @@
     ],
     "types": [
       "node",
-      "cordova"
+      "cordova",
+      "elastos-trinity-plugins-did"
     ],
     "lib": [
       "es2018",
