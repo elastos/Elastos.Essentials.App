@@ -42,7 +42,7 @@
     "ionic-image-loader": "7.0.0-beta.2",
     "moment": "2.29.1",
     "ng2-dragula": "2.1.1",
-    "qr-scanner": "^1.2.0",
+    "qr-scanner": "1.2.0",
     "rxjs": "6.6.3",
     "tslib": "2.1.0",
     "zone.js": "0.10.3"
@@ -58,21 +58,30 @@
     "@angular/language-service": "11.0.9",
     "@ionic/angular-toolkit": "3.1.0",
     "@types/node": "14.14.21",
+    "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-ionic-keyboard": "2.2.0",
+    "cordova-plugin-printer": "0.8.0",
     "cordova-plugin-splashscreen": "5.0.2",
-    "elastos-trinity-plugins-did": "file:../Plugins/DID",
+    "elastos-cordova-plugin-carrier": "file:../Plugins/Carrier",
+    "elastos-cordova-plugin-did": "file:../Plugins/DID",
+    "elastos-cordova-plugin-hive": "file:../Plugins/Hive",
     "ts-node": "9.1.1",
     "typescript": "4.0.5"
   },
   "description": "An Ionic project",
   "cordova": {
     "plugins": {
-      "cordova-plugin-splashscreen": {},
-      "cordova-plugin-ionic-keyboard": {},
-      "elastos-trinity-plugins-did": {},
       "cordova-plugin-camera": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      }
+      },
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-printer": {
+        "ANDROID_SUPPORT_V4_VERSION": "28.+"
+      },
+      "cordova-plugin-splashscreen": {},
+      "elastos-cordova-plugin-carrier": {},
+      "elastos-cordova-plugin-did": {},
+      "elastos-cordova-plugin-hive": {}
     },
     "platforms": [
       "android"
