@@ -1,0 +1,12 @@
+<div class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row class="header-row">
+    <img src="/assets/default/securityWarning.svg">
+    <h1 class="ion-text-center">Print QR Code</h1>
+  </ion-row>
+
+  <ion-row class="btn-row">
+    <ion-button (click)="print(true, false)">Only QR Code</ion-button>
+    <ion-button (click)="print(true, true)">QR Code and Mnemonic words</ion-button>
+  </ion-row>
+</div>
+

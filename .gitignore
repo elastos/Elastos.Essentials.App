@@ -7,6 +7,7 @@ resources/
 .vscode/
 typings/
 /config.xml
+*.tmp
 
 # Temporary cordova test during the initial essentials 2.0 merge
 /platforms/

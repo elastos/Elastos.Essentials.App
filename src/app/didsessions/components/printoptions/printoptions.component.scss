@@ -1,0 +1,35 @@
+.container {
+  padding: 25px;
+
+  .header-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      margin: 10px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .btn-row {
+    padding-top: 20px;
+    width: 100%;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+  }
+}

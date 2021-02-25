@@ -1,0 +1,90 @@
+<ion-content>
+  <ion-slides
+    #slide
+    [options]="slideOpts"
+    (ionSlideWillChange)="getActiveSlide()"
+    class="ion-text-center"
+  >
+    <ion-slide class="ion-text-center first-slide" [class.darkContainer]="theme.darkMode">
+      <div class="qr-container">
+        <h1>Decentralized ID</h1>
+        <div #qrcode style="width:100%;"></div>
+        <p>{{ mnemonic }}</p>
+      </div>
+      <h2>This is your secret QR Code which holds your identity private key, don't share this with anyone.</h2>
+    </ion-slide>
+    <ion-slide class="ion-text-center second-slide">
+      <ion-row class="mnemonic-row">
+        <ion-col *ngFor="let mnemonic of mnemonicList" size="3.6" [class.bottom-row]="mnemonicList.indexOf(mnemonic) + 1 > 9">
+          <div class="mnemonic-index">{{ mnemonicList.indexOf(mnemonic) + 1 }}</div>
+          <ion-label>{{ mnemonic }}</ion-label>
+        </ion-col>
+      </ion-row>
+      <p>
+        {{ 'your-mnemonic-prompt1' | translate }}<b>{{ 'your-mnemonic-prompt2' | translate }}</b>{{ 'your-mnemonic-prompt3' | translate }}
+      </p>
+    </ion-slide>
+  </ion-slides>
+
+  <div class="footer" *ngIf="slideIndex < 1">
+    <ion-button (click)="showPrintOptions()">Print QR Code</ion-button>
+    <ion-button (click)="nextSlide()">Manual Verification</ion-button>
+  </div>
+  <div class="footer" *ngIf="slideIndex === 1">
+    <ion-button (click)="prevSlide()">Go Back</ion-button>
+    <ion-button (click)="nextClicked()">Verify</ion-button>
+  </div>
+</ion-content>
+
+<!-- <ion-footer class="ion-no-border" *ngIf="slideIndex < 1">
+  <ion-button (click)="showPrintOptions()">Print QR Code</ion-button>
+  <ion-button (click)="nextSlide()">Manual Verification</ion-button>
+</ion-footer>
+<ion-footer class="ion-no-border" *ngIf="slideIndex === 1">
+  <ion-button (click)="prevSlide()">Go Back</ion-button>
+  <ion-button (click)="nextClicked()">Verify</ion-button>
+</ion-footer> -->
+
+
+<!-- <ion-content>
+    <div class="ion-text-center container" [class.darkContainer]="theme.darkMode">
+      <ion-row class="mnemonic-row">
+        <ion-col size="3.6" *ngFor="let mnemonic of mnemonicList">
+          <div class="mnemonic-index">{{ mnemonicList.indexOf(mnemonic) + 1 }}</div>
+          <ion-label>{{ mnemonic }}</ion-label>
+        </ion-col>
+      </ion-row>
+      <p>
+        {{ 'your-mnemonic-prompt1' | translate }}<b>{{ 'your-mnemonic-prompt2' | translate }}</b>{{ 'your-mnemonic-prompt3' | translate }}
+      </p>
+    </div>
+</ion-content>
+
+<div #qrcode style="width:0px; height:0px;"></div>
+
+<ion-footer class="ion-no-border">
+  <ion-button (click)="nextClicked()">
+    {{ 'continue' | translate }}
+  </ion-button>
+</ion-footer> -->
+
+
+<!-- <ion-content>
+  <div class="ion-text-center container" [class.darkContainer]="theme.darkMode">
+    <ion-row class="mnemonic-row">
+      <ion-col size="3.6" *ngFor="let mnemonic of mnemonicList">
+        <div class="mnemonic-index">{{ mnemonicList.indexOf(mnemonic) + 1 }}</div>
+        <ion-label>{{ mnemonic }}</ion-label>
+      </ion-col>
+    </ion-row>
+    <h1>{{ 'your-mnemonic' | translate }}</h1>
+    <p>
+      {{ 'your-mnemonic-prompt1' | translate }}<b>{{ 'your-mnemonic-prompt2' | translate }}</b>{{ 'your-mnemonic-prompt3' | translate }}<br><br>
+    </p>
+    <ion-row class="btn-row" (click)="nextClicked()">
+      <ion-button color="success">
+        <ion-label>{{ 'continue' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </div>
+</ion-content> -->

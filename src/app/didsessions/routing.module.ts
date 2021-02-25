@@ -1,0 +1,37 @@
+import { Component, NgModule } from '@angular/core';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { PickIdentityPage } from './pages/pickidentity/pickidentity';
+import { CreateIdentityPage } from './pages/createidentity/createidentity';
+import { ImportDIDPage } from './pages/importdid/importdid';
+import { VerifyMnemonicsPage } from './pages/verifymnemonics/verifymnemonics';
+import { BackupDIDPage } from './pages/backupdid/backupdid';
+import { EditProfilePage } from './pages/editprofile/editprofile';
+import { LanguagePage } from './pages/language/language.page';
+import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimporteddid.page';
+import { ScanPage } from './pages/scan/scan.page';
+
+@Component({ template: "<div></div>" })
+export class EmptyPage  {}
+
+const routes: Routes = [
+  { path: 'language', component: LanguagePage },
+  { path: 'pickidentity', component: PickIdentityPage },
+  { path: 'createidentity', component: CreateIdentityPage },
+  { path: 'verifymnemonics', component: VerifyMnemonicsPage },
+  { path: 'importdid', component: ImportDIDPage },
+  { path: 'backupdid', component: BackupDIDPage },
+  { path: 'editprofile', component: EditProfilePage },
+  { path: 'chooseimporteddid', component: ChooseImportedDIDPage },
+  { path: 'scan', component: ScanPage },
+
+  { path: '**', component: EmptyPage },
+  // Prevent angular from calling a random default route sometimes when starting, leading to crashes if platform is not ready yet
+];
+
+@NgModule({
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+  ],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}

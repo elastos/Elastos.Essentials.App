@@ -7,7 +7,7 @@ import { TipsService } from './tips.service';
 @Injectable({
   providedIn: 'root'
 })
-export class LauncherService {
+export class LauncherModuleService {
   constructor(
     public appManager: AppmanagerService,
     public didService: DidmanagerService,

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240.066" height="240.74" viewBox="0 0 240.066 240.74">
+    <defs>
+        <linearGradient id="lnf5j2x5va" x1=".85" x2=".152" y1=".805" y2=".132" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset=".517" stop-color="#f5f5fd"/>
+            <stop offset="1" stop-color="#eaeaf5"/>
+        </linearGradient>
+        <linearGradient id="007qx0b5fb" x1=".193" x2=".851" y1=".116" y2=".861" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset=".507" stop-color="#f5f5fd"/>
+            <stop offset="1" stop-color="#eaeaf5"/>
+        </linearGradient>
+    </defs>
+    <path fill="url(#lnf5j2x5va)" d="M1293 16830c55.228 0 100 44.973 100 100.449s-44.771 100.449-100 100.449-100-44.973-100-100.449S1237.772 16830 1293 16830z" transform="rotate(-13 -73048.029 13665.049)"/>
+    <path fill="url(#007qx0b5fb)" d="M1283 16830a90.122 90.122 0 1 1-90 90.123 90.062 90.062 0 0 1 90-90.123z" transform="rotate(-13 -73004.778 13615.677)"/>
+    <g>
+        <g>
+            <path d="M3080.818 1702.4l17.4-10.044 17.4-10.1-17.4-10.045-17.4 10.045-17.4-10.045-17.4 10.045 17.4 10.1z" transform="translate(86.71 92.388) translate(-3046.024 -1644.943)"/>
+            <path d="M3080.818 1583.194l17.4-10.045 17.4-10.1-17.4-10.044-17.4 10.044-17.4-10.044-17.4 10.044 17.4 10.1z" transform="translate(86.71 92.388) translate(-3046.024 -1553)"/>
+        </g>
+    </g>
+</svg>

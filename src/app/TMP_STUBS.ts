@@ -58,6 +58,10 @@ export class AppManagerPlugin {
     listener("en","en","en");
   }
 
+  public setCurrentLocale(locale: string) {
+    console.log("setCurrentLocale() NOT IMPLEMENTED");
+  }
+
   public sendUrlIntent(url: string, onSuccess:any, onError: any) {
     console.log("sendUrlIntent() NOT IMPLEMENTED");
   }

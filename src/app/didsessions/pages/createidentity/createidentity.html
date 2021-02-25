@@ -1,0 +1,93 @@
+<!-- <ion-content>
+  <ion-slides
+    #slide
+    pager="true"
+    [options]="slideOpts"
+    [class.hidden]="hidden"
+    class="ion-text-center"
+  >
+    <ion-slide>
+      <img-loader useImg><img [src]="!theme.darkMode ? 'assets/onboard/welcome.svg' : 'assets/onboard/dark_mode/welcome.svg'"></img-loader>
+      <h1>{{ 'welcome' | translate }}</h1>
+      <p>
+        {{ 'welcome-message1' | translate }} <br>
+        {{ 'welcome-message2' | translate }} <br>
+        {{ 'welcome-message3' | translate }}
+      </p>
+      <ion-row class="btn-row">
+        <ion-button color="success" (click)="nextSlide(slide)">
+          <ion-img src="assets/buttons/fingerprint.png"></ion-img>
+          <ion-label>{{ 'create-identity' | translate }}</ion-label>
+        </ion-button>
+      </ion-row>
+    </ion-slide>
+
+    <ion-slide>
+      <img-loader useImg><img [src]="!theme.darkMode ? 'assets/onboard/newimport.svg' : 'assets/onboard/dark_mode/newimport.svg'"></img-loader>
+      <h1>{{ 'new-or-import' | translate }}</h1>
+      <p>{{ 'create-message' | translate }}</p>
+      <ion-row class="btn-row">
+        <ion-button color="success" class="ion-margin-bottom" (click)="createNewIdentity()">
+          <ion-label>{{ 'new' | translate }}</ion-label>
+        </ion-button>
+        <ion-button color="light" class="import-btn ion-margin-top" (click)="importIdentity()">
+          <ion-label>{{ 'import' | translate }}</ion-label>
+        </ion-button>
+      </ion-row>
+    </ion-slide>
+  </ion-slides>
+</ion-content> -->
+
+<ion-content>
+  <ion-slides
+    #slide
+    pager="true"
+    [options]="slideOpts"
+    [class.hidden]="hidden"
+    (ionSlideWillChange)="getActiveSlide()"
+    class="ion-text-center"
+  >
+    <ion-slide id="slide1">
+      <img [src]="!theme.darkMode ? 'assets/onboard/welcome.svg' : 'assets/onboard/dark_mode/welcome.svg'">
+<!--       <ion-label>Welcome to the modern internet, where you can browse the new web securely while maintaining control of your own digital identity, data and other forms of digital assets.</ion-label> -->
+      <ion-label>Welcome to the modern internet, where you take control of your own digital identity in a secured sand-box environment.</ion-label>
+    </ion-slide>
+
+    <ion-slide id="slide2">
+      <img src="assets/icon/ela.svg">
+<!--       <lottie-player src="/assets/animations/device.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player> -->
+      <ion-label>This will give you the ability to verify your identity and its credentials seamlessly across all applications without losing your privacy and data.</ion-label>
+    </ion-slide>
+
+    <ion-slide id="slide2">
+      <img [src]="!theme.darkMode ? 'assets/onboard/did.svg' : 'assets/onboard/dark_mode/did.svg'">
+      <ion-label>Let's start by creating your <br> first decentralized identity <br> or import one that you already own.</ion-label>
+    </ion-slide>
+
+  </ion-slides>
+  <div class="footer">
+    <ion-button *ngIf="slideIndex === 0" (click)="nextSlide()">Begin</ion-button>
+    <ion-button *ngIf="slideIndex === 1" (click)="nextSlide()">Continue</ion-button>
+    <div *ngIf="slideIndex >= 2">
+      <ion-button (click)="createNewIdentity()">
+        {{ 'new' | translate }}
+      </ion-button>
+      <ion-button (click)="importIdentity()">
+        {{ 'import' | translate }}
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+
+<!-- <ion-footer class="ion-no-border">
+  <ion-button *ngIf="slideIndex === 0" (click)="nextSlide()">Begin</ion-button>
+  <ion-button *ngIf="slideIndex === 1" (click)="nextSlide()">Continue</ion-button>
+  <div *ngIf="slideIndex >= 2">
+    <ion-button (click)="createNewIdentity()">
+      {{ 'new' | translate }}
+    </ion-button>
+    <ion-button (click)="importIdentity()">
+      {{ 'import' | translate }}
+    </ion-button>
+  </div>
+</ion-footer> -->

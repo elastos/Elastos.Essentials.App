@@ -4,7 +4,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 import { StorageService } from './services/storage.service';
 import { ThemeService } from './services/theme.service';
-import { LauncherService } from './launcher/services/launcher.service';
+import { LauncherModuleService } from './launcher/services/launcher.service';
+import { DIDSessionsModuleService } from './didsessions/services/didsessions.service';
 
 @Component({
     selector: 'app-root',
@@ -18,7 +19,8 @@ export class AppComponent {
         public splashScreen: SplashScreen,
         public storage: StorageService,
         public theme: ThemeService,
-        private launcherService: LauncherService
+        private launcherService: LauncherModuleService,
+        private didSessionsService: DIDSessionsModuleService
     ) {
     }
 
@@ -32,6 +34,7 @@ export class AppComponent {
 
             //screen.orientation.lock('portrait');
 
+            await this.didSessionsService.init();
             await this.launcherService.init();
 
             console.log("Navigating to home screen")

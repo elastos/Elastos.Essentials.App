@@ -1,0 +1,38 @@
+<!-- <ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-row>
+      <ion-label>{{ 'your-name' | translate }}</ion-label>
+    </ion-row>
+    <ion-row>
+      <ion-input [placeholder]="'enter-name'|translate" #input [(ngModel)]="name">
+      </ion-input>
+    </ion-row>
+    <ion-row>
+      <ion-button color="success" (click)="next()">
+        <ion-label>{{ 'continue' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+ -->
+
+<ion-content>
+<ion-grid class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row>
+    <ion-label>{{ 'your-name' | translate }}</ion-label>
+  </ion-row>
+  <ion-input [placeholder]="'enter-name'|translate" #input [(ngModel)]="name"></ion-input>
+  <div class="footer">
+    <ion-button (click)="next()">
+      {{ 'continue' | translate }}
+    </ion-button>
+  </div>
+</ion-grid>
+</ion-content>
+
+<!-- <ion-footer class="ion-no-border">
+  <ion-button (click)="next()">
+    {{ 'continue' | translate }}
+  </ion-button>
+</ion-footer>
+ -->

@@ -1,0 +1,43 @@
+<ion-content>
+  <ion-grid class="container ion-no-padding ion-no-margin" color="light" [class.dark-container]="theme.darkMode">
+    <img src="assets/icon/ela.svg">
+    <ion-row class="item-row" *ngFor="let language of languageService.languages" (click)="languageService.setSelectLang(language.code)">
+      <ion-col size="10" class="left-col">
+        <!-- <img [src]="language.icon"> -->
+        <ion-label [class.selected]="languageService.selectLang === language.code">{{ language.name }}</ion-label>
+      </ion-col>
+      <ion-col size="2" class="right-col">
+        <ion-icon [ngStyle]="{'color': languageService.selectLang === language.code ? '#732dcf' : '#dddddd' }" name="checkmark"></ion-icon>
+      </ion-col>
+    </ion-row>
+
+    <div class="footer">
+      <ion-button (click)="continue()">Confirm</ion-button>
+    </div>
+  </ion-grid>
+</ion-content>
+
+<!-- <ion-footer class="ion-no-border">
+  <ion-button (click)="continue()">Confirm</ion-button>
+</ion-footer> -->
+
+<!-- <ion-content>
+  <ion-grid class="container ion-no-padding ion-no-margin" color="light" [class.dark-container]="theme.darkMode">
+    <ion-row class="item" *ngFor="let language of languageService.languages" (click)="languageService.setSelectLang(language.code)">
+      <ion-col offset="1" size="9" class="title ion-no-padding">
+        <ion-label>{{ language.name }}</ion-label>
+      </ion-col>
+      <ion-col size="2" class="checkbox" *ngIf="languageService.selectLang === language.code">
+        <ion-icon name="checkmark" [ngStyle]="{'color': !theme.darkMode ? '#6e75f0' : '#ffffff' }"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row class="btn-row">
+      <ion-col class="ion-no-padding" offset="1" size="10">
+        <ion-button color="success" (click)="continue()">
+          <ion-label>{{ 'continue' | translate }}</ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content> -->
+
