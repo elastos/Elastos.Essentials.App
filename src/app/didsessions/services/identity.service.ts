@@ -149,6 +149,7 @@ export class IdentityService {
                 }
 
                 await this.didSessions.signIn(identityEntry, signInOptions);
+                this.navCtrl.navigateRoot("/launcher/home");
             }
             else {
                 console.warn("Failed to authentify using master password. Sign in not permitted.");

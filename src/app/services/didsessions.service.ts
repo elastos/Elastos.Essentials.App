@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
+import { StorageService } from './storage.service';
 
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
@@ -31,9 +33,27 @@ export type SignInOptions = {
   providedIn: 'root'
 })
 export class DIDSessionsService {
-  constructor(private platform: Platform) {
-    this.platform.ready().then(() => {
-    });
+  private identities: IdentityEntry[] = null;
+  private signedInIdentity: IdentityEntry | null = null;
+
+  constructor(private storage: StorageService) {
+  }
+
+  public async init(): Promise<void> {
+    console.log ("Initializating the DID Sessions service");
+
+    this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", "identities", []);
+    this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
+  }
+
+  private getIdentityIndex(didString: string): number {
+    return this.identities.findIndex((i)=>didString === i.didString);
+  }
+
+  private deleteIdentityEntryIfExists(didString: string) {
+    let existingIdentityIndex = this.getIdentityIndex(didString);
+    if (existingIdentityIndex != -1)
+      this.identities.splice(existingIdentityIndex, 1);
   }
 
   /**
@@ -43,22 +63,31 @@ export class DIDSessionsService {
    * entry is updated.
    */
   public async addIdentityEntry(entry: IdentityEntry): Promise<void> {
-    // TODO @chad
+    // Delete before adding again (update)
+    this.deleteIdentityEntryIfExists(entry.didString);
+
+    // Add again
+    this.identities.push(entry);
+
+    // Save to disk
+    await this.storage.setSetting(null, "didsessions", "identities", this.identities);
   }
 
   /**
    * Deletes a previously added identity entry.
    */
   public async deleteIdentityEntry(didString: string): Promise<void> {
-    // TODO @chad
+    this.deleteIdentityEntryIfExists(didString);
+
+    // Save to disk
+    await this.storage.setSetting(null, "didsessions", "identities", this.identities);
   }
 
   /**
    * Gets the list of all identity entries previously created.
    */
   public async getIdentityEntries(): Promise<IdentityEntry[]> {
-    // TODO @chad
-    return [];
+    return this.identities;
   }
 
   /**
@@ -67,12 +96,7 @@ export class DIDSessionsService {
    * @returns The signed in identity if any, null otherwise.
    */
   public async getSignedInIdentity(): Promise<IdentityEntry | null> {
-    /*return {
-      didStoreId: "12345",
-      didString: "did:elastos:abcde",
-      name: "Tmp user"
-    };*/
-    return null;
+    return this.signedInIdentity;
   }
 
   /**
@@ -83,13 +107,19 @@ export class DIDSessionsService {
    * identities.
    */
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
-    // TODO @chad
+    this.signedInIdentity = entry;
+
+    // Save to disk
+    await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
   }
 
   /**
    * Signs the active identity out. All opened dApps are closed as there is no more active DID session.
    */
   public async signOut(): Promise<void> {
-    // TODO @chad
+    this.signedInIdentity = null;
+
+    // Save to disk
+    await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
   }
 }

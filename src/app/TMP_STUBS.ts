@@ -67,7 +67,7 @@ export class TemporaryAppManagerPlugin {
   }
 
   public start(appID: string) {
-    //console.log("start() NOT IMPLEMENTED");
+    console.log("start() NOT IMPLEMENTED");
   }
 }
 

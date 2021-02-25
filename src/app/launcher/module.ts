@@ -27,7 +27,6 @@ import { OnboardPage } from './pages/onboard/onboard.page';
 
 export class CustomTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
-    console.log("getTranslation, lang=", lang)
     return Observable.create(observer => {
       switch (lang) {
         case 'zh':

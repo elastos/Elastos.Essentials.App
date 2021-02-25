@@ -20,8 +20,8 @@ export class AppComponent {
         public splashScreen: SplashScreen,
         public storage: StorageService,
         public theme: ThemeService,
-        private launcherService: LauncherInitService,
-        private didSessionsService: DIDSessionsInitService,
+        private launcherInitService: LauncherInitService,
+        private didSessionsInitService: DIDSessionsInitService,
         private didSessions: DIDSessionsService
     ) {
     }
@@ -36,8 +36,9 @@ export class AppComponent {
 
             // TODO screen.orientation.lock('portrait');
 
-            await this.didSessionsService.init();
-            await this.launcherService.init();
+            await this.didSessions.init();
+            await this.didSessionsInitService.init();
+            await this.launcherInitService.init();
 
             // Navigate to the right startup screen
             console.log("Navigating to start screen");
