@@ -57,7 +57,7 @@ type RunnableAppCategory = {
 })
 export class AppmanagerService {
     // List of runnable apps
-    private runnableApps: RunnableAppCategory[] = null;
+    public runnableApps: RunnableAppCategory[] = null;
 
     /* Popups */
     private notificationsShown = false;

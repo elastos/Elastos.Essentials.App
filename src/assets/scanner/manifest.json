@@ -1,0 +1,46 @@
+{
+    "id": "org.elastos.trinity.dapp.qrcodescanner",
+    "did": "did:elastos:ickJXGJZFzBBTwUpE6E7GYZbbACf6s5XPr",
+    "version": "1.2.9",
+    "version_code": 16,
+    "name": "Scanner",
+    "short_name": "Scanner",
+    "short_description": "Scan anything!",
+    "description": "QRCode scanner for the elastOS browser",
+    "start_url": "index.html",
+    "type": "app",
+    "start_visible": "hide",
+    "category": "tools",
+    "icons": [
+        {
+            "src": "assets/imgs/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/imgs/logo.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        }
+    ],
+    "author": {
+        "name": "Trinity Tech Co., Ltd.",
+        "email": "contact@trinity-tech.io",
+        "website": "https://www.trinity-tech.io"
+    },
+    "default_locale": "en",
+    "plugins": [
+        "Device",
+        "QRScanner",
+        "NetworkStatus"
+    ],
+    "urls": [],
+    "intent_filters": [
+        {
+            "action": "https://scanner.elastos.net/scanqrcode"
+        }
+    ],
+    "background_color": "#4e8ef7",
+    "theme_display": "show",
+    "theme_color": "#4e8ef7"
+}

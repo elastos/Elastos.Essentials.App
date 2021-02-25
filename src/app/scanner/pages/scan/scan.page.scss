@@ -1,0 +1,48 @@
+
+.qrscanner-area {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background: url("../../../../assets//scanner/imgs/scanner.svg") no-repeat center center;
+    background-size: contain;
+}
+
+.through-line {
+    left: 25%;
+    width: 50%;
+    height: 2px;
+    background: red;
+    position: absolute;
+    animation: lineAnimation 2s linear infinite alternate;
+}
+@keyframes lineAnimation {
+    0% {
+        background: #f04141;
+        top: 35%;
+    }
+    20% {
+        background: #ffc409;
+        top: 40%;
+    }
+    40% {
+        background: #3dc2ff;
+        top: 45%;
+    }
+    60% {
+        background: #2dd36f;
+        top: 50%;
+    }
+    80% {
+        background: #4854e0;
+        top: 55%;
+    }
+    100% {
+        background: #eb445a;
+        top: 60%;
+    }
+}
+
+.transparentBody {
+    background: transparent none !important;
+    --background: none transparent;
+}

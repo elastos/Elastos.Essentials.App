@@ -42,6 +42,7 @@
     "ionic-image-loader": "7.0.0-beta.2",
     "moment": "2.29.1",
     "ng2-dragula": "2.1.1",
+    "qr-scanner": "^1.2.0",
     "rxjs": "6.6.3",
     "tslib": "2.1.0",
     "zone.js": "0.10.3"
@@ -68,7 +69,10 @@
     "plugins": {
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-ionic-keyboard": {},
-      "elastos-trinity-plugins-did": {}
+      "elastos-trinity-plugins-did": {},
+      "cordova-plugin-camera": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      }
     },
     "platforms": [
       "android"

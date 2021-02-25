@@ -45,11 +45,11 @@ export class TemporaryAppManagerPlugin {
     //console.log("setListener() NOT IMPLEMENTED");
   }
 
-  public setIntentListener(listener: (ret) => any) {
+  public setIntentListener(listener: (ret: ReceivedIntent) => any) {
     //console.log("setIntentListener() NOT IMPLEMENTED");
   }
 
-  public sendIntent(action: string, data: any) {
+  public sendIntent(action: string, data: any, options?: any, onSuccess?: (ret: any)=>void, onError?: (err: any)=>void) {
     //console.log("sendIntent() NOT IMPLEMENTED");
   }
 
@@ -64,6 +64,10 @@ export class TemporaryAppManagerPlugin {
 
   public sendUrlIntent(url: string, onSuccess: any, onError: any) {
     //console.log("sendUrlIntent() NOT IMPLEMENTED");
+  }
+
+  public sendIntentResponse(action: string, responseData: any, intentId: number, onSuccess?: (ret: any)=>void, onError?: (err: any)=>void) {
+    //console.log("sendIntentResponse() NOT IMPLEMENTED");
   }
 
   public start(appID: string) {

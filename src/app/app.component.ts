@@ -7,6 +7,7 @@ import { ThemeService } from './services/theme.service';
 import { LauncherInitService } from './launcher/services/init.service';
 import { DIDSessionsInitService } from './didsessions/services/init.service';
 import { DIDSessionsService } from './services/didsessions.service';
+import { ScannerInitService } from './scanner/services/init.service';
 
 @Component({
     selector: 'app-root',
@@ -22,6 +23,7 @@ export class AppComponent {
         public theme: ThemeService,
         private launcherInitService: LauncherInitService,
         private didSessionsInitService: DIDSessionsInitService,
+        private scannerInitService: ScannerInitService,
         private didSessions: DIDSessionsService
     ) {
     }
@@ -39,6 +41,7 @@ export class AppComponent {
             await this.didSessions.init();
             await this.didSessionsInitService.init();
             await this.launcherInitService.init();
+            await this.scannerInitService.init();
 
             // Navigate to the right startup screen
             console.log("Navigating to start screen");
