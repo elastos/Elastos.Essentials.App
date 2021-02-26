@@ -1,8 +1,8 @@
-<ion-header class="ion-no-border" [class.dark-header]="theme.darkMode">
-  <ion-toolbar mode="ios" [class.dark-header]="theme.darkMode">
+<ion-header class="ion-no-border" [class.dark-header]="themeService.darkMode">
+  <ion-toolbar mode="ios" [class.dark-header]="themeService.darkMode">
     <ion-buttons slot="start">
       <ion-button>
-        <img [src]="!theme.darkMode ? '/assets/components/titlebar/elastos.svg' : '/assets/components/titlebar/darkmode/elastos.svg'">
+        <img [src]="!themeService.darkMode ? '/assets/components/titlebar/elastos.svg' : '/assets/components/titlebar/darkmode/elastos.svg'">
       </ion-button>
       <ion-button *ngIf="innerLeftIcon.visible">
         <img [src]="innerLeftIcon.iconPath">
@@ -17,7 +17,7 @@
         <img [src]="outerRightIcon.iconPath">
       </ion-button>
       <ion-button *ngIf="menuVisible" (click)="openMenu($event)">
-        <img [src]="!theme.darkMode ? '/assets/components/titlebar/menu.svg' : '/assets/components/titlebar/darkmode/menu.svg'">
+        <img [src]="!themeService.darkMode ? '/assets/components/titlebar/menu.svg' : '/assets/components/titlebar/darkmode/menu.svg'">
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

@@ -16,7 +16,6 @@ import { ComponentsModule } from './components/components.module';
 import { CommonModule } from '@angular/common';
 import { HomePage } from './pages/home/home.page';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
-import { SharedServicesModule } from '../services/sharedservices.module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { OnboardPage } from './pages/onboard/onboard.page';
@@ -41,7 +40,6 @@ import { OnboardPage } from './pages/onboard/onboard.page';
     HttpClientModule,
     AngularFittextModule,
     SharedComponentsModule,
-    SharedServicesModule,
     ComponentsModule,
     TranslateModule,
     LauncherRoutingModule

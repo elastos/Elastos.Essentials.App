@@ -16,7 +16,6 @@ export enum AppTheme {
 export class GlobalThemeService {
   public activeTheme = new BehaviorSubject<AppTheme>(AppTheme.LIGHT);
 
-  //public darkMode = false;
   public isAndroid = false;
 
   constructor(private platform: Platform, /*private backupService: BackupService,*/ private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
