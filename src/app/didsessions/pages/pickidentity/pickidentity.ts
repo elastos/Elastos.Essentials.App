@@ -1,6 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IdentityService, IdentityGroup } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -107,12 +106,6 @@ export class PickIdentityPage {
     else {
       // TODO: visual success feedback to user
     }
-  }
-
-  // Delete me
-  signOutTest() {
-    console.log("TEST - Signing out")
-    this.didSessions.signOut();
   }
 
   async deleteAllTest() {

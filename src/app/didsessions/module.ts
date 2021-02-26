@@ -1,5 +1,4 @@
 import { NgModule, ErrorHandler, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
@@ -9,15 +8,9 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IonicImageLoader } from 'ionic-image-loader';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
-import * as Sentry from "@sentry/browser";
-
 import { PickIdentityPage } from './pages/pickidentity/pickidentity';
 import { CreateIdentityPage } from './pages/createidentity/createidentity';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-
-import { zh } from '../../assets/didsessions/i18n/zh';
-import { en } from '../../assets/didsessions/i18n/en';
-import { fr } from '../../assets/didsessions/i18n/fr';
 
 import { Observable } from 'rxjs';
 import { BackupDIDPage } from './pages/backupdid/backupdid';
@@ -37,30 +30,6 @@ import { defineCustomElements } from '@teamhive/lottie-player/loader';
 
 defineCustomElements(window);
 
-export class CustomTranslateLoader implements TranslateLoader {
-  public getTranslation(lang: string): Observable<any> {
-      return Observable.create(observer => {
-          switch (lang) {
-              case 'zh':
-                observer.next(zh);
-                break;
-              case 'fr':
-                observer.next(fr);
-                break;
-              case 'en':
-              default:
-                observer.next(en);
-          }
-
-          observer.complete();
-      });
-  }
-}
-
-export function TranslateLoaderFactory() {
-  return new CustomTranslateLoader();
-}
-
 @NgModule({
   declarations: [
     LanguagePage,
@@ -77,18 +46,13 @@ export function TranslateLoaderFactory() {
     PrintoptionsComponent
   ],
   imports: [
-    IonicModule.forRoot(), // Warning "Ionic Angular was already initialized. Make sure IonicModule.forRoot() is just called once" but getSwiper() can't be found without this.
+    IonicModule.forRoot(), // Generates a warning "Ionic Angular was already initialized. Make sure IonicModule.forRoot() is just called once" but getSwiper() can't be found without this.
     CommonModule,
     DIDSessionsRoutingModule,
     FormsModule,
     ComponentsModule,
-    IonicImageLoader.forRoot(),
-    TranslateModule.forRoot({
-      loader: {
-          provide: TranslateLoader,
-          useFactory: (TranslateLoaderFactory)
-      }
-    })
+    TranslateModule,
+    IonicImageLoader.forRoot()
   ],
   entryComponents: [
     LanguagePage,

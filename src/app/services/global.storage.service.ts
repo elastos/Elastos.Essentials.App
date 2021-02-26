@@ -11,10 +11,7 @@ export type Preference<T> = {
   providedIn: 'root'
 })
 export class GlobalStorageService {
-  constructor(
-    private storage: Storage,
-    private platform: Platform
-  ) {
+  constructor(private storage: Storage) {
   }
 
   private getFullStorageKey(did: string | null, context, key): string {
@@ -26,18 +23,25 @@ export class GlobalStorageService {
   }
 
   public async setSetting<T>(did: string | null, context: string, key: string, value: T): Promise<void> {
-    return this.storage.set(this.getFullStorageKey(did, context, key), JSON.stringify(value)).then((res) => {
+    let fullKey = this.getFullStorageKey(did, context, key);
+    return this.storage.set(fullKey, JSON.stringify(value)).then((res) => {
     }, (err) => {
     });
   }
 
   public async getSetting<T>(did: string | null, context: string, key: string, defaultValue: T): Promise<T> {
-    if (!(key in await this.storage.keys()))
-      return defaultValue;
+    let fullKey = this.getFullStorageKey(did, context, key);
 
-    return this.storage.get(this.getFullStorageKey(did, context, key)).then((res) => {
+    // Return the default value is nothing saved in file system yet.
+    let existingKeys: string[] = await this.storage.keys();
+    if (!existingKeys.find((k)=>k === fullKey)) {
+      return defaultValue;
+    }
+
+    return this.storage.get(fullKey).then((res) => {
       return JSON.parse(res);
     }, (err) => {
+      console.warn("Global storage service getSetting() error:", fullKey, err);
       return defaultValue;
     });
   }

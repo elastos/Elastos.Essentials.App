@@ -62,7 +62,9 @@
     "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-printer": "0.8.0",
+    "cordova-plugin-qrscanner": "^3.0.1",
     "cordova-plugin-splashscreen": "5.0.2",
+    "cordova-plugin-whitelist": "^1.3.4",
     "elastos-cordova-plugin-carrier": "file:../Plugins/Carrier",
     "elastos-cordova-plugin-did": "file:../Plugins/DID",
     "elastos-cordova-plugin-hive": "file:../Plugins/Hive",
@@ -82,7 +84,9 @@
       "cordova-plugin-splashscreen": {},
       "elastos-cordova-plugin-carrier": {},
       "elastos-cordova-plugin-did": {},
-      "elastos-cordova-plugin-hive": {}
+      "elastos-cordova-plugin-hive": {},
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-qrscanner": {}
     },
     "platforms": [
       "android"

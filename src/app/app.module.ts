@@ -3,7 +3,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -22,6 +22,7 @@ import { DIDSessionsModule } from './didsessions/module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ScannerModule } from './scanner/module';
 import { HiveManagerModule } from './hivemanager/module';
+import { TranslationsLoader } from 'src/translationsloader';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -45,6 +46,32 @@ export class SentryErrorHandler implements ErrorHandler {
       'Error'
     );*/
   }
+}
+
+
+
+/**
+ * NOTE: BPI 20210226: Tried to have one translation loader per dapp module, using forChild / isolate,
+ * but this doesn't work. Only forRoot() seems to load stuff, and only one forRoot() works, etc.
+ * So for now, we load and merge all translations here.
+ */
+class CustomTranslateLoader implements TranslateLoader {
+  public getTranslation(lang: string): Observable<any> {
+    return Observable.create(observer => {
+      observer.next(TranslationsLoader.getTranslations(lang));
+      observer.complete();
+    });
+  }
+}
+
+export class CustomMissingTranslationHandler implements MissingTranslationHandler {
+  handle(params: MissingTranslationHandlerParams) {
+    console.warn("MISSING TRANSLATION:", params)
+  }
+}
+
+export function TranslateLoaderFactory() {
+  return new CustomTranslateLoader();
 }
 
 @NgModule({
@@ -75,6 +102,13 @@ export class SentryErrorHandler implements ErrorHandler {
     }),
     AppRoutingModule,
     FormsModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (TranslateLoaderFactory)
+      },
+      missingTranslationHandler: {provide: MissingTranslationHandler, useClass: CustomMissingTranslationHandler},
+    }),
     DragulaModule.forRoot(),
     IonicStorageModule.forRoot({
       name: '__essentials.db',
@@ -86,6 +120,7 @@ export class SentryErrorHandler implements ErrorHandler {
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: SentryErrorHandler },
+    //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

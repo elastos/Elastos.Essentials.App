@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 @Component({ template: "<div>Default root empty page</div>" })
 export class EmptyPage  {}
@@ -16,7 +16,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes/*, { preloadingStrategy: PreloadAllModules }*/)
+    RouterModule.forRoot(routes)
   ],
   exports: [RouterModule]
 })

@@ -14,6 +14,7 @@ import { en } from '../../assets/scanner/languages/en';
 import { fr } from '../../assets/scanner/languages/fr';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ScanPage } from './pages/scan/scan.page';
+import { CommonModule } from '@angular/common';
 
 export class CustomTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -44,15 +45,14 @@ export function TranslateLoaderFactory() {
     ScanPage
   ],
   imports: [
-    BrowserModule,
+    CommonModule,
     AppRoutingModule,
-    IonicModule.forRoot({animated: false}), // animated: false to remove the strange white screen slide animation when starting
-    TranslateModule.forRoot({
+    /*TranslateModule.forChild({
       loader: {
           provide: TranslateLoader,
           useFactory: (TranslateLoaderFactory)
       }
-    }),
+    }),*/
   ],
   exports: [],
   bootstrap: [],

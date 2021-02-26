@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
-import { AppRoutingModule, EmptyPage } from './routing';
+import { AppRoutingModule } from './routing';
 import { IonicStorageModule } from '@ionic/storage';
 import { SignInPage } from './pages/signin/signin.page';
 import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
@@ -51,7 +51,6 @@ export function TranslateLoaderFactory() {
 
 @NgModule({
   declarations: [
-    EmptyPage,
     SignInPage,
     PickProviderPage,
     PickPlanPage,
@@ -65,17 +64,16 @@ export function TranslateLoaderFactory() {
     FormsModule,
     ComponentsModule,
     AppRoutingModule,
-    TranslateModule.forRoot({
+    /*TranslateModule.forChild({
       loader: {
           provide: TranslateLoader,
           useFactory: (TranslateLoaderFactory)
       }
-    }),
+    }),*/
     IonicStorageModule.forRoot()
   ],
   bootstrap: [],
   entryComponents: [
-    EmptyPage
   ],
   providers: [
     StorageService,

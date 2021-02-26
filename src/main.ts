@@ -5,9 +5,12 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 import 'hammerjs';
+import { TranslationsLoader } from './translationsloader';
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.log(err));
+TranslationsLoader.loadAllModulesAndMerge().then(()=>{
+  platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.log(err));
+});

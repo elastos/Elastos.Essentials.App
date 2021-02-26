@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { GlobalStorageService } from './global.storage.service';
 
@@ -37,7 +37,7 @@ export class DIDSessionsService {
   private signedInIdentity: IdentityEntry | null = null;
   public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
-  constructor(private storage: GlobalStorageService) {
+  constructor(private storage: GlobalStorageService, private navController: NavController) {
   }
 
   public async init(): Promise<void> {
@@ -45,8 +45,9 @@ export class DIDSessionsService {
 
     this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", "identities", []);
     this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
-    if (this.signedInIdentity)
+    if (this.signedInIdentity) {
       DIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
+    }
   }
 
   private getIdentityIndex(didString: string): number {
@@ -110,6 +111,8 @@ export class DIDSessionsService {
    * identities.
    */
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
+    console.log("Signing in with DID", entry.didString, entry.name);
+
     this.signedInIdentity = entry;
     DIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
@@ -121,10 +124,14 @@ export class DIDSessionsService {
    * Signs the active identity out. All opened dApps are closed as there is no more active DID session.
    */
   public async signOut(): Promise<void> {
+    console.log("Signing out");
+
     this.signedInIdentity = null;
     DIDSessionsService.signedInDIDString = null;
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
+
+    this.navController.navigateRoot(['/didsessions/pickidentity']);
   }
 }

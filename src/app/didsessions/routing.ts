@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { PickIdentityPage } from './pages/pickidentity/pickidentity';
 import { CreateIdentityPage } from './pages/createidentity/createidentity';
 import { ImportDIDPage } from './pages/importdid/importdid';

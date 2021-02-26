@@ -75,6 +75,12 @@ export class HiveService {
 
     let signedInDID = await this.storage.getSignedInDID(); // Cannot be null if we are here
 
+    if (!this.client) {
+      // Should not happen, but just in case.
+      console.error("Fatal error in hive manager: Hive client not initialized.");
+      return null;
+    }
+
     if (this.vaultLinkStatus) {
       console.log("Reusing existing status:", this.vaultLinkStatus);
       return Promise.resolve(this.vaultLinkStatus);

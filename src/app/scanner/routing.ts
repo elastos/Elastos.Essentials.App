@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { ScanPage } from './pages/scan/scan.page';
 
 const routes: Routes = [

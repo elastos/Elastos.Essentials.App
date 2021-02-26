@@ -15,8 +15,13 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+    <allow-navigation href="data:*" />
+    <allow-navigation href="asset://*" />
+    <allow-navigation href="ionic://*" />
     <preference name="AndroidLaunchMode" value="singleTask" />
-    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="AutoHideSplashScreen" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResizeMode" value="ionic" />
     <preference name="SplashScreenDelay" value="1000" />
@@ -125,4 +130,5 @@
     <plugin name="elastos-cordova-plugin-carrier" spec="../Plugins/Carrier" />
     <plugin name="elastos-cordova-plugin-did" spec="../Plugins/DID" />
     <plugin name="elastos-cordova-plugin-hive" spec="../Plugins/Hive" />
+    <allow-navigation href="http://192.168.31.114:8100" sessionid="559e7a4b" />
 </widget>

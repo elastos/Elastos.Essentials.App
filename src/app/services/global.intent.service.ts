@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ReceivedIntent, TemporaryAppManagerPlugin } from '../TMP_STUBS';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { ReceivedIntent, TemporaryAppManagerPlugin } from '../TMP_STUBS';
 })
 export class GlobalIntentService {
   // Emits received intents from the app manager.
-  public intentListener = new BehaviorSubject<ReceivedIntent>(null);
+  public intentListener = new Subject<ReceivedIntent>();
 
   constructor(
     private appManager: TemporaryAppManagerPlugin

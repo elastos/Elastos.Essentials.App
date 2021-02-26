@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { HomePage } from './pages/home/home.page';
 import { OnboardPage } from './pages/onboard/onboard.page';
 

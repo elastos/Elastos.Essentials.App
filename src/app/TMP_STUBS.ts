@@ -270,8 +270,10 @@ export class PasswordManager {
   constructor() {
   }
 
-  setPasswordInfo(info: PasswordInfo): Promise<BooleanWithReason> {
-    return null;
+  async setPasswordInfo(info: PasswordInfo): Promise<BooleanWithReason> {
+    return {
+      value: true
+    };
   }
 
   /**

@@ -53,7 +53,7 @@ export class IntentService {
 
                 // Show the scan screen
                 this.showScanScreen(true);
-        }
+            }
         });
     }
 

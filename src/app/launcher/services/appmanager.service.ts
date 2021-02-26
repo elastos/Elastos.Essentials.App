@@ -416,7 +416,7 @@ export class AppmanagerService {
     }
 
     async initTranslateConfig() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.translate.addLangs(["zh", "en","fr"]);
             this.appManager.getLocale((
                 defaultLang: string, currentLang: string, systemLang: string
