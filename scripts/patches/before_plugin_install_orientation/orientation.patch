@@ -1,0 +1,18 @@
+--- origin_plugins/cordova-plugin-screen-orientation/src/ios/CDVOrientation.m	null
++++ plugins/cordova-plugin-screen-orientation/src/ios/CDVOrientation.m	null
+@@ -22,6 +22,7 @@
+ #import "CDVOrientation.h"
+ #import <Cordova/CDVViewController.h>
+ #import <objc/message.h>
++#import "elastOS-Swift.h"
+
+ @interface CDVOrientation () {}
+ @end
+@@ -80,6 +81,7 @@
+             }
+             if (value != nil) {
+                 _isLocked = true;
++                [[MainViewController getSharedInstance] setUIInterfaceOrientation: value.intValue];
+                 [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
+             } else {
+                 _isLocked = false;

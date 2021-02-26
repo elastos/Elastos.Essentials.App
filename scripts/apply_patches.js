@@ -12,36 +12,30 @@ const patch_dirs = [
 //     "platform": "ios",
 //     "patch_dir": "patches/after_platform_add_ios"
 //   },
-//   {
-//     "hook": "before_plugin_install",
-//     "platform": "android",
-//     "plugin_id": "cordova-plugin-camera",
-//     "patch_dir": "patches/before_plugin_install_camera"
-//   },
-//   {
-//     "hook": "before_plugin_install",
-//     "platform": "android",
-//     "plugin_id": "cordova-plugin-device",
-//     "patch_dir": "patches/before_plugin_install_device"
-//   },
-//   {
-//     "hook": "before_plugin_install",
-//     "platform": "android",
-//     "plugin_id": "cordova-plugin-firebase-lib",
-//     "patch_dir": "patches/before_plugin_install_firebase"
-//   },
-//   {
-//     "hook": "before_plugin_install",
-//     "platform": "android",
-//     "plugin_id": "cordova-plugin-network-information",
-//     "patch_dir": "patches/before_plugin_install_networkstatus"
-//   },
-//   {
-//     "hook": "before_plugin_install",
-//     "platform": "ios",
-//     "plugin_id": "cordova-plugin-screen-orientation",
-//     "patch_dir": "patches/before_plugin_install_orientation"
-//   },
+  {
+    "hook": "before_plugin_install",
+    "platform": "android",
+    "plugin_id": "cordova-plugin-camera",
+    "patch_dir": "patches/before_plugin_install_camera"
+  },
+  {
+    "hook": "before_plugin_install",
+    "platform": "android",
+    "plugin_id": "cordova-plugin-firebase-lib",
+    "patch_dir": "patches/before_plugin_install_firebase"
+  },
+  {
+    "hook": "before_plugin_install",
+    "platform": "ios",
+    "plugin_id": "cordova-plugin-screen-orientation",
+    "patch_dir": "patches/before_plugin_install_orientation"
+  },
+  {
+    "hook": "before_plugin_install",
+    "platform": "android",
+    "plugin_id": "cordova-plugin-printer",
+    "patch_dir": "patches/before_plugin_install_printer"
+  },
 //   {
 //     "hook": "after_build",
 //     "platform": "android",
@@ -98,7 +92,7 @@ module.exports = function(ctx) {
               if (!fs.existsSync(oldFilePath)) {
                 if (fs.existsSync(newFilePath)
                     && fs.lstatSync(newFilePath).isFile()) {
-                  console.log("Backup origin file to " + oldFilePath);
+                  console.log("  Backup origin file to " + oldFilePath);
                   let oldFileDir = path.dirname(oldFilePath);
                   if (!fs.existsSync(oldFileDir)) {
                     // console.log("Making directory " + oldFileDir);
@@ -107,18 +101,25 @@ module.exports = function(ctx) {
                   fs.copyFileSync(newFilePath, oldFilePath);
                 }
                 else {
-                  callback("Failed to open file " + newFilePath);
+                  // Create new file
+                  let newFileDir = path.dirname(newFilePath);
+                  if (!fs.existsSync(newFileDir)) {
+                    mkdirp.sync(newFileDir);
+                  }
+                  callback(null, "")
+                  return;
+                //   callback("  Failed to open new file " + newFilePath);
                 }
               }
 
               if (fs.existsSync(oldFilePath)
                   && fs.lstatSync(oldFilePath).isFile()) {
-                // console.log("Patching file from " + oldFilePath);
+                // console.log("  Patching file from " + oldFilePath);
                 let originStr = fs.readFileSync(oldFilePath, "utf8");
                 callback(null, originStr);
               }
               else {
-                callback("Failed to open file " + oldFilePath);
+                callback("  Failed to open origin file " + oldFilePath);
               }
             },
             patched: (uniDiff, patchedStr, callback) => {

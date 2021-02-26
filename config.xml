@@ -123,6 +123,7 @@
         <splash height="828" src="resources/ios/splash/Default-Landscape-1792h~iphone.png" width="1792" />
     </platform>
     <hook src="scripts/apply_patches.js" type="after_platform_add" />
+    <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <plugin name="cordova-plugin-camera" spec="5.0.1" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="2.0.5" />
     <plugin name="cordova-plugin-printer" spec="0.8.0" />

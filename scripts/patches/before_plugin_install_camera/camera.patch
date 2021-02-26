@@ -1,0 +1,21 @@
+===================================================================
+--- origin_plugins/cordova-plugin-camera/src/android/CameraLauncher.java	null
++++ plugins/cordova-plugin-camera/src/android/CameraLauncher.java	null
+@@ -37,7 +37,7 @@
+ import android.os.Bundle;
+ import android.os.Environment;
+ import android.provider.MediaStore;
+-import android.support.v4.content.FileProvider;
++import androidx.core.content.FileProvider;
+ import android.util.Base64;
+
+ import org.apache.cordova.BuildHelper;
+===================================================================
+--- origin_plugins/cordova-plugin-camera/src/android/FileProvider.java	null
++++ plugins/cordova-plugin-camera/src/android/FileProvider.java	null
+@@ -18,4 +18,4 @@
+ */
+ package org.apache.cordova.camera;
+
+-public class FileProvider extends android.support.v4.content.FileProvider {}
++public class FileProvider extends androidx.core.content.FileProvider {}
