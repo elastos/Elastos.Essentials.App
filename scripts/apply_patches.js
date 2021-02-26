@@ -78,7 +78,7 @@ module.exports = function(ctx) {
         if (fs.existsSync(patchFile) && fs.lstatSync(patchFile).isFile()
             && path.extname(patchFile) == ".patch") {
           let relativePatchFile = path.relative(ctx.opts.projectRoot, patchFile);
-          console.log("Applying patch " + relativePatchFile);
+          console.log("-- Applying patch " + relativePatchFile);
           let patchStr = fs.readFileSync(patchFile, "utf8");
 
           // Remove the diff header for each chunks
@@ -89,6 +89,17 @@ module.exports = function(ctx) {
             loadFile: (uniDiff, callback) => {
               let oldFilePath = uniDiff.oldFileName.split('/').join(path.sep);
               let newFilePath = uniDiff.newFileName.split('/').join(path.sep);
+
+              if ((uniDiff.hunks[0].oldStart == 0) && (uniDiff.hunks[0].oldLines == 0)) {
+                // Create new file
+                let newFileDir = path.dirname(newFilePath);
+                if (!fs.existsSync(newFileDir)) {
+                  mkdirp.sync(newFileDir);
+                }
+                callback(null, "")
+                return;
+              }
+
               if (!fs.existsSync(oldFilePath)) {
                 if (fs.existsSync(newFilePath)
                     && fs.lstatSync(newFilePath).isFile()) {
@@ -101,14 +112,7 @@ module.exports = function(ctx) {
                   fs.copyFileSync(newFilePath, oldFilePath);
                 }
                 else {
-                  // Create new file
-                  let newFileDir = path.dirname(newFilePath);
-                  if (!fs.existsSync(newFileDir)) {
-                    mkdirp.sync(newFileDir);
-                  }
-                  callback(null, "")
-                  return;
-                //   callback("  Failed to open new file " + newFilePath);
+                  callback("  Failed to open new file " + newFilePath);
                 }
               }
 
@@ -125,7 +129,7 @@ module.exports = function(ctx) {
             patched: (uniDiff, patchedStr, callback) => {
               let newFilePath = uniDiff.newFileName.split('/').join(path.sep);
               if (patchedStr) {
-                console.log("   Patched file " + newFilePath);
+                console.log("  Patched file " + newFilePath);
                 fs.writeFileSync(newFilePath, patchedStr);
                 callback();
               }
