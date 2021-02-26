@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TitlebarService } from 'src/app/services/titlebar.service';
 
 @Component({
   selector: 'app-titlebarmenuitem',
@@ -9,7 +8,6 @@ import { TitlebarService } from 'src/app/services/titlebar.service';
 export class TitlebarmenuitemComponent implements OnInit {
 
   constructor(
-    public titlebarService: TitlebarService
   ) { }
 
   ngOnInit() {}

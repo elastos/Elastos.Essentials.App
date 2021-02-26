@@ -1,7 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { ContactAvatar } from 'src/app/services/contactnotifier.service';
-import { TitlebarService } from 'src/app/services/titlebar.service';
 
 /**
  * TODO @chad - Finalize merging types and methods I have imported from the notification plugin, with
@@ -62,8 +61,7 @@ export class NotificationManagerService {
 
   constructor(
     private platform: Platform,
-    private zone: NgZone,
-    private titlebarService: TitlebarService
+    private zone: NgZone
   ) {
     this.platform.ready().then(() => {
       this.setNotificationListener();

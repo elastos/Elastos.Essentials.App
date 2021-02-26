@@ -20,34 +20,11 @@ import { PickPlanPage } from './pages/pickplan/pickplan.page';
 import { PickPlanPurchasePage } from './pages/pickplanpurchase/pickplanpurchase.page';
 import { ComponentsModule } from './components/components.module';
 
-import { zh } from './../../assets/hivemanager/languages/zh';
-import { en } from './../../assets/hivemanager/languages/en';
-import { fr } from './../../assets/hivemanager/languages/fr';
+import { zh } from '../../assets/translations/hivemanager/zh';
+import { en } from '../../assets/translations/hivemanager/en';
+import { fr } from '../../assets/translations/hivemanager/fr';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
-export class CustomTranslateLoader implements TranslateLoader {
-  public getTranslation(lang: string): Observable<any> {
-      return Observable.create(observer => {
-          switch (lang) {
-              case 'zh':
-                  observer.next(zh);
-                  break;
-              case 'fr':
-                  observer.next(fr);
-                  break;
-              case 'en':
-              default:
-                  observer.next(en);
-          }
-
-          observer.complete();
-      });
-  }
-}
-
-export function TranslateLoaderFactory() {
-  return new CustomTranslateLoader();
-}
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
 
 @NgModule({
   declarations: [
@@ -60,16 +37,11 @@ export function TranslateLoaderFactory() {
   ],
   imports: [
     CommonModule,
-    BrowserModule,
     FormsModule,
     ComponentsModule,
+    SharedComponentsModule,
     AppRoutingModule,
-    /*TranslateModule.forChild({
-      loader: {
-          provide: TranslateLoader,
-          useFactory: (TranslateLoaderFactory)
-      }
-    }),*/
+    TranslateModule,
     IonicStorageModule.forRoot()
   ],
   bootstrap: [],

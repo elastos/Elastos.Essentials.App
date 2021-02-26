@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import { IdentityService, IdentityGroup } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
@@ -7,6 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'page-pickidentity',
@@ -14,6 +16,7 @@ import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.
   styleUrls: ['./pickidentity.scss']
 })
 export class PickIdentityPage {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   groupedIdentities: IdentityGroup[] = [];
 
@@ -45,15 +48,13 @@ export class PickIdentityPage {
 
   ionViewWillEnter() {
     // Update system status bar every time we re-enter this screen.
-    /* TODO @chad
-    titleBarManager.setTitle(this.translate.instant("pick-identity"));
+    this.titleBar.setTitle(this.translate.instant("pick-identity"));
 
-    titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "language",
-      iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+      iconPath: BuiltInIcon.EDIT
     });
-    */
 
     this.uxService.setTitleBarBackKeyShown(false);
 

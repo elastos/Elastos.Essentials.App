@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import { BehaviorSubject } from 'rxjs';
 import { GlobalStorageService } from './global.storage.service';
 
 export type IdentityAvatar = {
@@ -33,8 +34,11 @@ export type SignInOptions = {
   providedIn: 'root'
 })
 export class DIDSessionsService {
+  public signedInIdentityListener = new BehaviorSubject<IdentityEntry | null>(null);
+
   private identities: IdentityEntry[] = null;
   private signedInIdentity: IdentityEntry | null = null;
+
   public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
   constructor(private storage: GlobalStorageService, private navController: NavController) {
@@ -48,6 +52,8 @@ export class DIDSessionsService {
     if (this.signedInIdentity) {
       DIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
     }
+
+    this.signedInIdentityListener.next(this.signedInIdentity);
   }
 
   private getIdentityIndex(didString: string): number {
@@ -118,6 +124,8 @@ export class DIDSessionsService {
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
+
+    this.signedInIdentityListener.next(this.signedInIdentity);
   }
 
   /**
@@ -131,6 +139,8 @@ export class DIDSessionsService {
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
+
+    this.signedInIdentityListener.next(null);
 
     this.navController.navigateRoot(['/didsessions/pickidentity']);
   }

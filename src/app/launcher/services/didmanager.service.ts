@@ -22,8 +22,8 @@ export class DidmanagerService {
   ) { }
 
   init() {
-    this.didSessions.getSignedInIdentity().then((id: IdentityEntry) => {
-      console.log('Signed Identity', id);
+    this.didSessions.signedInIdentityListener.subscribe((id: IdentityEntry) => {
+      console.log("Launcher: signed in identity changed", id);
       this.signedIdentity = id;
     });
   }
@@ -44,13 +44,13 @@ export class DidmanagerService {
   }
 
   async signOut() {
-    this.native.showLoading('signing-out');
+    // TODO @chad - I don't understand why the loading popup doesn't hide automatically - this.native.showLoading('signing-out');
 
     setTimeout(async () => {
       await this.didSessions.signOut();
-    }, 1000);
+    }, 10);
 
-    this.native.hideLoading();
+    // TODO @chad this.native.hideLoading();
   }
 
   getUserDID(): string {

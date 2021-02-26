@@ -7,7 +7,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
-import { AppRoutingModule } from './routing';
+import { ScannerRoutingModule } from './routing';
 
 import { zh } from '../../assets/scanner/languages/zh';
 import { en } from '../../assets/scanner/languages/en';
@@ -15,6 +15,7 @@ import { fr } from '../../assets/scanner/languages/fr';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ScanPage } from './pages/scan/scan.page';
 import { CommonModule } from '@angular/common';
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
 
 export class CustomTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -46,13 +47,8 @@ export function TranslateLoaderFactory() {
   ],
   imports: [
     CommonModule,
-    AppRoutingModule,
-    /*TranslateModule.forChild({
-      loader: {
-          provide: TranslateLoader,
-          useFactory: (TranslateLoaderFactory)
-      }
-    }),*/
+    ScannerRoutingModule,
+    SharedComponentsModule
   ],
   exports: [],
   bootstrap: [],

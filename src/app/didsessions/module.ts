@@ -27,6 +27,7 @@ import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimportedd
 import { ScanPage } from './pages/scan/scan.page';
 import { PrintoptionsComponent } from './components/printoptions/printoptions.component';
 import { defineCustomElements } from '@teamhive/lottie-player/loader';
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
 
 defineCustomElements(window);
 
@@ -51,6 +52,7 @@ defineCustomElements(window);
     DIDSessionsRoutingModule,
     FormsModule,
     ComponentsModule,
+    SharedComponentsModule,
     TranslateModule,
     IonicImageLoader.forRoot()
   ],

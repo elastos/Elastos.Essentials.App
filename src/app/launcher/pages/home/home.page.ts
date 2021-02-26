@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ToastController, PopoverController, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -12,7 +12,7 @@ import { OptionsComponent } from '../../components/options/options.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { DidmanagerService } from '../../services/didmanager.service';
 import { AppmanagerService } from '../../services/appmanager.service';
-import { TitlebarService } from 'src/app/services/titlebar.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +21,8 @@ import { TitlebarService } from 'src/app/services/titlebar.service';
 })
 
 export class HomePage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
   private popover: any = null;
 
   constructor(
@@ -34,8 +36,7 @@ export class HomePage implements OnInit {
     private notification: NotificationManagerService,
     private appManager: TemporaryAppManagerPlugin,
     public appService: AppmanagerService,
-    public didService: DidmanagerService,
-    public titlebarService: TitlebarService
+    public didService: DidmanagerService
   ) {
     console.log("Launcher home screen component is being constructed");
   }
@@ -47,7 +48,7 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
     // Show badge if there are notifications.
     this.notification.getNotifications();
-    this.titlebarService.setTitle('elastOS Essentials');
+    this.titleBar.setTitle('Elastos Essentials');
   }
 
   ionViewDidEnter() {

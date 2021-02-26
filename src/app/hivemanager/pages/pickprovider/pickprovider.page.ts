@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
 import { HiveService, PaidIncompleteOrder, VaultLinkStatus } from '../../services/hive.service';
@@ -10,6 +10,8 @@ import { PrefsService } from '../../services/prefs.service';
 import { NetworkType } from '../../model/networktype';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarMenuItem, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 type StorageProvider = {
   name: string,
@@ -22,6 +24,8 @@ type StorageProvider = {
   styleUrls: ['./pickprovider.page.scss'],
 })
 export class PickProviderPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
   public checkingInitialStatus: boolean = false;
   public vaultProviderCouldBeContacted: boolean = false;
   private vaultLinkStatus: VaultLinkStatus = null;
@@ -81,30 +85,29 @@ export class PickProviderPage implements OnInit {
     });
   }
 
-  /* TODO @chad
   async ionViewWillEnter() {
-    let menuItems: TitleBarPlugin.TitleBarMenuItem[] = [
+    let menuItems: TitleBarMenuItem[] = [
       {
         title: this.translate.instant('hive-menu.vault-providers-administration'),
         key: "pickprovider-adminproviders",
-        iconPath: TitleBarPlugin.BuiltInIcon.SETTINGS
+        iconPath: BuiltInIcon.SETTINGS
       }
     ];
 
-    this.developerMode = await this.appService.developerModeEnabled();
+    this.developerMode = await this.prefs.developerModeEnabled();
 
     if (this.developerMode) {
       // Add a special menu item to be able to switch to another vault without transfer
       menuItems.push({
         title: this.translate.instant('hive-menu.force-provider-change'),
         key: "pickprovider-forceproviderchange",
-        iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+        iconPath: BuiltInIcon.EDIT
       });
     }
 
-    titleBarManager.setupMenuItems(menuItems);
+    this.titleBar.setupMenuItems(menuItems);
 
-    titleBarManager.addOnItemClickedListener((clickedIcon)=>{
+    this.titleBar.addOnItemClickedListener((clickedIcon)=>{
       switch (clickedIcon.key) {
         case "pickprovider-adminproviders":
           this.goToAdminPanel();
@@ -119,12 +122,11 @@ export class PickProviderPage implements OnInit {
       }
     });
 
-    titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
-    titleBarManager.setTitle(this.translate.instant('pickprovider.title'));
-    appManager.setVisible("show");
+    this.titleBar.setTitle(this.translate.instant('pickprovider.title'));
   }
-  */
+
 
   ionViewDidEnter(){
     this.checkInitialStatus();

@@ -10,8 +10,8 @@ const routes: Routes = [
   { path: 'scanner', loadChildren: './scanner/module#ScannerModule' },
   { path: 'hivemanager', loadChildren: './hivemanager/module#HiveManagerModule' },
 
-  { path: '**', component: EmptyPage },
   // Prevent angular from calling a random default route sometimes when starting, leading to crashes if platform is not ready yet
+  { path: '**', component: EmptyPage },
 ];
 
 @NgModule({

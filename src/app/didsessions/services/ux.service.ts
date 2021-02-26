@@ -6,8 +6,8 @@ import { ThemeService } from './theme.service';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 import { Events } from './events.service';
-import { TitleBarIcon } from 'src/app/services/titlebar.service';
 import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
+import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 
 let selfUxService: UXService = null;
 

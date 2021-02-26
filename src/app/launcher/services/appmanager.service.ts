@@ -147,7 +147,7 @@ export class AppmanagerService {
                         description: this.translate.instant('app-hive-description'),
                         icon: '/assets/launcher/ios/app-icons/hive.svg',
                         id: 'org.elastos.trinity.dapp.hivemanager',
-                        routerPath: '/hivemanager/home'
+                        routerPath: '/hivemanager/pickprovider'
                     }
                 ]
             },
@@ -320,7 +320,7 @@ export class AppmanagerService {
     }
 
     startApp(app: RunnableApp) {
-        this.navController.navigateRoot(app.routerPath);
+        this.navController.navigateForward(app.routerPath);
     }
 
     /******************************** Notifications Manager ********************************/

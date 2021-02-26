@@ -1,5 +1,5 @@
 export class TranslationsLoader {
-    private static modulesWithTranslations = ["launcher", "didsessions"];
+    private static modulesWithTranslations = ["launcher", "didsessions", "hivemanager"];
     private static languagesToLoad = ["en", "zh", "fr"];
 
     private static loadedTranslations: {[lang:string]:any} = {};

@@ -4,19 +4,19 @@
       <ion-button>
         <img [src]="!theme.darkMode ? '/assets/components/titlebar/elastos.svg' : '/assets/components/titlebar/darkmode/elastos.svg'">
       </ion-button>
-      <ion-button *ngIf="titlebarService.innerLeftIcon.visible">
-        <img [src]="titlebarService.innerLeftIcon.iconPath">
+      <ion-button *ngIf="innerLeftIcon.visible">
+        <img [src]="innerLeftIcon.iconPath">
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ titlebarService.title | translate }}</ion-title>
+    <ion-title>{{ title | translate }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button [class.hidden]="!titlebarService.innerRightIcon.visible">
-        <img *ngIf="titlebarService.innerRightIcon.visible" [src]="titlebarService.innerRightIcon.iconPath">
+      <ion-button [class.hidden]="!innerRightIcon.visible">
+        <img *ngIf="innerRightIcon.visible" [src]="innerRightIcon.iconPath">
       </ion-button>
-      <ion-button *ngIf="!titlebarService.menuVisible && titlebarService.outerRightIcon.visible">
-        <img [src]="titlebarService.outerRightIcon.iconPath">
+      <ion-button *ngIf="!menuVisible && outerRightIcon.visible">
+        <img [src]="outerRightIcon.iconPath">
       </ion-button>
-      <ion-button *ngIf="titlebarService.menuVisible" (click)="openMenu($event)">
+      <ion-button *ngIf="menuVisible" (click)="openMenu($event)">
         <img [src]="!theme.darkMode ? '/assets/components/titlebar/menu.svg' : '/assets/components/titlebar/darkmode/menu.svg'">
       </ion-button>
     </ion-buttons>
