@@ -1,5 +1,15 @@
 {
   "compileOnSave": false,
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "plugins",
+    "platforms",
+    "origin_platforms",
+    "www"
+  ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",
@@ -14,11 +24,13 @@
     "target": "es5",
     "typeRoots": [
       "node_modules/@types",
+      "plugins"
     ],
     "types": [
       "node",
       "cordova",
-      "elastos-cordova-plugin-did"
+      "elastos-cordova-plugin-did",
+      "cordova-plugin-camera"
     ],
     "lib": [
       "es2018",
