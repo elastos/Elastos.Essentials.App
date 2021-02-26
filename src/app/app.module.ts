@@ -22,6 +22,7 @@ import { DIDSessionsModule } from './didsessions/module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ScannerModule } from './scanner/module';
 import { HiveManagerModule } from './hivemanager/module';
+import { SettingsModule } from './settings/module';
 import { TranslationsLoader } from 'src/translationsloader';
 
 @Injectable()
@@ -47,8 +48,6 @@ export class SentryErrorHandler implements ErrorHandler {
     );*/
   }
 }
-
-
 
 /**
  * NOTE: BPI 20210226: Tried to have one translation loader per dapp module, using forChild / isolate,
@@ -89,6 +88,8 @@ export function TranslateLoaderFactory() {
     DIDSessionsModule,
     ScannerModule,
     HiveManagerModule,
+    SettingsModule,
+
     /*
      * Generic modules
      */

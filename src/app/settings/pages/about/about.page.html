@@ -1,0 +1,25 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid [class.dark-container]="theme.darkMode">
+    <ion-card>
+      <img [src]="!theme.darkMode ? '/assets/settings/icon/light_mode/elalogo.svg' : '/assets/settings/icon/dark_mode/elalogo.svg'">
+      <ion-card-title>{{ 'version' | translate }} {{ version.slice(0,5) }}</ion-card-title>
+    </ion-card>
+
+    <ion-list>
+      <ion-row
+        class="section-row"
+        [class.removeBorder]="section === sections[sections.length - 1]"
+        *ngFor="let section of sections"
+      >
+        <ion-col size="12">
+          <ion-label>{{ section.type | translate }}</ion-label>
+        </ion-col>
+        <ion-col class="bottom-col" size="12" *ngFor="let item of section.links">
+            <h4><span>&#8226;</span>&nbsp; {{ item.title | translate }}</h4> <hr>
+            <p (click)="openLink(item)">{{ item.link }}</p>
+        </ion-col>
+      </ion-row>
+    </ion-list>
+  </ion-grid>
+</ion-content>

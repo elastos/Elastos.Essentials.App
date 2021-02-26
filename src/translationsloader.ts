@@ -3,7 +3,8 @@ export class TranslationsLoader {
         "launcher",
         "didsessions",
         "hivemanager",
-        "scanner"
+        "scanner",
+        "settings"
     ];
     private static languagesToLoad = [
         "en",

@@ -168,7 +168,7 @@ export class AppmanagerService {
                         description: this.translate.instant('app-settings-description'),
                         icon: '/assets/launcher/ios/app-icons/settings.svg',
                         id: 'org.elastos.trinity.dapp.settings',
-                        routerPath: '/settings/home'
+                        routerPath: '/settings/menu'
                     },
                 ]
             }

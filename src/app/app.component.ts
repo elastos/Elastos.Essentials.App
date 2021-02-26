@@ -9,6 +9,7 @@ import { DIDSessionsInitService } from './didsessions/services/init.service';
 import { DIDSessionsService } from './services/didsessions.service';
 import { ScannerInitService } from './scanner/services/init.service';
 import { HiveManagerInitService } from './hivemanager/services/init.service';
+import { SettingsInitService } from './settings/services/init.service';
 
 @Component({
     selector: 'app-root',
@@ -26,7 +27,8 @@ export class AppComponent {
         private launcherInitService: LauncherInitService,
         private didSessionsInitService: DIDSessionsInitService,
         private scannerInitService: ScannerInitService,
-        private hiveInitService: HiveManagerInitService
+        private hiveInitService: HiveManagerInitService,
+        private settingsInitService: SettingsInitService
     ) {
     }
 
@@ -45,6 +47,7 @@ export class AppComponent {
             await this.launcherInitService.init();
             await this.scannerInitService.init();
             await this.hiveInitService.init();
+            await this.settingsInitService.init();
 
             // Navigate to the right startup screen
             console.log("Navigating to start screen");

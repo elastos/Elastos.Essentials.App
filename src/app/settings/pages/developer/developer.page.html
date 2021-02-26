@@ -1,0 +1,39 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
+    <!-- Config Network -->
+    <ion-row class="section-row" [routerLink]="['/select-net']">
+      <ion-col size="9" class="left-col">
+        <h1>{{ 'configure-network' | translate }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <img src="assets/settings/default/right-arrow.svg">
+      </ion-col>
+    </ion-row>
+    <!-- Config Background Services -->
+    <ion-row class="section-row" >
+      <ion-col size="9" class="left-col">
+        <h1>{{ getBackgroundServicesTitle() }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <div (click)="developer.toggleBackgroundServices()">
+          <ion-toggle *ngIf="developer.backgroundServicesEnabled" checked mode="ios"></ion-toggle>
+          <ion-toggle *ngIf="!developer.backgroundServicesEnabled" mode="ios"></ion-toggle>
+        </div>
+      </ion-col>
+    </ion-row>
+    <!-- iOS Config CLI Address -->
+    <ion-row *ngIf="!theme.isAndroid" class="section-row input-row remove-border">
+      <ion-col size="9.5" class="left-col">
+        <h1>Trinity-CLI Run Command Address</h1>
+        <ion-input id="add-margin" [(ngModel)]="developer.cliAddress" type="text" clearInput placeholder="Enter IP Address" clearInput required></ion-input>
+      </ion-col>
+      <ion-col class="right-col" size="2.5" (click)="developer.configCliAddress()">
+        <div class="btn-container ion-activatable ripple">
+          <ion-icon name="send" mode="ios"></ion-icon>
+          <ion-ripple-effect></ion-ripple-effect>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
