@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ContactNotifierService } from 'src/app/services/contactnotifier.service';
 import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
-import { AppTheme, ThemeService } from 'src/app/services/theme.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { NativeService } from './native.service';
 
@@ -15,7 +15,7 @@ export class DidmanagerService {
   constructor(
     private translate: TranslateService,
     private native: NativeService,
-    private theme: ThemeService,
+    private theme: GlobalThemeService,
     private didSessions: DIDSessionsService,
     private contactNotifier: ContactNotifierService,
     private appManager: TemporaryAppManagerPlugin

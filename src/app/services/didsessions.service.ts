@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { StorageService } from './storage.service';
+import { GlobalStorageService } from './global.storage.service';
 
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
@@ -37,7 +37,7 @@ export class DIDSessionsService {
   private signedInIdentity: IdentityEntry | null = null;
   public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
-  constructor(private storage: StorageService) {
+  constructor(private storage: GlobalStorageService) {
   }
 
   public async init(): Promise<void> {

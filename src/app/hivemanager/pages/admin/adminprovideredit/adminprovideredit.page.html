@@ -1,0 +1,54 @@
+<ion-content>
+    <!-- No provider -->
+    <div *ngIf="!managedProvider" class="editContainer" [class.darkContainer]="theme.darkMode">
+        <h1>{{ 'adminprovideredit.provider-name' | translate }}</h1>
+        <ion-input [(ngModel)]="createName" placeholder="{{'adminprovideredit.enter-name' | translate }}" clearInput></ion-input>
+        <ion-button (click)="createAdminDID()">{{ 'adminprovideredit.create' | translate }}</ion-button>
+    </div>
+    <!-- Has provider -->
+    <div *ngIf="managedProvider" class="editContainer" [class.darkContainer]="theme.darkMode">
+        <ion-row>
+            <ion-col size="12" style="margin-bottom: 5px;">
+                <h1>{{ 'adminprovideredit.provider-name' | translate }}</h1>
+            </ion-col>
+            <ion-col size="12">
+                <ion-input [(ngModel)]="managedProvider.name" (input)='onNameChanged($event.target.value)' clearInput></ion-input>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col size="12" style="margin-bottom: 5px;">
+                <h1>{{ 'adminprovideredit.admin-id' | translate }}</h1>
+                <ion-icon (click)="copy(managedProvider.did.didString)" name="copy"></ion-icon>
+            </ion-col>
+            <ion-col size="12">
+                <h2>{{ managedProvider.did.didString }}</h2>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col size="12" style="margin-bottom: 5px;">
+                <h1>{{ 'adminprovideredit.admin-mnemonic' | translate }}</h1>
+                <div class="icon-container">
+                    <ion-icon *ngIf="!mnemonicShown" class="left-icon" name="eye-off" (click)="toggleMnemonic()"></ion-icon>
+                    <ion-icon *ngIf="mnemonicShown" class="left-icon" name="eye" (click)="toggleMnemonic()"></ion-icon>
+                    <ion-icon (click)="copy(adminDIDMnemonic)" name="copy"></ion-icon>
+                </div>
+            </ion-col>
+            <ion-col size="12">
+                <h2>{{ getMnemonic() }}</h2>
+            </ion-col>
+        </ion-row>
+    </div>
+</ion-content>
+
+<!-- Has provider -->
+<ion-footer class="ion-no-border" no-border *ngIf="managedProvider">
+    <div *ngIf="!adminDIDPublished; else onlyDeleteButton">
+        <ion-button color="danger" (click)="deleteVaultProvider()">{{ 'adminprovideredit.delete' | translate }}</ion-button>
+        <ion-button (click)="publishAdminDID()">{{ 'adminprovideredit.publish' | translate }}</ion-button>
+    </div>
+    <ng-template #onlyDeleteButton>
+        <div>
+            <ion-button class="onlyDeleteButton" color="danger" (click)="deleteVaultProvider()">{{ 'adminprovideredit.delete' | translate }}</ion-button>
+        </div>
+    </ng-template>
+</ion-footer>

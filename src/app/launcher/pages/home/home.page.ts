@@ -3,8 +3,8 @@ import { ToastController, PopoverController, NavController } from '@ionic/angula
 import { TranslateService } from '@ngx-translate/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
-import { StorageService } from 'src/app/services/storage.service';
-import { AppTheme, ThemeService } from 'src/app/services/theme.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 
 import * as moment from 'moment';
 import { NotificationManagerService } from '../../services/notificationmanager.service';
@@ -28,8 +28,8 @@ export class HomePage implements OnInit {
     private popoverCtrl: PopoverController,
     private navCtrl: NavController,
     public translate: TranslateService,
-    public storage: StorageService,
-    public theme: ThemeService,
+    public storage: GlobalStorageService,
+    public theme: GlobalThemeService,
     public splashScreen: SplashScreen,
     private notification: NotificationManagerService,
     private appManager: TemporaryAppManagerPlugin,

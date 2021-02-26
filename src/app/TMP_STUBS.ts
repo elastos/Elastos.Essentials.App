@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AppmanagerService } from './launcher/services/appmanager.service';
-import { PreferencesService } from './services/preferences.service';
+import { GlobalPreferencesService } from './services/global.preferences.service';
 
 // TODO: ALL THIS FILE MUST DISAPPEAR AND BE REPLACED BY THE NEW APP MANAGER PLUGIN
 
@@ -599,5 +599,35 @@ export namespace PrinterPlugin {
        * @param content The plain/html text or a file URI.
        */
       print(content: string | HTMLElement, options: PrintOptions, callback: (printed: boolean) => void);
+  }
+}
+
+
+
+
+
+
+
+export namespace TrinitySDK {
+  export namespace DID {
+    export type FastDIDCreationResult = {
+      storePassword: string;
+      didStore: DIDPlugin.DIDStore;
+      did: DIDPlugin.DID;
+    }
+
+    export class DIDHelper {
+      fastCreateDID(lang: DIDPlugin.MnemonicLanguage): FastDIDCreationResult {
+        return null;
+      }
+    }
+  }
+
+  export namespace Hive {
+    export class AuthHelper {
+      getClientWithAuth(callback: (err)=>void): HivePlugin.Client {
+        return null;
+      }
+    }
   }
 }

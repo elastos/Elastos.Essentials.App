@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, NavParams, IonInput } from '@ionic/angular';
 import { UXService } from 'src/app/didsessions/services/ux.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 export enum ImportDIDSource {
     ImportFromMnemonic,
@@ -18,7 +18,7 @@ export class ImportDIDSourceComponent implements OnInit {
   constructor(
     public modalCtrl: ModalController,
     public uxService: UXService,
-    public theme: ThemeService
+    public theme: GlobalThemeService
   ) {}
 
   ngOnInit() {

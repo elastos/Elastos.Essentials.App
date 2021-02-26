@@ -1,0 +1,68 @@
+ion-row {
+    background: white;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    border-radius: 20px;
+    padding: 10px 15px 15px;
+    margin: 5px 0 10px;
+    width: 100%;
+
+    ion-col {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #8889b1;
+        padding: 7.5px 0;
+
+        h1, h2, p {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        h2 {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        p {
+            font-size: 14px;
+            font-weight: 600;
+        }
+    }
+
+    .removeBorder {
+        border-bottom: none;
+    }
+}
+
+.darkContainer {
+    box-shadow: 0 3px 15px 0 #151626;
+    background-color: #2b2c49;
+}
+
+/* 
+.active-plan, .purchaseable-plan {
+    // BPI: YES I know, i'm at the max of my CSS design skills ;-)
+    background: white;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    border-radius: 20px;
+    margin: 10px;
+    padding: 10px;
+}
+
+
+
+ion-title {
+    position: absolute;
+    left: 0px !important;
+    top: 0px !important;
+    width: 100%;
+    height: 100%;
+    text-align: center !important;
+    // margin-left: 0px !important;
+    // margin-top: 0px !important;
+} */

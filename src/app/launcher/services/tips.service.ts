@@ -5,8 +5,8 @@ import { TipAudience } from '../model/tipaudience.model';
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { NotificationManagerService } from './notificationmanager.service';
-import { StorageService } from 'src/app/services/storage.service';
-import { PreferencesService } from 'src/app/services/preferences.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 const DURATION_MIN_BETWEEN_2_TIPS_MS = 12 * 60 * 60 * 1000; // 12 hours
@@ -77,8 +77,8 @@ export class TipsService {
   constructor(
     private translate: TranslateService,
     private appManager: TemporaryAppManagerPlugin,
-    private storage: StorageService,
-    private prefs: PreferencesService,
+    private storage: GlobalStorageService,
+    private prefs: GlobalPreferencesService,
     private notificationManager: NotificationManagerService,
     private didSessions: DIDSessionsService) { }
 

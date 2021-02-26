@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { ThemeService } from '../../../services/theme.service';
+import { GlobalThemeService } from '../../../services/global.theme.service';
 import { DidmanagerService } from '../../services/didmanager.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { DidmanagerService } from '../../services/didmanager.service';
 export class OptionsComponent implements OnInit {
 
   constructor(
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private didService: DidmanagerService,
     private popoverCtrl: PopoverController,
   ) { }

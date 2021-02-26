@@ -64,7 +64,7 @@ export class IntentService {
         };
 
         this.ngZone.run(() => {
-            this.router.navigate(["/scan"], {
+            this.router.navigate(["/scanner/scan"], {
                 queryParams: queryParams
             });
         });

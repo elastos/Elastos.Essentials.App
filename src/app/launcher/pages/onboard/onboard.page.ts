@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ThemeService } from 'src/app/services/theme.service';
-import { StorageService } from 'src/app/services/storage.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,8 +27,8 @@ export class OnboardPage implements OnInit {
   };
 
   constructor(
-    public theme: ThemeService,
-    private storage: StorageService,
+    public theme: GlobalThemeService,
+    private storage: GlobalStorageService,
     private router: Router,
     private platform: Platform,
     public translate: TranslateService,

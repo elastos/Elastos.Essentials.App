@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IntentService } from '../../services/intent.service';
 import QrScanner from 'qr-scanner';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 
@@ -41,7 +41,7 @@ export class ScanPage {
         private zone: NgZone,
         private alertController: AlertController,
         private loadingController: LoadingController,
-        private theme: ThemeService,
+        private theme: GlobalThemeService,
         private appManager: TemporaryAppManagerPlugin,
         private translate: TranslateService,
     ) {

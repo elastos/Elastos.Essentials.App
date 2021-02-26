@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/didsessions/services/language.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { DIDSessionsService } from 'src/app/services/didsessions.service';
@@ -18,7 +18,7 @@ export class LanguagePage implements OnInit {
 
   constructor(
     public languageService: LanguageService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public translate: TranslateService,
     private identityService: IdentityService,
     private uxService: UXService,

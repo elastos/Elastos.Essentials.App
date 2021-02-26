@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopoverController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
@@ -15,7 +15,7 @@ export class OptionsComponent implements OnInit {
 
   constructor(
     private navParams: NavParams,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public translate: TranslateService,
     private popoverCtrl: PopoverController,
     private events: Events

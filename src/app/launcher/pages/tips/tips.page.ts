@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Tip } from '../../model/tip.model';
 import { TipAudience } from '../../model/tipaudience.model';
@@ -19,7 +19,7 @@ export class TipsPage implements OnInit {
 
   constructor(
     private navParams: NavParams,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private modalController: ModalController,
     private translate: TranslateService,
     private tipsService: TipsService

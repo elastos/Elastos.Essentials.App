@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ThemeService } from '../../services/theme.service';
+import { GlobalThemeService } from '../../services/global.theme.service';
 import { TitlebarService } from 'src/app/services/titlebar.service';
 import { PopoverController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
@@ -15,7 +15,7 @@ export class TitleBarComponent implements OnInit {
 
   constructor(
     public titlebarService: TitlebarService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private popoverCtrl: PopoverController
   ) {
   }

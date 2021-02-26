@@ -9,7 +9,7 @@ import { Util } from 'src/app/didsessions/services/util';
 import { Styling } from 'src/app/didsessions/services/styling';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 @Component({
@@ -44,7 +44,7 @@ export class CreateIdentityPage {
     private identityService: IdentityService,
     private uxService: UXService,
     private translate: TranslateService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private splashScreen: SplashScreen,
     private didSessions: DIDSessionsService
   ) {

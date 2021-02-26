@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppTheme, ThemeService } from 'src/app/services/theme.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class NativeService {
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private translate: TranslateService,
-    private theme: ThemeService
+    private theme: GlobalThemeService
   ) { }
 
   appStartErrToast() {

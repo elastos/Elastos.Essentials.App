@@ -30,6 +30,7 @@
       "node",
       "cordova",
       "elastos-cordova-plugin-did",
+      "elastos-cordova-plugin-hive",
       "cordova-plugin-camera"
     ],
     "lib": [

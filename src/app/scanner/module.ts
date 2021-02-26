@@ -65,4 +65,4 @@ export function TranslateLoaderFactory() {
   ],
   schemas:[CUSTOM_ELEMENTS_SCHEMA] // Needed to find ion-back-button, etc
 })
-export class AppModule {}
+export class ScannerModule {}

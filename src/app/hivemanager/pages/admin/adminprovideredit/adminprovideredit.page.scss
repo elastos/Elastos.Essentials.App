@@ -1,0 +1,98 @@
+.editContainer {
+    padding: 10px 20px;
+
+    h1 {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: -0.6px;
+        line-height: 0.8;
+        text-align: left;
+        margin-left: 5px;
+        margin-bottom: 10px;
+    }
+
+    ion-input {
+        background: #f0f1ff;
+        border-radius: 15px;
+        font-size: 14px;
+        font-weight: 400;
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --padding-top: 15px;
+        --padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+    ion-row {
+        padding: 0;
+        margin: 0 0 15px;
+        
+        ion-col {
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            h2, ion-input {
+                margin: 0;
+                width: 100%;
+                font-size: 14px;
+                font-weight: 500;
+                text-align: center;
+                border-radius: 17px;
+                background-color: #ffffff;
+                box-shadow: 0 3px 15px 0 #ededf0;
+                padding: 20px;
+            }
+
+            ion-icon {
+                margin-top: 7.5px;
+                font-size: 25px;
+            }
+
+            .icon-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .left-icon {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+}
+
+.darkContainer {
+    ion-input {
+        background: #464660;
+        box-shadow: 0 3px 15px 0 #151626;
+    }
+
+    ion-row {
+        ion-col {
+            h2, ion-input {
+                box-shadow: 0 3px 15px 0 #151626;
+                background-color: #2b2c49;
+            }
+        }
+    }
+}
+
+ion-footer {
+    padding: 10px;
+
+    div {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        ion-button {
+            width: 48%;
+        }
+    
+        .onlyDeleteButton {
+            width: 100%;
+        }
+    }
+}

@@ -12,7 +12,7 @@ import {
 
 import { NotificationManagerService } from './notificationmanager.service';
 import { DidmanagerService } from './didmanager.service';
-import { ThemeService } from '../../services/theme.service';
+import { GlobalThemeService } from '../../services/global.theme.service';
 import { NativeService } from './native.service';
 import { BackupService } from './backup.service';
 import { Events } from './events.service';
@@ -24,7 +24,7 @@ import { Tip } from '../model/tip.model';
 
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
-import { StorageService } from 'src/app/services/storage.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 enum MessageType {
@@ -79,7 +79,7 @@ export class AppmanagerService {
         private events: Events,
         private didService: DidmanagerService,
         private native: NativeService,
-        private storage: StorageService,
+        private storage: GlobalStorageService,
         private appManager: TemporaryAppManagerPlugin,
         private didSessions: DIDSessionsService
     ) {}
@@ -160,7 +160,7 @@ export class AppmanagerService {
                         description: this.translate.instant('app-scanner-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
                         id: 'org.elastos.trinity.dapp.qrcodescanner',
-                        routerPath: '/scanner/home'
+                        routerPath: '/scanner/scan'
                     },
                     {
                         cssId: 'Settings',

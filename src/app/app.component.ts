@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Platform, ModalController, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
-import { StorageService } from './services/storage.service';
-import { ThemeService } from './services/theme.service';
+import { GlobalStorageService } from './services/global.storage.service';
+import { GlobalThemeService } from './services/global.theme.service';
 import { LauncherInitService } from './launcher/services/init.service';
 import { DIDSessionsInitService } from './didsessions/services/init.service';
 import { DIDSessionsService } from './services/didsessions.service';
@@ -19,8 +19,8 @@ export class AppComponent {
         public modalCtrl: ModalController,
         private navController: NavController,
         public splashScreen: SplashScreen,
-        public storage: StorageService,
-        public theme: ThemeService,
+        public storage: GlobalStorageService,
+        public theme: GlobalThemeService,
         private launcherInitService: LauncherInitService,
         private didSessionsInitService: DIDSessionsInitService,
         private scannerInitService: ScannerInitService,

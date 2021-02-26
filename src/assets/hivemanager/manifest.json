@@ -1,0 +1,52 @@
+{
+    "id": "org.elastos.trinity.dapp.hivemanager",
+    "did": "did:elastos:iikZ53t3KxdXNbs5LDcajNHhrzVB1w2w9R",
+    "version": "0.0.6",
+    "version_code": 6,
+    "name": "Hive Manager",
+    "short_name": "Hive Manager",
+    "short_description": "Hive storage space manager for elastOS",
+    "description": "This capsule lets users manage their Hive vault storage, hive subscriptions, transfer data to another vault, and more.",
+    "start_url": "index.html",
+    "type": "app",
+    "start_visible": "hide",
+    "category": "tool",
+    "icons": [
+        {
+            "src": "assets/images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/logo.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        }
+    ],
+    "author": {
+        "name": "Trinity Tech Co., Ltd.",
+        "email": "contact@trinity-tech.io",
+        "website": "https://www.trinity-tech.io"
+    },
+    "default_locale": "en",
+    "plugins": [
+        "Device",
+        "NetworkStatus",
+        "HivePlugin"
+    ],
+    "urls": [
+        "https://*.sentry.io/*",
+        "https://*"
+    ],
+    "intent_filters": [
+        {
+            "action": "https://hive.elastos.net/setupvaultprompt"
+        }
+    ],
+    "startup_service": [
+        "mainbackgroundservice"
+    ],
+    "background_color": "#4e8ef7",
+    "theme_display": "show",
+    "theme_color": "#4e8ef7"
+}

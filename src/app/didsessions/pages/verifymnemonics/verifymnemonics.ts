@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 type MnemonicWord = {
     text: string;
@@ -30,7 +30,7 @@ export class VerifyMnemonicsPage {
       public zone: NgZone,
       private identityService: IdentityService,
       private uxService: UXService,
-      public theme: ThemeService,
+      public theme: GlobalThemeService,
       private translate: TranslateService,
       private alertCtrl: AlertController,
       private navCtrl: NavController

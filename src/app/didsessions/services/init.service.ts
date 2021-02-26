@@ -15,7 +15,7 @@ export class DIDSessionsInitService {
   ) {}
 
   public async init(): Promise<void> {
-    console.log("DID Sessions service is initializing");
+    console.log("DID Sessions init service is initializing");
 
     this.language.init();
     this.identityService.init();

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, NavParams, IonInput } from '@ionic/angular';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'mnemonicpasscheck',
@@ -16,7 +16,7 @@ export class MnemonicPassCheckComponent implements OnInit {
 
   constructor(
     public modalCtrl: ModalController,
-    public theme: ThemeService
+    public theme: GlobalThemeService
   ) {
   }
 

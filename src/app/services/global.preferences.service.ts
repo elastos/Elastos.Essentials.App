@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
-import { StorageService } from './storage.service';
+import { GlobalStorageService } from './global.storage.service';
 
 export type AllPreferences = {[key:string]:any};
 
@@ -13,10 +13,10 @@ export type Preference<T> = {
 @Injectable({
   providedIn: 'root'
 })
-export class PreferencesService {
+export class GlobalPreferencesService {
   public preferenceListener = new Subject<Preference<any>>();
 
-  constructor(private storage: StorageService) {
+  constructor(private storage: GlobalStorageService) {
   }
 
   private getDefaultPreferences(): AllPreferences {

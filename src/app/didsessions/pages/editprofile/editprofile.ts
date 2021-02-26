@@ -4,7 +4,7 @@ import { NavController, IonInput, ModalController } from '@ionic/angular';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didsessions/services/identity.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 export type EditProfileStateParams = {
   onCompletion: Promise<string>;
@@ -25,7 +25,7 @@ export class EditProfilePage {
 
   constructor(
     private uxService: UXService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private translate: TranslateService,
     private identityService: IdentityService,
     private actRoute: ActivatedRoute,

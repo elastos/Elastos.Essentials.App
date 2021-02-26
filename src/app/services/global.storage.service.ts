@@ -10,7 +10,7 @@ export type Preference<T> = {
 @Injectable({
   providedIn: 'root'
 })
-export class StorageService {
+export class GlobalStorageService {
   constructor(
     private storage: Storage,
     private platform: Platform

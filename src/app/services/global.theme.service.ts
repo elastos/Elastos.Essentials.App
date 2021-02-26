@@ -3,7 +3,7 @@ import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AppmanagerService } from '../launcher/services/appmanager.service';
 import { DIDSessionsService } from './didsessions.service';
-import { PreferencesService } from './preferences.service';
+import { GlobalPreferencesService } from './global.preferences.service';
 
 export enum AppTheme {
   LIGHT,
@@ -13,13 +13,13 @@ export enum AppTheme {
 @Injectable({
   providedIn: 'root'
 })
-export class ThemeService {
+export class GlobalThemeService {
   public activeTheme = new BehaviorSubject<AppTheme>(AppTheme.LIGHT);
 
   //public darkMode = false;
   public isAndroid = false;
 
-  constructor(private platform: Platform, /*private backupService: BackupService,*/ private prefs: PreferencesService, private didSessions: DIDSessionsService) {
+  constructor(private platform: Platform, /*private backupService: BackupService,*/ private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
     this.platform.ready().then(() => {
       this.fetchThemeFromPreferences();
     });

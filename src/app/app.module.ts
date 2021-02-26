@@ -20,6 +20,8 @@ import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { DIDSessionsModule } from './didsessions/module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ScannerModule } from './scanner/module';
+import { HiveManagerModule } from './hivemanager/module';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -53,14 +55,24 @@ export class SentryErrorHandler implements ErrorHandler {
     AppComponent
   ],
   imports: [
+    /*
+     * Sub-apps modules
+     */
+    LauncherModule,
+    DIDSessionsModule,
+    ScannerModule,
+    HiveManagerModule,
+    /*
+     * Generic modules
+     */
     BrowserModule,
     BrowserAnimationsModule,
     //HttpClientModule,
     //AngularFittextModule,
-    LauncherModule,
-    DIDSessionsModule,
     SharedComponentsModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({
+      mode: 'md'
+    }),
     AppRoutingModule,
     FormsModule,
     DragulaModule.forRoot(),

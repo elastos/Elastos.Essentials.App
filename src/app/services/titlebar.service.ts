@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppTheme, ThemeService } from './theme.service';
+import { AppTheme, GlobalThemeService } from './global.theme.service';
 
   /**
    * Built-in convenience icons that can be used as icon paths instead fo providing a custom icon path.
@@ -107,7 +107,7 @@ export class TitlebarService {
   public menuItems: TitleBarMenuItem[] = [];
 
   constructor(
-    public themeService: ThemeService,
+    public themeService: GlobalThemeService,
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);

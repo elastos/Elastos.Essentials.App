@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import * as moment from 'moment';
 
-import { AppTheme, ThemeService } from 'src/app/services/theme.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import {
   NotificationManagerService,
   LauncherNotification,
@@ -29,7 +29,7 @@ export class NotificationsPage implements OnInit {
     private sanitizer: DomSanitizer,
     private modalController: ModalController,
     public notificationService: NotificationManagerService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public translate: TranslateService,
     public appService: AppmanagerService,
     private tipsService: TipsService,

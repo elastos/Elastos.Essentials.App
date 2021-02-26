@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from '../../services/language.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UXService } from '../../services/ux.service';
 import { IdentityService, NextStep, NavigateWithCompletionEnterData } from '../../services/identity.service';
@@ -20,7 +20,7 @@ export class ChooseImportedDIDPage implements OnInit {
 
   constructor(
     public languageService: LanguageService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private uxService: UXService,
     private identityService: IdentityService,
     private events: Events,

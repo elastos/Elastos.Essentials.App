@@ -3,7 +3,7 @@ import { NavController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IdentityService, IdentityGroup } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
@@ -26,7 +26,7 @@ export class PickIdentityPage {
     public identityService: IdentityService,
     private changeDetector: ChangeDetectorRef,
     public uxService: UXService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public translate: TranslateService,
     private events: Events,
     public popupProvider: PopupProvider,

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -10,7 +10,7 @@ import { ModalController } from '@ionic/angular';
 export class PrintoptionsComponent implements OnInit {
 
   constructor(
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private modalCtrl: ModalController
   ) { }
 

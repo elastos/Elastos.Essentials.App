@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Util } from '../../services/util';
 import { MnemonicPassCheckComponent } from 'src/app/didsessions/components/mnemonicpasscheck/mnemonicpasscheck.component';
 import { UXService } from 'src/app/didsessions/services/ux.service';
-import { ThemeService } from 'src/app/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didsessions/services/identity.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { Events } from 'src/app/didsessions/services/events.service';
@@ -55,7 +55,7 @@ export class ImportDIDPage {
         private translate: TranslateService,
         private popup: PopupProvider,
         private actRoute: ActivatedRoute,
-        public theme: ThemeService,
+        public theme: GlobalThemeService,
         private events: Events,
     ) {
         const navigation = this.router.getCurrentNavigation();
