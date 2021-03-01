@@ -1,6 +1,4 @@
 export const en = {
-  'please-wait': 'Please wait...',
-  'sorry': 'Sorry',
   'ok': 'Okay',
   'no-qr-err': 'No QR code was detected in the selected picture. Please try again.',
   'scan-err': 'Something went wrong while scanning your selected picture. Please try again.',

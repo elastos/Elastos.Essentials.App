@@ -1,6 +1,4 @@
 export const fr = {
-  'please-wait': 'Veuillez patienter...',
-  'sorry': 'Désolé',
   'ok': 'Ok',
   'no-qr-err': 'Aucun QR code n\'a été trouvé dans l\'image sélectionnée. Veuillez essayer à nouveau.',
   'scan-err': 'Erreur lors de l\'analyse de votre image. Veuillez essayer à nouveau.',

@@ -46,7 +46,6 @@ export class GlobalThemeService {
       // TODO @chad: this is launcher's backup service. Move to launcher folder and initialize in a better location
       // this.backupService.init();
     }
-    console.log("DEBUG-B");
     let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "ui.darkmode");
     if (currentlyUsingDarkMode)
       this.activeTheme.next(AppTheme.DARK);

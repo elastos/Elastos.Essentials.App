@@ -1,5 +1,6 @@
 export class TranslationsLoader {
     private static modulesWithTranslations = [
+        "common",       // Shared strings for generic keywords such as cancel, open, add, etc.
         "launcher",
         "didsessions",
         "hivemanager",
@@ -31,7 +32,7 @@ export class TranslationsLoader {
                 for (let key of Object.keys(translation[lang])) {
                     let value = translation[lang][key];
                     if ((key in TranslationsLoader.loadedTranslations[lang]))
-                        console.error("Duplicate translation key! Fix this - Overwriting entry for key:", key);
+                        console.error("Duplicate translation key! Fix this - Overwriting entry for key:", key, "Imported by module:", module);
 
                     TranslationsLoader.loadedTranslations[lang][key] = value;
                 }

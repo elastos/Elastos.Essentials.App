@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { TranslateService } from '@ngx-translate/core';
+import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
 import { AppmanagerService } from './appmanager.service';
-import { DidmanagerService } from './didmanager.service';
+import { DIDManagerService } from './didmanager.service';
 import { TipsService } from './tips.service';
 
 @Injectable({
@@ -10,18 +11,25 @@ import { TipsService } from './tips.service';
 })
 export class LauncherInitService {
   constructor(
-    public appManager: AppmanagerService,
-    public didService: DidmanagerService,
-    private translate: TranslateService
+    public didService: DIDManagerService,
+    private translate: TranslateService,
+    private didSessions: DIDSessionsService,
+    private appManagerService: AppmanagerService,
+    private tipsService: TipsService,
+    private didManager: DIDManagerService
   ) {}
 
   public async init(): Promise<void> {
     console.log("Launcher service is initializing");
 
-    // Mandatory services start
-    await this.appManager.init();
-    await this.didService.init();
+    this.didManager.init();
 
-    console.log("Launcher service - mandatory dependencies are initialized");
+    this.didSessions.signedInIdentityListener.subscribe((identity: IdentityEntry) => {
+      if (identity) {
+        // No blocking services start
+        this.appManagerService.init();
+        this.tipsService.init();
+      }
+    });
   }
 }

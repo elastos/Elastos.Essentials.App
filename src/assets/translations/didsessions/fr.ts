@@ -1,6 +1,5 @@
 export const fr = {
   // Titlebar
-  'language-setting': 'Sélection de la langue',
   'create-identity': 'Création d\'identité',
   'import-my-did': 'Importer une identité',
   'identity-name': 'Choix du nom',
@@ -11,11 +10,6 @@ export const fr = {
 
   // Placeholder
   'enter-name': 'Entrez le nom ici',
-
-  // Options
-  'sign-in': 'Connexion',
-  'sign-out': 'Déconnexion',
-  'delete': 'Supprimer',
 
   // Popups
   'mnemonic-invalid': 'Mnémonique invalide',
@@ -37,14 +31,7 @@ export const fr = {
   'import-again-cancel': 'Annuler',
   'import-again-yes': 'Oui',
 
-  // Actions
-  'continue': 'Continuer',
-
-  // Language screens
-  'system_language': 'Langue du système',
-
   // Create screen
-  'welcome': 'Bienvenue dans elastOS',
   'welcome-message1': 'Nous devons vous créer une identité privée. Nous appelons ça un DID.',
   'welcome-message2': '(Identité Décentralisée)',
   'welcome-message3': 'Après cela, vous pourrez gérer vos données personnelles et commencer à explorer le smart web.',
@@ -82,7 +69,6 @@ export const fr = {
   // Delete Identity
   'delete-identity': 'Suppression d\'identité',
   'delete-prompt': 'Cette action supprimera votre identité localement, mais vous pourrez toujours la ré-importer plus tard.',
-  'cancel': 'Annuler',
 
   // retrieve identities
   'retrieve-prompt': 'Recherche et importation des identités, veuillez patienter.',

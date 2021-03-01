@@ -9,16 +9,13 @@ export const en = {
     'system-notification': 'System notification',
     'contact-notification': 'From one of your contacts',
     'from-unknown-contact': 'From an unknown contact',
-    'sign-out': 'Sign Out',
     'share': 'Share',
     'favorite': 'Favorite',
     'share-add-me-as-friend': 'Add me as a friend in elastOS',
     "not-available-on-ios": "Feature not available on iOS",
     'restoring-backup': "Restoring backup in progress",
     'installed': "installed",
-    'please-wait': "Please wait...",
     'signing-out': 'Signing out...',
-    "sorry": "Sorry",
     'no-app-can-handle-request': 'No application can handle the requested action',
     'close': 'Close',
 
@@ -42,7 +39,6 @@ export const en = {
     'share-dapp': 'Try this app: ',
 
     /********** Home Page **********/
-    'elastos-essentials': 'elastOS Essentials',
     'dapp-browser': 'Capsule Browser',
     'wallet': 'Wallet',
     'identity': 'Identity',
@@ -64,7 +60,6 @@ export const en = {
     'welcome-to-a': 'Welcome to a',
     'secure-environment': 'secure environment',
     'introduction-0':'What you know about the old internet is blocked within elastOS by default. This means you are free to browse decentralized applications, manage a unique identity, and have your own crypto wallet all in a safe, secure sandboxed environment where network traffic is restricted.',
-    'continue': 'Continue',
     'entire-ecosystem-that': 'Entire ecosystem that',
     'we-call-capsules': "we call 'Capsules'",
     'introduction-1': 'You can browse your favorite Capsules which could be anything from digital assets to mini-websites.Keep your favorites on the home screen for easy access and explore more capsules by looking at what your contacts have.',

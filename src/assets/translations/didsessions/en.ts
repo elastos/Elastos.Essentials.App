@@ -1,6 +1,5 @@
 export const en = {
   // Titlebar
-  'language-setting': 'Select Your Language',
   'create-identity': 'Create Identity',
   'import-my-did': 'Import Identity',
   'identity-name': 'Identity Name',
@@ -11,11 +10,6 @@ export const en = {
 
   // Placeholder
   'enter-name': 'Enter Name Here',
-
-  // Options
-  'sign-in': 'Sign In',
-  'sign-out': 'Sign Out',
-  'delete': 'Delete',
 
   // Popups
   'mnemonic-invalid': 'Mnemonic invalid',
@@ -37,14 +31,7 @@ export const en = {
   'import-again-cancel': 'Cancel',
   'import-again-yes': 'Yes',
 
-  // Actions
-  'continue': 'Continue',
-
-  // Language screen
-  'system_language': 'System Language',
-
   // Create screen
-  'welcome': 'Welcome to elastOS',
   'welcome-message1': 'We need to set you up with a unique identity. We call this a DID',
   'welcome-message2': '(Decentralized Identifier).',
   'welcome-message3': 'With this, you can manage all your personal data and start exploring the new Smart Web.',
@@ -82,7 +69,6 @@ export const en = {
   // Delete Identity
   'delete-identity': 'Delete Identity',
   'delete-prompt': 'This action will cause this Identity to be deleted but you can always import it again later.',
-  'cancel': 'Cancel',
 
   // retrieve identities
   'retrieve-prompt': 'Trying to retrieve identities, please wait.',

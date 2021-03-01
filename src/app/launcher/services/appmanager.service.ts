@@ -11,7 +11,7 @@ import {
 } from '@ionic/angular';
 
 import { NotificationManagerService } from './notificationmanager.service';
-import { DidmanagerService } from './didmanager.service';
+import { DIDManagerService } from './didmanager.service';
 import { GlobalThemeService } from '../../services/global.theme.service';
 import { NativeService } from './native.service';
 import { BackupService } from './backup.service';
@@ -78,7 +78,7 @@ export class AppmanagerService {
         private navController: NavController,
         private router: Router,
         private events: Events,
-        private didService: DidmanagerService,
+        private didService: DIDManagerService,
         private native: NativeService,
         private storage: GlobalStorageService,
         private appManager: TemporaryAppManagerPlugin,
@@ -222,19 +222,6 @@ export class AppmanagerService {
             case MessageType.INTERNAL:
                 switch (params.action) {
                     case 'toggle':
-                        break;
-                    case 'minimize':
-                        // Update ID Header if changes were made in DID app
-                        if (ret.from === 'org.elastos.trinity.dapp.did') {
-                            this.zone.run(() => {
-                                console.log('Checking for DID Change');
-                                this.didService.init();
-                            });
-                        }
-
-                        this.zone.run(() => {
-                            this.native.hideLoading();
-                        });
                         break;
                     case 'receivedIntent':
                         console.log('receivedIntent message', ret);

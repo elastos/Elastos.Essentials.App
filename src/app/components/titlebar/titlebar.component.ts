@@ -10,7 +10,6 @@ import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, Ti
   styleUrls: ['./titlebar.component.scss'],
 })
 export class TitleBarComponent {
-
   public menu: any = null;
 
   constructor(
@@ -22,7 +21,7 @@ export class TitleBarComponent {
     });
   }
 
-  public title: string = 'Elastos Essentials';
+  public title: string = "";
 
   public visibile: boolean = true;
   public menuVisible: boolean = false;

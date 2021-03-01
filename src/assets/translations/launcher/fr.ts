@@ -9,16 +9,13 @@ export const fr = {
     'system-notification': 'Notification système',
     'contact-notification': 'De l\'un de vos contacts',
     'from-unknown-contact': 'Contact inconnu',
-    'sign-out': 'Déconnexion',
     'share': 'Partager',
     'favorite': 'Favoris',
     'share-add-me-as-friend': 'Ajoutez-moi comme ami dans elastOS',
     "not-available-on-ios": "Fonctionnalité non disponible sur iOS",
     'restoring-backup': "Restoration de votre sauvegarde en cours",
     'installed': "installé",
-    'please-wait': "Veuillez patienter...",
     'signing-out': 'Déconnexion...',
-    "sorry": "Désolé",
     'no-app-can-handle-request': "Aucune application ne peut prendre en charge cette requête",
     'close': 'Fermer',
 
@@ -42,7 +39,6 @@ export const fr = {
     'share-dapp': 'Essayez cette appli: ',
 
     /********** Home Page **********/
-    'elastos-essentials': 'elastOS Essentials',
     'dapp-browser': "Navigateur de capsules",
     'wallet': 'Portefeuille',
     'identity': 'Identité',
@@ -64,7 +60,6 @@ export const fr = {
     'welcome-to-a': 'Bienvenue dans un',
     'secure-environment': 'environnement sécurisé',
     'introduction-0': 'Ce que vous connaissez d\'internet est bloqué par défaut dans elastOS. Vous êtes maintenant libre de naviguer parmi des applications décentralisées, gérer votre propre identité votre portefeuille dans un environnement sécurisé où les communications http sont bloquées.',
-    'continue': 'Continuer',
     'entire-ecosystem-that': 'Ecosystème',
     'we-call-capsules': "que l\'on appelle 'Capsules'",
     'introduction-1': 'Vous pouvez ici utiliser vos capsules préférées qui peuvent être des objets numériques ou des mini-sites web. Conservez vos favoirs sur l\'écran d\'accueil et explorez de nouvelles capsules que vous trouverez via vos contacts.',

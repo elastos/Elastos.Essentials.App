@@ -62,7 +62,7 @@ export class GlobalLanguageService {
       }
     });
 
-    await this.fetchLanguageInfo();
+    //await this.fetchLanguageInfo();
   }
 
   /**

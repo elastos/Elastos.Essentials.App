@@ -4,7 +4,6 @@ export const en = {
     // Titles
     'settings': 'Settings',
     'capsule-setting': 'Capsule Settings',
-    'language-setting': 'Languages',
     'about-setting': 'About',
     'developer-setting': 'Developer Options',
     'display-setting': 'Change Theme',
@@ -26,7 +25,6 @@ export const en = {
     'help':'Help',
 
     /********** Language Page **********/
-    'system_language': 'System Language',
 
     /********** About Page **********/
     'version': 'Version',
@@ -74,9 +72,7 @@ export const en = {
     'delete-app': 'Delete Capsule',
     'delete-app-title': 'Delete Capsule',
     'delete-app-prompt': 'This app will be deleted permanently. Are you sure you want to do this?',
-    'cancel': 'Cancel',
     'clear': 'Clear',
-    'delete': 'Delete',
     'open': 'Open',
 
     /********** App Categories **********/

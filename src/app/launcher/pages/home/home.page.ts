@@ -10,7 +10,7 @@ import * as moment from 'moment';
 import { NotificationManagerService } from '../../services/notificationmanager.service';
 import { OptionsComponent } from '../../components/options/options.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { DidmanagerService } from '../../services/didmanager.service';
+import { DIDManagerService } from '../../services/didmanager.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -36,7 +36,7 @@ export class HomePage implements OnInit {
     private notification: NotificationManagerService,
     private appManager: TemporaryAppManagerPlugin,
     public appService: AppmanagerService,
-    public didService: DidmanagerService
+    public didService: DIDManagerService
   ) {
   }
 
@@ -46,7 +46,7 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
     // Show badge if there are notifications.
     this.notification.getNotifications();
-    this.titleBar.setTitle('Elastos Essentials');
+    this.titleBar.setTitle('app-name');
   }
 
   ionViewDidEnter() {

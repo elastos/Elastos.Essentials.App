@@ -4,7 +4,6 @@ export const zh = {
      // Titles
      'settings': '设置',
      'capsule-setting': '胶囊管理',
-     'language-setting': '语言设置',
      'about-setting': '关于亦来云',
      'developer-setting': '开发者选项',
      'passwordmanager-setting':'密码管理器',
@@ -26,7 +25,6 @@ export const zh = {
      'help':'帮助',
 
      /********** Language Page **********/
-     'system_language': '系统语言',
 
      /********** About Page **********/
      'version': '版本号',
@@ -74,9 +72,7 @@ export const zh = {
      'delete-app': '删除',
      'delete-app-title': '删除应用',
      'delete-app-prompt': '该应用程序将被永久删除。 您确定要这么做吗？',
-     'cancel': '取消',
      'clear': '清除',
-     'delete': '删除',
      'open': '打开',
 
      /********** App Categories **********/

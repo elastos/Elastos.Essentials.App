@@ -4,7 +4,6 @@ export const fr = {
     // Titles
     'settings': 'Paramètres',
     'capsule-setting': "Gestionnaire d'application",
-    'language-setting': 'Langues',
     'about-setting': "A propos d'elastOS",
     'developer-setting': 'Options pour développeurs',
     'display-setting': 'Thème',
@@ -26,7 +25,6 @@ export const fr = {
     'help':'Aide',
 
     /********** Language Page **********/
-    'system_language': 'Langue du système',
 
     /********** About Page **********/
     'version': 'Version',
@@ -74,9 +72,7 @@ export const fr = {
     'delete-app': 'Effacer l\'application',
     'delete-app-title': 'Supprimer l\'application',
     'delete-app-prompt': 'Cette application sera supprimée définititement, est-ce bien ce que vous souhaitez faire?',
-    'cancel': 'Annuler',
     'clear': 'Effacer',
-    'delete': 'Supprimer',
     'open': 'Ouvrir',
 
     /********** App Categories **********/

@@ -1,6 +1,5 @@
 export const zh = {
   // Titlebar
-  'language-setting': '选择语言',
   'create-identity': '创建身份',
   'import-my-did': '导入身份',
   'identity-name': '身份名称',
@@ -11,11 +10,6 @@ export const zh = {
 
   // Placeholder
   'enter-name': '在此输入名称',
-
-  // Options
-  'sign-in': '登录',
-  'sign-out': '注销',
-  'delete': '删除',
 
   // Popups
   'mnemonic-invalid': '助记词无效',
@@ -37,14 +31,7 @@ export const zh = {
   'import-again-cancel': '取消',
   'import-again-yes': '是的',
 
-  // Actions
-  'continue': '继续',
-
-  // Language screen
-  'system_language': '系统语言',
-
   // Create screen
-  'welcome': '欢迎来到elastOS',
   'welcome-message1': '我们需要给您一个独特的身份。我们称之为 DID',
   'welcome-message2': '(去中心化身份)',
   'welcome-message3': '这样，您就可以管理所有个人数据并开始探索新的智能互联网。',
@@ -82,7 +69,6 @@ export const zh = {
   // Delete Identity
   'delete-identity': '删除身份',
   'delete-prompt': '此身份信息将从本机删除，您随时可以再次导入它。',
-  'cancel': '取消',
 
   // retrieve identities
   'retrieve-prompt': '正在获取身份信息，请稍候...',

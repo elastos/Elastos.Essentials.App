@@ -9,16 +9,13 @@ export const zh = {
     'system-notification': '系统消息',
     'contact-notification': '好友的消息',
     'from-unknown-contact': '陌生人的消息',
-    'sign-out': '注销',
     'share': '分享',
     'favorite': '收藏',
     'share-add-me-as-friend': '在elastOS里添加我为好友',
     "not-available-on-ios": "功能在iOS上不可用",
     'restoring-backup': "恢复备份正在进行中",
     'installed': "已安装",
-    'please-wait': "请稍候...",
     'signing-out': '注销中...',
-    "sorry": "抱歉",
     'no-app-can-handle-request': '没有应用程序可以处理此请求',
     'close': '关闭',
 
@@ -42,7 +39,6 @@ export const zh = {
     'share-dapp': '试试这个程序： ',
 
     /********** Home Page **********/
-    'elastos-essentials': 'elastOS Essentials',
     'dapp-browser': '胶囊浏览器',
     'wallet': '钱包',
     'identity': '身份',
@@ -64,7 +60,6 @@ export const zh = {
     'welcome-to-a': '欢迎来到一个',
     'secure-environment': '安全的环境',
     'introduction-0': '在elastOS中，您将对旧互联网有新的理解。这意味着您可以自由浏览去中心的应用程序，管理独特的身份，并在网络受限的、安全的沙箱环境中拥有自己的加密钱包。',
-    'continue': '继续',
     'entire-ecosystem-that': '整个生态系统',
     'we-call-capsules': '我们称之为胶囊',
     'introduction-1': '您可以浏览自己喜欢的胶囊，从数字资产到小型网站，一应俱全。 将您的收藏夹保留在主屏幕上，以方便访问，并通过查看联系人拥有的内容来探索更多胶囊。',
