@@ -11,6 +11,7 @@ import { ScannerInitService } from './scanner/services/init.service';
 import { HiveManagerInitService } from './hivemanager/services/init.service';
 import { SettingsInitService } from './settings/services/init.service';
 import { GlobalLanguageService } from './services/global.language.service';
+import { ContactsInitService } from './contacts/services/init.service';
 
 @Component({
     selector: 'app-root',
@@ -30,6 +31,7 @@ export class AppComponent {
         private scannerInitService: ScannerInitService,
         private hiveInitService: HiveManagerInitService,
         private settingsInitService: SettingsInitService,
+        private contactsInitService: ContactsInitService,
         private language: GlobalLanguageService
     ) {
     }
@@ -51,6 +53,7 @@ export class AppComponent {
             await this.scannerInitService.init();
             await this.hiveInitService.init();
             await this.settingsInitService.init();
+            await this.contactsInitService.init();
 
             // Navigate to the right startup screen
             console.log("Navigating to start screen");

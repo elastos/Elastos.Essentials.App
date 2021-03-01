@@ -1,0 +1,25 @@
+<app-titlebar></app-titlebar>
+
+<ion-content>
+  <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+    <ion-row>
+      <ion-input
+        #input
+        autosize
+        clearInput
+        placeholder="{{'enter-identity-placeholder'|translate}}"
+        [(ngModel)]="didInput"
+        mode="ios"
+      >
+      </ion-input>
+    </ion-row>
+    <ion-row class="btn-container">
+      <ion-button color="success" (click)="addContact()">
+        <ion-label>{{ 'add-contact' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-row class="msg-container">
+      <p class="ion-text-center">{{ 'add-contact-prompt' | translate }}</p>
+    </ion-row>
+  </ion-grid>
+</ion-content>

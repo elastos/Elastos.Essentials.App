@@ -1,0 +1,54 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+    <ion-row class="input-container">
+      <ion-col class="input-title" size="2.5">
+        <ion-label>{{ 'name' | translate }}</ion-label>
+      </ion-col>
+      <ion-col class="input" size="9.5">
+        <ion-input
+          #input
+          placeholder="{{ 'custom-name' | translate }}"
+          [(ngModel)]="customName"
+          (ngModelChange)="nameChanged($event)">
+        </ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row class="input-container">
+      <ion-col class="input-title" size="2.5">
+        <ion-label>{{ 'bio' | translate }}</ion-label>
+      </ion-col>
+      <ion-col class="input" size="9.5">
+        <ion-input
+          placeholder="{{ 'custom-note' | translate }}"
+          [(ngModel)]="customNote"
+          (ngModelChange)="noteChanged($event)">
+        </ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row class="input-container">
+      <ion-col class="input-title" size="6">
+        <ion-label>{{ 'avatar' | translate }}</ion-label>
+      </ion-col>
+      <ion-col class="input" size="6" (click)="getPhoto()">
+        <ion-icon *ngIf="!theme.darkMode" src='assets/images/arrow.svg'></ion-icon>
+        <ion-icon *ngIf="theme.darkMode" src='assets/images/darkmode/arrow.svg'></ion-icon>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="btn-container">
+      <ion-button color="success" (click)="customizeContact()">
+        <ion-label>{{ 'save-changes' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-row class="msg-container">
+      <p *ngIf="!contactAddedWithNoName" class="ion-text-center">
+        {{ 'customize-info' | translate }}
+      </p>
+      <p *ngIf="contactAddedWithNoName" class="ion-text-center">
+        {{ 'customize-info2' | translate }} <br><br>
+        {{ 'customize-info3' | translate }}
+      </p>
+    </ion-row>
+  </ion-grid>
+</ion-content>

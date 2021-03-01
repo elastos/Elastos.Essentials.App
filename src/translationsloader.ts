@@ -5,7 +5,8 @@ export class TranslationsLoader {
         "didsessions",
         "hivemanager",
         "scanner",
-        "settings"
+        "settings",
+        "contacts"
     ];
     private static languagesToLoad = [
         "en",

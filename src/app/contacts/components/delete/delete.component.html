@@ -1,0 +1,26 @@
+<div class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row class="delete-header">
+      <img src="/assets/images/warning.svg">
+      <h1 class="ion-padding-horizontal ion-text-center">{{ 'delete-contact' | translate }}</h1>
+  </ion-row>
+
+  <ion-row>
+    <ion-col class="message ion-no-padding">
+      <p class="ion-padding-horizontal">
+        {{ 'delete-msg' | translate }} <br>
+        {{ 'delete-msg2' | translate }}
+      </p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="btn-row">
+    <ion-col class="btn ion-activatable ripple" size="5" (click)="cancel()">
+      <ion-label>{{ 'cancel' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+    <ion-col class="btn ion-activatable ripple" size="5" (click)="deleteFriend()">
+      <ion-label>{{ 'confirm' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+</div>

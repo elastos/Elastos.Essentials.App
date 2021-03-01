@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  min-height: 100%;
+
+  .profile-container {
+    background: #ffffff;
+    border: 1.75px solid #6d74ef;
+    width: 90vw;
+    border-radius: 12px;
+
+    .img-row {
+      display: flex;
+      justify-content: center;
+
+      img {
+        height: 84px;
+        width: 84px;
+        margin-top: -42px;
+        border-radius: 50%;
+        box-shadow: 3px 3px 8px rgba(100,100,100,0.2);
+        overflow: hidden;
+        border: 1px solid #6d74ef;
+      }
+
+      .profile-img {
+        border-radius: 50%;
+        object-fit: cover;
+        overflow: hidden;
+        border: 1.5px solid #6d74ef;
+      }
+    }
+
+    .profile-name {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      h1 {
+        margin: 15px;
+        font-size: 22px;
+        font-weight: 600;
+        text-align: center;
+
+        span {
+          font-size: 12px;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .message {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f8f8ff;
+      height: 110px;
+      overflow: hidden;
+
+      p {
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        color: #161740;
+      }
+    }
+
+    .btn-row {
+      height: 80px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      .btn {
+        width: 167px;
+        height: 41px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        background-color: #f8f8ff;
+
+        ion-label {
+          font-size: 16px;
+          font-weight: 500;
+          color: #161740;
+        }
+      }
+    }
+  }
+}
+
+.darkContainer {
+  .profile-container {
+    background: #47495a;
+
+
+    .profile-name {
+      h1 {
+        color: #fdfeff;
+      }
+    }
+
+    .message {
+      background: #393A48;
+
+      p {
+        color: #fdfeff;
+      }
+    }
+
+    .btn-row {
+      .btn {
+        background: #393A48;
+
+        ion-label {
+          color: #fdfeff;
+        }
+      }
+    }
+  }
+}

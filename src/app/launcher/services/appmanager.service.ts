@@ -136,7 +136,7 @@ export class AppmanagerService {
                         description: this.translate.instant('app-contacts-description'),
                         icon: '/assets/launcher/ios/app-icons/contacts.svg',
                         id: 'org.elastos.trinity.dapp.friends',
-                        routerPath: '/contacts/home'
+                        routerPath: '/contacts/friends'
                     },
                 ]
             },

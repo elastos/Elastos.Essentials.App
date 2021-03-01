@@ -10,7 +10,6 @@ import {
   LauncherNotification,
   LauncherNotificationType
 } from '../../services/notificationmanager.service';
-import { not } from '@angular/compiler/src/output/output_ast';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TipsService } from '../../services/tips.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
@@ -32,8 +31,7 @@ export class NotificationsPage implements OnInit {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     public appService: AppmanagerService,
-    private tipsService: TipsService,
-    private appManager: TemporaryAppManagerPlugin
+    private tipsService: TipsService
   ) {
   }
 
@@ -55,12 +53,19 @@ export class NotificationsPage implements OnInit {
     }
     else if (notification.url && (notification.url !== '')) {
       console.log('NotificationsComponent sendUrlIntent');
+
+      // NOTE @chad: try to avoid the dependency notif page -> app manager service -> notif page
+      // For this, i think the notif page could avoid calling appservice directly and instand, send a kind of
+      // "open notification request" event that would be handled by the app manager service to execute the commented
+      // code below.
+
+      /* TODO @chad
       this.appManager.sendUrlIntent(notification.url,
         () => {console.log('sendUrlIntent success'); },
         (error) => {console.log('NotificationsComponent sendUrlIntent failed, ', error); }
-      );
+      );*/
     } else {
-      this.appManager.start(notification.app.id);
+      // TODO @chad this.appManager.start(notification.app.id);
     }
   }
 

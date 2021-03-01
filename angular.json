@@ -47,7 +47,14 @@
                 "input": "src/app/app.scss"
               }
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "easyqrcodejs",
+              "@elastosfoundation/trinity-dapp-sdk",
+              "hammerjs",
+              "dragula",
+              "qrcode"
+            ]
           },
           "configurations": {
             "production": {

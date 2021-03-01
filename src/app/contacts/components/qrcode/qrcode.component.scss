@@ -1,0 +1,58 @@
+ion-grid {
+  background: #ffffff;
+  height: 100%;
+  width: 100%;
+  padding: 20px 10px;
+
+  ion-row {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.45px;
+      color: #161740;
+    }
+
+    qrcode {
+      zoom: 0.7;
+      background: #ffffff;
+      border-radius: 17px;
+      display: inline-block;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 500;
+      color: #161740;
+    }
+  }
+
+  .reducePadding {
+    padding: 0;
+  }
+}
+
+.darkContainer {
+  background: #262641;
+
+  ion-row {
+    h1, h2 {
+      color: #ffffff;
+    }
+
+    qrcode {
+      zoom: 0.65;
+    }
+  }
+}
+
+
+
+
+

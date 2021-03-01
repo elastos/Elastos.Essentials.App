@@ -24,6 +24,7 @@ import { ScannerModule } from './scanner/module';
 import { HiveManagerModule } from './hivemanager/module';
 import { SettingsModule } from './settings/module';
 import { TranslationsLoader } from 'src/translationsloader';
+import { ContactsModule } from './contacts/module';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -89,6 +90,7 @@ export function TranslateLoaderFactory() {
     ScannerModule,
     HiveManagerModule,
     SettingsModule,
+    ContactsModule,
 
     /*
      * Generic modules

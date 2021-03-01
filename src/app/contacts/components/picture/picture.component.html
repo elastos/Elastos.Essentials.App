@@ -1,0 +1,53 @@
+<!-- <ion-header class="ion-no-border" [class.dark-header]="theme.darkMode">
+  <ion-toolbar mode="ios" [class.dark-header]="theme.darkMode">
+    <ion-buttons slot="start">
+      <ion-button (click)="appService.launcher()">
+        <img [src]="!theme.darkMode ? 'assets/titlebar/elastos.svg' : 'assets/titlebar/darkmode/elastos.svg'">
+      </ion-button>
+      <ion-button (click)="modalCtrl.dismiss()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Customize Contact</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content>
+  <ion-grid *ngIf="!avatar || !avatar.data">
+    <ion-row class="btn-row">
+      <ion-button color="success" (click)="takePicture(1)">
+        <ion-label>{{ 'take-pictures' | translate }}</ion-label>
+      </ion-button>
+      <ion-button color="success" (click)="takePicture(0)">
+        <ion-label>{{ 'photo-library' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid *ngIf="avatar && avatar.data && !oldAvatar">
+    <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
+    <ion-row class="btn-row submit">
+      <ion-button color="success" (click)="submit(true)">
+        <ion-label>{{ 'use' | translate }}</ion-label>
+      </ion-button>
+      <ion-button color="success" (click)="avatar.data = null">
+        <ion-label>{{ 'change' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid *ngIf="avatar && avatar.data && oldAvatar">
+    <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
+    <ion-row class="btn-row submit">
+      <ion-button color="success" (click)="submit(true)">
+        <ion-label>{{ 'use' | translate }}</ion-label>
+      </ion-button>
+      <ion-button color="success" (click)="avatar.data = null">
+        <ion-label>{{ 'change' | translate }}</ion-label>
+      </ion-button>
+      <ion-button color="success" (click)="submit(false)">
+        <ion-label>{{ 'delete' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </ion-grid>
+</ion-content>
