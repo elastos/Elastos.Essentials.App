@@ -7,8 +7,7 @@ import { ThemeService } from '../../services/theme.service';
   templateUrl: './warning.component.html',
   styleUrls: ['./warning.component.scss'],
 })
-export class WarningComponent implements OnInit {
-
+export class SettingsWarningComponent implements OnInit {
   constructor(
     public theme: ThemeService,
     private navParams: NavParams,

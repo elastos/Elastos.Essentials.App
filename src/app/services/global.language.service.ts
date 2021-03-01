@@ -1,0 +1,129 @@
+import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
+import { DIDSessionsService } from './didsessions.service';
+import { GlobalPreferencesService } from './global.preferences.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GlobalLanguageService {
+  public languages = [
+    {
+      name: 'System Language',
+      code: 'native system',
+      icon: '/assets/icon/light_mode/language-icon.svg',
+      icon2: '/assets/icon/dark_mode/language-icon.svg'
+    },
+    {
+      name: 'English',
+      code: 'en',
+      icon: '/assets/icon/english.jpg',
+    },
+    {
+      name: 'Français',
+      code: 'fr',
+      icon: '/assets/icon/french.jpg',
+    },
+    {
+      name: '中文（简体）',
+      code: 'zh',
+      icon: '/assets/icon/chinese.png',
+    },
+    /*{
+      name: 'Deutsche',
+      code: 'de',
+      icon: '/assets/icon/german.png',
+    }*/
+  ];
+
+  private systemLanguage: string = null;
+  private selectedLanguage: string = null;
+
+  public activeLanguage = new BehaviorSubject<string>("en"); // Default: english
+
+  constructor(
+    private translate: TranslateService,
+    private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
+
+    this.setupAvailableLanguages();
+
+    this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
+      // Re-apply the theme for the active user.
+      this.fetchLanguageInfo();
+    })
+
+    this.prefs.preferenceListener.subscribe((prefChanged)=>{
+      if (prefChanged.key == "locale.language") {
+        let lang = prefChanged.value as string;
+        this.activeLanguage.next(lang);
+      }
+    });
+  }
+
+  /**
+   * Register languages that the ionic translate module can use.
+   */
+  private setupAvailableLanguages() {
+    for (var i = 1; i < this.languages.length; i++) {
+      this.translate.addLangs([this.languages[i].code]);
+    }
+  }
+
+  /**
+   * Retrieves and stores system language, and current user-defined language.
+   */
+  async fetchLanguageInfo(): Promise<void> {
+    this.systemLanguage = this.translate.getBrowserLang();
+    this.selectedLanguage = await this.prefs.getPreference(DIDSessionsService.signedInDIDString, "locale.language");
+
+    this.activeLanguage.next(this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage);
+  }
+
+  /**
+   * Tells whether the current language is a language defined by the user, or the default system one.
+   */
+  public userDefinedLanguageInUse(): boolean {
+    return !this.selectedLanguage;
+  }
+
+  /**
+   * Resets the user defined language and revert active language back to system default language.
+   */
+  public clearSelectedLanguage() {
+    this.setSelectedLanguage(null);
+  }
+
+  /**
+   * Sets a user-defined language for the whole application.
+   * Pass null to restore to the default system language.
+   */
+  public setSelectedLanguage(code: string | null) {
+    if (!code)
+      code = "native system";
+
+    if (this.selectedLanguage !== code) {
+      this.selectedLanguage = code;
+    }
+    if (code === "native system") {
+      code = this.systemLanguage;
+    }
+
+    this.translate.setDefaultLang(code);
+    this.translate.use(code);
+
+    this.activeLanguage.next(this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage);
+  }
+
+  /**
+   * Returns the user friendly display language name for the given language code.
+   * The returned language name is in its own language for each language (en->english, fr->français).
+   */
+  public getLanguageName(code: string) {
+    for (var i = 0; i < this.languages.length; i++) {
+      if (this.languages[i].code === code) {
+        return this.languages[i].name;
+      }
+    }
+  }
+}

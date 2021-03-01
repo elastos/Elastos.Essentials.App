@@ -2,8 +2,9 @@ import { Injectable, NgZone } from '@angular/core';
 import { ToastController, LoadingController, Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
-
-declare let appManager: AppManagerPlugin.AppManager;
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -22,7 +23,9 @@ export class DeveloperService {
     private loadingCtrl: LoadingController,
     private platform: Platform,
     private zone: NgZone,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private appManager: TemporaryAppManagerPlugin,
+    private prefs: GlobalPreferencesService
   ) {
     this.platform.ready().then(() => {
         this.getCurrentConfigurations();
@@ -38,19 +41,19 @@ export class DeveloperService {
   }
   public networks = [
       // TODO: ethscRPCApi need to update when it is ready.
-    { 
+    {
       type: 'main-net',
-      code: 'MainNet', 
+      code: 'MainNet',
       mainChainRPCApi: 'http://api.elastos.io:20336',
       idChainRPCApi: 'http://api.elastos.io:20606',
       ethscRPCApi: 'http://api.elastos.io:20636',
       ethscApiMisc: 'http://api.elastos.io:20634',
       ethscOracle: 'http://api.elastos.io:20632',
-      icon: '/assets/icon/main.svg' 
+      icon: '/assets/icon/main.svg'
     },
-    { 
+    {
       type: 'test-net',
-      code: 'TestNet', 
+      code: 'TestNet',
       mainChainRPCApi: 'http://api.elastos.io:21336',
       idChainRPCApi: 'http://api.elastos.io:21606',
       ethscRPCApi: 'http://api.elastos.io:21636',
@@ -58,7 +61,7 @@ export class DeveloperService {
       ethscOracle: 'http://api.elastos.io:21632',
       icon: '/assets/icon/test.svg'
     },
-    { 
+    {
       type: 'reg-net',
       code: 'RegTest',
       mainChainRPCApi: 'http://api.elastos.io:22336',
@@ -68,7 +71,7 @@ export class DeveloperService {
       ethscOracle: 'http://api.elastos.io:22632',
       icon: '/assets/icon/reg.svg'
     },
-    { 
+    {
       type: 'priv-net',
       code: 'PrvNet',
       mainChainRPCApi: 'http://api.elastos.io:22336',
@@ -80,21 +83,14 @@ export class DeveloperService {
     },
   ];
 
-  getCurrentConfigurations() {
-    appManager.getPreference("chain.network.type", (networkCode) => {
-        this.zone.run(() => {
-          this.selectedNet = networkCode;
-        });
-    });
-    appManager.getPreference("developer.backgroundservices.startonboot", (mode) => {
-        this.zone.run(() => {
-          this.backgroundServicesEnabled = mode;
-        });
-    });
-    appManager.getPreference("trinitycli.runaddress", (address) => {
-        this.zone.run(() => {
-          this.cliAddress = address;
-        });
+  async getCurrentConfigurations() {
+    let networkCode = await this.prefs.getPreference<string>(DIDSessionsService.signedInDIDString, "chain.network.type");
+    let mode = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "developer.backgroundservices.startonboot");
+    let address = await this.prefs.getPreference<string>(DIDSessionsService.signedInDIDString, "trinitycli.runaddress");
+    this.zone.run(() => {
+      this.selectedNet = networkCode;
+      this.backgroundServicesEnabled = mode;
+      this.cliAddress = address;
     });
   }
 
@@ -108,12 +104,12 @@ export class DeveloperService {
   ) {
     console.log('Dev preference set to ' + networkCode);
     this.selectedNet = networkCode;
-    appManager.setPreference("chain.network.type", networkCode);
-    appManager.setPreference("mainchain.rpcapi", mainchainRPCApi);
-    appManager.setPreference("sidechain.id.rpcapi", idChainRPCApi);
-    appManager.setPreference("sidechain.eth.rpcapi", ethscRPCApi);
-    appManager.setPreference("sidechain.eth.apimisc", ethscApiMisc);
-    appManager.setPreference("sidechain.eth.oracle", ethscOracle);
+    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
+    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
+    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
+    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
+    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
+    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
   }
 
   getIndexByNetCode(netCode: string) {
@@ -125,7 +121,7 @@ export class DeveloperService {
       if (this.selectedNet !== 'MainNet') {
           const index = this.getIndexByNetCode('MainNet');
           this.selectNet(
-            this.networks[index].code, 
+            this.networks[index].code,
             this.networks[index].mainChainRPCApi,
             this.networks[index].idChainRPCApi,
             this.networks[index].ethscRPCApi,
@@ -147,7 +143,7 @@ export class DeveloperService {
       console.log('Trinity-CLI run command address filled', this.cliAddress);
       await this.setPreference("trinitycli.runaddress", this.cliAddress);
       this.showToast('Client address set to ' + this.cliAddress, 'Your app will start installing in a few seconds', 6000);
-    } 
+    }
   }
 
   async configNetwork() {
@@ -173,7 +169,7 @@ export class DeveloperService {
         await this.setPreference("chain.network.config", config);
         await this.setPreference("chain.network.configurl", this.privateNet.configUrl);
         await this.setPreference("sidechain.id.rpcapi", this.privateNet.resolveUrl);
-  
+
         // TODO: for mainchain and ethsc rpc?
         // await this.setPreference("mainchain.rpcapi", this.privateNet.resolveUrl);
         // await this.setPreference("sidechain.eth.rpcapi", this.privateNet.resolveUrl);
@@ -191,14 +187,8 @@ export class DeveloperService {
     }
   }
 
-  private setPreference(key: string, value: any): Promise<void> {
-    return new Promise((resolve, reject)=>{
-      appManager.setPreference(key, value, () => {
-        resolve();
-      }, (err) => {
-        reject(err);
-      });
-    });
+  private async setPreference(key: string, value: any): Promise<void> {
+    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, key, value);
   }
 
   async showToast(header: string, msg?: string, duration: number = 4000) {

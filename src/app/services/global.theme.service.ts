@@ -18,9 +18,20 @@ export class GlobalThemeService {
 
   public isAndroid = false;
 
-  constructor(private platform: Platform, /*private backupService: BackupService,*/ private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
-    this.platform.ready().then(() => {
+  constructor(private platform: Platform, private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
+    this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
+      // Re-apply the theme for the active user.
       this.fetchThemeFromPreferences();
+    })
+
+    this.prefs.preferenceListener.subscribe((prefChanged)=>{
+      if (prefChanged.key == "ui.darkmode") {
+        let darkMode = prefChanged.value as boolean;
+        if (darkMode)
+          this.activeTheme.next(AppTheme.DARK);
+        else
+          this.activeTheme.next(AppTheme.LIGHT);
+      }
     });
   }
 
@@ -39,6 +50,13 @@ export class GlobalThemeService {
       this.activeTheme.next(AppTheme.DARK);
     else
       this.activeTheme.next(AppTheme.LIGHT);
+
+    console.log("Loaded theme from preferences: ", this.activeTheme.value);
+  }
+
+  public async toggleTheme() {
+    console.log("Theme toggle");
+    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
   }
 
   // Convenient getter for backward compatibility from elastOS 1.x

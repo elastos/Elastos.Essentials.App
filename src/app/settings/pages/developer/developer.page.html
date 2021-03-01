@@ -2,7 +2,7 @@
 <ion-content>
   <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
     <!-- Config Network -->
-    <ion-row class="section-row" [routerLink]="['/select-net']">
+    <ion-row class="section-row" [routerLink]="['/settings/select-net']">
       <ion-col size="9" class="left-col">
         <h1>{{ 'configure-network' | translate }}</h1>
       </ion-col>
@@ -33,6 +33,15 @@
           <ion-icon name="send" mode="ios"></ion-icon>
           <ion-ripple-effect></ion-ripple-effect>
         </div>
+      </ion-col>
+    </ion-row>
+    <!-- Essentials development tests -->
+    <ion-row class="section-row" [routerLink]="['/settings/devtests']">
+      <ion-col size="9" class="left-col">
+        <h1>Essentials Tests</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <img src="assets/settings/default/right-arrow.svg">
       </ion-col>
     </ion-row>
   </ion-grid>

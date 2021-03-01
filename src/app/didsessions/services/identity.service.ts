@@ -14,13 +14,13 @@ import { connectableObservableDescriptor } from 'rxjs/internal/observable/Connec
 import { timingSafeEqual } from 'crypto';
 import { TranslateService } from '@ngx-translate/core';
 import { WrongPasswordException } from '../model/exceptions/wrongpasswordexception.exception';
-import { LanguageService } from './language.service';
 import { BiometricAuthenticationFailedException } from '../model/exceptions/biometricauthenticationfailed.exception';
 import { BiometricLockedoutException } from '../model/exceptions/biometriclockedout.exception';
 import { UXService } from './ux.service';
 import { Events } from './events.service';
 import { DIDSessionsService, IdentityEntry, SignInOptions } from 'src/app/services/didsessions.service';
 import { TemporaryAppManagerPlugin, TemporaryPasswordManagerPlugin } from 'src/app/TMP_STUBS';
+import { GlobalLanguageService } from 'src/app/services/global.language.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -59,7 +59,7 @@ export class IdentityService {
         private events: Events,
         private navCtrl: NavController,
         private popupProvider: PopupProvider,
-        private language: LanguageService,
+        private language: GlobalLanguageService,
         private translate: TranslateService,
         private alertCtrl: AlertController,
         private uxService: UXService,
@@ -141,12 +141,14 @@ export class IdentityService {
                 await this.didSessions.signOut()
 
                 let signInOptions: SignInOptions = null;
-                if (this.language.languageWasChangedByUser()) {
-                    console.log("Language changed by user. Passing session language to be: "+this.language.selectLang);
+                // TODO: while the code below is commented out, if a user change the language in did sessions, this will also
+                // change any other signing in user's language. (BUG)
+                // if (this.language.languageWasChangedByUser()) {
+                    console.log("Language changed by user. Passing session language to be: "+this.language.activeLanguage.value);
                     signInOptions = {
-                        sessionLanguage: this.language.selectLang
+                        sessionLanguage: this.language.activeLanguage.value
                     }
-                }
+                //}
 
                 await this.didSessions.signIn(identityEntry, signInOptions);
                 this.navCtrl.navigateRoot("/launcher/home");

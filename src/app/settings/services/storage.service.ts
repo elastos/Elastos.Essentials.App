@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+/*
+* TODO @chad: do we still need those theme + lang getters/setters? Why don't we just use preferences here?
+*/
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
-
   constructor(private storage: Storage) {
   }
 
@@ -35,5 +37,5 @@ export class StorageService {
       return JSON.parse(data);
     });
   }
-  
+
 }

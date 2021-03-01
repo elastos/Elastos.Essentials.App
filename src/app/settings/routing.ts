@@ -5,13 +5,15 @@ import { LanguagePage } from './pages/language/language.page';
 import { AboutPage } from './pages/about/about.page';
 import { DeveloperPage } from './pages/developer/developer.page';
 import { SelectNetPage } from './pages/select-net/select-net.page';
+import { DevTestsPage } from './pages/devtests/devtests.page';
 
 const routes: Routes = [
   { path: 'menu', component: MenuPage },
   { path: 'language', component: LanguagePage },
   { path: 'about', component: AboutPage },
   { path: 'developer', component: DeveloperPage },
-  { path: 'select-net', component: SelectNetPage }
+  { path: 'select-net', component: SelectNetPage },
+  { path: 'devtests', component: DevTestsPage }
 ];
 
 @NgModule({

@@ -1,7 +1,7 @@
 <app-titlebar></app-titlebar>
 <ion-content>
   <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
-      <ion-row *ngFor="let language of languageService.languages" class="section-row" (click)="languageService.setSelectLang(language.code)">
+      <ion-row *ngFor="let language of languageService.languages" class="section-row" (click)="languageService.setSelectedLanguage(language.code)">
           <ion-col size="9" class="left-col">
               <h1>{{ language.name }}</h1>
           </ion-col>

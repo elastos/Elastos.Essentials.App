@@ -38,11 +38,9 @@ export class HomePage implements OnInit {
     public appService: AppmanagerService,
     public didService: DidmanagerService
   ) {
-    console.log("Launcher home screen component is being constructed");
   }
 
   ngOnInit() {
-    console.log("Launcher home screen component is initializing");
   }
 
   ionViewWillEnter() {

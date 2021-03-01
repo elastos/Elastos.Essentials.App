@@ -8,6 +8,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { DIDSessionsService } from 'src/app/services/didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 type Preferences = {
   developerMode: boolean
@@ -19,7 +20,7 @@ type Preferences = {
   styleUrls: ['./menu.page.scss'],
 })
 export class MenuPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   prefs: Preferences = {
     developerMode: false
@@ -29,7 +30,7 @@ export class MenuPage implements OnInit {
     {
       name: 'language-setting',
       subtitle: 'change-lang',
-      router: '/language',
+      router: '/settings/language',
       iconDir: '/assets/icon/light_mode/earth.svg',
       iconDir2: '/assets/icon/dark_mode/earth.svg',
     },
@@ -43,7 +44,7 @@ export class MenuPage implements OnInit {
     {
       name: 'about-setting',
       subtitle: 'about-elastos',
-      router: '/about',
+      router: '/settings/about',
       iconDir: '/assets/icon/light_mode/ela.svg',
       iconDir2: '/assets/icon/dark_mode/ela.svg',
     }
@@ -52,7 +53,7 @@ export class MenuPage implements OnInit {
   public hasConfigSections = false
 
   constructor(
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public developer: DeveloperService,
     public translate: TranslateService,
     private navController:NavController,

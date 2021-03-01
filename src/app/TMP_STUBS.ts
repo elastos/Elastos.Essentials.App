@@ -53,14 +53,14 @@ export class TemporaryAppManagerPlugin {
     //console.log("sendIntent() NOT IMPLEMENTED");
   }
 
-  public getLocale(listener: (defaultLang, currentLang, systemLang) => any) {
+  /*public getLocale(listener: (defaultLang, currentLang, systemLang) => any) {
     //console.log("getLocale() NOT IMPLEMENTED");
     listener("en", "en", "en");
   }
 
-  public setCurrentLocale(locale: string) {
+  public setCurrentLocale(locale: string, onSuccess?: (ret: any)=>void, onError?: (err: any)=>void) {
     //console.log("setCurrentLocale() NOT IMPLEMENTED");
-  }
+  }*/
 
   public sendUrlIntent(url: string, onSuccess: any, onError: any) {
     //console.log("sendUrlIntent() NOT IMPLEMENTED");
@@ -72,6 +72,10 @@ export class TemporaryAppManagerPlugin {
 
   public start(appID: string) {
     console.log("start() NOT IMPLEMENTED");
+  }
+
+  public getVersion(onSuccess?: (version: any)=>void) {
+
   }
 }
 

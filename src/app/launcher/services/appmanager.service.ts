@@ -88,9 +88,7 @@ export class AppmanagerService {
         console.log('AppmanagerService init');
 
         this.initAppsList();
-        await this.initTranslateConfig();
 
-        await this.getLanguage();
         await this.getCurrentNet();
 
         this.appManager.setListener((ret) => {
@@ -267,28 +265,12 @@ export class AppmanagerService {
 
             case MessageType.IN_REFRESH:
                 switch (params.action) {
-                    case 'started':
-                        break;
-                    case 'closed':
+                    case 'closed': // TODO
                         this.zone.run(() => {
                             this.native.hideLoading();
                         });
                         break;
-                    case 'unInstalled':
-                        break;
-                    case 'installed':
-                        break;
-                    case 'initiated':
-                        break;
-                    case 'authorityChanged':
-                        break;
-                    case 'currentLocaleChanged':
-                        this.getLanguage();
-                        break;
-                    case 'launcher_upgraded':
-                        this.native.genericToast("Launcher has been upgraded. PLEASE RESTART", 5000);
-                        break;
-                    case 'preferenceChanged':
+                    case 'preferenceChanged': // TODO - USE GLOBAL PREFS SERVICE
                         // Update display mode globally
                         if (params.data.key === "ui.darkmode") {
                             this.zone.run(() => {
@@ -390,16 +372,6 @@ export class AppmanagerService {
     }
 
     /******************************** Preferences ********************************/
-    getLanguage(): Promise<void> {
-        return new Promise((resolve)=>{
-            this.appManager.getLocale(async (defaultLang, currentLang, systemLang) => {
-                    await this.setCurLang(currentLang);
-                    resolve();
-                }
-            );
-        });
-    }
-
     setCurLang(lang: string): Promise<void> {
         return new Promise((resolve)=>{
             console.log('Setting current language to ' + lang);
@@ -409,30 +381,6 @@ export class AppmanagerService {
                     moment.locale('zh-cn');
                 } else {
                     moment.locale(lang);
-                }
-                resolve();
-            });
-        });
-    }
-
-    async initTranslateConfig() {
-        return new Promise<void>((resolve) => {
-            this.translate.addLangs(["zh", "en","fr"]);
-            this.appManager.getLocale((
-                defaultLang: string, currentLang: string, systemLang: string
-            ) => {
-                if (currentLang === 'zh') {
-                    this.translate.setDefaultLang(currentLang);
-                    this.translate.use(currentLang);
-                } else if (currentLang === 'en') {
-                    this.translate.setDefaultLang(currentLang);
-                    this.translate.use(currentLang);
-                } else if (currentLang === 'fr') {
-                    this.translate.setDefaultLang(currentLang);
-                    this.translate.use(currentLang);
-                } else {
-                    this.translate.setDefaultLang('en');
-                    this.translate.use('en');
                 }
                 resolve();
             });

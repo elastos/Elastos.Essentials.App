@@ -47,6 +47,7 @@ export class GlobalPreferencesService {
     let preferences = await this.getPreferences(did);
     if (!(key in preferences))
       throw new Error("Preference "+key+" is not a registered preference!");
+      console.log("GET PREF", key, preferences[key])
     return preferences[key];
   }
 
@@ -55,6 +56,8 @@ export class GlobalPreferencesService {
    */
   public async getPreferences(did: string): Promise <AllPreferences> {
     let diskPreferences = await this.storage.getSetting<AllPreferences>(did, "prefservice", "preferences", {});
+
+    console.log("DISK PREFS", did, diskPreferences)
 
     // Merge saved preferences with default values
     return Object.assign({}, this.getDefaultPreferences(), diskPreferences);

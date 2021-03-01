@@ -3,7 +3,7 @@ import { DeveloperService } from '../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-developer',
@@ -11,7 +11,7 @@ import { ThemeService } from 'src/app/didsessions/services/theme.service';
   styleUrls: ['./developer.page.scss'],
 })
 export class DeveloperPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public privatenet: string = '';
 

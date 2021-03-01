@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { LanguageService } from '../../services/language.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UXService } from '../../services/ux.service';
 import { IdentityService, NextStep, NavigateWithCompletionEnterData } from '../../services/identity.service';
 import { DID } from '../../model/did.model';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from '../../services/events.service';
+import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-chooseimporteddid',
@@ -19,7 +19,7 @@ export class ChooseImportedDIDPage implements OnInit {
   private nextStepId: number = null;
 
   constructor(
-    public languageService: LanguageService,
+    public languageService: GlobalLanguageService,
     public theme: GlobalThemeService,
     private uxService: UXService,
     private identityService: IdentityService,

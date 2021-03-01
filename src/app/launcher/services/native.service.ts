@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService, AppTheme } from 'src/app/services/global.theme.service';
 
 @Injectable({
   providedIn: 'root'
