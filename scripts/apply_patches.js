@@ -36,6 +36,12 @@ const patch_dirs = [
     "plugin_id": "cordova-plugin-printer",
     "patch_dir": "patches/before_plugin_install_printer"
   },
+  {
+    "hook": "before_plugin_install",
+    "platform": "android",
+    "plugin_id": "cordova-plugin-qrscanner",
+    "patch_dir": "patches/before_plugin_install_qrscanner"
+  },
 //   {
 //     "hook": "after_build",
 //     "platform": "android",
