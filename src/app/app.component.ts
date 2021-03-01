@@ -10,6 +10,7 @@ import { DIDSessionsService } from './services/didsessions.service';
 import { ScannerInitService } from './scanner/services/init.service';
 import { HiveManagerInitService } from './hivemanager/services/init.service';
 import { SettingsInitService } from './settings/services/init.service';
+import { GlobalLanguageService } from './services/global.language.service';
 
 @Component({
     selector: 'app-root',
@@ -28,7 +29,8 @@ export class AppComponent {
         private didSessionsInitService: DIDSessionsInitService,
         private scannerInitService: ScannerInitService,
         private hiveInitService: HiveManagerInitService,
-        private settingsInitService: SettingsInitService
+        private settingsInitService: SettingsInitService,
+        private language: GlobalLanguageService
     ) {
     }
 
@@ -43,6 +45,7 @@ export class AppComponent {
             // TODO screen.orientation.lock('portrait');
 
             await this.didSessions.init();
+            await this.language.init();
             await this.didSessionsInitService.init();
             await this.launcherInitService.init();
             await this.scannerInitService.init();

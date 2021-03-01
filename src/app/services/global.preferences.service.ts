@@ -43,21 +43,29 @@ export class GlobalPreferencesService {
    *
    * @param key Unique key identifying the preference data.
    */
-  public async getPreference<T>(did: string, key: string): Promise<T> {
-    let preferences = await this.getPreferences(did);
+  public async getPreference<T>(did: string, key: string, allowNullDID: boolean = false): Promise<T> {
+    if (did == null && !allowNullDID)
+      throw new Error("Getting a global preference (no DID set) without allowNullDID set to false is forbidden! key= "+key);
+
+    let preferences = await this.getPreferences(did, allowNullDID);
     if (!(key in preferences))
       throw new Error("Preference "+key+" is not a registered preference!");
-      console.log("GET PREF", key, preferences[key])
+
+    //console.log("GET PREF", key, preferences[key])
+
     return preferences[key];
   }
 
   /**
    * Get all system preferences.
    */
-  public async getPreferences(did: string): Promise <AllPreferences> {
+  public async getPreferences(did: string, allowNullDID: boolean = false): Promise <AllPreferences> {
+    if (did == null && !allowNullDID)
+      throw new Error("Getting global preferences (no DID set) without allowNullDID set to false is forbidden!");
+
     let diskPreferences = await this.storage.getSetting<AllPreferences>(did, "prefservice", "preferences", {});
 
-    console.log("DISK PREFS", did, diskPreferences)
+    //console.log("DISK PREFS", did, diskPreferences)
 
     // Merge saved preferences with default values
     return Object.assign({}, this.getDefaultPreferences(), diskPreferences);

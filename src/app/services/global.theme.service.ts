@@ -20,8 +20,10 @@ export class GlobalThemeService {
 
   constructor(private platform: Platform, private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
     this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
-      // Re-apply the theme for the active user.
-      this.fetchThemeFromPreferences();
+      if (signedInIdentity) {
+        // Re-apply the theme for the active user.
+        this.fetchThemeFromPreferences();
+      }
     })
 
     this.prefs.preferenceListener.subscribe((prefChanged)=>{
@@ -44,7 +46,7 @@ export class GlobalThemeService {
       // TODO @chad: this is launcher's backup service. Move to launcher folder and initialize in a better location
       // this.backupService.init();
     }
-
+    console.log("DEBUG-B");
     let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "ui.darkmode");
     if (currentlyUsingDarkMode)
       this.activeTheme.next(AppTheme.DARK);

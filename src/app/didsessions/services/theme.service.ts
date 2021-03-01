@@ -8,37 +8,8 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
   providedIn: 'root'
 })
 export class ThemeService {
-  public darkMode = false;
+  public darkMode = false; // DID Sessions always in light mode as there is no "active user" to get preferences from
 
   constructor(private platform: Platform, private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
-    this.platform.ready().then(() => {
-      this.getTheme();
-    });
-  }
-
-  async getTheme() {
-    let value = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "ui.darkmode");
-    this.darkMode = value;
-    this.setTheme(this.darkMode);
-  }
-
-  setTheme(dark) {
-    this.darkMode = dark;
-    if (this.darkMode) {
-      // Set dark mode globally
-      document.body.classList.add("dark");
-
-      // Set dark mode to native header
-      // TODO @chad - titleBarManager.setBackgroundColor("#191a2f");
-      // TODO @chad - titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT);
-
-    } else {
-      // Remove dark mode globally
-      document.body.classList.remove("dark");
-
-      // Remove dark mode to native header
-      // TODO @chad - titleBarManager.setBackgroundColor("#f8f8ff");
-      // TODO @chad - titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
-    }
   }
 }

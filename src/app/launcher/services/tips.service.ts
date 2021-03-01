@@ -5,9 +5,9 @@ import { TipAudience } from '../model/tipaudience.model';
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { NotificationManagerService } from './notificationmanager.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 const DURATION_MIN_BETWEEN_2_TIPS_MS = 12 * 60 * 60 * 1000; // 12 hours
 const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
@@ -85,7 +85,7 @@ export class TipsService {
   public async init() {
     console.log("Tips service is initializing");
 
-    await this.resetAllTipsAsNotViewed(); // DEBUG ONLY
+    //await this.resetAllTipsAsNotViewed(); // DEBUG ONLY
 
     // Wait a moment while the launcher starts, then start showing tips if needed.
     setTimeout(() => {
@@ -173,7 +173,7 @@ export class TipsService {
   }
 
   private async saveSentTipTime() {
-    return new Promise(async (resolve) => {
+    return new Promise<void>(async (resolve) => {
       try {
         await this.storage.setSetting(DIDSessionsService.signedInDIDString, "launcher", "latest-sent-tip-time", new Date().toISOString());
         resolve();
@@ -237,7 +237,7 @@ export class TipsService {
   }
 
   private async saveViewedTips(tips: Tip[]) {
-    return new Promise(async (resolve) => {
+    return new Promise<void>(async (resolve) => {
       await this.storage.setSetting(DIDSessionsService.signedInDIDString, "launcher", "viewed-tips", tips);
       resolve();
     });

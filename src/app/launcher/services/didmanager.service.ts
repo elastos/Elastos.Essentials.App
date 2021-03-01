@@ -5,6 +5,7 @@ import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { NativeService } from './native.service';
+import { TipsService } from './tips.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,17 @@ export class DidmanagerService {
     private theme: GlobalThemeService,
     private didSessions: DIDSessionsService,
     private contactNotifier: ContactNotifierService,
-    private appManager: TemporaryAppManagerPlugin
+    private appManager: TemporaryAppManagerPlugin,
+    private tipsService: TipsService
   ) { }
 
   init() {
     this.didSessions.signedInIdentityListener.subscribe((id: IdentityEntry) => {
       console.log("Launcher: signed in identity changed", id);
       this.signedIdentity = id;
+
+      // No blocking services start
+      this.tipsService.init();
     });
   }
 

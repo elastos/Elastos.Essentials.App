@@ -45,7 +45,9 @@ export class GlobalLanguageService {
   constructor(
     private translate: TranslateService,
     private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
+  }
 
+  public async init() {
     this.setupAvailableLanguages();
 
     this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
@@ -59,6 +61,8 @@ export class GlobalLanguageService {
         this.activeLanguage.next(lang);
       }
     });
+
+    await this.fetchLanguageInfo();
   }
 
   /**
@@ -74,17 +78,25 @@ export class GlobalLanguageService {
    * Retrieves and stores system language, and current user-defined language.
    */
   async fetchLanguageInfo(): Promise<void> {
+    console.log("Fetching language information");
+
     this.systemLanguage = this.translate.getBrowserLang();
     this.selectedLanguage = await this.prefs.getPreference(DIDSessionsService.signedInDIDString, "locale.language");
 
-    this.activeLanguage.next(this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage);
+    console.log("System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
+
+    let actualLanguage = this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage;
+    this.translate.setDefaultLang(actualLanguage);
+    this.translate.use(actualLanguage);
+
+    this.activeLanguage.next(actualLanguage);
   }
 
   /**
    * Tells whether the current language is a language defined by the user, or the default system one.
    */
   public userDefinedLanguageInUse(): boolean {
-    return !this.selectedLanguage;
+    return !this.selectedLanguage || this.selectedLanguage == "native system";
   }
 
   /**
@@ -98,7 +110,7 @@ export class GlobalLanguageService {
    * Sets a user-defined language for the whole application.
    * Pass null to restore to the default system language.
    */
-  public setSelectedLanguage(code: string | null) {
+  public async setSelectedLanguage(code: string | null) {
     if (!code)
       code = "native system";
 
@@ -109,10 +121,16 @@ export class GlobalLanguageService {
       code = this.systemLanguage;
     }
 
+    // Set language for the ionic translate module that does the actual screen items translations
     this.translate.setDefaultLang(code);
     this.translate.use(code);
 
-    this.activeLanguage.next(this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage);
+    // Save current choice to disk
+    console.log("Saving global language code:", code);
+    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, "locale.language", code);
+
+    // Notify listeners of language changes
+    this.activeLanguage.next(code);
   }
 
   /**

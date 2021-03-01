@@ -26,6 +26,7 @@ import * as moment from 'moment';
 import { TemporaryAppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalLanguageService } from 'src/app/services/global.language.service';
 
 enum MessageType {
     INTERNAL = 1,
@@ -81,13 +82,16 @@ export class AppmanagerService {
         private native: NativeService,
         private storage: GlobalStorageService,
         private appManager: TemporaryAppManagerPlugin,
-        private didSessions: DIDSessionsService
+        private didSessions: DIDSessionsService,
+        private language: GlobalLanguageService
     ) {}
 
     public async init() {
         console.log('AppmanagerService init');
 
-        this.initAppsList();
+        this.language.activeLanguage.subscribe((lang)=>{
+            this.initAppsList();
+        });
 
         await this.getCurrentNet();
 

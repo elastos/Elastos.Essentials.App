@@ -37,7 +37,6 @@ export class BackupDIDPage {
       public router: Router,
       private translate: TranslateService,
       private identityService: IdentityService,
-      public theme: ThemeService,
       private uxService: UXService,
       private modalCtrl: ModalController
     ) {
@@ -58,7 +57,6 @@ export class BackupDIDPage {
     }
 
     ionViewWillEnter() {
-      this.theme.getTheme();
       this.getActiveSlide();
 
       /* TODO @chad titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
