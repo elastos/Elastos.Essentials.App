@@ -61,6 +61,7 @@
     "@angular/language-service": "11.0.9",
     "@ionic/angular-toolkit": "3.1.0",
     "@types/node": "14.14.21",
+    "appmanager": "file:../Plugins/AppManager",
     "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-printer": "0.8.0",
@@ -88,7 +89,8 @@
       "elastos-cordova-plugin-did": {},
       "elastos-cordova-plugin-hive": {},
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-qrscanner": {}
+      "cordova-plugin-qrscanner": {},
+      "elastos-cordova-plugin-appmanager": {}
     },
     "platforms": [
       "android"
