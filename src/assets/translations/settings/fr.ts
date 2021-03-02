@@ -2,7 +2,6 @@ export const fr = {
 
     /********** Menu Page **********/
     // Titles
-    'settings': 'Paramètres',
     'capsule-setting': "Gestionnaire d'application",
     'about-setting': "A propos d'elastOS",
     'developer-setting': 'Options pour développeurs',
@@ -30,7 +29,6 @@ export const fr = {
     'version': 'Version',
     'developer': 'Développeur',
     'see-also': 'Voir aussi',
-    'website': 'Site Web',
     'visit': 'Commencer',
     'join': 'Nous rejoindre',
     'build': 'Développer',
@@ -63,7 +61,6 @@ export const fr = {
     'sign': 'Signature',
     'category': 'Catégorie',
     'author': 'Auteur',
-    'email': 'Email',
     'open-app': 'Ouvrir',
     'clear-data': 'Effacer les données',
     'clear-data-title': 'Effacer les données de l\'application',
@@ -73,7 +70,6 @@ export const fr = {
     'delete-app-title': 'Supprimer l\'application',
     'delete-app-prompt': 'Cette application sera supprimée définititement, est-ce bien ce que vous souhaitez faire?',
     'clear': 'Effacer',
-    'open': 'Ouvrir',
 
     /********** App Categories **********/
     'finance': 'Finance',

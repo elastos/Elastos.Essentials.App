@@ -99,9 +99,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {
-      preloadingStrategy: NoPreloading,
-    }),
+    RouterModule.forChild(routes)
   ],
   exports: [RouterModule],
 })

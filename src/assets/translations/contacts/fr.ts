@@ -7,9 +7,7 @@ export const fr = {
   'no-contacts-alert': 'Vous n\'avez aucun contact avec qui partager!',
   'no-contacts-with-cred-alert': 'Vous n\'avez aucun contact avec le crédentiel nécessaire.',
   'please-dont-add-self': 'Please add an Identity other than your own',
-  "please-wait": "Veuillez patienter",
-  'ok': 'D\'accord',
-  'restoring-backup': 'Restoring Contacts',
+  'restoring-contacts-backup': 'Restoring Contacts',
 
   /********** Buttons **********/
   'add-contact': 'Ajouter le contact',
@@ -19,19 +17,14 @@ export const fr = {
   'customize': 'Personnaliser',
   'discover': 'Découvrir',
   'connect': 'Connecter',
-  'open': 'Ouvrir',
   'add': 'Ajouter',
-  'cancel': 'Annuler',
-  'confirm': 'Confirmer',
   'go-back': 'Retour',
   'invite': 'Inviter',
 
   /********** Friends Pg **********/
-  'contacts': 'Contacts',
   'no-contacts': 'Aucun contact?',
   'add-a-contact': "Ajouter un contact en cliquant sur l'icône d'ajout ci-dessus",
   'add-a-contact2': "Ajouter un contact en cliquant sur l\'icône d'ajout ci-dessous",
-  'favorites': 'Favoris',
   'all-contacts': 'Contacts',
   'starter-contact': 'Voici votre contact de démonstration. Cliquez pour voir ses informations. Ajoutez de nouveaux contacts via le bouton ajouter ci-dessus.',
 
@@ -40,18 +33,6 @@ export const fr = {
   'details': 'Détails',
   'apps': 'Capsules',
   'no-apps': 'Aucune capsule disponible',
-  'nickname': 'Pseudo',
-  'bio': 'Bio',
-  'gender': 'Sexe',
-  'country': 'Pays',
-  'birth': 'Date de naissance',
-  'birth-place': 'Lieu de Naissance',
-  'occupation': 'Activité',
-  'education': 'Education',
-  'interests': 'Passe-temps',
-  'telephone': 'Téléphone',
-  'email': 'Email',
-  'website': 'Site Web',
   'did': 'Identité',
   'elaWallet': 'Adresse ELA',
   'carrier': 'Adresse de communication Carrier',
@@ -90,22 +71,11 @@ export const fr = {
 
   /********** Picture Comp **********/
   'avatar': 'Avatar',
-  'take-pictures': 'Prendre une photo',
-  'photo-library': 'Blibliothèque de photos',
-  'change': 'Modifier',
-  'use': 'Utiliser',
 
   /********** QRCode Comp **********/
-  'identity': "\'s Identité",
   'copied': ' copié',
-  'copy-to-clipboard': 'Copier',
-  'share-friend': 'Ajouter mon contact dans elastOS',
-  'share-add-me-as-friend': 'Ajoutez moi comme contact',
 
   /********** Options Comp **********/
-  'share': 'Partager',
-  'favorite': 'Favori',
-  'delete': 'Supprimer',
 
   /********** Delete Comp **********/
   'delete-contact': 'Effacer le contact',

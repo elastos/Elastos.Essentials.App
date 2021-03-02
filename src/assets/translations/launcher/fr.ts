@@ -9,15 +9,11 @@ export const fr = {
     'system-notification': 'Notification système',
     'contact-notification': 'De l\'un de vos contacts',
     'from-unknown-contact': 'Contact inconnu',
-    'share': 'Partager',
-    'favorite': 'Favoris',
-    'share-add-me-as-friend': 'Ajoutez-moi comme ami dans elastOS',
     "not-available-on-ios": "Fonctionnalité non disponible sur iOS",
     'restoring-backup': "Restoration de votre sauvegarde en cours",
     'installed': "installé",
     'signing-out': 'Déconnexion...',
     'no-app-can-handle-request': "Aucune application ne peut prendre en charge cette requête",
-    'close': 'Fermer',
 
     /********** Running & Notifications Page **********/
     'running': 'Applications actives',
@@ -40,11 +36,7 @@ export const fr = {
 
     /********** Home Page **********/
     'dapp-browser': "Navigateur de capsules",
-    'wallet': 'Portefeuille',
-    'identity': 'Identité',
-    'contacts': 'Contacts',
     'recent': 'Récents',
-    'favorites': 'Favoris',
     'welcome': 'Bienvenue',
     'no-apps-title': 'Aucune Application?',
     'no-apps-message': "Vous pouvez trouver des applications elastOS à partir de vos contacts ou des réseaux sociaux. Plus vous explorez l'écosystème elastOS, plus vous trouverez d'applications",
@@ -68,7 +60,7 @@ export const fr = {
     /********** iOS apps **********/
     'app-wallet': 'Portefeuille',
     'app-wallet-description': 'Gérez vos ELA',
-    'app-identity': 'Idéntité',
+    'app-identity': 'Identité',
     'app-identity-description': 'Gérez votre identité numérique',
     'app-contacts': 'Contacts',
     'app-contacts-description': 'Gérez vos contacts',

@@ -2,7 +2,6 @@ export const en = {
 
     /********** Menu Page **********/
     // Titles
-    'settings': 'Settings',
     'capsule-setting': 'Capsule Settings',
     'about-setting': 'About',
     'developer-setting': 'Developer Options',
@@ -30,7 +29,6 @@ export const en = {
     'version': 'Version',
     'developer': 'Developer',
     'see-also': 'See Also',
-    'website': 'Website',
     'visit': 'Visit',
     'join': 'Join',
     'build': 'Build',
@@ -63,7 +61,6 @@ export const en = {
     'sign': 'Signature',
     'category': 'Category',
     'author': 'Author',
-    'email': 'Email',
     'open-app': 'Open App',
     'clear-data': 'Clear Capsule Data',
     'clear-data-title': 'Clear App Data',
@@ -73,7 +70,6 @@ export const en = {
     'delete-app-title': 'Delete Capsule',
     'delete-app-prompt': 'This app will be deleted permanently. Are you sure you want to do this?',
     'clear': 'Clear',
-    'open': 'Open',
 
     /********** App Categories **********/
     'finance': 'Finance',

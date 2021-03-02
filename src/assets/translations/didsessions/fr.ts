@@ -17,15 +17,12 @@ export const fr = {
   'mnemonicpasscheck-question': 'Avez-vous un mot de passe pour votre mnémonique?',
   'mnemonicpasscheck-have-passphrase': 'J\'ai une phrase secrète',
   'mnemonicpasscheck-no-passphrase': 'Je n\'en ai pas',
-  'submit': 'Envoyer',
   'mnemonicpassword-intro': 'Entrez le mot de passe du mnémonique',
   'text-password-input': 'Mot de passe',
   'repeat-password': 'Confirmation du mot de passe',
   'wrong-password': 'Les mot de passe ne correspondent pas',
-  'name-is-missing': "Veuillez saisir un nom",
   'mnemonics-incorrect': 'Les mnémoniques sont incorrects',
   'check-mnemonics': 'Veuillez vérifier votre saisie et essayer à nouveau',
-  'Okay': 'Ok',
   'id-already-added': 'Identité déjà dans la liste',
   'import-again': 'Voulez-vous importer une identité différente?',
   'import-again-cancel': 'Annuler',
@@ -43,15 +40,8 @@ export const fr = {
   // Edit
   'your-name': 'Quel est votre nom?',
 
-  // Backup
-  'your-mnemonic': 'Votre mnémonique',
-  'your-mnemonic-prompt1': 'Voici vos 12 mots secrets (mnémonique). Si vous les perdez, vous perdez votre identité, alors notez-les quelque part ',
-  'your-mnemonic-prompt2': 'dans le bon ordre',
-  'your-mnemonic-prompt3': ', et en sécurité!',
-
   // Verify Mnemonic
   'verify-prompt': 'Cliquez sur vos 12 mots secrets pour les vérifier.',
-  'confirm': 'Confirmer',
 
   // Import
   'import-type': 'Type d\'import',
@@ -68,7 +58,7 @@ export const fr = {
 
   // Delete Identity
   'delete-identity': 'Suppression d\'identité',
-  'delete-prompt': 'Cette action supprimera votre identité localement, mais vous pourrez toujours la ré-importer plus tard.',
+  'delete-identity-prompt': 'Cette action supprimera votre identité localement, mais vous pourrez toujours la ré-importer plus tard.',
 
   // retrieve identities
   'retrieve-prompt': 'Recherche et importation des identités, veuillez patienter.',

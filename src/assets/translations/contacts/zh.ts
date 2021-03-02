@@ -7,9 +7,7 @@ export const zh = {
   'no-contacts-alert': '您没有联系人!',
   'no-contacts-with-cred-alert': '您没有联系人持有所需凭证',
   'please-dont-add-self': '请添加其他人的身份ID(不能添加自己)',
-  'please-wait': '请等待...',
-  'ok': '好',
-  'restoring-backup': '恢复联系人',
+  'restoring-contacts-backup': '恢复联系人',
 
   /********** Buttons **********/
   'add-contact': '添加联系人',
@@ -19,19 +17,14 @@ export const zh = {
   'customize': ' 定制',
   'discover': '获取',
   'connect': '连接',
-  'open': '打开',
   'add': '添加',
-  'cancel': '取消',
-  'confirm': '确定',
   'go-back': '返回',
   'invite': '邀请',
 
   /********** Friends Pg **********/
-  'contacts': '联系人',
   'no-contacts': '联系人为空?',
   'add-a-contact': '请点击上面的添加图标添加联系人',
   'add-a-contact2': '请点击下面的添加图标添加联系人',
-  'favorites': '收藏',
   'all-contacts': '所有联系人',
   'starter-contact': '这是您的初始联系人。 单击可以查看其已验证的凭证。 通过上方的添加图标可以添加新联系人',
 
@@ -40,18 +33,6 @@ export const zh = {
   'details': '详情',
   'apps': '已浏览的胶囊',
   'no-apps': '没有可用的胶囊',
-  'nickname': '昵称',
-  'bio': '备注',
-  'gender': '性别',
-  'country': '国家/地区',
-  'birth': '生日',
-  'birth-place': '出生地',
-  'occupation': '职业',
-  'education': '教育',
-  'interests': '兴趣爱好',
-  'telephone': '电话',
-  'email': '邮箱',
-  'website': '网址',
   'did': '身份码',
   'elaWallet': 'ELA 地址',
   'carrier': 'Carrier 地址',
@@ -90,22 +71,11 @@ export const zh = {
 
   /********** Picture Comp **********/
   'avatar': '头像',
-  'take-pictures': '拍摄',
-  'photo-library': '从手机相册选择',
-  'change': '更改',
-  'use': '使用',
 
   /********** QRCode Comp **********/
-  'identity': '的DID身份码',
-  'copy-to-clipboard': '复制',
-  'share-friend': '在elastOS中添加我的朋友',
   'copied':'已复制',
-  'share-add-me-as-friend': '加我为好友',
 
   /********** Options Comp **********/
-  'share': '分享',
-  'favorite': '收藏',
-  'delete': '删除',
 
   /********** Delete Comp **********/
   'delete-contact': '删除联系人',

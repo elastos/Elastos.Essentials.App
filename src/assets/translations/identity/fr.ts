@@ -1,20 +1,13 @@
 export const fr = {
 
     /******************** Generic ********************/
-    'submit': 'Envoyer',
-    'next': 'Suivant',
-    'confirm': 'Confirmer',
     'accept': 'Accepter',
-    'cancel': 'Annuler',
-    'share': 'Partager',
     'share-description': 'Partagez votre identité',
     'edit': 'Modifier',
     'edit-description': 'Modifiez et ajoutez des infos à votre profil',
     'publish-description': 'Publiez votre identité sur la chaîne de blocs',
     'missing': 'Manquant',
-    'close': 'Fermer',
     'verify': 'Vérifier Maintenant',
-    'back': 'Retour',
 
     /******************** Main Screens  ********************/
     // page: myprofile (Home)
@@ -72,16 +65,11 @@ export const fr = {
     'publish-popup-content': 'Les informations seront sauvegardées sur la chaîne de blocs après confirmation, et elles y resteront en permanence!',
     'publish-popup-confirm-question': 'Etes-vous certain(e)?',
 
-    // showqrcode
-    'share-add-me-as-friend': 'Ajoutez moi comme un ami dans elastOS',
-
     // page: editprofile
     'edit-avatar': 'modifier l\'avatar',
     'show-on-profile': 'Afficher sur mon Profil',
-    'country': 'Pays',
     'add-field': 'Ajouter un champ',
     'edit-profile': 'Modifier le Profil',
-    'name-is-missing': 'Fournissez au moins votre nom SVP',
     'select-one': 'Sélectionnez-en un',
     'select-date': 'Sélectionnez une date',
     'enter-here': 'Saisir ici',
@@ -90,13 +78,8 @@ export const fr = {
     // tabnav
     'home': 'Accueil',
     'profile': 'Profil',
-    'identity': 'Identity',
 
     // page: exportmnemonic
-    'your-mnemonic': 'Votre mnémonique',
-    'your-mnemonic-prompt1': 'Voici vos 12 mots de securité (mnémonique). Si vous perdez ces mots, vous perdez votre identité. Gardez-les écrits ',
-    'your-mnemonic-prompt2': 'en ordre',
-    'your-mnemonic-prompt3': ', et en sécurité!',
     'back-to-identity': 'Retourner vers l\'identité',
 
     // page: credentials
@@ -113,7 +96,6 @@ export const fr = {
     'toggle-credentials-to-publish': 'Sélectionnez les Crédentiels à Publier',
 
     // page: settings & advanced-settings
-    'settings': 'Paramètres',
     'advanced-settings': 'Paramètres avancés',
     'available-options': 'Options disponibles',
     'sync-did-profile': 'Synchroniser l\'identité',
@@ -123,31 +105,24 @@ export const fr = {
     // component: qrcode
     'my-identity-qr-code': 'QR Code de mon identité',
     'qr-code': 'QR code',
-    'copy-to-clipboard': 'Copier',
     'copied-to-clipboard': 'Copié dans le presse-papier!',
 
     // component: options
     'edit-visibility': 'Modif. Visibilité',
     'delete-credentials': 'Supprimer',
-    'delete': 'Supprimer',
     'publish': 'Publier',
     'export': 'Exporter',
 
     // component: warning
     'delete-creds': 'Supprimer les Crédentiels?',
-    'delete-prompt': 'Cette action supprimera les crédentiels sélectionnés définitivement de votre identité.',
+    'delete-creds-prompt': 'Cette action supprimera les crédentiels sélectionnés définitivement de votre identité.',
     'publish-identity': 'Publier l\'identité?',
     'publish-visibility': 'Publier les modifications?',
     'publish-visibility-prompt': 'Vous pouvez publier vos modifications pour partager vos informations les plus récentes avec d\'autres personnes. Cette action peut coûter quelques frais de transactions mineurs en ELA.',
     'publish-identity-prompt': 'Votre identité n\'est pas encore en ligne. Publier votre identité vous permettra de prouver qui vous êtes dans les applications de l\'écosystème Elastos. Cette action peut coûter quelques frais de transactions mineurs en ELA.',
     'not-yet': 'Pas maintenant',
-    'continue': 'Continuer',
 
     // component: avatar
-    'take-pictures': 'Prendre une Photo',
-    'photo-library': 'Bibliothèque d\'images',
-    'change': 'Modifier',
-    'use': 'Utiliser',
     'uploading-photo-to-hive': 'Envoi de la photo vers votre espace de stockage',
     'avatar-publish': 'Souhaitez-vous publier votre nouvel avatar?',
     'avatar-publish-cancel': 'Annuler',
@@ -259,7 +234,6 @@ export const fr = {
 
     // loading
     'loading-msg': 'Veuillez patienter',
-    'please-wait': 'Veuillez patienter',
 
     // id transaction
     'publish-success': "Vos informations publiques ont été envoyées à la chaîne d'identité publique. Veuillez patienter un moment pour que vos changements soient actifs.",

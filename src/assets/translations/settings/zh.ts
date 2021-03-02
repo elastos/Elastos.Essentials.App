@@ -2,7 +2,6 @@ export const zh = {
 
      /********** Language Page **********/
      // Titles
-     'settings': '设置',
      'capsule-setting': '胶囊管理',
      'about-setting': '关于亦来云',
      'developer-setting': '开发者选项',
@@ -30,7 +29,6 @@ export const zh = {
      'version': '版本号',
      'developer': '开发者',
      'see-also': '另请参阅',
-     'website': '网站',
      'visit': '访问',
      'join': '加入',
      'build': '开发',
@@ -63,7 +61,6 @@ export const zh = {
      'sign': '签名',
      'category': '分类',
      'author': '作者',
-     'email': '邮箱',
      'open-app': '启动',
      'clear-data': '清除数据',
      'clear-data-title': '清除应用数据',
@@ -73,7 +70,6 @@ export const zh = {
      'delete-app-title': '删除应用',
      'delete-app-prompt': '该应用程序将被永久删除。 您确定要这么做吗？',
      'clear': '清除',
-     'open': '打开',
 
      /********** App Categories **********/
      'finance': '金融理财',

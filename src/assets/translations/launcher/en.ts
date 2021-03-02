@@ -9,15 +9,11 @@ export const en = {
     'system-notification': 'System notification',
     'contact-notification': 'From one of your contacts',
     'from-unknown-contact': 'From an unknown contact',
-    'share': 'Share',
-    'favorite': 'Favorite',
-    'share-add-me-as-friend': 'Add me as a friend in elastOS',
     "not-available-on-ios": "Feature not available on iOS",
     'restoring-backup': "Restoring backup in progress",
     'installed': "installed",
     'signing-out': 'Signing out...',
     'no-app-can-handle-request': 'No application can handle the requested action',
-    'close': 'Close',
 
     /********** Running & Notifications Page **********/
     'running': 'Running Capsules',
@@ -40,11 +36,7 @@ export const en = {
 
     /********** Home Page **********/
     'dapp-browser': 'Capsule Browser',
-    'wallet': 'Wallet',
-    'identity': 'Identity',
-    'contacts': 'Contacts',
     'recent': 'Recent',
-    'favorites': 'Favorites',
     'welcome': 'Welcome',
     'no-apps-title': 'No Capsules?',
     'no-apps-message': 'You can find elastOS Capsules to browse from your contacts or social networks. The more you explore the elastOS ecosystem, the more Capsules you will find',
@@ -78,7 +70,6 @@ export const en = {
     'app-passwords-description': 'Manage all your passwords',
     'app-scanner': 'Scanner',
     'app-scanner-description': 'Scan anything',
-    'app-settings': 'Settings',
     'app-settings-description': 'Manage elastOS',
 
     /*********** Tips generic ************/

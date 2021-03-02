@@ -90,11 +90,6 @@ import { TabnavPage } from "./pages/tabnav/tabnav.page";
     SharedComponentsModule,
     FormsModule,
     IonBottomDrawerModule,
-    IonicModule.forRoot({
-      mode: "ios",
-      scrollAssist: false,
-      scrollPadding: false,
-    }),
     QRCodeModule,
     IonicStorageModule,
     TranslateModule,

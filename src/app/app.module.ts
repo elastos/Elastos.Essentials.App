@@ -103,7 +103,9 @@ export function TranslateLoaderFactory() {
     //AngularFittextModule,
     SharedComponentsModule,
     IonicModule.forRoot({
-      mode: 'md'
+      mode: 'md',
+      scrollAssist: false,
+      scrollPadding: false,
     }),
     AppRoutingModule,
     FormsModule,

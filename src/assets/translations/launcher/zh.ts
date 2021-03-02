@@ -9,15 +9,11 @@ export const zh = {
     'system-notification': '系统消息',
     'contact-notification': '好友的消息',
     'from-unknown-contact': '陌生人的消息',
-    'share': '分享',
-    'favorite': '收藏',
-    'share-add-me-as-friend': '在elastOS里添加我为好友',
     "not-available-on-ios": "功能在iOS上不可用",
     'restoring-backup': "恢复备份正在进行中",
     'installed': "已安装",
     'signing-out': '注销中...',
     'no-app-can-handle-request': '没有应用程序可以处理此请求',
-    'close': '关闭',
 
     /********** Running & Notifications Page **********/
     'running': '正在运行',
@@ -40,11 +36,7 @@ export const zh = {
 
     /********** Home Page **********/
     'dapp-browser': '胶囊浏览器',
-    'wallet': '钱包',
-    'identity': '身份',
-    'contacts': '联系人',
     'recent': '最近使用',
-    'favorites': '收藏',
     'welcome': '欢迎',
     'no-apps-title': '没有胶囊',
     'no-apps-message': '您可以从您的联系人或社交网络上找到elastOS胶囊来浏览。您对elastOS生态系统探索得越多，您就会发现更多的胶囊。',

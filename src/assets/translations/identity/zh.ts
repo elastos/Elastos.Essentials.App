@@ -1,20 +1,13 @@
 export const zh = {
 
     /******************** Generic ********************/
-    'submit': '提交',
-    'next': '下一步',
-    'confirm': '确认',
     'accept': '接受',
-    'cancel': '取消',
-    'share': '分享',
     'share-description': '分享您的身份',
     'edit': '编辑',
     'edit-description': '更改、添加和编辑档案',
     'publish-description': '将身份发布上链',
     'missing': '缺失',
-    'close': '关闭',
     'verify': '立即验证',
-    'back': '返回',
 
     /******************** Main Screens  ********************/
     // page: myprofile
@@ -72,16 +65,11 @@ export const zh = {
     'publish-popup-content': '确认后信息将存储并保存在区块链上!',
     'publish-popup-confirm-question': '确定?',
 
-    // showqrcode
-    'share-add-me-as-friend': '在Elastos里添加我为好友',
-
     // page: editprofile
     'edit-avatar': '编辑头像',
     'show-on-profile': '显示在档案上',
-    'country': '国家/地区',
     'add-field': '新增',
     'edit-profile': '编辑信息',
-    'name-is-missing': '至少需要提供姓名',
     'select-one': '选择一个',
     'select-date': '选择日期',
     'enter-here': '请输入',
@@ -90,13 +78,8 @@ export const zh = {
     // tabnav
     'home': '主页',
     'profile': '档案',
-    'identity': 'Identity',
 
     // page: exportmnemonic
-    'your-mnemonic': '您的助记词',
-    'your-mnemonic-prompt1': '这是您的12个安全字（助记词）。丢失这些，您将丢失身份，因此必须将它们',
-    'your-mnemonic-prompt2': '按顺序',
-    'your-mnemonic-prompt3': '写下来，并且安全地保存。',
     'back-to-identity': '返回',
 
     // page: credentials
@@ -113,7 +96,6 @@ export const zh = {
     'toggle-credentials-to-publish': '切换要发布的凭据',
 
     // page: settings & advanced-settings
-    'settings': '设置',
     'advanced-settings': '高级设置',
     'available-options': '可用选项',
     'sync-did-profile': '同步身份',
@@ -123,31 +105,24 @@ export const zh = {
     // component: qrcode
     'my-identity-qr-code': '我的DID身份码',
     'qr-code': '二维码',
-    'copy-to-clipboard': '复制',
     'copied-to-clipboard': '已复制到剪切板!',
 
     // component: options
     'edit-visibility': '编辑公开档案',
     'delete-credentials': '删除凭证',
-    'delete': '删除',
     'publish': '发布',
     'export': '导出',
 
     // component: warning
     'delete-creds': '删除凭证?',
-    'delete-prompt': '此凭证将会永久删除',
+    'delete-creds-prompt': '此凭证将会永久删除',
     'publish-identity': '发布身份?',
     'publish-visibility': '发布可见性？',
     'publish-visibility-prompt': '您可以发布新的更改，以便将其记录下来供所有人查看。此操作只花费少量的ELA交易费用',
     'publish-identity-prompt': '您的身份尚未发布。执行下一步操作，您将声明对此数据的所有权，并挖掘Elastos生态系统的全部潜力。此操作只花费少量的ELA交易费用',
     'not-yet': '取消',
-    'continue': '继续',
 
     // component: avatar
-    'take-pictures': '拍摄',
-    'photo-library': '从手机相册选择',
-    'change': '更改',
-    'use': '使用',
     'uploading-photo-to-hive': '将照片上传到Hive',
     'avatar-publish': '您想发布您的头像吗?',
     'avatar-publish-cancel': '取消',
@@ -259,7 +234,6 @@ export const zh = {
 
     // loading
     'loading-msg': '加载中，请稍候',
-    'please-wait': '请稍等',
 
     // id transaction
     'publish-success': '您公开的身份信息已发送到ID链。',

@@ -17,12 +17,10 @@ export const zh = {
   'mnemonicpasscheck-question': '是否有助记词密码?',
   'mnemonicpasscheck-have-passphrase': '有助记词密码',
   'mnemonicpasscheck-no-passphrase': '没有助记词密码',
-  'submit': '提交',
   'mnemonicpassword-intro': '输入您的助记词密码',
   'text-password-input': '输入密码',
   'repeat-password': '再次输入密码',
   'wrong-password': '密码错误',
-  'name-is-missing': "请输入名称",
   'mnemonics-incorrect': '助记词错误',
   'check-mnemonics': '请检查您的助记词',
   'Okay': '确定',
@@ -43,15 +41,8 @@ export const zh = {
   // Edit
   'your-name': '您的名称?',
 
-  // Backup
-  'your-mnemonic': '您的助记词',
-  'your-mnemonic-prompt1': '这是您的12个安全字（助记词）。丢失这些，您将丢失身份，因此必须将它们',
-  'your-mnemonic-prompt2': '按顺序',
-  'your-mnemonic-prompt3': '写下来，并且安全地保存。',
-
   // Verify Mnemonic
   'verify-prompt': '请按顺序点击这12个安全字（助记词）进行验证。',
-  'confirm': '确定',
 
   // Import
   'import-type': '导入类型',
@@ -68,7 +59,7 @@ export const zh = {
 
   // Delete Identity
   'delete-identity': '删除身份',
-  'delete-prompt': '此身份信息将从本机删除，您随时可以再次导入它。',
+  'delete-identity-prompt': '此身份信息将从本机删除，您随时可以再次导入它。',
 
   // retrieve identities
   'retrieve-prompt': '正在获取身份信息，请稍候...',

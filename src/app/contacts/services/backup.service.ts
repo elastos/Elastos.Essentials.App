@@ -99,7 +99,7 @@ export class BackupService {
       /* TODO @chad - Replace with another UI indicator?
       titleBarManager.showActivityIndicator(
         TitleBarPlugin.TitleBarActivityType.DOWNLOAD,
-        this.translate.instant('restoring-backup')
+        this.translate.instant('restoring-contacts-backup')
       );*/
 
       // await this.friendsService.resolveDIDDocument(contactId, false, null, false);

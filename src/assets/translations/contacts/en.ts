@@ -7,9 +7,7 @@ export const en = {
   'no-contacts-alert': 'You don\'t have any contacts!',
   'no-contacts-with-cred-alert': 'You don\'t have any contacts with the required credential',
   'please-dont-add-self': 'Please add an Identity other than your own',
-  'please-wait': 'Please wait...',
-  'ok': 'Okay',
-  'restoring-backup': 'Restoring Contacts',
+  'restoring-contacts-backup': 'Restoring Contacts',
 
   /********** Buttons **********/
   'add-contact': 'Add Contact',
@@ -19,19 +17,14 @@ export const en = {
   'customize': 'Customize',
   'discover': 'Discover',
   'connect': 'Connect',
-  'open': 'Open',
   'add': 'Add',
-  'cancel': 'Cancel',
-  'confirm': 'Confirm',
   'go-back': 'Go Back',
   'invite': 'Invite',
 
   /********** Friends Pg **********/
-  'contacts': 'Contacts',
   'no-contacts': 'No Contacts?',
   'add-a-contact': 'Add a contact by clicking the add icon above',
   'add-a-contact2': 'Add a contact by clicking the add icon below',
-  'favorites': 'Favorites',
   'all-contacts': 'All Contacts',
   'starter-contact': 'This is your starter contact. Click on it to see their verified credentials. Add new contacts by the add icon above',
 
@@ -40,18 +33,6 @@ export const en = {
   'details': 'Details',
   'apps': 'Capsules',
   'no-apps': 'No Capsules Available',
-  'nickname': 'Nickname',
-  'bio': 'Bio',
-  'gender': 'Gender',
-  'country': 'Country',
-  'birth': 'Birth Date',
-  'birth-place': 'Birth Place',
-  'occupation': 'Occupation',
-  'education': 'Education',
-  'interests': 'Interests',
-  'telephone': 'Telephone',
-  'email': 'Email',
-  'website': 'Website',
   'did': 'Identity',
   'elaWallet': 'ELA Address',
   'carrier': 'Carrier Address',
@@ -90,22 +71,11 @@ export const en = {
 
   /********** Picture Comp **********/
   'avatar': 'Avatar',
-  'take-pictures': 'Take Picture',
-  'photo-library': 'Photo Library',
-  'change': 'Change',
-  'use': 'Use',
 
   /********** QRCode Comp **********/
-  'identity': "\'s Identity",
   'copied': ' copied',
-  'copy-to-clipboard': 'Copy',
-  'share-friend': 'Add my friend in elastOS',
-  'share-add-me-as-friend': 'Add me as a friend',
 
   /********** Options Comp **********/
-  'share': 'Share',
-  'favorite': 'Favorite',
-  'delete': 'Delete',
 
   /********** Delete Comp **********/
   'delete-contact': 'Delete Contact',

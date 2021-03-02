@@ -33,8 +33,12 @@ export class TranslationsLoader {
                 // keys from various modules.
                 for (let key of Object.keys(translation[lang])) {
                     let value = translation[lang][key];
-                    if ((key in TranslationsLoader.loadedTranslations[lang]))
-                        console.error("Duplicate translation key! Fix this - Overwriting entry for key:", key, "Imported by module:", module);
+                    if ((key in TranslationsLoader.loadedTranslations[lang])) {
+                        if (TranslationsLoader.loadedTranslations[lang][key] == value)
+                            console.warn("Duplicate translation key (same value)! For key:", key, "Imported by module:", module);
+                        else
+                            console.error("Duplicate translation key with different values! Fix this - Overwriting entry for key:", key, "Imported by module:", module);
+                    }
 
                     TranslationsLoader.loadedTranslations[lang][key] = value;
                 }

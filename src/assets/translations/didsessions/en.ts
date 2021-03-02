@@ -17,12 +17,10 @@ export const en = {
   'mnemonicpasscheck-question': 'Mnemonic Passphrase?',
   'mnemonicpasscheck-have-passphrase': 'I Have a Passphrase',
   'mnemonicpasscheck-no-passphrase': 'I Don\'t Have a Passphrase',
-  'submit': 'Submit',
   'mnemonicpassword-intro': 'Type Your Passphrase',
   'text-password-input': 'Enter Password',
   'repeat-password': 'Repeat Password',
   'wrong-password': 'Passwords do not match',
-  'name-is-missing': "Please enter a name",
   'mnemonics-incorrect': 'Mnemonics are incorrect',
   'check-mnemonics': 'Please check your mnemonics and try again',
   'Okay': 'Okay',
@@ -44,14 +42,9 @@ export const en = {
   'your-name': 'What\'s your name?',
 
   // Backup
-  'your-mnemonic': 'Your Mnemonic',
-  'your-mnemonic-prompt1': 'These are your 12 mnemonic words. Lose these and you will lose the identity, so you must keep them written down ',
-  'your-mnemonic-prompt2': 'in order',
-  'your-mnemonic-prompt3': ', and safe!',
 
   // Verify Mnemonic
   'verify-prompt': 'Please verify your 12 mnemonic words in order.',
-  'confirm': 'Confirm',
 
   // Import
   'import-type': 'Import Type',
@@ -68,7 +61,7 @@ export const en = {
 
   // Delete Identity
   'delete-identity': 'Delete Identity',
-  'delete-prompt': 'This action will cause this Identity to be deleted but you can always import it again later.',
+  'delete-identity-prompt': 'This action will cause this Identity to be deleted but you can always import it again later.',
 
   // retrieve identities
   'retrieve-prompt': 'Trying to retrieve identities, please wait.',

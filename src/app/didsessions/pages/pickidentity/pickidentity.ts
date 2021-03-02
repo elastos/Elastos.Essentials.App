@@ -34,7 +34,6 @@ export class PickIdentityPage {
     public popupProvider: PopupProvider,
     private didSessions: DIDSessionsService
   ) {
-
       this.events.subscribe("identityadded", newIdentity => {
         console.log("PickIdentiy - Identity added, reloading content");
         this.loadIdentities();

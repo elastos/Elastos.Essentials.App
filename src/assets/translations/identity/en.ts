@@ -1,20 +1,13 @@
 export const en = {
 
     /******************** Generic ********************/
-    'submit': 'Submit',
-    'next': 'Next',
-    'confirm': 'Confirm',
     'accept': 'Accept',
-    'cancel': 'Cancel',
-    'share': 'Share',
     'share-description': 'Share your Identity with others',
     'edit': 'Edit',
     'edit-description': 'Change, add and edit Identity profile',
     'publish-description': 'Publish identity to blockchain',
     'missing': 'Missing',
-    'close': 'Close',
     'verify': 'Verify Now',
-    'back': 'Back',
 
     /******************** Main Screens  ********************/
     // page: myprofile (Home)
@@ -72,16 +65,11 @@ export const en = {
     'publish-popup-content': 'Information will be stored on the blockchain when you confirm and will stay there!',
     'publish-popup-confirm-question': 'Are you sure?',
 
-    // showqrcode
-    'share-add-me-as-friend': 'Add me as a friend in Elastos',
-
     // page: editprofile
     'edit-avatar': 'edit avatar',
     'show-on-profile': 'Show on Profile',
-    'country': 'Country',
     'add-field': 'Add field',
     'edit-profile': 'Edit Profile',
-    'name-is-missing': 'Please at least provide your name',
     'select-one': 'Select one',
     'select-date': 'Select date',
     'enter-here': 'Enter here',
@@ -90,13 +78,8 @@ export const en = {
     // tabnav
     'home': 'Home',
     'profile': 'Profile',
-    'identity': 'Identity',
 
     // page: exportmnemonic
-    'your-mnemonic': 'Your Mnemonic',
-    'your-mnemonic-prompt1': 'These are your 12 security words (mnemonic). Lose these and you will lose the identity, so you must keep them written down ',
-    'your-mnemonic-prompt2': 'in order',
-    'your-mnemonic-prompt3': ', and safe!',
     'back-to-identity': 'Back to Identity',
 
     // page: credentials
@@ -113,7 +96,6 @@ export const en = {
     'toggle-credentials-to-publish': 'Toggle Credentials to Publish',
 
     // page: settings & advanced-settings
-    'settings': 'Settings',
     'advanced-settings': 'Advanced Settings',
     'available-options': 'Available Options',
     'sync-did-profile': 'Synchronize Identity',
@@ -123,31 +105,24 @@ export const en = {
     // component: qrcode
     'my-identity-qr-code': 'My Identity QR Code',
     'qr-code': 'QR code',
-    'copy-to-clipboard': 'Copy',
     'copied-to-clipboard': 'Identity copied',
 
     // component: options
     'edit-visibility': 'Change Visibility',
     'delete-credentials': 'Delete Credentials',
-    'delete': 'Delete',
     'publish': 'Publish',
     'export': 'Export',
 
     // component: warning
     'delete-creds': 'Delete Credentials?',
-    'delete-prompt': 'This action will cause the selected credentials to be permanently deleted from your identity.',
+    'delete-creds-prompt': 'This action will cause the selected credentials to be permanently deleted from your identity.',
     'publish-identity': 'Publish Identity?',
     'publish-visibility': 'Publish Visibility?',
     'publish-visibility-prompt': 'You can publish your new changes so it\'s recorded for everyone to see. This action will cost a minor ELA transaction fee.',
     'publish-identity-prompt': 'Your identity is not published yet. Taking this next step will allow you to claim ownership of your data and tap the full potential of the Elastos ecosystem. This action will cost a minor ELA transaction fee.',
     'not-yet': 'Not Yet',
-    'continue': 'Continue',
 
     // component: avatar
-    'take-pictures': 'Take Picture',
-    'photo-library': 'Photo Library',
-    'change': 'Change',
-    'use': 'Use',
     'uploading-photo-to-hive': 'Uploading Photo to Hive',
     'avatar-publish': 'Would you like to publish your avatar?',
     'avatar-publish-cancel': 'Cancel',
@@ -259,7 +234,6 @@ export const en = {
 
     // loading
     'loading-msg': 'Wait a moment',
-    'please-wait': 'Please wait',
 
     // id transaction
     'publish-success': 'Your public identity information has been sent to the public ID chain. Please wait a few minutes to see your changes live.',
