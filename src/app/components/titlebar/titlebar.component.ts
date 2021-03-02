@@ -19,6 +19,9 @@ export class TitleBarComponent {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);
     });
+
+    // Set the default navigation mode (used by most apps)
+    // TODO @chad
   }
 
   public title: string = "";

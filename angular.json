@@ -53,7 +53,8 @@
               "@elastosfoundation/trinity-dapp-sdk",
               "hammerjs",
               "dragula",
-              "qrcode"
+              "qrcode",
+              "lodash"
             ]
           },
           "configurations": {
@@ -75,7 +76,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "4mb",
                   "maximumError": "5mb"
                 }
               ]

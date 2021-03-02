@@ -193,7 +193,7 @@ export class ContactNotifierService {
    */
   public async getAllContacts(): Promise<Contact[]> {
     // TODO
-    return null;
+    return [];
   }
 
   /**

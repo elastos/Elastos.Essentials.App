@@ -1,0 +1,196 @@
+.container {
+    padding: 5px;
+    background-color: #f5f5fd;
+    h1 {
+        font-family: Montserrat;
+        font-size: 30px;
+        font-weight: 600;
+        font-stretch: normal;
+        font-style: normal;
+        letter-spacing: normal;
+        text-align: left;
+        color: #191a2f;
+        margin-left:15px;
+    }
+
+    span {
+        margin-top: 12px;;
+        display: block;
+        margin-left:30px;
+        font-family: Montserrat;
+        font-size: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1;
+        letter-spacing: 0.6px;
+        text-align: left;
+        color: #8e8fac;
+    }
+
+    .alert-section {
+        border-top: 2px solid white;
+        border-bottom: 2px solid white;
+        padding: 10px 20px 10px 20px;
+        margin-top: 20px;
+        margin-bottom: 24px;
+
+        img {
+            margin-top:2px;
+        }
+
+        span {
+            display: inline;
+            font-family: Montserrat;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            color: #191a2f;
+            margin-left: 15px;
+        }
+    }
+
+    .list-credentials-section {
+        padding-left: 16px;
+
+        .card {
+            padding-top:8px;
+        }
+
+        .card-icon {
+            position: absolute;
+            width: 72px;
+            margin: 3px;
+            height: 72px;
+            background-repeat: no-repeat;
+            background-image: url("/assets/svg/icondiv.svg");
+            background-blend-mode: multiply;
+            padding: 11px;
+            display: flex;
+            justify-content: center;
+            color: #ffffff;
+            // ion-icon {
+            //     display: block;
+            //     margin: auto;
+            //     width: 70%;
+            //     height: 70%;
+            // }
+            img{
+                margin-top: 9px;
+                width: 64%;
+                height: 64%;
+            }
+
+            .avatar {
+                margin-top: 0px;
+                border-radius: 50%;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .card-internal {
+            width: 100% auto;
+            min-height: 75px;
+            margin-left: 20px;
+            border-radius: 18px;
+            box-shadow: 0 3px 15px 0 #ededf0;
+            background-image: linear-gradient(to right, #ede6ff, #ffffff 1%, #ffffff 81%);
+            padding-left: 40px;
+            padding-top: 0px;
+            padding-bottom: 7px;
+            padding-right: 7px;
+
+        }
+
+        .card-body {
+            width: 100%;
+        }
+
+        .card-action {
+            width: 60px;
+            height: 100%;  vertical-align: middle;
+            padding-top: 20px;
+
+        }
+        ion-toggle{
+            zoom: 0.7;
+            vertical-align: middle;
+        }
+        .card-title {
+            font-family: Montserrat;
+            font-size: 17px;
+            font-weight: 500;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1;
+            letter-spacing: normal;
+            text-align: left;
+            color: #191a2f;
+        }
+
+        .card-title-icons {
+            float: right;
+        }
+
+        .card-value {
+            display: block;
+            font-family: Montserrat;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1.19;
+            letter-spacing: normal;
+            text-align: left;
+            color: #191a2f;
+            padding-bottom: 5px;
+        }
+
+    }
+
+
+
+
+    .darkContainer{
+
+        h1 {
+            color: white;
+        }
+
+        span {
+            color: white;
+        }
+
+        .alert-section {
+            border-top: 2px solid #090910;
+            border-bottom: 2px solid #090910;
+        }
+
+
+        .list-credentials-section {
+
+            .card-internal {
+
+                box-shadow: 0 3px 15px 0 #151515;
+                background-color: #2a2a4d;
+                background-image: none;
+            }
+
+            .card-title {
+                color: white;
+            }
+            .card-value {
+                color: white;
+            }
+        }
+    }
+
+    .button-section {
+        padding-top:10px;
+    }
+}
+
+
+
+

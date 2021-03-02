@@ -1,0 +1,11 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-list class="ion-padding" [class.dark-container]="theme.darkMode">
+    <ion-virtual-scroll [items]="areaList"  approxItemHeight="60px">
+      <ion-item *virtualItem="let item" (click)="selectItem(item)">
+        <ion-label>{{ item.name }}</ion-label>
+      </ion-item>
+    </ion-virtual-scroll>
+  </ion-list>
+</ion-content>
+

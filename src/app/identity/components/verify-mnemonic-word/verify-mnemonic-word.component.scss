@@ -1,0 +1,29 @@
+.verify-mnemonic-word {
+    overflow:hidden;
+    background:#F4F4F4;
+    width:100%;
+    display:block;
+
+    font-weight:600;
+    font-size:14px;
+    border-radius: 10px;
+    text-align:left;
+    margin-left:5px;
+    margin-right:5px;
+
+    .index {
+        margin-left:10px;
+        color: #BABABA;
+        padding-top:2px;
+        padding-bottom:2px;
+    }
+
+    .word {
+        display:block;
+        background:var(--ion-color-primary);
+        color:white;
+        text-align: center;
+        padding-top:2px;
+        padding-bottom:2px;
+    }
+}

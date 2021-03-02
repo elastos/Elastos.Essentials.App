@@ -1,0 +1,19 @@
+<div class="rounded-action-button" >
+    <ion-grid class="ion-no-padding">
+        <ion-row class="ion-no-padding">
+            <ion-col [ngClass]="{'danger':(mode=='danger')}" class="ion-no-padding ion-align-self-center">
+                <div class="picture-container ion-activatable" [ngStyle]="{'background': color}">
+                    <ion-icon [src]="image" class="picture" [ngStyle]="{'fill': imgcolor}"></ion-icon>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col [ngClass]="{'danger':(mode=='danger')}" 
+                class="title ion-align-self-center"
+                [ngStyle]="{'color': color}">
+                {{title | translate}}
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</div>

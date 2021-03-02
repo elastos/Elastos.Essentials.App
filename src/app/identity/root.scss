@@ -1,0 +1,303 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import "~@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+
+:focus {
+  outline: none;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 300;
+  font-style: normal;
+  src: url("../../assets/fonts/montserrat/Montserrat-Light.ttf");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 400;
+  font-style: normal;
+  src: url("../../assets/fonts/montserrat/Montserrat-Regular.ttf");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-style: normal;
+  src: url("../../assets/fonts/montserrat/Montserrat-Medium.ttf");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-style: normal;
+  src: url("../../assets/fonts/montserrat/Montserrat-SemiBold.ttf");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-style: normal;
+  src: url("../../assets/fonts/montserrat/Montserrat-Bold.ttf");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 800;
+  font-style: normal;
+  src: url("../../assets/fonts/montserrat/Montserrat-ExtraBold.ttf");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 900;
+  font-style: normal;
+  src: url("../../assets/fonts/montserrat/Montserrat-Black.ttf");
+}
+
+* {
+  font-family: "Montserrat" !important;
+}
+
+ion-ripple-effect {
+  --ripple-color: var(--ion-color-primary);
+  color: var(--ripple-color);
+}
+
+ion-item {
+  --background-activated: none;
+}
+
+.blur {
+  filter: blur(2.5px);
+}
+
+.ripple {
+  overflow: hidden;
+  position: relative;
+}
+
+.loader {
+  --spinner-color: #000000;
+  --background: #ffffff;
+  color: #000000;
+}
+
+.darkLoader {
+  --spinner-color: white;
+  --background: #2b2c49;
+  color: white;
+}
+
+/********** Popup Components **********/
+.edit-options {
+  --background: #ffffff;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+
+  .popover-wrapper {
+    .popover-content {
+      width: 55vw !important;
+    }
+  }
+}
+
+.edit-darkOptions {
+  --background: #464660;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+
+  .popover-wrapper {
+    .popover-content {
+      width: 55vw !important;
+    }
+  }
+}
+
+.profile-options {
+  --background: #ffffff;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.profile-darkOptions {
+  --background: #464660;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.warning {
+  --min-height: 302px;
+  // --min-width: 385px;
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-wrapper {
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width: 85vw !important;
+    }
+  }
+}
+
+.successComponent {
+  --background: transparent;
+  animation: animate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes animate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width: 85vw !important;
+    }
+  }
+}
+
+/********** Modal Components **********/
+.qrcode-modal {
+  --height: 56%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
+}
+
+.dark-qrcode-modal {
+  --height: 56%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
+}
+
+.security-check-modal {
+  --height: 300px;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+@media screen and (max-height: 670px) {
+  .qrcode-modal {
+    --height: 65%;
+  }
+
+  .dark-qrcode-modal {
+    --height: 65%;
+  }
+}
+
+// ion-toggle {
+//   height: 18px;
+//   --handle-height: 16px;
+//   zoom: 0.8;
+
+// }
+
+
+ion-title {
+  position: absolute;
+  left: 0px !important;
+  top: 0px !important;
+  width: 100%;
+  height: 100%;
+  text-align: center !important;
+  --background: #0093F0;
+  font-size: 18px;
+}
+
+ion-button {
+  text-transform: none;
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end:0;
+  margin-left: px2rem(45px);
+  margin-right: px2rem(45px);
+}
+
+ion-note {
+  font-size: 14px;
+}
+
+ion-footer {
+  text-align: center;
+}
+
+.confirm {
+  width: px2rem(686px);
+  height: px2rem(84px);
+  --background: #0093F0;
+  font-size: 14px;
+}
+
+.delete {
+  width: px2rem(686px);
+  height: px2rem(84px);
+  --background: #AB2323;
+  font-size: 16px;
+}
+
+.line-limit-length {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.backupWalletTextArea {
+  margin: auto;
+  border: 1px dashed #d9d9d9;
+  border-radius: 3px;
+  // color: #192c3a;
+  text-align: center;
+  width: px2rem(660px);
+  height: px2rem(280px);
+  // display: flex;
+  justify-content: center;
+  background-color: #161723;
+  font-size: 20px;
+}
+
+.no-background{
+  --background:none;
+  background:none;
+}

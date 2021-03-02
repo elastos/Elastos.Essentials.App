@@ -1,0 +1,487 @@
+.current-options-section {
+
+  h1 {
+    font-family: Montserrat;
+    font-size: 13px;
+    font-weight: 600;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.23;
+    letter-spacing: 0.65px;
+    text-align: left;
+    color: #9394b6;
+    margin-left:10px;
+  }
+
+  h2 {
+    display: block;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 17px;
+    font-weight: 600;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.29;
+    letter-spacing: normal;
+    text-align: center;
+    color: #ffffff;
+  }
+
+
+  span {
+    display: block;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 12px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.08;
+    letter-spacing: 0.6px;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px;
+  }
+
+  .publish {
+    background-image: url("/assets/svg/background-blue.svg");
+    background-size: 95%;
+    background-repeat: no-repeat;
+    width: 153px;
+    height: 131px;
+    margin: auto;
+    margin-bottom: 10px;
+    text-align: center;
+    padding: 15px 10px 5px 10px;
+
+    h2 {
+      margin: 2px 2px 3px 2px;
+
+    }
+    img {
+      width: 35px;
+
+    }
+
+  }
+  .share {
+    background-image: url("/assets/svg/background-black.svg");
+    background-size: 95%;
+    background-repeat: no-repeat;
+    width: 153px;
+    height: 131px;
+    margin: auto;
+    text-align: center;
+    padding: 15px 10px 5px 10px;
+
+    h2 {
+      margin: 0px 2px 5px 2px;
+
+    }
+    img {
+      width: 35px;
+
+    }
+  }
+
+  .edit {
+    background-image: url("/assets/svg/background-black.svg");
+    background-size: 95%;
+    background-repeat: no-repeat;
+    margin: auto;
+    margin-bottom: 10px;
+    // margin: 10px 0px 0px 0px;
+    width: 153px;
+    height: 131px;
+    text-align: center;
+    padding: 15px 10px 5px 10px;
+
+    h2 {
+      margin: 0px 2px 2px 2px;
+    }
+    img {
+      width: 35px;
+      //height: 48.4px;
+    }
+  }
+
+  .export {
+    background-image: url("/assets/svg/background-black.svg");
+    background-size: 95%;
+    background-repeat: no-repeat;
+    margin: auto;
+    // margin: 10px 0px 0px 0px;
+    width: 153px;
+    height: 131px;
+    text-align: center;
+    padding: 15px 10px 5px 10px;
+
+    h2 {
+      margin: 0px 2px 2px 2px;
+
+    }
+    img {
+      width: 35px;
+
+    }
+  }
+}
+
+
+
+.container {
+  min-height: 100%;
+  width: 100%;
+  padding: 5px 13px 13px 13px;
+
+
+  .icon-section {
+    width: 215.1px;
+    height: 214.6px;
+    margin: 0 auto;
+    object-fit: contain;
+    display: flex;
+    justify-content: center;
+    color: #ffffff;
+    background-image: url("/assets/svg/empty-balloon.svg");
+    background-blend-mode: multiply;
+    padding: 35px;
+    ion-icon {
+      display: block;
+      margin: auto;
+      width: 70%;
+      height: 70%;
+    }
+    img {
+      display: block;
+      margin: auto;
+      border-radius: 50%;
+      object-fit: cover;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .avatar-container {
+      img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 1.75px solid #6d74ef;
+      }
+    }
+
+    h1 {
+      margin: 0;
+      padding: 15px 30px 7.5px;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.21;
+      text-align: center;
+    }
+
+    p {
+      margin: 0;
+      padding: 0px 60px 15px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .btn-row {
+      padding: 15px 30px 25px;
+
+      img {
+        margin: 0 7.5px;
+        height: 46px;
+        width: 46px;
+      }
+    }
+  }
+  .issuer-cred {
+    margin-top: 15px;
+    padding: 0px 15px;
+    color: #cfd1f7;
+
+    .issuer-cred-header {
+      display: block;
+      font-weight: bold;
+    }
+
+    .issuer-cred-values {
+      margin-top: 5px;
+      font-size: 11px;
+    }
+
+    .issuer-cred-values img {
+      object-fit: cover;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      float: left;
+      margin-right: 10px;
+    }
+
+    .issuer-cred-name {
+      margin-left: 10px;
+      font-weight: bold;
+      display: block;
+    }
+  }
+
+  .background-balloon {
+    width: 215.1px;
+    height: 214.6px;
+    object-fit: contain;
+    display: block;
+    margin: 0px auto 20px auto;
+  }
+
+  .welcome-back {
+    font-family: Montserrat;
+    font-size: 15px;
+    font-weight: 300;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #191a2f;
+    display: block;
+    width: 80%;
+    margin-left: 18px;
+    margin-top:5px;
+  }
+  .actionsSection {
+    padding: 0px;
+
+    .title {
+      width: 173px;
+      height: 18px;
+      font-family: Montserrat;
+      font-size: 14px;
+      font-weight: 600;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.29;
+      letter-spacing: 0.7px;
+      text-align: left;
+      color: #ffffff;
+    }
+    .description {
+      width: 165px;
+      height: 16px;
+      font-family: Montserrat;
+      font-size: 13px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.23;
+      letter-spacing: normal;
+      text-align: left;
+      color: #ffffff;
+    }
+    .Credentials {
+      width: 21.5px;
+      height: 21.5px;
+      object-fit: contain;
+    }
+
+
+    .hive{
+      width: 36.7px;
+      height: 32.9px;
+      object-fit: contain;
+
+    }
+
+    .identity {
+      width: 24.7px;
+      height: 24.8px;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-family: MontserratSemiBold;
+      font-size: 16px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.19;
+      letter-spacing: 0.8px;
+      text-align: left;
+      color: #372153;
+      margin-top: 10px;
+    }
+  }
+
+  .username {
+    font-family: Montserrat;
+    font-size: 22px;
+    font-weight: 600;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #191a2f;
+    display: block;
+    margin-left: 18px;
+    width: 80%;
+  }
+
+  .dots {
+    width: 4.8px;
+    height: 20.1px;
+    object-fit: contain;
+    float: right;
+  }
+
+  .alert {
+    width: 16.8px;
+    height: 15.8px;
+    object-fit: contain;
+  }
+
+  .description {
+    width: 265px;
+    height: 18px;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.29;
+    letter-spacing: normal;
+    text-align: left;
+    color: #372153;
+  }
+
+  .detail-row {
+    margin: 0 15px 0 15px;
+  }
+
+  .alert-section {
+    padding: 5px 10px 5px 20px;
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+    margin-top: 5px;
+
+    .published {
+      width: 24.8px;
+      height: 19.6px;
+      object-fit: contain;
+    }
+
+    .verified {
+      width: 20.2px;
+      height: 22.7px;
+      margin-left:2px;
+      object-fit: contain;
+    }
+  }
+
+  .section2 {
+    padding: 0px 10px 0px 10px;
+  }
+
+  .danger {
+    width: 100%;
+    height: 60.5px;
+
+    --border-radius: 15px;
+  }
+
+  .warning {
+    width: 100%;
+    height: 60.5px;
+
+    --border-radius: 15px;
+  }
+
+  .primary {
+    width: 100%;
+    height: 60.5px;
+
+    --border-radius: 15px;
+  }
+
+  .chevron-thin-right {
+    width: 6.7px;
+    height: 12.2px;
+    object-fit: contain;
+  }
+}
+
+
+.darkContainer {
+
+  .current-options-section {
+    color: black !important;
+
+    h1 {
+      color: white;
+    }
+    h2 {
+      color: black;
+    }
+
+    span {
+      color: black;
+    }
+    .publish {
+      h2 {
+        color: white;
+      }
+      span {
+        color: white;
+      }
+    }
+
+    .share {
+      background-image: url("/assets/svg/background-dark.svg");
+
+    }
+
+    .edit {
+      background-image: url("/assets/svg/background-dark.svg");
+    }
+    .export {
+      background-image: url("/assets/svg/background-dark.svg");
+    }
+  }
+
+  .alert-section {
+    border-top: 2px solid #090910;
+    border-bottom: 2px solid #090910;
+
+     }
+
+  .welcome-back {
+    color: white;
+  }
+
+  .description,
+  .username {
+    color: #ffffff;
+  }
+
+  .actionsSection {
+    h1 {
+      color: #ffffff;
+    }
+  }
+}

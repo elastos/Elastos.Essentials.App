@@ -3,7 +3,7 @@
 <ion-content>
   <ion-grid class="container ion-no-padding ion-no-margin" color="light" [class.dark-container]="theme.darkMode">
     <img src="assets/didsessions/icon/ela.svg">
-    <ion-row class="item-row" *ngFor="let language of languageService.languages" (click)="languageService.setSelectLang(language.code)">
+    <ion-row class="item-row" *ngFor="let language of languageService.languages" (click)="languageService.setSelectedLanguage(language.code)">
       <ion-col size="10" class="left-col">
         <!-- <img [src]="language.icon"> -->
         <ion-label [class.selected]="languageService.selectLang === language.code">{{ language.name }}</ion-label>

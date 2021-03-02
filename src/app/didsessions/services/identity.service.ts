@@ -458,6 +458,7 @@ export class IdentityService {
 
     deleteDIDStore(didStoreId: string) : Promise<void> {
         return new Promise((resolve, reject)=>{
+            console.log("didManager", didManager)
             didManager.deleteDidStore(didStoreId, ()=>{
                 resolve();
             }, (err)=>{

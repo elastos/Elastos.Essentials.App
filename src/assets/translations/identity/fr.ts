@@ -1,0 +1,271 @@
+export const fr = {
+
+    /******************** Generic ********************/
+    'submit': 'Envoyer',
+    'next': 'Suivant',
+    'confirm': 'Confirmer',
+    'accept': 'Accepter',
+    'cancel': 'Annuler',
+    'share': 'Partager',
+    'share-description': 'Partagez votre identité',
+    'edit': 'Modifier',
+    'edit-description': 'Modifiez et ajoutez des infos à votre profil',
+    'publish-description': 'Publiez votre identité sur la chaîne de blocs',
+    'missing': 'Manquant',
+    'close': 'Fermer',
+    'verify': 'Vérifier Maintenant',
+    'back': 'Retour',
+
+    /******************** Main Screens  ********************/
+    // page: myprofile (Home)
+    'welcome-back': 'Bienvenue!',
+    'identity-not-published-on-blockchain': 'Identité Non Publiée',
+    'identity-published-on-blockchain': 'Identité Publiée',
+    'credentials-published-on-blockchain': 'Crédentiels Publiés',
+    'credentials-verified': 'Crédentiels Verifiés',
+    'current-actions': 'Actions Actuelles',
+    'current-options': 'Options actuelles',
+    'identity-not-published': 'Identité Non Publiée',
+    'identity-on-blockchain': 'Rendez Votre Identité Visible',
+    'add-more-information': 'Ajoutez plus d\'Informations',
+    'start-adding-more-to-your-profile': 'Ajoutez plus sur votre profil',
+    'my-identity': 'Mon Identité',
+    'export-mnemonics': 'Exportez',
+    'export-mnemonics-description': 'Voir mon mnémonique d\'identité',
+    'credentials-modified': 'Crédentiels non synchronisés sur cet appareil',
+    'credentials-modified-description': 'Re-publiez votre profil pour synchronizer',
+
+    // page : profile
+    'my-capsules': 'Mes Capsules',
+    'show-all': 'Montrer Tout',
+    'no-capsules-title': 'Aucune Capsule trouvée',
+    'no-capsules-text': 'Vous trouvez ici des capsules de la communauté Elastos. Certains capsules vous permettent d\'être ajoutées à votre profil pour vous connecter plus facilement avec vos contacts.',
+    'not-set': 'Non défini',
+    'credentials': 'Crédentiels',
+    'male': 'Homme',
+    'female': 'Femme',
+    'published': 'Publié',
+    'unpublished': 'Non Publié',
+    'hive-storage-vault': 'Espace de Stockage Hive',
+    'about-me': 'A mon propos',
+
+
+    // page: credential-details
+    'credentialdetails-show-on-profile': 'Montrer dans le profil public',
+    'credentialdetails-self-proclaimed-credential': 'Crédentiel Auto-Proclamé',
+    'credential-published-on-blockchain': 'Crédentiel Publié sur la chaîne de blocs',
+    'credential-verified': 'Crédentiel Vérifié',
+    'credential-unverified': 'Crédentiel Non Vérifié',
+    'credential-not-published': 'Crédentiel Non Publié',
+    'credential-on-blockchain': 'Rendez cette information visible',
+    'verify-credential': 'Vérifier le Crédentiel',
+    'reverify-credential': 'Revérifier le Crédentiel',    
+    'launch-external-app-to-verify': 'Lancer une capsule externe pour vérifier',
+    'validator': 'Validateur',
+    'history': 'Historique',
+    'issuance-date': 'Date d\'émission',
+    'expiration-date': 'Date d\'expiration',
+    'no-history-display': 'Pas d\'historique',
+
+    // Credentiallist
+    'publish-changes': 'Publier les Changements',
+    'publish-popup-content': 'Les informations seront sauvegardées sur la chaîne de blocs après confirmation, et elles y resteront en permanence!',
+    'publish-popup-confirm-question': 'Etes-vous certain(e)?',
+
+    // showqrcode
+    'share-add-me-as-friend': 'Ajoutez moi comme un ami dans elastOS',
+
+    // page: editprofile
+    'edit-avatar': 'modifier l\'avatar',
+    'show-on-profile': 'Afficher sur mon Profil',
+    'country': 'Pays',
+    'add-field': 'Ajouter un champ',
+    'edit-profile': 'Modifier le Profil',
+    'name-is-missing': 'Fournissez au moins votre nom SVP',
+    'select-one': 'Sélectionnez-en un',
+    'select-date': 'Sélectionnez une date',
+    'enter-here': 'Saisir ici',
+    'select-gender': 'Sélectionnez un genre',
+
+    // tabnav
+    'home': 'Accueil',
+    'profile': 'Profil',
+    'identity': 'Identity',
+
+    // page: exportmnemonic
+    'your-mnemonic': 'Votre mnémonique',
+    'your-mnemonic-prompt1': 'Voici vos 12 mots de securité (mnémonique). Si vous perdez ces mots, vous perdez votre identité. Gardez-les écrits ',
+    'your-mnemonic-prompt2': 'en ordre',
+    'your-mnemonic-prompt3': ', et en sécurité!',
+    'back-to-identity': 'Retourner vers l\'identité',
+
+    // page: credentials
+    'mycredentials-header': 'Crédentiels',
+    'mycredentials-segment-all': 'Tous',
+    'mycredentials-segment-hidden': 'Invisible',
+    'mycredentials-segment-visible': 'Visible',
+    'mycredentials-segment-verified': 'Verifiés',
+    'mycredentials-segment-unverified': 'Non Verifiés',
+    'mycredentials-verifiedby': 'Verifiés par:',
+
+    // page: publish
+    'showing-all-visible-credentials': 'Montrez Tous les Crédentiels Visibles',
+    'toggle-credentials-to-publish': 'Sélectionnez les Crédentiels à Publier',
+
+    // page: settings & advanced-settings
+    'settings': 'Paramètres',
+    'advanced-settings': 'Paramètres avancés',
+    'available-options': 'Options disponibles',
+    'sync-did-profile': 'Synchroniser l\'identité',
+    'did-sync-success': 'Synchronisation de l\'identité réussie',
+
+    /******************** Component Screens ********************/
+    // component: qrcode
+    'my-identity-qr-code': 'QR Code de mon identité',
+    'qr-code': 'QR code',
+    'copy-to-clipboard': 'Copier',
+    'copied-to-clipboard': 'Copié dans le presse-papier!',
+
+    // component: options
+    'edit-visibility': 'Modif. Visibilité',
+    'delete-credentials': 'Supprimer',
+    'delete': 'Supprimer',
+    'publish': 'Publier',
+    'export': 'Exporter',
+
+    // component: warning
+    'delete-creds': 'Supprimer les Crédentiels?',
+    'delete-prompt': 'Cette action supprimera les crédentiels sélectionnés définitivement de votre identité.',
+    'publish-identity': 'Publier l\'identité?',
+    'publish-visibility': 'Publier les modifications?',
+    'publish-visibility-prompt': 'Vous pouvez publier vos modifications pour partager vos informations les plus récentes avec d\'autres personnes. Cette action peut coûter quelques frais de transactions mineurs en ELA.',
+    'publish-identity-prompt': 'Votre identité n\'est pas encore en ligne. Publier votre identité vous permettra de prouver qui vous êtes dans les applications de l\'écosystème Elastos. Cette action peut coûter quelques frais de transactions mineurs en ELA.',
+    'not-yet': 'Pas maintenant',
+    'continue': 'Continuer',
+
+    // component: avatar
+    'take-pictures': 'Prendre une Photo',
+    'photo-library': 'Bibliothèque d\'images',
+    'change': 'Modifier',
+    'use': 'Utiliser',
+    'uploading-photo-to-hive': 'Envoi de la photo vers votre espace de stockage',
+    'avatar-publish': 'Souhaitez-vous publier votre nouvel avatar?',
+    'avatar-publish-cancel': 'Annuler',
+    'avatar-publish-yes': 'Oui',
+
+    // component: success
+    'request': 'Your Request',
+    'sent': 'is on its way',
+    'success-msg': 'This app will automatically close when your request is delivered.',
+
+    /******************** Intent Screens  ********************/
+    // page: appidcredissue
+    'appidcredential-issue': 'Identification de l\'Application',
+    'appidcredential-package-id': 'ID du paquet:',
+    'appidcredissue-intro': 'Confirmez-vous que cette application a été téléchargée et installée depuis une source sure? ',
+    'app-instancedid': 'DID temporaire de l\'application',
+    'app-did': 'DID de l\'application',
+
+    // page: signrequest
+    'sign-data': 'Signer des données',
+
+    // page:  registerappprofilerequest
+    'app-profile': "Profil d'application",
+    'register-app': "Enregistrer le profil de l'application:",
+    'registerapp-intro': 'Le profil d\'application peut rester privé ou être affiché publiquement.',
+    'registerapp-msg': 'Ce profil d\'application est publié et sera visible par tous (frais de transactions mineurs).',
+    'registerapp-msg2': 'Seulement certaines personnes que vous choisirez pourront voir ce profil.',
+    'visible': 'Visible: ',
+    'private': 'Privé: ',
+
+    // page: credaccess
+    'profile-request': 'Accès au profil',
+    'credaccess-intro': 'Cette application demande à accéder à certaines de vos informations. Veuillez vérifier les informations partagées avant de continuer:',
+    'credaccess-missing': 'Certaines informations requises ne sont pas disponibles dans votre profil. Veuillez d\'abord compléter votre profil avant de continuer.',
+    'mandatory-data-access': 'Informations obligatoires',
+    'optional-data-access': 'Informations optionnelles',
+    'credaccess-information-missing': 'Au moins une information requise est manquante dans votre profil. Veuillez compléter votre profil et réessayer.',
+    'cant-be-displayed': "(Non affichable)",
+    'credaccess-publish-required': 'Votre identité doit être publiée pour pouvoir continuer cette action. Veuillez publier votre identité, puis essayez à nouveau.',
+    'credaccess-alert-publish-required-title': 'Identité Publiée Requise',
+    'credaccess-alert-publish-required-msg': 'Cette application requièrt que votre identité soit publiée pour pouvoir utiliser des informations de votre profil. Veuillez publier votre identité, puis essayez à nouveau.',
+    'credaccess-alert-publish-required-btn': 'Ok',
+    'publish-status': 'Statut',
+    'published-did-required': 'Identité Publiée Requise',
+    'published-did-not-required': 'Identité Publiée Non Requise',
+
+    // page: credissue
+    'sign-cred': 'Signer un Crédentiel:',
+    'credential-issue': 'Création d\'un credentiel',
+    'credissue-intro': 'Vous allez délivrer des informations à un tiers, et signer ces informations avec votre identité. Veuillez vérifier le contenu avec attention.',
+    'receiver': 'Destinataire',
+    'identifier': 'Identifiant',
+    'expire': 'Expiration',
+    'credential-issued': 'Crédentiel créé',
+    'done': 'Terminer',
+    'credential-issued-success': 'Parfait, le crédentiel a été créé!',
+    'credential-issued-error': 'Oops, le crédentiel n\'a pas pu être créé pour l\'instant.',
+
+    // page: credimport
+    'credential-import': 'Import de Crédentiel',
+    'credential-import-from': 'Délivré Par:',
+    'credimport-intro': 'Vous allez ajouter un crédentiel fourni par un tier, à votre profil. Veuillez vérifier son contenu.',
+    'credimport-intro2': 'Veuillez consulter les données suivantes',
+    'credimport-success-title': 'Credentiél importé',
+    'credimport-success': 'Parfait, le crédential a été ajouté à votre profil.',
+    'credimport-success-done': 'Terminer',
+
+    // page: sethiveprovider
+    'sethiveprovider-title': 'Espace de stockage Hive',
+    'sethiveprovider-app-id': 'Application:',
+    'sethiveprovider-intro': 'Ce nouveau fournisseur va être enregistré dans votre profil public (identité) comme gestionnaire de votre espace de stockage.',
+    'sethiveprovider-name': 'Nom:',
+    'sethiveprovider-address': 'Adresse:',
+
+    /******************** Profile Entries ********************/
+    'credential-info-type-did': 'Identité',
+    'credential-info-type-avatar': 'Avatar',
+    'credential-info-type-name': 'Nom',
+    'credential-info-type-email': 'Email',
+    'credential-info-type-birthDate': 'Date de naissance',
+    'credential-info-type-education': 'Education',
+    'credential-info-type-gender': 'Sexe',
+    'credential-info-type-nation': 'Pays',
+    'credential-info-type-telephone': 'Téléphone',
+    'credential-info-type-nickname': 'Pseudonyme',
+    'credential-info-type-birthPlace': 'Lieu de naissance',
+    'credential-info-type-description': 'Bio',
+    'credential-info-type-occupation': 'Profession',
+    'credential-info-type-interests': 'Intérêts',
+    'credential-info-type-url': 'Site internet',
+    'credential-info-type-facebook': 'Facebook',
+    'credential-info-type-instagram': 'Instagram',
+    'credential-info-type-twitter': 'Twitter',
+    'credential-info-type-snapchat': 'Snapchat',
+    'credential-info-type-telegram': 'Telegram',
+    'credential-info-type-wechat': 'Wechat',
+    'credential-info-type-weibo': 'Weibo',
+    'credential-info-type-elaAddress': 'Adresse ELA',
+    'credential-info-type-twitch': 'Twitch',
+    'credential-info-type-tiktok': 'TikTok',
+    'credential-info-type-paypal': 'Paypal',
+    'credential-info-type-venmo': 'Venmo',
+
+    /******************** Messages ********************/
+    // errors
+    'error': 'Erreur',
+    'text-request-fail': 'Erreur lors de la requête',
+    'text-request-no-credential': 'Aucun crédentiel',
+
+    // loading
+    'loading-msg': 'Veuillez patienter',
+    'please-wait': 'Veuillez patienter',
+
+    // id transaction
+    'publish-success': "Vos informations publiques ont été envoyées à la chaîne d'identité publique. Veuillez patienter un moment pour que vos changements soient actifs.",
+    'publish-error': 'Vos informations publiques n\'ont pas pu être publiées pour l\'instant. Veuillez réessayer dans un moment.',
+    'publish-error-title': "Erreur de publication",
+    'publish-wait': 'Veuillez attendre quelques minutes avant de publier à nouveau.',
+};
+
+

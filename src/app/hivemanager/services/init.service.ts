@@ -14,8 +14,6 @@ export class HiveManagerInitService {
   ) {}
 
   public async init(): Promise<void> {
-    console.log("Hive manager init service is initializing");
-
     // Start mandatory services
     await this.hiveService.init();
     await this.appService.init();

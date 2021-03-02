@@ -1,0 +1,47 @@
+.rounded-action-button {
+    background: white;
+    --color: black;
+    position: relative;
+
+    .picture-container {
+        border-radius: 50%;
+        overflow: hidden;
+        width:55px;
+        height:55px;
+        position:relative;
+        margin: 0 auto;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+
+        ion-ripple-effect {
+            --ripple-color:white;
+        }
+
+        .picture {
+            border-radius: 50%;
+            width:80%;
+            height:80%;
+        }
+    }
+
+    .title {
+        font-weight: 400;
+        font-size:12px;
+        text-align:center;
+    }
+    
+    .danger {
+        color:#FF4D4D !important;
+        fill:#FF4D4D !important;
+    }
+
+    .right-arrow {
+        height:18px;
+    }
+ 
+    ion-ripple-effect {
+        --ripple-color: var(--ion-color-primary);
+        color: var(--ripple-color);
+    } 
+}

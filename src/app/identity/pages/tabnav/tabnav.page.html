@@ -1,0 +1,22 @@
+<ion-content class="container" [class.darkContainer]="theme.darkMode">
+  <ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()">
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="home" [class.selected]="selectedTab == 'home'">
+        <ion-icon class="home-run"></ion-icon>
+        <ion-label>{{ 'home'  | translate  }}</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="profile" [class.selected]="selectedTab == 'profile'">
+        <ion-icon class="Profile">
+        </ion-icon>
+        <ion-label>{{ 'profile'  | translate  }}</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="credentials" [class.selected]="selectedTab == 'credentials'">
+        <ion-icon class="Credentials">
+        </ion-icon>
+        <ion-label>{{ 'credentials'  | translate  }}</ion-label>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
+</ion-content>

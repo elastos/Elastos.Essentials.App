@@ -1,0 +1,96 @@
+ion-grid {
+  width: 100%;
+  padding: 5px;
+
+  .copy {
+    height: 30px;
+  }
+
+  ion-row {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      font-family: Montserrat;
+      font-size: 21px;
+      font-weight: 600;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 0.95;
+      letter-spacing: normal;
+      text-align: left;
+      color: #372153;
+    }
+
+    qrcode {
+      background: white;
+      display: inline-block;
+    }
+
+    span {
+      font-family: Poppins;
+      font-size: 12px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.5;
+      letter-spacing: normal;
+      text-align: right;
+      color: #372153;
+      word-wrap: break-word;
+      text-align: center;
+      position: relative;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+  }
+
+  .btn-row {
+    ion-button {
+      height: 41px;
+      width: 100%;
+      --border-radius: 8px;
+
+      ion-label {
+        text-transform: none;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: -0.43px;
+      }
+    }
+  }
+
+  .reducePadding {
+    padding: 0;
+  }
+}
+
+.darkContainer {
+  background: #262641;
+
+  .border {
+    padding: 5px 5px 2px 5px;
+    background-color: white;
+  }
+
+  .did,
+  .title {
+    color: #ffffff;
+  }
+
+  ion-grid {
+    ion-row {
+      h1,
+      span {
+        color: #ffffff;
+      }
+      qrcode {
+        padding: 10px 0px 5px 0px;
+      }
+    }
+  }
+}

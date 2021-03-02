@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="prefix__Component_401_6" width="47" height="46" data-name="Component 401 – 6" viewBox="0 0 47 46">
+    <defs>
+        <style>
+            .prefix__cls-2{fill:#ffffff}
+        </style>
+    </defs>
+    <ellipse id="prefix__Ellipse_334" cx="23.5" cy="23" data-name="Ellipse 334" rx="23.5" ry="23" style="fill:#464660"/>
+    <g id="prefix__Component_398_1" data-name="Component 398 – 1" transform="translate(16 16)">
+        <path id="prefix__Subtraction_1" d="M5.25 7h-3.5A1.752 1.752 0 0 1 0 5.25v-3.5A1.752 1.752 0 0 1 1.749 0h3.5A1.752 1.752 0 0 1 7 1.75v3.5A1.752 1.752 0 0 1 5.25 7zM2.522 1.544a.979.979 0 0 0-.978.978v1.956a.979.979 0 0 0 .978.978h1.955a.979.979 0 0 0 .978-.978V2.521a.979.979 0 0 0-.978-.978z" class="prefix__cls-2" data-name="Subtraction 1"/>
+        <path id="prefix__Subtraction_2" d="M5.25 7h-3.5A1.752 1.752 0 0 1 0 5.25v-3.5A1.752 1.752 0 0 1 1.749 0h3.5A1.752 1.752 0 0 1 7 1.75v3.5A1.752 1.752 0 0 1 5.25 7zM2.522 1.544a.979.979 0 0 0-.978.978v1.956a.979.979 0 0 0 .978.978h1.955a.979.979 0 0 0 .978-.978V2.521a.979.979 0 0 0-.978-.978z" class="prefix__cls-2" data-name="Subtraction 2" transform="translate(8)"/>
+        <path id="prefix__Path_2370" d="M6.777 20H4.926a.928.928 0 0 0-.926.926v1.851a.928.928 0 0 0 .926.926h1.851a.928.928 0 0 0 .926-.926v-1.851A.928.928 0 0 0 6.777 20z" class="prefix__cls-2" data-name="Path 2370" transform="translate(5.623 -10.214)"/>
+        <path id="prefix__Subtraction_4" d="M5.25 7h-3.5A1.752 1.752 0 0 1 0 5.25v-3.5A1.752 1.752 0 0 1 1.749 0h3.5A1.752 1.752 0 0 1 7 1.75v3.5A1.752 1.752 0 0 1 5.25 7zM2.522 1.544a.979.979 0 0 0-.978.978v1.956a.979.979 0 0 0 .978.978h1.955a.979.979 0 0 0 .978-.978V2.521a.979.979 0 0 0-.978-.978z" class="prefix__cls-2" data-name="Subtraction 4" transform="translate(0 8)"/>
+    </g>
+</svg>

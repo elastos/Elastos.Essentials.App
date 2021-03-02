@@ -1,0 +1,21 @@
+<div class="large-menu-item ion-activatable">
+    <ion-grid class="ion-no-padding">
+        <ion-row class="ion-no-padding">
+            <ion-col size="1" class="ion-align-self-center">
+            </ion-col>
+            <ion-col size="10" class="ion-align-self-center">
+                <ion-grid>
+                    <ion-row>
+                        <ion-col [ngClass]="{'title':true, 'danger':(mode=='danger')}">
+                        {{title}}
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+            </ion-col>
+            <ion-col size="1" [ngClass]="{'danger':(mode=='danger'), 'ion-align-self-center':true}">
+                <ion-icon [src]="'assets/images/right_arrow.svg'" class="right-arrow"></ion-icon>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-ripple-effect></ion-ripple-effect>
+</div>

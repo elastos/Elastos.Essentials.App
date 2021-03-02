@@ -11,8 +11,10 @@ const routes: Routes = [
   { path: 'hivemanager', loadChildren: './hivemanager/module#HiveManagerModule' },
   { path: 'settings', loadChildren: './settings/module#SettingsModule' },
   { path: 'contacts', loadChildren: './contacts/module#ContactsModule' },
+  { path: 'identity', loadChildren: './identity/module#IdentityModule' },
 
-  // Prevent angular from calling a random default route sometimes when starting, leading to crashes if platform is not ready yet
+  // Prevent angular from calling a random default route sometimes when starting,
+  // leading to crashes if platform is not ready yet
   { path: '**', component: EmptyPage },
 ];
 

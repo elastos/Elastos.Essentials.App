@@ -77,11 +77,11 @@ export class GlobalPreferencesService {
    * @param key   Unique key identifying the preference data.
    * @param value The data to be stored. If null is passed, the preference is restored to system default value.
    */
-  public async setPreference(did: string, key: string, value: any): Promise<void> {
+  public async setPreference(did: string, key: string, value: any, allowNullDID: boolean = false): Promise<void> {
     if (!(key in this.getDefaultPreferences()))
       throw new Error("Preference "+key+" is not a registered preference!");
 
-    let preferences = await this.getPreferences(did);
+    let preferences = await this.getPreferences(did, allowNullDID);
     preferences[key] = value;
 
     await this.storage.setSetting<AllPreferences>(did, "prefservice", "preferences", preferences);

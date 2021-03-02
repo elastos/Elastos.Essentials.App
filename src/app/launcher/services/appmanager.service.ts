@@ -87,7 +87,7 @@ export class AppmanagerService {
     ) {}
 
     public async init() {
-        console.log('AppmanagerService init');
+        console.log('Launcher\'s app manager service is initializing');
 
         this.language.activeLanguage.subscribe((lang)=>{
             this.initAppsList();
@@ -99,7 +99,6 @@ export class AppmanagerService {
             this.onMessageReceived(ret);
         });
 
-        console.log('Listening to intent events');
         this.appManager.setIntentListener((ret) => {
             this.onIntentReceived(ret);
         });
@@ -128,7 +127,7 @@ export class AppmanagerService {
                         description: this.translate.instant('app-identity-description'),
                         icon: '/assets/launcher/ios/app-icons/identity.svg',
                         id: 'org.elastos.trinity.dapp.did',
-                        routerPath: '/identity/home'
+                        routerPath: '/identity/myprofile/home'
                     },
                     {
                         cssId: 'Contacts',

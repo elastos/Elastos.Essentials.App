@@ -10,8 +10,6 @@ export class SettingsInitService {
   ) {}
 
   public async init(): Promise<void> {
-    console.log("Settings init service is initializing");
-
     // Mandatory services start
     await this.settings.init();
   }

@@ -7,15 +7,15 @@
       <p> {{ uxService.getDisplayableBio(contact) }}</p>
       <ion-row class="btn-row">
         <div class="ion-activatable ripple">
-          <img [src]="!theme.darkMode ? '/assets/buttons/scan.svg' : '/assets/buttons/darkmode/scan.svg'" (click)="popupService.showQRCode(contact)">
+          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/scan.svg' : '/assets/contacts/buttons/darkmode/scan.svg'" (click)="popupService.showQRCode(contact)">
           <ion-ripple-effect></ion-ripple-effect>
         </div>
         <div class="ion-activatable ripple">
-          <img [src]="!theme.darkMode ? '/assets/buttons/edit.svg' : '/assets/buttons/darkmode/edit.svg'" (click)="friendsService.showCustomization(contact, false)">
+          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/edit.svg' : '/assets/contacts/buttons/darkmode/edit.svg'" (click)="friendsService.showCustomization(contact, false)">
           <ion-ripple-effect></ion-ripple-effect>
         </div>
         <div class="ion-activatable ripple">
-          <img [src]="!theme.darkMode ? '/assets/buttons/options.svg' : '/assets/buttons/darkmode/options.svg'" (click)="popupService.showOptions($event, contact, true)">
+          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/options.svg' : '/assets/contacts/buttons/darkmode/options.svg'" (click)="popupService.showOptions($event, contact, true)">
           <ion-ripple-effect></ion-ripple-effect>
         </div>
       </ion-row>

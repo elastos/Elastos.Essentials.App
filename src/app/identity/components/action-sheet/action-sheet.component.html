@@ -1,0 +1,12 @@
+<div class="container" (click)="backgroundClicked('container',$event)" id="container">
+    <div class="modal-box" [ngStyle]="{'opacity': (readyToDisplay?'1':'0')}">
+        <div class="action-buttons">
+            <div class="action-button" *ngFor="let item of config.buttons" (click)="doAction(item)">
+                <img  class="action-icon" [src]="getIcon(item.icon)" />
+                <span class="action-title">{{item.title}}</span>
+                <span class="action-description">{{item.description}}</span>
+            </div>
+        </div>
+        <button class="action-cancel" (click)="cancel()" >{{ 'cancel' | translate }}</button>
+    </div>
+</div>

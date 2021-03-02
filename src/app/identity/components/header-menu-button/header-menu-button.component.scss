@@ -1,0 +1,25 @@
+.header-menu-button {
+    background:white;
+    color: black;
+    float:right;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    width:60px;
+    box-shadow: -3px 3px 5px rgba(0,0,0,0.3);
+    overflow:hidden;
+    --background-activated:none;
+
+    .close-icon {
+        height:16px;
+        margin-top:4px;
+    }
+}
+
+.button {
+    --background:none !important;
+    margin: 0;
+    margin-bottom:5px;
+    border-width:0px;
+    --box-shadow: none;
+    --padding-start:0;
+}

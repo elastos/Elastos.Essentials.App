@@ -1,0 +1,25 @@
+.large-menu-item {
+    background: white;
+    --color: black;
+    position: relative;
+
+    .title {
+        font-weight: 600;
+        font-size:14px;
+        color:#000000;
+    }
+    
+    .danger {
+        color:#FF4D4D !important;
+        fill:#FF4D4D !important;
+    }
+
+    .right-arrow {
+        height:18px;
+    }
+ 
+    ion-ripple-effect {
+        --ripple-color: var(--ion-color-primary);
+        color: var(--ripple-color);
+    } 
+}

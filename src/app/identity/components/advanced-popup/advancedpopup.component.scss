@@ -1,0 +1,74 @@
+ion-content {
+    backdrop-filter: blur(6px);
+    --background: rgba(255,255,255,0.3);
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+}
+
+.boxes {
+    opacity:0;
+    transition: all 0.3s ease;
+
+    .box {
+        background:white;
+        color:black;
+        border-radius: 20px;
+        padding:30px;
+        font-size:20px;
+        font-weight:600;
+        text-align:center;
+        width:80vw;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+
+        .title {
+            font-size:26px;
+            font-weight:700;
+        }
+    }
+
+    .info-box {
+        margin-bottom:50px;
+
+        .picture {
+            height:80px;
+            margin-bottom:10px;
+        }
+
+        .title {
+            margin-bottom:10px;
+        }
+
+        .content {
+            font-size:16px;
+            font-weight:500;
+            line-height:20px;
+        }
+    }
+
+    .prompt-box {
+        text-align: center;
+
+        .title {
+            margin-bottom:30px;
+        }
+
+        .confirm-button {
+            margin-bottom:20px !important; 
+        }
+
+        .confirm-button, .cancel-button {
+            width:120px;
+            display: block;
+            margin: 10px auto;
+        }
+    }
+}

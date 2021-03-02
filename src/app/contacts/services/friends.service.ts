@@ -13,6 +13,7 @@ import { DidService } from './did.service';
 import { Events } from './events.service';
 import { ContactNotifierService, Contact as ContactNotifierContact } from 'src/app/services/contactnotifier.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { DIDSessionsService } from 'src/app/services/didsessions.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -79,6 +80,7 @@ export class FriendsService {
     public storageService: StorageService,
     private events: Events,
     private didService: DidService,
+    private didSessions: DIDSessionsService,
     private contactNotifier: ContactNotifierService,
     private appManager: TemporaryAppManagerPlugin
   ) {
@@ -86,9 +88,14 @@ export class FriendsService {
   }
 
   async init() {
-    await this.getVisit();
-    await this.getStoredContacts();
-    this.getContactNotifierContacts();
+    this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
+      // Refresh content for each signing in user (different contacts list for now).
+      if (signedInIdentity) {
+        await this.getVisit();
+        await this.getStoredContacts();
+        this.getContactNotifierContacts();
+      }
+    });
   }
 
   /******************************************************
@@ -305,6 +312,7 @@ export class FriendsService {
       'Requires confirmation?' + requiresConfirmation
     );
     return new Promise((resolve, reject) => {
+      console.log("FRIENDS SVC DEBUG", didManager)
       didManager.resolveDidDocument(didString, true, (didDocument: DIDPlugin.DIDDocument) => {
         console.log("DIDDocument resolved for DID " + didString, didDocument);
 

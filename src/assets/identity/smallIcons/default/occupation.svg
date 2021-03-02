@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="OccupationIcon" width="15.297" height="15.297" viewBox="0 0 15.297 15.297">
+    <defs>
+        <style>
+            .cls-1{fill:#565bdb}
+        </style>
+    </defs>
+    <g id="Group_13569" transform="translate(3.059)">
+        <path id="Path_22138" d="M110.049 3.059V1.147A1.176 1.176 0 0 0 108.9 0h-3.824a1.176 1.176 0 0 0-1.147 1.147v1.912H102.4V15.3h9.178V3.059zm-1.53 0h-3.059V1.53h3.059z" class="cls-1" transform="translate(-102.4)"/>
+    </g>
+    <g id="Group_13572" transform="translate(0 3.059)">
+        <g id="Group_13571">
+            <path id="Path_22139" d="M.765 102.4a.723.723 0 0 0-.765.765v10.708a.723.723 0 0 0 .765.765h.765V102.4z" class="cls-1" transform="translate(0 -102.4)"/>
+        </g>
+    </g>
+    <g id="Group_13573" transform="translate(13.768 3.059)">
+        <path id="Path_22140" d="M461.565 102.4h-.765v12.238h.765a.723.723 0 0 0 .765-.765v-10.708a.723.723 0 0 0-.765-.765z" class="cls-1" transform="translate(-460.8 -102.4)"/>
+    </g>
+</svg>

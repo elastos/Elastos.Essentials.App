@@ -81,7 +81,10 @@ export class GlobalLanguageService {
     console.log("Fetching language information");
 
     this.systemLanguage = this.translate.getBrowserLang();
-    this.selectedLanguage = await this.prefs.getPreference(DIDSessionsService.signedInDIDString, "locale.language");
+    if (DIDSessionsService.signedInDIDString)
+      this.selectedLanguage = await this.prefs.getPreference(DIDSessionsService.signedInDIDString, "locale.language");
+    else
+      this.selectedLanguage = null;
 
     console.log("System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
 
@@ -127,7 +130,7 @@ export class GlobalLanguageService {
 
     // Save current choice to disk
     console.log("Saving global language code:", code);
-    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, "locale.language", code);
+    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, "locale.language", code, true);
 
     // Notify listeners of language changes
     this.activeLanguage.next(code);

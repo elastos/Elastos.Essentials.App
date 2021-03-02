@@ -1,0 +1,33 @@
+<ion-content>
+    <div class="container" (click)="backgroundClicked('container',$event)" id="container">
+        <div class="boxes" [ngStyle]="{'opacity': (readyToDisplay?'1':'0')}">
+            <div class="box info-box" *ngIf="config.info">
+                <img [src]='config.info.picture' *ngIf="config.info.picture" class="picture">
+                <div class="title" [ngStyle]="{'color': config.color}">{{config.info.title}}</div>
+                <div class="content">{{config.info.content}}</div>
+            </div>
+
+            <div class="box prompt-box" *ngIf="config.prompt">
+                <div class="title" [ngStyle]="{'color': config.color}">{{config.prompt.title}}</div>
+
+                <did-button class="confirm-button" (click)="confirm()"
+                    [title]="config.prompt.confirmAction"
+                    [textcolor]="'#FFFFFF'"
+                    textsize="14px"
+                    [bgcolor]="config.color"
+                    [bordercolor]="config.color"
+                    [padding]="'4px'"
+                    [shadow]="false"></did-button>
+
+                <did-button class="cancel-button" (click)="cancel()"
+                    [title]="config.prompt.cancelAction"
+                    [textcolor]="'#000000'"
+                    textsize="14px"
+                    [bgcolor]="'rgba(0,0,0,0)'"
+                    [bordercolor]="'#000000'"
+                    [padding]="'4px'"
+                    [shadow]="false"></did-button>
+            </div>
+        </div>
+    </div>
+</ion-content>

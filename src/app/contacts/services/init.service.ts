@@ -16,8 +16,6 @@ export class ContactsInitService {
   ) {}
 
   public async init(): Promise<void> {
-    console.log("Contacts init service is initializing");
-
     this.appService.init();
     await this.friendsService.init();
     this.intentService.init();

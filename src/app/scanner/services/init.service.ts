@@ -10,8 +10,6 @@ export class ScannerInitService {
   ) {}
 
   public async init(): Promise<void> {
-    console.log("Scanner init service is initializing");
-
     // Mandatory services start
     await this.intentService.init();
   }

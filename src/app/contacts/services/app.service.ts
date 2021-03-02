@@ -29,8 +29,6 @@ export class AppService {
 
   init() {
     if (this.platform.platforms().indexOf("cordova") >= 0) {
-      console.log("Listening to intent events");
-
       /* TODO @chad titleBarManager.addOnItemClickedListener((menuIcon) => {
         if(this.popupService.qrModal) {
           this.popupService.qrModal.dismiss();
