@@ -4,7 +4,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Component({
   selector: 'app-onboard',
@@ -32,7 +32,7 @@ export class OnboardPage implements OnInit {
     private router: Router,
     private platform: Platform,
     public translate: TranslateService,
-    private didSessions: DIDSessionsService
+    private didSessions: GlobalDIDSessionsService
   ) { }
 
   ngOnInit() {
@@ -72,7 +72,7 @@ export class OnboardPage implements OnInit {
   }
 
   async exit() {
-    await this.storage.setSetting(DIDSessionsService.signedInDIDString, "launcher", "visit", true);
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "visit", true);
     this.router.navigate(['launcher/home']);
   }
 }

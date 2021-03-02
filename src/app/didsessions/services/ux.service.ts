@@ -6,7 +6,7 @@ import { ThemeService } from './theme.service';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 import { Events } from './events.service';
-import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 
 let selfUxService: UXService = null;
@@ -34,7 +34,7 @@ export class UXService {
         private theme: ThemeService,
         private events: Events,
         private loadingCtrl: LoadingController,
-        private didSessions: DIDSessionsService
+        private didSessions: GlobalDIDSessionsService
     ) {
         selfUxService = this;
         UXService.instance = this;
@@ -47,7 +47,6 @@ export class UXService {
     }
 
     async init() {
-        console.log("UXService init");
         // this.theme.getTheme();
 
         /* TODO @chad titleBarManager.addOnItemClickedListener((menuItem)=>{

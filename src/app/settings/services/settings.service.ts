@@ -19,7 +19,6 @@ export class SettingsService {
     this.getRuntimeVersion();
 
     // Load app manager only on real device, not in desktop browser - beware: ionic 4 bug with "desktop" or "android"/"ios"
-    console.log("Listening to messages and intent events")
     /* TODO @chad titleBarManager.addOnItemClickedListener((menuIcon)=>{
       if (menuIcon.key == "back") {
           this.navCtrl.back();

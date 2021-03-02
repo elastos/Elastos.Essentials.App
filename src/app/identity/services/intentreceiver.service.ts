@@ -30,8 +30,6 @@ export class IntentReceiverService {
     }
 
     async init() {
-        console.log("IntentReceiverService is initializing");
-
         this.intentService.intentListener.subscribe((intent)=>{
             this.onReceiveIntent(intent);
         });

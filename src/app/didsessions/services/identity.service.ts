@@ -18,9 +18,10 @@ import { BiometricAuthenticationFailedException } from '../model/exceptions/biom
 import { BiometricLockedoutException } from '../model/exceptions/biometriclockedout.exception';
 import { UXService } from './ux.service';
 import { Events } from './events.service';
-import { DIDSessionsService, IdentityEntry, SignInOptions } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { TemporaryAppManagerPlugin, TemporaryPasswordManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -65,7 +66,7 @@ export class IdentityService {
         private uxService: UXService,
         private appManager: TemporaryAppManagerPlugin,
         private passwordManager: TemporaryPasswordManagerPlugin.PasswordManager,
-        private didSessions: DIDSessionsService
+        private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
         this.zone.run(() => {
@@ -88,7 +89,7 @@ export class IdentityService {
 
         this.translate.onLangChange.subscribe(data => {
             let lang = data.lang;
-            console.log("Setting current mnemonic language to "+lang);
+            Logger.log("DIDSessions", "Setting current mnemonic language to "+lang);
 
             // Settings DID SDK language
             if (lang === 'zh') {
@@ -521,7 +522,7 @@ export class IdentityService {
     }
 
     async loadGroupedIdentities(): Promise<IdentityGroup[]> {
-        console.log("Loading DID Session identities");
+        Logger.log("DIDSessions", "Loading DID Session identities");
 
         let identityEntries = await this.didSessions.getIdentityEntries();
         //console.log(identityEntries);

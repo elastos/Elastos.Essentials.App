@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { Logger } from 'src/app/logger';
 import { ContactAvatar } from 'src/app/services/contactnotifier.service';
 
 /**
@@ -143,10 +144,9 @@ export class NotificationManagerService {
 
   async getNotifications() {
     const notifications = await this._fromPluginToBeMerged_getNotifications();
-    console.log("Got notifications from the notification manager: " + JSON.stringify(notifications));
+    Logger.log("Launcher", "Got notifications from the notification manager: " + JSON.stringify(notifications));
     this.notifications = notifications;
     this.clearUselessNotification();
-    console.log('getNotifications:', this.notifications);
     this.updateBadge();
   }
 

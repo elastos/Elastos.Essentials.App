@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -84,9 +84,9 @@ export class DeveloperService {
   ];
 
   async getCurrentConfigurations() {
-    let networkCode = await this.prefs.getPreference<string>(DIDSessionsService.signedInDIDString, "chain.network.type");
-    let mode = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "developer.backgroundservices.startonboot");
-    let address = await this.prefs.getPreference<string>(DIDSessionsService.signedInDIDString, "trinitycli.runaddress");
+    let networkCode = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, "chain.network.type");
+    let mode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "developer.backgroundservices.startonboot");
+    let address = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, "trinitycli.runaddress");
     this.zone.run(() => {
       this.selectedNet = networkCode;
       this.backgroundServicesEnabled = mode;
@@ -104,12 +104,12 @@ export class DeveloperService {
   ) {
     console.log('Dev preference set to ' + networkCode);
     this.selectedNet = networkCode;
-    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
-    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
-    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
-    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
-    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
-    this.prefs.setPreference(DIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
+    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
+    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
+    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
+    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
+    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
+    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
   }
 
   getIndexByNetCode(netCode: string) {
@@ -188,7 +188,7 @@ export class DeveloperService {
   }
 
   private async setPreference(key: string, value: any): Promise<void> {
-    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, key, value);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, key, value);
   }
 
   async showToast(header: string, msg?: string, duration: number = 4000) {

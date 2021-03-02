@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { NetworkType } from '../model/networktype';
 
@@ -14,13 +14,13 @@ export class PrefsService {
      * Retrieved from elastOS' global preferences.
      */
     public async getActiveNetworkType(): Promise<NetworkType> {
-        let value = await this.prefs.getPreference<string>(DIDSessionsService.signedInDIDString, "chain.network.type");
+        let value = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, "chain.network.type");
         return value as NetworkType;
     }
 
     public async developerModeEnabled(): Promise<boolean> {
         try {
-            let devMode = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "developer.mode");
+            let devMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "developer.mode");
             if (devMode)
                 return true;
             else

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
-import { DIDSessionsService } from './didsessions.service';
+import { Logger } from '../logger';
+import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 
 @Injectable({
@@ -44,7 +45,7 @@ export class GlobalLanguageService {
 
   constructor(
     private translate: TranslateService,
-    private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
+    private prefs: GlobalPreferencesService, private didSessions: GlobalDIDSessionsService) {
   }
 
   public async init() {
@@ -78,15 +79,15 @@ export class GlobalLanguageService {
    * Retrieves and stores system language, and current user-defined language.
    */
   async fetchLanguageInfo(): Promise<void> {
-    console.log("Fetching language information");
+    Logger.log("LanguageService", "Fetching language information");
 
     this.systemLanguage = this.translate.getBrowserLang();
-    if (DIDSessionsService.signedInDIDString)
-      this.selectedLanguage = await this.prefs.getPreference(DIDSessionsService.signedInDIDString, "locale.language");
+    if (GlobalDIDSessionsService.signedInDIDString)
+      this.selectedLanguage = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language");
     else
       this.selectedLanguage = null;
 
-    console.log("System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
+    Logger.log("LanguageService", "System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
 
     let actualLanguage = this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage;
     this.translate.setDefaultLang(actualLanguage);
@@ -130,7 +131,7 @@ export class GlobalLanguageService {
 
     // Save current choice to disk
     console.log("Saving global language code:", code);
-    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, "locale.language", code, true);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language", code, true);
 
     // Notify listeners of language changes
     this.activeLanguage.next(code);

@@ -1,6 +1,7 @@
 import { DIDURL } from './didurl.model';
 import { DIDHelper } from '../helpers/did.helper';
 import { VerifiableCredential } from './verifiablecredential.model';
+import { Logger } from 'src/app/logger';
 
 export type CredentialAvatar = {
     "content-type": string,
@@ -28,7 +29,7 @@ export class DID {
      * in memory.
      */
     async loadAllCredentials() {
-        console.log("Loading credentials for DID", this);
+        Logger.log("DIDSessions", "Loading credentials for DID", this);
 
         let pluginCredentials = await this.loadPluginCredentials();
 
@@ -37,7 +38,7 @@ export class DID {
             this.credentials.push(new VerifiableCredential(c));
         })
 
-        console.log("Current credentials list: ", this.credentials);
+        Logger.log("DIDSessions", "Current credentials list: ", this.credentials);
     }
 
     private loadPluginCredentials(): Promise<DIDPlugin.VerifiableCredential[]> {

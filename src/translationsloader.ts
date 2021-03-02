@@ -1,3 +1,5 @@
+import { Logger } from "./app/logger";
+
 export class TranslationsLoader {
     private static modulesWithTranslations = [
         "common",       // Shared strings for generic keywords such as cancel, open, add, etc.
@@ -22,7 +24,7 @@ export class TranslationsLoader {
      * doesn't seem to allow us to have isolated translations per module.
      */
     public static async loadAllModulesAndMerge(): Promise<void> {
-        console.log("Loading all translations");
+        Logger.log("Translations", "Loading all translations");
 
         for (let lang of TranslationsLoader.languagesToLoad) {
             TranslationsLoader.loadedTranslations[lang] = {}
@@ -45,7 +47,7 @@ export class TranslationsLoader {
                 //Object.assign(TranslationsLoader.loadedTranslations[lang], translation[lang]);
             }
         }
-        console.log("All translations have been loaded");
+        Logger.log("Translations", "All translations have been loaded");
     }
 
     public static getTranslations(lang: string): {[key:string]:string} {

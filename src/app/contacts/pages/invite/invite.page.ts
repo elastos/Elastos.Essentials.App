@@ -107,7 +107,6 @@ export class InvitePage implements OnInit {
 
       this.letters = this.letters.sort((a, b) => a > b ? 1 : -1);
       this.letters.push(this.letters.splice(this.letters.indexOf('Anonymous'), 1)[0]);
-      console.log('Letter groups', this.letters);
     } else {
       this.friendsService.contacts.map((contact) => {
         // Add letter for 'anonymous' contact
@@ -134,7 +133,6 @@ export class InvitePage implements OnInit {
 
       this.letters = this.letters.sort((a, b) => a > b ? 1 : -1);
       this.letters.push(this.letters.splice(this.letters.indexOf('Anonymous'), 1)[0]);
-      console.log('Letter groups', this.letters);
     }
   }
 

@@ -17,6 +17,7 @@ import { DIDService } from "./did.service";
 import { DIDDocument } from "../model/diddocument.model";
 import { Events } from "./events.service";
 import { AuthService } from "./auth.service";
+import { Logger } from "src/app/logger";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -41,7 +42,7 @@ export class DIDSyncService {
     public native: Native,
     private authService: AuthService
   ) {
-    console.log("DIDSyncService created");
+    Logger.log("Identity", "DIDSyncService created");
     DIDSyncService.instance = this;
 
     this.subscribeEvents();
@@ -57,7 +58,7 @@ export class DIDSyncService {
     );
 
     this.events.subscribe("did:didchanged", () => {
-      console.log("DID Sync service got did changed event");
+      Logger.log("Identity", "DID Sync service got did changed event");
       // Every time a DID has changed we check its publish status
       let did = this.didService.getActiveDid();
       if (did) this.checkIfDIDDocumentNeedsToBePublished(did);
@@ -122,7 +123,7 @@ export class DIDSyncService {
   public async checkIfDIDDocumentNeedsToBePublished(
     did: DID
   ): Promise<boolean> {
-    console.log("Checking if DID document needs to be published", did);
+    Logger.log("Identity", "Checking if DID document needs to be published", did);
     let didString = did.getDIDString();
 
     // Check locally resolved DIDDocument modification date, or on chain one if notthing found locally (or expired).
@@ -132,7 +133,7 @@ export class DIDSyncService {
         didString,
         false
       );
-      console.log("Resolved on chain document: ", currentOnChainDIDDocument);
+      Logger.log("Identity", "Resolved on chain document: ", currentOnChainDIDDocument);
 
       if (!currentOnChainDIDDocument) {
         // Null? This means there is no published document yet, so we need to publish.
@@ -144,7 +145,7 @@ export class DIDSyncService {
         this.setPublicationStatus(did, true);
         return true;
       } else {
-        console.log("DID " + did.getDIDString() + " is published");
+        Logger.log("Identity", "DID " + did.getDIDString() + " is published");
         this.setPublicationStatus(did, false);
         return false;
       }
@@ -185,7 +186,6 @@ export class DIDSyncService {
     didString: string,
     forceRemote: boolean
   ): Promise<DIDDocument> {
-    console.log("Calling resolveDIDWithoutDIDStore")
     return new Promise((resolve, reject) => {
       didManager.resolveDidDocument(
         didString,

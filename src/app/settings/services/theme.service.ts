@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 

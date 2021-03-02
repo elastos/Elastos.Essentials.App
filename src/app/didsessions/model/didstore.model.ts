@@ -3,6 +3,7 @@ import { DIDHelper } from '../helpers/did.helper';
 import { NewIdentity } from './newidentity';
 import { DIDURL } from './didurl.model';
 import { Util } from '../services/util';
+import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -77,7 +78,7 @@ export class DIDStore {
                     // Never called
                 },
                 (pluginDidStore: DIDPlugin.DIDStore) => {
-                    console.log("Initialized DID Store is ", pluginDidStore);
+                    Logger.log("DIDSessions", "Initialized DID Store is ", pluginDidStore);
                     resolve(pluginDidStore);
                 },
                 (err) => {
@@ -132,13 +133,13 @@ export class DIDStore {
     }
 
     public async loadAll() {
-        console.log("DID store loading all.");
+        Logger.log("DIDSessions", "DID store loading all.");
         try {
             await this.initDidStore(this.getId());
 
             let pluginDids = await this.listPluginDids();
 
-            console.log("Plugin DIDs:", pluginDids);
+            Logger.log("DIDSessions", "Plugin DIDs:", pluginDids);
             if (pluginDids.length == 0) {
                 // Something went wrong earlier, no DID in the DID store...
                 console.log("No DID in the DID Store.")
@@ -155,12 +156,12 @@ export class DIDStore {
     protected async loadAllDids(pluginDids: DIDPlugin.DID[]) {
         this.dids = [];
         for(let pluginDid of pluginDids) {
-            console.log("Loading DID "+pluginDid.getDIDString());
+            Logger.log("DIDSessions", "Loading DID "+pluginDid.getDIDString());
             let did = new DID(pluginDid);
             await did.loadAll();
             this.dids.push(did);
         }
-        console.log("Loaded DIDs:", this.dids);
+        Logger.log("DIDSessions", "Loaded DIDs:", this.dids);
     }
 
     listPluginDids(): Promise<DIDPlugin.DID[]> {

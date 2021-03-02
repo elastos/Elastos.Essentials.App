@@ -6,7 +6,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
-import { DIDSessionsService, IdentityEntry } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
@@ -32,7 +32,7 @@ export class PickIdentityPage {
     public translate: TranslateService,
     private events: Events,
     public popupProvider: PopupProvider,
-    private didSessions: DIDSessionsService
+    private didSessions: GlobalDIDSessionsService
   ) {
       this.events.subscribe("identityadded", newIdentity => {
         console.log("PickIdentiy - Identity added, reloading content");

@@ -3,7 +3,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
@@ -22,7 +22,7 @@ export class LanguagePage implements OnInit {
     public translate: TranslateService,
     private uxService: UXService,
     private splashScreen: SplashScreen,
-    private didSessions: DIDSessionsService
+    private didSessions: GlobalDIDSessionsService
   ) { }
 
   ngOnInit() {

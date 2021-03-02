@@ -11,7 +11,8 @@ import { isNullOrUndefined } from 'util';
 
 import * as moment from 'moment';
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 
 export interface LastExpirationNotification {
@@ -33,7 +34,7 @@ export class BackgroundService {
         private authService: AuthService,
         private expirationService: ExpirationService,
         private notificationManager: NotificationManagerService,
-        private didsessions: DIDSessionsService,
+        private didsessions: GlobalDIDSessionsService,
         public native: Native) {
     }
 
@@ -41,7 +42,7 @@ export class BackgroundService {
       // TODO: STOP TIMERS WHEN SWITCHING TO ANOTHER DID USER HERE!
       this.didsessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
         if (signedInIdentity) {
-          console.log("Identity background service is initializing for",signedInIdentity.didString);
+          Logger.log("Identity", "Identity background service is initializing for",signedInIdentity.didString);
 
           // Initialize the active DID
           await this.didService.loadGlobalIdentity();
@@ -61,19 +62,19 @@ export class BackgroundService {
 
     // Synchronizes the active DID with the ID chain, to make sure we always have up to date information.
     private synchronizeActiveDIDAndRepeat() {
-      console.log("Synchronizing current DID with ID chain");
+      Logger.log("Identity", "Synchronizing current DID with ID chain");
 
       this.authService.checkPasswordThenExecute(async ()=>{
-        console.log("Synchronization is starting");
+        Logger.log("Identity", "Synchronization is starting");
         await this.didService.getActiveDidStore().synchronize(this.authService.getCurrentUserPassword());
-        console.log("Synchronization ended");
+        Logger.log("Identity", "Synchronization ended");
 
         setTimeout(() => {
           this.synchronizeActiveDIDAndRepeat();
         }, 30*60*1000); // Repeat after 30 minutes
       }, () => {
         // Operation cancelled
-        console.log("Password operation cancelled");
+        Logger.log("Identity", "Password operation cancelled");
         this.native.hideLoading();
 
         setTimeout(()=>{
@@ -83,21 +84,21 @@ export class BackgroundService {
     }
 
     private async notifyExpiredCredentials()   {
-      console.log("Starting expiration notifications");
+      Logger.log("Identity", "Starting expiration notifications");
         if (await this.isExpirationAlreadyVerifiedToday()){
-          console.log("Expiration was already checked today, next verification in 24h");
+          Logger.log("Identity", "Expiration was already checked today, next verification in 24h");
 
           setTimeout(()=>{
             this.notifyExpiredCredentials();
           }, 24*60*60*1000); // Repeat after 24 hours
         } else {
-          console.log("Starting check expirations");
+          Logger.log("Identity", "Starting check expirations");
           let maxDaysToExpire: number = 7;
           let expirations = await this.expirationService.getElementsAboutToExpireOnActiveDID(maxDaysToExpire);
 
           if (expirations.length > 0)
           {
-            console.log("Sending expirations notifications");
+            Logger.log("Identity", "Sending expirations notifications");
             expirations.forEach(expiration =>{
               this.notificationManager.sendNotification({
                 key: expiration.id,
@@ -116,13 +117,13 @@ export class BackgroundService {
             this.notifyExpiredCredentials();
           }, 24*60*60*1000); // Repeat after 24 hours
 
-          console.log("End expiration notifications, next verification in 24h");
+          Logger.log("Identity", "End expiration notifications, next verification in 24h");
         }
     }
 
     private isExpirationAlreadyVerifiedToday() : Promise<boolean> {
       return new Promise<boolean>((resolve, reject) =>{
-        console.log("Verify if expiration was already checked today");
+        Logger.log("Identity", "Verify if expiration was already checked today");
           this.localStorage.get(this.EXPIRATION_STORAGE_KEY).then(storedChecked =>{
             // Verify if was checked today
             if (!isNullOrUndefined(storedChecked))

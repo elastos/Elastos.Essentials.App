@@ -6,13 +6,14 @@ import { GlobalStorageService } from './services/global.storage.service';
 import { GlobalThemeService } from './services/global.theme.service';
 import { LauncherInitService } from './launcher/services/init.service';
 import { DIDSessionsInitService } from './didsessions/services/init.service';
-import { DIDSessionsService } from './services/didsessions.service';
+import { GlobalDIDSessionsService } from './services/global.didsessions.service';
 import { ScannerInitService } from './scanner/services/init.service';
 import { HiveManagerInitService } from './hivemanager/services/init.service';
 import { SettingsInitService } from './settings/services/init.service';
 import { GlobalLanguageService } from './services/global.language.service';
 import { ContactsInitService } from './contacts/services/init.service';
 import { IdentityInitService } from './identity/services/init.service';
+import { Logger } from './logger';
 
 @Component({
     selector: 'app-root',
@@ -26,7 +27,7 @@ export class AppComponent {
         public splashScreen: SplashScreen,
         public storage: GlobalStorageService,
         public theme: GlobalThemeService,
-        private didSessions: DIDSessionsService,
+        private didSessions: GlobalDIDSessionsService,
         private launcherInitService: LauncherInitService,
         private didSessionsInitService: DIDSessionsInitService,
         private scannerInitService: ScannerInitService,
@@ -44,7 +45,7 @@ export class AppComponent {
 
     async initializeApp() {
         this.platform.ready().then(async () => {
-            console.log("Main app component initialization is starting");
+            Logger.log("Global", "Main app component initialization is starting");
 
             // TODO screen.orientation.lock('portrait');
 
@@ -59,13 +60,13 @@ export class AppComponent {
             await this.identityInitService.init();
 
             // Navigate to the right startup screen
-            console.log("Navigating to start screen");
+            Logger.log("Global", "Navigating to start screen");
             let entry = await this.didSessions.getSignedInIdentity();
             if (entry != null) {
-                console.log("An active DID exists, navigating to launcher home");
+                Logger.log("Global", "An active DID exists, navigating to launcher home");
                 this.navController.navigateRoot(['/launcher/home']);
             } else {
-                console.log("No active DID, navigating to DID sessions");
+                Logger.log("Global", "No active DID, navigating to DID sessions");
                 this.navController.navigateRoot(['/didsessions/pickidentity']);
                 //this.navController.navigateRoot(['/launcher/home']);
             }

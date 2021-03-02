@@ -9,7 +9,8 @@ import { VerifiableCredential } from './verifiablecredential.model';
 import { Avatar } from '../services/hive.service';
 import { ProfileService } from '../services/profile.service';
 import { Events } from '../services/events.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 export class DID {
     public credentials: VerifiableCredential[] = [];
@@ -17,7 +18,7 @@ export class DID {
 
     private didDocument: DIDDocument;
 
-    constructor(public pluginDid: DIDPlugin.DID, private events: Events, private didSessions: DIDSessionsService) {
+    constructor(public pluginDid: DIDPlugin.DID, private events: Events, private didSessions: GlobalDIDSessionsService) {
     }
 
     public async loadAll() {
@@ -34,7 +35,7 @@ export class DID {
      * in memory.
      */
     async loadAllCredentials() {
-        console.log("Loading credentials for DID", this);
+        Logger.log("Identity", "Loading credentials for DID", this);
 
         let pluginCredentials = await this.loadPluginCredentials();
 
@@ -43,7 +44,7 @@ export class DID {
             this.credentials.push(new VerifiableCredential(c));
         })
 
-        console.log("Current credentials list: ", this.credentials);
+        Logger.log("Identity", "Current credentials list: ", this.credentials);
 
         //this.DisplayCredentials = this.profileService.allCreds;
     }
@@ -422,7 +423,7 @@ export class DID {
     }
 
     public setLoadedDIDDocument(didDocument: DIDDocument) {
-        console.log("Setting loaded did document to:", didDocument);
+        Logger.log("Identity", "Setting loaded did document to:", didDocument);
         this.didDocument = didDocument;
     }
 

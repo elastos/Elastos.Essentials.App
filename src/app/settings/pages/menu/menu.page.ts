@@ -5,7 +5,7 @@ import { NavController } from '@ionic/angular';
 import { SettingsService } from '../../services/settings.service';
 import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -71,7 +71,7 @@ export class MenuPage implements OnInit {
     this.hasConfigSections = true;
 
     // Retrieve current settings
-    let prefs = await this.prefsService.getPreferences(DIDSessionsService.signedInDIDString);
+    let prefs = await this.prefsService.getPreferences(GlobalDIDSessionsService.signedInDIDString);
     console.log("Loaded preferences:", prefs);
     this.prefs.developerMode = prefs["developer.mode"];
     console.log("After loading preferences:", this.prefs);
@@ -83,7 +83,7 @@ export class MenuPage implements OnInit {
 
   toggleDeveloperMode() {
     this.prefs.developerMode = !this.prefs.developerMode;
-    this.prefsService.setPreference(DIDSessionsService.signedInDIDString, "developer.mode", this.prefs.developerMode);
+    this.prefsService.setPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode", this.prefs.developerMode);
     if (!this.prefs.developerMode) {
         this.developer.resetNet();
     }

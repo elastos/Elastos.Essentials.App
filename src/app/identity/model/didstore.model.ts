@@ -5,7 +5,8 @@ import { DIDDocument } from './diddocument.model';
 import { DIDHelper } from '../helpers/did.helper';
 import { LocalStorage } from '../services/localstorage';
 import { Events } from '../services/events.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: any; // TODO
 declare let didManager: DIDPlugin.DIDManager;
@@ -15,14 +16,14 @@ export class DIDStore {
     public dids: DID[] = [];
     private activeDid: DID = null;
 
-    constructor(private events: Events, private didSessions: DIDSessionsService) { }
+    constructor(private events: Events, private didSessions: GlobalDIDSessionsService) { }
 
     public getActiveDid(): DID {
         return this.activeDid
     }
 
     public async setActiveDid(did: DID) {
-        console.log("DID store " + this.getId() + " is setting its active DID to " + (did ? did.getDIDString() : null));
+        Logger.log("Identity", "DID store " + this.getId() + " is setting its active DID to " + (did ? did.getDIDString() : null));
         this.activeDid = did;
 
         // When we set a new active DID, we also load its DIDDocument to cache it for later use.
@@ -79,13 +80,13 @@ export class DIDStore {
     }
 
     public async loadAll(didStoreId: string, restoreDeletedDIDs: boolean) {
-        console.log("DID store loading all.");
+        Logger.log("Identity", "DID store loading all.");
         try {
             await this.initDidStore(didStoreId);
 
             let pluginDids = await this.listPluginDids();
 
-            console.log("Plugin DIDs:", pluginDids);
+            Logger.log("DIDSessions", "Plugin DIDs:", pluginDids);
             if (pluginDids.length == 0) {
                 // Something went wrong earlier, no DID in the DID store...
                 console.warn("No DID in the DID Store, that's a bit strange but we want to continue here.")
@@ -102,8 +103,8 @@ export class DIDStore {
     /**
      * Fills this object model by loading a plugin DID store with all its contained DIDs, credentials, etc.
      */
-    public static async loadFromDidStoreId(didStoreId: string, events: Events, didSessions: DIDSessionsService): Promise<DIDStore> {
-        console.log("loadFromDidStoreId " + didStoreId);
+    public static async loadFromDidStoreId(didStoreId: string, events: Events, didSessions: GlobalDIDSessionsService): Promise<DIDStore> {
+        Logger.log("Identity", "Loading all data from DID Store " + didStoreId);
 
         let didStore = new DIDStore(events, didSessions);
         await didStore.loadAll(didStoreId, false);
@@ -126,7 +127,7 @@ export class DIDStore {
             }
 
             if (!didWasDeleted) {
-                console.log("Loading DID " + pluginDid.getDIDString());
+                Logger.log("Identity", "Loading DID " + pluginDid.getDIDString());
 
                 let did = new DID(pluginDid, this.events, this.didSessions);
                 await did.loadAll();
@@ -136,14 +137,14 @@ export class DIDStore {
                 console.log("DID " + pluginDid.getDIDString() + " was listed by the DID plugin but deleted locally earlier. Skipping it.");
             }
         }
-        console.log("Loaded DIDs:", this.dids);
+        Logger.log("Identity", "Loaded DIDs:", this.dids);
     }
 
     /**
      * Finds a loaded DID in the DID list, from its DID string.
      */
     public findDidByString(didString: string): DID {
-        console.log("Searching DID from did string " + didString);
+        Logger.log("Identity", "Searching DID from did string " + didString);
 
         if (!didString)
             return null;
@@ -228,7 +229,7 @@ export class DIDStore {
                     this.createIdTransactionCallback(payload, memo);
                 },
                 (pluginDidStore: DIDPlugin.DIDStore) => {
-                    console.log("Initialized DID Store is ", pluginDidStore);
+                    Logger.log("Identity", "Initialized DID Store is ", pluginDidStore);
                     resolve(pluginDidStore);
                 },
                 (err) => {

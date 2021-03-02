@@ -25,8 +25,9 @@ import { Tip } from '../model/tip.model';
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { Logger } from 'src/app/logger';
 
 enum MessageType {
     INTERNAL = 1,
@@ -82,12 +83,12 @@ export class AppmanagerService {
         private native: NativeService,
         private storage: GlobalStorageService,
         private appManager: TemporaryAppManagerPlugin,
-        private didSessions: DIDSessionsService,
+        private didSessions: GlobalDIDSessionsService,
         private language: GlobalLanguageService
     ) {}
 
     public async init() {
-        console.log('Launcher\'s app manager service is initializing');
+        Logger.log("Launcher", 'App manager service is initializing');
 
         this.language.activeLanguage.subscribe((lang)=>{
             this.initAppsList();
@@ -177,10 +178,9 @@ export class AppmanagerService {
     }
 
     async getVisit() {
-        let visit = await this.storage.getSetting<boolean>(DIDSessionsService.signedInDIDString, "launcher", 'visit', false);
+        let visit = await this.storage.getSetting<boolean>(GlobalDIDSessionsService.signedInDIDString, "launcher", 'visit', false);
         if (visit || visit === true) {
             this.firstVisit = false;
-            console.log('First visit?', this.firstVisit);
         } else {
             this.router.navigate(['launcher/onboard']);
         }

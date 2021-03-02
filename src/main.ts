@@ -6,6 +6,10 @@ import { environment } from './environments/environment';
 
 import 'hammerjs';
 import { TranslationsLoader } from './translationsloader';
+import { Logger } from './app/logger';
+
+// Replace default console logs with our own logger
+Logger.init(console);
 
 if (environment.production) {
   enableProdMode();

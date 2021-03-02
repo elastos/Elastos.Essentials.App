@@ -2,6 +2,7 @@ import { DIDPluginException } from "../model/exceptions/didplugin.exception";
 import { WrongPasswordException } from "../model/exceptions/wrongpasswordexception.exception";
 import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
 import { PasswordManagerCancelallationException } from "../model/exceptions/passwordmanagercancellationexception";
+import { Logger } from "src/app/logger";
 
 export class DIDHelper {
   /**
@@ -29,13 +30,13 @@ export class DIDHelper {
       }
     }
 
-    console.log("No specific exception info");
+    Logger.log("Identity", "No specific exception info");
     return e; // No more info - return the raw error.
   }
 
   static reworkedApiNoAuthorityException(e) {
     if (!e || typeof (e) !== "string") {
-      console.log("No specific exception info");
+      Logger.log("Identity", "No specific exception info");
       return e; // No more info - return the raw error.
     }
 

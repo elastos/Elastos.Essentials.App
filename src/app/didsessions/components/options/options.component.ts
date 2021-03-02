@@ -3,7 +3,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopoverController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
-import { IdentityEntry } from 'src/app/services/didsessions.service';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 
 @Component({
   selector: 'app-options',

@@ -10,8 +10,9 @@ import { DID } from "../model/did.model";
 import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
 import { Events } from "./events.service";
 import { AuthService } from "./auth.service";
-import { DIDSessionsService } from "src/app/services/didsessions.service";
+import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { TemporaryPasswordManagerPlugin } from "src/app/TMP_STUBS";
+import { Logger } from "src/app/logger";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -30,7 +31,7 @@ export class DIDService {
     public localStorage: LocalStorage,
     private popupProvider: PopupProvider,
     public native: Native,
-    private didSessions: DIDSessionsService,
+    private didSessions: GlobalDIDSessionsService,
     private passwordManager: TemporaryPasswordManagerPlugin.PasswordManager
   ) {
     DIDService.instance = this;
@@ -53,7 +54,7 @@ export class DIDService {
   public async loadGlobalIdentity(
     noRouting: boolean = false
   ): Promise<boolean> {
-    console.log("Loading global identity");
+    Logger.log("Identity", "Loading global identity");
     let signedInIdentity = await this.didSessions.getSignedInIdentity();
     if (!signedInIdentity) {
       if (!noRouting) this.native.setRootRouter("/identity/notsignedin");
@@ -97,7 +98,7 @@ export class DIDService {
         return;
       }
 
-      console.log("Setting active DID store", didStore);
+      Logger.log("Identity", "Setting active DID store", didStore);
       this.activeDidStore = didStore;
 
       this.events.publish("did:didchanged");
@@ -111,7 +112,7 @@ export class DIDService {
    * Redirects to the right screen after activation, if a switch is required.
    */
   public activateDid(storeId: string, didString: string): Promise<boolean> {
-    console.log(
+    Logger.log("Identity",
       "Activating DID using DID store ID " + storeId + " and DID " + didString
     );
 

@@ -10,7 +10,7 @@ import { Styling } from 'src/app/didsessions/services/styling';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Component({
   selector: 'page-createidentity',
@@ -46,7 +46,7 @@ export class CreateIdentityPage {
     private translate: TranslateService,
     public theme: GlobalThemeService,
     private splashScreen: SplashScreen,
-    private didSessions: DIDSessionsService
+    private didSessions: GlobalDIDSessionsService
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {

@@ -26,6 +26,7 @@ import { SettingsModule } from './settings/module';
 import { TranslationsLoader } from 'src/translationsloader';
 import { ContactsModule } from './contacts/module';
 import { IdentityModule } from './identity/module';
+import { Logger } from './logger';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -35,7 +36,7 @@ export class SentryErrorHandler implements ErrorHandler {
   }
 
   handleError(error) {
-    console.error("Globally catched exception:", error);
+    Logger.error("Global", "Globally catched exception:", error);
 
     console.log(document.URL);
     // Only send reports to sentry if we are not debugging.
@@ -67,7 +68,7 @@ class CustomTranslateLoader implements TranslateLoader {
 
 export class CustomMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
-    console.warn("MISSING TRANSLATION:", params)
+    Logger.warn("Translations", "Missing translation:", params)
   }
 }
 

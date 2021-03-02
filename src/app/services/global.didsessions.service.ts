@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
+import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
 
 export type IdentityAvatar = {
@@ -33,7 +34,7 @@ export type SignInOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class DIDSessionsService {
+export class GlobalDIDSessionsService {
   public signedInIdentityListener = new BehaviorSubject<IdentityEntry | null>(null);
 
   private identities: IdentityEntry[] = null;
@@ -45,12 +46,12 @@ export class DIDSessionsService {
   }
 
   public async init(): Promise<void> {
-    console.log ("Initializating the DID Sessions service");
+    Logger.log("DIDSessionsService", "Initializating the DID Sessions service");
 
     this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", "identities", []);
     this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
     if (this.signedInIdentity) {
-      DIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
+      GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
     }
 
     this.signedInIdentityListener.next(this.signedInIdentity);
@@ -120,7 +121,7 @@ export class DIDSessionsService {
     console.log("Signing in with DID", entry.didString, entry.name);
 
     this.signedInIdentity = entry;
-    DIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
+    GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
@@ -135,7 +136,7 @@ export class DIDSessionsService {
     console.log("Signing out");
 
     this.signedInIdentity = null;
-    DIDSessionsService.signedInDIDString = null;
+    GlobalDIDSessionsService.signedInDIDString = null;
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);

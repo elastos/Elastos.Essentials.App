@@ -6,6 +6,7 @@ import { StorageService } from './storage.service';
 import { HiveService } from './hive.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
+import { Logger } from 'src/app/logger';
 
 // TODO @chad declare let notificationManager: NotificationManagerPlugin.NotificationManager;
 
@@ -27,17 +28,17 @@ export class BackgroundService {
     }
 
     public async init() {
-      console.log("Background service: initializing ");
+      Logger.log("HiveManager", "Background service: initializing");
       this.getActivePaymentPlan();
     }
 
     async getActivePaymentPlan() {
         await this.hiveService.retrieveVaultLinkStatus();
         if (await this.hiveService.getActiveVault()) {
-            console.log("Background service: Fetching active payment plan");
+            Logger.log("HiveManager", "Background service: Fetching active payment plan");
 
             this.activePaymentPlan = await this.hiveService.getActiveVault().getPayment().getActivePricingPlan();
-            console.log("Background service: Got active payment plan", this.activePaymentPlan.getName(), this.activePaymentPlan);
+            Logger.log("HiveManager", "Background service: Got active payment plan", this.activePaymentPlan.getName(), this.activePaymentPlan);
 
             this.getTimeCheck();
         }
@@ -45,7 +46,7 @@ export class BackgroundService {
 
     async getTimeCheck() {
         const lastCheckedTime = await this.storage.get('timeCheckedForExpiration');
-        console.log('Background service: Time-checked for expiration', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
+        Logger.log("HiveManager", 'Background service: Time-checked for expiration', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
         const today = new Date();
         if(lastCheckedTime) {

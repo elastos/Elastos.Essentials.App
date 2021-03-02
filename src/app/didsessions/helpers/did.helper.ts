@@ -3,6 +3,7 @@ import { WrongPasswordException } from "../model/exceptions/wrongpasswordexcepti
 import { PasswordManagerCancellationException } from "../model/exceptions/passwordmanagercancellationexception";
 import { BiometricAuthenticationFailedException } from "../model/exceptions/biometricauthenticationfailed.exception";
 import { BiometricLockedoutException } from "../model/exceptions/biometriclockedout.exception";
+import { Logger } from "src/app/logger";
 
 export class DIDHelper {
   /**
@@ -31,7 +32,7 @@ export class DIDHelper {
       }
     }
 
-    console.log("No specific exception info", e);
+    Logger.log("DIDSessions", "No specific exception info", e);
     return e; // No more info - return the raw error.
   }
 }

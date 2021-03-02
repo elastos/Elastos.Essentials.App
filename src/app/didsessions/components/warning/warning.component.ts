@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopoverController, NavParams } from '@ionic/angular';
 import { Events } from 'src/app/didsessions/services/events.service';
-import { IdentityEntry } from 'src/app/services/didsessions.service';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 
 @Component({
   selector: 'app-warning',

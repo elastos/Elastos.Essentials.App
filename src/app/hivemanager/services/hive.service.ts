@@ -7,6 +7,7 @@ import { Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
 import { TemporaryAppManagerPlugin, TrinitySDK } from 'src/app/TMP_STUBS';
+import { Logger } from 'src/app/logger';
 
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -71,18 +72,18 @@ export class HiveService {
    *    - If not created, call createVault()
    */
   async retrieveVaultLinkStatus(): Promise<VaultLinkStatus> {
-    console.log("Looking for vault link status");
+    Logger.log("HiveManager", "Looking for vault link status");
 
     let signedInDID = await this.storage.getSignedInDID(); // Cannot be null if we are here
 
     if (!this.client) {
       // Should not happen, but just in case.
-      console.error("Fatal error in hive manager: Hive client not initialized.");
+      Logger.error("HiveManager", "Fatal error in hive manager: Hive client not initialized.");
       return null;
     }
 
     if (this.vaultLinkStatus) {
-      console.log("Reusing existing status:", this.vaultLinkStatus);
+      Logger.log("HiveManager", "Reusing existing status:", this.vaultLinkStatus);
       return Promise.resolve(this.vaultLinkStatus);
     }
 
@@ -112,7 +113,7 @@ export class HiveService {
     }
 
     // Check if we can find an existing vault provider address on DID chain for this user.
-    console.log("Asking hive manager to give us the vault address for current user's DID "+signedInDID);
+    Logger.log("HiveManager", "Asking hive manager to give us the vault address for current user's DID "+signedInDID);
     try {
       this.activeVault = await this.client.getVault(signedInDID);
     }

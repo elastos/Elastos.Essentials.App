@@ -13,7 +13,8 @@ import { DidService } from './did.service';
 import { Events } from './events.service';
 import { ContactNotifierService, Contact as ContactNotifierContact } from 'src/app/services/contactnotifier.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { DIDSessionsService } from 'src/app/services/didsessions.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -80,7 +81,7 @@ export class FriendsService {
     public storageService: StorageService,
     private events: Events,
     private didService: DidService,
-    private didSessions: DIDSessionsService,
+    private didSessions: GlobalDIDSessionsService,
     private contactNotifier: ContactNotifierService,
     private appManager: TemporaryAppManagerPlugin
   ) {
@@ -103,7 +104,6 @@ export class FriendsService {
   *******************************************************/
   async getVisit() {
     this.storageService.getVisit().then(async data => {
-      console.log('First visit?', this.firstVisit);
       if (!data) {
         await this.resolveDIDDocument('did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2', false, null, false);
         this.storageService.setVisit(true);
@@ -117,7 +117,7 @@ export class FriendsService {
   getStoredContacts(): Promise<Contact[]> {
     return new Promise((resolve, reject) => {
       this.storageService.getContacts().then(contacts => {
-        console.log('Stored contacts fetched', contacts);
+        Logger.log("Contacts", 'Stored contacts fetched', contacts);
         this.contactsFetched = true;
 
         if(contacts) {
@@ -128,7 +128,7 @@ export class FriendsService {
           if(!this.contactsChecked) {
             this.contactsChecked = true;
             this.contacts.forEach(async (contact) => {
-              console.log('Checking stored contacts for updates', contacts);
+              Logger.log("Contacts", 'Checking stored contacts for updates', contacts);
               contact.id !== 'did:elastos' ? await this.resolveDIDDocument(contact.id, true) : null;
             });
           }
@@ -145,7 +145,7 @@ export class FriendsService {
   *************************************************/
   getContactNotifierContacts() {
     this.contactNotifier.getAllContacts().then((notifierContacts) => {
-      console.log('Found all Notifier Contacts', notifierContacts);
+      Logger.log("Contacts", 'Found all Notifier Contacts', notifierContacts);
       notifierContacts.forEach((notifierContact) => {
         const alreadyAddedContact = this.contacts.find((contact) => contact.id === notifierContact.getDID());
         if(!alreadyAddedContact) {
@@ -306,15 +306,14 @@ export class FriendsService {
     carrierAddress?: string,
     requiresConfirmation?: boolean,
   ): Promise<void> {
-    console.log(
+    Logger.log("Contacts",
       'Resolving DID document for DID string ', didString,
       'Updating friends?' + updatingFriends,
       'Requires confirmation?' + requiresConfirmation
     );
     return new Promise((resolve, reject) => {
-      console.log("FRIENDS SVC DEBUG", didManager)
       didManager.resolveDidDocument(didString, true, (didDocument: DIDPlugin.DIDDocument) => {
-        console.log("DIDDocument resolved for DID " + didString, didDocument);
+        Logger.log("Contacts", "DIDDocument resolved for DID " + didString, didDocument);
 
         if (didDocument && !updatingFriends) {
           this.buildPublishedContact(didDocument, carrierAddress, requiresConfirmation);
@@ -343,7 +342,7 @@ export class FriendsService {
   updateContact(newDoc) {
     this.contacts.map((contact) => {
       if(contact.id === newDoc.id.didString) {
-        console.log('Updating contact', contact);
+        Logger.log("Contacts", 'Updating contact', contact);
 
         contact.didDocument = newDoc;
         newDoc.verifiableCredential.map(key => {
@@ -782,7 +781,7 @@ export class FriendsService {
   customizeContact(id: string, customName: string, customNote: string, customAvatar: Avatar) {
     this.contacts.map(contact => {
       if(contact.id === id) {
-        console.log('Updating contact\'s custom values' + customName + customNote + customAvatar);
+        Logger.log("Contacts", 'Updating contact\'s custom values' + customName + customNote + customAvatar);
 
         contact.customName = customName;
         contact.customNote = customNote;
@@ -1035,7 +1034,6 @@ export class FriendsService {
 
     this.letters = this.letters.sort((a, b) => a > b ? 1 : -1);
     this.letters.push(this.letters.splice(this.letters.indexOf('Anonymous'), 1)[0]);
-    console.log('Letter groups', this.letters);
   }
 
   getPromptName(contact: Contact): string {

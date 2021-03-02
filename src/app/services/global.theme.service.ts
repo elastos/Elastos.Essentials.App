@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AppmanagerService } from '../launcher/services/appmanager.service';
-import { DIDSessionsService } from './didsessions.service';
+import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 
 export enum AppTheme {
@@ -18,7 +18,7 @@ export class GlobalThemeService {
 
   public isAndroid = false;
 
-  constructor(private platform: Platform, private prefs: GlobalPreferencesService, private didSessions: DIDSessionsService) {
+  constructor(private platform: Platform, private prefs: GlobalPreferencesService, private didSessions: GlobalDIDSessionsService) {
     this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
       if (signedInIdentity) {
         // Re-apply the theme for the active user.
@@ -46,18 +46,15 @@ export class GlobalThemeService {
       // TODO @chad: this is launcher's backup service. Move to launcher folder and initialize in a better location
       // this.backupService.init();
     }
-    let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(DIDSessionsService.signedInDIDString, "ui.darkmode");
+    let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
     if (currentlyUsingDarkMode)
       this.activeTheme.next(AppTheme.DARK);
     else
       this.activeTheme.next(AppTheme.LIGHT);
-
-    console.log("Loaded theme from preferences: ", this.activeTheme.value);
   }
 
   public async toggleTheme() {
-    console.log("Theme toggle");
-    await this.prefs.setPreference(DIDSessionsService.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
   }
 
   // Convenient getter for backward compatibility from elastOS 1.x
