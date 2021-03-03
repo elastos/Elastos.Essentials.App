@@ -29,6 +29,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { Logger } from 'src/app/logger';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
+import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 
 enum MessageType {
     INTERNAL = 1,
@@ -47,7 +48,8 @@ type RunnableApp = {
     description: string;
     icon: string;
     id: string;
-    routerPath: string;
+    routerPath?: string;
+    startCall?: () => void;
 }
 
 type RunnableAppCategory = {
@@ -85,7 +87,8 @@ export class AppmanagerService {
         private storage: GlobalStorageService,
         private appManager: TemporaryAppManagerPlugin,
         private didSessions: GlobalDIDSessionsService,
-        private language: GlobalLanguageService
+        private language: GlobalLanguageService,
+        private hiveManagerInitService: HiveManagerInitService
     ) {}
 
     public async init() {
@@ -154,7 +157,7 @@ export class AppmanagerService {
                         description: this.translate.instant('app-hive-description'),
                         icon: '/assets/launcher/ios/app-icons/hive.svg',
                         id: 'org.elastos.trinity.dapp.hivemanager',
-                        routerPath: '/hivemanager/pickprovider'
+                        startCall: () => this.hiveManagerInitService.start()
                     }
                 ]
             },
@@ -297,7 +300,12 @@ export class AppmanagerService {
     }
 
     startApp(app: RunnableApp) {
-        this.navController.navigateForward(app.routerPath);
+        if (app.routerPath)
+            this.navController.navigateForward(app.routerPath);
+        else if (app.startCall)
+            app.startCall();
+        else
+            Logger.error("launcher", "Failed to start app without either routerPath or startCall entry point.", app);
     }
 
     /******************************** Notifications Manager ********************************/

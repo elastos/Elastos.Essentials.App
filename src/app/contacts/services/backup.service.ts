@@ -9,6 +9,7 @@ import { AuthHelper, HiveDataSync } from 'src/app/elastos-cordova-sdk/hive';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 @Injectable({
   providedIn: 'root'
@@ -40,23 +41,23 @@ export class BackupService {
       const hiveAuthHelper = new ElastosSDKHelper(this.storage).newHiveAuthHelper("contacts");
 
       const hiveClient = await hiveAuthHelper.getClientWithAuth((authError)=>{
-        console.warn("Hive authentication error callback: ", authError);
+        Logger.warn("contacts", "Hive authentication error callback: ", authError);
       });
-      console.log("Hive client initialization complete");
+      Logger.log("contacts", "Hive client initialization complete");
 
       const userDID = await this.didService.getSignedIdentity();
 
       // did:elastos:iaMPKSkYLJYmbBTuT3JfF9E8cFtLWky5vk - Test
 
-      console.log("Getting current user's vault instance");
+      Logger.log("contacts", "Getting current user's vault instance");
       this.userVault = await hiveClient.getVault(userDID); // No response here
 
       if (!this.userVault) {
-        console.log("Failed to get user's vault. Maybe none if configured yet. Backup service not starting for now");
+        Logger.log("contacts", "Failed to get user's vault. Maybe none if configured yet. Backup service not starting for now");
         return;
       }
 
-      console.log("User vault retrieved. Now creating a new backup restore helper instance", this.userVault);
+      Logger.log("contacts", "User vault retrieved. Now creating a new backup restore helper instance", this.userVault);
 
       this.backupRestoreHelper = new ElastosSDKHelper(this.storage).newHiveDataSync("contacts", this.userVault, true);
 
@@ -64,41 +65,41 @@ export class BackupService {
       this.backupRestoreHelper.addSyncContext("contacts",
         async (entry) => {
           // Add backup locally
-          console.log("Addition request from backup helper", entry);
+          Logger.log("contacts", "Addition request from backup helper", entry);
           await this.addContactEntryLocally(entry.data);
           return true;
 
         }, async (entry) => {
           // Modify backup locally
-          console.log("Modify request from the backup helper", entry);
+          Logger.log("contacts", "Modify request from the backup helper", entry);
           this.modifyContactEntryLocally(entry.data);
           return true;
 
         }, async (entry) => {
           // Delete backup locally
-          console.log("Deletion request from the backup helper", entry);
+          Logger.log("contacts", "Deletion request from the backup helper", entry);
           this.deleteContactEntryLocally(entry.data.id);
           return true;
         }
       );
 
-      console.log("Starting backup restore sync");
+      Logger.log("contacts", "Starting backup restore sync");
       await this.backupRestoreHelper.sync();
     } catch (e) {
       // We could get a hive exception here
-      console.error("Catched exception during backup service initialization:");
-      console.error(e);
+      Logger.error("contacts", "Catched exception during backup service initialization:");
+      Logger.error("contacts", e);
     }
   }
 
   async addContactEntryLocally(data: Contact) {
-    console.log('Checking if backup data needs to be added', data);
+    Logger.log("contacts", 'Checking if backup data needs to be added', data);
     this.restoredContacts.push(data);
 
     const contactId = data.id;
     const targetContact = this.friendsService.contacts.find((contact) => contact.id === contactId);
     if (!targetContact) {
-      console.log('Backup data needs to be added', data);
+      Logger.log("contacts", 'Backup data needs to be added', data);
 
       /* TODO @chad - Replace with another UI indicator?
       titleBarManager.showActivityIndicator(
@@ -153,21 +154,21 @@ export class BackupService {
 
   async upsertDatabaseEntry(context: string, key: string, data: HivePlugin.JSONObject): Promise<void> {
     try {
-      console.log('Local restored contacts', this.restoredContacts);
-      console.log('upsertDatabaseEntry called for entry', context, key);
+      Logger.log("contacts", 'Local restored contacts', this.restoredContacts);
+      Logger.log("contacts", 'upsertDatabaseEntry called for entry', context, key);
       await this.backupRestoreHelper.upsertDatabaseEntry(context, key, data);
     } catch (e) {
-      console.error('BackupService upsertDatabaseEntry error:', e);
+      Logger.error("contacts", 'BackupService upsertDatabaseEntry error:', e);
     }
   }
 
   async deleteDatabaseEntry(contextName: string, key: string): Promise<void> {
     try {
-      console.log('Backup restored contacts', this.restoredContacts);
-      console.log('deleteDatabaseEntry called for entry', contextName, key);
+      Logger.log("contacts", 'Backup restored contacts', this.restoredContacts);
+      Logger.log("contacts", 'deleteDatabaseEntry called for entry', contextName, key);
       await this.backupRestoreHelper.deleteDatabaseEntry(contextName, key);
     } catch (e) {
-      console.error('BackupService deleteDatabaseEntry error:', e);
+      Logger.error("contacts", 'BackupService deleteDatabaseEntry error:', e);
     }
   }
 

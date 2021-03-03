@@ -7,6 +7,7 @@ import { ReceivedMessage } from 'src/app/TMP_STUBS';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 @Injectable({
     providedIn: 'root'
@@ -32,35 +33,22 @@ export class AppService {
             switch (receivedIntent.action) {
                 // User is being asked to setup his vault storage.
                 case "https://hive.elastos.net/setupvaultprompt":
-                    this.checkSignedInThenGoTo("/hivemanager/pickprovider", receivedIntent);
+                    this.navigateTo("/hivemanager/pickprovider", receivedIntent);
                     break;
             }
         });
     }
 
     startDefaultScreen() {
-        this.checkSignedInThenGoTo("/hivemanager/pickprovider");
+        this.navigateTo("/hivemanager/pickprovider");
     }
 
-    async checkSignedInThenGoTo(nextRoute: string, routeQueryParams?: any) {
-        console.log("Checking which default screen to start");
+    async navigateTo(nextRoute: string, routeQueryParams?: any) {
+        Logger.log("HiveManager", "Navigating to", nextRoute);
 
-        // If not signed in, ask to sign in
-        let signedInDID = await this.storage.getSignedInDID();
-        if (!signedInDID) {
-            console.log("No signed in DID, going to the sign in screen");
-            this.postSignInRoute = nextRoute;
-            this.postSignInQueryParams = routeQueryParams;
-            this.navController.navigateRoot("signin");
-        }
-        else {
-            // We know user's did string already? Then we go to the next route. It will check what needs to
-            // be done for this user.
-            console.log("DID already known. Going to the next screen");
-            this.navController.navigateRoot(nextRoute, {
-                queryParams: routeQueryParams
-            });
-        }
+        this.navController.navigateRoot(nextRoute, {
+            queryParams: routeQueryParams
+        });
     }
 
     public goToPostSignInRoute() {

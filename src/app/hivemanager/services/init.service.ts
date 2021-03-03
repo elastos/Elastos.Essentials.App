@@ -20,4 +20,12 @@ export class HiveManagerInitService {
 
     this.backgroundService.init();
   }
+
+  /**
+   * Simulates a regular "app start" (without intents). This method is responsible for deciding the proper
+   * route to use, according to current module (sub-app) state.
+   */
+  public async start() {
+    this.appService.startDefaultScreen();
+  }
 }

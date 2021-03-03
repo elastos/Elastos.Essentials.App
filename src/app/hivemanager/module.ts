@@ -5,7 +5,6 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { AppRoutingModule } from './routing';
 import { IonicStorageModule } from '@ionic/storage';
-import { SignInPage } from './pages/signin/signin.page';
 import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
 import { StorageService } from './services/storage.service';
 import { PopupService } from './services/popup.service';
@@ -28,7 +27,6 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
 
 @NgModule({
   declarations: [
-    SignInPage,
     PickProviderPage,
     PickPlanPage,
     PickPlanPurchasePage,

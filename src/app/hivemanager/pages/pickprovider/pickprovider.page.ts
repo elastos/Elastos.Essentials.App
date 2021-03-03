@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarMenuItem, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 type StorageProvider = {
   name: string,
@@ -76,11 +77,11 @@ export class PickProviderPage implements OnInit {
     }
 
     this.route.queryParams.subscribe((data) => {
-      //console.log("QUERY PARAMS", data);
+      //Logger.log("HiveManager", "QUERY PARAMS", data);
     });
 
     this.events.subscribe("plan-just-purchased", ()=>{
-      console.log("Payment just purchased. Refreshing status.");
+      Logger.log("HiveManager", "Payment just purchased. Refreshing status.");
       this.checkInitialStatus();
     });
   }
@@ -113,7 +114,7 @@ export class PickProviderPage implements OnInit {
           this.goToAdminPanel();
           break;
         case "pickprovider-forceproviderchange":
-          console.log("Forcing provider change");
+          Logger.log("HiveManager", "Forcing provider change");
           this.zone.run(()=>{
             this.forceProviderChange = true;
             this.vaultProviderCouldBeContacted = true;
@@ -168,7 +169,7 @@ export class PickProviderPage implements OnInit {
       ]);
     }
     catch (e) {
-      console.warn("Error while trying to retrieve vault link status: ", e);
+      Logger.warn("HiveManager", "Error while trying to retrieve vault link status: ", e);
       this.vaultProviderCouldBeContacted = false;
     }
 
@@ -199,7 +200,7 @@ export class PickProviderPage implements OnInit {
   }
 
   private async publishProvider(providerName: string, providerAddress: string) {
-    console.log("Publishing vault provider", providerName, providerAddress);
+    Logger.log("HiveManager", "Publishing vault provider", providerName, providerAddress);
     this.publishingProvider = true;
 
     let publicationStarted = await this.hiveService.publishVaultProvider(providerName, providerAddress);
@@ -208,7 +209,7 @@ export class PickProviderPage implements OnInit {
 
     // Refresh the link status
     this.vaultLinkStatus = await this.hiveService.retrieveVaultLinkStatus();
-    console.log("Vault link status:", this.vaultLinkStatus)
+    Logger.log("HiveManager", "Vault link status:", this.vaultLinkStatus)
 
     this.forceProviderChange = false;
 
@@ -225,11 +226,11 @@ export class PickProviderPage implements OnInit {
 
   private async fetchActivePaymentPlan() {
     if (await this.hiveService.getActiveVault()) {
-      console.log("Fetching active payment plan");
+      Logger.log("HiveManager", "Fetching active payment plan");
 
       // TODO: PERF improvement - getActivePricingPlan() is already called in retrieveVaultLinkStatus(), this is duplicate API call to remove.
       this.activePaymentPlan = await this.hiveService.getActiveVault().getPayment().getActivePricingPlan()
-      console.log("Got active payment plan:", this.activePaymentPlan);
+      Logger.log("HiveManager", "Got active payment plan:", this.activePaymentPlan);
     }
 
     this.fetchingActivePaymentPlan = false;
@@ -240,18 +241,18 @@ export class PickProviderPage implements OnInit {
    * confirmed by the vault provider yet.
    */
   private async fetchOrdersAwaitingTxConfirmation() {
-    console.log("Starting to fetch orders awaiting confirmation");
+    Logger.log("HiveManager", "Starting to fetch orders awaiting confirmation");
 
     if (await this.hiveService.getActiveVault()) {
-      console.log("Getting orders awaiting payment validation");
+      Logger.log("HiveManager", "Getting orders awaiting payment validation");
       this.ordersAwaitingTxConfirmation = await this.hiveService.getOrdersAwaitingPaymentValidation();
     }
 
     // Also fetch incomplete orders
-    console.log("Getting paid incomplete orders");
+    Logger.log("HiveManager", "Getting paid incomplete orders");
     this.incompleteOrders = await this.hiveService.getPaidIncompleteOrders();
 
-    console.log("Fetched orders awaiting tx confirmation");
+    Logger.log("HiveManager", "Fetched orders awaiting tx confirmation");
 
     this.fetchingOrdersAwaitingTxConfirmation = false;
   }

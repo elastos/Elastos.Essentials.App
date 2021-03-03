@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
 import { TemporaryAppManagerPlugin, TrinitySDK } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -52,14 +53,19 @@ export class HiveService {
     private popup: PopupService,
     private events: Events,
     public translate: TranslateService,
-    private appManager: TemporaryAppManagerPlugin
+    private appManager: TemporaryAppManagerPlugin,
+    private didSessions: GlobalDIDSessionsService
   ) {}
 
   async init() {
     let hiveAuthHelper = await new TrinitySDK.Hive.AuthHelper();
     this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
-      console.error("Authentication error:", err);
+      Logger.error("HiveManager", "Authentication error:", err);
     });
+
+    if (!this.client) {
+      Logger.error("HiveManager", "Fatal error in hive manager: Unable to get a hive client instance in init().");
+    }
   }
 
   /**
@@ -74,7 +80,7 @@ export class HiveService {
   async retrieveVaultLinkStatus(): Promise<VaultLinkStatus> {
     Logger.log("HiveManager", "Looking for vault link status");
 
-    let signedInDID = await this.storage.getSignedInDID(); // Cannot be null if we are here
+    let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
     if (!this.client) {
       // Should not happen, but just in case.
@@ -121,17 +127,17 @@ export class HiveService {
       if (hiveManager.errorOfType(e, HivePlugin.EnhancedErrorType.VAULT_NOT_FOUND)) {
         // Vault not created on this hive provider yet (old DIDs?) - force user to pick a provider, that will
         // create the vault at the same time.
-        console.log("Vault does not exist on this provider. It has to be created again.");
+        Logger.log("HiveManager", "Vault does not exist on this provider. It has to be created again.");
         return null;
       }
       else {
-        console.error("Exception while calling getVault() in retrieveVaultLinkStatus():", e);
+        Logger.error("HiveManager", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
         throw e;
       }
     }
 
     if (this.activeVault === null) {
-      console.log("No vault for for this DID");
+      Logger.log("HiveManager", "No vault for for this DID");
       // Null vault returned, so this either means we are not on ID chain yet,c or we didn't
       // call create vault. So the user will have to do it.
       return status;
@@ -142,24 +148,24 @@ export class HiveService {
     try {
       let activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
       if (!activePricingPlan) {
-        console.log("Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
+        Logger.log("HiveManager", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
         return null;
       }
-      console.log("Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
+      Logger.log("HiveManager", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
     }
     catch (e) {
       if (hiveManager.errorOfType(e, HivePlugin.EnhancedErrorType.VAULT_NOT_FOUND)) {
-        console.log("Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
+        Logger.log("HiveManager", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
         return null;
       }
       else {
-        console.error("Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
+        Logger.error("HiveManager", "Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
         throw e;
       }
     }
 
     let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
-    console.log("Currently published vault address: ", currentlyPublishedVaultAddress);
+    Logger.log("HiveManager", "Currently published vault address: ", currentlyPublishedVaultAddress);
 
     if (currentlyPublishedVaultAddress) {
       status.publishedInfo = {
@@ -169,7 +175,7 @@ export class HiveService {
       };
     }
 
-    console.log("Link status retrieval completed");
+    Logger.log("HiveManager", "Link status retrieval completed");
 
     this.vaultLinkStatus = status;
 
@@ -214,20 +220,20 @@ export class HiveService {
    * Sets and saves a NEW vault provider for the active DID, without any transfer of data.
    */
   public async publishVaultProvider(providerName: string, vaultAddress: string): Promise<boolean> {
-    let signedInDID = await this.storage.getSignedInDID(); // Cannot be null if we are here
+    let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
     // First try to create the vault on the provider
     try {
       let createdVault = await this.client.createVault(signedInDID, vaultAddress);
       if (createdVault) {
-        console.log("Vault was newly created on the provider. Now updating vault address on user's DID");
+        Logger.log("HiveManager", "Vault was newly created on the provider. Now updating vault address on user's DID");
 
         // Vault creation succeeded, we can now save the provider address on ID chain.
         this.activeVault = createdVault;
       }
       else {
         // Vault already exists on this provider. Nothing to do
-        console.log("The vault already exists on the vault provider.");
+        Logger.log("HiveManager", "The vault already exists on the vault provider.");
       }
 
       let publicationStarted = await this.publishVaultProviderToIDChain(providerName, vaultAddress);
@@ -241,7 +247,7 @@ export class HiveService {
 
   private async publishVaultProviderToIDChain(providerName: string, vaultAddress: string): Promise<boolean> {
     return new Promise((resolve)=>{
-      console.log("Requesting identity app to update the hive provider");
+      Logger.log("HiveManager", "Requesting identity app to update the hive provider");
 
       this.appManager.sendIntent("https://did.elastos.net/sethiveprovider", {
         name: providerName,
@@ -249,7 +255,7 @@ export class HiveService {
       }, {
         // TODO - RESTORE AFTER NATIVE CRASH (dongxiao) appId: "org.elastos.trinity.dapp.did" // Force receiving by the DID app
       }, (result: {result: {status: string}})=>{
-        console.log("Got sethiveprovider intent result:", result);
+        Logger.log("HiveManager", "Got sethiveprovider intent result:", result);
 
         if (result && result.result && result.result.status && result.result.status == "published") {
           // Save local timestamp - We will not allow to pick another provider before a few minutes
@@ -261,11 +267,11 @@ export class HiveService {
         }
         else {
           // Publication was cancelled or errored. Do nothing more. Maybe user will retry.
-          console.log("Publication cancelled or errored");
+          Logger.log("HiveManager", "Publication cancelled or errored");
           resolve(false);
         }
       }, (err)=>{
-        console.error("Error while trying to call the sethiveprovider intent: ", err);
+        Logger.error("HiveManager", "Error while trying to call the sethiveprovider intent: ", err);
           this.popup.ionicAlert(this.translate.instant('alert.error'), this.translate.instant('alert.sorry-provider-not-save') + err, this.translate.instant('alert.ok'));
         resolve(false);
       });
@@ -309,12 +315,12 @@ export class HiveService {
 
           await this.notifyProviderOfPaidOrder(plan.getName(), transactionID);
 
-          console.log("Plan purchase completed successfully");
+          Logger.log("HiveManager", "Plan purchase completed successfully");
 
           operationSuccessful = true;
         }
         else {
-          console.warn("Payment failure");
+          Logger.warn("HiveManager", "Payment failure");
           operationSuccessful = false;
         }
       }
@@ -344,11 +350,11 @@ export class HiveService {
         }
         else {
           // Success
-          console.log("Pay intent response data: ", data);
+          Logger.log("HiveManager", "Pay intent response data: ", data);
           resolve(data.result.txid);
         }
       }, (err)=>{
-        console.error("Pay intent error: ", err);
+        Logger.error("HiveManager", "Pay intent error: ", err);
         reject();
       });
     });
@@ -362,10 +368,10 @@ export class HiveService {
     let orderId = await this.getActiveVault().getPayment().placeOrder(planName);
 
     // Let the vault provider know which transaction IDs have been generated for the payment of this order.
-    console.log("Paying order on vault for transaction ID", transactionID);
+    Logger.log("HiveManager", "Paying order on vault for transaction ID", transactionID);
     await this.getActiveVault().getPayment().payOrder(orderId, [transactionID]);
 
-    console.log("Order paid on the vault provider");
+    Logger.log("HiveManager", "Order paid on the vault provider");
 
     await this.finalizePaidIncompleteOrder(transactionID);
 
@@ -379,24 +385,24 @@ export class HiveService {
    * doesn't loose his payment.
    */
   public async tryToFinalizePreviousOrders(): Promise<void> {
-    console.log("Trying to finalize paid but incomplete orders");
+    Logger.log("HiveManager", "Trying to finalize paid but incomplete orders");
 
     let incompleteOrders = await this.getPaidIncompleteOrders();
     if (incompleteOrders.length == 0) {
       // No incomplete order, nothing to finalize.
-      console.log("No incomplete order, nothing to do.");
+      Logger.log("HiveManager", "No incomplete order, nothing to do.");
       return;
     }
     else {
       // For each incomplete order, try to call payOrder() again.
       for (let order of incompleteOrders) {
         try {
-          console.log("Retrying to finalize paid incomplete order:", order);
+          Logger.log("HiveManager", "Retrying to finalize paid incomplete order:", order);
           await this.notifyProviderOfPaidOrder(order.planName, order.transactionId);
-          console.log("Retried to finalize paid incomplete order successfully");
+          Logger.log("HiveManager", "Retried to finalize paid incomplete order successfully");
         }
         catch (e) {
-          console.warn("Retried to finalize paid incomplete order but failed again:", e);
+          Logger.warn("HiveManager", "Retried to finalize paid incomplete order but failed again:", e);
         }
       }
     }
@@ -407,10 +413,10 @@ export class HiveService {
    * and not retry anything later.
    */
   private async finalizePaidIncompleteOrder(transactionId: string) {
-    console.log("Finalizing paid incomplete order for transaction ID", transactionId);
+    Logger.log("HiveManager", "Finalizing paid incomplete order for transaction ID", transactionId);
     let pendingPaidOrders = await this.getPaidIncompleteOrders();
 
-    console.log("List of paid incomplete orders: ", pendingPaidOrders);
+    Logger.log("HiveManager", "List of paid incomplete orders: ", pendingPaidOrders);
     let orderIndex = pendingPaidOrders.findIndex((order)=>{
       return order.transactionId == transactionId;
     });
@@ -422,7 +428,7 @@ export class HiveService {
     else {
       // Remove the pending order from our temporary list.
       pendingPaidOrders.splice(orderIndex, 1);
-      console.log("Removing the order from pending paid orders list because it's finalized. New pendingPaidOrders: ", pendingPaidOrders);
+      Logger.log("HiveManager", "Removing the order from pending paid orders list because it's finalized. New pendingPaidOrders: ", pendingPaidOrders);
       await this.storage.setJson("pendingPaidOrders", pendingPaidOrders);
     }
   }
@@ -468,13 +474,13 @@ export class HiveService {
    */
   public async getOrdersAwaitingPayment(): Promise<HivePlugin.Payment.Order[]> {
     let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
-    console.log("All orders:", orders);
+    Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o)=>{
       return o.getState() == HivePlugin.Payment.OrderState.AWAITING_PAYMENT;
     });
 
-    console.log("Orders awaiting payment:", awaitingOrders);
+    Logger.log("HiveManager", "Orders awaiting payment:", awaitingOrders);
 
     return awaitingOrders;
   }
@@ -485,27 +491,27 @@ export class HiveService {
    */
   public async getOrdersAwaitingPaymentValidation(): Promise<HivePlugin.Payment.Order[]> {
     let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
-    console.log("All orders:", orders);
+    Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o)=>{
       return o.getState() == HivePlugin.Payment.OrderState.AWAITING_TX_CONFIRMATION;
     });
 
-    console.log("Orders awaiting confirmation:", awaitingOrders);
+    Logger.log("HiveManager", "Orders awaiting confirmation:", awaitingOrders);
 
     return awaitingOrders;
   }
 
   public async getActiveOrders(): Promise<HivePlugin.Payment.Order[]> {
     let orders = this.sortOrdersByMostRecentFirst(await this.getActiveVault().getPayment().getAllOrders());
-    console.log("All orders:", orders);
+    Logger.log("HiveManager", "All orders:", orders);
 
     let activeOrders = orders.filter((o)=>{
       // Active orders are orders COMPLETED, and not expired
       return o.getState() == HivePlugin.Payment.OrderState.COMPLETED /* TODO - NOT EXPIRED */;
     });
 
-    console.log("Active orders:", activeOrders);
+    Logger.log("HiveManager", "Active orders:", activeOrders);
 
     return activeOrders;
   }
