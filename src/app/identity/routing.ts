@@ -53,11 +53,6 @@ const routes: Routes = [
           },
         ],
       },
-
-      // {
-      //   path: "profile",
-      //   loadChildren: "../products/products.module#ProductsPageModule",
-      // },
       {
         path: "credentials",
         children: [
@@ -67,6 +62,11 @@ const routes: Routes = [
           },
         ],
       },
+      {
+        path: '',
+        redirectTo: '/identity/myprofile/home',
+        pathMatch: 'full'
+      }
     ]
   },
 

@@ -29,6 +29,7 @@
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="InternalIntentFilter" value="did.elastos.net wallet.elastos.net hive.elastos.net contact.elastos.net scanner.elastos.net" />
+    <preference name="AndroidXEnabled" value="true" />
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
             <manifest xmlns:tools="http://schemas.android.com/tools" />

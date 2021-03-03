@@ -72,9 +72,7 @@ export class MenuPage implements OnInit {
 
     // Retrieve current settings
     let prefs = await this.prefsService.getPreferences(GlobalDIDSessionsService.signedInDIDString);
-    console.log("Loaded preferences:", prefs);
     this.prefs.developerMode = prefs["developer.mode"];
-    console.log("After loading preferences:", this.prefs);
   }
 
   ionViewDidEnter() {

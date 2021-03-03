@@ -28,4 +28,7 @@ export class DevTestsPage {
   ionViewWillLeave() {
     this.settings.setTitleBarBackKeyShown(false);
   }
+
+  someTest() {
+  }
 }

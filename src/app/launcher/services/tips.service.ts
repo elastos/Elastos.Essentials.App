@@ -95,7 +95,7 @@ export class TipsService {
   }
 
   private async checkIfTimeToShowATip() {
-    console.log("Checking if it's a right time to show a tip");
+    Logger.log("Launcher", "Checking if it's a right time to show a tip");
 
     if (!await this.userWantsToSeeTips()) {
       console.log("User doesn't want to see tips. Skipping.");

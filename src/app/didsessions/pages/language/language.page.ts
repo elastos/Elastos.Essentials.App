@@ -57,9 +57,9 @@ export class LanguagePage implements OnInit {
 
   continue() {
     if(this.identities.length === 0) {
-      this.uxService.go("createidentity");
+      this.uxService.go("/didsessions/createidentity");
     } else {
-      this.uxService.go("pickidentity");
+      this.uxService.go("/didsessions/pickidentity");
     }
   }
 }
