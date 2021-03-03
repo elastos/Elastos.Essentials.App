@@ -155,13 +155,5 @@
     </platform>
     <hook src="scripts/apply_patches.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
-    <plugin name="cordova-plugin-camera" spec="5.0.1" />
-    <plugin name="cordova-plugin-ionic-keyboard" spec="2.0.5" />
-    <plugin name="cordova-plugin-printer" spec="0.8.0" />
-    <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
-    <plugin name="elastos-cordova-plugin-carrier" spec="../Plugins/Carrier" />
-    <plugin name="elastos-cordova-plugin-did" spec="../Plugins/DID" />
-    <plugin name="elastos-cordova-plugin-hive" spec="../Plugins/Hive" />
-    <plugin name="elastos-essentials-plugin-appmanager" spec="../Plugins/AppManager" />
     <allow-navigation href="http://192.168.31.114:8100" sessionid="559e7a4b" />
 </widget>
