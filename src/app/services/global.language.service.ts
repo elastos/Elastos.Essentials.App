@@ -41,7 +41,7 @@ export class GlobalLanguageService {
   ];
 
   private systemLanguage: string = null;
-  private selectedLanguage: string = null;
+  public selectedLanguage: string = null;
 
   public activeLanguage = new BehaviorSubject<string>("en"); // Default: english
 
