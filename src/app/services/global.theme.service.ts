@@ -10,6 +10,8 @@ export enum AppTheme {
   DARK
 }
 
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,11 +26,17 @@ export class GlobalThemeService {
         // Re-apply the theme for the active user.
         this.fetchThemeFromPreferences();
       }
+      else {
+        // Default mode for password popups: light
+        passwordManager.setDarkMode(false);
+      }
     })
 
     this.prefs.preferenceListener.subscribe((prefChanged)=>{
       if (prefChanged.key == "ui.darkmode") {
         let darkMode = prefChanged.value as boolean;
+        passwordManager.setDarkMode(darkMode);
+
         if (darkMode)
           this.activeTheme.next(AppTheme.DARK);
         else
@@ -47,6 +55,7 @@ export class GlobalThemeService {
       // this.backupService.init();
     }
     let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
+    passwordManager.setDarkMode(currentlyUsingDarkMode);
     if (currentlyUsingDarkMode)
       this.activeTheme.next(AppTheme.DARK);
     else

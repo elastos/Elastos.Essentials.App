@@ -6,6 +6,7 @@ package-lock.json
 .vscode/
 typings/
 *.tmp
+*.buildback
 
 origin_platforms/
 platforms/

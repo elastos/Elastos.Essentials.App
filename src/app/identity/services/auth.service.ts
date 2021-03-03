@@ -6,7 +6,8 @@ import { Native } from './native';
 import { DIDHelper } from '../helpers/did.helper';
 import { PasswordManagerCancelallationException } from '../model/exceptions/passwordmanagercancellationexception';
 import { PopupProvider } from './popup';
-import { TemporaryPasswordManagerPlugin } from 'src/app/TMP_STUBS';
+
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
     providedIn: 'root'
@@ -17,8 +18,7 @@ export class AuthService {
 
     constructor(public modalCtrl: ModalController,
         private didService: DIDService,
-        private popupProvider: PopupProvider,
-        private passwordManager: TemporaryPasswordManagerPlugin.PasswordManager) {
+        private popupProvider: PopupProvider) {
         AuthService.instance = this;
     }
 
@@ -34,12 +34,12 @@ export class AuthService {
     public async checkPasswordThenExecute(writeActionCb: () => Promise<void>, onCancelled: () => void, showMasterPromptIfDatabaseLocked: boolean = true, forceShowMasterPrompt: boolean = false) {
         return new Promise(async (resolve, reject) => {
             try {
-                let options: TemporaryPasswordManagerPlugin.GetPasswordInfoOptions = {
+                let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
                     promptPasswordIfLocked: showMasterPromptIfDatabaseLocked,
                     forceMasterPasswordPrompt: forceShowMasterPrompt
                 };
 
-                let passwordInfo = await this.passwordManager.getPasswordInfo("didstore-"+this.didService.getActiveDidStore().getId(), options) as TemporaryPasswordManagerPlugin.GenericPasswordInfo;
+                let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+this.didService.getActiveDidStore().getId(), options) as PasswordManagerPlugin.GenericPasswordInfo;
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
                     console.log("Master password was right, but no password found for the requested key")

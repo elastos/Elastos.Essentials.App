@@ -19,11 +19,12 @@ import { BiometricLockedoutException } from '../model/exceptions/biometriclocked
 import { UXService } from './ux.service';
 import { Events } from './events.service';
 import { GlobalDIDSessionsService, IdentityEntry, SignInOptions } from 'src/app/services/global.didsessions.service';
-import { TemporaryAppManagerPlugin, TemporaryPasswordManagerPlugin } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 export type IdentityGroup = {
     didStoreId: string;
@@ -65,7 +66,6 @@ export class IdentityService {
         private alertCtrl: AlertController,
         private uxService: UXService,
         private appManager: TemporaryAppManagerPlugin,
-        private passwordManager: TemporaryPasswordManagerPlugin.PasswordManager,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -128,15 +128,15 @@ export class IdentityService {
         // Allow signing in only if the password database could be opened.
 
         // Set virtual did context
-        await this.passwordManager.setVirtualDIDContext(identityEntry.didString);
+        await passwordManager.setVirtualDIDContext(identityEntry.didString);
 
         // Try to retrieve the did store password. If we can retrieve it, this means the master password database
         // could be successfully unlocked
         try {
-            let passwordInfo = await this.passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId);
+            let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId);
             if (passwordInfo) {
                 console.log("Password manager could unlock database for DID "+identityEntry.didString+". Signing in");
-                await this.passwordManager.setVirtualDIDContext(null);
+                await passwordManager.setVirtualDIDContext(null);
 
                 // Force signing out, in case we were not already (but we should be)
                 await this.didSessions.signOut()
@@ -211,7 +211,7 @@ export class IdentityService {
         let didStore = await DIDStore.create();
 
         // Generate a random password
-        let storePassword = await this.passwordManager.generateRandomPassword();
+        let storePassword = await passwordManager.generateRandomPassword();
         let mnemonicLanguage = this.getMnemonicLang();
         let mnemonic = this.identityBeingCreated.mnemonic;
 
@@ -228,29 +228,29 @@ export class IdentityService {
 
     private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string): Promise<boolean> {
         // Set a virtual did context to the password manager, so we can save the generated did store password
-        await this.passwordManager.setVirtualDIDContext(createdDID.getDIDString());
+        await passwordManager.setVirtualDIDContext(createdDID.getDIDString());
 
         try {
             // Save the did store password with a master password
-            let passwordInfo: TemporaryPasswordManagerPlugin.GenericPasswordInfo = {
-                type: TemporaryPasswordManagerPlugin.PasswordType.GENERIC_PASSWORD,
+            let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
+                type: PasswordManagerPlugin.PasswordType.GENERIC_PASSWORD,
                 key: "didstore-"+didStore.getId(),
                 displayName: "DID store password",
                 password: storePassword,
                 // TODO: visible: false
             }
-            let result = await this.passwordManager.setPasswordInfo(passwordInfo);
+            let result = await passwordManager.setPasswordInfo(passwordInfo);
             if (result.value) {
                 // Master password was created and did store password could be saved
                 // Save the identity entry in the did session plugin
                 let avatar = createdDID.getAvatarCredentialValue();
                 await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
-                await this.passwordManager.setVirtualDIDContext(null);
+                await passwordManager.setVirtualDIDContext(null);
             }
             else {
                 // Go back to the default screen, creating the new DID is cancelled.
                 console.log("Master password input failed. Aborting identity creation.");
-                await this.passwordManager.setVirtualDIDContext(null);
+                await passwordManager.setVirtualDIDContext(null);
             }
         }
         catch (e) {
@@ -317,7 +317,7 @@ export class IdentityService {
         console.log('Getting didStore', didStore);
 
         // Generate a random password
-        let storePassword = await this.passwordManager.generateRandomPassword();
+        let storePassword = await passwordManager.generateRandomPassword();
         let mnemonicLanguage = this.getMnemonicLang();
         let mnemonic = this.identityBeingCreated.mnemonic;
 
@@ -417,7 +417,7 @@ export class IdentityService {
         console.log("Deleting identity", identity);
 
         // Set a virtual did context to the password manager, so we can get the did store password
-        await this.passwordManager.setVirtualDIDContext(identity.didString);
+        await passwordManager.setVirtualDIDContext(identity.didString);
 
         // Get did store password from the password manager
         try {
@@ -436,7 +436,7 @@ export class IdentityService {
             await this.didSessions.deleteIdentityEntry(identity.didString);
 
             // Cleanup the password manager content
-            await this.passwordManager.deleteAll();
+            await passwordManager.deleteAll();
 
             // Notify listeners of this deletion
             this.zone.run(() => {

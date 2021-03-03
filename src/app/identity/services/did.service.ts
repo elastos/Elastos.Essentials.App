@@ -11,10 +11,10 @@ import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexcep
 import { Events } from "./events.service";
 import { AuthService } from "./auth.service";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
-import { TemporaryPasswordManagerPlugin } from "src/app/TMP_STUBS";
 import { Logger } from "src/app/logger";
 
 declare let didManager: DIDPlugin.DIDManager;
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
   providedIn: "root",
@@ -31,8 +31,7 @@ export class DIDService {
     public localStorage: LocalStorage,
     private popupProvider: PopupProvider,
     public native: Native,
-    private didSessions: GlobalDIDSessionsService,
-    private passwordManager: TemporaryPasswordManagerPlugin.PasswordManager
+    private didSessions: GlobalDIDSessionsService
   ) {
     DIDService.instance = this;
   }
@@ -201,7 +200,7 @@ export class DIDService {
     await this.getActiveDidStore().deleteDid(did);
 
     // Cleanup the password manager content
-    await this.passwordManager.deleteAll();
+    await passwordManager.deleteAll();
 
     // Sign out and go back to the DID session app
     await this.didSessions.signOut();

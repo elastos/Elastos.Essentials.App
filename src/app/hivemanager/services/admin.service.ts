@@ -3,9 +3,10 @@ import { StorageService } from './storage.service';
 import { Router } from '@angular/router';
 import { PopupService } from './popup.service';
 import { ManagedProvider } from '../model/managedprovider';
-import { TemporaryAppManagerPlugin, TemporaryPasswordManagerPlugin, TrinitySDK } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin, TrinitySDK } from 'src/app/TMP_STUBS';
 
 declare let didManager: DIDPlugin.DIDManager;
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,6 @@ export class AdminService {
     private storage: StorageService,
     private popup: PopupService,
     private appManager: TemporaryAppManagerPlugin,
-    private passwordManager: TemporaryPasswordManagerPlugin.PasswordManager
   ) {}
 
   async init() {
@@ -93,13 +93,13 @@ export class AdminService {
     let createdDIDInfo = await didHelper.fastCreateDID(DIDPlugin.MnemonicLanguage.ENGLISH);
 
     // Save the password to the password manager
-    let passwordInfo: TemporaryPasswordManagerPlugin.GenericPasswordInfo = {
+    let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
       key: "vaultprovideradmindid-"+provider.id,
-      type: TemporaryPasswordManagerPlugin.PasswordType.GENERIC_PASSWORD,
+      type: PasswordManagerPlugin.PasswordType.GENERIC_PASSWORD,
       displayName:"Vault provider admin DID",
       password: createdDIDInfo.storePassword
     };
-    let passwordSetResult = await this.passwordManager.setPasswordInfo(passwordInfo);
+    let passwordSetResult = await passwordManager.setPasswordInfo(passwordInfo);
 
     if (!passwordSetResult.value) {
       // Failed to save the password. Cancel DID creation
@@ -121,7 +121,7 @@ export class AdminService {
   public async getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
     return new Promise((resolve)=>{
       didManager.initDidStore(provider.did.storeId, ()=>{}, async (didStore)=>{
-        let passwordInfo = await this.passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as TemporaryPasswordManagerPlugin.GenericPasswordInfo;
+        let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
         didStore.exportMnemonic(passwordInfo.password, (mnemonic)=>{
           resolve(mnemonic);
         })
@@ -160,7 +160,7 @@ export class AdminService {
         this.sendDIDTransactionIntentRequest(payload.toString());
       }, async (didStore)=>{
         didStore.loadDidDocument(provider.did.didString, async (didDocument)=>{
-          let passwordInfo = await this.passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as TemporaryPasswordManagerPlugin.GenericPasswordInfo;
+          let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
           didDocument.publish(passwordInfo.password, ()=>{
             resolve();
           });
