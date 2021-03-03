@@ -25,19 +25,19 @@ export class Logger {
 
     public static log(module: string, ...args: any) {
         this.originalDebugLog.apply(this.originalConsole, [
-            "%c"+module.toUpperCase()+"", 'background: #008730; color: #FFF; font-weight:bold; padding:5px;',
+            "%c"+module.toUpperCase()+"*", 'background: #008730; color: #FFF; font-weight:bold; padding:5px;',
             ...args]);
     }
 
     public static warn(module: string, ...args: any) {
         this.originalDebugWarn.apply(this.originalConsole, [
-            "%c"+module.toUpperCase()+" WARNING", 'background: #d59100; color: #FFF; font-weight:bold; padding:5px;',
+            "%c"+module.toUpperCase()+"* WARNING", 'background: #d59100; color: #FFF; font-weight:bold; padding:5px;',
             ...args]);
     }
 
     public static error(module: string, ...args: any) {
         this.originalDebugErr.apply(this.originalConsole, [
-            "%c"+module.toUpperCase()+" ERROR", 'background: #b30202; color: #FFF; font-weight:bold; padding:5px;',
+            "%c"+module.toUpperCase()+"* ERROR", 'background: #b30202; color: #FFF; font-weight:bold; padding:5px;',
             ...args]);
     }
 }

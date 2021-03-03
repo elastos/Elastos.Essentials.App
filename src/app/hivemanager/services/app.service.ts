@@ -46,7 +46,7 @@ export class AppService {
     async navigateTo(nextRoute: string, routeQueryParams?: any) {
         Logger.log("HiveManager", "Navigating to", nextRoute);
 
-        this.navController.navigateRoot(nextRoute, {
+        this.navController.navigateForward(nextRoute, {
             queryParams: routeQueryParams
         });
     }

@@ -273,30 +273,3 @@ export namespace PrinterPlugin {
 
 
 
-
-
-
-
-export namespace TrinitySDK {
-  export namespace DID {
-    export type FastDIDCreationResult = {
-      storePassword: string;
-      didStore: DIDPlugin.DIDStore;
-      did: DIDPlugin.DID;
-    }
-
-    export class DIDHelper {
-      fastCreateDID(lang: DIDPlugin.MnemonicLanguage): FastDIDCreationResult {
-        return null;
-      }
-    }
-  }
-
-  export namespace Hive {
-    export class AuthHelper {
-      getClientWithAuth(callback: (err)=>void): HivePlugin.Client {
-        return null;
-      }
-    }
-  }
-}

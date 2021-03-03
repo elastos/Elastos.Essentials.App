@@ -6,9 +6,12 @@ import { PopupService } from './popup.service';
 import { Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
-import { TemporaryAppManagerPlugin, TrinitySDK } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Hive } from 'src/app/elastos-cordova-sdk';
+import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -50,6 +53,7 @@ export class HiveService {
   constructor(
     private router: Router,
     private storage: StorageService,
+    private globalStorage: GlobalStorageService,
     private popup: PopupService,
     private events: Events,
     public translate: TranslateService,
@@ -58,13 +62,16 @@ export class HiveService {
   ) {}
 
   async init() {
-    let hiveAuthHelper = await new TrinitySDK.Hive.AuthHelper();
+    let hiveAuthHelper = await new ElastosSDKHelper(this.globalStorage).newHiveAuthHelper("hivemanager");
     this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
       Logger.error("HiveManager", "Authentication error:", err);
     });
 
     if (!this.client) {
       Logger.error("HiveManager", "Fatal error in hive manager: Unable to get a hive client instance in init().");
+    }
+    else {
+      Logger.log("HiveManager", "Hive client instance was created");
     }
   }
 

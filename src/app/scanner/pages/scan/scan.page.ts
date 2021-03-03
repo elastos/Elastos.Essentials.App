@@ -9,6 +9,7 @@ import QrScanner from 'qr-scanner';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { Logger } from 'src/app/logger';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
 QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
@@ -46,7 +47,6 @@ export class ScanPage {
         private translate: TranslateService,
     ) {
         this.route.queryParams.subscribe((params: any) => {
-            console.log("params",params);
             this.fromIntentRequest = (params.fromIntent == "true");
         });
     }
@@ -64,7 +64,7 @@ export class ScanPage {
     }
 
     ionViewDidEnter() {
-        console.log("Starting scanning process");
+        Logger.log("Scanner", "Starting scanning process");
         this.startScanningProcess();
     }
 
@@ -102,18 +102,18 @@ export class ScanPage {
     startScanningProcess() {
         this.qrScanner.prepare().then((status: QRScannerStatus) => {
 
-            console.log("Scanner prepared")
+            Logger.log("Scanner", "Scanner prepared")
             if (status.authorized) {
                 // Camera permission was granted. Start scanning
-                console.log("Scanner authorized")
+                Logger.log("Scanner", "Scanner authorized")
 
                 // Show camera preview
-                console.log("Showing camera preview")
+                Logger.log("Scanner", "Showing camera preview")
                 this.showCamera()
 
                 // Start scanning and listening to scan results
                 this.scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
-                    console.log("Scanned data: ", text)
+                    Logger.log("Scanner", "Scanned data: ", text)
                     this.scannedText = text;
 
                     this.ngZone.run(() => {
@@ -133,12 +133,12 @@ export class ScanPage {
                 // Wait for user to scan something, then the observable callback will be called
             } else if (status.denied) {
                 // Camera permission was permanently denied
-                console.log("Access to QRScanner plugin was permanently denied")
+                Logger.log("Scanner", "Access to QRScanner plugin was permanently denied")
             } else {
                 // Permission was denied, but not permanently. You can ask for permission again at a later time.
-                console.log("Access to QRScanner plugin is currently denied")
+                Logger.log("Scanner", "Access to QRScanner plugin is currently denied")
             }
-        }).catch((e: any) => console.log('Unexpected error: ', e, e));
+        }).catch((e: any) => Logger.error("Scanner", 'Unexpected error: ', e, e));
     }
 
     stopScanning() {
@@ -168,23 +168,23 @@ export class ScanPage {
           this.alert = null;
         }
 
-        console.log("Stopping camera, getting ready to pick a picture from the gallery.");
+        Logger.log("Scanner", "Stopping camera, getting ready to pick a picture from the gallery.");
         this.showLoading();
         await this.hideCamera();
         this.stopScanning();
         this.showGalleryTitlebarKey(false);
 
         setTimeout(async () => {
-            console.log("Opening gallery to pick a picture");
+            Logger.log("Scanner", "Opening gallery to pick a picture");
             // Ask user to pick a picture from the library
             navigator.camera.getPicture((data)=>{
-                console.log("Got gallery data");
+                Logger.log("Scanner", "Got gallery data");
                 if (data) {
                     this.zone.run(() => {
                         try {
                             const image = new Image();
                             image.onload = async() => {
-                                console.log("Loaded image size:", image.width, image.height);
+                                Logger.log("Scanner", "Loaded image size:", image.width, image.height);
 
                                 let code: string;
                                 try {
@@ -192,10 +192,10 @@ export class ScanPage {
                                 }
                                 catch (err) {
                                     //debugger;
-                                    console.error(err);
+                                    Logger.error("Scanner", err);
                                     code = null;
                                 }
-                                console.log("Read qr code:", code);
+                                Logger.log("Scanner", "Read qr code:", code);
 
                                 if (code != null) {
                                     this.hideLoading();
@@ -218,13 +218,13 @@ export class ScanPage {
                         }
                         catch (e) {
                             this.alertNoScannedContent('sorry', 'scan-err');
-                            console.log("Error while loading the picture as PNG:", e);
+                            Logger.warn("Scanner", "Error while loading the picture as PNG:", e);
                         }
                     });
                 }
             }
             , (err)=>{
-                console.log(err);
+                Logger.error("Scanner", err);
                 // 'No Image Selected': User canceled.
                 if (err === 'No Image Selected') {
                     this.hideLoading();
@@ -272,13 +272,13 @@ export class ScanPage {
     }
 
     sendIntentAsUrl(scannedContent: string) {
-        console.log("Sending scanned content as a URL intent:", scannedContent);
+        Logger.log("Scanner", "Sending scanned content as a URL intent:", scannedContent);
         this.appManager.sendUrlIntent(scannedContent, async ()=>{
             // URL intent sent
-            console.log("Intent sent successfully")
+            Logger.log("Scanner", "Intent sent successfully")
             await this.exitApp()
         }, (err)=>{
-            console.error("Intent sending failed", err)
+            Logger.error("Scanner", "Intent sending failed", err)
             this.ngZone.run(() => {
                 this.showNooneToHandleIntent()
             })
@@ -298,13 +298,13 @@ export class ScanPage {
             scanIntentAction = "handlescannedcontent"
         }
 
-        console.log("Sending scanned content as raw content to an "+scanIntentAction+" intent action");
+        Logger.log("Scanner", "Sending scanned content as raw content to an "+scanIntentAction+" intent action");
         this.appManager.sendIntent(scanIntentAction, {data: scannedContent}, {}, async ()=>{
             // Raw intent sent
-            console.log("Intent sent successfully as action '"+scanIntentAction+"'")
+            Logger.log("Scanner", "Intent sent successfully as action '"+scanIntentAction+"'")
             await this.exitApp()
         }, (err)=>{
-            console.error("Intent sending failed", err)
+            Logger.error("Scanner", "Intent sending failed", err)
             this.ngZone.run(() => {
                 this.showNooneToHandleIntent()
             })
@@ -360,7 +360,7 @@ export class ScanPage {
     }
 
     async exitApp() {
-        console.log("Exiting app")
+        Logger.log("Scanner", "Exiting app")
 
         this.stopScanning();
         await this.hideCamera();
@@ -372,7 +372,7 @@ export class ScanPage {
      * Leaving the page, do some cleanup.
      */
     async ionViewWillLeave() {
-        console.log("Scan view is leaving")
+        Logger.log("Scanner", "Scan view is leaving")
         this.stopScanning();
         await this.hideCamera();
     }

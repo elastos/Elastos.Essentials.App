@@ -31,7 +31,7 @@ export class AppComponent {
         private launcherInitService: LauncherInitService,
         private didSessionsInitService: DIDSessionsInitService,
         private scannerInitService: ScannerInitService,
-        private hiveInitService: HiveManagerInitService,
+        private hiveManagerInitService: HiveManagerInitService,
         private settingsInitService: SettingsInitService,
         private contactsInitService: ContactsInitService,
         private identityInitService: IdentityInitService,
@@ -54,7 +54,7 @@ export class AppComponent {
             await this.didSessionsInitService.init();
             await this.launcherInitService.init();
             await this.scannerInitService.init();
-            await this.hiveInitService.init();
+            await this.hiveManagerInitService.init();
             await this.settingsInitService.init();
             await this.contactsInitService.init();
             await this.identityInitService.init();

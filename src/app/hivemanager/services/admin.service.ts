@@ -3,7 +3,10 @@ import { StorageService } from './storage.service';
 import { Router } from '@angular/router';
 import { PopupService } from './popup.service';
 import { ManagedProvider } from '../model/managedprovider';
-import { TemporaryAppManagerPlugin, TrinitySDK } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { DID } from 'src/app/elastos-cordova-sdk';
+import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -17,6 +20,7 @@ export class AdminService {
   constructor(
     private router: Router,
     private storage: StorageService,
+    private globalStorage: GlobalStorageService,
     private popup: PopupService,
     private appManager: TemporaryAppManagerPlugin,
   ) {}
@@ -88,8 +92,8 @@ export class AdminService {
   /**
    * Created a new Administration DID for a given vault provider configuration
    */
-  public async createAdminDID(provider: ManagedProvider): Promise<TrinitySDK.DID.FastDIDCreationResult> {
-    let didHelper = new TrinitySDK.DID.DIDHelper();
+  public async createAdminDID(provider: ManagedProvider): Promise<DID.FastDIDCreationResult> {
+    let didHelper = new ElastosSDKHelper(this.globalStorage).newDIDHelper("hivemanager");
     let createdDIDInfo = await didHelper.fastCreateDID(DIDPlugin.MnemonicLanguage.ENGLISH);
 
     // Save the password to the password manager

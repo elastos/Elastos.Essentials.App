@@ -25,7 +25,7 @@ type StorageProvider = {
   styleUrls: ['./pickprovider.page.scss'],
 })
 export class PickProviderPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public checkingInitialStatus: boolean = false;
   public vaultProviderCouldBeContacted: boolean = false;
