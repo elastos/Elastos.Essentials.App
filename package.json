@@ -60,7 +60,6 @@
     "@angular/language-service": "11.0.9",
     "@ionic/angular-toolkit": "3.1.0",
     "@types/node": "14.14.21",
-    "appmanager": "file:../Plugins/AppManager",
     "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-printer": "0.8.0",
@@ -93,8 +92,7 @@
       "cordova-plugin-whitelist": {},
       "elastos-essentials-plugins-fingerprint": {},
       "cordova-plugin-qrscanner": {},
-      "elastos-essentials-plugins-passwordmanager": {},
-      "elastos-cordova-plugin-appmanager": {}
+      "elastos-essentials-plugins-passwordmanager": {}
     },
     "platforms": [
       "android"
