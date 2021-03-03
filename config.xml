@@ -165,6 +165,6 @@
     <plugin name="elastos-cordova-plugin-carrier" spec="../Plugins/Carrier" />
     <plugin name="elastos-cordova-plugin-did" spec="../Plugins/DID" />
     <plugin name="elastos-cordova-plugin-hive" spec="../Plugins/Hive" />
-    <plugin name="elastos-cordova-plugin-appmanager" spec="../Plugins/AppManager" />
+    <plugin name="elastos-essentials-plugin-appmanager" spec="../Plugins/AppManager" />
     <allow-navigation href="http://192.168.31.114:8100" sessionid="559e7a4b" />
 </widget>
