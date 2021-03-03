@@ -31,7 +31,7 @@
       "cordova",
       "elastos-cordova-plugin-did",
       "elastos-cordova-plugin-hive",
-      "elastos-cordova-plugin-appmanager",
+      "elastos-essentials-plugin-appmanager",
       "elastos-essentials-plugins-passwordmanager",
       "cordova-plugin-camera"
     ],

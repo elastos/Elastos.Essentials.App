@@ -180,7 +180,7 @@ export class CredentialDetailsPage {
   ionViewWillEnter() {
     this.uxService.makeAppVisible();
     this.uxService.setTitleBarBackKeyShown(true);
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.HOME);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
 
     this.getIssuer();
 

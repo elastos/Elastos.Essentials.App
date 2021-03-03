@@ -35,10 +35,7 @@
             <manifest xmlns:tools="http://schemas.android.com/tools" />
         </edit-config>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:usesCleartextTraffic="true" />
-            <application android:allowBackup="false" />
-            <application android:fullBackupContent="false" />
-            <application tools:replace="android:allowBackup" />
+            <application android:usesCleartextTraffic="true" android:allowBackup="false" android:fullBackupContent="false" tools:replace="android:allowBackup"/>
         </edit-config>
         <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
             <intent-filter>

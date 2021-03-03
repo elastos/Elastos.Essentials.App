@@ -1,19 +1,19 @@
 <ion-header class="ion-no-border" [class.dark-header]="themeService.darkMode">
   <ion-toolbar mode="ios" [class.dark-header]="themeService.darkMode">
     <ion-buttons slot="start">
-      <ion-button>
-        <img [src]="!themeService.darkMode ? '/assets/components/titlebar/elastos.svg' : '/assets/components/titlebar/darkmode/elastos.svg'">
+      <ion-button *ngIf="outerLeftIcon.visible" (click)="outerLeftIconClicked()">
+        <img [src]="outerLeftIcon.iconPath">
       </ion-button>
-      <ion-button *ngIf="innerLeftIcon.visible">
+      <ion-button *ngIf="innerLeftIcon.visible" (click)="innerLeftIconClicked()">
         <img [src]="innerLeftIcon.iconPath">
       </ion-button>
     </ion-buttons>
     <ion-title>{{ title | translate }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button [class.hidden]="!innerRightIcon.visible">
+      <ion-button [class.hidden]="!innerRightIcon.visible"  (click)="innerRightIconClicked()">
         <img *ngIf="innerRightIcon.visible" [src]="innerRightIcon.iconPath">
       </ion-button>
-      <ion-button *ngIf="!menuVisible && outerRightIcon.visible">
+      <ion-button *ngIf="!menuVisible && outerRightIcon.visible"  (click)="outerRightIconClicked()">
         <img [src]="outerRightIcon.iconPath">
       </ion-button>
       <ion-button *ngIf="menuVisible" (click)="openMenu($event)">

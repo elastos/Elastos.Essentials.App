@@ -185,7 +185,7 @@ export class CredentialsPage {
 
     this.uxService.makeAppVisible();
     //titleBarManager.setTitle(this.translate.instant("my-identity"));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.HOME);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
   }
 
   ionViewDidEnter() {

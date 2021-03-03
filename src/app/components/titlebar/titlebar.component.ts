@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AppTheme, GlobalThemeService } from '../../services/global.theme.service';
-import { PopoverController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
-import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode } from './titlebar.types';
+import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon } from './titlebar.types';
 
 @Component({
   selector: 'app-titlebar',
@@ -14,7 +14,8 @@ export class TitleBarComponent {
 
   constructor(
     public themeService: GlobalThemeService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private navCtrl: NavController
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);
@@ -22,12 +23,14 @@ export class TitleBarComponent {
 
     // Set the default navigation mode (used by most apps)
     // TODO @chad
+    this.setNavigationMode(TitleBarNavigationMode.BACK)
   }
 
   public title: string = "";
 
   public visibile: boolean = true;
   public menuVisible: boolean = false;
+  private navigationMode: TitleBarNavigationMode;
 
   public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
 
@@ -36,10 +39,16 @@ export class TitleBarComponent {
   public innerRightIcon: TitleBarSlotItem = TitleBarComponent.makeDefaultIcon();
   public outerRightIcon: TitleBarSlotItem = TitleBarComponent.makeDefaultIcon();
 
+  private itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
+
   public menuItems: TitleBarMenuItem[] = [];
 
   private static makeDefaultIcon(): TitleBarSlotItem {
-    return { visible: false, key: null, iconPath: null, badgeCount: 0 };
+    return {
+      visible: false,
+      key: null,
+      iconPath: null,
+      badgeCount: 0 };
   }
 
   /**
@@ -70,7 +79,7 @@ export class TitleBarComponent {
    * @param onItemClicked Callback called when an item is clicked.
    */
   public addOnItemClickedListener(onItemClicked: (icon: TitleBarSlotItem | TitleBarMenuItem) => void) {
-    return onItemClicked;
+    this.itemClickedListeners.push(onItemClicked);
   }
 
   /**
@@ -79,7 +88,7 @@ export class TitleBarComponent {
    * @param onItemClicked Callback called when an item is clicked.
    */
   public removeOnItemClickedListener(onItemClicked: (icon: TitleBarSlotItem | TitleBarMenuItem) => void) {
-    // TODO
+    this.itemClickedListeners.splice(this.itemClickedListeners.indexOf(onItemClicked), 1);
   }
 
   /**
@@ -93,12 +102,36 @@ export class TitleBarComponent {
    * @param icon Icon and action to be used at this slot. Use null to clear any existing configuration.
    */
   public setIcon(iconSlot: TitleBarIconSlot, icon: TitleBarIcon) {
+    let actualIconPath: string = icon.iconPath
+    if (icon) {
+      // Replace built-in icon path placeholders with real picture path
+      switch (icon.iconPath) {
+        case BuiltInIcon.BACK:
+          actualIconPath = !this.themeService.darkMode ? '/assets/components/titlebar/elastos.svg' : '/assets/components/titlebar/darkmode/elastos.svg';
+          break;
+        /* TODO:
+        CLOSE = "close",
+        SCAN = "scan",
+        ADD = "add",
+        DELETE = "delete",
+        SETTINGS = "settings",
+        HELP = "help",
+        HORIZONTAL_MENU = "horizontal_menu",
+        VERTICAL_MENU = "vertical_menu",
+        EDIT = "edit",
+        FAVORITE = "favorite"
+        */
+       default:
+        // Nothing, we'll use the real given path.
+      }
+    }
+
     switch (iconSlot) {
       case TitleBarIconSlot.OUTER_LEFT:
         if(icon) {
           this.outerLeftIcon.visible = true;
           this.outerLeftIcon.key = icon.key;
-          this.outerLeftIcon.iconPath = icon.iconPath;
+          this.outerLeftIcon.iconPath = actualIconPath;
         } else {
           this.outerLeftIcon.visible = false;
           this.outerLeftIcon.key = null;
@@ -109,7 +142,7 @@ export class TitleBarComponent {
         if(icon) {
           this.innerLeftIcon.visible = true;
           this.innerLeftIcon.key = icon.key;
-          this.innerLeftIcon.iconPath = icon.iconPath;
+          this.innerLeftIcon.iconPath = actualIconPath;
         } else {
           this.innerLeftIcon.visible = false;
           this.innerLeftIcon.key = null;
@@ -120,7 +153,7 @@ export class TitleBarComponent {
         if(icon) {
           this.innerRightIcon.visible = true;
           this.innerRightIcon.key = icon.key;
-          this.innerRightIcon.iconPath = icon.iconPath;
+          this.innerRightIcon.iconPath = actualIconPath;
         } else {
           this.innerRightIcon.visible = false;
           this.innerRightIcon.key = null;
@@ -131,7 +164,7 @@ export class TitleBarComponent {
         if(icon) {
           this.outerRightIcon.visible = true;
           this.outerRightIcon.key = icon.key;
-          this.outerRightIcon.iconPath = icon.iconPath;
+          this.outerRightIcon.iconPath = actualIconPath;
         } else {
           this.outerRightIcon.visible = false;
           this.outerRightIcon.key = null;
@@ -193,18 +226,6 @@ export class TitleBarComponent {
     this.menuVisible = visible;
   }
 
-  public setTitleBarTheme(theme: AppTheme) {
-    if (theme === AppTheme.LIGHT) {
-      document.body.classList.remove("dark");
-      this.theme.backgroundColor = '#f8f8ff';
-      this.theme.color = '#000000'
-    } else {
-      document.body.classList.add("dark");
-      this.theme.backgroundColor = '#191a2f';
-      this.theme.color = '#ffffff';
-    }
-  }
-
   /**
    * Changes the top left icon appearance and behaviour. See @TitleBarNavigationMode for available
    * navigation modes.
@@ -212,9 +233,42 @@ export class TitleBarComponent {
    * @param navigationMode See @TitleBarNavigationMode
    */
   public setNavigationMode(navigationMode: TitleBarNavigationMode) {
+    this.navigationMode = navigationMode;
 
+    if (navigationMode == TitleBarNavigationMode.BACK)
+      this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
+    else (navigationMode == TitleBarNavigationMode.CLOSE)
+      this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
   }
 
+  private listenableIconClicked(icon: TitleBarSlotItem | TitleBarMenuItem) {
+    // Custom icon, call the icon listener
+    this.itemClickedListeners.forEach((listener)=>{
+      listener(icon);
+    });
+  }
+
+  outerLeftIconClicked() {
+    if (this.navigationMode == TitleBarNavigationMode.BACK)
+      this.navCtrl.back();
+    else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
+      this.navCtrl.back();
+    else {
+      this.listenableIconClicked(this.outerLeftIcon);
+    }
+  }
+
+  innerLeftIconClicked() {
+    this.listenableIconClicked(this.innerLeftIcon);
+  }
+
+  innerRightIconClicked() {
+    this.listenableIconClicked(this.innerRightIcon);
+  }
+
+  outerRightIconClicked() {
+    this.listenableIconClicked(this.outerRightIcon);
+  }
 
   async openMenu(ev) {
     this.menu = await this.popoverCtrl.create({
@@ -230,5 +284,17 @@ export class TitleBarComponent {
       this.menu = null;
     });
     return await this.menu.present();
+  }
+
+  private setTitleBarTheme(theme: AppTheme) {
+    if (theme === AppTheme.LIGHT) {
+      document.body.classList.remove("dark");
+      this.theme.backgroundColor = '#f8f8ff';
+      this.theme.color = '#000000'
+    } else {
+      document.body.classList.add("dark");
+      this.theme.backgroundColor = '#191a2f';
+      this.theme.color = '#ffffff';
+    }
   }
 }

@@ -44,7 +44,7 @@ export type TitleBarIcon = {
      * Path to an icon picture illustrating this menu item. Path can be either a built-in value to use
      * built-in icons, or a path to a custom icon (ex: "assets/...")
      */
-    iconPath: String | BuiltInIcon
+    iconPath: string | BuiltInIcon
 }
 
 export type TitleBarSlotItem = TitleBarIcon & {
@@ -58,7 +58,7 @@ export type TitleBarSlotItem = TitleBarIcon & {
  */
 export type TitleBarMenuItem = TitleBarIcon & {
     /** Localized menu item display title. */
-    title: String
+    title: string
 }
 
 export const enum TitleBarDisplayMode {
@@ -89,8 +89,10 @@ export const enum TitleBarIconSlot {
  * Status for the top left icon that can switch from one mode to another.
  */
 export enum TitleBarNavigationMode {
-    /** Home icon - minimizes the currently active app and returns to launcher. */
-    HOME = 0,
-    /** Close icon - closes the currently active app and returns to the launcher. */
-    CLOSE = 1
+    /** Back icon - Navigates back in the router stack. Default mode */
+    BACK = 0,
+    /** Close icon - Navigates back in the router stack but shows a cross. */
+    CLOSE = 1,
+    /** No predefined outer left icon. All slots can be configured */
+    CUSTOM =2
 }

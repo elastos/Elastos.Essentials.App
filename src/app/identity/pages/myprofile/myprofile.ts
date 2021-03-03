@@ -205,7 +205,7 @@ export class MyProfilePage {
     this.uxService.makeAppVisible();
     //titleBarManager.setTitle(this.translate.instant("my-identity"));
     this.titleBar.setTitle("");
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.HOME);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
     // this.uxService.setTitleBarSettingsKeyShown(true);
     this.buildCredentialEntries();
 

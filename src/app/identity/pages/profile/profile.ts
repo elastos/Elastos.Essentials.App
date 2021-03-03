@@ -211,7 +211,7 @@ export class ProfilePage {
     console.log("ionwillenter profile");
     this.uxService.makeAppVisible();
     //titleBarManager.setTitle(this.translate.instant("my-identity"));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.HOME);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
 
     this.buildAppAndAvatarCreds(false);
 
