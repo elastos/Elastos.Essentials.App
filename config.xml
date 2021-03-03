@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content src="index.html" />
+        <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -28,7 +28,8 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="SplashMaintainAspectRatio" value="true" />
-    <preference name="InternalIntentFilter" value="did.elastos.net wallet.elastos.net hive.elastos.net contact.elastos.net scanner.elastos.net" />
+    <preference name="InternalIntentFilter" value="https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net" />
+    <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
     <preference name="AndroidXEnabled" value="true" />
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
@@ -39,6 +40,12 @@
             <uses-library android:name="org.apache.http.legacy" android:required="false" />
         </edit-config>
         <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="essentials.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -157,4 +164,5 @@
     <hook src="scripts/apply_patches.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <allow-navigation href="http://192.168.31.114:8100" sessionid="559e7a4b" />
+    <allow-navigation href="http://192.168.8.214:8100" sessionid="6965a6c7" />
 </widget>
