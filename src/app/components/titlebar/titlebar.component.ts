@@ -22,7 +22,6 @@ export class TitleBarComponent {
     });
 
     // Set the default navigation mode (used by most apps)
-    // TODO @chad
     this.setNavigationMode(TitleBarNavigationMode.BACK)
   }
 
@@ -34,10 +33,12 @@ export class TitleBarComponent {
 
   public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
 
-  public outerLeftIcon: TitleBarSlotItem = TitleBarComponent.makeDefaultIcon();
-  public innerLeftIcon: TitleBarSlotItem = TitleBarComponent.makeDefaultIcon();
-  public innerRightIcon: TitleBarSlotItem = TitleBarComponent.makeDefaultIcon();
-  public outerRightIcon: TitleBarSlotItem = TitleBarComponent.makeDefaultIcon();
+  public icons: TitleBarSlotItem[] = [
+    TitleBarComponent.makeDefaultIcon(), // outer left
+    TitleBarComponent.makeDefaultIcon(), // inner left
+    TitleBarComponent.makeDefaultIcon(), // inner right
+    TitleBarComponent.makeDefaultIcon()  // outer right
+  ]
 
   private itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
 
@@ -102,75 +103,49 @@ export class TitleBarComponent {
    * @param icon Icon and action to be used at this slot. Use null to clear any existing configuration.
    */
   public setIcon(iconSlot: TitleBarIconSlot, icon: TitleBarIcon) {
-    let actualIconPath: string = icon.iconPath
-    if (icon) {
-      // Replace built-in icon path placeholders with real picture path
-      switch (icon.iconPath) {
-        case BuiltInIcon.BACK:
-          actualIconPath = !this.themeService.darkMode ? '/assets/components/titlebar/elastos.svg' : '/assets/components/titlebar/darkmode/elastos.svg';
-          break;
-        /* TODO:
-        CLOSE = "close",
-        SCAN = "scan",
-        ADD = "add",
-        DELETE = "delete",
-        SETTINGS = "settings",
-        HELP = "help",
-        HORIZONTAL_MENU = "horizontal_menu",
-        VERTICAL_MENU = "vertical_menu",
-        EDIT = "edit",
-        FAVORITE = "favorite"
-        */
-       default:
-        // Nothing, we'll use the real given path.
-      }
+    console.log("setIcon", icon);
+    if(icon) {
+      this.icons[iconSlot].visible = true;
+      this.icons[iconSlot].key = icon.key;
+      this.icons[iconSlot].iconPath = icon.iconPath;
+    } else {
+      this.icons[iconSlot].visible = false;
+      this.icons[iconSlot].key = null;
+      this.icons[iconSlot].iconPath = null;
+    }
+  }
+
+  getIconPath(iconSlot: TitleBarIconSlot) {
+    console.log("getIconPath" , iconSlot, this.icons[iconSlot].iconPath, this.icons[iconSlot])
+
+    // Soecial case for the outer right icon in case a menu is configured
+    if (iconSlot == TitleBarIconSlot.OUTER_RIGHT && this.menuVisible) {
+      return !this.themeService.darkMode ? '/assets/components/titlebar/menu.svg' : '/assets/components/titlebar/darkmode/menu.svg';
     }
 
-    switch (iconSlot) {
-      case TitleBarIconSlot.OUTER_LEFT:
-        if(icon) {
-          this.outerLeftIcon.visible = true;
-          this.outerLeftIcon.key = icon.key;
-          this.outerLeftIcon.iconPath = actualIconPath;
-        } else {
-          this.outerLeftIcon.visible = false;
-          this.outerLeftIcon.key = null;
-          this.outerLeftIcon.iconPath = null;
-        }
-        break;
-      case TitleBarIconSlot.INNER_LEFT:
-        if(icon) {
-          this.innerLeftIcon.visible = true;
-          this.innerLeftIcon.key = icon.key;
-          this.innerLeftIcon.iconPath = actualIconPath;
-        } else {
-          this.innerLeftIcon.visible = false;
-          this.innerLeftIcon.key = null;
-          this.innerLeftIcon.iconPath = null;
-        }
-        break;
-      case TitleBarIconSlot.INNER_RIGHT:
-        if(icon) {
-          this.innerRightIcon.visible = true;
-          this.innerRightIcon.key = icon.key;
-          this.innerRightIcon.iconPath = actualIconPath;
-        } else {
-          this.innerRightIcon.visible = false;
-          this.innerRightIcon.key = null;
-          this.innerRightIcon.iconPath = null;
-        }
-        break;
-      case TitleBarIconSlot.OUTER_RIGHT:
-        if(icon) {
-          this.outerRightIcon.visible = true;
-          this.outerRightIcon.key = icon.key;
-          this.outerRightIcon.iconPath = actualIconPath;
-        } else {
-          this.outerRightIcon.visible = false;
-          this.outerRightIcon.key = null;
-          this.outerRightIcon.iconPath = null;
-        }
-        break;
+    // Replace built-in icon path placeholders with real picture path
+    switch (this.icons[iconSlot].iconPath) {
+      case BuiltInIcon.ELASTOS:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/elastos.svg';
+      case BuiltInIcon.BACK:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/back.svg' : 'assets/components/titlebar/darkmode/back.svg';
+      case BuiltInIcon.CLOSE:
+        // TODO - TEST ONLY
+        return !this.themeService.darkMode ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/elastos.svg';
+      /* TODO:
+      SCAN = "scan",
+      ADD = "add",
+      DELETE = "delete",
+      SETTINGS = "settings",
+      HELP = "help",
+      HORIZONTAL_MENU = "horizontal_menu",
+      VERTICAL_MENU = "vertical_menu",
+      EDIT = "edit",
+      FAVORITE = "favorite"
+      */
+      default:
+        // Nothing, we'll use the real given path.
+        return this.icons[iconSlot].iconPath;
     }
   }
 
@@ -196,20 +171,7 @@ export class TitleBarComponent {
    * @param count Number to display as a badge over the icon. A value of 0 hides the badge.
    */
   public setBadgeCount(iconSlot: TitleBarIconSlot, count: number) {
-    switch (iconSlot) {
-      case TitleBarIconSlot.OUTER_LEFT:
-        this.outerLeftIcon.badgeCount = count;
-        break;
-      case TitleBarIconSlot.INNER_LEFT:
-        this.innerLeftIcon.badgeCount = count;
-        break;
-      case TitleBarIconSlot.INNER_RIGHT:
-        this.innerRightIcon.badgeCount = count;
-        break;
-      case TitleBarIconSlot.OUTER_LEFT:
-        this.outerRightIcon.badgeCount = count;
-        break;
-    }
+    this.icons[iconSlot].badgeCount = count;
   }
 
   /**
@@ -237,7 +199,7 @@ export class TitleBarComponent {
 
     if (navigationMode == TitleBarNavigationMode.BACK)
       this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
-    else (navigationMode == TitleBarNavigationMode.CLOSE)
+    else if (navigationMode == TitleBarNavigationMode.CLOSE)
       this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
   }
 
@@ -254,20 +216,23 @@ export class TitleBarComponent {
     else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
       this.navCtrl.back();
     else {
-      this.listenableIconClicked(this.outerLeftIcon);
+      this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
     }
   }
 
   innerLeftIconClicked() {
-    this.listenableIconClicked(this.innerLeftIcon);
+    this.listenableIconClicked(this.icons[TitleBarIconSlot.INNER_LEFT]);
   }
 
   innerRightIconClicked() {
-    this.listenableIconClicked(this.innerRightIcon);
+    this.listenableIconClicked(this.icons[TitleBarIconSlot.INNER_RIGHT]);
   }
 
-  outerRightIconClicked() {
-    this.listenableIconClicked(this.outerRightIcon);
+  outerRightIconClicked(ev) {
+    if (this.menuVisible)
+      this.openMenu(ev);
+    else
+      this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
   }
 
   async openMenu(ev) {

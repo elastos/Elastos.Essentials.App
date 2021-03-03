@@ -3,6 +3,8 @@
  * Built-in convenience icons that can be used as icon paths instead fo providing a custom icon path.
  */
 export enum BuiltInIcon {
+    /** Elastos default icon */
+    ELASTOS = "elastos",
     /** Go back */
     BACK = "back",
     /** Close cross */

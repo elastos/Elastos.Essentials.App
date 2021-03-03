@@ -13,6 +13,7 @@ import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { DIDManagerService } from '../../services/didmanager.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-home',
@@ -47,6 +48,8 @@ export class HomePage implements OnInit {
     // Show badge if there are notifications.
     this.notification.getNotifications();
     this.titleBar.setTitle('app-name');
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "home", iconPath: BuiltInIcon.ELASTOS })
   }
 
   ionViewDidEnter() {

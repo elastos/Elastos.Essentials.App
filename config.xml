@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content original-src="index.html" src="http://192.168.31.114:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -35,7 +35,7 @@
             <manifest xmlns:tools="http://schemas.android.com/tools" />
         </edit-config>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:usesCleartextTraffic="true" android:allowBackup="false" android:fullBackupContent="false" tools:replace="android:allowBackup"/>
+            <application android:allowBackup="false" android:fullBackupContent="false" android:usesCleartextTraffic="true" tools:replace="android:allowBackup" />
         </edit-config>
         <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
             <intent-filter>
