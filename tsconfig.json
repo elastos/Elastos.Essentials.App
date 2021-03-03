@@ -33,6 +33,7 @@
       "elastos-cordova-plugin-hive",
       "elastos-essentials-plugin-appmanager",
       "elastos-essentials-plugin-passwordmanager",
+      "elastos-essentials-plugin-wallet",
       "cordova-plugin-camera"
     ],
     "lib": [

@@ -76,6 +76,7 @@
     "elastos-essentials-plugin-appmanager": "../Plugins/AppManager",
     "elastos-essentials-plugin-fingerprint": "file:../Plugins/Fingerprint",
     "elastos-essentials-plugin-passwordmanager": "file:../Plugins/PasswordManager",
+    "elastos-essentials-plugin-wallet": "file:../Plugins/Wallet",
     "es6-promise-plugin": "4.2.2",
     "ts-node": "9.1.1",
     "typescript": "4.0.5"
@@ -100,7 +101,8 @@
       "elastos-cordova-plugin-hive": {},
       "elastos-essentials-plugin-fingerprint": {},
       "elastos-essentials-plugin-passwordmanager": {},
-      "elastos-essentials-plugin-appmanager": {}
+      "elastos-essentials-plugin-appmanager": {},
+      "elastos-essentials-plugin-wallet": {}
     },
     "platforms": [
       "android"
