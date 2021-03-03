@@ -36,6 +36,7 @@
         </edit-config>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" android:fullBackupContent="false" android:usesCleartextTraffic="true" tools:replace="android:allowBackup" />
+            <uses-library android:name="org.apache.http.legacy" android:required="false" />
         </edit-config>
         <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
             <intent-filter>

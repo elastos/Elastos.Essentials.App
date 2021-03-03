@@ -5,6 +5,8 @@ import { Logger } from '../logger';
 import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -93,6 +95,8 @@ export class GlobalLanguageService {
     this.translate.setDefaultLang(actualLanguage);
     this.translate.use(actualLanguage);
 
+    passwordManager.setLanguage(actualLanguage);
+
     this.activeLanguage.next(actualLanguage);
   }
 
@@ -132,6 +136,9 @@ export class GlobalLanguageService {
     // Save current choice to disk
     console.log("Saving global language code:", code);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language", code, true);
+
+    // Let the password manager know
+    passwordManager.setLanguage(code);
 
     // Notify listeners of language changes
     this.activeLanguage.next(code);
