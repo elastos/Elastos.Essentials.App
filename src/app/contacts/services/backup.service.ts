@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import * as TrinitySDK from '@elastosfoundation/trinity-dapp-sdk';
 import { DidService } from './did.service';
 import { Contact } from '../models/contact.model';
 import { FriendsService } from './friends.service';
 import { Events } from './events.service';
+import { AuthHelper, HiveDataSync } from 'src/app/elastos-cordova-sdk/hive';
+import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackupService {
 
-  private backupRestoreHelper: TrinitySDK.Backup.BackupRestoreHelper;
+  private backupRestoreHelper: HiveDataSync;
   private userVault: HivePlugin.Vault;
 
   public restoredContacts: Contact[] = [];
@@ -21,7 +24,8 @@ export class BackupService {
     private translate: TranslateService,
     private events: Events,
     private didService: DidService,
-    private friendsService: FriendsService
+    private friendsService: FriendsService,
+    private storage: GlobalStorageService
   ) { }
 
   async init() {
@@ -33,7 +37,7 @@ export class BackupService {
     });
 
     try {
-      const hiveAuthHelper = new TrinitySDK.Hive.AuthHelper();
+      const hiveAuthHelper = new ElastosSDKHelper(this.storage).newHiveAuthHelper("contacts");
 
       const hiveClient = await hiveAuthHelper.getClientWithAuth((authError)=>{
         console.warn("Hive authentication error callback: ", authError);
@@ -54,7 +58,7 @@ export class BackupService {
 
       console.log("User vault retrieved. Now creating a new backup restore helper instance", this.userVault);
 
-      this.backupRestoreHelper = new TrinitySDK.Backup.BackupRestoreHelper(this.userVault, true);
+      this.backupRestoreHelper = new ElastosSDKHelper(this.storage).newHiveDataSync("contacts", this.userVault, true);
 
       this.restoredContacts = [];
       this.backupRestoreHelper.addSyncContext("contacts",

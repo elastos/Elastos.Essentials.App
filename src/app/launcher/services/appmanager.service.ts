@@ -28,6 +28,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { Logger } from 'src/app/logger';
+import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 
 enum MessageType {
     INTERNAL = 1,
@@ -89,6 +90,10 @@ export class AppmanagerService {
 
     public async init() {
         Logger.log("Launcher", 'App manager service is initializing');
+
+        // TMP TEST
+        let testHelper = new ElastosSDKHelper(this.storage);
+        testHelper.newDIDHelper("launcherfake").getOrCreateAppIdentityCredential();
 
         this.language.activeLanguage.subscribe((lang)=>{
             this.initAppsList();

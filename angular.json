@@ -50,7 +50,6 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "easyqrcodejs",
-              "@elastosfoundation/trinity-dapp-sdk",
               "hammerjs",
               "dragula",
               "qrcode",

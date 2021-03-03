@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content original-src="index.html" src="http://192.168.31.114:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -40,7 +40,7 @@
             <application android:fullBackupContent="false" />
             <application tools:replace="android:allowBackup" />
         </edit-config>
-        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+        <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
