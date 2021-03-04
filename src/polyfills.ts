@@ -104,4 +104,4 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
         setTimeout(fn, 0);
     };
 })();
-//(window as any).global.Buffer = (window as any).global.Buffer || require('buffer').Buffer;
+(window as any).global.Buffer = (window as any).global.Buffer || require('buffer').Buffer;

@@ -7,12 +7,12 @@ import { AppService } from '../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopupService } from '../../services/popup.service';
 import { PrefsService } from '../../services/prefs.service';
-import { NetworkType } from '../../model/networktype';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarMenuItem, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { NetworkType } from 'src/app/model/networktype';
 
 type StorageProvider = {
   name: string,

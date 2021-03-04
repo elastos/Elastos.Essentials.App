@@ -1,0 +1,21 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+        <ion-row>
+            <ion-input
+                #input
+                autosize
+                clearInput
+                [placeholder]="'wallet-edit-name-new-name' | translate"
+                [(ngModel)]="walletname"
+                mode="ios"
+            >
+            </ion-input>
+        </ion-row>
+        <ion-row class="btn-container">
+            <ion-button color="primary" (click)="modify()">
+                <ion-label>{{ 'confirm' | translate }}</ion-label>
+            </ion-button>
+        </ion-row>
+    </ion-grid>
+</ion-content>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Component_1016_1" width="372" height="243" data-name="Component 1016 – 1" viewBox="0 0 372 243">
+    <path id="base" fill="#9394af" d="M0 0H372V243H0z"/>
+    <path id="Intersection_66" fill="#8487a1" d="M236.437 309.219a20 20 0 0 1-20-20V157.138c44.571-8.156 88.505 36.409 141.708 80.973 33.564 28.114 70.828 56.231 114.249 71.108z" data-name="Intersection 66" transform="translate(-216.437 -66.219)"/>
+    <path id="Intersection_64" fill="#7f819c" d="M223.723 282.059a147.7 147.7 0 0 0-6.815-18.725H352a20 20 0 0 1 20 20v96.231c-18.356 9.011-34.877 13.2-49.738 13.2-48.271-.007-79.062-44.193-98.539-110.706z" data-name="Intersection 64" transform="translate(0 -263.334)"/>
+</svg>

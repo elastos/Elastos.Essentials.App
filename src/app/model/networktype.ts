@@ -3,4 +3,4 @@ export enum NetworkType {
     TestNet = "TestNet",
     RegNet = "RegNet",
     PrvNet = "PrvNet"
-}
+  }

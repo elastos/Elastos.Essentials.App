@@ -1,0 +1,71 @@
+@import "../../../functions.scss";
+
+.view {
+    width: 100%;
+    // height: px2rem(670px);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    color: white;
+    background-color: #161723;
+}
+
+.pay-box-title {
+    // color: #ddd;
+    margin-top: px2rem(10px);
+    margin-bottom: px2rem(10px);
+    height: px2rem(70px);
+    line-height: px2rem(64px);;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    // position: relative;
+    font-size: 20px;
+}
+.close {
+    width: px2rem(30px);;
+    position: absolute;
+    right: px2rem(30px);
+    margin-top: px2rem(15px);
+}
+
+ion-item {
+    text-align: left;
+    margin-left: px2rem(35px);
+    margin-right: px2rem(0px);
+    // .left {
+        // width: px2rem(100px);
+    // }
+    #address {
+        font-size: 12px;
+    }
+    .right {
+        flex: 0 0 px2rem(480px) !important;
+        margin-left: px2rem(0px);
+    }
+}
+
+.arrow_mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+    display: block;
+    background: black;
+    opacity: 0.7;
+}
+
+.fingerprint-preview {
+    height:px2rem(40px);
+    margin-right:px2rem(40px);
+}
+
+.fingerprint-large {
+    height:px2rem(60px);
+    margin-bottom:px2rem(20px);
+}
+
+.touch-fingerprint {
+    color: #918EFF;
+}

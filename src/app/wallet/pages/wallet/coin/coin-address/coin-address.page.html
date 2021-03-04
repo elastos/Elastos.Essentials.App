@@ -1,0 +1,45 @@
+<!-- <ion-content>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <div *ngIf="addressList.length > 0">
+            <ion-row
+                class="item-row ripple ion-activatable"
+                *ngFor="let address of addressList"
+            >
+                <ion-col class="left-col" (click)="selectAddress(address)">
+                    <p> {{ address }} </p>
+                </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
+        </div>
+    </ion-grid>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="{{'coin-address-load-more'|translate}}">
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+</ion-content> -->
+
+<app-titlebar></app-titlebar>
+<ion-content>
+    <ion-grid *ngIf="addressList.length > 0" class="container" [class.dark-container]="theme.darkMode">
+        <ion-row class="main-title-row">
+            <ion-col size="12">
+                <p>{{ 'coin-address-msg' | translate }}</p>
+            </ion-col>
+        </ion-row>
+        <ion-row
+            class="subwallet-row ripple ion-activatable"
+            [class.dark-subwallet-row]="theme.darkMode"
+            *ngFor="let address of addressList"
+            (click)="selectAddress(address)"
+        >
+            <ion-col size="12" class="middle-col">
+                <p>{{ address }}</p>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+    </ion-grid>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content loadingSpinner="crescent">
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+</ion-content>

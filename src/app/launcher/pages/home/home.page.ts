@@ -49,7 +49,7 @@ export class HomePage implements OnInit {
     this.notification.getNotifications();
     this.titleBar.setTitle('app-name');
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "home", iconPath: BuiltInIcon.ELASTOS })
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "home", iconPath: BuiltInIcon.ELASTOS });
   }
 
   ionViewDidEnter() {

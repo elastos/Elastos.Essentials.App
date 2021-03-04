@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { NetworkType } from 'src/app/model/networktype';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { NetworkType } from '../model/networktype';
 
 @Injectable({
     providedIn: 'root'

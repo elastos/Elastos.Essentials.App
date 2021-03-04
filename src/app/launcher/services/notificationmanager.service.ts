@@ -2,43 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { ContactAvatar } from 'src/app/services/contactnotifier.service';
-
-/**
- * TODO @chad - Finalize merging types and methods I have imported from the notification plugin, with
- * types and methods that were in this higher level notification manager service.
- *
- * This "notification manager" may be moved to root "services" instead of being in the launcher
- */
-
-/**
- * Object used to generate a notification.
- */
-export type NotificationRequest = {
-  /** Identification key used to overwrite a previous notification if it has the same key. */
-  key: string;
-  /** Title to be displayed as the main message on the notification. */
-  title: string;
-  /** Detailed message for this notification. */
-  message: string;
-  /** Intent URL emitted when the notification is clicked. */
-  url?: string;
-  /** Contact DID emitting this notification, in case of a remotely received notification. */
-  emitter?: string;
-}
-
-/**
- * Received notification.
- */
-export type Notification = NotificationRequest & {
-  /** Unique identifier for each notification. */
-  notificationId: string;
-  /** Identification key used to overwrite a previous notification (for the same app id) if it has the same key. */
-  key: string;
-  /** Package ID of the sending app. */
-  appId: string;
-  /** timestamp of the notification. */
-  sent_date: number;
-}
+import { GlobalNotificationsService, Notification, NotificationRequest } from 'src/app/services/global.notifications.service';
 
 export const enum LauncherNotificationType {
   SYSTEM,
@@ -62,23 +26,15 @@ export class NotificationManagerService {
 
   constructor(
     private platform: Platform,
-    private zone: NgZone
+    private zone: NgZone,
+    private globalNotifications: GlobalNotificationsService
   ) {
     this.platform.ready().then(() => {
       this.setNotificationListener();
     });
   }
 
-  /**
-  * Sends a in-app notification. Notifications are usually displayed
-  * by the launcher/home application, in a notifications panel, and they are directly used to
-  * inform users of something they can potentially interact with.
-  *
-  * @param request The notification content.
-  *
-  * @returns A promise that can be awaited and catched in case or error.
-  */
-  public async sendNotification(request: NotificationRequest): Promise<void> {
+  /*public async sendNotification(request: NotificationRequest): Promise<void> {
     const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
     this.notifications.push({
       key: request.key,
@@ -91,28 +47,10 @@ export class NotificationManagerService {
       sent_date: Date.now(),
     });
 
+    //
+
     return null;
-  }
-
-  /**
-   * Registers a callback that will receive all the incoming in-app notifications (sent by this instance
-   * of elastOS/Trinity or by a remote contact).
-   *
-   * @param onNotification Callback passing the received notification info.
-   */
-  public _fromPluginToBeMerged_setNotificationListener(onNotification: (notification: Notification) => void) {
-    // TODO @chad
-  }
-
-  /**
-   * Returns all notifications previously received and not yet cleared.
-   *
-   * @returns Unread notifications.
-   */
-  public async _fromPluginToBeMerged_getNotifications(): Promise<Notification[]> {
-    // TODO @chad
-    return [];
-  }
+  }*/
 
   /**
    * Removes a received notification from the notifications list permanently.
@@ -121,11 +59,12 @@ export class NotificationManagerService {
    */
   public clearNotification(notificationId: string) {
     this.notifications = this.notifications.filter((notification) => notification.notificationId !== notificationId);
+    this.globalNotifications.clearNotification(notificationId);
   }
 
 
   setNotificationListener() {
-    this._fromPluginToBeMerged_setNotificationListener((notification) => {
+    this.globalNotifications.setNotificationListener((notification) => {
       console.log('new notification:', notification);
 
       this.zone.run(() => {
@@ -143,7 +82,7 @@ export class NotificationManagerService {
   }
 
   async getNotifications() {
-    const notifications = await this._fromPluginToBeMerged_getNotifications();
+    const notifications = await this.globalNotifications.getNotifications();
     Logger.log("Launcher", "Got notifications from the notification manager: " + JSON.stringify(notifications));
     this.notifications = notifications;
     this.clearUselessNotification();

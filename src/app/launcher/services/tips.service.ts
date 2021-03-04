@@ -4,11 +4,11 @@ import { Tip } from '../model/tip.model';
 import { TipAudience } from '../model/tipaudience.model';
 import * as moment from 'moment';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { NotificationManagerService } from './notificationmanager.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 
 const DURATION_MIN_BETWEEN_2_TIPS_MS = 12 * 60 * 60 * 1000; // 12 hours
 const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
@@ -80,7 +80,7 @@ export class TipsService {
     private appManager: TemporaryAppManagerPlugin,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
-    private notificationManager: NotificationManagerService,
+    private notifications: GlobalNotificationsService,
     private didSessions: GlobalDIDSessionsService) { }
 
   public async init() {
@@ -144,7 +144,7 @@ export class TipsService {
         message: this.translate.instant(tipToNotify.message)
       }
 
-      this.notificationManager.sendNotification({
+      this.notifications.sendNotification({
         key: "launcher_tip_of_the_day", // Always overwrite previous tip notifications, if any
         title: this.translate.instant(tipToNotify.title),
         message: JSON.stringify(jsonMessage)

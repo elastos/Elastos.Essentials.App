@@ -1,0 +1,59 @@
+<app-titlebar title="text-contacts"></app-titlebar>
+<ion-content>
+    <ion-list lines="none">
+        <ion-item>
+            <ion-label>
+                <span>{{'contacts-name-title' | translate }}:</span>
+            </ion-label>
+            <ion-note *ngIf="contactUser['name']" slot="end">
+                {{contactUser["name"]}}
+            </ion-note>
+        </ion-item>
+
+        <!-- <ion-item>
+            <ion-label>
+                <span>{{'contacts-address-title' | translate }}</span>
+            </ion-label>
+            <ion-note *ngIf="contactUser['address']" slot="end">
+                {{contactUser["address"]}}
+            </ion-note>
+        </ion-item> -->
+
+        <ion-item>
+            <ion-label>
+                <span>{{'contacts-phone-title' | translate}}:</span>
+            </ion-label>
+            <ion-note *ngIf="contactUser['phone']" slot="end">
+                {{contactUser["phone"]}}
+            </ion-note>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>
+                <span>{{'contacts-email-title' | translate}}:</span>
+            </ion-label>
+            <ion-note *ngIf="contactUser['email']" slot="end">
+                {{contactUser["email"]}}
+            </ion-note>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>
+                <span>{{'text-memo' | translate}}:</span>
+            </ion-label>
+            <ion-note *ngIf="contactUser['remark']" slot="end">
+                {{contactUser["remark"]}}
+            </ion-note>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>
+                <span>{{'contacts-address-title' | translate }}:</span>
+            </ion-label>
+        </ion-item>
+        <my-qrcode [address]="qrcode" [title]="contactUser['name'] + ('qrcode' | translate)"></my-qrcode>
+    </ion-list>
+</ion-content>
+<ion-footer *ngIf="isShow">
+    <ion-button class="confirm" (click)="pay(contactUser['address'])">{{ 'text-transfer' | translate }}</ion-button>
+</ion-footer>

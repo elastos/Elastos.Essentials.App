@@ -10,9 +10,9 @@ import { ExpirationService } from './expiration.service';
 import { isNullOrUndefined } from 'util';
 
 import * as moment from 'moment';
-import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 
 
 export interface LastExpirationNotification {
@@ -33,7 +33,7 @@ export class BackgroundService {
         private didService: DIDService,
         private authService: AuthService,
         private expirationService: ExpirationService,
-        private notificationManager: NotificationManagerService,
+        private notifications: GlobalNotificationsService,
         private didsessions: GlobalDIDSessionsService,
         public native: Native) {
     }
@@ -100,7 +100,7 @@ export class BackgroundService {
           {
             Logger.log("Identity", "Sending expirations notifications");
             expirations.forEach(expiration =>{
-              this.notificationManager.sendNotification({
+              this.notifications.sendNotification({
                 key: expiration.id,
                 title: "Expiration",
                 message: expiration.message

@@ -30,6 +30,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { Logger } from 'src/app/logger';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
+import { WalletInitService } from 'src/app/wallet/services/init.service';
 
 enum MessageType {
     INTERNAL = 1,
@@ -88,14 +89,15 @@ export class AppmanagerService {
         private appManager: TemporaryAppManagerPlugin,
         private didSessions: GlobalDIDSessionsService,
         private language: GlobalLanguageService,
-        private hiveManagerInitService: HiveManagerInitService
+        private hiveManagerInitService: HiveManagerInitService,
+        private walletInitService: WalletInitService
     ) {}
 
     public async init() {
         Logger.log("Launcher", 'App manager service is initializing');
 
         // TMP TEST
-        let testHelper = new ElastosSDKHelper(this.storage);
+        let testHelper = new ElastosSDKHelper();
         testHelper.newDIDHelper("launcherfake").getOrCreateAppIdentityCredential();
 
         this.language.activeLanguage.subscribe((lang)=>{
@@ -128,7 +130,7 @@ export class AppmanagerService {
                         description: this.translate.instant('app-wallet-description'),
                         icon: '/assets/launcher/ios/app-icons/wallet.svg',
                         id: 'wallet',
-                        routerPath: '/wallet/home'
+                        startCall: () => this.walletInitService.start()
                     },
                     {
                         cssId: 'Identity',

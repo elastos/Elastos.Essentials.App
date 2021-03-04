@@ -1,0 +1,276 @@
+<!-- <ion-content>
+    <ion-grid class="ion-text-center container">
+        <p>
+            {{ 'type-menmonic-verify' | translate }}
+        </p>
+        <ion-slides #slider pager [options]="slideOpts">
+            <ion-slide>
+                <ion-row *ngFor="let word of inputList.slice(0,4); let i = index;">
+                    <ion-col size="1">
+                        <span>{{ i + 1 }}.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            (keyup)="up()"
+                            [(ngModel)]="word.input"
+                            (ngModelChange)="inputChanged($event)"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+            </ion-slide>
+            <ion-slide>
+                <ion-row *ngFor="let word of inputList.slice(4,8); let i = index;">
+                    <ion-col size="1">
+                        <span>{{ 4 + i + 1 }}.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            #input
+                            [(ngModel)]="word.input"
+                            (ngModelChange)="inputChanged($event)"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+            </ion-slide>
+            <ion-slide>
+                <ion-row *ngFor="let word of inputList.slice(8, 12); let i = index;">
+                    <ion-col size="1">
+                        <span>{{ 8 + i + 1 }}.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            #input
+                            [(ngModel)]="word.input"
+                            (ngModelChange)="inputChanged($event)"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+            </ion-slide>
+        </ion-slides>
+
+        <ion-row class="btn-container">
+            <ion-button color="secondary" (click)="onNext()">
+                <ion-label>{{ 'confirm' | translate }}</ion-label>
+            </ion-button>
+        </ion-row>
+    </ion-grid>
+</ion-content> -->
+
+<app-titlebar></app-titlebar>
+<ion-content>
+    <ion-grid class="ion-text-center container">
+        <p>{{ 'type-menmonic-verify' | translate }}</p>
+        <ion-slides #slide pager [options]="slideOpts">
+            <!------------ SLIDE 1 ------------>
+            <ion-slide>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>1.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input1
+                            (keypress)="goToNextInput($event.keyCode, input2)"
+                            [(ngModel)]="inputList[0].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>2.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input2
+                            (keypress)="goToNextInput($event.keyCode, input3)"
+                            [(ngModel)]="inputList[1].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>3.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input3
+                            (keypress)="goToNextInput($event.keyCode, input4)"
+                            [(ngModel)]="inputList[2].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>4.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input4
+                            (keypress)="goToNextInput($event.keyCode, input5, slide)"
+                            [(ngModel)]="inputList[3].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="btn-container">
+                    <ion-button color="secondary" (click)="slideNext(slide)">
+                        <ion-label>{{ 'next-four-words' | translate }}</ion-label>
+                    </ion-button>
+                </ion-row>
+            </ion-slide>
+            <!------------ SLIDE 2 ------------>
+            <ion-slide>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>5.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input5
+                            (keypress)="goToNextInput($event.keyCode, input6)"
+                            [(ngModel)]="inputList[4].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>6.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input6
+                            (keypress)="goToNextInput($event.keyCode, input7)"
+                            [(ngModel)]="inputList[5].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>7.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input7
+                            (keypress)="goToNextInput($event.keyCode, input8)"
+                            [(ngModel)]="inputList[6].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>8.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input8
+                            (keypress)="goToNextInput($event.keyCode, input9, slide)"
+                            [(ngModel)]="inputList[7].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="btn-container">
+                    <ion-button color="secondary" (click)="slideNext(slide)">
+                        <ion-label>{{ 'next-four-words' | translate }}</ion-label>
+                    </ion-button>
+                </ion-row>
+            </ion-slide>
+            <!------------ SLIDE 3 ------------>
+            <ion-slide>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>9.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input9
+                            (keypress)="goToNextInput($event.keyCode, input10)"
+                            [(ngModel)]="inputList[8].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>10.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input10
+                            (keypress)="goToNextInput($event.keyCode, input11)"
+                            [(ngModel)]="inputList[9].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>11.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input11
+                            (keypress)="goToNextInput($event.keyCode, input12)"
+                            [(ngModel)]="inputList[10].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="input-row">
+                    <ion-col size="1">
+                        <span>12.</span>
+                    </ion-col>
+                    <ion-col class='input-col' size="10">
+                        <ion-input
+                            type="text"
+                            autocapitalize='off'
+                            #input12
+                            (keypress)="goToNextInput($event.keyCode)"
+                            [(ngModel)]="inputList[11].input"
+                        >
+                        </ion-input>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="btn-container">
+                    <ion-button [disabled]="!allInputsFilled()" color="secondary" (click)="onCreate()">
+                        <ion-label>{{ 'create-wallet' | translate }}</ion-label>
+                    </ion-button>
+                </ion-row>
+            </ion-slide>
+        </ion-slides>
+    </ion-grid>
+</ion-content>

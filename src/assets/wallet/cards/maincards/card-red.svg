@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Component_1025_1" width="372" height="157.001" data-name="Component 1025 – 1" viewBox="0 0 372 157.001">
+    <defs>
+        <linearGradient id="linear-gradient" x1=".5" x2=".5" y2="1" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#e853c6"/>
+            <stop offset="1" stop-color="#f06666"/>
+        </linearGradient>
+    </defs>
+    <path id="base" fill="url(#linear-gradient)" d="M0 0H372V157H0z" transform="translate(0 .001)"/>
+    <path id="Intersection_10" fill="#f5728e" d="M143.686 157a20 20 0 0 1-20-20V88.769q7.479.461 15.553.481c101.4.178 83.144 45.427 216.858 67.749z" data-name="Intersection 10" transform="translate(-123.685)"/>
+    <path id="Intersection_11" fill="#fc6eaa" d="M155.714 51.867c-4.874-20.485-16.407-32.9-28.929-40.411H352a20 20 0 0 1 20 20v63.353c-29.411 1.906-64.814 6.9-97.174 18.68-17.543 6.387-32.772 9.311-45.973 9.311-41.818 0-63.247-29.352-73.139-70.933z" data-name="Intersection 11" transform="translate(0 -11.456)"/>
+    <path id="Intersection_12" fill="#fc7db4" d="M212.556 28.085H352a20 20 0 0 1 20 20v39.807c-96.453-2.566-51.606-23.765-159.444-59.807z" data-name="Intersection 12" transform="translate(0 -28.085)"/>
+</svg>

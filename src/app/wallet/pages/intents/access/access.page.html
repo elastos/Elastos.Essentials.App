@@ -1,0 +1,79 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+
+        <ion-card>
+            <img *ngIf="exportMnemonic" class="warning" src="assets/wallet/intents/warning.svg">
+            <img *ngIf="!exportMnemonic" class="wallet" src="assets/wallet/intents/wallet.svg">
+            <ion-card-title>{{ title }}</ion-card-title>
+            <ion-card-subtitle *ngIf="requestDapp">{{ requestDapp }}</ion-card-subtitle>
+        </ion-card>
+
+        <div *ngIf="!exportMnemonic">
+            <div class="msg-container">
+                <p *ngIf="showReason">{{ 'access-reason' | translate }}: {{ requestItems[0].reason }}</p>
+                <p *ngIf="!showReason">{{ 'access-request-for-info' | translate }}</p>
+                <p class="second-msg">{{ 'access-data-access' | translate }}</p>
+            </div>
+            <ion-row class="data-row" *ngFor="let item of requestItems">
+                <p>{{ item.name | translate }}</p>
+                <h5 *ngIf="item.name === 'elaamount'">{{ item.value/Config.SELA }}</h5>
+                <h5 *ngIf="item.name !== 'elaamount'">{{ item.value }}</h5>
+            </ion-row>
+        </div>
+
+        <div *ngIf="exportMnemonic">
+            <div class="msg-container">
+                <p>{{ 'text-share-mnemonic-warning' | translate }}</p>
+                <p *ngIf="showReason">{{ 'access-reason' | translate }}: {{ requestItems[0].reason }}</p>
+            </div>
+        </div>
+
+        <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
+            <ion-label>{{ 'cancel' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </div>
+        <div class="btn confirm ion-activatable ripple" (click)="onShare()">
+            <ion-label>{{ 'confirm' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </div>
+
+    </ion-grid>
+</ion-content>
+
+
+<!-- <ion-content>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <ion-card>
+            <ion-img class="wallet" src="assets/wallet/intents/wallet.svg"></ion-img>
+            <ion-card-title>Wallet Access From:</ion-card-title>
+            <ion-card-subtitle>elastos.trinity.demo</ion-card-subtitle>
+        </ion-card>
+        <div class="msg-container">
+            <p>This is a request for information from your wallet.</p>
+            <p class="second-msg">Data Access</p>
+        </div>
+
+        <ion-row class="data-row">
+            <p>ELA Mainchain Address:</p>
+            <h5>TkdlfghiuerjrthHHdgIDIidhihofloren25odilsefse4fhwefewufnefniegfeg</h5>
+        </ion-row>
+        <ion-row class="data-row">
+            <p>ELA Mainchain Address:</p>
+            <h5>TkdlfghiuerjrthHHdgIDIidhihofodierhgehehgesfgesgegregh</h5>
+        </ion-row>
+        <ion-row class="data-row">
+            <p>ELA Mainchain Address:</p>
+            <h5>TkdlfghiuerjrthHHdgIDIidhihofodierhesgefdesgrsdhrsheshserh</h5>
+        </ion-row>
+        <div class="btn cancel ion-activatable ripple">
+            <ion-label>{{ 'cancel' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </div>
+        <div class="btn confirm ion-activatable ripple">
+            <ion-label>{{ 'confirm' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </div>
+    </ion-grid>
+</ion-content>
+ -->

@@ -1,0 +1,78 @@
+ion-slides { 
+    min-height: 100%;
+    background-image: url('/assets/wallet/background/background2.svg');
+    object-fit: cover;
+
+    ion-slide {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+
+        p {
+            font-size: 18px;
+            font-weight: 400;
+            letter-spacing: -0.46px;
+            line-height: 1.26;
+            text-align: center;
+            color: #fdfeff;
+        }
+    
+        .btn-container {
+            margin-top: 75px;
+        }
+    }
+
+    .message-container {
+        justify-content: center;
+        padding: 30px 25px;
+        margin-top: 75px;
+
+        h1, p {
+            padding: 0 25px;
+        }
+    
+        h1 {
+            font-size: 38px;
+            font-weight: 500;
+            letter-spacing: -0.82px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .btn-container {
+            width: 100%;
+        }
+    }
+    
+    .mnemonic-container {
+        justify-content: flex-start;
+        padding: 10px 25px;
+       
+        p {
+            margin: 0;
+            padding: 20px 25px 40px;
+        }
+
+        .btn-container {
+            width: 95%;
+        }
+    }
+}
+
+
+
+@media screen and (max-height: 670px) {
+    ion-slides {
+        background-image: url('/assets/wallet/background/background.svg');
+
+        .mnemonic-container {
+            .mnemonic-row {
+                ion-col {
+                    margin-bottom: 15px;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,47 @@
+<app-titlebar title="text-contacts-add"></app-titlebar>
+
+<ion-content>
+    <ion-list lines="none">
+        <ion-item>
+            <ion-label stacked>{{ 'contacts-name-title' | translate }}</ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-input type="text" autofocus placeholder="{{ 'contacts-name-input' | translate }}" [(ngModel)]="name"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label stacked>{{ 'contacts-address-title' | translate }}</ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-input type="text" placeholder="{{ 'contacts-address-input' | translate }}" [(ngModel)]="address"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label stacked>{{ 'contacts-phone-title' | translate }}</ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-input type="text" placeholder="{{ 'contacts-phone-input' | translate }}" [(ngModel)]="phone"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label stacked>{{ 'contacts-email-title' | translate }}</ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-input type="text" placeholder="{{ 'contacts-email-input' | translate }}" [(ngModel)]="email"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label stacked>{{ 'contacts-remark-title' | translate }}</ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-input type="text" placeholder="" [(ngModel)]="remark"></ion-input>
+        </ion-item>
+    </ion-list>
+</ion-content>
+
+<ion-footer>
+    <ion-button *ngIf="!isEdit" class="confirm" (click)="add()">{{'text-add' | translate}}</ion-button>
+    <ion-button *ngIf="isEdit" class="confirm" (click)="modify()">{{'text-save-modify' | translate}}</ion-button>
+    <ion-button *ngIf="isEdit" class="delete" id="delete" (click)="delete()">{{'text-delete' | translate}}</ion-button>
+</ion-footer>
+

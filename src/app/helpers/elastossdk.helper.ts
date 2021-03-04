@@ -2,9 +2,12 @@ import { DIDHelper } from "../elastos-cordova-sdk/did";
 import { AuthHelper, HiveDataSync } from "../elastos-cordova-sdk/hive";
 import { IAppIDGenerator } from "../elastos-cordova-sdk/iappidgenerator";
 import { IKeyValueStorage } from "../elastos-cordova-sdk/ikeyvaluestorage";
+import { TrinityWeb3Provider } from "../essentials-connectivity-cordova-sdk/ethereum/web3/providers";
 import { Logger } from "../logger";
 import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
 import { GlobalStorageService } from "../services/global.storage.service";
+import * as ConnectivitySDK from "../essentials-connectivity-cordova-sdk";
+import { GlobalPreferencesService } from "../services/global.preferences.service";
 
 export class EssentialsDIDKeyValueStore implements IKeyValueStorage {
     constructor(private storage: GlobalStorageService, private context: string) {
@@ -31,7 +34,7 @@ export class EssentialsDirectAppIDGenerator implements IAppIDGenerator {
 }
 
 export class ElastosSDKHelper {
-    constructor(private storage: GlobalStorageService) {
+    constructor() {
     }
 
     /**
@@ -39,7 +42,7 @@ export class ElastosSDKHelper {
      */
     public newDIDHelper(context: string): DIDHelper {
         let didHelper = new DIDHelper(new EssentialsDirectAppIDGenerator());
-        didHelper.setStorage(new EssentialsDIDKeyValueStore(this.storage, context));
+        didHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         return didHelper;
     }
 
@@ -48,7 +51,7 @@ export class ElastosSDKHelper {
      */
     public newHiveAuthHelper(context: string): AuthHelper {
         let authHelper = new AuthHelper(new EssentialsDirectAppIDGenerator());
-        authHelper.setStorage(new EssentialsDIDKeyValueStore(this.storage, context));
+        authHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         return authHelper;
     }
 
@@ -57,7 +60,12 @@ export class ElastosSDKHelper {
      */
     public newHiveDataSync(context: string, userVault: HivePlugin.Vault, showDebugLogs: boolean = false): HiveDataSync {
         let dataSync = new HiveDataSync(userVault, showDebugLogs);
-        dataSync.setStorage(new EssentialsDIDKeyValueStore(this.storage, context));
+        dataSync.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         return dataSync;
+    }
+
+    public async newWeb3Provider(): Promise<TrinityWeb3Provider> {
+        let ethRPCEndpoint = await GlobalPreferencesService.instance.getETHSidechainRPCApiEndpoint(GlobalDIDSessionsService.signedInDIDString);
+        return new ConnectivitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider(ethRPCEndpoint);
     }
 }

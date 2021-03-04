@@ -1,0 +1,53 @@
+
+@import "../../../functions.scss";
+
+#bg {
+    margin-left: px2rem(65px);
+    width: px2rem(620px);
+    height: px2rem(800px);
+    background-color: white;
+    border-width: 1px;
+    border-radius: 2px;
+    color: #000;
+    text-align: center;
+
+    #title {
+        padding-top: px2rem(35px);
+        font-size: 18px;
+    }
+
+    qrcode {
+        // margin-left: px2rem(40px);
+        margin-top: px2rem(30px);
+        width: px2rem(540px);
+        height: px2rem(540px);
+        display:inline-block;
+    }
+
+    #address {
+        margin-left: px2rem(40px);
+        margin-right: px2rem(40px);
+        margin-top: px2rem(25px);
+        font-size: 16px;
+        text-align: left;
+        word-wrap: break-word;
+    }
+
+    ion-button {
+        // text-align: center;
+        margin-left: px2rem(10px);
+        margin-top: px2rem(-6px);
+        width: px2rem(60px);
+        height: px2rem(36px);
+        --padding-top: px2rem(8px);
+        --background: #EEEEEE;
+        --border-color:  #D8D8D8;
+        --border-radius: 2px;
+        --border-style: solid;
+        --border-width: 1px;
+        --color: #333333;
+        --box-shadow: 0px;
+        font-size: 10px;
+    }
+}
+

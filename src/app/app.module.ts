@@ -27,6 +27,7 @@ import { TranslationsLoader } from 'src/translationsloader';
 import { ContactsModule } from './contacts/module';
 import { IdentityModule } from './identity/module';
 import { Logger } from './logger';
+import { WalletModule } from './wallet/module';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -94,6 +95,7 @@ export function TranslateLoaderFactory() {
     SettingsModule,
     ContactsModule,
     IdentityModule,
+    WalletModule,
 
     /*
      * Generic modules
@@ -106,7 +108,7 @@ export function TranslateLoaderFactory() {
     IonicModule.forRoot({
       mode: 'md',
       scrollAssist: false,
-      scrollPadding: false,
+      scrollPadding: false
     }),
     AppRoutingModule,
     FormsModule,

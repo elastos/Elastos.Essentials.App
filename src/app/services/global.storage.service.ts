@@ -11,7 +11,12 @@ export type Preference<T> = {
   providedIn: 'root'
 })
 export class GlobalStorageService {
+  public static instance: GlobalStorageService;  // Convenient way to get this service from non-injected classes
+  public static ionicStorage: Storage; // Convenient way to get ionic storage from non-injected classes
+
   constructor(private storage: Storage) {
+    GlobalStorageService.instance = this;
+    GlobalStorageService.ionicStorage = storage;
   }
 
   private getFullStorageKey(did: string | null, context, key): string {

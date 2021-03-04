@@ -9,7 +9,8 @@ export class TranslationsLoader {
         "scanner",
         "settings",
         "contacts",
-        "identity"
+        "identity",
+        "wallet"
     ];
     private static languagesToLoad = [
         "en",
@@ -31,7 +32,7 @@ export class TranslationsLoader {
             for (let module of TranslationsLoader.modulesWithTranslations) {
                 let translation = await import("./assets/translations/"+module+"/"+lang);
 
-                // Copy all entries oen by one and check if they don't already exist, to be able to notice duplicate
+                // Copy all entries one by one and check if they don't already exist, to be able to notice duplicate
                 // keys from various modules.
                 for (let key of Object.keys(translation[lang])) {
                     let value = translation[lang][key];

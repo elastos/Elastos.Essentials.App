@@ -8,7 +8,7 @@
         <img [src]="getIconPath(1)">
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ title | translate }}</ion-title>
+    <ion-title>{{ _title | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button [class.hidden]="!icons[2].visible"  (click)="innerRightIconClicked()">
         <img *ngIf="icons[2].visible" [src]="getIconPath(2)">

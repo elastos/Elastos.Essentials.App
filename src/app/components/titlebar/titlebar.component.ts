@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AppTheme, GlobalThemeService } from '../../services/global.theme.service';
 import { NavController, PopoverController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
-import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon } from './titlebar.types';
+import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon, TitleBarForegroundMode } from './titlebar.types';
 
 @Component({
   selector: 'app-titlebar',
@@ -12,20 +12,12 @@ import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, Ti
 export class TitleBarComponent {
   public menu: any = null;
 
-  constructor(
-    public themeService: GlobalThemeService,
-    private popoverCtrl: PopoverController,
-    private navCtrl: NavController
-  ) {
-    themeService.activeTheme.subscribe((activeTheme) => {
-      this.setTitleBarTheme(activeTheme);
-    });
-
-    // Set the default navigation mode (used by most apps)
-    this.setNavigationMode(TitleBarNavigationMode.BACK)
+  @Input()
+  set title(title: string) {
+      this._title = title;
   }
 
-  public title: string = "";
+  public _title: string = "";
 
   public visibile: boolean = true;
   public menuVisible: boolean = false;
@@ -44,12 +36,25 @@ export class TitleBarComponent {
 
   public menuItems: TitleBarMenuItem[] = [];
 
+  constructor(
+    public themeService: GlobalThemeService,
+    private popoverCtrl: PopoverController,
+    private navCtrl: NavController
+  ) {
+    themeService.activeTheme.subscribe((activeTheme) => {
+      this.setTitleBarTheme(activeTheme);
+    });
+
+    // Set the default navigation mode (used by most apps)
+    this.setNavigationMode(TitleBarNavigationMode.BACK)
+  }
+
   private static makeDefaultIcon(): TitleBarSlotItem {
     return {
       visible: false,
       key: null,
       iconPath: null,
-      badgeCount: 0 
+      badgeCount: 0
     };
   }
 
@@ -60,7 +65,7 @@ export class TitleBarComponent {
    * @param title Main title to show on the title bar. If title is not provided, the title bar shows the default title (the app name)
    */
   public setTitle(title: string) {
-    this.title = title;
+    this._title = title;
   }
 
   /**
@@ -71,6 +76,28 @@ export class TitleBarComponent {
   public setTheme(backgroundColor: string, color: string) {
     this.theme.backgroundColor = backgroundColor;
     this.theme.color = color;
+  }
+
+  /**
+   * Sets the status bar background color.
+   *
+   * @param hexColor Hex color code with format "#RRGGBB"
+   */
+  public setBackgroundColor(hexColor: string){
+    this.theme.backgroundColor = hexColor;
+  }
+
+  /**
+   * Sets the title bar foreground (title, icons) color. Use this API in coordination with
+   * setBackgroundColor() in order to adjust foreground with background.
+   *
+   * @param foregroundMode A @TitleBarForegroundMode mode, LIGHT or DARK.
+   */
+  public setForegroundMode(foregroundMode: TitleBarForegroundMode) {
+    if (foregroundMode == TitleBarForegroundMode.LIGHT)
+      this.theme.color = "#FFFFFF";
+    else
+      this.theme.color = "#000000";
   }
 
   /**
@@ -102,7 +129,6 @@ export class TitleBarComponent {
    * @param icon Icon and action to be used at this slot. Use null to clear any existing configuration.
    */
   public setIcon(iconSlot: TitleBarIconSlot, icon: TitleBarIcon) {
-    console.log("setIcon", icon);
     if(icon) {
       this.icons[iconSlot].visible = true;
       this.icons[iconSlot].key = icon.key;
@@ -115,8 +141,6 @@ export class TitleBarComponent {
   }
 
   getIconPath(iconSlot: TitleBarIconSlot) {
-    console.log("getIconPath" , iconSlot, this.icons[iconSlot].iconPath, this.icons[iconSlot])
-
     // Soecial case for the outer right icon in case a menu is configured
     if (iconSlot == TitleBarIconSlot.OUTER_RIGHT && this.menuVisible) {
       return !this.themeService.darkMode ? '/assets/components/titlebar/horizontal_menu.svg' : '/assets/components/titlebar/darkmode/horizontal_menu.svg';

@@ -1,0 +1,150 @@
+.verify-container {
+    min-height: 100%;
+    padding: 30px 35px;
+  
+    ion-input {
+        background: #ffffff;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        font-size: 15px;
+        --padding-start: 12px;
+    }
+  
+    .btn-container {
+        margin-top: 25px;
+    }
+}
+  
+.verify-dark-container {  
+    ion-input {
+        background: #2b2c49;
+        box-shadow: 0 3px 15px 0 #151626;
+    }
+}
+
+.verified-container {
+    min-height: 100%;
+    padding: 10px 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-image: url('/assets/wallet/background/background2.svg');
+    object-fit: cover;
+
+    p {
+        margin: 0;
+        padding: 20px 25px 40px;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.26;
+        letter-spacing: -0.46px;
+        text-align: center;
+        color: #fdfeff;
+    }
+
+    .btn-container {
+        margin-top: 75px;
+        width: 95%;
+    }
+}
+
+@media screen and (max-height: 670px) {
+    .verified-container {
+        .mnemonic-row {
+            ion-col {
+                margin-bottom: 15px;
+            }
+        }
+    } 
+}
+
+  
+
+/* .mnemonic {
+    max-height: 30rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .slide-title {
+        text-align: center;
+        font-size: 14px;
+        padding: 20px;
+        // color: color($colors, grey);
+        color: --ion-color-medium;
+    }
+    @media (max-height: 550px) {
+        align-items: baseline;
+    }
+    .slide-body {
+        min-width: 80%;
+    }
+    .phrase-container {
+        background: white;
+        margin: auto;
+        border: 2px dashed #d9d9d9;
+        border-radius: 3px;
+        color: #192c3a;
+        text-align: center;
+        max-width: 500px;
+        min-height: 9rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .phrase {
+            padding: 0.5rem;
+            font-weight: bold;
+            line-height: 2;
+            font-size: 16px;
+            letter-spacing: 1px;
+            @media (min-width: 575px) {
+                font-size: 18px;
+                padding: 3rem;
+            }
+            @media (max-height: 550px) {
+                font-size: 16px;
+                padding: 1rem;
+            }
+            .button {
+                height: 3rem;
+                font-size: 14px;
+            }
+        }
+    }
+    .words {
+        max-width: 500px;
+        margin: 0 auto;
+        .button {
+            height: 3rem;
+            font-size: 14px;
+        }
+    }
+    .bottom-button {
+        max-width: 500px;
+        font-size: 16px;
+        // color: color($colors, grey);
+        color: --ion-color-medium;
+        padding: 1rem;
+        position: absolute;
+        bottom: 2rem;
+        text-align: center;
+        width: 100%;
+    }
+}
+.mnemonic-password {
+    margin-top: 10%;
+    .text-center {
+        text-align: center;
+    }
+}
+.coin-info-top-box {
+    text-align: center;
+    padding: 30px;
+    &>img {
+        width: 50px;
+    }
+}
+.coin-info-top-box img {
+    width: 30px;
+    height: 40px;
+}
+ */

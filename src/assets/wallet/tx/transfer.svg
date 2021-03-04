@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Component_897_2" width="37.762" height="37.762" data-name="Component 897 – 2" viewBox="0 0 37.762 37.762">
+    <defs>
+        <style>
+            .cls-2,.cls-3{fill:none;stroke:#fff;stroke-width:1.5px}.cls-3{stroke-linecap:square}
+        </style>
+    </defs>
+    <g id="Component_882_18" data-name="Component 882 – 18">
+        <path id="Path_21720" fill="#fdab93" d="M18.881 0A18.881 18.881 0 1 1 0 18.881 18.881 18.881 0 0 1 18.881 0z" data-name="Path 21720"/>
+    </g>
+    <g id="Component_886_5" data-name="Component 886 – 5" transform="translate(10.751 17.277)">
+        <g id="Group_13399" data-name="Group 13399" transform="rotate(90 8.117 8.117)">
+            <path id="Line_13" d="M0 0L0 10.234" class="cls-2" data-name="Line 13" transform="translate(2.274)"/>
+            <path id="Line_14" d="M0 0L2.274 2.274" class="cls-3" data-name="Line 14" transform="translate(2.274)"/>
+            <path id="Line_15" d="M2.274 0L0 2.274" class="cls-3" data-name="Line 15"/>
+        </g>
+        <g id="Group_13400" data-name="Group 13400" transform="rotate(-90 2.275 2.275)">
+            <path id="Line_13-2" d="M0 0L0 10.234" class="cls-2" data-name="Line 13" transform="translate(2.274)"/>
+            <path id="Line_14-2" d="M0 0L2.274 2.274" class="cls-3" data-name="Line 14" transform="translate(2.274)"/>
+            <path id="Line_15-2" d="M2.274 0L0 2.274" class="cls-3" data-name="Line 15"/>
+        </g>
+    </g>
+</svg>

@@ -73,6 +73,16 @@ export const enum TitleBarDisplayMode {
 }
 
 /**
+ * Color mode for all icons and texts on the title bar.
+ */
+export const enum TitleBarForegroundMode {
+    /** Title bar title and icons use a light (white) color. Use this on a dark background color. */
+    LIGHT = 0,
+    /** Title bar title and icons use a dark (dark gray) color. Use this on a light background color. */
+    DARK = 1
+}
+
+/**
  * Title bar organization:
  * | Navigation icon or outer_left | inner_left | Title | inner_right | outer_right or menu |
  */

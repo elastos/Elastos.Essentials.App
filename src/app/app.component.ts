@@ -17,7 +17,7 @@ import { Logger } from './logger';
 
 @Component({
     selector: 'app-root',
-    template: '<ion-app><ion-router-outlet></ion-router-outlet></ion-app>',
+    template: '<ion-app><ion-router-outlet [swipeGesture]="false"></ion-router-outlet></ion-app>',
 })
 export class AppComponent {
     constructor(
