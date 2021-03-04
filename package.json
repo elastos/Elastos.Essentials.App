@@ -4,7 +4,7 @@
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
-    "ng": "ng",
+    "ng": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",

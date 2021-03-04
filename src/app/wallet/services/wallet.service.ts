@@ -125,7 +125,7 @@ export class WalletManager {
         await this.spvService.init(this);
 
         if (!hasWallet) {
-            this.goToLauncherScreen();
+            //this.goToLauncherScreen();
             return;
         }
 
@@ -174,7 +174,7 @@ export class WalletManager {
 
             if (idList.length === 0) {
                 console.log("No SPV wallet found, going to launcher screen");
-                this.goToLauncherScreen();
+                //this.goToLauncherScreen();
                 return false;
             }
 
