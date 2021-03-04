@@ -87,7 +87,7 @@ export class GlobalLanguageService {
     if (GlobalDIDSessionsService.signedInDIDString)
       this.selectedLanguage = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language");
     else
-      this.selectedLanguage = null;
+      this.selectedLanguage = 'native system';
 
     Logger.log("LanguageService", "System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
 

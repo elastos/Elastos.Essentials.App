@@ -31,20 +31,20 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
 
 :root {
   /** primary **/
-  --ion-color-primary: linear-gradient(to left, #646bed 99%, #6a3de6 1%);
-  --ion-color-primary-rgb: 90,98,255;
+  --ion-color-primary: linear-gradient(to bottom, #732dcf, #640fd4);
+  --ion-color-primary-rgb: 115,45,207;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255,255,255;
-  --ion-color-primary-shade: #4f56e0;
-  --ion-color-primary-tint: #6b72ff;
+  --ion-color-primary-shade: #6528b6;
+  --ion-color-primary-tint: #8142d4;
 
   /** secondary **/
-  --ion-color-secondary: #0cd1e8;
-  --ion-color-secondary-rgb: 12, 209, 232;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #0bb8cc;
-  --ion-color-secondary-tint: #24d6ea;
+  --ion-color-secondary: #f0f1ff;
+  --ion-color-secondary-rgb: 240,241,255;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0,0,0;
+  --ion-color-secondary-shade: #d3d4e0;
+  --ion-color-secondary-tint: #f2f2ff;
 
   /** tertiary **/
   --ion-color-tertiary: #7044ff;
@@ -86,7 +86,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-dark-shade: #1e2023;
   --ion-color-dark-tint: #383a3e;
 
-  /** Pop-up rows/toast colors **/
+  /** medium **/
   --ion-color-medium: #f0f1ff;
   --ion-color-medium-rgb: 240,241,255;
   --ion-color-medium-contrast: #000000;
@@ -116,20 +116,20 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
 
  body.dark {
   /** primary **/
-  --ion-color-primary: linear-gradient(to left, #646bed 99%, #6a3de6 1%);
-  --ion-color-primary-rgb: 90,98,255;
+  --ion-color-primary: linear-gradient(to bottom, #732dcf, #640fd4);
+  --ion-color-primary-rgb: 115,45,207;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255,255,255;
-  --ion-color-primary-shade: #4f56e0;
-  --ion-color-primary-tint: #6b72ff;
+  --ion-color-primary-shade: #6528b6;
+  --ion-color-primary-tint: #8142d4;
 
   /** secondary **/
-  --ion-color-secondary: #0cd1e8;
-  --ion-color-secondary-rgb: 12, 209, 232;
+  --ion-color-secondary: #262641;
+  --ion-color-secondary-rgb: 38,38,65;
   --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #0bb8cc;
-  --ion-color-secondary-tint: #24d6ea;
+  --ion-color-secondary-contrast-rgb: 255,255,255;
+  --ion-color-secondary-shade: #212139;
+  --ion-color-secondary-tint: #3c3c54;
 
   /** tertiary **/
   --ion-color-tertiary: #7044ff;
@@ -243,40 +243,6 @@ ion-row {
   width: 100%;
 }
 
-ion-header {
-  padding: 0 5px;
-
-  ion-toolbar {
-    --background: #f8f8ff;
-
-    img {
-      height: 24px;
-      width: 24px;
-    }
-
-    ion-icon {
-      height: 30px;
-      width: 30px;
-      color: #000000;
-    }
-
-    ion-title {
-      font-size: 16px;
-      font-weight: 600;
-    }
-  }
-}
-
-.dark-header {
-  ion-toolbar {
-    --background: #191a2f;
-
-    ion-icon {
-      color: #ffffff;
-    }
-  }
-}
-
 .footer {
   position: fixed;
   bottom: 0;
@@ -288,12 +254,16 @@ ion-header {
   align-items: center;
   padding: 15px 10px;
 
+  div {
+    width: 100%;
+  }
+
   ion-button {
     height: 50px;
     width: 100%;
     --background: linear-gradient(to bottom, #732dcf, #640fd4);
     --border-radius: 8px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.1px;
   }
@@ -311,12 +281,8 @@ ion-footer {
     width: 100%;
     --background: linear-gradient(to bottom, #732dcf, #640fd4);
     --border-radius: 8px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.1px;
   }
-}
-
-div {
-  width: 100%;
 }

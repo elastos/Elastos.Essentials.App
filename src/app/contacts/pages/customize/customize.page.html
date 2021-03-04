@@ -31,14 +31,13 @@
         <ion-label>{{ 'avatar' | translate }}</ion-label>
       </ion-col>
       <ion-col class="input" size="6" (click)="getPhoto()">
-        <ion-icon *ngIf="!theme.darkMode" src='assets/images/arrow.svg'></ion-icon>
-        <ion-icon *ngIf="theme.darkMode" src='assets/images/darkmode/arrow.svg'></ion-icon>
+        <ion-icon src='assets/contacts/icon/right-arrow.svg'></ion-icon>
       </ion-col>
     </ion-row>
 
     <ion-row class="btn-container">
-      <ion-button color="success" (click)="customizeContact()">
-        <ion-label>{{ 'save-changes' | translate }}</ion-label>
+      <ion-button (click)="customizeContact()">
+        {{ 'save-changes' | translate }}
       </ion-button>
     </ion-row>
     <ion-row class="msg-container">

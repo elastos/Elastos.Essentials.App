@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { UXService } from 'src/app/didsessions/services/ux.service';
-import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-language',
@@ -13,6 +13,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   styleUrls: ['./language.page.scss'],
 })
 export class LanguagePage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public identities = [];
 
@@ -32,10 +33,8 @@ export class LanguagePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.titleBar.setNavigationMode(null);
     this.updateTitle();
-    this.uxService.setTitleBarBackKeyShown(false);
-    // TODO @chad - titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
-
     this.checkForIdentities();
   }
 
@@ -48,7 +47,7 @@ export class LanguagePage implements OnInit {
   }
 
   updateTitle() {
-    // TODO @chad - titleBarManager.setTitle(' ');
+    this.titleBar.setTitle(' ');
   }
 
   async checkForIdentities() {

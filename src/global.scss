@@ -9,6 +9,7 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+@import './declared.scss';
 
 @font-face {
     font-family: 'Montserrat';
@@ -70,17 +71,6 @@
 /** Swipe notification **/
 .notifications-swipe-button{
     --background: transparent;
-}
-
-/** Options comp **/
-.options {
-    --background: #ffffff;
-    box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
-}
-
-.darkOptions {
-    --background: #2e2f4e;
-    box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 /** Popup **/

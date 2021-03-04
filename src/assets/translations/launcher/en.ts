@@ -70,6 +70,7 @@ export const en = {
     'app-passwords-description': 'Manage all your passwords',
     'app-scanner': 'Scanner',
     'app-scanner-description': 'Scan anything',
+    'app-settings': 'Settings',
     'app-settings-description': 'Manage elastOS',
 
     /*********** Tips generic ************/

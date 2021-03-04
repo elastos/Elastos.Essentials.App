@@ -171,7 +171,7 @@ export class UXService {
       this.options = await this.popoverCtrl.create({
         mode: 'ios',
         component: OptionsComponent,
-        cssClass: !this.theme.darkMode ? 'options' : 'darkOptions',
+        cssClass: 'options-component',
         componentProps: {
           identityEntry: identityEntry
         },
@@ -206,7 +206,7 @@ export class UXService {
     private async showDeletePrompt(identity) {
       this.popover = await this.popoverCtrl.create({
         mode: 'ios',
-        cssClass: 'warning',
+        cssClass: 'warning-component',
         component: WarningComponent,
         componentProps: {
           identityEntry: identity

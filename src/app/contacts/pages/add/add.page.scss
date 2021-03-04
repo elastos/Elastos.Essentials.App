@@ -4,7 +4,7 @@
 
   ion-input {
     background: #f0f1ff;
-    height: 47px;
+    height: 50px;
     border-radius: 8px;
     font-size: 13px;
     --padding-start: 12px;
@@ -12,6 +12,16 @@
 
   .btn-container {
     padding-top: 15px;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
   }
 
   .msg-container {

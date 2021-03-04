@@ -39,7 +39,7 @@ export class PopupService {
   async showDeletePrompt(contact: Contact) {
     this.deletePopup = await this.popoverCtrl.create({
       mode: 'ios',
-      cssClass: 'delete',
+      cssClass: 'warning-component',
       component: DeleteComponent,
       componentProps: {
         contact: contact
@@ -80,7 +80,7 @@ export class PopupService {
         name: contact.customName ? contact.customName : contact.credentials.name,
         qrCodeString: await this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
       },
-      cssClass: !this.theme.darkMode ? 'qrcode-modal' : 'dark-qrcode-modal'
+      cssClass: !this.theme.darkMode ? 'contacts-qrcode-component' : 'contacts-qrcode-component-dark'
     });
     this.qrModal.onWillDismiss().then((params) => {
       this.qrModal = null

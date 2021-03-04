@@ -3,7 +3,7 @@ import { DeveloperService } from '../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from '../../services/theme.service';
+import { ThemeService } from 'src/app/settings/services/theme.service';
 
 @Component({
   selector: 'app-developer',

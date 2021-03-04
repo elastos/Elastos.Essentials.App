@@ -1,5 +1,7 @@
+@import 'src/app/didsessions/module.scss';
+
 .container {
-  padding: 40px 20px;
+  padding: 25px;
 
   .header-row {
     display: flex;
@@ -7,9 +9,8 @@
     justify-content: center;
     align-items: center;
 
-
     h1 {
-      margin: 15px;
+      margin: 10px;
       font-size: 24px;
       font-weight: 700;
       letter-spacing: -0.5px;
@@ -21,10 +22,26 @@
     }
   }
 
+  .btn-row {
+    padding-top: 20px;
+    width: 100%;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+  }
+
   #first-input-row {
     padding-top: 20px;
     padding-bottom: 10px;
   }
+
   .input-row {
     display: flex;
     flex-direction: column;
@@ -37,27 +54,14 @@
       --padding-top: 13px;
       --padding-bottom: 13px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 14px;
     }
 
     .password-failed-info {
       color: #FF6464;
       font-weight:700;
       font-size: 10px;
-      margin-top:5px;
-    }
-  }
-
-  .btn-row {
-    padding-top: 20px;
-    width: 100%;
-
-    ion-button {
-      height: 50px;
-      width: 100%;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: -0.5px;
+      margin-top: 5px;
     }
   }
 }

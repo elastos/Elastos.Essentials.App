@@ -6,7 +6,7 @@
               <h1>{{ language.name }}</h1>
           </ion-col>
           <ion-col size="3" class="right-col">
-            <ion-icon *ngIf="languageService.selectLang === language.code" name="checkmark"></ion-icon>
+            <ion-icon *ngIf="languageService.selectedLanguage === language.code" name="checkmark"></ion-icon>
           </ion-col>
       </ion-row>
   </ion-grid>

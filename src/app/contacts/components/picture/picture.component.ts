@@ -1,11 +1,12 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 
-import { FriendsService } from '../../services/friends.service';
 import { AppService } from '../../services/app.service';
 
 import { Avatar } from '../../models/avatar';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-picture',
@@ -13,12 +14,12 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   styleUrls: ['./picture.component.scss'],
 })
 export class PictureComponent implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  
   public oldAvatar: Avatar;
   public avatar: Avatar;
 
   constructor(
-    private friendsService: FriendsService,
     public appService: AppService,
     public theme: GlobalThemeService,
     private navParams: NavParams,
@@ -43,7 +44,13 @@ export class PictureComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.appService.setTitleBarBackKeyShown(true, false);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'closeModal', iconPath: BuiltInIcon.CLOSE });
+    this.titleBar.addOnItemClickedListener((icon) => {
+      if(icon.key === 'closeModal') {
+        this.modalCtrl.dismiss();
+      }
+    });
   }
 
   takePicture(sourceType: number) {

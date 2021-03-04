@@ -12,10 +12,10 @@
     </ion-row>
     <!-- Config Background Services -->
     <ion-row class="section-row" >
-      <ion-col size="9" class="left-col">
+      <ion-col size="10.5" class="left-col">
         <h1>{{ getBackgroundServicesTitle() }}</h1>
       </ion-col>
-      <ion-col size="3" class="right-col">
+      <ion-col size="1.5" class="right-col">
         <div (click)="developer.toggleBackgroundServices()">
           <ion-toggle *ngIf="developer.backgroundServicesEnabled" checked mode="ios"></ion-toggle>
           <ion-toggle *ngIf="!developer.backgroundServicesEnabled" mode="ios"></ion-toggle>

@@ -14,7 +14,7 @@ import { Events } from '../../services/events.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
@@ -41,7 +41,7 @@ export class FriendsPage implements OnInit {
     public friendsService: FriendsService,
     public didService: DidService,
     public translate: TranslateService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public popupService: PopupService,
     public appService: AppService,
     public uxService: UxService,
@@ -66,6 +66,11 @@ export class FriendsPage implements OnInit {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "add",
       iconPath:  BuiltInIcon.ADD
+    });
+    this.titleBar.addOnItemClickedListener((icon) => {
+      if(icon.key === 'add') {
+        this.router.navigate(['/add']);
+      }
     });
 
     this.getContacts();

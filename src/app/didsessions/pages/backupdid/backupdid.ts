@@ -134,7 +134,7 @@ export class BackupDIDPage {
       component: PrintoptionsComponent,
       componentProps: {
       },
-      cssClass: "printoptionscomponent"
+      cssClass: "didsessions-printoptions-component"
     });
     this.uxService.modal.onDidDismiss().then((params) => {
         this.uxService.modal = null;

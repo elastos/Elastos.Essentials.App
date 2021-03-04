@@ -9,6 +9,7 @@ import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'page-pickidentity',
@@ -23,7 +24,6 @@ export class PickIdentityPage {
   popover: any = null;
 
   constructor(
-    private platform: Platform,
     public navCtrl: NavController,
     public identityService: IdentityService,
     private changeDetector: ChangeDetectorRef,
@@ -32,7 +32,7 @@ export class PickIdentityPage {
     public translate: TranslateService,
     private events: Events,
     public popupProvider: PopupProvider,
-    private didSessions: GlobalDIDSessionsService
+    private didSessions: GlobalDIDSessionsService,
   ) {
       this.events.subscribe("identityadded", newIdentity => {
         console.log("PickIdentiy - Identity added, reloading content");
@@ -49,10 +49,15 @@ export class PickIdentityPage {
     // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle(this.translate.instant("pick-identity"));
 
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
+    this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "language",
       iconPath: BuiltInIcon.EDIT
+    });
+    this.titleBar.addOnItemClickedListener((icon) => {
+      if(icon.key === 'language') {
+        this.navCtrl.navigateBack('language');
+      }
     });
 
     this.uxService.setTitleBarBackKeyShown(false);

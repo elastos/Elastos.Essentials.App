@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
+import { ThemeService } from 'src/app/settings/services/theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 

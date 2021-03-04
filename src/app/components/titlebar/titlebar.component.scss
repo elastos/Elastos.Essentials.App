@@ -1,3 +1,37 @@
+ion-header {
+    padding: 0 5px;
+  
+    ion-toolbar {
+      --background: #f8f8ff;
+  
+        img {
+            height: 24px;
+            width: 24px;
+        }
+    
+        ion-icon {
+            height: 30px;
+            width: 30px;
+            color: #000000;
+      }
+  
+        ion-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+    }
+}
+  
+.dark-header {
+    ion-toolbar {
+        --background: #191a2f;
+    
+        ion-icon {
+            color: #ffffff;
+        }
+    }
+}
+
 .hidden {
     visibility: hidden;
 }

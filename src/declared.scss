@@ -1,0 +1,96 @@
+// For components declared globally with custom css properties
+
+/********************** GLOBAL **********************/
+.warning-component {
+  --min-height: 302px;
+  animation: animate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes animate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+    }
+  }
+}
+
+.options-component {
+  --background: #ffffff;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.dark-options-component {
+  --background: #2e2f4e;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+/********************** DIDSESSSIONS **********************/
+.didsessions-printoptions-component {
+    --height: 300px;
+    align-items: flex-end;
+  
+    .modal-wrapper {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+    }
+}
+
+.didsessions-mnemonicpasscheck-component {
+    --height: 350px;
+    align-items: flex-end;
+  
+    .modal-wrapper {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+    }
+}
+
+/********************** CONTACTS **********************/
+.contacts-qrcode-component {
+  --height: 55%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      border-top-left-radius: 50px;
+      border-top-right-radius: 50px;
+  }
+}
+
+.contacts-qrcode-component-dark {
+  --height: 55%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      border-top-left-radius: 50px;
+      border-top-right-radius: 50px;
+  }
+}
+

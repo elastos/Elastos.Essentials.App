@@ -18,7 +18,7 @@ import { PopupService } from '../../services/popup.service';
 import { Contact } from '../../models/contact.model';
 import { DApp } from '../../models/dapp.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
@@ -54,7 +54,7 @@ export class FriendDetailsPage implements OnInit {
     private navCtrl: NavController,
     private http: HttpClient,
     public translate: TranslateService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private clipboard: Clipboard,
     private appManager: TemporaryAppManagerPlugin
   ) {}

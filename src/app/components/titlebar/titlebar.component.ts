@@ -49,7 +49,8 @@ export class TitleBarComponent {
       visible: false,
       key: null,
       iconPath: null,
-      badgeCount: 0 };
+      badgeCount: 0 
+    };
   }
 
   /**
@@ -95,9 +96,7 @@ export class TitleBarComponent {
   /**
    * Configures icons displayed on the left or right of the main title.
    *
-   * Only some privileged apps can configure the OUTER_LEFT slot. Other slots are accessible to all apps.
-   * The OUTER_LEFT icon is visible only in case the navigation icon is hidden. Otherwise, the navigation
-   * icon overwrites the OUTER_LEFT icon.
+   * If a caller requests to edit the OUTER_LEFT icon, we automatically switch to CUSTOM navigation mode.
    *
    * @param iconSlot Location to configure.
    * @param icon Icon and action to be used at this slot. Use null to clear any existing configuration.
@@ -120,7 +119,7 @@ export class TitleBarComponent {
 
     // Soecial case for the outer right icon in case a menu is configured
     if (iconSlot == TitleBarIconSlot.OUTER_RIGHT && this.menuVisible) {
-      return !this.themeService.darkMode ? '/assets/components/titlebar/menu.svg' : '/assets/components/titlebar/darkmode/menu.svg';
+      return !this.themeService.darkMode ? '/assets/components/titlebar/horizontal_menu.svg' : '/assets/components/titlebar/darkmode/horizontal_menu.svg';
     }
 
     // Replace built-in icon path placeholders with real picture path
@@ -130,19 +129,25 @@ export class TitleBarComponent {
       case BuiltInIcon.BACK:
         return !this.themeService.darkMode ? 'assets/components/titlebar/back.svg' : 'assets/components/titlebar/darkmode/back.svg';
       case BuiltInIcon.CLOSE:
-        // TODO - TEST ONLY
-        return !this.themeService.darkMode ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/elastos.svg';
-      /* TODO:
-      SCAN = "scan",
-      ADD = "add",
-      DELETE = "delete",
-      SETTINGS = "settings",
-      HELP = "help",
-      HORIZONTAL_MENU = "horizontal_menu",
-      VERTICAL_MENU = "vertical_menu",
-      EDIT = "edit",
-      FAVORITE = "favorite"
-      */
+        return !this.themeService.darkMode ? 'assets/components/titlebar/close.svg' : 'assets/components/titlebar/darkmode/close.svg';
+      case BuiltInIcon.SCAN:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/scan.svg' : 'assets/components/titlebar/darkmode/scan.svg';
+      case BuiltInIcon.ADD:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/add.svg' : 'assets/components/titlebar/darkmode/add.svg';
+      case BuiltInIcon.DELETE:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/delete.svg' : 'assets/components/titlebar/darkmode/delete.svg';
+      case BuiltInIcon.SETTINGS:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/settings.svg' : 'assets/components/titlebar/darkmode/settings.svg';
+      case BuiltInIcon.HELP:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/help.svg' : 'assets/components/titlebar/darkmode/help.svg';
+      case BuiltInIcon.HORIZONTAL_MENU:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/horizontal_menu.svg' : 'assets/components/titlebar/darkmode/horizontal_menu.svg';
+      case BuiltInIcon.VERTICAL_MENU:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/vertical_menu.svg' : 'assets/components/titlebar/darkmode/vertical_menu.svg';
+      case BuiltInIcon.EDIT:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/edit.svg' : 'assets/components/titlebar/darkmode/edit.svg';
+      case BuiltInIcon.FAVORITE:
+        return !this.themeService.darkMode ? 'assets/components/titlebar/favorite.svg' : 'assets/components/titlebar/darkmode/favorite.svg';
       default:
         // Nothing, we'll use the real given path.
         return this.icons[iconSlot].iconPath;
@@ -201,6 +206,7 @@ export class TitleBarComponent {
       this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
     else if (navigationMode == TitleBarNavigationMode.CLOSE)
       this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
+    else this.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
   }
 
   private listenableIconClicked(icon: TitleBarSlotItem | TitleBarMenuItem) {
@@ -213,8 +219,8 @@ export class TitleBarComponent {
   outerLeftIconClicked() {
     if (this.navigationMode == TitleBarNavigationMode.BACK)
       this.navCtrl.back();
-    else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
-      this.navCtrl.back();
+   // else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
+   //   this.navCtrl.back();
     else {
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
     }

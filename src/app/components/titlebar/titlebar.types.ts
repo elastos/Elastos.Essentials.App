@@ -96,5 +96,5 @@ export enum TitleBarNavigationMode {
     /** Close icon - Navigates back in the router stack but shows a cross. */
     CLOSE = 1,
     /** No predefined outer left icon. All slots can be configured */
-    CUSTOM =2
+    CUSTOM = 2
 }

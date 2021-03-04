@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SettingsService } from '../../services/settings.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
+import { ThemeService } from 'src/app/settings/services/theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 
@@ -14,13 +14,6 @@ export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public version: string = "";
-  /* public sections = [
-    { title: 'visit', link: 'https://www.elastos.org' },
-    { title: 'join', link: 'https://www.cyberrepublic.org' },
-    { title: 'build', link: 'https://developer.elastos.org' },
-    { title: 'contact', link: 'https://t.me/elastosbrowser' },
-  ] */
-
   public sections = [
     {
       type: 'developer',

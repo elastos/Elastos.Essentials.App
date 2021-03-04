@@ -28,6 +28,7 @@ import { ScanPage } from './pages/scan/scan.page';
 import { PrintoptionsComponent } from './components/printoptions/printoptions.component';
 import { defineCustomElements } from '@teamhive/lottie-player/loader';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { Module } from 'module';
 
 defineCustomElements(window);
 

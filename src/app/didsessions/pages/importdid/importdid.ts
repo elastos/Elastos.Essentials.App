@@ -170,7 +170,7 @@ export class ImportDIDPage {
             component: MnemonicPassCheckComponent,
             componentProps: {
             },
-            cssClass: this.theme.darkMode ? "create-password-modal-dark" : "create-password-modal"
+            cssClass: 'didsessions-mnemonicpasscheck-component'
         });
         this.uxService.modal.onDidDismiss().then((params) => {
             this.uxService.modal = null;
