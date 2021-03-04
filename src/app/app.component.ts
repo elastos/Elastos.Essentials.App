@@ -13,6 +13,7 @@ import { SettingsInitService } from './settings/services/init.service';
 import { GlobalLanguageService } from './services/global.language.service';
 import { ContactsInitService } from './contacts/services/init.service';
 import { IdentityInitService } from './identity/services/init.service';
+import { WalletInitService } from './wallet/services/init.service'
 import { Logger } from './logger';
 
 @Component({
@@ -35,6 +36,7 @@ export class AppComponent {
         private settingsInitService: SettingsInitService,
         private contactsInitService: ContactsInitService,
         private identityInitService: IdentityInitService,
+        private walletInitService: WalletInitService,
         private language: GlobalLanguageService
     ) {
     }
@@ -58,6 +60,7 @@ export class AppComponent {
             await this.settingsInitService.init();
             await this.contactsInitService.init();
             await this.identityInitService.init();
+            await this.walletInitService.init();
 
             // Navigate to the right startup screen
             Logger.log("Global", "Navigating to start screen");
