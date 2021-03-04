@@ -50,7 +50,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
             case TransactionDirection.MOVED:
                 switch (transaction.Type) {
                     case RawTransactionType.CancelProducer: // This transaction type value means "DID published" for ID chain...
-                        return './assets/buttons/send.png'; // TODO: show a "publish" icon (ex: head/face)
+                        return './assets/wallet/buttons/send.png'; // TODO: show a "publish" icon (ex: head/face)
                 }
         }
 

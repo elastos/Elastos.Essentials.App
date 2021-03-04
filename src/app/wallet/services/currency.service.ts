@@ -29,19 +29,19 @@ export class CurrencyService {
       symbol: 'USD',
       name: 'united-states-dollar',
       price: 0,
-      icon: '/assets/currencies/usd.png'
+      icon: '/assets/wallet/currencies/usd.png'
     },
     {
       symbol: 'CNY',
       name: 'chinese-yuan',
       price: 0,
-      icon: '/assets/currencies/cny.png'
+      icon: '/assets/wallet/currencies/cny.png'
     },
     {
       symbol: 'BTC',
       name: 'bitcoin',
       price: 0,
-      icon: '/assets/currencies/btc.png'
+      icon: '/assets/wallet/currencies/btc.png'
     }
   ];
 

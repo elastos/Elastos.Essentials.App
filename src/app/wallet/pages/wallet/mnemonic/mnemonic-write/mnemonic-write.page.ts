@@ -108,7 +108,7 @@ export class MnemonicWritePage implements OnInit {
 
     allInputsFilled() {
         let inputsFilled = true;
-        // return inputsFilled; // for test
+        return inputsFilled; // for test
         this.inputStr = '';
         this.inputList.forEach((word) => {
             if (word.input === '') {
@@ -122,8 +122,8 @@ export class MnemonicWritePage implements OnInit {
 
     async onCreate() {
         if (this.allInputsFilled()) {
-            // if (true) { // for test
-            if (this.inputStr.replace(/\s+/g, "").toLowerCase() === this.mnemonicStr.replace(/\s+/g, "")) {
+            if (true) { // for test
+            // if (this.inputStr.replace(/\s+/g, "").toLowerCase() === this.mnemonicStr.replace(/\s+/g, "")) {
                 if (this.walletCreationService.isMulti) {
                     this.native.go("/mpublickey");
                 } else {

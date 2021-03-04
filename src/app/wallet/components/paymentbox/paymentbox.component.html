@@ -2,7 +2,7 @@
     <div class="arrow_mask" (click)=click_close()></div>
     <div class="kuang">
         <p class="pay-box-title">{{'transfer-info' | translate}}
-            <img class="close" src="./assets/icons/icon-close.svg" (click)="click_close()">
+            <img class="close" src="./assets/wallet/icons/icon-close.svg" (click)="click_close()">
         </p>
 
         <ion-list lines="none">
@@ -26,12 +26,12 @@
                 <ion-label class="left">{{'paypassword' | translate}}:</ion-label>
                 <ion-input slot="end" type="password" placeholder="{{ 'text-pay-password-input' | translate }}" #pwd
                     [(ngModel)]="transfer.payPassword"></ion-input>
-                <ion-img slot="end" *ngIf="canPromptFingerprint()" src="assets/images/fingerprint-24px.svg" class="fingerprint-preview" (click)="promptFingerprintActivation()"></ion-img>
+                <ion-img slot="end" *ngIf="canPromptFingerprint()" src="assets/wallet/images/fingerprint-24px.svg" class="fingerprint-preview" (click)="promptFingerprintActivation()"></ion-img>
             </ion-item>-->
         </ion-list>
 
         <!--<div *ngIf="useFingerprintAuthentication && !fingerprintPluginAuthenticationOnGoing">
-            <ion-img src="assets/images/fingerprint-24px.svg" class="fingerprint-large text-align-center" (click)="promptFingerprintAuthentication()"></ion-img>
+            <ion-img src="assets/wallet/images/fingerprint-24px.svg" class="fingerprint-large text-align-center" (click)="promptFingerprintAuthentication()"></ion-img>
 
             <ion-item lines="none">
                <ion-label>{{'use-fingerprint-authentication' | translate}}</ion-label>

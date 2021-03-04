@@ -241,11 +241,11 @@ export class ERC20SubWallet extends SubWallet {
     protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
         const direction = await this.getERC20TransactionDirection(transaction.TargetAddress);
         if (direction === TransactionDirection.RECEIVED) {
-            return './assets/buttons/receive.png';
+            return './assets/wallet/buttons/receive.png';
         } else if (direction === TransactionDirection.SENT) {
-            return './assets/buttons/send.png';
+            return './assets/wallet/buttons/send.png';
         } else if (direction === TransactionDirection.MOVED) {
-            return './assets/buttons/transfer.png';
+            return './assets/wallet/buttons/transfer.png';
         }
 
         return null;

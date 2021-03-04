@@ -100,7 +100,6 @@ export class WalletManager {
         public translate: TranslateService,
         public localStorage: LocalStorage,
         private appService: AppService,
-        private syncService: SPVSyncService,
         private coinService: CoinService,
         private authService: AuthService,
         public popupProvider: PopupProvider,
@@ -121,6 +120,9 @@ export class WalletManager {
         const hasWallet = await this.initWallets();
 
         this.jsonRPCService.init();
+
+        // Start the sync service
+        await this.spvService.init(this);
 
         if (!hasWallet) {
             this.goToLauncherScreen();
@@ -155,9 +157,6 @@ export class WalletManager {
         }
         this.getAllMasterWalletBalanceByRPC();
 
-        // Start the sync service
-        await this.syncService.init(this);
-
         console.log("Wallet manager initialization complete");
 
         this.events.publish("walletmanager:initialized");
@@ -168,6 +167,8 @@ export class WalletManager {
 
     private async initWallets(): Promise<boolean> {
         try {
+            await this.spvBridge.init();
+
             console.log("Getting all master wallets from the SPV SDK");
             const idList = await this.spvBridge.getAllMasterWallets();
 

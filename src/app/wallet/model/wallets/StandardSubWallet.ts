@@ -151,27 +151,27 @@ export abstract class StandardSubWallet extends SubWallet {
                 case RawTransactionType.RechargeToSideChain:
                 case RawTransactionType.WithdrawFromSideChain:
                 case RawTransactionType.TransferCrossChainAsset:
-                    return './assets/buttons/transfer.png';
+                    return './assets/wallet/buttons/transfer.png';
                 default:
-                    return './assets/buttons/receive.png';
+                    return './assets/wallet/buttons/receive.png';
             }
         } else if (transaction.Direction === TransactionDirection.SENT) {
             switch (transaction.Type) {
                 case RawTransactionType.RechargeToSideChain:
                 case RawTransactionType.WithdrawFromSideChain:
                 case RawTransactionType.TransferCrossChainAsset:
-                    return './assets/buttons/transfer.png';
+                    return './assets/wallet/buttons/transfer.png';
                 default:
-                    return './assets/buttons/send.png';
+                    return './assets/wallet/buttons/send.png';
             }
         } else if (transaction.Direction === TransactionDirection.MOVED) {
-            return './assets/buttons/transfer.png';
+            return './assets/wallet/buttons/transfer.png';
         }
 
         // In case the transaction type is a cross chain transfer, we don't mind the direction, we show
         // a transfer icon
         /*if (transaction.Type == RawTransactionType.TransferCrossChainAsset) {
-            payStatusIcon = './assets/buttons/transfer.png';
+            payStatusIcon = './assets/wallet/buttons/transfer.png';
         }*/
 
         return null;

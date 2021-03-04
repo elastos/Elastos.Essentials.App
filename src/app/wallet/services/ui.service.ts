@@ -40,13 +40,13 @@ export class UiService {
 
     switch (subwallet.id) {
         case StandardCoinName.ELA:
-            return "assets/coins/ela-black.svg";
+            return "assets/wallet/coins/ela-black.svg";
         case StandardCoinName.IDChain:
-            return "assets/coins/ela-turquoise.svg";
+            return "assets/wallet/coins/ela-turquoise.svg";
         case StandardCoinName.ETHSC:
-            return "assets/coins/ela-gray.svg";
+            return "assets/wallet/coins/ela-gray.svg";
         default:
-            return "assets/coins/eth-purple.svg";
+            return "assets/wallet/coins/eth-purple.svg";
     }
   }
 

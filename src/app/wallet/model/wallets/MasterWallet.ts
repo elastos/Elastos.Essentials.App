@@ -54,7 +54,7 @@ export class MasterWallet {
         this.name = name || 'Anonymous Wallet';
         this.theme = theme || {
             color: '#752fcf',
-            background: '/assets/cards/maincards/card-purple.svg'
+            background: '/assets/wallet/cards/maincards/card-purple.svg'
         };
     }
 
