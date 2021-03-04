@@ -164,6 +164,4 @@
     </platform>
     <hook src="scripts/apply_patches.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
-    <allow-navigation href="http://192.168.31.114:8100" sessionid="559e7a4b" />
-    <allow-navigation href="http://192.168.8.214:8100" sessionid="6965a6c7" />
 </widget>
