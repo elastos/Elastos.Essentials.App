@@ -149,17 +149,17 @@ export class SPVWalletPluginBridge {
 
     public setNetwork(netType: string, config: string, jsonrpcUrl: string, apimiscUrl: string): Promise<void> {
         return new Promise((resolve, reject)=>{
-            walletManager.setNetwork([netType, config, jsonrpcUrl, apimiscUrl],
+/*             walletManager.setNetwork([netType, config, jsonrpcUrl, apimiscUrl],
                 (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
+                (err) => { this.handleError(err, reject);  }); */
         });
     }
 
     public init(): Promise<void> {
         return new Promise((resolve, reject)=>{
-            walletManager.init([],
+/*             walletManager.init([],
                 (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
+                (err) => { this.handleError(err, reject);  }); */
         });
     }
 
