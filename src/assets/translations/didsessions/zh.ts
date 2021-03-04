@@ -9,7 +9,7 @@ export const zh = {
   'select-identity': '选择身份',
 
   // Placeholder
-  'enter-name': '在此输入名称',
+  'enter-name-here': '在此输入名称',
 
   // Popups
   'mnemonic-invalid': '助记词无效',

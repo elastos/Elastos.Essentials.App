@@ -94,7 +94,7 @@ export class DIDStore {
      */
     public async createPrivateIdentity(mnemonicPass: string, storePass: string, mnemonicLang: DIDPlugin.MnemonicLanguage, mnemonic: string) : Promise<boolean> {
         // Create a private root key
-        console.log("Creating private root key");
+        Logger.log('didsessions', "Creating private root key");
         await this.initPluginPrivateIdentity(mnemonicLang, mnemonic, mnemonicPass, storePass, true);
 
         return true;

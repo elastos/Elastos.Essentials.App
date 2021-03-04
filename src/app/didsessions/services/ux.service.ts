@@ -8,6 +8,7 @@ import { WarningComponent } from '../components/warning/warning.component';
 import { Events } from './events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 let selfUxService: UXService = null;
 
@@ -92,11 +93,11 @@ export class UXService {
         // Redirect to the appropriate screen depending on available identities
         let identities = await this.didSessions.getIdentityEntries();
         if (identities.length == 0) {
-            console.log("No existing identity. Navigating to language chooser then createidentity");
+            Logger.log("didsessions", "No existing identity. Navigating to language chooser then createidentity");
             this.navCtrl.navigateRoot("language");
         }
         else {
-            console.log("Navigating to pickidentity");
+            Logger.log("didsessions", "Navigating to pickidentity");
             // this.router.navigate(['/language']);
             this.navCtrl.navigateRoot("pickidentity");
             // this.navCtrl.navigateRoot("createidentity");
@@ -105,7 +106,6 @@ export class UXService {
 
     // Sensitive data should not be passed through queryParams
     public go(page: any, options: any = {}) {
-        console.log("NAV - Going to "+page);
         this.zone.run(()=>{
             this.hideLoading();
             this.navCtrl.navigateForward([page], { state: options });

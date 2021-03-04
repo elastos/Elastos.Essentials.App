@@ -26,10 +26,8 @@ export class EssentialsDIDKeyValueStore implements IKeyValueStorage {
  * NOTE: To be used only from inside essentials, not for external intent requests.
  */
 export class EssentialsDirectAppIDGenerator implements IAppIDGenerator {
-    generateAppIDCredential(appInstanceDID: string): DIDPlugin.VerifiableCredential {
-        // TODO: call the identity app service that will automatically generate and return the credential
-        Logger.warn("SDKHelper", "generateAppIDCredential() not yet implemented, returning null credential");
-        return null;
+    generateAppIDCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
+        return ConnectivitySDK.DID.DID.generateAppIDCredential(appInstanceDID);
     }
 }
 

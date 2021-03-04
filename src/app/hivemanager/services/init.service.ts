@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { AppService } from './app.service';
 import { BackgroundService } from './background.service';
 import { HiveService } from './hive.service';
@@ -10,15 +11,20 @@ export class HiveManagerInitService {
   constructor(
     private hiveService: HiveService,
     private backgroundService: BackgroundService,
-    private appService: AppService
+    private appService: AppService,
+    private didSessions: GlobalDIDSessionsService
   ) {}
 
   public async init(): Promise<void> {
-    // Start mandatory services
-    await this.hiveService.init();
     await this.appService.init();
 
-    this.backgroundService.init();
+    this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
+      if (signedInIdentity) {
+        await this.hiveService.init();
+
+        this.backgroundService.init();
+      }
+    });
   }
 
   /**

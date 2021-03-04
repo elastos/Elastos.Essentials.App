@@ -48,7 +48,8 @@ defineCustomElements(window);
     PrintoptionsComponent
   ],
   imports: [
-    IonicModule.forRoot(), // Generates a warning "Ionic Angular was already initialized. Make sure IonicModule.forRoot() is just called once" but getSwiper() can't be found without this.
+    IonicModule,
+    //IonicModule.forRoot(), // Generates a warning "Ionic Angular was already initialized. Make sure IonicModule.forRoot() is just called once" but getSwiper() can't be found without this.
     CommonModule,
     DIDSessionsRoutingModule,
     FormsModule,

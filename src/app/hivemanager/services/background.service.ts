@@ -7,6 +7,7 @@ import { HiveService } from './hive.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 // TODO @chad declare let notificationManager: NotificationManagerPlugin.NotificationManager;
 
@@ -23,13 +24,14 @@ export class BackgroundService {
         public events: Events,
         private storage: StorageService,
         private hiveService: HiveService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private didSessions: GlobalDIDSessionsService
     ) {
     }
 
     public async init() {
-      Logger.log("HiveManager", "Background service: initializing");
-      this.getActivePaymentPlan();
+        Logger.log("HiveManager", "Background service: initializing");
+        this.getActivePaymentPlan();
     }
 
     async getActivePaymentPlan() {

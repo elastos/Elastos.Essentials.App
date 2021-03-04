@@ -41,7 +41,8 @@ import { InvitePage } from './pages/invite/invite.page';
   imports: [
     CommonModule,
     HttpClientModule,
-    IonicModule.forRoot(),
+    IonicModule,
+    //IonicModule.forRoot(),
     ContactsRoutingModule,
     QRCodeModule,
     ComponentsModule,

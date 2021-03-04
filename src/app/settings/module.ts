@@ -32,7 +32,8 @@ import { DevTestsPage } from './pages/devtests/devtests.page';
     HttpClientModule,
     FormsModule,
     SettingsRoutingModule,
-    IonicModule.forRoot(),
+    IonicModule,
+    //IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
     SharedComponentsModule,
     TranslateModule

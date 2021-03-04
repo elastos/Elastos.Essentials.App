@@ -10,6 +10,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Router } from '@angular/router';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'page-pickidentity',
@@ -35,12 +36,12 @@ export class PickIdentityPage {
     private didSessions: GlobalDIDSessionsService,
   ) {
       this.events.subscribe("identityadded", newIdentity => {
-        console.log("PickIdentiy - Identity added, reloading content");
+        Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
         this.loadIdentities();
       });
 
       this.events.subscribe("identityremoved", newIdentity => {
-        console.log("PickIdentiy - Identity deleted, reloading content");
+        Logger.log('didsessions', "PickIdentiy - Identity deleted, reloading content");
         this.loadIdentities();
       });
   }
@@ -70,7 +71,7 @@ export class PickIdentityPage {
   async loadIdentities() {
     this.groupedIdentities = await this.identityService.loadGroupedIdentities();
     this.changeDetector.detectChanges(); // Force angular to catch change in the array, in case of update
-    console.log("Grouped identities:", this.groupedIdentities);
+    Logger.log("didsessions", "Grouped identities:", this.groupedIdentities);
 
     if (this.availableIdentitiesCount() === 0) {
       // Maybe we've just deleted the last identity. Then go back to the identity creation screen
@@ -83,13 +84,13 @@ export class PickIdentityPage {
   addAvatars() {
     this.groupedIdentities.map((group) => {
       group.entries.forEach((entry) => {
-        console.log('Identity', entry);
+        Logger.log('didsessions', 'Identity', entry);
       });
     })
   }
 
   async signIn(identityEntry: IdentityEntry) {
-    console.log("Trying to sign in with DID "+identityEntry.didString);
+    Logger.log('didsessions', "Trying to sign in with DID "+identityEntry.didString);
     await this.identityService.signIn(identityEntry);
   }
 

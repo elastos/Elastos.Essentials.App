@@ -73,7 +73,7 @@ export const fr = {
   'avatar': 'Avatar',
 
   /********** QRCode Comp **********/
-  'copied': ' copié',
+  'copied-with-type': ' copié',
 
   /********** Options Comp **********/
 

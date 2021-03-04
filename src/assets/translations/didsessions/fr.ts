@@ -9,7 +9,7 @@ export const fr = {
   'select-identity': 'Sélect. une identité',
 
   // Placeholder
-  'enter-name': 'Entrez le nom ici',
+  'enter-name-here': 'Entrez le nom ici',
 
   // Popups
   'mnemonic-invalid': 'Mnémonique invalide',

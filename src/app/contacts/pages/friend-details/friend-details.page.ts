@@ -200,7 +200,7 @@ export class FriendDetailsPage implements OnInit {
   copyAddress(type: string, address: string) {
     this.clipboard.copy(address);
     this.native.genericToast(
-      this.translate.instant(type) + this.translate.instant('copied')
+      this.translate.instant(type) + this.translate.instant('copied-with-type')
     );
   }
 }

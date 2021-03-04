@@ -53,7 +53,10 @@
               "hammerjs",
               "dragula",
               "qrcode",
-              "lodash"
+              "lodash",
+              "hash.js",
+              "bignumber.js",
+              "web3"
             ]
           },
           "configurations": {

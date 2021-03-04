@@ -48,7 +48,7 @@ export class DIDStore {
         }
 
         // Create a private root key
-        console.log("Creating private root key");
+        Logger.log('didsessions', "Creating private root key");
         await this.initPluginPrivateIdentity(mnemonicLang, mnemonic, mnemonicPass, storePass, true);
 
         return true;
@@ -59,12 +59,12 @@ export class DIDStore {
         if (!didStoreId)
             didStoreId = Config.uuid(6, 16);
 
-        console.log("Initializing a new DID Store with ID " + didStoreId);
+        Logger.log('didsessions', "Initializing a new DID Store with ID " + didStoreId);
         try {
             await this.initDidStore(didStoreId);
         }
         catch (e) {
-            console.log('initNewDidStore: e:', e)
+            Logger.log('didsessions', 'initNewDidStore: e:', e)
             throw e;
         }
     }
@@ -134,7 +134,7 @@ export class DIDStore {
                 this.dids.push(did);
             }
             else {
-                console.log("DID " + pluginDid.getDIDString() + " was listed by the DID plugin but deleted locally earlier. Skipping it.");
+                Logger.log('didsessions', "DID " + pluginDid.getDIDString() + " was listed by the DID plugin but deleted locally earlier. Skipping it.");
             }
         }
         Logger.log("Identity", "Loaded DIDs:", this.dids);
@@ -163,7 +163,7 @@ export class DIDStore {
         try {
             // Create and add a DID to the DID store in physical storage.
             createdDid = await this.createPluginDid(newDid.password, "");
-            console.log("Created DID:", createdDid);
+            Logger.log('didsessions', "Created DID:", createdDid);
         }
         catch (e) {
             console.error("Create DID exception", e);
@@ -201,7 +201,7 @@ export class DIDStore {
         // Mark as deleted in permanent storage
         await this.markDIDAsDeleted(did.getDIDString());
 
-        console.log("Deleted DID");
+        Logger.log('didsessions', "Deleted DID");
 
         await this.setActiveDid(null);
     }
@@ -212,12 +212,12 @@ export class DIDStore {
     }
 
     private async markDIDAsDeleted(didString: DIDPlugin.DIDString) {
-        console.log("Marking DID " + didString + " as deleted in storage");
+        Logger.log('didsessions', "Marking DID " + didString + " as deleted in storage");
         await LocalStorage.instance.set("deleted-did-" + didString, true);
     }
 
     private async removeDIDFromDeleted(didString: DIDPlugin.DIDString) {
-        console.log("Remove DID " + didString + " from deleted in storage");
+        Logger.log('didsessions', "Remove DID " + didString + " from deleted in storage");
         await LocalStorage.instance.remove("deleted-did-" + didString);
     }
 
@@ -233,7 +233,7 @@ export class DIDStore {
                     resolve(pluginDidStore);
                 },
                 (err) => {
-                    console.log('initPluginDidStore error:', err);
+                    Logger.log('didsessions', 'initPluginDidStore error:', err);
                     reject(DIDHelper.reworkedPluginException(err))
                 },
             );
@@ -247,27 +247,27 @@ export class DIDStore {
      */
     private createIdTransactionCallback(payload: string, memo: string) {
         let jsonPayload = JSON.parse(payload);
-        console.log("Received id transaction callback with payload: ", jsonPayload);
+        Logger.log('didsessions', "Received id transaction callback with payload: ", jsonPayload);
         let params = {
             didrequest: jsonPayload
         }
 
-        console.log("Sending didtransaction intent with params:", params);
+        Logger.log('didsessions', "Sending didtransaction intent with params:", params);
 
         appManager.sendIntent("https://wallet.elastos.net/didtransaction", params, {}, (response) => {
-            console.log("Got didtransaction intent response.", response);
+            Logger.log('didsessions', "Got didtransaction intent response.", response);
 
             // If txid is set in the response this means a transaction has been sent on chain.
             // If null, this means user has cancelled the operation (no ELA, etc).
             if (response.result && response.result.txid) {
-                console.log('didtransaction response.result.txid ', response.result.txid);
+                Logger.log('didsessions', 'didtransaction response.result.txid ', response.result.txid);
                 this.events.publish("diddocument:publishresult", {
                     didStore: this,
                     published: true
                 });
             }
             else {
-                console.log('didtransaction response.result.txid is null');
+                Logger.log('didsessions', 'didtransaction response.result.txid is null');
                 this.events.publish("diddocument:publishresult", {
                     didStore: this,
                     cancelled: true
@@ -327,12 +327,12 @@ export class DIDStore {
     }
 
     createPluginDid(passphrase, hint = ""): Promise<DIDPlugin.DID> {
-        console.log("Creating DID");
+        Logger.log('didsessions', "Creating DID");
         return new Promise((resolve, reject) => {
             this.pluginDidStore.newDid(
                 passphrase, hint,
                 (did) => {
-                    console.log("Created plugin DID:", did);
+                    Logger.log('didsessions', "Created plugin DID:", did);
                     resolve(did)
                 },
                 (err) => { reject(err) },

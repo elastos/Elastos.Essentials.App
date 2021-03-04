@@ -73,7 +73,7 @@ export const zh = {
   'avatar': '头像',
 
   /********** QRCode Comp **********/
-  'copied':'已复制',
+  'copied-with-type':'已复制',
 
   /********** Options Comp **********/
 
