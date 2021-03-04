@@ -15,6 +15,7 @@ import { NavService } from './nav.service';
 import { WalletManager } from './wallet.service';
 import { LocalStorage } from './storage.service';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -36,28 +37,33 @@ export class WalletInitService {
     private contactsService: ContactsService,
     private erc20CoinService: ERC20CoinService,
     private uiService: UiService,
-    private imageLoaderConfig: ImageLoaderConfigService
+    private imageLoaderConfig: ImageLoaderConfigService,
+    private didSessions: GlobalDIDSessionsService
   ) {}
 
   public async init(): Promise<void> {
-    Logger.log("Wallet", "Wallet service is initializing");
-    this.imageLoaderConfig.useImageTag(true);
+    this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
+      if (signedInIdentity) {
+        Logger.log("Wallet", "Wallet service is initializing");
+        this.imageLoaderConfig.useImageTag(true);
 
-    await this.appService.init();
-    await this.coinService.init();
-    await this.currencyService.init();
-    await this.contactsService.init();
-    await this.uiService.init();
-    await this.erc20CoinService.init();
+        await this.appService.init();
+        await this.coinService.init();
+        await this.currencyService.init();
+        await this.contactsService.init();
+        await this.uiService.init();
+        await this.erc20CoinService.init();
 
-    // Wait until the wallet manager is ready before showing the first screen.
-    // TODO: rework
-    this.events.subscribe("walletmanager:initialized", () => {
-        console.log("walletmanager:initialized event received");
+        // Wait until the wallet manager is ready before showing the first screen.
+        // TODO: rework
+        this.events.subscribe("walletmanager:initialized", () => {
+            console.log("walletmanager:initialized event received");
+        });
+
+        await this.walletManager.init();
+        await this.intentService.init();
+      }
     });
-
-    await this.walletManager.init();
-    await this.intentService.init();
   }
 
   public start() {

@@ -46,6 +46,9 @@ export class IntentService {
     }
 
     async onReceiveIntent(intent: AppManagerPlugin.ReceivedIntent) {
+        if (intent.action.indexOf("https://wallet.elastos.net/") != 0)
+            return; // Not for us.
+
         this.walletList = this.walletManager.getWalletsList();
         if (this.walletList.length === 0) {
             const toCreateWallet = await this.popupProvider.ionicConfirm('intent-no-wallet-title', 'intent-no-wallet-msg', 'ok', 'exit');

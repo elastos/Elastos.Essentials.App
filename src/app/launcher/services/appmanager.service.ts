@@ -96,10 +96,6 @@ export class AppmanagerService {
     public async init() {
         Logger.log("Launcher", 'App manager service is initializing');
 
-        // TMP TEST
-        let testHelper = new ElastosSDKHelper();
-        testHelper.newDIDHelper("launcherfake").getOrCreateAppIdentityCredential();
-
         this.language.activeLanguage.subscribe((lang)=>{
             this.initAppsList();
         });
