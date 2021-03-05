@@ -47,6 +47,7 @@ export const zh = {
     'capsule-marketplace': '胶囊市场',
     'main': '主要',
     'utilities': '通用',
+    'voting': 'Voting',
     'other': '其它',
 
     /********** Onboard Page **********/

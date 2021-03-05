@@ -47,6 +47,7 @@ export const fr = {
     'capsule-marketplace': 'Marché des capsules',
     'main': 'Commencer',
     'utilities': 'Utilitaires',
+    'voting': 'Voting',
     'other': 'Autres',
 
     /********** Onboard Page **********/

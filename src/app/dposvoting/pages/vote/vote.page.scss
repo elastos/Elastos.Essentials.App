@@ -1,3 +1,5 @@
+@import '../../root.scss';
+
 .header {
   ion-label {
     font-size: 16px;
@@ -10,13 +12,13 @@
 }
 
 ion-content {
-  position:relative;
+  position: relative;
 }
 
 .container {
   background: hsl(225, 22%, 96%);
   min-height: 100%;
-  padding-top: 13%;
+  padding-top: 16%;
   padding-bottom: 15%;
 }
 

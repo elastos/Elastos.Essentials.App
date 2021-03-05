@@ -1,0 +1,34 @@
+@import '../../root.scss';
+
+ion-tab-bar {
+    height: 9%;
+  
+    ion-icon {
+      color: #989aa2;
+      font-size: 36px;
+    }
+  
+    ion-label {
+      font-size: 9px;
+      font-weight: bold;
+      color: #989aa2;
+    }
+}
+
+ion-tab-button {
+    --ripple-color: #9D64FB;;
+    }
+
+    ion-tab-button.tab-selected {
+        ion-icon, ion-label {
+            color: #9D64FB !important;
+            --ion-color-base: #9D64FB !important;
+        }
+    }
+
+    ion-tab-button:hover {
+        ion-icon, ion-label {
+            color: #9D64FB !important;
+            --ion-color-base: #9D64FB !important;
+        }
+}

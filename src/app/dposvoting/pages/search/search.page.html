@@ -29,7 +29,7 @@
 
     <ion-list lines="none" [class.blur]="showNode" class="node-list">
       <ion-virtual-scroll [items]="filteredNodes"  approxItemHeight="240px">
-        <ion-item color="secondary"  *virtualItem="let node">
+        <ion-item *virtualItem="let node">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">
               <ion-col

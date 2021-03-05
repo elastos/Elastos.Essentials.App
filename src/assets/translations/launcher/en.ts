@@ -47,6 +47,7 @@ export const en = {
     'capsule-marketplace': 'Capsule Marketplace',
     'main': 'Main',
     'utilities': 'Utilities',
+    'voting': 'Voting',
     'other': 'Other',
 
     /********** Onboard Page **********/

@@ -153,21 +153,16 @@ export class AppmanagerService {
                         description: this.translate.instant('app-hive-description'),
                         icon: '/assets/launcher/ios/app-icons/hive.svg',
                         startCall: () => this.hiveManagerInitService.start()
-                    }
-                ]
-            },
-            {
-                type: 'other',
-                apps: [
+                    },
                     {
-                        cssId: 'Scanner',
+                        cssId: 'Other',
                         name: this.translate.instant('app-scanner'),
                         description: this.translate.instant('app-scanner-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
                         routerPath: '/scanner/scan'
                     },
                     {
-                        cssId: 'Settings',
+                        cssId: 'Other',
                         name: this.translate.instant('app-settings'),
                         description: this.translate.instant('app-settings-description'),
                         icon: '/assets/launcher/ios/app-icons/settings.svg',
@@ -183,7 +178,7 @@ export class AppmanagerService {
                         name: this.translate.instant('app-dpos-voting'),
                         description: this.translate.instant('app-dpos-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: '/dposvoting/menu/home'
+                        routerPath: '/dposvoting/menu/vote'
                     },
                     {
                         cssId: 'CRCouncil',

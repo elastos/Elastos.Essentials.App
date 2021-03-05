@@ -13,8 +13,8 @@ const routes: Routes = [
     component: MenuPage,
     children: [
       {
-        path: 'home',
-        loadChildren: '../home/home.module#HomePageModule'
+        path: 'vote',
+        loadChildren: '../vote/vote.module#VotePageModule'
       },
       {
         path: 'stats',
@@ -25,10 +25,6 @@ const routes: Routes = [
         loadChildren: '../search/search.module#SearchPageModule'
       },
       {
-        path: 'vote',
-        loadChildren: '../vote/vote.module#VotePageModule'
-      },
-      {
         path: 'history',
         loadChildren: '../history/history.module#HistoryPageModule'
       },
@@ -37,7 +33,11 @@ const routes: Routes = [
         loadChildren: '../tx/tx.module#TxPageModule'
       },
     ]
-  }
+  },
+  { 
+    path: 'home',
+    loadChildren: './pages/home/home.module#HomePageModule'
+  },
 ];
 
 @NgModule({

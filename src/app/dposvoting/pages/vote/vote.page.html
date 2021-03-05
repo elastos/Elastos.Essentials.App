@@ -8,6 +8,10 @@
 
   <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length > 0">
 
+<!--     <ion-button [routerLink]="['/dposvoting/home']">
+      GO HOME
+    </ion-button> -->
+
     <app-node-slider
       *ngIf="showNode"
       [nodeIndex]="nodeIndex"
@@ -18,7 +22,7 @@
 
     <ion-list lines="none" [class.blur]="showNode" class="node-list">
       <ion-virtual-scroll [items]="nodesService.activeNodes"  approxItemHeight="240px">
-        <ion-item color="secondary"  *virtualItem="let node">
+        <ion-item *virtualItem="let node">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">
               <ion-col

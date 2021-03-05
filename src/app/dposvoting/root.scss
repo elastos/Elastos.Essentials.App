@@ -1,97 +1,9 @@
-/* Core CSS required for Ionic components to work properly */
-@import "~@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
-@import "~@ionic/angular/css/normalize.css";
-@import "~@ionic/angular/css/structure.css";
-@import "~@ionic/angular/css/typography.css";
-@import '~@ionic/angular/css/display.css';
-
-/* Optional CSS utils that can be commented out */
-@import "~@ionic/angular/css/padding.css";
-@import "~@ionic/angular/css/float-elements.css";
-@import "~@ionic/angular/css/text-alignment.css";
-@import "~@ionic/angular/css/text-transformation.css";
-@import "~@ionic/angular/css/flex-utils.css";
-
-@font-face {
-  font-family: 'Raleway';
-  font-weight: 300;
-  font-style: normal;
-  src: url('assets/fonts/Raleway-Light.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Raleway';
-  font-weight: 400;
-  font-style: normal;
-  src: url('assets/fonts/Raleway-Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Raleway';
-  font-weight: 500;
-  font-style: normal;
-  src: url('assets/fonts/Raleway-Medium.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Raleway';
-  font-weight: 600;
-  font-style: normal;
-  src: url('assets/fonts/Raleway-SemiBold.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Raleway';
-  font-weight: 700;
-  font-style: normal;
-  src: url('assets/fonts/Raleway-Bold.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Raleway';
-  font-weight: 800;
-  font-style: normal;
-  src: url('assets/fonts/Raleway-ExtraBold.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Raleway';
-  font-weight: 900;
-  font-style: normal;
-  src: url('assets/fonts/Raleway-Black.ttf') format('truetype');
-}
-
-* {
-  font-family: 'Raleway' !important;
-}
-
 ion-content {
   --background: transparent;
 }
 
-:root {
-  ion-tab-button {
-    --ripple-color: var(--ion-color-tertiary);
-  }
-
-  ion-tab-button.tab-selected {
-    ion-icon, ion-label {
-      color: var(--ion-color-tertiary) !important;
-      --ion-color-base: var(--ion-color-tertiary) !important;
-    }
-  }
-
-  ion-tab-button:hover {
-    ion-icon, ion-label {
-      color: var(--ion-color-tertiary) !important;
-      --ion-color-base: var(--ion-color-tertiary) !important;
-    }
-  }
-}
-
-/** Searchbar **/
-ion-searchbar {
-  .searchbar-input-container{
-      .searchbar-input{
-          border-radius: 30px !important;
-      }
-  }
+* {
+  font-family: 'Raleway' !important;
 }
 
 .blur {
@@ -102,7 +14,10 @@ ion-searchbar {
   color: rgb(231, 81, 81) !important;
 }
 
-/** Default Header **/
+/*******************************************  
+  GLOBAL HEADER
+  pages ~ vote, search, stats, tx, history
+*******************************************/
 .header {
   position: fixed;
   top: 0;
@@ -144,7 +59,10 @@ ion-searchbar {
   }
 }
 
-/** Global Node Slides **/
+/************************************ 
+  NODES SLIDES
+  components ~ node-slider
+************************************/
 .node-slides {
   position: fixed;
   top: 25%;
@@ -156,6 +74,7 @@ ion-searchbar {
     padding: 0;
     margin: 10px;
     border-radius: 10px;
+    background: #ffffff;
 
     ion-grid {
       padding: 0;
@@ -260,7 +179,10 @@ ion-searchbar {
   }
 }
 
-/** Global Node List **/
+/************************************ 
+  NODES LIST
+  pages ~ vote, history, search
+************************************/
 .node-list {
   padding: 0;
   background: hsl(225, 22%, 96%);
@@ -268,7 +190,8 @@ ion-searchbar {
   ion-item {
     --inner-padding-end: 0px;
     --padding-start: 0px;
-    margin: 8px 0;
+    --background: #ffffff;
+    margin: 0 0 5px;
     padding: 0px;
 
     ion-row {
@@ -316,6 +239,7 @@ ion-searchbar {
           --border-width: 2px;
           --border-color: #A25BFE !important;
           --border-color-checked: #A25BFE !important;
+          --background-checked: #A25BFE !important;
         }
       }
 
@@ -343,6 +267,10 @@ ion-searchbar {
   }
 }
 
+/************************************ 
+  ROOT TABS
+  pages ~ app
+************************************/
 ion-tab-bar {
   height: 9%;
 

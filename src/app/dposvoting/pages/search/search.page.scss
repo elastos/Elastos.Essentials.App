@@ -1,5 +1,15 @@
+@import '../../root.scss';
+
+ion-searchbar {
+  .searchbar-input-container{
+      .searchbar-input{
+          border-radius: 30px !important;
+      }
+  }
+}
+
 .container {
   background: hsl(225, 22%, 96%);
   min-height: 100%;
-  padding-top: 13%;
+  padding-top: 16%;
 }
