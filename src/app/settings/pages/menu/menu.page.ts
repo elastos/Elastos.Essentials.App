@@ -85,15 +85,6 @@ export class MenuPage implements OnInit {
   }
 
   open(id:string){
-    let launchableApps = [
-      "org.elastos.trinity.dapp.passwordmanager",
-      "org.elastos.trinity.dapp.wallet"
-    ];
-
-    if (launchableApps.indexOf(id) >= 0) {
-        this.appManager.start(id);
-    } else {
-        this.navController.navigateForward(id);
-    }
+    this.navController.navigateForward(id);
   }
 }

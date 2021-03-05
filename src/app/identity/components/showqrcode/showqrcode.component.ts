@@ -4,7 +4,8 @@ import { ModalController, NavParams, IonInput } from '@ionic/angular';
 import { Native } from '../../services/native';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Component({
   selector: 'showqrcode',
@@ -20,8 +21,7 @@ export class ShowQRCodeComponent implements OnInit {
     public native: Native,
     private navParams: NavParams,
     public theme: GlobalThemeService,
-    private translate: TranslateService,
-    private appManager: TemporaryAppManagerPlugin
+    private translate: TranslateService
   ) {
     this.didString = navParams.get("didstring");
     this.qrCodeString = navParams.get("qrcodestring");
@@ -40,7 +40,7 @@ export class ShowQRCodeComponent implements OnInit {
   }
 
   shareInvitationLink() {
-    this.appManager.sendIntent("share", {
+    appManager.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: this.qrCodeString
     });

@@ -3,6 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -62,7 +64,7 @@ export class NativeService {
           text: this.translate.instant('ok'),
           handler: () => {
             this.zone.run(() => {
-                this.appManager.sendIntentResponse(intent, {}, intentId, () => {});
+                appManager.sendIntentResponse({}, intentId);
             });
           }
         }

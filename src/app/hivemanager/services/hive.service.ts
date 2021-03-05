@@ -14,6 +14,7 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 declare let hiveManager: HivePlugin.HiveManager;
+declare let appManager: AppManagerPlugin.AppManager;
 
 export type VaultLinkStatus = {
   // There is already a vault provider info on chain about a vault provider attacher to this user.
@@ -253,15 +254,15 @@ export class HiveService {
   }
 
   private async publishVaultProviderToIDChain(providerName: string, vaultAddress: string): Promise<boolean> {
-    return new Promise((resolve)=>{
+    return new Promise(async (resolve)=>{
       Logger.log("HiveManager", "Requesting identity app to update the hive provider");
 
-      this.appManager.sendIntent("https://did.elastos.net/sethiveprovider", {
-        name: providerName,
-        address: vaultAddress
-      }, {
-        // TODO - RESTORE AFTER NATIVE CRASH (dongxiao) appId: "org.elastos.trinity.dapp.did" // Force receiving by the DID app
-      }, (result: {result: {status: string}})=>{
+      try {
+        let result: {result: {status: string}} = await appManager.sendIntent("https://did.elastos.net/sethiveprovider", {
+          name: providerName,
+          address: vaultAddress
+        });
+
         Logger.log("HiveManager", "Got sethiveprovider intent result:", result);
 
         if (result && result.result && result.result.status && result.result.status == "published") {
@@ -277,11 +278,12 @@ export class HiveService {
           Logger.log("HiveManager", "Publication cancelled or errored");
           resolve(false);
         }
-      }, (err)=>{
+      }
+      catch(err) {
         Logger.error("HiveManager", "Error while trying to call the sethiveprovider intent: ", err);
           this.popup.ionicAlert(this.translate.instant('alert.error'), this.translate.instant('alert.sorry-provider-not-save') + err, this.translate.instant('alert.ok'));
         resolve(false);
-      });
+      }
     });
   }
 
@@ -345,12 +347,14 @@ export class HiveService {
   }
 
   private async executePayment(cost: number, elaAddress: string): Promise<string> {
-    return new Promise((resolve, reject)=>{
-      this.appManager.sendIntent("https://wallet.elastos.net/pay", {
-        amount: cost,
-        receiver: elaAddress,
-        currency: "ELA"
-      }, null, (data: { result: { txid: string }})=>{
+    return new Promise(async (resolve, reject)=>{
+      try {
+        let data: { result: { txid: string }} = await appManager.sendIntent("https://wallet.elastos.net/pay", {
+          amount: cost,
+          receiver: elaAddress,
+          currency: "ELA"
+        });
+
         if (!data || !data.result || !data.result.txid) {
           // Cancelled or error
           reject();
@@ -360,10 +364,11 @@ export class HiveService {
           Logger.log("HiveManager", "Pay intent response data: ", data);
           resolve(data.result.txid);
         }
-      }, (err)=>{
+      }
+      catch (err) {
         Logger.error("HiveManager", "Pay intent error: ", err);
         reject();
-      });
+      }
     });
   }
 

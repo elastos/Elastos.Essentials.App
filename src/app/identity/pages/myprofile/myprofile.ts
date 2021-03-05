@@ -28,6 +28,8 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { ThemeService } from "src/app/didsessions/services/theme.service";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
   label: string; // "title" to display
@@ -580,10 +582,8 @@ export class MyProfilePage {
     console.log("Claims object: ")
     console.log(claimsObject)
 
-    this.appManager.sendIntent("https://did.elastos.net/credverify", {
+    appManager.sendIntent("https://did.elastos.net/credverify", {
       claims: claimsObject
-    }, {}, (res: any) => {
-      console.log("User data received", res);
     });
   }
 

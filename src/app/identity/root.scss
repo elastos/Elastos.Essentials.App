@@ -29,53 +29,6 @@
   outline: none;
 }
 
-@font-face {
-  font-family: "Montserrat";
-  font-weight: 300;
-  font-style: normal;
-  src: url("../../assets/fonts/montserrat/Montserrat-Light.ttf");
-}
-@font-face {
-  font-family: "Montserrat";
-  font-weight: 400;
-  font-style: normal;
-  src: url("../../assets/fonts/montserrat/Montserrat-Regular.ttf");
-}
-@font-face {
-  font-family: "Montserrat";
-  font-weight: 500;
-  font-style: normal;
-  src: url("../../assets/fonts/montserrat/Montserrat-Medium.ttf");
-}
-@font-face {
-  font-family: "Montserrat";
-  font-weight: 600;
-  font-style: normal;
-  src: url("../../assets/fonts/montserrat/Montserrat-SemiBold.ttf");
-}
-@font-face {
-  font-family: "Montserrat";
-  font-weight: 700;
-  font-style: normal;
-  src: url("../../assets/fonts/montserrat/Montserrat-Bold.ttf");
-}
-@font-face {
-  font-family: "Montserrat";
-  font-weight: 800;
-  font-style: normal;
-  src: url("../../assets/fonts/montserrat/Montserrat-ExtraBold.ttf");
-}
-@font-face {
-  font-family: "Montserrat";
-  font-weight: 900;
-  font-style: normal;
-  src: url("../../assets/fonts/montserrat/Montserrat-Black.ttf");
-}
-
-* {
-  font-family: "Montserrat" !important;
-}
-
 ion-ripple-effect {
   --ripple-color: var(--ion-color-primary);
   color: var(--ripple-color);

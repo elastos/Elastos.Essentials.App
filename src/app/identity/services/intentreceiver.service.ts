@@ -8,8 +8,9 @@ import { PopupProvider } from './popup';
 import { AppIDService } from './appid.service';
 import { UXService } from './ux.service';
 import { Events } from './events.service';
-import { ReceivedIntent, TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Injectable({
     providedIn: 'root'
@@ -24,7 +25,6 @@ export class IntentReceiverService {
         private popup: PopupProvider,
         private appIDService: AppIDService,
         private uxService: UXService,
-        private appManager: TemporaryAppManagerPlugin,
         private intentService: GlobalIntentService
     ) {
     }
@@ -44,7 +44,7 @@ export class IntentReceiverService {
         return fullAction.replace(intentDomainRoot, "");
     }
 
-    async onReceiveIntent(intent: ReceivedIntent) {
+    async onReceiveIntent(intent: AppManagerPlugin.ReceivedIntent) {
         switch (this.getShortAction(intent.action)) {
             case "appidcredissue":
                 console.log("Received appid credential issue intent request");
@@ -170,7 +170,7 @@ export class IntentReceiverService {
         return fullAppId.substring(0, hashIndex);
     }
 
-    async showErrorAndExitFromIntent(intent: ReceivedIntent) {
+    async showErrorAndExitFromIntent(intent: AppManagerPlugin.ReceivedIntent) {
         let errorMessage = "Sorry, there are invalid parameters in the request";
         errorMessage += "\n\n"+JSON.stringify(intent.params);
 
@@ -310,7 +310,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkRegAppProfileIntentParams(intent: ReceivedIntent): boolean {
+    checkRegAppProfileIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
         console.log("Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
@@ -336,7 +336,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkSignIntentParams(intent: ReceivedIntent): boolean {
+    checkSignIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
         console.log("Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
@@ -354,7 +354,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkSetHiveProviderIntentParams(intent: ReceivedIntent): boolean {
+    checkSetHiveProviderIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
         console.log("Checking SetHiveProvider intent parameters");
 
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.address)) {
@@ -365,7 +365,7 @@ export class IntentReceiverService {
         console.log("DEBUG INTENT PARAMS: "+JSON.stringify(intent.params));
 
         Config.requestDapp = {
-            appPackageId: this.extractRootAppId(intent.from),
+            appPackageId: null, // TODO this.extractRootAppId(intent.from),
             intentId: intent.intentId,
             action: intent.action,
             address: intent.params.address,
@@ -374,7 +374,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkCreateDIDIntentParams(intent: ReceivedIntent): boolean {
+    checkCreateDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
         console.log("Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
@@ -385,7 +385,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkImportMnemonicIntentParams(intent: ReceivedIntent): boolean {
+    checkImportMnemonicIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
         console.log("Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent, true))
@@ -396,7 +396,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkDeleteDIDIntentParams(intent: ReceivedIntent): boolean {
+    checkDeleteDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
         console.log("Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent, true))

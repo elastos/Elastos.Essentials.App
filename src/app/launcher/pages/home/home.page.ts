@@ -14,6 +14,7 @@ import { DIDManagerService } from '../../services/didmanager.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { IdentityInitService } from 'src/app/identity/services/init.service';
 
 @Component({
   selector: 'app-home',
@@ -37,7 +38,8 @@ export class HomePage implements OnInit {
     private notification: NotificationManagerService,
     private appManager: TemporaryAppManagerPlugin,
     public appService: AppmanagerService,
-    public didService: DIDManagerService
+    public didService: DIDManagerService,
+    private identityInitService: IdentityInitService
   ) {
   }
 
@@ -83,7 +85,7 @@ export class HomePage implements OnInit {
   }
 
   showMyIdentity() {
-    this.appManager.start("org.elastos.trinity.dapp.did");
+    this.identityInitService.start();
   }
 
   getDateFromNow() {

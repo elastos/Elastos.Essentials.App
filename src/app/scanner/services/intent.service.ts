@@ -2,14 +2,15 @@ import { Injectable, NgZone } from '@angular/core';
 import { Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ReceivedIntent, TemporaryAppManagerPlugin } from '../../TMP_STUBS';
 import { GlobalIntentService } from '../../services/global.intent.service';
+
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Injectable({
     providedIn: 'root'
 })
 export class IntentService {
-    private intentRequest: ReceivedIntent;
+    private intentRequest: AppManagerPlugin.ReceivedIntent;
 
     constructor(
         private platform: Platform,
@@ -17,7 +18,6 @@ export class IntentService {
         private router: Router,
         private ngZone: NgZone,
         private translate: TranslateService,
-        private appManager: TemporaryAppManagerPlugin,
         private globalIntentService: GlobalIntentService
     ) {
     }
@@ -73,14 +73,8 @@ export class IntentService {
     public sendScanQRCodeIntentResponse(scannedContent: string): Promise<void> {
         console.log("Sending scanqrcode intent response");
 
-        return new Promise((resolve, reject)=>{
-            this.appManager.sendIntentResponse("scanqrcode", {
-                scannedContent: scannedContent
-            }, this.intentRequest.intentId as number, (response)=>{
-                resolve();
-            }, (err: any)=>{
-                reject();
-            });
-        });
+        return appManager.sendIntentResponse({
+            scannedContent: scannedContent
+        }, this.intentRequest.intentId as number);
     }
 }

@@ -22,6 +22,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 type DisplayableAppInfo = {
   packageId: string,
   app: DApp,
@@ -150,8 +152,8 @@ export class FriendDetailsPage implements OnInit {
 
   // Find app in marketplace, if marketplace is not installed, automatically install app //
   discoverApp(appId: string) {
-    console.log('Inquiring app in app-store..', appId);
-    this.appManager.sendIntent("appdetails", appId, {}, (res) => {
+    /* TODO - remove? console.log('Inquiring app in app-store..', appId);
+    appManager.sendIntent("appdetails", appId, {}, (res) => {
       console.log(res)
     }, (err) => {
       console.error(err);
@@ -160,7 +162,7 @@ export class FriendDetailsPage implements OnInit {
         { id: appId },
         {}
       );
-    });
+    });*/
   }
 
   // If app is installed, connect app to identity demo, if identity demo is not installed, open app instead  //
@@ -180,7 +182,7 @@ export class FriendDetailsPage implements OnInit {
 
       console.log("Passing fields to the connectapplicationprofile intent:", passedFields);
 
-      this.appManager.sendIntent(
+      /* TODO - Remove? appManager.sendIntent(
         "connectapplicationprofile",
         passedFields,
         { appId: appId },
@@ -189,7 +191,7 @@ export class FriendDetailsPage implements OnInit {
       }, (err) => {
         this.appService.startApp(appId);
         console.error("connectapplicationprofile intent error", err);
-      });
+      });*/
     }
   }
 

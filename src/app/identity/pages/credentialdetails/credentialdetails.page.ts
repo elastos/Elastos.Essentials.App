@@ -27,6 +27,8 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
   label: string; // "title" to display
@@ -560,14 +562,10 @@ export class CredentialDetailsPage {
 
     claimsObject[fragment] = localValue;
 
-    this.appManager.sendIntent(
+    appManager.sendIntent(
       "https://did.elastos.net/credverify",
       {
         claims: claimsObject,
-      },
-      {},
-      (res: any) => {
-        console.log("User data received", res);
       }
     );
   }

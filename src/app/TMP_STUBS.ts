@@ -18,22 +18,6 @@ export type ReceivedMessage = {
   from: string;
 }
 
-/**
- * Information about an intent request.
- */
-export type ReceivedIntent = {
-  /** The action requested from the receiving application. */
-  action: string;
-  /** Custom intent parameters provided by the calling application. */
-  params: any;
-  /** Application package id of the calling application. */
-  from: string;
-  /** Unique intent ID that has to be sent back when sending the intent response. */
-  intentId: Number;
-  /** In case the intent comes from outside elastOS and was received as a JWT, this JWT is provided here. */
-  originalJwtRequest?: string;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -45,40 +29,14 @@ export class TemporaryAppManagerPlugin {
     //console.log("setListener() NOT IMPLEMENTED");
   }
 
-  public setIntentListener(listener: (ret: ReceivedIntent) => any) {
-    //console.log("setIntentListener() NOT IMPLEMENTED");
-  }
-
-  public sendIntent(action: string, data: any, options?: any, onSuccess?: (ret: any)=>void, onError?: (err: any)=>void) {
-    //console.log("sendIntent() NOT IMPLEMENTED");
-  }
-
-  /*public getLocale(listener: (defaultLang, currentLang, systemLang) => any) {
-    //console.log("getLocale() NOT IMPLEMENTED");
-    listener("en", "en", "en");
-  }
-
-  public setCurrentLocale(locale: string, onSuccess?: (ret: any)=>void, onError?: (err: any)=>void) {
-    //console.log("setCurrentLocale() NOT IMPLEMENTED");
-  }*/
-
   public sendUrlIntent(url: string, onSuccess: any, onError: any) {
     //console.log("sendUrlIntent() NOT IMPLEMENTED");
-  }
-
-  public sendIntentResponse(action: string, responseData: any, intentId: number, onSuccess?: (ret: any)=>void, onError?: (err: any)=>void) {
-    //console.log("sendIntentResponse() NOT IMPLEMENTED");
-  }
-
-  public start(appID: string) {
-    console.log("start() NOT IMPLEMENTED");
   }
 
   public getVersion(onSuccess?: (version: any)=>void) {
 
   }
 }
-
 
 
 

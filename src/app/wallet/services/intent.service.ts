@@ -10,6 +10,7 @@ import { MasterWallet } from '../model/wallets/MasterWallet';
 import { WalletEditionService } from './walletedition.service';
 import { Events } from './events.service';
 import { PopupProvider } from './popup.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -17,7 +18,6 @@ declare let appManager: AppManagerPlugin.AppManager;
     providedIn: 'root'
 })
 export class IntentService {
-
     private walletList: MasterWallet [] = null;
 
     constructor(
@@ -28,7 +28,8 @@ export class IntentService {
         private coinTransferService: CoinTransferService,
         private popupProvider: PopupProvider,
         private walletAccessService: WalletAccessService,
-        private walletEditionService: WalletEditionService
+        private walletEditionService: WalletEditionService,
+        private intentService: GlobalIntentService
     ) {
     }
 
@@ -40,7 +41,7 @@ export class IntentService {
     }
 
     setIntentListener() {
-        appManager.setIntentListener((intent: AppManagerPlugin.ReceivedIntent) => {
+        this.intentService.intentListener.subscribe((intent: AppManagerPlugin.ReceivedIntent) => {
             this.onReceiveIntent(intent);
         });
     }

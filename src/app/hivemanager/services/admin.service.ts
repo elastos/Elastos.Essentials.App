@@ -10,6 +10,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,6 @@ export class AdminService {
     private storage: StorageService,
     private globalStorage: GlobalStorageService,
     private popup: PopupService,
-    private appManager: TemporaryAppManagerPlugin,
   ) {}
 
   async init() {
@@ -175,11 +175,8 @@ export class AdminService {
 
   private sendDIDTransactionIntentRequest(payload: string) {
     console.log("Sending didtransaction intent");
-    this.appManager.sendIntent("https://wallet.elastos.net/didtransaction", {
+    appManager.sendIntent("https://wallet.elastos.net/didtransaction", {
       didrequest: JSON.parse(payload)
-    }, {}, (response)=>{
-    }, (err)=>{
-        console.error("Failed to send app manager didtransaction intent!", err);
     });
   }
 }

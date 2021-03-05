@@ -8,7 +8,7 @@ import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 
-let selfUxService: UXService = null;
+declare let appManager: AppManagerPlugin.AppManager;
 
 enum MessageType {
     INTERNAL = 1,
@@ -32,14 +32,11 @@ export class UXService {
     constructor(
         public translate: TranslateService,
         public events: Events,
-        private zone: NgZone,
         private didService: DIDService,
         private modalCtrl: ModalController,
         private navCtrl: NavController,
-        private theme: GlobalThemeService,
         private appManager: TemporaryAppManagerPlugin
     ) {
-        selfUxService = this;
         UXService.instance = this;
     }
 
@@ -194,16 +191,6 @@ export class UXService {
     }
 
     public sendIntentResponse(action, result, intentId): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.appManager.sendIntentResponse(action, result, intentId,
-                (response) => {
-                    resolve();
-                },
-                (err) => {
-                    console.error('sendIntentResponse failed: ', err);
-                    reject(err);
-                }
-            );
-        });
+        return appManager.sendIntentResponse(result, intentId);
     }
 }

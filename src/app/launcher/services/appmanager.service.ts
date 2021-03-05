@@ -23,7 +23,7 @@ import { TipsPage } from '../pages/tips/tips.page';
 import { Tip } from '../model/tip.model';
 
 import * as moment from 'moment';
-import { TemporaryAppManagerPlugin, ReceivedIntent, ReceivedMessage } from 'src/app/TMP_STUBS';
+import { TemporaryAppManagerPlugin, ReceivedMessage } from 'src/app/TMP_STUBS';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
@@ -31,6 +31,7 @@ import { Logger } from 'src/app/logger';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 enum MessageType {
     INTERNAL = 1,
@@ -90,7 +91,8 @@ export class AppmanagerService {
         private didSessions: GlobalDIDSessionsService,
         private language: GlobalLanguageService,
         private hiveManagerInitService: HiveManagerInitService,
-        private walletInitService: WalletInitService
+        private walletInitService: WalletInitService,
+        private globalIntentService: GlobalIntentService
     ) {}
 
     public async init() {
@@ -106,8 +108,8 @@ export class AppmanagerService {
             this.onMessageReceived(ret);
         });
 
-        this.appManager.setIntentListener((ret) => {
-            this.onIntentReceived(ret);
+        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+            this.onIntentReceived(receivedIntent);
         });
 
         this.events.subscribe("updateNotifications", () => {
@@ -195,7 +197,7 @@ export class AppmanagerService {
     /******************************** Intent Listener ********************************/
 
     // Intent
-    onIntentReceived(ret: ReceivedIntent) {
+    onIntentReceived(ret: AppManagerPlugin.ReceivedIntent) {
         console.log('Received external intent', ret);
         switch (this.getShortAction(ret.action)) {
         }

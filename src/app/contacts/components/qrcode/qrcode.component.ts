@@ -5,8 +5,9 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 
 import { FriendsService } from '../../services/friends.service';
 import { NativeService } from '../../services/native.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Component({
   selector: 'app-qrcode',
@@ -26,8 +27,7 @@ export class QRCodeComponent implements OnInit {
     public friendsService: FriendsService,
     private clipboard: Clipboard,
     public modalCtrl: ModalController,
-    private navParams: NavParams,
-    private appManager: TemporaryAppManagerPlugin
+    private navParams: NavParams
   ) {
     this.name = this.navParams.get("name");
     this.didString = this.navParams.get("didstring");
@@ -46,12 +46,11 @@ export class QRCodeComponent implements OnInit {
     this.native.shareToast();
   }
 
-  shareInvitationLink() {
-    this.appManager.sendIntent("share", {
+  async shareInvitationLink() {
+    await appManager.sendIntent("share", {
       title: this.translate.instant("share-friend"),
       url: this.qrCodeString
-    }, {}, () => {
-      this.modalCtrl.dismiss();
     });
+    this.modalCtrl.dismiss();
   }
 }

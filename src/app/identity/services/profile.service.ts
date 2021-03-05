@@ -13,7 +13,9 @@ import { Profile } from "../model/profile.model";
 import { Events } from "./events.service";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
-var deepEqual = require('deep-equal')
+var deepEqual = require('deep-equal');
+
+declare let appManager: AppManagerPlugin.AppManager;
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -192,7 +194,7 @@ export class ProfileService {
     //   this.options.dismiss();
     // }
 
-    this.appManager.sendIntent("share", {
+    appManager.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: await this.getAddFriendShareableUrl(),
     });

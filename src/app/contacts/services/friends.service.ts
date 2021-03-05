@@ -17,6 +17,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Injectable({
   providedIn: 'root'
@@ -82,8 +83,7 @@ export class FriendsService {
     private events: Events,
     private didService: DidService,
     private didSessions: GlobalDIDSessionsService,
-    private contactNotifier: ContactNotifierService,
-    private appManager: TemporaryAppManagerPlugin
+    private contactNotifier: ContactNotifierService
   ) {
     this.managerService = this;
   }
@@ -215,48 +215,45 @@ export class FriendsService {
   /************************************************
   *********** Add Friend By Scan Button ***********
   *************************************************/
-  scanDID() {
-    this.appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
-      console.log("Got scan result", res);
+  async scanDID() {
+    let res = await appManager.sendIntent("https://scanner.elastos.net/scanqrcode");
+    console.log("Got scan result", res);
 
-      // Scanned content could contain different things:
-      // - A did: did:elastos:xxxx
-      // - A add friend url: https://contact.elastos.net/addfriend?did=xxx[&carrier=xxx]
-      // - Something that we don't know
-      let scannedContentHandled = false
-      if (res && res.result && res.result.scannedContent) {
-        let scannedContent = res.result.scannedContent;
+    // Scanned content could contain different things:
+    // - A did: did:elastos:xxxx
+    // - A add friend url: https://contact.elastos.net/addfriend?did=xxx[&carrier=xxx]
+    // - Something that we don't know
+    let scannedContentHandled = false
+    if (res && res.result && res.result.scannedContent) {
+      let scannedContent = res.result.scannedContent;
 
-        if (scannedContent.indexOf("did:") == 0) {
-          // We've scanned a DID string. Add friend, without carrier address support
-          console.log("Scanned content is a DID string");
-          this.addContactByIntent(scannedContent, null);
-          scannedContentHandled = true;
-        }
-        else if (scannedContent.indexOf("http") == 0) {
-          console.log("Scanned content is a URL");
-          // Probably a url - try to parse it and see if we can handle it
-          let scannedUrl = new URL(scannedContent);
-          console.log(scannedUrl);
+      if (scannedContent.indexOf("did:") == 0) {
+        // We've scanned a DID string. Add friend, without carrier address support
+        console.log("Scanned content is a DID string");
+        this.addContactByIntent(scannedContent, null);
+        scannedContentHandled = true;
+      }
+      else if (scannedContent.indexOf("http") == 0) {
+        console.log("Scanned content is a URL");
+        // Probably a url - try to parse it and see if we can handle it
+        let scannedUrl = new URL(scannedContent);
+        console.log(scannedUrl);
 
-          if (scannedUrl) {
-            if (scannedUrl.pathname == "/addfriend") {
-              let did = scannedUrl.searchParams.get("did");
-              let carrierAddress = scannedUrl.searchParams.get("carrier");
+        if (scannedUrl) {
+          if (scannedUrl.pathname == "/addfriend") {
+            let did = scannedUrl.searchParams.get("did");
+            let carrierAddress = scannedUrl.searchParams.get("carrier");
 
-              this.addContactByIntent(did, carrierAddress);
-              scannedContentHandled = true;
-            }
+            this.addContactByIntent(did, carrierAddress);
+            scannedContentHandled = true;
           }
         }
       }
+    }
 
-      if (!scannedContentHandled) {
-        this.native.genericToast(this.translate.instant('failed-read-scan'));
-      }
-    }, (err: any) => {
-      console.error(err);
-    });
+    if (!scannedContentHandled) {
+      this.native.genericToast(this.translate.instant('failed-read-scan'));
+    }
   }
 
   /*******************************************
@@ -932,11 +929,8 @@ export class FriendsService {
     }
     console.log("Tried to send " + sentNotificationsCount + " notifications to friends");
     console.log("Sending share intent response");
-    this.appManager.sendIntentResponse(
-      "share", {},
-      this.managerService.handledIntentId,
-      (res: any) => {},
-      (err: any) => {console.log('sendIntentResponse failed: ', err)}
+    appManager.sendIntentResponse({},
+      this.managerService.handledIntentId
     );
   }
 
@@ -958,12 +952,9 @@ export class FriendsService {
 
   sendIntentRes(contacts: Contact[], intent: string) {
     if(contacts.length > 0) {
-      this.appManager.sendIntentResponse(
-        intent,
+      appManager.sendIntentResponse(
         { friends: contacts },
-        this.managerService.handledIntentId,
-        (res: any) => {},
-        (err: any) => { console.log('sendIntentResponse failed: ', err) }
+        this.managerService.handledIntentId
       );
     } else {
       this.native.genericToast(this.translate.instant('select-before-invite'));

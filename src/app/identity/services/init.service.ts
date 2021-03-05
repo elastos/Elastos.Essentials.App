@@ -21,4 +21,8 @@ export class IdentityInitService {
     await this.intentReceiverService.init();
     await this.hiveService.init();
   }
+
+  public start() {
+    this.uxService.computeAndShowEntryScreen();
+  }
 }

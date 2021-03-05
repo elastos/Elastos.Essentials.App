@@ -22,6 +22,7 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 
 declare let didManager: DIDPlugin.DIDManager;
+declare let appManager: AppManagerPlugin.AppManager;
 
 type RequestDapp = {
   appPackageId: string,
@@ -398,8 +399,7 @@ export class CredentialAccessRequestPage {
           text: this.translate.instant('credaccess-alert-publish-required-btn'),
           handler: () => {
             this.zone.run(() => {
-              this.appManager.sendIntentResponse(
-                this.requestDapp.action,
+              appManager.sendIntentResponse(
                 { jwt: null },
                 this.requestDapp.intentId
               );

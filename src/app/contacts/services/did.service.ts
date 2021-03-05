@@ -6,6 +6,8 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +18,6 @@ export class DidService {
     private translate: TranslateService,
     private uxService: UxService,
     private didSessions: GlobalDIDSessionsService,
-    private appManager: TemporaryAppManagerPlugin
   ) { }
 
   getSignedIdentity(): Promise<string> {
@@ -30,7 +31,7 @@ export class DidService {
   }
 
   async shareIdentity(contact: Contact) {
-    this.appManager.sendIntent("share", {
+    appManager.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: await this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
     });

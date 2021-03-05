@@ -5,6 +5,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 @Component({
   selector: 'app-about',
   templateUrl: './about.page.html',
@@ -56,7 +58,7 @@ export class AboutPage implements OnInit {
     if(item.title === 'email') {
       return;
     } else {
-      this.appManager.sendIntent('openurl', { url: item.link })
+      appManager.sendIntent('openurl', { url: item.link });
     }
   }
 }

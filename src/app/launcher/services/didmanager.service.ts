@@ -9,6 +9,8 @@ import { AppmanagerService } from './appmanager.service';
 import { NativeService } from './native.service';
 import { TipsService } from './tips.service';
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,7 +23,6 @@ export class DIDManagerService {
     private theme: GlobalThemeService,
     private didSessions: GlobalDIDSessionsService,
     private contactNotifier: ContactNotifierService,
-    private appManager: TemporaryAppManagerPlugin,
   ) { }
 
   init() {
@@ -40,7 +41,7 @@ export class DIDManagerService {
       encodeURIComponent(this.signedIdentity.didString) +
       '&carrier=' + carrierAddress;
 
-    this.appManager.sendIntent("share", {
+    appManager.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: addFriendUrl,
     });

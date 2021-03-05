@@ -1,8 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Platform, NavController } from '@ionic/angular';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { ReceivedIntent, TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { FriendsService } from './friends.service';
+
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,6 @@ export class IntentService {
     private zone: NgZone,
     private navCtrl: NavController,
     private friendsService: FriendsService,
-    private appManager: TemporaryAppManagerPlugin,
     private intentService: GlobalIntentService
   ) {
   }
@@ -24,7 +24,7 @@ export class IntentService {
     })
   }
 
-  onReceiveIntent(ret: ReceivedIntent) {
+  onReceiveIntent(ret: AppManagerPlugin.ReceivedIntent) {
     console.log("Intent received", ret, JSON.stringify(ret));
     this.friendsService.managerService.handledIntentId = ret.intentId;
 
@@ -105,8 +105,7 @@ export class IntentService {
 
   // Just notify the qrscanner to quit
   sendEmptyIntentRes() {
-    this.appManager.sendIntentResponse(
-      "",
+    appManager.sendIntentResponse(
       {},
       this.friendsService.managerService.handledIntentId
     );
