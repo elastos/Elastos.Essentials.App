@@ -5,6 +5,8 @@ import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
 
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
+
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
   contentType: string;
@@ -52,6 +54,7 @@ export class GlobalDIDSessionsService {
     this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
     if (this.signedInIdentity) {
       GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
+      passwordManager.setCurrentDID(this.signedInIdentity.didString);
     }
 
     this.signedInIdentityListener.next(this.signedInIdentity);
@@ -122,6 +125,7 @@ export class GlobalDIDSessionsService {
 
     this.signedInIdentity = entry;
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
+    passwordManager.setCurrentDID(this.signedInIdentity.didString);
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
@@ -137,6 +141,7 @@ export class GlobalDIDSessionsService {
 
     this.signedInIdentity = null;
     GlobalDIDSessionsService.signedInDIDString = null;
+    passwordManager.setCurrentDID(null);
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
