@@ -73,6 +73,12 @@ export const zh = {
     'app-scanner-description': '扫描二维码',
     'app-settings': '设置',
     'app-settings-description': '管理elastOS',
+    'app-dpos-voting': 'DPoS voting',
+    'app-dpos-description': 'DPoS Supernodes',
+    'app-cr-council': 'CR Council',
+    'app-crcouncil-description': 'Cyber Republic council members',
+    'app-cr-proposal': 'CR Proposal',
+    'app-crproposal-description': 'Cyber Republic proposals',
 
     /*********** Tips generic ************/
     'tip-of-the-day': '每日提示',

@@ -73,6 +73,12 @@ export const en = {
     'app-scanner-description': 'Scan anything',
     'app-settings': 'Settings',
     'app-settings-description': 'Manage elastOS',
+    'app-dpos-voting': 'DPoS voting',
+    'app-dpos-description': 'DPoS Supernodes',
+    'app-cr-council': 'CR Council',
+    'app-crcouncil-description': 'Cyber Republic council members',
+    'app-cr-proposal': 'CR Proposal',
+    'app-crproposal-description': 'Cyber Republic proposals',
 
     /*********** Tips generic ************/
     'tip-of-the-day': 'Tip of the day',

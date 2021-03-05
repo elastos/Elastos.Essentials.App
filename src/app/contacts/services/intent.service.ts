@@ -25,7 +25,6 @@ export class IntentService {
   }
 
   onReceiveIntent(ret: AppManagerPlugin.ReceivedIntent) {
-    console.log("Intent received", ret, JSON.stringify(ret));
     this.friendsService.managerService.handledIntentId = ret.intentId;
 
     switch (ret.action) {

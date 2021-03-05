@@ -73,7 +73,13 @@ export const fr = {
     'app-scanner-description': 'Numérisez vos QR codes',
     'app-settings': 'Paramètres',
     'app-settings-description': 'Configurez elastOS',
-
+    'app-dpos-voting': 'DPoS voting',
+    'app-dpos-description': 'DPoS Supernodes',
+    'app-cr-council': 'CR Council',
+    'app-crcouncil-description': 'Cyber Republic council members',
+    'app-cr-proposal': 'CR Proposal',
+    'app-crproposal-description': 'Cyber Republic proposals',
+    
     /*********** Tips generic ************/
     'tip-of-the-day': 'Astuce du jour',
     'previous-tip': 'Préc.',

@@ -96,6 +96,7 @@ export class AppIDService {
         });
     }, () => {
       // Cancelled
+      Logger.warn("identity", "AppID credential generation cancelled");
       this.rejectExternalRequest();
     });
   }
