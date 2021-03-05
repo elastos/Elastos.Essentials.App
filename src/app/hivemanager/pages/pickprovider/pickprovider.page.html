@@ -35,7 +35,6 @@
         <ion-button (click)="manuallySetProvider()">{{ 'pickprovider.use-address' | translate }}</ion-button>
     </div>
 
-
     <!-- Can't Fetch Vault -->
     <div *ngIf="!checkingInitialStatus && !vaultProviderCouldBeContacted && !publishInProgress()" class="container" [class.darkContainer]="theme.darkMode">
         <h3>{{ 'pickprovider.provider-offline' | translate }}</h3>

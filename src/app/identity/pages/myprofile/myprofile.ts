@@ -26,7 +26,6 @@ import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { ThemeService } from "src/app/didsessions/services/theme.service";
-import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 
 type ProfileDisplayEntry = {
@@ -201,12 +200,6 @@ export class MyProfilePage {
 
   ionViewWillEnter() {
     console.log("ionWillEnter");
-
-    this.uxService.makeAppVisible();
-    //titleBarManager.setTitle(this.translate.instant("my-identity"));
-    this.titleBar.setTitle("");
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-    // this.uxService.setTitleBarSettingsKeyShown(true);
     this.buildCredentialEntries();
 
     this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();

@@ -1,10 +1,12 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, ModalController, NavController } from '@ionic/angular';
 import { DIDService } from './did.service';
 import { Events } from './events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 
 let selfUxService: UXService = null;
 
@@ -23,8 +25,10 @@ enum MessageType {
     providedIn: 'root'
 })
 export class UXService {
-    public static instance: UXService = null;
+    @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
+    public static instance: UXService = null;
+    
     constructor(
         public translate: TranslateService,
         public events: Events,
@@ -42,44 +46,34 @@ export class UXService {
     async init() {
         this.appManager.setListener(this.onReceive);
 
-        /* TODO @chad
-        titleBarManager.addOnItemClickedListener((menuIcon) => {
-            if (menuIcon.key == "back") {
-                this.titlebarBackButtonHandle();
-            }
-            if (menuIcon.key == "settings") {
+     
+   /*      this.titleBar.addOnItemClickedListener((icon) => {
+            if (icon.key == "settings") {
                 this.navCtrl.navigateForward('/settings');
             }
-        });
-        */
+        }); */
     }
 
     setTitleBarBackKeyShown(show: boolean) {
-        /* TODO @chad
         if (show) {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-                key: "back",
-                iconPath: TitleBarPlugin.BuiltInIcon.BACK
-            });
+            this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
         }
         else {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
+            this.titleBar.setNavigationMode(null);
         }
-        */
+       
     }
 
     setTitleBarSettingsKeyShown(show: boolean) {
-        /* TODO @chad
         if (show) {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
                 key: "settings",
-                iconPath: TitleBarPlugin.BuiltInIcon.SETTINGS
+                iconPath: BuiltInIcon.SETTINGS
             });
         }
         else {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
         }
-        */
     }
 
     /**

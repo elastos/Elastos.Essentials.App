@@ -16,6 +16,9 @@
       <ion-button *ngIf="!menuVisible && icons[3].visible"  (click)="outerRightIconClicked($event)">
         <img [src]="getIconPath(3)">
       </ion-button>
+      <ion-button *ngIf="menuVisible"  (click)="outerRightIconClicked($event)">
+        <img [src]="getIconPath(3)">
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

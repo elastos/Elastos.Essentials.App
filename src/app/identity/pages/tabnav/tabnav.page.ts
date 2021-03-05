@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { IonTabs } from "@ionic/angular";
+import { IonTabs, NavController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { UXService } from "../../services/ux.service";
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: "app-tabnav",
@@ -10,11 +11,13 @@ import { UXService } from "../../services/ux.service";
   styleUrls: ["./tabnav.page.scss"],
 })
 export class TabnavPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild("tabs", { static: false }) tabs: IonTabs;
+
   constructor(
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    public UX: UXService
+    private navCtrl: NavController
   ) { }
 
   public selectedTab: string;
@@ -24,13 +27,22 @@ export class TabnavPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    //titleBarManager.setTitle(this.translate.instant('identity'));
-    this.UX.setTitleBarSettingsKeyShown(true);
-    this.UX.setTitleBarBackKeyShown(false);
+    this.titleBar.setTitle(this.translate.instant("my-identity"));
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+      key: "settings",
+      iconPath: BuiltInIcon.SETTINGS
+    });
+  
+    this.titleBar.addOnItemClickedListener((icon) => {
+      if (icon.key == "settings") {
+          this.navCtrl.navigateForward('/settings');
+      }
+    });
   }
 
   ionViewWillLeave() {
-    this.UX.setTitleBarSettingsKeyShown(false);
+    this.titleBar.setNavigationMode(null);
   }
 
   setCurrentTab() {

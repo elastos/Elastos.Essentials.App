@@ -119,8 +119,4 @@ export class FriendsPage implements OnInit {
       return false;
     }
   }
-
-  goToAdd() {
-    this.router.navigate(['/add']);
-  }
 }

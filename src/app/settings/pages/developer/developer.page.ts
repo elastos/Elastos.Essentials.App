@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { DeveloperService } from '../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from 'src/app/settings/services/theme.service';
 
 @Component({
   selector: 'app-developer',
@@ -17,7 +17,7 @@ export class DeveloperPage implements OnInit {
 
   constructor(
     public settings: SettingsService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public developer: DeveloperService,
     public translate: TranslateService
   ) { }
@@ -26,11 +26,9 @@ export class DeveloperPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('developer-options'));
-    this.settings.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave() {
-    this.settings.setTitleBarBackKeyShown(false);
   }
 
   getBackgroundServicesTitle() {

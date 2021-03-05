@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SettingsService } from '../../services/settings.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ThemeService } from 'src/app/settings/services/theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-about',
@@ -36,7 +36,7 @@ export class AboutPage implements OnInit {
 
   constructor(
     public settings: SettingsService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public translate: TranslateService,
     private appManager: TemporaryAppManagerPlugin
   ) { }
@@ -47,11 +47,9 @@ export class AboutPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('about-setting'));
-    this.settings.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave() {
-    this.settings.setTitleBarBackKeyShown(false);
   }
 
   openLink(item) {

@@ -119,10 +119,10 @@
         <ion-item-sliding *ngFor="let contact of friendsService.contacts">
           <!-- HAS CONTACT NAME -->
           <ion-item
-            [color]="
+            [class.activeItem]="
               contact === friendsService.activeSlide ||
               !friendsService.activeSlide && firstContact() ?
-              'secondary' : 'medium'"
+              'secondary' : null"
             detail="false"
             lines="none"
             [routerLink]="['/friends/', contact.id]"
@@ -143,7 +143,7 @@
           </ion-item>
           <!-- HAS NO CONTACT NAME -->
           <ion-item
-            [color]="contact === friendsService.activeSlide ? 'secondary' : 'medium'"
+            [class.activeItem]="contact === friendsService.activeSlide"
             detail="false"
             lines="none"
             [routerLink]="['/friends/', contact.id]"
@@ -166,14 +166,14 @@
           </ion-grid>
         </ion-item>
         <ion-item-options side="end">
-          <ion-item-option class="itemOption" [color]="contact === friendsService.activeSlide ? 'secondary' : 'medium'" (click)="friendsService.toggleFav(contact)">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="friendsService.toggleFav(contact)">
             <img *ngIf="contact.isFav" src="/assets/contacts/images/favorite.svg">
             <img *ngIf="!contact.isFav" [src]="!theme.darkMode ? '/assets/contacts/images/unfavorite.svg' : '/assets/contacts/images/darkmode/unfavorite.svg'">
           </ion-item-option>
-          <ion-item-option class="itemOption" [color]="contact === friendsService.activeSlide ? 'secondary' : 'medium'" (click)="didService.shareIdentity(contact)">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="didService.shareIdentity(contact)">
             <img [src]="!theme.darkMode ? '/assets/contacts/images/share.svg' : '/assets/contacts/images/darkmode/share.svg'">
           </ion-item-option>
-          <ion-item-option class="itemOption" [color]="contact === friendsService.activeSlide ? 'secondary' : 'medium'" (click)="popupService.showDeletePrompt(contact)">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="popupService.showDeletePrompt(contact)">
             <img src="/assets/contacts/images/delete.svg">
           </ion-item-option>
         </ion-item-options>
@@ -185,10 +185,10 @@
     <ion-list *ngIf="friendsService.contacts.length > 0 && favActive">
       <ion-item-sliding *ngFor="let contact of getFavorites()">
         <ion-item
-          [color]="
+          [class.activeItem]="
             contact === friendsService.activeSlide ||
             !friendsService.activeSlide && firstContact() ?
-            'secondary' : 'medium'"
+            'secondary' : null"
           detail="false"
           lines="none"
           [routerLink]="['/friends/', contact.id]"
@@ -207,13 +207,13 @@
           </ion-grid>
         </ion-item>
         <ion-item-options side="end">
-          <ion-item-option class="itemOption" [color]="contact === friendsService.activeSlide ? 'secondary' : 'medium'" (click)="friendsService.toggleFav(contact)">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="friendsService.toggleFav(contact)">
             <img src="/assets/contacts/images/favorite.svg">
           </ion-item-option>
-          <ion-item-option class="itemOption" [color]="contact === friendsService.activeSlide ? 'secondary' : 'medium'" (click)="didService.shareIdentity(contact)">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="didService.shareIdentity(contact)">
             <img [src]="!theme.darkMode ? '/assets/contacts/images/share.svg' : '/assets/contacts/images/darkmode/share.svg'">
           </ion-item-option>
-          <ion-item-option class="itemOption" [color]="contact === friendsService.activeSlide ? 'secondary' : 'medium'" (click)="popupService.showDeletePrompt(contact)">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="popupService.showDeletePrompt(contact)">
             <img src="/assets/contacts/images/delete.svg">
           </ion-item-option>
         </ion-item-options>

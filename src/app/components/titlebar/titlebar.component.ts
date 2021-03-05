@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AppTheme, GlobalThemeService } from '../../services/global.theme.service';
-import { NavController, PopoverController } from '@ionic/angular';
+import { NavController, PopoverController, ModalController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon, TitleBarForegroundMode } from './titlebar.types';
 
@@ -39,6 +39,7 @@ export class TitleBarComponent {
   constructor(
     public themeService: GlobalThemeService,
     private popoverCtrl: PopoverController,
+    private modalCtrl: ModalController,
     private navCtrl: NavController
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
@@ -141,7 +142,7 @@ export class TitleBarComponent {
   }
 
   getIconPath(iconSlot: TitleBarIconSlot) {
-    // Soecial case for the outer right icon in case a menu is configured
+    // Special case for the outer right icon in case a menu is configured
     if (iconSlot == TitleBarIconSlot.OUTER_RIGHT && this.menuVisible) {
       return !this.themeService.darkMode ? '/assets/components/titlebar/horizontal_menu.svg' : '/assets/components/titlebar/darkmode/horizontal_menu.svg';
     }
@@ -189,7 +190,7 @@ export class TitleBarComponent {
    * @param menuItems List of app-specific menu entries @TitleBarMenuItem . Pass null to remove the existing menu.
    */
   public setupMenuItems(menuItems: TitleBarMenuItem[]) {
-    this.menuItems = this.menuItems;
+    this.menuItems = menuItems;
   }
 
   /**
@@ -213,8 +214,19 @@ export class TitleBarComponent {
     this.visibile = visibile;
   }
 
+  /**
+   * Setting this to true will automatically add the icon to TitleBarIconSlot.OUTER_RIGHT slot with key 'menu' to be listened to
+  */
   public setMenuVisibility(visible: boolean) {
-    this.menuVisible = visible;
+    if(visible) {
+      this.menuVisible = visible;
+/*       this.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+        key: "menu",
+        iconPath: BuiltInIcon.HORIZONTAL_MENU
+      }); */
+    } else {
+      this.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+    }
   }
 
   /**
@@ -260,20 +272,20 @@ export class TitleBarComponent {
 
   outerRightIconClicked(ev) {
     if (this.menuVisible)
-      this.openMenu(ev);
+      this.openMenu();
     else
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
   }
 
-  async openMenu(ev) {
-    this.menu = await this.popoverCtrl.create({
+  async openMenu() {
+    this.menu = await this.modalCtrl.create({
       mode: 'ios',
       component: TitlebarmenuitemComponent,
       componentProps: {
+        items: this.menuItems
       },
-      cssClass: !this.themeService.activeTheme.value ? 'options' : 'darkOptions',
-      event: ev,
-      translucent: false
+      cssClass: !this.themeService.darkMode ? 'titlebarmenu-component' : 'titlebarmenu-component',
+      backdropDismiss: true,
     });
     this.menu.onWillDismiss().then(() => {
       this.menu = null;

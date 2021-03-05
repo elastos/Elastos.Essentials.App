@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -29,7 +29,7 @@ export class AppService {
 
   init() {
     if (this.platform.platforms().indexOf("cordova") >= 0) {
-      /* TODO @chad titleBarManager.addOnItemClickedListener((menuIcon) => {
+  /*     this.titleBar.addOnItemClickedListener((menuIcon) => {
         if(this.popupService.qrModal) {
           this.popupService.qrModal.dismiss();
         }
@@ -39,15 +39,23 @@ export class AppService {
         if(this.popupService.optionsPopup) {
           this.popupService.optionsPopup.dismiss();
         }
-        if (menuIcon.key === "back") {
-          if(this.popupService.avatarModal) {
-            this.popupService.avatarModal.dismiss();
-          } else {
-            this.navCtrl.back();
-          }
-        }
+
         this.onTitleBarItemClicked(menuIcon);
-      });*/
+      }); */
+    }
+  }
+
+  onTitleBarItemClicked(icon: TitleBarIcon) {
+    switch (icon.key) {
+      case 'backToHome':
+        console.log('Back to home');
+        this.navCtrl.navigateBack('/friends');
+        break;
+      case 'add':
+        this.router.navigate(['/add']);
+        break;
+      case 'scan':
+        this.friendsService.scanDID();
     }
   }
 
@@ -76,20 +84,6 @@ export class AppService {
     }
   }
   */
-
-  onTitleBarItemClicked(icon: TitleBarIcon) {
-    switch (icon.key) {
-      case 'backToHome':
-        console.log('Back to home');
-        this.navCtrl.navigateBack('/friends');
-        break;
-      case 'add':
-        this.router.navigate(['/add']);
-        break;
-      case 'scan':
-        this.friendsService.scanDID();
-    }
-  }
 
   setTitleBarBackKeyShown(show: boolean, backToHome: boolean) {
     /* TODO @chad

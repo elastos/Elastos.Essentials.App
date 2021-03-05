@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, PopoverController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
 import { HiveService, PaidIncompleteOrder, VaultLinkStatus } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarMenuItem, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
+import { TitlebarmenuitemComponent } from 'src/app/components/titlebarmenuitem/titlebarmenuitem.component';
 
 type StorageProvider = {
   name: string,
@@ -43,6 +44,8 @@ export class PickProviderPage implements OnInit {
   // Hardcoded list of suggested providers for now
   public storageProviders: StorageProvider[] = [];
 
+  private menu: any;
+
   constructor(
     public navCtrl: NavController,
     public zone: NgZone,
@@ -50,11 +53,11 @@ export class PickProviderPage implements OnInit {
     private translate: TranslateService,
     public hiveService: HiveService,
     private route: ActivatedRoute,
-    private appService: AppService,
     public theme: GlobalThemeService,
     private popup: PopupService,
     private prefs: PrefsService,
-    private events: Events
+    private events: Events,
+    private popoverCtrl: PopoverController
   ) {}
 
   async ngOnInit() {
@@ -106,16 +109,20 @@ export class PickProviderPage implements OnInit {
       });
     }
 
+    this.titleBar.setMenuVisibility(true);
     this.titleBar.setupMenuItems(menuItems);
 
-    this.titleBar.addOnItemClickedListener((clickedIcon)=>{
+    this.titleBar.addOnItemClickedListener(async (clickedIcon) => {
       switch (clickedIcon.key) {
+   /*      case "menu":
+          await this.openMenu();
+          break; */
         case "pickprovider-adminproviders":
           this.goToAdminPanel();
           break;
         case "pickprovider-forceproviderchange":
           Logger.log("HiveManager", "Forcing provider change");
-          this.zone.run(()=>{
+          this.zone.run(() => {
             this.forceProviderChange = true;
             this.vaultProviderCouldBeContacted = true;
           });
@@ -123,7 +130,7 @@ export class PickProviderPage implements OnInit {
       }
     });
 
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
 
     this.titleBar.setTitle(this.translate.instant('pickprovider.title'));
   }
@@ -134,7 +141,7 @@ export class PickProviderPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    // TODO @chad titleBarManager.setupMenuItems(null);
+    this.titleBar.setMenuVisibility(false);
 
     if (this.popup.alert) {
       this.popup.alertCtrl.dismiss();
@@ -142,6 +149,22 @@ export class PickProviderPage implements OnInit {
     }
   }
 
+/*   async openMenu() {
+    this.menu = await this.popoverCtrl.create({
+      mode: 'ios',
+      component: TitlebarmenuitemComponent,
+      componentProps: {
+        items: this.titleBar.menuItems
+      },
+      cssClass: !this.theme.darkMode ? 'titlebarmenu-component' : 'titlebarmenu-component',
+      translucent: false
+    });
+    this.menu.onWillDismiss().then(() => {
+      this.menu = null;
+    });
+    return await this.menu.present();
+  }
+ */
   private async checkInitialStatus() {
     if (this.checkingInitialStatus)
       return;

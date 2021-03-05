@@ -1,2 +1,8 @@
-<!--<ion-row *ngFor="let item of titlebarService.menuItems">{{ item.title }}</ion-row>-->
-<!-- TODO @chad: get menu items for each title bar component, not through a service -->
+<ion-grid>
+    <ion-row *ngFor="let item of menuItems">
+        <ion-col size="12">
+            <ion-label>{{ item.title }}</ion-label>
+            <img [src]="getIconPath(item.iconPath)">
+        </ion-col>
+    </ion-row>
+</ion-grid>

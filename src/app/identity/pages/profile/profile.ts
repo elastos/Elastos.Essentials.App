@@ -208,11 +208,7 @@ export class ProfilePage {
   }
 
   ionViewWillEnter() {
-    console.log("ionwillenter profile");
-    this.uxService.makeAppVisible();
-    //titleBarManager.setTitle(this.translate.instant("my-identity"));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-
+    console.log("ionWillEnter");
     this.buildAppAndAvatarCreds(false);
 
     // this.profileService.didString = this.didService

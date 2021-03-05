@@ -132,7 +132,7 @@
           font-weight: 600;
           line-height: 1.2;
         }
-      }
+      }  
     }
 
     .first-col {
@@ -172,16 +172,27 @@
       text-align: center;
     }
   }
+
+  .activeItem {
+    --background: #f0f1ff;
+  }
+
+  .itemOption {
+    background: transparent;
+  
+    img {
+      height: 20px;
+      width: 20px
+    }
+  }
+  
+  .activeItemOption {
+    background: #f0f1ff;
+  }    
 }
 
 
 /******************** Ion-item option ********************/
-.itemOption {
-  img {
-    height: 20px;
-    width: 20px
-  }
-}
 
 .darkContainer {
   ion-segment {
@@ -196,6 +207,14 @@
 
   ion-list {
     background: #191a2f;
+  }
+
+  .activeItem {
+    --background: #262641;
+  }
+
+  .activeItemOption {
+    background: #262641;
   }
 }
 

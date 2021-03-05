@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PopoverController, NavParams } from '@ionic/angular';
-import { ThemeService } from '../../services/theme.service';
+import { PopoverController } from '@ionic/angular';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-warning',
@@ -9,8 +9,7 @@ import { ThemeService } from '../../services/theme.service';
 })
 export class SettingsWarningComponent implements OnInit {
   constructor(
-    public theme: ThemeService,
-    private navParams: NavParams,
+    public theme: GlobalThemeService,
     private popoverCtrl: PopoverController,
   ) { }
 

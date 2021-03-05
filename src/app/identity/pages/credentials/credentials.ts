@@ -26,7 +26,6 @@ import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { ProfileService } from "../../services/profile.service";
-import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -55,7 +54,6 @@ type CredentialDisplayEntry = {
   styleUrls: ["credentials.scss"],
 })
 export class CredentialsPage {
-  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public profile: Profile;
 
@@ -182,10 +180,6 @@ export class CredentialsPage {
   }
 
   ionViewWillEnter() {
-
-    this.uxService.makeAppVisible();
-    //titleBarManager.setTitle(this.translate.instant("my-identity"));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
   }
 
   ionViewDidEnter() {

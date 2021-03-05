@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
-import { ThemeService } from 'src/app/settings/services/theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-language',
@@ -16,7 +16,7 @@ export class LanguagePage implements OnInit {
   constructor(
     public settings: SettingsService,
     public languageService: GlobalLanguageService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public translate: TranslateService
   ) { }
 
@@ -25,10 +25,8 @@ export class LanguagePage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('language-setting'));
-    this.settings.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave() {
-    this.settings.setTitleBarBackKeyShown(false);
   }
 }

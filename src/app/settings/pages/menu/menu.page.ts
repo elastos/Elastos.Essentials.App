@@ -2,8 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DeveloperService } from '../../services/developer.service';
 import { NavController } from '@ionic/angular';
-import { SettingsService } from '../../services/settings.service';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -56,8 +54,7 @@ export class MenuPage implements OnInit {
     public theme: GlobalThemeService,
     public developer: DeveloperService,
     public translate: TranslateService,
-    private navController:NavController,
-    private settings: SettingsService,
+    private navController: NavController,
     private prefsService: GlobalPreferencesService,
     private appManager: TemporaryAppManagerPlugin
   ) {

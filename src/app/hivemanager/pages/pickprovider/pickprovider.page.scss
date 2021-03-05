@@ -1,3 +1,5 @@
+@import "../../module.scss";
+
 .container {
     display: flex;
     flex-direction: column;
@@ -52,36 +54,6 @@
         p {
             margin: 0;
         }
-  
-        /* ion-row {
-            padding: 0;
-  
-            ion-col {
-                padding: 5px 10px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid #8889b1;
-  
-                h4, h5 {
-                    margin: 0;
-                }
-  
-                h4 {
-                    font-weight: 500;
-                    font-size: 12px;
-                }
-  
-                h5 {
-                    font-weight: 600;
-                    font-size: 13px;
-                    text-align: right;
-                }
-            }
-            .removeBorder {
-                border-bottom: none;
-            }
-        } */
   
         .bubble-tail {
             position: absolute;
