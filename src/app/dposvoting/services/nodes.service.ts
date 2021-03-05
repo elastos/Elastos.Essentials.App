@@ -111,8 +111,6 @@ export class NodesService {
     this.storageService.getVisit().then(data => {
       if(data || data === true) {
         this.firstVisit = false;
-      } else {
-        this.router.navigate(['menu/home']);
       }
     });
    }

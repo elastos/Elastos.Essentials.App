@@ -183,14 +183,14 @@ export class AppmanagerService {
                         name: this.translate.instant('app-dpos-voting'),
                         description: this.translate.instant('app-dpos-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: '/dposvoting/menu/vote'
+                        routerPath: '/dposvoting/menu/home'
                     },
                     {
                         cssId: 'CRCouncil',
                         name: this.translate.instant('app-cr-council'),
                         description: this.translate.instant('app-crcouncil-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: 'TODO'
+                        routerPath: '/crcouncilvoting/candidates'
                     },
                     {
                         cssId: 'CRProposal',

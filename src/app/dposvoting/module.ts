@@ -11,6 +11,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { DPoSVotingRoutingModule } from './routing';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { HistoryPage } from './pages/history/history.page';
+import { HomePage } from './pages/home/home.page';
+import { MenuPage } from './pages/menu/menu.page';
+import { SearchPage } from './pages/search/search.page';
+import { StatsPage } from './pages/stats/stats.page';
+import { TxPage } from './pages/tx/tx.page';
+import { VotePage } from './pages/vote/vote.page';
+import { MenuPageModule } from './pages/menu/menu.module';
 
 @NgModule({
   declarations: [
@@ -29,7 +37,8 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
   ],
   providers: [
     Platform,
-    WebView
+    WebView,
+    MenuPageModule
   ]
 })
 export class DPoSVotingModule {}
