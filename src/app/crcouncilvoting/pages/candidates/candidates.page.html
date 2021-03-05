@@ -26,7 +26,7 @@
                 {{ candidatesService.candidates.indexOf(candidate) + 1 }}
               </ion-col>
               <ion-col size="2" class="img-container" (click)="_showCandidate(candidatesService.candidates.indexOf(candidate), candidate)">
-                <ion-img *ngIf="!candidate.imageUrl" src='/assets/icon/avatar.png'></ion-img>
+                <ion-img *ngIf="!candidate.imageUrl" src='/assets/crcouncilvoting/icon/avatar.png'></ion-img>
                 <img *ngIf="candidate.imageUrl" [src]="candidate.imageUrl">
               </ion-col>
               <ion-col size="8" (click)="_showCandidate(candidatesService.candidates.indexOf(candidate), candidate)">
@@ -81,7 +81,7 @@
                 {{ candidatesService.council.indexOf(member) + 1 }}
               </ion-col>
               <ion-col size="2" class="img-container">
-                <ion-img *ngIf="!member.avatar" src='/assets/icon/avatar.png'></ion-img>
+                <ion-img *ngIf="!member.avatar" src='/assets/crcouncilvoting/icon/avatar.png'></ion-img>
                 <img *ngIf="member.avatar" [src]="member.avatar">
               </ion-col>
               <ion-col size="8">

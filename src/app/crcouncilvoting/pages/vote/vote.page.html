@@ -11,7 +11,7 @@
         <ion-grid>
           <ion-row class="ion-no-padding">
             <ion-col size="6.5" class="candidate-title">
-              <ion-img *ngIf="!candidate.imageUrl" src='/assets/icon/avatar.png'></ion-img>
+              <ion-img *ngIf="!candidate.imageUrl" src='/assets/crcouncilvoting/icon/avatar.png'></ion-img>
               <img *ngIf="candidate.imageUrl" [src]="candidate.imageUrl">
              <!--  <img-loader *ngIf="candidate.imageUrl" useImg><img [src]="candidate.imageUrl"></img-loader> -->
               <ion-label>
@@ -39,7 +39,7 @@
 
   <!-- <div class="ballot-box" (click)="castVote()">
     <h1 *ngIf="votesCasted" class="votes-casted-title">VOTES CASTED</h1>
-    <ion-img [class.voting-logo]="castingVote" src='/assets/images/cybericon.svg'></ion-img>
+    <ion-img [class.voting-logo]="castingVote" src='/assets/crcouncilvoting/images/cybericon.svg'></ion-img>
     <h1 *ngIf="!votesCasted" [class.voting-title]="castingVote">CAST VOTES</h1>
   </div> -->
 
