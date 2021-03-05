@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
+import { Logger } from "src/app/logger";
 import { AuthService } from "./auth.service";
 import { DIDService } from "./did.service";
 import { UXService } from "./ux.service";
@@ -15,7 +16,7 @@ import { UXService } from "./ux.service";
   providedIn: "root",
 })
 export class AppIDService {
-  private intentId: string = null;
+  private intentId: number = null;
   private appPackageId: string = null;
   private appInstanceDID: string = null;
   private externallyProvidedAppDID: string = null;
@@ -26,7 +27,7 @@ export class AppIDService {
     private didService: DIDService) {
   }
 
-  public prepareNextRequest(intentId: string, appPackageId: string, appInstanceDID: string, externallyProvidedAppDID: string) {
+  public prepareNextRequest(intentId: number, appPackageId: string, appInstanceDID: string, externallyProvidedAppDID: string) {
     this.intentId = intentId;
     this.appPackageId = appPackageId;
     this.appInstanceDID = appInstanceDID;
@@ -38,17 +39,17 @@ export class AppIDService {
       // Get real app did from runtime
       let appDid = await this.uxService.getAppDid(this.appPackageId);
       if (!appDid) {
-        console.log("Can't issue app id credential silently: no appDID for package id "+this.appPackageId);
+        Logger.log('identity', "Can't issue app id credential silently: no appDID for package id "+this.appPackageId);
         return false;
       }
       else {
-        console.log("App id credential can be issued silently");
+        Logger.log('identity', "App id credential can be issued silently");
         return true;
       }
     }
     else {
       // From native apps, force showing a screen
-      console.log("Can't issue app id credential silently: called from a native app");
+      Logger.log('identity', "Can't issue app id credential silently: called from a native app");
       return false;
     }
   }
@@ -74,7 +75,7 @@ export class AppIDService {
     };
 
     AuthService.instance.checkPasswordThenExecute(async () => {
-      console.log("AppIdCredIssueRequest - issuing credential");
+      Logger.log('identity', "AppIdCredIssueRequest - issuing credential");
 
       this.didService.getActiveDid().pluginDid.issueCredential(
         this.appInstanceDID,
@@ -84,7 +85,7 @@ export class AppIDService {
         properties,
         this.authService.getCurrentUserPassword(),
         async (issuedCredential) => {
-          console.log("Sending appidcredissue intent response for intent id " + this.intentId)
+          Logger.log('identity', "Sending appidcredissue intent response for intent id " + this.intentId)
           let credentialAsString = await issuedCredential.toString();
           await this.uxService.sendIntentResponse("appidcredissue", {
             credential: credentialAsString

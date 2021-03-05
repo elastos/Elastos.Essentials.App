@@ -82,7 +82,7 @@ export class DIDService {
       }
 
       if (storeId == this.getCurDidStoreId()) {
-        console.log("DID Store ID hasn't changed - not loading the DID Store");
+        Logger.log('identity', "DID Store ID hasn't changed - not loading the DID Store");
         resolve(true); // Nothing changed but considered as successful.
         return;
       }
@@ -150,7 +150,7 @@ export class DIDService {
   }
 
   public async showDid(storeId: string, didString: string) {
-    console.log("Showing DID Store " + storeId + " with DID " + didString);
+    Logger.log('identity', "Showing DID Store " + storeId + " with DID " + didString);
     let couldEnableStore = await this.activateDid(storeId, didString);
     if (!couldEnableStore) {
       console.error("Unable to load the previously selected DID store");

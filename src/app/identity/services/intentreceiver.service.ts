@@ -9,6 +9,8 @@ import { AppIDService } from './appid.service';
 import { UXService } from './ux.service';
 import { Events } from './events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
+import { IdentityIntent, AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent, CredImportIdentityIntent } from '../model/identity.intents';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -16,7 +18,7 @@ declare let appManager: AppManagerPlugin.AppManager;
     providedIn: 'root'
 })
 export class IntentReceiverService {
-    private appIsLaunchingFromIntent = false; // Is the app starting because of an intent request?
+    private receivedIntent: IdentityIntent<IdentityIntentParams>;
 
     constructor(
         public translate: TranslateService,
@@ -44,21 +46,22 @@ export class IntentReceiverService {
         return fullAction.replace(intentDomainRoot, "");
     }
 
-    async onReceiveIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    private async onReceiveIntent(intent: AppManagerPlugin.ReceivedIntent) {
         switch (this.getShortAction(intent.action)) {
             case "appidcredissue":
-                console.log("Received appid credential issue intent request");
+                Logger.log('identity', "Received appid credential issue intent request");
                 if (this.checkAppIdCredIssueIntentParams(intent)) {
-                    this.appIsLaunchingFromIntent = true;
                     await this.uxService.loadIdentityAndShow(false);
+
+                    let appIdIssueIntent = intent as AppIdCredIssueIdentityIntent;
 
                     // Check if we can directly fullfil the request or not (silent intent).
                     // From inside trinity, as the runtime can ensure the app did, we can directly
                     // issue the credential most of the times. Native apps though require a UI
                     // confirmation.
-                    this.appIDService.prepareNextRequest(Config.requestDapp.intentId, Config.requestDapp.appPackageId, Config.requestDapp.appinstancedid, Config.requestDapp.appdid);
-                    if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(Config.requestDapp.params)) {
-                        this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(Config.requestDapp.params);
+                    this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
+                    if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
+                        this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
                     }
                     else {
                         // We have to show a UI confirmation so let's do it.
@@ -71,9 +74,8 @@ export class IntentReceiverService {
                 }
                 break;
             case "credaccess":
-                console.log("Received credential access intent request");
+                Logger.log('identity', "Received credential access intent request");
                 if (this.checkCredAccessIntentParams(intent)) {
-                    this.appIsLaunchingFromIntent = true;
                     await this.uxService.loadIdentityAndShow(false);
                     this.native.setRootRouter("/credaccessrequest");
                 }
@@ -83,9 +85,8 @@ export class IntentReceiverService {
                 }
                 break;
             case "credimport":
-                console.log("Received credential import intent request");
+                Logger.log('identity', "Received credential import intent request");
                 if (this.checkCredImportIntentParams(intent)) {
-                    this.appIsLaunchingFromIntent = true;
                     await this.uxService.loadIdentityAndShow(false);
                     this.native.setRootRouter("/credimportrequest");
                 }
@@ -95,9 +96,8 @@ export class IntentReceiverService {
                 }
                 break;
             case "credissue":
-                console.log("Received credential issue intent request");
+                Logger.log('identity', "Received credential issue intent request");
                 if (this.checkCredIssueIntentParams(intent)) {
-                    this.appIsLaunchingFromIntent = true;
                     await this.uxService.loadIdentityAndShow(false);
                     this.native.setRootRouter("/credissuerequest");
                 }
@@ -107,9 +107,8 @@ export class IntentReceiverService {
                 }
                 break;
             case "didsign":
-                console.log("Received didsign intent request");
+                Logger.log('identity', "Received didsign intent request");
                 if (this.checkSignIntentParams(intent)) {
-                    this.appIsLaunchingFromIntent = true;
                     await this.uxService.loadIdentityAndShow(false);
                     this.native.setRootRouter("/signrequest");
                 }
@@ -121,16 +120,14 @@ export class IntentReceiverService {
                 }
                 break;
             case 'promptpublishdid':
-                this.appIsLaunchingFromIntent = true;
                 // param is not required
                 await this.uxService.loadIdentityAndShow(false);
                 await this.native.setRootRouter('/myprofile');
                 this.events.publish('did:promptpublishdid');
                 break;
             case "registerapplicationprofile":
-                console.log("Received register application profile intent request");
+                Logger.log('identity', "Received register application profile intent request");
                 if (this.checkRegAppProfileIntentParams(intent)) {
-                    this.appIsLaunchingFromIntent = true;
                     await this.uxService.loadIdentityAndShow(false);
                     this.native.setRootRouter("/regappprofilerequest");
                 }
@@ -142,9 +139,8 @@ export class IntentReceiverService {
                 }
                 break;
             case "sethiveprovider":
-                console.log("Received set hiveprovider intent request");
+                Logger.log('identity', "Received set hiveprovider intent request");
                 if (this.checkSetHiveProviderIntentParams(intent)) {
-                    this.appIsLaunchingFromIntent = true;
                     await this.uxService.loadIdentityAndShow(false);
                     this.native.setRootRouter("/sethiveproviderrequest");
                 }
@@ -156,6 +152,13 @@ export class IntentReceiverService {
                 }
                 break;
         }
+    }
+
+    /**
+     * Returns the received intent casted to the right type.
+     */
+    public getReceivedIntent<T extends IdentityIntent<IdentityIntentParams>>(): T {
+        return this.receivedIntent as T;
     }
 
     /**
@@ -181,30 +184,25 @@ export class IntentReceiverService {
         await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
     }
 
-    checkCredAccessIntentParams(intent) {
-        console.log("Checking credaccess intent parameters");
+    private checkCredAccessIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking credaccess intent parameters");
         if (Util.isEmptyObject(intent.params)) {
             console.error("Invalid credaccess parameters received. No params.", intent.params);
             return false;
         }
 
-        Config.requestDapp = {
-            appPackageId: this.extractRootAppId(intent.from),
-            intentId: intent.intentId,
-            action: intent.action,
-            claims: intent.params.claims || [], // We are allowed to request no claim except the DID itself
-            customization: intent.params.customization || null,
-            nonce: intent.params.nonce || "no-nonce",
-            realm: intent.params.realm || "no-realm",
-            originalJwtRequest: intent.originalJwtRequest,
-            jwtExpirationDays: intent.jwtExpirationDays || 1 // Defaults to 1 day is not info given
-        }
+        let credAccessIntent: CredAccessIdentityIntent = intent;
+        credAccessIntent.params.claims = credAccessIntent.params.claims || [];
+        credAccessIntent.params.nonce = credAccessIntent.params.nonce || "no-nonce";
+        credAccessIntent.params.realm = credAccessIntent.params.realm || "no-realm";
+        credAccessIntent.jwtExpirationDays = credAccessIntent.jwtExpirationDays || 1;
+        this.receivedIntent = credAccessIntent;
 
         return true;
     }
 
-    checkCredIssueIntentParams(intent) {
-        console.log("Checking credissue intent parameters");
+    private checkCredIssueIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking credissue intent parameters");
         if (Util.isEmptyObject(intent.params)) {
             console.error("Invalid credissue parameters received. Empty parameters.", intent.params);
             return false;
@@ -216,7 +214,7 @@ export class IntentReceiverService {
         }
 
         if (Util.isEmptyObject(intent.params.properties)) {
-            console.error("Invalid credissue parameters received. Empty properties.", intent.properties);
+            console.error("Invalid credissue parameters received. Empty properties.", intent.params);
             return false;
         }
 
@@ -230,22 +228,11 @@ export class IntentReceiverService {
             return false;
         }
 
-        Config.requestDapp = {
-            appPackageId: this.extractRootAppId(intent.from),
-            intentId: intent.intentId,
-            action: intent.action,
-            identifier: intent.params.identifier,
-            types: intent.params.types,
-            subjectDID: intent.params.subjectdid,
-            properties: intent.params.properties,
-            expirationDate: intent.params.expirationdate,
-            originalJwtRequest: intent.originalJwtRequest
-        }
         return true;
     }
 
-    checkAppIdCredIssueIntentParams(intent) {
-        console.log("Checking appidcredissue intent parameters");
+    private checkAppIdCredIssueIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking appidcredissue intent parameters");
         if (Util.isEmptyObject(intent.params)) {
             console.error("Invalid appidcredissue parameters received. Empty parameters.", intent.params);
             return false;
@@ -256,34 +243,20 @@ export class IntentReceiverService {
             return false;
         }
 
-        Config.requestDapp = {
-            appPackageId: this.extractRootAppId(intent.from),
-            intentId: intent.intentId,
-            action: intent.action,
-            appinstancedid: intent.params.appinstancedid,
-            appdid: intent.params.appdid,
-            params: intent.params
-        }
+        this.receivedIntent = intent;
+
         return true;
     }
 
-    checkCredImportIntentParams(intent) {
-        console.log("Checking credimport intent parameters", intent);
+    private checkCredImportIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking credimport intent parameters", intent);
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.credentials)) {
             console.error("Invalid credimport parameters received. No params or empty credentials list.", intent.params);
             return false;
         }
 
-        console.log("DEBUG INTENT PARAMS: "+JSON.stringify(intent.params));
+        this.receivedIntent = intent;
 
-        Config.requestDapp = {
-            appPackageId: this.extractRootAppId(intent.from),
-            intentId: intent.intentId,
-            action: intent.action,
-            credentials: intent.params.credentials,
-            customization: intent.params.customization,
-            originalJwtRequest: intent.originalJwtRequest
-        }
         return true;
     }
 
@@ -291,27 +264,21 @@ export class IntentReceiverService {
      * Checks generic parameters in the received intent, and fills our requesting DApp object info
      * with intent info for later use.
      */
-    checkGenericIntentParams(intent, allowEmptyParams: boolean = false): boolean {
-        console.log("Checking generic intent parameters", intent);
+    private checkGenericIntentParams(intent: AppManagerPlugin.ReceivedIntent, allowEmptyParams: boolean = false): boolean {
+        Logger.log('identity', "Checking generic intent parameters", intent);
 
         if (!allowEmptyParams && Util.isEmptyObject(intent.params)) {
             console.error("Intent parameters are empty");
             return false;
         }
 
-        Config.requestDapp = {
-            appPackageId: this.extractRootAppId(intent.from),
-            intentId: intent.intentId,
-            action: intent.action,
-            allParams: intent.params,
-            originalJwtRequest: intent.originalJwtRequest
-        }
+        this.receivedIntent = intent;
 
         return true;
     }
 
-    checkRegAppProfileIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
-        console.log("Checking intent parameters");
+    private checkRegAppProfileIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+        Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
             return false;
@@ -327,17 +294,11 @@ export class IntentReceiverService {
             return false;
         }
 
-        // Config.requestDapp was already initialized earlier.
-        Config.requestDapp.identifier = intent.params.identifier;
-        Config.requestDapp.connectactiontitle = intent.params.connectactiontitle;
-        Config.requestDapp.customcredentialtypes = intent.params.customcredentialtypes;
-        Config.requestDapp.allParams = intent.params;
-
         return true;
     }
 
-    checkSignIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
-        console.log("Checking intent parameters");
+    private checkSignIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+        Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
             return false;
@@ -348,34 +309,26 @@ export class IntentReceiverService {
             return false;
         }
 
-        // Config.requestDapp was already initialized earlier.
-        Config.requestDapp.allParams = intent.params;
-
         return true;
     }
 
-    checkSetHiveProviderIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
-        console.log("Checking SetHiveProvider intent parameters");
+    private checkSetHiveProviderIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+        Logger.log('identity', "Checking SetHiveProvider intent parameters");
 
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.address)) {
             console.error("Invalid sethiveprovider parameters received. No params or empty address list.", intent.params);
             return false;
         }
 
-        console.log("DEBUG INTENT PARAMS: "+JSON.stringify(intent.params));
+        let setHiveProviderIntent: SetHiveProviderIdentityIntent = intent;
+        setHiveProviderIntent.params.name = setHiveProviderIntent.params.name || '';
+        this.receivedIntent = setHiveProviderIntent;
 
-        Config.requestDapp = {
-            appPackageId: null, // TODO this.extractRootAppId(intent.from),
-            intentId: intent.intentId,
-            action: intent.action,
-            address: intent.params.address,
-            name: intent.params.name || '',
-        }
         return true;
     }
 
-    checkCreateDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
-        console.log("Checking intent parameters");
+    private checkCreateDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+        Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
             return false;
@@ -385,8 +338,8 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkImportMnemonicIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
-        console.log("Checking intent parameters");
+    private checkImportMnemonicIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+        Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent, true))
             return false;
@@ -396,8 +349,8 @@ export class IntentReceiverService {
         return true;
     }
 
-    checkDeleteDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
-        console.log("Checking intent parameters");
+    private checkDeleteDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+        Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent, true))
             return false;

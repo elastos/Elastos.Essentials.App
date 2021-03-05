@@ -1,5 +1,6 @@
 
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
 import { LocalStorage } from './storage.service';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -46,7 +47,7 @@ export class AuthService {
                 let passwordInfo = await passwordManager.getPasswordInfo("wallet-"+walletId, options) as PasswordManagerPlugin.GenericPasswordInfo;
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
-                    console.log("Master password was right, but no password found for the requested key")
+                    Logger.log('wallet', "Master password was right, but no password found for the requested key")
 
                     resolve(null);
                 }
@@ -89,7 +90,7 @@ export class AuthService {
      * Activates fingerprint authentication instead of using a password.
      */
     /*async activateFingerprintAuthentication(walletID: string, password: string): Promise<boolean> {
-        console.log('Activating fingerprint authentication for did store id ' + walletID);
+        Logger.log('wallet', 'Activating fingerprint authentication for did store id ' + walletID);
 
         // Ask the fingerprint plugin to save user's password
         try {
@@ -98,7 +99,7 @@ export class AuthService {
             await this.storage.set('useFingerprintAuthentication-' + walletID, true);
             return true;
         } catch (e) {
-            console.log('authenticateAndSavePassword eror ', e);
+            Logger.log('wallet', 'authenticateAndSavePassword eror ', e);
             return false;
         }
     }

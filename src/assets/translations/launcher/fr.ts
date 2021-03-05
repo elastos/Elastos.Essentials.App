@@ -35,7 +35,7 @@ export const fr = {
     'share-dapp': 'Essayez cette appli: ',
 
     /********** Home Page **********/
-    'elastos-essentials': 'elastOS Essentials',
+    'elastos-essentials': 'Elastos Essentials',
     'dapp-browser': "Navigateur de capsules",
     'recent': 'Récents',
     'welcome': 'Bienvenue',

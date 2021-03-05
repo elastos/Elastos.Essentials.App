@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { WalletID, ExtendedWalletInfo } from '../model/wallets/MasterWallet';
@@ -33,7 +34,7 @@ export class LocalStorage {
     }
 
     public async get(key: string): Promise<any> {
-        console.log('Fetching for ' + key + ' in app manager settings');
+        Logger.log('wallet', 'Fetching for ' + key + ' in app manager settings');
         return new Promise(async (resolve) => {
             let val = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
             if (val === null)
@@ -95,61 +96,61 @@ export class LocalStorage {
 
     public setCurrency(value: string) {
         return this.set("currency", JSON.stringify(value)).then(() => {
-          console.log('Currency stored');
+          Logger.log('wallet', 'Currency stored');
         });
     }
 
     public async getCurrency(): Promise<string> {
         let rawCurrency = await this.get("currency");
-        console.log('Found currency stored', rawCurrency);
+        Logger.log('wallet', 'Found currency stored', rawCurrency);
         return rawCurrency;
     }
 
     public setCurrencyDisplayPreference(useCurrency: boolean) {
         return this.set('useCurrency', JSON.stringify(useCurrency)).then(() => {
-            console.log('Currency display preference stored');
+            Logger.log('wallet', 'Currency display preference stored');
         });
     }
 
     public async getCurrencyDisplayPreference(): Promise<boolean> {
         let pref = await this.get("useCurrency");
-        console.log('User prefers using currency?', pref);
+        Logger.log('wallet', 'User prefers using currency?', pref);
         return pref;
     }
 
     public setPrice(symbol: string, price: number) {
         return this.set(symbol, JSON.stringify(price)).then(() => {
-          console.log('Ela price stored');
+          Logger.log('wallet', 'Ela price stored');
         });
     }
 
     public async getPrice(symbol: string): Promise<number> {
         let rawPrice = await this.get(symbol);
-        console.log('Found Ela price stored', rawPrice);
+        Logger.log('wallet', 'Found Ela price stored', rawPrice);
         return rawPrice;
     }
 
     public setVisit(visited: boolean) {
         return this.set('visited', JSON.stringify(visited)).then(() => {
-            console.log('Visit stored');
+            Logger.log('wallet', 'Visit stored');
         });
     }
 
     public async getVisit(): Promise<boolean> {
         let visited = await this.get("visited");
-        console.log('User already visited?', visited);
+        Logger.log('wallet', 'User already visited?', visited);
         return visited;
     }
 
     public setContacts(contacts: Contact[]) {
         return this.set('contacts', JSON.stringify(contacts)).then(() => {
-            console.log('Contacts stored');
+            Logger.log('wallet', 'Contacts stored');
         });
     }
 
     public async getContacts(): Promise<Contact[]> {
         let contacts = await this.get("contacts");
-        console.log('Found contacts', contacts);
+        Logger.log('wallet', 'Found contacts', contacts);
         return contacts;
     }
 }

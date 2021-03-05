@@ -13,6 +13,7 @@ const routes: Routes = [
   { path: 'contacts', loadChildren: './contacts/module#ContactsModule' },
   { path: 'identity', loadChildren: './identity/module#IdentityModule' },
   { path: 'wallet', loadChildren: './wallet/module#WalletModule' },
+  { path: 'dposvoting', loadChildren: './dposvoting/module#DPoSVotingModule' },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet

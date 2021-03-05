@@ -48,6 +48,7 @@ import { MainAndIDChainSubWallet } from '../model/wallets/MainAndIDChainSubWalle
 import { ETHChainSubWallet } from '../model/wallets/ETHChainSubWallet';
 import { Events } from './events.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -113,7 +114,7 @@ export class WalletManager {
     }
 
     async init() {
-        console.log("Master manager is initializing");
+        Logger.log('wallet', "Master manager is initializing");
 
         this.spvBridge = new SPVWalletPluginBridge(this.native, this.events, this.popupProvider);
 
@@ -157,7 +158,7 @@ export class WalletManager {
         }
         this.getAllMasterWalletBalanceByRPC();
 
-        console.log("Wallet manager initialization complete");
+        Logger.log('wallet', "Wallet manager initialization complete");
 
         this.events.publish("walletmanager:initialized");
 
@@ -169,22 +170,22 @@ export class WalletManager {
         try {
             await this.spvBridge.init();
 
-            console.log("Getting all master wallets from the SPV SDK");
+            Logger.log('wallet', "Getting all master wallets from the SPV SDK");
             const idList = await this.spvBridge.getAllMasterWallets();
 
             if (idList.length === 0) {
-                console.log("No SPV wallet found, going to launcher screen");
+                Logger.log('wallet', "No SPV wallet found, going to launcher screen");
                 //this.goToLauncherScreen();
                 return false;
             }
 
-            console.log("Got "+idList.length+" wallets from the SPVSDK");
+            Logger.log('wallet', "Got "+idList.length+" wallets from the SPVSDK");
 
             // Rebuild our local model for all wallets returned by the SPV SDK.
             for (let i = 0; i < idList.length; i++) {
                 const masterId = idList[i];
 
-                console.log("Rebuilding local model for wallet id "+masterId);
+                Logger.log('wallet', "Rebuilding local model for wallet id "+masterId);
 
                 // Try to retrieve locally storage extended info about this wallet
                 const extendedInfo = await this.localStorage.getExtendedMasterWalletInfos(masterId);
@@ -193,7 +194,7 @@ export class WalletManager {
                     await this.spvBridge.destroyWallet(masterId);
                     continue;
                 } else {
-                    console.log("Found extended wallet info for master wallet id " + masterId, extendedInfo);
+                    Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId, extendedInfo);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
                     this.masterWallets[masterId] = new MasterWallet(this, this.coinService, masterId);
@@ -203,19 +204,19 @@ export class WalletManager {
                     let subwallet: SerializedSubWallet;
                     subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ELA);
                     if (!subwallet) {
-                        console.log('(Re)Opening ELA');
+                        Logger.log('wallet', '(Re)Opening ELA');
                         const subWallet = new MainchainSubWallet(this.masterWallets[masterId]);
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
                     subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.IDChain);
                     if (!subwallet) {
-                        console.log('(Re)Opening IDChain');
+                        Logger.log('wallet', '(Re)Opening IDChain');
                         const subWallet = new IDChainSubWallet(this.masterWallets[masterId]);
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
                     subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHSC);
                     if (!subwallet) {
-                        console.log('(Re)Opening ETHSC');
+                        Logger.log('wallet', '(Re)Opening ETHSC');
                         const subWallet = new ETHChainSubWallet(this.masterWallets[masterId]);
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
@@ -316,7 +317,7 @@ export class WalletManager {
         payPassword: string,
         singleAddress: boolean
     ) {
-        console.log("Creating new master wallet");
+        Logger.log('wallet', "Creating new master wallet");
 
         await this.spvBridge.createMasterWallet(
             masterId,
@@ -345,7 +346,7 @@ export class WalletManager {
         payPassword: string,
         singleAddress: boolean
     ) {
-        console.log("Importing new master wallet with mnemonic");
+        Logger.log('wallet', "Importing new master wallet with mnemonic");
 
         await this.spvBridge.importWalletWithMnemonic(masterId, mnemonicStr, mnemonicPassword, payPassword, singleAddress);
 
@@ -358,7 +359,7 @@ export class WalletManager {
     }
 
     private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount) {
-        console.log("Adding master wallet to local model", id, name);
+        Logger.log('wallet', "Adding master wallet to local model", id, name);
 
         // Add a new wallet to our local model
         this.masterWallets[id] = new MasterWallet(this, this.coinService, id, name);
@@ -441,7 +442,7 @@ export class WalletManager {
      */
     public async saveMasterWallet(masterWallet: MasterWallet) {
         const extendedInfo = masterWallet.getExtendedWalletInfo();
-        console.log("Saving wallet extended info", masterWallet.id, extendedInfo);
+        Logger.log('wallet', "Saving wallet extended info", masterWallet.id, extendedInfo);
 
         await this.localStorage.setExtendedMasterWalletInfo(masterWallet.id, extendedInfo);
     }
@@ -457,11 +458,11 @@ export class WalletManager {
      * If there is another wallet syncing, its on going sync will be stopped first.
      */
     public async startWalletSync(masterId: WalletID): Promise<void> {
-        console.log("Requesting sync service to start syncing wallet " + masterId);
+        Logger.log('wallet', "Requesting sync service to start syncing wallet " + masterId);
 
         if (!this.getMasterWallet(masterId)) {
             // The master wallet is destroyed.
-            console.log('startWalletSync error, the master wallet does not exist!');
+            Logger.log('wallet', 'startWalletSync error, the master wallet does not exist!');
             return;
         }
 
@@ -478,7 +479,7 @@ export class WalletManager {
 
     // TODO: When wallet is destroyed
     public async stopWalletSync(masterId: WalletID): Promise<boolean> {
-        console.log("Requesting sync service to stop syncing wallet " + masterId);
+        Logger.log('wallet', "Requesting sync service to stop syncing wallet " + masterId);
 
         // Add only standard subwallets to SPV stop sync request
         const chainIds: StandardCoinName[] = [];
@@ -511,7 +512,7 @@ export class WalletManager {
      * Start listening to all events from the SPV SDK.
      */
     public registerSubWalletListener() {
-        console.log("Register wallet listener");
+        Logger.log('wallet', "Register wallet listener");
 
         this.spvBridge.registerWalletListener((event: SPVWalletMessage) => {
             this.zone.run(() => {
@@ -527,8 +528,8 @@ export class WalletManager {
         const masterId = event.MasterWalletID;
         const chainId = event.ChainID;
 
-        // console.log("SubWallet message: ", masterId, chainId, event);
-        //console.log(event.Action, event.result);
+        // Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
+        //Logger.log('wallet', event.Action, event.result);
 
         switch (event.Action) {
             case "OnTransactionStatusChanged":
@@ -576,7 +577,7 @@ export class WalletManager {
         masterWallet.updateSyncProgress(chainId, progress, lastBlockTime);
 
         const subWallet = masterWallet.getSubWallet(chainId) as StandardSubWallet;
-        // console.log("DEBUG updateSyncProgress", masterId, chainId, masterWallet.getSubWallets())
+        // Logger.log('wallet', "DEBUG updateSyncProgress", masterId, chainId, masterWallet.getSubWallets())
         // Seems like we can sometimes receive an update progress about a subwallet not yet added. Reason unknown for now.
         if (!subWallet) {
             console.warn("updateSyncProgress() called but subwallet with ID", chainId, "does not exist in wallet!", masterWallet);
@@ -605,12 +606,12 @@ export class WalletManager {
 
     // ETHSC has different event
     private updateETHSCEventFromCallback(masterId: WalletID, chainId: StandardCoinName, result: SPVWalletMessage) {
-        // console.log('----updateETHSCEventFromCallback chainId:', chainId, ' result:', result);
+        // Logger.log('wallet', '----updateETHSCEventFromCallback chainId:', chainId, ' result:', result);
         switch (result.event.Type) {
             case ETHSCEventType.EWMEvent: // update progress
                 switch (result.event.Event) {
                     case ETHSCEventAction.PROGRESS:
-                        // console.log('----updateETHSCEventFromCallback masterId:', masterId, ' result.event:', result.event);
+                        // Logger.log('wallet', '----updateETHSCEventFromCallback masterId:', masterId, ' result.event:', result.event);
                         result.Progress =  Math.round(result.event.PercentComplete);
                         result.LastBlockTime = result.event.Timestamp;
                         break;
@@ -619,7 +620,7 @@ export class WalletManager {
                         if ('CONNECTED' === result.event.NewState) {
                             result.Progress =  100;
                             result.LastBlockTime = new Date().getTime() / 1000;
-                            // console.log('----updateETHSCEventFromCallback set 100 masterId:', masterId, ' result.event:', result.event);
+                            // Logger.log('wallet', '----updateETHSCEventFromCallback set 100 masterId:', masterId, ' result.event:', result.event);
                         } else if ('DISCONNECTED' === result.event.NewState) {
                             result.Progress =  0;
                         } else {
@@ -639,17 +640,17 @@ export class WalletManager {
                 break;
             case ETHSCEventType.WalletEvent: // update balance
                 if (result.event.Event === ETHSCEventAction.BALANCE_UPDATED) {
-                    // console.log('----updateETHSCEventFromCallback BALANCE_UPDATED:', result, ' masterId:', masterId, ' chainId:', chainId);
+                    // Logger.log('wallet', '----updateETHSCEventFromCallback BALANCE_UPDATED:', result, ' masterId:', masterId, ' chainId:', chainId);
                     this.getMasterWallet(masterId).getSubWallet(chainId).updateBalance();
                 }
                 break;
             case ETHSCEventType.TransferEvent:
-                // console.log('----updateETHSCEventFromCallback TransferEvent:', result, ' masterId:', masterId, ' chainId:', chainId);
+                // Logger.log('wallet', '----updateETHSCEventFromCallback TransferEvent:', result, ' masterId:', masterId, ' chainId:', chainId);
                 // ERC20 Token transfer
                 // TODO: update the balance
                 break;
             case ETHSCEventType.TokenEvent:
-                // console.log('----updateETHSCEventFromCallback TokenEvent:', result, ' masterId:', masterId, ' chainId:', chainId);
+                // Logger.log('wallet', '----updateETHSCEventFromCallback TokenEvent:', result, ' masterId:', masterId, ' chainId:', chainId);
                 // TODO
                 break;
             default:
@@ -686,7 +687,7 @@ export class WalletManager {
         }
 
         if (code !== 0) {
-            console.log('OnTxPublished fail:', JSON.stringify(data));
+            Logger.log('wallet', 'OnTxPublished fail:', JSON.stringify(data));
             this.popupProvider.ionicAlert_PublishedTx_fail('transaction-fail', tx + code, hash, reason);
             if (this.transactionMap[hash].lock !== true) {
                 delete this.transactionMap[hash];
@@ -713,12 +714,12 @@ export class WalletManager {
 
         const masterWallet = this.getMasterWallet(masterId);
         if (masterWallet.subWallets[StandardCoinName.ELA].balance.lte(1000000)) {
-            console.log('ELA balance ', masterWallet.subWallets[StandardCoinName.ELA].balance);
+            Logger.log('wallet', 'ELA balance ', masterWallet.subWallets[StandardCoinName.ELA].balance);
             return;
         }
 
         if (masterWallet.subWallets[StandardCoinName.IDChain].balance.gt(100000)) {
-            console.log('IDChain balance ',  masterWallet.subWallets[StandardCoinName.IDChain].balance);
+            Logger.log('wallet', 'IDChain balance ',  masterWallet.subWallets[StandardCoinName.IDChain].balance);
             return;
         }
 

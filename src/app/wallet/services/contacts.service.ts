@@ -3,6 +3,7 @@ import { LocalStorage } from './storage.service';
 import { HttpClient } from '@angular/common/http';
 import * as CryptoAddressResolvers from '../model/address-resolvers';
 import { StandardCoinName } from '../model/Coin';
+import { Logger } from 'src/app/logger';
 
 export type Contact = {
   cryptoname: string;
@@ -33,7 +34,7 @@ export class ContactsService {
   getContacts() {
     return new Promise<void>((resolve, reject) => {
       this.storage.getContacts().then((contacts) => {
-        console.log("Fetched stored contacts", contacts);
+        Logger.log('wallet', "Fetched stored contacts", contacts);
         if (contacts) {
           let contactsChecked = 0;
           this.contacts.forEach(async (contact) => {

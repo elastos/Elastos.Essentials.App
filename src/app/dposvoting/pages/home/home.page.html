@@ -1,0 +1,92 @@
+<ion-content>
+  <ion-grid class="container">
+    <ion-slides
+      #slide
+      pager="true"
+      [options]="slideOpts"
+      [class.hidden]="hidden"
+    >
+
+      <ion-slide>
+        <ion-card-title>
+          <ion-row class="img-container">
+            <img-loader useImg><img src="../assets/icon/onboard1.svg"></img-loader>
+          </ion-row>
+          <ion-row>
+            <ion-col offset="1.25" size="9.5">
+              <h4 class="title">Welcome</h4>
+            </ion-col>
+            <ion-col size="1.25" class="arrow-container" (click)="next(slide)">
+              <ion-icon name="arrow-round-forward"></ion-icon>
+            </ion-col>
+          </ion-row>
+          <p class="subtitle">
+            DPoS supernodes are part of the Elastos ecosystem security.
+            They participate in validating ELA Transactions
+          </p>
+          <ion-row class="btn-container">
+            <div class="btn" (click)="next(slide)">
+              <ion-label>Next</ion-label>
+            </div>
+          </ion-row>
+        </ion-card-title>
+      </ion-slide>
+
+      <ion-slide>
+        <ion-card-title>
+          <ion-row class="img-container">
+            <img-loader useImg><img src="../assets/icon/onboard2.svg"></img-loader>
+          </ion-row>
+          <ion-row>
+            <ion-col size="1.25" class="arrow-container" (click)="prev(slide)">
+              <ion-icon name="arrow-round-back"></ion-icon>
+            </ion-col>
+            <ion-col>
+              <h4 class="title" size="9.5">36 Votes for 1 ELA</h4>
+            </ion-col>
+            <ion-col size="1.25" class="arrow-container" (click)="next(slide)">
+              <ion-icon name="arrow-round-forward"></ion-icon>
+            </ion-col>
+          </ion-row>
+          <p class="subtitle">
+            Each ELA gives you 1 voting power so you can vote for 36 nodes.
+            You don't spend your ELA. You can get your ELA back any time
+          </p>
+          <ion-row class="btn-container">
+            <div class="btn" (click)="next(slide)">
+              <ion-label>Next</ion-label>
+            </div>
+          </ion-row>
+        </ion-card-title>
+      </ion-slide>
+
+      <ion-slide>
+        <ion-card-title>
+          <ion-row class="img-container">
+            <img-loader useImg><img src="../assets/icon/onboard3.svg"></img-loader>
+          </ion-row>
+          <ion-row>
+            <ion-col size="1.25" class="arrow-container" (click)="prev(slide)">
+              <ion-icon name="arrow-round-back"></ion-icon>
+            </ion-col>
+            <ion-col>
+              <h4 class="title">ELA Transactions</h4>
+            </ion-col>
+            <ion-col size="1.25">
+            </ion-col>
+          </ion-row>
+          <p class="subtitle">
+            If you make payment transactions using your ELA,
+            your votes are cancelled and you need to vote again
+          </p>
+          <ion-row class="btn-container">
+            <div class="btn" (click)="goToVote()">
+              <ion-label>Continue to Voting</ion-label>
+            </div>
+          </ion-row>
+        </ion-card-title>
+      </ion-slide>
+
+    </ion-slides>
+  </ion-grid>
+</ion-content>

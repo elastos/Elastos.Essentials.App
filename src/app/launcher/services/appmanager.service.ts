@@ -49,7 +49,6 @@ type RunnableApp = {
     name: string;
     description: string;
     icon: string;
-    id: string;
     routerPath?: string;
     startCall?: () => void;
 }
@@ -127,7 +126,6 @@ export class AppmanagerService {
                         name: this.translate.instant('app-wallet'),
                         description: this.translate.instant('app-wallet-description'),
                         icon: '/assets/launcher/ios/app-icons/wallet.svg',
-                        id: 'wallet',
                         startCall: () => this.walletInitService.start()
                     },
                     {
@@ -135,7 +133,6 @@ export class AppmanagerService {
                         name: this.translate.instant('app-identity'),
                         description: this.translate.instant('app-identity-description'),
                         icon: '/assets/launcher/ios/app-icons/identity.svg',
-                        id: 'org.elastos.trinity.dapp.did',
                         routerPath: '/identity/myprofile/home'
                     },
                     {
@@ -143,7 +140,6 @@ export class AppmanagerService {
                         name: this.translate.instant('app-contacts'),
                         description: this.translate.instant('app-contacts-description'),
                         icon: '/assets/launcher/ios/app-icons/contacts.svg',
-                        id: 'org.elastos.trinity.dapp.friends',
                         routerPath: '/contacts/friends'
                     },
                 ]
@@ -156,7 +152,6 @@ export class AppmanagerService {
                         name: this.translate.instant('app-hive'),
                         description: this.translate.instant('app-hive-description'),
                         icon: '/assets/launcher/ios/app-icons/hive.svg',
-                        id: 'org.elastos.trinity.dapp.hivemanager',
                         startCall: () => this.hiveManagerInitService.start()
                     }
                 ]
@@ -169,7 +164,6 @@ export class AppmanagerService {
                         name: this.translate.instant('app-scanner'),
                         description: this.translate.instant('app-scanner-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        id: 'org.elastos.trinity.dapp.qrcodescanner',
                         routerPath: '/scanner/scan'
                     },
                     {
@@ -177,8 +171,33 @@ export class AppmanagerService {
                         name: this.translate.instant('app-settings'),
                         description: this.translate.instant('app-settings-description'),
                         icon: '/assets/launcher/ios/app-icons/settings.svg',
-                        id: 'org.elastos.trinity.dapp.settings',
                         routerPath: '/settings/menu'
+                    },
+                ]
+            },
+            {
+                type: 'voting',
+                apps: [
+                    {
+                        cssId: 'DPoS',
+                        name: this.translate.instant('app-dpos-voting'),
+                        description: this.translate.instant('app-dpos-description'),
+                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        routerPath: '/dposvoting/menu/vote'
+                    },
+                    {
+                        cssId: 'CRCouncil',
+                        name: this.translate.instant('app-cr-council'),
+                        description: this.translate.instant('app-crcouncil-description'),
+                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        routerPath: 'TODO'
+                    },
+                    {
+                        cssId: 'CRProposal',
+                        name: this.translate.instant('app-cr-proposal'),
+                        description: this.translate.instant('app-crproposal-description'),
+                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        routerPath: 'TODO'
                     },
                 ]
             }
@@ -198,7 +217,6 @@ export class AppmanagerService {
 
     // Intent
     onIntentReceived(ret: AppManagerPlugin.ReceivedIntent) {
-        console.log('Received external intent', ret);
         switch (this.getShortAction(ret.action)) {
         }
     }
@@ -214,24 +232,24 @@ export class AppmanagerService {
 
     // Message
     async onMessageReceived(ret: ReceivedMessage) {
-        console.log('Elastos launcher received message:' + ret.message + '. type: ' + ret.type + '. from: ' + ret.from);
+        Logger.log('launcher', 'Elastos launcher received message:' + ret.message + '. type: ' + ret.type + '. from: ' + ret.from);
 
         let params: any = ret.message;
         if (typeof (params) === 'string') {
             try {
                 params = JSON.parse(params);
             } catch (e) {
-                console.log('Params are not JSON format: ', params);
+                Logger.log('launcher', 'Params are not JSON format: ', params);
             }
         }
-        console.log(JSON.stringify(params));
+        Logger.log('launcher', JSON.stringify(params));
         switch (ret.type) {
             case MessageType.INTERNAL:
                 switch (params.action) {
                     case 'toggle':
                         break;
                     case 'receivedIntent':
-                        console.log('receivedIntent message', ret);
+                        Logger.log('launcher', 'receivedIntent message', ret);
                         this.zone.run(() => {
                             if (ret.hasOwnProperty('error')) {
                                 this.native.genericAlert('no-app-can-handle-request', 'sorry');
@@ -242,7 +260,7 @@ export class AppmanagerService {
                         });
                         break;
                     case 'hidden':
-                        console.log('hidden message', ret);
+                        Logger.log('launcher', 'hidden message', ret);
                         this.zone.run(() => { this.native.hideLoading(); });
                         break;
                 }
@@ -311,7 +329,7 @@ export class AppmanagerService {
     /******************************** Notifications Manager ********************************/
     async toggleNotifications() {
         if (this.notificationsShowing) {
-            console.log('toggleNotifications is in progress, skip ...')
+            Logger.log('launcher', 'toggleNotifications is in progress, skip ...')
             return;
         }
         this.notificationsShowing = true;
@@ -368,7 +386,7 @@ export class AppmanagerService {
             await this.modalController.dismiss();
             let newModalElement = await this.modalController.getTop();
             if (newModalElement && (newModalElement === modalElement)) { // just in case
-                console.log('dismissAllModals dismiss error')
+                Logger.log('launcher', 'dismissAllModals dismiss error')
                 return;
             }
         }
@@ -377,7 +395,7 @@ export class AppmanagerService {
     /******************************** Preferences ********************************/
     setCurLang(lang: string): Promise<void> {
         return new Promise((resolve)=>{
-            console.log('Setting current language to ' + lang);
+            Logger.log('launcher', 'Setting current language to ' + lang);
             this.zone.run(() => {
                 this.translate.use(lang);
                 if (lang === 'zh') {

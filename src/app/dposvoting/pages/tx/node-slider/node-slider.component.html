@@ -1,0 +1,41 @@
+<ion-slides [options]="slideOpts" (ionSlideNextEnd)="loadNext()" class="node-slides">
+  <ion-slide *ngFor="let node of _nodes">
+    <ion-card class="ion-text-center" color="secondary">
+      <ion-grid>
+        <ion-row class="header-container">
+          <ion-col size="3" class="img-container">
+            <img-loader *ngIf="node.imageUrl" useImg><img [src]="node.imageUrl"></img-loader>
+            <img-loader *ngIf="!node.imageUrl" useImg><img src="../assets/icon/elastos-icon.svg"></img-loader>
+          </ion-col>
+          <ion-col size="9" class="name-container">
+            <ion-card-title>
+              {{ node.nickname }}
+            </ion-card-title>
+          </ion-col>
+        </ion-row>
+        <ion-card-content>
+          <ion-row class="detail-container">
+            <p>Current Rank</p>
+            <h3>#{{ node.index }}</h3>
+          </ion-row>
+          <ion-row class="detail-container">
+            <p>Current Votes</p>
+            <h3>{{ getVotes(node.votes) }}</h3>
+          </ion-row>
+          <ion-row class="detail-container">
+            <p>Daily Rewards</p>
+            <h3>{{ getRewards(node.EstRewardPerYear) }}</h3>
+          </ion-row>
+          <ion-row class="detail-container">
+            <p>Percentage of Casted Votes</p>
+            <h3>{{ getVotePercent(node.votes) }}%</h3>
+          </ion-row>
+          <ion-row class="website">
+            <p>Website</p>
+            <h3 (click)="nodesService.openLink(node.url)">{{ node.url }}</h3>
+          </ion-row>
+        </ion-card-content>
+      </ion-grid>
+    </ion-card>
+  </ion-slide>
+</ion-slides>

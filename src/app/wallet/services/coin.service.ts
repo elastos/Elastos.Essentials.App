@@ -29,6 +29,7 @@ import { Events } from './events.service';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 @Injectable({
     providedIn: 'root'
@@ -70,8 +71,8 @@ export class CoinService {
 
         await this.initDeletedCustomERC20Coins();
 
-        console.log("Available coins:", this.availableCoins);
-        console.log("Deleted coins:", this.deletedERC20Coins);
+        Logger.log('wallet', "Available coins:", this.availableCoins);
+        Logger.log('wallet', "Deleted coins:", this.deletedERC20Coins);
     }
 
     public getAvailableCoins(): Coin[] {
@@ -112,7 +113,7 @@ export class CoinService {
      * If activateInWallet is passed, the coin is automatically added to that wallet.
      */
     public async addCustomERC20Coin(erc20Coin: ERC20Coin, activateInWallet?: MasterWallet) {
-        console.log("Add coin to custom ERC20 coins list", erc20Coin);
+        Logger.log('wallet', "Add coin to custom ERC20 coins list", erc20Coin);
 
         const existingCoins = await this.getCustomERC20Coins();
         existingCoins.push(erc20Coin);
@@ -139,7 +140,7 @@ export class CoinService {
         let allCustomERC20Coins = await this.getCustomERC20Coins();
         allCustomERC20Coins = allCustomERC20Coins.filter((coin) => coin.getContractAddress() !== erc20Coin.getContractAddress());
         await this.storage.set("custom-erc20-coins", allCustomERC20Coins);
-        console.log('availableCoins after deleting', this.availableCoins);
+        Logger.log('wallet', 'availableCoins after deleting', this.availableCoins);
 
         this.deletedERC20Coins.push(erc20Coin);
         await this.storage.set("custom-erc20-coins-deleted", this.deletedERC20Coins);

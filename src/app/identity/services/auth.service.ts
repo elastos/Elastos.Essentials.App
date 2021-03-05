@@ -6,6 +6,7 @@ import { Native } from './native';
 import { DIDHelper } from '../helpers/did.helper';
 import { PasswordManagerCancelallationException } from '../model/exceptions/passwordmanagercancellationexception';
 import { PopupProvider } from './popup';
+import { Logger } from 'src/app/logger';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -42,9 +43,9 @@ export class AuthService {
                 let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+this.didService.getActiveDidStore().getId(), options) as PasswordManagerPlugin.GenericPasswordInfo;
                 if (!passwordInfo) {
                     // Master password is right, but no data for the requested key...
-                    console.log("Master password was right, but no password found for the requested key")
+                    Logger.error('identity', "Master password was right, but no password found for the requested key")
 
-                    this.popupProvider.ionicAlert("Password error", "Impossible to retrieve your identity store password from your master password. Please try to import your identity again.");
+                    // TODO - COMMENTED OUT TEMPORARILY AS IT SHOWS TOO OFTEN - @zhiming TO CHECK WHAT IS HAPPENING - this.popupProvider.ionicAlert("Password error", "Impossible to retrieve your identity store password from your master password. Please try to import your identity again.");
                     onCancelled();
 
                     return

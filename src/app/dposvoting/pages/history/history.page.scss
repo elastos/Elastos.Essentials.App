@@ -1,0 +1,71 @@
+.container {
+  background: hsl(225, 22%, 96%);
+  min-height: 100%;
+  padding-top: 16%;
+
+  ion-list {
+    padding: 0;
+    margin: 0;
+    min-height: 100%;
+    border-top: solid 1px rgb(216, 216, 216);
+    background: hsl(225, 22%, 96%);
+
+    ion-item {
+      --padding-start: 0px;
+
+      ion-row {
+        padding: 2.5px 0;
+      }
+
+      ion-label {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        overflow: hidden;
+      }
+
+      .date {
+        font-weight: 600;
+        font-size: 13px;
+        color: #666666 !important;
+      }
+
+      .tx {
+        margin-top: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #989aa2;
+      }
+    }
+  }
+}
+
+/** No History **/
+.noHistory {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ion-label {
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    color: #666666;
+  }
+}
+
+/** Skeleton **/
+._date {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+._keys {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.loading-container {
+  padding-top: 0;
+}

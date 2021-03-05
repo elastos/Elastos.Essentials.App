@@ -35,7 +35,7 @@ export const zh = {
     'share-dapp': '试试这个程序： ',
 
     /********** Home Page **********/
-    'elastos-essentials': 'elastOS Essentials',
+    'elastos-essentials': 'Elastos Essentials',
     'dapp-browser': '胶囊浏览器',
     'recent': '最近使用',
     'welcome': '欢迎',

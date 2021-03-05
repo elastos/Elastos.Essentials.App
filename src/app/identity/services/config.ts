@@ -4,7 +4,7 @@ import { NewDID } from '../model/newdid.model';
 
 @Injectable()
 export class Config {
-    public static requestDapp: any;
+    //public static requestDapp: any;
 
     public static uuid(len, radix): string {
         var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');

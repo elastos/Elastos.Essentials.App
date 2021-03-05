@@ -9,6 +9,7 @@ import { DIDService } from '../../services/did.service';
 import { Config } from '../../services/config';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { IntentReceiverService } from '../../services/intentreceiver.service';
 
 @Component({
     selector: 'page-deletedid',
@@ -26,7 +27,9 @@ export class DeleteDIDPage {
                 private advancedPopup: AdvancedPopupController,
                 private translate: TranslateService,
                 private didService: DIDService,
-                private uxService: UXService) {
+                private uxService: UXService,
+                private intentService: IntentReceiverService
+                ) {
         this.init();
     }
 
@@ -62,11 +65,11 @@ export class DeleteDIDPage {
                     let activeDid = this.didService.getActiveDid();
                     await this.didService.deleteDid(activeDid);
 
-                    // DID has been deleted. Now go back to the callin app (normally, DID session)
+                    // DID has been deleted. Now go back to the calling app (normally, DID session)
                     console.log("Identity has been deleted. Sending intent response");
                     await this.uxService.sendIntentResponse("deletedid", {
                         didString: this.didString
-                    }, Config.requestDapp.intentId);
+                    }, this.intentService.getReceivedIntent().intentId);
                 }
             }
         }).show();

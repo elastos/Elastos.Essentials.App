@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LocalStorage } from './storage.service';
 import BigNumber from 'bignumber.js';
+import { Logger } from 'src/app/logger';
 
 type Currency = {
   symbol: string;
@@ -58,14 +59,14 @@ export class CurrencyService {
     await this.getSavedCurrencyDisplayPreference();
     this.fetch();
 
-    console.log("Currency service initialization complete");
+    Logger.log('wallet', "Currency service initialization complete");
   }
 
   getSavedPrices(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.currencies.forEach((currency) => {
         this.storage.getPrice(currency.symbol).then((price) => {
-          console.log('Saved ela price', currency.symbol, price);
+          Logger.log('wallet', 'Saved ela price', currency.symbol, price);
           price ? currency.price = price : currency.price = 0;
         });
       });
@@ -76,13 +77,13 @@ export class CurrencyService {
   getSavedCurrency(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.storage.getCurrency().then((symbol) => {
-        console.log("Got storage currency", symbol);
+        Logger.log('wallet', "Got storage currency", symbol);
         if (symbol) {
           this.selectedCurrency = this.currencies.find((currency) => currency.symbol === symbol);
-          console.log('Currency saved', this.selectedCurrency);
+          Logger.log('wallet', 'Currency saved', this.selectedCurrency);
         } else {
           this.selectedCurrency = this.currencies.find((currency) => currency.symbol === 'USD');
-          console.log('No currency saved, using default USD', this.selectedCurrency);
+          Logger.log('wallet', 'No currency saved, using default USD', this.selectedCurrency);
         }
         resolve();
       });
@@ -92,7 +93,7 @@ export class CurrencyService {
   getSavedCurrencyDisplayPreference(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.storage.getCurrencyDisplayPreference().then((useCurrency) => {
-        console.log('Got stored currency display preference', useCurrency);
+        Logger.log('wallet', 'Got stored currency display preference', useCurrency);
         if (useCurrency) {
           this.useCurrency = useCurrency;
         }
@@ -104,10 +105,10 @@ export class CurrencyService {
   fetch() {
     // TODO: Get price by token name.
     this.http.get<any>(this.proxyurl + 'https://api-price.elaphant.app/api/1/cmc?limit=500').subscribe((res) => {
-      console.log('Got CMC response', res);
+      Logger.log('wallet', 'Got CMC response', res);
       this.elaStats = res.find((coin) => coin.symbol === 'ELA');
       if (this.elaStats) {
-        console.log('CMC ELA stats', this.elaStats);
+        Logger.log('wallet', 'CMC ELA stats', this.elaStats);
         this.addPriceToCurrency();
       }
     }, (err) => {
@@ -130,7 +131,7 @@ export class CurrencyService {
         currency.price = parseFloat(this.elaStats.price_btc);
       }
     });
-    console.log('Currency ELA prices updated', this.currencies);
+    Logger.log('wallet', 'Currency ELA prices updated', this.currencies);
   }
 
   /**

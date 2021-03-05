@@ -7,6 +7,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -81,7 +82,7 @@ export class UXService {
      * This method must be called only during the initial app start.
      */
     computeAndShowEntryScreen() {
-        console.log("Checking if there are pending intents");
+        Logger.log('identity', "Checking if there are pending intents");
         this.loadIdentityAndShow();
     }
 
@@ -108,7 +109,7 @@ export class UXService {
      */
     close() {
         // TODO @chad - closing means going back in router nav. We may discuss the best way to do this.
-        console.log("Closing DID app");
+        Logger.log('identity', "Closing DID app");
         // TODO appManager.close();
     }
 
@@ -125,13 +126,13 @@ export class UXService {
     }
 
     onReceive = (ret) => {
-        console.log('onReceive', ret);
+        Logger.log('identity', 'onReceive', ret);
         var params: any = ret.message;
         if (typeof (params) == "string") {
             try {
                 params = JSON.parse(params);
             } catch (e) {
-                console.log('Params are not JSON format: ', params);
+                Logger.log('identity', 'Params are not JSON format: ', params);
             }
         }
         switch (ret.type) {
@@ -180,7 +181,7 @@ export class UXService {
      * has to be received in the intent request at first.
      */
     public async isIntentResponseGoingOutsideElastos(intentParams: any): Promise<boolean> {
-        console.log("isIntentResponseGoingOutsideElastos? Params:", intentParams)
+        Logger.log('identity', "isIntentResponseGoingOutsideElastos? Params:", intentParams)
         if (!intentParams)
             return false; // Should not happen
 

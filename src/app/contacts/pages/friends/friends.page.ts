@@ -119,4 +119,8 @@ export class FriendsPage implements OnInit {
       return false;
     }
   }
+
+  goToAdd() {
+    console.log("FRIENDS - goToAdd() clicked - fix this.");
+  }
 }

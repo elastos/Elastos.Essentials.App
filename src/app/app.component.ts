@@ -15,6 +15,8 @@ import { ContactsInitService } from './contacts/services/init.service';
 import { IdentityInitService } from './identity/services/init.service';
 import { WalletInitService } from './wallet/services/init.service'
 import { Logger } from './logger';
+import { GlobalIntentService } from './services/global.intent.service';
+import { DPoSVotingInitService } from './dposvoting/services/init.service';
 
 @Component({
     selector: 'app-root',
@@ -37,7 +39,9 @@ export class AppComponent {
         private contactsInitService: ContactsInitService,
         private identityInitService: IdentityInitService,
         private walletInitService: WalletInitService,
-        private language: GlobalLanguageService
+        private dposVotingInitService: DPoSVotingInitService,
+        private language: GlobalLanguageService,
+        private intentService: GlobalIntentService
     ) {
     }
 
@@ -50,9 +54,11 @@ export class AppComponent {
             Logger.log("Global", "Main app component initialization is starting");
 
             // TODO screen.orientation.lock('portrait');
-
+            await this.intentService.init();
             await this.didSessions.init();
             await this.language.init();
+
+            // "DApps" initializations
             await this.didSessionsInitService.init();
             await this.launcherInitService.init();
             await this.scannerInitService.init();
@@ -61,6 +67,7 @@ export class AppComponent {
             await this.contactsInitService.init();
             await this.identityInitService.init();
             await this.walletInitService.init();
+            await this.dposVotingInitService.init();
 
             // Navigate to the right startup screen
             Logger.log("Global", "Navigating to start screen");

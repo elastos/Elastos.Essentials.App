@@ -133,7 +133,7 @@ export class FriendsService {
             });
           }
         } else {
-          console.log("No stored contacts");
+          Logger.log('contacts', "No stored contacts");
           resolve([]);
         }
       });
@@ -204,7 +204,7 @@ export class FriendsService {
 
           this.contacts.push(newContact);
         } else {
-          console.log('Contact Notifier Contact', alreadyAddedContact + ' is already added');
+          Logger.log('contacts', 'Contact Notifier Contact', alreadyAddedContact + ' is already added');
         }
       });
 
@@ -217,7 +217,7 @@ export class FriendsService {
   *************************************************/
   async scanDID() {
     let res = await appManager.sendIntent("https://scanner.elastos.net/scanqrcode");
-    console.log("Got scan result", res);
+    Logger.log('contacts', "Got scan result", res);
 
     // Scanned content could contain different things:
     // - A did: did:elastos:xxxx
@@ -229,15 +229,15 @@ export class FriendsService {
 
       if (scannedContent.indexOf("did:") == 0) {
         // We've scanned a DID string. Add friend, without carrier address support
-        console.log("Scanned content is a DID string");
+        Logger.log('contacts', "Scanned content is a DID string");
         this.addContactByIntent(scannedContent, null);
         scannedContentHandled = true;
       }
       else if (scannedContent.indexOf("http") == 0) {
-        console.log("Scanned content is a URL");
+        Logger.log('contacts', "Scanned content is a URL");
         // Probably a url - try to parse it and see if we can handle it
         let scannedUrl = new URL(scannedContent);
-        console.log(scannedUrl);
+        Logger.log('contacts', scannedUrl);
 
         if (scannedUrl) {
           if (scannedUrl.pathname == "/addfriend") {
@@ -260,7 +260,7 @@ export class FriendsService {
   *********** Add Contact By Intent ***********
   ********************************************/
   async addContactByIntent(did: string, carrierAddress?: string) {
-    console.log('Received contact by intent', did, carrierAddress);
+    Logger.log('contacts', 'Received contact by intent', did, carrierAddress);
 
     if(await this.didService.getUserDID() === did) {
       this.native.genericToast('please-dont-add-self');
@@ -275,11 +275,11 @@ export class FriendsService {
           this.storageService.setContacts(this.contacts);
           this.router.navigate(['friends/', targetContact.id]);
           this.native.genericToast(promptName + this.translate.instant('did-carrier-added'));
-          console.log('Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
+          Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
         } else {
           this.native.genericToast(promptName + this.translate.instant('is-already-added'));
           this.router.navigate(['friends/', targetContact.id]);
-          console.log('Contact is already added');
+          Logger.log('contacts', 'Contact is already added');
         }
       } else {
         this.native.showLoading('please-wait');
@@ -483,14 +483,14 @@ export class FriendsService {
       carrierAddress: null,
       notificationsCarrierAddress: carrierString ? carrierString : null
     };
-    console.log('Pending contact is reset', this.pendingContact);
+    Logger.log('contacts', 'Pending contact is reset', this.pendingContact);
   }
 
   /********************************************************
   **** Start Filling Pending Contact for Unresolved DID ***
   *********************************************************/
   buildUnpublishedContact(didString: string, carrierString?: string, requiresConfirmation?: boolean) {
-    console.log('Building contact using unresolved DID for confirm-prompt', didString);
+    Logger.log('contacts', 'Building contact using unresolved DID for confirm-prompt', didString);
     this.resetPendingContact(didString, carrierString);
 
     if(requiresConfirmation === false) {
@@ -505,7 +505,7 @@ export class FriendsService {
   **** Start Filling Current Contact for Resolved DID *****
   *********************************************************/
   buildPublishedContact = (resolvedDidDocument, carrierString?: string, requiresConfirmation?: boolean) => {
-    console.log('Building contact using resolved DID document for confirm-prompt', resolvedDidDocument);
+    Logger.log('contacts', 'Building contact using resolved DID document for confirm-prompt', resolvedDidDocument);
     const resolvedDidString = resolvedDidDocument.id.didString;
     this.resetPendingContact(resolvedDidString, carrierString);
 
@@ -514,99 +514,99 @@ export class FriendsService {
 
     resolvedDidDocument.verifiableCredential.map(key => {
       if(key.credentialSubject.hasOwnProperty('name')) {
-        console.log('Resolved DID has name');
+        Logger.log('contacts', 'Resolved DID has name');
         this.pendingContact.credentials.name = key.credentialSubject.name;
       }
       if(key.credentialSubject.hasOwnProperty('avatar')) {
-        console.log('Resolved DID has avatar');
+        Logger.log('contacts', 'Resolved DID has avatar');
         this.pendingContact.credentials.avatar = Avatar.fromAvatarCredential(key.credentialSubject.avatar);
       }
       if(key.credentialSubject.hasOwnProperty('nickname')) {
-        console.log('Resolved DID has nickname');
+        Logger.log('contacts', 'Resolved DID has nickname');
         this.pendingContact.credentials.nickname = key.credentialSubject.nickname;
       }
       if(key.credentialSubject.hasOwnProperty('gender')) {
-        console.log('Resolved DID has gender');
+        Logger.log('contacts', 'Resolved DID has gender');
         this.pendingContact.credentials.gender = key.credentialSubject.gender;
       }
       if(key.credentialSubject.hasOwnProperty('nation')) {
-        console.log('Resolved DID has nation');
+        Logger.log('contacts', 'Resolved DID has nation');
         this.pendingContact.credentials.nation = key.credentialSubject.nation;
       }
       if(key.credentialSubject.hasOwnProperty('birthDate')) {
-        console.log('Resolved DID has birth date');
+        Logger.log('contacts', 'Resolved DID has birth date');
         this.pendingContact.credentials.birthDate = key.credentialSubject.birthDate;
       }
       if(key.credentialSubject.hasOwnProperty('birthPlace')) {
-        console.log('Resolved DID has birth place');
+        Logger.log('contacts', 'Resolved DID has birth place');
         this.pendingContact.credentials.birthPlace = key.credentialSubject.birthPlace;
       }
       if(key.credentialSubject.hasOwnProperty('occupation')) {
-        console.log('Resolved DID has occupation');
+        Logger.log('contacts', 'Resolved DID has occupation');
         this.pendingContact.credentials.occupation = key.credentialSubject.occupation;
       }
       if(key.credentialSubject.hasOwnProperty('education')) {
-        console.log('Resolved DID has education');
+        Logger.log('contacts', 'Resolved DID has education');
         this.pendingContact.credentials.education = key.credentialSubject.education;
       }
       if(key.credentialSubject.hasOwnProperty('telephone')) {
-        console.log('Resolved DID has telephone');
+        Logger.log('contacts', 'Resolved DID has telephone');
         this.pendingContact.credentials.telephone = key.credentialSubject.telephone;
       }
       if(key.credentialSubject.hasOwnProperty('email')) {
-        console.log('Resolved DID has email');
+        Logger.log('contacts', 'Resolved DID has email');
         this.pendingContact.credentials.email = key.credentialSubject.email;
       }
       if(key.credentialSubject.hasOwnProperty('interests')) {
-        console.log('Resolved DID has interests');
+        Logger.log('contacts', 'Resolved DID has interests');
         this.pendingContact.credentials.interests = key.credentialSubject.interests;
       }
       if(key.credentialSubject.hasOwnProperty('description')) {
-        console.log('Resolved DID has description');
+        Logger.log('contacts', 'Resolved DID has description');
         this.pendingContact.credentials.description = key.credentialSubject.description;
       }
       if(key.credentialSubject.hasOwnProperty('url')) {
-        console.log('Resolved DID has website');
+        Logger.log('contacts', 'Resolved DID has website');
         this.pendingContact.credentials.url = key.credentialSubject.url;
       }
       if(key.credentialSubject.hasOwnProperty('twitter')) {
-        console.log('Resolved DID has twitter');
+        Logger.log('contacts', 'Resolved DID has twitter');
         this.pendingContact.credentials.twitter = key.credentialSubject.twitter;
       }
       if(key.credentialSubject.hasOwnProperty('facebook')) {
-        console.log('Resolved DID has facebook');
+        Logger.log('contacts', 'Resolved DID has facebook');
         this.pendingContact.credentials.facebook = key.credentialSubject.facebook;
       }
       if(key.credentialSubject.hasOwnProperty('instagram')) {
-        console.log('Resolved DID has instagram');
+        Logger.log('contacts', 'Resolved DID has instagram');
         this.pendingContact.credentials.instagram = key.credentialSubject.instagram;
       }
       if(key.credentialSubject.hasOwnProperty('snapchat')) {
-        console.log('Resolved DID has snapchat');
+        Logger.log('contacts', 'Resolved DID has snapchat');
         this.pendingContact.credentials.snapchat = key.credentialSubject.snapchat;
       }
       if(key.credentialSubject.hasOwnProperty('telegram')) {
-        console.log('Resolved DID has telegram');
+        Logger.log('contacts', 'Resolved DID has telegram');
         this.pendingContact.credentials.telegram = key.credentialSubject.telegram;
       }
       if(key.credentialSubject.hasOwnProperty('wechat')) {
-        console.log('Resolved DID has wechat');
+        Logger.log('contacts', 'Resolved DID has wechat');
         this.pendingContact.credentials.wechat = key.credentialSubject.wechat;
       }
       if(key.credentialSubject.hasOwnProperty('weibo')) {
-        console.log('Contact has weibo');
+        Logger.log('contacts', 'Contact has weibo');
         this.pendingContact.credentials.weibo = key.credentialSubject.weibo;
       }
       if(key.credentialSubject.hasOwnProperty('twitch')) {
-        console.log('Contact has twitch');
+        Logger.log('contacts', 'Contact has twitch');
         this.pendingContact.credentials.twitch = key.credentialSubject.twitch;
       }
       if(key.credentialSubject.hasOwnProperty('elaAddress')) {
-        console.log('Contact has ela wallet');
+        Logger.log('contacts', 'Contact has ela wallet');
         this.pendingContact.credentials.elaAddress = key.credentialSubject.elaAddress;
       }
       if(key.credentialSubject.hasOwnProperty('apppackage')) {
-        console.log('Contact has apps');
+        Logger.log('contacts', 'Contact has apps');
         this.pendingContact.credentials.applicationProfileCredentials.push({
           action: key.credentialSubject.action,
           apppackage: key.credentialSubject.apppackage,
@@ -627,7 +627,7 @@ export class FriendsService {
   **************** Prompt Confirm Contact ******************
   *********************************************************/
   showConfirmPrompt(isPublished: boolean) {
-    console.log("Prompting contact confirm", this.pendingContact);
+    Logger.log('contacts', "Prompting contact confirm", this.pendingContact);
     const props: NavigationExtras = {
       queryParams: {
         id: this.pendingContact.id,
@@ -655,10 +655,10 @@ export class FriendsService {
           this.events.publish("backup:contact", this.contacts[this.contacts.indexOf(targetContact)]);
 
           this.native.genericToast(promptName + this.translate.instant('did-carrier-added'));
-          console.log('Contact is already added but carrier address is updated');
+          Logger.log('contacts', 'Contact is already added but carrier address is updated');
         } else {
           this.native.genericToast(promptName + this.translate.instant('is-already-added'));
-          console.log('Contact is already added');
+          Logger.log('contacts', 'Contact is already added');
         }
         resolve(true);
       } else {
@@ -666,21 +666,21 @@ export class FriendsService {
         // To try to reach him also through contact notifier plugin's global carrier address.
         // After he accepts this invitation, it becomes possible to send him remote notifications.
         if(this.pendingContact.notificationsCarrierAddress) {
-          console.log("Sending friend invitation through contact notifier");
+          Logger.log('contacts', "Sending friend invitation through contact notifier");
           this.contactNotifier.sendInvitation(
             this.pendingContact.id,
             this.pendingContact.notificationsCarrierAddress
           );
         } else {
-          console.log("Added friend has no associated contact notifier carrier address");
+          Logger.log('contacts', "Added friend has no associated contact notifier carrier address");
         }
 
         if(this.contactNotifierInviationId) {
-          console.log('Accepting contact notifier invitation', this.contactNotifierInviationId);
+          Logger.log('contacts', 'Accepting contact notifier invitation', this.contactNotifierInviationId);
           this.contactNotifier.acceptInvitation(this.contactNotifierInviationId);
           this.contactNotifierInviationId = null;
         } else {
-          console.log('Confirmed contact did not come from a "viewfriendinvitation" intent');
+          Logger.log('contacts', 'Confirmed contact did not come from a "viewfriendinvitation" intent');
         }
 
         this.contacts.push(this.pendingContact);
@@ -719,14 +719,14 @@ export class FriendsService {
           }
 
           if(targetAvatar) {
-            console.log('Updating notifier contact avatar' + contact.id);
+            Logger.log('contacts', 'Updating notifier contact avatar' + contact.id);
             notifierContact.setAvatar({
               contentType: targetAvatar.contentType,
               base64ImageData: targetAvatar.data
             });
           }
           if(targetName) {
-            console.log('Updating notifier contact name' + contact.id);
+            Logger.log('contacts', 'Updating notifier contact name' + contact.id);
             notifierContact.setName(targetName);
           }
         }
@@ -739,13 +739,13 @@ export class FriendsService {
   deleteContact(contact: Contact) {
     const promptName = this.getPromptName(contact);
 
-    console.log("Deleting contact from the contact notifier database");
+    Logger.log('contacts', "Deleting contact from the contact notifier database");
     this.contactNotifier.removeContact(contact.id);
 
-    console.log('Deleting contact', contact);
+    Logger.log('contacts', 'Deleting contact', contact);
     this.contacts = this.contacts.filter(_contact => _contact.id !== contact.id);
 
-    console.log('Updated contacts after deleting:' + contact.credentials.name, this.contacts);
+    Logger.log('contacts', 'Updated contacts after deleting:' + contact.credentials.name, this.contacts);
     this.saveContactsState();
 
     // Update home page contact slides
@@ -769,7 +769,7 @@ export class FriendsService {
     } else {
       this.activeSlide = this.contacts[this.contacts.indexOf(contact) - 1];
     }
-    console.log('Active slide after deletion', this.activeSlide);
+    Logger.log('contacts', 'Active slide after deletion', this.activeSlide);
   }
 
   /********************************************************
@@ -815,7 +815,7 @@ export class FriendsService {
   // 'pickfriend' intent without filter param
   getContacts(isSingleInvite: boolean, intent: string) {
     this.getStoredContacts().then((contacts: Contact[]) => {
-      console.log('Fetched stored contacts for pickfriend intent', contacts);
+      Logger.log('contacts', 'Fetched stored contacts for pickfriend intent', contacts);
       const realContacts = contacts.filter((contact) => contact.id !== 'did:elastos');
       if (realContacts.length > 0) {
         let props: NavigationExtras = {
@@ -839,13 +839,13 @@ export class FriendsService {
   // 'pickfriend' intent with filter param
   getFilteredContacts(isSingleInvite: boolean, ret) {
     this.getStoredContacts().then((contacts: Contact[]) => {
-      console.log('Fetched stored contacts for pickfriend intent', contacts);
+      Logger.log('contacts', 'Fetched stored contacts for pickfriend intent', contacts);
       const realContacts = contacts.filter((contact) => contact.id !== 'did:elastos');
       if(realContacts.length > 0) {
         this.filteredContacts = [];
 
         if(ret.params.filter.credentialType === 'ApplicationProfileCredential') {
-          console.log('pickfriend intent requesting contact with app', ret.from);
+          Logger.log('contacts', 'pickfriend intent requesting contact with app', ret.from);
           realContacts.map((contact) => {
             contact.credentials.applicationProfileCredentials.map((appCreds) => {
               if(appCreds.apppackage === ret.from) {
@@ -854,7 +854,7 @@ export class FriendsService {
             });
           });
         } else {
-          console.log('Intent requesting friends with credential', ret.params.filter.credentialType);
+          Logger.log('contacts', 'Intent requesting friends with credential', ret.params.filter.credentialType);
           realContacts.map((contact) => {
             if(contact.credentials[ret.params.filter.credentialType]) {
               this.filteredContacts.push(contact);
@@ -894,7 +894,7 @@ export class FriendsService {
   async sendRemoteNotificationToContact(contactId: string, title: string, url: string) {
     let contactNotifierContact = await this.contactNotifier.resolveContact(contactId);
     if (contactNotifierContact) {
-      console.log("Sending shared content to friend with DID "+ contactId);
+      Logger.log('contacts', "Sending shared content to friend with DID "+ contactId);
       await contactNotifierContact.sendRemoteNotification({
         title: "Shared content from a contact",
         message: title,
@@ -907,7 +907,7 @@ export class FriendsService {
   }
 
   async shareToContacts(isFilter: boolean) {
-    console.log("Sharing to contacts");
+    Logger.log('contacts', "Sharing to contacts");
 
     let sentNotificationsCount = 0;
     if (!isFilter) {
@@ -927,15 +927,15 @@ export class FriendsService {
         }
       }));
     }
-    console.log("Tried to send " + sentNotificationsCount + " notifications to friends");
-    console.log("Sending share intent response");
+    Logger.log('contacts', "Tried to send " + sentNotificationsCount + " notifications to friends");
+    Logger.log('contacts', "Sending share intent response");
     appManager.sendIntentResponse({},
       this.managerService.handledIntentId
     );
   }
 
   inviteContacts(isFilter: boolean, intent: string) {
-    console.log('Invited filtered friends?', isFilter);
+    Logger.log('contacts', 'Invited filtered friends?', isFilter);
     let contactsForIntent = [];
 
     if (!isFilter) {
@@ -946,7 +946,7 @@ export class FriendsService {
       this.filteredContacts.forEach((contact) => contact.isPicked = false);
     }
 
-    console.log('Invited Contacts', contactsForIntent);
+    Logger.log('contacts', 'Invited Contacts', contactsForIntent);
     this.sendIntentRes(contactsForIntent, intent);
   }
 

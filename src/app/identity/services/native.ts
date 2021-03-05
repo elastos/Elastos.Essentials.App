@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 
-import * as _ from 'lodash';
+import { isString } from 'lodash';
 import { AppActionSheetController } from '../components/action-sheet/action-sheet.controller';
 import { IActionSheetButtonConfig } from '../components/action-sheet/action-sheet.config';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -33,7 +33,7 @@ export class Native {
 
   public log(message: any, type: string): void {
     // if (Config.isDebug) {
-      let msg = type +  ": " + (_.isString(message) ? message : JSON.stringify(message));
+      let msg = type +  ": " + (isString(message) ? message : JSON.stringify(message));
       console.log(msg);
     // }
   }

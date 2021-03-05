@@ -11,7 +11,9 @@ export class DID {
                 let res: { result: { credential: string } } = await appManager.sendIntent("https://did.elastos.net/appidcredissue", {
                     appinstancedid: appInstanceDID
                 });
-                
+
+                console.log("Got response for the appidcredissue intent");
+
                 if (!res || !res.result || !res.result.credential) {
                     console.warn("Missing credential information. The operation was maybe cancelled.");
                     resolve(null);

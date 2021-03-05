@@ -33,8 +33,6 @@ export class AppService {
     }
 
     public async init() {
-        console.log("AppmanagerService init");
-
         // Listen to title bar events
         /* TODO @chad
         titleBarManager.addOnItemClickedListener((menuIcon) => {
