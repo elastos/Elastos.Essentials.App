@@ -2,6 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -10,48 +11,35 @@ declare let appManager: AppManagerPlugin.AppManager;
 })
 export class NativeService {
 
-  private loader: HTMLIonLoadingElement = null;
-
   constructor(
     private translate: TranslateService,
-    private toastController: ToastController,
     private alertController: AlertController,
-    private loadingCtrl: LoadingController,
     private zone: NgZone,
-    private appManager: TemporaryAppManagerPlugin
+    private appManager: TemporaryAppManagerPlugin,
+    private globalNative: GlobalNativeService
   ) { }
 
   /********* Toasts *********/
   async genericToast(msg: string, duration: number = 3000) {
-    const toast = await this.toastController.create({
-      mode: 'ios',
-      color: 'success',
-      header: this.translate.instant(msg),
-      duration: duration,
-    });
-    toast.present();
+    this.globalNative.genericToast(msg, duration)
   }
 
   async shareToast() {
-    const toast = await this.toastController.create({
-      mode: 'ios',
-      color: 'success',
-      header: this.translate.instant('contact-copied'),
-      duration: 3000,
-      position: 'top'
-    });
-    toast.present();
+    this.globalNative.genericToast(this.translate.instant('contact-copied'), 3000);
   }
 
   async didResolveErr(err: string) {
-    const toast = await this.toastController.create({
-      mode: 'ios',
-      color: 'success',
-      header: this.translate.instant('resolve-error-header'),
-      message: err,
-      duration: 6000,
-    });
-    toast.present();
+    this.globalNative.errToast(this.translate.instant('resolve-error-header'), 6000);
+  }
+
+  /********* Loader *********/  
+  public async showLoading(content: string = ''): Promise<void> {
+    await this.globalNative.hideLoading();
+    this.globalNative.showLoading(content);
+  }
+
+  public async hideLoading() {
+    await this.globalNative.hideLoading();
   }
 
   /********* Alerts *********/
@@ -72,29 +60,4 @@ export class NativeService {
     });
     alert.present();
   }
-
-  public async showLoading(content: string = ''): Promise<void> {
-    // Hide a previous loader in case there was one already.
-    await this.hideLoading();
-    const translatation = this.translate.instant(content);
-
-    this.loader = await this.loadingCtrl.create({
-      mode: 'ios',
-      cssClass: 'loader',
-      message: translatation
-    });
-    this.loader.onWillDismiss().then(() => {
-      this.loader = null;
-    });
-
-    return await this.loader.present();
-  }
-
-  public async hideLoading() {
-    if (this.loader) {
-      await this.loader.dismiss();
-      this.loader = null;
-    }
-  }
-
 }

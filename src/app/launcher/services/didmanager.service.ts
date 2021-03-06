@@ -3,11 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { ContactNotifierService } from 'src/app/services/contactnotifier.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { AppmanagerService } from './appmanager.service';
-import { NativeService } from './native.service';
-import { TipsService } from './tips.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -19,7 +16,7 @@ export class DIDManagerService {
 
   constructor(
     private translate: TranslateService,
-    private native: NativeService,
+    private native: GlobalNativeService ,
     private theme: GlobalThemeService,
     private didSessions: GlobalDIDSessionsService,
     private contactNotifier: ContactNotifierService,

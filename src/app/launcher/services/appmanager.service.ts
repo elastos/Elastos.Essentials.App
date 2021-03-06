@@ -13,7 +13,6 @@ import {
 import { NotificationManagerService } from './notificationmanager.service';
 import { DIDManagerService } from './didmanager.service';
 import { GlobalThemeService } from '../../services/global.theme.service';
-import { NativeService } from './native.service';
 import { BackupService } from './backup.service';
 import { Events } from './events.service';
 
@@ -27,6 +26,7 @@ import { TemporaryAppManagerPlugin, ReceivedMessage } from 'src/app/TMP_STUBS';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Logger } from 'src/app/logger';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
@@ -84,7 +84,7 @@ export class AppmanagerService {
         private router: Router,
         private events: Events,
         private didService: DIDManagerService,
-        private native: NativeService,
+        private native: GlobalNativeService,
         private storage: GlobalStorageService,
         private appManager: TemporaryAppManagerPlugin,
         private didSessions: GlobalDIDSessionsService,
@@ -113,6 +113,10 @@ export class AppmanagerService {
 
         this.events.subscribe("updateNotifications", () => {
             // TODO @chad this.notification.fillAppInfoToNotification(this.installService.appInfos);
+        });
+
+        this.events.subscribe("notifications.tip", (notification) => {
+            this.presentTip(notification);
         });
     }
 

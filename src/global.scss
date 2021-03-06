@@ -9,8 +9,11 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
-@import './declared.scss';
 
+@import './theme/declared.scss';
+@import './theme/ionic.scss';
+
+/********************** SHARED FONTS **********************/
 @font-face {
     font-family: 'Montserrat';
     font-weight: 300;
@@ -121,149 +124,8 @@
     color: #f04141;
 }
 
-/** ion-slides pagination **/
-.swiper-pagination {
-    position: relative;
-    padding-top: 20px;
-    color: #ffffff;
-}
-
-/** ion-refresher **/
-.refresh {
-    .refresher-pulling-text,
-    .refresher-refreshing-text,
-    .refresher-refreshing-icon,
-    .refresher-pulling-icon {
-        font-weight: 500;
-    }
-}
-
-/** alert controller **/
-.alert {
-    --ion-text-color: #000000;
-}
-
-/** Swipe notification **/
-.notifications-swipe-button{
-    --background: transparent;
-}
-
-/** Popup **/
-.running-comp {
-    ion-backdrop{
-      opacity: 0.5 !important;
-    }
-
-    .popover-wrapper{
-        .popover-content{
-            top: 0% !important;
-            left: 0% !important;
-            width: 100%;
-            border-bottom-left-radius: 37px;
-            border-bottom-right-radius: 37px;
-        }
-    }
-}
-
-.running-modal {
-}
-
-@media screen and (max-height: 640px) {
-    .swiper-pagination {
-        padding-top: 5px;
-    }
-}
-
-/** Alert controller **/
-.custom-alert {
-}
-
 /** Loader controller **/
 .custom-loader-wrapper {
     --background: white;
 }
 
-.custom-loader {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
-
-
-    ion-label {
-        margin-top: 20px;
-        font-size: 14px;
-        font-weight: bold;
-        color: #353650;
-    }
-}
-
-.lds-dual-ring {
-    display: inline-block;
-    width: 80px;
-    height: 80px;
-}
-.lds-dual-ring:after {
-    content: " ";
-    display: block;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border-radius: 50%;
-    border: 6px solid #353650;;
-    border-color: #353650 transparent #353650 transparent;
-    animation: lds-dual-ring 1.2s linear infinite;
-}
-@keyframes lds-dual-ring {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/** Darkmode loader controller **/
-.dark-custom-loader-wrapper {
-    --background: #2e2f4e;
-}
-
-.dark-custom-loader {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
-
-
-    ion-label {
-        margin-top: 20px;
-        font-size: 14px;
-        font-weight: bold;
-        color: white;
-    }
-}
-
-.dark-lds-dual-ring {
-    display: inline-block;
-    width: 80px;
-    height: 80px;
-}
-.dark-lds-dual-ring:after {
-    content: " ";
-    display: block;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border-radius: 50%;
-    border: 6px solid white;
-    border-color: white transparent white transparent;
-    animation: lds-dual-ring 1.2s linear infinite;
-}
-@keyframes dark-lds-dual-ring {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}

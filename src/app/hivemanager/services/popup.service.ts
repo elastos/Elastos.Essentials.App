@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Injectable()
 export class PopupService {
@@ -10,19 +11,12 @@ export class PopupService {
     constructor(
         public alertCtrl: AlertController,
         public translate: TranslateService,
-        private toastCtrl: ToastController
+        private globalNative: GlobalNativeService
     )
     {}
 
-    public toast(message: string = '', duration: number = 2000) {
-        message = this.translate.instant(message);
-        this.toastCtrl.create({
-            mode: 'ios',
-            color: 'primary',
-            position: 'bottom',
-            header: message,
-            duration: duration,
-        }).then(toast => toast.present());
+    public toast(msg: string = '', duration: number = 2000) {
+        this.globalNative.genericToast(msg, duration);
     }
 
     public ionicAlert(

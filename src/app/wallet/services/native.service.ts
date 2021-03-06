@@ -26,6 +26,7 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from '../model/Logger';
 import { HelpComponent } from '../components/help/help.component';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Injectable()
 export class Native {
@@ -36,13 +37,12 @@ export class Native {
     private loadingCtrlCreating = false;
 
     constructor(
-        public toastCtrl: ToastController,
-        private clipboard: Clipboard,
         public translate: TranslateService,
         private loadingCtrl: LoadingController,
         public popoverCtrl: PopoverController,
         private navCtrl: NavController,
         private zone: NgZone,
+        private globalNative: GlobalNativeService
     ) {
     }
 
@@ -58,29 +58,16 @@ export class Native {
         Logger.log(message, "Warnning");
     }
 
-    public toast(message: string = '操作完成', duration: number = 2000): void {
-        this.toastCtrl.create({
-            mode: 'ios',
-            color: 'primary',
-            position: 'top',
-            header: message,
-            duration: 2000,
-        }).then(toast => toast.present());
+    public toast(msg: string = '操作完成', duration: number = 2000): void {
+        this.globalNative.genericToast(msg, duration);
     }
 
-    public toast_trans(message: string = '', duration: number = 2000): void {
-        message = this.translate.instant(message);
-        this.toastCtrl.create({
-            mode: 'ios',
-            color: 'primary',
-            position: 'top',
-            header: message,
-            duration: duration,
-        }).then(toast => toast.present());
+    public toast_trans(msg: string = '', duration: number = 2000): void {
+        this.globalNative.genericToast(msg, duration);
     }
 
     copyClipboard(text) {
-        return this.clipboard.copy(text);
+        return this.globalNative.copyClipboard(text);
     }
 
     public go(page: string, options: any = {}) {

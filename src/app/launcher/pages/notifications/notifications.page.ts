@@ -10,9 +10,8 @@ import {
   LauncherNotification,
   LauncherNotificationType
 } from '../../services/notificationmanager.service';
-import { AppmanagerService } from '../../services/appmanager.service';
 import { TipsService } from '../../services/tips.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { Events } from '../../services/events.service';
 
 @Component({
   selector: 'app-notifications',
@@ -30,8 +29,8 @@ export class NotificationsPage implements OnInit {
     public notificationService: NotificationManagerService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    public appService: AppmanagerService,
-    private tipsService: TipsService
+    private tipsService: TipsService,
+    private events: Events
   ) {
   }
 
@@ -48,8 +47,8 @@ export class NotificationsPage implements OnInit {
       // Special "tip" notification: handle this directly in the launcher app without starting an intent
       console.log("Opening tip from notification", notification);
 
-      let tipData = JSON.parse(notification.message);
-      this.appService.presentTip(this.tipsService.findTipByIdentifier(tipData.key));
+      const tipData = JSON.parse(notification.message);
+      this.events.publish('notifications.tip', this.tipsService.findTipByIdentifier(tipData.key));
     }
     else if (notification.url && (notification.url !== '')) {
       console.log('NotificationsComponent sendUrlIntent');
