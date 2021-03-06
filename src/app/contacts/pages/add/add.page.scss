@@ -1,12 +1,14 @@
+@import 'src/app/contacts/root.scss';
+
 .container {
   min-height: 100%;
   padding: 30px 35px;
 
   ion-input {
     background: #f0f1ff;
-    height: 50px;
+    height: 47px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 14px;
     --padding-start: 12px;
   }
 

@@ -4,6 +4,8 @@ import { BehaviorSubject } from 'rxjs';
 import { AppmanagerService } from '../launcher/services/appmanager.service';
 import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
+import { Event } from '@angular/router';
+import { TitleBarForegroundMode } from '../components/titlebar/titlebar.types';
 
 export enum AppTheme {
   LIGHT,
@@ -20,7 +22,11 @@ export class GlobalThemeService {
 
   public isAndroid = false;
 
-  constructor(private platform: Platform, private prefs: GlobalPreferencesService, private didSessions: GlobalDIDSessionsService) {
+  constructor(
+    private platform: Platform,
+    private prefs: GlobalPreferencesService,
+    private didSessions: GlobalDIDSessionsService,
+  ) {
     this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
       if (signedInIdentity) {
         // Re-apply the theme for the active user.
@@ -39,6 +45,7 @@ export class GlobalThemeService {
 
         if (darkMode)
           this.activeTheme.next(AppTheme.DARK);
+          //this.events.emit('titlebar-foregroundmode', TitleBarForegroundMode.LIGHT);
         else
           this.activeTheme.next(AppTheme.LIGHT);
       }

@@ -9,7 +9,7 @@
                 {{ 'mnemonic-warning3' | translate }}
             </p>
             <ion-row class="btn-container">
-                <ion-button color="secondary" (click)="nextSlide(slide)">
+                <ion-button (click)="nextSlide(slide)">
                     <ion-label> {{ 'view-mnemonic' | translate }}</ion-label>
                 </ion-button>
             </ion-row>
@@ -25,7 +25,7 @@
                 </ion-col>
             </ion-row>
             <ion-row class="btn-container">
-                <ion-button color="secondary" (click)="goToMnemonicWrite()">
+                <ion-button (click)="goToMnemonicWrite()">
                     <ion-label>{{ 'memory-written-down' | translate }}</ion-label>
                 </ion-button>
             </ion-row>

@@ -1,5 +1,5 @@
-<ion-header class="ion-no-border" [class.dark-header]="themeService.darkMode">
-  <ion-toolbar mode="ios" [class.dark-header]="themeService.darkMode">
+<!-- <ion-header class="ion-no-border">
+  <ion-toolbar mode="ios" [ngStyle]="{ '--background': theme.backgroundColor }">
     <ion-buttons slot="start">
       <ion-button *ngIf="icons[0].visible" (click)="outerLeftIconClicked()">
         <img [src]="getIconPath(0)">
@@ -8,7 +8,7 @@
         <img [src]="getIconPath(1)">
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ _title }}</ion-title>
+    <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
     <ion-buttons slot="end">
       <ion-button [class.hidden]="!icons[2].visible"  (click)="innerRightIconClicked()">
         <img *ngIf="icons[2].visible" [src]="getIconPath(2)">
@@ -21,4 +21,25 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+</ion-header> -->
+
+<ion-header class="ion-no-border">
+  <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
+    <ion-col size="1.25">
+      <img *ngIf="icons[0].visible" [src]="getIconPath(0)" (click)="outerLeftIconClicked()">
+    </ion-col>
+    <ion-col size="1.25">
+      <img *ngIf="icons[1].visible" [src]="getIconPath(1)" (click)="innerLeftIconClicked()">
+    </ion-col>
+    <ion-col size="7">
+      <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
+    </ion-col>
+    <ion-col size="1.25" [class.hidden]="!icons[2].visible" >
+      <img *ngIf="icons[2].visible" [src]="getIconPath(2)" (click)="innerRightIconClicked()">
+    </ion-col>
+    <ion-col size="1.25">
+      <img *ngIf="!menuVisible && icons[3].visible" [src]="getIconPath(3)" (click)="outerRightIconClicked($event)">
+      <img *ngIf="menuVisible" [src]="getIconPath(3)" (click)="outerRightIconClicked($event)">
+    </ion-col>
+  </ion-row>
 </ion-header>

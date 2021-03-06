@@ -24,6 +24,7 @@ export class TitleBarComponent {
   private navigationMode: TitleBarNavigationMode;
 
   public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
+  public foregroundMode: TitleBarForegroundMode;
 
   public icons: TitleBarSlotItem[] = [
     TitleBarComponent.makeDefaultIcon(), // outer left
@@ -95,6 +96,8 @@ export class TitleBarComponent {
    * @param foregroundMode A @TitleBarForegroundMode mode, LIGHT or DARK.
    */
   public setForegroundMode(foregroundMode: TitleBarForegroundMode) {
+    this.foregroundMode = foregroundMode;
+
     if (foregroundMode == TitleBarForegroundMode.LIGHT)
       this.theme.color = "#FFFFFF";
     else
@@ -150,29 +153,29 @@ export class TitleBarComponent {
     // Replace built-in icon path placeholders with real picture path
     switch (this.icons[iconSlot].iconPath) {
       case BuiltInIcon.ELASTOS:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/elastos.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/elastos.svg' : 'assets/components/titlebar/darkmode/elastos.svg';
       case BuiltInIcon.BACK:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/back.svg' : 'assets/components/titlebar/darkmode/back.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/back.svg' : 'assets/components/titlebar/darkmode/back.svg';
       case BuiltInIcon.CLOSE:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/close.svg' : 'assets/components/titlebar/darkmode/close.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/close.svg' : 'assets/components/titlebar/darkmode/close.svg';
       case BuiltInIcon.SCAN:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/scan.svg' : 'assets/components/titlebar/darkmode/scan.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/scan.svg' : 'assets/components/titlebar/darkmode/scan.svg';
       case BuiltInIcon.ADD:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/add.svg' : 'assets/components/titlebar/darkmode/add.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/add.svg' : 'assets/components/titlebar/darkmode/add.svg';
       case BuiltInIcon.DELETE:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/delete.svg' : 'assets/components/titlebar/darkmode/delete.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/delete.svg' : 'assets/components/titlebar/darkmode/delete.svg';
       case BuiltInIcon.SETTINGS:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/settings.svg' : 'assets/components/titlebar/darkmode/settings.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/settings.svg' : 'assets/components/titlebar/darkmode/settings.svg';
       case BuiltInIcon.HELP:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/help.svg' : 'assets/components/titlebar/darkmode/help.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/help.svg' : 'assets/components/titlebar/darkmode/help.svg';
       case BuiltInIcon.HORIZONTAL_MENU:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/horizontal_menu.svg' : 'assets/components/titlebar/darkmode/horizontal_menu.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/horizontal_menu.svg' : 'assets/components/titlebar/darkmode/horizontal_menu.svg';
       case BuiltInIcon.VERTICAL_MENU:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/vertical_menu.svg' : 'assets/components/titlebar/darkmode/vertical_menu.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/vertical_menu.svg' : 'assets/components/titlebar/darkmode/vertical_menu.svg';
       case BuiltInIcon.EDIT:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/edit.svg' : 'assets/components/titlebar/darkmode/edit.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/edit.svg' : 'assets/components/titlebar/darkmode/edit.svg';
       case BuiltInIcon.FAVORITE:
-        return !this.themeService.darkMode ? 'assets/components/titlebar/favorite.svg' : 'assets/components/titlebar/darkmode/favorite.svg';
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/favorite.svg' : 'assets/components/titlebar/darkmode/favorite.svg';
       default:
         // Nothing, we'll use the real given path.
         return this.icons[iconSlot].iconPath;
@@ -298,10 +301,12 @@ export class TitleBarComponent {
       document.body.classList.remove("dark");
       this.theme.backgroundColor = '#f8f8ff';
       this.theme.color = '#000000'
+      this.foregroundMode = TitleBarForegroundMode.DARK;
     } else {
       document.body.classList.add("dark");
       this.theme.backgroundColor = '#191a2f';
       this.theme.color = '#ffffff';
+      this.foregroundMode = TitleBarForegroundMode.LIGHT;
     }
   }
 }

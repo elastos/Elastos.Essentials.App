@@ -9,6 +9,8 @@ import { WalletCreationService } from '../../../services/walletcreation.service'
 import { AuthService } from '../../../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../services/events.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 export enum MnemonicLanguage {
   CHINESE_SIMPLIFIED,
@@ -22,7 +24,7 @@ export enum MnemonicLanguage {
 })
 
 export class WalletImportPage implements OnInit {
-
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', {static: false}) slider: IonSlides;
 
     slideOpts = {
@@ -63,6 +65,12 @@ export class WalletImportPage implements OnInit {
             });
         }
         console.log('Input list created', this.inputList);
+    }
+
+    ionViewWillEnter() {
+        this.titleBar.setBackgroundColor('#732cd0');
+        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+        this.titleBar.setTitle(' ');
     }
 
 

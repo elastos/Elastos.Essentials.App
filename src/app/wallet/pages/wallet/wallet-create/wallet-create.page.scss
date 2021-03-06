@@ -1,3 +1,5 @@
+@import 'src/app/wallet/root.scss';
+
 .container {
     min-height: 100%;
     padding: 10px 15px;
@@ -25,8 +27,6 @@
 
         ion-input {
             background: #803fd5;
-            border-radius: 8px;
-            font-size: 14px;
             font-weight: 400;
             letter-spacing: -0.34px;
             text-align: left;
@@ -84,8 +84,8 @@
             align-items: center;
 
             ion-icon {
-                width: 40px;
-                height: 40px;
+                width: 25px;
+                height: 25px;
                 color: #ffffff;
             }
         }
@@ -93,5 +93,6 @@
 
     .btn-row {
         margin-top: 30px;
+        width: 100%;
     }
 }

@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UiService } from '../../../services/ui.service';
 import { IonInput } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
     selector: 'app-wallet-create',
@@ -48,6 +49,7 @@ export class WalletCreatePage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setBackgroundColor('#732cd0');
+        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         if (this.walletCreationService.type === NewWallet.CREATE) {
             this.titleBar.setTitle(this.translate.instant('launcher-create-wallet'));
         } else {

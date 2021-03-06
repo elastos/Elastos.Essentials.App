@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IonicStorageModule } from '@ionic/storage';
+import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
 
 import { DragulaModule } from 'ng2-dragula';
 import { AngularFittextModule } from 'angular-fittext';
@@ -112,7 +113,8 @@ export function TranslateLoaderFactory() {
     IonicModule.forRoot({
       mode: 'md',
       scrollAssist: false,
-      scrollPadding: false
+      scrollPadding: false,
+      navAnimation: iosTransitionAnimation
     }),
     AppRoutingModule,
     FormsModule,

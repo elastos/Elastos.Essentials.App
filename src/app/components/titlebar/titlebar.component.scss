@@ -1,5 +1,31 @@
 ion-header {
-    padding: 0 5px;
+    ion-row {
+        width: 100%;
+        padding: 7.5px 2.5px;
+
+        ion-col {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            img {
+                height: 24px;
+                width: 24px;
+            }
+        
+            ion-icon {
+                height: 30px;
+                width: 30px;
+                color: #000000;
+            }
+      
+            ion-title {
+                font-size: 15px;
+                font-weight: 600;
+                text-align: center;
+            }
+        }
+    }
   
     ion-toolbar {
       --background: #f8f8ff;
@@ -13,7 +39,7 @@ ion-header {
             height: 30px;
             width: 30px;
             color: #000000;
-      }
+        }
   
         ion-title {
             font-size: 15px;

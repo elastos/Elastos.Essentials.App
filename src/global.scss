@@ -105,10 +105,42 @@
     outline: none;
 }
 
+/** Page filter when popup is showing **/
+.blur {
+    filter: blur(2.5px);
+}
+
 /** Clickable items **/
 .ripple {
     overflow: hidden;
     position: relative;
+}
+
+/** Color for warning texts  **/
+.warning-text {
+    color: #f04141;
+}
+
+/** ion-slides pagination **/
+.swiper-pagination {
+    position: relative;
+    padding-top: 20px;
+    color: #ffffff;
+}
+
+/** ion-refresher **/
+.refresh {
+    .refresher-pulling-text,
+    .refresher-refreshing-text,
+    .refresher-refreshing-icon,
+    .refresher-pulling-icon {
+        font-weight: 500;
+    }
+}
+
+/** alert controller **/
+.alert {
+    --ion-text-color: #000000;
 }
 
 /** Swipe notification **/

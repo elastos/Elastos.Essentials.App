@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { Util } from "../../../model/Util";
@@ -6,6 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
 import { Events } from '../../../services/events.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-wallet-advanced-import',
@@ -13,6 +15,7 @@ import { Events } from '../../../services/events.service';
   styleUrls: ['./wallet-advanced-import.page.scss'],
 })
 export class WalletAdvancedImportPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private masterWalletId = '1';
   public mnemonicSentence = '';
@@ -30,6 +33,12 @@ export class WalletAdvancedImportPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setBackgroundColor('#732cd0');
+    this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+    this.titleBar.setTitle(' ');
   }
 
   onMnemonicSentenceChanged() {

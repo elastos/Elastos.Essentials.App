@@ -166,7 +166,7 @@ export class Native {
         this.popup = await this.popoverCtrl.create({
           mode: 'ios',
           component: HelpComponent,
-          cssClass: 'helpComponent',
+          cssClass: 'wallet-help-component',
           event: ev,
           componentProps: {
             message: helpMessage

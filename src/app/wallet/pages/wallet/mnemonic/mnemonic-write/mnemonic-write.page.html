@@ -130,7 +130,7 @@
                     </ion-col>
                 </ion-row>
                 <ion-row class="btn-container">
-                    <ion-button color="secondary" (click)="slideNext(slide)">
+                    <ion-button (click)="slideNext(slide)">
                         <ion-label>{{ 'next-four-words' | translate }}</ion-label>
                     </ion-button>
                 </ion-row>
@@ -198,7 +198,7 @@
                     </ion-col>
                 </ion-row>
                 <ion-row class="btn-container">
-                    <ion-button color="secondary" (click)="slideNext(slide)">
+                    <ion-button (click)="slideNext(slide)">
                         <ion-label>{{ 'next-four-words' | translate }}</ion-label>
                     </ion-button>
                 </ion-row>
@@ -266,7 +266,7 @@
                     </ion-col>
                 </ion-row>
                 <ion-row class="btn-container">
-                    <ion-button [disabled]="!allInputsFilled()" color="secondary" (click)="onCreate()">
+                    <ion-button [disabled]="!allInputsFilled()" (click)="onCreate()">
                         <ion-label>{{ 'create-wallet' | translate }}</ion-label>
                     </ion-button>
                 </ion-row>

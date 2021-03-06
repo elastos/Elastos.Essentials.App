@@ -1,32 +1,50 @@
-:focus {
-  outline: none;
+ion-row {
+    width: 100%;
 }
 
-/** Page filter when popup is showing **/
-.blur {
-  filter: blur(2.5px);
+ion-input {
+    height: 47px;
+    border-radius: 8px;
+    font-size: 15px;
 }
 
-/** Ripple for clickable items **/
-.ripple {
-  position: relative;
-  overflow: hidden;
+ion-button {
+    height: 50px;
+    width: 100%;
+    --background: linear-gradient(to bottom, #732dcf, #640fd4);
+    --border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
 }
 
-/** Color for warning texts  **/
-.warning-text {
-    color: #f04141;
+ion-footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 10px;
+}
+  
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: -2px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 10px;
+  
+    div {
+         width: 100%;
+    }
 }
 
 /************************************ 
   Declared Controllers
 ************************************/
-.helpComponent {
-  --width: 66.6%;
-  --background: linear-gradient(to bottom, #4a118d, #39136a);
-  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
-}
-
 .txPopup {
   --background: transparent;
   animation: animate;
