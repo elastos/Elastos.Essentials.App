@@ -17,11 +17,11 @@
         </div>
       </ion-col>
       <ion-col size="1.5">
-        <img class="qrcode" src="{{ this.theme.darkMode ? '/assets/svg/qrcode-dark.svg' : '/assets/svg/qrcode.svg' }}"
+        <img class="qrcode" src="{{ this.theme.darkMode ? '/assets/identity/svg/qrcode-dark.svg' : '/assets/identity/svg/qrcode.svg' }}"
           (click)="showQRCode()" />
       </ion-col>
       <ion-col size="1.5">
-        <img class="dots" src="{{ this.theme.darkMode ? '/assets/svg/share-dark.svg' : '/assets/svg/share.svg' }}"
+        <img class="dots" src="{{ this.theme.darkMode ? '/assets/identity/svg/share-dark.svg' : '/assets/identity/svg/share.svg' }}"
           (click)="profileService.shareIdentity()" />
       </ion-col>
     </ion-row>
@@ -35,9 +35,9 @@
       <ion-grid>
         <ion-row>
           <ion-col size="1" class="detail-col">
-            <img *ngIf="profileService.verifiedCredentials.length == 0" src="/assets/svg/circle-with-x.svg"
+            <img *ngIf="profileService.verifiedCredentials.length == 0" src="/assets/identity/svg/circle-with-x.svg"
               class="alert"></img>
-            <img *ngIf="profileService.verifiedCredentials.length != 0" src="/assets/svg/badge.svg" class="alert">
+            <img *ngIf="profileService.verifiedCredentials.length != 0" src="/assets/identity/svg/badge.svg" class="alert">
             </img>
           </ion-col>
           <ion-col size="11">
@@ -52,14 +52,14 @@
       <ion-col size="12">
         <div>
           <div class="hive-background">
-            <img class="baloon" src="/assets/svg/hive-ballon.svg" />
-            <img class="icon" src="/assets/svg/hive.svg" />
+            <img class="baloon" src="/assets/identity/svg/hive-ballon.svg" />
+            <img class="icon" src="/assets/identity/svg/hive.svg" />
           </div>
           <div class="hive-foreground">
             <div class="hive-title">{{ 'hive-storage-vault' | translate }}</div>
             <div *ngIf="!profileService.publishedDIDDocument || hiveIsloaded" class="hive-address">
               {{ hiveVault ? hiveVault.getEndpoint() : 'not-set' | translate }}</div>
-            <div class="hive-loading" *ngIf="profileService.publishedDIDDocument && !hiveIsloaded"><img src="/assets/svg/loader.gif"></div>
+            <div class="hive-loading" *ngIf="profileService.publishedDIDDocument && !hiveIsloaded"><img src="/assets/identity/svg/loader.gif"></div>
           </div>
         </div>
       </ion-col>
@@ -69,7 +69,7 @@
       <div class="profile-header">
         <span class="aboutme">{{ 'about-me' | translate }}</span>
         <span class="edit" (click)="profileService.editProfile();">{{ 'edit' | translate }}&nbsp;<img
-            src="{{ this.theme.darkMode ? '../../../assets/svg/chevron-thin-right-dark.svg' : '../../../assets/svg/chevron-thin-right.svg' }}"></span>
+            src="{{ this.theme.darkMode ? '../../../assets/identity/svg/chevron-thin-right-dark.svg' : '../../../assets/identity/svg/chevron-thin-right.svg' }}"></span>
       </div>
       <div class="profile" *ngIf="this.profileService.profileEntries.length > 0">
         <ion-row *ngFor="let entry of this.profileService.profileEntries">
@@ -89,7 +89,7 @@
       <!-- <ion-col size="4"
       ><span class="show-all">{{ 'show-all ' | translate}}</span>
       <ion-icon
-        src="{{ this.theme.darkMode ? '/assets/svg/chevron-thin-right-dark.svg' : '/assets/svg/chevron-thin-right.svg' }}"
+        src="{{ this.theme.darkMode ? '/assets/identity/svg/chevron-thin-right-dark.svg' : '/assets/identity/svg/chevron-thin-right.svg' }}"
         class="chevron-thin-right"
       ></ion-icon>
     </ion-col> -->
@@ -105,7 +105,7 @@
                   <ion-row class="ion-align-items-center">
                     <ion-col>
                       <img class="capsule-icon" src="{{ appCred.appInfo.app ? getAppIcon(appCred.appInfo.app.id)
-                        : '/assets/icon/default-icon.svg' }}" />
+                        : '/assets/identity/icon/default-icon.svg' }}" />
                     </ion-col>
 
                   </ion-row>

@@ -601,7 +601,7 @@ export class CredentialAccessRequestPage {
     if(this.requestDappIcon) {
       return this.sanitize(this.requestDappIcon);
     } else {
-      return 'assets/icon/elastos-icon.svg'
+      return 'assets/identity/icon/elastos-icon.svg'
     }
   }
 
@@ -635,7 +635,7 @@ export class CredentialAccessRequestPage {
     } else {
       const imgName = item.name === "did" ? "finger-print" : item.name;
       const theme = this.theme.darkMode ? "dark" : "light";
-      return `/assets/smallIcons/nofill/${imgName}.svg`;
+      return `/assets/identity/smallIcons/nofill/${imgName}.svg`;
     }
   }
 

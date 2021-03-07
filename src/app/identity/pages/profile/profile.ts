@@ -695,7 +695,7 @@ export class ProfilePage {
       case "avatar":
         return "image";
       default:
-        return `/assets/smallIcons/${skin}/${fragment}.svg`;
+        return `/assets/identity/smallIcons/${skin}/${fragment}.svg`;
     }
   }
 

@@ -51,7 +51,7 @@
   }
 
   .publish {
-    background-image: url("/assets/svg/background-blue.svg");
+    background-image: url("/assets/identity/svg/background-blue.svg");
     background-size: 95%;
     background-repeat: no-repeat;
     width: 153px;
@@ -72,7 +72,7 @@
 
   }
   .share {
-    background-image: url("/assets/svg/background-black.svg");
+    background-image: url("/assets/identity/svg/background-black.svg");
     background-size: 95%;
     background-repeat: no-repeat;
     width: 153px;
@@ -92,7 +92,7 @@
   }
 
   .edit {
-    background-image: url("/assets/svg/background-black.svg");
+    background-image: url("/assets/identity/svg/background-black.svg");
     background-size: 95%;
     background-repeat: no-repeat;
     margin: auto;
@@ -113,7 +113,7 @@
   }
 
   .export {
-    background-image: url("/assets/svg/background-black.svg");
+    background-image: url("/assets/identity/svg/background-black.svg");
     background-size: 95%;
     background-repeat: no-repeat;
     margin: auto;
@@ -150,7 +150,7 @@
     display: flex;
     justify-content: center;
     color: #ffffff;
-    background-image: url("/assets/svg/empty-balloon.svg");
+    background-image: url("/assets/identity/svg/empty-balloon.svg");
     background-blend-mode: multiply;
     padding: 35px;
     ion-icon {
@@ -453,15 +453,15 @@
     }
 
     .share {
-      background-image: url("/assets/svg/background-dark.svg");
+      background-image: url("/assets/identity/svg/background-dark.svg");
 
     }
 
     .edit {
-      background-image: url("/assets/svg/background-dark.svg");
+      background-image: url("/assets/identity/svg/background-dark.svg");
     }
     .export {
-      background-image: url("/assets/svg/background-dark.svg");
+      background-image: url("/assets/identity/svg/background-dark.svg");
     }
   }
 

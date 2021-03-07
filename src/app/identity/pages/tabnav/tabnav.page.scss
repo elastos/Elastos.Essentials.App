@@ -12,27 +12,27 @@
   }
 
   .home-run {
-    content:url('/assets/buttons/home-run-dark.svg');
+    content:url('/assets/identity/buttons/home-run-dark.svg');
   }
-  
+
   .Profile {
-    content:url('/assets/buttons/profile-dark.svg');
+    content:url('/assets/identity/buttons/profile-dark.svg');
   }
-  
-  
+
+
   .Credentials {
-    content:url('/assets/buttons/credentials-dark.svg');
+    content:url('/assets/identity/buttons/credentials-dark.svg');
   }
-  
+
   .selected {
     .Credentials {
-      content:url('/assets/buttons/credentials-selected-dark.svg');
+      content:url('/assets/identity/buttons/credentials-selected-dark.svg');
     }
     .Profile {
-      content:url('/assets/buttons/profile-selected-dark.svg');
+      content:url('/assets/identity/buttons/profile-selected-dark.svg');
     }
     .home-run {
-      content:url('/assets/buttons/home-run-selected-dark.svg');
+      content:url('/assets/identity/buttons/home-run-selected-dark.svg');
     }
   }
 }
@@ -49,14 +49,14 @@ ion-tab-bar {
   width: 23px;
   height: 23px;
   object-fit: contain;
-  content:url('/assets/buttons/home-run.svg');
+  content:url('/assets/identity/buttons/home-run.svg');
 }
 
 .Profile {
   width: 19.4px;
   height: 23.2px;
   object-fit: contain;
-  content:url('/assets/buttons/profile.svg');
+  content:url('/assets/identity/buttons/profile.svg');
 }
 
 
@@ -64,20 +64,20 @@ ion-tab-bar {
   width: 21.5px;
   height: 21.5px;
   object-fit: contain;
-  content:url('/assets/buttons/credentials.svg');
+  content:url('/assets/identity/buttons/credentials.svg');
 
-  
+
 }
 
 .selected {
   .Credentials {
-    content:url('/assets/buttons/credentials-selected.svg');
+    content:url('/assets/identity/buttons/credentials-selected.svg');
   }
   .Profile {
-    content:url('/assets/buttons/profile-selected.svg');
+    content:url('/assets/identity/buttons/profile-selected.svg');
   }
   .home-run {
-    content:url('/assets/buttons/home-run-selected.svg');
+    content:url('/assets/identity/buttons/home-run-selected.svg');
   }
 }
 

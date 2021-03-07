@@ -196,7 +196,7 @@ export class PublishPage {
         }
 
         let skin = this.theme.darkMode ? "dark" : "light";
-        return `/assets/smallIcons/dark/${fragment}.svg`;
+        return `/assets/identity/smallIcons/dark/${fragment}.svg`;
     }
 
     isAvatarCred(entry: CredentialDisplayEntry): boolean {

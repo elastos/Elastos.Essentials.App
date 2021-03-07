@@ -256,7 +256,7 @@ export class CredentialListPage {
     this.advancedPopup.create({
       color:'var(--ion-color-primary)',
       info: {
-          picture: '/assets/images/Visibility_Icon.svg',
+          picture: '/assets/identity/images/Visibility_Icon.svg',
           title: this.translate.instant("publish-popup-title"),
           content: this.translate.instant("publish-popup-content")
       },
@@ -334,7 +334,7 @@ export class CredentialListPage {
     this.advancedPopup.create({
       color:'#FF4D4D',
       info: {
-          picture: '/assets/images/Local_Data_Delete_Icon.svg',
+          picture: '/assets/identity/images/Local_Data_Delete_Icon.svg',
           title: this.translate.instant("deletion-popup-warning"),
           content: this.translate.instant("credential-deletion-popup-content")
       },

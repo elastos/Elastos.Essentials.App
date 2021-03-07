@@ -7,9 +7,9 @@
         <span>- {{ 'toggle-credentials-to-publish'| translate }}</span>
 
         <div class="alert-section">
-            <img *ngIf="profileService.getPublishedCredentials().length > 0" src="/assets/svg/credential-published.svg"
+            <img *ngIf="profileService.getPublishedCredentials().length > 0" src="/assets/identity/svg/credential-published.svg"
                 class="published" />
-            <img *ngIf="profileService.getPublishedCredentials().length == 0" src="/assets/svg/publish-gray.svg"
+            <img *ngIf="profileService.getPublishedCredentials().length == 0" src="/assets/identity/svg/publish-gray.svg"
                 class="published" />
 
             <span>{{ profileService.getPublishedCredentials().length }}/{{ profileService.allCreds.length }}

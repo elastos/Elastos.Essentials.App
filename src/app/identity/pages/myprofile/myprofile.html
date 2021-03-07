@@ -16,7 +16,7 @@
       <ion-grid>
         <ion-row *ngIf="profileService.isPublishStatusFetched() && !profileService.didNeedsToBePublished">
           <ion-col size="1.5" class="detail-col">
-            <img src="/assets/svg/credential-published.svg" class="published">
+            <img src="/assets/identity/svg/credential-published.svg" class="published">
           </ion-col>
           <ion-col size="7">
             <ion-label class="description">{{ 'identity-published-on-blockchain' | translate }}</ion-label>
@@ -29,8 +29,8 @@
         <ion-row>
           <ion-col size="1.5" class="detail-col">
             <img *ngIf="unchangedPublishedCredentials.length > 0"
-              src="/assets/svg/credential-published.svg" class="published">
-            <img *ngIf="unchangedPublishedCredentials.length == 0" src="/assets/svg/publish-gray.svg"
+              src="/assets/identity/svg/credential-published.svg" class="published">
+            <img *ngIf="unchangedPublishedCredentials.length == 0" src="/assets/identity/svg/publish-gray.svg"
               class="published">
           </ion-col>
           <ion-col size="10.5">
@@ -42,7 +42,7 @@
 
         <ion-row *ngIf="profileService.verifiedCredentials.length > 0">
           <ion-col size="1.5" class="detail-col">
-            <img src="/assets/svg/verified.svg" class="verified">
+            <img src="/assets/identity/svg/verified.svg" class="verified">
           </ion-col>
           <ion-col size="10.5">
             <ion-label class="description">
@@ -53,7 +53,7 @@
 
         <ion-row *ngIf="profileService.verifiedCredentials.length == 0">
           <ion-col size="1.5" class="detail-col">
-            <img src="/assets/svg/verified-gray.svg" class="verified">
+            <img src="/assets/identity/svg/verified-gray.svg" class="verified">
           </ion-col>
           <ion-col size="10.5">
             <ion-label class="description">
@@ -69,7 +69,7 @@
         <ion-row>
           <ion-button class="primary" shape="round" expand="block" color="warning"
             (click)="this.profileService.publish()">
-            <ion-icon slot="start" src="/assets/svg/Credentials.svg" class="Credentials"></ion-icon>
+            <ion-icon slot="start" src="/assets/identity/svg/Credentials.svg" class="Credentials"></ion-icon>
             <ion-grid>
               <ion-row>
                 <span class="title">{{ 'credentials-modified' | translate }}</span>
@@ -81,7 +81,7 @@
               </ion-row>
             </ion-grid>
 
-            <ion-icon slot="end" src="/assets/svg/chevron-thin-right-dark.svg" class="chevron-thin-right"></ion-icon>
+            <ion-icon slot="end" src="/assets/identity/svg/chevron-thin-right-dark.svg" class="chevron-thin-right"></ion-icon>
           </ion-button>
         </ion-row>
       </ion-grid>
@@ -93,24 +93,24 @@
         </ion-row>
         <ion-row class="options">
           <div class="publish" (click)="profileService.publish()">
-            <img src=" /assets/svg/publish-button.svg" />
+            <img src=" /assets/identity/svg/publish-button.svg" />
             <h2>{{ 'publish' | translate}}</h2>
             <span>{{ 'publish-description' | translate }}</span>
           </div>
           <div class="edit" (click)="profileService.editProfile()">
-            <img src="{{ this.theme.darkMode ? '/assets/svg/edit-button-dark.svg' : '/assets/svg/edit-button.svg' }}" />
+            <img src="{{ this.theme.darkMode ? '/assets/identity/svg/edit-button-dark.svg' : '/assets/identity/svg/edit-button.svg' }}" />
             <h2>{{ 'edit' | translate}}</h2>
             <span>{{ 'edit-description' | translate }}</span>
           </div>
           <div class="share" (click)="profileService.shareIdentity()">
             <img
-              src="{{ this.theme.darkMode ? '/assets/svg/share-button-dark.svg' : '/assets/svg/share-button.svg' }}" />
+              src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button-dark.svg' : '/assets/identity/svg/share-button.svg' }}" />
             <h2>{{ 'share' | translate}}</h2>
             <span>{{ 'share-description' | translate }} </span>
           </div>
           <div class="export" (click)="exportMnemonic()">
             <img
-              src="{{ this.theme.darkMode ? '/assets/svg/share-button-dark.svg' : '/assets/svg/share-button.svg' }}" />
+              src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button-dark.svg' : '/assets/identity/svg/share-button.svg' }}" />
             <h2>{{ 'export-mnemonics' | translate}}</h2>
             <span>{{ 'export-mnemonics-description' | translate}}</span>
           </div>

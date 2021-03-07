@@ -1,6 +1,6 @@
 <div *ngIf="warning === 'delete'" class="container deleteContainer" [class.darkContainer]="theme.darkMode">
   <ion-row class="header">
-    <img src="/assets/default/deleteWarning.svg">
+    <img src="/assets/identity/default/deleteWarning.svg">
     <h1 class="ion-padding-horizontal ion-text-center">{{ 'delete-creds' | translate }}</h1>
   </ion-row>
   <ion-row>
@@ -22,7 +22,7 @@
 
 <div *ngIf="warning === 'publishIdentity' || warning === 'publishVisibility'" class="container publishContainer" [class.darkContainer]="theme.darkMode">
   <ion-row class="header">
-    <img src="/assets/default/publishWarning.svg">
+    <img src="/assets/identity/default/publishWarning.svg">
     <h1 class="ion-padding-horizontal ion-text-center">{{ getDisplayableHeader() }}</h1>
   </ion-row>
   <ion-row>

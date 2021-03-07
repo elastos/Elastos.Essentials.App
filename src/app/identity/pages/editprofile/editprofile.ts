@@ -123,7 +123,7 @@ export class EditProfilePage {
   showMenu() {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "done",
-      iconPath: "/assets/icon/check-green.ico",
+      iconPath: "/assets/identity/icon/check-green.ico",
     });
 
     this.titleBar.addOnItemClickedListener((menuIcon) => {

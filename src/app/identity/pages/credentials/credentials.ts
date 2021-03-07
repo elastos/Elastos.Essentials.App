@@ -629,7 +629,7 @@ export class CredentialsPage {
     }
 
     let skin = this.theme.darkMode ? "dark" : "light";
-    return `/assets/smallIcons/dark/${fragment}.svg`;
+    return `/assets/identity/smallIcons/dark/${fragment}.svg`;
   }
 
   getCredIcon(entry: CredentialDisplayEntry): string {
@@ -714,7 +714,7 @@ export class CredentialsPage {
   }
 
   getSmallIcon(iconName: string) {
-    return this.theme.darkMode ? `/assets/smallIcons/dark/${iconName}.svg` : `/assets/smallIcons/light/${iconName}.svg`
+    return this.theme.darkMode ? `/assets/identity/smallIcons/dark/${iconName}.svg` : `/assets/identity/smallIcons/light/${iconName}.svg`
   }
 
   getIssuerName(issuerId: string): string {

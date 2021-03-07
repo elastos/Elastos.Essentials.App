@@ -83,7 +83,7 @@ export class Profile {
   }
 
   getDefaultProfilePicturePath() {
-    if (this.isMale()) return "assets/images/Guy_Face.svg";
-    else return "assets/images/DefaultProfileWoman.svg";
+    if (this.isMale()) return "assets/identity/images/Guy_Face.svg";
+    else return "assets/identity/images/DefaultProfileWoman.svg";
   }
 }

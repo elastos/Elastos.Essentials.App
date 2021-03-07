@@ -52,7 +52,7 @@ export class DeleteDIDPage {
         this.advancedPopup.create({
             color: '#FF4D4D',
             info: {
-                picture: '/assets/images/Local_Data_Delete_Icon.svg',
+                picture: '/assets/identity/images/Local_Data_Delete_Icon.svg',
                 title: this.translate.instant("deletion-popup-warning"),
                 content: this.translate.instant("deletion-popup-content")
             },

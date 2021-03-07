@@ -2,7 +2,7 @@
 <ion-content>
     <ion-grid *ngIf="receivedIntent" class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
-            <img src="assets/images/fingerprint.svg">
+            <img src="assets/identity/images/fingerprint.svg">
             <ion-card-title>{{ 'sethiveprovider-app-id' | translate }}</ion-card-title>
             <ion-card-subtitle *ngIf="requestDapp">{{ requestDapp.appPackageId }}</ion-card-subtitle>
         </ion-card>

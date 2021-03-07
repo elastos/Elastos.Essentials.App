@@ -320,11 +320,11 @@ export class CredentialDetailsPage {
     }
 
     let skin = this.theme.darkMode ? "dark" : "light";
-    return this.isVerified() ? `/assets/headerIcons/${skin}/${fragment}-verified.svg` : `/assets/headerIcons/${skin}/${fragment}.svg`;
+    return this.isVerified() ? `/assets/identity/headerIcons/${skin}/${fragment}-verified.svg` : `/assets/identity/headerIcons/${skin}/${fragment}.svg`;
   }
 
   getSmallIcon(iconName: string) {
-    return this.theme.darkMode ? `/assets/smallIcons/dark/${iconName}.svg` : `/assets/smallIcons/light/${iconName}.svg`
+    return this.theme.darkMode ? `/assets/identity/smallIcons/dark/${iconName}.svg` : `/assets/identity/smallIcons/light/${iconName}.svg`
   }
 
   getAppIcon() {
@@ -345,7 +345,7 @@ export class CredentialDetailsPage {
           })
         }, (error: any) => {
           let skin = this.theme.darkMode ? "dark" : "light";
-          this.appIcon = `../../../assets/headerIcons/${skin}/finger-print.svg`;
+          this.appIcon = `../../../assets/identity/headerIcons/${skin}/finger-print.svg`;
         });
   }
 
