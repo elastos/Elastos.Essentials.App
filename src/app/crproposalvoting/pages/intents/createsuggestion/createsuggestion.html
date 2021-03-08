@@ -1,0 +1,30 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+    <div *ngIf="!suggestionDetailsFetched">
+        <ion-spinner></ion-spinner>
+    </div>
+    <div *ngIf="suggestionDetailsFetched">
+        <p>
+            You are about to create the following suggestion. Please review it, and follow the process to sign and publish it.
+        </p>
+        <div>
+            <ion-row class="header">Title</ion-row>
+            <ion-row>{{ suggestionDetails.title }}</ion-row>
+
+            <ion-row class="header">Creation date</ion-row>
+            <ion-row>{{ suggestionDetails.createdAt }}</ion-row>
+
+            <ion-row class="header">Created by:</ion-row>
+            <ion-row>{{ suggestionDetails.didName }}</ion-row>
+            <ion-row>{{ suggestionDetails.did }}</ion-row>
+
+            <ion-row class="header">Description</ion-row>
+            <ion-row>{{ suggestionDetails.abs }}</ion-row>
+        </div>
+        <ion-button (click)="signAndCreateSuggestion()" *ngIf="!signingAndSendingSuggestionResponse">Sign and create the suggestion</ion-button>
+        <div *ngIf="signingAndSendingSuggestionResponse">
+            <ion-spinner></ion-spinner>
+        </div>
+    </div>
+</ion-content>
+

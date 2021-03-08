@@ -90,7 +90,8 @@
     "elastos-essentials-plugin-wallet": "file:../Plugins/Wallet",
     "es6-promise-plugin": "4.2.2",
     "ts-node": "9.1.1",
-    "typescript": "4.0.5"
+    "typescript": "4.0.5",
+    "webpack-bundle-analyzer": "^4.4.0"
   },
   "browser": {
     "http": false,

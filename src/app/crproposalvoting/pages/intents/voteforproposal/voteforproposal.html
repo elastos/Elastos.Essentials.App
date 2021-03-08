@@ -1,0 +1,13 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+    <div>
+        <p>
+            You are about to vote to veto a proposal. If a proposal is vetoed by community members using enough ELA, it will be aborted.
+        </p>
+        <div>
+            TODO: fetch and display proposal details when the API is ready for this (see clickup).
+        </div>
+        <ion-button (click)="voteAgainstProposal()" *ngIf="!sendingResponse">Vote against this proposal</ion-button> 
+        <ion-spinner *ngIf="sendingResponse"></ion-spinner>
+    </div>
+</ion-content>

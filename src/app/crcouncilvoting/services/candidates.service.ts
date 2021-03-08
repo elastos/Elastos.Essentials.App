@@ -119,7 +119,7 @@ export class CandidatesService {
       Logger.log('crcouncil', 'Council added', this.council);
       this.getLogos();
       // TODO @chad titleBarManager.setTitle("CRC Voting Results");
-      this.votingEndedToast();
+      //this.votingEndedToast();
     }, (err) => {
       this.alertErr('The CRC Council is not available at this time, please try again later');
       console.error(err);

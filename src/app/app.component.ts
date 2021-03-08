@@ -18,6 +18,7 @@ import { Logger } from './logger';
 import { GlobalIntentService } from './services/global.intent.service';
 import { DPoSVotingInitService } from './dposvoting/services/init.service';
 import { CRCouncilVotingInitService } from './crcouncilvoting/services/init.service';
+import { CRProposalVotingInitService } from './crproposalvoting/services/init.service';
 
 @Component({
     selector: 'app-root',
@@ -43,7 +44,8 @@ export class AppComponent {
         private dposVotingInitService: DPoSVotingInitService,
         private language: GlobalLanguageService,
         private intentService: GlobalIntentService,
-        private crCouncilVotingInitService: CRCouncilVotingInitService
+        private crCouncilVotingInitService: CRCouncilVotingInitService,
+        private crProposalVotingInitService: CRProposalVotingInitService
     ) {
     }
 

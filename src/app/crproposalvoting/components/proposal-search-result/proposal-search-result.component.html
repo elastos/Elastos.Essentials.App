@@ -1,0 +1,9 @@
+<ion-grid (click)="selectProposal(proposal)">
+    <ion-row class="title">
+        {{ proposal.title }}
+    </ion-row>
+    <ion-row>
+        <ion-col size="9" class="author">#{{ proposal.id }} {{ proposal.createdAt }} - By {{ proposal.proposedBy }}</ion-col>
+        <ion-col size="3" class="status ion-text-right">{{ proposal.status }}</ion-col>
+    </ion-row>
+</ion-grid>

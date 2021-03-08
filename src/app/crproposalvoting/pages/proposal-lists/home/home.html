@@ -1,0 +1,42 @@
+<app-titlebar></app-titlebar>
+<ion-tabs [class.darkTabs]="theme.darkMode">
+  <ion-tab-bar slot="top">
+    <ion-tab-button></ion-tab-button>
+    <ion-tab-button></ion-tab-button>
+    <ion-tab-button></ion-tab-button>
+    <ion-tab-button></ion-tab-button>
+    <ion-tab-button tab="ALL">
+      <ion-label>All</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="VOTING">
+      <ion-label>Council Review</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="NOTIFICATION">
+      <ion-label>Community Review</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="ACTIVE">
+        <ion-label>Active</ion-label>
+      </ion-tab-button>
+      <ion-tab-button tab="FINAL">
+        <ion-label>Approved</ion-label>
+      </ion-tab-button>
+      <ion-tab-button tab="REJECTED">
+        <ion-label>Rejected</ion-label>
+      </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+
+
+
+<!-- <ion-header no-border>
+  <ion-slides [options]="slideOpts">
+    <ion-slide
+      *ngFor="let section of sections"
+      [routerLink]="['/', 'proposals', section.name]"
+    >
+      <ion-label>
+       {{ section.name }}
+      </ion-label>
+    </ion-slide>
+  </ion-slides>
+</ion-header> -->

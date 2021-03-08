@@ -31,6 +31,7 @@ import { Logger } from './logger';
 import { WalletModule } from './wallet/module';
 import { DPoSVotingModule } from './dposvoting/module';
 import { CRCouncilVotingModule } from './crcouncilvoting/module';
+import { CRProposalVotingModule } from './crproposalvoting/module';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -101,6 +102,7 @@ export function TranslateLoaderFactory() {
     WalletModule,
     DPoSVotingModule,
     CRCouncilVotingModule,
+    CRProposalVotingModule,
 
     /*
      * Generic modules

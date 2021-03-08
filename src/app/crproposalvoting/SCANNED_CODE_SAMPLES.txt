@@ -1,0 +1,42 @@
+HOW TO TEST ON CR STAGING:
+- Configure elastOS to use privnet
+- Use privnet DID resolver url: http://did1rpc.longrunweather.com:18080
+- Create a new DID Session DID with CR-01 test council member mnemonic
+- Sign in to the CR staging website https://staging.cyberrepublic.org/ by scanning the sign in QR code from elastOS
+- Start scanning various suggestion/proposal qrcodes to initiate various CR "command" from those qrcodes (createsuggestion, voteforproposal, etc)
+
+SCREENS SPEC:
+- https://shimo.im/docs/c4fbfcbefc0c4679/read
+
+API DOCUMENTATION:
+- https://shimo.im/docs/WPJCgYKTvCRYWVR6/read
+
+
+PROPOSAL IN NOTIFICATION STATE ON CR WEBSITE:
+
+    # Using in app scanner:
+    elastos://crproposal/eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1OTUzOTc0NzUsImV4cCI6MTU5NTQ4Mzg3NSwiaXNzIjoiZGlkOmVsYXN0b3M6aVlwUU13aGVEeHlTcWl2b2NTSmFvcHJjb0RUcVFzRFlBdSIsImNvbW1hbmQiOiJ2b3RlZm9ycHJvcG9zYWwiLCJkYXRhIjp7InByb3Bvc2FsSGFzaCI6IjM2ZDVmNTliYjUwNWVhZjI4NGMxNjc1MTFiN2MwMTU0MjE0MDY2MTUwOTlmOGJiOTM1YzBjNDBjNWI3ZDJmY2QifX0.7MhQ1P6nqLfXX36IHyg7x3oyvoDvwCgUv6i_JCRYiGn1O08h-qfAVfEJTFIH2jMG8EAhoy09YpHmu0ay6x3hng
+
+        Extracted JWT:
+
+        {"alg":"ES256","typ":"JWT"}{"iat":1595397475,"exp":1595483875,"iss":"did:elastos:iYpQMwheDxySqivocSJaoprcoDTqQsDYAu","command":"voteforproposal","data":{"proposalHash":"36d5f59bb505eaf284c167511b7c015421406615099f8bb935c0c40c5b7d2fcd"}}
+
+    # Using scanner app and getting an intent:
+    {
+        action: "crproposal", params: {…}, from: "org.elastos.trinity.dapp.qrcodescanner", intentId: 1595397979095, originalJwtRequest: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1O…2z93VPczlq_KVVGtIySeumnlF7UWC08HMVR9d0VTthwGhukRQ"}
+        action: "crproposal"
+        from: "org.elastos.trinity.dapp.qrcodescanner"
+        intentId: 1595397979095
+        originalJwtRequest: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1OTUzOTc5NjUsImV4cCI6MTU5NTQ4NDM2NSwiaXNzIjoiZGlkOmVsYXN0b3M6aVlwUU13aGVEeHlTcWl2b2NTSmFvcHJjb0RUcVFzRFlBdSIsImNvbW1hbmQiOiJ2b3RlZm9ycHJvcG9zYWwiLCJkYXRhIjp7InByb3Bvc2FsSGFzaCI6IjM2ZDVmNTliYjUwNWVhZjI4NGMxNjc1MTFiN2MwMTU0MjE0MDY2MTUwOTlmOGJiOTM1YzBjNDBjNWI3ZDJmY2QifX0.6UZJ0bpf1eqqyMI1uMfO5seJTFfn7eoqYTrbG2z93VPczlq_KVVGtIySeumnlF7UWC08HMVR9d0VTthwGhukRQ"
+        params:
+            command: "voteforproposal"
+            data:
+                proposalHash: "36d5f59bb505eaf284c167511b7c015421406615099f8bb935c0c40c5b7d2fcd"
+            exp: 1595484365
+            iat: 1595397965
+            iss: "did:elastos:iYpQMwheDxySqivocSJaoprcoDTqQsDYAu"
+            type: "jwt"
+
+        Extracted JWT (originalJwtRequest):
+
+        {"alg":"ES256","typ":"JWT"}{"iat":1595397965,"exp":1595484365,"iss":"did:elastos:iYpQMwheDxySqivocSJaoprcoDTqQsDYAu","command":"voteforproposal","data":{"proposalHash":"36d5f59bb505eaf284c167511b7c015421406615099f8bb935c0c40c5b7d2fcd"}}:

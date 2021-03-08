@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler, Injectable } from '@angular/core';
+import { NgModule, ErrorHandler, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
@@ -34,6 +34,7 @@ import { HomePageModule } from './pages/home/home.module';
     WebView,
     MenuPageModule,
     HomePageModule
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DPoSVotingModule {}

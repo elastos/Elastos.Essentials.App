@@ -196,7 +196,7 @@ export class AppmanagerService {
                         name: this.translate.instant('app-cr-proposal'),
                         description: this.translate.instant('app-crproposal-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: 'TODO'
+                        routerPath: '/crproposalvoting/proposals/ALL'
                     },
                 ]
             }
