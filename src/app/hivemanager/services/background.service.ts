@@ -56,7 +56,7 @@ export class BackgroundService {
                 this.storage.set('timeCheckedForExpiration', today);
                 this.checkPlanExpiration(today);
             } else {
-                console.log('Background service: Plan expiration already checked today');
+                Logger.log("hivemanager", 'Background service: Plan expiration already checked today');
             }
         } else {
             this.storage.set('timeCheckedForExpiration', today);
@@ -68,7 +68,7 @@ export class BackgroundService {
         const weekFromNow = moment(today).add(7, 'days');
         const planExpiration = moment(this.activePaymentPlan.getEndTime() * 1000);
 
-        console.log('Plan expiration', planExpiration.format('MMMM Do YYYY, h:mm'));
+        Logger.log("hivemanager", 'Plan expiration', planExpiration.format('MMMM Do YYYY, h:mm'));
         if(planExpiration.isBetween(today, weekFromNow)) {
             const notification = {
                 key: 'storagePlanExpiring',

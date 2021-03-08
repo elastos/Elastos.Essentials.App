@@ -14,6 +14,7 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
+import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -53,7 +54,7 @@ export class SetHiveProviderRequestPage {
     // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
     // request initiated by publish() on a did document.
     this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
-      console.log("diddocument:publishresultpopupclosed event received in sethiveprovider request", result);
+      Logger.log("identity", "diddocument:publishresultpopupclosed event received in sethiveprovider request", result);
       let status = 'error';
       if (result.published) {
         status = 'published';
@@ -84,11 +85,11 @@ export class SetHiveProviderRequestPage {
   }
 
   async addOrUpdateService(password: string) {
-    console.log("Creating service");
+    Logger.log("identity", "Creating service");
 
     let service: DIDPlugin.Service = await this.didService.getActiveDid().getDIDDocument().getService('#hivevault');
     if (service) {
-        console.log('the #hivevault service already exist, update it');
+        Logger.log("identity", 'the #hivevault service already exist, update it');
         await this.didService.getActiveDid().getDIDDocument().removeService('#hivevault', password);
     }
 

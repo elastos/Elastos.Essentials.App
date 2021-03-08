@@ -19,6 +19,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { BackupRestoreEntry } from 'src/app/elastos-cordova-sdk/hive/datasync';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let walletManager: WalletPlugin.WalletManager;
@@ -300,7 +301,7 @@ export class BackupRestoreService {
     }
     catch (e) {
       // Network error, provider is broken, etc
-      console.error(e);
+      Logger.error("wallet", e);
       syncResult = false;
     }
 
@@ -442,7 +443,7 @@ export class BackupRestoreService {
         }
       }
       else {
-        console.log("File download failed", err);
+        Logger.log("wallet", "File download failed", err);
         return {
           wasRestored: false,
           fileNotFound: false
@@ -477,7 +478,7 @@ export class BackupRestoreService {
       };
     }
     catch (e) {
-      console.error(e);
+      Logger.error("wallet", e);
       this.logError("Exception while downloading sync state file from vault: "+e);
       return {
         wasRestored: false, fileNotFound: false
@@ -608,20 +609,20 @@ export class BackupRestoreService {
   }
 
   private log(message: any, ...params: any) {
-    console.log("BackupRestoreService: ", message, ...params);
+    Logger.log("wallet", "BackupRestoreService: ", message, ...params);
   }
 
   private logDebug(message: any, ...params: any) {
     if (BackupRestoreService.SHOW_DEBUG_LOGS)
-      console.log("BackupRestoreService: ", message, ...params);
+      Logger.log("wallet", "BackupRestoreService: ", message, ...params);
   }
 
   private logWarn(message: any, ...params: any) {
-    console.warn("BackupRestoreService: ", message, ...params);
+    Logger.warn("wallet", "BackupRestoreService: ", message, ...params);
   }
 
   private logError(message: any, ...params: any) {
-    console.error("BackupRestoreService: ", message, ...params);
+    Logger.error("wallet", "BackupRestoreService: ", message, ...params);
   }
 
   private fetchAndPrintFilesRec(path: string): Promise<void> {
@@ -647,7 +648,7 @@ export class BackupRestoreService {
 
   public suggestUserToSetupVault(): Promise<void> {
    return new Promise((resolve)=>{
-     console.log("Asking hive manager dApp to configure a vault for current user.");
+     Logger.log("wallet", "Asking hive manager dApp to configure a vault for current user.");
      appManager.sendIntent("https://hive.elastos.net/setupvaultprompt", {});
    });
  }

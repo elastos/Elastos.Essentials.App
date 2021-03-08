@@ -5,6 +5,7 @@ import { Config } from '../config/Config';
 import BigNumber from 'bignumber.js';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -68,7 +69,6 @@ export class JsonRPCService {
                 // wait 100ms?
             }
         } while (++retryTimes < 5);
-        console.log('debug: getBalanceByAddress:', balanceOfSELA);
         return balanceOfSELA;
     }
 
@@ -124,7 +124,7 @@ export class JsonRPCService {
                 break;
             default:
                 rpcApiUrl = '';
-                console.log('JsonRPCService: Can not support ' + chainID);
+                Logger.log("wallet", 'JsonRPCService: Can not support ' + chainID);
                 break;
         }
         return rpcApiUrl;
@@ -145,7 +145,7 @@ export class JsonRPCService {
                         resolve(res.result || '');
                     }
                 }, (err) => {
-                    console.log('JsonRPCService httpRequest error:', JSON.stringify(err));
+                    Logger.log("wallet", 'JsonRPCService httpRequest error:', JSON.stringify(err));
                     reject(err);
                 });
         });

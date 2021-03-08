@@ -104,7 +104,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.updateWallet();
 
         this.walletChangedSubscription = this.events.subscribe("masterwalletcount:changed", (result) => {
-            console.log("masterwalletcount:changed event received result:", result);
+            Logger.log("wallet", "masterwalletcount:changed event received result:", result);
             this.zone.run(() => {
                 this.updateWallet();
                 this.backupService.init();
@@ -226,7 +226,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     shouldPromptToEnableHiveVaultForBackup(): boolean {
-        /*console.log(
+        /*Logger.log("wallet", 
             'shouldPromptToEnableHiveVaultForBackup',
             this.resolvingBackupService,
             this.backupService.initialized(),

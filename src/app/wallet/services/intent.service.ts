@@ -11,6 +11,7 @@ import { WalletEditionService } from './walletedition.service';
 import { Events } from './events.service';
 import { PopupProvider } from './popup.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -34,7 +35,7 @@ export class IntentService {
     }
 
     public async init() {
-        console.log("IntentService init");
+        Logger.log("wallet", "IntentService init");
 
         // Listen to incoming intents.
         this.setIntentListener();
@@ -103,12 +104,12 @@ export class IntentService {
 
         switch (this.getShortAction(intent.action)) {
             case 'crmembervote':
-                console.log('CR member vote Transaction intent content:', intent.params);
+                Logger.log("wallet", 'CR member vote Transaction intent content:', intent.params);
                 this.coinTransferService.transfer.votes = intent.params.votes;
                 break;
 
             case 'crmemberregister':
-                console.log('CR member register Transaction intent content:', intent.params);
+                Logger.log("wallet", 'CR member register Transaction intent content:', intent.params);
                 this.coinTransferService.transfer.did = intent.params.did;
                 this.coinTransferService.transfer.nickname = intent.params.nickname;
                 this.coinTransferService.transfer.url = intent.params.url;
@@ -116,26 +117,26 @@ export class IntentService {
                 break;
 
             case 'crmemberupdate':
-                console.log('CR member update Transaction intent content:', intent.params);
+                Logger.log("wallet", 'CR member update Transaction intent content:', intent.params);
                 this.coinTransferService.transfer.nickname = intent.params.nickname;
                 this.coinTransferService.transfer.url = intent.params.url;
                 this.coinTransferService.transfer.location = intent.params.location;
                 break;
 
             case 'crmemberunregister':
-                console.log('CR member unregister Transaction intent content:', intent.params);
+                Logger.log("wallet", 'CR member unregister Transaction intent content:', intent.params);
                 this.coinTransferService.transfer.crDID = intent.params.crDID;
                 break;
 
             case 'crmemberretrieve':
-                console.log('CR member retrieve Transaction intent content:', intent.params);
+                Logger.log("wallet", 'CR member retrieve Transaction intent content:', intent.params);
                 this.coinTransferService.chainId = StandardCoinName.IDChain;
                 this.coinTransferService.transfer.amount = intent.params.amount;
                 this.coinTransferService.transfer.publickey = intent.params.publickey;
                 break;
 
             case 'dposvotetransaction':
-                console.log('DPOS Transaction intent content:', intent.params);
+                Logger.log("wallet", 'DPOS Transaction intent content:', intent.params);
                 this.coinTransferService.publickeys = intent.params.publickeys;
                 break;
 
@@ -180,7 +181,7 @@ export class IntentService {
                 break;
 
             default:
-                console.log('AppService unknown intent:', intent);
+                Logger.log("wallet", 'AppService unknown intent:', intent);
                 return;
         }
         if (this.walletList.length === 1) {
@@ -240,7 +241,7 @@ export class IntentService {
     }
 
     private async handleVoteAgainstProposalIntent(intent: AppManagerPlugin.ReceivedIntent) {
-        console.log("Handling vote against proposal intent");
+        Logger.log("wallet", "Handling vote against proposal intent");
 
         // Let the screen know for which proposal we want to vote against
         this.coinTransferService.transfer.votes = [
@@ -261,7 +262,7 @@ export class IntentService {
      * publishing it in a transaction.
      */
     private async handleCreateProposalDigestIntent(intent: AppManagerPlugin.ReceivedIntent) {
-        console.log("Handling create proposal digest silent intent");
+        Logger.log("wallet", "Handling create proposal digest silent intent");
 
         if (intent && intent.params && intent.params.proposal) {
             let masterWalletID = await this.walletManager.getCurrentMasterIdFromStorage();
@@ -296,11 +297,11 @@ export class IntentService {
                     const coin = this.coinService.getCoinByID(chainID);
                     if (!coin) {
                         chainID = null;
-                        console.log('Not support coin:', currency);
+                        Logger.log("wallet", 'Not support coin:', currency);
                     }
                 } else {
                     chainID = null;
-                    console.log('Not support coin:', currency);
+                    Logger.log("wallet", 'Not support coin:', currency);
                 }
                 break;
         }

@@ -7,6 +7,7 @@ import { isNullOrUndefined } from "util";
 import { DIDDocument } from "../model/diddocument.model";
 
 import * as moment from 'moment';
+import { Logger } from "src/app/logger";
 
 export interface ExpiredItem {
     id: string,
@@ -40,17 +41,15 @@ export class ExpirationService {
         //Get all Verifiable Credentials and verify if is about to expire. 
         let credentials: DIDPlugin.VerifiableCredential[] = didDocument.getCredentials()
         await credentials.forEach(async (credential) =>{
-
             //verify if credential is not self proclaimed and is about to expire
             let credentialExpiredItem = this.verifyCredentialExpiration(did.getDIDString(), credential, maxDaysToExpire)
             if (credentialExpiredItem !== null && credentialExpiredItem.daysToExpire <= maxDaysToExpire) 
-                expiredItems.push(credentialExpiredItem)
+                expiredItems.push(credentialExpiredItem);
 
             //Verify if credential have an issuer and the issuer DID is about to expire
             let issuerDIDExpiredItem = await this.verifyIssuerDIDExpiration(did.getDIDString(), credential, maxDaysToExpire)
             if (issuerDIDExpiredItem !== null && issuerDIDExpiredItem.daysToExpire <= maxDaysToExpire) 
-                expiredItems.push(issuerDIDExpiredItem)
-           
+                expiredItems.push(issuerDIDExpiredItem);
         })
         return expiredItems
     } 
@@ -59,9 +58,7 @@ export class ExpirationService {
     {
         let daysToActiveDIDExpire : number = this.daysToExpire(didDocument.getExpires())
         
-        console.log("Days to Active DID expire", daysToActiveDIDExpire)
-        
-        
+        Logger.log("identity", "Days to Active DID expire", daysToActiveDIDExpire)
         
         let didExpiredMessage = this.constructPersonalMessage("Your DID", daysToActiveDIDExpire);
         //add new expired item response for this DID
@@ -71,7 +68,6 @@ export class ExpirationService {
             message: didExpiredMessage,
             daysToExpire: daysToActiveDIDExpire    
         }
-
     }
 
     public verifyCredentialExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number): ExpiredItem{
@@ -81,7 +77,7 @@ export class ExpirationService {
 
         let daysToCredentialExpire: number = this.daysToExpire(credential.getExpirationDate())
 
-        console.log(`Days to ${this.getCredentialID(did, credential)} expire`, daysToCredentialExpire)
+        Logger.log("identity", `Days to ${this.getCredentialID(did, credential)} expire`, daysToCredentialExpire)
 
         
         let credentialExpiredMessage = this.constructPersonalMessage(`Your ${this.getCredentialID(did, credential)} credential`, daysToCredentialExpire)
@@ -106,7 +102,7 @@ export class ExpirationService {
         //verify if issuer DID is about to expire
         let daysToIssuerDIDExpire : number = this.daysToExpire(issuerDocument.getExpires())
 
-        console.log(`Days to validator DID for ${this.getCredentialID(did, credential)} credential expire in `, daysToIssuerDIDExpire)
+        Logger.log("identity", `Days to validator DID for ${this.getCredentialID(did, credential)} credential expire in `, daysToIssuerDIDExpire)
 
 
         let issuerExpiredMessage: string = this.constructIssuerMessage(`The validator DID for ${this.getCredentialID(did, credential)} credential`, daysToIssuerDIDExpire);

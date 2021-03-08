@@ -57,7 +57,7 @@ export class WalletInitService {
         // Wait until the wallet manager is ready before showing the first screen.
         // TODO: rework
         this.events.subscribe("walletmanager:initialized", () => {
-            console.log("walletmanager:initialized event received");
+            Logger.log("wallet", "walletmanager:initialized event received");
         });
 
         await this.walletManager.init();

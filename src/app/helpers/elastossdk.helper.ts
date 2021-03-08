@@ -8,6 +8,7 @@ import { GlobalDIDSessionsService } from "../services/global.didsessions.service
 import { GlobalStorageService } from "../services/global.storage.service";
 import * as ConnectivitySDK from "../essentials-connectivity-cordova-sdk";
 import { GlobalPreferencesService } from "../services/global.preferences.service";
+import { ILogger } from "../elastos-cordova-sdk/ilogger";
 
 export class EssentialsDIDKeyValueStore implements IKeyValueStorage {
     constructor(private storage: GlobalStorageService, private context: string) {
@@ -31,8 +32,25 @@ export class EssentialsDirectAppIDGenerator implements IAppIDGenerator {
     }
 }
 
+class EssentialsLogger implements ILogger {
+    log(...args: any) {
+        Logger.log.apply(Logger, ["elastossdk", ...args]);
+    }
+    warn(...args: any) {
+        Logger.warn.apply(Logger, ["elastossdk", ...args]);
+    }
+    error(...args: any) {
+        Logger.error.apply(Logger, ["elastossdk", ...args]);
+    }
+
+}
+
 export class ElastosSDKHelper {
     constructor() {
+    }
+
+    private newLogger(): ILogger {
+        return
     }
 
     /**
@@ -41,6 +59,7 @@ export class ElastosSDKHelper {
     public newDIDHelper(context: string): DIDHelper {
         let didHelper = new DIDHelper(new EssentialsDirectAppIDGenerator());
         didHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
+        didHelper.setLogger(new EssentialsLogger());
         return didHelper;
     }
 
@@ -50,6 +69,7 @@ export class ElastosSDKHelper {
     public newHiveAuthHelper(context: string): AuthHelper {
         let authHelper = new AuthHelper(new EssentialsDirectAppIDGenerator());
         authHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
+        authHelper.setLogger(new EssentialsLogger());
         return authHelper;
     }
 
@@ -59,6 +79,7 @@ export class ElastosSDKHelper {
     public newHiveDataSync(context: string, userVault: HivePlugin.Vault, showDebugLogs: boolean = false): HiveDataSync {
         let dataSync = new HiveDataSync(userVault, showDebugLogs);
         dataSync.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
+        dataSync.setLogger(new EssentialsLogger());
         return dataSync;
     }
 

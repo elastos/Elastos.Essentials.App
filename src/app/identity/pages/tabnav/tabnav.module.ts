@@ -49,11 +49,7 @@ const routes: Routes = [
         ],
       },
     ],
-  },
-  {
-    path: "",
-    redirectTo: "/myprofile/myprofile/home",
-  },
+  }
 ];
 
 // export class CustomTranslateLoader implements TranslateLoader {

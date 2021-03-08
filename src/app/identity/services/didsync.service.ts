@@ -52,7 +52,7 @@ export class DIDSyncService {
     this.events.subscribe(
       "diddocument:publishresult",
       (result: DIDDocumentPublishEvent) => {
-        console.log("diddocument:publishresult event received", result);
+        Logger.log("identity", "diddocument:publishresult event received", result);
         this.onDIDDocumentPublishResponse(result);
       }
     );
@@ -90,19 +90,19 @@ export class DIDSyncService {
       this.native.hideLoading();
     } catch (err) {
       await this.native.hideLoading();
-      console.log(JSON.stringify(err));
+      Logger.log("identity", JSON.stringify(err));
       await this.popupProvider.ionicAlert("publish-error-title", err.message);
     }
   }
 
   private onDIDDocumentPublishResponse(result: DIDDocumentPublishEvent) {
     if (result.published) {
-      console.log("PUBLISHED !");
+      Logger.log("identity", "PUBLISHED !");
       this.popupProvider.ionicAlert("publish-success").then(() => {
         this.events.publish("diddocument:publishresultpopupclosed", result);
       });
     } else if (result.cancelled) {
-      console.log("CANCELLED");
+      Logger.log("identity", "CANCELLED");
     } else if (result.error) {
       console.error("ERROR");
       this.popupProvider.ionicAlert("publish-error").then(() => {
@@ -137,7 +137,7 @@ export class DIDSyncService {
 
       if (!currentOnChainDIDDocument) {
         // Null? This means there is no published document yet, so we need to publish.
-        console.log(
+        Logger.log("identity", 
           "DID " +
             did.getDIDString() +
             " needs to be published (no did document on chain)"
@@ -164,7 +164,7 @@ export class DIDSyncService {
       currentOnChainDIDDocument.pluginDidDocument.getUpdated()
     ) {
       // User document is more recent than chain document. Need to publish.
-      console.log(
+      Logger.log("identity", 
         "DID " +
           did.getDIDString() +
           " needs to be published (more recent than the on chain one)."
@@ -173,7 +173,7 @@ export class DIDSyncService {
       return;
     } else {
       // User document has not been modified recently. Nothing to do.
-      console.log(
+      Logger.log("identity", 
         "DID " + did.getDIDString() + " doesn't need to be published."
       );
       this.needToPublishStatuses.set(did, false);
@@ -230,7 +230,7 @@ export class DIDSyncService {
    * When a change in the DID Document is done in the app, we can force-set the "needs publish" value.
    */
   public getDIDDocumentFromDID(did: string): Promise<DIDDocument> {
-    console.log("getDIDDocumentFromDID")
+    Logger.log("identity", "getDIDDocumentFromDID")
     return this.resolveDIDWithoutDIDStore(did, true);
   }
 }

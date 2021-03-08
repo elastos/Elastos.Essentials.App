@@ -15,6 +15,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { RegAppProfileIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
+import { Logger } from 'src/app/logger';
 
 // TODO: Show credential(s) content that will be created to the user. He needs to make sure for example
 // that no shared credential will overwrite existing ones like "name" or "email"...
@@ -85,14 +86,14 @@ export class RegisterApplicationProfileRequestPage {
     if (!this.receivedIntent.params.sharedclaims)
       this.receivedIntent.params.sharedclaims = [];
 
-    console.log("Modified request data:", this.receivedIntent);
+    Logger.log("identity", "Modified request data:", this.receivedIntent);
   }
 
   ionViewDidEnter() {
     // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
     // request initiated by publish() on a did document.
     this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
-      console.log("diddocument:publishresultpopupclosed event received in regappprofile request", result);
+      Logger.log("identity", "diddocument:publishresultpopupclosed event received in regappprofile request", result);
       if (result.published) {
         await this.sendIntentResponse();
       }
@@ -127,7 +128,7 @@ export class RegisterApplicationProfileRequestPage {
   }
 
   async createMainApplicationProfileCredential(password: string) {
-    console.log("Creating application profile credential");
+    Logger.log("identity", "Creating application profile credential");
 
     // The credential title is the identifier given by the application. Ex: "twitter".
     let credentialTitle = this.receivedIntent.params.identifier;
@@ -146,7 +147,7 @@ export class RegisterApplicationProfileRequestPage {
         return;
 
       let value = this.receivedIntent.params[key];
-      console.log("Including field in app profile credential: key:",key," value:",value);
+      Logger.log("identity", "Including field in app profile credential: key:",key," value:",value);
       props[key] = value;
     });
 
@@ -156,7 +157,7 @@ export class RegisterApplicationProfileRequestPage {
     props["apppackage"] = this.receivedIntent.params.appPackageId;
     props["apptype"] = "elastosbrowser";
 
-    console.log("Credential properties:", props);
+    Logger.log("identity", "Credential properties:", props);
 
     // Create and append the new ApplicationProfileCredential credential to the local store.
     let credentialId = new DIDURL("#"+credentialTitle);
@@ -169,14 +170,14 @@ export class RegisterApplicationProfileRequestPage {
   }
 
   async createIndependantCredentials(password: string) {
-    console.log("Creating independant credentials");
+    Logger.log("identity", "Creating independant credentials");
 
     let sharedClaims = this.receivedIntent.params.sharedclaims;
     for (let sharedClaim of sharedClaims) {
       Object.keys(sharedClaim).map(async (key) => {
         let value = sharedClaim[key];
 
-        console.log("Creating independant credential with key "+key+" and value:", value);
+        Logger.log("identity", "Creating independant credential with key "+key+" and value:", value);
         let credentialId = new DIDURL("#"+key);
         let createdCredential: DIDPlugin.VerifiableCredential = await this.didService.getActiveDid().addCredential(credentialId, {key:value}, password);
         this.credentials.push(createdCredential);

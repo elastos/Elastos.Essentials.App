@@ -1,5 +1,7 @@
 import { IKeyValueStorage } from "../ikeyvaluestorage";
+import { ILogger } from "../ilogger";
 import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
+import { DefaultLogger } from "../internal/defaultlogger";
 
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -71,6 +73,7 @@ export class LocalBackupRestoreEntry extends BackupRestoreEntry {
 export class HiveDataSync {
     private contexts: SyncContext[] = [];
     private storageLayer: IKeyValueStorage | null = null;
+    private logger = new DefaultLogger();
 
     /**
      * As this backup helper relised on vault, a vault instance of the currently user must be
@@ -94,6 +97,13 @@ export class HiveDataSync {
      */
     public setStorage(storageLayer: IKeyValueStorage) {
         this.storageLayer = storageLayer;
+    }
+
+    /**
+     * Overrides the default console logger with a custom logger.
+     */
+    public setLogger(logger: ILogger) {
+        this.logger = logger;
     }
 
     /**
@@ -585,15 +595,15 @@ export class HiveDataSync {
     }
 
     private log(message: any, ...params: any) {
-        console.log("BackupRestore: ", message, params);
+        this.logger.log("BackupRestore: ", message, params);
     }
 
     private logWarn(message: any, ...params: any) {
-        console.warn("BackupRestore: ", message, ...params);
+        this.logger.warn("BackupRestore: ", message, ...params);
     }
 
     private logDebug(message: any, ...params: any) {
         if (this.showDebugLogs)
-            console.log("BackupRestore[debug]: ", message, ...params);
+            this.logger.log("BackupRestore[debug]: ", message, ...params);
     }
 }

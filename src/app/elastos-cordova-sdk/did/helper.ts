@@ -1,5 +1,7 @@
 import { IAppIDGenerator } from "../iappidgenerator";
 import { IKeyValueStorage } from "../ikeyvaluestorage";
+import { ILogger } from "../ilogger";
+import { DefaultLogger } from "../internal/defaultlogger";
 const moment = require('moment');
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -12,6 +14,7 @@ export type FastDIDCreationResult = {
 
 export class DIDHelper {
     private storageLayer: IKeyValueStorage = null;
+    private logger = new DefaultLogger();
 
     constructor(private appIDGenerator: IAppIDGenerator | null) {
     }
@@ -22,6 +25,13 @@ export class DIDHelper {
      */
     public setStorage(storageLayer: IKeyValueStorage) {
         this.storageLayer = storageLayer;
+    }
+
+    /**
+     * Overrides the default console logger with a custom logger.
+     */
+    public setLogger(logger: ILogger) {
+        this.logger = logger;
     }
 
     /**
@@ -73,7 +83,7 @@ export class DIDHelper {
      * - Create a default DID in the store
      */
     public fastCreateDID(language: DIDPlugin.MnemonicLanguage): Promise<FastDIDCreationResult> {
-        console.log("Fast DID creation with language "+language);
+        this.logger.log("Fast DID creation with language "+language);
 
         return new Promise((resolve)=>{
             didManager.generateMnemonic(language, (mnemonic)=>{
@@ -93,15 +103,15 @@ export class DIDHelper {
                                 storePassword: storePass
                             });
                         }, (err)=>{
-                            console.error(err);
+                            this.logger.error(err);
                             resolve(null);
                         });
                     }, (err)=>{
-                        console.error(err);
+                        this.logger.error(err);
                         resolve(null);
                     });
                 }, (err)=>{
-                    console.error(err);
+                    this.logger.error(err);
                     resolve(null);
                 });
             });
@@ -129,7 +139,7 @@ export class DIDHelper {
             didStore.loadDidDocument(didString, (didDocument)=>{
                 resolve(didDocument.getSubject());
             }, (err)=>{
-                console.error(err);
+                this.logger.error(err);
                 resolve(null);
             })
         });
@@ -200,7 +210,7 @@ export class DIDHelper {
         let didStore: DIDPlugin.DIDStore = null;
         let did: DIDPlugin.DID = null;
 
-        console.log("Getting or creating app instance DID");
+        this.logger.log("Getting or creating app instance DID");
 
         // Check if we have a app instance DID store saved in our local storage (app manager settings)
         let appInstanceDIDInfo = await this.getExistingAppInstanceDIDInfo();
@@ -213,7 +223,7 @@ export class DIDHelper {
         }
 
         if (!didStore || !did) {
-            console.log("No app instance DID found. Creating a new one");
+            this.logger.log("No app instance DID found. Creating a new one");
 
             // No DID store found. Need to create a new app instance DID.
             let didCreationresult = await this.createNewAppInstanceDID();
@@ -256,11 +266,11 @@ export class DIDHelper {
                 let expirationDate = moment(credential.getExpirationDate());
                 if (expirationDate.isBefore(moment().subtract(1, 'hours'))) {
                     // We are expired - ask to generate a new credential
-                    console.log("Existing credential is expired or almost expired - renewing it");
+                    this.logger.log("Existing credential is expired or almost expired - renewing it");
                     credential = null;
                 }
                 else {
-                    console.log("Returning existing app id credential found in app's local storage");
+                    this.logger.log("Returning existing app id credential found in app's local storage");
                     resolve(credential);
                     return;
                 }
@@ -268,7 +278,7 @@ export class DIDHelper {
 
             if (!credential) {
                 // No such credential, so we have to create one. Send an intent to get that from the did app
-                console.log("No app id credential found in app local storage. Trying to generate one.");
+                this.logger.log("No app id credential found in app local storage. Trying to generate one.");
 
                 try {
                     let credential = await this.appIDGenerator.generateAppIDCredential(appInstanceDID.getDIDString());

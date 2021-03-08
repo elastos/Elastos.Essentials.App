@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { JsonRPCService } from '../../services/jsonrpc.service';
+import { Logger } from 'src/app/logger';
 
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
@@ -40,7 +41,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     public async updateBalance() {
-        console.log('MainAndIDChainSubWallet updateBalance ', this.id,
+        Logger.log("wallet", 'MainAndIDChainSubWallet updateBalance ', this.id,
                     ' syncTimestamp:', this.syncTimestamp,
                     ' timestampRPC:', this.timestampRPC,
                     ' this.progress:', this.progress);
@@ -52,7 +53,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             // Balance in SELA
             this.balance = new BigNumber(balanceStr, 10);
         } else {
-            console.log('Do not get Balance from spvsdk.');
+            Logger.log("wallet", 'Do not get Balance from spvsdk.');
             // TODO: update balance by rpc?
         }
     }
@@ -130,7 +131,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * Get balance by RPC if the last block time of spvsdk is one day ago.
      */
     async getBalanceByRPC(jsonRPCService: JsonRPCService) {
-        console.log('TIMETEST getBalanceByRPC start:', this.id);
+        Logger.log("wallet", 'TIMETEST getBalanceByRPC start:', this.id);
         const currentTimestamp = moment().valueOf();
         const onedayago = moment().add(-1, 'days').valueOf();
         const oneHourago = moment().add(-10, 'minutes').valueOf();
@@ -138,7 +139,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         if (this.lastBlockTime
                 && ((this.syncTimestamp > onedayago)
                 || (this.timestampRPC > oneHourago))) {
-            console.log('Do not need to get balance by rpc.',
+            Logger.log("wallet", 'Do not need to get balance by rpc.',
                 ' this.lastBlockTime:', this.lastBlockTime,
                 ' this.syncTimestamp:', this.syncTimestamp,
                 ' this.timestampRPC:', this.timestampRPC);
@@ -161,9 +162,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.balance = totalBalance;
         this.timestampRPC = currentTimestamp;
 
-        console.log('TIMETEST getBalanceByRPC ', this.id, ' end');
-        console.log('getBalanceByRPC totalBalance:', totalBalance.toString());
-        console.log(this.masterWallet.id, ' ', this.id, ' timestampRPC:', this.timestampRPC);
+        Logger.log("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
+        Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
+        Logger.log("wallet", this.masterWallet.id, ' ', this.id, ' timestampRPC:', this.timestampRPC);
         return true;
     }
 
@@ -178,9 +179,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         let totalBalance = new BigNumber(0);
 
         if (internalAddress) {
-            console.log('get Balance for internal Address');
+            Logger.log("wallet", 'get Balance for internal Address');
         } else {
-            console.log('get Balance for external Address');
+            Logger.log("wallet", 'get Balance for external Address');
         }
 
         let addressArray = null;
@@ -207,13 +208,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                     requestTimesOfGetEmptyBalance = 0;
                 }
             } catch (e) {
-                console.log('jsonRPCService.getBalanceByAddress exception:', e);
+                Logger.log("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
                 throw e;
             }
         } while (!this.masterWallet.account.SingleAddress);
 
-        console.log('request Address count:', requestAddressCount);
-        console.log('balance:', totalBalance.toString());
+        Logger.log("wallet", 'request Address count:', requestAddressCount);
+        Logger.log("wallet", 'balance:', totalBalance.toString());
 
         return totalBalance;
     }
