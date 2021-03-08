@@ -13,6 +13,7 @@ import { Profile } from "../model/profile.model";
 import { Events } from "./events.service";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
+import { Logger } from "src/app/logger";
 var deepEqual = require('deep-equal');
 
 declare let appManager: AppManagerPlugin.AppManager;
@@ -130,7 +131,7 @@ export class ProfileService {
     this.fetchPublishedDIDDocument();
   }
   setPublishStatus(isPublishStatusFetched: boolean) {
-    console.log("isPublishStatusFetched: " + isPublishStatusFetched);
+    Logger.log("identity", "isPublishStatusFetched: " + isPublishStatusFetched);
     this.publishStatusFetched = isPublishStatusFetched;
   }
 
@@ -140,14 +141,14 @@ export class ProfileService {
 
   setCredentialVisibility(key: string, isVisible: boolean) {
     let credential = this.credentials.find((item) => {
-      console.log(item.credential.getFragment());
+      Logger.log("identity", item.credential.getFragment());
 
       return item.credential.getFragment() == key;
     });
     if (credential) {
       credential.isVisible = isVisible;
-      console.log("Credential2 : " + JSON.stringify(credential));
-      console.log("all credentials: " + JSON.stringify(this.credentials));
+      Logger.log("identity", "Credential2 : " + JSON.stringify(credential));
+      Logger.log("identity", "all credentials: " + JSON.stringify(this.credentials));
 
       this.events.publish("credentials:modified");
     }
@@ -180,7 +181,7 @@ export class ProfileService {
       }
     });
 
-    //console.log("Basic profile:", JSON.stringify(profile));
+    //Logger.log("identity", "Basic profile:", JSON.stringify(profile));
     return profile;
 
   }
@@ -282,7 +283,7 @@ export class ProfileService {
 
   /********** Reveal Data Options **********/
   async showWarning(warning: string, password: string) {
-    console.log("Opening warning");
+    Logger.log("identity", "Opening warning");
     this.popover = await this.popoverCtrl.create({
       mode: "ios",
       cssClass: "warning",
@@ -373,7 +374,7 @@ export class ProfileService {
       return this.publishedDIDDocument;
     }
 
-    console.log("profile getDIDDocumentFromDID")
+    Logger.log("identity", "profile getDIDDocumentFromDID")
 
     this.fetchingPublishedDIDDocument = true;
     this.fetchedPublishedDIDDocument = false;
@@ -386,7 +387,7 @@ export class ProfileService {
             this.publishedDIDDocument = didDoc;
           }
 
-          console.log("Fetched DID Document:", didString, didDoc);
+          Logger.log("identity", "Fetched DID Document:", didString, didDoc);
 
           this.fetchingPublishedDIDDocument = false;
           this.fetchedPublishedDIDDocument = true;
@@ -450,7 +451,7 @@ export class ProfileService {
 
   hasModifiedCredentials(): boolean {
     let publishedCredentials = this.getPublishedCredentials();
-    //console.log("local creds:", this.credentials, "published:", publishedCredentials);
+    //Logger.log("identity", "local creds:", this.credentials, "published:", publishedCredentials);
     for (let pubCred of publishedCredentials) {
       var found = this.credentials.find(x => {
         return x.credential.getId() == pubCred.getId();
@@ -460,7 +461,7 @@ export class ProfileService {
         let local = JSON.parse(JSON.stringify(found.credential.getSubject()));
         let published = JSON.parse(JSON.stringify(pubCred.getSubject()));
         if (!deepEqual(local, published)) {
-          console.log("Local and published credentials don't match. hasModifiedCredentials() returns true.", "Local:", local, "Published:", published);
+          Logger.log("identity", "Local and published credentials don't match. hasModifiedCredentials() returns true.", "Local:", local, "Published:", published);
           return true; // we handle only the modified case not the added or removed case
         }
       }
@@ -525,19 +526,19 @@ export class ProfileService {
     credentialEntry: CredentialDisplayEntry,
     password: string
   ) {
-    console.log(
+    Logger.log("identity",
       "Updating document selection from entry ",
       currentDidDocument,
       credentialEntry
     );
     let credentialId = credentialEntry.credential.getId();
-    console.log("Found credential id to publish", credentialId);
+    Logger.log("identity", "Found credential id to publish", credentialId);
     let existingCredential = await currentDidDocument.getCredentialById(
       new DIDURL(credentialId)
     );
     if (!existingCredential && credentialEntry.isVisible) {
       // Credential doesn't exist in the did document yet but user wants to add it? Then add it.
-      console.log("add");
+      Logger.log("identity", "add");
       await currentDidDocument.addCredential(
         credentialEntry.credential,
         password
@@ -547,7 +548,7 @@ export class ProfileService {
       !credentialEntry.isVisible
     ) {
       // Credential exists but user wants to remove it on chain? Then delete it from the did document
-      console.log("delete");
+      Logger.log("identity", "delete");
       await currentDidDocument.deleteCredential(
         credentialEntry.credential,
         password
@@ -557,7 +558,7 @@ export class ProfileService {
       credentialEntry.isVisible
     ) {
       // Credential exists but user wants to update it on chain? Then delete it from the did document and add it again
-      console.log("update");
+      Logger.log("identity", "update");
       await currentDidDocument.updateOrAddCredential(
         credentialEntry.credential,
         password
@@ -610,12 +611,12 @@ export class ProfileService {
         .getDIDDocumentFromDID(issuerId)
         .then((issuerDoc) => {
           if (issuerDoc === null) {
-            console.log(issuerId, ' is not published');
+            Logger.log("identity", issuerId, ' is not published');
             resolve(null);
             return;
           }
 
-          console.log("Issuer ", issuerId);
+          Logger.log("identity", "Issuer ", issuerId);
           let response: IssuerDisplayEntry = {
             did: this.transformIssuerId(issuerId),
             name: "",
@@ -638,11 +639,11 @@ export class ProfileService {
           }
 
 
-          console.log("Issuer response", response);
+          Logger.log("identity", "Issuer response", response);
           resolve(response);
         })
         .catch((error) => {
-          console.log("Issuer error", error);
+          Logger.log("identity", "Issuer error", error);
           reject(error);
         });
     });

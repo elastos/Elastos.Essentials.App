@@ -55,6 +55,7 @@
             <ion-col size="12">
                 <ion-input
                     type="number"
+                    name="amount" ngDefaultControl
                     placeholder="{{ 'amount' | translate }}"
                     [(ngModel)]="amount"
                 >
@@ -84,6 +85,7 @@
                     class="amount-input"
                     type="number"
                     placeholder="0"
+                    name="amount2" ngDefaultControl
                     [(ngModel)]="amount"
                 >
                 </ion-input>
@@ -109,6 +111,7 @@
                     clearInput
                     placeholder="{{ 'transfer-receiver-address' | translate}}"
                     [(ngModel)]="toAddress"
+                    name="toAddress" ngDefaultControl
                     (input)='onSendToAddressInput($event.target.value)'>
                 </ion-input>
                 <div class="scan-btn ripple ion-activatable">
@@ -138,6 +141,7 @@
                 <ion-input
                     type="text"
                     clearInput
+                    name="memo" ngDefaultControl
                     placeholder="{{ 'tx-info-memo' | translate }}"
                     [(ngModel)]="memo"
                 >
@@ -198,6 +202,7 @@
                         class="amount-input"
                         type="number"
                         placeholder="0"
+                        name="amount3" ngDefaultControl
                         [(ngModel)]="amount"
                     >
                     </ion-input>

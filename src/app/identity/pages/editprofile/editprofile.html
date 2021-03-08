@@ -34,13 +34,13 @@
             </ion-row>
             <ion-row>
               <ion-col class="edit-container">
-                <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value"></ion-input>
+                <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" name="edit" ngDefaultControl></ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)"></ion-toggle>
+          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -58,14 +58,14 @@
             <ion-row>
               <ion-col class="edit-container">
                 <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" type="email"
-                  pattern="email">
+                  pattern="email" name="email" ngDefaultControl>
                 </ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)"></ion-toggle>
+          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -83,13 +83,13 @@
             </ion-row>
             <ion-row class="edit-container">
               <ion-col>
-                <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" type="tel"></ion-input>
+                <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" type="tel" name="tel" ngDefaultControl></ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)"></ion-toggle>
+          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -114,7 +114,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)"></ion-toggle>
+          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -133,7 +133,7 @@
             <ion-row class="edit-container">
               <ion-col>
                 <ion-select [(ngModel)]="entry.value" [placeholder]="'select-one'|translate" [interfaceOptions]="option"
-                  [cancelText]="'cancel'|translate" [okText]="'confirm'|translate">
+                  [cancelText]="'cancel'|translate" [okText]="'confirm'|translate" ngDefaultControl>
                   <ion-select-option value="female">{{ 'female' | translate }}</ion-select-option>
                   <ion-select-option value="male">{{ 'male' | translate }}</ion-select-option>
                 </ion-select>
@@ -142,7 +142,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)"></ion-toggle>
+          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -162,14 +162,15 @@
               <ion-col>
                 <ion-datetime picker-format="YYYY/M/D" [(ngModel)]="entry.value" [placeholder]="'select-date'|translate"
                   [cancelText]="'cancel'|translate" [doneText]="'confirm'|translate"
-                  (ionChange)="formatBirthDay(entry)">
+                  (ionChange)="formatBirthDay(entry)"
+                  ngDefaultControl>
                 </ion-datetime>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)"></ion-toggle>
+          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
     </div>

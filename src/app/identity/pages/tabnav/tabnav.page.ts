@@ -12,7 +12,6 @@ import { Router } from "@angular/router";
   styleUrls: ["./tabnav.page.scss"],
 })
 export class TabnavPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild("tabs", { static: true }) tabs: IonTabs;
 
   constructor(
@@ -29,22 +28,10 @@ export class TabnavPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant("my-identity"));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-      key: "settings",
-      iconPath: BuiltInIcon.SETTINGS
-    });
-
-    this.titleBar.addOnItemClickedListener((icon) => {
-      if (icon.key == "settings") {
-          this.navCtrl.navigateForward('/identity/settings');
-      }
-    });
   }
 
   ionViewWillLeave() {
-    this.titleBar.setNavigationMode(null);
+    //this.titleBar.setNavigationMode(null);
   }
 
   setCurrentTab() {

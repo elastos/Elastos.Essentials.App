@@ -23,7 +23,7 @@
   <ion-row>
     <ion-label>{{ 'your-name' | translate }}</ion-label>
   </ion-row>
-  <ion-input [placeholder]="'enter-name-here'|translate" #input [(ngModel)]="name"></ion-input>
+  <ion-input [placeholder]="'enter-name-here'|translate" #input [(ngModel)]="name" name="name" ngDefaultControl></ion-input>
   <div class="footer">
     <ion-button (click)="next()">
       {{ 'continue' | translate }}

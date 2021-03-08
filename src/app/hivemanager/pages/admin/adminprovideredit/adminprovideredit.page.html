@@ -2,7 +2,7 @@
     <!-- No provider -->
     <div *ngIf="!managedProvider" class="editContainer" [class.darkContainer]="theme.darkMode">
         <h1>{{ 'adminprovideredit.provider-name' | translate }}</h1>
-        <ion-input [(ngModel)]="createName" placeholder="{{'adminprovideredit.enter-name' | translate }}" clearInput></ion-input>
+        <ion-input [(ngModel)]="createName" placeholder="{{'adminprovideredit.enter-name' | translate }}" clearInput name="name1" ngDefaultControl></ion-input>
         <ion-button (click)="createAdminDID()">{{ 'adminprovideredit.create' | translate }}</ion-button>
     </div>
     <!-- Has provider -->
@@ -12,7 +12,7 @@
                 <h1>{{ 'adminprovideredit.provider-name' | translate }}</h1>
             </ion-col>
             <ion-col size="12">
-                <ion-input [(ngModel)]="managedProvider.name" (input)='onNameChanged($event.target.value)' clearInput></ion-input>
+                <ion-input [(ngModel)]="managedProvider.name" (input)='onNameChanged($event.target.value)' clearInput name="name2" ngDefaultControl></ion-input>
             </ion-col>
         </ion-row>
         <ion-row>

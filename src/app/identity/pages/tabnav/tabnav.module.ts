@@ -10,6 +10,7 @@ import { TranslateModule } from "@ngx-translate/core";
 import { Routes, RouterModule } from "@angular/router";
 
 import { TabnavPage } from "./tabnav.page";
+import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
 
 const routes: Routes = [
   {
@@ -81,7 +82,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    //TabsnavPageRoutingModule,
+    SharedComponentsModule,
     TranslateModule.forChild(),
     RouterModule.forChild(routes),
   ],

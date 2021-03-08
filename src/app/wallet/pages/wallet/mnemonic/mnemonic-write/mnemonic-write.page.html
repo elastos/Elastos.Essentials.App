@@ -1,67 +1,3 @@
-<!-- <ion-content>
-    <ion-grid class="ion-text-center container">
-        <p>
-            {{ 'type-menmonic-verify' | translate }}
-        </p>
-        <ion-slides #slider pager [options]="slideOpts">
-            <ion-slide>
-                <ion-row *ngFor="let word of inputList.slice(0,4); let i = index;">
-                    <ion-col size="1">
-                        <span>{{ i + 1 }}.</span>
-                    </ion-col>
-                    <ion-col class='input-col' size="10">
-                        <ion-input
-                            type="text"
-                            (keyup)="up()"
-                            [(ngModel)]="word.input"
-                            (ngModelChange)="inputChanged($event)"
-                        >
-                        </ion-input>
-                    </ion-col>
-                </ion-row>
-            </ion-slide>
-            <ion-slide>
-                <ion-row *ngFor="let word of inputList.slice(4,8); let i = index;">
-                    <ion-col size="1">
-                        <span>{{ 4 + i + 1 }}.</span>
-                    </ion-col>
-                    <ion-col class='input-col' size="10">
-                        <ion-input
-                            type="text"
-                            #input
-                            [(ngModel)]="word.input"
-                            (ngModelChange)="inputChanged($event)"
-                        >
-                        </ion-input>
-                    </ion-col>
-                </ion-row>
-            </ion-slide>
-            <ion-slide>
-                <ion-row *ngFor="let word of inputList.slice(8, 12); let i = index;">
-                    <ion-col size="1">
-                        <span>{{ 8 + i + 1 }}.</span>
-                    </ion-col>
-                    <ion-col class='input-col' size="10">
-                        <ion-input
-                            type="text"
-                            #input
-                            [(ngModel)]="word.input"
-                            (ngModelChange)="inputChanged($event)"
-                        >
-                        </ion-input>
-                    </ion-col>
-                </ion-row>
-            </ion-slide>
-        </ion-slides>
-
-        <ion-row class="btn-container">
-            <ion-button color="secondary" (click)="onNext()">
-                <ion-label>{{ 'confirm' | translate }}</ion-label>
-            </ion-button>
-        </ion-row>
-    </ion-grid>
-</ion-content> -->
-
 <app-titlebar></app-titlebar>
 <ion-content>
     <ion-grid class="ion-text-center container">
@@ -78,6 +14,7 @@
                             type="text"
                             autocapitalize='off'
                             #input1
+                            name="input1" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input2)"
                             [(ngModel)]="inputList[0].input"
                         >
@@ -93,6 +30,7 @@
                             type="text"
                             autocapitalize='off'
                             #input2
+                            name="input2" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input3)"
                             [(ngModel)]="inputList[1].input"
                         >
@@ -108,6 +46,7 @@
                             type="text"
                             autocapitalize='off'
                             #input3
+                            name="input3" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input4)"
                             [(ngModel)]="inputList[2].input"
                         >
@@ -123,6 +62,7 @@
                             type="text"
                             autocapitalize='off'
                             #input4
+                            name="input4" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input5, slide)"
                             [(ngModel)]="inputList[3].input"
                         >
@@ -146,6 +86,7 @@
                             type="text"
                             autocapitalize='off'
                             #input5
+                            name="input5" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input6)"
                             [(ngModel)]="inputList[4].input"
                         >
@@ -161,6 +102,7 @@
                             type="text"
                             autocapitalize='off'
                             #input6
+                            name="input6" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input7)"
                             [(ngModel)]="inputList[5].input"
                         >
@@ -176,6 +118,7 @@
                             type="text"
                             autocapitalize='off'
                             #input7
+                            name="input7" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input8)"
                             [(ngModel)]="inputList[6].input"
                         >
@@ -191,6 +134,7 @@
                             type="text"
                             autocapitalize='off'
                             #input8
+                            name="input8" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input9, slide)"
                             [(ngModel)]="inputList[7].input"
                         >
@@ -214,6 +158,7 @@
                             type="text"
                             autocapitalize='off'
                             #input9
+                            name="input9" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input10)"
                             [(ngModel)]="inputList[8].input"
                         >
@@ -229,6 +174,7 @@
                             type="text"
                             autocapitalize='off'
                             #input10
+                            name="input10" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input11)"
                             [(ngModel)]="inputList[9].input"
                         >
@@ -244,6 +190,7 @@
                             type="text"
                             autocapitalize='off'
                             #input11
+                            name="input11" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode, input12)"
                             [(ngModel)]="inputList[10].input"
                         >
@@ -259,6 +206,7 @@
                             type="text"
                             autocapitalize='off'
                             #input12
+                            name="input12" ngDefaultControl
                             (keypress)="goToNextInput($event.keyCode)"
                             [(ngModel)]="inputList[11].input"
                         >

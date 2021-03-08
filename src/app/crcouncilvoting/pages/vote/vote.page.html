@@ -23,6 +23,7 @@
                 class="ion-text-center"
                 (ionBlur)="setInputDefault($event.target.value)"
                 type="number"
+                name="userVotes" ngDefaultControl
                 [(ngModel)]="candidate.userVotes">
               </ion-input>
               <ion-label>Pledge ELA</ion-label>

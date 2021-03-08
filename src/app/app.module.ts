@@ -41,9 +41,9 @@ export class SentryErrorHandler implements ErrorHandler {
   }
 
   handleError(error) {
-    Logger.error("Global", "Globally catched exception:", error);
-
-    console.log(document.URL);
+    Logger.error("Sentry", "Globally catched exception:", error);
+    Logger.error("Sentry", document.URL);
+    
     // Only send reports to sentry if we are not debugging.
     if (document.URL.includes('launcher')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
       // TODO @zhiming Sentry.captureException(error.originalError || error);

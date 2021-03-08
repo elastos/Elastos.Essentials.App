@@ -274,6 +274,10 @@ export class ScanPage {
     }
 
     sendIntentAsUrl(scannedContent: string) {
+        // Special backward compatibility case: convert elastos:// into https://did.elastos.net/ for CR sign in
+        if (scannedContent.indexOf("elastos://") === 0)
+            scannedContent = scannedContent.replace("elastos://", "https://did.elastos.net/");
+
         Logger.log("Scanner", "Sending scanned content as a URL intent:", scannedContent);
         this.appManager.sendUrlIntent(scannedContent, async ()=>{
             // URL intent sent

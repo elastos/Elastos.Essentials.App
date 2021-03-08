@@ -35,7 +35,7 @@ import { TitleBarIconSlot } from "src/app/components/titlebar/titlebar.types";
 
 @Component({
   selector: "page-editprofile",
-  templateUrl: "editprofile.html",
+  templateUrl: "./editprofile.html",
   styleUrls: ["editprofile.scss"],
 })
 export class EditProfilePage {

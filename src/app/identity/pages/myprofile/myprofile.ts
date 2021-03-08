@@ -4,6 +4,7 @@ import {
   ModalController,
   PopoverController,
   ActionSheetController,
+  NavController,
 } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 
@@ -28,6 +29,7 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { ThemeService } from "src/app/didsessions/services/theme.service";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { Logger } from "src/app/logger";
+import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -58,7 +60,7 @@ type CredentialDisplayEntry = {
   styleUrls: ["myprofile.scss"],
 })
 export class MyProfilePage {
-  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public profile: Profile;
 
@@ -95,7 +97,8 @@ export class MyProfilePage {
     public theme: ThemeService,
     public hiveService: HiveService,
     public profileService: ProfileService,
-    public actionSheetController: ActionSheetController
+    public actionSheetController: ActionSheetController,
+    private navCtrl: NavController
   ) {
     this.init();
   }
@@ -220,6 +223,19 @@ export class MyProfilePage {
           Logger.log("identity", "diddocument is not published.");
         }
       });
+
+    this.titleBar.setTitle(this.translate.instant("my-identity"));
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+      key: "settings",
+      iconPath: BuiltInIcon.SETTINGS
+    });
+
+    this.titleBar.addOnItemClickedListener((icon) => {
+      if (icon.key == "settings") {
+          this.navCtrl.navigateForward('/identity/settings');
+      }
+    });
   }
 
   ionViewDidEnter() {
@@ -228,7 +244,7 @@ export class MyProfilePage {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
 
-    Logger.log("identity", 
+    Logger.log("identity",
       "MyProfilePage ionViewDidEnter did: " + this.profileService.didString
     );
   }
@@ -238,7 +254,7 @@ export class MyProfilePage {
       identity
     );
     this.profileService.setPublishStatus(true);
-    Logger.log("identity", 
+    Logger.log("identity",
       "DID needs publishing?",
       this.profileService.didNeedsToBePublished
     );
@@ -465,7 +481,7 @@ export class MyProfilePage {
       // Update app credential's visibility under 'credentials' if its visibility was changed under 'capsules'
       this.profileService.visibleCredentials.map((cred) => {
         if (cred.credential === entry.credential) {
-          Logger.log("identity", 
+          Logger.log("identity",
             'Updating app cred\'s visibility selection under "credentials" tab'
           );
           cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
@@ -473,7 +489,7 @@ export class MyProfilePage {
       });
       this.profileService.invisibleCredentials.map((cred) => {
         if (cred.credential === entry.credential) {
-          Logger.log("identity", 
+          Logger.log("identity",
             'Updating app cred\'s visibility selection under "credentials" tab'
           );
           cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
@@ -483,7 +499,7 @@ export class MyProfilePage {
       // Update app credential's visibility under 'capsules' if its visibility was changed under 'credentials'
       this.profileService.appCreds.map((cred) => {
         if (cred.credential === entry.credential) {
-          Logger.log("identity", 
+          Logger.log("identity",
             'Updating app cred\'s visibility selection under "capsules" tab'
           );
           cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;

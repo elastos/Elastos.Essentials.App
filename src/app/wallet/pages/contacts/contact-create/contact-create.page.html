@@ -13,28 +13,28 @@
             <ion-label stacked>{{ 'contacts-address-title' | translate }}</ion-label>
         </ion-item>
         <ion-item>
-            <ion-input type="text" placeholder="{{ 'contacts-address-input' | translate }}" [(ngModel)]="address"></ion-input>
+            <ion-input type="text" placeholder="{{ 'contacts-address-input' | translate }}" [(ngModel)]="address" name="address" ngDefaultControl></ion-input>
         </ion-item>
 
         <ion-item>
             <ion-label stacked>{{ 'contacts-phone-title' | translate }}</ion-label>
         </ion-item>
         <ion-item>
-            <ion-input type="text" placeholder="{{ 'contacts-phone-input' | translate }}" [(ngModel)]="phone"></ion-input>
+            <ion-input type="text" placeholder="{{ 'contacts-phone-input' | translate }}" [(ngModel)]="phone" name="phone" ngDefaultControl></ion-input>
         </ion-item>
 
         <ion-item>
             <ion-label stacked>{{ 'contacts-email-title' | translate }}</ion-label>
         </ion-item>
         <ion-item>
-            <ion-input type="text" placeholder="{{ 'contacts-email-input' | translate }}" [(ngModel)]="email"></ion-input>
+            <ion-input type="text" placeholder="{{ 'contacts-email-input' | translate }}" [(ngModel)]="email" name="email" ngDefaultControl></ion-input>
         </ion-item>
 
         <ion-item>
             <ion-label stacked>{{ 'contacts-remark-title' | translate }}</ion-label>
         </ion-item>
         <ion-item>
-            <ion-input type="text" placeholder="" [(ngModel)]="remark"></ion-input>
+            <ion-input type="text" placeholder="" [(ngModel)]="remark" name="remark" ngDefaultControl></ion-input>
         </ion-item>
     </ion-list>
 </ion-content>

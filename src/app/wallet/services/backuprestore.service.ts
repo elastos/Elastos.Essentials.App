@@ -164,7 +164,7 @@ export class BackupRestoreService {
 
     this.log("Using vault for user:", this.userVault.getVaultOwnerDid(), "at:", this.userVault.getVaultProviderAddress());
 
-    this.backupRestoreHelper = new HiveDataSync(this.userVault, true);
+    this.backupRestoreHelper = new ElastosSDKHelper().newHiveDataSync("wallet", this.userVault, true);
     this.log("Backup restore helper initialized", this.backupRestoreHelper);
     return true;
   }

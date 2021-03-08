@@ -21,11 +21,11 @@
   </ion-row>
 
   <ion-row id="first-input-row" class="input-row">
-    <ion-input [placeholder]="'text-password-input'|translate" #pwd [(ngModel)]="password" type="password" (keyup)="moveFocus(rptpwd, $event)"></ion-input>
+    <ion-input [placeholder]="'text-password-input'|translate" #pwd [(ngModel)]="password" type="password" (keyup)="moveFocus(rptpwd, $event)" name="password" ngDefaultControl></ion-input>
   </ion-row>
 
   <ion-row class="input-row">
-    <ion-input [placeholder]="'repeat-password'|translate" #rptpwd [(ngModel)]="passwordConfirmation" type="password"></ion-input>
+    <ion-input [placeholder]="'repeat-password'|translate" #rptpwd [(ngModel)]="passwordConfirmation" type="password" name="passwordConfirmation" ngDefaultControl></ion-input>
     <div class="password-failed-info" *ngIf="!passwordsMatch() && passwordConfirmation !== '' && password !== ''">{{ 'wrong-password' | translate }}</div>
   </ion-row>
 

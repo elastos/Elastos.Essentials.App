@@ -7,6 +7,7 @@
         <ion-row>
             <ion-input
                 type="text"
+                name="name" ngDefaultControl
                 [placeholder]="'enter-name' | translate"
                 [(ngModel)]="wallet.name">
             </ion-input>
@@ -35,6 +36,7 @@
             <ion-col size="10">
                 <ion-input
                     type="text"
+                    name="mnemonicPassword" ngDefaultControl
                     placeholder="{{ 'mnemonic-input-passphrase' | translate }}"
                     [(ngModel)]="wallet.mnemonicPassword"
                     (keypress)="goToNextInput($event.keyCode, input)">
@@ -48,6 +50,7 @@
             <ion-input
                 #input
                 type="text"
+                name="mnemonicPasswordRepeat" ngDefaultControl
                 placeholder="{{ 'mnemonic-reinput-passphrase' | translate }}"
                 [(ngModel)]="repeatMnemonicPassword">
             </ion-input>

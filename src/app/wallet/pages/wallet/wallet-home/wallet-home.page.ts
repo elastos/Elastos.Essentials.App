@@ -44,6 +44,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -226,7 +227,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     shouldPromptToEnableHiveVaultForBackup(): boolean {
-        /*Logger.log("wallet", 
+        /*Logger.log("wallet",
             'shouldPromptToEnableHiveVaultForBackup',
             this.resolvingBackupService,
             this.backupService.initialized(),

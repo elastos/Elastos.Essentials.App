@@ -4,6 +4,7 @@
         <ion-item lines="none">
             <ion-label stacked>{{ 'addwallet-walletname-title' | translate }}</ion-label>
             <ion-input type="text" placeholder="{{ 'addwallet-walletname-placeholder' | translate }}"
+            name="name" ngDefaultControl
                 [(ngModel)]="name"></ion-input>
         </ion-item>
     </ion-list>

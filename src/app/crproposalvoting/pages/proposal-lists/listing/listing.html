@@ -12,6 +12,7 @@
             autosize
             placeholder="Search Proposal"
             [(ngModel)]="searchInput"
+            name="searchInput" ngDefaultControl
             (ngModelChange)="searchProposal($event)"
             mode="ios"
         >

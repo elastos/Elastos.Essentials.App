@@ -28,10 +28,12 @@
         <ion-input
           [(ngModel)]="developer.privateNet.configUrl"
           placeholder="Enter config URL"
+          name="privnetConfigUrl" ngDefaultControl
           type="text" clearInput  required>
         </ion-input>
         <ion-input
           id="add-margin"
+          name="privnetResolveUrl" ngDefaultControl
           [(ngModel)]="developer.privateNet.resolveUrl"
           placeholder="Enter resolve URL"
           type="text" clearInput  required>
