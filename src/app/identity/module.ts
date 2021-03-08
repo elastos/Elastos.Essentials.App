@@ -46,6 +46,7 @@ import { AdvancedSettingsPage } from "./pages/advanced-settings/advanced-setting
 import { SuccessComponent } from "./components/success/success.component";
 import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
 import { ExportmnemonicPage } from "./pages/exportmnemonic/exportmnemonic.page";
+import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { ExportmnemonicPage } from "./pages/exportmnemonic/exportmnemonic.page";
     IonicStorageModule,
     TranslateModule,
     IonicImageLoader,
+    TabsnavPageModule
   ],
   bootstrap: [],
   entryComponents: [

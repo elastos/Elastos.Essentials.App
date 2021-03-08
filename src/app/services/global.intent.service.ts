@@ -14,7 +14,7 @@ export class GlobalIntentService {
   constructor() {}
 
   public async init(): Promise<void> {
-    console.log("Global intent service is initializing");
+    Logger.log("global", "Global intent service is initializing");
 
     appManager.setIntentListener((receivedIntent)=>{
       Logger.log("global", "Intent received, now dispatching to listeners", receivedIntent);
