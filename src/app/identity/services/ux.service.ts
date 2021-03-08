@@ -29,7 +29,7 @@ export class UXService {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public static instance: UXService = null;
-    
+
     constructor(
         public translate: TranslateService,
         public events: Events,
@@ -44,10 +44,10 @@ export class UXService {
     async init() {
         this.appManager.setListener(this.onReceive);
 
-     
+
    /*      this.titleBar.addOnItemClickedListener((icon) => {
             if (icon.key == "settings") {
-                this.navCtrl.navigateForward('/settings');
+                this.navCtrl.navigateForward('/identity/settings');
             }
         }); */
     }
@@ -59,7 +59,7 @@ export class UXService {
         else {
             this.titleBar.setNavigationMode(null);
         }
-       
+
     }
 
     setTitleBarSettingsKeyShown(show: boolean) {

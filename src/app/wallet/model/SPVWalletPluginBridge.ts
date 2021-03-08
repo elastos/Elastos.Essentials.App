@@ -5,6 +5,7 @@ import { Config } from '../config/Config';
 import { StandardCoinName } from './Coin';
 import { AllTransactions } from './Transaction';
 import { Events } from '../services/events.service';
+import { Logger } from 'src/app/logger';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -261,7 +262,7 @@ export class SPVWalletPluginBridge {
 
     getAllMasterWallets(): Promise<string[]> {
         return new Promise((resolve, reject)=>{
-            console.log("Getting all master wallets");
+            Logger.log("wallet", "Getting all master wallets");
 
             walletManager.getAllMasterWallets([],
                 (ret) => { resolve(ret); },

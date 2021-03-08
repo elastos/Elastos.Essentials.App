@@ -31,6 +31,7 @@ import { LocalStorage } from './storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
 import { GlobalNotificationsService, NotificationRequest } from 'src/app/services/global.notifications.service';
+import { Logger } from 'src/app/logger';
 
 export type InAppRPCMessage = {
     method: RPCMethod;
@@ -93,7 +94,7 @@ export class SPVSyncService {
     }
 
     public async init(walletManager: WalletManager) {
-        console.log("SPV sync service is initializing");
+        Logger.log("wallet", "SPV sync service is initializing");
 
         this.walletManager = walletManager;
 
@@ -111,8 +112,8 @@ export class SPVSyncService {
         const masterId = event.MasterWalletID;
         const chainId = event.ChainID;
 
-        console.log("SubWallet message: ", masterId, chainId, event);
-        // console.log(event.Action, event.result);
+        Logger.log("wallet", "SubWallet message: ", masterId, chainId, event);
+        // Logger.log("wallet", event.Action, event.result);
 
         switch (event.Action) {
             case 'OnBlockSyncProgress':
@@ -128,17 +129,17 @@ export class SPVSyncService {
     }
 
     public async syncStartSubWallets(masterId: WalletID, chainIds: StandardCoinName[]): Promise<void> {
-        console.log("SubWallets sync is starting:", masterId);
+        Logger.log("wallet", "SubWallets sync is starting:", masterId);
 
         for (const chainId of chainIds) {
             await this.spvBridge.syncStart(masterId, chainId);
         }
 
-        console.log("SubWallet sync start is completed");
+        Logger.log("wallet", "SubWallet sync start is completed");
     }
 
     public async syncStopSubWallets(masterId: WalletID, chainIds: StandardCoinName[]): Promise<boolean> {
-        console.log("SubWallets sync is stopping:", masterId);
+        Logger.log("wallet", "SubWallets sync is stopping:", masterId);
 
         for (const chainId of chainIds) {
             try {
@@ -150,7 +151,7 @@ export class SPVSyncService {
             }
         }
 
-        console.log("SubWallet sync stop is completed");
+        Logger.log("wallet", "SubWallet sync stop is completed");
         return true;
     }
 
@@ -225,7 +226,7 @@ export class SPVSyncService {
      * This way, users know when they can start using their wallet in third party apps.
      */
     private async sendSyncCompletedNotification(chainId) {
-        console.log('Sending sync completed notification for subwallet '+chainId);
+        Logger.log("wallet", 'Sending sync completed notification for subwallet '+chainId);
 
         const request: NotificationRequest = {
             message: '',

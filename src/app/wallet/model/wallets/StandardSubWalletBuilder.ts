@@ -5,6 +5,7 @@ import { SerializedSubWallet } from './SubWallet';
 import { ETHChainSubWallet } from './ETHChainSubWallet';
 import { MainchainSubWallet } from './MainchainSubWallet';
 import { IDChainSubWallet } from './IDChainSubWallet';
+import { Logger } from 'src/app/logger';
 
 /**
  * Helper class to create and restore standard sub wallet objects.
@@ -34,7 +35,7 @@ export class StandardSubWalletBuilder {
     }
 
     public static newFromSerializedSubWallet(masterWallet: MasterWallet, serializedSubWallet: SerializedSubWallet): StandardSubWallet {
-        console.log("Initializing standard subwallet from serialized sub wallet", serializedSubWallet);
+        Logger.log("wallet", "Initializing standard subwallet from serialized sub wallet", serializedSubWallet);
         let subWallet = this.newSubWalletFromId(masterWallet, serializedSubWallet.id);
         subWallet.initFromSerializedSubWallet(serializedSubWallet);
         return subWallet;

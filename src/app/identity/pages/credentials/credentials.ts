@@ -26,6 +26,7 @@ import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { ProfileService } from "../../services/profile.service";
+import { Logger } from "src/app/logger";
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -151,15 +152,15 @@ export class CredentialsPage {
     if (identity) {
       // Happens when importing a new mnemonic over an existing one
       this.profile = identity.getBasicProfile();
-      console.log(
+      Logger.log("identity", 
         "Credentials Page is using this profile:",
         JSON.stringify(this.profile)
       );
 
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
-      console.log("Has credentials?", this.hasCredential);
-      console.log("Credentials", JSON.stringify(this.credentials));
+      Logger.log("identity", "Has credentials?", this.hasCredential);
+      Logger.log("identity", "Credentials", JSON.stringify(this.credentials));
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {
@@ -221,7 +222,7 @@ export class CredentialsPage {
 
   //   if (this.currentOnChainDIDDocument === null) {
 
-  //     console.log("1: " + console.log(howLong.ms));
+  //     Logger.log("identity", "1: " + Logger.log("identity", howLong.ms));
   //     return false;
 
   //   }
@@ -231,19 +232,19 @@ export class CredentialsPage {
 
   //   let chainValue = this.currentOnChainDIDDocument.getCredentialById(new DIDURL("#" + fragment));
   //   if (!chainValue) {
-  //     console.log("2: " + console.log(howLong.ms));
+  //     Logger.log("identity", "2: " + Logger.log("identity", howLong.ms));
   //     return false;
   //   }
 
   //   if (!localValue) {
-  //     console.log("3: " + console.log(howLong.ms));
+  //     Logger.log("identity", "3: " + Logger.log("identity", howLong.ms));
   //     //handling capsules credential
   //     localValue = this.getLocalCredByProperty(credential, "apppackage");
   //     if (localValue) {
   //       let apppackage = chainValue.getSubject().apppackage;
 
   //       return localValue === apppackage;
-  //       console.log("4: " + console.log(howLong.ms));
+  //       Logger.log("identity", "4: " + Logger.log("identity", howLong.ms));
   //     }
   //     else {
   //       // handle external credentials
@@ -255,7 +256,7 @@ export class CredentialsPage {
 
   //   if (typeof localValue === "object" || typeof chainValue === "object") {
   //     //avatar
-  //     console.log("5: " + console.log(howLong.ms));
+  //     Logger.log("identity", "5: " + Logger.log("identity", howLong.ms));
   //     return JSON.stringify(localValue) === JSON.stringify(chainValue);
   //   }
 
@@ -303,8 +304,8 @@ export class CredentialsPage {
       this.profileService.invisibleData.push(entry);
     }
 
-    // console.log("Invisible data", this.profileService.invisibleData);
-    // console.log("Visible data", this.profileService.visibleData);
+    // Logger.log("identity", "Invisible data", this.profileService.invisibleData);
+    // Logger.log("identity", "Visible data", this.profileService.visibleData);
   }
 
 
@@ -350,10 +351,10 @@ export class CredentialsPage {
         hasAvatar = true;
         this.hiveService.rawImage =
           "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        console.log("Profile has avatar", this.hiveService.rawImage);
+        Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
 
         if (publishAvatar) {
-          console.log("Prompting avatar publish");
+          Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
           this.profileService.showWarning("publishVisibility", null);
         }
@@ -361,7 +362,7 @@ export class CredentialsPage {
       // Find Description Credential
       if (cred.credential.getSubject().hasOwnProperty("description")) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
-        console.log("Profile has bio", this.profileService.displayedBio);
+        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
     this.profileService.invisibleCredentials.map((cred) => {
@@ -384,10 +385,10 @@ export class CredentialsPage {
         hasAvatar = true;
         // this.hiveService.rawImage =
         //   "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        console.log("Profile has avatar", this.hiveService.rawImage);
+        Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
 
         if (publishAvatar) {
-          console.log("Prompting avatar publish");
+          Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
           this.profileService.showWarning("publishVisibility", null);
         }
@@ -395,11 +396,11 @@ export class CredentialsPage {
       // Find Description Credentials
       if (cred.credential.getSubject().hasOwnProperty("description")) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
-        console.log("Profile has bio", this.profileService.displayedBio);
+        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
 
-    console.log("App creds", this.profileService.appCreds);
+    Logger.log("identity", "App creds", this.profileService.appCreds);
     if (this.profileService.appCreds.length > 0) {
       this.buildDisplayableAppsInfo();
     }
@@ -421,7 +422,7 @@ export class CredentialsPage {
         )
         .subscribe(
           (manifest: any) => {
-            console.log("Got app!", manifest);
+            Logger.log("identity", "Got app!", manifest);
             this.zone.run(async () => {
               cred.appInfo = {
                 packageId: cred.credential.getSubject().apppackage,
@@ -436,7 +437,7 @@ export class CredentialsPage {
             });
           },
           (err) => {
-            console.log("HTTP ERROR " + JSON.stringify(err));
+            Logger.log("identity", "HTTP ERROR " + JSON.stringify(err));
             this.zone.run(async () => {
               cred.appInfo = {
                 packageId: cred.credential.getSubject().apppackage,
@@ -453,7 +454,7 @@ export class CredentialsPage {
         );
     });
 
-    console.log("App infos", this.profileService.appCreds);
+    Logger.log("identity", "App infos", this.profileService.appCreds);
   }
 
   getAppIcon(appId: string) {
@@ -739,7 +740,7 @@ export class CredentialsPage {
         description: this.translate.instant("publish-description"),
         icon: "publish",
         action: () => {
-          console.log("publish clicked");
+          Logger.log("identity", "publish clicked");
           this.profileService.showWarning("publishIdentity", "");
         },
       },
@@ -748,7 +749,7 @@ export class CredentialsPage {
         description: this.translate.instant("edit-description"),
         icon: "edit",
         action: () => {
-          console.log("edit clicked");
+          Logger.log("identity", "edit clicked");
           this.profileService.editProfile();
         },
       },
@@ -757,7 +758,7 @@ export class CredentialsPage {
         description: this.translate.instant("share-description"),
         icon: "share",
         action: () => {
-          console.log("Share clicked");
+          Logger.log("identity", "Share clicked");
           this.profileService.shareIdentity();
         },
       },
@@ -793,7 +794,7 @@ export class CredentialsPage {
   }
 
   openCredential(entry: CredentialDisplayEntry) {
-    this.native.go("credentialdetails", {
+    this.native.go("/identity/credentialdetails", {
       credentialId: entry.credential.getId(),
     });
   }

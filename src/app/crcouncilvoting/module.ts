@@ -11,6 +11,7 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { FormsModule } from '@angular/forms';
 import { CandidateSliderComponent } from './components/candidate-slider/candidate-slider.component';
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { CandidateSliderComponent } from './components/candidate-slider/candidat
     HttpClientModule,
     FormsModule,
     AppRoutingModule,
+    SharedComponentsModule,
     IonicModule,
     IonicImageLoader,
     IonicStorageModule

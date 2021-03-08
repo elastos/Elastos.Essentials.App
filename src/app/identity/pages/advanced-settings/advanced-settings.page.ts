@@ -41,7 +41,7 @@ export class AdvancedSettingsPage implements OnInit {
         );
         console.log(res);
         this.events.publish('did:didchanged');
-        this.native.go("/myprofile");
+        this.native.go("/identity/myprofile");
         this.native.hideLoading();
         this.native.toast_trans('did-sync-success');
       }, () => {

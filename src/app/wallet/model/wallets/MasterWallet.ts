@@ -11,6 +11,7 @@ import { StandardSubWalletBuilder } from './StandardSubWalletBuilder';
 import { ETHChainSubWallet } from './ETHChainSubWallet';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 export type WalletID = string;
 
@@ -76,7 +77,7 @@ export class MasterWallet {
      * storage instead.
      */
     public async populateWithExtendedInfo(extendedInfo: ExtendedWalletInfo) {
-        console.log("Populating master wallet with extended info", this.id);
+        Logger.log("wallet", "Populating master wallet with extended info", this.id);
 
         // Retrieve wallet account type
         this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
@@ -149,7 +150,7 @@ export class MasterWallet {
     public async createSubWallet(coin: Coin) {
         this.subWallets[coin.getID()] = await SubWalletBuilder.newFromCoin(this, coin);
 
-        console.log("Created subwallet with id "+coin.getID()+" for wallet "+this.id);
+        Logger.log("wallet", "Created subwallet with id "+coin.getID()+" for wallet "+this.id);
 
         await this.walletManager.saveMasterWallet(this);
     }
@@ -192,7 +193,7 @@ export class MasterWallet {
      */
     public async updateERC20TokenList(prefs: GlobalPreferencesService) {
         if (!this.subWallets[StandardCoinName.ETHSC]) {
-            console.log('updateERC20TokenList no ETHSC');
+            Logger.log("wallet", 'updateERC20TokenList no ETHSC');
             return;
         }
 
@@ -210,7 +211,7 @@ export class MasterWallet {
                             await this.coinService.addCustomERC20Coin(newCoin, this);
                         }
                     } catch (e) {
-                        console.log('updateERC20TokenList exception:', e);
+                        Logger.log("wallet", 'updateERC20TokenList exception:', e);
                     }
                 }
             } else {
@@ -225,7 +226,7 @@ class SubWalletBuilder {
      * Newly created wallet, base on a coin type.
      */
     static newFromCoin(masterWallet: MasterWallet, coin: Coin): Promise<SubWallet> {
-        console.log("Creating new subwallet using coin", coin);
+        Logger.log("wallet", "Creating new subwallet using coin", coin);
 
         switch (coin.getType()) {
             case CoinType.STANDARD:

@@ -55,7 +55,7 @@ export class ProfileEntryPickerPage {
   }
 
   createData() {
-    this.router.navigate(['/createdata']);
+    this.router.navigate(['/identity/createdata']);
   }
 
   close() {

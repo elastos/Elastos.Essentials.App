@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-pickplan',
@@ -30,7 +31,7 @@ export class PickPlanPage implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((data) => {
-      //console.log("QUERY PARAMS", data);
+      //Logger.log("hivemanager", "QUERY PARAMS", data);
     });
   }
 
@@ -55,15 +56,15 @@ export class PickPlanPage implements OnInit {
 
   private async fetchPlans() {
     this.pricingInfo = await this.hiveService.getPricingInfo();
-    console.log("Received pricing info:", this.pricingInfo);
-    console.log("Pricing info plans:", this.pricingInfo.getPricingPlans());
-    console.log("Pricing info settings:", this.pricingInfo.getPaymentSettings());
+    Logger.log("hivemanager", "Received pricing info:", this.pricingInfo);
+    Logger.log("hivemanager", "Pricing info plans:", this.pricingInfo.getPricingPlans());
+    Logger.log("hivemanager", "Pricing info settings:", this.pricingInfo.getPaymentSettings());
 
     this.fetchingPlans = false;
   }
 
   public pickPlan(plan: HivePlugin.Payment.PricingPlan) {
-    console.log("pick plan", plan);
+    Logger.log("hivemanager", "pick plan", plan);
 
     this.navCtrl.navigateForward("pickplanpurchase", {
       queryParams: {

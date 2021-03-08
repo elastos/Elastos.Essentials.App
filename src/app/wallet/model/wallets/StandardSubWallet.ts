@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -86,13 +87,13 @@ export abstract class StandardSubWallet extends SubWallet {
 
     public async getTransactions(startIndex: number): Promise<AllTransactions> {
         let allTransactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, startIndex, '');
-        console.log("Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
+        Logger.log("wallet", "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
         return allTransactions;
     }
 
     protected async getTransactionName(transaction: Transaction, translate: TranslateService): Promise<string> {
         let transactionName: string = '';
-        // console.log("getTransactionName std subwallet", transaction);
+        // Logger.log("wallet", "getTransactionName std subwallet", transaction);
 
         switch (transaction.Direction) {
             case TransactionDirection.RECEIVED:
@@ -203,7 +204,7 @@ export abstract class StandardSubWallet extends SubWallet {
         }
         this.progress = progress;
 
-        console.log("Standard subwallet "+this.id+" got update sync progress request. Progress = "+progress);
+        Logger.log("wallet", "Standard subwallet "+this.id+" got update sync progress request. Progress = "+progress);
 
         const curTimestampMs = (new Date()).getTime();
         const timeInverval = curTimestampMs - this.timestamp;
@@ -229,10 +230,10 @@ export abstract class StandardSubWallet extends SubWallet {
      */
     public async signAndSendRawTransaction(transaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
         return new Promise(async (resolve) => {
-            console.log('Received raw transaction', transaction);
+            Logger.log("wallet", 'Received raw transaction', transaction);
             const password = await this.masterWallet.walletManager.openPayModal(transfer);
             if (!password) {
-                console.log("No password received. Cancelling");
+                Logger.log("wallet", "No password received. Cancelling");
                 if (transfer.action) {
                     await this.masterWallet.walletManager.sendIntentResponse(
                         { txid: null, status: 'cancelled' },
@@ -244,7 +245,7 @@ export abstract class StandardSubWallet extends SubWallet {
                 return;
             }
 
-            console.log("Password retrieved. Now signing the transaction.");
+            Logger.log("wallet", "Password retrieved. Now signing the transaction.");
 
             await this.masterWallet.walletManager.native.showLoading();
 
@@ -255,7 +256,7 @@ export abstract class StandardSubWallet extends SubWallet {
                 password
             );
 
-            console.log("Transaction signed. Now publishing.");
+            Logger.log("wallet", "Transaction signed. Now publishing.");
 
             const publishedTransaction =
             await this.masterWallet.walletManager.spvBridge.publishTransaction(
@@ -267,7 +268,7 @@ export abstract class StandardSubWallet extends SubWallet {
             this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
 
             if (!Util.isEmptyObject(transfer.action)) {
-                console.log("Mode: transfer with intent action");
+                Logger.log("wallet", "Mode: transfer with intent action");
                 this.masterWallet.walletManager.lockTx(publishedTransaction.TxHash);
 
                 setTimeout(async () => {
@@ -279,7 +280,7 @@ export abstract class StandardSubWallet extends SubWallet {
                         status = 'error';
                     }
                     this.masterWallet.walletManager.native.hideLoading();
-                    console.log('Sending intent response', transfer.action, { txid: txId }, transfer.intentId);
+                    Logger.log("wallet", 'Sending intent response', transfer.action, { txid: txId }, transfer.intentId);
                     await this.masterWallet.walletManager.sendIntentResponse(
                         { txid: txId, status },
                         transfer.intentId);
@@ -290,7 +291,7 @@ export abstract class StandardSubWallet extends SubWallet {
                     });
                 }, 5000); // wait for 5s for txPublished
             } else {
-                console.log("Published transaction id:", publishedTransaction.TxHash);
+                Logger.log("wallet", "Published transaction id:", publishedTransaction.TxHash);
 
                 await this.masterWallet.walletManager.native.hideLoading();
 

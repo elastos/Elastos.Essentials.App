@@ -261,7 +261,7 @@ export class ProfileService {
     this.editingVisibility = false;
     this.deleteMode = false;
     //this.options.dismiss();
-    this.native.go("/editprofile", { create: false });
+    this.native.go("/identity/editprofile", { create: false });
   }
 
   editVisibility() {
@@ -303,7 +303,7 @@ export class ProfileService {
       }
 
       this.popover = null;
-      this.native.go("myprofile");
+      this.native.go("/identity/myprofile");
     });
     return await this.popover.present();
   }
@@ -365,7 +365,7 @@ export class ProfileService {
   }
 
   publish() {
-    this.native.go("/publish");
+    this.native.go("/identity/publish");
   }
 
   public async fetchPublishedDIDDocument(): Promise<DIDDocument> {

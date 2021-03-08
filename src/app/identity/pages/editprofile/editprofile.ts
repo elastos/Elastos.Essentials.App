@@ -166,7 +166,7 @@ export class EditProfilePage {
       });
       this.selectCountrySubscription.unsubscribe();
     });
-    this.native.go("/countrypicker");
+    this.native.go("/identity/countrypicker");
     this.showSelectCountry = true;
   }
 

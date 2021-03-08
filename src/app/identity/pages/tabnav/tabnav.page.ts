@@ -4,6 +4,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-tabnav",
@@ -12,12 +13,13 @@ import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/c
 })
 export class TabnavPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  @ViewChild("tabs", { static: false }) tabs: IonTabs;
+  @ViewChild("tabs", { static: true }) tabs: IonTabs;
 
   constructor(
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    public router: Router
   ) { }
 
   public selectedTab: string;
@@ -33,10 +35,10 @@ export class TabnavPage implements OnInit {
       key: "settings",
       iconPath: BuiltInIcon.SETTINGS
     });
-  
+
     this.titleBar.addOnItemClickedListener((icon) => {
       if (icon.key == "settings") {
-          this.navCtrl.navigateForward('/settings');
+          this.navCtrl.navigateForward('/identity/settings');
       }
     });
   }

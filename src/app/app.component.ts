@@ -80,7 +80,7 @@ export class AppComponent {
             if (entry != null) {
                 Logger.log("Global", "An active DID exists, navigating to launcher home");
                 this.navController.navigateRoot(['/launcher/home']);
-                 // this.navController.navigateRoot(['/identity/myprofile']);
+                //this.navController.navigateRoot(['/identity/myprofile/home']);
             } else {
                 Logger.log("Global", "No active DID, navigating to DID sessions");
                 this.navController.navigateRoot(['/didsessions/pickidentity']);

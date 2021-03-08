@@ -40,8 +40,8 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
     HttpClientModule,
     SharedComponentsModule,
     FormsModule,
-    IonicModule.forRoot(),
-    IonicStorageModule.forRoot()
+    IonicModule,
+    IonicStorageModule
   ],
   bootstrap: [],
   entryComponents: [

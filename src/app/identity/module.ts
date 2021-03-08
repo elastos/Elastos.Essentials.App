@@ -5,7 +5,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { IonicModule, Platform } from "@ionic/angular";
 import { IonicStorageModule } from "@ionic/storage";
-import { AppRoutingModule } from "./routing";
+import { IdentityRoutingModule } from "./routing";
 import { Clipboard } from "@ionic-native/clipboard/ngx";
 import { QRCodeModule } from "angularx-qrcode";
 import { IonBottomDrawerModule } from "ion-bottom-drawer";
@@ -46,16 +46,11 @@ import { AdvancedSettingsPage } from "./pages/advanced-settings/advanced-setting
 import { SuccessComponent } from "./components/success/success.component";
 import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
 import { ExportmnemonicPage } from "./pages/exportmnemonic/exportmnemonic.page";
-import { MyProfilePage } from "./pages/myprofile/myprofile";
-import { CredentialsPage } from "./pages/credentials/credentials";
-import { ProfilePage } from "./pages/profile/profile";
-import { TabnavPage } from "./pages/tabnav/tabnav.page";
 
 @NgModule({
   declarations: [
     CountryPickerPage,
     AppIdCredentialIssueRequestPage,
-    CredentialsPage,
     CredentialAccessRequestPage,
     CredentialIssueRequestPage,
     CredentialImportRequestPage,
@@ -71,21 +66,18 @@ import { TabnavPage } from "./pages/tabnav/tabnav.page";
     SignRequestPage,
     ProfileEntryPickerPage,
     DeleteDIDPage,
-    MyProfilePage,
     NotSignedInPage,
-    ProfilePage,
     SettingsPage,
     AdvancedSettingsPage,
     OptionsComponent,
     WarningComponent,
     PictureComponent,
-    SuccessComponent,
-    TabnavPage
+    SuccessComponent
   ],
   imports: [
     CommonModule,
     HttpClientModule,
-    AppRoutingModule,
+    IdentityRoutingModule,
     ComponentsModule,
     SharedComponentsModule,
     FormsModule,
@@ -93,7 +85,7 @@ import { TabnavPage } from "./pages/tabnav/tabnav.page";
     QRCodeModule,
     IonicStorageModule,
     TranslateModule,
-    IonicImageLoader.forRoot(),
+    IonicImageLoader,
   ],
   bootstrap: [],
   entryComponents: [

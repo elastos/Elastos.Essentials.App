@@ -48,7 +48,7 @@ export class OptionsComponent implements OnInit {
     await this.authService.checkPasswordThenExecute(async () => {
       let mnemonics = await this.didService.activeDidStore.exportMnemonic(AuthService.instance.getCurrentUserPassword());
       console.log('Mnemonics', mnemonics);
-      this.native.go('exportmnemonic', { mnemonics: mnemonics });
+      this.native.go('/identity/exportmnemonic', { mnemonics: mnemonics });
     }, () => {
       // Operation cancelled
       console.log("Password operation cancelled");

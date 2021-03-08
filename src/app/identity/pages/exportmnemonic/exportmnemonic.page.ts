@@ -36,7 +36,7 @@ export class ExportmnemonicPage implements OnInit {
   }
 
   return() {
-    this.native.go('myprofile');
+    this.native.go('/identity/myprofile');
   }
 
 }

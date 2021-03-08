@@ -182,12 +182,12 @@ export class CredentialListPage {
   }
 
   createCredential() {
-    this.native.go('/credentialcreate');
+    this.native.go('/identity/credentialcreate');
   }
 
   backupCredential(credential) {
     this.didService.credentialToJSON(credential).then( (ret)=> {
-      this.native.go('/credentialbackup', {content: ret});
+      this.native.go('/identity/credentialbackup', {content: ret});
     })
   }
 

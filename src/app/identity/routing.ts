@@ -19,55 +19,17 @@ import { CredentialImportRequestPage } from "./pages/intents/credentialimportreq
 import { CredentialDetailsPage } from "./pages/credentialdetails/credentialdetails.page";
 import { SettingsPage } from "./pages/settings/settings.page";
 import { AdvancedSettingsPage } from "./pages/advanced-settings/advanced-settings.page";
-import { CredentialsPage } from "./pages/credentials/credentials";
-import { MyProfilePage } from "./pages/myprofile/myprofile";
-import { ProfilePage } from "./pages/profile/profile";
-import { TabnavPage } from "./pages/tabnav/tabnav.page";
 import { ExportmnemonicPage } from "./pages/exportmnemonic/exportmnemonic.page";
+import { CommonModule } from "@angular/common";
 
 const routes: Routes = [
-  // { path: '', redirectTo: '', pathMatch: 'full' }, // No default route, services will decide this by themselves.
   { path: "countrypicker", component: CountryPickerPage },
   { path: "createidentity", component: EditProfilePage },
   { path: "editprofile", component: EditProfilePage },
   { path: "publish", component: PublishPage },
   {
     path: "myprofile",
-    component: TabnavPage,
-    children: [
-      {
-        path: "home",
-        children: [
-          {
-            path: "",
-            component: MyProfilePage,
-          },
-        ],
-      },
-      {
-        path: "profile",
-        children: [
-          {
-            path: "",
-            component: ProfilePage,
-          },
-        ],
-      },
-      {
-        path: "credentials",
-        children: [
-          {
-            path: "",
-            component: CredentialsPage,
-          },
-        ],
-      },
-      {
-        path: '',
-        redirectTo: '/identity/myprofile/home',
-        pathMatch: 'full'
-      }
-    ]
+    loadChildren: "./pages/tabnav/tabnav.module#TabsnavPageModule"
   },
 
   { path: "credentiallist", component: CredentialListPage },
@@ -91,16 +53,14 @@ const routes: Routes = [
   { path: "notsignedin", component: NotSignedInPage },
   { path: "settings", component: SettingsPage },
   { path: 'advanced-settings', component: AdvancedSettingsPage },
-  {
-    path: "exportmnemonic",
-    component: ExportmnemonicPage
-  }
+  { path: "exportmnemonic", component: ExportmnemonicPage }
 ];
 
 @NgModule({
   imports: [
+    CommonModule,
     RouterModule.forChild(routes)
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class IdentityRoutingModule { }

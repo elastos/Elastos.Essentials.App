@@ -27,6 +27,7 @@ import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { ThemeService } from "src/app/didsessions/services/theme.service";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
+import { Logger } from "src/app/logger";
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -90,18 +91,17 @@ export class MyProfilePage {
     private didService: DIDService,
     private didSyncService: DIDSyncService,
     private modalCtrl: ModalController,
-    private uxService: UXService,
     private native: Native,
     public theme: ThemeService,
     public hiveService: HiveService,
     public profileService: ProfileService,
-    public actionSheetController: ActionSheetController,
-    private appManager: TemporaryAppManagerPlugin
+    public actionSheetController: ActionSheetController
   ) {
     this.init();
   }
 
   ngOnInit() {
+    Logger.log("identity", "MYPROFILE NGONINIT")
     this.didchangedSubscription = this.events.subscribe("did:didchanged", () => {
       this.zone.run(() => {
         this.init();
@@ -118,7 +118,7 @@ export class MyProfilePage {
     );
 
     this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
-      console.log("Publish avatar?", publishAvatar);
+      Logger.log("identity", "Publish avatar?", publishAvatar);
       // When the did document content changes, we rebuild our profile entries on screen.
       this.init(publishAvatar);
     });
@@ -127,7 +127,7 @@ export class MyProfilePage {
     this.documentFetchedSubscription = this.events.subscribe("diddocument:fetched", () => {
       this.zone.run(() => {
         // Compare local credentials with the ones in the document.
-        console.log("DID Document fetch completed, comparing local credentials with document ones");
+        Logger.log("identity", "DID Document fetch completed, comparing local credentials with document ones");
         this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
         this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
       });
@@ -147,7 +147,7 @@ export class MyProfilePage {
 
     this.modifiedCredentialsSubscription = this.events.subscribe("credentials:modified", () => {
       this.zone.run(() => {
-        console.log("Credentials have been modified, comparing local credentials with document ones");
+        Logger.log("identity", "Credentials have been modified, comparing local credentials with document ones");
         this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
         this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
       });
@@ -181,8 +181,8 @@ export class MyProfilePage {
       this.profileName = this.profile.getName();
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
-      console.log("Has credentials?", this.hasCredential);
-      console.log("Credentials", JSON.stringify(this.credentials));
+      Logger.log("identity", "Has credentials?", this.hasCredential);
+      Logger.log("identity", "Credentials", JSON.stringify(this.credentials));
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {
@@ -201,7 +201,7 @@ export class MyProfilePage {
   }
 
   ionViewWillEnter() {
-    console.log("ionWillEnter");
+    Logger.log("identity", "ionWillEnter");
     this.buildCredentialEntries();
 
     this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
@@ -215,20 +215,20 @@ export class MyProfilePage {
       .then((didDoc) => {
         this.currentOnChainDIDDocument = didDoc;
         if (this.currentOnChainDIDDocument) {
-          console.log("diddocument" + this.currentOnChainDIDDocument.pluginDidDocument.toJson());
+          Logger.log("identity", "diddocument" + this.currentOnChainDIDDocument.pluginDidDocument.toJson());
         } else {
-          console.log("diddocument is not published.");
+          Logger.log("identity", "diddocument is not published.");
         }
       });
   }
 
   ionViewDidEnter() {
-    console.log("ionDidEnter");
-    console.log("Dark theme : ", this.theme.darkMode);
+    Logger.log("identity", "ionDidEnter");
+    Logger.log("identity", "Dark theme : ", this.theme.darkMode);
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
 
-    console.log(
+    Logger.log("identity", 
       "MyProfilePage ionViewDidEnter did: " + this.profileService.didString
     );
   }
@@ -238,7 +238,7 @@ export class MyProfilePage {
       identity
     );
     this.profileService.setPublishStatus(true);
-    console.log(
+    Logger.log("identity", 
       "DID needs publishing?",
       this.profileService.didNeedsToBePublished
     );
@@ -273,8 +273,8 @@ export class MyProfilePage {
       this.profileService.invisibleData.push(entry);
     }
 
-    console.log("Invisible data", this.profileService.invisibleData);
-    console.log("Visible data", this.profileService.visibleData);
+    Logger.log("identity", "Invisible data", this.profileService.invisibleData);
+    Logger.log("identity", "Visible data", this.profileService.visibleData);
   }
 
   getProfileName() {
@@ -356,8 +356,8 @@ export class MyProfilePage {
       });
     }
 
-    console.log("Visible creds", this.profileService.visibleCredentials);
-    console.log("Invisible creds", this.profileService.invisibleCredentials);
+    Logger.log("identity", "Visible creds", this.profileService.visibleCredentials);
+    Logger.log("identity", "Invisible creds", this.profileService.invisibleCredentials);
     this.buildAppAndAvatarCreds(publishAvatar);
   }
 
@@ -388,10 +388,10 @@ export class MyProfilePage {
         // TODO: avatar is null
         this.hiveService.rawImage =
           "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        console.log("Profile has avatar", this.hiveService.rawImage);
+        Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
 
         if (publishAvatar) {
-          console.log("Prompting avatar publish");
+          Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
           this.profileService.showWarning("publishVisibility", null);
         }
@@ -399,7 +399,7 @@ export class MyProfilePage {
       // Find Description Credential
       if (cred.credential.getSubject().hasOwnProperty("description")) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
-        console.log("Profile has bio", this.profileService.displayedBio);
+        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
     this.profileService.invisibleCredentials.map((cred) => {
@@ -429,7 +429,7 @@ export class MyProfilePage {
 
 
         if (publishAvatar) {
-          console.log("Prompting avatar publish");
+          Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
           this.profileService.showWarning("publishVisibility", null);
         }
@@ -437,11 +437,11 @@ export class MyProfilePage {
       // Find Description Credentials
       if (cred.credential.getSubject().hasOwnProperty("description")) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
-        console.log("Profile has bio", this.profileService.displayedBio);
+        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
 
-    console.log("App creds", this.profileService.appCreds);
+    Logger.log("identity", "App creds", this.profileService.appCreds);
     if (this.profileService.appCreds.length > 0) {
 
     }
@@ -465,7 +465,7 @@ export class MyProfilePage {
       // Update app credential's visibility under 'credentials' if its visibility was changed under 'capsules'
       this.profileService.visibleCredentials.map((cred) => {
         if (cred.credential === entry.credential) {
-          console.log(
+          Logger.log("identity", 
             'Updating app cred\'s visibility selection under "credentials" tab'
           );
           cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
@@ -473,7 +473,7 @@ export class MyProfilePage {
       });
       this.profileService.invisibleCredentials.map((cred) => {
         if (cred.credential === entry.credential) {
-          console.log(
+          Logger.log("identity", 
             'Updating app cred\'s visibility selection under "credentials" tab'
           );
           cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
@@ -483,7 +483,7 @@ export class MyProfilePage {
       // Update app credential's visibility under 'capsules' if its visibility was changed under 'credentials'
       this.profileService.appCreds.map((cred) => {
         if (cred.credential === entry.credential) {
-          console.log(
+          Logger.log("identity", 
             'Updating app cred\'s visibility selection under "capsules" tab'
           );
           cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
@@ -579,8 +579,8 @@ export class MyProfilePage {
 
     claimsObject[fragment] = localValue
 
-    console.log("Claims object: ")
-    console.log(claimsObject)
+    Logger.log("identity", "Claims object: ")
+    Logger.log("identity", claimsObject)
 
     appManager.sendIntent("https://did.elastos.net/credverify", {
       claims: claimsObject
@@ -733,12 +733,12 @@ export class MyProfilePage {
         let mnemonics = await this.didService.activeDidStore.exportMnemonic(
           AuthService.instance.getCurrentUserPassword()
         );
-        console.log("Mnemonics", mnemonics);
-        this.native.go("exportmnemonic", { mnemonics: mnemonics });
+        Logger.log("identity", "Mnemonics", mnemonics);
+        this.native.go("/identity/exportmnemonic", { mnemonics: mnemonics });
       },
       () => {
         // Operation cancelled
-        console.log("Password operation cancelled");
+        Logger.log("identity", "Password operation cancelled");
       },
       true,
       true
