@@ -94,7 +94,7 @@ export class DeveloperService {
     });
   }
 
-  selectNet(
+  async selectNet(
     networkCode: string,
     mainchainRPCApi: string,
     idChainRPCApi: string,
@@ -104,12 +104,12 @@ export class DeveloperService {
   ) {
     console.log('Dev preference set to ' + networkCode);
     this.selectedNet = networkCode;
-    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
-    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
-    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
-    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
-    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
-    this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
   }
 
   getIndexByNetCode(netCode: string) {
