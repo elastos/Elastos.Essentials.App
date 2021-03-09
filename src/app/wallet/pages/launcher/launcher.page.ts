@@ -33,6 +33,7 @@ export class LauncherPage implements OnInit {
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('wallet'));
+        this.titleBar.setNavigationMode(null);
 
         /* TODO @chad if (this.walletManager.getWalletsCount() === 0) {
             this.appService.setBackKeyVisibility(false);

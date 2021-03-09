@@ -31,7 +31,7 @@ export class TitleBarComponent {
     TitleBarComponent.makeDefaultIcon(), // inner left
     TitleBarComponent.makeDefaultIcon(), // inner right
     TitleBarComponent.makeDefaultIcon()  // outer right
-  ]
+  ];
 
   private itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
 
@@ -47,8 +47,11 @@ export class TitleBarComponent {
       this.setTitleBarTheme(activeTheme);
     });
 
+    // Set home navigation for all apps
+    this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.ELASTOS });
+
     // Set the default navigation mode (used by most apps)
-    this.setNavigationMode(TitleBarNavigationMode.BACK)
+    this.setNavigationMode(TitleBarNavigationMode.BACK);
   }
 
   private static makeDefaultIcon(): TitleBarSlotItem {
@@ -242,10 +245,10 @@ export class TitleBarComponent {
     this.navigationMode = navigationMode;
 
     if (navigationMode == TitleBarNavigationMode.BACK)
-      this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
     else if (navigationMode == TitleBarNavigationMode.CLOSE)
-      this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
-    else this.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
+    else this.setIcon(TitleBarIconSlot.INNER_LEFT, null);
   }
 
   private listenableIconClicked(icon: TitleBarSlotItem | TitleBarMenuItem) {
@@ -256,17 +259,17 @@ export class TitleBarComponent {
   }
 
   outerLeftIconClicked() {
-    if (this.navigationMode == TitleBarNavigationMode.BACK)
-      this.navCtrl.back();
-   // else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
-   //   this.navCtrl.back();
-    else {
-      this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
-    }
+    this.navCtrl.navigateRoot(['/launcher/home']);
   }
 
   innerLeftIconClicked() {
-    this.listenableIconClicked(this.icons[TitleBarIconSlot.INNER_LEFT]);
+    if (this.navigationMode == TitleBarNavigationMode.BACK)
+    this.navCtrl.back();
+    // else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
+    //   this.navCtrl.back();
+    else {
+      this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
+    }
   }
 
   innerRightIconClicked() {

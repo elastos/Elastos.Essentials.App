@@ -72,8 +72,12 @@ export class MenuPage implements OnInit {
     this.prefs.developerMode = prefs["developer.mode"];
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings'));
+    this.titleBar.setNavigationMode(null);
+  }
+
+  ionViewDidEnter() {
   }
 
   toggleDeveloperMode() {

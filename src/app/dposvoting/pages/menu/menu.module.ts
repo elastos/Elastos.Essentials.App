@@ -6,6 +6,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { MenuPage } from './menu.page';
+import { VotePage } from '../vote/vote.page';
+import { StatsPage } from '../stats/stats.page';
+import { SearchPage } from '../search/search.page';
+import { HistoryPage } from '../history/history.page';
+import { TxPage } from '../tx/tx.page';
+
+import { NodeSliderComponent } from '../vote/node-slider/node-slider.component';
 
 const routes: Routes = [
   {
@@ -14,23 +21,48 @@ const routes: Routes = [
     children: [
       {
         path: 'vote',
-        loadChildren: '../vote/vote.module#VotePageModule'
+        children: [
+          {
+            path: "",
+            component: VotePage,
+          }
+        ]
       },
       {
         path: 'stats',
-        loadChildren: '../stats/stats.module#StatsPageModule'
+        children: [
+          {
+            path: "",
+            component: StatsPage,
+          }
+        ]
       },
       {
         path: 'search',
-        loadChildren: '../search/search.module#SearchPageModule'
+        children: [
+          {
+            path: "",
+            component: SearchPage,
+          }
+        ]
       },
       {
         path: 'history',
-        loadChildren: '../history/history.module#HistoryPageModule'
+        children: [
+          {
+            path: "",
+            component: HistoryPage,
+          }
+        ]
       },
       {
         path: 'history/:txId',
-        loadChildren: '../tx/tx.module#TxPageModule'
+        children: [
+          {
+            path: "",
+            component: TxPage,
+          }
+        ]
       },
     ]
   },
@@ -47,6 +79,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [MenuPage]
+  declarations: [MenuPage, NodeSliderComponent]
 })
 export class MenuPageModule {}

@@ -90,7 +90,7 @@ export class PickProviderPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    let menuItems: TitleBarMenuItem[] = [
+    const menuItems: TitleBarMenuItem[] = [
       {
         title: this.translate.instant('hive-menu.vault-providers-administration'),
         key: "pickprovider-adminproviders",
@@ -109,6 +109,7 @@ export class PickProviderPage implements OnInit {
       });
     }
 
+    this.titleBar.setNavigationMode(null);
     this.titleBar.setMenuVisibility(true);
     this.titleBar.setupMenuItems(menuItems);
 

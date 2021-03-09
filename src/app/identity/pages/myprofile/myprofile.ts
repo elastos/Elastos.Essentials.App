@@ -26,10 +26,10 @@ import { AuthService } from "../../services/auth.service";
 import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { ThemeService } from "src/app/didsessions/services/theme.service";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { Logger } from "src/app/logger";
 import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -94,7 +94,7 @@ export class MyProfilePage {
     private didSyncService: DIDSyncService,
     private modalCtrl: ModalController,
     private native: Native,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
@@ -225,7 +225,7 @@ export class MyProfilePage {
       });
 
     this.titleBar.setTitle(this.translate.instant("my-identity"));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
+    this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "settings",
       iconPath: BuiltInIcon.SETTINGS

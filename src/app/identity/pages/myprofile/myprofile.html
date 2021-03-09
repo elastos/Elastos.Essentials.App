@@ -1,6 +1,6 @@
 <app-titlebar></app-titlebar>
-<ion-content class="container">
-  <ion-grid [class.darkContainer]="theme.darkMode">
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-row>
       <div class="icon-section">
         <ion-icon *ngIf="!hiveService.rawImage" mode="ios" name="person"></ion-icon>

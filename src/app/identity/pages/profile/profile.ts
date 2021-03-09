@@ -24,9 +24,9 @@ import { DIDDocument } from "../../model/diddocument.model";
 import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { ThemeService } from "src/app/didsessions/services/theme.service";
 import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -89,7 +89,7 @@ export class ProfilePage {
     private modalCtrl: ModalController,
     private uxService: UXService,
     private native: Native,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
@@ -211,6 +211,7 @@ export class ProfilePage {
   ionViewWillEnter() {
     Logger.log("identity", "ionWillEnter");
     this.buildAppAndAvatarCreds(false);
+    this.titleBar.setNavigationMode(null);
 
     // this.profileService.didString = this.didService
     //   .getActiveDid()

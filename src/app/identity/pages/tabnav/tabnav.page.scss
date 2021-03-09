@@ -1,6 +1,6 @@
 @import "src/app/identity/root.scss";
 
-.darkContainer {
+.dark-tabs {
   ion-label {
     color: #464660;;
   }
@@ -65,8 +65,6 @@ ion-tab-bar {
   height: 21.5px;
   object-fit: contain;
   content:url('/assets/identity/buttons/credentials.svg');
-
-
 }
 
 .selected {
@@ -97,7 +95,6 @@ ion-label {
 .tab-selected {
   ion-label {
     color: #372153;
-
   }
 
 }

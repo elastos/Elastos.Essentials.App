@@ -55,6 +55,7 @@ type CredentialDisplayEntry = {
   styleUrls: ["credentials.scss"],
 })
 export class CredentialsPage {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public profile: Profile;
 
@@ -181,6 +182,7 @@ export class CredentialsPage {
   }
 
   ionViewWillEnter() {
+    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {

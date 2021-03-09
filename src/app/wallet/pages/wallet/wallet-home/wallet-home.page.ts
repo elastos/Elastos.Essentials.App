@@ -141,6 +141,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     ionViewWillEnter() {
         this.appService.setTitleBarTitle(this.translate.instant("wallet-home-title"));
+        this.titleBar.setNavigationMode(null);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
             key: "settings",
             iconPath: BuiltInIcon.SETTINGS

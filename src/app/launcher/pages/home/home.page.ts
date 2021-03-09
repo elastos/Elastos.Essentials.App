@@ -50,8 +50,7 @@ export class HomePage implements OnInit {
     // Show badge if there are notifications.
     this.notification.getNotifications();
     this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "home", iconPath: BuiltInIcon.ELASTOS });
+    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {

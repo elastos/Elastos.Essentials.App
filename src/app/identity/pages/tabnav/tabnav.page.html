@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()">
+  <ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()" [class.dark-tabs]="theme.darkMode">
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="home" [class.selected]="selectedTab == 'home'">
         <ion-icon class="home-run"></ion-icon>
