@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalDIDSessionsService } from './global.didsessions.service';
@@ -78,6 +79,22 @@ export class GlobalLanguageService {
   }
 
   /**
+   * Set language for all modules
+   */
+  private setAppLanguage(language: string) {
+    if (language === 'zh') {
+        moment.locale('zh-cn');
+    } else {
+        moment.locale(language);
+    }
+    // Set language for the ionic translate module that does the actual screen items translations
+    this.translate.setDefaultLang(language);
+    this.translate.use(language);
+
+    passwordManager.setLanguage(language);
+  }
+
+  /**
    * Retrieves and stores system language, and current user-defined language.
    */
   async fetchLanguageInfo(): Promise<void> {
@@ -92,10 +109,7 @@ export class GlobalLanguageService {
     Logger.log("LanguageService", "System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
 
     let actualLanguage = this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage;
-    this.translate.setDefaultLang(actualLanguage);
-    this.translate.use(actualLanguage);
-
-    passwordManager.setLanguage(actualLanguage);
+    this.setAppLanguage(actualLanguage);
 
     this.activeLanguage.next(actualLanguage);
   }
@@ -129,16 +143,11 @@ export class GlobalLanguageService {
       code = this.systemLanguage;
     }
 
-    // Set language for the ionic translate module that does the actual screen items translations
-    this.translate.setDefaultLang(code);
-    this.translate.use(code);
+    this.setAppLanguage(code);
 
     // Save current choice to disk
     console.log("Saving global language code:", code);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language", code, true);
-
-    // Let the password manager know
-    passwordManager.setLanguage(code);
 
     // Notify listeners of language changes
     this.activeLanguage.next(code);
