@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Elastos Foundation
+ * Copyright (c) 2021 Elastos Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,8 +47,10 @@ import { StandardSubWallet } from '../model/wallets/StandardSubWallet';
 import { MainAndIDChainSubWallet } from '../model/wallets/MainAndIDChainSubWallet';
 import { ETHChainSubWallet } from '../model/wallets/ETHChainSubWallet';
 import { Events } from './events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
+import { NetworkType } from 'src/app/model/networktype';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -168,6 +170,12 @@ export class WalletManager {
 
     private async initWallets(): Promise<boolean> {
         try {
+            // NetWork Type
+            let networkType: NetworkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+            let networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
+            let jsonrpcUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
+            let apimiscUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
+            await this.spvBridge.setNetwork(networkType, networkConfig, jsonrpcUrl, apimiscUrl );
             await this.spvBridge.init();
 
             Logger.log('wallet', "Getting all master wallets from the SPV SDK");
