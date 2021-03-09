@@ -32,6 +32,7 @@ import { WalletModule } from './wallet/module';
 import { DPoSVotingModule } from './dposvoting/module';
 import { CRCouncilVotingModule } from './crcouncilvoting/module';
 import { CRProposalVotingModule } from './crproposalvoting/module';
+import { DeveloperToolsModule } from './developertools/module';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -43,7 +44,7 @@ export class SentryErrorHandler implements ErrorHandler {
   handleError(error) {
     Logger.error("Sentry", "Globally catched exception:", error);
     Logger.error("Sentry", document.URL);
-    
+
     // Only send reports to sentry if we are not debugging.
     if (document.URL.includes('launcher')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
       // TODO @zhiming Sentry.captureException(error.originalError || error);
@@ -103,6 +104,7 @@ export function TranslateLoaderFactory() {
     DPoSVotingModule,
     CRCouncilVotingModule,
     CRProposalVotingModule,
+    DeveloperToolsModule,
 
     /*
      * Generic modules

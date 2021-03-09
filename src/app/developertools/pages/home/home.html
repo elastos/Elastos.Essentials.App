@@ -1,0 +1,31 @@
+<app-titlebar></app-titlebar>
+<ion-content class="ion-text-center">
+  <ion-grid class="container">
+
+    <div class="ion-text-center">
+      <h1 *ngIf="dappService.getDApps().length > 0">My Applications</h1>
+      <h1 *ngIf="dappService.getDApps().length === 0">No Applications</h1>
+    </div>
+
+    <ion-card *ngFor="let app of dappService.getDApps()" (click)="openApp(app)">
+      <ion-card-subtitle>{{ app.name }}</ion-card-subtitle>
+    </ion-card>
+
+  </ion-grid>
+
+  <div class="btn ion-activatable ripple" (click)="newApp()">
+    <ion-label>NEW APP</ion-label>
+    <ion-ripple-effect></ion-ripple-effect>
+  </div>
+</ion-content>
+
+<!-- <ion-footer>
+  <ion-button (click)="this.dappService.deleteApps()">Delete Apps</ion-button>
+</ion-footer> -->
+
+<!-- <ion-footer no-border class="ion-padding ion-text-center">
+  <ion-button color="dark" (click)="newApp()">
+    <ion-label>New App</ion-label>
+  </ion-button>
+</ion-footer>
+ -->

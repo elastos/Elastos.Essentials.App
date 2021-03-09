@@ -1,0 +1,86 @@
+.container {
+  min-height: 120%;
+  background: #FAFAFA;
+  padding: 30px;
+
+  h1 {
+    margin: 0px 0px 15px;
+    font-size: 24px;
+    font-weight: 900;
+    color: #21313d;
+  }
+
+  ion-card {
+    background: linear-gradient(to bottom, #181d20 0%,  #21313d 100%);
+    padding: 30px;
+    margin: 0;
+    border-radius: 15px;
+
+    ion-card-title {
+      color: white;
+    }
+
+    ion-card-subtitle {
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 2px;
+    }
+
+    h5 {
+      margin: 0;
+      font-size: 14px;
+      color: white;
+    }
+  }
+
+  ion-list {
+    background: #FAFAFA;
+
+    ion-title {
+      padding: 15px 0 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #21313d;
+
+      span {
+        font-size: 14px;
+        font-weight: 500;
+        color: #21313d;
+      }
+
+      ion-icon {
+        font-size: 18px;
+        position: relative;
+        top: 3px;
+      }
+    }
+
+    ion-item {
+      --padding-start: 0px;
+      --background: #FAFAFA;
+
+      ion-input {
+        --background: #FAFAFA;
+        --color: #21313d;
+        --padding-top: 0;
+        --padding-bottom: 0;
+      }
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      margin-top: 30px;
+
+      ion-title {
+        padding: 0;
+      }
+
+      ion-toggle {
+        padding-left: 0;
+      }
+    }
+  }
+}
+

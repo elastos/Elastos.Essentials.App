@@ -1,0 +1,69 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <!-- Create App Screen -->
+  <ion-grid class="container" *ngIf="!createdDApp">
+
+    <div class="ion-text-center">
+      <h1>Create a New App</h1>
+    </div>
+
+    <ion-card class="ion-text-center">
+      <h5>
+        Creating a new app means creating a new permanent DID for it. <br> <br>
+        This DID must be saved carefully because this is the only way to upgrade your application in the future. <br> <br>
+        To learn how to build an app, visit https://developer.elastos.org
+      </h5>
+    </ion-card>
+
+    <ion-list>
+      <div>
+        <ion-title mode='md'>App Name</ion-title>
+        <ion-item detail="false">
+          <ion-input title="App name" [(ngModel)]="appName" type="text"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="toggle">
+        <ion-toggle [(ngModel)]="importDID"></ion-toggle>
+        <ion-title mode='md' *ngIf="!importDID">Create a new DID</ion-title>
+        <ion-title mode='md' *ngIf="importDID">Import an existing DID</ion-title>
+      </div>
+
+      <div *ngIf="importDID">
+        <ion-title mode='md'>Existing App DID Mnemonic <ion-icon name="help-circle" (click)='dAppService.showHelp($event, helpMessage2)'></ion-icon></ion-title>
+        <ion-item detail="false">
+          <ion-textarea [(ngModel)]="mnemonicToImport"></ion-textarea>
+        </ion-item>
+      </div>
+
+      <div *ngIf="importDID">
+        <ion-title mode='md'>Mnemonic Passphrase <span>(if any) </span> <ion-icon name="help-circle" (click)='dAppService.showHelp($event, helpMessage3)'></ion-icon></ion-title>
+        <ion-item detail="false">
+          <ion-input [(ngModel)]="mnemonicToImportPassphrase"></ion-input>
+        </ion-item>
+      </div>
+    </ion-list>
+
+    <ion-button (click)="createApp()">
+      <ion-label>Create App</ion-label>
+    </ion-button>
+  </ion-grid>
+
+  <!-- App Created Screen -->
+  <ion-grid class="container" *ngIf="createdDApp">
+    <div class="ion-text-center">
+      <h1>App Created!</h1>
+    </div>
+
+    <ion-card class="ion-text-center">
+      <h5>Please save your mnemonic carefully:</h5> <br>
+      <ion-card-subtitle>
+        {{createdDApp.mnemonic}}
+      </ion-card-subtitle>
+    </ion-card>
+    <ion-button (click)="endAppCreation()">
+      <ion-label>Done</ion-label>
+    </ion-button>
+  </ion-grid>
+
+</ion-content>

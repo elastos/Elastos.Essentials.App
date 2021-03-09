@@ -19,6 +19,7 @@ import { GlobalIntentService } from './services/global.intent.service';
 import { DPoSVotingInitService } from './dposvoting/services/init.service';
 import { CRCouncilVotingInitService } from './crcouncilvoting/services/init.service';
 import { CRProposalVotingInitService } from './crproposalvoting/services/init.service';
+import { DeveloperToolsInitService } from './developertools/services/init.service';
 
 @Component({
     selector: 'app-root',
@@ -45,7 +46,8 @@ export class AppComponent {
         private language: GlobalLanguageService,
         private intentService: GlobalIntentService,
         private crCouncilVotingInitService: CRCouncilVotingInitService,
-        private crProposalVotingInitService: CRProposalVotingInitService
+        private crProposalVotingInitService: CRProposalVotingInitService,
+        private developerToolsInitService: DeveloperToolsInitService
     ) {
     }
 
@@ -73,6 +75,8 @@ export class AppComponent {
             await this.walletInitService.init();
             await this.dposVotingInitService.init();
             await this.crCouncilVotingInitService.init();
+            await this.crProposalVotingInitService.init();
+            await this.developerToolsInitService.init();
 
             // Navigate to the right startup screen
             Logger.log("Global", "Navigating to start screen");

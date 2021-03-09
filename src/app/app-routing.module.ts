@@ -16,6 +16,7 @@ const routes: Routes = [
   { path: 'dposvoting', loadChildren: './dposvoting/module#DPoSVotingModule' },
   { path: 'crcouncilvoting', loadChildren: './crcouncilvoting/module#CRCouncilVotingModule' },
   { path: 'crproposalvoting', loadChildren: './crproposalvoting/module#CRProposalVotingModule' },
+  { path: 'developertools', loadChildren: './developertools/module#DeveloperToolsModule' },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet

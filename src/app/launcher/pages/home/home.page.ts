@@ -92,4 +92,8 @@ export class HomePage implements OnInit {
     // return moment().format('dddd MMM Do') + ', ' + moment().format('LT');
     return moment().format('dddd, MMM Do');
   }
+
+  public tmpMiniIdentityTest() {
+    
+  }
 }

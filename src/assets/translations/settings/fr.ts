@@ -42,6 +42,7 @@ export const fr = {
     'configure-network': 'Configuration du réseau',
     'on': 'ACTIF',
     'off': 'INACTIF',
+    'developer-tools': 'Outils de développement',
 
     /********** Select-net Page **********/
     'choose-network': 'Choix du réseau',

@@ -42,6 +42,7 @@ export const en = {
     'configure-network': 'Configure Network',
     'on': 'ON',
     'off': 'OFF',
+    'developer-tools': 'Developer Tools',
 
     /********** Select-net Page **********/
     'choose-network': 'Choose Network',

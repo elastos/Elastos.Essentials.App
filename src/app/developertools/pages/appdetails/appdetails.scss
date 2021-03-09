@@ -1,0 +1,49 @@
+.container {
+  min-height: 100%;
+  background: #FAFAFA;
+  padding: 30px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 900;
+    color: #21313d;
+  }
+
+  ion-list {
+    background: #FAFAFA;
+
+    ion-title {
+      padding: 15px 0 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #21313d;
+    }
+
+    ion-item {
+      --padding-start: 0px;
+      --background: #FAFAFA;
+      overflow: visible;
+
+      ion-input {
+        --background: #FAFAFA;
+        --color: #21313d;
+        --padding-top: 0;
+        --padding-bottom: 0;
+      }
+
+      ion-label {
+        font-size: 12px;
+        font-weight: 500;
+        white-space: pre-wrap !important;
+      }
+    }
+  }
+}
+
+.wrong-password {
+  color: #f04141;
+  font-size: 12px;
+}
+
+
