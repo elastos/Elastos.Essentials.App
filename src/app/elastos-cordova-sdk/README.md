@@ -1,3 +1,7 @@
+THIS MODULE WILL SOON BE MOVED OUT OF ESSENTIALS
+
+-------------
+
 BPI 20210302:
 
 This whole folder is initially cloned from the Trinity DApp SDK NPM library.
