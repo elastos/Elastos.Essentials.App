@@ -1,6 +1,12 @@
 // Components declared globally with custom css properties
 
-/********************** GLOBAL WARNING POPUP **********************/
+
+/********************** ALERT CONTROLLER **********************/
+.alert {
+  --ion-text-color: #000000;
+}
+
+/********************** WARNING POPUP **********************/
 .warning-component {
   --min-height: 302px;
   animation: animate;
@@ -26,7 +32,7 @@
   }
 }
 
-/********************** GLOBAL OPTIONS POPUP **********************/
+/********************** OPTIONS POPUP **********************/
 .options-component {
   position: fixed;
   top: 0;
@@ -53,7 +59,7 @@
   }
 }
 
-/********************** GLOBAL LOADER **********************/
+/********************** LOADER **********************/
 .custom-loader-wrapper {
   --background: white;
 }

@@ -25,6 +25,8 @@ import { AppService } from '../../services/app.service';
 import { Util } from '../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { Native } from '../../services/native.service';
 
 @Component({
     selector: 'app-settings',
@@ -48,21 +50,24 @@ export class SettingsPage implements OnInit {
             title: this.translate.instant("settings-add-wallet"),
             subtitle: this.translate.instant("settings-add-wallet-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/wallet.svg'
+            iconDarkmode: '/assets/wallet/settings/darkmode/wallet.svg',
+            type: 'launcher'
         },
         {
             route: "/wallet-manager",
             title: this.translate.instant("settings-my-wallets"),
             subtitle: this.translate.instant("settings-my-wallets-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/wallet.svg'
+            iconDarkmode: '/assets/wallet/settings/darkmode/wallet.svg',
+            type: 'wallet-manager'
         },
         {
             route: "/currency-select",
             title: this.translate.instant("settings-currency"),
             subtitle: this.translate.instant("settings-currency-subtitle"),
             icon: '/assets/wallet/settings/dollar.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg'
+            iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg',
+            type: 'currency-select'
         },
     ];
 
@@ -71,7 +76,8 @@ export class SettingsPage implements OnInit {
     constructor(
         private appService: AppService,
         public theme: GlobalThemeService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private native: Native
     ) {
     }
 
@@ -80,5 +86,9 @@ export class SettingsPage implements OnInit {
 
     ionViewWillEnter() {
       this.appService.setTitleBarTitle(this.translate.instant("settings-title"));
+    }
+
+    go(item) {
+        item.type === 'launcher' ? this.native.go(item.route, { from: 'settings' }) : this.native.go(item.route);
     }
 }

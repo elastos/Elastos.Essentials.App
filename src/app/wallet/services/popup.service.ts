@@ -19,6 +19,7 @@ export class PopupProvider {
         subHeader: subTitle ? this.translate.instant(subTitle) : '',
         backdropDismiss: false,
         cssClass: 'alert',
+        mode: 'ios',
         buttons: [
           {
             text: okText ? okText : this.translate.instant('confirm'),
@@ -46,6 +47,7 @@ export class PopupProvider {
         subHeader: this.translate.instant(subTitle)+"("+suggestAmount+amount+")",
         backdropDismiss: false,
         cssClass: 'alert',
+        mode: 'ios',
         buttons: [
           {
             text: okText ? okText : this.translate.instant('confirm'),
@@ -73,6 +75,7 @@ export class PopupProvider {
         subHeader: "txHash:"+"("+hash+")"+":"+transactionDeleted,
         backdropDismiss: false,
         cssClass: 'alert',
+        mode: 'ios',
         buttons: [
           {
             text: okText ? okText : this.translate.instant('confirm'),
@@ -102,6 +105,7 @@ export class PopupProvider {
         subHeader: reason + ':' + sub,
         backdropDismiss: false,
         cssClass: 'alert',
+        mode: 'ios',
         buttons: [
           {
             text: okText ? okText : this.translate.instant('confirm'),
@@ -129,6 +133,7 @@ export class PopupProvider {
         subHeader: sub+"<br/>"+"("+"txHash:"+hash+")",
         backdropDismiss: false,
         cssClass: 'alert',
+        mode: 'ios',
         buttons: [
           {
             text: okText ? okText : this.translate.instant('confirm'),
@@ -157,6 +162,7 @@ export class PopupProvider {
         message  : this.translate.instant(message),
         cssClass: 'alert',
         backdropDismiss: false,
+        mode: 'ios',
         buttons: [
           {
             text: this.translate.instant(cancelText),
@@ -187,6 +193,7 @@ export class PopupProvider {
         subHeader : subTitle,
         message  : this.translate.instant(message),
         cssClass: 'alert',
+        mode: 'ios',
         buttons: [
           {
             text: this.translate.instant('cancel'),
@@ -238,6 +245,7 @@ export class PopupProvider {
             type: inputType
           },
         ],*/
+        mode: 'ios',
         buttons: [
           {
             text: cancelText ? cancelText : this.translate.instant('Cancel'),

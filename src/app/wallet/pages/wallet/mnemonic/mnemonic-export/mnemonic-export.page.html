@@ -2,7 +2,7 @@
 <ion-content>
     <ion-grid *ngIf="hideMnemonic" class="verify-container ion-no-padding ion-no-margin" [class.verify-dark-container]="theme.darkMode">
         <ion-row class="btn-container">
-            <ion-button color="primary" (click)="onExport()">
+            <ion-button (click)="onExport()">
                 <ion-label>{{ 'text-export-mnemonic' | translate }}</ion-label>
             </ion-button>
         </ion-row>
@@ -19,12 +19,12 @@
             </ion-col>
         </ion-row>
         <ion-row *ngIf="!hideMnemonic && !isFromIntent" class="btn-container">
-            <ion-button color="secondary" (click)="return()">
+            <ion-button (click)="return()">
                 <ion-label> {{ 'back-to-setting' | translate }}</ion-label>
             </ion-button>
         </ion-row>
         <ion-row *ngIf="!hideMnemonic && isFromIntent" class="btn-container">
-            <ion-button color="secondary" (click)="onShare()">
+            <ion-button (click)="onShare()">
                 <ion-label>{{ 'text-allow' | translate }}</ion-label>
             </ion-button>
         </ion-row>

@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2021 Elastos Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -35,7 +35,7 @@ import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { UiService } from '../../../services/ui.service';
 import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
-import { IonSlides } from '@ionic/angular';
+import { IonSlides, NavController } from '@ionic/angular';
 import { BackupRestoreService } from '../../../services/backuprestore.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { Events } from '../../../services/events.service';
@@ -93,7 +93,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         public uiService: UiService,
         private zone: NgZone,
         private backupService: BackupRestoreService,
-        private storage: LocalStorage
+        private storage: LocalStorage,
     ) {
     }
 
@@ -145,6 +145,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
             key: "settings",
             iconPath: BuiltInIcon.SETTINGS
+        });
+        this.titleBar.addOnItemClickedListener((icon) => {
+            if(icon.key === 'settings') {
+                this.native.go('wallet/settings');
+            }
         });
     }
 

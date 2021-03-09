@@ -5,7 +5,8 @@ import { WalletCreationService } from '../../services/walletcreation.service';
 import { WalletManager } from '../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { Router } from '@angular/router';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -17,13 +18,22 @@ declare let appManager: AppManagerPlugin.AppManager;
 export class LauncherPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+    public useBackNav = false; 
+
     constructor(
         private appService: AppService,
         public native: Native,
         private walletCreationService: WalletCreationService,
         private walletManager: WalletManager,
         public translate: TranslateService,
+        private router: Router
     ) {
+        const navigation = this.router.getCurrentNavigation();
+        if (navigation.extras.state) {
+            if(navigation.extras.state.from === 'settings') {
+                this.useBackNav = true;
+            }
+        } 
     }
 
     ngOnInit() {
@@ -33,7 +43,7 @@ export class LauncherPage implements OnInit {
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('wallet'));
-        this.titleBar.setNavigationMode(null);
+        this.useBackNav ? this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK) : this.titleBar.setNavigationMode(null);
 
         /* TODO @chad if (this.walletManager.getWalletsCount() === 0) {
             this.appService.setBackKeyVisibility(false);

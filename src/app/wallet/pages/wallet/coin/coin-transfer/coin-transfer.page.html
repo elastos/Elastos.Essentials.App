@@ -154,7 +154,7 @@
 <!------------------ RECHARGE AND SEND FOOTER ------------------>
 <ion-footer
     *ngIf="!native.popup && transferType !== 3"
-    class="footer" [class.dark-footer]="theme.darkMode"
+    class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
 >
     <ion-row *ngIf="!waitingForSyncCompletion" class="btn-container">
         <ion-button color="primary" [disabled]="!valuesValid()" (click)="goTransaction()">
@@ -220,7 +220,7 @@
 
 <!------------------ PAY INTENT FOOTER ------------------>
 <ion-footer
-    class="pay-footer" [class.dark-pay-footer]="theme.darkMode"
+    class="pay-footer ion-no-border" [class.dark-pay-footer]="theme.darkMode"
     *ngIf="transferType === 3"
 >
     <p *ngIf="amountIsSuffice()">{{ 'insufficient-balance' | translate }}</p>
