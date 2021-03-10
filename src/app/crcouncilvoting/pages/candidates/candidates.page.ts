@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from "@angular/core";
+import { Component, OnInit, NgZone, ViewChild } from "@angular/core";
 import { ToastController, AlertController } from "@ionic/angular";
 import { CandidatesService } from "../../services/candidates.service";
 import { Candidate } from "../../model/candidates.model";
@@ -6,6 +6,8 @@ import { Router, NavigationExtras } from "@angular/router";
 import { StorageService } from "../../services/storage.service";
 
 import * as moment from 'moment';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -15,6 +17,8 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ["./candidates.page.scss"]
 })
 export class CandidatesPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
   constructor(
     public candidatesService: CandidatesService,
     private storage: StorageService,
@@ -34,32 +38,17 @@ export class CandidatesPage implements OnInit {
     this.showCandidate = false;
   }
 
-
-
   ionViewWillEnter() {
-    /* TODO @chad titleBarManager.setupMenuItems(
-      [
-        {
-          key: "registerApp",
-          iconPath: TitleBarPlugin.BuiltInIcon.EDIT,
-          title: "Register Capsule"
-        }
-      ],
-    );
-    titleBarManager.addOnItemClickedListener(this.onItemClickedListener = (menuIcon) => {
-      if (menuIcon.key === "registerApp") {
-        console.log("Menu item clicked");
-        this.registerAppAlert();
-      }
-    });*/
-  }
+    this.titleBar.setTheme('linear-gradient(40deg, #181d20 0%, #1acda0 50%, #181d20 100%)', TitleBarForegroundMode.LIGHT);
+    this.titleBar.setNavigationMode(null);
 
-
-  ionViewDidEnter() {
-  }
-
-  ionViewWillLeave() {
-    // TODO @chad titleBarManager.removeOnItemClickedListener(this.onItemClickedListener);
+    if(this.candidatesService.candidates.length) {
+      this.titleBar.setTitle('CR Council Candidates');
+    } else if(this.candidatesService.council.length){
+      this.titleBar.setTitle('CR Council Members');
+    } else {
+      this.titleBar.setTitle('CR Council Voting');
+    }
   }
 
 

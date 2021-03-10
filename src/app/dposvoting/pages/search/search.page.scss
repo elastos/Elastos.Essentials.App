@@ -8,8 +8,24 @@ ion-searchbar {
   }
 }
 
+.header {
+  .search-container {
+    width: 85%;
+
+    ion-input {
+      height: 45px;
+      background: #ffffff;
+      color: #000000;
+      font-size: 15px;
+      border-radius: 50px !important;
+      letter-spacing: -0.8px;
+      box-shadow: 0 0.1px 0.5px 0 rgba(0, 0, 0, 0.16);
+    }  
+  }
+}
+
 .container {
   background: hsl(225, 22%, 96%);
   min-height: 100%;
-  padding-top: 16%;
+  padding-top: 15%;
 }

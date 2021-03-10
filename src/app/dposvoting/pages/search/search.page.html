@@ -1,31 +1,27 @@
-<ion-header *ngIf="nodesService._nodes.length > 0">
-  <div class="ion-text-center header">
-    <div class="search-container" *ngIf="nodesService._nodes.length > 0">
-      <ion-searchbar
-        color="medium"
-        placeholder="{{ 'search-supernode' | translate }}"
-        [(ngModel)]="_node"
-        (ngModelChange)="filterNodes($event)"
-        mode="ios"
-      >
-      </ion-searchbar>
-    </div>
-  </div>
-</ion-header>
 
+<div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
+  <div class="search-container">
+    <ion-input
+      placeholder="{{ 'search-supernode' | translate }}"
+      [(ngModel)]="_node"
+      (ngModelChange)="filterNodes($event)"
+      mode="ios"
+    >
+    </ion-input>
+  </div>
+</div>
 
 <ion-content>
-
   <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length > 0">
 
-    <app-node-slider
+    <app-node-slider-search
       *ngIf="showNode"
       [nodeIndex]="nodeIndex"
       [totalVotes]="nodesService.totalVotes"
       [_nodes]="filteredNodes"
       [node]="node"
     >
-    </app-node-slider>
+    </app-node-slider-search>
 
     <ion-list lines="none" [class.blur]="showNode" class="node-list">
       <ion-virtual-scroll [items]="filteredNodes"  approxItemHeight="240px">

@@ -78,9 +78,9 @@ export class TitleBarComponent {
    *
    * @param hexColor Hex color code with format "#RRGGBB"
    */
-  public setTheme(backgroundColor: string, color: string) {
-    this.theme.backgroundColor = backgroundColor;
-    this.theme.color = color;
+  public setTheme(backgroundColor: string, foregroundMode: TitleBarForegroundMode) {
+    this.setBackgroundColor(backgroundColor);
+    this.setForegroundMode(foregroundMode);
   }
 
   /**

@@ -3,7 +3,7 @@ import { Node } from '../../../model/nodes.model';
 import { NodesService } from '../../../services/nodes.service';
 
 @Component({
-  selector: 'app-node-slider',
+  selector: 'app-node-slider-search',
   templateUrl: './node-slider.component.html',
   styleUrls: ['./node-slider.component.scss'],
 })

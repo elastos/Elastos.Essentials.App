@@ -20,7 +20,7 @@ ion-content {
 *******************************************/
 .header {
   position: fixed;
-  top: 10%;
+  top: 0;
   left: 0;
   z-index: 2;
   width: 100%;
@@ -38,7 +38,7 @@ ion-content {
 
   @keyframes showHeader {
     0% { top: -100px }
-    100% { top: 10%; }
+    100% { top: 0%; }
   }
 
   ion-label {

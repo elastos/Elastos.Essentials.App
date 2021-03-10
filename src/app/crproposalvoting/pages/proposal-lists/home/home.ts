@@ -16,5 +16,6 @@ export class ProposalListsHomePage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle("Proposals");
+    this.titleBar.setNavigationMode(null);
   }
 }

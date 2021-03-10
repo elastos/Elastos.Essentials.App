@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToastController, AlertController, LoadingController } from '@ionic/angular';
+import { ToastController, AlertController, LoadingController, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { GlobalThemeService, AppTheme } from 'src/app/services/global.theme.service';
@@ -19,7 +19,12 @@ export class GlobalNativeService {
       private translate: TranslateService,
       private theme: GlobalThemeService,
       private clipboard: Clipboard,
+      private navCtrl: NavController
     ) { }
+
+    go(route: string, options?: any) {
+        this.navCtrl.navigateForward(route, options);
+    }
 
     copyClipboard(text) {
         return this.clipboard.copy(text);

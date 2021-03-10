@@ -2,7 +2,6 @@
 
 .container {
   min-height: 100%;
-  padding-top: 12%;
   padding-bottom: 16%;
   background: #181d20;
 
@@ -22,6 +21,7 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
+        color: #1de9b6;
       }
 
       .img-container {
@@ -52,7 +52,7 @@
 
         .custom-checkbox {
           background: #181d20;
-          border: 1px solid #1de9b6;;
+          border: 1px solid #1de9b6;
           border-radius: 5px;
           width: 20px;
           height: 20px;
@@ -180,6 +180,7 @@
 
   .spinner {
     ion-spinner {
+      color: #1de9b6;
       transform: scale(2);
     }
   }

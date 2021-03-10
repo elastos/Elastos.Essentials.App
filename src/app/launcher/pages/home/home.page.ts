@@ -15,6 +15,7 @@ import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { IdentityInitService } from 'src/app/identity/services/init.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +31,6 @@ export class HomePage implements OnInit {
   constructor(
     public toastCtrl: ToastController,
     private popoverCtrl: PopoverController,
-    private navCtrl: NavController,
     public translate: TranslateService,
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
@@ -39,7 +39,8 @@ export class HomePage implements OnInit {
     private appManager: TemporaryAppManagerPlugin,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
-    private identityInitService: IdentityInitService
+    private identityInitService: IdentityInitService,
+    private native: GlobalNativeService
   ) {
   }
 
@@ -84,7 +85,7 @@ export class HomePage implements OnInit {
   }
 
   showMyIdentity() {
-    this.identityInitService.start();
+    this.native.go('/identity/myprofile/home');
   }
 
   getDateFromNow() {

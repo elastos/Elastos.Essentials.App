@@ -32,6 +32,7 @@ import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../../config/Config';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NavController } from '@ionic/angular';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -59,6 +60,7 @@ export class DPoSVotePage implements OnInit {
         public popupProvider: PopupProvider,
         public theme: GlobalThemeService,
         private translate: TranslateService,
+        private navCtrl: NavController
     ) {
         this.init();
     }
@@ -101,9 +103,14 @@ export class DPoSVotePage implements OnInit {
      * sending the intent response.
      */
     async cancelOperation() {
-        await this.intentService.sendIntentResponse(
-            { txid: null, status: 'cancelled' },
-            this.intentTransfer.intentId);
+        try {
+            await this.intentService.sendIntentResponse(
+                { txid: null, status: 'cancelled' },
+                this.intentTransfer.intentId);
+        } catch (err) {
+            console.error('wallet app -> dposvote pg -> cancelOperation err', err);
+            this.navCtrl.back();
+        }
     }
 
     goTransaction() {

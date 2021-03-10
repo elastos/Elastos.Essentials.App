@@ -15,6 +15,7 @@ import { TxPage } from '../tx/tx.page';
 import { NodeSliderComponent as VoteNodeSliderComponent } from '../vote/node-slider/node-slider.component';
 import { NodeSliderComponent as SearchNodeSliderComponent } from '../search/node-slider/node-slider.component';
 import { NodeSliderComponent as TxNodeSliderComponent } from '../tx/node-slider/node-slider.component';
+
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { TranslateModule } from '@ngx-translate/core';
 

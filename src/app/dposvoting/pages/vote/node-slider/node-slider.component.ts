@@ -4,7 +4,7 @@ import { IonSlides } from '@ionic/angular';
 import { NodesService } from '../../../services/nodes.service';
 
 @Component({
-  selector: 'app-node-slider',
+  selector: 'app-node-slider-vote',
   templateUrl: './node-slider.component.html',
   styleUrls: ['./node-slider.component.scss'],
 })

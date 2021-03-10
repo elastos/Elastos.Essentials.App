@@ -1,18 +1,17 @@
-<ion-header>
-  <div class="ion-text-center header">
-    <ion-label>{{ modDate(vote.date) }}</ion-label>
-  </div>
-</ion-header>
+
+<div class="ion-text-center header">
+  <ion-label>{{ modDate(vote.date) }}</ion-label>
+</div>
 
 <ion-content>
   <ion-grid class="container ion-no-padding">
-    <app-node-slider
+    <app-node-slider-tx
       *ngIf="showNode"
       [nodeIndex]="nodeIndex"
       [totalVotes]="nodesService.totalVotes"
       [_nodes]="_nodes"
       [node]="node"
-    ></app-node-slider>
+    ></app-node-slider-tx>
     <ion-list lines="none" [class.blur]="showNode" class="node-list">
       <ion-virtual-scroll [items]="_nodes"  approxItemHeight="240px">
         <ion-item color="secondary"  *virtualItem="let node">

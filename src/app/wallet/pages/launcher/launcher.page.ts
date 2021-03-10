@@ -42,8 +42,7 @@ export class LauncherPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setBackgroundColor('#732cd0');
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+        this.titleBar.setTheme('#732cd0', TitleBarForegroundMode.LIGHT)
         this.titleBar.setTitle(this.translate.instant('wallet'));
         this.useBackNav ? this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK) : this.titleBar.setNavigationMode(null);
 

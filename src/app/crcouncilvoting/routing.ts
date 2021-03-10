@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { CandidatesPage } from './pages/candidates/candidates.page';
+import { VotePage } from './pages/vote/vote.page';
+import { HistoryPage } from './pages/history/history.page';
 
 const routes: Routes = [
-  { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
-  { path: 'candidates', loadChildren: './pages/candidates/candidates.module#CandidatesPageModule' },
-  { path: 'vote', loadChildren: './pages/vote/vote.module#VotePageModule' },
-  { path: 'history', loadChildren: './pages/history/history.module#HistoryPageModule' },
+  { path: 'candidates', component: CandidatesPage },
+  { path: 'vote', component: VotePage },
+  { path: 'history', component: HistoryPage }
 ];
 
 @NgModule({
@@ -14,4 +16,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class CRCouncilVotingRoutingModule {}

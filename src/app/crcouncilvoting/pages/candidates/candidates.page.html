@@ -1,9 +1,9 @@
+<app-titlebar></app-titlebar>
+
 <!---------- CRC CANDIDATES ---------->
-<ion-header *ngIf="candidatesService.candidates.length > 0">
-  <div class="ion-text-center header">
-    <ion-label>Cyber Republic Candidates</ion-label>
-  </div>
-</ion-header>
+<!-- <div *ngIf="candidatesService.candidates.length > 0" class="ion-text-center header">
+  <ion-label>Cyber Republic Candidates</ion-label>
+</div> -->
 
 <ion-content *ngIf="candidatesService.candidates.length > 0">
   <ion-grid class="container ion-no-padding">
@@ -61,11 +61,11 @@
 </ion-content>
 
 <!---------- CRC COUNCIL ---------->
-<ion-header *ngIf="candidatesService.council.length > 0">
+<!-- <ion-header *ngIf="candidatesService.council.length > 0">
   <div class="ion-text-center header">
     <ion-label>CR Council Members</ion-label>
   </div>
-</ion-header>
+</ion-header> -->
 
 <ion-content *ngIf="candidatesService.council.length > 0">
   <ion-grid class="container ion-no-padding">
@@ -108,7 +108,7 @@
 <ion-content *ngIf="candidatesService.candidates.length === 0 && candidatesService.council.length === 0">
   <ion-grid class="spinner-container ion-no-padding">
     <div class="spinner">
-      <ion-spinner name="bubbles" color="success"></ion-spinner>
+      <ion-spinner name="bubbles"></ion-spinner>
     </div>
   </ion-grid>
 </ion-content>

@@ -3,25 +3,33 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
-import { AppRoutingModule } from './routing';
+import { CRCouncilVotingRoutingModule } from './routing';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicImageLoader } from 'ionic-image-loader';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { FormsModule } from '@angular/forms';
-import { CandidateSliderComponent } from './components/candidate-slider/candidate-slider.component';
+
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+
+import { CandidatesPage } from './pages/candidates/candidates.page';
+import { HistoryPage } from './pages/history/history.page';
+import { VotePage } from './pages/vote/vote.page';
+import { CandidateSliderComponent } from './components/candidate-slider/candidate-slider.component';
 
 @NgModule({
   declarations: [
+    VotePage,
+    CandidatesPage,
+    HistoryPage,
     CandidateSliderComponent
   ],
   imports: [
     CommonModule,
     HttpClientModule,
     FormsModule,
-    AppRoutingModule,
+    CRCouncilVotingRoutingModule,
     SharedComponentsModule,
     IonicModule,
     IonicImageLoader,
