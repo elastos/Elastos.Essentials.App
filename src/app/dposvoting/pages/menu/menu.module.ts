@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
@@ -13,6 +13,7 @@ import { HistoryPage } from '../history/history.page';
 import { TxPage } from '../tx/tx.page';
 
 import { NodeSliderComponent } from '../vote/node-slider/node-slider.component';
+import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 
 const routes: Routes = [
   {
@@ -77,8 +78,18 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    SharedComponentsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [MenuPage, NodeSliderComponent]
+  declarations: [
+    MenuPage,
+    VotePage,
+    StatsPage,
+    HistoryPage,
+    TxPage,
+    SearchPage,
+    NodeSliderComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class MenuPageModule {}
