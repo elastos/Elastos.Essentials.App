@@ -14,6 +14,7 @@ import { TxPage } from '../tx/tx.page';
 
 import { NodeSliderComponent } from '../vote/node-slider/node-slider.component';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
@@ -79,7 +80,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     SharedComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    TranslateModule
   ],
   declarations: [
     MenuPage,

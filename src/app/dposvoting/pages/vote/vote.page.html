@@ -2,7 +2,7 @@
 
 <ion-header *ngIf="nodesService._nodes.length > 0">
   <div class="ion-text-center header">
-    <ion-label><span>{{ getSelectedNodes() }}</span>/36 selected nodes</ion-label>
+    <ion-label><span>{{ getSelectedNodes() }}</span>/36 {{ 'vote-selected' | translate }}</ion-label>
   </div>
 </ion-header>
 
@@ -371,7 +371,7 @@
 </ion-content>
 
 <div *ngIf="nodesService._nodes.length > 0" class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
-  <h1 *ngIf="!voted">CAST VOTE</h1>
-  <h1 *ngIf="voted">VOTES CASTED</h1>
+  <h1 *ngIf="!voted">{{ 'vote-voted' | translate }}</h1>
+  <h1 *ngIf="voted">{{ 'vote-not-voted' | translate }}</h1>
   <ion-ripple-effect></ion-ripple-effect>
 </div>

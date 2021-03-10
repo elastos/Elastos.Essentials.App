@@ -1,6 +1,6 @@
 <ion-header *ngIf="nodesService._nodes.length > 0">
   <div class="ion-text-center header">
-    <ion-label>Votes Overview</ion-label>
+    <ion-label>{{ 'history-votes-overview' | translate }}</ion-label>
   </div>
 </ion-header>
 
@@ -25,7 +25,7 @@
     <ion-row class="noHistory">
       <ion-col size="12">
         <ion-label class="ion-text-center">
-          No records yet..
+            {{ 'history-no-records' | translate }}
         </ion-label>
       </ion-col>
     </ion-row>

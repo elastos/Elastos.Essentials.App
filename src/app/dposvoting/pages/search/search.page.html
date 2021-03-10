@@ -3,7 +3,7 @@
     <div class="search-container" *ngIf="nodesService._nodes.length > 0">
       <ion-searchbar
         color="medium"
-        placeholder="Search for supernode.."
+        placeholder="{{ 'search-supernode' | translate }}"
         [(ngModel)]="_node"
         (ngModelChange)="filterNodes($event)"
         mode="ios"

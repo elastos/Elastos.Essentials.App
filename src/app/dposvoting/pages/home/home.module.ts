@@ -7,6 +7,7 @@ import { IonicImageLoader } from 'ionic-image-loader';
 import { IonicModule } from '@ionic/angular';
 
 import { HomePage } from './home.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
@@ -21,7 +22,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     IonicImageLoader,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    TranslateModule
   ],
   declarations: [HomePage]
 })

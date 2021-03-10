@@ -15,23 +15,23 @@
         </ion-row>
         <ion-card-content>
           <ion-row class="detail-container">
-            <p>Current Rank</p>
+            <p>{{ 'slider-rank' | translate }}</p>
             <h3>#{{ node.index }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>Current Votes</p>
+            <p>{{ 'slider-votes' | translate }}</p>
             <h3>{{ getVotes(node.votes) }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>Daily Rewards</p>
+            <p>{{ 'slider-rewards' | translate }}</p>
             <h3>{{ getRewards(node.EstRewardPerYear) }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>Percentage of Casted Votes</p>
+            <p>{{ 'slider-percentage' | translate }}</p>
             <h3>{{ getVotePercent(node.votes) }}%</h3>
           </ion-row>
           <ion-row class="website">
-            <p>Website</p>
+            <p>{{ 'website' | translate }}</p>
             <h3 (click)="nodesService.openLink(node.url)">{{ node.url }}</h3>
           </ion-row>
         </ion-card-content>

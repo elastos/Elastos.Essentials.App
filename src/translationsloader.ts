@@ -5,6 +5,7 @@ export class TranslationsLoader {
         "common",       // Shared strings for generic keywords such as cancel, open, add, etc.
         "launcher",
         "didsessions",
+        "dposvoting",
         "hivemanager",
         "scanner",
         "settings",
