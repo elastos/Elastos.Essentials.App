@@ -7,7 +7,7 @@ export const zh = {
     /********** Home **********/
     'home-welcome': '欢迎',
     'home-dpos-description': 'DPoS超级节点是Elastos生态系统安全性的一部分。他们参与验证ELA交易',
-    'home-dpos-description-ela': "每个ELA赋予您1个投票权，您可以给36个节点投票。投票不会花费您的ELA。您可以随时使用ELA",
+    'home-dpos-description-ela': "每个ELA赋予您1个投票权，您可以给36个节点投票。投票不会花费您的ELA。You can use your ELA any time",
     'home-dpos-description-pay': '如果您使用ELA进行付款交易，则您的投票将被取消，您需要再次投票',
     'home-votes-ela': '每个ELA可投给36个节点',
     'home-transactions': 'ELA交易',

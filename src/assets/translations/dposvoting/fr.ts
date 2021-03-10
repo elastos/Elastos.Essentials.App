@@ -1,53 +1,52 @@
 export const fr = {
 
     /********** History **********/
-    'history-votes-overview': 'Votes Overview',
-    'history-no-records': 'No records yet..',
+    'history-votes-overview': 'Résumé des votes',
+    'history-no-records': 'Aucune info pour le moment..',
 
     /********** Home **********/
-    'home-welcome': 'Welcome',
-    'home-dpos-description': 'DPoS supernodes are part of the Elastos ecosystem security. They participate in validating ELA Transactions',
-    'home-dpos-description-ela': "Each ELA gives you 1 voting power so you can vote for 36 nodes. You don't spend your ELA. You can get your ELA back any time",
-    'home-dpos-description-pay': 'If you make payment transactions using your ELA, your votes are cancelled and you need to vote again',
-    'home-votes-ela': '36 Votes for 1 ELA',
-    'home-transactions': 'ELA Transactions',
-    'home-next': 'Continue to Voting',
+    'home-welcome': 'Bienvenue',
+    'home-dpos-description': 'Les supernoeuds DPoS sont une pièce importante de l\'écosystème Elastos. Ils participent à la validation des transactions.',
+    'home-dpos-description-ela': "Chaque ELA vous donne un pouvoir de vote, et vous pouvez voter pour 36 noeuds. Aucun ELA n\'est dépensé. Vous pouvez utiliser vos ELA à tout moment.",
+    'home-dpos-description-pay': 'Si vous réalisez une transaction avec vos ELA, votre vote précédent est annulé est vous devez voter à nouveau.',
+    'home-votes-ela': '36 Votes pour 1 ELA',
+    'home-transactions': 'Transactions ELA',
+    'home-next': 'Continuer vers le Vote',
 
     /********** Menu **********/
-    'menu-voting': 'Voting',
-    'menu-stat': 'Statistics',
-    'menu-history': 'History',
-    'menu-search': 'Search',
+    'menu-voting': 'Vote',
+    'menu-stat': 'Stats',
+    'menu-history': 'Historique',
+    'menu-search': 'Recherche',
 
     /********** Search **********/
-    'search-supernode': 'Search for supernode..',
+    'search-supernode': 'Rechercher un supernoeud..',
 
     /********** Slider **********/
-    'slider-rank': 'Current Rank',
-    'slider-votes': 'Current Votes',
-    'slider-rewards': 'Daily Rewards',
-    'slider-percentage': 'Percentage of Casted Votes',
+    'slider-rank': 'Position actuelle',
+    'slider-votes': 'Votes actuels',
+    'slider-rewards': 'Récompense quotidienne',
+    'slider-percentage': 'Pourcentage des votes',
 
     /********** Stats **********/
-    'stats-overview': 'Network Overview',
-    'stats-last-validator': 'Last Validator',
-    'stats-total-voters': 'Total Voters',
-    'stats-total-votes': 'Total Votes',
-    'stats-ela-staking': 'Total ELA Staking',
-    'stats-voters-percent': 'ELA Voted vs Circulation',
-    'stats-active-nodes': 'Active Supernodes',
-    'stats-active-addresses': 'Active Addresses',
-    'stats-txperhour': 'Transactions per Hour',
-    'stats-percent-btchashrate': 'Bitcoin Hashrate Used',
-    'stats-block-height': 'Block Height',
-    'stats-coin-rank': 'Coin Rank',
-    'stats-supply': 'Circulation Supply',
-    'stats-ela-price': 'Price per ELA',
-    'stats-ela-price-btc': 'Sats per ELA',
-    'stats-total-volume': 'Total Volume',
+    'stats-overview': 'Informations Réseau',
+    'stats-last-validator': 'Dernier Validateur',
+    'stats-total-voters': 'Total des votants',
+    'stats-total-votes': 'Total des votes',
+    'stats-ela-staking': 'Total d\'ELA utilisés',
+    'stats-voters-percent': 'ELA votés VS en circulation',
+    'stats-active-nodes': 'Supernoeuds actifs',
+    'stats-active-addresses': 'Adresses actives',
+    'stats-txperhour': 'Transactions par Heure',
+    'stats-percent-btchashrate': 'Pourcentage du calcul Bitcoin',
+    'stats-block-height': 'Hauteur de bloc',
+    'stats-coin-rank': 'Rang du jeton',
+    'stats-supply': 'Montant en circulation',
+    'stats-ela-price': 'Prix par ELA',
+    'stats-ela-price-btc': 'Sats par ELA',
+    'stats-total-volume': 'Volume Total',
 
     /********** Vote **********/
-    'vote-voted': 'VOTES CASTED',
-    'vote-not-voted': 'CAST VOTE',
-
+    'vote-voted': 'VOTES ACTUELS',
+    'vote-not-voted': 'VOTER',
 };
