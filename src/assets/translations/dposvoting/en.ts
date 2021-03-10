@@ -7,7 +7,7 @@ export const en = {
     /********** Home **********/
     'home-welcome': 'Welcome',
     'home-dpos-description': 'DPoS supernodes are part of the Elastos ecosystem security. They participate in validating ELA Transactions',
-    'home-dpos-description-ela': "Each ELA gives you 1 voting power so you can vote for 36 nodes. You don't spend your ELA. You can get your ELA back any time",
+    'home-dpos-description-ela': "Each ELA gives you 1 voting power so you can vote for 36 nodes. You don't spend your ELA. You can use your ELA any time",
     'home-dpos-description-pay': 'If you make payment transactions using your ELA, your votes are cancelled and you need to vote again',
     'home-votes-ela': '36 Votes for 1 ELA',
     'home-transactions': 'ELA Transactions',
