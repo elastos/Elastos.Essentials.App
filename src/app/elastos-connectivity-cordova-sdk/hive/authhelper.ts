@@ -1,18 +1,18 @@
-import { IAppIDGenerator } from "../iappidgenerator";
-import { IKeyValueStorage } from "../ikeyvaluestorage";
-import { ILogger } from "../ilogger";
+import { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
+import { ILogger } from "../interfaces/ilogger";
 import { DID } from "../index";
 import { DefaultLogger } from "../internal/defaultlogger";
+import { DIDHelper } from "../did/internal/didhelper";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
 export class AuthHelper {
-  private didHelper: DID.DIDHelper;
+  private didAccess: DID.DIDAccess;
   private storageLayer: IKeyValueStorage = null;
   private logger = new DefaultLogger();
 
-  constructor(private appIDGenerator: IAppIDGenerator | null) {
+  constructor() {
   }
 
   /**
@@ -36,9 +36,9 @@ export class AuthHelper {
    */
   public getClientWithAuth(onAuthError?: (e: Error)=>void): Promise<HivePlugin.Client> {
     return new Promise(async (resolve)=>{
-      this.didHelper = new DID.DIDHelper(this.appIDGenerator);
-      this.didHelper.setStorage(this.storageLayer);
-      this.didHelper.setLogger(this.logger);
+      this.didAccess = new DID.DIDAccess();
+      this.didAccess.setStorage(this.storageLayer);
+      this.didAccess.setLogger(this.logger);
 
       let authHelper = this;
 
@@ -46,7 +46,7 @@ export class AuthHelper {
       // for hive. Hive uses the given app instance DID document to verify JWTs received later, using an unpublished
       // app instance DID.
       this.logger.log("Getting an app instance DID");
-      let appInstanceDIDInfo = await this.didHelper.getOrCreateAppInstanceDID();
+      let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
 
       this.logger.log("Getting app instance DID document");
       appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument)=>{
@@ -81,6 +81,7 @@ export class AuthHelper {
       });
     });
   }
+
   /*
   - auth challenge: JWT (iss, nonce)
   - hive sdk:
@@ -126,17 +127,22 @@ export class AuthHelper {
       let realm = parseResult.payload["iss"] as string;
 
       this.logger.log("Getting app instance DID");
-      let appInstanceDID = (await this.didHelper.getOrCreateAppInstanceDID()).did;
+      let appInstanceDID = (await this.didAccess.getOrCreateAppInstanceDID()).did;
 
-      let appInstanceDIDInfo = await this.didHelper.getExistingAppInstanceDIDInfo();
+      let appInstanceDIDInfo = await this.didAccess.getExistingAppInstanceDIDInfo();
 
       this.logger.log("Getting app identity credential");
-      let appIdCredential = await this.didHelper.getOrCreateAppIdentityCredential();
+      let appIdCredential = await this.didAccess.getExistingAppIdentityCredential();
 
       if (!appIdCredential) {
-        this.logger.warn("Empty app id credential");
-        resolve(null);
-        return;
+        this.logger.log("Empty app id credential. Trying to generate a new one");
+
+        appIdCredential = await this.didAccess.generateAppIdCredential();
+        if (!appIdCredential) {
+          this.logger.warn("Failed to generated a new App ID credential");
+          resolve(null);
+          return;
+        }
       }
 
       // Create the presentation that includes hive back end challenge (nonce) and the app id credential.
@@ -147,7 +153,7 @@ export class AuthHelper {
         if (presentation) {
           // Generate the hive back end authentication JWT
           this.logger.log("Opening DID store to create a JWT for presentation:", presentation);
-          let didStore = await this.didHelper.openDidStore(appInstanceDIDInfo.storeId);
+          let didStore = await DIDHelper.openDidStore(appInstanceDIDInfo.storeId);
 
           this.logger.log("Loading DID document");
           didStore.loadDidDocument(appInstanceDIDInfo.didString, async (didDocument)=>{

@@ -5,7 +5,7 @@ import { DidService } from './did.service';
 import { Contact } from '../models/contact.model';
 import { FriendsService } from './friends.service';
 import { Events } from './events.service';
-import { AuthHelper, HiveDataSync } from 'src/app/elastos-cordova-sdk/hive';
+import { AuthHelper, HiveDataSync } from 'src/app/elastos-connectivity-cordova-sdk/hive';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';

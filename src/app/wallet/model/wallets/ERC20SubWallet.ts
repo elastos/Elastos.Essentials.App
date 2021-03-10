@@ -8,9 +8,7 @@ import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import { AllTransactions, EthTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
-import * as ConnectivitySDK from "../../../essentials-connectivity-cordova-sdk";
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -54,7 +52,7 @@ export class ERC20SubWallet extends SubWallet {
     private async initialize() {
         this.coin = this.masterWallet.coinService.getCoinByID(this.id) as ERC20Coin;
         // Get Web3 and the ERC20 contract ready
-        const trinityWeb3Provider = await (new ElastosSDKHelper().newWeb3Provider());
+        const trinityWeb3Provider = new EssentialsWeb3Provider();
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI

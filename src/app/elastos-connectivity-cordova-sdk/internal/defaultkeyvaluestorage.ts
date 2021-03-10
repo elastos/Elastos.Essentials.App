@@ -1,4 +1,4 @@
-import { IKeyValueStorage } from "../ikeyvaluestorage";
+import { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 
 /**
  * Default implementation for storing data, in case no provider is passed.

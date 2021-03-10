@@ -1,14 +1,11 @@
-import { DIDHelper } from "../elastos-cordova-sdk/did";
-import { AuthHelper, HiveDataSync } from "../elastos-cordova-sdk/hive";
-import { IAppIDGenerator } from "../elastos-cordova-sdk/iappidgenerator";
-import { IKeyValueStorage } from "../elastos-cordova-sdk/ikeyvaluestorage";
-import { TrinityWeb3Provider } from "../essentials-connectivity-cordova-sdk/ethereum/web3/providers";
+import { AuthHelper, HiveDataSync } from "../elastos-connectivity-cordova-sdk/hive";
+import { IKeyValueStorage } from "../elastos-connectivity-cordova-sdk/interfaces/ikeyvaluestorage";
 import { Logger } from "../logger";
 import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
 import { GlobalStorageService } from "../services/global.storage.service";
-import * as ConnectivitySDK from "../essentials-connectivity-cordova-sdk";
-import { GlobalPreferencesService } from "../services/global.preferences.service";
-import { ILogger } from "../elastos-cordova-sdk/ilogger";
+//import * as ConnectivitySDK from "../essentials-connectivity-cordova-sdk";
+import { ILogger } from "../elastos-connectivity-cordova-sdk/interfaces/ilogger";
+import { DIDAccess } from "../elastos-connectivity-cordova-sdk/did";
 
 export class EssentialsDIDKeyValueStore implements IKeyValueStorage {
     constructor(private storage: GlobalStorageService, private context: string) {
@@ -20,15 +17,6 @@ export class EssentialsDIDKeyValueStore implements IKeyValueStorage {
 
     get<T>(key: string, defaultValue: T): Promise<T> {
         return this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, this.context, key, defaultValue);
-    }
-}
-
-/**
- * NOTE: To be used only from inside essentials, not for external intent requests.
- */
-export class EssentialsDirectAppIDGenerator implements IAppIDGenerator {
-    generateAppIDCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
-        return ConnectivitySDK.DID.DID.generateAppIDCredential(appInstanceDID);
     }
 }
 
@@ -46,18 +34,15 @@ class EssentialsLogger implements ILogger {
 }
 
 export class ElastosSDKHelper {
-    constructor() {
-    }
+    private static setupCompleted = false;
 
-    private newLogger(): ILogger {
-        return
-    }
+    constructor() {}
 
     /**
      * @param context Isolation context to be able to handle multiple app instance DIDs, etc. Usually, the "app module name"
      */
-    public newDIDHelper(context: string): DIDHelper {
-        let didHelper = new DIDHelper(new EssentialsDirectAppIDGenerator());
+    public newDIDHelper(context: string): DIDAccess {
+        let didHelper = new DIDAccess();
         didHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         didHelper.setLogger(new EssentialsLogger());
         return didHelper;
@@ -67,7 +52,7 @@ export class ElastosSDKHelper {
      * @param context Isolation context to be able to handle multiple auth tokens, etc. Usually, the "app module name"
      */
     public newHiveAuthHelper(context: string): AuthHelper {
-        let authHelper = new AuthHelper(new EssentialsDirectAppIDGenerator());
+        let authHelper = new AuthHelper();
         authHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         authHelper.setLogger(new EssentialsLogger());
         return authHelper;
@@ -81,10 +66,5 @@ export class ElastosSDKHelper {
         dataSync.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         dataSync.setLogger(new EssentialsLogger());
         return dataSync;
-    }
-
-    public async newWeb3Provider(): Promise<TrinityWeb3Provider> {
-        let ethRPCEndpoint = await GlobalPreferencesService.instance.getETHSidechainRPCApiEndpoint(GlobalDIDSessionsService.signedInDIDString);
-        return new ConnectivitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider(ethRPCEndpoint);
     }
 }

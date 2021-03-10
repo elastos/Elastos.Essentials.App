@@ -1,9 +1,11 @@
 import { AuthHelper } from "./authhelper";
-import { HiveHelper } from "./helper";
+import { Utils } from "./utils";
 import { HiveDataSync } from "./datasync";
+import { HiveAccess } from "./hiveaccess";
 
 export {
+    HiveAccess,
     AuthHelper,
-    HiveHelper,
+    Utils,
     HiveDataSync
 }

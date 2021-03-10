@@ -24,6 +24,6 @@ const routes: Routes = [
     IonicImageLoader,
     RouterModule.forChild(routes)
   ],
-  declarations: [CandidatesPage, CandidateSliderComponent]
+  declarations: [CandidatesPage]
 })
 export class CandidatesPageModule {}

@@ -11,6 +11,10 @@ import { DPoSVotingRoutingModule } from './routing';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { MenuPageModule } from './pages/menu/menu.module';
 import { HomePageModule } from './pages/home/home.module';
+import { SearchPage } from './pages/search/search.page';
+import { HistoryPage } from './pages/history/history.page';
+import { StatsPage } from './pages/stats/stats.page';
+import { TxPage } from './pages/tx/tx.page';
 
 
 @NgModule({

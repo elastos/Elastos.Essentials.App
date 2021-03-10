@@ -12,7 +12,9 @@ import { SearchPage } from '../search/search.page';
 import { HistoryPage } from '../history/history.page';
 import { TxPage } from '../tx/tx.page';
 
-import { NodeSliderComponent } from '../vote/node-slider/node-slider.component';
+import { NodeSliderComponent as VoteNodeSliderComponent } from '../vote/node-slider/node-slider.component';
+import { NodeSliderComponent as SearchNodeSliderComponent } from '../search/node-slider/node-slider.component';
+import { NodeSliderComponent as TxNodeSliderComponent } from '../tx/node-slider/node-slider.component';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -90,7 +92,9 @@ const routes: Routes = [
     HistoryPage,
     TxPage,
     SearchPage,
-    NodeSliderComponent
+    VoteNodeSliderComponent,
+    SearchNodeSliderComponent,
+    TxNodeSliderComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { PopupService } from './popup.service';
 import { ManagedProvider } from '../model/managedprovider';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { DID } from 'src/app/elastos-cordova-sdk';
+import { DID } from 'src/app/elastos-connectivity-cordova-sdk';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 

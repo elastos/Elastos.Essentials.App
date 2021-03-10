@@ -1,6 +1,6 @@
 declare let didManager: DIDPlugin.DIDManager;
 
-export class HiveHelper {
+export class Utils {
   /**
    * Returns the vault provider address for a given DID. The DID must be a published DID and have a
    * HiveVault service registered. Otherwise, this method return null.

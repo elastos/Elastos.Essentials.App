@@ -1,9 +1,8 @@
 import { AbstractProvider, RequestArguments } from "web3-core";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
+import { Connectors } from "../connectors";
 
-declare let appManager: any; //AppManagerPlugin.AppManager;
-
-export class TrinityWeb3Provider implements AbstractProvider {
+export class ElastosWeb3Provider implements AbstractProvider {
     constructor(private rpcApiEndpoint: string) {}
 
     /**
@@ -56,20 +55,14 @@ export class TrinityWeb3Provider implements AbstractProvider {
     }
 
     // Can be inherited for custom behaviour.
-    protected sendTransaction(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        appManager.sendIntent("https://wallet.elastos.net/esctransaction", {
-            payload: payload
-        }, {}, (ret: { result: { status:string, txid: string }})=>{
-            let cbResult = null;
-            if (ret && ret.result && ret.result.status === "published")
-                cbResult = ret.result.txid;
+    protected async sendTransaction(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
+        let txId = await Connectors.getActiveConnector().sendSmartContractTransaction(payload);
 
-            callback(null, {
-                jsonrpc: "2.0",
-                id: payload.id as number,
-                result: cbResult // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
-            })
-        })
+        callback(null, {
+            jsonrpc: "2.0",
+            id: payload.id as number,
+            result: txId // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
+        });
     }
 
     // Mandatory method: sendAsync()
@@ -92,5 +85,10 @@ export class TrinityWeb3Provider implements AbstractProvider {
                     callback(e);
                 }
         }
+    }
+
+    private ensureConnectorActive() {
+        if (Connectors.getActiveConnector() == null)
+            throw new Error("An active connector must be defined in order to do this action");
     }
 }

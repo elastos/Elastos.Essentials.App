@@ -13,13 +13,14 @@ import { CoinService } from './coin.service';
 import { PopupProvider } from './popup.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
-import { HiveDataSync, HiveHelper } from 'src/app/elastos-cordova-sdk/hive';
+import { HiveDataSync } from 'src/app/elastos-connectivity-cordova-sdk/hive';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { BackupRestoreEntry } from 'src/app/elastos-cordova-sdk/hive/datasync';
+import { BackupRestoreEntry } from 'src/app/elastos-connectivity-cordova-sdk/hive/datasync';
 import { Logger } from 'src/app/logger';
+import { Hive } from 'src/app/elastos-connectivity-cordova-sdk';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let walletManager: WalletPlugin.WalletManager;
@@ -108,11 +109,14 @@ export class BackupRestoreService {
     this.log("Backup helper setup starting");
 
     const didHelper = new ElastosSDKHelper().newDIDHelper("wallet");
-    const credential: DIDPlugin.VerifiableCredential = await didHelper.getOrCreateAppIdentityCredential();
+    let credential: DIDPlugin.VerifiableCredential = await didHelper.getExistingAppIdentityCredential();
     if (!credential) {
+      credential = await didHelper.generateAppIdCredential();
+      if (!credential) {
         // maybe user cancelled this action.
         this.logDebug("Maybe cancelled or no credential?");
         return false;
+      }
     }
     const userDID = credential.getIssuer();
     this.logDebug("Current user DID:", userDID);
@@ -120,7 +124,7 @@ export class BackupRestoreService {
     this.userVault = null;
 
     // Check if user has a vault
-    let vaultAddress = await HiveHelper.getVaultProviderAddress(userDID);
+    let vaultAddress = await Hive.Utils.getVaultProviderAddress(userDID);
     if (!vaultAddress) {
       this.logWarn("No hive vault provider for for current DID. Asking to configure.");
       // PROBLEM HERE? On IOS, ionicPrompt() call seems to print error: {} and block the whole app...

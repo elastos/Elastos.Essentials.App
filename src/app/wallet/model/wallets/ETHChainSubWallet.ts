@@ -10,8 +10,8 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 
-declare let appManager: AppManagerPlugin.AppManager;
 declare let walletManager: WalletPlugin.WalletManager;
 
 /**
@@ -151,7 +151,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     private async initWeb3() {
-        const trinityWeb3Provider = await new ElastosSDKHelper().newWeb3Provider();
+        const trinityWeb3Provider = new EssentialsWeb3Provider();
         this.web3 = new Web3(trinityWeb3Provider);
     }
 
@@ -193,7 +193,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
-        const provider = await (new ElastosSDKHelper().newWeb3Provider());
+        const provider = new EssentialsWeb3Provider();
         const web3 = new Web3(provider);
 
         const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");

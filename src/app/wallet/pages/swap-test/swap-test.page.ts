@@ -18,16 +18,17 @@ import { BigNumber } from 'bignumber.js';
 import { ETHChainSubWallet } from '../../model/wallets/ETHChainSubWallet';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 
 const BIPS_BASE = JSBI.BigInt(10000) // Fixed, don't touch
 const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than this (price changed a lot between 2 blocks), transaction will be cancelled
 const DEFAULT_DEADLINE_FROM_NOW = 60 * 20 // 20 minutes, denominated in seconds
 
-class InternalWeb3Provider extends ConnectivitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider {
+class InternalWeb3Provider extends EssentialsWeb3Provider {
     private elaEthSubwallet: ETHChainSubWallet;
 
-    constructor(rpcApiEndpoint: string, private walletManager: WalletManager, private masterWallet: MasterWallet) {
-        super(rpcApiEndpoint);
+    constructor(private walletManager: WalletManager, private masterWallet: MasterWallet) {
+        super();
         this.elaEthSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
     }
 
@@ -126,7 +127,7 @@ export class SwapTestPage implements OnInit {
     async doSwap() {
         return new Promise<void>(async (resolve)=>{
             let ethRpcApi = await this.prefs.getETHSidechainRPCApiEndpoint(GlobalDIDSessionsService.signedInDIDString);
-            let provider = new InternalWeb3Provider(ethRpcApi, this.walletManager, this.masterWallet);
+            let provider = new InternalWeb3Provider(this.walletManager, this.masterWallet);
             let web3 = new Web3(provider);
             let routerContract = new web3.eth.Contract(IUniswapV2Router02ABI as any, "0x1FF9598aBCBbC2F3A9B15261403459215b352e2b");
             const DMA = new Token(ChainId.MAINNET, '0x9c22cec60392cb8c87eb65c6e344872f1ead1115', 18, 'DMA', 'DMA token')

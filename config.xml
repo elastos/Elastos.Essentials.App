@@ -7,11 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-<<<<<<< HEAD
-    <content original-src="index.html" src="http://192.168.0.4:8100" />
-=======
     <content original-src="index.html" src="http://0.0.0.0:8100" />
->>>>>>> c8a95c2198f4a52ea531a0dde7074e1ba024f123
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -170,5 +166,4 @@
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <allow-navigation href="http://0.0.0.0:8100" sessionid="73ebb027" />
     <allow-navigation href="https://0.0.0.0:8100" sessionid="b8dc54c0" />
-    <allow-navigation href="http://192.168.0.4:8100" sessionid="ffcaee10" />
 </widget>

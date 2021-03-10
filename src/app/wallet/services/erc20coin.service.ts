@@ -27,6 +27,7 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 
 @Injectable({
     providedIn: 'root'
@@ -44,7 +45,7 @@ export class ERC20CoinService {
     public async init() {
         this.activeNetwork = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
 
-        const trinityWeb3Provider = await (new ElastosSDKHelper().newWeb3Provider());
+        const trinityWeb3Provider = new EssentialsWeb3Provider();
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI

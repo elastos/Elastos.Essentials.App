@@ -1,7 +1,5 @@
-import * as DID from "./did";
-import * as Ethereum from "./ethereum";
+import { EssentialsConnector } from "./connector";
 
 export {
-    DID,
-    Ethereum
+    EssentialsConnector
 }
