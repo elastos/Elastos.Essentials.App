@@ -132,7 +132,7 @@ export function TranslateLoaderFactory() {
     DragulaModule.forRoot(),
     IonicStorageModule.forRoot({
       name: '__essentials.db',
-      driverOrder: ['localstorage', 'indexeddb', 'sqlite', 'websql']
+      driverOrder: ['sqlite', 'indexeddb', 'websql', 'localstorage']
     }),
     BrowserAnimationsModule,
   ],
