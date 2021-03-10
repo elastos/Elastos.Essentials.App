@@ -25,7 +25,7 @@ ion-footer {
     align-items: center;
     padding: 15px 10px;
 }
-  
+
 .footer {
     position: fixed;
     bottom: 0;
@@ -36,48 +36,13 @@ ion-footer {
     justify-content: center;
     align-items: center;
     padding: 15px 10px;
-  
+
     div {
          width: 100%;
     }
 }
 
-/************************************ 
-  Declared Controllers
-************************************/
-.txPopup {
-  --background: transparent;
-  animation: animate;
-  animation-duration: 300ms;
-  animation-fill-mode: forwards;
-
-  @keyframes animate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
-  }
-
-  ion-backdrop {
-    background: transparent !important;
-  }
-
-  .popover-wrapper{
-    .popover-content {
-      position: relative !important;
-      margin: 0 auto !important;
-      left: auto !important;
-      top: auto !important;
-      width: 85vw !important;
-    }
-  }
-}
-
-.loader {
-    --spinner-color: white;
-    --background: #801fff;
-    color: white;
-}
-
-/************************************ 
+/************************************
   WALLET CARD
   pages ~ wallet-home, wallet-manager, wallet-settings, coin-list,
 ************************************/
@@ -165,7 +130,7 @@ ion-footer {
                 letter-spacing: 0.53px;
             }
         }
-    } 
+    }
 
     .arrow-down {
         position: absolute;
@@ -185,8 +150,8 @@ ion-footer {
     }
 }
 
-/************************************ 
-  SUBWALLET ROW 
+/************************************
+  SUBWALLET ROW
   pages ~ wallet-home, coin-select, waitforsync, coin-list, select-currency, select-subwallet, coin-address
   components ~ contacts
 ************************************/
@@ -196,7 +161,7 @@ ion-footer {
     margin-bottom: 7.5px;
     box-shadow: 0 3px 15px 0 #ededf0;
     background-color: #ffffff;
-    
+
     .left-col {
         display: flex;
         justify-content: center;
@@ -234,7 +199,7 @@ ion-footer {
             }
         }
     }
-    
+
     .middle-col, .right-col, .bottom-col {
         display: flex;
         flex-direction: column;
@@ -252,7 +217,7 @@ ion-footer {
             letter-spacing: 0.7px;
             text-align: left;
         }
-    
+
         p {
             font-size: 13px;
             font-weight: 400;
@@ -295,7 +260,7 @@ ion-footer {
 
 .dark-subwallet-row {
     box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2b2c49; 
+    background-color: #2b2c49;
 
     .left-col {
         .icon-container {
@@ -306,8 +271,8 @@ ion-footer {
     }
 }
 
-/************************************ 
-  SETTINGS OPTION ROW 
+/************************************
+  SETTINGS OPTION ROW
   pages ~ settings, wallet-settings
 ************************************/
 .setting-row {
@@ -367,8 +332,8 @@ ion-footer {
     background-color: #2b2c49;
 }
 
-/************************************ 
-  MNEMONIC LIST ROW 
+/************************************
+  MNEMONIC LIST ROW
   pages ~ mnemonic-create, mnemonic-export
 ************************************/
 .mnemonic-row {
@@ -409,10 +374,10 @@ ion-footer {
             letter-spacing: -0.29px;
             color: #fdfeff;
         }
-    } 
+    }
 }
 
-/************************************ 
+/************************************
   REFRESH BOX
   pages ~ wallet-home, coin-home
 ************************************/
@@ -454,7 +419,7 @@ ion-footer {
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: 17px; 
+        border-radius: 17px;
         box-shadow: 0 3px 15px 0 #ededf0;
     }
 }
@@ -462,7 +427,7 @@ ion-footer {
 .dark-refresh-row {
     box-shadow: 0 3px 15px 0 #151626;
     background-color: #2e2f4e;
-   
+
     .right-col {
         box-shadow: 0 3px 15px 0 #151626;
     }

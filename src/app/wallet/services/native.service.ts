@@ -131,7 +131,7 @@ export class Native {
         this.loadingCtrlCreating = true;
         this.loader = await this.loadingCtrl.create({
             mode: 'ios',
-            cssClass: 'loader',
+            cssClass: 'wallet-loader',
             message: content
         });
         this.loader.onWillDismiss().then(() => {

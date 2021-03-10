@@ -543,7 +543,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         this.native.popup = await this.native.popoverCtrl.create({
             mode: 'ios',
-            cssClass: 'txPopup',
+            cssClass: 'wallet-txPopup',
             component: TxConfirmComponent,
             componentProps: {
                 txInfo: txInfo
@@ -562,7 +562,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async showSuccess() {
         this.native.popup = await this.native.popoverCtrl.create({
             mode: 'ios',
-            cssClass: 'txPopup',
+            cssClass: 'wallet-txPopup',
             component: TxSuccessComponent,
         });
         this.native.popup.onWillDismiss().then(() => {
@@ -670,7 +670,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
 
             this.modal = null;
-            
+
             this.appService.setTitleBarTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
             this.setContactsKeyVisibility(true);
             this.setCryptonamesKeyVisibility(true);

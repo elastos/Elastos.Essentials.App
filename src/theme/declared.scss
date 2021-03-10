@@ -151,7 +151,7 @@
 .didsessions-printoptions-component {
     --height: 300px;
     align-items: flex-end;
-  
+
     .modal-wrapper {
       position: absolute;
       left: 0;
@@ -165,7 +165,7 @@
 .didsessions-mnemonicpasscheck-component {
     --height: 350px;
     align-items: flex-end;
-  
+
     .modal-wrapper {
       position: absolute;
       left: 0;
@@ -196,6 +196,38 @@
   --width: 66.6%;
   --background: linear-gradient(to bottom, #4a118d, #39136a);
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
+}
+
+.wallet-txPopup {
+  --background: transparent;
+  animation: animate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes animate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width: 85vw !important;
+    }
+  }
+}
+
+.wallet-loader {
+  --spinner-color: white;
+  --background: #801fff;
+  color: white;
 }
 
 /********************** CONTACTS **********************/
