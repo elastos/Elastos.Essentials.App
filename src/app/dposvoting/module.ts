@@ -31,9 +31,7 @@ import { HomePageModule } from './pages/home/home.module';
   ],
   providers: [
     Platform,
-    WebView,
-    MenuPageModule,
-    HomePageModule
+    WebView
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
