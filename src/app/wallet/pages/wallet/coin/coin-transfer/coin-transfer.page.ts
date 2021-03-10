@@ -670,7 +670,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
 
             this.modal = null;
-            // TODO @chad this.appService.setBackKeyVisibility(true);
+            
             this.appService.setTitleBarTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
             this.setContactsKeyVisibility(true);
             this.setCryptonamesKeyVisibility(true);

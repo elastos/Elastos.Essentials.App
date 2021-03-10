@@ -52,7 +52,7 @@ export class GlobalThemeService {
     });
   }
 
-  private async fetchThemeFromPreferences() {
+  public async fetchThemeFromPreferences() {
     if (this.platform.platforms().indexOf('android') === 0) {
       this.isAndroid = true;
 
@@ -61,7 +61,7 @@ export class GlobalThemeService {
       // TODO @chad: this is launcher's backup service. Move to launcher folder and initialize in a better location
       // this.backupService.init();
     }
-    let currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
+    const currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
     passwordManager.setDarkMode(currentlyUsingDarkMode);
     if (currentlyUsingDarkMode)
       this.activeTheme.next(AppTheme.DARK);

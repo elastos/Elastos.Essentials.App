@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Platform, LoadingController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular'
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
@@ -10,6 +10,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
 QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
@@ -26,6 +28,8 @@ export type ScanPageRouteParams = {
     styleUrls: ['./scan.page.scss'],
 })
 export class ScanPage {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
     torchLightOn: boolean;
     isCameraShown: boolean = false;
     contentWasScanned: boolean = false;
@@ -54,20 +58,30 @@ export class ScanPage {
     }
 
     ionViewWillEnter() {
-        // TODO @chad titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
-
+        this.titleBar.setNavigationMode(null);
         this.showGalleryTitlebarKey(true);
-
-        /* TODO @chad  titleBarManager.addOnItemClickedListener((clickedItem)=>{
+        this.titleBar.addOnItemClickedListener((clickedItem)=>{
             if (clickedItem.key == "gallery") {
                 this.scanFromLibrary();
             }
-        });*/
+        });
     }
 
     ionViewDidEnter() {
         Logger.log("Scanner", "Starting scanning process");
         this.startScanningProcess();
+    }
+    
+    /**
+     * Leaving the page, do some cleanup.
+     */
+    async ionViewWillLeave() {
+        this.zone.run(async () => {
+            Logger.log("Scanner", "Scan view is leaving")
+            this.stopScanning();
+            await this.hideCamera();
+            document.body.classList.remove("transparentBody");
+        });
     }
 
     /**
@@ -84,14 +98,12 @@ export class ScanPage {
 
     showCamera() {
         // Make sure to make ion-app and ion-content transparent to see the camera preview
-        window.document.querySelector('ion-app').classList.add('transparentBody')
+        document.body.classList.add("transparentBody");
         this.qrScanner.show();
         this.isCameraShown = true; // Will display controls
     }
 
     async hideCamera() {
-        if (!this.isCameraShown) return;
-
         window.document.querySelector('ion-app').classList.remove('transparentBody')
         await this.qrScanner.hide();
         await this.qrScanner.destroy();
@@ -151,14 +163,14 @@ export class ScanPage {
     }
 
     showGalleryTitlebarKey(show: boolean) {
-      /* TODO @chad if(show) {
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
-          key: "gallery",
-          iconPath: "./assets/imgs/upload-cloud.png"
+      if(show) {
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+            key: "gallery",
+            iconPath: !this.theme.darkMode ? "assets/scanner/imgs/upload.svg" : "assets/scanner/imgs/darkmode/upload.svg"
         });
       } else {
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
-      }*/
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+      }
     }
 
     /**
@@ -375,15 +387,6 @@ export class ScanPage {
         await this.hideCamera();
 
         // TODO @chad, navigate somewhere else instead - appManager.close();
-    }
-
-    /**
-     * Leaving the page, do some cleanup.
-     */
-    async ionViewWillLeave() {
-        Logger.log("Scanner", "Scan view is leaving")
-        this.stopScanning();
-        await this.hideCamera();
     }
 
     public async showLoading() {
