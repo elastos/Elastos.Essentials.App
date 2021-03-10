@@ -570,7 +570,7 @@ export class ProfilePage {
         didString: this.profileService.didString,
         qrCodeString: await this.profileService.getAddFriendShareableUrl(),
       },
-      cssClass: !this.theme.darkMode ? "qrcode-modal" : "dark-qrcode-modal",
+      cssClass: "identity-showqrcode-component",
     });
     modal.onDidDismiss().then((params) => { });
     modal.present();

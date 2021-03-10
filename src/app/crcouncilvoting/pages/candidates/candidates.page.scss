@@ -13,6 +13,7 @@
     ion-item {
       margin: 6px 0;
       --padding-start: 0px;
+      --background: linear-gradient(120deg, #181d20 0%,  #21313d 100%);
 
       .rank-container {
         font-size: 12px !important;
@@ -91,6 +92,10 @@
           }
         }
       }
+    }
+
+    .selected {
+      --background: linear-gradient(120deg, #173045 0%, #21313d 100%);
     }
   }
 }

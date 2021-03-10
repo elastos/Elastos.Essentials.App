@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Native } from '../../services/native';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-exportmnemonic',
@@ -19,7 +20,8 @@ export class ExportmnemonicPage implements OnInit {
     private router: Router,
     public translate: TranslateService,
     public theme: GlobalThemeService,
-    private native: Native
+    private native: Native,
+    private navCtrl: NavController
   ) {
   }
 
@@ -36,7 +38,7 @@ export class ExportmnemonicPage implements OnInit {
   }
 
   return() {
-    this.native.go('/identity/myprofile');
+    this.navCtrl.back();
   }
 
 }

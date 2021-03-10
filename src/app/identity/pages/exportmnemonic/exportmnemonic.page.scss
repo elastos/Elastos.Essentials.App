@@ -13,10 +13,10 @@
     align-items: space-between;
 
     ion-col {
-      height: 35px;
+      height: 40px;
       background: #565bdb;
       border-radius: 8px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -76,13 +76,13 @@
     flex-direction: column;
 
     ion-button {
-      height: 41px;
+      height: 50px;
       width: 100%;
       --border-radius: 8px;
 
       ion-label {
         text-transform: none;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 500;
         letter-spacing: -0.43px;
       }

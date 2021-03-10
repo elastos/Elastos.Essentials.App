@@ -34,13 +34,13 @@
             </ion-row>
             <ion-row>
               <ion-col class="edit-container">
-                <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" name="edit" ngDefaultControl></ion-input>
+                <ion-input mode="ios" [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" name="edit" ngDefaultControl></ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -57,15 +57,20 @@
             </ion-row>
             <ion-row>
               <ion-col class="edit-container">
-                <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" type="email"
-                  pattern="email" name="email" ngDefaultControl>
+                <ion-input
+                  mode="ios"
+                  [placeholder]="'enter-here'|translate"
+                  [(ngModel)]="entry.value"
+                  type="email" pattern="email" name="email"
+                  ngDefaultControl
+                >
                 </ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -83,13 +88,13 @@
             </ion-row>
             <ion-row class="edit-container">
               <ion-col>
-                <ion-input [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" type="tel" name="tel" ngDefaultControl></ion-input>
+                <ion-input mode="ios" [placeholder]="'enter-here'|translate" [(ngModel)]="entry.value" type="tel" name="tel" ngDefaultControl></ion-input>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -114,7 +119,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -142,7 +147,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -170,7 +175,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2">
-          <ion-toggle [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
     </div>

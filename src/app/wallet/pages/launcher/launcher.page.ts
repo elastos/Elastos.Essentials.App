@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Router } from '@angular/router';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -26,7 +27,8 @@ export class LauncherPage implements OnInit {
         private walletCreationService: WalletCreationService,
         private walletManager: WalletManager,
         public translate: TranslateService,
-        private router: Router
+        private router: Router,
+        private theme: GlobalThemeService
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (navigation.extras.state) {
@@ -45,14 +47,17 @@ export class LauncherPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant('wallet'));
         this.useBackNav ? this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK) : this.titleBar.setNavigationMode(null);
 
-        /* TODO @chad if (this.walletManager.getWalletsCount() === 0) {
-            this.appService.setBackKeyVisibility(false);
+   /*      if(this.walletManager.getWalletsCount() === 0) {
+            this.titleBar.setNavigationMode(null)
         } else {
-            this.appService.setBackKeyVisibility(true);
-        }*/
+            this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK)
+        } */
     }
 
     ionViewWillLeave() {
+        this.theme.activeTheme.subscribe((activeTheme) => {
+            this.titleBar.setTitleBarTheme(activeTheme);
+        });
     }
 
     onNext(type: number) {

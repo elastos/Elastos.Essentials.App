@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { IonicImageLoader } from 'ionic-image-loader';
 
 import { CandidatesPage } from './candidates.page';
+import { CandidateSliderComponent } from '../../components/candidate-slider/candidate-slider.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,6 @@ const routes: Routes = [
     IonicImageLoader,
     RouterModule.forChild(routes)
   ],
-  declarations: [CandidatesPage]
+  declarations: [CandidatesPage, CandidateSliderComponent]
 })
 export class CandidatesPageModule {}

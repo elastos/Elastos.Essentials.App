@@ -1,20 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { UXService } from '../../../services/ux.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   templateUrl: 'home.html',
   styleUrls: ['./home.scss']
 })
 export class ProposalListsHomePage {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
   
   constructor(
-    private uxService: UXService,
     public theme: GlobalThemeService
   ) {
   }
 
   ionViewWillEnter() {
-    this.uxService.setTitleBarBackKeyShown(false);
+    this.titleBar.setTitle("Proposals");
   }
 }

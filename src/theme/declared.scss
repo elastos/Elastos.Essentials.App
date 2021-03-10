@@ -176,6 +176,21 @@
     }
 }
 
+/********************** IDENTITY **********************/
+.identity-showqrcode-component {
+  --height: 66%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
 /********************** WALLET **********************/
 .wallet-help-component {
   --width: 66.6%;

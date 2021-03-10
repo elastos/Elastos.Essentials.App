@@ -299,7 +299,7 @@ export class TitleBarComponent {
     return await this.menu.present();
   }
 
-  private setTitleBarTheme(theme: AppTheme) {
+  public setTitleBarTheme(theme: AppTheme) {
     if (theme === AppTheme.LIGHT) {
       document.body.classList.remove("dark");
       this.theme.backgroundColor = '#f8f8ff';

@@ -55,11 +55,7 @@ export class ProposalListingPage implements OnInit {
 
   async ionViewDidEnter() {
     if (!this.proposalsFetched) {
-      this.fetchProposals();
-    }
-
-    if(this.proposals.length > 0) {
-      this.titleBar.setTitle("Proposals");
+      await this.fetchProposals();
     }
   }
 
