@@ -77,6 +77,27 @@ export class GlobalNavService {
         this.navCtrl.navigateRoot(previousStep.route, previousStep.routerOptions);
     }
 
+    /**
+     * Navigates out of current context to the first screen that belongs to another context
+     */
+    public exitCurrentContext() {
+        Logger.log("Nav", "Navigating out of current context");
+        let currentStep = this.navigationHistory[this.navigationHistory.length-1];
+        this.navigationHistory.pop();
+
+        let startContext = currentStep.context;
+        while (this.canGoBack()) {
+            currentStep = this.navigationHistory[this.navigationHistory.length-1];
+            if (currentStep.context == startContext)
+                this.navigationHistory.pop(); // Same context, unstack the step
+            else {
+                // Found the previous context, go there.
+                this.navigateTo(currentStep.context, currentStep.route, currentStep.routerOptions);
+                return;
+            }
+        }
+    }
+
     public canGoBack(): boolean {
         return (this.navigationHistory.length > 1);
     }

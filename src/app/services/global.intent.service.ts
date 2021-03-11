@@ -30,7 +30,7 @@ export class GlobalIntentService {
 
   sendIntentResponse(result: any, intentId: number): Promise<void> {
     Logger.log("Intents", "Sending intent response ", result, intentId);
-    this.globalNav.navigateBack();
+    this.globalNav.exitCurrentContext();
     return essentialsIntent.sendIntentResponse(result, intentId);
   }
 }
