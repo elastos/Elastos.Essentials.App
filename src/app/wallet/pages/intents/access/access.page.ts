@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 import { Util } from '../../../model/Util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ClaimRequest = {
     name: string,

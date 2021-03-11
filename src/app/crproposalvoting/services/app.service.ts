@@ -6,7 +6,7 @@ import { ProposalStatus } from '../model/proposal-status';
 import * as moment from 'moment';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'

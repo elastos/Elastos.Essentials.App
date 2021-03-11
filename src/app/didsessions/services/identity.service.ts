@@ -65,7 +65,7 @@ export class IdentityService {
         private translate: TranslateService,
         private alertCtrl: AlertController,
         private uxService: UXService,
-        private appManager: TemporaryAppManagerPlugin,
+        private essentialsIntent: TemporaryAppManagerPlugin,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -81,7 +81,7 @@ export class IdentityService {
     }
 
     async init() {
-        this.appManager.setListener((msg) => {
+        this.essentialsIntent.setListener((msg) => {
             if (msg.message == "navback") {
                 this.navCtrl.back();
             }

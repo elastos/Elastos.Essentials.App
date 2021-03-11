@@ -6,7 +6,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { URL } from 'url';
 import { PopupService } from './popup.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
 
 type CRWebsiteCommand = {
@@ -68,7 +68,7 @@ export class CROperationsService {
 
     private async handleScanAction() {
         try {
-            let data = await appManager.sendIntent("scanqrcode", null);
+            let data = await essentialsIntent.sendIntent("scanqrcode", null);
             Logger.log("crproposal", "Scan result", data);
             if (data && data.result && data.result.scannedContent)
                 this.handleScannedContent(data.result.scannedContent);
@@ -90,14 +90,19 @@ export class CROperationsService {
         }
     }
 
+<<<<<<< Updated upstream
     private async handledReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {
         Logger.log("crproposal", "RECEIVED INTENT:", receivedIntent);
+=======
+    private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
+        console.log("RECEIVED INTENT:", receivedIntent);
+>>>>>>> Stashed changes
 
         if (receivedIntent.action == "crproposal")
             this.handleCRProposalIntentRequest(receivedIntent);
     }
 
-    private async handleCRProposalIntentRequest(receivedIntent: AppManagerPlugin.ReceivedIntent) {
+    private async handleCRProposalIntentRequest(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
         if (!receivedIntent.originalJwtRequest) {
             console.error("Received a crproposal intent request that is not encoded as JWT, which is not allowed. Skipping the request");
         }

@@ -56,7 +56,7 @@ export class MenuPage implements OnInit {
     public translate: TranslateService,
     private navController: NavController,
     private prefsService: GlobalPreferencesService,
-    private appManager: TemporaryAppManagerPlugin
+    private essentialsIntent: TemporaryAppManagerPlugin
   ) {
     this.init();
   }

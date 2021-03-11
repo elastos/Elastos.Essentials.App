@@ -96,7 +96,7 @@ export class NotificationManagerService {
   }
 
   /* TODO @chad - rework
-  async fillAppInfoToNotification(allApps: AppManagerPlugin.AppInfo[]) {
+  async fillAppInfoToNotification(allApps: EssentialsIntentPlugin.AppInfo[]) {
     this.clearUselessNotification();
 
     for (let notification of this.notifications) {

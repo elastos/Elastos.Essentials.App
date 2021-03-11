@@ -10,7 +10,7 @@ export class SettingsService {
 
   constructor(
     private sanitizer: DomSanitizer,
-    private appManager: TemporaryAppManagerPlugin
+    private essentialsIntent: TemporaryAppManagerPlugin
   ) { }
 
   async init() {
@@ -22,11 +22,11 @@ export class SettingsService {
   }
 
   display_err(err) {
-    // TODO @chad appManager.alertPrompt("Error", err);
+    // TODO @chad essentialsIntent.alertPrompt("Error", err);
   }
 
   getRuntimeVersion() {
-    this.appManager.getVersion((val) => {
+    this.essentialsIntent.getVersion((val) => {
       this.version = val;
       console.log('elastOS version', this.version);
     });

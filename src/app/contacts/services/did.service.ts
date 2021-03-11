@@ -6,7 +6,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,7 @@ export class DidService {
   }
 
   async shareIdentity(contact: Contact) {
-    appManager.sendIntent("share", {
+    essentialsIntent.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: await this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
     });

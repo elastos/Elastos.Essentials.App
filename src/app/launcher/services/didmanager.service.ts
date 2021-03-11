@@ -6,7 +6,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +38,7 @@ export class DIDManagerService {
       encodeURIComponent(this.signedIdentity.didString) +
       '&carrier=' + carrierAddress;
 
-    appManager.sendIntent("share", {
+    essentialsIntent.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: addFriendUrl,
     });

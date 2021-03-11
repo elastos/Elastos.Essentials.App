@@ -31,7 +31,7 @@ import { Logger } from "src/app/logger";
 import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -598,7 +598,7 @@ export class MyProfilePage {
     Logger.log("identity", "Claims object: ")
     Logger.log("identity", claimsObject)
 
-    appManager.sendIntent("https://did.elastos.net/credverify", {
+    essentialsIntent.sendIntent("https://did.elastos.net/credverify", {
       claims: claimsObject
     });
   }

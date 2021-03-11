@@ -7,7 +7,7 @@ import { FriendsService } from '../../services/friends.service';
 import { NativeService } from '../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-qrcode',
@@ -47,7 +47,7 @@ export class QRCodeComponent implements OnInit {
   }
 
   async shareInvitationLink() {
-    await appManager.sendIntent("share", {
+    await essentialsIntent.sendIntent("share", {
       title: this.translate.instant("share-friend"),
       url: this.qrCodeString
     });

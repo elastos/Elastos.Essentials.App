@@ -52,7 +52,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 class TransactionMapEntry {
     Code: number = null;
@@ -829,6 +829,6 @@ export class WalletManager {
     }
 
     sendIntentResponse(result, intentId): Promise<void> {
-        return appManager.sendIntentResponse(result, intentId);
+        return essentialsIntent.sendIntentResponse(result, intentId);
     }
 }

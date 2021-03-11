@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-about',
@@ -40,7 +40,7 @@ export class AboutPage implements OnInit {
     public settings: SettingsService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    private appManager: TemporaryAppManagerPlugin
+    private essentialsIntent: TemporaryAppManagerPlugin
   ) { }
 
   ngOnInit() {
@@ -58,7 +58,7 @@ export class AboutPage implements OnInit {
     if(item.title === 'email') {
       return;
     } else {
-      appManager.sendIntent('openurl', { url: item.link });
+      essentialsIntent.sendIntent('openurl', { url: item.link });
     }
   }
 }

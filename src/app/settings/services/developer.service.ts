@@ -24,7 +24,7 @@ export class DeveloperService {
     private platform: Platform,
     private zone: NgZone,
     private translate: TranslateService,
-    private appManager: TemporaryAppManagerPlugin,
+    private essentialsIntent: TemporaryAppManagerPlugin,
     private prefs: GlobalPreferencesService
   ) {
     this.platform.ready().then(() => {

@@ -2,7 +2,7 @@ import { CLIApp } from "./cliapp.model";
 import { AppPublicationCredentialSubject } from "./apppubcredsubject.model";
 import { Logger } from "src/app/logger";
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDSession {
@@ -173,7 +173,7 @@ export class DIDSession {
 
         try {
             Logger.log("developertools", "Sending didtransaction intent with params:", params);
-            let response = await appManager.sendIntent("https://wallet.elastos.net/didtransaction", params);
+            let response = await essentialsIntent.sendIntent("https://wallet.elastos.net/didtransaction", params);
             Logger.log("developertools", "Got didtransaction intent response.", response);
 
             // If txid is set in the response this means a transaction has been sent on chain.

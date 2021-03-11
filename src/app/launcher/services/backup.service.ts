@@ -80,7 +80,7 @@ export class BackupService {
   async addAppEntryLocally(data: RestoredApp) {
     const appId = data.appId;
     const appAlreadyInBackup = this.restoredApps.find((app) => app.appId === appId);
-    const targetAppInfo: AppManagerPlugin.AppInfo = this.installService.appInfos.find((app) => app.id === appId);
+    const targetAppInfo: EssentialsIntentPlugin.AppInfo = this.installService.appInfos.find((app) => app.id === appId);
 
     if (!appAlreadyInBackup) {
       this.restoredApps.push(data);

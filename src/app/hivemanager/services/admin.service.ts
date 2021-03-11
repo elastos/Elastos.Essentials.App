@@ -9,7 +9,7 @@ import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -174,7 +174,7 @@ export class AdminService {
 
   private sendDIDTransactionIntentRequest(payload: string) {
     console.log("Sending didtransaction intent");
-    appManager.sendIntent("https://wallet.elastos.net/didtransaction", {
+    essentialsIntent.sendIntent("https://wallet.elastos.net/didtransaction", {
       didrequest: JSON.parse(payload)
     });
   }

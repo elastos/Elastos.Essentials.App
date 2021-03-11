@@ -84,8 +84,8 @@
     "elastos-cordova-plugin-carrier": "file:../Plugins/Carrier",
     "elastos-cordova-plugin-did": "file:../Plugins/DID",
     "elastos-cordova-plugin-hive": "file:../Plugins/Hive",
-    "elastos-essentials-plugin-appmanager": "file:../Plugins/AppManager",
     "elastos-essentials-plugin-fingerprint": "file:../Plugins/Fingerprint",
+    "elastos-essentials-plugin-intent": "file:../Plugins/EssentialsIntent",
     "elastos-essentials-plugin-passwordmanager": "file:../Plugins/PasswordManager",
     "elastos-essentials-plugin-wallet": "file:../Plugins/Wallet",
     "es6-promise-plugin": "4.2.2",
@@ -118,10 +118,10 @@
       "elastos-cordova-plugin-hive": {},
       "elastos-essentials-plugin-fingerprint": {},
       "elastos-essentials-plugin-passwordmanager": {},
-      "elastos-essentials-plugin-appmanager": {},
       "elastos-essentials-plugin-wallet": {},
       "cordova-plugin-ionic-webview": {},
-      "cordova-sqlite-storage": {}
+      "cordova-sqlite-storage": {},
+      "elastos-essentials-plugin-intent": {}
     },
     "platforms": [
       "android"

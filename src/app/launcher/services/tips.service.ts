@@ -77,7 +77,7 @@ export class TipsService {
 
   constructor(
     private translate: TranslateService,
-    private appManager: TemporaryAppManagerPlugin,
+    private essentialsIntent: TemporaryAppManagerPlugin,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
     private notifications: GlobalNotificationsService,

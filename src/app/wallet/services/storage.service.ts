@@ -5,7 +5,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { WalletID, ExtendedWalletInfo } from '../model/wallets/MasterWallet';
 import { Contact } from './contacts.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 /***
  * Local storage using app manager settings ot make sure debug (CLI) and no debug app versions share the same

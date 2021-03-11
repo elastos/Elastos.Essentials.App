@@ -13,7 +13,7 @@ import { WalletEditionService } from '../../../../services/walletedition.service
 import { SubWallet } from '../../../../model/wallets/SubWallet';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-coin-erc20-details',
@@ -95,7 +95,7 @@ export class CoinErc20DetailsPage implements OnInit {
       "https://wallet.elastos.net/addcoin?contract=" +
       encodeURIComponent(this.contractAddress);
 
-    appManager.sendIntent("share", {
+    essentialsIntent.sendIntent("share", {
       title: this.translate.instant("share-erc20-token"),
       url: addCoinUrl,
     });

@@ -4,7 +4,7 @@ import { ToastController, AlertController, LoadingController } from '@ionic/angu
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class NativeService {
     private translate: TranslateService,
     private alertController: AlertController,
     private zone: NgZone,
-    private appManager: TemporaryAppManagerPlugin,
+    private essentialsIntent: TemporaryAppManagerPlugin,
     private globalNative: GlobalNativeService
   ) { }
 
@@ -32,7 +32,7 @@ export class NativeService {
     this.globalNative.errToast(this.translate.instant('resolve-error-header'), 6000);
   }
 
-  /********* Loader *********/  
+  /********* Loader *********/
   public async showLoading(content: string = ''): Promise<void> {
     await this.globalNative.hideLoading();
     this.globalNative.showLoading(content);
@@ -52,7 +52,7 @@ export class NativeService {
           text: this.translate.instant('ok'),
           handler: () => {
             this.zone.run(() => {
-                appManager.sendIntentResponse({}, intentId);
+                essentialsIntent.sendIntentResponse({}, intentId);
             });
           }
         }

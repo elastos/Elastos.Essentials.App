@@ -17,7 +17,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -216,7 +216,7 @@ export class FriendsService {
   *********** Add Friend By Scan Button ***********
   *************************************************/
   async scanDID() {
-    let res = await appManager.sendIntent("https://scanner.elastos.net/scanqrcode");
+    let res = await essentialsIntent.sendIntent("https://scanner.elastos.net/scanqrcode");
     Logger.log('contacts', "Got scan result", res);
 
     // Scanned content could contain different things:
@@ -929,7 +929,7 @@ export class FriendsService {
     }
     Logger.log('contacts', "Tried to send " + sentNotificationsCount + " notifications to friends");
     Logger.log('contacts', "Sending share intent response");
-    appManager.sendIntentResponse({},
+    essentialsIntent.sendIntentResponse({},
       this.managerService.handledIntentId
     );
   }
@@ -952,7 +952,7 @@ export class FriendsService {
 
   sendIntentRes(contacts: Contact[], intent: string) {
     if(contacts.length > 0) {
-      appManager.sendIntentResponse(
+      essentialsIntent.sendIntentResponse(
         { friends: contacts },
         this.managerService.handledIntentId
       );

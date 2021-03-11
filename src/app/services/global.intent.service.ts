@@ -3,22 +3,22 @@ import { Subject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalNavService } from './global.nav.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalIntentService {
   // Emits received intents from the app manager.
-  public intentListener = new Subject<AppManagerPlugin.ReceivedIntent>();
+  public intentListener = new Subject<EssentialsIntentPlugin.ReceivedIntent>();
 
   constructor(private globalNav: GlobalNavService) {}
 
   public async init(): Promise<void> {
     Logger.log("Intents", "Global intent service is initializing");
 
-    appManager.setIntentListener((receivedIntent)=>{
-      Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
+    essentialsIntent.addIntentListener((receivedIntent)=>{
+    Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
       this.intentListener.next(receivedIntent);
     });
   }

@@ -11,7 +11,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 

@@ -4,7 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { StorageService } from '../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-vote',
@@ -102,7 +102,7 @@ export class VotePage implements OnInit, OnDestroy {
 
       setTimeout(async () => {
         try {
-          let res = await appManager.sendIntent(
+          let res = await essentialsIntent.sendIntent(
             'crmembervote',
             { votes: votedCandidates });
 
@@ -165,7 +165,7 @@ export class VotePage implements OnInit, OnDestroy {
           text: 'Okay',
           handler: () => {
             toast.dismiss();
-            // appManager.close();
+            // essentialsIntent.close();
             this.router.navigate(['/candidates']);
           }
         }
@@ -187,7 +187,7 @@ export class VotePage implements OnInit, OnDestroy {
           text: 'Okay',
           handler: () => {
             toast.dismiss();
-            // appManager.close();
+            // essentialsIntent.close();
             this.router.navigate(['/candidates']);
           }
         }

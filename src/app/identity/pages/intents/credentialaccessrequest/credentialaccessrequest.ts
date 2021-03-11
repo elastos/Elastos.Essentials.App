@@ -24,7 +24,7 @@ import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type RequestDapp = {
   appPackageId: string,
@@ -101,7 +101,7 @@ export class CredentialAccessRequestPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public receivedIntent: CredAccessIdentityIntent = null;
-  // TODO public requestDappInfo: AppManagerPlugin.AppInfo = null;
+  // TODO public requestDappInfo: EssentialsIntentPlugin.AppInfo = null;
   public requestDappIcon: string = null;
   public requestDappName: string = null;
   public requestDappColor: string = '#565bdb';
@@ -139,7 +139,7 @@ export class CredentialAccessRequestPage {
     public theme: ThemeService,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
-    private appManager: TemporaryAppManagerPlugin,
+    private essentialsIntent: TemporaryAppManagerPlugin,
     private intentService: IntentReceiverService
   ) {
   }
@@ -194,7 +194,7 @@ export class CredentialAccessRequestPage {
       }
 
       /* TODO
-      appManager.getAppInfo(this.requestDapp.appPackageId, (appInfo) => {
+      essentialsIntent.getAppInfo(this.requestDapp.appPackageId, (appInfo) => {
         this.requestDappInfo = appInfo;
         this.requestDappName = appInfo.name;
         this.requestDappIcon = appInfo.icons[0].src;
@@ -401,7 +401,7 @@ export class CredentialAccessRequestPage {
           text: this.translate.instant('credaccess-alert-publish-required-btn'),
           handler: () => {
             this.zone.run(() => {
-              appManager.sendIntentResponse(
+              essentialsIntent.sendIntentResponse(
                 { jwt: null },
                 this.receivedIntent.intentId
               );

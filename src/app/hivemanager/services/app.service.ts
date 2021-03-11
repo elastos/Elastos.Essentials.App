@@ -12,7 +12,7 @@ import { Logger } from 'src/app/logger';
     providedIn: 'root'
 })
 export class AppService {
-    //private onGoingIntents = new Map<string, AppManagerPlugin.ReceivedIntent>();
+    //private onGoingIntents = new Map<string, EssentialsIntentPlugin.ReceivedIntent>();
     private postSignInRoute: string = null;
     private postSignInQueryParams: any = null;
 

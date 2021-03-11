@@ -59,12 +59,12 @@ export class NotificationsPage implements OnInit {
       // code below.
 
       /* TODO @chad
-      this.appManager.sendUrlIntent(notification.url,
+      this.essentialsIntent.sendUrlIntent(notification.url,
         () => {console.log('sendUrlIntent success'); },
         (error) => {console.log('NotificationsComponent sendUrlIntent failed, ', error); }
       );*/
     } else {
-      // TODO @chad this.appManager.start(notification.app.id);
+      // TODO @chad this.essentialsIntent.start(notification.app.id);
     }
   }
 

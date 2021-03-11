@@ -13,7 +13,7 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 declare let hiveManager: HivePlugin.HiveManager;
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 export type VaultLinkStatus = {
   // There is already a vault provider info on chain about a vault provider attacher to this user.
@@ -57,7 +57,7 @@ export class HiveService {
     private popup: PopupService,
     private events: Events,
     public translate: TranslateService,
-    private appManager: TemporaryAppManagerPlugin,
+    private essentialsIntent: TemporaryAppManagerPlugin,
     private didSessions: GlobalDIDSessionsService
   ) {}
 
@@ -257,7 +257,7 @@ export class HiveService {
       Logger.log("HiveManager", "Requesting identity app to update the hive provider");
 
       try {
-        let result: {result: {status: string}} = await appManager.sendIntent("https://did.elastos.net/sethiveprovider", {
+        let result: {result: {status: string}} = await essentialsIntent.sendIntent("https://did.elastos.net/sethiveprovider", {
           name: providerName,
           address: vaultAddress
         });
@@ -348,7 +348,7 @@ export class HiveService {
   private async executePayment(cost: number, elaAddress: string): Promise<string> {
     return new Promise(async (resolve, reject)=>{
       try {
-        let data: { result: { txid: string }} = await appManager.sendIntent("https://wallet.elastos.net/pay", {
+        let data: { result: { txid: string }} = await essentialsIntent.sendIntent("https://wallet.elastos.net/pay", {
           amount: cost,
           receiver: elaAddress,
           currency: "ELA"

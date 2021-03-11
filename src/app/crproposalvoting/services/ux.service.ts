@@ -5,7 +5,7 @@ import { CROperationsService } from './croperations.service';
 import * as moment from 'moment';
 import { ProposalStatus } from '../model/proposal-status';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
 
 type CRWebsiteCommand = {

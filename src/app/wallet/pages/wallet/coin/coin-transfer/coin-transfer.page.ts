@@ -52,7 +52,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-coin-transfer',
@@ -659,7 +659,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Intent response will return a contact's DID document under result.friends.document
     async openContacts() {
         console.log("Sending intent 'https://contact.elastos.net/pickfriend', requesting credentialType: 'elaAddress'");
-        let res = await appManager.sendIntent(
+        let res = await essentialsIntent.sendIntent(
             "https://contact.elastos.net/pickfriend",
             {
               singleSelection: true,

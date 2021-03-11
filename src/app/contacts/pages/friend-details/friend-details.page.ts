@@ -22,7 +22,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type DisplayableAppInfo = {
   packageId: string,
@@ -58,7 +58,7 @@ export class FriendDetailsPage implements OnInit {
     public translate: TranslateService,
     public theme: GlobalThemeService,
     private clipboard: Clipboard,
-    private appManager: TemporaryAppManagerPlugin
+    private essentialsIntent: TemporaryAppManagerPlugin
   ) {}
 
   ngOnInit() {
@@ -153,11 +153,11 @@ export class FriendDetailsPage implements OnInit {
   // Find app in marketplace, if marketplace is not installed, automatically install app //
   discoverApp(appId: string) {
     /* TODO - remove? console.log('Inquiring app in app-store..', appId);
-    appManager.sendIntent("appdetails", appId, {}, (res) => {
+    essentialsIntent.sendIntent("appdetails", appId, {}, (res) => {
       console.log(res)
     }, (err) => {
       console.error(err);
-      this.appManager.sendIntent(
+      this.essentialsIntent.sendIntent(
         "app",
         { id: appId },
         {}
@@ -182,7 +182,7 @@ export class FriendDetailsPage implements OnInit {
 
       console.log("Passing fields to the connectapplicationprofile intent:", passedFields);
 
-      /* TODO - Remove? appManager.sendIntent(
+      /* TODO - Remove? essentialsIntent.sendIntent(
         "connectapplicationprofile",
         passedFields,
         { appId: appId },

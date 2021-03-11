@@ -11,7 +11,7 @@ import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { Native } from '../../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-select-subwallet',

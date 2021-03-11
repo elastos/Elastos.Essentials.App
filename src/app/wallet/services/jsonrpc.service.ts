@@ -7,7 +7,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type JSONRPCResponse = {
     error: string;

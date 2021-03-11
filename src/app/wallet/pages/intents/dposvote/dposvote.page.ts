@@ -34,7 +34,7 @@ import { Config } from '../../../config/Config';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NavController } from '@ionic/angular';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-dposvote',

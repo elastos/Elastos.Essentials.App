@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from '../../services/global.intent.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'
 })
 export class IntentService {
-    private intentRequest: AppManagerPlugin.ReceivedIntent;
+    private intentRequest: EssentialsIntentPlugin.ReceivedIntent;
 
     constructor(
         private platform: Platform,
@@ -24,7 +24,7 @@ export class IntentService {
 
     public async init() {
         /*console.log("Checking if there are pending intents");
-        appManager.hasPendingIntent((hasPendingIntent: boolean)=>{
+        essentialsIntent.hasPendingIntent((hasPendingIntent: boolean)=>{
             if (hasPendingIntent) {
                 // Do nothing, the intent listener will show the appropriate screen.
                 console.log("There are some pending intents.");
@@ -73,7 +73,7 @@ export class IntentService {
     public sendScanQRCodeIntentResponse(scannedContent: string): Promise<void> {
         console.log("Sending scanqrcode intent response");
 
-        return appManager.sendIntentResponse({
+        return essentialsIntent.sendIntentResponse({
             scannedContent: scannedContent
         }, this.intentRequest.intentId as number);
     }

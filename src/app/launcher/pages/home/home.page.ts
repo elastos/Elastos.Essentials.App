@@ -37,7 +37,7 @@ export class HomePage implements OnInit {
     public theme: GlobalThemeService,
     public splashScreen: SplashScreen,
     private notification: NotificationManagerService,
-    private appManager: TemporaryAppManagerPlugin,
+    private essentialsIntent: TemporaryAppManagerPlugin,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private identityInitService: IdentityInitService,
@@ -93,4 +93,11 @@ export class HomePage implements OnInit {
     // return moment().format('dddd MMM Do') + ', ' + moment().format('LT');
     return moment().format('dddd, MMM Do');
   }
+<<<<<<< Updated upstream
+=======
+
+  public tmpMiniIdentityTest() {
+
+  }
+>>>>>>> Stashed changes
 }

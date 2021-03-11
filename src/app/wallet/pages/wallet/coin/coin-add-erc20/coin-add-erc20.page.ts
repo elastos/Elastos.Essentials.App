@@ -20,7 +20,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-coin-add-erc20',
@@ -107,7 +107,7 @@ export class CoinAddERC20Page implements OnInit {
      * Opens the scanner to get the coin address
      */
     async scanCoinAddress() {
-        let res: { result: { scannedContent: string }} = await appManager.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+        let res: { result: { scannedContent: string }} = await essentialsIntent.sendIntent('https://scanner.elastos.net/scanqrcode', {});
         if (res && res.result && res.result.scannedContent) {
             this.coinAddress = res.result.scannedContent;
             console.log('Got scanned content:', this.coinAddress);

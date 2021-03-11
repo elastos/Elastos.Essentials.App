@@ -34,7 +34,7 @@ import { MainAndIDChainSubWallet } from '../../../model/wallets/MainAndIDChainSu
 import BigNumber from 'bignumber.js';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-didtransaction',

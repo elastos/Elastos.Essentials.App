@@ -13,7 +13,7 @@ import { CurrencyService } from '../../../services/currency.service';
 import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-wallet-manager',

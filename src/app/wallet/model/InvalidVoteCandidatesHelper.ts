@@ -10,7 +10,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type InvalidCRCCandidate = string;
 type InvalidDelegateCandidate = string;

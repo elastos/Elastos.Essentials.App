@@ -9,7 +9,7 @@ import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/componen
 import { Router } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-launcher',
@@ -19,7 +19,7 @@ declare let appManager: AppManagerPlugin.AppManager;
 export class LauncherPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public useBackNav = false; 
+    public useBackNav = false;
 
     constructor(
         private appService: AppService,
@@ -35,7 +35,7 @@ export class LauncherPage implements OnInit {
             if(navigation.extras.state.from === 'settings') {
                 this.useBackNav = true;
             }
-        } 
+        }
     }
 
     ngOnInit() {

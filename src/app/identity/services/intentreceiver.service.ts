@@ -12,7 +12,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { IdentityIntent, AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent, CredImportIdentityIntent } from '../model/identity.intents';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'
@@ -46,7 +46,7 @@ export class IntentReceiverService {
         return fullAction.replace(intentDomainRoot, "");
     }
 
-    private async onReceiveIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    private async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         switch (this.getShortAction(intent.action)) {
             case "appidcredissue":
                 Logger.log('identity', "Received appid credential issue intent request");
@@ -173,7 +173,7 @@ export class IntentReceiverService {
         return fullAppId.substring(0, hashIndex);
     }
 
-    async showErrorAndExitFromIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    async showErrorAndExitFromIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         let errorMessage = "Sorry, there are invalid parameters in the request";
         errorMessage += "\n\n"+JSON.stringify(intent.params);
 
@@ -184,7 +184,7 @@ export class IntentReceiverService {
         await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
     }
 
-    private checkCredAccessIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+    private checkCredAccessIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking credaccess intent parameters");
         if (Util.isEmptyObject(intent.params)) {
             console.error("Invalid credaccess parameters received. No params.", intent.params);
@@ -201,7 +201,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkCredIssueIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+    private checkCredIssueIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking credissue intent parameters");
         if (Util.isEmptyObject(intent.params)) {
             console.error("Invalid credissue parameters received. Empty parameters.", intent.params);
@@ -231,7 +231,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkAppIdCredIssueIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+    private checkAppIdCredIssueIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking appidcredissue intent parameters");
         if (Util.isEmptyObject(intent.params)) {
             console.error("Invalid appidcredissue parameters received. Empty parameters.", intent.params);
@@ -248,7 +248,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkCredImportIntentParams(intent: AppManagerPlugin.ReceivedIntent) {
+    private checkCredImportIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking credimport intent parameters", intent);
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.credentials)) {
             console.error("Invalid credimport parameters received. No params or empty credentials list.", intent.params);
@@ -264,7 +264,7 @@ export class IntentReceiverService {
      * Checks generic parameters in the received intent, and fills our requesting DApp object info
      * with intent info for later use.
      */
-    private checkGenericIntentParams(intent: AppManagerPlugin.ReceivedIntent, allowEmptyParams: boolean = false): boolean {
+    private checkGenericIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent, allowEmptyParams: boolean = false): boolean {
         Logger.log('identity', "Checking generic intent parameters", intent);
 
         if (!allowEmptyParams && Util.isEmptyObject(intent.params)) {
@@ -277,7 +277,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkRegAppProfileIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+    private checkRegAppProfileIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent): boolean {
         Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
@@ -297,7 +297,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkSignIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+    private checkSignIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent): boolean {
         Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
@@ -312,7 +312,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkSetHiveProviderIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+    private checkSetHiveProviderIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent): boolean {
         Logger.log('identity', "Checking SetHiveProvider intent parameters");
 
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.address)) {
@@ -327,7 +327,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkCreateDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+    private checkCreateDIDIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent): boolean {
         Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent))
@@ -338,7 +338,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkImportMnemonicIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+    private checkImportMnemonicIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent): boolean {
         Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent, true))
@@ -349,7 +349,7 @@ export class IntentReceiverService {
         return true;
     }
 
-    private checkDeleteDIDIntentParams(intent: AppManagerPlugin.ReceivedIntent): boolean {
+    private checkDeleteDIDIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent): boolean {
         Logger.log('identity', "Checking intent parameters");
 
         if (!this.checkGenericIntentParams(intent, true))

@@ -14,7 +14,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'
@@ -40,16 +40,16 @@ export class IntentService {
         Logger.log("wallet", "IntentService init");
 
         // Listen to incoming intents.
-        this.setIntentListener();
+        this.addIntentListener();
     }
 
-    setIntentListener() {
-        this.intentService.intentListener.subscribe((intent: AppManagerPlugin.ReceivedIntent) => {
+    addIntentListener() {
+        this.intentService.intentListener.subscribe((intent: EssentialsIntentPlugin.ReceivedIntent) => {
             this.onReceiveIntent(intent);
         });
     }
 
-    async onReceiveIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         if (intent.action.indexOf("https://wallet.elastos.net/") != 0)
             return; // Not for us.
 
@@ -90,7 +90,7 @@ export class IntentService {
         return fullAction.replace(intentDomainRoot, "");
     }
 
-    async handleTransactionIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    async handleTransactionIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         if (Util.isEmptyObject(intent.params)) {
             console.error('Invalid intent parameters received. No params.', intent.params);
             await this.sendIntentResponse("Invalid intent parameters", intent.intentId);
@@ -196,7 +196,7 @@ export class IntentService {
         }
     }
 
-    handleAddCoinIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    handleAddCoinIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         this.walletEditionService.reset();
         this.walletEditionService.intentTransfer = {
             action: this.getShortAction(intent.action),
@@ -219,7 +219,7 @@ export class IntentService {
         }
     }
 
-    handleAccessIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    handleAccessIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         this.walletAccessService.reset();
         this.walletAccessService.intentTransfer = {
             action: this.getShortAction(intent.action),
@@ -242,7 +242,7 @@ export class IntentService {
         }
     }
 
-    private async handleVoteAgainstProposalIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    private async handleVoteAgainstProposalIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log("wallet", "Handling vote against proposal intent");
 
         // Let the screen know for which proposal we want to vote against
@@ -253,7 +253,7 @@ export class IntentService {
 
     sendIntentResponse(result, intentId): Promise<void> {
         return new Promise((resolve) => {
-            appManager.sendIntentResponse(result, intentId);
+            essentialsIntent.sendIntentResponse(result, intentId);
             resolve();
         });
     }
@@ -263,7 +263,7 @@ export class IntentService {
      * Usually used to create a digest representation of a proposal before signing it and/or
      * publishing it in a transaction.
      */
-    private async handleCreateProposalDigestIntent(intent: AppManagerPlugin.ReceivedIntent) {
+    private async handleCreateProposalDigestIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log("wallet", "Handling create proposal digest silent intent");
 
         if (intent && intent.params && intent.params.proposal) {

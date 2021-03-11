@@ -3,7 +3,7 @@ import { StorageService } from '../../services/storage.service';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-home',

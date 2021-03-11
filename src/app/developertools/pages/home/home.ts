@@ -6,7 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'page-home',

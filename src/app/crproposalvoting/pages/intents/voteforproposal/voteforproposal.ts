@@ -7,7 +7,7 @@ import { CROperationsService, VoteForProposalCommand } from '../../../services/c
 import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'page-voteforproposal',
@@ -41,7 +41,7 @@ export class VoteForProposalPage {
   async ionViewDidEnter() {
     // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle("Vote against a proposal");
-    
+
     this.voteForProposalCommand = this.crOperations.getOnGoingVoteForProposalCommand();
   }
 
@@ -50,7 +50,7 @@ export class VoteForProposalPage {
 
     // Request the wallet to publish our vote.
     try {
-      let ret = await appManager.sendIntent("crproposalvoteagainst", {
+      let ret = await essentialsIntent.sendIntent("crproposalvoteagainst", {
         proposalHash: this.voteForProposalCommand.data.proposalHash
       });
       console.log("Vote for proposal intent has returned", ret);

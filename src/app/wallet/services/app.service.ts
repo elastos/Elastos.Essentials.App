@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { Events } from './events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 export enum ScanType {
     Address     = 1,
@@ -50,7 +50,7 @@ export class AppService {
     }
 
     async scan(type: ScanType) {
-        let res = await appManager.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+        let res = await essentialsIntent.sendIntent('https://scanner.elastos.net/scanqrcode', {});
         let content: string = res.result.scannedContent;
 
         // Some address star with "xxx:", eg "etherum:"

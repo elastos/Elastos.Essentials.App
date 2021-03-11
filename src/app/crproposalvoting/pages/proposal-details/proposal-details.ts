@@ -8,7 +8,7 @@ import { UXService } from '../../services/ux.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
 
@@ -19,7 +19,7 @@ type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
 })
 export class ProposalDetailsPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
-  
+
   proposal: MergedProposalInfo;
   proposalDetails = [];
 
@@ -49,7 +49,7 @@ export class ProposalDetailsPage {
 
     // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle('Loading Proposal...');
-    
+
     this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
 
     this.route.queryParams.subscribe(async (data: {proposalId: number})=>{
@@ -136,7 +136,7 @@ export class ProposalDetailsPage {
     if(item.type === 'url') {
       const urlToOpen = item.description;
       console.log("Opening external URL:", urlToOpen);
-      appManager.sendIntent('openurl', { url: urlToOpen })
+      essentialsIntent.sendIntent('openurl', { url: urlToOpen })
     }
   }
 }

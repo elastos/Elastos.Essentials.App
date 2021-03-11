@@ -16,7 +16,7 @@ import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode } from 'src/app/c
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
 QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 export type ScanPageRouteParams = {
     fromIntent: boolean
@@ -49,7 +49,7 @@ export class ScanPage {
         private alertController: AlertController,
         private loadingController: LoadingController,
         private theme: GlobalThemeService,
-        private appManager: TemporaryAppManagerPlugin,
+        private essentialsIntent: TemporaryAppManagerPlugin,
         private translate: TranslateService,
     ) {
         this.route.queryParams.subscribe((params: any) => {
@@ -71,7 +71,7 @@ export class ScanPage {
         Logger.log("Scanner", "Starting scanning process");
         this.startScanningProcess();
     }
-    
+
     /**
      * Leaving the page, do some cleanup.
      */
@@ -291,7 +291,7 @@ export class ScanPage {
             scannedContent = scannedContent.replace("elastos://", "https://did.elastos.net/");
 
         Logger.log("Scanner", "Sending scanned content as a URL intent:", scannedContent);
-        this.appManager.sendUrlIntent(scannedContent, async ()=>{
+        this.essentialsIntent.sendUrlIntent(scannedContent, async ()=>{
             // URL intent sent
             Logger.log("Scanner", "Intent sent successfully")
             await this.exitApp()
@@ -318,7 +318,7 @@ export class ScanPage {
 
         try {
             Logger.log("Scanner", "Sending scanned content as raw content to an "+scanIntentAction+" intent action");
-            await appManager.sendIntent(scanIntentAction, {data: scannedContent});
+            await essentialsIntent.sendIntent(scanIntentAction, {data: scannedContent});
 
             // Raw intent sent
             Logger.log("Scanner", "Intent sent successfully as action '"+scanIntentAction+"'")
@@ -386,7 +386,7 @@ export class ScanPage {
         this.stopScanning();
         await this.hideCamera();
 
-        // TODO @chad, navigate somewhere else instead - appManager.close();
+        // TODO @chad, navigate somewhere else instead - essentialsIntent.close();
     }
 
     public async showLoading() {

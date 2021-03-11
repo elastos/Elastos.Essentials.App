@@ -60,7 +60,7 @@ export class AppService {
   }
 
   /* TODO @chad
-  onMessageReceived(msg: AppManagerPlugin.ReceivedMessage) {
+  onMessageReceived(msg: EssentialsIntentPlugin.ReceivedMessage) {
     var params: any = msg.message;
     if (typeof (params) == "string") {
       try {
@@ -106,7 +106,7 @@ export class AppService {
   ************************ Misc ***************************
   *********************************************************/
   startApp(id) {
-    // TODO @chad appManager.start(id);
+    // TODO @chad essentialsIntent.start(id);
   }
 
   deleteStorage() {
@@ -114,6 +114,6 @@ export class AppService {
   }
 
   launcher() {
-    // TODO @chad appManager.launcher();
+    // TODO @chad essentialsIntent.launcher();
   }
 }

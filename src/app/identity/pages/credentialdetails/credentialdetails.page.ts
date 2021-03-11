@@ -27,7 +27,7 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -107,7 +107,7 @@ export class CredentialDetailsPage {
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
     private basicCredentialService: BasicCredentialsService,
-    private appManager: TemporaryAppManagerPlugin
+    private essentialsIntent: TemporaryAppManagerPlugin
   ) {
     this.init();
   }
@@ -562,7 +562,7 @@ export class CredentialDetailsPage {
 
     claimsObject[fragment] = localValue;
 
-    appManager.sendIntent(
+    essentialsIntent.sendIntent(
       "https://did.elastos.net/credverify",
       {
         claims: claimsObject,

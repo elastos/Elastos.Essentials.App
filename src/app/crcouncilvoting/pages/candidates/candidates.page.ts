@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: "app-candidates",
@@ -78,7 +78,7 @@ export class CandidatesPage implements OnInit {
   /****************** Route to Vote *******************/
   async addCandidates() {
     try {
-      let res = await appManager.sendIntent(
+      let res = await essentialsIntent.sendIntent(
         "walletaccess",
         { elaamount: { reason: "For CRC voting rights" } });
 
@@ -183,7 +183,7 @@ export class CandidatesPage implements OnInit {
         {
           text: "Yes",
           handler: () => {
-            appManager.sendIntent(
+            essentialsIntent.sendIntent(
               "registerapplicationprofile",
               {
                 identifier: "CRC Election",

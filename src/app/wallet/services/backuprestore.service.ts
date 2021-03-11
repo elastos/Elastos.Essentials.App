@@ -20,7 +20,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
 import { Interfaces, Hive } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let walletManager: WalletPlugin.WalletManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -651,7 +651,7 @@ export class BackupRestoreService {
   public suggestUserToSetupVault(): Promise<void> {
    return new Promise((resolve)=>{
      Logger.log("wallet", "Asking hive manager dApp to configure a vault for current user.");
-     appManager.sendIntent("https://hive.elastos.net/setupvaultprompt", {});
+     essentialsIntent.sendIntent("https://hive.elastos.net/setupvaultprompt", {});
    });
  }
 }

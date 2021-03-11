@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
 import { Logger } from 'src/app/logger';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 export abstract class StandardSubWallet extends SubWallet {
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {

@@ -13,7 +13,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { DIDSessionsModule } from 'src/app/didsessions/module';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'

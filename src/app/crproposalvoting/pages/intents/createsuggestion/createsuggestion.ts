@@ -8,7 +8,7 @@ import { CreateSuggestionCommand, CROperationsService } from '../../../services/
 import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'page-create-suggestion',
@@ -113,7 +113,7 @@ export class CreateSuggestionPage {
 
     console.log("Sending intent to create suggestion digest", walletProposal);
     try {
-      let response: { result: { digest: string } } = await appManager.sendIntent("crproposalcreatedigest", {
+      let response: { result: { digest: string } } = await essentialsIntent.sendIntent("crproposalcreatedigest", {
         proposal: JSON.stringify(walletProposal)
       });
 
@@ -129,7 +129,7 @@ export class CreateSuggestionPage {
   private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
     console.log("Sending intent to sign the suggestion digest", suggestionDigest);
     try {
-      let result = await appManager.sendIntent("didsign", {
+      let result = await essentialsIntent.sendIntent("didsign", {
         data: suggestionDigest,
         signatureFieldName: "data",
         jwtExtra: {

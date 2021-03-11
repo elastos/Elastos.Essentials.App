@@ -88,7 +88,7 @@ export class AppmanagerService {
         private didService: DIDManagerService,
         private native: GlobalNativeService,
         private storage: GlobalStorageService,
-        private appManager: TemporaryAppManagerPlugin,
+        private essentialsIntent: TemporaryAppManagerPlugin,
         private didSessions: GlobalDIDSessionsService,
         private language: GlobalLanguageService,
         private hiveManagerInitService: HiveManagerInitService,
@@ -106,7 +106,7 @@ export class AppmanagerService {
 
         await this.getCurrentNet();
 
-        this.appManager.setListener((ret) => {
+        this.essentialsIntent.setListener((ret) => {
             this.onMessageReceived(ret);
         });
 
@@ -227,7 +227,7 @@ export class AppmanagerService {
     /******************************** Intent Listener ********************************/
 
     // Intent
-    onIntentReceived(ret: AppManagerPlugin.ReceivedIntent) {
+    onIntentReceived(ret: EssentialsIntentPlugin.ReceivedIntent) {
         switch (this.getShortAction(ret.action)) {
         }
     }
@@ -265,7 +265,7 @@ export class AppmanagerService {
                             if (ret.hasOwnProperty('error')) {
                                 this.native.genericAlert('no-app-can-handle-request', 'sorry');
                             } else if (ret.from === 'system') {
-                                // TODO @chad: replace with ionic navigation to launcher's home screen - appManager.launcher();
+                                // TODO @chad: replace with ionic navigation to launcher's home screen - essentialsIntent.launcher();
                                 this.native.showLoading('please-wait');
                             }
                         });
@@ -426,7 +426,7 @@ export class AppmanagerService {
         is able to hold a reference on its own title bar component, should listen to network type change
         events using preferencesService.preferenceListener.subscribe((pref)=> { update the title bar here });
 
-        appManager.getPreference("chain.network.type", (networkCode) => {
+        essentialsIntent.getPreference("chain.network.type", (networkCode) => {
             this.zone.run(() => {
                 if (networkCode === 'MainNet') {
                     titleBarManager.setTitle('elastOS');
@@ -468,19 +468,19 @@ export class AppmanagerService {
      */
 
     launcher() {
-        // TODO @chad appManager.launcher();
+        // TODO @chad essentialsIntent.launcher();
     }
 
     start(id: string) {
-        // TODO @chad appManager.start(id, () => { });
+        // TODO @chad essentialsIntent.start(id, () => { });
     }
 
     sendIntent(action: string, params: any) {
-        // TODO @chad appManager.sendIntent(action, params);
+        // TODO @chad essentialsIntent.sendIntent(action, params);
     }
 
     close(id: string) {
-        // TODO @chad appManager.closeApp(id);
+        // TODO @chad essentialsIntent.closeApp(id);
     }
 }
 

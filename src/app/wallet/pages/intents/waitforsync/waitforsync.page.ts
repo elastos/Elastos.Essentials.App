@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-waitforsync',

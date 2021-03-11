@@ -16,7 +16,7 @@ import { ContactNotifierService } from "src/app/services/contactnotifier.service
 import { Logger } from "src/app/logger";
 var deepEqual = require('deep-equal');
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -105,7 +105,7 @@ export class ProfileService {
     private didSyncService: DIDSyncService,
     private translate: TranslateService,
     private basicCredentialService: BasicCredentialsService,
-    private appManager: TemporaryAppManagerPlugin,
+    private essentialsIntent: TemporaryAppManagerPlugin,
     private contactNotifier: ContactNotifierService
   ) { }
 
@@ -195,7 +195,7 @@ export class ProfileService {
     //   this.options.dismiss();
     // }
 
-    appManager.sendIntent("share", {
+    essentialsIntent.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: await this.getAddFriendShareableUrl(),
     });

@@ -30,7 +30,7 @@ import { CoinTransferService, Transfer, IntentTransfer } from '../../../services
 import { IntentService } from '../../../services/intent.service';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-crmembervote',

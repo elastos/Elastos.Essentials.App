@@ -9,7 +9,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 enum MessageType {
     INTERNAL = 1,
@@ -36,13 +36,13 @@ export class UXService {
         private didService: DIDService,
         private modalCtrl: ModalController,
         private navCtrl: NavController,
-        private appManager: TemporaryAppManagerPlugin
+        private essentialsIntent: TemporaryAppManagerPlugin
     ) {
         UXService.instance = this;
     }
 
     async init() {
-        this.appManager.setListener(this.onReceive);
+        this.essentialsIntent.setListener(this.onReceive);
 
 
    /*      this.titleBar.addOnItemClickedListener((icon) => {
@@ -110,7 +110,7 @@ export class UXService {
     close() {
         // TODO @chad - closing means going back in router nav. We may discuss the best way to do this.
         Logger.log('identity', "Closing DID app");
-        // TODO appManager.close();
+        // TODO essentialsIntent.close();
     }
 
     /**
@@ -118,7 +118,7 @@ export class UXService {
      * user can actually see the app (but see it only when fully ready)
      */
     makeAppVisible() {
-        // TODO: delete this makeAppVisible() from code. appManager.setVisible("show");
+        // TODO: delete this makeAppVisible() from code. essentialsIntent.setVisible("show");
     }
 
     public translateInstant(key: string): string {
@@ -161,7 +161,7 @@ export class UXService {
     public async getAppDid(appId: string): Promise<string> {
         /* TODO
         return new Promise((resolve, reject) => {
-            appManager.getAppInfo(appId,
+            essentialsIntent.getAppInfo(appId,
                 (appInfo) => {
                     resolve(appInfo.did || '');
                 },
@@ -192,6 +192,6 @@ export class UXService {
     }
 
     public sendIntentResponse(action, result, intentId): Promise<void> {
-        return appManager.sendIntentResponse(result, intentId);
+        return essentialsIntent.sendIntentResponse(result, intentId);
     }
 }

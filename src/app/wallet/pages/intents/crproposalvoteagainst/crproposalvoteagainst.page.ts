@@ -32,7 +32,7 @@ import { StandardCoinName } from '../../../model/Coin';
 import { VoteType, CRProposalVoteInfo } from '../../../model/SPVWalletPluginBridge';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-crproposalvoteagainst',

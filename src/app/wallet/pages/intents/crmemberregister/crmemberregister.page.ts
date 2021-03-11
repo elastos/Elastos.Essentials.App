@@ -34,7 +34,7 @@ import { IntentService } from '../../../services/intent.service';
 import { AuthService } from '../../../services/auth.service';
 import BigNumber from 'bignumber.js';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-crmemberregister',

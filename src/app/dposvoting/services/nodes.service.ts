@@ -10,7 +10,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -643,6 +643,6 @@ export class NodesService {
   }
 
   openLink(url: string) {
-    appManager.sendIntent('openurl', { url: url });
+    essentialsIntent.sendIntent('openurl', { url: url });
   }
 }

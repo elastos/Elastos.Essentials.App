@@ -5,7 +5,7 @@ import { Native } from '../../services/native';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'showqrcode',
@@ -40,7 +40,7 @@ export class ShowQRCodeComponent implements OnInit {
   }
 
   shareInvitationLink() {
-    appManager.sendIntent("share", {
+    essentialsIntent.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: this.qrCodeString
     });
