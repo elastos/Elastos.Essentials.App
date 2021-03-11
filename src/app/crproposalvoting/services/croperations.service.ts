@@ -90,13 +90,8 @@ export class CROperationsService {
         }
     }
 
-<<<<<<< Updated upstream
-    private async handledReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {
-        Logger.log("crproposal", "RECEIVED INTENT:", receivedIntent);
-=======
     private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
-        console.log("RECEIVED INTENT:", receivedIntent);
->>>>>>> Stashed changes
+        Logger.log("crproposal", "RECEIVED INTENT:", receivedIntent);
 
         if (receivedIntent.action == "crproposal")
             this.handleCRProposalIntentRequest(receivedIntent);

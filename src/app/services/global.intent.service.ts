@@ -25,12 +25,12 @@ export class GlobalIntentService {
 
   sendIntent(action: string, params?: any): Promise<any> {
     Logger.log("Intents", "Sending intent", action, params);
-    return appManager.sendIntent(action, params);
+    return essentialsIntent.sendIntent(action, params);
   }
 
   sendIntentResponse(result: any, intentId: number): Promise<void> {
     Logger.log("Intents", "Sending intent response ", result, intentId);
     this.globalNav.navigateBack();
-    return appManager.sendIntentResponse(result, intentId);
+    return essentialsIntent.sendIntentResponse(result, intentId);
   }
 }
