@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Platform, ModalController, NavController } from '@ionic/angular';
+import { Component, ViewChild } from '@angular/core';
+import { Platform, ModalController, NavController, IonRouterOutlet } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 import { GlobalStorageService } from './services/global.storage.service';
@@ -20,19 +20,22 @@ import { DPoSVotingInitService } from './dposvoting/services/init.service';
 import { CRCouncilVotingInitService } from './crcouncilvoting/services/init.service';
 import { CRProposalVotingInitService } from './crproposalvoting/services/init.service';
 import { DeveloperToolsInitService } from './developertools/services/init.service';
+import { GlobalNavService } from './services/global.nav.service';
 
 @Component({
     selector: 'app-root',
     template: '<ion-app><ion-router-outlet [swipeGesture]="false"></ion-router-outlet></ion-app>',
 })
 export class AppComponent {
+    @ViewChild(IonRouterOutlet, { static: true }) routerOutlet: IonRouterOutlet;
+
     constructor(
         private platform: Platform,
         public modalCtrl: ModalController,
-        private navController: NavController,
         public splashScreen: SplashScreen,
         public storage: GlobalStorageService,
         public theme: GlobalThemeService,
+        private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService,
         private launcherInitService: LauncherInitService,
         private didSessionsInitService: DIDSessionsInitService,
@@ -59,6 +62,8 @@ export class AppComponent {
         this.platform.ready().then(async () => {
             Logger.log("Global", "Main app component initialization is starting");
 
+            this.setupBackKeyNavigation();
+
             // TODO screen.orientation.lock('portrait');
             await this.intentService.init();
             await this.didSessions.init();
@@ -83,13 +88,27 @@ export class AppComponent {
             let entry = await this.didSessions.getSignedInIdentity();
             if (entry != null) {
                 Logger.log("Global", "An active DID exists, navigating to launcher home");
-                this.navController.navigateRoot(['/launcher/home']);
+                this.globalNav.navigateHome();
                 //this.navController.navigateRoot(['/identity/myprofile/home']);
             } else {
                 Logger.log("Global", "No active DID, navigating to DID sessions");
-                this.navController.navigateRoot(['/didsessions/pickidentity']);
+                this.globalNav.navigateTo("didsessions", '/didsessions/pickidentity');
                 // this.navController.navigateRoot(['/identity/myprofile']);
             }
         });
     }
+
+    /**
+   * Listen to back key events. If the default router can go back, just go back.
+   * Otherwise, exit the application.
+   */
+  setupBackKeyNavigation() {
+    this.platform.backButton.subscribeWithPriority(0, () => {
+      if (this.globalNav.canGoBack()) {
+        this.globalNav.navigateBack();
+      } else {
+        navigator["app"].exitApp();
+      }
+    });
+  }
 }

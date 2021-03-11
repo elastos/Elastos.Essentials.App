@@ -1,18 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
+import { Logger } from '../logger';
 
-import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
-@Component({
-  selector: 'modal-page',
-  template: `
-    <ion-app><ion-router-outlet [swipeGesture]="false"></ion-router-outlet></ion-app>
-  `
-})
-export class ModalPage {
-  constructor() {}
+type NavigationStep = {
+    context: string;
+    route: string;
+    routerOptions?: any;
 }
-
 
 @Injectable({
   providedIn: 'root'
@@ -20,33 +14,70 @@ export class ModalPage {
 export class GlobalNavService {
     public loader: HTMLIonLoadingElement = null;
     public alert = null;
+    private navigationHistory: NavigationStep[] = [];
 
     constructor(
       private navCtrl: NavController,
-      public modalController: ModalController,
-      private router: Router
+      public modalController: ModalController
     ) { }
 
-    async sendIntent() {
-        // TODO: try to launch
-       // this.navCtrl.navigateForward(route, options);
+    /**
+     * Deletes all recent steps as long as they belong to the given context.
+     * This basically comes back to the root of a "dApp".
+     */
+    public navigateRoot(context: string, route: string, routerOptions?: any) {
+        Logger.log("Nav", "Setting "+context+" navigation context root to: "+route);
+        while (this.canGoBack()) {
+            let lastStep = this.navigationHistory[this.navigationHistory.length-1];
+            if (lastStep.context != context)
+                break; // Found the previous context - stop unstacking.
+            else
+                this.navigationHistory.pop(); // Same context, unstack the step
+        }
 
-       const modal = await this.modalController.create({
-            component: ModalPage,
-            cssClass: 'my-custom-class'
-        });
-        await modal.present();
-
-        setTimeout(() => {
-            /*this.navCtrl.navigateRoot("/wallet/launcher", {
-
-            });*/
-            this.router.navigate([], {})
-        }, 2000);
-
+        this.navigateTo(context, route, routerOptions);
     }
 
-    go(route: string, options?: any) {
-       this.navCtrl.navigateForward(route, options);
+    /**
+     * Navigates back to the launcher home and clears the whole navigation history for all
+     * contexts. Fresh restart.
+     */
+    public navigateHome() {
+        Logger.log("Nav", "Navigating to launcher home");
+
+        let launcherHome = {
+            context: "launcher",
+            route: "/launcher/home"
+        };
+        this.navigationHistory = [];
+        this.navigationHistory.push(launcherHome);
+        this.navCtrl.navigateRoot(launcherHome.route);
+    }
+
+    public navigateTo(context: string, route: string, routerOptions?: any) {
+        Logger.log("Nav", "Navigating to", route);
+
+        this.navigationHistory.push({context, route, routerOptions});
+        this.navCtrl.navigateRoot(route, routerOptions);
+    }
+
+    /**
+     * Navigates back in stack, coming back in the steps history. This is cross context and
+     * can go back to the previous context.
+     */
+    public navigateBack() {
+        if (!this.canGoBack())
+            throw new Error("Unable to navigate back. No more known route in stack");
+
+        this.navigationHistory.pop();
+        let previousStep = this.navigationHistory[this.navigationHistory.length-1];
+
+        Logger.log("Nav", "Navigating back to", previousStep.route);
+
+        this.navCtrl.navigateRoot(previousStep.route, previousStep.routerOptions);
+    }
+
+    public canGoBack(): boolean {
+        return (this.navigationHistory.length > 1);
     }
 }

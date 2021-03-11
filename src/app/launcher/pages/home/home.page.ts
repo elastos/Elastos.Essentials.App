@@ -86,8 +86,7 @@ export class HomePage implements OnInit {
   }
 
   showMyIdentity() {
-    this.nav.sendIntent();
-    //this.nav.go('/identity/myprofile/home');
+    this.nav.navigateTo("identity", '/identity/myprofile/home');
   }
 
   getDateFromNow() {

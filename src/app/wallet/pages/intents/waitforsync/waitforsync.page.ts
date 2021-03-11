@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { Events } from '../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -59,7 +60,8 @@ export class WaitForSyncPage implements OnInit {
         public theme: GlobalThemeService,
         public translate: TranslateService,
         public currencyService: CurrencyService,
-        public uiService: UiService
+        public uiService: UiService,
+        private globalIntentService: GlobalIntentService
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
@@ -168,7 +170,7 @@ export class WaitForSyncPage implements OnInit {
 
     async cancelOperation() {
         const intentParams =  this.coinTransferService.intentTransfer;
-        await this.intentService.sendIntentResponse(
+        await this.globalIntentService.sendIntentResponse(
             {txid: null, status: 'cancelled'},
             intentParams.intentId
         );

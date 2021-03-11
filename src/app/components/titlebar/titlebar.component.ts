@@ -3,6 +3,7 @@ import { AppTheme, GlobalThemeService } from '../../services/global.theme.servic
 import { NavController, PopoverController, ModalController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon, TitleBarForegroundMode } from './titlebar.types';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-titlebar',
@@ -41,7 +42,8 @@ export class TitleBarComponent {
     public themeService: GlobalThemeService,
     private popoverCtrl: PopoverController,
     private modalCtrl: ModalController,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private globalNav: GlobalNavService
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);
@@ -259,12 +261,12 @@ export class TitleBarComponent {
   }
 
   outerLeftIconClicked() {
-    this.navCtrl.navigateRoot(['/launcher/home']);
+    this.globalNav.navigateHome();
   }
 
   innerLeftIconClicked() {
     if (this.navigationMode == TitleBarNavigationMode.BACK)
-    this.navCtrl.back();
+      this.globalNav.navigateBack();
     // else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
     //   this.navCtrl.back();
     else {

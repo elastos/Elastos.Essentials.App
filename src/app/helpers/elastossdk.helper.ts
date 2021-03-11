@@ -18,13 +18,13 @@ export class EssentialsDIDKeyValueStore implements Interfaces.IKeyValueStorage {
 
 class EssentialsLogger implements Interfaces.ILogger {
     log(...args: any) {
-        Logger.log.apply(Logger, ["elastossdk", ...args]);
+        Logger.log.apply(Logger, ["connectivitysdk", ...args]);
     }
     warn(...args: any) {
-        Logger.warn.apply(Logger, ["elastossdk", ...args]);
+        Logger.warn.apply(Logger, ["connectivitysdk", ...args]);
     }
     error(...args: any) {
-        Logger.error.apply(Logger, ["elastossdk", ...args]);
+        Logger.error.apply(Logger, ["connectivitysdk", ...args]);
     }
 
 }

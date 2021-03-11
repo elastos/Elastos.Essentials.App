@@ -1,6 +1,7 @@
 import { Native } from './native.service';
 import { WalletManager } from './wallet.service';
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -12,7 +13,7 @@ export class NavService {
     }
 
     public showStartupScreen() {
-        console.log("Computing and showing startup screen");
+        Logger.log("wallet", "Computing and showing startup screen");
 
         if (this.walletManager.getWalletsCount() > 0) {
             // Go to wallet's home page.

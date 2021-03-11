@@ -12,6 +12,7 @@ import { Events } from './events.service';
 import { PopupProvider } from './popup.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -30,7 +31,8 @@ export class IntentService {
         private popupProvider: PopupProvider,
         private walletAccessService: WalletAccessService,
         private walletEditionService: WalletEditionService,
-        private intentService: GlobalIntentService
+        private intentService: GlobalIntentService,
+        private globalNav: GlobalNavService
     ) {
     }
 
@@ -188,9 +190,9 @@ export class IntentService {
             const masterWallet = this.walletList[0];
             this.coinTransferService.masterWalletId = masterWallet.id;
             this.coinTransferService.walletInfo = masterWallet.account;
-            this.native.setRootRouter('/waitforsync', {rootPage: true});
+            this.native.setRootRouter('/wallet/waitforsync', {rootPage: true});
         } else {
-            this.native.setRootRouter('select-subwallet');
+            this.native.setRootRouter('/wallet/select-subwallet');
         }
     }
 

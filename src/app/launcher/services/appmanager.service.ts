@@ -32,6 +32,7 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 enum MessageType {
     INTERNAL = 1,
@@ -47,6 +48,7 @@ enum MessageType {
 type RunnableApp = {
     cssId:string;
     name: string;
+    routerContext: string; // Ex: "wallet"
     description: string;
     icon: string;
     routerPath?: string;
@@ -91,7 +93,8 @@ export class AppmanagerService {
         private language: GlobalLanguageService,
         private hiveManagerInitService: HiveManagerInitService,
         private walletInitService: WalletInitService,
-        private globalIntentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService,
+        private globalNav: GlobalNavService
     ) {}
 
     public async init() {
@@ -128,12 +131,14 @@ export class AppmanagerService {
                     {
                         cssId: 'Wallet',
                         name: this.translate.instant('app-wallet'),
+                        routerContext: "wallet",
                         description: this.translate.instant('app-wallet-description'),
                         icon: '/assets/launcher/ios/app-icons/wallet.svg',
                         startCall: () => this.walletInitService.start()
                     },
                     {
                         cssId: 'Identity',
+                        routerContext: "identity",
                         name: this.translate.instant('app-identity'),
                         description: this.translate.instant('app-identity-description'),
                         icon: '/assets/launcher/ios/app-icons/identity.svg',
@@ -141,6 +146,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'Contacts',
+                        routerContext: "contacts",
                         name: this.translate.instant('app-contacts'),
                         description: this.translate.instant('app-contacts-description'),
                         icon: '/assets/launcher/ios/app-icons/contacts.svg',
@@ -153,6 +159,7 @@ export class AppmanagerService {
                 apps: [
                     {
                         cssId: 'Hive',
+                        routerContext: "hivemanager",
                         name: this.translate.instant('app-hive'),
                         description: this.translate.instant('app-hive-description'),
                         icon: '/assets/launcher/ios/app-icons/hive.svg',
@@ -160,6 +167,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'Other',
+                        routerContext: "scanner",
                         name: this.translate.instant('app-scanner'),
                         description: this.translate.instant('app-scanner-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -167,6 +175,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'Other',
+                        routerContext: "settings",
                         name: this.translate.instant('app-settings'),
                         description: this.translate.instant('app-settings-description'),
                         icon: '/assets/launcher/ios/app-icons/settings.svg',
@@ -179,6 +188,7 @@ export class AppmanagerService {
                 apps: [
                     {
                         cssId: 'DPoS',
+                        routerContext: "dposvoting",
                         name: this.translate.instant('app-dpos-voting'),
                         description: this.translate.instant('app-dpos-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -186,6 +196,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'CRCouncil',
+                        routerContext: "crcouncilvoting",
                         name: this.translate.instant('app-cr-council'),
                         description: this.translate.instant('app-crcouncil-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -193,6 +204,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'CRProposal',
+                        routerContext: "crproposalvoting",
                         name: this.translate.instant('app-cr-proposal'),
                         description: this.translate.instant('app-crproposal-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -318,7 +330,8 @@ export class AppmanagerService {
 
     startApp(app: RunnableApp) {
         if (app.routerPath)
-            this.navController.navigateForward(app.routerPath);
+            this.globalNav.navigateTo(app.routerContext, app.routerPath);
+            //this.navController.navigateForward(app.routerPath);
         else if (app.startCall)
             app.startCall();
         else

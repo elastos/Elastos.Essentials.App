@@ -24,9 +24,10 @@ import { Injectable, NgZone } from '@angular/core';
 import { ToastController, LoadingController, NavController, PopoverController } from '@ionic/angular';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Logger } from '../model/Logger';
 import { HelpComponent } from '../components/help/help.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Logger } from 'src/app/logger';
 
 @Injectable()
 export class Native {
@@ -42,7 +43,8 @@ export class Native {
         public popoverCtrl: PopoverController,
         private navCtrl: NavController,
         private zone: NgZone,
-        private globalNative: GlobalNativeService
+        private globalNative: GlobalNativeService,
+        private globalNav: GlobalNavService
     ) {
     }
 
@@ -71,10 +73,11 @@ export class Native {
     }
 
     public go(page: string, options: any = {}) {
-        console.log("Navigating to:", page);
+        Logger.log("wallet", "Navigating to:", page);
         this.zone.run(() => {
             this.hideLoading();
-            this.navCtrl.navigateForward([page], { state: options });
+            this.globalNav.navigateTo("wallet", page, { state: options });
+            //this.navCtrl.navigateForward([page], { state: options });
         });
     }
 
@@ -87,10 +90,11 @@ export class Native {
     }
 
     public setRootRouter(page: any,  options: any = {}) {
-        console.log("Setting root router path to:", page);
+        Logger.log("wallet", "Setting root router path to:", page);
         this.zone.run(() => {
             this.hideLoading();
-            this.navCtrl.navigateRoot([page], { state: options });
+            this.globalNav.navigateTo("wallet", page, { state: options });
+            //this.navCtrl.navigateRoot([page], { state: options });
         });
     }
 
@@ -122,7 +126,7 @@ export class Native {
 
     public async showLoading(content: string = ''): Promise<void> {
         if (this.loadingCtrlCreating) {// Just in case.
-            console.log('loadingCtrl is preparing, skip')
+            Logger.log("wallet", 'loadingCtrl is preparing, skip')
             return;
         }
         // Hide a previous loader in case there was one already.
