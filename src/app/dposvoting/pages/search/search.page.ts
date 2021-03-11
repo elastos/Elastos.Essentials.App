@@ -3,6 +3,7 @@ import { IonInput } from '@ionic/angular';
 
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-search',
@@ -44,7 +45,7 @@ export class SearchPage implements OnInit {
         return node.nickname.toLowerCase().indexOf(search.toLowerCase()) !== -1;
       }
     });
-    console.log('Search results', this.filteredNodes);
+    Logger.log('dposvoting', 'Search results', this.filteredNodes);
   }
 
   //// Define Values ////

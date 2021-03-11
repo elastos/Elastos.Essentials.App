@@ -196,7 +196,7 @@ export class NodesService {
                 Logger.log('dposvoting', 'JsonRPCService httpRequest error:', JSON.stringify(err));
             });
     } catch (e) {
-        console.error('')
+      Logger.error('dposvoting', ' error:', e)
     }
 
     // to show the Daily Rewards, but it is too slow.

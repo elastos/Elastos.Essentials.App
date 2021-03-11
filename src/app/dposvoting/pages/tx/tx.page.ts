@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { Vote } from '../../model/history.model';
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-tx',
@@ -37,7 +38,7 @@ export class TxPage implements OnInit {
       }
       this.vote = this.nodesService.getVote(paramMap.get('txId'));
       this.getNodes();
-      console.log(this.vote);
+      Logger.log('dposvoting', this.vote);
     });
   }
 

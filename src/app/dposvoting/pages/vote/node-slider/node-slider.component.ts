@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Node } from '../../../model/nodes.model';
 import { IonSlides } from '@ionic/angular';
 import { NodesService } from '../../../services/nodes.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-node-slider-vote',
@@ -45,8 +46,8 @@ export class NodeSliderComponent implements OnInit {
     } else {
       return;
     }
-    console.log('last node', lastNode);
-    console.log('next node', this._nodes[nextNodeIndex]);
+    Logger.log('dposvoting', 'last node', lastNode);
+    Logger.log('dposvoting', 'next node', this._nodes[nextNodeIndex]);
   }
 
   //// Define Values ////

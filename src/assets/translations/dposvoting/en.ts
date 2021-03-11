@@ -1,6 +1,6 @@
 export const en = {
 
-    /********** History **********/
+  /********** History **********/
     'history-votes-overview': 'Votes Overview',
     'history-no-records': 'No records yet..',
 
@@ -49,5 +49,10 @@ export const en = {
     /********** Vote **********/
     'vote-voted': 'VOTES CASTED',
     'vote-not-voted': 'CAST VOTE',
-    'vote-selected': ' selected nodes'
+    'vote-selected': ' selected nodes',
+    'vote-success': 'Votes successfully sent',
+    'vote-fail': 'There was an error with sending votes...',
+    'vote-cancelled': 'Votes were cancelled',
+    'vote-timeout': 'No response from wallet',
+    'vote-no-nodes-checked': 'Please select up to 36 nodes in order to vote',
 };

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Logger } from 'src/app/logger';
 import { Node } from '../../../model/nodes.model';
 import { NodesService } from '../../../services/nodes.service';
 
@@ -40,8 +41,8 @@ export class NodeSliderComponent implements OnInit {
     if(nextNodeIndex) {
       this.displayedArr.push(this._nodes[nextNodeIndex]);
     }
-    console.log('last node', lastNode);
-    console.log('next node', this._nodes[nextNodeIndex]);
+    Logger.log('dposvoting', 'last node', lastNode);
+    Logger.log('dposvoting', 'next node', this._nodes[nextNodeIndex]);
   }
 
   //// Define Values ////

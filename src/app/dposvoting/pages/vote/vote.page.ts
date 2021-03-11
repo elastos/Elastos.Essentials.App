@@ -4,6 +4,8 @@ import { ToastController, Platform, AlertController } from '@ionic/angular';
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
 import { StorageService } from '../../services/storage.service';
+import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -37,7 +39,8 @@ export class VotePage implements OnInit {
     public nodesService: NodesService,
     private storageService: StorageService,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private translate: TranslateService,
   ) {
   }
 
@@ -51,7 +54,7 @@ export class VotePage implements OnInit {
     /* TODO @chad titleBarManager.setupMenuItems([{key: 'registerApp', iconPath: TitleBarPlugin.BuiltInIcon.EDIT, title: 'Register Capsule'}]);
     titleBarManager.addOnItemClickedListener(this.onItemClickedListener = (menuIcon) => {
       if (menuIcon.key === "registerApp") {
-        console.log('Menu item clicked');
+        Logger.log('dposvoting', 'Menu item clicked');
         this.registerAppAlert();
       }
     });*/
@@ -67,7 +70,7 @@ export class VotePage implements OnInit {
     });
 
     if (castedNodeKeys.length > 0) {
-      console.log(castedNodeKeys);
+      Logger.log('dposvoting', castedNodeKeys);
       this.storageService.setNodes(castedNodeKeys);
       let votesSent: boolean = false;
 
@@ -76,33 +79,33 @@ export class VotePage implements OnInit {
           "https://wallet.elastos.net/dposvotetransaction",
           { publickeys: (castedNodeKeys) });
 
-        console.log('Insent sent sucessfully', res);
+        Logger.log('dposvoting', 'Insent sent sucessfully', res);
 
-        if(res.result.txid === null ) {
+        if(res.result.txId === null ) {
           votesSent = true;
-          this.voteFailed('Votes were cancelled');
+          this.voteFailed('vote-cancelled');
         } else {
           votesSent = true;
           this.voted = true;
           let date = new Date;
-          let txid: string = res.result.txid;
+          let txId: string = res.result.txId;
 
-          this.nodesService._votes = this.nodesService._votes.concat({ date: date, tx: txid, keys: castedNodeKeys });
-          console.log('Vote history updated', this.nodesService._votes);
+          this.nodesService._votes = this.nodesService._votes.concat({ date: date, tx: txId, keys: castedNodeKeys });
+          Logger.log('dposvoting', 'Vote history updated', this.nodesService._votes);
           this.storageService.setVotes(this.nodesService._votes);
-          this.voteSuccess(res.result.txid);
+          this.voteSuccess(res.result.txId);
         }
       }
       catch (err) {
           votesSent = true;
-          console.log('Intent sent failed', err);
+          Logger.log('dposvoting', 'Intent sent failed', err);
           this.voteFailed(err);
       }
 
       // If no response is sent from wallet, show vote transaction has failed
       setTimeout(() => {
         if(votesSent === false) {
-          this.voteFailed('No response from wallet');
+          this.voteFailed('vote-timeout');
         }
       }, 10000)
 
@@ -151,15 +154,15 @@ export class VotePage implements OnInit {
       message: 'Registering a capsule will allow your followers via Contacts to effortlessly browse your favorite capsules!',
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translate.instant('cancel'),
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('No thanks');
+            Logger.log('dposvoting', 'No thanks');
           }
         },
         {
-          text: 'Yes',
+          text: this.translate.instant('confirm'),
           handler: () => {
             essentialsIntent.sendIntent("https://did.elastos.net/registerapplicationprofile", {
               identifier: "DPoS Voting",
@@ -176,12 +179,12 @@ export class VotePage implements OnInit {
     this.closeToast();
     this.toast = await this.toastController.create({
       position: 'bottom',
-      header: 'Votes successfully sent',
-      message: 'Txid:' + res.slice(0,30) + '...',
+      header: this.translate.instant('vote-success'),
+      message: 'TxId:' + res.slice(0,30) + '...',
       color: "primary",
       buttons: [
         {
-          text: 'Okay',
+          text: this.translate.instant('ok'),
           handler: () => {
             this.toast.dismiss();
           }
@@ -195,13 +198,13 @@ export class VotePage implements OnInit {
     this.closeToast();
     this.toast = await this.toastController.create({
       position: 'bottom',
-      header: 'There was an error with sending votes...',
-      message: res,
+      header: this.translate.instant('vote-fail'),
+      message: this.translate.instant(res),
       color: "primary",
       cssClass: 'toaster',
       buttons: [
         {
-          text: 'Okay',
+          text: this.translate.instant('ok'),
           handler: () => {
             this.toast.dismiss();
           }
@@ -222,7 +225,7 @@ export class VotePage implements OnInit {
   async noNodesChecked() {
     const toast = await this.toastController.create({
       position: 'bottom',
-      header: 'Please select up to 36 nodes in order to vote',
+      header: this.translate.instant('vote-no-nodes-checked'),
       color: "primary",
       duration: 2000
     });
