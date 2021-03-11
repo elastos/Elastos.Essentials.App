@@ -11,7 +11,7 @@ import { GlobalThemeService, AppTheme } from 'src/app/services/global.theme.serv
 export class GlobalNativeService {
     public loader: HTMLIonLoadingElement = null;
     public alert = null;
-  
+
     constructor(
       private toastCtrl: ToastController,
       private alertCtrl: AlertController,
@@ -22,14 +22,10 @@ export class GlobalNativeService {
       private navCtrl: NavController
     ) { }
 
-    go(route: string, options?: any) {
-        this.navCtrl.navigateForward(route, options);
-    }
-
     copyClipboard(text) {
         return this.clipboard.copy(text);
     }
-  
+
     errToast(msg: string, duration: number = 3000) {
         const msgTranslated = this.translate.instant(msg);
         this.toastCtrl.create({
@@ -40,7 +36,7 @@ export class GlobalNativeService {
             color: 'danger'
         }).then(toast => toast.present());
     }
-  
+
     genericToast(msg: string, duration: number = 1000) {
       const translation = this.translate.instant(msg);
       this.toastCtrl.create({
@@ -51,7 +47,7 @@ export class GlobalNativeService {
           color: 'primary'
       }).then(toast => toast.present());
     }
-  
+
     async genericAlert(msg: string, title?: string) {
         await this.hideAlert();
         this.alert = await this.alertCtrl.create({
@@ -64,7 +60,7 @@ export class GlobalNativeService {
         this.alert.onWillDismiss().then(() => {
             this.alert = null;
         });
-  
+
         return await this.alert.present();
     }
 
@@ -74,7 +70,7 @@ export class GlobalNativeService {
             this.alert = null;
         }
     }
-  
+
     public async showLoading(message: string = 'please-wait') {
         let isDarkMode = this.theme.activeTheme.value == AppTheme.DARK;
         await this.hideLoading();
@@ -88,19 +84,18 @@ export class GlobalNativeService {
         this.loader.onWillDismiss().then(() => {
             this.loader = null;
         });
-    
+
         return await this.loader.present();
     }
-  
+
     public async hideLoading() {
         if (this.loader) {
             await this.loader.dismiss();
             this.loader = null;
         }
     }
-  
+
     print_err(err: string) {
       console.log("ElastosJS  Error: " + err);
     }
 }
-  

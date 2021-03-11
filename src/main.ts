@@ -8,9 +8,16 @@ import 'hammerjs';
 import { TranslationsLoader } from './translationsloader';
 import { Logger } from './app/logger';
 import { defineCustomElements } from '@teamhive/lottie-player/loader';
+import { Connectors } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { InternalElastosConnector } from './app/model/internalelastosconnector';
 
 // Replace default console logs with our own logger
 Logger.init(console);
+
+// Use our own internal connector for the connectivity SDK
+let internalConnector = new InternalElastosConnector();
+Connectors.registerConnector(new InternalElastosConnector());
+Connectors.setActiveConnector(internalConnector.name);
 
 // Setup Lottie animation player
 defineCustomElements(window);

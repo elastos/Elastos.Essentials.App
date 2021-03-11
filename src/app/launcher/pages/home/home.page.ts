@@ -16,6 +16,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { IdentityInitService } from 'src/app/identity/services/init.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-home',
@@ -40,7 +41,7 @@ export class HomePage implements OnInit {
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private identityInitService: IdentityInitService,
-    private native: GlobalNativeService
+    private nav: GlobalNavService
   ) {
   }
 
@@ -85,15 +86,12 @@ export class HomePage implements OnInit {
   }
 
   showMyIdentity() {
-    this.native.go('/identity/myprofile/home');
+    this.nav.sendIntent();
+    //this.nav.go('/identity/myprofile/home');
   }
 
   getDateFromNow() {
     // return moment().format('dddd MMM Do') + ', ' + moment().format('LT');
     return moment().format('dddd, MMM Do');
-  }
-
-  public tmpMiniIdentityTest() {
-    
   }
 }

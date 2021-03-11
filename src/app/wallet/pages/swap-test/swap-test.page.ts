@@ -3,7 +3,6 @@ import { WalletManager } from '../../services/wallet.service';
 import { AppService } from '../../services/app.service';
 import { Native } from '../../services/native.service';
 import Web3 from 'web3';
-import * as ConnectivitySDK from "../../../essentials-connectivity-cordova-sdk";
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
 import { StandardCoinName } from '../../model/Coin';
 import { MasterWallet } from '../../model/wallets/MasterWallet';
