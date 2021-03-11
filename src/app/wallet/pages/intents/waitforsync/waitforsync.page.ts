@@ -41,6 +41,8 @@ export class WaitForSyncPage implements OnInit {
     action = '';
     nextScreen = '';
 
+    cancelByUser = false;
+
     private rootPage = false;
 
     private waitSubscription : Subscription = null;
@@ -73,6 +75,7 @@ export class WaitForSyncPage implements OnInit {
     }
 
     ionViewWillEnter() {
+        this.cancelByUser = false;
         this.appService.setTitleBarTitle(this.translate.instant('waitforsync-syncing'));
         if (!this.rootPage) {
             // TODO @chad this.appService.setBackKeyVisibility(true);
@@ -162,10 +165,13 @@ export class WaitForSyncPage implements OnInit {
     }
 
     doAction() {
-        this.native.go(this.nextScreen);
+        if (!this.cancelByUser) {
+          this.native.go(this.nextScreen);
+        }
     }
 
     async cancelOperation() {
+        this.cancelByUser = true;
         const intentParams =  this.coinTransferService.intentTransfer;
         await this.globalIntentService.sendIntentResponse(
             {txid: null, status: 'cancelled'},
