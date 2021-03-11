@@ -89,18 +89,11 @@ ion-content {
           justify-content: center;
           align-items: center;
 
-          img-loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 100%;
-            overflow: hidden;
-
-            img {
-              width: 45px;
-              height: 45px;
-              object-fit: cover;
-            }
+          img {
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
           }
         }
 
@@ -211,18 +204,11 @@ ion-content {
         justify-content: center;
         align-items: center;
 
-        img-loader {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 100%;
-          overflow: hidden;
-
-          img {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-          }
+        img {
+          border-radius: 50%;
+          width: 45px;
+          height: 45px;
+          object-fit: cover;
         }
 
         ion-avatar {

@@ -5,7 +5,6 @@ import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { DIDSessionsRoutingModule } from './routing';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { IonicImageLoader } from 'ionic-image-loader';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 import { PickIdentityPage } from './pages/pickidentity/pickidentity';
@@ -55,7 +54,6 @@ defineCustomElements(window);
     ComponentsModule,
     SharedComponentsModule,
     TranslateModule,
-    IonicImageLoader.forRoot()
   ],
   entryComponents: [
     LanguagePage,

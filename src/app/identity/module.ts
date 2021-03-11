@@ -10,7 +10,6 @@ import { Clipboard } from "@ionic-native/clipboard/ngx";
 import { QRCodeModule } from "angularx-qrcode";
 import { IonBottomDrawerModule } from "ion-bottom-drawer";
 import { TranslateModule } from "@ngx-translate/core";
-import { IonicImageLoader } from "ionic-image-loader";
 import { WebView } from "@ionic-native/ionic-webview/ngx";
 
 import { ComponentsModule } from "./components/components.module";
@@ -86,7 +85,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
     QRCodeModule,
     IonicStorageModule,
     TranslateModule,
-    IonicImageLoader,
     TabsnavPageModule
   ],
   bootstrap: [],

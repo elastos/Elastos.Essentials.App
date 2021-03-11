@@ -2,7 +2,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
-import { IonicImageLoader } from 'ionic-image-loader';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -20,7 +19,6 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
     DPoSVotingRoutingModule,
     IonicModule,
     IonicStorageModule,
-    IonicImageLoader,
     SharedComponentsModule
   ],
   bootstrap: [],

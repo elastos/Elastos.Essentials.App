@@ -5,7 +5,6 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { CRCouncilVotingRoutingModule } from './routing';
 import { HttpClientModule } from '@angular/common/http';
-import { IonicImageLoader } from 'ionic-image-loader';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 
@@ -32,7 +31,6 @@ import { CandidateSliderComponent } from './components/candidate-slider/candidat
     CRCouncilVotingRoutingModule,
     SharedComponentsModule,
     IonicModule,
-    IonicImageLoader,
     IonicStorageModule
   ],
   bootstrap: [],

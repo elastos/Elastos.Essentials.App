@@ -1,7 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ImageLoaderConfigService } from 'ionic-image-loader';
 import { PopupProvider } from './popup.service';
 import { AppService } from './app.service';
 import { UiService } from './ui.service';
@@ -37,7 +36,6 @@ export class WalletInitService {
     private contactsService: ContactsService,
     private erc20CoinService: ERC20CoinService,
     private uiService: UiService,
-    private imageLoaderConfig: ImageLoaderConfigService,
     private didSessions: GlobalDIDSessionsService
   ) {}
 
@@ -45,7 +43,6 @@ export class WalletInitService {
     this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
       if (signedInIdentity) {
         Logger.log("Wallet", "Wallet service is initializing");
-        this.imageLoaderConfig.useImageTag(true);
 
         await this.appService.init();
         await this.coinService.init();

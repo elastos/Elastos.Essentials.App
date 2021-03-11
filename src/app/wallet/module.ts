@@ -34,7 +34,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AlertController, IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
-import { IonicImageLoaderModule } from 'ionic-image-loader-v5';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 /****************** Sentry ******************/
@@ -163,7 +162,6 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
         IonicModule,
         WalletRoutingModule,
         IonicStorageModule,
-        IonicImageLoaderModule,
         FormsModule,
         ComponentsModule,
         SharedComponentsModule,

@@ -49,8 +49,6 @@
     "ethereumjs-tx": "2.1.2",
     "hammerjs": "2.0.8",
     "ion-bottom-drawer": "2.0.0",
-    "ionic-image-loader": "7.0.0-beta.2",
-    "ionic-image-loader-v5": "1.0.2",
     "moment": "2.29.1",
     "ng2-dragula": "2.1.1",
     "qr-scanner": "1.2.0",
