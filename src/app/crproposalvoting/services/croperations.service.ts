@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { URL } from 'url';
 import { PopupService } from './popup.service';
@@ -52,7 +53,7 @@ export class CROperationsService {
         private intentService: GlobalIntentService) {}
 
     async init() {
-        console.log("CROperationsService is initializing");
+        Logger.log("crproposal", "CROperationsService is initializing");
 
         /* TODO @chad titleBarManager.addOnItemClickedListener((menuIcon)=>{
             if (menuIcon.key == "scan") {
@@ -68,7 +69,7 @@ export class CROperationsService {
     private async handleScanAction() {
         try {
             let data = await appManager.sendIntent("scanqrcode", null);
-            console.log("Scan result", data);
+            Logger.log("crproposal", "Scan result", data);
             if (data && data.result && data.result.scannedContent)
                 this.handleScannedContent(data.result.scannedContent);
             else
@@ -90,7 +91,7 @@ export class CROperationsService {
     }
 
     private async handledReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {
-        console.log("RECEIVED INTENT:", receivedIntent);
+        Logger.log("crproposal", "RECEIVED INTENT:", receivedIntent);
 
         if (receivedIntent.action == "crproposal")
             this.handleCRProposalIntentRequest(receivedIntent);
@@ -113,7 +114,7 @@ export class CROperationsService {
             return;
         }
 
-        console.log("JWT signature is valid");
+        Logger.log("crproposal", "JWT signature is valid");
 
         let jwtPayload = parsedJwtresult.payload as CRWebsiteCommand;
         if (!jwtPayload.command) {
@@ -135,7 +136,7 @@ export class CROperationsService {
     }
 
     private async handleVoteForProposalCommand(command: VoteForProposalCommand, jwt: string) {
-        console.log("Handling vote for proposal command "+command);
+        Logger.log("crproposal", "Handling vote for proposal command "+command);
 
         this.onGoingVoteForProposalcommand = command;
 
@@ -149,7 +150,7 @@ export class CROperationsService {
     }
 
     private async handleCreateSuggestionCommand(command: CreateSuggestionCommand, jwt: string) {
-        console.log("Handling Create Suggestion command ", command);
+        Logger.log("crproposal", "Handling Create Suggestion command ", command);
 
         this.onGoingCreateSuggestionCommand = command;
 
