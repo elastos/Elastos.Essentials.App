@@ -58,7 +58,7 @@ export class GlobalNavService {
         Logger.log("Nav", "Navigating to", route);
 
         this.navigationHistory.push({context, route, routerOptions});
-        this.navCtrl.navigateRoot(route, routerOptions);
+        this.navCtrl.navigateForward(route, routerOptions);
     }
 
     /**
@@ -74,7 +74,7 @@ export class GlobalNavService {
 
         Logger.log("Nav", "Navigating back to", previousStep.route);
 
-        this.navCtrl.navigateRoot(previousStep.route, previousStep.routerOptions);
+        this.navCtrl.navigateBack(previousStep.route, previousStep.routerOptions);
     }
 
     /**

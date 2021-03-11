@@ -2,7 +2,7 @@
 
 <ion-content *ngIf="hasConfigSections">
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <ion-row class="section" *ngFor="let section of sections" (click)="open(section.router)">
+        <ion-row class="section" *ngFor="let section of sections" (click)="open(section)">
             <ion-col size="11" class="title-col">
                 <h1>{{ section.name | translate }}</h1>
                 <h2>{{ section.subtitle | translate }}</h2>

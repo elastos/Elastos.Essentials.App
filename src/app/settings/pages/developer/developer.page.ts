@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-developer',
@@ -19,7 +20,8 @@ export class DeveloperPage implements OnInit {
     public settings: SettingsService,
     public theme: GlobalThemeService,
     public developer: DeveloperService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private nav: GlobalNavService,
   ) { }
 
   ngOnInit() {}
@@ -37,5 +39,9 @@ export class DeveloperPage implements OnInit {
     } else {
       return this.translate.instant('background-services-enabled');
     }
+  }
+
+  go(route: string) {
+    this.nav.navigateTo('settings', route);
   }
 }

@@ -40,8 +40,6 @@ export class ProposalDetailsPage {
   }
 
   ionViewDidEnter() {
-  /*   titleBarManager.setBackgroundColor('#181d20');
-    titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT); */
   }
 
   async ionViewWillEnter() {

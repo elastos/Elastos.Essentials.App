@@ -7,6 +7,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 type Preferences = {
   developerMode: boolean
@@ -32,13 +33,13 @@ export class MenuPage implements OnInit {
       iconDir: '/assets/icon/light_mode/earth.svg',
       iconDir2: '/assets/icon/dark_mode/earth.svg',
     },
-    {
+/*     {
       name:"passwordmanager-setting",
       subtitle: 'manage-pw',
       router:'org.elastos.trinity.dapp.passwordmanager',
       iconDir: '/assets/icon/light_mode/password.svg',
       iconDir2: '/assets/icon/dark_mode/password.svg',
-    },
+    }, */
     {
       name: 'about-setting',
       subtitle: 'about-elastos',
@@ -54,7 +55,7 @@ export class MenuPage implements OnInit {
     public theme: GlobalThemeService,
     public developer: DeveloperService,
     public translate: TranslateService,
-    private navController: NavController,
+    private nav: GlobalNavService,
     private prefsService: GlobalPreferencesService,
     private essentialsIntent: TemporaryAppManagerPlugin
   ) {
@@ -88,7 +89,7 @@ export class MenuPage implements OnInit {
     }
   }
 
-  open(id:string){
-    this.navController.navigateForward(id);
+  open(section){
+    this.nav.navigateTo('settings', section.router);
   }
 }

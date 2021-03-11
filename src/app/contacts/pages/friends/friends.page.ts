@@ -123,7 +123,7 @@ export class FriendsPage implements OnInit {
     }
   }
 
-  goToAdd() {
-    console.log("FRIENDS - goToAdd() clicked - fix this.");
+  goToContact(contact: Contact) {
+    this.globalNav.navigateTo('contacts', '/friends/' + contact.id);
   }
 }

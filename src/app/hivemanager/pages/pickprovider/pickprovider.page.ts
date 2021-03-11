@@ -131,8 +131,6 @@ export class PickProviderPage implements OnInit {
       }
     });
 
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-
     this.titleBar.setTitle(this.translate.instant('pickprovider.title'));
   }
 

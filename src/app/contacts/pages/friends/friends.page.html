@@ -24,7 +24,7 @@
             [src]="uxService.getAvatar(contact)"
             class="inactiveSlide profile-img"
             [class.activeSlide]="contact === friendsService.activeSlide || firstContact()"
-            [routerLink]="['/friends/', contact.id]"
+            (click)="goToContact(contact)"
           >
         </ion-slide>
       </ion-slides>
@@ -121,8 +121,8 @@
               'secondary' : null"
             detail="false"
             lines="none"
-            [routerLink]="['/friends/', contact.id]"
             *ngIf="uxService.contactHasName(contact, letter)"
+            (click)="goToContact(contact)"
           >
             <ion-grid>
               <ion-row>
@@ -142,7 +142,7 @@
             [class.activeItem]="contact === friendsService.activeSlide"
             detail="false"
             lines="none"
-            [routerLink]="['/friends/', contact.id]"
+            (click)="goToContact(contact)"
             *ngIf="
               !contact.credentials.name && !contact.customName && letter === 'Anonymous' ||
               !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && letter === 'Anonymous'
@@ -187,7 +187,7 @@
             'secondary' : null"
           detail="false"
           lines="none"
-          [routerLink]="['/friends/', contact.id]"
+          (click)="goToContact(contact)"
         >
           <ion-grid>
             <ion-row>

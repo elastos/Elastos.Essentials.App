@@ -12,6 +12,7 @@ import { SuggestionDetailsResponse } from '../model/suggestion-details-response'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { DIDSessionsModule } from 'src/app/didsessions/module';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -21,7 +22,12 @@ declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 export class ProposalService {
     private latestSearchResults: ProposalSearchResult[] = [];
 
-    constructor(private http: HttpClient, private router: Router, private prefs: GlobalPreferencesService) {}
+    constructor(
+        private http: HttpClient,
+        private router: Router,
+        private prefs: GlobalPreferencesService,
+        private nav: GlobalNavService
+    ) {}
 
     private getCRProposalAPI(): Promise<string> {
 		return new Promise(async (resolve)=>{
@@ -131,6 +137,7 @@ export class ProposalService {
                 proposalId: proposal.id
             }
         })
+        // this.nav.navigateTo('crproposalvotings', '/proposal-details', { proposalId: proposal.id })
     }
 
     public getFetchedProposalById(proposalId: number): ProposalSearchResult {
