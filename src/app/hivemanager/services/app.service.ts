@@ -3,7 +3,6 @@ import { NavController } from '@ionic/angular';
 import { StorageService } from './storage.service';
 import { ThemeService } from './theme.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ReceivedMessage } from 'src/app/TMP_STUBS';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';

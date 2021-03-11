@@ -2,12 +2,12 @@
 <widget android-packageName="org.elastos.trinity.runtime" ios-CFBundleIdentifier="org.elastos.trinity.essentials" ios-CFBundleVersion="100" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>elastOS</name>
     <description>
-        Elastos essentials.
+        Elastos essentials
     </description>
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content original-src="index.html" src="http://192.168.0.4:8101" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

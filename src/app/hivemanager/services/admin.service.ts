@@ -3,10 +3,9 @@ import { StorageService } from './storage.service';
 import { Router } from '@angular/router';
 import { PopupService } from './popup.service';
 import { ManagedProvider } from '../model/managedprovider';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { DID } from 'src/app/elastos-connectivity-cordova-sdk';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;

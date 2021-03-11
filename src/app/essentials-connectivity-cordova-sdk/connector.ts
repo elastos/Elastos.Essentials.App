@@ -1,8 +1,8 @@
-import { IConnector } from "../elastos-connectivity-cordova-sdk/interfaces/connectors/iconnector";
+import * as ElastosConnectivitySDK from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { DID } from "./did/did";
 import { Wallet } from "./wallet/wallet";
 
-export class EssentialsConnector implements IConnector {
+export class EssentialsConnector implements ElastosConnectivitySDK.Interfaces.Connectors.IConnector {
     public name: string = "essentials";
 
     /**

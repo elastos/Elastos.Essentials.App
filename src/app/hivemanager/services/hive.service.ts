@@ -9,7 +9,6 @@ import { Events } from './events.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { Hive } from 'src/app/elastos-connectivity-cordova-sdk';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 

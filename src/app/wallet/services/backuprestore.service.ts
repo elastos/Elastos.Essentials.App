@@ -13,14 +13,12 @@ import { CoinService } from './coin.service';
 import { PopupProvider } from './popup.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
-import { HiveDataSync } from 'src/app/elastos-connectivity-cordova-sdk/hive';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { BackupRestoreEntry } from 'src/app/elastos-connectivity-cordova-sdk/hive/datasync';
 import { Logger } from 'src/app/logger';
-import { Hive } from 'src/app/elastos-connectivity-cordova-sdk';
+import { Interfaces, Hive } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let walletManager: WalletPlugin.WalletManager;
@@ -34,7 +32,7 @@ export class BackupRestoreService {
 
   private initializationComplete = false;
   private userVault: HivePlugin.Vault = null;
-  private backupRestoreHelper: HiveDataSync;
+  private backupRestoreHelper: Hive.DataSync.HiveDataSync;
   private subWalletBackupInProgress = false;
   private walletsList: MasterWallet[] = [];
   private fullySuccessfulSyncExpected = true;
@@ -504,7 +502,7 @@ export class BackupRestoreService {
   /**
    * A wallet that does not exist locally exists on the vault backup. We must restore it locally.
    */
-  private async handleRemoteBackupEntryChanged(entry: BackupRestoreEntry): Promise<boolean> {
+  private async handleRemoteBackupEntryChanged(entry: Hive.DataSync.BackupRestoreEntry): Promise<boolean> {
     this.logDebug("handleRemoteBackupEntryChanged()", entry);
 
     // Compare the remote lastsyncdate vs local
