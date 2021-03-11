@@ -9,6 +9,7 @@ import { CouncilMember } from '../model/council.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -20,7 +21,7 @@ export class CandidatesService {
   constructor(
     private platform: Platform,
     private http: HttpClient,
-    private router: Router,
+    private globalNav: GlobalNavService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
     private storageService: StorageService

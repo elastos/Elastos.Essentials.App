@@ -8,6 +8,7 @@ import { StorageService } from "../../services/storage.service";
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService } from "src/app/services/global.nav.service";
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -22,7 +23,8 @@ export class CandidatesPage implements OnInit {
   constructor(
     public candidatesService: CandidatesService,
     private storage: StorageService,
-    private router: Router,
+    //private router: Router,
+    private globalNav: GlobalNavService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private zone: NgZone
@@ -88,7 +90,7 @@ export class CandidatesPage implements OnInit {
         }
       };
       console.log("Candidates", this.candidatesService.selectedCandidates);
-      this.router.navigate(["/vote"], props);
+      this.globalNav.navigateTo("crcouncilvoting", "/crcouncilvoting/vote", props);
     }
     catch (err) {
       console.log(err);

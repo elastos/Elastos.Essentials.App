@@ -15,6 +15,7 @@ import { ContactNotifierService, Contact as ContactNotifierContact } from 'src/a
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
@@ -73,8 +74,9 @@ export class FriendsService {
   }
 
   constructor(
-    private router: Router,
-    private navController: NavController,
+    //private router: Router,
+    //private navController: NavController,
+    private globalNav: GlobalNavService,
     public zone: NgZone,
     private clipboard: Clipboard,
     public translate: TranslateService,
@@ -264,7 +266,7 @@ export class FriendsService {
 
     if(await this.didService.getUserDID() === did) {
       this.native.genericToast('please-dont-add-self');
-      this.navController.navigateRoot(['/friends']);
+      this.globalNav.navigateRoot('contacts', '/contacts/friends');
     } else {
       const targetContact: Contact = this.contacts.find(contact => contact.id === did);
       if(targetContact) {
@@ -273,12 +275,12 @@ export class FriendsService {
         if(carrierAddress) {
           this.contacts[this.contacts.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
           this.storageService.setContacts(this.contacts);
-          this.router.navigate(['friends/', targetContact.id]);
+          this.globalNav.navigateTo('contacts', '/contacts/friends/'+targetContact.id);
           this.native.genericToast(promptName + this.translate.instant('did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
         } else {
           this.native.genericToast(promptName + this.translate.instant('is-already-added'));
-          this.router.navigate(['friends/', targetContact.id]);
+          this.globalNav.navigateTo('contacts', '/contacts/friends/'+targetContact.id);
           Logger.log('contacts', 'Contact is already added');
         }
       } else {
@@ -327,7 +329,7 @@ export class FriendsService {
       }, (err: any) => {
         console.error("DIDDocument resolving error", err);
         this.native.didResolveErr(err.message);
-        this.router.navigate(['friends']);
+        this.globalNav.navigateRoot('contacts', '/contacts/friends');
         resolve();
       });
     });
@@ -636,7 +638,7 @@ export class FriendsService {
         isPublished: isPublished,
       }
     }
-    this.router.navigate(['/confirm'], props);
+    this.globalNav.navigateTo('contacts', '/contacts/confirm', props);
   }
 
   /********************************************************
@@ -755,7 +757,7 @@ export class FriendsService {
     this.events.publish("backup:deleteContact", contact);
 
     this.native.genericToast(promptName + this.translate.instant('was-deleted'));
-    this.navController.navigateRoot(['/friends']);
+    this.globalNav.navigateRoot('contacts', '/contacts/friends');
   }
 
   /**
@@ -789,7 +791,7 @@ export class FriendsService {
       }
     });
 
-    this.router.navigate(['/friends/', id]);
+    this.globalNav.navigateTo('friends', '/friends/'+id);
   }
 
   /********************************************************
@@ -799,7 +801,7 @@ export class FriendsService {
     this.getStoredContacts().then(async (contacts: Contact[]) => {
       const targetContact = contacts.find((contact) => contact.id === didString);
       if(targetContact) {
-        this.router.navigate(['friends/', didString]);
+        this.globalNav.navigateTo('contacts', '/contacts/friends/'+didString);
       } else {
         this.native.showLoading('please-wait');
         await this.resolveDIDDocument(didString, false);
@@ -824,9 +826,9 @@ export class FriendsService {
             intent: intent
           }
         }
-        this.router.navigate(['/invite'], props);
+        this.globalNav.navigateTo('contacts', '/contacts/invite', props);
       } else {
-        this.navController.navigateRoot(['/friends']);
+        this.globalNav.navigateRoot('contacts', '/contacts/friends');
         this.native.alertNoContacts(
           intent,
           this.managerService.handledIntentId,
@@ -870,9 +872,9 @@ export class FriendsService {
               intent: 'pickfriend'
             }
           }
-          this.router.navigate(['/invite'], props);
+          this.globalNav.navigateTo('contacts', '/contacts/invite', props);
         } else {
-          this.navController.navigateRoot(['/friends']);
+          this.globalNav.navigateRoot('friends', '/contacts/friends');
           this.native.alertNoContacts(
             'pickfriend',
             this.managerService.handledIntentId,
@@ -880,7 +882,7 @@ export class FriendsService {
           );
         }
       } else {
-        this.navController.navigateRoot(['/friends']);
+        this.globalNav.navigateRoot('contacts', '/contacts/friends');
         this.native.alertNoContacts(
           'pickfriend',
           this.managerService.handledIntentId,
@@ -992,7 +994,7 @@ export class FriendsService {
         contactAddedWithNoName: contactAddedWithNoName,
       }
     }
-    this.router.navigate(['/customize'], props);
+    this.globalNav.navigateTo('contacts', '/contacts/customize', props);
   }
 
   /********************************************************

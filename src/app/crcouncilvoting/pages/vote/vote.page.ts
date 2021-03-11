@@ -3,6 +3,7 @@ import { CandidatesService } from '../../services/candidates.service';
 import { ToastController } from '@ionic/angular';
 import { StorageService } from '../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -17,7 +18,8 @@ export class VotePage implements OnInit, OnDestroy {
     public candidatesService: CandidatesService,
     private storageService: StorageService,
     private toastCtrl: ToastController,
-    private router: Router,
+    //private router: Router,
+    private globalNav: GlobalNavService,
     private route: ActivatedRoute,
     private zone: NgZone
   ) { }
@@ -165,8 +167,8 @@ export class VotePage implements OnInit, OnDestroy {
           text: 'Okay',
           handler: () => {
             toast.dismiss();
-            // essentialsIntent.close();
-            this.router.navigate(['/candidates']);
+            // appManager.close();
+            this.globalNav.navigateTo("crcouncilvoting", '/crcouncilvoting/candidates');
           }
         }
       ]
@@ -187,8 +189,8 @@ export class VotePage implements OnInit, OnDestroy {
           text: 'Okay',
           handler: () => {
             toast.dismiss();
-            // essentialsIntent.close();
-            this.router.navigate(['/candidates']);
+            // appManager.close();
+            this.globalNav.navigateTo('crcouncilvoting', '/crcouncilvoting/candidates');
           }
         }
       ]

@@ -72,8 +72,7 @@ export class FriendsPage implements OnInit {
     });
     this.titleBar.addOnItemClickedListener((icon) => {
       if(icon.key === 'add') {
-        //this.router.navigate(['/add']);
-        this.globalNav.navigateTo("contacts", '/contacts/add');
+        this.globalNav.navigateTo('contacts', '/contacts/add');
       }
     });
 

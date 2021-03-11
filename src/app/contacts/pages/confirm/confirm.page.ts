@@ -10,6 +10,7 @@ import { NativeService } from '../../services/native.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ContactNotifierService } from 'src/app/services/contactnotifier.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-confirm',
@@ -33,7 +34,8 @@ export class ConfirmPage implements OnInit {
     public translate: TranslateService,
     private zone: NgZone,
     private native: NativeService,
-    private contactNotifier: ContactNotifierService
+    private contactNotifier: ContactNotifierService,
+    private globalNav: GlobalNavService
   ) { }
 
   ngOnInit() {
@@ -73,12 +75,12 @@ export class ConfirmPage implements OnInit {
 
     this.zone.run(() => {
       if(contactAlreadyAdded) {
-        this.router.navigate(['/friends']);
+        this.globalNav.navigateRoot('contacts', '/contacts/friends');
       } else {
         if(!this.name) {
           this.friendsService.showCustomization(this.friendsService.pendingContact, true);
         } else {
-          this.router.navigate(['/friends/', this.id]);
+          this.globalNav.navigateTo('contacts', '/contacts/friends/'+this.id);
         }
       }
     });
@@ -93,6 +95,6 @@ export class ConfirmPage implements OnInit {
       console.log('Rejected contact did not come from a "viewfriendinvitation" intent');
     }
 
-    this.router.navigate(['friends']);
+    this.globalNav.navigateRoot('contacts', '/contacts/friends');
   }
 }

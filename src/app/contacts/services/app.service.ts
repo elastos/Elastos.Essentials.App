@@ -8,6 +8,7 @@ import { StorageService } from './storage.service';
 import { PopupService } from './popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +23,7 @@ export class AppService {
     private theme: GlobalThemeService,
     private zone: NgZone,
     private translate: TranslateService,
-    private navCtrl: NavController,
-    private router: Router
+    private globalNav: GlobalNavService
   ) {
   }
 
@@ -49,10 +49,10 @@ export class AppService {
     switch (icon.key) {
       case 'backToHome':
         console.log('Back to home');
-        this.navCtrl.navigateBack('/friends');
+        this.globalNav.navigateRoot('contacts', '/contacts/friends');
         break;
       case 'add':
-        this.router.navigate(['/add']);
+        this.globalNav.navigateTo('contacts', '/contacts/add');
         break;
       case 'scan':
         this.friendsService.scanDID();
