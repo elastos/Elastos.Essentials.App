@@ -378,7 +378,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.appService.scan(ScanType.Address);
     }
 
-    /* supportsMaxTransfer() {
+    supportsMaxTransfer() {
         // Only the payment transaction of ELA and IDChain support send all balance.
         // TODO: what should to do with ETHSC and ERC20 Token?
         if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
@@ -393,38 +393,15 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.zone.run(() => {
             this.sendMax = !this.sendMax;
             if (this.sendMax) {
-                // -1 means send max.
+                // -1 means send max in spvsdk.
                 this.amount = -1;
             } else {
                 this.amount = null;
             }
         });
-    } */
-
-    supportsMaxTransfer() {
-        if(this.chainId === StandardCoinName.ELA || this.chainId === StandardCoinName.IDChain) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    setMaxTransfer() {
-        this.amount = this.masterWallet.subWallets[this.chainId].getDisplayBalance().toNumber() - 0.001;
-    }
-
-    amountIsSuffice() {
-        if(this.masterWallet.subWallets[this.chainId].getDisplayBalance().toNumber() - 0.001 < this.amount) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     async goTransaction() {
-        // this.showConfirm();
-        // this.showSuccess();
-
         if (this.sendMax || this.valuesReady()) {
             await this.startTransaction();
         }

@@ -82,20 +82,30 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         const jsonInfo = await this.masterWallet.walletManager.spvBridge.getBalanceInfo(this.masterWallet.id, this.id);
         const balanceInfoArray = JSON.parse(jsonInfo);
         let availableBalance = new BigNumber(0);
+        let hadPengdingTX = false;
+        // Send Max balance if amount < 0.
+        let sengMax = amount.isNegative() ? true : false;
+
         for (const balanceInfo of balanceInfoArray) {
             if (balanceInfo.Summary.Balance !== '0') {
                 let balanceOfasset = new BigNumber(balanceInfo.Summary.Balance);
                 if (balanceInfo.Summary.SpendingBalance !== '0') {
+                    hadPengdingTX = true;
                     balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.SpendingBalance));
                 }
                 if (balanceInfo.Summary.PendingBalance !== '0') {
+                    hadPengdingTX = true;
                     balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.PendingBalance));
                 }
                 if (balanceInfo.Summary.LockedBalance !== '0') {
+                    hadPengdingTX = true;
                     balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.LockedBalance));
                 }
                 // DepositBalance
 
+                if (hadPengdingTX && sengMax) {
+                    return false;
+                }
                 availableBalance = availableBalance.plus(balanceOfasset);
                 if (availableBalance.gt(amount)) {
                     return true;
