@@ -992,7 +992,7 @@ export class SPVWalletPluginBridge {
     // TODO: replace hardcoded error code with enum: http://elastos.ela.spv.cpp/SDK/Common/ErrorChecker.h
     handleError(err: any, promiseRejectHandler: (reason?: any)=>void): any {
         this.native.hideLoading();
-        this.native.error(err);
+        Logger.error('wallet', err);
 
         let error = err["code"]
         if (error) {

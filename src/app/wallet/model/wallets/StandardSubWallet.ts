@@ -11,8 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
 import { Logger } from 'src/app/logger';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
-
 export abstract class StandardSubWallet extends SubWallet {
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id, CoinType.STANDARD);
@@ -234,13 +232,10 @@ export abstract class StandardSubWallet extends SubWallet {
             const password = await this.masterWallet.walletManager.openPayModal(transfer);
             if (!password) {
                 Logger.log("wallet", "No password received. Cancelling");
-                if (transfer.action) {
-                    await this.masterWallet.walletManager.sendIntentResponse(
-                        { txid: null, status: 'cancelled' },
-                        transfer.intentId);
-                }
                 resolve({
-                    published: false
+                  published: false,
+                  txId: null,
+                  status: 'cancelled'
                 });
                 return;
             }
@@ -280,14 +275,11 @@ export abstract class StandardSubWallet extends SubWallet {
                         status = 'error';
                     }
                     this.masterWallet.walletManager.native.hideLoading();
-                    Logger.log("wallet", 'Sending intent response', transfer.action, { txid: txId }, transfer.intentId);
-                    await this.masterWallet.walletManager.sendIntentResponse(
-                        { txid: txId, status },
-                        transfer.intentId);
 
                     resolve({
-                        published: true,
-                        txId: txId
+                      published: true,
+                      txId: txId,
+                      status,
                     });
                 }, 5000); // wait for 5s for txPublished
             } else {
@@ -300,6 +292,7 @@ export abstract class StandardSubWallet extends SubWallet {
 
                 resolve({
                     published: true,
+                    status: 'published',
                     txId: publishedTransaction.TxHash
                 });
             }

@@ -26,13 +26,12 @@ import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
-import { IntentService } from '../../../services/intent.service';
 import { WalletAccountType } from '../../../model/WalletAccount';
 import { StandardCoinName } from '../../../model/Coin';
 import { VoteType, CRProposalVoteInfo } from '../../../model/SPVWalletPluginBridge';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-crproposalvoteagainst',
@@ -48,10 +47,13 @@ export class CRProposalVoteAgainstPage implements OnInit {
 
     balance: string; // Balance in SELA
 
-    constructor(public walletManager: WalletManager, public appService: AppService,
+    constructor(public walletManager: WalletManager,
+                public appService: AppService,
                 private coinTransferService: CoinTransferService,
-                private intentService: IntentService,
-                public native: Native, public zone: NgZone, public popupProvider: PopupProvider) {
+                private globalIntentService: GlobalIntentService,
+                public native: Native,
+                public zone: NgZone,
+                public popupProvider: PopupProvider) {
         this.init();
     }
 
@@ -92,7 +94,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
      * sending the intent response.
      */
     async cancelOperation() {
-        await this.intentService.sendIntentResponse(
+        await this.globalIntentService.sendIntentResponse(
             { txid: null, status: 'cancelled' },
             this.intentTransfer.intentId
         );

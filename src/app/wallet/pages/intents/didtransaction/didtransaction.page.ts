@@ -28,13 +28,12 @@ import { WalletManager } from '../../../services/wallet.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { StandardCoinName } from '../../../model/Coin';
-import { IntentService } from '../../../services/intent.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MainAndIDChainSubWallet } from '../../../model/wallets/MainAndIDChainSubWallet';
 import BigNumber from 'bignumber.js';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-didtransaction',
@@ -55,7 +54,7 @@ export class DidTransactionPage implements OnInit {
         public appService: AppService,
         public popupProvider: PopupProvider,
         private coinTransferService: CoinTransferService,
-        private intentService: IntentService,
+        private globalIntentService: GlobalIntentService,
         public native: Native,
         public zone: NgZone,
         private translate: TranslateService,
@@ -98,7 +97,7 @@ export class DidTransactionPage implements OnInit {
      * sending the intent response.
      */
     async cancelOperation() {
-        await this.intentService.sendIntentResponse(
+        await this.globalIntentService.sendIntentResponse(
             { txid: null, status: 'cancelled' },
             this.intentTransfer.intentId
         );
@@ -149,7 +148,8 @@ export class DidTransactionPage implements OnInit {
             intentId: this.intentTransfer.intentId,
         });
 
-        await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

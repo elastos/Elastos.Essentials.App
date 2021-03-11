@@ -37,7 +37,6 @@ import { HttpClient } from '@angular/common/http';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../services/currency.service';
-import { IntentService } from '../../../../services/intent.service';
 import { UiService } from '../../../../services/ui.service';
 import { StandardSubWallet } from '../../../../model/wallets/StandardSubWallet';
 import BigNumber from 'bignumber.js';
@@ -51,6 +50,7 @@ import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -120,7 +120,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         public theme: GlobalThemeService,
         private translate: TranslateService,
         public currencyService: CurrencyService,
-        private intentService: IntentService,
+        private globalIntentService: GlobalIntentService,
         public uiService: UiService,
         public keyboard: Keyboard,
         private contactsService: ContactsService,
@@ -308,6 +308,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
         if (result.published)
             this.showSuccess();
+        if (transfer.intentId) {
+          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+        }
     }
 
     /**
@@ -550,7 +553,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // Pay intent
     async cancelPayment() {
-        await this.intentService.sendIntentResponse(
+        await this.globalIntentService.sendIntentResponse(
             { txid: null, status: 'cancelled' },
             this.coinTransferService.intentTransfer.intentId
         );

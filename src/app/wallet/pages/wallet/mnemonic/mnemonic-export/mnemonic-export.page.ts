@@ -6,7 +6,6 @@ import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
 import { WalletManager } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
-import { IntentService } from '../../../../services/intent.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { WalletAccessService } from '../../../../services/walletaccess.service';
@@ -14,6 +13,7 @@ import { Events } from '../../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 @Component({
     selector: 'app-mnemonic-export',
@@ -22,7 +22,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 })
 export class MnemonicExportPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    
+
     public title = '';
     public payPassword: string = '';
     public masterWalletId: string = "1";
@@ -39,7 +39,7 @@ export class MnemonicExportPage implements OnInit {
         public walletManager: WalletManager,
         public zone: NgZone,
         private walletEditionService: WalletEditionService,
-        private intentService: IntentService,
+        private globalIntentService: GlobalIntentService,
         public native: Native,
         public events: Events,
         public appService: AppService,
@@ -104,7 +104,7 @@ export class MnemonicExportPage implements OnInit {
         } else {
             // User cancel
             console.log('MnemonicExportPage user cancel');
-            await this.intentService.sendIntentResponse(
+            await this.globalIntentService.sendIntentResponse(
                 { txid: null, status: 'cancelled' },
                 this.intentTransfer.intentId
             );
@@ -128,7 +128,7 @@ export class MnemonicExportPage implements OnInit {
     }
 
     async onShare() {
-        await this.intentService.sendIntentResponse(
+        await this.globalIntentService.sendIntentResponse(
             { mnemonic: this.mnemonicStr },
             this.intentTransfer.intentId
         );

@@ -13,6 +13,7 @@ import { Events } from '../../services/events.service';
 export type RawTransactionPublishResult = {
     published: boolean; // Whether the transaction was successfully published to the node/spvsdk or not
     txId?: string; // In case of successful publication, ID of the published transaction.
+    status?: string; // published, cancelled, error
 }
 
 /**

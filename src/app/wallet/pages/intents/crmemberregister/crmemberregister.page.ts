@@ -22,7 +22,6 @@
 
 import { Component, OnInit, NgZone } from '@angular/core';
 import { AppService } from '../../../services/app.service';
-import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -30,11 +29,10 @@ import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
 import { WalletAccount, WalletAccountType } from '../../../model/WalletAccount';
 import { StandardCoinName } from '../../../model/Coin';
-import { IntentService } from '../../../services/intent.service';
 import { AuthService } from '../../../services/auth.service';
 import BigNumber from 'bignumber.js';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-crmemberregister',
@@ -60,7 +58,7 @@ export class CRMemberRegisterPage implements OnInit {
 
     constructor(public walletManager: WalletManager,
                 public appService: AppService,
-                private intentService: IntentService,
+                private globalIntentService: GlobalIntentService,
                 public popupProvider: PopupProvider,
                 private coinTransferService: CoinTransferService,
                 private authService: AuthService,
@@ -126,7 +124,7 @@ export class CRMemberRegisterPage implements OnInit {
      * sending the intent response.
      */
     async cancelOperation() {
-        await this.intentService.sendIntentResponse(
+        await this.globalIntentService.sendIntentResponse(
             { txid: null, status: 'cancelled' },
             this.intentTransfer.intentId
         );
@@ -182,7 +180,8 @@ export class CRMemberRegisterPage implements OnInit {
                 '', payload, this.transfer.memo);
 
         let sourceSubwallet = this.masterWallet.getSubWallet(this.chainId);
-        await sourceSubwallet.signAndSendRawTransaction(this.transfer.rawTransaction, this.transfer);
+        const result = await sourceSubwallet.signAndSendRawTransaction(this.transfer.rawTransaction, this.transfer);
+        await this.globalIntentService.sendIntentResponse(result, this.transfer.intentId);
     }
 
     async createUnregisterCRTransaction() {

@@ -5,9 +5,8 @@ import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
-import { CoinTransferService, IntentTransfer } from '../../../services/cointransfer.service';
+import { CoinTransferService } from '../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../model/Coin';
-import { IntentService } from '../../../services/intent.service';
 import { CurrencyService } from '../../../services/currency.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UiService } from '../../../services/ui.service';
@@ -19,7 +18,6 @@ import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-waitforsync',
@@ -52,7 +50,6 @@ export class WaitForSyncPage implements OnInit {
         public native: Native,
         public events: Events,
         public zone: NgZone,
-        private intentService: IntentService,
         private coinTransferService: CoinTransferService,
         private walletManager: WalletManager,
         public popupProvider: PopupProvider,

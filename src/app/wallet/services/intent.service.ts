@@ -1,7 +1,7 @@
 import { Native } from './native.service';
 import { Util } from '../model/Util';
 import { StandardCoinName } from '../model/Coin';
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CoinService } from './coin.service';
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { WalletAccessService } from './walletaccess.service';
@@ -14,7 +14,6 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'
@@ -31,7 +30,7 @@ export class IntentService {
         private popupProvider: PopupProvider,
         private walletAccessService: WalletAccessService,
         private walletEditionService: WalletEditionService,
-        private intentService: GlobalIntentService,
+        private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService
     ) {
     }
@@ -44,7 +43,7 @@ export class IntentService {
     }
 
     addIntentListener() {
-        this.intentService.intentListener.subscribe((intent: EssentialsIntentPlugin.ReceivedIntent) => {
+        this.globalIntentService.intentListener.subscribe((intent: EssentialsIntentPlugin.ReceivedIntent) => {
             this.onReceiveIntent(intent);
         });
     }
@@ -60,7 +59,7 @@ export class IntentService {
                 this.native.setRootRouter('launcher');
                 // Should call sendIntentResponse?
             }  else {
-                await this.sendIntentResponse({message: 'No active master wallet!', status: 'error'}, intent.intentId);
+                await this.globalIntentService.sendIntentResponse({message: 'No active master wallet!', status: 'error'}, intent.intentId);
             }
             return false;
         }
@@ -93,7 +92,7 @@ export class IntentService {
     async handleTransactionIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         if (Util.isEmptyObject(intent.params)) {
             console.error('Invalid intent parameters received. No params.', intent.params);
-            await this.sendIntentResponse("Invalid intent parameters", intent.intentId);
+            await this.globalIntentService.sendIntentResponse("Invalid intent parameters", intent.intentId);
             return false;
         } else {
             this.coinTransferService.reset();
@@ -158,9 +157,9 @@ export class IntentService {
                 if (intentChainId) {
                     this.coinTransferService.chainId = intentChainId;
                 } else {
-                    await this.sendIntentResponse(
-                        'pay',
-                        { message: 'Not support Token:' + intent.params.currency, status: 'error' }
+                    await this.globalIntentService.sendIntentResponse(
+                        { message: 'Not support Token:' + intent.params.currency, status: 'error' },
+                        intent.intentId
                     );
 
                     return;
@@ -251,13 +250,6 @@ export class IntentService {
         ];
     }
 
-    sendIntentResponse(result, intentId): Promise<void> {
-        return new Promise((resolve) => {
-            essentialsIntent.sendIntentResponse(result, intentId);
-            resolve();
-        });
-    }
-
     /**
      * Intent that gets a CR proposal object as input and returns a HEX digest of it.
      * Usually used to create a digest representation of a proposal before signing it and/or
@@ -271,11 +263,11 @@ export class IntentService {
             let digest = await this.walletManager.spvBridge.proposalOwnerDigest(masterWalletID, StandardCoinName.ELA, intent.params.proposal);
 
             // This is a silent intent, app will close right after calling sendIntentresponse()
-            await this.sendIntentResponse({digest: digest}, intent.intentId);
+            await this.globalIntentService.sendIntentResponse({digest: digest}, intent.intentId);
         }
         else {
             // This is a silent intent, app will close right after calling sendIntentresponse()
-            await this.sendIntentResponse({message: "Missing proposal input parameter in the intent", status: 'error'}, intent.intentId);
+            await this.globalIntentService.sendIntentResponse({message: "Missing proposal input parameter in the intent", status: 'error'}, intent.intentId);
         }
     }
 

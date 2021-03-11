@@ -21,8 +21,7 @@
  */
 
 import { Injectable, NgZone } from '@angular/core';
-import { ToastController, LoadingController, NavController, PopoverController } from '@ionic/angular';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { LoadingController, NavController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { HelpComponent } from '../components/help/help.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -46,18 +45,6 @@ export class Native {
         private globalNative: GlobalNativeService,
         private globalNav: GlobalNavService
     ) {
-    }
-
-    public info(message) {
-        Logger.log(message, "Info");
-    }
-
-    public error(message) {
-        Logger.log(message, "Error");
-    }
-
-    public warnning(message) {
-        Logger.log(message, "Warnning");
     }
 
     public toast(msg: string = '操作完成', duration: number = 2000): void {
@@ -86,7 +73,7 @@ export class Native {
     }
 
     public openUrl(url: string) {
-        console.warn("openUrl(): Not implemented any more");
+      Logger.warn("wallet", "openUrl(): Not implemented any more");
     }
 
     public setRootRouter(page: any,  options: any = {}) {

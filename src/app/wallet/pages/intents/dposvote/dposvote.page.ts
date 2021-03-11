@@ -26,15 +26,15 @@ import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
-import { IntentService } from '../../../services/intent.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../../config/Config';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NavController } from '@ionic/angular';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-dposvote',
@@ -54,13 +54,13 @@ export class DPoSVotePage implements OnInit {
         public walletManager: WalletManager,
         public appService: AppService,
         public coinTransferService: CoinTransferService,
-        private intentService: IntentService,
         public native: Native,
         public zone: NgZone,
         public popupProvider: PopupProvider,
         public theme: GlobalThemeService,
         private translate: TranslateService,
-        private navCtrl: NavController
+        private navCtrl: NavController,
+        private globalIntentService: GlobalIntentService
     ) {
         this.init();
     }
@@ -104,7 +104,7 @@ export class DPoSVotePage implements OnInit {
      */
     async cancelOperation() {
         try {
-            await this.intentService.sendIntentResponse(
+            await this.globalIntentService.sendIntentResponse(
                 { txid: null, status: 'cancelled' },
                 this.intentTransfer.intentId);
         } catch (err) {
@@ -158,7 +158,8 @@ export class DPoSVotePage implements OnInit {
             intentId: this.intentTransfer.intentId,
         });
 
-        await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

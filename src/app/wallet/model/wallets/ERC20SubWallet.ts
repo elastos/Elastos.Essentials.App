@@ -301,11 +301,10 @@ export class ERC20SubWallet extends SubWallet {
             const password = await this.masterWallet.walletManager.openPayModal(transfer);
             if (!password) {
                 console.log("No password received. Cancelling");
-                await this.masterWallet.walletManager.sendIntentResponse(
-                    { txid: null, status: 'cancelled' },
-                    transfer.intentId);
                 resolve({
-                    published: false
+                    published: false,
+                    txId: null,
+                    status: 'cancelled'
                 });
                 return;
             }
@@ -345,14 +344,10 @@ export class ERC20SubWallet extends SubWallet {
                         status = 'error';
                     }
                     this.masterWallet.walletManager.native.hideLoading();
-                    console.log('Sending intent response', transfer.action, { txid: txId }, transfer.intentId);
-                    await this.masterWallet.walletManager.sendIntentResponse(
-                        { txid: txId, status },
-                        transfer.intentId);
-
                     resolve({
                         published: true,
-                        txId: txId
+                        txId: txId,
+                        status
                     });
                 }, 5000); // wait for 5s for txPublished
             } else {
@@ -363,6 +358,7 @@ export class ERC20SubWallet extends SubWallet {
 
                 resolve({
                     published: true,
+                    status: 'published',
                     txId: publishedTransaction.TxHash
                 });
             }

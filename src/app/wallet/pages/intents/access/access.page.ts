@@ -5,7 +5,6 @@ import { WalletManager } from '../../../services/wallet.service';
 import { WalletAccessService } from '../../../services/walletaccess.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { IntentService } from '../../../services/intent.service';
 import { StandardCoinName } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
@@ -14,8 +13,8 @@ import { IntentTransfer } from '../../../services/cointransfer.service';
 import { Router } from '@angular/router';
 import { Util } from '../../../model/Util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ClaimRequest = {
     name: string,
@@ -42,7 +41,7 @@ export class AccessPage implements OnInit {
 
     constructor(
         public appService: AppService,
-        private intentService: IntentService,
+        private globalIntentService: GlobalIntentService,
         public walletManager: WalletManager,
         public popupProvider: PopupProvider,
         public native: Native,
@@ -157,7 +156,7 @@ export class AccessPage implements OnInit {
      * sending the intent response.
      */
     async cancelOperation() {
-        await this.intentService.sendIntentResponse(
+        await this.globalIntentService.sendIntentResponse(
             { walletinfo: null, status: 'cancelled' },
             this.intentTransfer.intentId
         );
@@ -168,7 +167,7 @@ export class AccessPage implements OnInit {
             this.native.go('/mnemonic-export', { fromIntent: true });
         } else {
             const selectedClaim = this.buildDeliverableList();
-            await this.intentService.sendIntentResponse(
+            await this.globalIntentService.sendIntentResponse(
                     {walletinfo: selectedClaim}, this.intentTransfer.intentId);
         }
     }

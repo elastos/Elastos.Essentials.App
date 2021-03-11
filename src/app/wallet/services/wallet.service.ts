@@ -52,7 +52,6 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 class TransactionMapEntry {
     Code: number = null;
@@ -826,9 +825,5 @@ export class WalletManager {
         if (updatedByRPC) {
             await this.saveMasterWallet(masterWallet);
         }
-    }
-
-    sendIntentResponse(result, intentId): Promise<void> {
-        return essentialsIntent.sendIntentResponse(result, intentId);
     }
 }

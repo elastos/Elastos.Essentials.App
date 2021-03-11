@@ -19,6 +19,7 @@ import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 type EditableCoinInfo = {
     coin: Coin,
@@ -33,7 +34,7 @@ type EditableCoinInfo = {
 
 export class CoinListPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    
+
     masterWallet: MasterWallet = null;
     coinList: EditableCoinInfo[] = null;
     coinListCache = {};
@@ -117,7 +118,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async switchCoin(item: EditableCoinInfo, open: boolean) {
         item.isOpen = open;
-        this.native.info(item);
+        Logger.log('wallet', item);
 
         this.currentCoin = item;
         await this.native.showLoading();

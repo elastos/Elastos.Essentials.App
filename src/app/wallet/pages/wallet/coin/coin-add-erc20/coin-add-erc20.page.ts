@@ -12,13 +12,13 @@ import { PopupProvider } from '../../../../services/popup.service';
 import { CoinService } from '../../../../services/coin.service';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';
 import { Util } from '../../../../model/Util';
-import { IntentService } from '../../../../services/intent.service';
 import { Events } from '../../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -63,7 +63,7 @@ export class CoinAddERC20Page implements OnInit {
         private prefs: GlobalPreferencesService,
         private zone: NgZone,
         private router: Router,
-        private intentService: IntentService
+        private globalIntentService: GlobalIntentService,
     ) {
         this.masterWallet = this.walletManager.getMasterWallet(this.walletEditionService.modifiedMasterWalletId);
         this.walletname = this.walletManager.masterWallets[this.masterWallet.id].name;
@@ -204,7 +204,7 @@ export class CoinAddERC20Page implements OnInit {
 
              // Coin added - go back to the previous screen
             if (this.intentMode) {
-               /*  await this.intentService.sendIntentResponse(
+               /*  await this.globalIntentService.sendIntentResponse(
                     this.walletEditionService.intentTransfer.action,
                     { message: this.coinName + ' added successfully', status: 'success' },
                     this.walletEditionService.intentTransfer.intentId

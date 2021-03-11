@@ -6,12 +6,11 @@ import { StandardCoinName, CoinType } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
 import { AppService } from '../../../services/app.service';
-import { IntentService } from '../../../services/intent.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { Native } from '../../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-select-subwallet',
@@ -31,7 +30,7 @@ export class SelectSubwalletPage implements OnInit {
     public translate: TranslateService,
     public theme: GlobalThemeService,
     public currencyService: CurrencyService,
-    public intentService: IntentService,
+    private globalIntentService: GlobalIntentService,
     private native: Native
   ) { }
 
@@ -53,7 +52,7 @@ export class SelectSubwalletPage implements OnInit {
 
   async cancelOperation() {
     const intentParams = this.coinTransferService.intentTransfer;
-    await this.intentService.sendIntentResponse(
+    await this.globalIntentService.sendIntentResponse(
         { txid: null, status: 'cancelled' },
         intentParams.intentId
     );
