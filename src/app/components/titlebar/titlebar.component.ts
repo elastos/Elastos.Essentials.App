@@ -268,7 +268,7 @@ export class TitleBarComponent {
   }
 
   innerLeftIconClicked() {
-    if (this.navigationMode == TitleBarNavigationMode.BACK)
+    if (this.navigationMode == TitleBarNavigationMode.BACK || this.navigationMode == TitleBarNavigationMode.CLOSE)
       this.globalNav.navigateBack();
     else {
       this.listenableIconClicked(this.icons[TitleBarIconSlot.INNER_LEFT]);

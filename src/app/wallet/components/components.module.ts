@@ -4,13 +4,9 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
 import { TranslateModule } from '@ngx-translate/core';
-import { MyQrcodeComponent } from './my-qrcode/my-qrcode.component';
-import { PaymentboxComponent } from './paymentbox/paymentbox.component';
 
 @NgModule({
   declarations: [
-    MyQrcodeComponent,
-    PaymentboxComponent
   ],
   imports: [
     CommonModule,
@@ -20,11 +16,9 @@ import { PaymentboxComponent } from './paymentbox/paymentbox.component';
     TranslateModule,
   ],
   exports: [
-    MyQrcodeComponent,
-    PaymentboxComponent
   ],
   providers: [
   ],
-  entryComponents: [PaymentboxComponent],
+  entryComponents: [],
 })
 export class ComponentsModule { }

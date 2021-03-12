@@ -6,7 +6,6 @@ import { IonSlides, ModalController, IonInput } from '@ionic/angular';
 import { WalletManager } from '../../../../services/wallet.service';
 import { AuthService } from '../../../../services/auth.service';
 import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
-import { WalletCreatedComponent } from '../../../../components/wallet-created/wallet-created.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -143,8 +142,6 @@ export class MnemonicWritePage implements OnInit {
                             action: 'add',
                             walletId: this.walletCreationService.masterId
                         });
-
-                        // this.createWalletSuccess();
                     } else {
                         // Cancelled, do nothing
                     }
@@ -158,18 +155,6 @@ export class MnemonicWritePage implements OnInit {
             this.inputStr = "";
             this.native.toast(this.translate.instant("mnemonic-import-missing-words"));
         }
-    }
-
-    async createWalletSuccess() {
-        this.modal = await this.modalCtrl.create({
-          component: WalletCreatedComponent,
-          componentProps: {
-          },
-        });
-        this.modal.onWillDismiss().then(() => {
-            this.native.go('/wallet-home');
-        });
-        this.modal.present();
     }
 }
 

@@ -223,7 +223,7 @@
     class="pay-footer ion-no-border" [class.dark-pay-footer]="theme.darkMode"
     *ngIf="transferType === 3"
 >
-    <p *ngIf="amountIsSuffice()">{{ 'insufficient-balance' | translate }}</p>
+    <p *ngIf="valuesReady()">{{ 'insufficient-balance' | translate }}</p>
     <ion-row class="btn-row">
         <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
             <ion-label>{{ 'cancel' | translate }}</ion-label>

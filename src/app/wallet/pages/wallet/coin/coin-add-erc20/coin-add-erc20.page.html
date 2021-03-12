@@ -41,7 +41,7 @@
     </ion-grid>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="ion-no-border">
     <ion-button *ngIf="coinInfoFetched && !fetchingCoinInfo" color="primary" (click)="addCoin()">
         <ion-label>{{ 'coin-adderc20-add' | translate }}</ion-label>
     </ion-button>

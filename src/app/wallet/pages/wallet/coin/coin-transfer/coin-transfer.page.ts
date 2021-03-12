@@ -166,7 +166,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (showKey) {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
                 key: "contacts",
-                iconPath: "assets/wallet/icons/contacts.png"
+                iconPath: !this.theme.darkMode ? "assets/wallet/icons/contacts.png" : "assets/wallet/icons/darkmode/contacts.png"
             });
         } else {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
@@ -407,6 +407,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.sendMax || this.valuesReady()) {
             await this.startTransaction();
         }
+
+        // this.showSuccess();
     }
 
     // For revealing button
@@ -522,7 +524,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         this.native.popup = await this.native.popoverCtrl.create({
             mode: 'ios',
-            cssClass: 'wallet-txPopup',
+            cssClass: 'wallet-tx-component',
             component: TxConfirmComponent,
             componentProps: {
                 txInfo: txInfo
@@ -541,7 +543,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async showSuccess() {
         this.native.popup = await this.native.popoverCtrl.create({
             mode: 'ios',
-            cssClass: 'wallet-txPopup',
+            cssClass: 'wallet-tx-component',
             component: TxSuccessComponent,
         });
         this.native.popup.onWillDismiss().then(() => {
@@ -631,7 +633,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async showCryptonames() {
-        // TODO @chad this.appService.setBackKeyVisibility(false);
         this.setContactsKeyVisibility(false);
         this.setCryptonamesKeyVisibility(false);
         this.titleBar.setTitle('select-address');

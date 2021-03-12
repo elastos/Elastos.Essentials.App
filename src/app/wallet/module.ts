@@ -21,29 +21,22 @@
 */
 
 /****************** Angular ******************/
-import { NgModule, Injectable, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { QRCodeModule } from 'angularx-qrcode';
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 /****************** Ionic ******************/
-import { AlertController, IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
-/****************** Sentry ******************/
-import * as Sentry from "@sentry/browser";
-import { RewriteFrames } from '@sentry/integrations';
-
+/****************** Services ******************/
 import { Logger } from './model/Logger';
 import { ComponentsModule } from './components/components.module';
-
-/****************** Services ******************/
 import { LocalStorage } from './services/storage.service';
 import { Native } from './services/native.service';
 import { PopupProvider } from './services/popup.service';
@@ -88,7 +81,6 @@ import { WalletAdvancedImportPage } from './pages/wallet/wallet-advanced-import/
 import { SelectSubwalletPage } from './pages/intents/select-subwallet/select-subwallet.page';
 
 /****************** Components ******************/
-import { WalletCreatedComponent } from './components/wallet-created/wallet-created.component';
 import { TxConfirmComponent } from './components/tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from './components/tx-success/tx-success.component';
 import { HelpComponent } from './components/help/help.component';
@@ -141,7 +133,6 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
         CurrencySelectPage,
         WalletColorPage,
         SelectSubwalletPage,
-        WalletCreatedComponent,
         TxConfirmComponent,
         TxSuccessComponent,
         HelpComponent,
@@ -150,7 +141,6 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
     ],
     entryComponents: [
         LauncherPage,
-        WalletCreatedComponent,
         TxConfirmComponent,
         TxSuccessComponent,
         HelpComponent,

@@ -368,10 +368,29 @@
     .syncing-container {
         padding: 20px 30px;
 
+        ion-card-title {
+            font-weight: 700;
+            font-size: 22px;
+        }
+
+        ion-card-subtitle {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
         span {
             font-size: 13px;
             font-weight: 600;
             color: #20e3d2;
+        }
+    }
+}
+
+/********************** Send and Recharge Dark Footer **********************/
+.dark-footer {
+    .syncing-container {
+        ion-card-title {
+            color: white;
         }
     }
 }

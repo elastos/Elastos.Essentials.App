@@ -1,20 +1,3 @@
-<!-- <ion-content>
-  <ion-list class="ion-padding" [class.dark-container]="theme.darkMode">
-    <ion-item *ngFor="let contact of contactsService.contacts" (click)="selectContact(contact)">
-      <ion-label>{{ contact.cryptoname }}</ion-label>
-    </ion-item>
-  </ion-list>
-</ion-content>
-
-<ion-footer>
-    <ion-row class="btn-container">
-        <ion-button color="primary" (click)="modalCtrl.dismiss()">
-            <ion-label>{{ 'cancel' | translate}}</ion-label>
-        </ion-button>
-    </ion-row>
-</ion-footer>
- -->
-
 <ion-content>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-row class="main-title-row">
@@ -42,7 +25,7 @@
     </ion-grid>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="ion-no-border">
     <ion-row class="btn-container">
         <ion-button color="primary" (click)="modalCtrl.dismiss()">
             <ion-label>{{ 'cancel' | translate}}</ion-label>
