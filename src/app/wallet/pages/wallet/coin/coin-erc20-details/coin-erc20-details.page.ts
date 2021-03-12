@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Util } from '../../../../model/Util';
 import { Router } from '@angular/router';
 import { ERC20Coin, Coin } from '../../../../model/Coin';
-import { AppService } from '../../../../services/app.service';
 import { CoinService } from '../../../../services/coin.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
@@ -12,8 +11,9 @@ import { WalletManager } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 import { SubWallet } from '../../../../model/wallets/SubWallet';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-coin-erc20-details',
@@ -21,6 +21,7 @@ declare let essentialsIntent: EssentialsIntentPlugin.Intent;
   styleUrls: ['./coin-erc20-details.page.scss'],
 })
 export class CoinErc20DetailsPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private masterWallet: MasterWallet = null;
   private subWallet: SubWallet = null;
@@ -31,7 +32,6 @@ export class CoinErc20DetailsPage implements OnInit {
   public Util = Util;
 
   constructor(
-    private appService: AppService,
     public theme: GlobalThemeService,
     private native: Native,
     private translate: TranslateService,
@@ -39,7 +39,8 @@ export class CoinErc20DetailsPage implements OnInit {
     private coinService: CoinService,
     private popupProvider: PopupProvider,
     private walletManager: WalletManager,
-    private walletEditionService: WalletEditionService
+    private walletEditionService: WalletEditionService,
+    private globalIntentService: GlobalIntentService,
   ) { }
 
   ngOnInit() {
@@ -62,7 +63,7 @@ export class CoinErc20DetailsPage implements OnInit {
         }
 
         this.contractAddress = this.coin.getContractAddress();
-        this.appService.setTitleBarTitle(this.coin.getName());
+        this.titleBar.setTitle(this.coin.getName());
     }
   }
 
@@ -95,7 +96,7 @@ export class CoinErc20DetailsPage implements OnInit {
       "https://wallet.elastos.net/addcoin?contract=" +
       encodeURIComponent(this.contractAddress);
 
-    essentialsIntent.sendIntent("share", {
+    this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("share-erc20-token"),
       url: addCoinUrl,
     });

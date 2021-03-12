@@ -1,5 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
-import { AppService } from '../../../services/app.service';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -17,6 +16,7 @@ import { Events } from '../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 
 @Component({
@@ -25,6 +25,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
   styleUrls: ['./waitforsync.page.scss'],
 })
 export class WaitForSyncPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     Config = Config;
     SELA = Config.SELA;
@@ -48,7 +49,6 @@ export class WaitForSyncPage implements OnInit {
     private waitSubscription : Subscription = null;
 
     constructor(
-        public appService: AppService,
         public native: Native,
         public events: Events,
         public zone: NgZone,
@@ -76,7 +76,7 @@ export class WaitForSyncPage implements OnInit {
 
     ionViewWillEnter() {
         this.cancelByUser = false;
-        this.appService.setTitleBarTitle(this.translate.instant('waitforsync-syncing'));
+        this.titleBar.setTitle(this.translate.instant('waitforsync-syncing'));
         if (!this.rootPage) {
             // TODO @chad this.appService.setBackKeyVisibility(true);
         }

@@ -6,7 +6,6 @@ import { Util } from '../../../../model/Util';
 import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
-import { AppService } from '../../../../services/app.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../../services/events.service';
 import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
@@ -40,7 +39,6 @@ export class MnemonicCreatePage implements OnInit {
         public events: Events,
         public zone: NgZone,
         private walletCreationService: WalletCreationService,
-        private appService: AppService,
         private translate: TranslateService
     ) {
         native.showLoading().then(() => {

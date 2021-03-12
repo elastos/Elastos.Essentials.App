@@ -5,7 +5,6 @@ import { Config } from '../../../config/Config';
 import { ActivatedRoute } from '@angular/router';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletCreationService, NewWallet } from '../../../services/walletcreation.service';
-import { AppService } from '../../../services/app.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UiService } from '../../../services/ui.service';
 import { IonInput } from '@ionic/angular';
@@ -35,7 +34,6 @@ export class WalletCreatePage implements OnInit {
         private walletManager: WalletManager,
         public walletCreationService: WalletCreationService,
         public zone: NgZone,
-        private appService: AppService,
         public translate: TranslateService,
         public uiService: UiService
     ) {

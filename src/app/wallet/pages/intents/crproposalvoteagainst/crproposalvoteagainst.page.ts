@@ -21,7 +21,6 @@
  */
 
 import { Component, OnInit, NgZone } from '@angular/core';
-import { AppService } from '../../../services/app.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -48,7 +47,6 @@ export class CRProposalVoteAgainstPage implements OnInit {
     balance: string; // Balance in SELA
 
     constructor(public walletManager: WalletManager,
-                public appService: AppService,
                 private coinTransferService: CoinTransferService,
                 private globalIntentService: GlobalIntentService,
                 public native: Native,

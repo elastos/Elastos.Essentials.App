@@ -7,7 +7,6 @@ import { StandardSubWallet } from '../model/wallets/StandardSubWallet';
 import { Coin, StandardCoinName } from '../model/Coin';
 import { MainchainSubWallet } from '../model/wallets/MainchainSubWallet';
 import moment from "moment";
-import { AppService } from './app.service';
 import { WalletManager } from './wallet.service';
 import { CoinService } from './coin.service';
 import { PopupProvider } from './popup.service';
@@ -19,8 +18,8 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
 import { Interfaces, Hive } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let walletManager: WalletPlugin.WalletManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -41,12 +40,12 @@ export class BackupRestoreService {
   constructor(
     private http: HttpClient,
     private storage: LocalStorage,
-    private appService: AppService,
     private events: Events,
     private coinService: CoinService,
     private popup: PopupProvider,
     public translate: TranslateService,
-    private prefs: GlobalPreferencesService
+    private prefs: GlobalPreferencesService,
+    private globalIntentService: GlobalIntentService,
   ) {
   }
 
@@ -651,7 +650,7 @@ export class BackupRestoreService {
   public suggestUserToSetupVault(): Promise<void> {
    return new Promise((resolve)=>{
      Logger.log("wallet", "Asking hive manager dApp to configure a vault for current user.");
-     essentialsIntent.sendIntent("https://hive.elastos.net/setupvaultprompt", {});
+     this.globalIntentService.sendIntent("https://hive.elastos.net/setupvaultprompt", {});
    });
  }
 }

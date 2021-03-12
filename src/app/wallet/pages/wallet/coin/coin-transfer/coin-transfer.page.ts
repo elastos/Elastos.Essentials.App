@@ -23,7 +23,6 @@
 import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModalController } from '@ionic/angular';
-import { AppService, ScanType } from '../../../../services/app.service';
 import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
@@ -51,8 +50,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-coin-transfer',
@@ -111,7 +110,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     constructor(
         public route: ActivatedRoute,
         public walletManager: WalletManager,
-        public appService: AppService,
         public coinTransferService: CoinTransferService,
         public native: Native,
         public events: Events,
@@ -121,6 +119,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private translate: TranslateService,
         public currencyService: CurrencyService,
         private globalIntentService: GlobalIntentService,
+        private intentService: IntentService,
         public uiService: UiService,
         public keyboard: Keyboard,
         private contactsService: ContactsService,
@@ -199,7 +198,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             // For Recharge Transfer
             case TransferType.RECHARGE:
                 // Setup page display
-                this.appService.setTitleBarTitle(this.translate.instant("coin-transfer-recharge-title", {coinName: this.coinTransferService.subchainId}));
+                this.titleBar.setTitle(this.translate.instant("coin-transfer-recharge-title", {coinName: this.coinTransferService.subchainId}));
                 this.toSubWallet = this.masterWallet.getSubWallet(this.coinTransferService.subchainId);
 
                 // Setup params for recharge transaction
@@ -217,7 +216,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             case TransferType.WITHDRAW:
                 // Setup page display
-                this.appService.setTitleBarTitle(this.translate.instant("coin-transfer-withdraw-title", {coinName: this.chainId}));
+                this.titleBar.setTitle(this.translate.instant("coin-transfer-withdraw-title", {coinName: this.chainId}));
                 this.toSubWallet = this.masterWallet.getSubWallet(StandardCoinName.ELA);
 
                 // Setup params for withdraw transaction
@@ -230,7 +229,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             // For Send Transfer
             case TransferType.SEND:
-                this.appService.setTitleBarTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
+                this.titleBar.setTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
                 this.transaction = this.createSendTransaction;
 
                 if (this.chainId === StandardCoinName.ELA) {
@@ -246,7 +245,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             // For Pay Intent
             case TransferType.PAY:
-                this.appService.setTitleBarTitle(this.translate.instant("payment-title"));
+                this.titleBar.setTitle(this.translate.instant("payment-title"));
                 this.transaction = this.createSendTransaction;
 
                 console.log('Pay intent params', this.coinTransferService.payTransfer);
@@ -378,7 +377,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     goScan() {
-        this.appService.scan(ScanType.Address);
+        this.intentService.scan(ScanType.Address);
     }
 
     supportsMaxTransfer() {
@@ -635,7 +634,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // TODO @chad this.appService.setBackKeyVisibility(false);
         this.setContactsKeyVisibility(false);
         this.setCryptonamesKeyVisibility(false);
-        this.appService.setTitleBarTitle('select-address');
+        this.titleBar.setTitle('select-address');
 
         this.modal = await this.modalCtrl.create({
             component: ContactsComponent,
@@ -651,7 +650,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
             this.modal = null;
 
-            this.appService.setTitleBarTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
+            this.titleBar.setTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
             this.setContactsKeyVisibility(true);
             this.setCryptonamesKeyVisibility(true);
 
@@ -662,7 +661,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Intent response will return a contact's DID document under result.friends.document
     async openContacts() {
         console.log("Sending intent 'https://contact.elastos.net/pickfriend', requesting credentialType: 'elaAddress'");
-        let res = await essentialsIntent.sendIntent(
+        let res = await this.globalIntentService.sendIntent(
             "https://contact.elastos.net/pickfriend",
             {
               singleSelection: true,

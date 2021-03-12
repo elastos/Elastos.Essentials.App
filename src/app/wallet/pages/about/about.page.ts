@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { WalletManager } from '../../services/wallet.service';
-import { AppService } from '../../services/app.service';
 import { Native } from '../../services/native.service';
 
 @Component({
@@ -13,7 +12,6 @@ export class AboutPage implements OnInit {
     public spvVersion = "0";
     // public commitVersion = "v0.12";
     constructor(public walletManager: WalletManager,
-                public appService: AppService,
                 public native: Native) {
         this.init();
     }

@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AppService } from '../../services/app.service';
 import { Native } from '../../services/native.service';
 import { WalletCreationService } from '../../services/walletcreation.service';
 import { WalletManager } from '../../services/wallet.service';
@@ -9,7 +8,6 @@ import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/componen
 import { Router } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-launcher',
@@ -22,7 +20,6 @@ export class LauncherPage implements OnInit {
     public useBackNav = false;
 
     constructor(
-        private appService: AppService,
         public native: Native,
         private walletCreationService: WalletCreationService,
         private walletManager: WalletManager,

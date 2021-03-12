@@ -20,8 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone } from '@angular/core';
-import { AppService } from '../../../services/app.service';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -33,6 +32,7 @@ import { MainAndIDChainSubWallet } from '../../../model/wallets/MainAndIDChainSu
 import BigNumber from 'bignumber.js';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 
 @Component({
@@ -41,6 +41,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
     styleUrls: ['./didtransaction.page.scss'],
 })
 export class DidTransactionPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private masterWallet: MasterWallet;
     private sourceSubwallet: MainAndIDChainSubWallet;
@@ -51,7 +52,6 @@ export class DidTransactionPage implements OnInit {
 
     constructor(
         public walletManager: WalletManager,
-        public appService: AppService,
         public popupProvider: PopupProvider,
         private coinTransferService: CoinTransferService,
         private globalIntentService: GlobalIntentService,
@@ -67,7 +67,7 @@ export class DidTransactionPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("didtransaction-title"));
+        this.titleBar.setTitle(this.translate.instant("didtransaction-title"));
     }
 
     ionViewDidEnter() {

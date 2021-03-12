@@ -2,7 +2,6 @@ import { Injectable, NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { PopupProvider } from './popup.service';
-import { AppService } from './app.service';
 import { UiService } from './ui.service';
 import { Events } from './events.service';
 import { CoinService } from './coin.service';
@@ -28,7 +27,6 @@ export class WalletInitService {
     public zone: NgZone,
     public translate: TranslateService,
     private navService: NavService,
-    public appService: AppService,
     private currencyService: CurrencyService,
     public popupProvider: PopupProvider,
     public modalCtrl: ModalController,
@@ -44,7 +42,6 @@ export class WalletInitService {
       if (signedInIdentity) {
         Logger.log("Wallet", "Wallet service is initializing");
 
-        await this.appService.init();
         await this.coinService.init();
         await this.currencyService.init();
         await this.contactsService.init();

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CurrencyService } from '../../../services/currency.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AppService } from '../../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-currency-select',
@@ -10,19 +10,19 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   styleUrls: ['./currency-select.page.scss'],
 })
 export class CurrencySelectPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   constructor(
     public currencyService: CurrencyService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    private appService: AppService
   ) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.appService.setTitleBarTitle(this.translate.instant('select-currency-title'));
+    this.titleBar.setTitle(this.translate.instant('select-currency-title'));
   }
 
 }

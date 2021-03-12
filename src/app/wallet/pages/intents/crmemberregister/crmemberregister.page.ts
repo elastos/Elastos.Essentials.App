@@ -21,7 +21,6 @@
  */
 
 import { Component, OnInit, NgZone } from '@angular/core';
-import { AppService } from '../../../services/app.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -57,7 +56,6 @@ export class CRMemberRegisterPage implements OnInit {
     private depositAmount = new BigNumber(500000000000); // 5000 ELA
 
     constructor(public walletManager: WalletManager,
-                public appService: AppService,
                 private globalIntentService: GlobalIntentService,
                 public popupProvider: PopupProvider,
                 private coinTransferService: CoinTransferService,

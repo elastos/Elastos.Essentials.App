@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
 import { ActivatedRoute } from '@angular/router';
 import { WalletManager } from '../../../../services/wallet.service';
 import { SubWallet } from '../../../../model/wallets/SubWallet';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
-import { AppService } from '../../../../services/app.service';
 import { Util } from '../../../../model/Util';
 import { Config } from '../../../../config/Config';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,6 +12,7 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { UiService } from '../../../../services/ui.service';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-coin-select',
@@ -21,6 +21,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 })
 
 export class CoinSelectPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWallet: MasterWallet;
     // Available subwallets to transfer to
@@ -38,7 +39,6 @@ export class CoinSelectPage implements OnInit {
         private coinTransferService: CoinTransferService,
         public theme: GlobalThemeService,
         private translate: TranslateService,
-        private appService: AppService,
         public currencyService: CurrencyService,
         public uiService: UiService
     ) {
@@ -49,7 +49,7 @@ export class CoinSelectPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("coin-select-title"));
+        this.titleBar.setTitle(this.translate.instant("coin-select-title"));
     }
 
     init() {

@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WalletManager } from '../../../services/wallet.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { UiService } from '../../../services/ui.service';
 import { StandardCoinName, CoinType } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
-import { AppService } from '../../../services/app.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { Native } from '../../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 
 @Component({
@@ -18,12 +18,12 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
   styleUrls: ['./select-subwallet.page.scss'],
 })
 export class SelectSubwalletPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public CoinType = CoinType;
   public chainId: StandardCoinName;
 
   constructor(
-    public appService: AppService,
     public walletManager: WalletManager,
     public coinTransferService: CoinTransferService,
     public uiService: UiService,
@@ -40,7 +40,7 @@ export class SelectSubwalletPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.appService.setTitleBarTitle(this.translate.instant('select-subwallet'));
+    this.titleBar.setTitle(this.translate.instant('select-subwallet'));
     // TODO @chad this.appService.setBackKeyVisibility(false);
   }
 

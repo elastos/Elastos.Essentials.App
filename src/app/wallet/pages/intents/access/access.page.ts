@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../../services/app.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Config } from '../../../config/Config';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletAccessService } from '../../../services/walletaccess.service';
@@ -14,6 +13,7 @@ import { Router } from '@angular/router';
 import { Util } from '../../../model/Util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 
 type ClaimRequest = {
@@ -28,6 +28,7 @@ type ClaimRequest = {
     styleUrls: ['./access.page.scss'],
 })
 export class AccessPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public Config = Config;
     public intentTransfer: IntentTransfer;
@@ -40,7 +41,6 @@ export class AccessPage implements OnInit {
     private rootPage = false;
 
     constructor(
-        public appService: AppService,
         private globalIntentService: GlobalIntentService,
         public walletManager: WalletManager,
         public popupProvider: PopupProvider,
@@ -62,7 +62,7 @@ export class AccessPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant('access-title'));
+        this.titleBar.setTitle(this.translate.instant('access-title'));
         if (!this.rootPage) {
             // TODO @chad this.appService.setBackKeyVisibility(true);
         }

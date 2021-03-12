@@ -7,7 +7,6 @@ import { WalletManager } from '../../../../services/wallet.service';
 import { AuthService } from '../../../../services/auth.service';
 import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
 import { WalletCreatedComponent } from '../../../../components/wallet-created/wallet-created.component';
-import { AppService } from '../../../../services/app.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -45,7 +44,6 @@ export class MnemonicWritePage implements OnInit {
         private walletCreationService: WalletCreationService,
         public zone: NgZone,
         private modalCtrl: ModalController,
-        private appService: AppService,
         private translate: TranslateService
     ) {
         this.mnemonicStr = this.native.clone(this.walletCreationService.mnemonicStr);

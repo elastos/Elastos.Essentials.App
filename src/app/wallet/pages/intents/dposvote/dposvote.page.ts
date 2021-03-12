@@ -20,8 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone } from '@angular/core';
-import { AppService } from '../../../services/app.service';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -34,6 +33,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NavController } from '@ionic/angular';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 
 @Component({
@@ -42,6 +42,7 @@ import { Logger } from 'src/app/logger';
     styleUrls: ['./dposvote.page.scss'],
 })
 export class DPoSVotePage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private masterWalletId: string;
     private sourceSubwallet: MainchainSubWallet = null;
@@ -52,7 +53,6 @@ export class DPoSVotePage implements OnInit {
 
     constructor(
         public walletManager: WalletManager,
-        public appService: AppService,
         public coinTransferService: CoinTransferService,
         public native: Native,
         public zone: NgZone,
@@ -69,7 +69,7 @@ export class DPoSVotePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant('dposvote-title'));
+        this.titleBar.setTitle(this.translate.instant('dposvote-title'));
     }
 
     ionViewDidEnter() {

@@ -29,7 +29,6 @@ import { SPVWalletPluginBridge, SPVWalletMessage, TxPublishedResult, ETHSCEventT
 import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
 import { StandardCoinName, CoinType } from '../model/Coin';
 import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
-import { AppService } from './app.service';
 import { SubWallet, SerializedSubWallet } from '../model/wallets/SubWallet';
 import { InvalidVoteCandidatesHelper, InvalidCandidateForVote } from '../model/InvalidVoteCandidatesHelper';
 import { CoinService } from './coin.service';
@@ -101,7 +100,6 @@ export class WalletManager {
         public modalCtrl: ModalController,
         public translate: TranslateService,
         public localStorage: LocalStorage,
-        private appService: AppService,
         private coinService: CoinService,
         private authService: AuthService,
         public popupProvider: PopupProvider,

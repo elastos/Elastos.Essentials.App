@@ -9,7 +9,6 @@ import { MasterWallet } from '../../../../model/wallets/MasterWallet';
 import { Coin, CoinType } from '../../../../model/Coin';
 import { CoinService } from '../../../../services/coin.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
-import { AppService } from '../../../../services/app.service';
 import { Util } from '../../../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { UiService } from '../../../../services/ui.service';
@@ -60,7 +59,6 @@ export class CoinListPage implements OnInit, OnDestroy {
         public popupProvider: PopupProvider,
         private coinService: CoinService,
         private walletEditionService: WalletEditionService,
-        private appService: AppService,
         public native: Native,
         public localStorage: LocalStorage,
         public modalCtrl: ModalController,
@@ -97,7 +95,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("coin-list-title"));
+        this.titleBar.setTitle(this.translate.instant("coin-list-title"));
 
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
             key: "add-erc20-coin",

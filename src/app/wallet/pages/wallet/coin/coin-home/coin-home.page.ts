@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
@@ -29,7 +29,6 @@ import { Util } from '../../../../model/Util';
 import { WalletManager } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
-import { AppService } from '../../../../services/app.service';
 import { CoinTransferService, TransferType, Transfer } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { SubWallet } from '../../../../model/wallets/SubWallet';
@@ -39,11 +38,11 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { ERC20SubWallet } from '../../../../model/wallets/ERC20SubWallet';
 import { StandardSubWallet } from '../../../../model/wallets/StandardSubWallet';
 import { UiService } from '../../../../services/ui.service';
-import BigNumber from 'bignumber.js';
 import { LocalStorage } from '../../../../services/storage.service';
 import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-coin-home',
@@ -51,6 +50,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./coin-home.page.scss'],
 })
 export class CoinHomePage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWalletInfo = '';
     public masterWallet: MasterWallet = null;
@@ -84,7 +84,6 @@ export class CoinHomePage implements OnInit {
         public native: Native,
         public events: Events,
         public popupProvider: PopupProvider,
-        private appService: AppService,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         public uiService: UiService,
@@ -99,7 +98,7 @@ export class CoinHomePage implements OnInit {
         });
 
         this.coinTransferService.chainId = this.chainId;
-        this.appService.setTitleBarTitle(this.chainId);
+        this.titleBar.setTitle(this.chainId);
     }
 
     ionViewDidLeave() {

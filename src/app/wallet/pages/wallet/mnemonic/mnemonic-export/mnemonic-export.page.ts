@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppService } from '../../../../services/app.service';
 import { AuthService } from '../../../../services/auth.service';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
@@ -42,7 +41,6 @@ export class MnemonicExportPage implements OnInit {
         private globalIntentService: GlobalIntentService,
         public native: Native,
         public events: Events,
-        public appService: AppService,
         private authService: AuthService,
         public theme: GlobalThemeService,
         private translate: TranslateService,
@@ -52,7 +50,7 @@ export class MnemonicExportPage implements OnInit {
     }
 
     ngOnInit() {
-        this.appService.setTitleBarTitle(this.translate.instant('wallet-settings-backup-wallet'));
+        this.titleBar.setTitle(this.translate.instant('wallet-settings-backup-wallet'));
     }
 
     ionViewWillEnter() {
@@ -115,7 +113,7 @@ export class MnemonicExportPage implements OnInit {
         const ret = await this.walletManager.spvBridge.exportWalletWithMnemonic(this.masterWalletId, this.payPassword);
         this.titleBar.setBackgroundColor('#6B26C6');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        this.appService.setTitleBarTitle(this.translate.instant('mnemonic'));
+        this.titleBar.setTitle(this.translate.instant('mnemonic'));
 
         this.mnemonicStr = ret.toString();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/).filter(str => str.trim().length > 0);

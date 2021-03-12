@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
@@ -6,8 +6,8 @@ import { PopupProvider} from '../../../services/popup.service';
 import { Util } from '../../../model/Util';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
-import { AppService } from '../../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-wallet-password-reset',
@@ -15,6 +15,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./wallet-password-reset.page.scss'],
 })
 export class WalletPasswordResetPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private masterWalletId: string = '';
     public oldPayPassword: string = '';
@@ -33,13 +34,12 @@ export class WalletPasswordResetPage implements OnInit {
         private walletEditionService: WalletEditionService,
         public native: Native,
         public theme: GlobalThemeService,
-        private appService: AppService
     ) {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
     }
 
     ngOnInit() {
-        this.appService.setTitleBarTitle('Change Wallet Password');
+        this.titleBar.setTitle('Change Wallet Password');
     }
 
     async ionViewWillEnter() {

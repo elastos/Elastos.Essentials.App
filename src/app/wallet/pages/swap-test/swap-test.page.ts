@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { WalletManager } from '../../services/wallet.service';
-import { AppService } from '../../services/app.service';
 import { Native } from '../../services/native.service';
 import Web3 from 'web3';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
@@ -85,7 +84,6 @@ export class SwapTestPage implements OnInit {
     public status: string[] = [];
 
     constructor(public walletManager: WalletManager,
-        public appService: AppService,
         private coinTransferService: CoinTransferService,
         private translate: TranslateService,
         private storage: LocalStorage,

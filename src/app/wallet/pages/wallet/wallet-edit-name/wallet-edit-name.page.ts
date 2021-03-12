@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Util } from '../../../model/Util';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
@@ -6,10 +6,10 @@ import { ActivatedRoute } from '@angular/router';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
-import { AppService } from '../../../services/app.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-wallet-edit-name',
@@ -17,6 +17,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./wallet-edit-name.page.scss'],
 })
 export class WalletEditNamePage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public walletname: string = "";
     public masterWallet: MasterWallet = null;
@@ -28,7 +29,6 @@ export class WalletEditNamePage implements OnInit {
         public events: Events,
         private walletManager: WalletManager,
         private walletEditionService: WalletEditionService,
-        private appService: AppService,
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {
@@ -41,7 +41,7 @@ export class WalletEditNamePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("wallet-edit-name-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet-edit-name-title"));
     }
 
     modify() {

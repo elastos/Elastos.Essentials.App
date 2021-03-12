@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WalletManager } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
-import { AppService } from '../../../../services/app.service';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName, ERC20Coin } from '../../../../model/Coin';
 import { PopupProvider } from '../../../../services/popup.service';
@@ -20,7 +19,6 @@ import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/title
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-coin-add-erc20',
@@ -54,7 +52,6 @@ export class CoinAddERC20Page implements OnInit {
         public events: Events,
         private walletManager: WalletManager,
         private walletEditionService: WalletEditionService,
-        private appService: AppService,
         private coinService: CoinService,
         private erc20CoinService: ERC20CoinService,
         private translate: TranslateService,
@@ -83,7 +80,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("coin-adderc20-title"));
+        this.titleBar.setTitle(this.translate.instant("coin-adderc20-title"));
         if (this.rootPage) {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
                 key: "backToHome",
@@ -107,7 +104,7 @@ export class CoinAddERC20Page implements OnInit {
      * Opens the scanner to get the coin address
      */
     async scanCoinAddress() {
-        let res: { result: { scannedContent: string }} = await essentialsIntent.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+        let res: { result: { scannedContent: string }} = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
         if (res && res.result && res.result.scannedContent) {
             this.coinAddress = res.result.scannedContent;
             console.log('Got scanned content:', this.coinAddress);

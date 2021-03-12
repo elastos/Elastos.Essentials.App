@@ -3,7 +3,6 @@ import { WalletManager } from './wallet.service';
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'

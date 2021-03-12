@@ -1,11 +1,11 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet, Theme } from '../../../model/wallets/MasterWallet';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
 import { Native } from '../../../services/native.service';
-import { AppService } from '../../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-wallet-color',
@@ -13,6 +13,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
   styleUrls: ['./wallet-color.page.scss'],
 })
 export class WalletColorPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public masterWallet: MasterWallet = null;
   public walletTheme: Theme = {
@@ -58,7 +59,6 @@ export class WalletColorPage implements OnInit {
     private walletEditionService: WalletEditionService,
     public native: Native,
     public ngZone: NgZone,
-    private appService: AppService
   ) { }
 
   ngOnInit() {
@@ -67,7 +67,7 @@ export class WalletColorPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.appService.setTitleBarTitle(this.translate.instant("change-wallet-theme-title"));
+    this.titleBar.setTitle(this.translate.instant("change-wallet-theme-title"));
   }
 
   getTheme() {

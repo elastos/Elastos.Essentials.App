@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocalStorage } from '../../../services/storage.service';
 import { PopupProvider } from "../../../services/popup.service";
 import { WalletManager } from '../../../services/wallet.service';
@@ -6,7 +6,6 @@ import { Native } from '../../../services/native.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Util } from '../../../model/Util';
 import { Config } from '../../../config/Config';
-import { AppService } from '../../../services/app.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,6 +13,7 @@ import { CurrencyService } from '../../../services/currency.service';
 import { AuthService } from '../../../services/auth.service';
 import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-wallet-settings',
@@ -21,6 +21,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./wallet-settings.page.scss'],
 })
 export class WalletSettingsPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWallet: MasterWallet;
 
@@ -107,7 +108,6 @@ export class WalletSettingsPage implements OnInit {
         public native: Native,
         private translate: TranslateService,
         private walletEditionService: WalletEditionService,
-        private appService: AppService,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         private authService: AuthService,
@@ -125,7 +125,7 @@ export class WalletSettingsPage implements OnInit {
         // Update walletName when modify name
         this.walletName = this.walletManager.masterWallets[this.masterWalletId].name;
 
-        this.appService.setTitleBarTitle("wallet-settings-title");
+        this.titleBar.setTitle(this.translate.instant("wallet-settings-title"));
     }
 
     async getPassword() {

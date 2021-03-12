@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WalletManager } from '../../../services/wallet.service';
 import { Native } from '../../../services/native.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { WalletEditionService } from '../../../services/walletedition.service';
-import { AppService } from '../../../services/app.service';
 import { Util } from '../../../model/Util';
 import { Config } from '../../../config/Config';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,8 +11,8 @@ import { Router } from '@angular/router';
 import { CurrencyService } from '../../../services/currency.service';
 import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-wallet-manager',
@@ -21,6 +20,7 @@ declare let essentialsIntent: EssentialsIntentPlugin.Intent;
     styleUrls: ['./wallet-manager.page.scss'],
 })
 export class WalletManagerPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public Util = Util;
     public SELA = Config.SELA;
@@ -33,7 +33,6 @@ export class WalletManagerPage implements OnInit {
         public events: Events,
         public native: Native,
         public router: Router,
-        private appService: AppService,
         public theme: GlobalThemeService,
         private walletEditionService: WalletEditionService,
         public walletManager: WalletManager,
@@ -55,8 +54,8 @@ export class WalletManagerPage implements OnInit {
 
     ionViewWillEnter() {
         this.forIntent ?
-            this.appService.setTitleBarTitle(this.translate.instant('intent-select-wallet')) :
-            this.appService.setTitleBarTitle(this.translate.instant('settings-my-wallets'));
+            this.titleBar.setTitle(this.translate.instant('intent-select-wallet')) :
+            this.titleBar.setTitle(this.translate.instant('settings-my-wallets'));
     }
 
     walletSelected(masterWallet: MasterWallet) {

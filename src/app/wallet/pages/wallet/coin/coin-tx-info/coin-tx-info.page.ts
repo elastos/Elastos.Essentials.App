@@ -6,7 +6,6 @@ import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
 import { WalletManager } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
-import { AppService } from '../../../../services/app.service';
 import { StandardCoinName } from '../../../../model/Coin';
 import { TransactionDirection, TransactionType, TransactionInfo, Transaction, EthTransaction } from '../../../../model/Transaction';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,7 +33,7 @@ class TransactionDetail {
 })
 export class CoinTxInfoPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    
+
     // General Values
     private masterWallet: MasterWallet = null;
     public chainId: string = '';
@@ -74,7 +73,6 @@ export class CoinTxInfoPage implements OnInit {
         public router: Router,
         public walletManager: WalletManager,
         public native: Native,
-        private appService: AppService,
         private coinService: CoinService,
         private erc20CoinService: ERC20CoinService,
         public jsonRPCService: JsonRPCService,
@@ -88,7 +86,7 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("tx-info-title"));
+        this.titleBar.setTitle(this.translate.instant("tx-info-title"));
     }
 
     ionViewDidLeave() {

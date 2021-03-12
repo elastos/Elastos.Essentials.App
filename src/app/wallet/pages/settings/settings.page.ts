@@ -20,13 +20,12 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../services/app.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Util } from '../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Native } from '../../services/native.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-settings',
@@ -34,6 +33,7 @@ import { Native } from '../../services/native.service';
     styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWalletId: string = "1";
     public masterWalletType: string = "";
@@ -74,7 +74,6 @@ export class SettingsPage implements OnInit {
     public Util = Util;
 
     constructor(
-        private appService: AppService,
         public theme: GlobalThemeService,
         private translate: TranslateService,
         private native: Native
@@ -85,7 +84,7 @@ export class SettingsPage implements OnInit {
     }
 
     ionViewWillEnter() {
-      this.appService.setTitleBarTitle(this.translate.instant("settings-title"));
+      this.titleBar.setTitle(this.translate.instant("settings-title"));
     }
 
     go(item) {

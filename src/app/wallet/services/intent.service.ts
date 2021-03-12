@@ -14,6 +14,12 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 
+export enum ScanType {
+  Address     = 1,
+  Publickey   = 2,
+  PrivateKey  = 3,
+}
+
 
 @Injectable({
     providedIn: 'root'
@@ -182,7 +188,7 @@ export class IntentService {
                 break;
 
             default:
-                Logger.log("wallet", 'AppService unknown intent:', intent);
+                Logger.log("wallet", 'IntentService unknown intent:', intent);
                 return;
         }
         if (this.walletList.length === 1) {
@@ -300,5 +306,29 @@ export class IntentService {
                 break;
         }
         return chainID;
+    }
+
+    async scan(type: ScanType) {
+      let res = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+      let content: string = res.result.scannedContent;
+
+      // Some address star with "xxx:", eg "etherum:"
+      const index = content.indexOf(':');
+      if (index !== -1) {
+          content = content.substring(index + 1);
+      }
+      Logger.log('Wallet', 'Got scan result:', content);
+
+      switch (type) {
+          case ScanType.Address:
+              this.events.publish('address:update', content);
+              break;
+          case ScanType.Publickey:
+              this.events.publish('publickey:update', content);
+              break;
+          case ScanType.PrivateKey:
+              this.events.publish('privatekey:update', content);
+              break;
+      }
     }
 }

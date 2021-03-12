@@ -21,7 +21,6 @@
  */
 
 import { Component, OnInit, NgZone } from '@angular/core';
-import { AppService } from '../../../services/app.service';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -48,7 +47,6 @@ export class CRmembervotePage implements OnInit {
     voteBalanceELA = 0; // ELA
 
     constructor(public walletManager: WalletManager,
-                public appService: AppService,
                 private coinTransferService: CoinTransferService,
                 private globalIntentService: GlobalIntentService,
                 public native: Native,

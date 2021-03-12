@@ -20,8 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone } from '@angular/core';
-import { AppService } from '../../../services/app.service';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -34,6 +33,7 @@ import BigNumber from "bignumber.js";
 import { UiService } from '../../../services/ui.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 
 @Component({
@@ -42,6 +42,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
     styleUrls: ['./esctransaction.page.scss'],
 })
 export class EscTransactionPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private masterWallet: MasterWallet = null;
     private ethSidechainSubWallet: SubWallet = null;
@@ -53,7 +54,6 @@ export class EscTransactionPage implements OnInit {
 
     constructor(
         public walletManager: WalletManager,
-        public appService: AppService,
         public popupProvider: PopupProvider,
         private coinTransferService: CoinTransferService,
         private globalIntentService: GlobalIntentService,
@@ -70,7 +70,7 @@ export class EscTransactionPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        // TODO @chad this.appService.setTitleBarTitle(this.translate.instant('esctransaction-title'));
+        this.titleBar.setTitle(this.translate.instant('esctransaction-title'));
     }
 
     ionViewDidEnter() {

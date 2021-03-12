@@ -21,7 +21,6 @@
  */
 
 import { Component, OnInit, ViewChild, OnDestroy, NgZone } from '@angular/core';
-import { AppService } from '../../../services/app.service';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -46,7 +45,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
     selector: 'app-wallet-home',
@@ -82,7 +80,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     constructor(
         private events: Events,
         public native: Native,
-        public appService: AppService,
         public popupProvider: PopupProvider,
         public walletManager: WalletManager,
         private walletEditionService: WalletEditionService,
@@ -95,6 +92,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private backupService: BackupRestoreService,
         private storage: LocalStorage,
     ) {
+      Logger.log('TEST', 'Homepage constructor:', this)
     }
 
     ngOnInit() {
@@ -140,7 +138,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("wallet-home-title"));
+        Logger.log('TEST', 'Homepage ionViewWillEnter:', this)
+        this.titleBar.setTitle(this.translate.instant("wallet-home-title"));
         this.titleBar.setNavigationMode(null);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
             key: "settings",

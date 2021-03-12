@@ -1,15 +1,15 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { WalletManager } from '../../../../services/wallet.service';
 import { Native } from '../../../../services/native.service';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
-import { AppService } from '../../../../services/app.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
 import { StandardCoinName } from '../../../../model/Coin';
 import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-coin-receive',
@@ -17,6 +17,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./coin-receive.page.scss'],
 })
 export class CoinReceivePage implements OnInit, OnDestroy {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWallet: MasterWallet = null;
     private masterWalletId = '1';
@@ -34,7 +35,6 @@ export class CoinReceivePage implements OnInit, OnDestroy {
         private coinTransferService: CoinTransferService,
         public theme: GlobalThemeService,
         private translate: TranslateService,
-        private appService: AppService
     ) {
     }
 
@@ -43,7 +43,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("coin-receive-title", { coinName: this.chainId}));
+        this.titleBar.setTitle(this.translate.instant("coin-receive-title", { coinName: this.chainId}));
     }
 
     ngOnDestroy() {

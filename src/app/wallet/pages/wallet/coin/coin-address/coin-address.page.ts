@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
 import { WalletManager } from '../../../../services/wallet.service';
-import { AppService } from '../../../../services/app.service';
 import { Util } from '../../../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { Events } from '../../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-coin-address',
@@ -16,6 +16,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 })
 
 export class CoinAddressPage {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     addressList = [];
     public masterWalletId: string;
@@ -24,7 +25,6 @@ export class CoinAddressPage {
 
     constructor(
         public walletManager: WalletManager,
-        private appService: AppService,
         public native: Native,
         private navCtrl: NavController,
         public router: Router,
@@ -46,7 +46,7 @@ export class CoinAddressPage {
     }
 
     ionViewWillEnter() {
-        this.appService.setTitleBarTitle(this.translate.instant("select-address"));
+        this.titleBar.setTitle(this.translate.instant("select-address"));
     }
 
     async getAddressList(infiniteScroll: any) {
