@@ -4,12 +4,10 @@ import { Platform, ModalController, NavController } from '@ionic/angular';
 import { DIDService } from './did.service';
 import { Events } from './events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 enum MessageType {
     INTERNAL = 1,
@@ -36,13 +34,16 @@ export class UXService {
         private didService: DIDService,
         private modalCtrl: ModalController,
         private navCtrl: NavController,
-        private essentialsIntent: TemporaryAppManagerPlugin
+        private globalIntentService: GlobalIntentService
     ) {
         UXService.instance = this;
+        Logger.log('TEST', 'UXService :', this)
     }
 
     async init() {
-        this.essentialsIntent.setListener(this.onReceive);
+        this.globalIntentService.intentListener.subscribe((intent)=>{
+          this.onReceive(intent);
+      });
 
 
    /*      this.titleBar.addOnItemClickedListener((icon) => {
@@ -50,28 +51,6 @@ export class UXService {
                 this.navCtrl.navigateForward('/identity/settings');
             }
         }); */
-    }
-
-    setTitleBarBackKeyShown(show: boolean) {
-        if (show) {
-            this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-        }
-        else {
-            this.titleBar.setNavigationMode(null);
-        }
-
-    }
-
-    setTitleBarSettingsKeyShown(show: boolean) {
-        if (show) {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-                key: "settings",
-                iconPath: BuiltInIcon.SETTINGS
-            });
-        }
-        else {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-        }
     }
 
     /**
@@ -192,6 +171,6 @@ export class UXService {
     }
 
     public sendIntentResponse(action, result, intentId): Promise<void> {
-        return essentialsIntent.sendIntentResponse(result, intentId);
+        return this.globalIntentService.sendIntentResponse(result, intentId);
     }
 }

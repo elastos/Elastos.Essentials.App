@@ -4,8 +4,8 @@ import { ModalController, NavParams, IonInput } from '@ionic/angular';
 import { Native } from '../../services/native';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'showqrcode',
@@ -21,7 +21,8 @@ export class ShowQRCodeComponent implements OnInit {
     public native: Native,
     private navParams: NavParams,
     public theme: GlobalThemeService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private globalIntentService: GlobalIntentService
   ) {
     this.didString = navParams.get("didstring");
     this.qrCodeString = navParams.get("qrcodestring");
@@ -40,7 +41,7 @@ export class ShowQRCodeComponent implements OnInit {
   }
 
   shareInvitationLink() {
-    essentialsIntent.sendIntent("share", {
+    this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: this.qrCodeString
     });

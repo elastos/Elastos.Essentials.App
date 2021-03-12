@@ -22,9 +22,9 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type RequestDapp = {
   appPackageId: string,
@@ -139,14 +139,13 @@ export class CredentialAccessRequestPage {
     public theme: ThemeService,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
-    private essentialsIntent: TemporaryAppManagerPlugin,
+    private globalIntentService: GlobalIntentService,
     private intentService: IntentReceiverService
   ) {
   }
 
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
-    this.uxService.setTitleBarBackKeyShown(false);
     this.titleBar.setTitle(' ');
 
     this.mandatoryItems = [];
@@ -175,7 +174,7 @@ export class CredentialAccessRequestPage {
   }
 
   ionViewWillLeave() {
-    this.uxService.setTitleBarBackKeyShown(false);
+    this.titleBar.setNavigationMode(null);
   }
 
   getRequestedTheme(): Promise<void> {
@@ -194,7 +193,7 @@ export class CredentialAccessRequestPage {
       }
 
       /* TODO
-      essentialsIntent.getAppInfo(this.requestDapp.appPackageId, (appInfo) => {
+      this.globalIntentService.getAppInfo(this.requestDapp.appPackageId, (appInfo) => {
         this.requestDappInfo = appInfo;
         this.requestDappName = appInfo.name;
         this.requestDappIcon = appInfo.icons[0].src;
@@ -401,7 +400,7 @@ export class CredentialAccessRequestPage {
           text: this.translate.instant('credaccess-alert-publish-required-btn'),
           handler: () => {
             this.zone.run(() => {
-              essentialsIntent.sendIntentResponse(
+              this.globalIntentService.sendIntentResponse(
                 { jwt: null },
                 this.receivedIntent.intentId
               );

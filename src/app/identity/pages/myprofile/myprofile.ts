@@ -30,8 +30,8 @@ import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { Logger } from "src/app/logger";
 import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalIntentService } from "src/app/services/global.intent.service";
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -98,7 +98,8 @@ export class MyProfilePage {
     public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private globalIntentService: GlobalIntentService
   ) {
     this.init();
   }
@@ -598,7 +599,7 @@ export class MyProfilePage {
     Logger.log("identity", "Claims object: ")
     Logger.log("identity", claimsObject)
 
-    essentialsIntent.sendIntent("https://did.elastos.net/credverify", {
+    this.globalIntentService.sendIntent("https://did.elastos.net/credverify", {
       claims: claimsObject
     });
   }

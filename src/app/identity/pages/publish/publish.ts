@@ -19,6 +19,7 @@ import { BasicCredentialsService } from "../../services/basiccredentials.service
 import { Events } from "../../services/events.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 
 type CredentialDisplayEntry = {
     credential: DIDPlugin.VerifiableCredential;
@@ -62,7 +63,7 @@ export class PublishPage {
             });
         });
 
-
+        console.log('----PublishPage ngOnInit')
 
         this._publishableCredentials = [];
         this.profileService.visibleCredentials.forEach(val => this._publishableCredentials.push(Object.assign({}, val)));
@@ -108,7 +109,7 @@ export class PublishPage {
 
     ionViewWillEnter() {
 
-        this.uxService.setTitleBarBackKeyShown(true);
+        this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
     }
 
     ionViewDidEnter() {
@@ -116,7 +117,7 @@ export class PublishPage {
     }
 
     ionViewWillLeave() {
-        this.uxService.setTitleBarBackKeyShown(false);
+        this.titleBar.setNavigationMode(null);
     }
 
     getDisplayableCredentialTitle(entry: CredentialDisplayEntry): string {

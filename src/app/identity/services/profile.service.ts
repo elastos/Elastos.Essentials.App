@@ -14,9 +14,9 @@ import { Events } from "./events.service";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
 import { Logger } from "src/app/logger";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
 var deepEqual = require('deep-equal');
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -105,7 +105,7 @@ export class ProfileService {
     private didSyncService: DIDSyncService,
     private translate: TranslateService,
     private basicCredentialService: BasicCredentialsService,
-    private essentialsIntent: TemporaryAppManagerPlugin,
+    private globalIntentService: GlobalIntentService,
     private contactNotifier: ContactNotifierService
   ) { }
 
@@ -195,7 +195,7 @@ export class ProfileService {
     //   this.options.dismiss();
     // }
 
-    essentialsIntent.sendIntent("share", {
+    this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: await this.getAddFriendShareableUrl(),
     });
@@ -366,6 +366,7 @@ export class ProfileService {
   }
 
   publish() {
+    console.log('----go /identity/publish')
     this.native.go("/identity/publish");
   }
 

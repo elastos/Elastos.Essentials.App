@@ -31,7 +31,7 @@ import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { TitleBarIconSlot } from "src/app/components/titlebar/titlebar.types";
+import { TitleBarIconSlot, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 
 @Component({
   selector: "page-editprofile",
@@ -96,10 +96,10 @@ export class EditProfilePage {
   ionViewWillEnter() {
     this.uxService.makeAppVisible();
 
-    //titleBarManager.setTitle(this.translate.instant("edit-profile"));
+    this.titleBar.setTitle(this.translate.instant("edit-profile"));
 
     this.showMenu();
-    this.uxService.setTitleBarBackKeyShown(true);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
 
     console.log(this.profile);
   }
@@ -110,7 +110,7 @@ export class EditProfilePage {
       this.next(false);
     }
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-    this.uxService.setTitleBarBackKeyShown(false);
+    this.titleBar.setNavigationMode(null);
   }
 
   onVisibilityChange(e, entry: BasicCredentialEntry) {

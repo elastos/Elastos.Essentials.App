@@ -26,8 +26,8 @@ import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -107,7 +107,7 @@ export class CredentialDetailsPage {
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
     private basicCredentialService: BasicCredentialsService,
-    private essentialsIntent: TemporaryAppManagerPlugin
+    private globalIntentService: GlobalIntentService
   ) {
     this.init();
   }
@@ -181,14 +181,13 @@ export class CredentialDetailsPage {
 
   ionViewWillEnter() {
     this.uxService.makeAppVisible();
-    this.uxService.setTitleBarBackKeyShown(true);
     this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
 
     this.getIssuer();
 
   }
   ionViewWillLeave() {
-    this.uxService.setTitleBarBackKeyShown(false);
+    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {
@@ -562,7 +561,7 @@ export class CredentialDetailsPage {
 
     claimsObject[fragment] = localValue;
 
-    essentialsIntent.sendIntent(
+    this.globalIntentService.sendIntent(
       "https://did.elastos.net/credverify",
       {
         claims: claimsObject,

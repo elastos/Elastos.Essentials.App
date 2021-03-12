@@ -3,10 +3,10 @@ import { NavController } from '@ionic/angular';
 
 import { area } from '../../../../assets/identity/area/area';
 import { TranslateService } from '@ngx-translate/core';
-import { UXService } from '../../services/ux.service';
 import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'page-countrypicker',
@@ -23,7 +23,6 @@ export class CountryPickerPage {
             public events: Events,
             private navCtrl: NavController,
             private translate: TranslateService,
-            private uxService: UXService,
             public theme: GlobalThemeService
   ) {
     this.areaList = area;
@@ -32,11 +31,11 @@ export class CountryPickerPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('country'));
-    this.uxService.setTitleBarBackKeyShown(true);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
   }
 
   ionViewWillLeave() {
-    this.uxService.setTitleBarBackKeyShown(false);
+    this.titleBar.setNavigationMode(null);
   }
 
   selectItem(item) {
