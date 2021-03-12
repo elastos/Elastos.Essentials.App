@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -8,6 +8,7 @@ import { AppService } from '../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-pickplan',
@@ -15,16 +16,16 @@ import { Logger } from 'src/app/logger';
   styleUrls: ['./pickplan.page.scss'],
 })
 export class PickPlanPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
+
   public fetchingPlans = true;
   public pricingInfo: HivePlugin.Payment.PricingInfo = null;
 
   constructor(
     public navCtrl: NavController,
     public zone: NgZone,
-    private storage: GlobalStorageService,
     private hiveService: HiveService,
     private route: ActivatedRoute,
-    private appService: AppService,
     public theme: GlobalThemeService,
     private translate: TranslateService,
   ) {}
@@ -36,19 +37,11 @@ export class PickPlanPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    // TODO @chad titleBarManager.setTitle(this.translate.instant('pickplan.title'));
+    this.titleBar.setTitle(this.translate.instant('pickplan.title'));
 
     await this.tryToFinalizePreviousOrders();
     await this.fetchPlans();
   }
-
-  /* TODO @chad ionViewDidEnter(){
-    this.uxService.setTitleBarBackKeyShown(true);
-  }
-
-  ionViewWillLeave() {
-    this.uxService.setTitleBarBackKeyShown(false);
-  }*/
 
   private async tryToFinalizePreviousOrders() {
     this.hiveService.tryToFinalizePreviousOrders();

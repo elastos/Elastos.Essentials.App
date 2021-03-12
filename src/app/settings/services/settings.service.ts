@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +12,7 @@ export class SettingsService {
   constructor(
     private sanitizer: DomSanitizer,
     private essentialsIntent: TemporaryAppManagerPlugin,
-    private nav: GlobalNavService
+    private native: GlobalNativeService
   ) { }
 
   async init() {
@@ -25,7 +24,7 @@ export class SettingsService {
   }
 
   display_err(err) {
-    // TODO @chad essentialsIntent.alertPrompt("Error", err);
+    this.native.genericAlert(err);
   }
 
   getRuntimeVersion() {

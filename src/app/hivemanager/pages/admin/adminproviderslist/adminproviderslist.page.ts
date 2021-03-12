@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
 import * as moment from 'moment';
@@ -6,6 +6,9 @@ import * as moment from 'moment';
 import { AdminService } from '../../../services/admin.service';
 import { ManagedProvider } from '../../../model/managedprovider';
 import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 type StorageProvider = {
   name: string,
@@ -18,61 +21,41 @@ type StorageProvider = {
   styleUrls: ['./adminproviderslist.page.scss'],
 })
 export class AdminProvidersListPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public managedProviders: ManagedProvider[] = [];
-  // TODO @chad private titleBarIconClickedListener: (icon: TitleBarPlugin.TitleBarIcon | TitleBarPlugin.TitleBarMenuItem)=>void;
 
   constructor(
     public navCtrl: NavController,
     public zone: NgZone,
     private adminService: AdminService,
     private translate: TranslateService,
+    private nav: GlobalNavService
   ) {}
 
   async ngOnInit() {
   }
 
   async ionViewWillEnter() {
-    // Update system status bar every time we re-enter this screen.
-    /* TODO @chad
-    titleBarManager.setTitle(this.translate.instant('adminproviderlist.title'));
 
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-      key: "adminproviderslist-back",
-      iconPath: TitleBarPlugin.BuiltInIcon.BACK
-    });
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+    this.titleBar.setTitle(this.translate.instant('adminproviderlist.title'));
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "adminproviderslist-addprovider",
-      iconPath: TitleBarPlugin.BuiltInIcon.ADD
+      iconPath: BuiltInIcon.ADD
     });
 
-    this.titleBarIconClickedListener = (clickedIcon) => {
-      switch (clickedIcon.key) {
-        case "adminproviderslist-back":
-          this.navCtrl.back();
-          break;
+    this.titleBar.addOnItemClickedListener((icon: TitleBarIcon) => {
+      switch (icon.key) {
         case "adminproviderslist-addprovider":
-          this.navCtrl.navigateForward("adminprovideredit");
+          this.nav.navigateTo(App.HIVE_MANAGER, "adminprovideredit");
           break;
       }
-    }
-    titleBarManager.addOnItemClickedListener(this.titleBarIconClickedListener);
-*/
+    });
+
     this.managedProviders = await this.adminService.getManagedProviders();
   }
 
-  /* TODO @chad ionViewWillLeave() {
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-
-    titleBarManager.removeOnItemClickedListener(this.titleBarIconClickedListener);
-  }*/
-
   async editProvider(provider: ManagedProvider) {
-    this.navCtrl.navigateForward("adminprovideredit", {
-      queryParams: {
-        providerId: provider.id
-      }
-    });
+    this.nav.navigateTo(App.HIVE_MANAGER, "adminprovideredit", { providerId: provider.id })
   }
 }

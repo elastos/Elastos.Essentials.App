@@ -1,12 +1,8 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { StorageService } from './storage.service';
-import { ThemeService } from './theme.service';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 @Injectable({
     providedIn: 'root'
@@ -18,12 +14,8 @@ export class AppService {
 
     constructor(
         private navController: NavController,
-        private storage: StorageService,
-        private zone: NgZone,
-        private theme: ThemeService,
-        private translate: TranslateService,
-        private prefs: GlobalPreferencesService,
-        private intents: GlobalIntentService
+        private intents: GlobalIntentService,
+        private nav: GlobalNavService
     ) {
     }
 
@@ -44,10 +36,7 @@ export class AppService {
 
     async navigateTo(nextRoute: string, routeQueryParams?: any) {
         Logger.log("HiveManager", "Navigating to", nextRoute);
-
-        this.navController.navigateForward(nextRoute, {
-            queryParams: routeQueryParams
-        });
+        this.nav.navigateTo(App.HIVE_MANAGER, nextRoute, { queryParams: routeQueryParams });
     }
 
     public goToPostSignInRoute() {

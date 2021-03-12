@@ -1,19 +1,11 @@
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import {
-    PopoverController,
-    MenuController,
-    NavController,
-    ModalController,
-} from '@ionic/angular';
+import { PopoverController, MenuController, ModalController } from '@ionic/angular';
 
 import { NotificationManagerService } from './notificationmanager.service';
 import { DIDManagerService } from './didmanager.service';
-import { GlobalThemeService } from '../../services/global.theme.service';
-import { BackupService } from './backup.service';
 import { Events } from './events.service';
 
 import { NotificationsPage } from '../pages/notifications/notifications.page';
@@ -21,29 +13,14 @@ import { TipsPage } from '../pages/tips/tips.page';
 
 import { Tip } from '../model/tip.model';
 
-import * as moment from 'moment';
-import { TemporaryAppManagerPlugin, ReceivedMessage } from 'src/app/TMP_STUBS';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Logger } from 'src/app/logger';
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-
-enum MessageType {
-    INTERNAL = 1,
-    IN_RETURN = 2,
-    IN_REFRESH = 3,
-
-    EXTERNAL = 11,
-    EX_LAUNCHER = 12,
-    EX_INSTALL = 13,
-    EX_RETURN = 14,
-}
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 type RunnableApp = {
     cssId:string;
@@ -82,14 +59,11 @@ export class AppmanagerService {
         private modalController: ModalController,
         public menuCtrl: MenuController,
         private translate: TranslateService,
-        private navController: NavController,
         private router: Router,
         private events: Events,
         private didService: DIDManagerService,
         private native: GlobalNativeService,
         private storage: GlobalStorageService,
-        private essentialsIntent: TemporaryAppManagerPlugin,
-        private didSessions: GlobalDIDSessionsService,
         private language: GlobalLanguageService,
         private hiveManagerInitService: HiveManagerInitService,
         private walletInitService: WalletInitService,
@@ -103,13 +77,7 @@ export class AppmanagerService {
         this.language.activeLanguage.subscribe((lang)=>{
             this.initAppsList();
         });
-
-        await this.getCurrentNet();
-
-        this.essentialsIntent.setListener((ret) => {
-            this.onMessageReceived(ret);
-        });
-
+    
         this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             this.onIntentReceived(receivedIntent);
         });
@@ -131,14 +99,14 @@ export class AppmanagerService {
                     {
                         cssId: 'Wallet',
                         name: this.translate.instant('app-wallet'),
-                        routerContext: "wallet",
+                        routerContext: App.WALLET,
                         description: this.translate.instant('app-wallet-description'),
                         icon: '/assets/launcher/ios/app-icons/wallet.svg',
                         startCall: () => this.walletInitService.start()
                     },
                     {
                         cssId: 'Identity',
-                        routerContext: "identity",
+                        routerContext: App.IDENTITY,
                         name: this.translate.instant('app-identity'),
                         description: this.translate.instant('app-identity-description'),
                         icon: '/assets/launcher/ios/app-icons/identity.svg',
@@ -146,7 +114,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'Contacts',
-                        routerContext: "contacts",
+                        routerContext: App.CONTACTS,
                         name: this.translate.instant('app-contacts'),
                         description: this.translate.instant('app-contacts-description'),
                         icon: '/assets/launcher/ios/app-icons/contacts.svg',
@@ -159,7 +127,7 @@ export class AppmanagerService {
                 apps: [
                     {
                         cssId: 'Hive',
-                        routerContext: "hivemanager",
+                        routerContext: App.HIVE_MANAGER,
                         name: this.translate.instant('app-hive'),
                         description: this.translate.instant('app-hive-description'),
                         icon: '/assets/launcher/ios/app-icons/hive.svg',
@@ -167,7 +135,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'Other',
-                        routerContext: "scanner",
+                        routerContext: App.SCANNER,
                         name: this.translate.instant('app-scanner'),
                         description: this.translate.instant('app-scanner-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -175,7 +143,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'Other',
-                        routerContext: "settings",
+                        routerContext: App.SETTINGS,
                         name: this.translate.instant('app-settings'),
                         description: this.translate.instant('app-settings-description'),
                         icon: '/assets/launcher/ios/app-icons/settings.svg',
@@ -188,7 +156,7 @@ export class AppmanagerService {
                 apps: [
                     {
                         cssId: 'DPoS',
-                        routerContext: "dposvoting",
+                        routerContext: App.DPOS_VOTING,
                         name: this.translate.instant('app-dpos-voting'),
                         description: this.translate.instant('app-dpos-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -196,7 +164,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'CRCouncil',
-                        routerContext: "crcouncilvoting",
+                        routerContext: App.CRCOUNCIL_VOTING,
                         name: this.translate.instant('app-cr-council'),
                         description: this.translate.instant('app-crcouncil-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -204,7 +172,7 @@ export class AppmanagerService {
                     },
                     {
                         cssId: 'CRProposal',
-                        routerContext: "crproposalvoting",
+                        routerContext: App.CRPROPOSAL_VOTING,
                         name: this.translate.instant('app-cr-proposal'),
                         description: this.translate.instant('app-crproposal-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
@@ -216,7 +184,7 @@ export class AppmanagerService {
     }
 
     async getVisit() {
-        let visit = await this.storage.getSetting<boolean>(GlobalDIDSessionsService.signedInDIDString, "launcher", 'visit', false);
+        let visit = await this.storage.getSetting<boolean>(this.didService.signedIdentity.didString, "launcher", 'visit', false);
         if (visit || visit === true) {
             this.firstVisit = false;
         } else {
@@ -241,79 +209,6 @@ export class AppmanagerService {
         return fullAction.replace(intentDomainRoot, "");
     }
 
-    // Message
-    async onMessageReceived(ret: ReceivedMessage) {
-        Logger.log('launcher', 'Elastos launcher received message:' + ret.message + '. type: ' + ret.type + '. from: ' + ret.from);
-
-        let params: any = ret.message;
-        if (typeof (params) === 'string') {
-            try {
-                params = JSON.parse(params);
-            } catch (e) {
-                Logger.log('launcher', 'Params are not JSON format: ', params);
-            }
-        }
-        Logger.log('launcher', JSON.stringify(params));
-        switch (ret.type) {
-            case MessageType.INTERNAL:
-                switch (params.action) {
-                    case 'toggle':
-                        break;
-                    case 'receivedIntent':
-                        Logger.log('launcher', 'receivedIntent message', ret);
-                        this.zone.run(() => {
-                            if (ret.hasOwnProperty('error')) {
-                                this.native.genericAlert('no-app-can-handle-request', 'sorry');
-                            } else if (ret.from === 'system') {
-                                // TODO @chad: replace with ionic navigation to launcher's home screen - essentialsIntent.launcher();
-                                this.native.showLoading('please-wait');
-                            }
-                        });
-                        break;
-                    case 'hidden':
-                        Logger.log('launcher', 'hidden message', ret);
-                        this.zone.run(() => { this.native.hideLoading(); });
-                        break;
-                }
-                switch (params.visible) {
-                    case 'show':
-                        this.zone.run(() => {
-                            this.native.hideLoading();
-                        });
-                        break;
-                }
-                switch (ret.message) {
-                    case 'navback':
-                        // Navigate back in opened app
-                        this.navController.back();
-                        break;
-                }
-                break;
-
-            case MessageType.IN_REFRESH:
-                switch (params.action) {
-                    case 'closed': // TODO
-                        this.zone.run(() => {
-                            this.native.hideLoading();
-                        });
-                        break;
-                    case 'preferenceChanged': // TODO - USE GLOBAL PREFS SERVICE
-                        // Update display mode globally
-                        if (params.data.key === "ui.darkmode") {
-                            this.zone.run(() => {
-                                this.handleDarkModeChange(params.data.value);
-                            });
-                        }
-                        // Update developer network
-                        if (params.data.key === "chain.network.type") {
-                            this.getCurrentNet();
-                        }
-                        break;
-                }
-                break;
-        }
-    }
-
     async returnHome() {
         this.native.hideLoading();
         if (await this.modalController.getTop()) {
@@ -331,7 +226,6 @@ export class AppmanagerService {
     startApp(app: RunnableApp) {
         if (app.routerPath)
             this.globalNav.navigateTo(app.routerContext, app.routerPath);
-            //this.navController.navigateForward(app.routerPath);
         else if (app.startCall)
             app.startCall();
         else
@@ -402,85 +296,6 @@ export class AppmanagerService {
                 return;
             }
         }
-    }
-
-    /******************************** Preferences ********************************/
-    setCurLang(lang: string): Promise<void> {
-        return new Promise((resolve)=>{
-            Logger.log('launcher', 'Setting current language to ' + lang);
-            this.zone.run(() => {
-                this.translate.use(lang);
-                if (lang === 'zh') {
-                    moment.locale('zh-cn');
-                } else {
-                    moment.locale(lang);
-                }
-                resolve();
-            });
-        });
-    }
-
-    getCurrentNet() {
-        /*
-        TODO @chad: Here, the root component of each feature (launcher, did, friends, etc), the one that
-        is able to hold a reference on its own title bar component, should listen to network type change
-        events using preferencesService.preferenceListener.subscribe((pref)=> { update the title bar here });
-
-        essentialsIntent.getPreference("chain.network.type", (networkCode) => {
-            this.zone.run(() => {
-                if (networkCode === 'MainNet') {
-                    titleBarManager.setTitle('elastOS');
-                }
-                if (networkCode === 'TestNet') {
-                    titleBarManager.setTitle('Test Net Active');
-                }
-                if (networkCode === 'RegTest') {
-                    titleBarManager.setTitle('Regression Net Active');
-                }
-                if (networkCode === 'PrvNet') {
-                    titleBarManager.setTitle('Private Net Active');
-                }
-            });
-        });*/
-    }
-
-    handleDarkModeChange(useDarkMode) {
-        /*TODO @chad: Here, the root component of each feature (launcher, did, friends, etc), the one that
-        is able to hold a reference on its own title bar component, should listen to dark mode change
-        events using preferencesService.preferenceListener.subscribe((pref)=> { update the title bar here });
-        Or better, it can listen to themeService.activeTheme.subscribe((activeTheme)=> {update title bar});
-
-        this.theme.setTheme(useDarkMode);
-
-        */
-    }
-
-    /******************************** Intent Actions ********************************/
-
-    /**
-     * TODO @chad: here it's a bit more tricky: until now, the runtime managed a kind of screens stack automatically
-     * as it started a new webview every time an app or intent was started. Then on sendIntentResponse(), webviews were closed,
-     * so naturally the previous screen was displayed. Now that we are all in one app, we need to handle the navigation stack
-     * by ourselves. The basic attempt could be to use angular router's nav forward / nav back. This could work, but I expect a
-     * few bugs that may give us some headaches. We will deal with that all together little by little. For now, let's just try to
-     * make basic use cases run such as showing the identity "home" screen from the launcher "home" screen, and when pressing "minimize"
-     * in the title bar, come back to the launcher home screen.
-     */
-
-    launcher() {
-        // TODO @chad essentialsIntent.launcher();
-    }
-
-    start(id: string) {
-        // TODO @chad essentialsIntent.start(id, () => { });
-    }
-
-    sendIntent(action: string, params: any) {
-        // TODO @chad essentialsIntent.sendIntent(action, params);
-    }
-
-    close(id: string) {
-        // TODO @chad essentialsIntent.closeApp(id);
     }
 }
 

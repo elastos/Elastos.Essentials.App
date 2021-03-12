@@ -1,14 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { NgZone} from '@angular/core';
-import * as moment from 'moment';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NgZone } from '@angular/core';
 import { HiveService } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
-import { environment } from 'src/environments/environment';
-import { AppService } from '../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-pickplanpurchase',
@@ -16,15 +13,14 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./pickplanpurchase.page.scss'],
 })
 export class PickPlanPurchasePage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
   public planToPurchase: HivePlugin.Payment.PricingPlan = null;
 
   constructor(
     public navCtrl: NavController,
     public zone: NgZone,
-    private storage: GlobalStorageService,
     private hiveService: HiveService,
     private route: ActivatedRoute,
-    private appService: AppService,
     public theme: GlobalThemeService,
     private translate: TranslateService
   ) {}
@@ -36,18 +32,8 @@ export class PickPlanPurchasePage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    // TODO @chad titleBarManager.setTitle(this.translate.instant('pickplanpurchase.title'));
+    this.titleBar.setTitle(this.translate.instant('pickplanpurchase.title'));
   }
-
-  /* TODO @chad
-  ionViewDidEnter(){
-    this.uxService.setTitleBarBackKeyShown(true);
-  }
-
-  ionViewWillLeave() {
-    this.uxService.setTitleBarBackKeyShown(false);
-  }
-  */
 
   public async purchasePlan() {
     let pricingInfo = await this.hiveService.getPricingInfo();

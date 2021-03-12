@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Config } from '../config/config';
 import { ProposalStatus } from '../model/proposal-status';
@@ -10,11 +10,8 @@ import { ProposalsDetailsResponse } from '../model/proposal-details-response';
 import { SuggestionDetails } from '../model/suggestion-details';
 import { SuggestionDetailsResponse } from '../model/suggestion-details-response';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { DIDSessionsModule } from 'src/app/didsessions/module';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'
@@ -137,7 +134,6 @@ export class ProposalService {
                 proposalId: proposal.id
             }
         })
-        // this.nav.navigateTo('crproposalvotings', '/proposal-details', { proposalId: proposal.id })
     }
 
     public getFetchedProposalById(proposalId: number): ProposalSearchResult {

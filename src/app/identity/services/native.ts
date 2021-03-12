@@ -1,14 +1,12 @@
 
 import { Injectable, NgZone } from '@angular/core';
-import { ToastController, LoadingController, NavController, AlertController } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 
 import { isString } from 'lodash';
 import { AppActionSheetController } from '../components/action-sheet/action-sheet.controller';
 import { IActionSheetButtonConfig } from '../components/action-sheet/action-sheet.config';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 @Injectable({
     providedIn: 'root'
@@ -18,16 +16,11 @@ export class Native {
   private loader: any = null;
 
   constructor(
-      private toastCtrl: ToastController,
-      private alertCtrl: AlertController,
-      private clipboard: Clipboard,
       private translate: TranslateService,
-      private loadingCtrl: LoadingController,
-      private navCtrl: NavController,
       private actionSheetCtrl: AppActionSheetController,
       private zone: NgZone,
-      private router: Router,
-      private theme: GlobalThemeService
+      private native: GlobalNativeService,
+      private nav: GlobalNavService
   ) {
   }
 
@@ -50,50 +43,34 @@ export class Native {
       this.log(message, "Warnning");
   }
 
-  public toast(_message: string = '操作完成', duration: number = 2000): void {
-      this.toastCtrl.create({
-          mode: 'ios',
-          header: _message,
-          duration: duration,
-          position: 'top',
-          color: 'success'
-      }).then(toast => toast.present());
+  public toast(msg: string = '操作完成', duration: number = 2000): void {
+      this.native.genericToast(msg, duration);
   }
 
-  public toast_trans(_message: string = '', duration: number = 2000): void {
-      _message = this.translate.instant(_message);
-      this.toastCtrl.create({
-          mode: 'ios',
-          header: _message,
-          duration: duration,
-          position: 'top',
-          color: 'success'
-      }).then(toast => toast.present());
+  public toast_trans(msg: string = '', duration: number = 2000): void {
+      let message = this.translate.instant(msg);
+      this.native.genericToast(msg, duration);
   }
 
   copyClipboard(text) {
-      return this.clipboard.copy(text);
+      return this.native.copyClipboard(text);
   }
 
   // Sensitive data should not be passed through queryParams
-  public go(page: any, options: any = {}) {
-    console.log("NAV - Going to "+page);
-    this.zone.run(()=>{
-        this.hideLoading();
-        this.navCtrl.navigateForward([page], { state: options });
-    });
+  public async go(page: any, options: any = {}) {
+    console.log("NAV - Going to " + page);
+    await this.hideLoading();
+    this.nav.navigateTo(App.IDENTITY, page, { state: options });
   }
 
   public pop() {
-      this.navCtrl.pop();
+      this.nav.navigateBack();
   }
 
-  public setRootRouter(page: any,  options: any = {}) {
-    console.log("NAV - Setting root to "+page);
-      this.zone.run(()=>{
-        this.hideLoading();
-        this.navCtrl.navigateRoot([page], { state: options });
-      });
+  public async setRootRouter(page: any,  options: any = {}) {
+    console.log("NAV - Setting root to " + page);
+    await this.hideLoading();
+    this.nav.navigateRoot(App.IDENTITY, page, { state: options });
   }
 
   public getMnemonicLang(): DIDPlugin.MnemonicLanguage {
@@ -136,24 +113,11 @@ export class Native {
   }
 
   public async showLoading(content: string = 'please-wait') {
-    content = this.translate.instant(content);
-    this.loader = await this.loadingCtrl.create({
-      mode: 'ios',
-      spinner: 'crescent',
-      cssClass: !this.theme.darkMode ? 'loader' : 'darkLoader',
-      message: content,
-      duration: 10000
-    });
-    this.loader.onWillDismiss().then(() => {
-      this.loader = null;
-    })
-    return await this.loader.present();
+    await this.native.showLoading(content);
   };
 
-  public hideLoading(): void {
-    if(this.loader) {
-      this.loader.dismiss();
-    }
+  public async hideLoading() {
+    await this.native.hideLoading();
   };
 
   public getTimestamp() {

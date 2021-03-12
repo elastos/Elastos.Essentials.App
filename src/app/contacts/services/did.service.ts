@@ -3,7 +3,6 @@ import { Contact } from '../models/contact.model';
 import { TranslateService } from '@ngx-translate/core';
 import { UxService } from './ux.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;

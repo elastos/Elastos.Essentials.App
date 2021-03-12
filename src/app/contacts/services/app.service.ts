@@ -50,44 +50,10 @@ export class AppService {
     }
   }
 
-  /* TODO @chad
-  onMessageReceived(msg: EssentialsIntentPlugin.ReceivedMessage) {
-    var params: any = msg.message;
-    if (typeof (params) == "string") {
-      try {
-          params = JSON.parse(params);
-      } catch (e) {
-          console.log('Params are not JSON format: ', params);
-      }
-    }
-    switch (msg.type) {
-      case MessageType.IN_REFRESH:
-        if (params.action === "currentLocaleChanged") {
-          this.setCurLang(params.data);
-        }
-        if(params.action === 'preferenceChanged' && params.data.key === "ui.darkmode") {
-          this.zone.run(() => {
-            console.log('Dark Mode toggled');
-            this.theme.setTheme(params.data.value);
-          });
-        }
-        break;
-    }
-  }
-  */
-
   /********************************************************
   ************************ Misc ***************************
   *********************************************************/
-  startApp(id) {
-    // TODO @chad essentialsIntent.start(id);
-  }
-
   deleteStorage() {
     this.storageService.setVisit(false);
-  }
-
-  launcher() {
-    // TODO @chad essentialsIntent.launcher();
   }
 }

@@ -48,22 +48,22 @@ export class CROperationsService {
 
     constructor(
         private router: Router,
-        private navCtrl: NavController,
         private popup: PopupService,
-        private intentService: GlobalIntentService) {}
+        private intentService: GlobalIntentService,
+    ) {}
 
     async init() {
         Logger.log("crproposal", "CROperationsService is initializing");
-
-        /* TODO @chad titleBarManager.addOnItemClickedListener((menuIcon)=>{
-            if (menuIcon.key == "scan") {
-                this.handleScanAction();
-            }
-        });*/
-
+    
         this.intentService.intentListener.subscribe((receivedIntent)=>{
             this.handledReceivedIntent(receivedIntent);
         });
+    }
+
+    addOnItemClickedListener(icon) {
+        if (icon.key == "scan") {
+            this.handleScanAction();
+        }
     }
 
     private async handleScanAction() {

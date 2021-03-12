@@ -17,6 +17,7 @@ import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/c
 import { IdentityInitService } from 'src/app/identity/services/init.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 
 @Component({
   selector: 'app-home',
@@ -41,7 +42,8 @@ export class HomePage implements OnInit {
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private identityInitService: IdentityInitService,
-    private nav: GlobalNavService
+    private nav: GlobalNavService,
+    private pref: GlobalPreferencesService
   ) {
   }
 
@@ -51,8 +53,21 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
     // Show badge if there are notifications.
     this.notification.getNotifications();
-    this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
     this.titleBar.setNavigationMode(null);
+    this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
+      if (networkCode === 'MainNet') {
+        this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
+      }
+      if (networkCode === 'TestNet') {
+        this.titleBar.setTitle('Test Net Active');
+      }
+      if (networkCode === 'RegTest') {
+        this.titleBar.setTitle('Regression Net Active');
+      }
+      if (networkCode === 'PrvNet') {
+        this.titleBar.setTitle('Private Net Active');
+      }
+    });
   }
 
   ionViewDidEnter() {

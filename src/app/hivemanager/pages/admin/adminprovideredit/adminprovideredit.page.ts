@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavController, AlertController} from '@ionic/angular';
 import { NgZone} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -8,6 +8,7 @@ import { PopupService } from '../../../services/popup.service';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 type StorageProvider = {
   name: string,
@@ -20,6 +21,7 @@ type StorageProvider = {
   styleUrls: ['./adminprovideredit.page.scss'],
 })
 export class AdminProviderEditPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public createName = '';
 
@@ -53,35 +55,19 @@ export class AdminProviderEditPage implements OnInit {
     });
   }
 
-  async ionViewDidEnter(){
-    // Update system status bar every time we re-enter this screen.
-    /* TODO @chad titleBarManager.setTitle(this.translate.instant('adminprovideredit.title'));
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-      key: "adminprovideredit-back",
-      iconPath: TitleBarPlugin.BuiltInIcon.BACK
-    });
-
-    titleBarManager.addOnItemClickedListener(async (clickedIcon)=>{
-      switch (clickedIcon.key) {
-        case "adminprovideredit-back":
-          if(this.managedProvider) {
-            if(this.managedProvider.name) {
-              await this.adminService.updateAndSaveProvider(this.managedProvider);
-              this.navCtrl.back();
-            } else {
-              this.popup.toast('toast.provide-name');
-            }
-          } else {
-            this.navCtrl.back();
-          }
-
-          break;
-      }
-    });*/
+  ionViewWillEnter() {
+    this.titleBar.setTitle(this.translate.instant('adminprovideredit.title'));
   }
 
-  ionViewWillLeave() {
-    // TODO @chad titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+  async ionViewWillLeave() {
+    if(this.managedProvider) {
+      if(this.managedProvider.name) {
+        await this.adminService.updateAndSaveProvider(this.managedProvider);
+      } else {
+        this.managedProvider.name = 'Anonymous'
+        await this.adminService.updateAndSaveProvider(this.managedProvider);
+      }
+    }
 
     if (this.popup.alert) {
       this.popup.alertCtrl.dismiss();
@@ -95,8 +81,6 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   async createAdminDID() {
-    // this.popup.ionicAlert('Test test', 'im a test efesf esfsefes esfesfs efesf');
-
     if(this.createName) {
       let newProvider: ManagedProvider = await this.adminService.createProvider();
       newProvider.name = this.createName;

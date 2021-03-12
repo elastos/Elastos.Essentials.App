@@ -12,7 +12,8 @@ export enum App {
     DEVELOPER_TOOLS = "developertools",
     DPOS_VOTING = "dposvoting",
     HIVE_MANAGER = "hivemanager",
-    SETTINGS = "settings"
+    SETTINGS = "settings",
+    SCANNER = "scanner"
 }
 
 type NavigationStep = {

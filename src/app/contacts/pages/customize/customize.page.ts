@@ -88,13 +88,11 @@ export class CustomizePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.appService.setTitleBarBackKeyShown(true, false);
     this.titleBar.setTitle(this.translate.instant('customize-contact'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
   }
 
   ionViewWillLeave() {
-    this.appService.setTitleBarBackKeyShown(false, null);
   }
 
   ionViewDidEnter() {

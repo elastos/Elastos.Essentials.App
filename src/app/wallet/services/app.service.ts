@@ -1,11 +1,7 @@
-import { NavController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
 import { Native } from './native.service';
-import { Injectable, NgZone } from '@angular/core';
-import { CoinTransferService } from './cointransfer.service';
-import * as moment from 'moment';
+import { Injectable, ViewChild } from '@angular/core';
 import { Events } from './events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -19,34 +15,20 @@ export enum ScanType {
     providedIn: 'root'
 })
 export class AppService {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     private app_version = '';
 
     constructor(
-        private zone: NgZone,
-        private translate: TranslateService,
         public events: Events,
         public native: Native,
-        private navCtrl: NavController,
-        private coinTransferService: CoinTransferService,
-        private theme: GlobalThemeService
     ) {
     }
 
     public async init() {
-        // Listen to title bar events
-        /* TODO @chad
-        titleBarManager.addOnItemClickedListener((menuIcon) => {
-            if (menuIcon.key === "back") {
-              this.titlebarBackButtonHandle();
-            } else if (menuIcon.key === "backToHome") {
-                this.native.go('/wallet-home');
-            }
-        });
-        */
     }
 
-    public setTitleBarTitle(title: string) {
-        // TODO @chad titleBarManager.setTitle(this.translate.instant(title));
+    setTitleBarTitle(title: string) {
+        this.titleBar.setTitle(title);
     }
 
     async scan(type: ScanType) {

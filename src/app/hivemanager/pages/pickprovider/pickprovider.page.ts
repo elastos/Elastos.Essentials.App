@@ -3,7 +3,6 @@ import { NavController, AlertController, PopoverController } from '@ionic/angula
 import { NgZone} from '@angular/core';
 import { HiveService, PaidIncompleteOrder, VaultLinkStatus } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopupService } from '../../services/popup.service';
 import { PrefsService } from '../../services/prefs.service';
@@ -57,7 +56,6 @@ export class PickProviderPage implements OnInit {
     private popup: PopupService,
     private prefs: PrefsService,
     private events: Events,
-    private popoverCtrl: PopoverController
   ) {}
 
   async ngOnInit() {

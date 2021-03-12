@@ -1,8 +1,8 @@
-import { Component, OnInit, NgZone, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ToastController, AlertController } from "@ionic/angular";
 import { CandidatesService } from "../../services/candidates.service";
 import { Candidate } from "../../model/candidates.model";
-import { Router, NavigationExtras } from "@angular/router";
+import { NavigationExtras } from "@angular/router";
 import { StorageService } from "../../services/storage.service";
 
 import * as moment from 'moment';
@@ -23,11 +23,9 @@ export class CandidatesPage implements OnInit {
   constructor(
     public candidatesService: CandidatesService,
     private storage: StorageService,
-    //private router: Router,
     private globalNav: GlobalNavService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private zone: NgZone
   ) {}
 
   public candidate: Candidate;

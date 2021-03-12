@@ -2,16 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Candidate } from '../model/candidates.model';
 import { StorageService } from './storage.service';
-import { Router } from '@angular/router';
 import { Platform, AlertController, ToastController } from '@ionic/angular';
 import { Selected } from '../model/selected.model';
 import { CouncilMember } from '../model/council.model';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +14,6 @@ declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 export class CandidatesService {
 
   constructor(
-    private platform: Platform,
     private http: HttpClient,
     private globalNav: GlobalNavService,
     private alertCtrl: AlertController,
@@ -51,20 +45,6 @@ export class CandidatesService {
   init() {
     this.fetchCandidates();
     this.getSelectedCandidates();
-
-    if (this.platform.platforms().indexOf("cordova") >= 0) {
-      /* TODO @chad titleBarManager.addOnItemClickedListener((menuIcon)=>{
-        if (menuIcon.key === "back") {
-          this.router.navigate(['candidates']);
-        }
-      });*/
-    }
-  }
-
-  // TODO @chad call this from each screen
-  setTitlebar(titleBar: TitleBarComponent) {
-    titleBar.setBackgroundColor("#181d20");
-    titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }
 
   getSelectedCandidates() {
@@ -119,8 +99,6 @@ export class CandidatesService {
       this.council = res.data.council;
       Logger.log('crcouncil', 'Council added', this.council);
       this.getLogos();
-      // TODO @chad titleBarManager.setTitle("CRC Voting Results");
-      //this.votingEndedToast();
     }, (err) => {
       this.alertErr('The CRC Council is not available at this time, please try again later');
       console.error(err);
@@ -297,7 +275,7 @@ export class CandidatesService {
        {
           text: 'Okay',
           handler: () => {
-            // TODO @chad essentialsIntent.close();
+            this.globalNav.navigateHome(); 
           }
         }
       ]

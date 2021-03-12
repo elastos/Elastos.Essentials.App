@@ -91,11 +91,6 @@ export class NodesService {
     this.getVisit();
     this.getStoredVotes();
     this.fetchStats();
-
-  /*   setInterval(() => {
-      this.fetchStats();
-    }, 5000); */
-
     this.fetchNodes();
   }
 
