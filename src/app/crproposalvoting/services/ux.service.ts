@@ -1,9 +1,8 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-import { NavController, ToastController } from '@ionic/angular';
-import { CROperationsService } from './croperations.service';
-import * as moment from 'moment';
+import { Injectable } from '@angular/core';
 import { ProposalStatus } from '../model/proposal-status';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+
+import * as moment from 'moment';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
@@ -27,64 +26,11 @@ export class UXService {
     private appIsLaunchingFromIntent = false; // Is the app starting because of an intent request?
 
     constructor(
-        private router: Router,
-        private navCtrl: NavController,
-        private toastCtrl: ToastController
+        private native: GlobalNativeService
     ) {}
 
     async init() {
         console.log("UXService is initializing");
-
-        /* TODO @chad titleBarManager.addOnItemClickedListener((menuIcon)=>{
-            if (menuIcon.key == "back") {
-                this.titlebarBackButtonHandle();
-            }
-        });
-
-        this.setTitleBarScanIconVisible(true);*/
-    }
-
-    setTitleBarBackKeyShown(show: boolean) {
-        /* TODO @chad if (show) {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-                key: "back",
-                iconPath: TitleBarPlugin.BuiltInIcon.BACK
-            });
-        }
-        else {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-        }*/
-    }
-
-    setTitleBarCloseMode(useCloseIcon: boolean) {
-        /* TODO @chad if (useCloseIcon)
-            titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
-        else
-            titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.HOME);*/
-    }
-
-    setTitleBarScanIconVisible(visible: boolean) {
-        /* TODO @chad if (visible) {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-                key: "scan",
-                iconPath: TitleBarPlugin.BuiltInIcon.SCAN
-            });
-        }
-        else {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-        }*/
-    }
-
-    async titlebarBackButtonHandle() {
-        this.navCtrl.back();
-    }
-
-    /**
-     * Close this application.
-     */
-    close() {
-        console.log("Closing app");
-        this.navCtrl.back();
     }
 
     formatDate(timestamp) {
@@ -107,12 +53,6 @@ export class UXService {
     }
 
     async genericToast(msg: string) {
-        const toast = await this.toastCtrl.create({
-            mode: 'ios',
-            color: 'primary',
-            header: msg,
-            duration: 2000
-        });
-        toast.present();
+        this.native.genericToast(msg);
     }
 }

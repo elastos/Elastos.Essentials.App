@@ -48,7 +48,7 @@
 <ion-header class="ion-no-border">
   <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
     <ion-col size="1.25">
-      <img [src]="getIconPath(0)" (click)="outerLeftIconClicked()">
+      <img *ngIf="icons[0].visible" [src]="getIconPath(0)" (click)="outerLeftIconClicked()">
     </ion-col>
     <ion-col size="1.25">
       <img *ngIf="icons[1].visible" [src]="getIconPath(1)" (click)="innerLeftIconClicked()">

@@ -2,16 +2,21 @@
 
 ion-tab-bar {
     height: 9%;
-  
-    ion-icon {
-      color: #989aa2;
-      font-size: 36px;
-    }
-  
-    ion-label {
-      font-size: 9px;
-      font-weight: bold;
-      color: #989aa2;
+    background: white;
+
+    ion-tab-button {
+        background: white;
+
+        ion-icon {
+            color: #989aa2;
+            font-size: 36px;
+        }
+    
+        ion-label {
+            font-size: 9px;
+            font-weight: bold;
+            color: #989aa2;
+        }
     }
 }
 

@@ -44,12 +44,11 @@ export class PictureComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'closeModal', iconPath: BuiltInIcon.CLOSE });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null) // Remove ELA logo since this cannot close modals
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Does not need key, all modals are dismissed on appService.onTitlebarItemClicked()
+    this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
     this.titleBar.addOnItemClickedListener((icon) => {
-      if(icon.key === 'closeModal') {
-        this.modalCtrl.dismiss();
-      }
+      this.appService.onTitleBarItemClicked(icon);
     });
   }
 

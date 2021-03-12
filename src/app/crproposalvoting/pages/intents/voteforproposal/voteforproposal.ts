@@ -21,7 +21,14 @@ export class VoteForProposalPage {
   private voteForProposalCommand: VoteForProposalCommand;
   public sendingResponse = false;
 
-  constructor(public navCtrl: NavController, private uxService: UXService, private proposalService: ProposalService, private crOperations: CROperationsService, private route: ActivatedRoute, private zone: NgZone, private popup: PopupService) {
+  constructor(
+    public navCtrl: NavController,
+    private proposalService: ProposalService,
+    private crOperations: CROperationsService,
+    private route: ActivatedRoute,
+    private zone: NgZone,
+    private popup: PopupService
+  ) {
     this.route.queryParams.subscribe(async (data: {jwt: string, suggestionID: string})=>{
       this.zone.run(async ()=>{
         this.originalRequestJWT = data.jwt;
@@ -30,12 +37,9 @@ export class VoteForProposalPage {
   }
 
   ionViewWillEnter() {
-    this.uxService.setTitleBarCloseMode(true);
-    this.uxService.setTitleBarScanIconVisible(false);
   }
 
   ionViewWillLeave() {
-    this.uxService.setTitleBarCloseMode(false);
   }
 
   async ionViewDidEnter() {

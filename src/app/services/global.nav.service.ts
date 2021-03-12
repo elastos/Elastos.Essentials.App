@@ -2,6 +2,19 @@ import { Injectable } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { Logger } from '../logger';
 
+export enum App {
+    LAUNCHER = "launcher",
+    IDENTITY = "identity",
+    CONTACTS = "contacts",
+    WALLET = "wallet",
+    CRCOUNCIL_VOTING = "crcouncilvoting",
+    CRPROPOSAL_VOTING = "crproposalvoting",
+    DEVELOPER_TOOLS = "developertools",
+    DPOS_VOTING = "dposvoting",
+    HIVE_MANAGER = "hivemanager",
+    SETTINGS = "settings"
+}
+
 type NavigationStep = {
     context: string;
     route: string;
@@ -35,7 +48,7 @@ export class GlobalNavService {
                 this.navigationHistory.pop(); // Same context, unstack the step
         }
 
-        this.navigateTo(context, route, routerOptions);
+        this.navCtrl.navigateBack(route, routerOptions);
     }
 
     /**
@@ -46,7 +59,7 @@ export class GlobalNavService {
         Logger.log("Nav", "Navigating to launcher home");
 
         let launcherHome = {
-            context: "launcher",
+            context: App.LAUNCHER,
             route: "/launcher/home"
         };
         this.navigationHistory = [];

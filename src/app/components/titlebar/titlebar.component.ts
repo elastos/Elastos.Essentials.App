@@ -243,14 +243,17 @@ export class TitleBarComponent {
    *
    * @param navigationMode See @TitleBarNavigationMode
    */
-  public setNavigationMode(navigationMode: TitleBarNavigationMode) {
+  public setNavigationMode(navigationMode: TitleBarNavigationMode, customIcon?: TitleBarIcon) {
     this.navigationMode = navigationMode;
 
     if (navigationMode == TitleBarNavigationMode.BACK)
       this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
     else if (navigationMode == TitleBarNavigationMode.CLOSE)
       this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
-    else this.setIcon(TitleBarIconSlot.INNER_LEFT, null);
+    else if(navigationMode == TitleBarNavigationMode.CUSTOM && customIcon) 
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: customIcon.key, iconPath: customIcon.iconPath });
+    else
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, null);
   }
 
   private listenableIconClicked(icon: TitleBarSlotItem | TitleBarMenuItem) {
@@ -267,10 +270,8 @@ export class TitleBarComponent {
   innerLeftIconClicked() {
     if (this.navigationMode == TitleBarNavigationMode.BACK)
       this.globalNav.navigateBack();
-    // else if (this.navigationMode == TitleBarNavigationMode.CLOSE)
-    //   this.navCtrl.back();
     else {
-      this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
+      this.listenableIconClicked(this.icons[TitleBarIconSlot.INNER_LEFT]);
     }
   }
 

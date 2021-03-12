@@ -7,7 +7,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 type Preferences = {
   developerMode: boolean
@@ -89,7 +89,7 @@ export class MenuPage implements OnInit {
     }
   }
 
-  open(section){
-    this.nav.navigateTo('settings', section.router);
+  open(router: string){
+    this.nav.navigateTo(App.SETTINGS, router);
   }
 }

@@ -1,6 +1,14 @@
 @import "src/app/identity/root.scss";
 
 .dark-tabs {
+  ion-tab-bar {
+    background: #161723;
+
+    ion-tab-button {
+      background: #161723;
+    }
+  }
+
   ion-label {
     color: #464660;;
   }

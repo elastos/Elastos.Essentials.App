@@ -20,7 +20,7 @@ import { DApp } from '../../models/dapp.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -83,10 +83,13 @@ export class FriendDetailsPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('contact-profile'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
+    this.titleBar.addOnItemClickedListener((icon) => {
+      this.appService.onTitleBarItemClicked(icon);
+    });
   }
 
   ionViewWillLeave() {
-    this.appService.setTitleBarBackKeyShown(false, null);
   }
 
   changeList(activateDetails: boolean) {

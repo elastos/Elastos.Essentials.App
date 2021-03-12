@@ -7,6 +7,8 @@ import { ProposalDetails, VoteResultType } from '../../model/proposal-details';
 import { UXService } from '../../services/ux.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarNavigationMode, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -35,7 +37,8 @@ export class ProposalDetailsPage {
     private proposalService: ProposalService,
     private zone: NgZone,
     private changeDetector: ChangeDetectorRef,
-    public theme: GlobalThemeService
+    public theme: GlobalThemeService,
+    private nav: GlobalNavService
   ) {
   }
 
@@ -43,10 +46,15 @@ export class ProposalDetailsPage {
   }
 
   async ionViewWillEnter() {
-    this.uxService.setTitleBarBackKeyShown(true);
-
     // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle('Loading Proposal...');
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
+    this.titleBar.addOnItemClickedListener((icon) => {
+      if(icon.key === 'backToHome') {
+        console.log('LISTENING TO TITLEBAR!');
+        this.nav.navigateRoot(App.CRCOUNCIL_VOTING, '/crproposalvoting/proposals/ALL');
+      }
+    });
 
     this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
 

@@ -40,11 +40,12 @@ export class AddPage implements OnInit {
       key: "scan",
       iconPath: BuiltInIcon.SCAN
     });
-    this.appService.setTitleBarBackKeyShown(true, true);
+    this.titleBar.addOnItemClickedListener((icon) => {
+      this.appService.onTitleBarItemClicked(icon);
+    });
   }
 
   ionViewWillLeave() {
-    this.appService.setTitleBarBackKeyShown(false, null);
   }
 
   ionViewDidEnter() {

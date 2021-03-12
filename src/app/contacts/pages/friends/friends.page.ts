@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-friends',
@@ -71,9 +71,7 @@ export class FriendsPage implements OnInit {
       iconPath:  BuiltInIcon.ADD
     });
     this.titleBar.addOnItemClickedListener((icon) => {
-      if(icon.key === 'add') {
-        this.globalNav.navigateTo('contacts', '/contacts/add');
-      }
+      this.appService.onTitleBarItemClicked(icon);
     });
 
     this.getContacts();

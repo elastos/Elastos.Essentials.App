@@ -2,7 +2,7 @@
 
 <ion-content *ngIf="hasConfigSections">
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <ion-row class="section" *ngFor="let section of sections" (click)="open(section)">
+        <ion-row class="section" *ngFor="let section of sections" (click)="open(section.router)">
             <ion-col size="11" class="title-col">
                 <h1>{{ section.name | translate }}</h1>
                 <h2>{{ section.subtitle | translate }}</h2>
@@ -11,7 +11,7 @@
                 <img src="assets/settings/default/right-arrow.svg">
             </ion-col>
         </ion-row>
-        <ion-row class="section" *ngIf="prefs.developerMode" [routerLink]="['/developer']">
+        <ion-row class="section" *ngIf="prefs.developerMode" (click)="open('/developer')">
             <ion-col size="11" class="title-col">
                 <h1>{{ 'developer-setting' | translate }}</h1>
                 <h2>{{ 'advanced-setting' | translate }}</h2>

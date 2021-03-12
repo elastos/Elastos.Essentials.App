@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-developer',
@@ -42,6 +42,6 @@ export class DeveloperPage implements OnInit {
   }
 
   go(route: string) {
-    this.nav.navigateTo('settings', route);
+    this.nav.navigateTo(App.SETTINGS, route);
   }
 }

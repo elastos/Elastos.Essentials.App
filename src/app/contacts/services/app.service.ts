@@ -1,14 +1,10 @@
-import { Injectable, NgZone, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Platform, NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 
 import { FriendsService } from './friends.service';
 import { StorageService } from './storage.service';
 import { PopupService } from './popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,43 +15,38 @@ export class AppService {
     private friendsService: FriendsService,
     private storageService: StorageService,
     private popupService: PopupService,
-    private platform: Platform,
-    private theme: GlobalThemeService,
-    private zone: NgZone,
-    private translate: TranslateService,
     private globalNav: GlobalNavService
   ) {
   }
 
   init() {
-    if (this.platform.platforms().indexOf("cordova") >= 0) {
-  /*     this.titleBar.addOnItemClickedListener((menuIcon) => {
-        if(this.popupService.qrModal) {
-          this.popupService.qrModal.dismiss();
-        }
-        if(this.popupService.deletePopup) {
-          this.popupService.deletePopup.dismiss();
-        }
-        if(this.popupService.optionsPopup) {
-          this.popupService.optionsPopup.dismiss();
-        }
-
-        this.onTitleBarItemClicked(menuIcon);
-      }); */
-    }
   }
 
   onTitleBarItemClicked(icon: TitleBarIcon) {
+    if(this.popupService.qrModal) {
+      this.popupService.qrModal.dismiss();
+    }
+    if(this.popupService.avatarModal) {
+      this.popupService.avatarModal.dismiss();
+    }
+    if(this.popupService.deletePopup) {
+      this.popupService.deletePopup.dismiss();
+    }
+    if(this.popupService.optionsPopup) {
+      this.popupService.optionsPopup.dismiss();
+    }
+
     switch (icon.key) {
       case 'backToHome':
         console.log('Back to home');
-        this.globalNav.navigateRoot('contacts', '/contacts/friends');
+        this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
         break;
       case 'add':
-        this.globalNav.navigateTo('contacts', '/contacts/add');
+        this.globalNav.navigateTo(App.CONTACTS, '/contacts/add');
         break;
       case 'scan':
         this.friendsService.scanDID();
+        break;
     }
   }
 
@@ -84,23 +75,6 @@ export class AppService {
     }
   }
   */
-
-  setTitleBarBackKeyShown(show: boolean, backToHome: boolean) {
-    /* TODO @chad
-    if (show && !backToHome) {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-        key: "back",
-        iconPath: TitleBarPlugin.BuiltInIcon.BACK
-      });
-    } else if(show && backToHome) {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-        key: "backToHome",
-        iconPath: TitleBarPlugin.BuiltInIcon.BACK
-      });
-    } else {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-    }*/
-  }
 
   /********************************************************
   ************************ Misc ***************************

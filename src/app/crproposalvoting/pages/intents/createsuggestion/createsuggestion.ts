@@ -35,12 +35,9 @@ export class CreateSuggestionPage {
   }
 
   ionViewWillEnter() {
-    this.uxService.setTitleBarCloseMode(true);
-    this.uxService.setTitleBarScanIconVisible(false);
   }
 
   ionViewWillLeave() {
-    this.uxService.setTitleBarCloseMode(false);
   }
 
   async ionViewDidEnter() {

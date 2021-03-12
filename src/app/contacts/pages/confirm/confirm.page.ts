@@ -3,14 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FriendsService } from '../../services/friends.service';
-import { AppService } from '../../services/app.service';
 
 import { Avatar } from '../../models/avatar';
 import { NativeService } from '../../services/native.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ContactNotifierService } from 'src/app/services/contactnotifier.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-confirm',
@@ -27,7 +26,6 @@ export class ConfirmPage implements OnInit {
 
   constructor(
     public friendsService: FriendsService,
-    private appService: AppService,
     public theme: GlobalThemeService,
     private route: ActivatedRoute,
     private router: Router,
@@ -58,13 +56,10 @@ export class ConfirmPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('confirm-contact'));
-    this.appService.setTitleBarBackKeyShown(true, false);
-
     this.native.hideLoading();
   }
 
   ionViewWillLeave() {
-    this.appService.setTitleBarBackKeyShown(false, null);
   }
 
   ionViewDidEnter() {
@@ -75,12 +70,12 @@ export class ConfirmPage implements OnInit {
 
     this.zone.run(() => {
       if(contactAlreadyAdded) {
-        this.globalNav.navigateRoot('contacts', '/contacts/friends');
+        this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
       } else {
         if(!this.name) {
           this.friendsService.showCustomization(this.friendsService.pendingContact, true);
         } else {
-          this.globalNav.navigateTo('contacts', '/contacts/friends/'+this.id);
+          this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends/'+this.id);
         }
       }
     });
@@ -95,6 +90,6 @@ export class ConfirmPage implements OnInit {
       console.log('Rejected contact did not come from a "viewfriendinvitation" intent');
     }
 
-    this.globalNav.navigateRoot('contacts', '/contacts/friends');
+    this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
   }
 }
