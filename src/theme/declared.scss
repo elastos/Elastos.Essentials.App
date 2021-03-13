@@ -1,4 +1,4 @@
-// Components declared globally with custom css properties
+// Declared components with custom css properties
 
 
 /********************** ALERT CONTROLLER **********************/
@@ -46,17 +46,8 @@
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
+/********************** TITLEBAR MENU POPUP **********************/
 .titlebarmenu-component {
-  --min-height: 10%;
-  --max-height: 40%;
-
-  .modal-wrapper {
-    position: absolute;
-    top: 5%;
-    right: 0;
-    display: block;
-    width: 40%;
-  }
 }
 
 /********************** LOADER **********************/

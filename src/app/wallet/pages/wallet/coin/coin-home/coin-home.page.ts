@@ -218,8 +218,14 @@ export class CoinHomePage implements OnInit {
     }
 
     onItem(item) {
-        this.native.go('/coin-tx-info', { masterWalletId: this.masterWallet.id,
-                                        chainId: this.chainId, transactionInfo: item });
+        this.native.go(
+            '/coin-tx-info',
+            { 
+                masterWalletId: this.masterWallet.id,
+                chainId: this.chainId,
+                transactionInfo: item 
+            }
+        );
     }
 
     receiveFunds() {

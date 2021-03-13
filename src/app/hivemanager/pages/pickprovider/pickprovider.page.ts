@@ -9,10 +9,10 @@ import { PrefsService } from '../../services/prefs.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarMenuItem, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarMenuItem, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
-import { TitlebarmenuitemComponent } from 'src/app/components/titlebarmenuitem/titlebarmenuitem.component';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 type StorageProvider = {
   name: string,
@@ -53,6 +53,7 @@ export class PickProviderPage implements OnInit {
     public hiveService: HiveService,
     private route: ActivatedRoute,
     public theme: GlobalThemeService,
+    private nav: GlobalNavService,
     private popup: PopupService,
     private prefs: PrefsService,
     private events: Events,
@@ -111,11 +112,8 @@ export class PickProviderPage implements OnInit {
     this.titleBar.setMenuVisibility(true);
     this.titleBar.setupMenuItems(menuItems);
 
-    this.titleBar.addOnItemClickedListener(async (clickedIcon) => {
+    this.titleBar.addOnItemClickedListener(async (clickedIcon: TitleBarMenuItem) => {
       switch (clickedIcon.key) {
-   /*      case "menu":
-          await this.openMenu();
-          break; */
         case "pickprovider-adminproviders":
           this.goToAdminPanel();
           break;
@@ -146,22 +144,6 @@ export class PickProviderPage implements OnInit {
     }
   }
 
-/*   async openMenu() {
-    this.menu = await this.popoverCtrl.create({
-      mode: 'ios',
-      component: TitlebarmenuitemComponent,
-      componentProps: {
-        items: this.titleBar.menuItems
-      },
-      cssClass: !this.theme.darkMode ? 'titlebarmenu-component' : 'titlebarmenu-component',
-      translucent: false
-    });
-    this.menu.onWillDismiss().then(() => {
-      this.menu = null;
-    });
-    return await this.menu.present();
-  }
- */
   private async checkInitialStatus() {
     if (this.checkingInitialStatus)
       return;
@@ -278,11 +260,11 @@ export class PickProviderPage implements OnInit {
   }
 
   private goToAdminPanel() {
-    this.navCtrl.navigateForward("adminproviderslist");
+    this.nav.navigateTo(App.HIVE_MANAGER, "adminproviderslist");
   }
 
   public changePlan() {
-    this.navCtrl.navigateForward("pickplan");
+    this.nav.navigateTo(App.HIVE_MANAGER, "pickplan");
   }
 
   public transferVault() {

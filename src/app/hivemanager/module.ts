@@ -1,15 +1,12 @@
-import { NgModule, ErrorHandler, Injectable } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { AppRoutingModule } from './routing';
 import { IonicStorageModule } from '@ionic/storage';
 import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
 import { StorageService } from './services/storage.service';
 import { PopupService } from './services/popup.service';
-import { TranslateService, TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AdminProvidersListPage } from './pages/admin/adminproviderslist/adminproviderslist.page';
 import { AdminProviderEditPage } from './pages/admin/adminprovideredit/adminprovideredit.page';
@@ -19,9 +16,6 @@ import { PickPlanPage } from './pages/pickplan/pickplan.page';
 import { PickPlanPurchasePage } from './pages/pickplanpurchase/pickplanpurchase.page';
 import { ComponentsModule } from './components/components.module';
 
-import { zh } from '../../assets/translations/hivemanager/zh';
-import { en } from '../../assets/translations/hivemanager/en';
-import { fr } from '../../assets/translations/hivemanager/fr';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 

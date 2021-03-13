@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { NavParams } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import {  TitleBarMenuItem, BuiltInIcon } from '../titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
@@ -15,12 +14,20 @@ export class TitlebarmenuitemComponent implements OnInit {
 
   constructor(
     private navParams: NavParams,
-    private themeService: GlobalThemeService
+    private themeService: GlobalThemeService,
+    private popoverCtrl: PopoverController
   ) { }
 
   ngOnInit() {
     this.menuItems = this.navParams.get('items');
     console.log('Titlebar menu items', this.menuItems);
+  }
+
+  onTitlebarMenuItemClicked(item: TitleBarMenuItem) {
+    console.log('Titlebar menu item clicked', item);
+    this.popoverCtrl.dismiss({
+      item: item
+    });
   }
 
   getIconPath(icon) {

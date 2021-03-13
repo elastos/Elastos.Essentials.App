@@ -1,20 +1,10 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import {
-    ModalController,
-    PopoverController,
-    NavController,
-} from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 
 import { UXService } from "../../services/ux.service";
-import { DIDService } from "../../services/did.service";
-import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 import { HiveService } from "../../services/hive.service";
-import { HttpClient } from "@angular/common/http";
-import { Native } from "../../services/native";
-import { IntentReceiverService } from "../../services/intentreceiver.service";
 import { BasicCredentialsService } from "../../services/basiccredentials.service";
 import { Events } from "../../services/events.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
@@ -48,7 +38,6 @@ export class PublishPage {
         public theme: GlobalThemeService,
         public hiveService: HiveService,
         public profileService: ProfileService,
-        public navCtrl: NavController,
         private basicCredentialService: BasicCredentialsService
     ) {
         this.init();

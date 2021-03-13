@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController, AlertController} from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 import { ManagedProvider } from '../../../model/managedprovider';
 import { PopupService } from '../../../services/popup.service';
@@ -9,6 +9,7 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 type StorageProvider = {
   name: string,
@@ -23,8 +24,8 @@ type StorageProvider = {
 export class AdminProviderEditPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
+  private oldName = '';
   public createName = '';
-
   public managedProvider: ManagedProvider = null;
   public mnemonicShown: boolean = false;
   public adminDIDMnemonic: string = null;
@@ -36,15 +37,40 @@ export class AdminProviderEditPage implements OnInit {
     public zone: NgZone,
     public alertController:AlertController,
     private route: ActivatedRoute,
+    private router: Router,
     private adminService: AdminService,
     private popup: PopupService,
     private clipboard: Clipboard,
     public theme: GlobalThemeService,
+    private native: GlobalNativeService,
     private translate: TranslateService,
-  ) {}
+    // public navParams: NavParams // Err - No provider for Navparams
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    if(navigation.extras.state) {
+      const providerId = navigation.extras.state.providerId;
+      console.log('Provider id', providerId);
+      this.init(providerId);
+    }
+
+/*     this.providerId = navParams.get('providerId');
+    console.log('Provider id', this.providerId);
+    this.init();
+
+    this.retrieveAdminDIDPublicationStatus();
+    console.log("Editing provider:", this.managedProvider); */
+  }
+
+  async init(id) {
+    this.managedProvider = await this.adminService.getManagedProviderById(id);
+    this.adminDIDMnemonic = await this.adminService.getAdminDIDMnemonic(this.managedProvider);
+    this.oldName = this.managedProvider.name;
+    this.retrieveAdminDIDPublicationStatus();
+    console.log("Editing provider:", this.managedProvider);
+  }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(async (data: {providerId: string}) => {
+/*     this.route.queryParams.subscribe(async (data: {providerId: string}) => {
       if(data) {
         this.managedProvider = await this.adminService.getManagedProviderById(data.providerId);
         this.adminDIDMnemonic = await this.adminService.getAdminDIDMnemonic(this.managedProvider);
@@ -52,23 +78,14 @@ export class AdminProviderEditPage implements OnInit {
         this.retrieveAdminDIDPublicationStatus();
         console.log("Editing provider:", this.managedProvider);
       }
-    });
+    }); */
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('adminprovideredit.title'));
   }
 
-  async ionViewWillLeave() {
-    if(this.managedProvider) {
-      if(this.managedProvider.name) {
-        await this.adminService.updateAndSaveProvider(this.managedProvider);
-      } else {
-        this.managedProvider.name = 'Anonymous'
-        await this.adminService.updateAndSaveProvider(this.managedProvider);
-      }
-    }
-
+  ionViewWillLeave() {
     if (this.popup.alert) {
       this.popup.alertCtrl.dismiss();
       this.popup.alert = null;
@@ -90,6 +107,16 @@ export class AdminProviderEditPage implements OnInit {
       console.log("createdDIDInfo", createdDIDInfo);
     } else {
       this.popup.toast('toast.provide-name');
+    }
+  }
+
+  async updateName() {
+    if(this.managedProvider.name) {
+      await this.adminService.updateAndSaveProvider(this.managedProvider);
+      this.native.genericToast('Provider name updated', 2000);
+    } else {
+      this.native.genericToast('Please add a name to your provider', 2000);
+      this.managedProvider.name = this.oldName;
     }
   }
 
@@ -115,8 +142,8 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   async copy(item: string) {
-    await this.clipboard.copy(item);
-    this.popup.toast("toast.copied");
+    await this.native.copyClipboard(item);
+    this.native.genericToast("toast.copied");
   }
 
   getMnemonic(): string {

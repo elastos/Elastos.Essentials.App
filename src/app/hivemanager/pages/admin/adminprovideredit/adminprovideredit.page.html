@@ -11,6 +11,7 @@
         <ion-row>
             <ion-col size="12" style="margin-bottom: 5px;">
                 <h1>{{ 'adminprovideredit.provider-name' | translate }}</h1>
+                <ion-icon (click)="updateName()" name="save"></ion-icon>
             </ion-col>
             <ion-col size="12">
                 <ion-input [(ngModel)]="managedProvider.name" (input)='onNameChanged($event.target.value)' clearInput name="name2" ngDefaultControl></ion-input>

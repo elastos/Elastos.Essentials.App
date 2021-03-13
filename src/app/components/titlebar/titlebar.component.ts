@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AppTheme, GlobalThemeService } from '../../services/global.theme.service';
-import { NavController, PopoverController, ModalController } from '@ionic/angular';
+import { PopoverController, ModalController, ActionSheetController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon, TitleBarForegroundMode } from './titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -11,6 +11,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
   styleUrls: ['./titlebar.component.scss'],
 })
 export class TitleBarComponent {
+
   public menu: any = null;
 
   @Input()
@@ -42,8 +43,8 @@ export class TitleBarComponent {
     public themeService: GlobalThemeService,
     private popoverCtrl: PopoverController,
     private modalCtrl: ModalController,
-    private navCtrl: NavController,
-    private globalNav: GlobalNavService
+    private globalNav: GlobalNavService,
+    private actionSheetCtrl: ActionSheetController
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);
@@ -228,10 +229,6 @@ export class TitleBarComponent {
   public setMenuVisibility(visible: boolean) {
     if(visible) {
       this.menuVisible = visible;
-/*       this.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-        key: "menu",
-        iconPath: BuiltInIcon.HORIZONTAL_MENU
-      }); */
     } else {
       this.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
     }
@@ -281,13 +278,13 @@ export class TitleBarComponent {
 
   outerRightIconClicked(ev) {
     if (this.menuVisible)
-      this.openMenu();
+      this.openMenu(ev);
     else
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
   }
 
-  async openMenu() {
-    this.menu = await this.modalCtrl.create({
+  async openMenu(ev) {
+    this.menu = await this.popoverCtrl.create({
       mode: 'ios',
       component: TitlebarmenuitemComponent,
       componentProps: {
@@ -295,8 +292,13 @@ export class TitleBarComponent {
       },
       cssClass: !this.themeService.darkMode ? 'titlebarmenu-component' : 'titlebarmenu-component',
       backdropDismiss: true,
+      event: ev
     });
-    this.menu.onWillDismiss().then(() => {
+    this.menu.onWillDismiss().then((res) => {
+      console.log('Titlebar menu res', res);
+      if(res.data) {
+        this.listenableIconClicked(res.data.item);
+      }
       this.menu = null;
     });
     return await this.menu.present();

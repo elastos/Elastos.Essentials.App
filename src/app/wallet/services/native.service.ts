@@ -25,7 +25,7 @@ import { LoadingController, NavController, PopoverController } from '@ionic/angu
 import { TranslateService } from '@ngx-translate/core';
 import { HelpComponent } from '../components/help/help.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
 
 @Injectable()
@@ -63,8 +63,7 @@ export class Native {
         Logger.log("wallet", "Navigating to:", page);
         this.zone.run(() => {
             this.hideLoading();
-            this.globalNav.navigateTo("wallet", page, { state: options });
-            //this.navCtrl.navigateForward([page], { state: options });
+            this.globalNav.navigateTo(App.WALLET, page, { state: options });
         });
     }
 
@@ -80,7 +79,7 @@ export class Native {
         Logger.log("wallet", "Setting root router path to:", page);
         this.zone.run(() => {
             this.hideLoading();
-            this.globalNav.navigateTo("wallet", page, { state: options });
+            this.globalNav.navigateTo(App.WALLET, page, { state: options });
             //this.navCtrl.navigateRoot([page], { state: options });
         });
     }

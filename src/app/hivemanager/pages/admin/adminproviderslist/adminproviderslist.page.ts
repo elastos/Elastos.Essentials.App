@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
-import * as moment from 'moment';
 
 import { AdminService } from '../../../services/admin.service';
 import { ManagedProvider } from '../../../model/managedprovider';
@@ -37,7 +36,6 @@ export class AdminProvidersListPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-
     this.titleBar.setTitle(this.translate.instant('adminproviderlist.title'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "adminproviderslist-addprovider",
@@ -56,6 +54,6 @@ export class AdminProvidersListPage implements OnInit {
   }
 
   async editProvider(provider: ManagedProvider) {
-    this.nav.navigateTo(App.HIVE_MANAGER, "adminprovideredit", { providerId: provider.id })
+    this.nav.navigateTo(App.HIVE_MANAGER, "adminprovideredit", { state: { providerId: provider.id } });
   }
 }

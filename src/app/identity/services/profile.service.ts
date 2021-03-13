@@ -366,7 +366,7 @@ export class ProfileService {
   }
 
   publish() {
-    console.log('----go /identity/publish')
+    console.log('----go /identity/publish');
     this.native.go("/identity/publish");
   }
 
