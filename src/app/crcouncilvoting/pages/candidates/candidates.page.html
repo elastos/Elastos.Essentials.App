@@ -33,7 +33,7 @@
                   <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}</h4>
                   <p>
                     <ion-icon name="pin"></ion-icon> {{ candidate.location }} &nbsp;
-                    <span class="votes">{{ fixVotes(candidate.votes) }}</span> votes
+                    <span class="votes">{{ fixVotes(candidate.votes) }}</span> {{ 'votes' | translate }}
                   </p>
                 </ion-label>
               </ion-col>
@@ -54,7 +54,7 @@
   </ion-grid>
 
   <div class="add-btn ion-activatable ripple" (click)="walletAlert()">
-    <h1>DISTRIBUTE VOTES</h1>
+    <h1>{{ 'dist-votes' | translate }}</h1>
     <ion-ripple-effect></ion-ripple-effect>
   </div>
 </ion-content>

@@ -4,6 +4,7 @@
   </div>
 </ion-header> -->
 
+<app-titlebar></app-titlebar>
 <ion-content>
   <ion-grid class="container ion-no-padding">
     <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
@@ -24,7 +25,7 @@
                 name="userVotes" ngDefaultControl
                 [(ngModel)]="candidate.userVotes">
               </ion-input>
-              <ion-label>Pledge ELA</ion-label>
+              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -43,12 +44,12 @@
   </div> -->
 
   <div class="dist-btn ion-activatable ripple" (click)="distribute()">
-    <h1>DISTRIBUTE EQUALLY</h1>
+    <h1>{{ 'dist-equally' | translate }}</h1>
     <ion-ripple-effect></ion-ripple-effect>
   </div>
   <div class="vote-btn ion-activatable ripple" (click)="cast()">
-    <h1 *ngIf="!votesCasted">CAST VOTES</h1>
-    <h1 *ngIf="votesCasted">Votes Casted</h1>
+    <h1 *ngIf="!votesCasted">{{ 'cast-votes' | translate }}</h1>
+    <h1 *ngIf="votesCasted">{{ 'votes-casted' | translate }}</h1>
     <ion-ripple-effect></ion-ripple-effect>
   </div>
 

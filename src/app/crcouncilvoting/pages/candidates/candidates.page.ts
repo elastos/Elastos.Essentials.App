@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService } from "src/app/services/global.nav.service";
+import { TranslateService } from '@ngx-translate/core';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -26,6 +27,7 @@ export class CandidatesPage implements OnInit {
     private globalNav: GlobalNavService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    public translate: TranslateService
   ) {}
 
   public candidate: Candidate;
@@ -43,11 +45,11 @@ export class CandidatesPage implements OnInit {
     this.titleBar.setNavigationMode(null);
 
     if(this.candidatesService.candidates.length) {
-      this.titleBar.setTitle('CR Council Candidates');
+      this.titleBar.setTitle(this.translate.instant('council-candidates'));
     } else if(this.candidatesService.council.length){
-      this.titleBar.setTitle('CR Council Members');
+      this.titleBar.setTitle(this.translate.instant('council-members'));
     } else {
-      this.titleBar.setTitle('CR Council Voting');
+      this.titleBar.setTitle(this.translate.instant('council-voting'));
     }
   }
 

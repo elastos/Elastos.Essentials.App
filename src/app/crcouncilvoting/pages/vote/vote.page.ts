@@ -1,9 +1,11 @@
-import { Component, OnInit, NgZone, OnDestroy } from '@angular/core';
+import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { CandidatesService } from '../../services/candidates.service';
 import { ToastController } from '@ionic/angular';
 import { StorageService } from '../../services/storage.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -13,15 +15,15 @@ declare let essentialsIntent: EssentialsIntentPlugin.Intent;
   styleUrls: ['./vote.page.scss'],
 })
 export class VotePage implements OnInit, OnDestroy {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   constructor(
     public candidatesService: CandidatesService,
     private storageService: StorageService,
     private toastCtrl: ToastController,
-    //private router: Router,
     private globalNav: GlobalNavService,
     private route: ActivatedRoute,
-    private zone: NgZone
+    public translate: TranslateService
   ) { }
 
   public castingVote = false;
@@ -44,8 +46,7 @@ export class VotePage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    // TODO @chad titleBarManager.setTitle('My Candidates');
-    this.setTitleBarBackKeyShown(true);
+    this.titleBar.setTitle(this.translate.instant('my-candidates'));
   }
 
   ionViewDidEnter() {
@@ -56,19 +57,6 @@ export class VotePage implements OnInit, OnDestroy {
     this.votesCasted = false;
     this.candidatesService.candidates = [];
     this.candidatesService.init();
-    this.setTitleBarBackKeyShown(false);
-  }
-
-  setTitleBarBackKeyShown(show: boolean) {
-    /* TODO @chad if (show) {
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-            key: "back",
-            iconPath: TitleBarPlugin.BuiltInIcon.BACK
-        });
-    }
-    else {
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-    }*/
   }
 
   distribute() {

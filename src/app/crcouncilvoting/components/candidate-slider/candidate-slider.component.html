@@ -15,19 +15,19 @@
         </ion-row>
         <ion-card-content>
           <ion-row class="detail-container">
-            <p>Current Rank</p>
+            <p>{{ 'current-rank' | translate }}</p>
             <h3>#{{ candidatesService.candidates.indexOf(candidate) + 1 }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>Current Votes</p>
+            <p>{{ 'current-votes' | translate }}</p>
             <h3>{{ candidate.votes }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>Percentage of Votes</p>
+            <p>{{ 'percent-votes' | translate }}</p>
             <h3>{{ getVotePercent(candidate.votes) }}%</h3>
           </ion-row>
           <ion-row class="website">
-            <p>Website</p>
+            <p>{{ 'website' | translate }}</p>
             <h3>{{ candidate.url }}</h3>
           </ion-row>
         </ion-card-content>

@@ -8,6 +8,7 @@ import { UXService } from '../../../services/ux.service';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'page-proposal-listing',
@@ -38,7 +39,7 @@ export class ProposalListingPage implements OnInit {
     public theme: GlobalThemeService,
     private proposalService: ProposalService,
     private route: ActivatedRoute,
-    private zone: NgZone,
+    public translate: TranslateService
   ) {
     this.proposalType = this.route.snapshot.params.proposalType as ProposalStatus;
 
@@ -67,18 +68,18 @@ export class ProposalListingPage implements OnInit {
     this.proposals = this.proposalsSearchResponse.data.list;
     this.proposalsFetched = true;
     this.showSearch = true;
-    this.titleBar.setTitle("Proposals");
+    this.titleBar.setTitle(this.translate.instant('proposals'));
   }
 
   async searchProposal(event) {
     console.log('Search input changed', event);
     if(this.searchInput) {
       this.proposalsFetched = false;
-      this.titleBar.setTitle("Searching Proposal..");
+      this.titleBar.setTitle(this.translate.instant('searching-proposals'));
       this.proposalsSearchResponse = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
       this.proposals = this.proposalsSearchResponse.data.list;
       this.proposalsFetched = true;
-      this.titleBar.setTitle("Proposals");
+      this.titleBar.setTitle(this.translate.instant('proposals'));
     } else {
       // Reset Search Page #
       this.searchPage = 1;

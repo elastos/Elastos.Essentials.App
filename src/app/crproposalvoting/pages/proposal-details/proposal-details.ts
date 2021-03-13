@@ -9,6 +9,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarNavigationMode, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -38,7 +39,8 @@ export class ProposalDetailsPage {
     private zone: NgZone,
     private changeDetector: ChangeDetectorRef,
     public theme: GlobalThemeService,
-    private nav: GlobalNavService
+    private nav: GlobalNavService,
+    private translate: TranslateService
   ) {
   }
 
@@ -47,7 +49,7 @@ export class ProposalDetailsPage {
 
   async ionViewWillEnter() {
     // Update system status bar every time we re-enter this screen.
-    this.titleBar.setTitle('Loading Proposal...');
+    this.titleBar.setTitle(this.translate.instant('loading-proposal'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
     this.titleBar.addOnItemClickedListener((icon) => {
       if(icon.key === 'backToHome') {
@@ -68,39 +70,39 @@ export class ProposalDetailsPage {
         this.proposal = Object.assign(proposalSearchResult, proposalDetails);
         this.addProposalDetails();
         // titleBarManager.setTitle('Proposal ' + '#' + this.proposal.id);
-        this.titleBar.setTitle('Proposal Details');
+        this.titleBar.setTitle(this.translate.instant('proposal-details'));
         console.log("Merged proposal info:", this.proposal)
       });
     });
   }
 
   ionViewDidLeave() {
-    this.titleBar.setTitle('Proposals');
+    this.titleBar.setTitle(this.translate.instant('proposals'));
   }
 
   addProposalDetails() {
     this.proposalDetails = [];
     this.proposalDetails.push(
       {
-        title: 'Proposal',
+        title: this.translate.instant('proposal'),
         type: 'title',
         description: this.proposal.title,
         active: true
       },
       {
-        title: 'Abstract',
+        title: this.translate.instant('abstract'),
         type: 'abstract',
         description: this.proposal.abs,
         active: true
       },
       {
-        title: 'Proposal Hash',
+        title: this.translate.instant('proposal-hash'),
         type: 'hash',
         description: this.proposal.proposalHash,
         active: false
       },
       {
-        title: 'Original URL',
+        title: this.translate.instant('url'),
         type: 'url',
         description: this.proposal.address,
         active: false

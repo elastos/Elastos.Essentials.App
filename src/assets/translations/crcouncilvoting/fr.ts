@@ -1,0 +1,17 @@
+export const fr = {
+    'council-voting': 'CR Counvil Voting',
+    'council-candidates': 'CR Council Candidates',
+    'council-members': 'CR Council Members',
+    'my-candidates': 'My Candidates',
+    'vote-history': 'Vote History',
+    'votes': 'votes',
+    'dist-votes': 'Distribute Votes',
+    'pledge-ela': 'Pledge ELA',
+    'dist-equally': 'Distribute Equally',
+    'cast-votes': 'Cast Votes',
+    'votes-casted': 'Votes Casted',
+    'current-rank': 'Current Rank',
+    'current-votes': 'Current Votes',
+    'percent-votes': 'Percentage of Votes',
+    'website': 'Website',
+};

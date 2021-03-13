@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CROperationsService, VoteForProposalCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
@@ -27,7 +28,7 @@ export class VoteForProposalPage {
     private crOperations: CROperationsService,
     private route: ActivatedRoute,
     private zone: NgZone,
-    private popup: PopupService
+    public translate: TranslateService
   ) {
     this.route.queryParams.subscribe(async (data: {jwt: string, suggestionID: string})=>{
       this.zone.run(async ()=>{
@@ -37,6 +38,7 @@ export class VoteForProposalPage {
   }
 
   ionViewWillEnter() {
+    this.titleBar.setTitle(this.translate.instant('vote-proposal'));
   }
 
   ionViewWillLeave() {

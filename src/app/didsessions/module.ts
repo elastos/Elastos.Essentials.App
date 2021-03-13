@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler, Injectable, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
@@ -9,9 +9,8 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 import { PickIdentityPage } from './pages/pickidentity/pickidentity';
 import { CreateIdentityPage } from './pages/createidentity/createidentity';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
-import { Observable } from 'rxjs';
 import { BackupDIDPage } from './pages/backupdid/backupdid';
 import { EditProfilePage } from './pages/editprofile/editprofile';
 import { VerifyMnemonicsPage } from './pages/verifymnemonics/verifymnemonics';
@@ -27,7 +26,6 @@ import { ScanPage } from './pages/scan/scan.page';
 import { PrintoptionsComponent } from './components/printoptions/printoptions.component';
 import { defineCustomElements } from '@teamhive/lottie-player/loader';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
-import { Module } from 'module';
 
 defineCustomElements(window);
 
