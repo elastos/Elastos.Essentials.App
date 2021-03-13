@@ -8,7 +8,7 @@ import { BasicCredentialEntry } from '../../model/basiccredentialentry.model';
 import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'page-profileentrypicker',
@@ -23,10 +23,10 @@ export class ProfileEntryPickerPage {
   constructor(
     private basicCredentialService: BasicCredentialsService,
     private modalCtrl: ModalController,
-    private navParams: NavParams,
-    private router: Router,
+    public navParams: NavParams,
     public theme: GlobalThemeService,
-    public events: Events
+    public events: Events,
+
   ) {
     // List of keys we don't want to show (probably already existing in the profile)
     let filterOutKeys: string[] = navParams.get("filterOut");
@@ -37,8 +37,11 @@ export class ProfileEntryPickerPage {
   }
 
   ionViewWillEnter() {
-    // hide the menu
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
+    this.titleBar.addOnItemClickedListener((icon) => {
+      this.modalCtrl.dismiss();
+    });
   }
 
   ionViewWillLeave() {

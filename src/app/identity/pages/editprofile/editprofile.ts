@@ -1,12 +1,7 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
-import {
-  NavController,
-  IonInput,
-  ModalController,
-  AlertController,
-} from "@ionic/angular";
+import { IonInput, ModalController, AlertController } from "@ionic/angular";
 
 import { Native } from "../../services/native";
 import { Util } from "../../services/util";
@@ -31,7 +26,7 @@ import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { TitleBarIconSlot, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
+import { TitleBarIconSlot } from "src/app/components/titlebar/titlebar.types";
 
 @Component({
   selector: "page-editprofile",
@@ -58,7 +53,6 @@ export class EditProfilePage {
     public router: Router,
     public zone: NgZone,
     public events: Events,
-    public navCtrl: NavController,
     private didService: DIDService,
     private authService: AuthService,
     private modalCtrl: ModalController,
@@ -68,8 +62,7 @@ export class EditProfilePage {
     private native: Native,
     public theme: GlobalThemeService,
     public hiveService: HiveService,
-    private uxService: UXService,
-    private popup: PopupProvider
+    private popup: PopupProvider,
   ) {
     console.log("Entering EditProfile page");
     const navigation = this.router.getCurrentNavigation();
@@ -94,23 +87,16 @@ export class EditProfilePage {
   }
 
   ionViewWillEnter() {
-    this.uxService.makeAppVisible();
-
     this.titleBar.setTitle(this.translate.instant("edit-profile"));
-
     this.showMenu();
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-
     console.log(this.profile);
   }
 
   ionViewWillLeave() {
-    // Go to the countrypicker screen will trigger ionViewWillLeave
+  /*   // Go to the countrypicker screen will trigger ionViewWillLeave
     if (!this.showSelectCountry) {
       this.next(false);
-    }
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-    this.titleBar.setNavigationMode(null);
+    } */
   }
 
   onVisibilityChange(e, entry: BasicCredentialEntry) {
@@ -118,7 +104,6 @@ export class EditProfilePage {
     this.profileService.setCredentialVisibility(entry.key, e);
     this.profileService.updateDIDDocument();
   }
-
 
   showMenu() {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
@@ -335,15 +320,15 @@ export class EditProfilePage {
               AuthService.instance.getCurrentUserPassword()
             );
 
-          this.native.hideLoading();
+          await this.native.hideLoading();
           this.events.publish("did:didchanged");
           this.events.publish("diddocument:changed", publishAvatar);
-          this.navCtrl.pop();
+          this.native.pop();
         },
-        () => {
+        async () => {
           // Operation cancelled
           console.log("Password operation cancelled");
-          this.native.hideLoading();
+          await this.native.hideLoading();
         }
       );
     }

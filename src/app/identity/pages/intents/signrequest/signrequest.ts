@@ -1,6 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-
-import { Config } from '../../../services/config';
 import { DIDService } from '../../../services/did.service';
 import { UXService } from '../../../services/ux.service';
 import { PopupProvider } from '../../../services/popup';
@@ -35,7 +33,6 @@ export class SignRequestPage {
   constructor(
     private didService: DIDService,
     private popup: PopupProvider,
-    private uxService:UXService,
     private translate: TranslateService,
     private appServices: UXService,
     private authService: AuthService,
@@ -47,7 +44,6 @@ export class SignRequestPage {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('sign-data'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
-    this.uxService.makeAppVisible();
 
     this.receivedIntent = this.intentService.getReceivedIntent();
   }

@@ -1,9 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
 import { HttpClientModule } from "@angular/common/http";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { IonicModule, Platform } from "@ionic/angular";
+import { Platform } from "@ionic/angular";
 import { IonicStorageModule } from "@ionic/storage";
 import { IdentityRoutingModule } from "./routing";
 import { Clipboard } from "@ionic-native/clipboard/ngx";
@@ -19,9 +18,6 @@ import { EditProfilePage } from "./pages/editprofile/editprofile";
 import { PublishPage } from "./pages/publish/publish";
 
 import { CredentialAccessRequestPage } from "./pages/intents/credentialaccessrequest/credentialaccessrequest";
-import { CredentialListPage } from "./pages/credential/list/credentiallist";
-import { CredentialCreatePage } from "./pages/credential/create/credentialcreate";
-import { CredentialBackupPage } from "./pages/credential/backup/credentialbackup";
 import { RegisterApplicationProfileRequestPage } from "./pages/intents/regappprofilerequest/regappprofilerequest";
 import { SetHiveProviderRequestPage } from "./pages/intents/sethiveproviderrequest/sethiveproviderrequest";
 
@@ -33,7 +29,6 @@ import { ProfileEntryPickerPage } from "./pages/profileentrypicker/profileentryp
 import { SignRequestPage } from "./pages/intents/signrequest/signrequest";
 import { AppIdCredentialIssueRequestPage } from "./pages/intents/appidcredentialissuerequest/appidcredentialissuerequest";
 import { CredentialIssueRequestPage } from "./pages/intents/credentialissuerequest/credentialissuerequest";
-import { DeleteDIDPage } from "./pages/deletedid/deletedid";
 import { NotSignedInPage } from "./pages/notsignedin/notsignedin";
 import { WarningComponent } from "./components/warning/warning.component";
 import { OptionsComponent } from "./components/options/options.component";
@@ -54,9 +49,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
     CredentialAccessRequestPage,
     CredentialIssueRequestPage,
     CredentialImportRequestPage,
-    CredentialListPage,
-    CredentialCreatePage,
-    CredentialBackupPage,
     CredentialDetailsPage,
     EditProfilePage,
     ExportmnemonicPage,
@@ -65,7 +57,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
     SetHiveProviderRequestPage,
     SignRequestPage,
     ProfileEntryPickerPage,
-    DeleteDIDPage,
     NotSignedInPage,
     SettingsPage,
     AdvancedSettingsPage,

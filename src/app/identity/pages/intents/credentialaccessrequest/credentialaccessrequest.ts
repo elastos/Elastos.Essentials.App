@@ -1,6 +1,5 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Config } from '../../../services/config';
 import { DIDService } from '../../../services/did.service';
 import { Profile } from '../../../model/profile.model';
 import { UXService } from '../../../services/ux.service';
@@ -19,7 +18,6 @@ import { SuccessComponent } from '../../../components/success/success.component'
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -168,13 +166,10 @@ export class CredentialAccessRequestPage {
       console.log("Request Dapp color", this.requestDappColor);
       console.log("Mandatory claims:", this.mandatoryItems);
       console.log("Optional claims:", this.optionalItems);
-
-      this.uxService.makeAppVisible();
     });
   }
 
   ionViewWillLeave() {
-    this.titleBar.setNavigationMode(null);
   }
 
   getRequestedTheme(): Promise<void> {

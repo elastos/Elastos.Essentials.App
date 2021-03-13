@@ -1,10 +1,6 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import {
-  ActionSheetController,
-  ModalController,
-  PopoverController,
-} from "@ionic/angular";
+import { ActionSheetController, ModalController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
@@ -735,37 +731,6 @@ export class CredentialsPage {
     return issuer.did;
   }
 
-  async presentActionSheet() {
-    await this.native.showActionSheet([
-      {
-        title: this.translate.instant("publish"),
-        description: this.translate.instant("publish-description"),
-        icon: "publish",
-        action: () => {
-          Logger.log("identity", "publish clicked");
-          this.profileService.showWarning("publishIdentity", "");
-        },
-      },
-      {
-        title: this.translate.instant("edit"),
-        description: this.translate.instant("edit-description"),
-        icon: "edit",
-        action: () => {
-          Logger.log("identity", "edit clicked");
-          this.profileService.editProfile();
-        },
-      },
-      {
-        title: this.translate.instant("share"),
-        description: this.translate.instant("share-description"),
-        icon: "share",
-        action: () => {
-          Logger.log("identity", "Share clicked");
-          this.profileService.shareIdentity();
-        },
-      },
-    ]);
-  }
 
   credentialsListChanged(ev: any) {
     this.segment = ev.detail.value;

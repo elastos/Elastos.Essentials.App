@@ -1,8 +1,6 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
-
-import { UXService } from "../../services/ux.service";
 import { ProfileService } from "../../services/profile.service";
 import { HiveService } from "../../services/hive.service";
 import { BasicCredentialsService } from "../../services/basiccredentials.service";
@@ -29,12 +27,14 @@ type CredentialDisplayEntry = {
 export class PublishPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
+    avatarImg = "";
+    _publishableCredentials: CredentialDisplayEntry[] = [];
+
     constructor(
         public events: Events,
         public route: ActivatedRoute,
         public zone: NgZone,
         private translate: TranslateService,
-        private uxService: UXService,
         public theme: GlobalThemeService,
         public hiveService: HiveService,
         public profileService: ProfileService,
@@ -43,8 +43,7 @@ export class PublishPage {
         this.init();
 
     }
-    avatarImg = "";
-    _publishableCredentials: CredentialDisplayEntry[] = [];
+
     ngOnInit() {
         this.events.subscribe("did:didchanged", () => {
             this.zone.run(() => {
@@ -93,20 +92,12 @@ export class PublishPage {
     }
 
     init() {
-
     }
 
     ionViewWillEnter() {
-
-        this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-    }
-
-    ionViewDidEnter() {
-
     }
 
     ionViewWillLeave() {
-        this.titleBar.setNavigationMode(null);
     }
 
     getDisplayableCredentialTitle(entry: CredentialDisplayEntry): string {
@@ -119,6 +110,7 @@ export class PublishPage {
 
         return translated;
     }
+
     displayableProperties(credential: DIDPlugin.VerifiableCredential) {
         let fragment = credential.getFragment();
         if (fragment === "avatar") return [];
@@ -137,9 +129,8 @@ export class PublishPage {
                 };
             });
     }
+
     publishableCredentials(): CredentialDisplayEntry[] {
-
-
         return this._publishableCredentials;
         // return  get filteredCredentials(): CredentialDisplayEntry[] {
 
@@ -161,7 +152,6 @@ export class PublishPage {
 
 
     onVisibilityChange(e, entry: CredentialDisplayEntry) {
-
         console.log(entry.credential.getId());
         console.log(entry.credential.getFragment());
         this.profileService.setCredentialVisibility(entry.credential.getFragment(), e);

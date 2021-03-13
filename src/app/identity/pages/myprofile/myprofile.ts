@@ -1,24 +1,17 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import {
-  ModalController,
-  PopoverController,
-  ActionSheetController,
-  NavController,
-} from "@ionic/angular";
+import { ModalController, ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { Profile } from "../../model/profile.model";
 import { DIDURL } from "../../model/didurl.model";
 import { DIDPublicationStatusEvent } from "../../model/eventtypes.model";
-import { UXService } from "../../services/ux.service";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { HiveService } from "../../services/hive.service";
-import { HttpClient } from "@angular/common/http";
 import { Native } from "../../services/native";
 import { DID } from "../../model/did.model";
 import { DIDDocument } from "../../model/diddocument.model";
@@ -26,9 +19,8 @@ import { AuthService } from "../../services/auth.service";
 import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { Logger } from "src/app/logger";
-import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
+import { BuiltInIcon, TitleBarIconSlot } from "src/app/components/titlebar/titlebar.types";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 
@@ -84,7 +76,6 @@ export class MyProfilePage {
   private modifiedCredentialsSubscription: Subscription = null;
 
   constructor(
-    private http: HttpClient,
     public events: Events,
     public route: ActivatedRoute,
     public zone: NgZone,
@@ -98,7 +89,6 @@ export class MyProfilePage {
     public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
-    private navCtrl: NavController,
     private globalIntentService: GlobalIntentService
   ) {
     this.init();
@@ -234,7 +224,7 @@ export class MyProfilePage {
 
     this.titleBar.addOnItemClickedListener((icon) => {
       if (icon.key == "settings") {
-          this.navCtrl.navigateForward('/identity/settings');
+        this.native.go('/identity/settings');
       }
     });
   }

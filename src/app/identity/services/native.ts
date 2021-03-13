@@ -1,10 +1,7 @@
 
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-
 import { isString } from 'lodash';
-import { AppActionSheetController } from '../components/action-sheet/action-sheet.controller';
-import { IActionSheetButtonConfig } from '../components/action-sheet/action-sheet.config';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
@@ -17,8 +14,6 @@ export class Native {
 
   constructor(
       private translate: TranslateService,
-      private actionSheetCtrl: AppActionSheetController,
-      private zone: NgZone,
       private native: GlobalNativeService,
       private nav: GlobalNavService
   ) {
@@ -99,18 +94,6 @@ export class Native {
       return newObj;
   }
 
-  public async showActionSheet(
-    buttons: IActionSheetButtonConfig[],
-    showCancelButton: boolean = true,
-    callbackCancel: () => void = () => {})
-  {
-    console.log("Show action sheet")
-    await this.actionSheetCtrl.create({
-      buttons: buttons,
-      showCancelButton: showCancelButton,
-      cancelCallback: callbackCancel
-    }).show();
-  }
 
   public async showLoading(content: string = 'please-wait') {
     await this.native.showLoading(content);

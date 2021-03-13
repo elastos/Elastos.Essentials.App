@@ -1,6 +1,4 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-
-import { Config } from '../../../services/config';
 import { DIDService } from '../../../services/did.service';
 import { UXService } from '../../../services/ux.service';
 import { PopupProvider } from '../../../services/popup';
@@ -89,8 +87,6 @@ export class CredentialIssueRequestPage {
       this.organizeDisplayableInformation();
 
       console.log("Displayable credential:", this.displayableCredential)
-
-      this.uxService.makeAppVisible();
     });
   }
 

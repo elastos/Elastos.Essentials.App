@@ -1,6 +1,4 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-
-import { Config } from '../../../services/config';
 import { DIDService } from '../../../services/did.service';
 import { UXService } from '../../../services/ux.service';
 import { PopupProvider } from '../../../services/popup';
@@ -74,7 +72,6 @@ export class CredentialImportRequestPage {
     private zone: NgZone,
     public didService: DIDService,
     private popup: PopupProvider,
-    private uxService: UXService,
     private appServices: UXService,
     private translate: TranslateService,
     public theme: ThemeService,
@@ -91,7 +88,6 @@ export class CredentialImportRequestPage {
 
       await this.runPreliminaryChecks();
       await this.organizeImportedCredentials();
-      this.uxService.makeAppVisible();
 
       console.log("Displayable credentials:", this.displayableCredentials)
     });

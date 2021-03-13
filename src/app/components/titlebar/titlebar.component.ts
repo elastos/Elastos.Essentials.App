@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AppTheme, GlobalThemeService } from '../../services/global.theme.service';
-import { PopoverController, ModalController, ActionSheetController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon, TitleBarForegroundMode } from './titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -42,9 +42,7 @@ export class TitleBarComponent {
   constructor(
     public themeService: GlobalThemeService,
     private popoverCtrl: PopoverController,
-    private modalCtrl: ModalController,
     private globalNav: GlobalNavService,
-    private actionSheetCtrl: ActionSheetController
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);
@@ -261,7 +259,9 @@ export class TitleBarComponent {
   }
 
   outerLeftIconClicked() {
-    this.globalNav.navigateHome();
+    this.icons[TitleBarIconSlot.OUTER_LEFT].iconPath === BuiltInIcon.ELASTOS ? 
+      this.globalNav.navigateHome() :
+      this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
   }
 
   innerLeftIconClicked() {
@@ -277,9 +277,8 @@ export class TitleBarComponent {
   }
 
   outerRightIconClicked(ev) {
-    if (this.menuVisible)
-      this.openMenu(ev);
-    else
+    this.menuVisible ? 
+      this.openMenu(ev) :
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
   }
 

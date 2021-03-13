@@ -1,6 +1,4 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-
-import { Config } from '../../../services/config';
 import { DIDService } from '../../../services/did.service';
 import { UXService } from '../../../services/ux.service';
 import { PopupProvider } from '../../../services/popup';
@@ -28,6 +26,8 @@ type IssuedAppIdCredential = {
 })
 export class AppIdCredentialIssueRequestPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
+
+    public requestDapp;
 
     public receivedIntent: AppIdCredIssueIdentityIntent = null;
     public displayableCredential: IssuedAppIdCredential = null; // Displayable reworked material
@@ -57,9 +57,6 @@ export class AppIdCredentialIssueRequestPage {
 
         this.zone.run(async () => {
             this.receivedIntent = this.intentService.getReceivedIntent<AppIdCredIssueIdentityIntent>();
-
-            this.uxService.makeAppVisible();
-
             await this.checkIntentSenderAppDid();
 
             this.organizeDisplayableInformation();

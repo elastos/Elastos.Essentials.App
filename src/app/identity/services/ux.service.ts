@@ -44,13 +44,6 @@ export class UXService {
         this.globalIntentService.intentListener.subscribe((intent)=>{
           this.onReceive(intent);
       });
-
-
-   /*      this.titleBar.addOnItemClickedListener((icon) => {
-            if (icon.key == "settings") {
-                this.navCtrl.navigateForward('/identity/settings');
-            }
-        }); */
     }
 
     /**
@@ -81,23 +74,6 @@ export class UXService {
 
     showEntryScreen() {
         this.didService.displayDefaultScreen();
-    }
-
-    /**
-     * Close this application.
-     */
-    close() {
-        // TODO @chad - closing means going back in router nav. We may discuss the best way to do this.
-        Logger.log('identity', "Closing DID app");
-        // TODO essentialsIntent.close();
-    }
-
-    /**
-     * As the app starts invisible, screens have to call this method when they are ready, so that
-     * user can actually see the app (but see it only when fully ready)
-     */
-    makeAppVisible() {
-        // TODO: delete this makeAppVisible() from code. essentialsIntent.setVisible("show");
     }
 
     public translateInstant(key: string): string {

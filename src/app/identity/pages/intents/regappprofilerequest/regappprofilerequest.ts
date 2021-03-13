@@ -1,6 +1,4 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-
-import { Config } from '../../../services/config';
 import { DIDService } from '../../../services/did.service';
 import { UXService } from '../../../services/ux.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -59,10 +57,8 @@ export class RegisterApplicationProfileRequestPage {
   public shouldPublishOnSidechain: boolean = true;
 
   constructor(
-    private zone: NgZone,
     private didService: DIDService,
     private events: Events,
-    private uxService:UXService,
     private translate: TranslateService,
     private appServices: UXService,
     public profileService: ProfileService,
@@ -75,7 +71,6 @@ export class RegisterApplicationProfileRequestPage {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('app-profile'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
-    this.uxService.makeAppVisible();
 
     this.receivedIntent = this.intentService.getReceivedIntent();
 

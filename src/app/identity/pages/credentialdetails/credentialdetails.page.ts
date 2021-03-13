@@ -1,14 +1,11 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import {
-  ActionSheetController
-} from "@ionic/angular";
+import { ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 
 import { Profile } from "../../model/profile.model";
 import { DIDURL } from "../../model/didurl.model";
 import { DIDPublicationStatusEvent } from "../../model/eventtypes.model";
-import { UXService } from "../../services/ux.service";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
@@ -24,8 +21,6 @@ import { Subscription } from "rxjs";
 import { isNullOrUndefined } from "lodash";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
-import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 
 
@@ -100,7 +95,6 @@ export class CredentialDetailsPage {
     private translate: TranslateService,
     private didService: DIDService,
     private didSyncService: DIDSyncService,
-    private uxService: UXService,
     private native: Native,
     public theme: GlobalThemeService,
     public hiveService: HiveService,
@@ -180,14 +174,10 @@ export class CredentialDetailsPage {
   }
 
   ionViewWillEnter() {
-    this.uxService.makeAppVisible();
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
-
     this.getIssuer();
-
   }
+
   ionViewWillLeave() {
-    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {
@@ -520,29 +510,6 @@ export class CredentialDetailsPage {
     console.log('Local ' + localValue + " ; Chain " + chainValue);
     console.log("5");
     this.isPublished = localValue === chainValue;
-  }
-
-  async presentActionSheet() {
-    await this.native.showActionSheet([
-      {
-        title: this.translate.instant("publish"),
-        description: this.translate.instant("publish-description"),
-        icon: "publish",
-        action: () => {
-          console.log("publish clicked");
-          this.profileService.showWarning("publishIdentity", "");
-        },
-      },
-      {
-        title: this.translate.instant("edit"),
-        description: this.translate.instant("edit-description"),
-        icon: "edit",
-        action: () => {
-          console.log("edit clicked");
-          this.profileService.editProfile();
-        },
-      },
-    ]);
   }
 
   publishCredential() {

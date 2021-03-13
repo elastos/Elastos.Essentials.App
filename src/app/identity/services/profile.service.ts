@@ -15,8 +15,8 @@ import { TemporaryAppManagerPlugin } from "src/app/TMP_STUBS";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
-var deepEqual = require('deep-equal');
 
+var deepEqual = require('deep-equal');
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
