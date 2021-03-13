@@ -15,6 +15,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 // TODO: When opening the screen we could fetch the existing app on chain and display its info.
 
@@ -53,18 +54,17 @@ export class AppDetailsPage {
 
   constructor(
     public navCtrl: NavController,
-    private dAppService: DAppService,
+    public dAppService: DAppService,
     private route: ActivatedRoute,
     private router: Router,
     private popoverController: PopoverController,
     private identityService: IdentityService,
-    private storage: GlobalStorageService,
     private clipboard: Clipboard,
     private toastCtrl: ToastController,
     private zone: NgZone,
     private hiveService: HiveService,
     private popup: PopupService,
-    private didSessions: GlobalDIDSessionsService
+    public theme: GlobalThemeService
   ) {
     route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -245,7 +245,7 @@ export class AppDetailsPage {
     const popover = await this.popoverController.create({
       mode: 'ios',
       component: DeleteComponent,
-      cssClass: 'deleteComponent',
+      cssClass: 'developertools-delete-component',
       componentProps: {
         app: this.app
       },

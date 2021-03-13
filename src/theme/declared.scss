@@ -250,3 +250,33 @@
   }
 }
 
+/********************** DEVELOPER TOOLS **********************/
+.developertools-help-component {
+  --background: linear-gradient(to bottom, #181d20 0%,  #21313d 100%);
+  --width: 60%;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.developertools-delete-component {
+  --width: 90%;
+
+  ion-backdrop {
+    opacity: 0.1 !important;
+  }
+
+  .popover-wrapper{
+    .popover-content {
+      width: 85vw;
+    }
+  }
+}
+
+@media screen and (max-height: 670px) {
+  .qrcode-modal {
+    --height: 74%;
+  }
+
+  .dark-qrcode-modal {
+    --height: 77%;
+  }
+}

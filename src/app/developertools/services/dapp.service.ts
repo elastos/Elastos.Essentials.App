@@ -211,7 +211,7 @@ export class DAppService {
       const popover = await this.popoverController.create({
         mode: 'ios',
         component: HelpComponent,
-        cssClass: 'helpComponent',
+        cssClass: 'developertools-help-component',
         event: ev,
         componentProps: {
           message: helpMessage

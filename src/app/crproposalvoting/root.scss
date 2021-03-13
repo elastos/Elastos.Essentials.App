@@ -1,14 +1,3 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
 ion-tabs {
   ion-tab-bar {
     display: flex;
@@ -28,23 +17,6 @@ ion-tab-button.tab-selected {
     color: var(--ion-color-primary) !important;
     --ion-color-base: var(--ion-color-primary) !important;
   }
-}
-
-/** ion-refresher **/
-.refresh {
-  // background: hsl(225, 22%, 96%);
-  .refresher-pulling-text,
-  .refresher-refreshing-text,
-  .refresher-refreshing-icon,
-  .refresher-pulling-icon {
-    font-weight: 500;
-  }
-}
-
-/** Ripple for clickable items **/
-.ripple {
-  position: relative;
-  overflow: hidden;
 }
 
 /** General Spinner **/

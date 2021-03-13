@@ -1,7 +1,7 @@
 <app-titlebar></app-titlebar>
 <ion-content>
   <!-- Login Screen -->
-  <ion-grid class="container" *ngIf="!didStorePasswordIsValid">
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!didStorePasswordIsValid">
 
     <div class="ion-text-center">
       <h1>{{ app.name }}</h1>
@@ -9,12 +9,12 @@
   </ion-grid>
 
    <!-- Manage Screen -->
-  <ion-grid class="container" *ngIf="didStorePasswordIsValid">
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="didStorePasswordIsValid">
 
-    <p>
+   <!--  <p>
       This page allows you to configure your application identity on the Elastos DID sidechain, but
       also various technical settings for your application as a elastOS or as a native application.
-    </p>
+    </p> -->
 
     <div class="ion-text-center">
       <h1>Generic App Info</h1>

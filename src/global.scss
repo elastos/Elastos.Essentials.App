@@ -100,20 +100,27 @@
     src: url('assets/fonts/raleway/Raleway-Black.ttf') format('truetype');
 }
 
+/** Global font family **/
 * {
     font-family: 'Montserrat' !important;
 }
 
+/** Remove 'box' outline on clicked items **/
 :focus {
     outline: none;
 }
 
-/** Page filter when popup is showing **/
+/** Hide visibility **/
+.hidden {
+    visibility: hidden;
+}
+  
+/** Blur screen when a popup is showing **/
 .blur {
     filter: blur(2.5px);
 }
 
-/** Clickable items **/
+/** Ripple to clickable items **/
 .ripple {
     overflow: hidden;
     position: relative;

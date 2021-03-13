@@ -1,3 +1,5 @@
+@import "src/app/developertools/root.scss";
+
 .header {
   position: fixed;
   top: 0;
@@ -34,18 +36,8 @@
   min-height: 100%;
   background: #FAFAFA;
   padding: 15px;
-  // padding-top: 10%;
   padding-bottom: 15%;
 
-/*   min-height: 100%;
-  width: 100%;
-  background-repeat: repeat;
-  background-size: cover;
-  top: 0;
-  left: 0;
-  background-image: url("/assets/developertools/images/background.svg");
-  object-fit: contain;
- */
   h1 {
     margin: 15px 0px;
     font-size: 24px;
@@ -100,19 +92,3 @@
     color: #ffffff;
   }
 }
-
-/* ion-footer {
-  height: 12%;
-  background: #FAFAFA;
-
-  ion-button {
-    --border-radius: 30px;
-    width: 95%;
-    height: 80%;
-
-    ion-label {
-      letter-spacing: 5px;
-    }
-  }
-}
- */
