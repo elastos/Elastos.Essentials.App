@@ -1,9 +1,7 @@
-import { NgModule, ErrorHandler } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicStorageModule } from '@ionic/storage';
-import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import { DeveloperToolsRoutingModule } from './routing';
 import { FormsModule } from '@angular/forms';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
@@ -16,10 +14,8 @@ import { AppDetailsPage } from './pages/appdetails/appdetails';
 import { HttpClientModule } from '@angular/common/http';
 import { HelpComponent } from './components/help/help.component';
 import { DeleteComponent } from './components/delete/delete.component';
-import { HiveService } from './services/hive.service';
-import { IdentityService } from './services/identity.service';
-import { DAppService } from './services/dapp.service';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -36,7 +32,8 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
     HttpClientModule,
     FormsModule,
     IonicStorageModule,
-    IonicModule
+    IonicModule,
+    TranslateModule
   ],
   bootstrap: [],
   entryComponents: [

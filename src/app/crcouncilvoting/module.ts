@@ -1,8 +1,6 @@
-import { NgModule, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import { CRCouncilVotingRoutingModule } from './routing';
 import { HttpClientModule } from '@angular/common/http';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
@@ -16,6 +14,7 @@ import { CandidatesPage } from './pages/candidates/candidates.page';
 import { HistoryPage } from './pages/history/history.page';
 import { VotePage } from './pages/vote/vote.page';
 import { CandidateSliderComponent } from './components/candidate-slider/candidate-slider.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -31,7 +30,8 @@ import { CandidateSliderComponent } from './components/candidate-slider/candidat
     CRCouncilVotingRoutingModule,
     SharedComponentsModule,
     IonicModule,
-    IonicStorageModule
+    IonicStorageModule,
+    TranslateModule
   ],
   bootstrap: [],
   entryComponents: [

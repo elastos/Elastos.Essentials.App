@@ -18,6 +18,7 @@ import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforprop
 import { FormsModule } from '@angular/forms';
 import { StorageService } from './services/storage.service';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
     SharedComponentsModule,
     FormsModule,
     IonicModule,
-    IonicStorageModule
+    IonicStorageModule,
+    TranslateModule
   ],
   bootstrap: [],
   entryComponents: [

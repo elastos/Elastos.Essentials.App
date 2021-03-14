@@ -3,6 +3,7 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { StorageDApp } from '../../model/storagedapp.model';
 import { DAppService } from '../../services/dapp.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-delete',
@@ -13,12 +14,13 @@ export class DeleteComponent implements OnInit {
 
   @Output() cancelEvent = new EventEmitter<boolean>();
 
-  app: StorageDApp;
+  public app: StorageDApp;
 
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
-    public dAppService: DAppService
+    public dAppService: DAppService,
+    public translate: TranslateService
   ) { }
 
   ngOnInit() {

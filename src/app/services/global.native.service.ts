@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToastController, AlertController, LoadingController, NavController } from '@ionic/angular';
+import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { GlobalThemeService, AppTheme } from 'src/app/services/global.theme.service';
@@ -19,7 +19,6 @@ export class GlobalNativeService {
       private translate: TranslateService,
       private theme: GlobalThemeService,
       private clipboard: Clipboard,
-      private navCtrl: NavController
     ) { }
 
     copyClipboard(text) {
@@ -37,7 +36,7 @@ export class GlobalNativeService {
         }).then(toast => toast.present());
     }
 
-    genericToast(msg: string, duration: number = 1000) {
+    genericToast(msg: string, duration: number = 2000) {
       const translation = this.translate.instant(msg);
       this.toastCtrl.create({
           mode: 'ios',
@@ -46,6 +45,19 @@ export class GlobalNativeService {
           position: 'bottom',
           color: 'primary'
       }).then(toast => toast.present());
+    }
+
+    toastWithTitle(header: string, msg: string, duration: number = 2000) {
+        const translatedHeader = this.translate.instant(header)
+        const translatedMsg = this.translate.instant(msg);
+        this.toastCtrl.create({
+            mode: 'ios',
+            header: translatedHeader,
+            message: translatedMsg,
+            duration: duration,
+            position: 'bottom',
+            color: 'primary'
+        }).then(toast => toast.present());
     }
 
     async genericAlert(msg: string, title?: string) {

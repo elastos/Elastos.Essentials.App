@@ -5,8 +5,8 @@ import { StorageDApp } from '../../model/storagedapp.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
+import { TranslateService } from '@ngx-translate/core';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'page-home',
@@ -16,12 +16,16 @@ declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 export class HomePage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  constructor(public navCtrl: NavController, public dappService: DAppService) {
+  constructor(
+    public navCtrl: NavController,
+    public dappService: DAppService,
+    public translate: TranslateService,
+    private nav: GlobalNavService
+  ) {
   }
 
-  ionViewDidEnter() {
-    // Update system status bar every time we re-enter this screen.
-    this.titleBar.setTitle("Developer Toolbox");
+  ionViewWillEnter() {
+    this.titleBar.setTitle(this.translate.instant('dev-toolbox'));
     this.titleBar.setBackgroundColor("#181d20");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
@@ -29,14 +33,12 @@ export class HomePage {
 
   newApp() {
     Logger.log("developertools", "new app")
-    this.navCtrl.navigateForward("createapp");
+    this.nav.navigateTo(App.DEVELOPER_TOOLS, "createapp");
   }
 
   openApp(app: StorageDApp) {
-    this.navCtrl.navigateForward("appdetails", {
-      state: {
-        "app": app
-      }
-    });
+    this.nav.navigateTo(
+      App.DEVELOPER_TOOLS, "appdetails", { state: { "app": app } }
+    );
   }
 }

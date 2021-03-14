@@ -1,5 +1,5 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { NavController, NavParams, PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { DAppService } from '../../services/dapp.service';
 import { StorageDApp } from '../../model/storagedapp.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,15 +7,16 @@ import { DIDHelper } from '../../helpers/did.helper';
 import { DIDSession } from '../../model/didsession.model';
 import { DeleteComponent } from '../../components/delete/delete.component';
 import { IdentityService } from '../../services/identity.service';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { HiveService } from '../../services/hive.service';
-import { PopupService } from '../../services/popup.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { PopupService } from '../../services/popup.service';;
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TranslateService } from '@ngx-translate/core';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 // TODO: When opening the screen we could fetch the existing app on chain and display its info.
 
@@ -53,18 +54,18 @@ export class AppDetailsPage {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
-    public navCtrl: NavController,
     public dAppService: DAppService,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private router: Router,
     private popoverController: PopoverController,
     private identityService: IdentityService,
-    private clipboard: Clipboard,
-    private toastCtrl: ToastController,
     private zone: NgZone,
     private hiveService: HiveService,
     private popup: PopupService,
-    public theme: GlobalThemeService
+    public theme: GlobalThemeService,
+    private native: GlobalNativeService,
+    private nav: GlobalNavService,
+    public translate: TranslateService,
   ) {
     route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -73,13 +74,11 @@ export class AppDetailsPage {
     });
   }
 
-  ionViewWillEnter() {
-  }
-
-  async ionViewDidEnter() {
+  async ionViewWillEnter() {
     // Update system status bar every time we re-enter this screen.
-    this.titleBar.setTitle("Manage App");
-
+    this.titleBar.setTitle(this.translate.instant('manage-app'));
+    this.titleBar.setBackgroundColor("#181d20");
+    this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
       key: "appdetails-back",
       iconPath: BuiltInIcon.BACK
@@ -88,7 +87,7 @@ export class AppDetailsPage {
     this.titleBarIconClickedListener = (clickedIcon) => {
       switch (clickedIcon.key) {
         case "appdetails-back":
-          this.navCtrl.back();
+          this.nav.navigateBack();
           break;
       }
     }
@@ -135,12 +134,16 @@ export class AppDetailsPage {
   }
 
   publishAppToElastOS() {
-    this.navCtrl.navigateForward("publishapptrinity", {
-      state: {
-        "app": this.app,
-        "didsession": this.didSession
+    this.nav.navigateTo(
+      App.DEVELOPER_TOOLS,
+      "publishapptrinity", 
+      {
+        state: {
+          "app": this.app,
+          "didsession": this.didSession
+        }
       }
-    });
+    );
   }
 
   public isAppIdentityPublished(): boolean {
@@ -255,16 +258,8 @@ export class AppDetailsPage {
   }
 
   public async copyAppDIDToClipboard() {
-    this.clipboard.copy(this.app.didString);
-    const toast = await this.toastCtrl.create({
-      header: 'Copied',
-      message: "Application DID copied to clipboard",
-      color: 'primary',
-      position: 'bottom',
-      mode: 'ios',
-      duration: 2000
-    });
-    toast.present();
+    this.native.copyClipboard(this.app.didString);
+    this.native.genericToast('app-did-copied');
   }
 
   public async downloadAppIconFromDeveloperHive() {

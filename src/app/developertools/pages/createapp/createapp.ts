@@ -4,7 +4,9 @@ import { DAppService } from '../../services/dapp.service';
 import { CreatedDApp } from '../../model/customtypes';
 import { Router } from '@angular/router';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarMenuItem, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIcon, TitleBarMenuItem, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'page-createapp',
@@ -24,24 +26,24 @@ export class CreateAppPage {
   passwordToggle: string = 'eye';
   showPassword = false;
 
-  helpMessage: string = 'An app DID store password is an ordinary password used to access the created app\'s profile. Make sure to keep this password stored safely';
-  helpMessage2: string = 'If you have already created an app, you may use its existing DID mnemonic to create another app profile';
-  helpMessage3: string = 'For advanced use only, this mnemonic is only necessary if you want to use your wallet\'s passphrase for extra security';
+  helpMessage: string = this.translate.instant('help-message');
+  helpMessage2: string = this.translate.instant('help-message2');
+  helpMessage3: string = this.translate.instant('help-message3');
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem)=>void;
 
   constructor(
     public dAppService: DAppService,
-    public navCtrl: NavController,
-    private router: Router
+    private nav: GlobalNavService,
+    private router: Router,
+    public translate: TranslateService
   ) {
   }
 
-  ionViewDidEnter() {
-    // Update system status bar every time we re-enter this screen.
-    // titleBarManager.setTitle("Create app");
-    this.titleBar.setTitle("New App");
-
+  ionViewWillEnter() {
+    this.titleBar.setTitle(this.translate.instant('new-app'));
+    this.titleBar.setBackgroundColor("#181d20");
+    this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
       key: "createapp-back",
       iconPath: BuiltInIcon.BACK
@@ -50,7 +52,7 @@ export class CreateAppPage {
     this.titleBarIconClickedListener = (clickedIcon)=>{
       switch (clickedIcon.key) {
         case "createapp-back":
-          this.navCtrl.back();
+          this.nav.navigateBack();
           break;
       }
     }
@@ -70,7 +72,7 @@ export class CreateAppPage {
   }
 
   endAppCreation() {
-    this.router.navigate(['/developertools/home']);
+    this.nav.navigateBack();
   }
 
   togglePassword() {

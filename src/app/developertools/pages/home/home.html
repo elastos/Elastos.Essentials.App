@@ -3,8 +3,8 @@
   <ion-grid class="container">
 
     <div class="ion-text-center">
-      <h1 *ngIf="dappService.getDApps().length > 0">My Applications</h1>
-      <h1 *ngIf="dappService.getDApps().length === 0">No Applications</h1>
+      <h1 *ngIf="dappService.getDApps().length > 0">{{ 'my-apps' | translate }}</h1>
+      <h1 *ngIf="dappService.getDApps().length === 0">{{ 'no-apps' | translate }}</h1>
     </div>
 
     <ion-card *ngFor="let app of dappService.getDApps()" (click)="openApp(app)">
@@ -14,7 +14,7 @@
   </ion-grid>
 
   <div class="btn ion-activatable ripple" (click)="newApp()">
-    <ion-label>NEW APP</ion-label>
+    <ion-label>{{ 'new-app' | translate }}</ion-label>
     <ion-ripple-effect></ion-ripple-effect>
   </div>
 </ion-content>
