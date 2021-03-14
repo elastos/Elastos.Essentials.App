@@ -2,7 +2,7 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Platform } from "@ionic/angular";
+import { IonicModule, Platform } from "@ionic/angular";
 import { IonicStorageModule } from "@ionic/storage";
 import { IdentityRoutingModule } from "./routing";
 import { Clipboard } from "@ionic-native/clipboard/ngx";
@@ -68,6 +68,7 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
   imports: [
     CommonModule,
     HttpClientModule,
+    IonicModule,
     IdentityRoutingModule,
     ComponentsModule,
     SharedComponentsModule,
