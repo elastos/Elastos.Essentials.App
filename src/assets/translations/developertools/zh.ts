@@ -15,12 +15,9 @@ export const zh = {
     'create-app': '创建应用',
     'app-created': '应用已创建!',
     'save-mnemonic': '请仔细保存您的助记词:',
-    'done': '完成',
     'manage-app': '管理应用',
     'generic-app-info': '通用的应用程序信息',
-    'title': '标题',
     'app-identity-status': '应用程序身份状态',
-    'mnemonic': '助记词',
     'app-did-published?': '应用 DID 是否已经发布?',
     'dev-did-published?': '开发者 DID 是否已经发布?',
     'app-did-copied': '应用程序 DID 已经复制到剪切板d',
@@ -40,7 +37,5 @@ export const zh = {
     'help-message': '应用程序DID存储密码是用于访问创建的应用程序配置文件的普通密码。确保安全保存此密码',
     'help-message2': '如果您已经创建了一个应用程序，则可以使用其现有的DID助记符来创建另一个应用程序配置文件',
     'help-message3': '仅用于高级用途，仅当您要使用钱包的密码短语以增强安全性时才需要此助记符”',
-    'delete': '删除',
-    'cancel': '取消',
-    'delete-msg': '为了恢复此应用程序以供将来访问和更新，您必须创建一个具有相同助记符的新应用程序'
+    'delete-app-msg': '为了恢复此应用程序以供将来访问和更新，您必须创建一个具有相同助记符的新应用程序'
 };

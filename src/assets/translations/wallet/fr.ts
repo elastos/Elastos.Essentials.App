@@ -362,7 +362,6 @@ export const fr = {
     /*****************
     * Mnemonic Pages *
     *****************/
-    'mnemonic': 'Mnémonique',
     'mnemonic-prompt1': 'Voici vos 12 mots secrets (mnémonique). Si vous les perdez, vous perdez votre portefeuille, alors notez-les quelque part ',
     'mnemonic-prompt2': 'dans le bon ordre',
     'mnemonic-prompt3': ', et en sécurité!',

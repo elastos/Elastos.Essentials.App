@@ -32,7 +32,7 @@ export const fr = {
   'contact-profile': "Profil du contact",
   'details': 'Détails',
   'apps': 'Capsules',
-  'no-apps': 'Aucune capsule disponible',
+  'no-capsules': 'Aucune capsule disponible',
   'did': 'Identité',
   'elaWallet': 'Adresse ELA',
   'carrier': 'Adresse de communication Carrier',

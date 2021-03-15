@@ -33,10 +33,8 @@ export const zh = {
     // Intent Screens
     'create-suggestion': '提交提议',
     'create-suggestion-msg': '您将要提出以下建议。请对其进行审核，并按照流程进行签名和发布。',
-    'title': '标题',
     'creation-date': '创建日期',
     'created-by': '创建者',
-    'description': '描述',
     'sign-create-suggestion': '签名并提交建议',
     'vote-proposal': '为提案投票',
     'vote-proposal-msg': '您将投票否决此提案。如果社区成员使用足够的ELA否决了提案，则该提案将被中止。',

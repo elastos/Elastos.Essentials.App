@@ -177,7 +177,6 @@ export const en = {
     'identifier': 'Identifier',
     'expire': 'Expires',
     'credential-issued': 'Credential issued',
-    'done': 'Done',
     'credential-issued-success': 'Great, the credential has been created!',
     'credential-issued-error': 'Sorry, the credential could not be issued.',
 

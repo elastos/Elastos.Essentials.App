@@ -32,7 +32,7 @@ export const zh = {
   'contact-profile': '联系人信息',
   'details': '详情',
   'apps': '已浏览的胶囊',
-  'no-apps': '没有可用的胶囊',
+  'no-capsules': '没有可用的胶囊',
   'did': '身份码',
   'elaWallet': 'ELA 地址',
   'carrier': 'Carrier 地址',

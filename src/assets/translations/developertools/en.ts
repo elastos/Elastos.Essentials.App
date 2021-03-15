@@ -15,12 +15,9 @@ export const en = {
     'create-app': 'Create App',
     'app-created': 'App Created!',
     'save-mnemonic': 'Please save your mnemonic carefully:',
-    'done': 'Done',
     'manage-app': 'Manage App',
     'generic-app-info': 'Generic App Info',
-    'title': 'Title',
     'app-identity-status': 'App Identity Status',
-    'mnemonic': 'Mnemonic',
     'app-did-published?': 'App DID Published?',
     'dev-did-published?': 'Developer DID Published?',
     'app-did-copied': 'Application DID copied to clipboard',
@@ -40,7 +37,5 @@ export const en = {
     'help-message': 'An app DID store password is an ordinary password used to access the created app\'s profile. Make sure to keep this password stored safely',
     'help-message2': 'If you have already created an app, you may use its existing DID mnemonic to create another app profile',
     'help-message3': 'For advanced use only, this mnemonic is only necessary if you want to use your wallet\'s passphrase for extra security',
-    'delete': 'Delete',
-    'cancel': 'Cancel',
-    'delete-msg': 'In order to recover this app for future access and updates, you will have to create a new app with the same mnemonics'
+    'delete-app-msg': 'In order to recover this app for future access and updates, you will have to create a new app with the same mnemonics'
 };

@@ -1,5 +1,5 @@
 export const en = {
-    'app-name': 'Elastos Essentials',
+    'application-name': 'Elastos Essentials',
 
     // Generic actions
     'delete': 'Delete',
@@ -16,7 +16,12 @@ export const en = {
     'next': 'Next',
     'back': 'Back',
     'copy-to-clipboard': 'Copy',
+    'photo-library': 'Photo Library',
     'take-pictures': 'Take Picture',
+    'title': 'Title',
+    'done': 'Done',
+    'mnemonic': 'Mnemonic',
+    'description': 'Description',
 
     // Navigation
     'settings': 'Settings',
@@ -25,7 +30,6 @@ export const en = {
     'identity': 'Identity',
     'favorites': 'Favorites',
     'favorite': 'Favorite',
-    'photo-library': 'Photo Library',
 
     // Popups, error messages
     'please-wait': "Please wait...",

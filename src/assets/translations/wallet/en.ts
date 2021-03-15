@@ -363,7 +363,6 @@ export const en = {
     /*****************
     * Mnemonic Pages *
     *****************/
-    'mnemonic': 'Mnemonic',
     'mnemonic-prompt1': 'These are your 12 security words (mnemonic phrase). Lose these and you will lose the wallet, so you must keep them written down ',
     'mnemonic-prompt2': 'in order',
     'mnemonic-prompt3': ', and safe!',

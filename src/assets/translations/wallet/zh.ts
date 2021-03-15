@@ -362,7 +362,6 @@ export const zh = {
     /*****************
     * Mnemonic Pages *
     *****************/
-    'mnemonic': '助记词',
     'mnemonic-prompt1': '这是您的12个安全字（助记词）。丢失这些，您将丢失钱包，因此必须将它们',
     'mnemonic-prompt2': '按顺序',
     'mnemonic-prompt3': '写下来，并且安全地保存。',

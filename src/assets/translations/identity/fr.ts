@@ -52,7 +52,7 @@ export const fr = {
     'credential-not-published': 'Crédentiel Non Publié',
     'credential-on-blockchain': 'Rendez cette information visible',
     'verify-credential': 'Vérifier le Crédentiel',
-    'reverify-credential': 'Revérifier le Crédentiel',    
+    'reverify-credential': 'Revérifier le Crédentiel',
     'launch-external-app-to-verify': 'Lancer une capsule externe pour vérifier',
     'validator': 'Validateur',
     'history': 'Historique',
@@ -177,7 +177,6 @@ export const fr = {
     'identifier': 'Identifiant',
     'expire': 'Expiration',
     'credential-issued': 'Crédentiel créé',
-    'done': 'Terminer',
     'credential-issued-success': 'Parfait, le crédentiel a été créé!',
     'credential-issued-error': 'Oops, le crédentiel n\'a pas pu être créé pour l\'instant.',
 

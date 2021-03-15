@@ -52,7 +52,6 @@ export const zh = {
      'priv-net': 'Private Net',
 
      /********** App-Info Page **********/
-     'description': '描述',
      'app-details': '胶囊详情',
      'developer-details': '开发者',
      'install-details': '安装详情',

@@ -47,7 +47,7 @@ export const zh = {
     'capsule-marketplace': '胶囊市场',
     'main': '主要',
     'utilities': '通用',
-    'voting': 'Voting',
+    'voting': '投票',
     'other': '其它',
 
     /********** Onboard Page **********/
@@ -74,12 +74,12 @@ export const zh = {
     'app-scanner-description': '扫描二维码',
     'app-settings': '设置',
     'app-settings-description': '管理elastOS',
-    'app-dpos-voting': 'DPoS voting',
-    'app-dpos-description': 'DPoS Supernodes',
-    'app-cr-council': 'CR Council',
-    'app-crcouncil-description': 'Cyber Republic council members',
-    'app-cr-proposal': 'CR Proposal',
-    'app-crproposal-description': 'Cyber Republic proposals',
+    'app-dpos-voting': 'DPoS 超级节点投票',
+    'app-dpos-description': '参与亦来云生态体系建设',
+    'app-cr-council': 'CR 委员会',
+    'app-crcouncil-description': 'CR 委员会成员',
+    'app-cr-proposal': 'CR 提案',
+    'app-crproposal-description': '参与社区运营共治',
 
     /*********** Tips generic ************/
     'tip-of-the-day': '每日提示',

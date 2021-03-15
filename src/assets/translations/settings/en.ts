@@ -52,7 +52,6 @@ export const en = {
     'priv-net': 'Private Net',
 
     /********** App-Info Page **********/
-    'description': 'Description',
     'app-details': 'Capsule Details',
     'developer-details': 'Developer Details',
     'install-details': 'Installation Details',

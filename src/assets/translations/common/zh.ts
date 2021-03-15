@@ -1,5 +1,5 @@
 export const zh = {
-    'app-name': 'Elastos Essentials',
+    'application-name': 'Elastos Essentials',
 
     // Generic actions
     'delete': '删除',
@@ -18,6 +18,10 @@ export const zh = {
     'copy-to-clipboard': '复制',
     'take-pictures': '拍摄',
     'photo-library': '从手机相册选择',
+    'title': '标题',
+    'done': '完成',
+    'mnemonic': '助记词',
+    'description': '描述',
 
     // Navigation
     'settings': '设置',
@@ -58,5 +62,5 @@ export const zh = {
 
     // Sharing
     'share-friend': '在elastOS中添加我的朋友',
-    'share-add-me-as-friend': '加我为好友',  
+    'share-add-me-as-friend': '加我为好友',
 }

@@ -177,7 +177,6 @@ export const zh = {
     'identifier': '识别码',
     'expire': '有效期',
     'credential-issued': '已颁发凭证',
-    'done': '完成',
     'credential-issued-success': '太好了，凭证已经创建了！',
     'credential-issued-error': '抱歉，无法颁发凭证。',
 
