@@ -1,5 +1,5 @@
 export const fr = {
-    'council-voting': 'CR Counvil Voting',
+    'council-voting': 'CR Council Voting',
     'council-candidates': 'CR Council Candidates',
     'council-members': 'CR Council Members',
     'my-candidates': 'My Candidates',
@@ -13,5 +13,4 @@ export const fr = {
     'current-rank': 'Current Rank',
     'current-votes': 'Current Votes',
     'percent-votes': 'Percentage of Votes',
-    'website': 'Website',
 };

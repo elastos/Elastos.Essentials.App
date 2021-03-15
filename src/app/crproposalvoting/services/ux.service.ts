@@ -3,6 +3,7 @@ import { ProposalStatus } from '../model/proposal-status';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
@@ -26,7 +27,8 @@ export class UXService {
     private appIsLaunchingFromIntent = false; // Is the app starting because of an intent request?
 
     constructor(
-        private native: GlobalNativeService
+        private native: GlobalNativeService,
+        public translate: TranslateService
     ) {}
 
     async init() {
@@ -40,15 +42,15 @@ export class UXService {
     getDisplayableStatus(status: ProposalStatus) {
         switch (status) {
           case 'VOTING':
-              return 'Under Council Review';
+              return this.translate.instant('status-voting');
           case 'NOTIFICATION':
-              return 'Under Community Review';
+              return this.translate.instant('status-notification');
           case 'ACTIVE':
-              return 'Active';
+              return this.translate.instant('status-active');
           case 'FINAL':
-              return 'Approved';
+              return this.translate.instant('status-final');
           case 'REJECTED':
-              return 'Rejected';
+              return this.translate.instant('status-rejected');
         }
     }
 

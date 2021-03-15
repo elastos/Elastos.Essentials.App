@@ -7,6 +7,7 @@ export const en = {
     'active': 'Active',
     'approved': 'Approved',
     'rejected': 'Rejected',
+    'search-proposal': 'Search Proposal',
     'searching-proposals': 'Searching Proposals',
     'loading-proposal': 'Loading Proposal...',
     'no-proposals': 'No matching proposals for now.',
@@ -21,6 +22,13 @@ export const en = {
     'no': 'No',
     'abstain': 'Abstain',
     'by': 'By',
+
+    // Status
+    'status-voting': 'Under Council Review',
+    'status-notification': 'Under Community Review',
+    'status-active': 'Active',
+    'status-final': 'Approved',
+    'status-rejected': 'Rejuectd',
 
     // Intent Screens
     'create-suggestion': 'Create Suggestion',

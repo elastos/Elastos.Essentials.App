@@ -3,14 +3,17 @@ import { Logger } from "./app/logger";
 export class TranslationsLoader {
     private static modulesWithTranslations = [
         "common",       // Shared strings for generic keywords such as cancel, open, add, etc.
-        "launcher",
+        "contacts",
+        'crcouncilvoting',
+        'crproposalvoting',
+        "developertools",
         "didsessions",
         "dposvoting",
         "hivemanager",
+        "identity",
+        "launcher",
         "scanner",
         "settings",
-        "contacts",
-        "identity",
         "wallet"
     ];
     private static languagesToLoad = [

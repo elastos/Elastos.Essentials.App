@@ -10,7 +10,7 @@
         <ion-input
             #input
             autosize
-            placeholder="Search Proposal"
+            placeholder="{{ 'search-proposal' | translate }}"
             [(ngModel)]="searchInput"
             name="searchInput" ngDefaultControl
             (ngModelChange)="searchProposal($event)"
