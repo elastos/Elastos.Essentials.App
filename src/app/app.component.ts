@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Platform, ModalController, NavController, IonRouterOutlet } from '@ionic/angular';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 import { GlobalStorageService } from './services/global.storage.service';
@@ -50,7 +51,8 @@ export class AppComponent {
         private intentService: GlobalIntentService,
         private crCouncilVotingInitService: CRCouncilVotingInitService,
         private crProposalVotingInitService: CRProposalVotingInitService,
-        private developerToolsInitService: DeveloperToolsInitService
+        private developerToolsInitService: DeveloperToolsInitService,
+        private screenOrientation: ScreenOrientation
     ) {
     }
 
@@ -61,6 +63,8 @@ export class AppComponent {
     async initializeApp() {
         this.platform.ready().then(async () => {
             Logger.log("Global", "Main app component initialization is starting");
+
+            this.screenOrientation.lock("portrait");
 
             this.setupBackKeyNavigation();
 
