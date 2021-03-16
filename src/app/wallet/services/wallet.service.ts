@@ -173,7 +173,7 @@ export class WalletManager {
             let jsonrpcUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
             let apimiscUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
             await this.spvBridge.setNetwork(networkType, networkConfig, jsonrpcUrl, apimiscUrl );
-            await this.spvBridge.init();
+            await this.spvBridge.init(GlobalDIDSessionsService.signedInDIDString);
 
             Logger.log('wallet', "Getting all master wallets from the SPV SDK");
             const idList = await this.spvBridge.getAllMasterWallets();

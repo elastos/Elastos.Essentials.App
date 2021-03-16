@@ -740,7 +740,6 @@ export class MyProfilePage {
         let mnemonics = await this.didService.activeDidStore.exportMnemonic(
           AuthService.instance.getCurrentUserPassword()
         );
-        Logger.log("identity", "Mnemonics", mnemonics);
         this.native.go("/identity/exportmnemonic", { mnemonics: mnemonics });
       },
       () => {

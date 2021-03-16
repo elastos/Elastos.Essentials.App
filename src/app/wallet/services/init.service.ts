@@ -19,6 +19,9 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
   providedIn: 'root'
 })
 export class WalletInitService {
+  private walletServiceInitialized = false;
+  private waitforServiceInitialized = false;
+
   constructor(
     private intentService: IntentService,
     public localStorage: LocalStorage,
@@ -52,6 +55,7 @@ export class WalletInitService {
         // TODO: rework
         this.events.subscribe("walletmanager:initialized", () => {
             Logger.log("wallet", "walletmanager:initialized event received");
+            this.walletServiceInitialized = true;
         });
 
         await this.walletManager.init();
@@ -61,6 +65,20 @@ export class WalletInitService {
   }
 
   public start() {
-    this.navService.showStartupScreen();
+    if (this.walletServiceInitialized) {
+      this.navService.showStartupScreen();
+    } else {
+      if (!this.waitforServiceInitialized) {
+        this.waitforServiceInitialized = true;
+        // Wait until the wallet manager is ready before showing the first screen.
+        this.events.subscribe("walletmanager:initialized", () => {
+          Logger.log("wallet", "walletmanager:initialized event received, showStartupScreen");
+          this.navService.showStartupScreen();
+          this.waitforServiceInitialized = false;
+        });
+      } else {
+        Logger.log("wallet", "Wallet service is initializing, The Wallet will be displayed when the service is initialized.");
+      }
+    }
   }
 }

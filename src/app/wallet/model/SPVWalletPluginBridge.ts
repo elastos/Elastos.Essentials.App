@@ -156,9 +156,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    public init(): Promise<void> {
+    public init(didString: string): Promise<void> {
         return new Promise((resolve, reject)=>{
-             walletManager.init([],
+             walletManager.init([didString],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
