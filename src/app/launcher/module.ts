@@ -1,12 +1,6 @@
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-
-import { IonicStorageModule } from '@ionic/storage';
-
-import { DragulaModule } from 'ng2-dragula';
-import { AngularFittextModule } from 'angular-fittext';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { LauncherRoutingModule, EmptyPage } from './routing';
 import { TipsPage } from './pages/tips/tips.page';
@@ -17,7 +11,6 @@ import { CommonModule } from '@angular/common';
 import { HomePage } from './pages/home/home.page';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
 import { OnboardPage } from './pages/onboard/onboard.page';
 
 @NgModule({
@@ -38,7 +31,6 @@ import { OnboardPage } from './pages/onboard/onboard.page';
   imports: [
     CommonModule,
     HttpClientModule,
-    AngularFittextModule,
     SharedComponentsModule,
     ComponentsModule,
     TranslateModule,

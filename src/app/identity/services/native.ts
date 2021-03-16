@@ -9,7 +9,7 @@ import { GlobalNavService, App } from 'src/app/services/global.nav.service';
     providedIn: 'root'
 })
 export class Native {
-  private mnemonicLang: DIDPlugin.MnemonicLanguage = DIDPlugin.MnemonicLanguage.ENGLISH;
+  private mnemonicLang: DIDPlugin.MnemonicLanguage = "ENGLISH";
   private loader: any = null;
 
   constructor(

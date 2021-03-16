@@ -436,7 +436,7 @@ export class BackupRestoreService {
       vaultReader = await this.userVault.getFiles().download(vaultFilePath);
     }
     catch (err) {
-      if (hiveManager.errorOfType(err, HivePlugin.EnhancedErrorType.FILE_NOT_FOUND)) {
+      if (hiveManager.errorOfType(err, "FILE_NOT_FOUND")) {
         this.logWarn("The target file was not found on the vault, this is strange but as we don't want to remain blocked by this, we just don't restore this wallet state and we continue.");
         return {
           wasRestored: false,
@@ -634,7 +634,7 @@ export class BackupRestoreService {
         for (let file of files) {
           this.logDebug("FILE "+path+"/"+file.name,": size= "+file.size);
 
-          if (file.type == HivePlugin.Files.FileType.FOLDER) {
+          if (file.type == "FOLDER") {
             let subPath = path;
             if (!subPath.endsWith("/"))
               subPath = subPath + "/";

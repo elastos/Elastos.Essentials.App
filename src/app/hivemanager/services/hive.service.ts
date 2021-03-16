@@ -131,7 +131,7 @@ export class HiveService {
       this.activeVault = await this.client.getVault(signedInDID);
     }
     catch (e) {
-      if (hiveManager.errorOfType(e, HivePlugin.EnhancedErrorType.VAULT_NOT_FOUND)) {
+      if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
         // Vault not created on this hive provider yet (old DIDs?) - force user to pick a provider, that will
         // create the vault at the same time.
         Logger.log("HiveManager", "Vault does not exist on this provider. It has to be created again.");
@@ -161,7 +161,7 @@ export class HiveService {
       Logger.log("HiveManager", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
     }
     catch (e) {
-      if (hiveManager.errorOfType(e, HivePlugin.EnhancedErrorType.VAULT_NOT_FOUND)) {
+      if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
         Logger.log("HiveManager", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
         return null;
       }
@@ -488,7 +488,7 @@ export class HiveService {
     Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o)=>{
-      return o.getState() == HivePlugin.Payment.OrderState.AWAITING_PAYMENT;
+      return o.getState() == "AWAITING_PAYMENT";
     });
 
     Logger.log("HiveManager", "Orders awaiting payment:", awaitingOrders);
@@ -505,7 +505,7 @@ export class HiveService {
     Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o)=>{
-      return o.getState() == HivePlugin.Payment.OrderState.AWAITING_TX_CONFIRMATION;
+      return o.getState() == "AWAITING_TX_CONFIRMATION";
     });
 
     Logger.log("HiveManager", "Orders awaiting confirmation:", awaitingOrders);
@@ -519,7 +519,7 @@ export class HiveService {
 
     let activeOrders = orders.filter((o)=>{
       // Active orders are orders COMPLETED, and not expired
-      return o.getState() == HivePlugin.Payment.OrderState.COMPLETED /* TODO - NOT EXPIRED */;
+      return o.getState() == "COMPLETED" /* TODO - NOT EXPIRED */;
     });
 
     Logger.log("HiveManager", "Active orders:", activeOrders);
@@ -529,17 +529,17 @@ export class HiveService {
 
   public getFriendlyOrderState(order: HivePlugin.Payment.Order ) {
     switch (order.getState()) {
-        case HivePlugin.Payment.OrderState.AWAITING_PAYMENT:
+        case "AWAITING_PAYMENT":
             return "Waiting for payment";
-        case HivePlugin.Payment.OrderState.AWAITING_TX_CONFIRMATION:
+        case "AWAITING_TX_CONFIRMATION":
             return "Waiting for transaction to be validated";
-        case HivePlugin.Payment.OrderState.COMPLETED:
+        case "COMPLETED":
             return "Completed";
-        case HivePlugin.Payment.OrderState.FAILED_UNSPECIFIED_REASON:
+        case "FAILED_UNSPECIFIED_REASON":
             return "Failed, unknown reason";
-        case HivePlugin.Payment.OrderState.TIMED_OUT_WHILE_WAITING_FOR_PAYMENT:
+        case "TIMED_OUT_WHILE_WAITING_FOR_PAYMENT":
             return "Timed out waiting for payment";
-        case HivePlugin.Payment.OrderState.TIMED_OUT_WHILE_WAITING_FOR_TX_CONFIRMATION:
+        case "TIMED_OUT_WHILE_WAITING_FOR_TX_CONFIRMATION":
             return "Timed out waiting for transaction confirmation";
         default:
             return "Unknown state: "+order.getState();

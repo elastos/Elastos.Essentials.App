@@ -11,7 +11,6 @@ import { IonicStorageModule } from '@ionic/storage';
 import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
 
 import { DragulaModule } from 'ng2-dragula';
-import { AngularFittextModule } from 'angular-fittext';
 import { AppComponent } from './app.component';
 import { LauncherModule } from './launcher/module';
 import { AppRoutingModule } from './app-routing.module';
@@ -111,7 +110,6 @@ export function TranslateLoaderFactory() {
     BrowserModule,
     BrowserAnimationsModule,
     //HttpClientModule,
-    //AngularFittextModule,
     SharedComponentsModule,
     IonicModule.forRoot({
       mode: 'md',

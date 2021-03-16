@@ -33,7 +33,7 @@ export class DIDSession {
                 didStore.exportMnemonic(storePassword, (mnemonic) => {
                     session.mnemonic = mnemonic;
 
-                    didStore.listDids(DIDPlugin.DIDStoreFilter.DID_HAS_PRIVATEKEY, dids => {
+                    didStore.listDids("DID_HAS_PRIVATEKEY", dids => {
                         if (!dids || dids.length == 0) {
                             reject("No DID found in the did store. Create a DID session only when a store and a DID have been created.");
                         }

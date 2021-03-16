@@ -93,7 +93,7 @@ export class AdminService {
    */
   public async createAdminDID(provider: ManagedProvider): Promise<DID.FastDIDCreationResult> {
     let didHelper = new ElastosSDKHelper().newDIDHelper("hivemanager");
-    let createdDIDInfo = await didHelper.fastCreateDID(DIDPlugin.MnemonicLanguage.ENGLISH);
+    let createdDIDInfo = await didHelper.fastCreateDID("ENGLISH");
 
     // Save the password to the password manager
     let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {

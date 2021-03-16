@@ -147,7 +147,7 @@ export class ImportDIDPage {
         this.mnemonicLanguage = this.getMnemonicLang();
 
         // Rebuild words based on typed sentence
-        if (this.mnemonicLanguage === DIDPlugin.MnemonicLanguage.CHINESE_SIMPLIFIED) {
+        if (this.mnemonicLanguage === "CHINESE_SIMPLIFIED") {
             this.getMnemonicWordsFromChinese();
         }
         else {

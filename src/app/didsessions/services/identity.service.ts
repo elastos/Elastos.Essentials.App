@@ -49,7 +49,7 @@ export type NavigateWithCompletionEnterData = {
 })
 export class IdentityService {
 
-    private mnemonicLang: DIDPlugin.MnemonicLanguage = DIDPlugin.MnemonicLanguage.ENGLISH;
+    private mnemonicLang: DIDPlugin.MnemonicLanguage = "ENGLISH";
     public identityBeingCreated: NewIdentity = null;
     private nextSteps = new Array<NextStep>();
     public signedIdentity: IdentityEntry;
@@ -93,11 +93,11 @@ export class IdentityService {
 
             // Settings DID SDK language
             if (lang === 'zh') {
-                this.setMnemonicLang(DIDPlugin.MnemonicLanguage.CHINESE_SIMPLIFIED);
+                this.setMnemonicLang("CHINESE_SIMPLIFIED");
             } else if (lang === 'fr') {
-                this.setMnemonicLang(DIDPlugin.MnemonicLanguage.FRENCH);
+                this.setMnemonicLang("FRENCH");
             } else {
-                this.setMnemonicLang(DIDPlugin.MnemonicLanguage.ENGLISH);
+                this.setMnemonicLang("ENGLISH");
             }
         });
     }

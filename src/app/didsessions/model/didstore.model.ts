@@ -167,7 +167,7 @@ export class DIDStore {
     listPluginDids(): Promise<DIDPlugin.DID[]> {
         return new Promise((resolve, reject)=>{
             this.pluginDidStore.listDids(
-                DIDPlugin.DIDStoreFilter.DID_ALL,
+                "DID_ALL",
                 (ret) => {resolve(ret)}, (err) => {reject(err)},
             );
         });

@@ -107,7 +107,7 @@ export class DAppService {
                 let storePassword = await this.getStorePassword(didStore.getId());
 
                 // Create the root key to be able to create a DID right after
-                didStore.initPrivateIdentity(DIDPlugin.MnemonicLanguage.ENGLISH, mnemonic, passphrase, storePassword, true, () => {
+                didStore.initPrivateIdentity("ENGLISH", mnemonic, passphrase, storePassword, true, () => {
                     Logger.log("developertools", "Private identity created successfully");
 
                     didStore.newDid(storePassword, "", (did) => {
@@ -137,7 +137,7 @@ export class DAppService {
 
     private generateMnemonic(): Promise<string> {
         return new Promise((resolve, reject) => {
-            didManager.generateMnemonic(DIDPlugin.MnemonicLanguage.ENGLISH, (mnemonic) => {
+            didManager.generateMnemonic("ENGLISH", (mnemonic) => {
                 resolve(mnemonic);
             }, err => {
                 reject(err);
