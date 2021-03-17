@@ -1,5 +1,5 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { NavController, IonInput, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -7,7 +7,7 @@ import { Util } from '../../services/util';
 import { MnemonicPassCheckComponent } from 'src/app/didsessions/components/mnemonicpasscheck/mnemonicpasscheck.component';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didsessions/services/identity.service';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -57,28 +57,23 @@ export class ImportDIDPage {
         private uxService: UXService,
         private translate: TranslateService,
         private popup: PopupProvider,
-        private actRoute: ActivatedRoute,
         public theme: GlobalThemeService,
         private events: Events,
     ) {
         const navigation = this.router.getCurrentNavigation();
+        console.log('NAV', navigation);
         if (!Util.isEmptyObject(navigation.extras.state)) {
-            if (!Util.isEmptyObject(navigation.extras.state.mnemonic)) {
-                this.zone.run(() => {
-                    console.log('mnemonic from router navigation', navigation.extras.state.mnemonic);
-                    this.mnemonicSentence = navigation.extras.state.mnemonic;
-                    this.onMnemonicSentenceChanged();
-                    this.readonly = true;
-                });
-            }
+            this.nextStepId = navigation.extras.state.enterEvent.stepId;
+            console.log('Importdid - nextStepId', this.nextStepId);
+
+            this.mnemonicSentence = navigation.extras.state.mnemonic;
+            this.onMnemonicSentenceChanged();
+            this.readonly = true;
+            console.log('Importdid - Mnemonic', navigation.extras.state.enterEvent.data);
         }
     }
 
     ngOnInit() {
-        this.actRoute.queryParams.subscribe((params: {enterEvent:NavigateWithCompletionEnterData})=>{
-            this.nextStepId = params.enterEvent.stepId;
-        });
-
         this.events.subscribe('qrScanner', (qrData) => {
             console.log('qrScanner event', qrData.mnemonic);
             this.mnemonicSentence = qrData.mnemonic;
