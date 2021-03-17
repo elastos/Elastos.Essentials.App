@@ -4,6 +4,7 @@ export const en = {
     // Generic actions
     'delete': 'Delete',
     'cancel': 'Cancel',
+    'begin': 'Begin',
     'continue': 'Continue',
     'ok': 'Okay',
     'confirm': 'Confirm',

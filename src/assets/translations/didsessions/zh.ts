@@ -30,10 +30,9 @@ export const zh = {
   'import-again-yes': '是的',
 
   // Create screen
-  'welcome-message1': '我们需要给您一个独特的身份。我们称之为 DID',
-  'welcome-message2': '(去中心化身份)',
-  'welcome-message3': '这样，您就可以管理所有个人数据并开始探索新的智能互联网。',
-  'new-or-import': '新建或导入?',
+  'welcome-message1': '欢迎使用新一代互联网，您可以在安全的沙盒环境中控制自己的数字身份。',
+  'welcome-message2': '您可以在所有应用程序中无缝验证您的身份及其凭据，而且不会泄露您的隐私和数据。',
+  'welcome-message3': "首先，创建您的<br/> <br/>分布式身份<br/> <br/>或导入您已经拥有的身份。",
   'create-message': '您可以创建一个全新的身份，也可以导入一个已有的身份',
   'new': '新建',
   'import': '导入',
@@ -63,6 +62,13 @@ export const zh = {
 
   // retrieve identities
   'retrieve-prompt': '正在获取身份信息，请稍候...',
+
+  // Backup
+  'decentralized-id': '分布式 ID',
+  'did-warning-info': '这是您的私有QR码，其中包含您的身份私钥，请勿与任何人共享。',
+  'print-qrcode': '打印二维码',
+  'manual-verify': '手动验证',
+  'verify': '验证',
 };
 
 

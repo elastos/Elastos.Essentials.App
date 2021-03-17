@@ -4,6 +4,7 @@ export const fr = {
     // Generic actions
     'delete': 'Supprimer',
     'cancel': 'Annuler',
+    'begin': 'Commencer',
     'continue': 'Continuer',
     'ok': 'D\'accord',
     'confirm': 'Confirmer',

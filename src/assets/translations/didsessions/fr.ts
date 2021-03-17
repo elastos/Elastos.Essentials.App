@@ -29,10 +29,9 @@ export const fr = {
   'import-again-yes': 'Oui',
 
   // Create screen
-  'welcome-message1': 'Nous devons vous créer une identité privée. Nous appelons ça un DID.',
-  'welcome-message2': '(Identité Décentralisée)',
-  'welcome-message3': 'Après cela, vous pourrez gérer vos données personnelles et commencer à explorer le smart web.',
-  'new-or-import': 'Nouvelle, ou importée?',
+  'welcome-message1': 'Welcome to the modern internet, where you take control of your own digital identity in a secured sand-box environment.',
+  'welcome-message2': 'This will give you the ability to verify your identity and its credentials seamlessly across all applications without losing your privacy and data.',
+  'welcome-message3': "Let's start by creating your <br/><br/> first decentralized identity <br/><br/> or import one that you already own.",
   'create-message': 'Créez une toute nouvelle identité ou importez une identité que vous possédez déjà',
   'new': 'Nouvelle',
   'import': 'Importer',
@@ -62,6 +61,13 @@ export const fr = {
 
   // retrieve identities
   'retrieve-prompt': 'Recherche et importation des identités, veuillez patienter.',
+
+  // Backup
+  'decentralized-id': 'Decentralized ID',
+  'did-warning-info': 'This is your secret QR Code which holds your identity private key, don\'t share this with anyone.',
+  'print-qrcode': 'Print QR Code',
+  'manual-verify': 'Manual Verification',
+  'verify': 'Verify',
 };
 
 

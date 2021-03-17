@@ -9,11 +9,11 @@
   >
     <ion-slide class="ion-text-center first-slide">
       <div class="qr-container">
-        <h1>Decentralized ID</h1>
+        <h1>{{ 'decentralized-id' | translate }}</h1>
         <div #qrcode style="width:100%;"></div>
         <p>{{ mnemonic }}</p>
       </div>
-      <h2>This is your secret QR Code which holds your identity private key, don't share this with anyone.</h2>
+      <h2>{{ 'did-warning-info' | translate }}</h2>
     </ion-slide>
     <ion-slide class="ion-text-center second-slide">
       <ion-row class="mnemonic-row">
@@ -29,12 +29,12 @@
   </ion-slides>
 
   <div class="footer" *ngIf="slideIndex < 1">
-    <ion-button (click)="showPrintOptions()">Print QR Code</ion-button>
-    <ion-button (click)="nextSlide()">Manual Verification</ion-button>
+    <ion-button (click)="showPrintOptions()">{{ 'print-qrcode' | translate }}</ion-button>
+    <ion-button (click)="nextSlide()">{{ 'manual-verify' | translate }}</ion-button>
   </div>
   <div class="footer" *ngIf="slideIndex === 1">
-    <ion-button (click)="prevSlide()">Go Back</ion-button>
-    <ion-button (click)="nextClicked()">Verify</ion-button>
+    <ion-button (click)="prevSlide()">{{ 'back' | translate }}</ion-button>
+    <ion-button (click)="nextClicked()">{{ 'verify' | translate }}</ion-button>
   </div>
 </ion-content>
 
