@@ -546,12 +546,10 @@ export class CredentialAccessRequestPage {
         console.log("Sending credaccess intent response for intent id "+ this.receivedIntent.intentId);
         try {
           if (this.receivedIntent.originalJwtRequest) {
-            this.showSuccess(jwtToken);
-
             setTimeout(async () => {
               await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.receivedIntent.intentId);
               this.showSpinner = false;
-            }, 6000);
+            }, 1000);
 
           } else {
             await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.receivedIntent.intentId);

@@ -29,7 +29,7 @@ export class GlobalIntentService {
   }
 
   sendUrlIntent(url: string): Promise<any> {
-    Logger.log("sendUrlIntent", "Sending url intent", url);
+    Logger.log("Intents", "Sending url intent", url);
     return essentialsIntent.sendUrlIntent(url)
   }
 

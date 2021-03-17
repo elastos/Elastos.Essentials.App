@@ -98,7 +98,10 @@ export class GlobalNavService {
         Logger.log("Nav", "Navigating out of current context");
         let currentStep = this.navigationHistory[this.navigationHistory.length-1];
         this.navigationHistory.pop();
-
+        if (!currentStep) {
+          Logger.error("Nav", "Can't get the currentStep, this.navigationHistory:", this.navigationHistory);
+          return;
+        }
         let startContext = currentStep.context;
         while (this.canGoBack()) {
             currentStep = this.navigationHistory[this.navigationHistory.length-1];
