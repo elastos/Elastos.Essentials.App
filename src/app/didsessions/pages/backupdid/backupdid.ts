@@ -10,6 +10,8 @@ import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { ModalController, IonSlides } from '@ionic/angular';
 import { PrintoptionsComponent } from '../../components/printoptions/printoptions.component';
 import { PrinterPlugin, CordovaPlugins } from 'src/app/TMP_STUBS';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
     selector: 'page-backupdid',
@@ -17,7 +19,7 @@ import { PrinterPlugin, CordovaPlugins } from 'src/app/TMP_STUBS';
     styleUrls: ['backupdid.scss']
 })
 export class BackupDIDPage {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonSlides, { static: false }) slide: IonSlides;
   @ViewChild('qrcode', { static: false }) qrcode: ElementRef;
 
@@ -56,18 +58,22 @@ export class BackupDIDPage {
         }
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
       this.getActiveSlide();
-
-      /* TODO @chad titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-        key: "backToHome",
-        iconPath: TitleBarPlugin.BuiltInIcon.BACK
-      });*/
+      this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
+      this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
+      this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+      this.titleBar.setNavigationMode(null);
+      this.titleBar.addOnItemClickedListener((icon) => {
+        this.uxService.onTitleBarItemClicked(icon);
+      });
     }
 
     async getActiveSlide() {
       this.slideIndex = await this.slide.getActiveIndex();
-      // TODO @chad - this.slideIndex === 0 ? titleBarManager.setTitle(this.translate.instant('Your Private QR Code')) :  titleBarManager.setTitle(this.translate.instant('Your Private Key'));
+      this.slideIndex === 0 ? 
+        this.titleBar.setTitle(this.translate.instant('Your Private QR Code')) :
+        this.titleBar.setTitle(this.translate.instant('Your Private Key'));
     }
 
     nextSlide() {

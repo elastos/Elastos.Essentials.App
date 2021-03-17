@@ -7,6 +7,8 @@ import { AlertController, NavController } from '@ionic/angular';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 type MnemonicWord = {
     text: string;
@@ -19,7 +21,7 @@ type MnemonicWord = {
     styleUrls: ['verifymnemonics.scss']
 })
 export class VerifyMnemonicsPage {
-
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     mnemonicList: Array<MnemonicWord> = [];
     selectedList = [];
     mnemonicStr: string;
@@ -39,7 +41,13 @@ export class VerifyMnemonicsPage {
     }
 
     ionViewWillEnter() {
-      // TODO @chad titleBarManager.setTitle(this.translate.instant('verify-mnemonic'));
+      this.titleBar.setTitle(this.translate.instant('verify-mnemonic'));
+      this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
+      this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+      this.titleBar.setNavigationMode(null);
+      this.titleBar.addOnItemClickedListener((icon) => {
+        this.uxService.onTitleBarItemClicked(icon);
+      });
     }
 
     init() {

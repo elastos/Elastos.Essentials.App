@@ -8,7 +8,7 @@ import { Events } from 'src/app/didsessions/services/events.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -46,12 +46,10 @@ export class PickIdentityPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("pick-identity"));
+    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-      key: "language",
-      iconPath: BuiltInIcon.EDIT
-    });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
     this.titleBar.addOnItemClickedListener((icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });

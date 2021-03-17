@@ -7,7 +7,6 @@
   .id-row {
     background: #ffffff;
     box-shadow: 0 3px 15px 0 #ededf0;
-    // box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
     border-radius: 16px;
     padding: 4px;
     margin-bottom: 10px;
@@ -74,18 +73,6 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-  }
-}
-
-.darkContainer {
-  .id-row {
-    background: #262641;
-
-    .info-col {
-      h1, p {
-        color: #fdfeff;
-      }
-    }
   }
 }
 

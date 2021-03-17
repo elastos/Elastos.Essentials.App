@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 export type EditProfileStateParams = {
   onCompletion: Promise<string>;
@@ -43,9 +43,11 @@ export class EditProfilePage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
-    this.titleBar.setNavigationMode(null);
     this.titleBar.setTitle(this.translate.instant('identity-name'));
+    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+    this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener((icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });

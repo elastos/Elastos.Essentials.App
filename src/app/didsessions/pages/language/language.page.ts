@@ -6,7 +6,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-language',
@@ -31,9 +31,10 @@ export class LanguagePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.titleBar.setTitle(' ');
+    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setNavigationMode(null);
-    this.titleBar.setTitle(' ');
     this.checkForIdentities();
   }
 

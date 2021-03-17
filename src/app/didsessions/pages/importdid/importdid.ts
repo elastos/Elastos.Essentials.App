@@ -10,6 +10,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didsessions/services/identity.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { Events } from 'src/app/didsessions/services/events.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 /**
  * Import algorithm:
@@ -25,6 +27,9 @@ import { Events } from 'src/app/didsessions/services/events.service';
     styleUrls: ['importdid.scss']
 })
 export class ImportDIDPage {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+    @ViewChild('addMnemonicWordInput', { static: false }) addMnemonicWordInput: IonInput;
+
     private nextStepId: number;
     public loadingIdentity = false;
     public mnemonicWords = new Array<any>()
@@ -41,8 +46,6 @@ export class ImportDIDPage {
     private hideHandle: any;
     private scrollHeight: Number = -1;
     public hideButton = false;
-
-    @ViewChild('addMnemonicWordInput', { static: false }) addMnemonicWordInput: IonInput;
 
     constructor(
         public router: Router,
@@ -84,17 +87,15 @@ export class ImportDIDPage {
     }
 
     ionViewWillEnter() {
-        /* TODO @chad titleBarManager.setTitle(this.translate.instant('import-my-did'));
-
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-          key: "backToHome",
-          iconPath: TitleBarPlugin.BuiltInIcon.BACK
+        this.titleBar.setTitle(this.translate.instant('import-my-did'));
+        this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+        this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
+        this.titleBar.setNavigationMode(null);
+        this.titleBar.addOnItemClickedListener((icon) => {
+            this.uxService.onTitleBarItemClicked(icon);
         });
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-          key: "scan",
-          iconPath: TitleBarPlugin.BuiltInIcon.SCAN
-        });
-        */
 
         // the rootContent clientHeight is wrong in android?
         if (this.platform.platforms().indexOf('android') < 0) {
@@ -116,8 +117,6 @@ export class ImportDIDPage {
     }
 
     ionViewWillLeave() {
-        // TODO @chad titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-
         window.removeEventListener('native.keyboardshow', this.showHandle);
         window.removeEventListener('native.keyboardhide', this.hideHandle);
         this.loadingIdentity = false;
@@ -197,12 +196,6 @@ export class ImportDIDPage {
     }
 
     private async doImport() {
-        /* TODO @chad
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
-        */
-
         this.identityService.runNextStep(this.nextStepId, this.mnemonicForImport);
     }
 

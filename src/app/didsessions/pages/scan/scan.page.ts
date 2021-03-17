@@ -1,8 +1,10 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { Events } from 'src/app/didsessions/services/events.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, TitleBarForegroundMode, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-scan',
@@ -10,7 +12,7 @@ import { Events } from 'src/app/didsessions/services/events.service';
   styleUrls: ['./scan.page.scss'],
 })
 export class ScanPage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public scanning = false;
 
   constructor(
@@ -25,6 +27,13 @@ export class ScanPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.addOnItemClickedListener((icon) => {
+        this.uxService.onTitleBarItemClicked(icon);
+    });
+
     /* TODO @chad
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
       key: "backToImport",

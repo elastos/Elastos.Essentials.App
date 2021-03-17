@@ -12,7 +12,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'page-createidentity',
@@ -59,9 +59,11 @@ export class CreateIdentityPage {
   }
 
   async ionViewWillEnter() {
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'backToRoot', iconPath: BuiltInIcon.BACK });
-    this.titleBar.setNavigationMode(null);
     this.titleBar.setTitle(this.translate.instant("create-identity"));
+    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'backToRoot', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
+    this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener((icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });

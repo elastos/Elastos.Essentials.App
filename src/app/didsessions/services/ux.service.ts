@@ -1,7 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { NavController, ToastController, PopoverController, LoadingController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { PopoverController } from '@ionic/angular';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 import { Events } from './events.service';
@@ -9,6 +8,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 let selfUxService: UXService = null;
 
@@ -22,17 +22,14 @@ export class UXService {
     public popover: any = null; // Generic Popover
     public modal: any = null;
     public options: any = null; // Options Popover
-    private loader: any = null;
 
     constructor(
         public translate: TranslateService,
         private zone: NgZone,
         private nav: GlobalNavService,
+        private native: GlobalNativeService,
         private popoverCtrl: PopoverController,
-        private toastCtrl: ToastController,
-        private router: Router,
         private events: Events,
-        private loadingCtrl: LoadingController,
         private didSessions: GlobalDIDSessionsService
     ) {
         selfUxService = this;
@@ -66,10 +63,6 @@ export class UXService {
         case 'backToRoot':
           this.navigateRoot();
           break;
-        // When in import-did pg
-        case 'backToCreate':
-          this.go('createidentity');
-          break;
         // For all other pages that need back navigation
         case 'back':
           this.nav.navigateBack();
@@ -98,8 +91,8 @@ export class UXService {
 
     // Sensitive data should not be passed through queryParams
     public go(page: any, options: any = {}) {
-        this.zone.run(()=>{
-            this.hideLoading();
+        this.zone.run(() => {
+            this.native.hideLoading();
             this.nav.navigateTo(App.DID_SESSIONS, page, { state: options });
         });
     }
@@ -113,24 +106,19 @@ export class UXService {
     }
 
     public toast(message: string = '操作完成', duration: number = 2000): void {
-        this.toastCtrl.create({
-            mode: 'ios',
-            color: 'primary',
-            position: 'bottom',
-            header: message,
-            duration: duration,
-        }).then(toast => toast.present());
+      this.native.genericToast(message, duration);
     }
 
     public toast_trans(message: string = '', duration: number = 2000): void {
-        message = this.translate.instant(message);
-        this.toastCtrl.create({
-            mode: 'ios',
-            color: 'primary',
-            position: 'bottom',
-            header: message,
-            duration: duration,
-        }).then(toast => toast.present());
+      this.native.genericToast(message, duration);
+    }
+
+    public async showLoading(content: string) {
+      this.native.showLoading(content);
+    };
+
+    public async hideLoading() {
+      await this.native.hideLoading();
     }
 
     async showOptions(ev: any, identityEntry: IdentityEntry) {
@@ -151,25 +139,6 @@ export class UXService {
       });
       return await this.options.present();
     }
-
-    public async showLoading(content: string) {
-      this.hideLoading();
-      this.loader = await this.loadingCtrl.create({
-        mode: 'ios',
-        spinner: 'crescent',
-        message: this.translate.instant(content),
-      });
-      this.loader.onWillDismiss().then(() => {
-        this.loader = null;
-      })
-      return await this.loader.present();
-    };
-
-    public async hideLoading() {
-      if(this.loader) {
-        await this.loader.dismiss();
-      }
-    };
 
     private async showDeletePrompt(identity) {
       this.popover = await this.popoverCtrl.create({
