@@ -14,6 +14,7 @@ import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-home',
@@ -48,6 +49,7 @@ export class HomePage implements OnInit {
     // Show badge if there are notifications.
     this.notification.getNotifications();
     this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
       switch (networkCode) {
         case 'MainNet':

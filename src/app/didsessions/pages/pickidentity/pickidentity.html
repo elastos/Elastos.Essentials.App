@@ -14,7 +14,7 @@
           <p>{{ identityEntry.didString.slice(4,16) }}...{{ identityEntry.didString.slice(40,46) }}</p>
         </ion-col>
         <ion-col class="info-col" size="1.1" (click)="uxService.showOptions($event, identityEntry)">
-          <img [src]="!theme.darkMode ? 'assets/didsessions/icon/dots.svg' : 'assets/didsessions/icon/dark_mode/dots.svg'">
+          <img src="assets/didsessions/icon/dots.svg">
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
       </ion-row>
