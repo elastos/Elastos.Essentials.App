@@ -6,7 +6,6 @@ import { UXService } from '../../../services/ux.service';
 import { AuthService } from '../../../services/auth.service';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { TranslateService } from '@ngx-translate/core';
-import { isNullOrUndefined } from 'lodash';
 import { ProfileService } from '../../../services/profile.service';
 import { ExpirationService, ExpiredItem } from '../../../services/expiration.service';
 import { DIDDocument } from '../../../model/diddocument.model';
@@ -21,6 +20,7 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { isNullOrUndefined } from 'util';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -445,7 +445,6 @@ export class CredentialAccessRequestPage {
    */
   acceptsSelfProclaimedCredentials(iss: any): boolean {
     let response: boolean = true
-
     if (!isNullOrUndefined(iss) && iss instanceof Object){
       response =  iss["selfproclaimed"];
     }

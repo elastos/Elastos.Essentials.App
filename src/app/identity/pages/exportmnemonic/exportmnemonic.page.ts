@@ -20,7 +20,6 @@ export class ExportmnemonicPage implements OnInit {
     private router: Router,
     public translate: TranslateService,
     public theme: GlobalThemeService,
-    private native: Native,
     private navCtrl: NavController
   ) {
   }
@@ -32,8 +31,6 @@ export class ExportmnemonicPage implements OnInit {
       this.mnemonicList = mnemonics.split(/[\u3000\s]+/).map((word) => {
         return word;
       });
-
-      console.log('Mnemonic list', this.mnemonicList);
     }
   }
 

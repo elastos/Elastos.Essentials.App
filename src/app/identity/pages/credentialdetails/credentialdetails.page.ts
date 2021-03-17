@@ -18,10 +18,10 @@ import { DIDDocument } from "../../model/diddocument.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
 import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
-import { isNullOrUndefined } from "lodash";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { isNullOrUndefined } from "util";
 
 
 type ProfileDisplayEntry = {
