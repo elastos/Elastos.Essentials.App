@@ -1,10 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { NavController, IonInput, ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { IonInput } from '@ionic/angular';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { TranslateService } from '@ngx-translate/core';
-import { IdentityService, NavigateWithCompletionEnterData } from 'src/app/didsessions/services/identity.service';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 export type EditProfileStateParams = {
   onCompletion: Promise<string>;
@@ -16,7 +18,7 @@ export type EditProfileStateParams = {
   styleUrls: ['editprofile.scss']
 })
 export class EditProfilePage {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('input', {static: false}) input: IonInput;
 
   private nextStepId: number = null;
@@ -28,19 +30,25 @@ export class EditProfilePage {
     public theme: GlobalThemeService,
     private translate: TranslateService,
     private identityService: IdentityService,
-    private actRoute: ActivatedRoute,
+    private router: Router,
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if(navigation.extras.state) {
+      this.nextStepId = navigation.extras.state.enterEvent.stepId;
+      console.log('Editprofile - nextStepId', this.nextStepId);
+    }
   }
 
   ngOnInit() {
-    this.actRoute.queryParams.subscribe((params: {enterEvent:NavigateWithCompletionEnterData})=>{
-      this.nextStepId = params.enterEvent.stepId;
-    })
   }
 
   ionViewWillEnter() {
-    this.uxService.setTitleBarBackKeyShown(true);
-    // TODO @chad titleBarManager.setTitle(this.translate.instant('identity-name'));
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setTitle(this.translate.instant('identity-name'));
+    this.titleBar.addOnItemClickedListener((icon) => {
+      this.uxService.onTitleBarItemClicked(icon);
+    });
   }
 
   ionViewDidEnter() {
@@ -50,7 +58,6 @@ export class EditProfilePage {
   }
 
   ionViewWillLeave() {
-    this.uxService.setTitleBarBackKeyShown(false);
   }
 
   async next() {

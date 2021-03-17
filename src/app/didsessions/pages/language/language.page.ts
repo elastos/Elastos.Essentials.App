@@ -6,6 +6,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-language',
@@ -27,14 +28,12 @@ export class LanguagePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.translate.onLangChange.subscribe(data => {
-      this.updateTitle();
-    });
   }
 
   ionViewWillEnter() {
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setNavigationMode(null);
-    this.updateTitle();
+    this.titleBar.setTitle(' ');
     this.checkForIdentities();
   }
 
@@ -46,19 +45,11 @@ export class LanguagePage implements OnInit {
   ionViewWillLeave() {
   }
 
-  updateTitle() {
-    this.titleBar.setTitle(' ');
-  }
-
   async checkForIdentities() {
     this.identities = await this.didSessions.getIdentityEntries();
   }
 
   continue() {
-    if(this.identities.length === 0) {
-      this.uxService.go("/didsessions/createidentity");
-    } else {
-      this.uxService.go("/didsessions/pickidentity");
-    }
+    this.identities.length ? this.uxService.go("pickidentity") : this.uxService.go("createidentity");
   }
 }

@@ -11,6 +11,8 @@ import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'page-createidentity',
@@ -18,6 +20,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
   styleUrls: ['./createidentity.scss']
 })
 export class CreateIdentityPage {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonSlides, { static: false }) private slide: IonSlides;
 
   public hidden = true;
@@ -40,7 +43,6 @@ export class CreateIdentityPage {
   constructor(
     public router: Router,
     private platform: Platform,
-    private modalCtrl: ModalController,
     private identityService: IdentityService,
     private uxService: UXService,
     private translate: TranslateService,
@@ -56,11 +58,13 @@ export class CreateIdentityPage {
     }
   }
 
-  ionViewWillEnter() {
-    // Update system status bar every time we re-enter this screen.
-    // TODO @chad titleBarManager.setTitle(this.translate.instant("create-identity"));
-    this.uxService.setTitleBarEditKeyShown(true);
-    this.checkForIdentities();
+  async ionViewWillEnter() {
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'backToRoot', iconPath: BuiltInIcon.BACK });
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setTitle(this.translate.instant("create-identity"));
+    this.titleBar.addOnItemClickedListener((icon) => {
+      this.uxService.onTitleBarItemClicked(icon);
+    });
 
     // Dirty hack because on iOS we are currently unable to understand why the
     // ion-slides width is sometimes wrong when an app starts. Waiting a few
@@ -80,7 +84,6 @@ export class CreateIdentityPage {
   }
 
   ionViewWillLeave() {
-    this.uxService.setTitleBarBackKeyShown(false);
   }
 
   showSlider() {
@@ -97,16 +100,6 @@ export class CreateIdentityPage {
 
   nextSlide() {
     this.slide.slideNext();
-  }
-
-  async checkForIdentities() {
-    const identities = await this.didSessions.getIdentityEntries();
-    if (identities.length) {
-      /* TODO @chad titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-        key: "backToIdentities",
-        iconPath: TitleBarPlugin.BuiltInIcon.BACK
-      });*/
-    }
   }
 
   async createNewIdentity() {

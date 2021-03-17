@@ -3,6 +3,7 @@ import { ModalController, NavController } from '@ionic/angular';
 import { Logger } from '../logger';
 
 export enum App {
+    DID_SESSIONS = "didsessions",
     LAUNCHER = "launcher",
     IDENTITY = "identity",
     CONTACTS = "contacts",

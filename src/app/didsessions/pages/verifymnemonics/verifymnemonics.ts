@@ -40,7 +40,6 @@ export class VerifyMnemonicsPage {
 
     ionViewWillEnter() {
       // TODO @chad titleBarManager.setTitle(this.translate.instant('verify-mnemonic'));
-      this.uxService.setTitleBarBackKeyShown(true);
     }
 
     init() {

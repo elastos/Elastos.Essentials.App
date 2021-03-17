@@ -1,14 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Platform, NavController, ToastController, PopoverController, LoadingController } from '@ionic/angular';
+import { NavController, ToastController, PopoverController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { ThemeService } from './theme.service';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 import { Events } from './events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
 let selfUxService: UXService = null;
 
@@ -26,13 +26,11 @@ export class UXService {
 
     constructor(
         public translate: TranslateService,
-        private platform: Platform,
         private zone: NgZone,
-        private navCtrl: NavController,
+        private nav: GlobalNavService,
         private popoverCtrl: PopoverController,
         private toastCtrl: ToastController,
         private router: Router,
-        private theme: ThemeService,
         private events: Events,
         private loadingCtrl: LoadingController,
         private didSessions: GlobalDIDSessionsService
@@ -48,43 +46,39 @@ export class UXService {
     }
 
     async init() {
-        // this.theme.getTheme();
-
-        /* TODO @chad titleBarManager.addOnItemClickedListener((menuItem)=>{
-            // Dimiss controllers before using titlebar icons
-            if(this.popover) {
-              this.popover.dismiss();
-            }
-            if(this.options) {
-              this.options.dismiss();
-            }
-            if(this.modal) {
-              this.modal.dismiss();
-            }
-            if (menuItem.key === "back") {
-                this.navCtrl.back();
-            }
-
-            this.onTitleBarItemClicked(menuItem);
-        });*/
     }
 
     onTitleBarItemClicked(icon: TitleBarIcon) {
+      // Dimiss controllers before using titlebar icons
+      if(this.popover) {
+        this.popover.dismiss();
+      }
+      if(this.options) {
+        this.options.dismiss();
+      }
+      if(this.modal) {
+        this.modal.dismiss();
+      }
+
       console.log('Titlebar item clicked', icon);
       switch (icon.key) {
-        // When in import-did pg
-        case 'backToHome':
-          this.router.navigate(['/createidentity']);
-          break;
         // When in create-identity pg
-        case 'backToIdentities':
-          this.router.navigate(['/pickidentity']);
+        case 'backToRoot':
+          this.navigateRoot();
+          break;
+        // When in import-did pg
+        case 'backToCreate':
+          this.go('createidentity');
+          break;
+        // For all other pages that need back navigation
+        case 'back':
+          this.nav.navigateBack();
           break;
         case 'language':
-          this.router.navigate(['/language']);
+          this.go('language');
           break;
         case 'scan':
-          this.router.navigate(['/scan']);
+          this.go('scan');
           break;
       }
     }
@@ -94,13 +88,11 @@ export class UXService {
         let identities = await this.didSessions.getIdentityEntries();
         if (identities.length == 0) {
             Logger.log("didsessions", "No existing identity. Navigating to language chooser then createidentity");
-            this.navCtrl.navigateRoot("language");
+            this.nav.navigateRoot(App.DID_SESSIONS, "language");
         }
         else {
             Logger.log("didsessions", "Navigating to pickidentity");
-            // this.router.navigate(['/language']);
-            this.navCtrl.navigateRoot("pickidentity");
-            // this.navCtrl.navigateRoot("createidentity");
+            this.nav.navigateRoot(App.DID_SESSIONS, "pickidentity");
         }
     }
 
@@ -108,36 +100,12 @@ export class UXService {
     public go(page: any, options: any = {}) {
         this.zone.run(()=>{
             this.hideLoading();
-            this.navCtrl.navigateForward([page], { state: options });
+            this.nav.navigateTo(App.DID_SESSIONS, page, { state: options });
         });
     }
 
-    setTitleBarBackKeyShown(show: boolean) {
-        /* TODO @chad
-        if (show) {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-                key: "back",
-                iconPath: TitleBarPlugin.BuiltInIcon.BACK
-            });
-        }
-        else {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-        }
-        */
-    }
-
-    setTitleBarEditKeyShown(show: boolean) {
-      /* TODO @chad
-        if (show) {
-          titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
-            key: "language",
-            iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-          });
-        }
-        else {
-          titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
-        }
-        */
+    public goToLauncer() {
+      this.nav.navigateHome();
     }
 
     public translateInstant(key: string): string {

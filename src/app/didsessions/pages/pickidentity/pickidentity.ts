@@ -9,7 +9,6 @@ import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
-import { Router } from '@angular/router';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -25,7 +24,6 @@ export class PickIdentityPage {
   popover: any = null;
 
   constructor(
-    public navCtrl: NavController,
     public identityService: IdentityService,
     private changeDetector: ChangeDetectorRef,
     public uxService: UXService,
@@ -47,21 +45,16 @@ export class PickIdentityPage {
   }
 
   ionViewWillEnter() {
-    // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle(this.translate.instant("pick-identity"));
-
     this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "language",
       iconPath: BuiltInIcon.EDIT
     });
     this.titleBar.addOnItemClickedListener((icon) => {
-      if(icon.key === 'language') {
-        this.navCtrl.navigateBack('language');
-      }
+      this.uxService.onTitleBarItemClicked(icon);
     });
-
-    this.uxService.setTitleBarBackKeyShown(false);
 
     this.loadIdentities();
 
@@ -98,7 +91,7 @@ export class PickIdentityPage {
    * Used to create a new DID inside a brand new DID store = new mnemonic.
    */
   createIdentity() {
-    this.navCtrl.navigateForward("/createidentity");
+    this.uxService.go('createidentity');
   }
 
   /**

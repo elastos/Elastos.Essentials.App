@@ -1,7 +1,6 @@
 
 import { Injectable, NgZone } from '@angular/core';
-import { Router, Params } from '@angular/router';
-import { NavController, AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { DIDStore } from '../model/didstore.model';
 import { NewIdentity } from '../model/newidentity';
 import { identity } from 'rxjs';
@@ -59,7 +58,6 @@ export class IdentityService {
     constructor(
         public zone: NgZone,
         private events: Events,
-        private navCtrl: NavController,
         private popupProvider: PopupProvider,
         private language: GlobalLanguageService,
         private translate: TranslateService,
@@ -145,7 +143,7 @@ export class IdentityService {
                 //}
 
                 await this.didSessions.signIn(identityEntry, signInOptions);
-                this.navCtrl.navigateRoot("/launcher/home");
+                this.uxService.goToLauncer();
             }
             else {
                 console.warn("Failed to authentify using master password. Sign in not permitted.");
@@ -194,7 +192,7 @@ export class IdentityService {
         Logger.log('didsessions', "Navigating to profile edition");
         this.navigateWithCompletion("editprofile", (name)=>{
             this.identityBeingCreated.name = name;
-            this.navCtrl.navigateForward(["/backupdid"], { state: { create: true } });
+            this.uxService.go('backupdid', { state: { create: true } });
         });
     }
 
@@ -398,7 +396,7 @@ export class IdentityService {
           }
         } else {
           Logger.log('didsessions', 'New DID is already added');
-          this.navCtrl.navigateForward("/pickidentity");
+          this.uxService.go("/pickidentity");
           this.alertDuplicateImport();
         }
     }
@@ -581,9 +579,22 @@ export class IdentityService {
             data: enterEventData
         }
 
-        this.navCtrl.navigateForward(route, {queryParams: {
-            enterEvent: enterEvent
-        }, state: {"toto":1}});
+        this.uxService.go(
+            route, 
+            {  
+                'enterEvent': enterEvent,
+                "toto": 1
+            }
+         /*    {
+                queryParams: {
+                    enterEvent: enterEvent
+                }, 
+                state: {
+                    'enterEvent': enterEvent,
+                    "toto": 1
+                }
+            } */
+        );
     }
 
     public runNextStep(nextStepId: number, data?: any) {

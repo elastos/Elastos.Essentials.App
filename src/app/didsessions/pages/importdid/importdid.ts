@@ -84,7 +84,6 @@ export class ImportDIDPage {
     }
 
     ionViewWillEnter() {
-        this.uxService.setTitleBarEditKeyShown(true);
         /* TODO @chad titleBarManager.setTitle(this.translate.instant('import-my-did'));
 
         titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
@@ -117,7 +116,6 @@ export class ImportDIDPage {
     }
 
     ionViewWillLeave() {
-        this.uxService.setTitleBarBackKeyShown(false);
         // TODO @chad titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
 
         window.removeEventListener('native.keyboardshow', this.showHandle);

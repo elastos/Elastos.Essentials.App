@@ -36,8 +36,6 @@ export class ChooseImportedDIDPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    // TODO @chad titleBarManager.setTitle(this.translate.instant("select-identity"));
-    this.uxService.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave() {
