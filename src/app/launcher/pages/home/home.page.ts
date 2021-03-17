@@ -1,5 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ToastController, PopoverController, NavController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ToastController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
@@ -9,13 +9,9 @@ import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.serv
 import * as moment from 'moment';
 import { NotificationManagerService } from '../../services/notificationmanager.service';
 import { OptionsComponent } from '../../components/options/options.component';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { DIDManagerService } from '../../services/didmanager.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { IdentityInitService } from 'src/app/identity/services/init.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 
@@ -38,10 +34,8 @@ export class HomePage implements OnInit {
     public theme: GlobalThemeService,
     public splashScreen: SplashScreen,
     private notification: NotificationManagerService,
-    private essentialsIntent: TemporaryAppManagerPlugin,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
-    private identityInitService: IdentityInitService,
     private nav: GlobalNavService,
     private pref: GlobalPreferencesService
   ) {
@@ -55,17 +49,19 @@ export class HomePage implements OnInit {
     this.notification.getNotifications();
     this.titleBar.setNavigationMode(null);
     this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
-      if (networkCode === 'MainNet') {
-        this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
-      }
-      if (networkCode === 'TestNet') {
-        this.titleBar.setTitle('Test Net Active');
-      }
-      if (networkCode === 'RegTest') {
-        this.titleBar.setTitle('Regression Net Active');
-      }
-      if (networkCode === 'PrvNet') {
-        this.titleBar.setTitle('Private Net Active');
+      switch (networkCode) {
+        case 'MainNet':
+          this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
+        break;
+        case 'TestNet':
+          this.titleBar.setTitle('Test Net Active');
+        break;
+        case 'RegTest':
+          this.titleBar.setTitle('Regression Net Active');
+        break;
+        case 'PrvNet':
+          this.titleBar.setTitle('Private Net Active');
+        break;
       }
     });
   }

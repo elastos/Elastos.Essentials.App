@@ -18,32 +18,6 @@ export type ReceivedMessage = {
   from: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
-export class TemporaryAppManagerPlugin {
-  constructor() {
-  }
-
-  public setListener(listener: (ret) => any) {
-    //console.log("setListener() NOT IMPLEMENTED");
-  }
-
-  public sendUrlIntent(url: string, onSuccess: any, onError: any) {
-    //console.log("sendUrlIntent() NOT IMPLEMENTED");
-  }
-
-  public getVersion(onSuccess?: (version: any)=>void) {
-
-  }
-}
-
-
-
-
-
-
-
 export interface CordovaPlugins {
   printer: PrinterPlugin.Printer;
 }

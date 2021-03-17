@@ -8,15 +8,13 @@ import { IntentService } from '../../services/intent.service';
 import QrScanner from 'qr-scanner';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
 QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
-
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 export type ScanPageRouteParams = {
     fromIntent: boolean
@@ -49,7 +47,7 @@ export class ScanPage {
         private alertController: AlertController,
         private loadingController: LoadingController,
         private theme: GlobalThemeService,
-        private essentialsIntent: TemporaryAppManagerPlugin,
+        private globalIntentService: GlobalIntentService,
         private translate: TranslateService,
     ) {
         this.route.queryParams.subscribe((params: any) => {
@@ -285,22 +283,24 @@ export class ScanPage {
         }
     }
 
-    sendIntentAsUrl(scannedContent: string) {
+    async sendIntentAsUrl(scannedContent: string) {
         // Special backward compatibility case: convert elastos:// into https://did.elastos.net/ for CR sign in
         if (scannedContent.indexOf("elastos://") === 0)
             scannedContent = scannedContent.replace("elastos://", "https://did.elastos.net/");
 
-        Logger.log("Scanner", "Sending scanned content as a URL intent:", scannedContent);
-        this.essentialsIntent.sendUrlIntent(scannedContent, async ()=>{
+        try {
+            Logger.log("Scanner", "Sending scanned content as a URL intent:", scannedContent);
+            await this.globalIntentService.sendUrlIntent(scannedContent);
             // URL intent sent
-            Logger.log("Scanner", "Intent sent successfully")
+            Logger.log("Scanner", "sendUrlIntent successfully")
             await this.exitApp()
-        }, (err)=>{
-            Logger.error("Scanner", "Intent sending failed", err)
+        }
+        catch (err) {
+            Logger.error("Scanner", "sendUrlIntent failed", err)
             this.ngZone.run(() => {
                 this.showNooneToHandleIntent()
             })
-        })
+        }
     }
 
     async sendIntentAsRaw(scannedContent: string) {
@@ -318,7 +318,7 @@ export class ScanPage {
 
         try {
             Logger.log("Scanner", "Sending scanned content as raw content to an "+scanIntentAction+" intent action");
-            await essentialsIntent.sendIntent(scanIntentAction, {data: scannedContent});
+            await this.globalIntentService.sendIntent(scanIntentAction, {data: scannedContent});
 
             // Raw intent sent
             Logger.log("Scanner", "Intent sent successfully as action '"+scanIntentAction+"'")

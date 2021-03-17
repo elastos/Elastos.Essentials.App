@@ -3,7 +3,6 @@ import { StorageService } from '../../services/storage.service';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-home',
@@ -34,7 +33,7 @@ export class HomePage implements OnInit {
   constructor(
     private router: Router,
     private storageService: StorageService,
-    private platform: Platform
+    private platform: Platform,
   ) {
   }
 

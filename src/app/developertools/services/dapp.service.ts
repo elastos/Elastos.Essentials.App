@@ -1,7 +1,5 @@
-import { Injectable, NgZone, Directive } from '@angular/core';
-import { Platform, PopoverController } from '@ionic/angular';
-import { NavController } from '@ionic/angular';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, NgZone } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
 
 import { StorageDApp } from '../model/storagedapp.model';
 import { CreatedDApp } from '../model/customtypes';
@@ -11,7 +9,6 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -22,13 +19,10 @@ export class DAppService {
     dapps: StorageDApp[] = [];
 
     constructor(
-        private platform: Platform,
-        private navController: NavController,
         private popoverController: PopoverController,
         public zone: NgZone,
         private router: Router,
-        private http: HttpClient,
-        private storage: GlobalStorageService
+        private storage: GlobalStorageService,
     ) {
     }
 

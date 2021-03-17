@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from '../../services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +17,7 @@ export class IntentService {
         private router: Router,
         private ngZone: NgZone,
         private translate: TranslateService,
-        private globalIntentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService,
     ) {
     }
 
@@ -73,7 +72,7 @@ export class IntentService {
     public sendScanQRCodeIntentResponse(scannedContent: string): Promise<void> {
         console.log("Sending scanqrcode intent response");
 
-        return essentialsIntent.sendIntentResponse({
+        return this.globalIntentService.sendIntentResponse({
             scannedContent: scannedContent
         }, this.intentRequest.intentId as number);
     }

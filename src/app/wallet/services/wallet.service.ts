@@ -126,6 +126,7 @@ export class WalletManager {
 
         if (!hasWallet) {
             //this.goToLauncherScreen();
+            this.events.publish("walletmanager:initialized");
             return;
         }
 

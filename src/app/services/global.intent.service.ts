@@ -28,6 +28,11 @@ export class GlobalIntentService {
     return essentialsIntent.sendIntent(action, params);
   }
 
+  sendUrlIntent(url: string): Promise<any> {
+    Logger.log("sendUrlIntent", "Sending url intent", url);
+    return essentialsIntent.sendUrlIntent(url)
+  }
+
   sendIntentResponse(result: any, intentId: number): Promise<void> {
     Logger.log("Intents", "Sending intent response ", result, intentId);
     this.globalNav.exitCurrentContext();

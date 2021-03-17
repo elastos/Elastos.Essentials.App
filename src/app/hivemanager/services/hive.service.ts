@@ -6,14 +6,13 @@ import { PopupService } from './popup.service';
 import { Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let hiveManager: HivePlugin.HiveManager;
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 export type VaultLinkStatus = {
   // There is already a vault provider info on chain about a vault provider attacher to this user.
@@ -57,7 +56,7 @@ export class HiveService {
     private popup: PopupService,
     private events: Events,
     public translate: TranslateService,
-    private essentialsIntent: TemporaryAppManagerPlugin,
+    private globalIntentService: GlobalIntentService,
     private didSessions: GlobalDIDSessionsService
   ) {}
 
@@ -257,7 +256,7 @@ export class HiveService {
       Logger.log("HiveManager", "Requesting identity app to update the hive provider");
 
       try {
-        let result: {result: {status: string}} = await essentialsIntent.sendIntent("https://did.elastos.net/sethiveprovider", {
+        let result: {result: {status: string}} = await this.globalIntentService.sendIntent("https://did.elastos.net/sethiveprovider", {
           name: providerName,
           address: vaultAddress
         });
@@ -348,7 +347,7 @@ export class HiveService {
   private async executePayment(cost: number, elaAddress: string): Promise<string> {
     return new Promise(async (resolve, reject)=>{
       try {
-        let data: { result: { txid: string }} = await essentialsIntent.sendIntent("https://wallet.elastos.net/pay", {
+        let data: { result: { txid: string }} = await this.globalIntentService.sendIntent("https://wallet.elastos.net/pay", {
           amount: cost,
           receiver: elaAddress,
           currency: "ELA"

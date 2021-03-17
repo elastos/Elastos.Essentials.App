@@ -3,7 +3,6 @@ import { Platform, NavController } from '@ionic/angular';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { FriendsService } from './friends.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,8 @@ export class IntentService {
     private zone: NgZone,
     private navCtrl: NavController,
     private friendsService: FriendsService,
-    private intentService: GlobalIntentService
+    private intentService: GlobalIntentService,
+    private globalIntentService: GlobalIntentService,
   ) {
   }
 
@@ -104,7 +104,7 @@ export class IntentService {
 
   // Just notify the qrscanner to quit
   sendEmptyIntentRes() {
-    essentialsIntent.sendIntentResponse(
+    this.globalIntentService.sendIntentResponse(
       {},
       this.friendsService.managerService.handledIntentId
     );

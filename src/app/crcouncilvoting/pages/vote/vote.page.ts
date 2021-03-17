@@ -6,8 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-vote',
@@ -22,6 +22,7 @@ export class VotePage implements OnInit, OnDestroy {
     private storageService: StorageService,
     private toastCtrl: ToastController,
     private globalNav: GlobalNavService,
+    private globalIntentService: GlobalIntentService,
     private route: ActivatedRoute,
     public translate: TranslateService
   ) { }
@@ -92,7 +93,7 @@ export class VotePage implements OnInit, OnDestroy {
 
       setTimeout(async () => {
         try {
-          let res = await essentialsIntent.sendIntent(
+          let res = await this.globalIntentService.sendIntent(
             'crmembervote',
             { votes: votedCandidates });
 

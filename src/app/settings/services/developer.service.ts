@@ -2,7 +2,6 @@ import { Injectable, NgZone } from '@angular/core';
 import { ToastController, LoadingController, Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
@@ -24,7 +23,6 @@ export class DeveloperService {
     private platform: Platform,
     private zone: NgZone,
     private translate: TranslateService,
-    private essentialsIntent: TemporaryAppManagerPlugin,
     private prefs: GlobalPreferencesService
   ) {
     this.platform.ready().then(() => {

@@ -10,8 +10,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarNavigationMode, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
 
@@ -40,6 +40,7 @@ export class ProposalDetailsPage {
     private changeDetector: ChangeDetectorRef,
     public theme: GlobalThemeService,
     private nav: GlobalNavService,
+    private globalIntentService: GlobalIntentService,
     private translate: TranslateService
   ) {
   }
@@ -144,7 +145,7 @@ export class ProposalDetailsPage {
     if(item.type === 'url') {
       const urlToOpen = item.description;
       console.log("Opening external URL:", urlToOpen);
-      essentialsIntent.sendIntent('openurl', { url: urlToOpen })
+      this.globalIntentService.sendIntent('openurl', { url: urlToOpen })
     }
   }
 }

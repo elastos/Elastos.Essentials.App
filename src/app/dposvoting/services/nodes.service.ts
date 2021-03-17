@@ -9,8 +9,8 @@ import { Mainchain, Voters, Price, Block } from '../model/stats.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -73,6 +73,7 @@ export class NodesService {
     private http: HttpClient,
     private router: Router,
     private storageService: StorageService,
+    private globalIntentService: GlobalIntentService,
   ) {}
 
   get nodes(): Node[] {
@@ -638,6 +639,6 @@ export class NodesService {
   }
 
   openLink(url: string) {
-    essentialsIntent.sendIntent('openurl', { url: url });
+    this.globalIntentService.sendIntent('openurl', { url: url });
   }
 }

@@ -5,8 +5,8 @@ import { ContactNotifierService } from 'src/app/services/contactnotifier.service
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,7 @@ export class DIDManagerService {
     private native: GlobalNativeService ,
     private theme: GlobalThemeService,
     private didSessions: GlobalDIDSessionsService,
+    private globalIntentService: GlobalIntentService,
     private contactNotifier: ContactNotifierService,
   ) { }
 
@@ -38,7 +39,7 @@ export class DIDManagerService {
       encodeURIComponent(this.signedIdentity.didString) +
       '&carrier=' + carrierAddress;
 
-    essentialsIntent.sendIntent("share", {
+    this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: addFriendUrl,
     });

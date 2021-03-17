@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+// import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class SettingsService {
 
   constructor(
     private sanitizer: DomSanitizer,
-    private essentialsIntent: TemporaryAppManagerPlugin,
+    // private globalIntentService: GlobalIntentService,
     private native: GlobalNativeService
   ) { }
 
@@ -28,9 +28,10 @@ export class SettingsService {
   }
 
   getRuntimeVersion() {
-    this.essentialsIntent.getVersion((val) => {
-      this.version = val;
-      console.log('elastOS version', this.version);
-    });
+    // TODO
+    // this.globalIntentService.getVersion((val) => {
+    //   this.version = val;
+    //   console.log('elastOS version', this.version);
+    // });
   }
 }

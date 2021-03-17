@@ -7,8 +7,8 @@ import { CROperationsService, VoteForProposalCommand } from '../../../services/c
 import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'page-voteforproposal',
@@ -28,7 +28,8 @@ export class VoteForProposalPage {
     private crOperations: CROperationsService,
     private route: ActivatedRoute,
     private zone: NgZone,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private globalIntentService: GlobalIntentService,
   ) {
     this.route.queryParams.subscribe(async (data: {jwt: string, suggestionID: string})=>{
       this.zone.run(async ()=>{
@@ -56,7 +57,7 @@ export class VoteForProposalPage {
 
     // Request the wallet to publish our vote.
     try {
-      let ret = await essentialsIntent.sendIntent("crproposalvoteagainst", {
+      let ret = await this.globalIntentService.sendIntent("crproposalvoteagainst", {
         proposalHash: this.voteForProposalCommand.data.proposalHash
       });
       console.log("Vote for proposal intent has returned", ret);

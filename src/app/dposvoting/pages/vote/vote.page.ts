@@ -6,8 +6,8 @@ import { Node } from '../../model/nodes.model';
 import { StorageService } from '../../services/storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-vote',
@@ -41,6 +41,7 @@ export class VotePage implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private translate: TranslateService,
+    private globalIntentService: GlobalIntentService,
   ) {
   }
 
@@ -75,7 +76,7 @@ export class VotePage implements OnInit {
       let votesSent: boolean = false;
 
       try {
-        let res = await essentialsIntent.sendIntent(
+        let res = await this.globalIntentService.sendIntent(
           "https://wallet.elastos.net/dposvotetransaction",
           { publickeys: (castedNodeKeys) });
 
@@ -164,7 +165,7 @@ export class VotePage implements OnInit {
         {
           text: this.translate.instant('confirm'),
           handler: () => {
-            essentialsIntent.sendIntent("https://did.elastos.net/registerapplicationprofile", {
+            this.globalIntentService.sendIntent("https://did.elastos.net/registerapplicationprofile", {
               identifier: "DPoS Voting",
               connectactiontitle: "Vote for your favorite Supernodes and earn ELA along the way"
             });

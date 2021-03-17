@@ -6,10 +6,10 @@ import { ManagedProvider } from '../model/managedprovider';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,7 @@ export class AdminService {
     private router: Router,
     private storage: StorageService,
     private globalStorage: GlobalStorageService,
+    private globalIntentService: GlobalIntentService,
     private popup: PopupService,
   ) {}
 
@@ -174,7 +175,7 @@ export class AdminService {
 
   private sendDIDTransactionIntentRequest(payload: string) {
     console.log("Sending didtransaction intent");
-    essentialsIntent.sendIntent("https://wallet.elastos.net/didtransaction", {
+    this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", {
       didrequest: JSON.parse(payload)
     });
   }

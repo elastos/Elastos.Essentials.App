@@ -1,8 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Router, NavigationExtras } from '@angular/router';
+import { NavigationExtras } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
-import { NavController } from '@ionic/angular';
 
 import { NativeService } from './native.service';
 import { StorageService } from './storage.service';
@@ -12,13 +11,12 @@ import { Avatar } from '../models/avatar';
 import { DidService } from './did.service';
 import { Events } from './events.service';
 import { ContactNotifierService, Contact as ContactNotifierContact } from 'src/app/services/contactnotifier.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -85,7 +83,8 @@ export class FriendsService {
     private events: Events,
     private didService: DidService,
     private didSessions: GlobalDIDSessionsService,
-    private contactNotifier: ContactNotifierService
+    private contactNotifier: ContactNotifierService,
+    private globalIntentService: GlobalIntentService,
   ) {
     this.managerService = this;
   }
@@ -218,7 +217,7 @@ export class FriendsService {
   *********** Add Friend By Scan Button ***********
   *************************************************/
   async scanDID() {
-    let res = await essentialsIntent.sendIntent("https://scanner.elastos.net/scanqrcode");
+    let res = await this.globalIntentService.sendIntent("https://scanner.elastos.net/scanqrcode");
     Logger.log('contacts', "Got scan result", res);
 
     // Scanned content could contain different things:
@@ -931,7 +930,7 @@ export class FriendsService {
     }
     Logger.log('contacts', "Tried to send " + sentNotificationsCount + " notifications to friends");
     Logger.log('contacts', "Sending share intent response");
-    essentialsIntent.sendIntentResponse({},
+    this.globalIntentService.sendIntentResponse({},
       this.managerService.handledIntentId
     );
   }
@@ -954,7 +953,7 @@ export class FriendsService {
 
   sendIntentRes(contacts: Contact[], intent: string) {
     if(contacts.length > 0) {
-      essentialsIntent.sendIntentResponse(
+      this.globalIntentService.sendIntentResponse(
         { friends: contacts },
         this.managerService.handledIntentId
       );

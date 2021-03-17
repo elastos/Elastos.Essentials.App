@@ -6,8 +6,8 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { FriendsService } from '../../services/friends.service';
 import { NativeService } from '../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'app-qrcode',
@@ -22,6 +22,7 @@ export class QRCodeComponent implements OnInit {
 
   constructor(
     public theme: GlobalThemeService,
+    private globalIntentService: GlobalIntentService,
     private translate: TranslateService,
     private native: NativeService,
     public friendsService: FriendsService,
@@ -47,7 +48,7 @@ export class QRCodeComponent implements OnInit {
   }
 
   async shareInvitationLink() {
-    await essentialsIntent.sendIntent("share", {
+    await this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("share-friend"),
       url: this.qrCodeString
     });

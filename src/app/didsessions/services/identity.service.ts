@@ -11,7 +11,7 @@ import { DIDHelper } from '../helpers/did.helper';
 import { PasswordManagerCancellationException } from '../model/exceptions/passwordmanagercancellationexception';
 import { PopupProvider } from './popup';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
-import { timingSafeEqual } from 'crypto';
+// import { timingSafeEqual } from 'crypto';
 import { TranslateService } from '@ngx-translate/core';
 import { WrongPasswordException } from '../model/exceptions/wrongpasswordexception.exception';
 import { BiometricAuthenticationFailedException } from '../model/exceptions/biometricauthenticationfailed.exception';
@@ -19,9 +19,9 @@ import { BiometricLockedoutException } from '../model/exceptions/biometriclocked
 import { UXService } from './ux.service';
 import { Events } from './events.service';
 import { GlobalDIDSessionsService, IdentityEntry, SignInOptions } from 'src/app/services/global.didsessions.service';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -65,7 +65,7 @@ export class IdentityService {
         private translate: TranslateService,
         private alertCtrl: AlertController,
         private uxService: UXService,
-        private essentialsIntent: TemporaryAppManagerPlugin,
+        private globalIntentService: GlobalIntentService,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -81,12 +81,6 @@ export class IdentityService {
     }
 
     async init() {
-        this.essentialsIntent.setListener((msg) => {
-            if (msg.message == "navback") {
-                this.navCtrl.back();
-            }
-        });
-
         this.translate.onLangChange.subscribe(data => {
             let lang = data.lang;
             Logger.log("DIDSessions", "Setting current mnemonic language to "+lang);

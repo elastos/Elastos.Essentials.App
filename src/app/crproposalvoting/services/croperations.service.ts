@@ -1,12 +1,10 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { URL } from 'url';
 import { PopupService } from './popup.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 declare let didManager: DIDPlugin.DIDManager;
 
 type CRWebsiteCommand = {
@@ -49,13 +47,13 @@ export class CROperationsService {
     constructor(
         private router: Router,
         private popup: PopupService,
-        private intentService: GlobalIntentService,
+        private globalIntentService: GlobalIntentService,
     ) {}
 
     async init() {
         Logger.log("crproposal", "CROperationsService is initializing");
-    
-        this.intentService.intentListener.subscribe((receivedIntent)=>{
+
+        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             this.handledReceivedIntent(receivedIntent);
         });
     }
@@ -68,7 +66,7 @@ export class CROperationsService {
 
     private async handleScanAction() {
         try {
-            let data = await essentialsIntent.sendIntent("scanqrcode", null);
+            let data = await this.globalIntentService.sendIntent("scanqrcode", null);
             Logger.log("crproposal", "Scan result", data);
             if (data && data.result && data.result.scannedContent)
                 this.handleScannedContent(data.result.scannedContent);

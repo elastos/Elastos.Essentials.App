@@ -5,8 +5,6 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
-declare let didManager: DIDPlugin.DIDManager;
 
 type CRWebsiteCommand = {
     command: string; // Ex: "voteforproposal"

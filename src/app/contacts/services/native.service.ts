@@ -1,10 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ToastController, AlertController, LoadingController } from '@ionic/angular';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
+import { AlertController } from '@ionic/angular';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,7 @@ export class NativeService {
     private translate: TranslateService,
     private alertController: AlertController,
     private zone: NgZone,
-    private essentialsIntent: TemporaryAppManagerPlugin,
+    private globalIntentService: GlobalIntentService,
     private globalNative: GlobalNativeService
   ) { }
 
@@ -52,7 +51,7 @@ export class NativeService {
           text: this.translate.instant('ok'),
           handler: () => {
             this.zone.run(() => {
-                essentialsIntent.sendIntentResponse({}, intentId);
+                this.globalIntentService.sendIntentResponse({}, intentId);
             });
           }
         }

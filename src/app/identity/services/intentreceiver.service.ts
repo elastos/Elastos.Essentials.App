@@ -26,12 +26,12 @@ export class IntentReceiverService {
         private popup: PopupProvider,
         private appIDService: AppIDService,
         private uxService: UXService,
-        private intentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService
     ) {
     }
 
     async init() {
-        this.intentService.intentListener.subscribe((intent)=>{
+        this.globalIntentService.intentListener.subscribe((intent)=>{
             this.onReceiveIntent(intent);
         });
     }

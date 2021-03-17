@@ -2,10 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { SettingsService } from '../../services/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 @Component({
   selector: 'app-about',
@@ -40,7 +38,7 @@ export class AboutPage implements OnInit {
     public settings: SettingsService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    private essentialsIntent: TemporaryAppManagerPlugin
+    private globalIntentService: GlobalIntentService,
   ) { }
 
   ngOnInit() {
@@ -58,7 +56,7 @@ export class AboutPage implements OnInit {
     if(item.title === 'email') {
       return;
     } else {
-      essentialsIntent.sendIntent('openurl', { url: item.link });
+      this.globalIntentService.sendIntent('openurl', { url: item.link });
     }
   }
 }

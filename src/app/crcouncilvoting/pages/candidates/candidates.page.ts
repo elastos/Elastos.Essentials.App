@@ -10,8 +10,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalIntentService } from "src/app/services/global.intent.service";
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: "app-candidates",
@@ -25,6 +25,7 @@ export class CandidatesPage implements OnInit {
     public candidatesService: CandidatesService,
     private storage: StorageService,
     private globalNav: GlobalNavService,
+    private globalIntentService: GlobalIntentService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     public translate: TranslateService
@@ -80,7 +81,7 @@ export class CandidatesPage implements OnInit {
   /****************** Route to Vote *******************/
   async addCandidates() {
     try {
-      let res = await essentialsIntent.sendIntent(
+      let res = await this.globalIntentService.sendIntent(
         "walletaccess",
         { elaamount: { reason: "For CRC voting rights" } });
 
@@ -185,7 +186,7 @@ export class CandidatesPage implements OnInit {
         {
           text: "Yes",
           handler: () => {
-            essentialsIntent.sendIntent(
+            this.globalIntentService.sendIntent(
               "registerapplicationprofile",
               {
                 identifier: "CRC Election",

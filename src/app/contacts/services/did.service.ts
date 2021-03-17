@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { UxService } from './ux.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,7 @@ export class DidService {
     private translate: TranslateService,
     private uxService: UxService,
     private didSessions: GlobalDIDSessionsService,
+    private globalIntentService: GlobalIntentService,
   ) { }
 
   getSignedIdentity(): Promise<string> {
@@ -30,7 +31,7 @@ export class DidService {
   }
 
   async shareIdentity(contact: Contact) {
-    essentialsIntent.sendIntent("share", {
+    this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("share-add-me-as-friend"),
       url: await this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
     });

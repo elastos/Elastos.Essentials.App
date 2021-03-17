@@ -8,8 +8,8 @@ import { CreateSuggestionCommand, CROperationsService } from '../../../services/
 import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 
 @Component({
   selector: 'page-create-suggestion',
@@ -33,7 +33,8 @@ export class CreateSuggestionPage {
     private route: ActivatedRoute,
     private zone: NgZone,
     private popup: PopupService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private globalIntentService: GlobalIntentService,
   ) {
     this.route.queryParams.subscribe(async (data: { jwt: string, suggestionID: string }) => {
       this.zone.run(async () => {
@@ -120,7 +121,7 @@ export class CreateSuggestionPage {
 
     console.log("Sending intent to create suggestion digest", walletProposal);
     try {
-      let response: { result: { digest: string } } = await essentialsIntent.sendIntent("crproposalcreatedigest", {
+      let response: { result: { digest: string } } = await this.globalIntentService.sendIntent("crproposalcreatedigest", {
         proposal: JSON.stringify(walletProposal)
       });
 
@@ -136,7 +137,7 @@ export class CreateSuggestionPage {
   private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
     console.log("Sending intent to sign the suggestion digest", suggestionDigest);
     try {
-      let result = await essentialsIntent.sendIntent("didsign", {
+      let result = await this.globalIntentService.sendIntent("didsign", {
         data: suggestionDigest,
         signatureFieldName: "data",
         jwtExtra: {

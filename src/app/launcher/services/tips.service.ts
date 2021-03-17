@@ -3,12 +3,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { Tip } from '../model/tip.model';
 import { TipAudience } from '../model/tipaudience.model';
 import * as moment from 'moment';
-import { TemporaryAppManagerPlugin } from 'src/app/TMP_STUBS';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 const DURATION_MIN_BETWEEN_2_TIPS_MS = 12 * 60 * 60 * 1000; // 12 hours
 const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
@@ -77,7 +77,7 @@ export class TipsService {
 
   constructor(
     private translate: TranslateService,
-    private essentialsIntent: TemporaryAppManagerPlugin,
+    private globalIntentService: GlobalIntentService,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
     private notifications: GlobalNotificationsService,
