@@ -114,6 +114,9 @@ export class GlobalNavService {
                 return;
             }
         }
+
+        // Go to home if this.navigationHistory.length == 1
+        this.navigateHome();
     }
 
     public canGoBack(): boolean {
