@@ -39,7 +39,7 @@ export class ElastosSDKHelper {
      */
     public newDIDHelper(context: string): DID.DIDAccess {
         let didHelper = new DID.DIDAccess();
-        didHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
+        // didHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         didHelper.setLogger(new EssentialsLogger());
         return didHelper;
     }
@@ -49,7 +49,7 @@ export class ElastosSDKHelper {
      */
     public newHiveAuthHelper(context: string): Hive.AuthHelper {
         let authHelper = new Hive.AuthHelper();
-        authHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
+        // authHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
         authHelper.setLogger(new EssentialsLogger());
         return authHelper;
     }
