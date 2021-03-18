@@ -33,7 +33,7 @@ export class ChooseImportedDIDPage implements OnInit {
     if (!Util.isEmptyObject(navigation.extras.state)) {
       this.nextStepId = navigation.extras.state.enterEvent.stepId;
       console.log('Chooseimporteddid - nextStepId', this.nextStepId);
-      this.importedDids = navigation.extras.state.enterEvent.data;
+      this.importedDids = navigation.extras.state.enterEvent.data.dids;
     }
   }
 
