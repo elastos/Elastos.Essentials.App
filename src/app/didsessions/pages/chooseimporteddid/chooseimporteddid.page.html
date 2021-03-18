@@ -7,7 +7,7 @@
       <h1>{{ 'more-than-one-import-did-pick-one' | translate }} </h1>
     </ion-row>
 
-    <ion-row class="item" *ngFor="let did of importedDids" (click)="selectDID(did)">
+    <ion-row class="item" *ngFor="let did of importedDids.dids" (click)="selectDID(did)">
       <ion-col size="10" class="id-col">
         <h2>{{ did.getNameCredentialValue() }}</h2>
         <p>{{ did.getDIDString() }}</p>
