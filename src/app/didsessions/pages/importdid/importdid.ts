@@ -65,10 +65,11 @@ export class ImportDIDPage {
         if (!Util.isEmptyObject(navigation.extras.state)) {
             this.nextStepId = navigation.extras.state.enterEvent.stepId;
             console.log('Importdid - nextStepId', this.nextStepId);
-
-            this.mnemonicSentence = navigation.extras.state.mnemonic;
-            this.onMnemonicSentenceChanged();
-            this.readonly = true;
+            if (!Util.isEmptyObject(navigation.extras.state.mnemonic)) {
+              this.mnemonicSentence = navigation.extras.state.mnemonic;
+              this.onMnemonicSentenceChanged();
+              this.readonly = true;
+            }
             console.log('Importdid - Mnemonic', navigation.extras.state.enterEvent.data);
         }
     }
