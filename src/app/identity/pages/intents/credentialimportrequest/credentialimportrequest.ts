@@ -10,6 +10,7 @@ import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { CredImportIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
+import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -89,7 +90,7 @@ export class CredentialImportRequestPage {
       await this.runPreliminaryChecks();
       await this.organizeImportedCredentials();
 
-      console.log("Displayable credentials:", this.displayableCredentials)
+      Logger.log('Identity', "Displayable credentials:", this.displayableCredentials)
     });
   }
 
@@ -128,7 +129,7 @@ export class CredentialImportRequestPage {
     this.displayableCredentials = [];
     for (let key of Object.keys(this.receivedIntent.params.credentials)) {
       let importedCredential: DIDPlugin.VerifiableCredential = didManager.VerifiableCredentialBuilder.fromJson(JSON.stringify(this.receivedIntent.params.credentials[key]));
-      console.log("Received imported credential:", importedCredential);
+      Logger.log('Identity', "Received imported credential:", importedCredential);
 
       let credentialSubject = importedCredential.getSubject();
 
@@ -179,7 +180,7 @@ export class CredentialImportRequestPage {
     AuthService.instance.checkPasswordThenExecute(async ()=>{
       let importedCredentialsResult: String[] = [];
       for (let displayableCredential of this.displayableCredentials) {
-        console.log("CredImportRequest - storing credential: ", displayableCredential.credential);
+        Logger.log('Identity', "CredImportRequest - storing credential: ", displayableCredential.credential);
         await this.didService.getActiveDid().addRawCredential(displayableCredential.credential);
         // NOTE: Currently, DID SDK's storeCredential() on a DID doesn't require a storepass, which is strange... // this.authService.getCurrentUserPassword());
 
@@ -187,7 +188,7 @@ export class CredentialImportRequestPage {
       }
 
       this.popup.ionicAlert(this.translate.instant('credimport-success-title'), this.translate.instant('credimport-success'), this.translate.instant('credimport-success-done')).then(async ()=>{
-        console.log("Sending credimport intent response for intent id "+this.receivedIntent.intentId)
+        Logger.log('Identity', "Sending credimport intent response for intent id "+this.receivedIntent.intentId)
         await this.appServices.sendIntentResponse("credimport", {
           importedcredentials: importedCredentialsResult
         }, this.receivedIntent.intentId);

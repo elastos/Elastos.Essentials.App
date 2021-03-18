@@ -4,6 +4,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 
 
 type CRWebsiteCommand = {
@@ -30,7 +31,7 @@ export class UXService {
     ) {}
 
     async init() {
-        console.log("UXService is initializing");
+        Logger.log('crproposal', "UXService is initializing");
     }
 
     formatDate(timestamp) {

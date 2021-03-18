@@ -7,6 +7,7 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -40,7 +41,7 @@ export class AdminService {
   }
 
   public async saveManagedProviders(providers: ManagedProvider[]): Promise<void> {
-    console.log("Saving all providers:", providers);
+    Logger.log('HiveManager', "Saving all providers:", providers);
     return await this.storage.setJson("admin-managedproviders", providers);
   }
 
@@ -117,7 +118,7 @@ export class AdminService {
 
     this.updateAndSaveProvider(provider);
 
-    console.log("Updated provider after DID creation:", provider);
+    Logger.log('HiveManager', "Updated provider after DID creation:", provider);
 
     return createdDIDInfo;
   }
@@ -159,8 +160,8 @@ export class AdminService {
   public async publishAdminDID(provider: ManagedProvider): Promise<void> {
     return new Promise((resolve)=>{
       didManager.initDidStore(provider.did.storeId, (payload: String, memo: string)=>{
-        console.log("payload",payload)
-        console.log("payload fixed",payload.toString());
+        Logger.log('HiveManager', "payload",payload)
+        Logger.log('HiveManager', "payload fixed",payload.toString());
         this.sendDIDTransactionIntentRequest(payload.toString());
       }, async (didStore)=>{
         didStore.loadDidDocument(provider.did.didString, async (didDocument)=>{
@@ -174,7 +175,7 @@ export class AdminService {
   }
 
   private sendDIDTransactionIntentRequest(payload: string) {
-    console.log("Sending didtransaction intent");
+    Logger.log('HiveManager', "Sending didtransaction intent");
     this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", {
       didrequest: JSON.parse(payload)
     });

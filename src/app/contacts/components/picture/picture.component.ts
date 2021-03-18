@@ -7,6 +7,7 @@ import { Avatar } from '../../models/avatar';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-picture',
@@ -15,7 +16,7 @@ import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/c
 })
 export class PictureComponent implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  
+
   public oldAvatar: Avatar;
   public avatar: Avatar;
 
@@ -30,7 +31,7 @@ export class PictureComponent implements OnInit {
 
   ngOnInit() {
     if(JSON.parse(this.navParams.get('avatar')) !== null) {
-      console.log('Contact has picture');
+      Logger.log('contacts', 'Contact has picture');
       this.oldAvatar = JSON.parse(this.navParams.get('avatar'));
       this.avatar = JSON.parse(this.navParams.get('avatar'));
     } else {
@@ -40,7 +41,7 @@ export class PictureComponent implements OnInit {
       }
     }
 
-    console.log('Current avatar', this.avatar);
+    Logger.log('contacts', 'Current avatar', this.avatar);
   }
 
   ionViewWillEnter() {
@@ -65,11 +66,11 @@ export class PictureComponent implements OnInit {
 
     navigator.camera.getPicture((imageData) => {
       this.zone.run(() => {
-        console.log('Image data', imageData);
+        Logger.log('contacts', 'Image data', imageData);
         this.avatar.data = imageData;
       });
     }, ((err) => {
-      console.error(err);
+      Logger.error('contacts', err);
     }), options);
   }
 

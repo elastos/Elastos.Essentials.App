@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Platform, NavController } from '@ionic/angular';
+import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { FriendsService } from './friends.service';
 
@@ -29,27 +30,27 @@ export class IntentService {
 
     switch (ret.action) {
       case "handlescannedcontent_did":
-        console.log('handlescannedcontent_did intent', ret);
+        Logger.log('contacts', 'handlescannedcontent_did intent', ret);
         this.zone.run(() => {
           this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
           this.sendEmptyIntentRes();
         });
         break;
       case "https://contact.elastos.net/addfriend":
-        console.log('addfriend intent', ret);
+        Logger.log('contacts', 'addfriend intent', ret);
         this.zone.run(() => {
           this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
         });
         break;
       case "https://contact.elastos.net/viewfriendinvitation":
-        console.log('viewfriendinvitation intent', ret);
+        Logger.log('contacts', 'viewfriendinvitation intent', ret);
         this.zone.run(() => {
           this.friendsService.contactNotifierInviationId = ret.params.invitationid;
           this.friendsService.addContactByIntent(ret.params.did);
         });
         break;
       case "share":
-        console.log('share intent', ret);
+        Logger.log('contacts', 'share intent', ret);
 
         this.friendsService.shareIntentData = {
           title: ret.params.title,
@@ -61,13 +62,13 @@ export class IntentService {
         });
         break;
       case "https://contact.elastos.net/viewfriend":
-        console.log('viewfriend intent', ret);
+        Logger.log('contacts', 'viewfriend intent', ret);
         this.zone.run(() => {
           this.friendsService.viewContact(ret.params.did);
         });
         break;
       case "https://contact.elastos.net/pickfriend":
-        console.log('pickfriend intent', ret);
+        Logger.log('contacts', 'pickfriend intent', ret);
         this.zone.run(() => {
           let params = ret.params;
           // Single Invite, No Filter
@@ -75,12 +76,12 @@ export class IntentService {
             !params.hasOwnProperty('singleSelection') && !params.hasOwnProperty('filter') ||
             params.hasOwnProperty('singleSelection') && params.singleSelection === true && !params.hasOwnProperty('filter'))
           {
-            console.log('pickfriend intent is single selection without filter');
+            Logger.log('contacts', 'pickfriend intent is single selection without filter');
             this.friendsService.getContacts(true, 'pickfriend');
           }
           // Multiple Invite, No Filter
           if(params.hasOwnProperty('singleSelection') && params.singleSelection === false && !params.hasOwnProperty('filter')) {
-            console.log('pickfriend intent is multiple selection without filter');
+            Logger.log('contacts', 'pickfriend intent is multiple selection without filter');
             this.friendsService.getContacts(false, 'pickfriend');
           }
           // Single Invite, With Filter
@@ -88,12 +89,12 @@ export class IntentService {
             !params.hasOwnProperty('singleSelection') && params.hasOwnProperty('filter') ||
             params.hasOwnProperty('singleSelection') && params.singleSelection === true && params.hasOwnProperty('filter'))
           {
-            console.log('pickfriend intent is single selection and filtered by credential');
+            Logger.log('contacts', 'pickfriend intent is single selection and filtered by credential');
             this.friendsService.getFilteredContacts(true, ret);
           }
           // Multiple Invite, With Filter
           if(params.hasOwnProperty('singleSelection') && params.singleSelection === false && params.hasOwnProperty('filter')) {
-            console.log('pickfriend intent is multiple selection and filtered by credential');
+            Logger.log('contacts', 'pickfriend intent is multiple selection and filtered by credential');
             this.friendsService.getFilteredContacts(false, ret);
           }
         });

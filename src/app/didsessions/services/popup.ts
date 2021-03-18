@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ThemeService } from './theme.service';
+import { Logger } from 'src/app/logger';
 
 @Injectable()
 export class PopupProvider {
@@ -12,7 +12,7 @@ export class PopupProvider {
     ) {
     }
 
-    public ionicAlert(title: string, subTitle?: string, okText?: string): Promise<any> {
+    public ionicAlert(title: string, subTitle?: string, okText?: string): Promise<void> {
         return new Promise((resolve, reject) => {
             this.alertCtrl.create({
                 mode: 'ios',
@@ -23,7 +23,7 @@ export class PopupProvider {
                 buttons: [{
                     text: okText ? okText : this.translate.instant('confirm'),
                     handler: () => {
-                        console.log('ionicAlert Ok clicked');
+                        Logger.log('didsessions', 'ionicAlert Ok clicked');
                         resolve();
                     }
                 }]
@@ -41,14 +41,14 @@ export class PopupProvider {
                 buttons: [{
                     text: cancelText ? cancelText : this.translate.instant('cancel'),
                     handler: () => {
-                        console.log('ionicConfirm Disagree clicked');
+                        Logger.log('didsessions', 'ionicConfirm Disagree clicked');
                         resolve(false);
                     }
                 },
                 {
                     text: okText ? okText : this.translate.instant('confirm'),
                     handler: () => {
-                        console.log('Agree clicked');
+                        Logger.log('didsessions', 'Agree clicked');
                         resolve(true);
                     }
                 }]
@@ -78,14 +78,14 @@ export class PopupProvider {
             buttons: [{
                 text: cancelText ? cancelText : this.translate.instant('Cancel'),
                 handler: data => {
-                    console.log('Cancel clicked');
+                    Logger.log('didsessions', 'Cancel clicked');
                     resolve(null);
                 }
             },
             {
                 text: okText ? okText : this.translate.instant('Ok'),
                 handler: data => {
-                    console.log('Saved clicked');
+                    Logger.log('didsessions', 'Saved clicked');
                     resolve(data[0]);
                 }
             }]

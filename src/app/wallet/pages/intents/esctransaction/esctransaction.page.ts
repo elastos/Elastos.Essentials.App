@@ -34,6 +34,7 @@ import { UiService } from '../../../services/ui.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -137,9 +138,9 @@ export class EscTransactionPage implements OnInit {
         let fees = new BigNumber(this.coinTransferService.payloadParam.gas).multipliedBy(new BigNumber(this.coinTransferService.payloadParam.gasPrice)).dividedBy(weiElaRatio);
         let total = elaEthValue.plus(fees);
 
-        //console.log("elaEthValue", elaEthValue.toString())
-        //console.log("fees/gas", fees.toString());
-        //console.log("total", total.toString());
+        //Logger.log('wallet', "elaEthValue", elaEthValue.toString())
+        //Logger.log('wallet', "fees/gas", fees.toString());
+        //Logger.log('wallet', "total", total.toString());
 
         return {
             totalAsBigNumber: total,
@@ -152,7 +153,7 @@ export class EscTransactionPage implements OnInit {
     }
 
     async createEscTransaction() {
-        console.log("Calling createEscTransaction(): ", this.coinTransferService.payloadParam);
+        Logger.log('wallet', "Calling createEscTransaction(): ", this.coinTransferService.payloadParam);
 
         const rawTx =
         await this.walletManager.spvBridge.createTransferGeneric(
@@ -166,7 +167,7 @@ export class EscTransactionPage implements OnInit {
             this.coinTransferService.payloadParam.data
         );
 
-        console.log('Created raw ESC transaction:', rawTx);
+        Logger.log('wallet', 'Created raw ESC transaction:', rawTx);
 
         const transfer = new Transfer();
         Object.assign(transfer, {

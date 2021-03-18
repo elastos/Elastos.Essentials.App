@@ -14,6 +14,7 @@ import { PopupService } from '../../services/popup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-customize',
@@ -49,13 +50,13 @@ export class CustomizePage implements OnInit {
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params) {
-        console.log('Customizing contact', params);
+        Logger.log('contacts', 'Customizing contact', params);
         this.id = params.id;
         this.realName = params.name;
         this.note = params.customNote;
 
         this.avatar = JSON.parse(params.avatar);
-        console.log('Customizing avatar', this.avatar);
+        Logger.log('contacts', 'Customizing avatar', this.avatar);
 
         // If contact's name is a real name or they don't have a name at all,
         // show blank input, else show their custom name
@@ -80,7 +81,7 @@ export class CustomizePage implements OnInit {
           this.contactAddedWithNoName = false;
         }
 
-        console.log('Contact recently added and has no name?', this.contactAddedWithNoName);
+        Logger.log('contacts', 'Contact recently added and has no name?', this.contactAddedWithNoName);
         this.customName = this.name;
         this.customNote = this.note;
       }

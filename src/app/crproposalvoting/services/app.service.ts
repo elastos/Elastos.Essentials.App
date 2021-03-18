@@ -5,6 +5,7 @@ import { ProposalStatus } from '../model/proposal-status';
 
 import * as moment from 'moment';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { Logger } from 'src/app/logger';
 
 
 @Injectable({
@@ -19,7 +20,7 @@ export class AppService {
 
   public async getTimeCheckedForProposals() {
     const lastCheckedTime = await this.storage.get('timeCheckedForProposals');
-    console.log('Background service: Time-checked for proposals', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
+    Logger.log('crproposal', 'Background service: Time-checked for proposals', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
     const today = new Date();
     if(lastCheckedTime) {
@@ -27,7 +28,7 @@ export class AppService {
             this.storage.set('timeCheckedForProposals', today);
             this.checkForNewProposals(today);
         } else {
-            console.log('Background service: Proposals already checked today');
+            Logger.log('crproposal', 'Background service: Proposals already checked today');
         }
     } else {
         this.storage.set('timeCheckedForProposals', today);
@@ -38,7 +39,7 @@ export class AppService {
   async checkForNewProposals(today: Date) {
     const proposalRes = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
     const proposals = proposalRes.data.list;
-    console.log('Background service: Proposals fetched', proposals);
+    Logger.log('crproposal', 'Background service: Proposals fetched', proposals);
 
     // Send notification if there are any new proposals only for today
     let newProposalsCount: number = 0;
@@ -67,7 +68,7 @@ export class AppService {
 
     const lastCheckedProposal = await this.storage.get('lastProposalChecked');
     this.storage.set('lastProposalChecked', proposals[0].id);
-    console.log('Background service: Last proposal checked by id', lastCheckedProposal);
+    Logger.log('crproposal', 'Background service: Last proposal checked by id', lastCheckedProposal);
 
     // Send notification new proposals since user last visited elastOS
     if(lastCheckedProposal) {

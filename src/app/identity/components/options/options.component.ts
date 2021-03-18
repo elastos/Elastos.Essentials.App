@@ -6,6 +6,7 @@ import { DIDService } from '../../services/did.service';
 import { AuthService } from '../../services/auth.service';
 import { Native } from '../../services/native';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-options',
@@ -31,7 +32,7 @@ export class OptionsComponent implements OnInit {
 
   ngOnInit() {
     this.options = this.navParams.get('options');
-    console.log('Options ', this.options);
+    Logger.log('Identity', 'Options ', this.options);
   }
 
   ionViewWillLeave() {
@@ -47,11 +48,11 @@ export class OptionsComponent implements OnInit {
     this.popover.dismiss();
     await this.authService.checkPasswordThenExecute(async () => {
       let mnemonics = await this.didService.activeDidStore.exportMnemonic(AuthService.instance.getCurrentUserPassword());
-      console.log('Mnemonics', mnemonics);
+      Logger.log('Identity', 'Mnemonics', mnemonics);
       this.native.go('/identity/exportmnemonic', { mnemonics: mnemonics });
     }, () => {
       // Operation cancelled
-      console.log("Password operation cancelled");
+      Logger.log('Identity', "Password operation cancelled");
     },
     true, true)
   }

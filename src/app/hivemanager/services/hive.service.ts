@@ -246,7 +246,7 @@ export class HiveService {
       return publicationStarted;
     }
     catch (err) {
-      console.error("Failed to create vault on the vault provider for DID "+signedInDID+" at address "+vaultAddress, err);
+      Logger.error('HiveManager', "Failed to create vault on the vault provider for DID "+signedInDID+" at address "+vaultAddress, err);
       return false;
     }
   }
@@ -432,7 +432,7 @@ export class HiveService {
     });
 
     if (orderIndex == -1) {
-      console.error("Incomplete order not found in local storage for transaction ID "+transactionId+"!");
+      Logger.error('HiveManager', "Incomplete order not found in local storage for transaction ID "+transactionId+"!");
       return;
     }
     else {

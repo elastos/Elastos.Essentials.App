@@ -108,7 +108,7 @@ export class DPoSVotePage implements OnInit {
                 { txid: null, status: 'cancelled' },
                 this.intentTransfer.intentId);
         } catch (err) {
-            console.error('wallet app -> dposvote pg -> cancelOperation err', err);
+            Logger.error('wallet', 'wallet app -> dposvote pg -> cancelOperation err', err);
             this.navCtrl.back();
         }
     }
@@ -122,7 +122,7 @@ export class DPoSVotePage implements OnInit {
             // -1 mean max.
             this.createVoteProducerTransaction('-1');
         } catch (error) {
-            console.log('dposvote createVoteProducerTransaction error:', error);
+            Logger.log('wallet', 'dposvote createVoteProducerTransaction error:', error);
         }
     }
 
@@ -137,7 +137,7 @@ export class DPoSVotePage implements OnInit {
      * stakeAmount: SELA
      */
     async createVoteProducerTransaction(stakeAmount: string) {
-        console.log('Creating vote transaction with amount', stakeAmount);
+        Logger.log('wallet', 'Creating vote transaction with amount', stakeAmount);
 
         const rawTx =
             await this.walletManager.spvBridge.createVoteProducerTransaction(

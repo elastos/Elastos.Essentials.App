@@ -232,7 +232,7 @@ export class WalletManager {
                 await this.masterWallets[masterId].updateERC20TokenList(this.prefs);
             }
         } catch (error) {
-            console.error(error);
+            Logger.error('wallet', error);
             return false;
         }
         return true;
@@ -576,7 +576,7 @@ export class WalletManager {
     private async updateSyncProgress(masterId: WalletID, chainId: StandardCoinName, progress: number, lastBlockTime: number) {
         const masterWallet = this.getMasterWallet(masterId);
         if (!masterWallet) {
-            console.warn("updateSyncProgress() called but wallet with ID", masterId, "does not exist!");
+            Logger.warn('wallet', "updateSyncProgress() called but wallet with ID", masterId, "does not exist!");
             return;
         }
 
@@ -586,7 +586,7 @@ export class WalletManager {
         // Logger.log('wallet', "DEBUG updateSyncProgress", masterId, chainId, masterWallet.getSubWallets())
         // Seems like we can sometimes receive an update progress about a subwallet not yet added. Reason unknown for now.
         if (!subWallet) {
-            console.warn("updateSyncProgress() called but subwallet with ID", chainId, "does not exist in wallet!", masterWallet);
+            Logger.warn('wallet', "updateSyncProgress() called but subwallet with ID", chainId, "does not exist in wallet!", masterWallet);
             return;
         }
 

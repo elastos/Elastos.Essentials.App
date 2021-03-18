@@ -14,6 +14,7 @@ import { Util } from '../../../model/Util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 
 type ClaimRequest = {
@@ -85,10 +86,10 @@ export class AccessPage implements OnInit {
     }
 
     async organizeRequestedFields() {
-        console.log('organizeRequestedFields:', this.walletAccessService.requestFields);
+        Logger.log('wallet', 'organizeRequestedFields:', this.walletAccessService.requestFields);
         for (const key of Object.keys(this.walletAccessService.requestFields)) {
             const claimValue = await this.getClaimValue(key);
-            console.log('key:', key, ' value:', claimValue);
+            Logger.log('wallet', 'key:', key, ' value:', claimValue);
             const claimRequest: ClaimRequest = {
                 name: key,
                 value: claimValue,
@@ -122,7 +123,7 @@ export class AccessPage implements OnInit {
                 value = await this.createAddress(StandardCoinName.ETHSC);
                 break;
             default:
-                console.log('Not support ', key);
+                Logger.log('wallet', 'Not support ', key);
                 break;
         }
         return value;
@@ -147,7 +148,7 @@ export class AccessPage implements OnInit {
         const mandatoryDict = this.requestItems.reduce(this.reduceArrayToDict('name'), {});
         selectedClaim.push(mandatoryDict);
 
-        console.log('selectedClaim:', selectedClaim);
+        Logger.log('wallet', 'selectedClaim:', selectedClaim);
         return selectedClaim;
     }
 

@@ -9,6 +9,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { SignIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
+import { Logger } from 'src/app/logger';
 
 /*
 Request example:
@@ -49,7 +50,7 @@ export class SignRequestPage {
   }
 
   async acceptRequest() {
-    console.log("Signing user data now");
+    Logger.log('Identity', "Signing user data now");
 
     // Prompt password if needed
     AuthService.instance.checkPasswordThenExecute(async ()=>{
@@ -88,7 +89,7 @@ export class SignRequestPage {
       1, this.authService.getCurrentUserPassword());
 
       // Send the intent response as everything is completed
-      console.log("Data signed, sending intent response");
+      Logger.log('Identity', "Data signed, sending intent response");
       try {
         await this.appServices.sendIntentResponse("didsign", {jwt: jwtToken}, this.receivedIntent.intentId);
       }

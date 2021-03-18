@@ -153,10 +153,10 @@ export class CoinListPage implements OnInit, OnDestroy {
         this.coinList = [];
         for (let availableCoin of await this.coinService.getAvailableCoins()) {
             let isOpen = (availableCoin.getID() in this.masterWallet.subWallets);
-            console.log(availableCoin, "isOpen?", isOpen);
+            Logger.log('wallet', availableCoin, "isOpen?", isOpen);
             this.coinList.push({ coin: availableCoin, isOpen: isOpen });
         }
-        console.log('coin list', this.coinList);
+        Logger.log('wallet', 'coin list', this.coinList);
     }
 
     async createSubWallet(coin: Coin) {
@@ -177,7 +177,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     onSelect(item: EditableCoinInfo) {
-        console.log('Toggle triggered!', item);
+        Logger.log('wallet', 'Toggle triggered!', item);
         if (item.isOpen) {
             this.switchCoin(item, true);
         } else {

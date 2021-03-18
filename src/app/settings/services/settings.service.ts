@@ -31,7 +31,7 @@ export class SettingsService {
     // TODO
     // this.globalIntentService.getVersion((val) => {
     //   this.version = val;
-    //   console.log('elastOS version', this.version);
+    //   Logger.log('settings', 'elastOS version', this.version);
     // });
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
+import { Logger } from 'src/app/logger';
 import { Candidate } from '../../model/candidates.model';
 import { CandidatesService } from '../../services/candidates.service';
 
@@ -43,8 +44,8 @@ export class CandidateSliderComponent implements OnInit {
     } else {
       return;
     }
-    console.log('last Candidate', lastCandidate);
-    console.log('next Candidate', this.candidatesService.candidates[nextCandidateIndex]);
+    Logger.log('crcouncil', 'last Candidate', lastCandidate);
+    Logger.log('crcouncil', 'next Candidate', this.candidatesService.candidates[nextCandidateIndex]);
   }
 
   getVotePercent(votes: string): string {

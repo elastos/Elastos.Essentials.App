@@ -5,6 +5,7 @@ import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Router } from "@angular/router";
+import { Logger } from "src/app/logger";
 
 @Component({
   selector: "app-tabnav",
@@ -36,6 +37,6 @@ export class TabnavPage implements OnInit {
 
   setCurrentTab() {
     this.selectedTab = this.tabs.getSelected();
-    console.log(this.selectedTab);
+    Logger.log('Identity', this.selectedTab);
   }
 }

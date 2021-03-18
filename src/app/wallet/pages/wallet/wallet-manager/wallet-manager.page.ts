@@ -12,6 +12,7 @@ import { CurrencyService } from '../../../services/currency.service';
 import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -48,7 +49,7 @@ export class WalletManagerPage implements OnInit {
             this.forIntent = navigation.extras.state.forIntent;
             this.intent = navigation.extras.state.intent;
             this.intentParams = navigation.extras.state.intentParams;
-            console.log('For intent?', this.forIntent, this.intent);
+            Logger.log('wallet', 'For intent?', this.forIntent, this.intent);
         }
     }
 

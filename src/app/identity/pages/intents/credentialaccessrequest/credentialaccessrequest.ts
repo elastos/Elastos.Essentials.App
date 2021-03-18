@@ -21,6 +21,7 @@ import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { isNullOrUndefined } from 'util';
+import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -155,17 +156,17 @@ export class CredentialAccessRequestPage {
       this.did = this.didService.getActiveDidStore().getActiveDid();
       this.didNeedsToBePublished = await this.didSyncService.checkIfDIDDocumentNeedsToBePublished(this.did);
       this.publishStatusFetched = true;
-      console.log('Publish status fetched?', this.publishStatusFetched);
-      console.log('Did needs to be published?', this.didNeedsToBePublished);
+      Logger.log('Identity', 'Publish status fetched?', this.publishStatusFetched);
+      Logger.log('Identity', 'Did needs to be published?', this.didNeedsToBePublished);
 
       this.receivedIntent = this.intentService.getReceivedIntent();
 
       await this.getRequestedTheme();
       await this.organizeRequestedClaims();
 
-      console.log("Request Dapp color", this.requestDappColor);
-      console.log("Mandatory claims:", this.mandatoryItems);
-      console.log("Optional claims:", this.optionalItems);
+      Logger.log('Identity', "Request Dapp color", this.requestDappColor);
+      Logger.log('Identity', "Mandatory claims:", this.mandatoryItems);
+      Logger.log('Identity', "Optional claims:", this.optionalItems);
     });
   }
 
@@ -173,7 +174,7 @@ export class CredentialAccessRequestPage {
   }
 
   getRequestedTheme(): Promise<void> {
-    console.log('Creating credentialaccessrequest page layout');
+    Logger.log('Identity', 'Creating credentialaccessrequest page layout');
     return new Promise((resolve) => {
       const customization = this.receivedIntent.params.customization
       if(customization) {
@@ -220,14 +221,14 @@ export class CredentialAccessRequestPage {
       // so that users know which infos are really going to be shared (credentials can't be split).
 
       if(key === 'publisheddid') {
-        console.log('Requires published did?', claim);
+        Logger.log('Identity', 'Requires published did?', claim);
         this.publishStatusRequested = true;
         this.handleRequestedStatusOfPublishedDid(claimIsRequired);
       } else {
         // Retrieve current value from active store credentials
         let relatedCredential = this.findCredential(key);
         if (!relatedCredential) {
-          console.warn("No credential found for requested claim:", key);
+          Logger.warn('identity', "No credential found for requested claim:", key);
         }
 
         let credentialValue: string = null;
@@ -333,7 +334,7 @@ export class CredentialAccessRequestPage {
     let did: string = this.did.getDIDString();
     let didDocument : DIDDocument = this.did.getDIDDocument();
     let expiredState: ExpiredItem = this.expirationService.verifyDIDExpiration(did, didDocument , 0);
-    console.log("expiredState", expiredState)
+    Logger.log('Identity', "expiredState", expiredState)
 
     let claimRequest: ClaimRequest = {
       name: "did",
@@ -449,7 +450,7 @@ export class CredentialAccessRequestPage {
       response =  iss["selfproclaimed"];
     }
 
-    console.log("acceptsSelfProclaimedCredentials", iss, response)
+    Logger.log('Identity', "acceptsSelfProclaimedCredentials", iss, response)
 
     return response;
   }
@@ -458,7 +459,7 @@ export class CredentialAccessRequestPage {
    * Check if credential issuer match with requested
    */
   acceptsIssuer(iss: any, issuerDid: string): boolean {
-    console.log("acceptsIssuer", iss, issuerDid)
+    Logger.log('Identity', "acceptsIssuer", iss, issuerDid)
 
     if (isNullOrUndefined(iss)) return true;
 
@@ -497,7 +498,7 @@ export class CredentialAccessRequestPage {
         selectedCredentials.push(item.credential);
     }
 
-    console.log(JSON.parse(JSON.stringify(selectedCredentials)));
+    Logger.log('Identity', JSON.parse(JSON.stringify(selectedCredentials)));
 
     return selectedCredentials;
   }
@@ -513,7 +514,7 @@ export class CredentialAccessRequestPage {
         let presentation = null;
         let currentDidString: string = this.didService.getActiveDid().getDIDString();
         presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials, this.authService.getCurrentUserPassword(), this.receivedIntent.params.nonce, this.receivedIntent.params.realm);
-        console.log("Created presentation:", presentation);
+        Logger.log('Identity', "Created presentation:", presentation);
 
         let payload = {
           type: "credaccess",
@@ -524,7 +525,7 @@ export class CredentialAccessRequestPage {
         // Return the original JWT token in case this intent was called by an external url (elastos scheme definition)
         // TODO: Currently adding elastos://credaccess/ in front of the JWT because of CR website requirement. But we should cleanup this and pass only the JWT itself
         if (this.receivedIntent.originalJwtRequest) {
-          console.log('Intent is called by external intent', this.receivedIntent.originalJwtRequest);
+          Logger.log('Identity', 'Intent is called by external intent', this.receivedIntent.originalJwtRequest);
           payload["req"] = "elastos://credaccess/"+this.receivedIntent.originalJwtRequest;
 
           let parsedJwt = await didManager.parseJWT(false, this.receivedIntent.originalJwtRequest);
@@ -543,7 +544,7 @@ export class CredentialAccessRequestPage {
           this.authService.getCurrentUserPassword()
         );
 
-        console.log("Sending credaccess intent response for intent id "+ this.receivedIntent.intentId);
+        Logger.log('Identity', "Sending credaccess intent response for intent id "+ this.receivedIntent.intentId);
         try {
           if (this.receivedIntent.originalJwtRequest) {
             setTimeout(async () => {

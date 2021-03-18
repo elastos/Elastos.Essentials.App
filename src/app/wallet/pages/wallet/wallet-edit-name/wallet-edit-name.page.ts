@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-wallet-edit-name',
@@ -37,7 +38,7 @@ export class WalletEditNamePage implements OnInit {
     }
 
     ngOnInit() {
-        console.log('ngOnInit ModifywalletnamePage');
+        Logger.log('wallet', 'ngOnInit ModifywalletnamePage');
     }
 
     ionViewWillEnter() {

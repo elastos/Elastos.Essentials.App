@@ -9,6 +9,7 @@ import { Contact } from '../../models/contact.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarNavigationMode, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-invite',
@@ -37,7 +38,7 @@ export class InvitePage implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      console.log('pickfriend', params);
+      Logger.log('contacts', 'pickfriend', params);
       this.titleBar.setTitle(this.translate.instant('contacts'));
 
       if (params.singleInvite === "true") {
@@ -59,9 +60,9 @@ export class InvitePage implements OnInit {
       }
     });
 
-    console.log('Is single invite?', this.isSingleInvite);
-    console.log('Friends filtered?', this.isFilter);
-    console.log('Intent', this.intent);
+    Logger.log('contacts', 'Is single invite?', this.isSingleInvite);
+    Logger.log('contacts', 'Friends filtered?', this.isFilter);
+    Logger.log('contacts', 'Intent', this.intent);
   }
 
   ionViewWillEnter() {

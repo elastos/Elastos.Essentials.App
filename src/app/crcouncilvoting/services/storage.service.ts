@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
+import { Logger } from 'src/app/logger';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,13 @@ export class StorageService {
 
   public setVotes(value: any) {
     return this.storage.set("crcouncilvotes", JSON.stringify(value)).then((data) => {
-      console.log('Stored votes', data)
+      Logger.log('crcouncil', 'Stored votes', data)
     });
   }
 
   public getVotes(): Promise<any> {
     return this.storage.get("crcouncilvotes").then((data) => {
-      console.log(data)
+      Logger.log('crcouncil', data)
       return JSON.parse(data);
     });
   }

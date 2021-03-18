@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Injectable()
@@ -23,7 +24,7 @@ export class PopupService {
         title: string,
         subTitle?: string,
         okText: string = 'alert.confirm'
-    ): Promise<any> {
+    ): Promise<void> {
         return new Promise((resolve, reject) => {
             this.alert = null;
             this.alert = this.alertCtrl.create({
@@ -34,7 +35,7 @@ export class PopupService {
                 buttons: [{
                     text: this.translate.instant(okText),
                     handler: () => {
-                        console.log('ionicAlert Ok clicked');
+                        Logger.log('HiveManager', 'ionicAlert Ok clicked');
                         resolve();
                     }
                 }]
@@ -58,14 +59,14 @@ export class PopupService {
                 buttons: [{
                     text: this.translate.instant(cancelText),
                     handler: () => {
-                        console.log('ionicConfirm Disagree clicked');
+                        Logger.log('HiveManager', 'ionicConfirm Disagree clicked');
                         resolve(false);
                     }
                 },
                 {
                     text: this.translate.instant(okText),
                     handler: () => {
-                        console.log('Agree clicked');
+                        Logger.log('HiveManager', 'Agree clicked');
                         resolve(true);
                     }
                 }]
@@ -102,14 +103,14 @@ export class PopupService {
             buttons: [{
                 text: this.translate.instant(cancelText),
                 handler: data => {
-                    console.log('Cancel clicked');
+                    Logger.log('HiveManager', 'Cancel clicked');
                     resolve(null);
                 }
             },
             {
                 text: this.translate.instant(okText),
                 handler: data => {
-                    console.log('Saved clicked');
+                    Logger.log('HiveManager', 'Saved clicked');
                     resolve(data[0]);
                 }
             }]

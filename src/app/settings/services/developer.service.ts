@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -100,7 +101,7 @@ export class DeveloperService {
     ethscApiMisc: string,
     ethscOracle: string
   ) {
-    console.log('Dev preference set to ' + networkCode);
+    Logger.log('settings', 'Dev preference set to ' + networkCode);
     this.selectedNet = networkCode;
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
@@ -138,7 +139,7 @@ export class DeveloperService {
 
   async configCliAddress() {
     if(this.cliAddress.length) {
-      console.log('Trinity-CLI run command address filled', this.cliAddress);
+      Logger.log('settings', 'Trinity-CLI run command address filled', this.cliAddress);
       await this.setPreference("trinitycli.runaddress", this.cliAddress);
       this.showToast('Client address set to ' + this.cliAddress, 'Your app will start installing in a few seconds', 6000);
     }
@@ -146,16 +147,16 @@ export class DeveloperService {
 
   async configNetwork() {
     if(!this.privateNet.configUrl.length || !this.privateNet.resolveUrl.length) {
-      console.log('Not private net urls filled');
+      Logger.log('settings', 'Not private net urls filled');
       return;
     } else {
-      console.log('Config private net url..', this.privateNet);
+      Logger.log('settings', 'Config private net url..', this.privateNet);
       this.loading();
 
       this.networks.map((network) => {
         if(network.type === 'priv-net') {
           network.idChainRPCApi = this.privateNet.resolveUrl;
-          console.log('Resolve URL added', network.idChainRPCApi);
+          Logger.log('settings', 'Resolve URL added', network.idChainRPCApi);
           // TODO: for mainchain and ethsc rpc?
         }
       });
@@ -173,12 +174,12 @@ export class DeveloperService {
         // await this.setPreference("sidechain.eth.rpcapi", this.privateNet.resolveUrl);
         // await this.setPreference("sidechain.eth.apimisc", this.privateNet.resolveUrl);
 
-        console.log(config);
+        Logger.log('settings', config);
         this.loadingCtrl.dismiss();
         this.showToast('Private net sucessfuly configured', this.privateNet.configUrl);
       }
       catch (err) {
-        console.error(err);
+        Logger.error('settings', err);
         this.loadingCtrl.dismiss();
         this.privConfigToastErr(err);
       }

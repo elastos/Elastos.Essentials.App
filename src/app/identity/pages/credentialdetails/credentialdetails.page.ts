@@ -22,6 +22,7 @@ import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { isNullOrUndefined } from "util";
+import { Logger } from "src/app/logger";
 
 
 type ProfileDisplayEntry = {
@@ -132,7 +133,7 @@ export class CredentialDetailsPage {
     );
 
     this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
-      console.log("Publish avatar?", publishAvatar);
+      Logger.log('Identity', "Publish avatar?", publishAvatar);
       // When the did document content changes, we rebuild our profile entries on screen.
       this.init(publishAvatar);
     });
@@ -184,18 +185,18 @@ export class CredentialDetailsPage {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
 
-    console.log(
+    Logger.log('Identity',
       "Credential details ionViewDidEnter did: " + this.profileService.didString
     );
 
     if (this.isApp()) {
       this.getAppIcon();
-      console.log(this.appIcon);
+      Logger.log('Identity', this.appIcon);
     }
   }
 
   async selectCredential() {
-    console.log("select");
+    Logger.log('Identity', "select");
     this.credential = null;
     this.issuer = null;
     this.segment = "validator";
@@ -325,10 +326,10 @@ export class CredentialDetailsPage {
       )
       .subscribe(
         (manifest: any) => {
-          console.log("Got app!", manifest);
+          Logger.log('Identity', "Got app!", manifest);
           this.zone.run(async () => {
             let iconUrl = "https://dapp-store.elastos.org/apps/" + manifest.id + "/icon";
-            //console.log(iconUrl);
+            //Logger.log('Identity', iconUrl);
             this.appIcon = iconUrl;
 
           })
@@ -462,11 +463,11 @@ export class CredentialDetailsPage {
   async isLocalCredSyncOnChain() {
 
     let didString = this.didService.getActiveDid().getDIDString();
-    console.log('didstring ' + didString);
+    Logger.log('Identity', 'didstring ' + didString);
     this.currentOnChainDIDDocument = await this.didSyncService.getDIDDocumentFromDID(didString);
-    console.log("0");
+    Logger.log('Identity', "0");
     if (this.currentOnChainDIDDocument === null) {
-      console.log("1");
+      Logger.log('Identity', "1");
       this.isPublished = false;
       return false;
     }
@@ -476,7 +477,7 @@ export class CredentialDetailsPage {
 
     let chainValue = this.currentOnChainDIDDocument.getCredentialById(new DIDURL("#" + fragment));
     if (!chainValue) {
-      console.log("1");
+      Logger.log('Identity', "1");
       this.isPublished = false;
       return false;
     }
@@ -487,13 +488,13 @@ export class CredentialDetailsPage {
       if (localValue) {
         let apppackage = chainValue.getSubject().apppackage;
         this.isPublished = localValue === apppackage;
-        console.log("3");
+        Logger.log('Identity', "3");
         return;
       }
       else {
         // handle external credentials
         this.isPublished = true;
-        console.log("3.5");
+        Logger.log('Identity', "3.5");
         return;
       }
     }
@@ -503,12 +504,12 @@ export class CredentialDetailsPage {
     if (typeof localValue === "object" || typeof chainValue === "object") {
       //avatar
       this.isPublished = JSON.stringify(localValue) === JSON.stringify(chainValue);
-      console.log("4");
+      Logger.log('Identity', "4");
       return;
     }
 
-    console.log('Local ' + localValue + " ; Chain " + chainValue);
-    console.log("5");
+    Logger.log('Identity', 'Local ' + localValue + " ; Chain " + chainValue);
+    Logger.log('Identity', "5");
     this.isPublished = localValue === chainValue;
   }
 

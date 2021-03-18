@@ -1,3 +1,4 @@
+import { Logger } from "src/app/logger";
 import { NetworkType } from "src/app/model/networktype";
 
 export type CoinID = string; // ELA, IDChain, ERC1, ERC2...
@@ -15,7 +16,7 @@ export enum StandardCoinName {
 
 export namespace StandardCoinName {
     export function fromCoinID(coinID: CoinID): StandardCoinName {
-        console.log("debug fromCoinID ", coinID)
+        Logger.log('wallet', "debug fromCoinID ", coinID)
         return StandardCoinName[coinID];
     }
 }

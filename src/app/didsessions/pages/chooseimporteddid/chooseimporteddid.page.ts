@@ -9,6 +9,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-chooseimporteddid',
@@ -32,7 +33,7 @@ export class ChooseImportedDIDPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
       this.nextStepId = navigation.extras.state.enterEvent.stepId;
-      console.log('Chooseimporteddid - nextStepId', this.nextStepId);
+      Logger.log('didsessions', 'Chooseimporteddid - nextStepId', this.nextStepId);
       this.importedDids = navigation.extras.state.enterEvent.data.dids;
     }
   }

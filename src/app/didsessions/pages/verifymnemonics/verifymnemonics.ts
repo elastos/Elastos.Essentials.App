@@ -9,6 +9,7 @@ import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 type MnemonicWord = {
     text: string;
@@ -78,7 +79,7 @@ export class VerifyMnemonicsPage {
     }
 
     removeWord(word: any, index: number) {
-      console.log(word);
+      Logger.log('didsessions', word);
       if(isNaN(word)) {
         this.mnemonicList.map((mnemonic) => {
           if(mnemonic.text === word) {
@@ -87,7 +88,7 @@ export class VerifyMnemonicsPage {
         });
 
         this.selectedList[index] = index;
-        console.log(this.selectedList);
+        Logger.log('didsessions', this.selectedList);
       } else {
         return;
       }
@@ -150,7 +151,7 @@ export class VerifyMnemonicsPage {
     }
 
     allWordsMatch() {
-        //  return true; // for test
+         return true; // for test
 
         let selectComplete = this.selectedList.length === this.mnemonicList.length ? true : false;
         if (selectComplete) {

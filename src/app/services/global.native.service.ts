@@ -106,8 +106,4 @@ export class GlobalNativeService {
             this.loader = null;
         }
     }
-
-    print_err(err: string) {
-      console.log("ElastosJS  Error: " + err);
-    }
 }

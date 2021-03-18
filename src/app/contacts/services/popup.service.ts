@@ -8,6 +8,7 @@ import { UxService } from './ux.service';
 import { QRCodeComponent } from '../components/qrcode/qrcode.component';
 import { Events } from './events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +54,7 @@ export class PopupService {
 
   async showOptions(ev: any, contact: Contact, fromContactDetails?: boolean) {
     const targetContact = this.friendsService.contacts.find((_contact) => _contact.id === contact.id);
-    console.log('Opening options for contact', targetContact);
+    Logger.log('contacts', 'Opening options for contact', targetContact);
 
     this.optionsPopup = await this.popoverCtrl.create({
       mode: 'ios',

@@ -71,10 +71,10 @@ export class CROperationsService {
             if (data && data.result && data.result.scannedContent)
                 this.handleScannedContent(data.result.scannedContent);
             else
-                console.warn("Unable to handle the scanned QR code - no scanned content info");
+                Logger.warn('crproposal', "Unable to handle the scanned QR code - no scanned content info");
         }
         catch (err) {
-            console.error(err);
+            Logger.error('crproposal', err);
         }
     }
 
@@ -84,7 +84,7 @@ export class CROperationsService {
             this.handleCRProposalJWTCommand(jwt);
         }
         else {
-            console.warn("Unhandled QR code content:", scannedContent);
+            Logger.warn('crproposal', "Unhandled QR code content:", scannedContent);
         }
     }
 
@@ -97,7 +97,7 @@ export class CROperationsService {
 
     private async handleCRProposalIntentRequest(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
         if (!receivedIntent.originalJwtRequest) {
-            console.error("Received a crproposal intent request that is not encoded as JWT, which is not allowed. Skipping the request");
+            Logger.error('crproposal', "Received a crproposal intent request that is not encoded as JWT, which is not allowed. Skipping the request");
         }
         else {
             this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest);
@@ -108,7 +108,7 @@ export class CROperationsService {
         // Parse this JWT and verify the signature. We need to make sure the issuer is on chain.
         let parsedJwtresult = await didManager.parseJWT(true, crProposalJwtRequest);
         if (!parsedJwtresult.signatureIsValid) {
-            console.warn("Invalid JWT received");
+            Logger.warn('crproposal', "Invalid JWT received");
             return;
         }
 
@@ -116,7 +116,7 @@ export class CROperationsService {
 
         let jwtPayload = parsedJwtresult.payload as CRWebsiteCommand;
         if (!jwtPayload.command) {
-            console.warn("Received CR website command without a command field. Skipping.");
+            Logger.warn('crproposal', "Received CR website command without a command field. Skipping.");
             return;
         }
 
@@ -128,7 +128,7 @@ export class CROperationsService {
                 this.handleVoteForProposalCommand(jwtPayload as VoteForProposalCommand, crProposalJwtRequest);
                 break;
             default:
-                console.warn("Unhandled CR command: ", jwtPayload.command);
+                Logger.warn('crproposal', "Unhandled CR command: ", jwtPayload.command);
                 this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
         }
     }

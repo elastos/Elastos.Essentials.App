@@ -30,6 +30,7 @@ import { StandardCoinName } from '../../../model/Coin';
 import { VoteType, CRProposalVoteInfo } from '../../../model/SPVWalletPluginBridge';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -66,7 +67,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
 
         // TMP BPI TEST
         let previousVoteInfo = await this.walletManager.spvBridge.getVoteInfo(this.masterWalletId, StandardCoinName.ELA, VoteType.CRCProposal) as CRProposalVoteInfo[];
-        console.log("previousVoteInfo", previousVoteInfo);
+        Logger.log('wallet', "previousVoteInfo", previousVoteInfo);
     }
 
     init() {
@@ -101,7 +102,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
     goTransaction() {
         const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
         if (stakeAmount.isNegative()) {
-            console.log('CRProposalVoteAgainstPage: Not enough balance:', stakeAmount.toString());
+            Logger.log('wallet', 'CRProposalVoteAgainstPage: Not enough balance:', stakeAmount.toString());
             this.native.toast_trans('amount-null');
             return false;
         }
@@ -118,7 +119,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
     }
 
     async createVoteCRProposalTransaction(voteAmount) {
-        console.log('Creating vote transaction with amount', voteAmount, ' this.transfer:', this.transfer);
+        Logger.log('wallet', 'Creating vote transaction with amount', voteAmount, ' this.transfer:', this.transfer);
 
         let invalidCandidates = await this.walletManager.computeVoteInvalidCandidates(this.masterWalletId);
 
@@ -126,7 +127,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
         // TODO: don't use a votes array in a global transfer object. Use a custom object for CR proposal voting.
         let votes = {};
         votes[this.transfer.votes[0]] = voteAmount; // Vote with everything
-        console.log("Vote:", votes);
+        Logger.log('wallet', "Vote:", votes);
 
         this.transfer.rawTransaction =  await this.walletManager.spvBridge.createVoteCRCProposalTransaction(
             this.masterWalletId,

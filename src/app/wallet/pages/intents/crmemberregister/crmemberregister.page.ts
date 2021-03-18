@@ -31,6 +31,7 @@ import { StandardCoinName } from '../../../model/Coin';
 import { AuthService } from '../../../services/auth.service';
 import BigNumber from 'bignumber.js';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -146,7 +147,7 @@ export class CRMemberRegisterPage implements OnInit {
     }
 
     async createRegisterCRTransaction() {
-        console.log('Calling createRegisterCRTransaction()');
+        Logger.log('wallet', 'Calling createRegisterCRTransaction()');
 
         const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWallet.id, StandardCoinName.IDChain, 0, 1);
         const crPublicKey = crPublickeys.PublicKeys[0];
@@ -169,7 +170,7 @@ export class CRMemberRegisterPage implements OnInit {
     }
 
     async createUpdateCRTransaction() {
-        console.log('Calling createUpdateCRTransaction()');
+        Logger.log('wallet', 'Calling createUpdateCRTransaction()');
 
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWallet.id,
                 this.chainId, this.transfer.crPublicKey, this.transfer.did, this.transfer.nickname,
@@ -183,7 +184,7 @@ export class CRMemberRegisterPage implements OnInit {
     }
 
     async createUnregisterCRTransaction() {
-        console.log('Calling createUnregisterCRTransaction()');
+        Logger.log('wallet', 'Calling createUnregisterCRTransaction()');
 
         const payload = await this.walletManager.spvBridge.generateUnregisterCRPayload(this.masterWallet.id, this.chainId,
                 this.transfer.crDID);
@@ -193,7 +194,7 @@ export class CRMemberRegisterPage implements OnInit {
     }
 
     async createRetrieveCRDepositTransaction() {
-        console.log('Calling createRetrieveCRDepositTransaction()');
+        Logger.log('wallet', 'Calling createRetrieveCRDepositTransaction()');
 
         this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRetrieveCRDepositTransaction(this.masterWallet.id, this.chainId,
             this.transfer.crPublicKey, this.transfer.account, this.transfer.memo);

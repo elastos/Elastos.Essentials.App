@@ -33,6 +33,7 @@ import BigNumber from 'bignumber.js';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -126,7 +127,7 @@ export class DidTransactionPage implements OnInit {
     }
 
     async createIDTransaction() {
-        console.log('Calling createIdTransaction(): ', this.coinTransferService.didrequest);
+        Logger.log('wallet', 'Calling createIdTransaction(): ', this.coinTransferService.didrequest);
 
         const rawTx =
             await this.walletManager.spvBridge.createIdTransaction(
@@ -136,7 +137,7 @@ export class DidTransactionPage implements OnInit {
                 '' // Memo not necessary
             );
 
-        console.log('Created raw DID transaction:', rawTx);
+        Logger.log('wallet', 'Created raw DID transaction:', rawTx);
 
         const transfer = new Transfer();
         Object.assign(transfer, {

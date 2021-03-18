@@ -10,6 +10,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ContactNotifierService } from 'src/app/services/contactnotifier.service';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-confirm',
@@ -42,8 +43,8 @@ export class ConfirmPage implements OnInit {
         this.id = params.id;
         this.name = params.name;
         this.avatar = params.image ? JSON.parse(params.image) : null;
-        console.log("Confirm params", params)
-        console.log("Avatar:", this.avatar);
+        Logger.log('contacts', "Confirm params", params)
+        Logger.log('contacts', "Avatar:", this.avatar);
 
         if(params.isPublished === 'true') {
           this.isPublished = true;
@@ -83,11 +84,11 @@ export class ConfirmPage implements OnInit {
 
   denyContact() {
     if(this.friendsService.contactNotifierInviationId) {
-      console.log('Rejecting contact notifier invitation', this.friendsService.contactNotifierInviationId);
+      Logger.log('contacts', 'Rejecting contact notifier invitation', this.friendsService.contactNotifierInviationId);
       this.contactNotifier.rejectInvitation(this.friendsService.contactNotifierInviationId);
       this.friendsService.contactNotifierInviationId = null;
     } else {
-      console.log('Rejected contact did not come from a "viewfriendinvitation" intent');
+      Logger.log('contacts', 'Rejected contact did not come from a "viewfriendinvitation" intent');
     }
 
     this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');

@@ -104,7 +104,7 @@ export class DIDSyncService {
     } else if (result.cancelled) {
       Logger.log("identity", "CANCELLED");
     } else if (result.error) {
-      console.error("ERROR");
+      Logger.error('identity', "ERROR");
       this.popupProvider.ionicAlert("publish-error").then(() => {
         this.events.publish("diddocument:publishresultpopupclosed", result);
       });
@@ -137,7 +137,7 @@ export class DIDSyncService {
 
       if (!currentOnChainDIDDocument) {
         // Null? This means there is no published document yet, so we need to publish.
-        Logger.log("identity", 
+        Logger.log("identity",
           "DID " +
             did.getDIDString() +
             " needs to be published (no did document on chain)"
@@ -152,7 +152,7 @@ export class DIDSyncService {
     } catch (e) {
       // Exception: maybe network error while resolving. So we consider there is no need (or no way)
       // to publish the document for now.
-      console.warn("Exception while resolving DID", e);
+      Logger.warn('identity', "Exception while resolving DID", e);
       this.setPublicationStatus(did, false);
       return false;
     }
@@ -164,7 +164,7 @@ export class DIDSyncService {
       currentOnChainDIDDocument.pluginDidDocument.getUpdated()
     ) {
       // User document is more recent than chain document. Need to publish.
-      Logger.log("identity", 
+      Logger.log("identity",
         "DID " +
           did.getDIDString() +
           " needs to be published (more recent than the on chain one)."
@@ -173,7 +173,7 @@ export class DIDSyncService {
       return;
     } else {
       // User document has not been modified recently. Nothing to do.
-      Logger.log("identity", 
+      Logger.log("identity",
         "DID " + did.getDIDString() + " doesn't need to be published."
       );
       this.needToPublishStatuses.set(did, false);

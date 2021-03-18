@@ -121,7 +121,7 @@ export class GlobalDIDSessionsService {
    * identities.
    */
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
-    console.log("Signing in with DID", entry.didString, entry.name);
+    Logger.log('DIDSessionsService', "Signing in with DID", entry.didString, entry.name);
 
     this.signedInIdentity = entry;
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
@@ -137,7 +137,7 @@ export class GlobalDIDSessionsService {
    * Signs the active identity out. All opened dApps are closed as there is no more active DID session.
    */
   public async signOut(): Promise<void> {
-    console.log("Signing out");
+    Logger.log('DIDSessionsService', "Signing out");
 
     this.signedInIdentity = null;
     GlobalDIDSessionsService.signedInDIDString = null;

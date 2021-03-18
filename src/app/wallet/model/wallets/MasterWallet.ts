@@ -215,7 +215,7 @@ export class MasterWallet {
                     }
                 }
             } else {
-                console.error('Token has no name or symbol:', token);
+                Logger.error('wallet', 'Token has no name or symbol:', token);
             }
         });
     }
@@ -234,7 +234,7 @@ class SubWalletBuilder {
             case CoinType.ERC20:
                 return ERC20SubWallet.newFromCoin(masterWallet, coin);
             default:
-                console.warn("Unsupported coin type", coin.getType());
+                Logger.warn('wallet', "Unsupported coin type", coin.getType());
                 break;
         }
     }
@@ -249,7 +249,7 @@ class SubWalletBuilder {
             case CoinType.ERC20:
                 return ERC20SubWallet.newFromSerializedSubWallet(masterWallet, serializedSubWallet);
             default:
-                console.warn("Unsupported subwallet type", serializedSubWallet.type);
+                Logger.warn('wallet', "Unsupported subwallet type", serializedSubWallet.type);
                 break;
         }
     }

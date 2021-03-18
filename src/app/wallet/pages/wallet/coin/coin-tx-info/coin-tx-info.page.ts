@@ -18,6 +18,7 @@ import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
 
 class TransactionDetail {
     type: string;
@@ -103,7 +104,7 @@ export class CoinTxInfoPage implements OnInit {
             this.chainId = navigation.extras.state.chainId;
             this.subWallet = this.masterWallet.getSubWallet(this.chainId);
 
-            console.log('Tx info', this.transactionInfo);
+            Logger.log('wallet', 'Tx info', this.transactionInfo);
 
             // Header display values
             this.type = this.transactionInfo.type;
@@ -122,7 +123,7 @@ export class CoinTxInfoPage implements OnInit {
         const allTransactions = await this.subWallet.getTransactionDetails(this.transactionInfo.txId);
 
         const transaction = allTransactions.Transactions[0];
-        console.log('More tx info', transaction);
+        Logger.log('wallet', 'More tx info', transaction);
 
         const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
 
@@ -264,7 +265,7 @@ export class CoinTxInfoPage implements OnInit {
             );
         }
 
-        console.log('Tx details', this.txDetails);
+        Logger.log('wallet', 'Tx details', this.txDetails);
     }
 
     subscribeprogressEvent() {

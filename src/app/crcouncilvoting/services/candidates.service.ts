@@ -69,7 +69,7 @@ export class CandidatesService {
         this.fetchElectionResults();
       }
     }, (err) => {
-      console.error(err);
+      Logger.error('crcouncil', err);
       this.alertErr('The CRC Council is not available at this time, please try again later');
     });
   }
@@ -87,7 +87,7 @@ export class CandidatesService {
         Logger.log('crcouncil', 'Council term added', this.councilTerm);
         resolve();
       }, (err) => {
-        console.error(err);
+        Logger.error('crcouncil', err);
         resolve();
       });
     });
@@ -101,7 +101,7 @@ export class CandidatesService {
       this.getLogos();
     }, (err) => {
       this.alertErr('The CRC Council is not available at this time, please try again later');
-      console.error(err);
+      Logger.error('crcouncil', err);
     });
   }
 
@@ -275,7 +275,7 @@ export class CandidatesService {
        {
           text: 'Okay',
           handler: () => {
-            this.globalNav.navigateHome(); 
+            this.globalNav.navigateHome();
           }
         }
       ]

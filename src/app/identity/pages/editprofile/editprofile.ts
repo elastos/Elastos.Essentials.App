@@ -27,6 +27,7 @@ import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarIconSlot } from "src/app/components/titlebar/titlebar.types";
+import { Logger } from "src/app/logger";
 
 @Component({
   selector: "page-editprofile",
@@ -64,13 +65,13 @@ export class EditProfilePage {
     public hiveService: HiveService,
     private popup: PopupProvider,
   ) {
-    console.log("Entering EditProfile page");
+    Logger.log('Identity', "Entering EditProfile page");
     const navigation = this.router.getCurrentNavigation();
     if (
       !Util.isEmptyObject(navigation.extras.state) &&
       navigation.extras.state["create"] == false
     ) {
-      console.log("Editing an existing profile");
+      Logger.log('Identity', "Editing an existing profile");
 
       // Edition - We clone the received profile in case user wants to cancel editing.
       this.profile = Profile.fromProfile(
@@ -80,7 +81,7 @@ export class EditProfilePage {
       );
       this.isEdit = true;
     } else {
-      console.log("Editing a new profile");
+      Logger.log('Identity', "Editing a new profile");
       // Creation
       this.profile = Profile.createDefaultProfile();
     }
@@ -89,7 +90,7 @@ export class EditProfilePage {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("edit-profile"));
     this.showMenu();
-    console.log(this.profile);
+    Logger.log('Identity', this.profile);
   }
 
   ionViewWillLeave() {
@@ -142,9 +143,9 @@ export class EditProfilePage {
 
   /********** For 'nation' entry **********/
   selectCountry(countryEntry: BasicCredentialEntry) {
-    console.log("CountryEntry: " + countryEntry.key);
+    Logger.log('Identity', "CountryEntry: " + countryEntry.key);
     this.selectCountrySubscription = this.events.subscribe("selectarea", (params: CountryCodeInfo) => {
-      console.log("Country selected: " + params.alpha3);
+      Logger.log('Identity', "Country selected: " + params.alpha3);
       this.zone.run(() => {
         countryEntry.value = params.alpha3;
         this.showSelectCountry = false;
@@ -175,17 +176,17 @@ export class EditProfilePage {
       this.showmenuSubscription.unsubscribe();
     });
 
-    console.log("ENTRIES :", JSON.stringify(this.profile.entries));
+    Logger.log('Identity', "ENTRIES :", JSON.stringify(this.profile.entries));
 
 
 
-    //console.log("PIC ENTRY", entry);
+    //Logger.log('Identity', "PIC ENTRY", entry);
     const modal = await this.modalCtrl.create({
       component: PictureComponent,
       componentProps: {},
     });
     modal.onDidDismiss().then((params) => {
-      console.log("getPhoto params", params);
+      Logger.log('Identity', "getPhoto params", params);
 
       if (params.data && params.data.useImg) {
         let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
@@ -198,7 +199,7 @@ export class EditProfilePage {
         }
 
         // if (params.data.newImg) {
-        //   console.log("New avatar in use, prompting for publish");
+        //   Logger.log('Identity', "New avatar in use, prompting for publish");
         //   this.alertAvatarPublish();
         // }
       }
@@ -233,7 +234,7 @@ export class EditProfilePage {
       // Edition mode - go back to my profile after editing.
       let localDidDocumentHasChanged = false;
       await this.authService.checkPasswordThenExecute(async ()=>{
-        console.log("Password provided and valid. Now saving profile");
+        Logger.log('Identity', "Password provided and valid. Now saving profile");
 
         // We are editing an existing DID: just ask the DID to save its profile.
         // DID being created are NOT saved here.
@@ -250,7 +251,7 @@ export class EditProfilePage {
         }
 
         if (localDidDocumentHasChanged) {
-          console.log("Asking user to publish his DID document");
+          Logger.log('Identity', "Asking user to publish his DID document");
 
           // DID Document was modified: ask user if he wants to publish his new did document version now or not.
           this.events.publish('diddocument:changed');
@@ -261,12 +262,12 @@ export class EditProfilePage {
         }
         else {
           // Exit the screen.
-          console.log("Exiting profile edition");
+          Logger.log('Identity', "Exiting profile edition");
           this.navCtrl.pop();
         }
       }, () => {
         // Operation cancelled
-        console.log("Password operation cancelled");
+        Logger.log('Identity', "Password operation cancelled");
         this.native.hideLoading();
       });
     }
@@ -276,12 +277,12 @@ export class EditProfilePage {
   async save() {
     await this.authService.checkPasswordThenExecute(
       async () => {
-        console.log("Password provided and valid. Now saving profile");
+        Logger.log('Identity', "Password provided and valid. Now saving profile");
         // We are editing an existing DID: just ask the DID to save its profile.
         // DID being created are NOT saved here.
         await this.native.showLoading("loading-msg");
 
-        console.log("PROFILE TO WRITE: " + JSON.stringify(this.profile));
+        Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
         await this.didService
           .getActiveDid()
           .writeProfile(
@@ -296,7 +297,7 @@ export class EditProfilePage {
       },
       () => {
         // Operation cancelled
-        console.log("Password operation cancelled");
+        Logger.log('Identity', "Password operation cancelled");
         this.native.hideLoading();
       }
     );
@@ -307,12 +308,12 @@ export class EditProfilePage {
       // Edition mode - go back to my profile after editing.
       await this.authService.checkPasswordThenExecute(
         async () => {
-          console.log("Password provided and valid. Now saving profile");
+          Logger.log('Identity', "Password provided and valid. Now saving profile");
           // We are editing an existing DID: just ask the DID to save its profile.
           // DID being created are NOT saved here.
           await this.native.showLoading("loading-msg");
 
-          console.log("PROFILE TO WRITE: " + JSON.stringify(this.profile));
+          Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
           await this.didService
             .getActiveDid()
             .writeProfile(
@@ -327,7 +328,7 @@ export class EditProfilePage {
         },
         async () => {
           // Operation cancelled
-          console.log("Password operation cancelled");
+          Logger.log('Identity', "Password operation cancelled");
           await this.native.hideLoading();
         }
       );
@@ -355,7 +356,7 @@ export class EditProfilePage {
       let credentialId = new DIDURL("#" + entry.key);
       // Validate if the field(s) is/are modified
       if (!this.credentialContentHasChanged(credentialId, entry.value)) {
-        // console.log("Not updating credential "+entry.key+" as it has not changed");
+        // Logger.log('Identity', "Not updating credential "+entry.key+" as it has not changed");
         continue; // Skip this credential, go to next one.
       }
 
@@ -387,7 +388,7 @@ export class EditProfilePage {
     });
 
     if (!currentCredential) {
-      // console.log("Just a new credential because credential with id "+credentialId+" not found in DID");
+      // Logger.log('Identity', "Just a new credential because credential with id "+credentialId+" not found in DID");
       return false; // Doesn't exist previously, no need to check for its verification type.
     }
 
@@ -395,7 +396,7 @@ export class EditProfilePage {
     let currentProps = currentCredential.pluginVerifiableCredential.getSubject();
     let credentialFragment = currentCredential.pluginVerifiableCredential.getFragment();
     if (currentProps[credentialFragment] != newProfileValue) {
-      // console.log("Credential has changed because "+currentProps[credentialFragment]+" <> "+newProfileValue);
+      // Logger.log('Identity', "Credential has changed because "+currentProps[credentialFragment]+" <> "+newProfileValue);
       return true;
     }
 
@@ -441,7 +442,7 @@ export class EditProfilePage {
       existingProfileItems.push(e.key);
     });
 
-    console.log("Filtered items for add profile: ", existingProfileItems);
+    Logger.log('Identity', "Filtered items for add profile: ", existingProfileItems);
 
     let modal = await this.modalCtrl.create({
       component: ProfileEntryPickerPage,

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, NavParams, IonInput } from '@ionic/angular';
+import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
@@ -70,7 +71,7 @@ export class MnemonicPassCheckComponent implements OnInit {
     if (!this.canSave())
       return;
 
-    console.log("Password is ok, submitting to caller.");
+    Logger.log('didsessions', "Password is ok, submitting to caller.");
     this.modalCtrl.dismiss({
       password: this.password
     });

@@ -35,7 +35,6 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 /****************** Services ******************/
-import { Logger } from './model/Logger';
 import { ComponentsModule } from './components/components.module';
 import { LocalStorage } from './services/storage.service';
 import { Native } from './services/native.service';
@@ -163,7 +162,6 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
         Clipboard,
         LocalStorage,
         Native,
-        Logger,
         PopupProvider,
         WebView
     ],

@@ -65,7 +65,7 @@ export class NotificationManagerService {
 
   setNotificationListener() {
     this.globalNotifications.setNotificationListener((notification) => {
-      console.log('new notification:', notification);
+      Logger.log('Launcher', 'new notification:', notification);
 
       this.zone.run(() => {
         if (!this.isValidNotification(notification)) {
@@ -110,7 +110,7 @@ export class NotificationManagerService {
         if (contact) {
           contact.getName() ? notification.contactName = contact.getName() : notification.contactName = null;
           contact.getAvatar() ? notification.contactAvatar = contact.getAvatar() : notification.contactAvatar = null;
-          console.log('Contact notification obj', contact);
+          Logger.log('Launcher', 'Contact notification obj', contact);
         } else {
           notification.contactName = null;
           notification.contactAvatar = null;
@@ -121,7 +121,7 @@ export class NotificationManagerService {
           notification.app = allApps.find(app => app.id === notification.appId);
           // if the app doesn't exist, delete the notificaiton automatically
           if (!notification.app) {
-              console.log('fillAppInfoToNotification: ' + notification.appId + " doesn't exist, delete it");
+              Logger.log('Launcher', 'fillAppInfoToNotification: ' + notification.appId + " doesn't exist, delete it");
               notificationManager.clearNotification(notification.notificationId);
               notification.notificationId = null;
           } else {
@@ -133,14 +133,14 @@ export class NotificationManagerService {
     this.notifications = this.notifications.filter((item) => item.notificationId !== null);
     this.updateBadge();
 
-    console.log('notifications:', this.notifications);
+    Logger.log('Launcher', 'notifications:', this.notifications);
   }
   */
 
   clearUselessNotification() {
     this.notifications.forEach((notification: LauncherNotification) => {
       if (!this.isValidNotification(notification)) {
-        console.log('clearNotification ', notification.notificationId);
+        Logger.log('Launcher', 'clearNotification ', notification.notificationId);
         this.clearNotification(notification.notificationId);
         notification.notificationId = null;
       }
@@ -153,7 +153,7 @@ export class NotificationManagerService {
   // if no appid and no emitter, automatically delete the notification, because we don't know what to do with it.
   isValidNotification(notification: LauncherNotification) {
     if (notification.appId === '' && (!notification.emitter || notification.emitter === '')) {
-      console.log('notification is invalid: ', notification);
+      Logger.log('Launcher', 'notification is invalid: ', notification);
       return false;
     }
     return true;

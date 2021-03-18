@@ -9,6 +9,7 @@ import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'page-profileentrypicker',
@@ -51,7 +52,7 @@ export class ProfileEntryPickerPage {
 
 
   selectItem(item: BasicCredentialInfo) {
-    console.log("Picker profile info entry:", item);
+    Logger.log('Identity', "Picker profile info entry:", item);
     this.modalCtrl.dismiss({
       pickedItem: item
     })

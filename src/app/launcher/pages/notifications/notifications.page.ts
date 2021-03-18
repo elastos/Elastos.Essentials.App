@@ -12,6 +12,7 @@ import {
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
 import { Events } from '../../services/events.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-notifications',
@@ -45,13 +46,13 @@ export class NotificationsPage implements OnInit {
 
     if (notification.type == LauncherNotificationType.TIP) {
       // Special "tip" notification: handle this directly in the launcher app without starting an intent
-      console.log("Opening tip from notification", notification);
+      Logger.log('Launcher', "Opening tip from notification", notification);
 
       const tipData = JSON.parse(notification.message);
       this.events.publish('notifications.tip', this.tipsService.findTipByIdentifier(tipData.key));
     }
     else if (notification.url && (notification.url !== '')) {
-      console.log('NotificationsComponent sendUrlIntent');
+      Logger.log('Launcher', 'NotificationsComponent sendUrlIntent');
 
       // NOTE @chad: try to avoid the dependency notif page -> app manager service -> notif page
       // For this, i think the notif page could avoid calling appservice directly and instand, send a kind of
@@ -60,8 +61,8 @@ export class NotificationsPage implements OnInit {
 
       /* TODO @chad
       this.essentialsIntent.sendUrlIntent(notification.url,
-        () => {console.log('sendUrlIntent success'); },
-        (error) => {console.log('NotificationsComponent sendUrlIntent failed, ', error); }
+        () => {Logger.log('Launcher', 'sendUrlIntent success'); },
+        (error) => {Logger.log('Launcher', 'NotificationsComponent sendUrlIntent failed, ', error); }
       );*/
     } else {
       // TODO @chad this.essentialsIntent.start(notification.app.id);
@@ -115,7 +116,7 @@ export class NotificationsPage implements OnInit {
 
   getNotificationHeader(notification: LauncherNotification) {
     // if (notification.app)
-    //   console.log("ICON :"+JSON.stringify(notification.app.icons))
+    //   Logger.log('Launcher', "ICON :"+JSON.stringify(notification.app.icons))
 
     if (notification.type === LauncherNotificationType.CONTACT) {
       if (notification.contactName)

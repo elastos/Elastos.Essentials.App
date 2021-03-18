@@ -12,6 +12,7 @@ import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 /**
  * Import algorithm:
@@ -61,22 +62,22 @@ export class ImportDIDPage {
         private events: Events,
     ) {
         const navigation = this.router.getCurrentNavigation();
-        console.log('NAV', navigation);
+        Logger.log('didsessions', 'NAV', navigation);
         if (!Util.isEmptyObject(navigation.extras.state)) {
             this.nextStepId = navigation.extras.state.enterEvent.stepId;
-            console.log('Importdid - nextStepId', this.nextStepId);
+            Logger.log('didsessions', 'Importdid - nextStepId', this.nextStepId);
             if (!Util.isEmptyObject(navigation.extras.state.mnemonic)) {
               this.mnemonicSentence = navigation.extras.state.mnemonic;
               this.onMnemonicSentenceChanged();
               this.readonly = true;
             }
-            console.log('Importdid - Mnemonic', navigation.extras.state.enterEvent.data);
+            Logger.log('didsessions', 'Importdid - Mnemonic', navigation.extras.state.enterEvent.data);
         }
     }
 
     ngOnInit() {
         this.events.subscribe('qrScanner', (qrData) => {
-            console.log('qrScanner event', qrData.mnemonic);
+            Logger.log('didsessions', 'qrScanner event', qrData.mnemonic);
             this.mnemonicSentence = qrData.mnemonic;
             this.onMnemonicSentenceChanged();
         })
@@ -102,7 +103,7 @@ export class ImportDIDPage {
                     this.scrollHeight = this.calcScrollHeight(event.keyboardHeight);
                 }
                 if (this.scrollHeight != 0) {
-                    console.log('scrollHeight:', this.scrollHeight)
+                    Logger.log('didsessions', 'scrollHeight:', this.scrollHeight)
                     this.rootContent.style.top = this.scrollHeight + 'px';
                 }
             });
@@ -168,7 +169,7 @@ export class ImportDIDPage {
         this.uxService.modal.onDidDismiss().then((params) => {
             this.uxService.modal = null;
             if (params && params.data) {
-                console.log("Import screen: import process is continuing");
+                Logger.log('didsessions', "Import screen: import process is continuing");
 
                 this.loadingIdentity = true;
                 this.identityService.identityBeingCreated.mnemonicPassphrase = params.data.password;

@@ -57,7 +57,7 @@ export class UXService {
         this.modal.dismiss();
       }
 
-      console.log('Titlebar item clicked', icon);
+      Logger.log('didsessions', 'Titlebar item clicked', icon);
       switch (icon.key) {
         // When in create-identity pg
         case 'backToRoot':
@@ -122,7 +122,7 @@ export class UXService {
     }
 
     async showOptions(ev: any, identityEntry: IdentityEntry) {
-      console.log('Opening profile options');
+      Logger.log('didsessions', 'Opening profile options');
 
       this.options = await this.popoverCtrl.create({
         mode: 'ios',

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Native } from '../../services/native.service';
 
@@ -25,7 +26,7 @@ export class TxConfirmComponent implements OnInit {
 
   ngOnInit() {
     this.txInfo = this.navParams.get('txInfo');
-    console.log('Confirm tx', this.txInfo);
+    Logger.log('wallet', 'Confirm tx', this.txInfo);
 
     if (this.txInfo.type === 1) {
       this.txHeader = this.translate.instant('transfer-transaction-type');

@@ -5,6 +5,7 @@ import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, TitleBarForegroundMode, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-scan',
@@ -47,7 +48,7 @@ export class ScanPage implements OnInit {
     });
     */
 
-    console.log('Start scanning');
+    Logger.log('didsessions', 'Start scanning');
     // Optionally request the permission early
     this.qrScanner.prepare().then(async (status: QRScannerStatus) => {
       if (status.authorized) {
@@ -64,7 +65,7 @@ export class ScanPage implements OnInit {
 
         // Start scanning
         const scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
-          console.log('Scanned something', text);
+          Logger.log('didsessions', 'Scanned something', text);
 
           this.zone.run(() => {
             this.scanning = false;
@@ -90,7 +91,7 @@ export class ScanPage implements OnInit {
       }
     })
     .catch(async (err: any) => {
-      console.log('QRScanner error', err);
+      Logger.log('didsessions', 'QRScanner error', err);
       await this.identityService.startImportingMnemonic(null);
     });
   }

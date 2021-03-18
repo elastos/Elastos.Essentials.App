@@ -10,6 +10,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { Logger } from 'src/app/logger';
 
 type StorageProvider = {
   name: string,
@@ -49,16 +50,16 @@ export class AdminProviderEditPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if(navigation.extras.state) {
       const providerId = navigation.extras.state.providerId;
-      console.log('Provider id', providerId);
+      Logger.log('HiveManager', 'Provider id', providerId);
       this.init(providerId);
     }
 
 /*     this.providerId = navParams.get('providerId');
-    console.log('Provider id', this.providerId);
+    Logger.log('HiveManager', 'Provider id', this.providerId);
     this.init();
 
     this.retrieveAdminDIDPublicationStatus();
-    console.log("Editing provider:", this.managedProvider); */
+    Logger.log('HiveManager', "Editing provider:", this.managedProvider); */
   }
 
   async init(id) {
@@ -66,7 +67,7 @@ export class AdminProviderEditPage implements OnInit {
     this.adminDIDMnemonic = await this.adminService.getAdminDIDMnemonic(this.managedProvider);
     this.oldName = this.managedProvider.name;
     this.retrieveAdminDIDPublicationStatus();
-    console.log("Editing provider:", this.managedProvider);
+    Logger.log('HiveManager', "Editing provider:", this.managedProvider);
   }
 
   ngOnInit() {
@@ -76,7 +77,7 @@ export class AdminProviderEditPage implements OnInit {
         this.adminDIDMnemonic = await this.adminService.getAdminDIDMnemonic(this.managedProvider);
 
         this.retrieveAdminDIDPublicationStatus();
-        console.log("Editing provider:", this.managedProvider);
+        Logger.log('HiveManager', "Editing provider:", this.managedProvider);
       }
     }); */
   }
@@ -104,7 +105,7 @@ export class AdminProviderEditPage implements OnInit {
 
       const createdDIDInfo = await this.adminService.createAdminDID(newProvider);
       this.managedProvider = newProvider;
-      console.log("createdDIDInfo", createdDIDInfo);
+      Logger.log('HiveManager', "createdDIDInfo", createdDIDInfo);
     } else {
       this.popup.toast('toast.provide-name');
     }

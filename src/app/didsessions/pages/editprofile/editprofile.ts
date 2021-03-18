@@ -7,6 +7,7 @@ import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 export type EditProfileStateParams = {
   onCompletion: Promise<string>;
@@ -35,7 +36,7 @@ export class EditProfilePage {
     const navigation = this.router.getCurrentNavigation();
     if(navigation.extras.state) {
       this.nextStepId = navigation.extras.state.enterEvent.stepId;
-      console.log('Editprofile - nextStepId', this.nextStepId);
+      Logger.log('didsessions', 'Editprofile - nextStepId', this.nextStepId);
     }
   }
 

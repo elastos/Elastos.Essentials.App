@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
@@ -27,7 +28,7 @@ export class PrefsService {
                 return false;
         }
         catch (err) {
-            console.warn("developerModeEnabled() error", err);
+            Logger.warn('HiveManager', "developerModeEnabled() error", err);
             return false;
         }
     }

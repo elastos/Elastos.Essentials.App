@@ -91,7 +91,7 @@ export class AppIDService {
             credential: credentialAsString
           }, this.intentId);
         }, async (err) => {
-          console.error("Failed to issue the app id credential...", err);
+          Logger.error('identity', "Failed to issue the app id credential...", err);
           this.rejectExternalRequest();
         });
     }, () => {

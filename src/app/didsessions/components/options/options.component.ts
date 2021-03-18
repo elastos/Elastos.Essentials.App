@@ -4,6 +4,7 @@ import { PopoverController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-options',
@@ -23,7 +24,7 @@ export class OptionsComponent implements OnInit {
 
   ngOnInit() {
     this.identityEntry = this.navParams.get('identityEntry');
-    console.log('Identity', this.identityEntry);
+    Logger.log('didsessions', 'Identity', this.identityEntry);
   }
 
   signIn() {

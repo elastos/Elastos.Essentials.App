@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 
 @Injectable()
 export class PopupProvider {
@@ -16,7 +17,7 @@ export class PopupProvider {
                 buttons: [{
                     text: okText ? okText : this.translate.instant('confirm'),
                     handler: () => {
-                        console.log('ionicAlert Ok clicked');
+                        Logger.log('Identity', 'ionicAlert Ok clicked');
                         resolve();
                     }
                 }]
@@ -33,14 +34,14 @@ export class PopupProvider {
                 buttons: [{
                     text: cancelText ? cancelText : this.translate.instant('cancel'),
                     handler: () => {
-                        console.log('ionicConfirm Disagree clicked');
+                        Logger.log('Identity', 'ionicConfirm Disagree clicked');
                         resolve(false);
                     }
                 },
                 {
                     text: okText ? okText : this.translate.instant('confirm'),
                     handler: () => {
-                        console.log('Agree clicked');
+                        Logger.log('Identity', 'Agree clicked');
                         resolve(true);
                     }
                 }]
@@ -69,14 +70,14 @@ export class PopupProvider {
             buttons: [{
                 text: cancelText ? cancelText : this.translate.instant('Cancel'),
                 handler: data => {
-                    console.log('Cancel clicked');
+                    Logger.log('Identity', 'Cancel clicked');
                     resolve(null);
                 }
             },
             {
                 text: okText ? okText : this.translate.instant('Ok'),
                 handler: data => {
-                    console.log('Saved clicked');
+                    Logger.log('Identity', 'Saved clicked');
                     resolve(data[0]);
                 }
             }]

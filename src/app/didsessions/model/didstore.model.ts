@@ -26,12 +26,12 @@ export class DIDStore {
         if (!didStoreId)
             didStoreId = Util.uuid(6, 16);
 
-        console.log("Initializing a new DID Store with ID "+didStoreId);
+        Logger.log('didsessions', "Initializing a new DID Store with ID "+didStoreId);
         try {
           await didStore.initDidStore(didStoreId);
         }
         catch(e) {
-          console.log('DIDStore create: e:', e)
+          Logger.log('didsessions', 'DIDStore create: e:', e)
           throw e;
         }
 
@@ -43,7 +43,7 @@ export class DIDStore {
             this.pluginDidStore = await this.initPluginDidStore(didStoreId);
         }
         catch (e) {
-            console.error("initDidStore:", e);
+            Logger.error('didsessions', "initDidStore:", e);
             throw e;
         }
     }
@@ -54,10 +54,10 @@ export class DIDStore {
         try {
             // Create and add a DID to the DID store in physical storage.
             createdDid = await this.createPluginDid(storePassword, "");
-            console.log("Created DID:", createdDid);
+            Logger.log('didsessions', "Created DID:", createdDid);
         }
         catch (e) {
-            console.error("Create DID exception", e);
+            Logger.error('didsessions', "Create DID exception", e);
             throw DIDHelper.reworkedPluginException(e);
         }
 
@@ -82,7 +82,7 @@ export class DIDStore {
                     resolve(pluginDidStore);
                 },
                 (err) => {
-                    console.log('initPluginDidStore error:', err);
+                    Logger.log('didsessions', 'initPluginDidStore error:', err);
                     reject(DIDHelper.reworkedPluginException(err))
                 },
             );
@@ -110,12 +110,12 @@ export class DIDStore {
     }
 
     createPluginDid(passphrase, hint = ""): Promise<DIDPlugin.DID> {
-        console.log("Creating DID");
+        Logger.log('didsessions', "Creating DID");
         return new Promise((resolve, reject)=>{
             this.pluginDidStore.newDid(
                 passphrase, hint,
                 (did) => {
-                    console.log("Created plugin DID:", did);
+                    Logger.log('didsessions', "Created plugin DID:", did);
                     resolve(did)
                 },
                 (err) => {reject(err)},
@@ -142,13 +142,13 @@ export class DIDStore {
             Logger.log("DIDSessions", "Plugin DIDs:", pluginDids);
             if (pluginDids.length == 0) {
                 // Something went wrong earlier, no DID in the DID store...
-                console.log("No DID in the DID Store.")
+                Logger.log('didsessions', "No DID in the DID Store.")
             }
 
             await this.loadAllDids(pluginDids);
         }
         catch (e) {
-            console.error("Fatal error while loading from DID Store id.", e);
+            Logger.error('didsessions', "Fatal error while loading from DID Store id.", e);
             return;
         }
     }

@@ -15,6 +15,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-home',
@@ -81,7 +82,7 @@ export class HomePage implements OnInit {
 
   /************** Show App/Identity Options **************/
   async showOptions(ev: any) {
-    console.log('Opening options');
+    Logger.log('Launcher', 'Opening options');
 
     this.popover = await this.popoverCtrl.create({
       mode: 'ios',

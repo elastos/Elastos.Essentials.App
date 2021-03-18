@@ -61,7 +61,7 @@ export class DID {
      */
     async addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: String[]): Promise<DIDPlugin.VerifiableCredential> {
         return new Promise(async (resolve, reject) => {
-            console.log("Adding credential with id:", credentialId, props, userTypes);
+            Logger.log('Identity', "Adding credential with id:", credentialId, props, userTypes);
 
             let types: String[] = [
                 "SelfProclaimedCredential"
@@ -78,13 +78,13 @@ export class DID {
 
             let credential: DIDPlugin.VerifiableCredential = null;
             try {
-                console.log("Asking DIDService to create the credential with id " + credentialId);
+                Logger.log('Identity', "Asking DIDService to create the credential with id " + credentialId);
                 // the max validity days is 5*365 (5 years).
                 credential = await this.createPluginCredential(credentialId, types, 5 * 365, props, password);
-                console.log("Created credential:", JSON.parse(JSON.stringify(credential)));
+                Logger.log('Identity', "Created credential:", JSON.parse(JSON.stringify(credential)));
             }
             catch (e) {
-                console.error("Create credential exception", e);
+                Logger.error('identity', "Create credential exception", e);
                 if (typeof (e) === "string" && e.includes("have not run authority")) {
                     reject(new ApiNoAuthorityException(e));
                 } else {
@@ -101,10 +101,10 @@ export class DID {
     }
 
     async addRawCredential(vc: VerifiableCredential) {
-        console.log("Asking DIDService to store the credential", vc);
+        Logger.log('Identity', "Asking DIDService to store the credential", vc);
         await this.addPluginCredential(vc.pluginVerifiableCredential);
 
-        console.log("Credential successfully added");
+        Logger.log('Identity', "Credential successfully added");
 
         // Add the new credential to the memory model
         this.credentials.push(vc);
@@ -134,7 +134,7 @@ export class DID {
         // this.credentials.map((cred) => {
         //     let props = cred.pluginVerifiableCredential.getSubject(); // Credentials properties
         //     if (!props) {
-        //         console.warn("Found an empty credential subject while trying to build profile, this should not happen...");
+        //         Logger.warn('identity', "Found an empty credential subject while trying to build profile, this should not happen...");
         //         return;
         //     }
 
@@ -146,7 +146,7 @@ export class DID {
         //         // Try to retrieve a standard property info from this property
         //         let basicCredentialInfo = BasicCredentialsService.instance.getBasicCredentialInfoByKey(p);
         //         if (!basicCredentialInfo) {
-        //             console.warn("Unhandled basic credential " + p);
+        //             Logger.warn('identity', "Unhandled basic credential " + p);
         //         }
         //         else {
         //             profile.setValue(basicCredentialInfo, props[p]);
@@ -154,7 +154,7 @@ export class DID {
         //     }
         // });
 
-        console.log("Basic profile:", profile);
+        Logger.log('Identity', "Basic profile:", profile);
         return profile;
     }
 
@@ -167,7 +167,7 @@ export class DID {
      */
     public writeProfile(newProfile: Profile, password: string): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
-            console.log("Writing profile fields as credentials", newProfile);
+            Logger.log('Identity', "Writing profile fields as credentials", newProfile);
 
             let localDidDocumentHasChanged = false;
 
@@ -176,13 +176,13 @@ export class DID {
             for (let basicProfileKey of BasicCredentialsService.instance.getBasicCredentialkeys()) {
                 let entryExistingInNewProfile = newProfile.getEntryByKey(basicProfileKey);
                 if (!entryExistingInNewProfile) {
-                    console.log("Deleting profile entry " + basicProfileKey + " from current DID as it's not in the profile any more.");
+                    Logger.log('Identity', "Deleting profile entry " + basicProfileKey + " from current DID as it's not in the profile any more.");
 
                     // Delete the credential
                     let credentialId = new DIDURL("#" + basicProfileKey);
                     let existingCredential = this.getCredentialById(credentialId);
                     if (existingCredential) {
-                        console.log("Deleting credential with id " + existingCredential.pluginVerifiableCredential.getId() + " as it's being deleted from user profile.");
+                        Logger.log('Identity', "Deleting credential with id " + existingCredential.pluginVerifiableCredential.getId() + " as it's being deleted from user profile.");
                         await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()));
                     }
 
@@ -191,7 +191,7 @@ export class DID {
                     if (currentDidDocument) {
                         let documentCredential = currentDidDocument.getCredentialById(credentialId);
                         if (documentCredential) {
-                            console.log("Deleting credential from local DID document");
+                            Logger.log('Identity', "Deleting credential from local DID document");
                             await currentDidDocument.deleteCredential(documentCredential, password);
                             localDidDocumentHasChanged = true;
                         }
@@ -206,7 +206,7 @@ export class DID {
 
                 let credentialId = new DIDURL("#" + entry.key);
                 if (!this.credentialContentHasChanged(credentialId, entry.value)) {
-                    console.log("Not updating credential " + entry.key + " as it has not changed");
+                    Logger.log('Identity', "Not updating credential " + entry.key + " as it has not changed");
                     continue; // SKip this credential, go to next one.
                 }
 
@@ -214,14 +214,14 @@ export class DID {
                     // Update use case: if this credential already exist, we delete it first before re-creating it.
                     let existingCredential = this.getCredentialById(credentialId);
                     if (existingCredential) {
-                        console.log("Credential with id " + existingCredential.pluginVerifiableCredential.getId() + " already exists - deleting");
+                        Logger.log('Identity', "Credential with id " + existingCredential.pluginVerifiableCredential.getId() + " already exists - deleting");
                         await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()));
                     }
 
-                    console.log("Adding credential for profile key " + entry.key);
+                    Logger.log('Identity', "Adding credential for profile key " + entry.key);
                     try {
                         let credential = await this.addCredential(credentialId, props, password, ["BasicProfileCredential"]);
-                        console.log("Credential added:", credential);
+                        Logger.log('Identity', "Credential added:", credential);
 
                         // Update the DID Document in case it contains the credential. Then we will have to
                         // ask user if he wants to publish a new version of his did document on chain.
@@ -231,7 +231,7 @@ export class DID {
                             if (documentCredential) {
                                 // User's did document contains this credential being modified, so we updated the
                                 // document.
-                                console.log("Updating local DID document");
+                                Logger.log('Identity', "Updating local DID document");
                                 await currentDidDocument.updateOrAddCredential(credential, password);
                                 localDidDocumentHasChanged = true;
                             }
@@ -241,7 +241,7 @@ export class DID {
                         throw e;
                     }
 
-                    console.log("New credentials list:", JSON.parse(JSON.stringify(this.credentials)));
+                    Logger.log('Identity', "New credentials list:", JSON.parse(JSON.stringify(this.credentials)));
 
                     // Special handler for the special "name" field
                     if (entry.key == "name") {
@@ -257,7 +257,7 @@ export class DID {
                     // Special handler for the special "avatar" field
                     if (entry.key == "avatar") {
                         let avatar: Avatar = entry.value as Avatar;
-                        console.log("Saving avatar info to signed in identity", avatar)
+                        Logger.log('Identity', "Saving avatar info to signed in identity", avatar)
 
                         // For now we only know how to save base64 avatars. Other formats are unsupported
                         if (avatar.type === "base64") {
@@ -283,7 +283,7 @@ export class DID {
                 this.events.publish("credentials:modified");
             }
 
-            console.log("Credentials after write profile:", this.credentials);
+            Logger.log('Identity', "Credentials after write profile:", this.credentials);
 
             resolve(localDidDocumentHasChanged);
         });
@@ -309,7 +309,7 @@ export class DID {
         });
 
         if (!currentCredential) {
-            console.log("Credential has changed because credential with id " + credentialId + " not found in DID");
+            Logger.log('Identity', "Credential has changed because credential with id " + credentialId + " not found in DID");
             return true; // Doesn't exist? consider this has changed.
         }
 
@@ -317,7 +317,7 @@ export class DID {
         let currentProps = currentCredential.pluginVerifiableCredential.getSubject();
         let credentialFragment = currentCredential.pluginVerifiableCredential.getFragment();
         if (currentProps[credentialFragment] != newProfileValue) {
-            console.log("Credential has changed because " + currentProps[credentialFragment] + " <> " + newProfileValue);
+            Logger.log('Identity', "Credential has changed because " + currentProps[credentialFragment] + " <> " + newProfileValue);
             return true;
         }
 
@@ -335,18 +335,18 @@ export class DID {
     }
 
     public async deleteCredential(credentialDidUrl: DIDURL): Promise<boolean> {
-        console.log("Asking DIDService to delete the credential " + credentialDidUrl);
+        Logger.log('Identity', "Asking DIDService to delete the credential " + credentialDidUrl);
 
         await this.deletePluginCredential(credentialDidUrl);
 
         // Delete from our local model as well
-        console.log("Deleting credential from local model", this.credentials);
+        Logger.log('Identity', "Deleting credential from local model", this.credentials);
         let deletionIndex = this.credentials.findIndex((c) => {
             let match = credentialDidUrl.matches(c.pluginVerifiableCredential.getId());
             return match;
         });
         if (deletionIndex == -1) {
-            console.warn("Unable to delete credential from local model! Not found...", credentialDidUrl);
+            Logger.warn('identity', "Unable to delete credential from local model! Not found...", credentialDidUrl);
             return false;
         }
         this.credentials.splice(deletionIndex, 1);
@@ -359,7 +359,7 @@ export class DID {
             this.pluginDid.deleteCredential(
                 didUrlString.toString(),
                 () => { resolve() }, (err) => {
-                    console.error("Delete credential exception", err);
+                    Logger.error('identity', "Delete credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
                 },
             );
@@ -367,15 +367,15 @@ export class DID {
     }
 
     private addPluginCredential(credential: DIDPlugin.VerifiableCredential): Promise<void> {
-        console.log("DIDService - storeCredential", this.getDIDString(), JSON.parse(JSON.stringify(credential)));
+        Logger.log('Identity', "DIDService - storeCredential", this.getDIDString(), JSON.parse(JSON.stringify(credential)));
         return new Promise(async (resolve, reject) => {
-            console.log("DIDService - Calling real storeCredential");
+            Logger.log('Identity', "DIDService - Calling real storeCredential");
             this.pluginDid.addCredential(
                 credential,
                 () => {
                     resolve()
                 }, (err) => {
-                    console.error("Add credential exception", err);
+                    Logger.error('identity', "Add credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
                 },
             );
@@ -404,7 +404,7 @@ export class DID {
             this.pluginDid.createVerifiablePresentation(credentials, realm, nonce, storePass, (presentation: DIDPlugin.VerifiablePresentation) => {
                 resolve(presentation);
             }, (err) => {
-                console.error("Create presentation exception", err);
+                Logger.error('identity', "Create presentation exception", err);
                 reject(DIDHelper.reworkedPluginException(err));
             });
         });

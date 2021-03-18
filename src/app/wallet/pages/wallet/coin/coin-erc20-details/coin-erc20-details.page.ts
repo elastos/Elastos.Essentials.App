@@ -13,6 +13,7 @@ import { SubWallet } from '../../../../model/wallets/SubWallet';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -50,9 +51,9 @@ export class CoinErc20DetailsPage implements OnInit {
         this.masterWallet = this.walletManager.getMasterWallet(this.walletEditionService.modifiedMasterWalletId);
         this.subWallet = this.masterWallet.getSubWallet(this.coin.getID());
 
-        console.log('ERC20 Masterwallet', this.masterWallet);
-        console.log('ERC20 Subwallet', this.subWallet);
-        console.log('ERC20 Details', this.coin);
+        Logger.log('wallet', 'ERC20 Masterwallet', this.masterWallet);
+        Logger.log('wallet', 'ERC20 Subwallet', this.subWallet);
+        Logger.log('wallet', 'ERC20 Details', this.coin);
 
         /* if (this.coin.coinIsCustom() || this.subWallet && !this.subWallet.getDisplayBalance().isZero()) {
           this.canDelete = true;
@@ -90,7 +91,7 @@ export class CoinErc20DetailsPage implements OnInit {
   }
 
   share() {
-    console.log('Sending "share" intent for', this.coin);
+    Logger.log('wallet', 'Sending "share" intent for', this.coin);
 
     const addCoinUrl =
       "https://wallet.elastos.net/addcoin?contract=" +

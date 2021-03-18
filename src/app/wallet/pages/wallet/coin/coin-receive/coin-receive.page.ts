@@ -10,6 +10,7 @@ import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-coin-receive',
@@ -76,7 +77,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     async getAddress() {
         this.qrcode = await this.masterWallet.getSubWallet(this.chainId).createAddress();
-        console.log('qrcode', this.qrcode);
+        Logger.log('wallet', 'qrcode', this.qrcode);
     }
 
     showAddressList() {

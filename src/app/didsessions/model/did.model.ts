@@ -64,7 +64,7 @@ export class DID {
      */
     async addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: String[]): Promise<DIDPlugin.VerifiableCredential> {
         return new Promise(async (resolve, reject)=>{
-            console.log("Adding credential with id:", credentialId, props, userTypes);
+            Logger.log('didsessions', "Adding credential with id:", credentialId, props, userTypes);
 
             let types: String[] = [
                 "SelfProclaimedCredential"
@@ -81,13 +81,13 @@ export class DID {
 
             let credential: DIDPlugin.VerifiableCredential = null;
             try {
-                console.log("Asking DIDService to create the credential with id "+credentialId);
+                Logger.log('didsessions', "Asking DIDService to create the credential with id "+credentialId);
                 // the max validity days is 5*365 (5 years).
                 credential = await this.createPluginCredential(credentialId, types, 5*365, props, password);
-                console.log("Created credential:",JSON.parse(JSON.stringify(credential)));
+                Logger.log('didsessions', "Created credential:",JSON.parse(JSON.stringify(credential)));
             }
             catch (e) {
-                console.error("Create credential exception", e);
+                Logger.error('didsessions', "Create credential exception", e);
                 reject(DIDHelper.reworkedPluginException(e))
                 return;
             }
@@ -109,15 +109,15 @@ export class DID {
     }
 
     private addPluginCredential(credential: DIDPlugin.VerifiableCredential): Promise<void> {
-        console.log("DIDService - storeCredential", this.getDIDString(), JSON.parse(JSON.stringify(credential)));
+        Logger.log('didsessions', "DIDService - storeCredential", this.getDIDString(), JSON.parse(JSON.stringify(credential)));
         return new Promise(async (resolve, reject)=>{
-            console.log("DIDService - Calling real storeCredential");
+            Logger.log('didsessions', "DIDService - Calling real storeCredential");
             this.pluginDid.addCredential(
                 credential,
                 () => {
                     resolve()
                 }, (err) => {
-                    console.error("Add credential exception", err);
+                    Logger.error('didsessions', "Add credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
                 },
             );

@@ -11,6 +11,7 @@ import { TitleBarNavigationMode, BuiltInIcon } from 'src/app/components/titlebar
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
@@ -54,7 +55,7 @@ export class ProposalDetailsPage {
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
     this.titleBar.addOnItemClickedListener((icon) => {
       if(icon.key === 'backToHome') {
-        console.log('LISTENING TO TITLEBAR!');
+        Logger.log('crproposal', 'LISTENING TO TITLEBAR!');
         this.nav.navigateRoot(App.CRCOUNCIL_VOTING, '/crproposalvoting/proposals/ALL');
       }
     });
@@ -72,7 +73,7 @@ export class ProposalDetailsPage {
         this.addProposalDetails();
         // titleBarManager.setTitle('Proposal ' + '#' + this.proposal.id);
         this.titleBar.setTitle(this.translate.instant('proposal-details'));
-        console.log("Merged proposal info:", this.proposal)
+        Logger.log('crproposal', "Merged proposal info:", this.proposal)
       });
     });
   }
@@ -118,7 +119,7 @@ export class ProposalDetailsPage {
   }
 
   getTimeLeft(duration: number): string {
-    console.log('Proposal time left', duration);
+    Logger.log('crproposal', 'Proposal time left', duration);
     if(duration < 3600) {
       let minutes = Math.round(duration / 60);
       return String(minutes) + ' minutes remaining';
@@ -140,11 +141,11 @@ export class ProposalDetailsPage {
   }
 
   openLink(item) {
-    console.log("URL item clicked:", item);
+    Logger.log('crproposal', "URL item clicked:", item);
 
     if(item.type === 'url') {
       const urlToOpen = item.description;
-      console.log("Opening external URL:", urlToOpen);
+      Logger.log('crproposal', "Opening external URL:", urlToOpen);
       this.globalIntentService.sendIntent('openurl', { url: urlToOpen })
     }
   }

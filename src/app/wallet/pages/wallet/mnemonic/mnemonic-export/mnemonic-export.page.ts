@@ -13,6 +13,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-mnemonic-export',
@@ -65,7 +66,7 @@ export class MnemonicExportPage implements OnInit {
                     this.payPassword = navigation.extras.state.payPassword;
                     this.showMnemonics();
                 } else {
-                    console.log('From intent');
+                    Logger.log('wallet', 'From intent');
                     this.isFromIntent = true;
                     this.intentTransfer = this.walletAccessService.intentTransfer;
                     this.masterWalletId = this.walletAccessService.masterWalletId;
@@ -91,7 +92,7 @@ export class MnemonicExportPage implements OnInit {
                 return false;
             }
         } catch (e) {
-            console.error('MnemonicExportPage getWalletPassword error:' + e);
+            Logger.error('wallet', 'MnemonicExportPage getWalletPassword error:' + e);
             return false;
         }
     }
@@ -101,7 +102,7 @@ export class MnemonicExportPage implements OnInit {
            this.showMnemonics();
         } else {
             // User cancel
-            console.log('MnemonicExportPage user cancel');
+            Logger.log('wallet', 'MnemonicExportPage user cancel');
             await this.globalIntentService.sendIntentResponse(
                 { txid: null, status: 'cancelled' },
                 this.intentTransfer.intentId

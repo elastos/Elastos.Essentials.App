@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
+import { Logger } from 'src/app/logger';
 
 @Injectable()
 export class LocalStorage {
@@ -49,13 +50,13 @@ export class LocalStorage {
 
     public setPhoto(value: any) {
       return this.storage.set("photo", JSON.stringify(value)).then((data) => {
-        console.log('Set profile pic', data);
+        Logger.log('Identity', 'Set profile pic', data);
       });
     }
 
     public getPhoto(): Promise<any> {
       return this.storage.get("photo").then((data) => {
-        console.log('Get profile pic', data);
+        Logger.log('Identity', 'Get profile pic', data);
         return JSON.parse(data);
       });
     }

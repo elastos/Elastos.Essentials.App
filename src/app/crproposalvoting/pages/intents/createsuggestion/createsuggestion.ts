@@ -9,6 +9,7 @@ import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -57,7 +58,7 @@ export class CreateSuggestionPage {
 
     // Fetch more details about this suggestion, to display to the user
     this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
-    console.log("suggestionDetails", this.suggestionDetails);
+    Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
     this.suggestionDetailsFetched = true;
     this.createSuggestionCommand = this.crOperations.getOnGoingCreateSuggestionCommand();
   }
@@ -82,7 +83,7 @@ export class CreateSuggestionPage {
     }*/
     try {
       let signedJWT = await this.signSuggestionDigestAsJWT(proposalDigest);
-      console.log("signedJWT", signedJWT);
+      Logger.log('crproposal', "signedJWT", signedJWT);
 
       if (!signedJWT) {
         // Operation cancelled, cancel the operation silently.
@@ -119,23 +120,23 @@ export class CreateSuggestionPage {
     // Convert the suggestion to the format expected by the wallet intent / SPV SDK
     let walletProposal = this.suggestionCommandToWalletProposal(this.createSuggestionCommand);
 
-    console.log("Sending intent to create suggestion digest", walletProposal);
+    Logger.log('crproposal', "Sending intent to create suggestion digest", walletProposal);
     try {
       let response: { result: { digest: string } } = await this.globalIntentService.sendIntent("crproposalcreatedigest", {
         proposal: JSON.stringify(walletProposal)
       });
 
-      console.log("Got proposal digest.", response.result.digest);
+      Logger.log('crproposal', "Got proposal digest.", response.result.digest);
       return response.result.digest;
     }
     catch (err) {
-      console.error("createproposaldigest send intent error", err);
+      Logger.error('crproposal', "createproposaldigest send intent error", err);
       throw err;
     }
   }
 
   private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
-    console.log("Sending intent to sign the suggestion digest", suggestionDigest);
+    Logger.log('crproposal', "Sending intent to sign the suggestion digest", suggestionDigest);
     try {
       let result = await this.globalIntentService.sendIntent("didsign", {
         data: suggestionDigest,
@@ -147,7 +148,7 @@ export class CreateSuggestionPage {
           req: "elastos://crproposal/" + this.originalRequestJWT
         }
       });
-      console.log("Got signed digest.", result);
+      Logger.log('crproposal', "Got signed digest.", result);
 
       if (!result.result) {
         // Operation cancelled by user
@@ -162,7 +163,7 @@ export class CreateSuggestionPage {
       return result.responseJWT;
     }
     catch (err) {
-      console.error("didsign send intent error", err);
+      Logger.error('crproposal', "didsign send intent error", err);
       throw err;
     }
   }

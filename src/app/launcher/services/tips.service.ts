@@ -98,7 +98,7 @@ export class TipsService {
     Logger.log("Launcher", "Checking if it's a right time to show a tip");
 
     if (!await this.userWantsToSeeTips()) {
-      console.log("User doesn't want to see tips. Skipping.");
+      Logger.log('Launcher', "User doesn't want to see tips. Skipping.");
       return;
     }
 
@@ -114,11 +114,11 @@ export class TipsService {
 
   // Find the suitable tip to show next, and show it.
   private async showNextTip() {
-    console.log("All tips:", this.tips);
+    Logger.log('Launcher', "All tips:", this.tips);
 
     // Load tips that user has already viewed
     let viewedTips = await this.loadViewedTips();
-    console.log("Viewed tips:", viewedTips);
+    Logger.log('Launcher', "Viewed tips:", viewedTips);
 
     // Exclude developer tips if user is not a developer, etc.
     let usableTips = await this.getAllTipsUserCanView();
@@ -130,7 +130,7 @@ export class TipsService {
       }) == null;
     });
 
-    console.log("Usable tips:", usableTips);
+    Logger.log('Launcher', "Usable tips:", usableTips);
 
     // Take the first usable tip of the list, if any.
     if (usableTips.length > 0) {
@@ -167,7 +167,7 @@ export class TipsService {
         //resolve(true);
       }
       catch (err) {
-        console.error("rightTimeToShowATip() error:", err);
+        Logger.error('Launcher', "rightTimeToShowATip() error:", err);
         resolve(true);
       }
     });
@@ -181,7 +181,7 @@ export class TipsService {
       }
       catch (err) {
         // Kind of blocking issue, but let's resolve anyway...
-        console.error("saveSentTipTime() error:", err);
+        Logger.error('Launcher', "saveSentTipTime() error:", err);
         resolve();
       }
     });
@@ -266,7 +266,7 @@ export class TipsService {
           resolve(false);
       }
       catch (err) {
-        console.warn("developerModeEnabled() error", err);
+        Logger.warn('Launcher', "developerModeEnabled() error", err);
         resolve(false);
       }
     });

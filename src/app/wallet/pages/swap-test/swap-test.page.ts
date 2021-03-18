@@ -10,13 +10,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
 import { LocalStorage } from '../../services/storage.service';
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { Logger, LogLevel } from "@ethersproject/logger";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
 import { BigNumber } from 'bignumber.js';
 import { ETHChainSubWallet } from '../../model/wallets/ETHChainSubWallet';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
+import { Logger } from 'src/app/logger';
 
 const BIPS_BASE = JSBI.BigInt(10000) // Fixed, don't touch
 const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than this (price changed a lot between 2 blocks), transaction will be cancelled
@@ -34,7 +34,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
         // We overwrite the default implementation of sendTransaction() so that instead of sending an intent to
         // ourself, we directly sign and send the transaction from here.
 
-        console.log("InternalWeb3Provider - Send transaction request with payload:", payload);
+        Logger.log('wallet', "InternalWeb3Provider - Send transaction request with payload:", payload);
 
         const rawTx =
             await this.walletManager.spvBridge.createTransferGeneric(
@@ -48,7 +48,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
                 payload.params[0].data
             );
 
-        console.log('Created raw ESC transaction:', rawTx);
+        Logger.log('wallet', 'Created raw ESC transaction:', rawTx);
 
         const transfer = new Transfer();
         Object.assign(transfer, {
@@ -60,7 +60,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
         });
 
         let publicationResult = await this.elaEthSubwallet.signAndSendRawTransaction(rawTx, transfer, false);
-        console.log("Publication result:", publicationResult);
+        Logger.log('wallet', "Publication result:", publicationResult);
         if (publicationResult.published) {
             callback(null, {
                 jsonrpc: "2.0",
@@ -97,7 +97,7 @@ export class SwapTestPage implements OnInit {
 
     async init() {
         let currentMasterWalletId = await this.storage.getCurMasterId();
-        console.log("currentMasterWalletId", currentMasterWalletId);
+        Logger.log('wallet', "currentMasterWalletId", currentMasterWalletId);
         this.masterWallet = this.walletManager.getMasterWallet(currentMasterWalletId.masterId);
     }
 
@@ -133,7 +133,7 @@ export class SwapTestPage implements OnInit {
             let currencyOut = DMA; // Can be ETHER or a Token
             let sourceAmount = web3.utils.toWei("0.001"); // 0.01 ELAETH => will get about 9 DMA
             let currencyAmountIn = CurrencyAmount.ether(sourceAmount); // Can be CurrencyAmount.ether() or a new TokenAmount(DAI, "2");
-            console.log("currencyAmountIn:", currencyAmountIn)
+            Logger.log('wallet', "currencyAmountIn:", currencyAmountIn)
 
             let etherjsTrinityProvider = new JsonRpcProvider({
                 url: "http://api.elastos.io:20636" // TODO: change according to network in settings
@@ -141,19 +141,19 @@ export class SwapTestPage implements OnInit {
 
             this.status.push("Fetching pair data");
             const pair = await Fetcher.fetchPairData(DMA, WETH[DMA.chainId], etherjsTrinityProvider);
-            console.log("PAIR:", pair);
+            Logger.log('wallet', "PAIR:", pair);
 
             const route = new Route([pair], WETH[DMA.chainId])
-            console.log("ROUTE MIDPRICE:", route.midPrice.toSignificant(6)) // 201.306
-            console.log("ROUTE INVERT MIDPRICE:", route.midPrice.invert().toSignificant(6)) // 0.00496756
+            Logger.log('wallet', "ROUTE MIDPRICE:", route.midPrice.toSignificant(6)) // 201.306
+            Logger.log('wallet', "ROUTE INVERT MIDPRICE:", route.midPrice.invert().toSignificant(6)) // 0.00496756
 
             this.status.push("Computing trade");
             let trade = Trade.bestTradeExactIn([pair], currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })[0] ?? null;
-            console.log("TRADE:", trade);
+            Logger.log('wallet', "TRADE:", trade);
 
             let accountAddress = await this.getEthAddress();
 
-            console.log("Computing ROUTE CALL PARAMS");
+            Logger.log('wallet', "Computing ROUTE CALL PARAMS");
             let callParams = Router.swapCallParameters(trade, {
                 feeOnTransfer: false,
                 allowedSlippage: new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), BIPS_BASE),
@@ -161,10 +161,10 @@ export class SwapTestPage implements OnInit {
                 ttl: DEFAULT_DEADLINE_FROM_NOW // A few minutes before invalidating our swap request, so we do'nt wait for it forever
             });
 
-            console.log("CALLPARAMS: ", callParams);
+            Logger.log('wallet', "CALLPARAMS: ", callParams);
 
             let gasPrice = await web3.eth.getGasPrice();
-            console.log("GAS PRICE:", gasPrice);
+            Logger.log('wallet', "GAS PRICE:", gasPrice);
 
             let contractMethod = routerContract.methods[callParams.methodName](...callParams.args);
 
@@ -176,7 +176,7 @@ export class SwapTestPage implements OnInit {
                     value: callParams.value
                 });
             } catch (error) {
-                console.log('estimateGas error:', error);
+                Logger.log('wallet', 'estimateGas error:', error);
             }
 
             let transactionParams = {
@@ -192,7 +192,7 @@ export class SwapTestPage implements OnInit {
                     this.status.push("Transaction was published - transactionHash:" + hash);
                 })
                 .on('receipt', (receipt) => {
-                    //console.log("receipt", receipt);
+                    //Logger.log('wallet', "receipt", receipt);
                 })
                 .on('confirmation', (confirmationNumber, receipt) => {
                     this.status.push("Got transaction confirmation:"+confirmationNumber);
@@ -221,9 +221,9 @@ export class SwapTestPage implements OnInit {
         let fees = new BigNumber(this.coinTransferService.payloadParam.gas).multipliedBy(new BigNumber(this.coinTransferService.payloadParam.gasPrice)).dividedBy(weiElaRatio);
         let total = elaEthValue.plus(fees);
 
-        //console.log("elaEthValue", elaEthValue.toString())
-        //console.log("fees/gas", fees.toString());
-        //console.log("total", total.toString());
+        //Logger.log('wallet', "elaEthValue", elaEthValue.toString())
+        //Logger.log('wallet', "fees/gas", fees.toString());
+        //Logger.log('wallet', "total", total.toString());
 
         return {
             totalAsBigNumber: total,

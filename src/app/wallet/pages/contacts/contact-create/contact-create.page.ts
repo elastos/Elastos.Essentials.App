@@ -41,7 +41,7 @@ export class ContactCreatePage implements OnInit {
         }
         else {
             this.id = Util.uuid();
-            // console.log(this.id);
+            // Logger.log('wallet', this.id);
             this.name = "";
             this.address = "";
             this.phone = "";

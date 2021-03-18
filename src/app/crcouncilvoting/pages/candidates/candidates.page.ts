@@ -11,6 +11,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { Logger } from "src/app/logger";
 
 
 @Component({
@@ -72,7 +73,7 @@ export class CandidatesPage implements OnInit {
         _candidate => _candidate.cid !== candidate.cid
       );
     }
-    console.log(
+    Logger.log('crcouncil',
       "Selected candidates",
       this.candidatesService.selectedCandidates
     );
@@ -90,11 +91,11 @@ export class CandidatesPage implements OnInit {
           elaamount: res.result.walletinfo[0].elaamount
         }
       };
-      console.log("Candidates", this.candidatesService.selectedCandidates);
+      Logger.log('crcouncil', "Candidates", this.candidatesService.selectedCandidates);
       this.globalNav.navigateTo("crcouncilvoting", "/crcouncilvoting/vote", props);
     }
     catch (err) {
-      console.log(err);
+      Logger.log('crcouncil', err);
       this.toastWalletErr();
     }
   }
@@ -150,7 +151,7 @@ export class CandidatesPage implements OnInit {
           role: "cancel",
           cssClass: "secondary",
           handler: () => {
-            console.log("No thanks");
+            Logger.log('crcouncil', "No thanks");
           }
         },
         {
@@ -180,7 +181,7 @@ export class CandidatesPage implements OnInit {
           role: "cancel",
           cssClass: "secondary",
           handler: () => {
-            console.log("No thanks");
+            Logger.log('crcouncil', "No thanks");
           }
         },
         {

@@ -41,9 +41,9 @@ export class HiveService {
     this.storage.getPhoto().then(photoData => {
       if(photoData) {
         this.rawImage = photoData
-        console.log("Displaying photo", this.rawImage);
+        Logger.log('Identity', "Displaying photo", this.rawImage);
       } else {
-        console.log("No photo stored");
+        Logger.log('Identity', "No photo stored");
       }
     });
   }
@@ -107,7 +107,7 @@ export class HiveService {
       try {
         ipfs.get(cid).then((result) => {
           if(result["status"] === "success") {
-            console.log('ipfsGet', result);
+            Logger.log('Identity', 'ipfsGet', result);
             resolve(result["content"]);
           }
         }).catch((err:string) => {
@@ -120,12 +120,12 @@ export class HiveService {
   }
 */
  /*  loadImg(ipfsObj: HivePlugin.IPFS, imageCid: any) {
-    console.log('Loading img from hive', imageCid);
+    Logger.log('Identity', 'Loading img from hive', imageCid);
     this.ipfsGet(ipfsObj, imageCid).then((result) => {
       if(result["status"] === "success") {
         this.profileImage = result["content"];
-        console.log('ipfsGet', result);
-        console.log('Profile image', this.profileImage);
+        Logger.log('Identity', 'ipfsGet', result);
+        Logger.log('Identity', 'Profile image', this.profileImage);
       }
     }).catch((err) => {
       alert(err);
@@ -135,13 +135,13 @@ export class HiveService {
 
  /* TODO: old code using old hive, delete?
  async loadImg(ipfsObj: HivePlugin.IPFS, imageCid: any) {
-    console.log('Loading img from hive', imageCid);
+    Logger.log('Identity', 'Loading img from hive', imageCid);
     try {
       this.profileImage = await this.ipfsGet(ipfsObj, imageCid)
-      console.log('Profile image', this.profileImage);
+      Logger.log('Identity', 'Profile image', this.profileImage);
     }
     catch(e) {
-      console.log('loadImg exception:', e)
+      Logger.log('Identity', 'loadImg exception:', e)
     }
   }
   */

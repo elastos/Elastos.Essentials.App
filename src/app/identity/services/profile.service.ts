@@ -160,7 +160,7 @@ export class ProfileService {
     this.allCreds.map((cred) => {
       let props = cred.credential.getSubject(); // Credentials properties
       if (!props) {
-        console.warn("Found an empty credential subject while trying to build profile, this should not happen...");
+        Logger.warn('identity', "Found an empty credential subject while trying to build profile, this should not happen...");
         return;
       }
 
@@ -172,7 +172,7 @@ export class ProfileService {
         // Try to retrieve a standard property info from this property
         let basicCredentialInfo = BasicCredentialsService.instance.getBasicCredentialInfoByKey(p, cred.isVisible);
         if (!basicCredentialInfo) {
-          console.warn("Unhandled basic credential " + p);
+          Logger.warn('identity', "Unhandled basic credential " + p);
         }
         else {
           profile.setValue(basicCredentialInfo, props[p]);
@@ -365,7 +365,6 @@ export class ProfileService {
   }
 
   publish() {
-    console.log('----go /identity/publish');
     this.native.go("/identity/publish");
   }
 
@@ -396,7 +395,7 @@ export class ProfileService {
           this.events.publish("diddocument:fetched", this.publishedDIDDocument);
         })
         .catch((err) => {
-          console.error(err);
+          Logger.error('identity', err);
           this.fetchingPublishedDIDDocument = false;
           this.fetchedPublishedDIDDocument = true;
           resolve(null);

@@ -51,6 +51,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -192,7 +193,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         this.fromSubWallet = this.masterWallet.getSubWallet(this.chainId);
 
-        console.log('Balance', this.masterWallet.subWallets[this.chainId].getDisplayBalance());
+        Logger.log('wallet', 'Balance', this.masterWallet.subWallets[this.chainId].getDisplayBalance());
 
         switch (this.transferType) {
             // For Recharge Transfer
@@ -210,9 +211,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     this.amount = 0.1;
                 }
 
-                console.log('Transferring from..', this.fromSubWallet);
-                console.log('Transferring To..', this.toSubWallet);
-                console.log('Subwallet address', this.toAddress);
+                Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
+                Logger.log('wallet', 'Transferring To..', this.toSubWallet);
+                Logger.log('wallet', 'Subwallet address', this.toAddress);
                 break;
             case TransferType.WITHDRAW:
                 // Setup page display
@@ -223,9 +224,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.transaction = this.createWithdrawTransaction;
                 this.toAddress = await this.toSubWallet.createAddress();
 
-                console.log('Transferring from..', this.fromSubWallet);
-                console.log('Transferring To..', this.toSubWallet);
-                console.log('Subwallet address', this.toAddress);
+                Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
+                Logger.log('wallet', 'Transferring To..', this.toSubWallet);
+                Logger.log('wallet', 'Subwallet address', this.toAddress);
                 break;
             // For Send Transfer
             case TransferType.SEND:
@@ -248,7 +249,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.titleBar.setTitle(this.translate.instant("payment-title"));
                 this.transaction = this.createSendTransaction;
 
-                console.log('Pay intent params', this.coinTransferService.payTransfer);
+                Logger.log('wallet', 'Pay intent params', this.coinTransferService.payTransfer);
                 this.toAddress = this.coinTransferService.payTransfer.toAddress;
                 this.amount = this.coinTransferService.payTransfer.amount;
                 this.memo = this.coinTransferService.payTransfer.memo;
@@ -532,7 +533,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         });
         this.native.popup.onWillDismiss().then((params) => {
             this.native.popup = null;
-            console.log('Confirm tx params', params);
+            Logger.log('wallet', 'Confirm tx params', params);
             if (params.data && params.data.confirm) {
                 this.transaction();
             }
@@ -594,7 +595,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 const lowerCaseText = enteredText.toLowerCase();
                 const cryptoNameResolver = new CryptoAddressResolvers.CryptoNameResolver(this.http);
                 const results = await cryptoNameResolver.resolve(lowerCaseText, StandardCoinName.ELA);
-                console.log("cryptoname results", results);
+                Logger.log('wallet', "cryptoname results", results);
                 this.suggestedAddresses = this.suggestedAddresses.concat(results);
             }
         }
@@ -643,7 +644,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             },
         });
         this.modal.onWillDismiss().then((params) => {
-            console.log('Contact selected', params);
+            Logger.log('wallet', 'Contact selected', params);
             if (params.data && params.data.contact) {
                 this.addressName = params.data.contact.cryptoname;
                 this.toAddress = params.data.contact.address;
@@ -661,7 +662,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // Intent response will return a contact's DID document under result.friends.document
     async openContacts() {
-        console.log("Sending intent 'https://contact.elastos.net/pickfriend', requesting credentialType: 'elaAddress'");
+        Logger.log('wallet', "Sending intent 'https://contact.elastos.net/pickfriend', requesting credentialType: 'elaAddress'");
         let res = await this.globalIntentService.sendIntent(
             "https://contact.elastos.net/pickfriend",
             {
@@ -670,7 +671,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 credentialType: "elaAddress"
               }
         });
-        console.log('pickfriend intent res', res);
+        Logger.log('wallet', 'pickfriend intent res', res);
         this.zone.run(() => {
             this.toAddress = res.result.friends[0].credentials.elaAddress;
             this.addressName = res.result.friends[0].credentials.name;

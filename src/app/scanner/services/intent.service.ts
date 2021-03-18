@@ -3,6 +3,7 @@ import { Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from '../../services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Injectable({
@@ -22,20 +23,20 @@ export class IntentService {
     }
 
     public async init() {
-        /*console.log("Checking if there are pending intents");
+        /*Logger.log('Scanner', "Checking if there are pending intents");
         essentialsIntent.hasPendingIntent((hasPendingIntent: boolean)=>{
             if (hasPendingIntent) {
                 // Do nothing, the intent listener will show the appropriate screen.
-                console.log("There are some pending intents.");
+                Logger.log('Scanner', "There are some pending intents.");
             }
             else {
-                console.log("No pending intent.");
+                Logger.log('Scanner', "No pending intent.");
 
                 // No intent was received at boot. So we go through the regular screens.
                 this.showScanScreen(false);
             }
         }, (err: string)=>{
-            console.error(err);
+            Logger.log('Scanner', err);
 
             // Error while checking - fallback to default behaviour
             this.showScanScreen(false);
@@ -45,7 +46,7 @@ export class IntentService {
         // Listen to incoming intent events.
         this.globalIntentService.intentListener.subscribe((intent)=>{
             if (intent.action == "https://scanner.elastos.net/scanqrcode") {
-                console.log("Received intent for scanner:", intent);
+                Logger.log('Scanner', "Received intent for scanner:", intent);
 
                 // Remember the received intent for later use
                 this.intentRequest = intent;
@@ -70,7 +71,7 @@ export class IntentService {
     }
 
     public sendScanQRCodeIntentResponse(scannedContent: string): Promise<void> {
-        console.log("Sending scanqrcode intent response");
+        Logger.log('Scanner', "Sending scanqrcode intent response");
 
         return this.globalIntentService.sendIntentResponse({
             scannedContent: scannedContent

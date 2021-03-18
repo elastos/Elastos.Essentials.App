@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-mnemonic-write',
@@ -54,7 +55,7 @@ export class MnemonicWritePage implements OnInit {
                 input: ''
             });
         }
-        console.log('Empty input list created', this.inputList);
+        Logger.log('wallet', 'Empty input list created', this.inputList);
     }
 
     ionViewWillEnter() {

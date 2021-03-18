@@ -13,6 +13,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'page-createidentity',
@@ -53,7 +54,7 @@ export class CreateIdentityPage {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
       this.isfirst = false;
-      console.log("Setting create identity screen initial slide to index 1");
+      Logger.log('didsessions', "Setting create identity screen initial slide to index 1");
       this.slideOpts.initialSlide = 1;
     }
   }
@@ -89,7 +90,7 @@ export class CreateIdentityPage {
   }
 
   showSlider() {
-    console.log("Showing created identity screen slider");
+    Logger.log('didsessions', "Showing created identity screen slider");
     this.hidden = false
     this.slide.getSwiper().then((swiper) => {
       swiper.init();

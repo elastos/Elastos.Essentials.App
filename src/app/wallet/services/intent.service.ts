@@ -97,7 +97,7 @@ export class IntentService {
 
     async handleTransactionIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         if (Util.isEmptyObject(intent.params)) {
-            console.error('Invalid intent parameters received. No params.', intent.params);
+            Logger.error('wallet', 'Invalid intent parameters received. No params.', intent.params);
             await this.globalIntentService.sendIntentResponse("Invalid intent parameters", intent.intentId);
             return false;
         } else {

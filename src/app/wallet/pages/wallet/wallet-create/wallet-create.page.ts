@@ -10,6 +10,7 @@ import { UiService } from '../../../services/ui.service';
 import { IonInput } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-wallet-create',
@@ -63,7 +64,7 @@ export class WalletCreatePage implements OnInit {
 
     updateSingleAddress(event) {
         // this.wallet.singleAddress = event.detail.checked;
-        console.log('Single address toggled?', + this.wallet.singleAddress, event);
+        Logger.log('wallet', 'Single address toggled?', + this.wallet.singleAddress, event);
     }
 
     onCreate() {

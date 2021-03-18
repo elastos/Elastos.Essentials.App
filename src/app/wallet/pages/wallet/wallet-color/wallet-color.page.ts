@@ -6,6 +6,7 @@ import { WalletEditionService } from '../../../services/walletedition.service';
 import { Native } from '../../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-wallet-color',
@@ -75,8 +76,8 @@ export class WalletColorPage implements OnInit {
     if (this.masterWallet.theme) {
       this.walletTheme = this.masterWallet.theme;
     }
-    console.log('Setting theme for master wallet ', this.masterWallet);
-    console.log('Current wallet theme ', this.walletTheme);
+    Logger.log('wallet', 'Setting theme for master wallet ', this.masterWallet);
+    Logger.log('wallet', 'Current wallet theme ', this.walletTheme);
   }
 
   async confirm() {

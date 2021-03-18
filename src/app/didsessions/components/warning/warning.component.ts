@@ -3,6 +3,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopoverController, NavParams } from '@ionic/angular';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-warning',
@@ -21,7 +22,7 @@ export class WarningComponent implements OnInit {
 
   ngOnInit() {
     this.identityEntry = this.navParams.get('identityEntry');
-    console.log('Identity', this.identityEntry);
+    Logger.log('didsessions', 'Identity', this.identityEntry);
   }
 
   cancel() {

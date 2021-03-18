@@ -3,6 +3,7 @@ import { PopoverController, NavParams } from '@ionic/angular';
 import { DIDService } from '../../services/did.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-warning',
@@ -23,7 +24,7 @@ export class WarningComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log('Warning popup', this.warning);
+    Logger.log('Identity', 'Warning popup', this.warning);
     this.warning = this.navParams.get('warning');
     this.password = this.navParams.get('password');
   }

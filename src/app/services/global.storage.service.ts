@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import { Logger } from '../logger';
 
 export type Preference<T> = {
   key: string;
@@ -46,7 +47,7 @@ export class GlobalStorageService {
     return this.storage.get(fullKey).then((res) => {
       return JSON.parse(res);
     }, (err) => {
-      console.warn("Global storage service getSetting() error:", fullKey, err);
+      Logger.warn('StorageService', "Global storage service getSetting() error:", fullKey, err);
       return defaultValue;
     });
   }

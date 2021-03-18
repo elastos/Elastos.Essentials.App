@@ -121,7 +121,7 @@ export class UXService {
                     resolve(appInfo.did || '');
                 },
                 (err) => {
-                    console.error('getAppInfo failed: ', err);
+                    Logger.error('identity', 'getAppInfo failed: ', err);
                     reject(err);
                 }
             );

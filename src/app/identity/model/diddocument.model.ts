@@ -2,6 +2,7 @@ import { DIDURL } from './didurl.model';
 import { LocalStorage } from '../services/localstorage';
 import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
 import { DIDHelper } from '../helpers/did.helper';
+import { Logger } from 'src/app/logger';
 
 export class DIDDocument {
 
@@ -17,7 +18,7 @@ export class DIDDocument {
     }
 
     public addCredential(credential: DIDPlugin.VerifiableCredential, storePass: string): Promise<void> {
-        console.log("Adding credential with key " + credential.getId() + " into DIDDocument", JSON.parse(JSON.stringify(credential)));
+        Logger.log('Identity', "Adding credential with key " + credential.getId() + " into DIDDocument", JSON.parse(JSON.stringify(credential)));
 
         return new Promise((resolve, reject) => {
             this.pluginDidDocument.addCredential(
@@ -27,7 +28,7 @@ export class DIDDocument {
                     await this.markUpdated();
                     resolve()
                 }, (err) => {
-                    console.error("Add credential exception", err);
+                    Logger.error('identity', "Add credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
                 },
             );
@@ -35,7 +36,7 @@ export class DIDDocument {
     }
 
     public deleteCredential(credential: DIDPlugin.VerifiableCredential, storePass: string): Promise<void> {
-        console.log("Delete credential with key " + credential.getId() + " from the DIDDocument", JSON.parse(JSON.stringify(credential)));
+        Logger.log('Identity', "Delete credential with key " + credential.getId() + " from the DIDDocument", JSON.parse(JSON.stringify(credential)));
         return new Promise((resolve, reject) => {
             this.pluginDidDocument.deleteCredential(
                 credential,
@@ -44,7 +45,7 @@ export class DIDDocument {
                     await this.markUpdated();
                     resolve()
                 }, (err) => {
-                    console.error("Delete credential exception", err);
+                    Logger.error('identity', "Delete credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
                 },
             );
@@ -56,7 +57,7 @@ export class DIDDocument {
             this.pluginDidDocument.createJWT(properties, validityDays, storePass, async (jwtToken) => {
                 resolve(jwtToken);
             }, (err) => {
-                console.error("Delete credential exception", err);
+                Logger.error('identity', "Delete credential exception", err);
                 reject(DIDHelper.reworkedPluginException(err));
             });
         });
@@ -151,7 +152,7 @@ export class DIDDocument {
     getDefaultPublicKey(): Promise<DIDPlugin.Base58PublicKey> {
         return new Promise((resolve, reject) => {
             this.pluginDidDocument.getDefaultPublicKey((publicKey: DIDPlugin.PublicKey) => {
-                console.log(JSON.stringify(publicKey))
+                Logger.log('Identity', JSON.stringify(publicKey))
                 let base58Key = publicKey.getPublicKeyBase58();
                 resolve(base58Key);
             }, (err) => {
@@ -165,7 +166,7 @@ export class DIDDocument {
             this.pluginDidDocument.addService(service, storePass, async () => {
                 resolve();
             }, (err) => {
-                console.error("AddService exception", err);
+                Logger.error('identity', "AddService exception", err);
                 reject(DIDHelper.reworkedPluginException(err));
             });
         });
@@ -184,7 +185,7 @@ export class DIDDocument {
             this.pluginDidDocument.removeService(didUrl, storePass, async () => {
                 resolve();
             }, (err) => {
-                console.error("RemoveService exception", err);
+                Logger.error('identity', "RemoveService exception", err);
                 reject(DIDHelper.reworkedPluginException(err));
             });
         });

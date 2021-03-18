@@ -8,6 +8,7 @@ import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -60,11 +61,11 @@ export class VoteForProposalPage {
       let ret = await this.globalIntentService.sendIntent("crproposalvoteagainst", {
         proposalHash: this.voteForProposalCommand.data.proposalHash
       });
-      console.log("Vote for proposal intent has returned", ret);
+      Logger.log('crproposal', "Vote for proposal intent has returned", ret);
       this.exitIntentWithSuccess();
     }
     catch (err) {
-      console.error(err);
+      Logger.error('crproposal', err);
     }
   }
 

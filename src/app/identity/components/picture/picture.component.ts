@@ -5,6 +5,7 @@ import { HiveService } from '../../services/hive.service';
 import { LocalStorage } from '../../services/localstorage';
 import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-picture',
@@ -31,7 +32,7 @@ export class PictureComponent implements OnInit {
     this.newImg = false;
 
     if (this.hiveService.rawImage) {
-      console.log('Avatar cred found', this.hiveService.rawImage);
+      Logger.log('Identity', 'Avatar cred found', this.hiveService.rawImage);
     } else {
       return;
     }
@@ -56,7 +57,7 @@ export class PictureComponent implements OnInit {
 
     navigator.camera.getPicture((imageData) => {
       this.zone.run(() => {
-        console.log(imageData);
+        Logger.log('Identity', imageData);
         // Used for displaying
         this.hiveService.rawImage = 'data:image/png;base64,' + imageData;
         // Used for credential
@@ -65,7 +66,7 @@ export class PictureComponent implements OnInit {
         this.newImg = true;
       });
     }, ((err) => {
-      console.error(err);
+      Logger.error('identity', err);
     }), options);
   }
 
@@ -81,8 +82,8 @@ export class PictureComponent implements OnInit {
       this.hiveService.ipfsPut(this.hiveService.ipfsObj, this.rawImage).then((result) => {
         if(result["status"] === "success") {
           this.hiveService.imageCid = result["cid"];
-          console.log('ipfsPut', result);
-          console.log('Image cid', this.hiveService.imageCid);
+          Logger.log('Identity', 'ipfsPut', result);
+          Logger.log('Identity', 'Image cid', this.hiveService.imageCid);
           localStorage.setItem(this.hiveService.skey, JSON.stringify(result["cid"]));
           this.savingImg = false;
           this.rawImage = "";

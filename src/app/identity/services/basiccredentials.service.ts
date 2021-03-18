@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
 import { BasicCredentialEntry } from '../model/basiccredentialentry.model';
 
 @Injectable({
@@ -73,7 +74,7 @@ export class BasicCredentialsService {
     });
 
     if (info == null)
-      console.warn("No basic credential info found for key " + key + "!");
+      Logger.warn('identity', "No basic credential info found for key " + key + "!");
     else {
       info.isVisible = isVisible;
     }

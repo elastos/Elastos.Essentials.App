@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Tip } from '../../model/tip.model';
 import { TipAudience } from '../../model/tipaudience.model';
 import { TipsService } from '../../services/tips.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-tips',
@@ -29,7 +30,7 @@ export class TipsPage implements OnInit {
     this.allDisplayableTips = await this.tipsService.getAllTipsUserCanView();
     this.tipToShow = this.navParams.get('tipToShow');
     this.currentlyShownTip = this.tipToShow;
-    console.log('Tip to show:', this.tipToShow);
+    Logger.log('Launcher', 'Tip to show:', this.tipToShow);
 
     // Mark tip as shown to not notify it any more
     this.tipsService.markTipAsViewed(this.currentlyShownTip);

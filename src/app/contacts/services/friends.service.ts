@@ -326,7 +326,7 @@ export class FriendsService {
 
         resolve();
       }, (err: any) => {
-        console.error("DIDDocument resolving error", err);
+        Logger.error('contacts', "DIDDocument resolving error", err);
         this.native.didResolveErr(err.message);
         this.globalNav.navigateRoot('contacts', '/contacts/friends');
         resolve();
@@ -903,7 +903,7 @@ export class FriendsService {
       });
     }
     else {
-      console.warn("Not sending shared content to friend with DID " + contactId + " because he is not in the contact notifier");
+      Logger.warn('contacts', "Not sending shared content to friend with DID " + contactId + " because he is not in the contact notifier");
     }
   }
 

@@ -146,7 +146,7 @@ export class SPVSyncService {
                 await this.spvBridge.syncStop(masterId, chainId);
             }
             catch (e) {
-                console.error("Failed to stop subwallet "+chainId+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
+                Logger.error('wallet', "Failed to stop subwallet "+chainId+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
                 return false;
             }
         }

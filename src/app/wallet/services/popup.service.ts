@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
+import { Logger } from 'src/app/logger';
 
 @Injectable()
 export class PopupProvider {
@@ -24,7 +25,7 @@ export class PopupProvider {
           {
             text: okText ? okText : this.translate.instant('confirm'),
             handler: () => {
-              console.log('ionicAlert Ok clicked');
+              Logger.log('wallet', 'ionicAlert Ok clicked');
               this.alertPopup = null;
               resolve();
             }
@@ -52,7 +53,7 @@ export class PopupProvider {
           {
             text: okText ? okText : this.translate.instant('confirm'),
             handler: () => {
-              console.log('ionicAlert_data Ok clicked');
+              Logger.log('wallet', 'ionicAlert_data Ok clicked');
               this.alertPopup = null;
               resolve();
             }
@@ -80,7 +81,7 @@ export class PopupProvider {
           {
             text: okText ? okText : this.translate.instant('confirm'),
             handler: () => {
-              console.log('ionicAlert_delTx Ok clicked');
+              Logger.log('wallet', 'ionicAlert_delTx Ok clicked');
               this.alertPopup = null;
               resolve();
             }
@@ -110,7 +111,7 @@ export class PopupProvider {
           {
             text: okText ? okText : this.translate.instant('confirm'),
             handler: () => {
-              console.log('ionicAlert_PublishedTx_fail Ok clicked');
+              Logger.log('wallet', 'ionicAlert_PublishedTx_fail Ok clicked');
               this.alertPopup = null;
               resolve();
             }
@@ -138,7 +139,7 @@ export class PopupProvider {
           {
             text: okText ? okText : this.translate.instant('confirm'),
             handler: () => {
-              console.log('ionicAlert_PublishedTx_sucess Ok clicked');
+              Logger.log('wallet', 'ionicAlert_PublishedTx_sucess Ok clicked');
               this.alertPopup = null;
               resolve();
             }
@@ -167,7 +168,7 @@ export class PopupProvider {
           {
             text: this.translate.instant(cancelText),
             handler: () => {
-              console.log('ionicConfirm Disagree clicked');
+              Logger.log('wallet', 'ionicConfirm Disagree clicked');
               this.alertPopup = null;
               resolve(false);
             }
@@ -175,7 +176,7 @@ export class PopupProvider {
           {
             text: this.translate.instant(okText),
             handler: () => {
-              console.log('Agree clicked');
+              Logger.log('wallet', 'Agree clicked');
               this.alertPopup = null;
               resolve(true);
             }
@@ -198,7 +199,7 @@ export class PopupProvider {
           {
             text: this.translate.instant('cancel'),
             handler: () => {
-              console.log('ionicConfirm Disagree clicked');
+              Logger.log('wallet', 'ionicConfirm Disagree clicked');
               this.alertPopup = null;
               resolve(false);
             }
@@ -206,7 +207,7 @@ export class PopupProvider {
           {
             text: this.translate.instant('confirm'),
             handler: () => {
-              console.log('Agree clicked');
+              Logger.log('wallet', 'Agree clicked');
               this.alertPopup = null;
               resolve(true);
             }
@@ -250,7 +251,7 @@ export class PopupProvider {
           {
             text: cancelText ? cancelText : this.translate.instant('Cancel'),
             handler: data => {
-              console.log('Cancel clicked');
+              Logger.log('wallet', 'Cancel clicked');
               this.alertPopup = null;
               resolve(false);
             }
@@ -258,7 +259,7 @@ export class PopupProvider {
           {
             text: okText ? okText : this.translate.instant('Ok'),
             handler: data => {
-              console.log('Ok clicked');
+              Logger.log('wallet', 'Ok clicked');
               this.alertPopup = null;
               resolve(true);
             }

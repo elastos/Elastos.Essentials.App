@@ -8,6 +8,7 @@ import { DidService } from '../../services/did.service';
 import { Contact } from '../../models/contact.model';
 import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-options',
@@ -32,7 +33,7 @@ export class OptionsComponent implements OnInit {
 
   ngOnInit() {
     this.contact = this.navParams.get('contact');
-    console.log('Options ', this.contact);
+    Logger.log('contacts', 'Options ', this.contact);
   }
 
   async deleteContact() {

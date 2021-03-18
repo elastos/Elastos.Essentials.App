@@ -8,6 +8,7 @@ import { WalletCreationService } from '../../../services/walletcreation.service'
 import { Events } from '../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-wallet-advanced-import',
@@ -51,11 +52,11 @@ export class WalletAdvancedImportPage implements OnInit {
   }
 
   async onImport() {
-    // console.log('MNEMONIC SENTENCE', this.mnemonicSentence);
-    // console.log('MNEMONIC WORDS ARRAY', this.mnemonicWords);
+    // Logger.log('wallet', 'MNEMONIC SENTENCE', this.mnemonicSentence);
+    // Logger.log('wallet', 'MNEMONIC WORDS ARRAY', this.mnemonicWords);
 
     if (this.inputMnemonicCompleted()) {
-        console.log('Input string is valid');
+        Logger.log('wallet', 'Input string is valid');
 
         const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
         if (payPassword) {
@@ -69,7 +70,7 @@ export class WalletAdvancedImportPage implements OnInit {
 
   async importWalletWithMnemonic(payPassword: string) {
     const mnemonicStr = this.mnemonicWords.join(' ').toLowerCase();
-    // console.log('MNEMONIC IMPORT', mnemonicStr);
+    // Logger.log('wallet', 'MNEMONIC IMPORT', mnemonicStr);
 
     await this.walletManager.importMasterWalletWithMnemonic(
         this.masterWalletId,

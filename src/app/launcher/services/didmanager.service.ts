@@ -31,7 +31,7 @@ export class DIDManagerService {
   }
 
   async shareIdentity() {
-    console.log('Sharing identity', this.signedIdentity);
+    Logger.log('Launcher', 'Sharing identity', this.signedIdentity);
     const carrierAddress = await this.contactNotifier.getCarrierAddress();
 
     const addFriendUrl =

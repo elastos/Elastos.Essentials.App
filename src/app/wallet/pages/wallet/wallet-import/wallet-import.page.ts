@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 export enum MnemonicLanguage {
   CHINESE_SIMPLIFIED,
@@ -64,7 +65,7 @@ export class WalletImportPage implements OnInit {
                 input: ''
             });
         }
-        console.log('Input list created', this.inputList);
+        Logger.log('wallet', 'Input list created', this.inputList);
     }
 
     ionViewWillEnter() {
@@ -75,7 +76,7 @@ export class WalletImportPage implements OnInit {
 
 
  /*    goToNextInput(event, nextInput?: any) {
-        console.log('Input key code', event);
+        Logger.log('wallet', 'Input key code', event);
 
         // Convenient way to paste a full mnemonic (non chinese only): if only the first input has text,
         // try to split the existing input with spaces and dispatch the words into the other inputs automatically.
@@ -149,7 +150,7 @@ export class WalletImportPage implements OnInit {
     }
 
     webKeyStore(webKeyStore) {
-        console.log("========webKeyStore" + webKeyStore);
+        Logger.log('wallet', "========webKeyStore" + webKeyStore);
     }
 
     allInputsFilled() {
@@ -169,10 +170,10 @@ export class WalletImportPage implements OnInit {
     async onImport() {
         if (this.allInputsFilled()) {
             if (this.walletIsCreating) {
-                console.log('The wallet is creating, skip this action');
+                Logger.log('wallet', 'The wallet is creating, skip this action');
                 return;
             }
-            console.log('Input string is valid');
+            Logger.log('wallet', 'Input string is valid');
             this.walletIsCreating = true;
             try {
                 const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
@@ -183,7 +184,7 @@ export class WalletImportPage implements OnInit {
                     // Cancelled, do nothing
                 }
             } catch(err) {
-                console.error('CreateWalet error:', err)
+                Logger.error('wallet', 'CreateWalet error:', err)
             }
 
             this.walletIsCreating = false;
@@ -195,7 +196,7 @@ export class WalletImportPage implements OnInit {
 
     async importWalletWithMnemonic(payPassword: string) {
         // Trim leading and trailing spaces for each word
-        console.log('Importing with mnemonic');
+        Logger.log('wallet', 'Importing with mnemonic');
         await this.walletManager.importMasterWalletWithMnemonic(
             this.masterWalletId,
             this.walletCreateService.name,

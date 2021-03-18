@@ -161,7 +161,7 @@ export class RegisterApplicationProfileRequestPage {
     // Add this credential to the DID document.
     await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(createdCredential, password);
 
-    console.warn("diddoc after main app profile added:", this.didService.getActiveDid().getDIDDocument());
+    Logger.warn('identity', "diddoc after main app profile added:", this.didService.getActiveDid().getDIDDocument());
   }
 
   async createIndependantCredentials(password: string) {
@@ -178,7 +178,7 @@ export class RegisterApplicationProfileRequestPage {
         this.credentials.push(createdCredential);
         // Add this credential to the DID document.
         await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(createdCredential, password);
-        console.warn("diddoc after shared claim added:", this.didService.getActiveDid().getDIDDocument());
+        Logger.warn('identity', "diddoc after shared claim added:", this.didService.getActiveDid().getDIDDocument());
       });
     }
   }

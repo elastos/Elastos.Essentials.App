@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'page-proposal-listing',
@@ -43,7 +44,7 @@ export class ProposalListingPage implements OnInit {
   ) {
     this.proposalType = this.route.snapshot.params.proposalType as ProposalStatus;
 
-    console.log(this.proposalType, 'Proposal type');
+    Logger.log('crproposal', this.proposalType, 'Proposal type');
     this.allProposalsLoaded = false;
   }
 
@@ -72,7 +73,7 @@ export class ProposalListingPage implements OnInit {
   }
 
   async searchProposal(event) {
-    console.log('Search input changed', event);
+    Logger.log('crproposal', 'Search input changed', event);
     if(this.searchInput) {
       this.proposalsFetched = false;
       this.titleBar.setTitle(this.translate.instant('searching-proposals'));
@@ -98,7 +99,7 @@ export class ProposalListingPage implements OnInit {
 
   public async loadMoreProposals(event) {
     if(!this.allProposalsLoaded) {
-      console.log('Loading more proposals', this.fetchPage);
+      Logger.log('crproposal', 'Loading more proposals', this.fetchPage);
       this.content.scrollToBottom(300);
 
       if(this.searchInput) {

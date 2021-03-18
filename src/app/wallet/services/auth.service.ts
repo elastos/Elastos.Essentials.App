@@ -18,7 +18,7 @@ export class AuthService {
     public async createAndSaveWalletPassword(walletId: string): Promise<string> {
         let password = await passwordManager.generateRandomPassword();
         // return password;b
-        // console.log('password', password);
+        // Logger.log('wallet', 'password', password);
 
         // Save the did store password with a master password
         let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
@@ -29,7 +29,7 @@ export class AuthService {
             // TODO: visible: false
         }
         let result = await passwordManager.setPasswordInfo(passwordInfo);
-        console.log('result', result);
+        Logger.log('wallet', 'result', result);
         if (result.value) {
             // Master password was created and wallet password could be saved
             return password;
@@ -60,7 +60,7 @@ export class AuthService {
                 }
             }
             catch (e) {
-                console.error(e);
+                Logger.error('wallet', e);
                 // TODO: better handle various kind of errors
                 resolve(null);
             }
@@ -75,14 +75,14 @@ export class AuthService {
                     if (resultInfo.value) {
                         resolve(null);
                     } else {
-                        console.error('deletePasswordInfo error:', resultInfo.reason);
+                        Logger.error('wallet', 'deletePasswordInfo error:', resultInfo.reason);
                         reject(resultInfo.reason);
                     }
                 } else {
                     resolve(null);
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error('wallet', e);
                 // TODO: better handle various kind of errors
                 reject();
             }

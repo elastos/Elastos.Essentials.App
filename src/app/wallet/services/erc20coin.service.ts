@@ -28,6 +28,7 @@ import { NetworkType } from 'src/app/model/networktype';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
+import { Logger } from 'src/app/logger';
 
 @Injectable({
     providedIn: 'root'
@@ -66,23 +67,23 @@ export class ERC20CoinService {
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
         if (erc20Contract) {
             coinDecimals = await erc20Contract.methods.decimals().call();
-            console.log('Coin decimals:', coinDecimals);
+            Logger.log('wallet', 'Coin decimals:', coinDecimals);
         }
         return coinDecimals;
     }
 
     public async getCoinInfo(address: string, ethAccountAddress: string) {
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
-        console.log('erc20Contract', erc20Contract);
+        Logger.log('wallet', 'erc20Contract', erc20Contract);
 
         const coinName = await erc20Contract.methods.name().call();
-        console.log('Coin name:', coinName);
+        Logger.log('wallet', 'Coin name:', coinName);
 
         const coinSymbol = await erc20Contract.methods.symbol().call();
-        console.log('Coin symbol:', coinSymbol);
+        Logger.log('wallet', 'Coin symbol:', coinSymbol);
 
         const coinDecimals = await erc20Contract.methods.decimals().call();
-        console.log('Coin decimals:', coinDecimals);
+        Logger.log('wallet', 'Coin decimals:', coinDecimals);
 
         return { coinName, coinSymbol, coinDecimals};
     }

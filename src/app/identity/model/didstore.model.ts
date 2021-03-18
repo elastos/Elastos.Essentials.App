@@ -43,7 +43,7 @@ export class DIDStore {
     public async createPrivateIdentity(mnemonicPass: string, storePass: string, mnemonicLang: DIDPlugin.MnemonicLanguage, mnemonic: string): Promise<boolean> {
         let hasPrivId = await this.hasPrivateIdentity();
         if (hasPrivId) {
-            console.error("Private identity already exists!")
+            Logger.error('identity', "Private identity already exists!")
             return false; // Unable to load store data correctly
         }
 
@@ -74,7 +74,7 @@ export class DIDStore {
             this.pluginDidStore = await this.initPluginDidStore(didStoreId);
         }
         catch (e) {
-            console.error("initDidStore:", e);
+            Logger.error('identity', "initDidStore:", e);
             throw e;
         }
     }
@@ -89,13 +89,13 @@ export class DIDStore {
             Logger.log("DIDSessions", "Plugin DIDs:", pluginDids);
             if (pluginDids.length == 0) {
                 // Something went wrong earlier, no DID in the DID store...
-                console.warn("No DID in the DID Store, that's a bit strange but we want to continue here.")
+                Logger.warn('identity', "No DID in the DID Store, that's a bit strange but we want to continue here.")
             }
 
             await this.loadAllDids(pluginDids, restoreDeletedDIDs);
         }
         catch (e) {
-            console.error("Fatal error while loading from DID Store id.", e);
+            Logger.error('identity', "Fatal error while loading from DID Store id.", e);
             return null;
         }
     }
@@ -166,7 +166,7 @@ export class DIDStore {
             Logger.log('didsessions', "Created DID:", createdDid);
         }
         catch (e) {
-            console.error("Create DID exception", e);
+            Logger.error('identity', "Create DID exception", e);
             throw DIDHelper.reworkedPluginException(e);
         }
 
@@ -274,7 +274,7 @@ export class DIDStore {
                 });
             }
         }, (err) => {
-            console.error("Failed to send app manager didtransaction intent!", err);
+            Logger.error('identity', "Failed to send app manager didtransaction intent!", err);
             this.events.publish("diddocument:publishresult", {
                 didStore: this,
                 error: true

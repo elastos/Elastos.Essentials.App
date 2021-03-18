@@ -9,6 +9,7 @@ import { VoteType, CRProposalVoteInfo } from './SPVWalletPluginBridge';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Logger } from 'src/app/logger';
 
 type InvalidCRCCandidate = string;
 type InvalidDelegateCandidate = string;
@@ -51,7 +52,7 @@ export class InvalidVoteCandidatesHelper {
 
         // Check if some previously voted proposals are not in NOTIFICATION state any more
         let invalidProposals = await this.computeInvalidProposals();
-        console.log("invalidProposals", invalidProposals);
+        Logger.log('wallet', "invalidProposals", invalidProposals);
         if (invalidProposals)
             invalidCandidatesList.push(invalidProposals);
 
@@ -167,7 +168,7 @@ export class InvalidVoteCandidatesHelper {
 
         // Retrieve previous vote info
         let previousVoteInfo = await this.walletManager.spvBridge.getVoteInfo(this.masterWalletId, StandardCoinName.ELA, VoteType.CRCProposal) as CRProposalVoteInfo[];
-        console.log("previousVoteInfo", previousVoteInfo);
+        Logger.log('wallet', "previousVoteInfo", previousVoteInfo);
 
         // Fetch all proposals currently in NOTIFICATION state.
         try {
@@ -180,7 +181,7 @@ export class InvalidVoteCandidatesHelper {
             //      - All proposal not in the NOTIFICATION state any more should be considered invalid therefore
             //      be added to our list of invalid proposals, so the spv sdk can cleanup stuff.
             for (let previousVote of previousVoteInfo) {
-                console.log("Checking vote for CR proposal invalidity:", previousVote);
+                Logger.log('wallet', "Checking vote for CR proposal invalidity:", previousVote);
 
                 // Try to find this vote in the proposals currently in notificaion state on the CR website
                 if (previousVote.Type == VoteType.CRCProposal) {
@@ -195,11 +196,11 @@ export class InvalidVoteCandidatesHelper {
                         if (!matchingProposal) {
                             // Previously voted proposals is not in notification state any more. Make it invalid
                             invalidProposals.push(votedProposalHash);
-                            console.log("Previous vote added to invalid proposals list");
+                            Logger.log('wallet', "Previous vote added to invalid proposals list");
                         }
                         else {
                             // Previously voted proposals is still in notification state. Do nothing.
-                            console.log("Previous vote still in notification state, doing nothing");
+                            Logger.log('wallet', "Previous vote still in notification state, doing nothing");
                         }
                     }
                 }
@@ -211,7 +212,7 @@ export class InvalidVoteCandidatesHelper {
             }
         }
         catch (err) {
-            console.error(err);
+            Logger.error('wallet', err);
             return null;
         }
     }
@@ -236,17 +237,17 @@ export class InvalidVoteCandidatesHelper {
         }
 
         if (!crApiUrl) {
-            console.error("No CR API defined for network type "+networkType+"!");
+            Logger.error('wallet', "No CR API defined for network type "+networkType+"!");
             return null;
         }
 
         return new Promise((resolve, reject)=>{
-            console.log('Fetching proposals...');
+            Logger.log('wallet', 'Fetching proposals...');
             this.http.get<any>(crApiUrl+'/api/cvote/all_search?status='+status+'&page=1&results=-1').subscribe((res: CRProposalsSearchResponse) => {
-                console.log(res);
+                Logger.log('wallet', res);
                 resolve(res);
             }, (err) => {
-                console.error(err);
+                Logger.error('wallet', err);
                 reject(err);
             });
         });

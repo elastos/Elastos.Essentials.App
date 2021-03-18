@@ -112,7 +112,7 @@ export class IntentReceiverService {
                     this.native.setRootRouter("/signrequest");
                 }
                 else {
-                    console.error("Missing or wrong intent parameters for "+intent.action);
+                    Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
                     this.showErrorAndExitFromIntent(intent);
@@ -131,7 +131,7 @@ export class IntentReceiverService {
                     this.native.setRootRouter("/regappprofilerequest");
                 }
                 else {
-                    console.error("Missing or wrong intent parameters for "+intent.action);
+                    Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
                     this.showErrorAndExitFromIntent(intent);
@@ -144,7 +144,7 @@ export class IntentReceiverService {
                     this.native.setRootRouter("/sethiveproviderrequest");
                 }
                 else {
-                    console.error("Missing or wrong intent parameters for "+intent.action);
+                    Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
                     this.showErrorAndExitFromIntent(intent);
@@ -178,7 +178,7 @@ export class IntentReceiverService {
 
         await this.popup.ionicAlert("Action error", errorMessage, "Close");
 
-        console.error(errorMessage);
+        Logger.error('identity', errorMessage);
 
         await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
     }
@@ -186,7 +186,7 @@ export class IntentReceiverService {
     private checkCredAccessIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking credaccess intent parameters");
         if (Util.isEmptyObject(intent.params)) {
-            console.error("Invalid credaccess parameters received. No params.", intent.params);
+            Logger.error('identity', "Invalid credaccess parameters received. No params.", intent.params);
             return false;
         }
 
@@ -203,27 +203,27 @@ export class IntentReceiverService {
     private checkCredIssueIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking credissue intent parameters");
         if (Util.isEmptyObject(intent.params)) {
-            console.error("Invalid credissue parameters received. Empty parameters.", intent.params);
+            Logger.error('identity', "Invalid credissue parameters received. Empty parameters.", intent.params);
             return false;
         }
 
         if (Util.isEmptyObject(intent.params.identifier)) {
-            console.error("Invalid credissue parameters received. Empty identifier.", intent.params);
+            Logger.error('identity', "Invalid credissue parameters received. Empty identifier.", intent.params);
             return false;
         }
 
         if (Util.isEmptyObject(intent.params.properties)) {
-            console.error("Invalid credissue parameters received. Empty properties.", intent.params);
+            Logger.error('identity', "Invalid credissue parameters received. Empty properties.", intent.params);
             return false;
         }
 
         if (Util.isEmptyObject(intent.params.subjectdid)) {
-            console.error("Invalid credissue parameters received. Empty subject DID.", intent.params);
+            Logger.error('identity', "Invalid credissue parameters received. Empty subject DID.", intent.params);
             return false;
         }
 
         if (Util.isEmptyObject(intent.params.types) || intent.params.types.length == 0) {
-            console.error("Invalid credissue parameters received. Empty types. You must provide at least one type for the credential.", intent.params);
+            Logger.error('identity', "Invalid credissue parameters received. Empty types. You must provide at least one type for the credential.", intent.params);
             return false;
         }
 
@@ -233,12 +233,12 @@ export class IntentReceiverService {
     private checkAppIdCredIssueIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking appidcredissue intent parameters");
         if (Util.isEmptyObject(intent.params)) {
-            console.error("Invalid appidcredissue parameters received. Empty parameters.", intent.params);
+            Logger.error('identity', "Invalid appidcredissue parameters received. Empty parameters.", intent.params);
             return false;
         }
 
         if (Util.isEmptyObject(intent.params.appinstancedid)) {
-            console.error("Invalid appidcredissue parameters received. Empty appinstancedid.", intent.params);
+            Logger.error('identity', "Invalid appidcredissue parameters received. Empty appinstancedid.", intent.params);
             return false;
         }
 
@@ -250,7 +250,7 @@ export class IntentReceiverService {
     private checkCredImportIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log('identity', "Checking credimport intent parameters", intent);
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.credentials)) {
-            console.error("Invalid credimport parameters received. No params or empty credentials list.", intent.params);
+            Logger.error('identity', "Invalid credimport parameters received. No params or empty credentials list.", intent.params);
             return false;
         }
 
@@ -267,7 +267,7 @@ export class IntentReceiverService {
         Logger.log('identity', "Checking generic intent parameters", intent);
 
         if (!allowEmptyParams && Util.isEmptyObject(intent.params)) {
-            console.error("Intent parameters are empty");
+            Logger.error('identity', "Intent parameters are empty");
             return false;
         }
 
@@ -284,12 +284,12 @@ export class IntentReceiverService {
 
         // Check and get specific parameters for this intent
         if (!intent.params.identifier) {
-            console.error("Missing profile 'identifier'.");
+            Logger.error('identity', "Missing profile 'identifier'.");
             return false;
         }
 
         if (!intent.params.connectactiontitle) {
-            console.error("Missing profile 'connectactiontitle'.");
+            Logger.error('identity', "Missing profile 'connectactiontitle'.");
             return false;
         }
 
@@ -304,7 +304,7 @@ export class IntentReceiverService {
 
         // Check and get specific parameters for this intent
         if (!intent.params.data) {
-            console.error("Missing 'data'.");
+            Logger.error('identity', "Missing 'data'.");
             return false;
         }
 
@@ -315,7 +315,7 @@ export class IntentReceiverService {
         Logger.log('identity', "Checking SetHiveProvider intent parameters");
 
         if (Util.isEmptyObject(intent.params) || Util.isEmptyObject(intent.params.address)) {
-            console.error("Invalid sethiveprovider parameters received. No params or empty address list.", intent.params);
+            Logger.error('identity', "Invalid sethiveprovider parameters received. No params or empty address list.", intent.params);
             return false;
         }
 

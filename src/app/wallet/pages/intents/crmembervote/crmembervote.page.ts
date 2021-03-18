@@ -28,6 +28,7 @@ import { WalletManager } from '../../../services/wallet.service';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -95,7 +96,7 @@ export class CRmembervotePage implements OnInit {
             }
         }
         this.voteBalanceELA = voteBalanceSela / Config.SELA;
-        console.log('totalVotes:', this.voteBalanceELA);
+        Logger.log('wallet', 'totalVotes:', this.voteBalanceELA);
     }
 
     /**
@@ -121,7 +122,7 @@ export class CRmembervotePage implements OnInit {
     }
 
     async createVoteCRTransaction() {
-        console.log('Creating vote CR transaction');
+        Logger.log('wallet', 'Creating vote CR transaction');
         this.transfer.rawTransaction =  await this.walletManager.spvBridge.createVoteCRTransaction(this.masterWalletId, this.chainId,
                 '', this.transfer.votes, this.transfer.memo, '[]');
         // TODO need to check DropVotes

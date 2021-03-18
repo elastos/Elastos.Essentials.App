@@ -146,7 +146,7 @@ export class GlobalLanguageService {
     this.setAppLanguage(code);
 
     // Save current choice to disk
-    console.log("Saving global language code:", code);
+    Logger.log('LanguageService', "Saving global language code:", code);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language", code, true);
 
     // Notify listeners of language changes

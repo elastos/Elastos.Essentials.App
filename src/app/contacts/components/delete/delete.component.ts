@@ -6,6 +6,7 @@ import { FriendsService } from '../../services/friends.service';
 
 import { Contact } from '../../models/contact.model';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-delete',
@@ -28,7 +29,7 @@ export class DeleteComponent implements OnInit {
 
   ngOnInit() {
     this.contact = this.navParams.get('contact');
-    console.log('Delete Prompt for ', this.contact);
+    Logger.log('contacts', 'Delete Prompt for ', this.contact);
   }
 
   deleteFriend() {

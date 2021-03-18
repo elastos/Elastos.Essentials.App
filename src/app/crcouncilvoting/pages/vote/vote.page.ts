@@ -7,6 +7,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -33,12 +34,12 @@ export class VotePage implements OnInit, OnDestroy {
   private votedEla: number = 0;
 
   ngOnInit() {
-    console.log('My Candidates', this.candidatesService.selectedCandidates);
+    Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
     this.route.queryParams.subscribe(params => {
       if (params) {
         const fees = 0.001;// it is enough.
         this.totalEla = Math.floor(parseInt(params.elaamount) / 100000000 - fees);
-        console.log('ELA Balance', this.totalEla);
+        Logger.log('crcouncil', 'ELA Balance', this.totalEla);
       }
     });
   }
@@ -62,7 +63,7 @@ export class VotePage implements OnInit, OnDestroy {
 
   distribute() {
     let votes = this.totalEla / this.candidatesService.selectedCandidates.length;
-    console.log('Distributed votes', votes);
+    Logger.log('crcouncil', 'Distributed votes', votes);
     this.candidatesService.selectedCandidates.forEach((candidate) => {
       candidate.userVotes = votes;
     });
@@ -86,7 +87,7 @@ export class VotePage implements OnInit, OnDestroy {
     } else if (this.votedEla > this.totalEla) {
       this.toastErr('You are not allowed to pledge more ELA than you own');
     } else {
-      console.log(votedCandidates);
+      Logger.log('crcouncil', votedCandidates);
       this.storageService.setVotes(this.candidatesService.selectedCandidates);
       this.castingVote = true;
       this.votesCasted = false;
@@ -101,14 +102,14 @@ export class VotePage implements OnInit, OnDestroy {
             this.castingVote = false;
             this.voteFailedToast('Vote processing was incomplete');
           } else {
-            console.log('Insent sent sucessfully', res);
+            Logger.log('crcouncil', 'Insent sent sucessfully', res);
             this.castingVote = false;
             this.votesCasted = true;
             this.voteSuccessToast(res.result.txid);
           }
         }
         catch (err) {
-          console.log('Intent sent failed', err);
+          Logger.log('crcouncil', 'Intent sent failed', err);
           this.castingVote = false;
           this.voteFailedToast(err);
         }
@@ -118,7 +119,7 @@ export class VotePage implements OnInit, OnDestroy {
 
   /****************** Misc *******************/
   setInputDefault(event) {
-    console.log(event);
+    Logger.log('crcouncil', event);
   }
 
   getElaRemainder() {

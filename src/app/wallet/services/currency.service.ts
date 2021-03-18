@@ -112,7 +112,7 @@ export class CurrencyService {
         this.addPriceToCurrency();
       }
     }, (err) => {
-      console.error('Fetch CMC Stats err', err);
+      Logger.error('wallet', 'Fetch CMC Stats err', err);
     });
   }
 

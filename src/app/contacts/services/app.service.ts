@@ -38,7 +38,6 @@ export class AppService {
 
     switch (icon.key) {
       case 'backToHome':
-        console.log('Back to home');
         this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
         break;
       case 'add':

@@ -3,6 +3,7 @@ import { Address } from '../addresses/Address';
 import { CoinID, StandardCoinName } from '../../Coin';
 import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
 import { HttpClient } from '@angular/common/http';
+import { Logger } from "src/app/logger";
 
 export class CryptoNameResolver extends Resolver {
     constructor(private http: HttpClient) {
@@ -13,7 +14,7 @@ export class CryptoNameResolver extends Resolver {
         let addresses: Address[] = [];
 
         if (coin == StandardCoinName.ELA) {
-            console.log("Searching name "+name+" on cryptoname...");
+            Logger.log('wallet', "Searching name "+name+" on cryptoname...");
 
             try {
                 var url = "https://"+name+".elastos.name/ela.address";

@@ -5,6 +5,7 @@ import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Native } from '../../services/native';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'page-countrypicker',
@@ -24,7 +25,7 @@ export class CountryPickerPage {
     private native: Native
   ) {
     this.areaList = area;
-    console.log('areaList', this.areaList);
+    Logger.log('Identity', 'areaList', this.areaList);
   }
 
   ionViewWillEnter() {

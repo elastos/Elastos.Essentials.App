@@ -12,6 +12,7 @@ import { SuggestionDetailsResponse } from '../model/suggestion-details-response'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Logger } from 'src/app/logger';
 
 @Injectable({
     providedIn: 'root'
@@ -42,13 +43,13 @@ export class ProposalService {
         let apiUrl = await this.getCRProposalAPI();
 
         return new Promise((resolve, reject)=>{
-            console.log('Fetching proposals...');
+            Logger.log('crproposal', 'Fetching proposals...');
             this.http.get<any>(apiUrl+'/api/cvote/all_search?status='+status+'&page='+page+'&results=10').subscribe((res: ProposalsSearchResponse) => {
-                console.log(res);
+                Logger.log('crproposal', res);
                 this.latestSearchResults = res.data.list;
                 resolve(res);
             }, (err) => {
-                console.error(err);
+                Logger.error('crproposal', err);
                 this.latestSearchResults = [];
                 reject(err);
             });
@@ -59,12 +60,12 @@ export class ProposalService {
         let apiUrl = await this.getCRProposalAPI();
 
         return new Promise((resolve, reject)=>{
-            console.log('Fetching proposal details for proposal '+proposalId+'...');
+            Logger.log('crproposal', 'Fetching proposal details for proposal '+proposalId+'...');
             this.http.get<any>(apiUrl+'/api/cvote/get_proposal/'+proposalId).subscribe((res: ProposalsDetailsResponse) => {
-                console.log(res);
+                Logger.log('crproposal', res);
                 resolve(res.data);
             }, (err) => {
-                console.error(err);
+                Logger.error('crproposal', err);
                 reject(err);
             });
         });
@@ -74,12 +75,12 @@ export class ProposalService {
         let apiUrl = await this.getCRProposalAPI();
 
         return new Promise((resolve, reject)=>{
-            console.log('Fetching searched proposal for status: ' + status, + 'with search: ' + search);
+            Logger.log('crproposal', 'Fetching searched proposal for status: ' + status, + 'with search: ' + search);
             this.http.get<any>(apiUrl+'/api/cvote/all_search?page='+page+'&results=10&status='+status+'&search='+search).subscribe((res: ProposalsSearchResponse) => {
-                console.log(res);
+                Logger.log('crproposal', res);
                 resolve(res);
             }, (err) => {
-                console.error(err);
+                Logger.error('crproposal', err);
                 reject(err);
             });
         });
@@ -89,12 +90,12 @@ export class ProposalService {
         let apiUrl = await this.getCRProposalAPI();
 
         return new Promise((resolve, reject)=>{
-            console.log('Fetching suggestion details for suggestion '+suggestionId+'...');
+            Logger.log('crproposal', 'Fetching suggestion details for suggestion '+suggestionId+'...');
             this.http.get<any>(apiUrl+'/api/suggestion/get_suggestion/'+suggestionId).subscribe((res: SuggestionDetailsResponse) => {
-                console.log(res);
+                Logger.log('crproposal', res);
                 resolve(res.data);
             }, (err) => {
-                console.error(err);
+                Logger.error('crproposal', err);
                 reject(err);
             });
         });
@@ -106,7 +107,7 @@ export class ProposalService {
      */
     public sendProposalCommandResponseToCallbackURL(callbackUrl: string, jwtToken: string): Promise<void> {
         return new Promise((resolve, reject)=>{
-            console.log("Calling callback url: "+callbackUrl);
+            Logger.log('crproposal', "Calling callback url: "+callbackUrl);
 
             let headers = new HttpHeaders({
                 'Content-Type': 'application/json'
@@ -115,10 +116,10 @@ export class ProposalService {
             this.http.post<any>(callbackUrl, {
                 jwt: jwtToken
             }, { headers: headers }).subscribe((res) => {
-                console.log("Callback url response success", res);
+                Logger.log('crproposal', "Callback url response success", res);
                 resolve();
             }, (err) => {
-                console.error(err);
+                Logger.error('crproposal', err);
 
                 if (err.error && err.error.message)
                     reject(err.error.message); // Improved message

@@ -8,6 +8,7 @@ import { Events } from "../../services/events.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
+import { Logger } from "src/app/logger";
 
 type CredentialDisplayEntry = {
     credential: DIDPlugin.VerifiableCredential;
@@ -51,17 +52,15 @@ export class PublishPage {
             });
         });
 
-        console.log('----PublishPage ngOnInit')
-
         this._publishableCredentials = [];
         this.profileService.visibleCredentials.forEach(val => this._publishableCredentials.push(Object.assign({}, val)));
         this.profileService.invisibleCredentials.forEach(val => {
             if (val.credential.getSubject().hasOwnProperty("apppackage") || (val.credential.getFragment() == "avatar" && val.credential.getSubject().hasOwnProperty["data"]))
                 this._publishableCredentials.push(val);
-            //console.log("av " + JSON.stringify(val.credential.getFragment()));
+            //Logger.log('Identity', "av " + JSON.stringify(val.credential.getFragment()));
 
         });
-        //console.log("pc " + this._publishableCredentials.length);
+        //Logger.log('Identity', "pc " + this._publishableCredentials.length);
 
         // this.events.subscribe(
         //     "did:publicationstatus",
@@ -73,7 +72,7 @@ export class PublishPage {
         // );
 
         // this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
-        //     console.log("Publish avatar?", publishAvatar);
+        //     Logger.log('Identity', "Publish avatar?", publishAvatar);
         //     // When the did document content changes, we rebuild our profile entries on screen.
         //     this.init(publishAvatar);
         // });
@@ -152,8 +151,8 @@ export class PublishPage {
 
 
     onVisibilityChange(e, entry: CredentialDisplayEntry) {
-        console.log(entry.credential.getId());
-        console.log(entry.credential.getFragment());
+        Logger.log('Identity', entry.credential.getId());
+        Logger.log('Identity', entry.credential.getFragment());
         this.profileService.setCredentialVisibility(entry.credential.getFragment(), e);
         this.profileService.updateDIDDocument();
     }

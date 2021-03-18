@@ -146,7 +146,7 @@ export class IdentityService {
                 this.uxService.goToLauncer();
             }
             else {
-                console.warn("Failed to authentify using master password. Sign in not permitted.");
+                Logger.warn('didsessions', "Failed to authentify using master password. Sign in not permitted.");
             }
         }
         catch (e) {
@@ -287,7 +287,7 @@ export class IdentityService {
      */
     async startImportingMnemonic(existingMnemonic?: string) {
         this.identityBeingCreated = new NewIdentity();
-
+        Logger.log('didsessions', "startImportingMnemonic existingMnemonic:", existingMnemonic);
         if (!existingMnemonic) {
             Logger.log('didsessions', "Navigating to import DID");
             this.navigateWithCompletion("importdid", async (mnemonic)=>{
@@ -454,7 +454,7 @@ export class IdentityService {
             didManager.deleteDidStore(didStoreId, ()=>{
                 resolve();
             }, (err)=>{
-                console.error(err);
+                Logger.error('didsessions', err);
                 resolve();
             });
         });
@@ -580,15 +580,15 @@ export class IdentityService {
         }
 
         this.uxService.go(
-            route, 
-            {  
+            route,
+            {
                 'enterEvent': enterEvent,
                 "toto": 1
             }
          /*    {
                 queryParams: {
                     enterEvent: enterEvent
-                }, 
+                },
                 state: {
                     'enterEvent': enterEvent,
                     "toto": 1

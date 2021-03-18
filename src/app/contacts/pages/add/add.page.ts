@@ -9,6 +9,7 @@ import { DidService } from '../../services/did.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-add',
@@ -55,7 +56,7 @@ export class AddPage implements OnInit {
   }
 
   async addContact() {
-    console.log(this.didInput.length, 'DID INPUT LENGTH')
+    Logger.log('contacts', this.didInput.length, 'DID INPUT LENGTH')
     if(this.didInput.length < 33 || this.didInput.slice(0,11) !== 'did:elastos') {
       this.didInput = "";
       this.native.genericToast(this.translate.instant('please-add-a-valid-identity'));
@@ -63,7 +64,7 @@ export class AddPage implements OnInit {
       this.native.genericToast('please-dont-add-self');
     } else {
       this.native.showLoading('please-wait');
-      console.log("Resolving DID Document");
+      Logger.log('contacts', "Resolving DID Document");
 
       await this.friendsService.resolveDIDDocument(this.didInput, false);
       this.native.hideLoading();

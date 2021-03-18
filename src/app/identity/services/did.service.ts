@@ -76,7 +76,7 @@ export class DIDService {
   public activateDidStore(storeId: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       if (storeId == null) {
-        console.error("Impossible to activate a null store id!");
+        Logger.error('identity', "Impossible to activate a null store id!");
         resolve(false);
         return;
       }
@@ -117,7 +117,7 @@ export class DIDService {
 
     return new Promise(async (resolve, reject) => {
       if (didString == null) {
-        console.error("Impossible to activate a null did string!");
+        Logger.error('identity', "Impossible to activate a null did string!");
         resolve(false);
         return;
       }
@@ -132,7 +132,7 @@ export class DIDService {
         let did = this.getActiveDidStore().findDidByString(didString);
         if (!did) {
           // Just in case, should not happen but for robustness...
-          console.error("No DID found! Failed to activate DID");
+          Logger.error('identity', "No DID found! Failed to activate DID");
           resolve(false);
           return;
         }
@@ -143,7 +143,7 @@ export class DIDService {
         resolve(true);
       } catch (e) {
         // Failed to load this full DID content
-        console.error(e);
+        Logger.error('identity', e);
         resolve(false);
       }
     });
@@ -153,14 +153,14 @@ export class DIDService {
     Logger.log('identity', "Showing DID Store " + storeId + " with DID " + didString);
     let couldEnableStore = await this.activateDid(storeId, didString);
     if (!couldEnableStore) {
-      console.error("Unable to load the previously selected DID store");
+      Logger.error('identity', "Unable to load the previously selected DID store");
       this.handleNull(); // TODO: go to DID list instead
     } else {
       if (this.getActiveDid() !== null) this.native.setRootRouter("/myprofile");
       // this.native.setRootRouter('/noidentity');
       else {
         // Oops, no active DID...
-        console.warn("No active DID in this store!");
+        Logger.warn('identity', "No active DID in this store!");
         throw Error("No active DID in this store!");
       }
     }

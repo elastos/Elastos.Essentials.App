@@ -17,6 +17,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-friends',
@@ -59,7 +60,7 @@ export class FriendsPage implements OnInit {
   ionViewWillEnter() {
     this.subscription = this.events.subscribe("friends:updateSlider", () => {
       this.zone.run(() => {
-        console.log('friends:updateSlider event');
+        Logger.log('contacts', 'friends:updateSlider event');
         this.getActiveSlide();
       });
     });
@@ -95,7 +96,7 @@ export class FriendsPage implements OnInit {
   }
 
   async getContacts() {
-    console.log('Initializing home - "friends" pg');
+    Logger.log('contacts', 'Initializing home - "friends" pg');
     await this.getActiveSlide();
   }
 
@@ -103,9 +104,9 @@ export class FriendsPage implements OnInit {
     if(this.friendsService.contacts.length) {
       const index = await this.slider.getActiveIndex();
       this.friendsService.activeSlide = this.friendsService.contacts[index] || this.friendsService.contacts[this.friendsService.contacts.length - 1];
-      console.log('friends.getActiveSlide - ', this.friendsService.activeSlide);
+      Logger.log('contacts', 'friends.getActiveSlide - ', this.friendsService.activeSlide);
     } else {
-      console.log('friends.getActiveSlide - No contacts');
+      Logger.log('contacts', 'friends.getActiveSlide - No contacts');
     }
   }
 

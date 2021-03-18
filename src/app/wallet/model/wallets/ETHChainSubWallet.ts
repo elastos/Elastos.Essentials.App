@@ -11,6 +11,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
+import { Logger } from 'src/app/logger';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -179,7 +180,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
     public async getERC20TokenList(): Promise<WalletPlugin.ERC20TokenInfo[]> {
         const address = await this.getTokenAddress();
         const tokenlist = await walletManager.getERC20TokenList(address);
-        console.log('getERC20TokenList:', tokenlist);
+        Logger.log('wallet', 'getERC20TokenList:', tokenlist);
         return tokenlist;
     }
 
@@ -211,7 +212,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
         //     // Estimate gas cost
         //     gasLimit = await method.estimateGas();
         // } catch (error) {
-        //     console.log('estimateGas error:', error);
+        //     Logger.log('wallet', 'estimateGas error:', error);
         // }
 
         const data = method.encodeABI();

@@ -10,6 +10,7 @@ import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { CredIssueIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
+import { Logger } from 'src/app/logger';
 
 // TODO: Verify and show clear errors in case data is missing in credentials (expiration date, issuer, etc).
 // TODO: Resolve issuer's DID and try to display more user friendly information about the issuer
@@ -86,7 +87,7 @@ export class CredentialIssueRequestPage {
       this.runPreliminaryChecks();
       this.organizeDisplayableInformation();
 
-      console.log("Displayable credential:", this.displayableCredential)
+      Logger.log('Identity', "Displayable credential:", this.displayableCredential)
     });
   }
 
@@ -146,7 +147,7 @@ export class CredentialIssueRequestPage {
     // Save the credentials to user's DID.
     // NOTE: For now we save all credentials, we can't select them individually.
     AuthService.instance.checkPasswordThenExecute(async ()=>{
-      console.log("CredIssueRequest - issuing credential");
+      Logger.log('Identity', "CredIssueRequest - issuing credential");
 
       let validityDays = (this.displayableCredential.expirationDate.getTime() - Date.now()) / 1000 / 60 / 60 / 24;
 
@@ -159,7 +160,7 @@ export class CredentialIssueRequestPage {
         this.authService.getCurrentUserPassword(),
         (issuedCredential)=>{
           this.popup.ionicAlert(this.translate.instant('credential-issued'), this.translate.instant('credential-issued-success'),this.translate.instant('done')).then(async ()=>{
-            console.log("Sending credissue intent response for intent id "+this.receivedIntent.intentId)
+            Logger.log('Identity', "Sending credissue intent response for intent id "+this.receivedIntent.intentId)
             let credentialAsString = await issuedCredential.toString();
             await this.appServices.sendIntentResponse("credissue", {
               credential: credentialAsString

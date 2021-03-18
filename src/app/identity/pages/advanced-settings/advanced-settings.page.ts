@@ -6,6 +6,7 @@ import { DIDService } from '../../services/did.service';
 import { Native } from '../../services/native';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-advanced-settings',
@@ -39,13 +40,13 @@ export class AdvancedSettingsPage implements OnInit {
         const res = await this.didService.activeDidStore.synchronize(
           AuthService.instance.getCurrentUserPassword()
         );
-        console.log(res);
+        Logger.log('Identity', res);
         this.events.publish('did:didchanged');
         this.native.go("/identity/myprofile");
         this.native.hideLoading();
         this.native.toast_trans('did-sync-success');
       }, () => {
-        console.log("Password operation cancelled");
+        Logger.log('Identity', "Password operation cancelled");
       },
       true,
       true

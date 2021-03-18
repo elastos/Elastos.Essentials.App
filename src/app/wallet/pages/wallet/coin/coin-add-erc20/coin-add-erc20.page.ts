@@ -18,6 +18,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -72,7 +73,7 @@ export class CoinAddERC20Page implements OnInit {
             this.rootPage = navigation.extras.state.rootPage;
             this.coinAddress = navigation.extras.state.contract;
             this.checkCoinAddress();
-            console.log('Received intent - checking coin address', this.coinAddress);
+            Logger.log('wallet', 'Received intent - checking coin address', this.coinAddress);
         }
     }
 
@@ -97,7 +98,7 @@ export class CoinAddERC20Page implements OnInit {
 
     getAllCustomERC20Coins() {
         this.allCustomERC20Coins = this.coinService.getAvailableERC20Coins();
-        console.log('All available erc20tokens', this.allCustomERC20Coins);
+        Logger.log('wallet', 'All available erc20tokens', this.allCustomERC20Coins);
     }
 
     /**
@@ -107,7 +108,7 @@ export class CoinAddERC20Page implements OnInit {
         let res: { result: { scannedContent: string }} = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
         if (res && res.result && res.result.scannedContent) {
             this.coinAddress = res.result.scannedContent;
-            console.log('Got scanned content:', this.coinAddress);
+            Logger.log('wallet', 'Got scanned content:', this.coinAddress);
             this.checkCoinAddress();
         }
     }
@@ -134,7 +135,7 @@ export class CoinAddERC20Page implements OnInit {
     coinAlreadyAdded(address: string): boolean {
         const targetCoin = this.allCustomERC20Coins.find((coin) => coin.getContractAddress() === address);
         if (targetCoin) {
-            console.log('Address already exists', address);
+            Logger.log('wallet', 'Address already exists', address);
             return true;
         } else {
             return false;
@@ -159,25 +160,25 @@ export class CoinAddERC20Page implements OnInit {
             try {
                 const contractCode = await this.erc20CoinService.isContractAddress(address);
                 if (!contractCode) {
-                    console.log("Contract at "+address+" does not exist");
+                    Logger.log('wallet', "Contract at "+address+" does not exist");
                     this.fetchingCoinInfo = false;
                     this.native.toast_trans('coin-adderc20-not-found');
                 } else {
-                    console.log("Found contract at address " + address);
+                    Logger.log('wallet', "Found contract at address " + address);
                     const coinInfo = await this.erc20CoinService.getCoinInfo(address, ethAccountAddress);
 
                     this.coinName = coinInfo.coinName;
-                    console.log("Coin name", this.coinName);
+                    Logger.log('wallet', "Coin name", this.coinName);
 
                     this.coinSymbol = coinInfo.coinSymbol;
-                    console.log("Coin symbol", this.coinSymbol);
+                    Logger.log('wallet', "Coin symbol", this.coinSymbol);
 
                     this.coinInfoFetched = true;
                     this.fetchingCoinInfo = false;
                 }
             } catch (e) {
                 this.fetchingCoinInfo = false;
-                console.log("Contract call exception - invalid contract? Not ERC20?");
+                Logger.log('wallet', "Contract call exception - invalid contract? Not ERC20?");
                 this.popup.ionicAlert("error", "coin-adderc20-invalid-contract-or-network-error", "Ok");
             }
         }

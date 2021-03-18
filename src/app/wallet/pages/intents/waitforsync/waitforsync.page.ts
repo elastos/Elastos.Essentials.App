@@ -17,6 +17,7 @@ import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 
 @Component({
@@ -88,8 +89,8 @@ export class WaitForSyncPage implements OnInit {
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
         this.subWallet = this.masterWallet.subWallets[this.chainId];
 
-        console.log("Wait for sync - Master wallet:", this.masterWallet, "Chain ID:", this.chainId, "SubWallet:", this.subWallet);
-        console.log('Intent Transfer params', this.coinTransferService.intentTransfer);
+        Logger.log('wallet', "Wait for sync - Master wallet:", this.masterWallet, "Chain ID:", this.chainId, "SubWallet:", this.subWallet);
+        Logger.log('wallet', 'Intent Transfer params', this.coinTransferService.intentTransfer);
 
         switch (this.coinTransferService.intentTransfer.action) {
             case 'crmembervote':
@@ -133,7 +134,7 @@ export class WaitForSyncPage implements OnInit {
                 this.nextScreen = '/crproposalvoteagainst';
                 break;
             default:
-                console.log('Please check the action - ' + this.action + ' is not supported.');
+                Logger.log('wallet', 'Please check the action - ' + this.action + ' is not supported.');
                 break;
         }
 
@@ -149,7 +150,7 @@ export class WaitForSyncPage implements OnInit {
         if (this.masterWallet.subWallets[this.chainId].progress !== 100) {
             const eventType = this.masterWallet.id + ':' + this.chainId + ':synccompleted';
             this.waitSubscription = this.events.subscribe(eventType, (coin) => {
-                console.log('WaitforsyncPage coin:', coin);
+                Logger.log('wallet', 'WaitforsyncPage coin:', coin);
                 this.doAction();
                 this.waitSubscription.unsubscribe();
             });

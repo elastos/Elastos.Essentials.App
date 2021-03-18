@@ -14,6 +14,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-wallet-settings',
@@ -117,7 +118,7 @@ export class WalletSettingsPage implements OnInit {
     ngOnInit() {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
-        console.log('Settings for master wallet - ' + this.masterWallet);
+        Logger.log('wallet', 'Settings for master wallet - ' + this.masterWallet);
         this.getMasterWalletBasicInfo();
     }
 
@@ -135,7 +136,7 @@ export class WalletSettingsPage implements OnInit {
                 this.native.go('/mnemonic-export', { payPassword: payPassword });
             }
         } catch (e) {
-            console.error('MnemonicExportPage getWalletPassword error:' + e);
+            Logger.error('wallet', 'MnemonicExportPage getWalletPassword error:' + e);
         }
     }
 
@@ -149,7 +150,7 @@ export class WalletSettingsPage implements OnInit {
                 }
             }
         } catch (e) {
-            console.error('onDelete getWalletPassword error:' + e);
+            Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
         }
     }
 
@@ -162,7 +163,7 @@ export class WalletSettingsPage implements OnInit {
     }
 
     private async getMasterWalletBasicInfo() {
-        console.log("2", this.masterWalletId);
+        Logger.log('wallet', "2", this.masterWalletId);
         let ret = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.masterWalletId);
 
         this.masterWalletType = ret["Type"];

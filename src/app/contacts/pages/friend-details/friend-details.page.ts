@@ -21,6 +21,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
 
 
 type DisplayableAppInfo = {
@@ -74,7 +75,7 @@ export class FriendDetailsPage implements OnInit {
         }
       });
 
-      console.log('Contact profile for', this.contact);
+      Logger.log('contacts', 'Contact profile for', this.contact);
       this.buildDisplayableAppsInfo();
     });
   }
@@ -102,13 +103,13 @@ export class FriendDetailsPage implements OnInit {
     this.contactsApps = [];
 
     if (this.contact.credentials.applicationProfileCredentials.length > 0) {
-      console.log('Contact\'s app creds ', this.contact.credentials.applicationProfileCredentials);
+      Logger.log('contacts', 'Contact\'s app creds ', this.contact.credentials.applicationProfileCredentials);
 
       let fetchCount = this.contact.credentials.applicationProfileCredentials.length;
       this.fetchingApps = true;
       this.contact.credentials.applicationProfileCredentials.forEach((apc)=>{
         this.http.get<DApp>('https://dapp-store.elastos.org/apps/' + apc.apppackage + '/manifest').subscribe((manifest: DApp) => {
-          console.log('Got app!', manifest);
+          Logger.log('contacts', 'Got app!', manifest);
           this.zone.run(async () => {
             this.contactsApps.push({
               packageId: apc.apppackage,
@@ -122,7 +123,7 @@ export class FriendDetailsPage implements OnInit {
               this.fetchingApps = false;
           });
         }, (err) => {
-          console.log("HTTP ERROR " + JSON.stringify(err));
+          Logger.log('contacts', "HTTP ERROR " + JSON.stringify(err));
           this.zone.run(async () => {
             this.contactsApps.push({
               packageId: apc.apppackage,
@@ -136,11 +137,11 @@ export class FriendDetailsPage implements OnInit {
               this.fetchingApps = false;
           });
         });
-        console.log('Updated apps for contact profile', this.contactsApps);
+        Logger.log('contacts', 'Updated apps for contact profile', this.contactsApps);
       });
     }
     else {
-      console.log("No application profile credential found in this contact's profile.");
+      Logger.log('contacts', "No application profile credential found in this contact's profile.");
     }
   }
 
@@ -154,11 +155,11 @@ export class FriendDetailsPage implements OnInit {
 
   // Find app in marketplace, if marketplace is not installed, automatically install app //
   discoverApp(appId: string) {
-    /* TODO - remove? console.log('Inquiring app in app-store..', appId);
+    /* TODO - remove? Logger.log('contacts', 'Inquiring app in app-store..', appId);
     this.globalIntentService.sendIntent("appdetails", appId, {}, (res) => {
-      console.log(res)
+      Logger.log('contacts', res)
     }, (err) => {
-      console.error(err);
+      Logger.error('contacts', err);
       this.globalIntentService.sendIntent(
         "app",
         { id: appId },
@@ -171,7 +172,7 @@ export class FriendDetailsPage implements OnInit {
   connectApp(appId: string) {
     const targetAppCred = this.contact.credentials.applicationProfileCredentials.find((appCred) => appCred.apppackage === appId);
     if(targetAppCred) {
-      console.log('Launching appCred: ' + targetAppCred, 'appManifest: ', appId);
+      Logger.log('contacts', 'Launching appCred: ' + targetAppCred, 'appManifest: ', appId);
 
       let passedFields = {};
       for (let key of Object.keys(targetAppCred)) {
@@ -182,17 +183,17 @@ export class FriendDetailsPage implements OnInit {
         passedFields[key] = targetAppCred[key];
       }
 
-      console.log("Passing fields to the connectapplicationprofile intent:", passedFields);
+      Logger.log('contacts', "Passing fields to the connectapplicationprofile intent:", passedFields);
 
       /* TODO - Remove? this.globalIntentService.sendIntent(
         "connectapplicationprofile",
         passedFields,
         { appId: appId },
         () => {
-        console.log("connectapplicationprofile intent success");
+        Logger.log('contacts', "connectapplicationprofile intent success");
       }, (err) => {
         this.appService.startApp(appId);
-        console.error("connectapplicationprofile intent error", err);
+        Logger.error('contacts', "connectapplicationprofile intent error", err);
       });*/
     }
   }

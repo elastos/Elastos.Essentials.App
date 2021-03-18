@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isString } from 'lodash';
+import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 
@@ -22,7 +23,7 @@ export class Native {
   public log(message: any, type: string): void {
     // if (Config.isDebug) {
       let msg = type +  ": " + (isString(message) ? message : JSON.stringify(message));
-      console.log(msg);
+      Logger.log('Identity', msg);
     // }
   }
 
@@ -53,7 +54,7 @@ export class Native {
 
   // Sensitive data should not be passed through queryParams
   public async go(page: any, options: any = {}) {
-    console.log("NAV - Going to " + page);
+    Logger.log('Identity', "NAV - Going to " + page);
     await this.hideLoading();
     this.nav.navigateTo(App.IDENTITY, page, { state: options });
   }
@@ -63,7 +64,7 @@ export class Native {
   }
 
   public async setRootRouter(page: any,  options: any = {}) {
-    console.log("NAV - Setting root to " + page);
+    Logger.log('Identity', "NAV - Setting root to " + page);
     await this.hideLoading();
     this.nav.navigateRoot(App.IDENTITY, page, { state: options });
   }

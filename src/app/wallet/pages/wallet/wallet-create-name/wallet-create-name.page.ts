@@ -5,6 +5,7 @@ import { Util } from '../../../model/Util';
 import { ActivatedRoute } from '@angular/router';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-wallet-create-name',
@@ -24,7 +25,7 @@ export class WalletCreateNamePage implements OnInit {
     }
 
     ngOnInit() {
-        console.log('ngOnInit WalletCreateNamePage');
+        Logger.log('wallet', 'ngOnInit WalletCreateNamePage');
     }
 
     import() {
