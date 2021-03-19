@@ -24,6 +24,20 @@ ion-header {
                 font-weight: 600;
                 text-align: center;
             }
+
+            .badge {
+                position: relative;
+
+                .red-dot {
+                    height: 10px;
+                    width: 10px;
+                    background: red;
+                    border-radius: 100%;
+                    position: absolute;
+                    top: -5px;
+                    right: -5px;
+                }
+            }
         }
     }
   

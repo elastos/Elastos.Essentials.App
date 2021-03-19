@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
@@ -13,6 +13,8 @@ import {
 import { TipsService } from '../../services/tips.service';
 import { Events } from '../../services/events.service';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-notifications',
@@ -20,9 +22,7 @@ import { Logger } from 'src/app/logger';
   styleUrls: ['./notifications.page.scss'],
 })
 export class NotificationsPage implements OnInit {
-
-  public notifications = [
-  ];
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -35,7 +35,17 @@ export class NotificationsPage implements OnInit {
   ) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.notificationService.resetNewNotifications();
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
+    this.titleBar.addOnItemClickedListener((icon) => {
+      this.modalController.dismiss();
+    });
+  }
 
   sanitize(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -70,7 +80,7 @@ export class NotificationsPage implements OnInit {
   }
 
   async close(notification: LauncherNotification) {
-    this.notificationService.deleteNotification(notification.notificationId);
+    this.notificationService.clearNotification(notification.notificationId);
 
     if (notification.type == LauncherNotificationType.TIP) {
       // Dismissed tip = mark as viewed to not bother user again with it.
@@ -91,6 +101,7 @@ export class NotificationsPage implements OnInit {
   }
 
   getNotificationIcon(notification: LauncherNotification) {
+    console.log('NOTIFICATION', notification);
     if (notification.type === LauncherNotificationType.SYSTEM) {
       if (this.theme.activeTheme.value == AppTheme.DARK) {
         return "assets/icons/dark_mode/elalogo.svg";
@@ -103,8 +114,8 @@ export class NotificationsPage implements OnInit {
       } else {
         return "assets/icons/contact.png";
       }
-    } else if (notification.type === LauncherNotificationType.NORMAL) {
-      return this.sanitize(notification.app.icons[0].src);
+    } else if (notification.type === LauncherNotificationType.NORMAL && notification.app) {
+      return this.notificationService.getAppIcon(notification.app);
     } else {
       if (this.theme.activeTheme.value == AppTheme.DARK) {
         return "assets/icons/dark_mode/elalogo.svg";
@@ -115,23 +126,20 @@ export class NotificationsPage implements OnInit {
   }
 
   getNotificationHeader(notification: LauncherNotification) {
-    // if (notification.app)
-    //   Logger.log('Launcher', "ICON :"+JSON.stringify(notification.app.icons))
-
     if (notification.type === LauncherNotificationType.CONTACT) {
       if (notification.contactName)
         return notification.contactName;
       else
         return this.translate.instant('from-unknown-contact');
     }
-    else if (notification.app && notification.app.name) {
-      return notification.app.name;
+    else if (notification.app) {
+      return this.notificationService.getAppTitle(notification.app);
     }
     else if (notification.type == LauncherNotificationType.TIP) {
       return this.translate.instant('tip-of-the-day');
     }
     else {
-      return this.translate.instant('system-notification' ); // Default if no title or if system
+      return this.translate.instant('system-notification'); // Default if no title or if system
     }
   }
 

@@ -1,6 +1,19 @@
-import { Injectable, NgZone } from "@angular/core";
-import { Platform } from "@ionic/angular";
-import { ContactAvatar } from "./contactnotifier.service";
+import { Injectable } from "@angular/core";
+
+export enum App {
+    DID_SESSIONS = "didsessions",
+    LAUNCHER = "launcher",
+    IDENTITY = "identity",
+    CONTACTS = "contacts",
+    WALLET = "wallet",
+    CRCOUNCIL_VOTING = "crcouncilvoting",
+    CRPROPOSAL_VOTING = "crproposalvoting",
+    DEVELOPER_TOOLS = "developertools",
+    DPOS_VOTING = "dposvoting",
+    HIVE_MANAGER = "hivemanager",
+    SETTINGS = "settings",
+    SCANNER = "scanner"
+}
 
 /**
  * Object used to generate a notification.
@@ -12,9 +25,11 @@ export type NotificationRequest = {
     title: string;
     /** Detailed message for this notification. */
     message: string;
-    /** Intent URL emitted when the notification is clicked. */
+    /** App that sent notification */
+    app?: App;
+
+    /** Process of deprecating **/
     url?: string;
-    /** Contact DID emitting this notification, in case of a remotely received notification. */
     emitter?: string;
 }
 
@@ -24,21 +39,23 @@ export type NotificationRequest = {
 export type Notification = NotificationRequest & {
     /** Unique identifier for each notification. */
     notificationId: string;
-    /** Identification key used to overwrite a previous notification (for the same app id) if it has the same key. */
-    key: string;
-    /** Package ID of the sending app. */
-    appId: string;
     /** timestamp of the notification. */
     sent_date: number;
+
+    /** Process of deprecating **/
+    appId?: string;
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class GlobalNotificationsService {
-    constructor(
-        private platform: Platform
-    ) {
+
+    public newNotifications = 0;
+    public notifications: Notification[] = [];
+    private itemClickedListeners: ((notification) => void)[] = [];
+
+    constructor() {
     }
 
     /**
@@ -51,19 +68,19 @@ export class GlobalNotificationsService {
     * @returns A promise that can be awaited and catched in case or error.
     */
     public async sendNotification(request: NotificationRequest): Promise<void> {
-        // TODO @chad
+        this.newNotifications++;
+        this.notifications = this.notifications.filter(notification => notification.notificationId !== request.key);
+        this.notifications.push({
+            key: request.key,
+            title: request.title,
+            message: request.message,
+            app: request.app ? request.app : null,
+            notificationId: request.key ,
+            sent_date: Date.now()
+        });
 
+        console.log('Notifications', this.notifications);
         return null;
-    }
-
-    /**
-     * Registers a callback that will receive all the incoming in-app notifications (sent by this instance
-     * of elastOS/Trinity or by a remote contact).
-     *
-     * @param onNotification Callback passing the received notification info.
-     */
-    public setNotificationListener(onNotification: (notification: Notification) => void) {
-        // TODO @chad
     }
 
     /**
@@ -72,8 +89,7 @@ export class GlobalNotificationsService {
      * @returns Unread notifications.
      */
     public async getNotifications(): Promise<Notification[]> {
-        // TODO @chad
-        return [];
+        return this.notifications;
     }
 
     /**
@@ -82,6 +98,10 @@ export class GlobalNotificationsService {
      * @param notificationId Notification ID
      */
     public clearNotification(notificationId: string) {
-        // TODO @chad
+        this.notifications = this.notifications.filter(notification => notification.notificationId !== notificationId);
+    }
+
+    public setNotificationListener(onNotification: (notification: Notification) => void) {
+        this.itemClickedListeners.push(onNotification);
     }
 }

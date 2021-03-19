@@ -4,6 +4,7 @@ import { PopoverController } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon, TitleBarForegroundMode } from './titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 
 @Component({
   selector: 'app-titlebar',
@@ -43,6 +44,7 @@ export class TitleBarComponent {
     public themeService: GlobalThemeService,
     private popoverCtrl: PopoverController,
     private globalNav: GlobalNavService,
+    public globalNotifications: GlobalNotificationsService,
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
       this.setTitleBarTheme(activeTheme);
@@ -180,6 +182,8 @@ export class TitleBarComponent {
         return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/edit.svg' : 'assets/components/titlebar/darkmode/edit.svg';
       case BuiltInIcon.FAVORITE:
         return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/favorite.svg' : 'assets/components/titlebar/darkmode/favorite.svg';
+      case BuiltInIcon.NOTIFICATIONS:
+        return this.foregroundMode === TitleBarForegroundMode.DARK ? 'assets/components/titlebar/notification.svg' : 'assets/components/titlebar/darkmode/notification.svg';
       default:
         // Nothing, we'll use the real given path.
         return this.icons[iconSlot].iconPath;

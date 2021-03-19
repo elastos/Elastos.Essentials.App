@@ -7,9 +7,7 @@ import { HiveService } from './hive.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from './events.service';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-
-// TODO @chad declare let notificationManager: NotificationManagerPlugin.NotificationManager;
+import { GlobalNotificationsService, App } from 'src/app/services/global.notifications.service';
 
 @Injectable({
     providedIn: 'root'
@@ -24,8 +22,7 @@ export class BackgroundService {
         public events: Events,
         private storage: StorageService,
         private hiveService: HiveService,
-        private translate: TranslateService,
-        private didSessions: GlobalDIDSessionsService
+        private notificationsManager: GlobalNotificationsService
     ) {
     }
 
@@ -74,9 +71,9 @@ export class BackgroundService {
                 key: 'storagePlanExpiring',
                 title: 'Storage Plan Expiring',
                 message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
-                url: 'https://launcher.elastos.net/app?id=' + 'org.elastos.trinity.dapp.hivemanager'
+                app: App.HIVE_MANAGER
             };
-            // TODO @chad when the notif service is ready - notificationManager.sendNotification(notification);
+            this.notificationsManager.sendNotification(notification);
         }
     }
 }

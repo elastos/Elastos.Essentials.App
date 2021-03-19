@@ -26,7 +26,9 @@ export enum BuiltInIcon {
     /** Edit, a pen */
     EDIT = "edit",
     /** Favorite, a bookmark */
-    FAVORITE = "favorite"
+    FAVORITE = "favorite",
+    /** Notifications */
+    NOTIFICATIONS = "notifications"
 }
 
 export type TitleBarTheme = {

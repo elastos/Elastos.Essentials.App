@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ToastController, PopoverController } from '@ionic/angular';
+import { ToastController, PopoverController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
@@ -14,8 +14,10 @@ import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { NotificationsPage } from '../notifications/notifications.page';
+import { GlobalNotificationsService, App } from 'src/app/services/global.notifications.service';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +29,7 @@ export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private popover: any = null;
+  private modal: any = null;
 
   constructor(
     public toastCtrl: ToastController,
@@ -35,11 +38,12 @@ export class HomePage implements OnInit {
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
     public splashScreen: SplashScreen,
-    private notification: NotificationManagerService,
+    private notificationsService: GlobalNotificationsService,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private nav: GlobalNavService,
-    private pref: GlobalPreferencesService
+    private pref: GlobalPreferencesService,
+    private modalCtrl: ModalController
   ) {
   }
 
@@ -47,10 +51,26 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    // Show badge if there are notifications.
-    this.notification.getNotifications();
+ /*    const notification = {
+      key: 'storagePlanExpiring',
+      title: 'Storage Plan Expiring',
+      message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
+      app: App.LAUNCHER
+    };
+    this.notificationsService.sendNotification(notification); */
+
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+      key: "notifications",
+      iconPath:  BuiltInIcon.NOTIFICATIONS
+    });
+    this.titleBar.addOnItemClickedListener((icon) => {
+      if(icon.key === 'notifications') {
+        this.showNotifications();
+      }
+    });
+
     this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
       switch (networkCode) {
         case 'MainNet':
@@ -78,6 +98,16 @@ export class HomePage implements OnInit {
     if (this.popover) {
       this.popover.dimiss();
     }
+  }
+
+  async showNotifications() {
+    this.modal = await this.modalCtrl.create({
+        component: NotificationsPage,
+        cssClass: 'running-modal',
+        mode: 'ios',
+    });
+    this.modal.onDidDismiss().then(() => { this.modal = null; });
+    await this.modal.present();
   }
 
   /************** Show App/Identity Options **************/
