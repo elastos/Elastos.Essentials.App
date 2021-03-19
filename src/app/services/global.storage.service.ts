@@ -51,4 +51,9 @@ export class GlobalStorageService {
       return defaultValue;
     });
   }
+
+  public async deleteSetting(did: string | null, context: string, key: string): Promise<void> {
+    let fullKey = this.getFullStorageKey(did, context, key);
+    return this.storage.remove(fullKey);
+  }
 }

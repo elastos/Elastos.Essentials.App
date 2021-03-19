@@ -14,6 +14,10 @@ export class EssentialsDIDKeyValueStore implements Interfaces.IKeyValueStorage {
     get<T>(key: string, defaultValue: T): Promise<T> {
         return this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, this.context, key, defaultValue);
     }
+
+    unset(key: string): Promise<void> {
+        return this.storage.deleteSetting(GlobalDIDSessionsService.signedInDIDString, this.context, key);
+    }
 }
 
 class EssentialsLogger implements Interfaces.ILogger {
@@ -26,7 +30,6 @@ class EssentialsLogger implements Interfaces.ILogger {
     error(...args: any) {
         Logger.error.apply(Logger, ["connectivitysdk", ...args]);
     }
-
 }
 
 export class ElastosSDKHelper {
