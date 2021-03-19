@@ -86,7 +86,7 @@ export class FriendDetailsPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('contact-profile'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.appService.onTitleBarItemClicked(icon);
     });
   }
