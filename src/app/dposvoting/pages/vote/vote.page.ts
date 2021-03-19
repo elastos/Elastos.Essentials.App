@@ -7,6 +7,7 @@ import { StorageService } from '../../services/storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class VotePage implements OnInit {
 
   public isAndroid = false;
 
-  public onItemClickedListener: any;
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private platform: Platform,
@@ -53,12 +54,16 @@ export class VotePage implements OnInit {
 
   ionViewWillEnter() {
     /* TODO @chad titleBarManager.setupMenuItems([{key: 'registerApp', iconPath: TitleBarPlugin.BuiltInIcon.EDIT, title: 'Register Capsule'}]);
-    titleBarManager.addOnItemClickedListener(this.onItemClickedListener = (menuIcon) => {
+    titleBarManager.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon) => {
       if (menuIcon.key === "registerApp") {
         Logger.log('dposvoting', 'Menu item clicked');
         this.registerAppAlert();
       }
     });*/
+  }
+
+  ionViewWillLeave() {
+    // this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   //// Vote intent ////

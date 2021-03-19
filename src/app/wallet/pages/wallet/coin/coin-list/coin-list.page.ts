@@ -16,7 +16,7 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 
@@ -52,7 +52,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     private coinDeleteSubscription: Subscription = null;
 
     // Titlebar
-    private onItemClickedListener: any;
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
         public walletManager: WalletManager,
@@ -71,7 +71,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.titleBar.addOnItemClickedListener(this.onItemClickedListener = (menuIcon: TitleBarIcon) => {
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon: TitleBarIcon) => {
             if (menuIcon.key == "add-erc20-coin")
                 this.handleOnAddECR20Coin();
         });
@@ -90,8 +90,7 @@ export class CoinListPage implements OnInit, OnDestroy {
         this.unsubscribe(this.coinAddSubscription);
         this.unsubscribe(this.coinDeleteSubscription);
 
-        this.titleBar.removeOnItemClickedListener(this.onItemClickedListener);
-        this.onItemClickedListener = null;
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     ionViewWillEnter() {

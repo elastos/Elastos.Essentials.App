@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 export type EditProfileStateParams = {
@@ -25,6 +25,8 @@ export class EditProfilePage {
   private nextStepId: number = null;
   public isEdit: boolean = false;
   public name: string = ""; // Name being edited
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private uxService: UXService,
@@ -49,7 +51,7 @@ export class EditProfilePage {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
     this.titleBar.setNavigationMode(null);
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });
   }
@@ -61,6 +63,7 @@ export class EditProfilePage {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   async next() {

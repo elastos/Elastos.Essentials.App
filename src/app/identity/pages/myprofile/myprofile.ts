@@ -20,7 +20,7 @@ import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { Logger } from "src/app/logger";
-import { BuiltInIcon, TitleBarIconSlot } from "src/app/components/titlebar/titlebar.types";
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 
@@ -74,6 +74,8 @@ export class MyProfilePage {
   private credentialaddedSubscription: Subscription = null;
   private promptpublishdidSubscription: Subscription = null;
   private modifiedCredentialsSubscription: Subscription = null;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public events: Events,
@@ -222,7 +224,7 @@ export class MyProfilePage {
       iconPath: BuiltInIcon.SETTINGS
     });
 
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if (icon.key == "settings") {
         this.native.go('/identity/settings');
       }
@@ -238,6 +240,10 @@ export class MyProfilePage {
     Logger.log("identity",
       "MyProfilePage ionViewDidEnter did: " + this.profileService.didString
     );
+  }
+
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   async checkDidForPublish(identity: DID) {

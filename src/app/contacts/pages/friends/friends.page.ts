@@ -15,8 +15,8 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -30,6 +30,7 @@ export class FriendsPage implements OnInit {
 
   public favActive = false;
   private subscription: Subscription = null;
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   slideOpts = {
     initialSlide: 0,
@@ -49,7 +50,6 @@ export class FriendsPage implements OnInit {
     public uxService: UxService,
     private zone: NgZone,
     private events: Events,
-    private router: Router,
     private globalNav: GlobalNavService
   ) {
   }
@@ -71,18 +71,18 @@ export class FriendsPage implements OnInit {
       key: "add",
       iconPath:  BuiltInIcon.ADD
     });
-    this.titleBar.addOnItemClickedListener((icon) => {
-      this.appService.onTitleBarItemClicked(icon);
-    });
+
+    this.titleBarIconClickedListener = (clickedIcon) => {
+      this.appService.onTitleBarItemClicked(clickedIcon);
+    }
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener)
 
     this.getContacts();
   }
 
-  ionViewDidEnter() {
-  }
-
   ionViewWillLeave() {
-    this.subscription.unsubscribe()
+    this.subscription.unsubscribe();
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   changeList(activateFav: boolean) {

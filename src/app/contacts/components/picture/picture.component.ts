@@ -6,7 +6,7 @@ import { AppService } from '../../services/app.service';
 import { Avatar } from '../../models/avatar';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -19,6 +19,8 @@ export class PictureComponent implements OnInit {
 
   public oldAvatar: Avatar;
   public avatar: Avatar;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public appService: AppService,
@@ -47,9 +49,13 @@ export class PictureComponent implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Does not need key, all modals are dismissed on appService.onTitlebarItemClicked()
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.appService.onTitleBarItemClicked(icon);
     });
+  }
+
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   takePicture(sourceType: number) {

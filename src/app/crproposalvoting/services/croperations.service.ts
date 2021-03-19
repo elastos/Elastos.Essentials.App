@@ -1,8 +1,7 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { URL } from 'url';
 import { PopupService } from './popup.service';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -43,6 +42,7 @@ export type CreateSuggestionCommand = CRWebsiteCommand & {
 export class CROperationsService {
     private onGoingCreateSuggestionCommand: CreateSuggestionCommand;
     private onGoingVoteForProposalcommand: VoteForProposalCommand;
+
 
     constructor(
         private router: Router,

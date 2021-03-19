@@ -12,7 +12,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -41,6 +41,8 @@ export class CreateIdentityPage {
   public password: string = "";
   public passwordConfirmation: string = "";
 
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
   constructor(
     public router: Router,
     private platform: Platform,
@@ -65,7 +67,7 @@ export class CreateIdentityPage {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'backToRoot', iconPath: BuiltInIcon.BACK });
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
     this.titleBar.setNavigationMode(null);
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });
 
@@ -87,6 +89,7 @@ export class CreateIdentityPage {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   showSlider() {

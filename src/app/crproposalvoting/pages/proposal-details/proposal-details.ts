@@ -7,7 +7,7 @@ import { ProposalDetails, VoteResultType } from '../../model/proposal-details';
 import { UXService } from '../../services/ux.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -32,6 +32,8 @@ export class ProposalDetailsPage {
 
   activeTab = 1;
 
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
   constructor(
     public navCtrl: NavController,
     public uxService: UXService,
@@ -53,7 +55,7 @@ export class ProposalDetailsPage {
     // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle(this.translate.instant('loading-proposal'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if(icon.key === 'backToHome') {
         Logger.log('crproposal', 'LISTENING TO TITLEBAR!');
         this.nav.navigateRoot(App.CRCOUNCIL_VOTING, '/crproposalvoting/proposals/ALL');
@@ -80,6 +82,7 @@ export class ProposalDetailsPage {
 
   ionViewDidLeave() {
     this.titleBar.setTitle(this.translate.instant('proposals'));
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   addProposalDetails() {

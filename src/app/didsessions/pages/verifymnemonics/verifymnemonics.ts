@@ -8,7 +8,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 type MnemonicWord = {
@@ -28,6 +28,8 @@ export class VerifyMnemonicsPage {
     mnemonicStr: string;
     allWordsSelected: boolean = false;
 
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
     constructor(
       public router: Router,
       public zone: NgZone,
@@ -46,9 +48,13 @@ export class VerifyMnemonicsPage {
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
       this.titleBar.setNavigationMode(null);
-      this.titleBar.addOnItemClickedListener((icon) => {
+      this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
         this.uxService.onTitleBarItemClicked(icon);
       });
+    }
+
+    ionViewWillLeave() {
+      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     init() {

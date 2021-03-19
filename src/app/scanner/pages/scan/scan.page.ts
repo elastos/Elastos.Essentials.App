@@ -10,7 +10,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
@@ -37,6 +37,8 @@ export class ScanPage {
     loader: any = null;
     alert: any = null;
 
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
     constructor(
         public route: ActivatedRoute,
         private qrScanner: QRScanner,
@@ -58,7 +60,7 @@ export class ScanPage {
     ionViewWillEnter() {
         this.titleBar.setNavigationMode(null);
         this.showGalleryTitlebarKey(true);
-        this.titleBar.addOnItemClickedListener((clickedItem)=>{
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem)=>{
             if (clickedItem.key == "gallery") {
                 this.scanFromLibrary();
             }
@@ -74,6 +76,7 @@ export class ScanPage {
      * Leaving the page, do some cleanup.
      */
     async ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         this.zone.run(async () => {
             Logger.log("Scanner", "Scan view is leaving")
             this.stopScanning();

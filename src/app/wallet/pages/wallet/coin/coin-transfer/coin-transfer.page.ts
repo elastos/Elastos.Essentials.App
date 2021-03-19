@@ -48,7 +48,7 @@ import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
@@ -97,7 +97,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public CoinType = CoinType;
 
     // Titlebar
-    private onItemClickedListener: any;
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     // Modal
     private modal: any = null;
@@ -136,7 +136,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.addressName = null;
             });
         });
-        this.titleBar.addOnItemClickedListener(this.onItemClickedListener = (menuIcon: TitleBarIcon) => {
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon: TitleBarIcon) => {
             if (menuIcon.key === "cryptonames") {
                 this.showCryptonames();
             }
@@ -161,6 +161,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     ngOnDestroy() {
         if (this.addressUpdateSubscription) this.addressUpdateSubscription.unsubscribe();
         if (this.syncSubscription) this.syncSubscription.unsubscribe();
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     setContactsKeyVisibility(showKey: boolean) {

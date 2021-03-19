@@ -8,7 +8,7 @@ import { BasicCredentialEntry } from '../../model/basiccredentialentry.model';
 import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -20,6 +20,8 @@ export class ProfileEntryPickerPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   availableItems: BasicCredentialEntry[];
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private basicCredentialService: BasicCredentialsService,
@@ -40,12 +42,13 @@ export class ProfileEntryPickerPage {
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.modalCtrl.dismiss();
     });
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     // let the editprofile screen to show menu
     this.events.publish('editprofile-showmenu');
   }

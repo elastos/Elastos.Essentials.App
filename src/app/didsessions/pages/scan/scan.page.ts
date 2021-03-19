@@ -4,7 +4,7 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, TitleBarForegroundMode, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, TitleBarForegroundMode, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -15,6 +15,8 @@ import { Logger } from 'src/app/logger';
 export class ScanPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public scanning = false;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private qrScanner: QRScanner,
@@ -31,7 +33,7 @@ export class ScanPage implements OnInit {
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
     this.titleBar.setNavigationMode(null);
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
         this.uxService.onTitleBarItemClicked(icon);
     });
 
@@ -96,7 +98,8 @@ export class ScanPage implements OnInit {
     });
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     this.zone.run(() => {
       this.scanning = false;
     });

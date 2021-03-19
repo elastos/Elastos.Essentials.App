@@ -14,7 +14,7 @@ import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NotificationsPage } from '../notifications/notifications.page';
 import { GlobalNotificationsService, App } from 'src/app/services/global.notifications.service';
@@ -30,6 +30,7 @@ export class HomePage implements OnInit {
 
   private popover: any = null;
   private modal: any = null;
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public toastCtrl: ToastController,
@@ -65,7 +66,7 @@ export class HomePage implements OnInit {
       key: "notifications",
       iconPath:  BuiltInIcon.NOTIFICATIONS
     });
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if(icon.key === 'notifications') {
         this.showNotifications();
       }
@@ -95,6 +96,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.popover) {
       this.popover.dimiss();
     }

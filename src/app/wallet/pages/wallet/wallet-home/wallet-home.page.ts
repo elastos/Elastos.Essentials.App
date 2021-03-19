@@ -34,7 +34,7 @@ import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { UiService } from '../../../services/ui.service';
 import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
-import { IonSlides, NavController } from '@ionic/angular';
+import { IonSlides } from '@ionic/angular';
 import { BackupRestoreService } from '../../../services/backuprestore.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { Events } from '../../../services/events.service';
@@ -42,7 +42,7 @@ import { Subscription } from 'rxjs';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 
@@ -75,7 +75,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public SELA = Config.SELA;
 
     // Titlebar
-    private onItemClickedListener: any;
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
         private events: Events,
@@ -145,7 +145,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             key: "settings",
             iconPath: BuiltInIcon.SETTINGS
         });
-        this.titleBar.addOnItemClickedListener((icon) => {
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             if(icon.key === 'settings') {
                 this.native.go('wallet/settings');
             }
@@ -159,6 +159,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         if (this.native.popup) {
             this.native.popup.dismiss();
         }

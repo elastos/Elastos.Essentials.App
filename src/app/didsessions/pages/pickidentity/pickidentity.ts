@@ -8,7 +8,7 @@ import { Events } from 'src/app/didsessions/services/events.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -22,6 +22,8 @@ export class PickIdentityPage {
   groupedIdentities: IdentityGroup[] = [];
 
   popover: any = null;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public identityService: IdentityService,
@@ -50,13 +52,17 @@ export class PickIdentityPage {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.uxService.onTitleBarItemClicked(icon);
     });
 
     this.loadIdentities();
 
     this.identityService.getSignedIdentity();
+  }
+
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   async loadIdentities() {

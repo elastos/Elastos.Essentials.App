@@ -11,7 +11,7 @@ import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { Events } from 'src/app/didsessions/services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 /**
@@ -47,6 +47,8 @@ export class ImportDIDPage {
     private hideHandle: any;
     private scrollHeight: Number = -1;
     public hideButton = false;
+
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
         public router: Router,
@@ -90,7 +92,7 @@ export class ImportDIDPage {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
         this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
         this.titleBar.setNavigationMode(null);
-        this.titleBar.addOnItemClickedListener((icon) => {
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             this.uxService.onTitleBarItemClicked(icon);
         });
 
@@ -116,6 +118,7 @@ export class ImportDIDPage {
     ionViewWillLeave() {
         window.removeEventListener('native.keyboardshow', this.showHandle);
         window.removeEventListener('native.keyboardhide', this.hideHandle);
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         this.loadingIdentity = false;
     }
 

@@ -14,7 +14,7 @@ import { TipsService } from '../../services/tips.service';
 import { Events } from '../../services/events.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-notifications',
@@ -23,6 +23,8 @@ import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/title
 })
 export class NotificationsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -42,9 +44,13 @@ export class NotificationsPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.modalController.dismiss();
     });
+  }
+
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   sanitize(url: string) {

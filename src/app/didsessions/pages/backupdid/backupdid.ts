@@ -11,7 +11,7 @@ import { ModalController, IonSlides } from '@ionic/angular';
 import { PrintoptionsComponent } from '../../components/printoptions/printoptions.component';
 import { PrinterPlugin, CordovaPlugins } from 'src/app/TMP_STUBS';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -35,6 +35,8 @@ export class BackupDIDPage {
       speed: 400,
       init: false
     };
+
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
       public router: Router,
@@ -65,9 +67,13 @@ export class BackupDIDPage {
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
       this.titleBar.setNavigationMode(null);
-      this.titleBar.addOnItemClickedListener((icon) => {
+      this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
         this.uxService.onTitleBarItemClicked(icon);
       });
+    }
+
+    ionViewWillLeave() {
+      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     async getActiveSlide() {

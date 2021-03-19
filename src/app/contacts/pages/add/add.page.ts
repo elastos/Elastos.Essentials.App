@@ -8,7 +8,7 @@ import { AppService } from '../../services/app.service';
 import { DidService } from '../../services/did.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 @Component({
@@ -21,6 +21,8 @@ export class AddPage implements OnInit {
   @ViewChild('input', {static: false}) input: IonInput;
 
   didInput: string = '';
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public friendsService: FriendsService,
@@ -41,12 +43,13 @@ export class AddPage implements OnInit {
       key: "scan",
       iconPath: BuiltInIcon.SCAN
     });
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.appService.onTitleBarItemClicked(icon);
     });
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   ionViewDidEnter() {

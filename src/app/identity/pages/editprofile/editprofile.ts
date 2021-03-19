@@ -26,7 +26,7 @@ import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { TitleBarIconSlot } from "src/app/components/titlebar/titlebar.types";
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 
 @Component({
@@ -44,6 +44,8 @@ export class EditProfilePage {
 
   private selectCountrySubscription: Subscription = null;
   private showmenuSubscription: Subscription = null;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   option: any = {
     header: this.translate.instant("select-gender"),
@@ -94,6 +96,7 @@ export class EditProfilePage {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   /*   // Go to the countrypicker screen will trigger ionViewWillLeave
     if (!this.showSelectCountry) {
       this.next(false);
@@ -112,7 +115,7 @@ export class EditProfilePage {
       iconPath: "/assets/identity/icon/check-green.ico",
     });
 
-    this.titleBar.addOnItemClickedListener((menuIcon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon) => {
       if (menuIcon.key == "done") {
         this.next(false);
       }

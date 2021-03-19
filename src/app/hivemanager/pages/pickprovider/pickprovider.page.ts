@@ -9,7 +9,7 @@ import { PrefsService } from '../../services/prefs.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarMenuItem, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarMenuItem, BuiltInIcon, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
@@ -44,6 +44,8 @@ export class PickProviderPage implements OnInit {
   public storageProviders: StorageProvider[] = [];
 
   private menu: any;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public navCtrl: NavController,
@@ -112,7 +114,7 @@ export class PickProviderPage implements OnInit {
     this.titleBar.setMenuVisibility(true);
     this.titleBar.setupMenuItems(menuItems);
 
-    this.titleBar.addOnItemClickedListener(async (clickedIcon: TitleBarMenuItem) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (clickedIcon: TitleBarMenuItem) => {
       switch (clickedIcon.key) {
         case "pickprovider-adminproviders":
           this.goToAdminPanel();
@@ -142,6 +144,8 @@ export class PickProviderPage implements OnInit {
       this.popup.alertCtrl.dismiss();
       this.popup.alert = null;
     }
+
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   private async checkInitialStatus() {

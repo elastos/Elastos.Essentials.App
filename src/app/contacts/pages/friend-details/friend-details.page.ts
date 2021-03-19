@@ -19,7 +19,7 @@ import { Contact } from '../../models/contact.model';
 import { DApp } from '../../models/dapp.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 
@@ -43,6 +43,8 @@ export class FriendDetailsPage implements OnInit {
   public contactsApps: DisplayableAppInfo[] = [];
   public fetchingApps = false;
   public detailsActive = true;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public friendsService: FriendsService,
@@ -90,6 +92,7 @@ export class FriendDetailsPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   changeList(activateDetails: boolean) {
