@@ -145,7 +145,7 @@ export class ImportDIDPage {
             this.getMnemonicWordsFromChinese();
         }
         else {
-            this.mnemonicWords = this.mnemonicSentence.trim().split(" ");
+            this.mnemonicWords = this.mnemonicSentence.trim().replace(/[\r\n]/g,"").split(" ");
             this.mnemonicWords = this.mnemonicWords.filter(item => item !== '');
         }
     }
@@ -176,7 +176,7 @@ export class ImportDIDPage {
                 this.doImport();
             }
         });
-        this.uxService.modal.present();
+        await this.uxService.modal.present();
     }
 
     async promptStorePassword() {

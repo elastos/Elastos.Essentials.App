@@ -43,7 +43,7 @@ export class WalletAdvancedImportPage implements OnInit {
   }
 
   onMnemonicSentenceChanged() {
-    this.mnemonicWords = this.mnemonicSentence.trim().split(" ");
+    this.mnemonicWords = this.mnemonicSentence.trim().replace(/[\r\n]/g,"").split(" ");
     this.mnemonicWords = this.mnemonicWords.filter(item => item !== '');
   }
 
@@ -52,9 +52,6 @@ export class WalletAdvancedImportPage implements OnInit {
   }
 
   async onImport() {
-    // Logger.log('wallet', 'MNEMONIC SENTENCE', this.mnemonicSentence);
-    // Logger.log('wallet', 'MNEMONIC WORDS ARRAY', this.mnemonicWords);
-
     if (this.inputMnemonicCompleted()) {
         Logger.log('wallet', 'Input string is valid');
 
@@ -70,8 +67,6 @@ export class WalletAdvancedImportPage implements OnInit {
 
   async importWalletWithMnemonic(payPassword: string) {
     const mnemonicStr = this.mnemonicWords.join(' ').toLowerCase();
-    // Logger.log('wallet', 'MNEMONIC IMPORT', mnemonicStr);
-
     await this.walletManager.importMasterWalletWithMnemonic(
         this.masterWalletId,
         this.walletCreateService.name,
