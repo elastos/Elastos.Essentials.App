@@ -95,6 +95,18 @@ export class IntentService {
         return fullAction.replace(intentDomainRoot, "");
     }
 
+    /**
+     * Compatibility. Some intent from External app maybe use string
+     * @param param
+     */
+    private getNumberFromParam(param) : number{
+        if (typeof param === 'string')  {
+            return parseFloat(param);
+        } else {
+            return param;
+        }
+    }
+
     async handleTransactionIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         if (Util.isEmptyObject(intent.params)) {
             Logger.error('wallet', 'Invalid intent parameters received. No params.', intent.params);
@@ -138,7 +150,7 @@ export class IntentService {
             case 'crmemberretrieve':
                 Logger.log("wallet", 'CR member retrieve Transaction intent content:', intent.params);
                 this.coinTransferService.chainId = StandardCoinName.IDChain;
-                this.coinTransferService.transfer.amount = intent.params.amount;
+                this.coinTransferService.transfer.amount = this.getNumberFromParam(intent.params.amount);
                 this.coinTransferService.transfer.publickey = intent.params.publickey;
                 break;
 
@@ -174,7 +186,7 @@ export class IntentService {
                 this.coinTransferService.transferType = TransferType.PAY;
                 this.coinTransferService.payTransfer = {
                     toAddress: intent.params.receiver,
-                    amount: intent.params.amount,
+                    amount: this.getNumberFromParam(intent.params.amount),
                     memo: intent.params.memo || ""
                 };
                 break;
