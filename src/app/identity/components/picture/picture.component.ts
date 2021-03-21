@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 import { ProfileService } from '../../services/profile.service';
 import { HiveService } from '../../services/hive.service';
@@ -6,6 +6,8 @@ import { LocalStorage } from '../../services/localstorage';
 import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-picture',
@@ -13,8 +15,10 @@ import { Logger } from 'src/app/logger';
   styleUrls: ['./picture.component.scss'],
 })
 export class PictureComponent implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public newImg = false;
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private navParams: NavParams,
@@ -36,6 +40,15 @@ export class PictureComponent implements OnInit {
     } else {
       return;
     }
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null); // Hide ela logo because it does not dismiss modal
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Does not need key, all modals are dismissed on appService.onTitlebarItemClicked()
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      this.modalCtrl.dismiss();
+    });
   }
 
   ionViewWillLeave() {

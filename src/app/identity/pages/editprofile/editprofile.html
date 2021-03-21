@@ -180,12 +180,10 @@
       </ion-row>
     </div>
 
-    <ion-row>
-      <ion-col size="12">
-        <ion-button expand="full" (click)="addProfileEntry()">
-          {{ 'add-field'|translate }}
-        </ion-button>
-      </ion-col>
+    <ion-row class="btn-row">
+      <ion-button (click)="addProfileEntry()">
+        {{ 'add-field'|translate }}
+      </ion-button>
     </ion-row>
   </ion-grid>
 </ion-content>

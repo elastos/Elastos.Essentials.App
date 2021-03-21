@@ -39,7 +39,7 @@ export class HomePage implements OnInit {
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
     public splashScreen: SplashScreen,
-    private notificationsService: GlobalNotificationsService,
+    private notificationsService: NotificationManagerService,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private nav: GlobalNavService,
@@ -71,6 +71,9 @@ export class HomePage implements OnInit {
         this.showNotifications();
       }
     });
+    if(this.notificationsService.newNotifications) {
+      this.titleBar.newNotifications = true;
+    }
 
     this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
       switch (networkCode) {
@@ -96,6 +99,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.titleBar.newNotifications = false;
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.popover) {
       this.popover.dimiss();

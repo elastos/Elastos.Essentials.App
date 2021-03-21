@@ -1,26 +1,9 @@
 @import "src/app/identity/root.scss";
 
-.button-container {
-  position: absolute;
-  bottom: 0px;
-
-  ion-button {
-    font-family: Montserrat;
-    font-size: 13px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.62;
-    letter-spacing: normal;
-    text-align: left;
-    color: white;
-  }
-}
 ion-toggle {
   zoom: 0.7;
-
-
 }
+
 .show-profile {
   font-family: Montserrat;
   font-size: 14px;
@@ -40,7 +23,6 @@ ion-toggle {
 
 
 .container {
-
   .icon-section {
     width: 215.1px;
     height: 214.6px;
@@ -67,6 +49,24 @@ ion-toggle {
       overflow: hidden;
       width: 100%;
       height: 100%;
+    }
+  }
+
+  .btn-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+
+    ion-button {
+      height: 50px;
+      width: 90%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
     }
   }
 }
@@ -121,8 +121,7 @@ ion-toggle {
   justify-content: flex-start;
   align-items: center;
 
-  ion-label,
-  span {
+  ion-label, span {
     font-family: Montserrat;
     font-size: 13px;
     font-weight: 600;
@@ -151,10 +150,9 @@ ion-row {
     display: flex;
     justify-content: center;
     align-items: center;
-
-
   }
 }
+
 .edit-container {
   display: flex;
   justify-content: flex-end;
@@ -194,6 +192,7 @@ img {
   height: 15.1px;
   object-fit: contain;
 }
+
 .add-row {
   padding: 10px 0;
 }

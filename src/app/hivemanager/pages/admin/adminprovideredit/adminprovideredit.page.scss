@@ -83,6 +83,7 @@
 
 ion-footer {
     padding: 10px;
+    background: #f8f8ff;
 
     div {
         width: 100%;
@@ -97,4 +98,8 @@ ion-footer {
             width: 100%;
         }
     }
+}
+
+.dark-footer {
+    background: #191a2f;
 }

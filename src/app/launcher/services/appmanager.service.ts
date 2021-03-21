@@ -151,7 +151,7 @@ export class AppmanagerService {
                     },
                 ]
             },
-            {
+           /*  {
                 type: 'voting',
                 apps: [
                     {
@@ -179,7 +179,7 @@ export class AppmanagerService {
                         routerPath: '/crproposalvoting/proposals/ALL'
                     },
                 ]
-            }
+            } */
         ];
     }
 

@@ -40,17 +40,13 @@ ion-grid {
     flex-direction: column;
 
     ion-button {
-      height: 41px;
-      width: 250px;
+      height: 50px;
+      width: 75%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
       --border-radius: 8px;
-      --box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
-
-      ion-label {
-        text-transform: none;
-        font-size: 16px;
-        font-weight: 500;
-        letter-spacing: -0.43px;
-      }
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
     }
   }
 

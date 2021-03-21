@@ -5,19 +5,6 @@ ion-grid {
     margin: 0;
     padding: 15px 0;
 
-    .header-row {
-        margin-bottom: 10px;
-        padding: 0px 20px;
-
-        ion-label {
-            font-size: 22px;
-            font-weight: 600;
-            line-height: 1.04;
-            text-align: left;
-            color: #191a2f;
-        }
-    }
-
     .close-all-row {
         display: flex;
         justify-content: center;

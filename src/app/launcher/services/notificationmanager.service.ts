@@ -22,6 +22,7 @@ export type LauncherNotification = Notification & {
 })
 export class NotificationManagerService {
   public notifications: LauncherNotification[] = [];
+  public newNotifications: boolean = false;
 
   constructor(
     private platform: Platform,
@@ -84,6 +85,10 @@ export class NotificationManagerService {
     const notifications = await this.globalNotifications.getNotifications();
     Logger.log("Launcher", "Got notifications from the notification manager: " + JSON.stringify(notifications));
     this.fillAppInfoToNotification(notifications);
+
+    if(this.globalNotifications.newNotifications > 0) {
+      this.newNotifications = true;
+    }
   }
 
   async fillAppInfoToNotification(allApps: Notification[]) {
@@ -157,6 +162,7 @@ export class NotificationManagerService {
   }
 
   resetNewNotifications() {
+    this.newNotifications = false;
     this.globalNotifications.newNotifications = 0;
   }
 

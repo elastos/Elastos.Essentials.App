@@ -151,45 +151,55 @@
 
     }
 
+    .btn-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 20px;
 
-
-
-    .darkContainer{
-
-        h1 {
-            color: white;
-        }
-
-        span {
-            color: white;
-        }
-
-        .alert-section {
-            border-top: 2px solid #090910;
-            border-bottom: 2px solid #090910;
-        }
-
-
-        .list-credentials-section {
-
-            .card-internal {
-
-                box-shadow: 0 3px 15px 0 #151515;
-                background-color: #2a2a4d;
-                background-image: none;
-            }
-
-            .card-title {
-                color: white;
-            }
-            .card-value {
-                color: white;
-            }
+        ion-button {
+            height: 50px;
+            width: 90%;
+            --background: linear-gradient(to bottom, #732dcf, #640fd4);
+            --border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.1px;
         }
     }
+}
 
-    .button-section {
-        padding-top:10px;
+.darkContainer {
+    h1 {
+        color: white;
+    }
+
+    span {
+        color: white;
+    }
+
+    .alert-section {
+        border-top: 2px solid #090910;
+        border-bottom: 2px solid #090910;
+    }
+
+
+    .list-credentials-section {
+
+        .card-internal {
+
+            box-shadow: 0 3px 15px 0 #151515;
+            background-color: #2a2a4d;
+            background-image: none;
+        }
+
+        .card-title {
+            color: white;
+        }
+        .card-value {
+            color: white;
+        }
     }
 }
 

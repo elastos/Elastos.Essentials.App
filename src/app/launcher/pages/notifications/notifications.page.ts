@@ -15,6 +15,7 @@ import { Events } from '../../services/events.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-notifications',
@@ -43,7 +44,9 @@ export class NotificationsPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(null);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
+    this.titleBar.setTitle(this.translate.instant('notifications'));
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.NOTIFICATIONS });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.modalController.dismiss();
     });

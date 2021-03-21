@@ -2,11 +2,6 @@
 
 <ion-content>
     <ion-grid [class.dark-container]="theme.darkMode">
-        <ion-row class="header-row">
-            <ion-col size="12">
-                <ion-label>{{ 'notifications' | translate }}</ion-label>
-            </ion-col>
-        </ion-row>
         <div *ngIf="notificationService.notifications.length > 0">
             <ion-item-sliding *ngFor="let notification of notificationService.notifications">
                 <ion-item

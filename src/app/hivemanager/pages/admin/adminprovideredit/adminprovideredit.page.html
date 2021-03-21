@@ -43,7 +43,7 @@
 </ion-content>
 
 <!-- Has provider -->
-<ion-footer class="ion-no-border" no-border *ngIf="managedProvider">
+<ion-footer *ngIf="managedProvider" class="ion-no-border" [class.dark-footer]="theme.darkMode">
     <div *ngIf="!adminDIDPublished; else onlyDeleteButton">
         <ion-button color="danger" (click)="deleteVaultProvider()">{{ 'adminprovideredit.delete' | translate }}</ion-button>
         <ion-button (click)="publishAdminDID()">{{ 'adminprovideredit.publish' | translate }}</ion-button>
