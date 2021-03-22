@@ -7,6 +7,10 @@ declare let didManager: DIDPlugin.DIDManager;
 export class InternalElastosConnector implements Interfaces.Connectors.IConnector {
     public name: string = "essentials-internal";
 
+    async getDisplayName(): Promise<string> {
+        return "Essentials Internal connector";
+    }
+
     /**
      * DID API
      */

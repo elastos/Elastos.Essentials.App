@@ -16,6 +16,7 @@ Logger.init(console);
 
 // Use our own internal connector for the connectivity SDK
 let internalConnector = new InternalElastosConnector();
+connectivity.unregisterConnector("local-identity");
 connectivity.registerConnector(new InternalElastosConnector());
 connectivity.setActiveConnector(internalConnector.name);
 
