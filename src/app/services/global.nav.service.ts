@@ -42,6 +42,7 @@ export class GlobalNavService {
      */
     public navigateRoot(context: string, route: string, routerOptions?: any) {
         Logger.log("Nav", "Setting "+context+" navigation context root to: "+route);
+
         while (this.canGoBack()) {
             let lastStep = this.navigationHistory[this.navigationHistory.length-1];
             if (lastStep.context != context)
@@ -54,7 +55,7 @@ export class GlobalNavService {
     }
 
     /**
-     * Navigates back to the launcher home and clears the whole navigation history for all
+     * Navigates back to the didSession home and clears the whole navigation history for all
      * contexts. Fresh restart.
      */
     public navigateDIDSessionHome() {
