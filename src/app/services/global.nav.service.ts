@@ -57,6 +57,22 @@ export class GlobalNavService {
      * Navigates back to the launcher home and clears the whole navigation history for all
      * contexts. Fresh restart.
      */
+    public navigateDIDSessionHome() {
+        Logger.log("Nav", "Navigating to DIDSession home");
+
+        let didSessionHome = {
+            context: App.DID_SESSIONS,
+            route: "/didsessions/pickidentity"
+        };
+        this.navigationHistory = [];
+        this.navigationHistory.push(didSessionHome);
+        this.navCtrl.navigateRoot(didSessionHome.route);
+    }
+
+    /**
+     * Navigates back to the launcher home and clears the whole navigation history for all
+     * contexts. Fresh restart.
+     */
     public navigateHome() {
         Logger.log("Nav", "Navigating to launcher home");
 

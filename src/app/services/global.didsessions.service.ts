@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { NavController, Platform } from '@ionic/angular';
-import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
+import { GlobalNavService } from './global.nav.service';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -44,7 +43,7 @@ export class GlobalDIDSessionsService {
 
   public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
-  constructor(private storage: GlobalStorageService, private navController: NavController) {
+  constructor(private storage: GlobalStorageService, private globalNavService: GlobalNavService) {
   }
 
   public async init(): Promise<void> {
@@ -148,6 +147,8 @@ export class GlobalDIDSessionsService {
 
     this.signedInIdentityListener.next(null);
 
-    this.navController.navigateRoot(['/didsessions/pickidentity']);
+    // TODO: Stop all background services, destroy plugins.
+
+    this.globalNavService.navigateDIDSessionHome();
   }
 }
