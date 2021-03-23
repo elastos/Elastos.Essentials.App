@@ -130,7 +130,7 @@ export class ProposalService {
     }
 
     public navigateToProposalDetailsPage(proposal: ProposalSearchResult) {
-        this.router.navigate(["/proposal-details"], {
+        this.router.navigate(["/crproposalvoting/proposal-details"], {
             queryParams: {
                 proposalId: proposal.id
             }

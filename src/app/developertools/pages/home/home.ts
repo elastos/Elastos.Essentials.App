@@ -33,7 +33,7 @@ export class HomePage {
 
   newApp() {
     Logger.log("developertools", "new app")
-    this.nav.navigateTo(App.DEVELOPER_TOOLS, "createapp");
+    this.nav.navigateTo(App.DEVELOPER_TOOLS, "/developertools/createapp");
   }
 
   openApp(app: StorageDApp) {

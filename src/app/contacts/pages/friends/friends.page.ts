@@ -123,6 +123,6 @@ export class FriendsPage implements OnInit {
   }
 
   goToContact(contact: Contact) {
-    this.globalNav.navigateTo('contacts', '/friends/' + contact.id);
+    this.globalNav.navigateTo('contacts', '/contacts/friends/' + contact.id);
   }
 }

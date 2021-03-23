@@ -39,6 +39,6 @@ export class PickPlanPurchasePage implements OnInit {
     let pricingInfo = await this.hiveService.getPricingInfo();
     await this.hiveService.purchasePlan(pricingInfo.getPaymentSettings(), this.planToPurchase);
 
-    this.navCtrl.navigateRoot("pickprovider");
+    this.navCtrl.navigateRoot("/hivemanager/pickprovider");
   }
 }
