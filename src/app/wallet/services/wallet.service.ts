@@ -114,6 +114,8 @@ export class WalletManager {
 
     async init() {
         Logger.log('wallet', "Master manager is initializing");
+        // TODO: reset masterWallets, because this servcie is not destroyed when signout.
+        this.masterWallets = {};
 
         this.spvBridge = new SPVWalletPluginBridge(this.native, this.events, this.popupProvider);
 
@@ -232,7 +234,7 @@ export class WalletManager {
                 await this.masterWallets[masterId].updateERC20TokenList(this.prefs);
             }
         } catch (error) {
-            Logger.error('wallet', error);
+            Logger.error('wallet', 'initWallets error:', error);
             return false;
         }
         return true;
@@ -534,7 +536,7 @@ export class WalletManager {
         const masterId = event.MasterWalletID;
         const chainId = event.ChainID;
 
-        // Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
+        Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
         //Logger.log('wallet', event.Action, event.result);
 
         switch (event.Action) {

@@ -5,6 +5,7 @@ import { GlobalStorageService } from './global.storage.service';
 import { GlobalNavService } from './global.nav.service';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
+declare let walletManager: WalletPlugin.WalletManager;
 
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
@@ -141,6 +142,7 @@ export class GlobalDIDSessionsService {
     this.signedInIdentity = null;
     GlobalDIDSessionsService.signedInDIDString = null;
     passwordManager.setCurrentDID(null);
+    await this.destroyWallet();
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
@@ -150,5 +152,14 @@ export class GlobalDIDSessionsService {
     // TODO: Stop all background services, destroy plugins.
 
     this.globalNavService.navigateDIDSessionHome();
+  }
+
+  // Temp solution, should stop all background services, destroy plugins.
+  public destroyWallet(): Promise<void> {
+    return new Promise((resolve, reject)=>{
+         walletManager.destroy([],
+            (ret) => { resolve(ret); },
+            (err) => { Logger.log('DIDSessionsService', "Error to destroy wallet manager."); });
+    });
   }
 }
