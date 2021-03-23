@@ -134,6 +134,6 @@ export class MnemonicExportPage implements OnInit {
     }
 
     return() {
-        this.native.go("/wallet-settings");
+        this.native.go("/wallet/wallet-settings");
     }
 }

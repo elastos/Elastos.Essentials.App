@@ -60,6 +60,6 @@ export class LauncherPage implements OnInit {
         this.walletCreationService.reset();
         this.walletCreationService.isMulti = false;
         this.walletCreationService.type = type;
-        this.native.go("/wallet-create");
+        this.native.go("/wallet/wallet-create");
     }
 }

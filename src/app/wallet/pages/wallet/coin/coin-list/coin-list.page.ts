@@ -213,12 +213,12 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     // User wants to add a new ERC20 token of his own to the available list of tokens.
     private handleOnAddECR20Coin() {
-        this.native.go("/coin-add-erc20");
+        this.native.go("/wallet/coin-add-erc20");
     }
 
     public goToCoinDetails(item: EditableCoinInfo) {
         if (item.coin.getType() === CoinType.ERC20) {
-            this.native.go('/coin-erc20-details', { coin: item.coin });
+            this.native.go('/wallet/coin-erc20-details', { coin: item.coin });
         }
     }
 }

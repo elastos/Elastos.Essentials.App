@@ -31,7 +31,7 @@ export class WalletCreateNamePage implements OnInit {
     import() {
         if (this.checkParms()) {
             this.walletCreationService.name = this.name;
-            this.native.go("/addpublickey");
+            this.native.go("/wallet/addpublickey");
         }
     }
 

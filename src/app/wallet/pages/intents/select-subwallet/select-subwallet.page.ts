@@ -47,7 +47,7 @@ export class SelectSubwalletPage implements OnInit {
   walletSelected(masterWallet: MasterWallet) {
     this.coinTransferService.masterWalletId = masterWallet.id;
     this.coinTransferService.walletInfo = masterWallet.account;
-    this.native.go("/waitforsync");
+    this.native.go("/wallet/waitforsync");
   }
 
   async cancelOperation() {

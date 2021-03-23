@@ -147,7 +147,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             if(icon.key === 'settings') {
-                this.native.go('wallet/settings');
+                this.native.go('/wallet/settings');
             }
         });
     }
@@ -174,7 +174,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     goToGeneralSettings() {
-        this.native.go('/settings');
+        this.native.go('/wallet/settings');
 
         // Not sure what this does but it throws an err using it
         // event.stopPropagation();
@@ -183,11 +183,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     goToWalletSettings(masterWallet: MasterWallet) {
         this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
-        this.native.go("/wallet-settings");
+        this.native.go("/wallet/wallet-settings");
     }
 
     goCoinHome(masterWalletId: string, chainId: string) {
-        this.native.go("/coin", { masterWalletId, chainId });
+        this.native.go("/wallet/coin", { masterWalletId, chainId });
     }
 
     async doRefresh(event) {

@@ -123,7 +123,7 @@ export class MnemonicWritePage implements OnInit {
             if (true) { // for test
             // if (this.inputStr.replace(/\s+/g, "").toLowerCase() === this.mnemonicStr.replace(/\s+/g, "")) {
                 if (this.walletCreationService.isMulti) {
-                    this.native.go("/mpublickey");
+                    this.native.go("/wallet/mpublickey");
                 } else {
                     this.native.toast_trans('mnemonic-verify-sucess');
 

@@ -95,7 +95,7 @@ export class PickIdentityPage {
    * Used to create a new DID inside a brand new DID store = new mnemonic.
    */
   createIdentity() {
-    this.uxService.go('createidentity');
+    this.uxService.go('/didsessions/createidentity');
   }
 
   /**

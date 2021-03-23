@@ -75,7 +75,7 @@ export class MnemonicCreatePage implements OnInit {
 
         // this.walletCreationService.mnemonicPassword = this.mnemonicPassword;
 
-        this.native.go("/mnemonic-write");
+        this.native.go("/wallet/mnemonic-write");
     }
 
     nextSlide(slide) {

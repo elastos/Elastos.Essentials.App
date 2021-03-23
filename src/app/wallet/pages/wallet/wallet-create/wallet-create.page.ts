@@ -103,9 +103,9 @@ export class WalletCreatePage implements OnInit {
         }
 
         if (this.walletCreationService.type === 1) {
-            this.native.go("/mnemonic-create");
+            this.native.go("/wallet/mnemonic-create");
         } else {
-            this.native.go("/wallet-import");
+            this.native.go("/wallet/wallet-import");
         }
     }
 

@@ -68,10 +68,10 @@ export class UXService {
           this.nav.navigateBack();
           break;
         case 'language':
-          this.go('language');
+          this.go('/didsessions/language');
           break;
         case 'scan':
-          this.go('scan');
+          this.go('/didsessions/scan');
           break;
       }
     }

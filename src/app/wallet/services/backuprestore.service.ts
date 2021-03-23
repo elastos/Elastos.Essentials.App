@@ -420,7 +420,7 @@ export class BackupRestoreService {
       return true;
     }
     catch (e) {
-      this.logError("Exception while uploading sync state file to vault: " + e);
+      this.logError("Exception while uploading sync state file to vault: ", e);
       return false;
     }
   }

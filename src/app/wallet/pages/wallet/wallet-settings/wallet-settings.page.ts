@@ -75,7 +75,7 @@ export class WalletSettingsPage implements OnInit {
         // },
         {
             type: 'coin-list',
-            route: "/coin-list",
+            route: "/wallet/coin-list",
             title: this.translate.instant("wallet-settings-manage-coin-list"),
             subtitle: this.translate.instant("wallet-settings-manage-coin-list-subtitle"),
             icon: '/assets/wallet/settings/coins.svg',
@@ -91,7 +91,7 @@ export class WalletSettingsPage implements OnInit {
         },
         {
             type: 'wallet-swap',
-            route: "/swap-test",
+            route: "/wallet/swap-test",
             title: this.translate.instant("SWAP TEST"),
             subtitle: this.translate.instant("This is a temporary screen"),
             icon: '/assets/wallet/settings/trash.svg',
@@ -133,7 +133,7 @@ export class WalletSettingsPage implements OnInit {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
-                this.native.go('/mnemonic-export', { payPassword: payPassword });
+                this.native.go('/wallet/mnemonic-export', { payPassword: payPassword });
             }
         } catch (e) {
             Logger.error('wallet', 'MnemonicExportPage getWalletPassword error:' + e);

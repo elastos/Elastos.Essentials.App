@@ -46,7 +46,7 @@ export class SettingsPage implements OnInit {
     public available = 0;
     public settings = [
         {
-            route: "/launcher",
+            route: "/wallet/launcher",
             title: this.translate.instant("settings-add-wallet"),
             subtitle: this.translate.instant("settings-add-wallet-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
@@ -54,7 +54,7 @@ export class SettingsPage implements OnInit {
             type: 'launcher'
         },
         {
-            route: "/wallet-manager",
+            route: "/wallet/wallet-manager",
             title: this.translate.instant("settings-my-wallets"),
             subtitle: this.translate.instant("settings-my-wallets-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
@@ -62,7 +62,7 @@ export class SettingsPage implements OnInit {
             type: 'wallet-manager'
         },
         {
-            route: "/currency-select",
+            route: "/wallet/currency-select",
             title: this.translate.instant("settings-currency"),
             subtitle: this.translate.instant("settings-currency-subtitle"),
             icon: '/assets/wallet/settings/dollar.svg',

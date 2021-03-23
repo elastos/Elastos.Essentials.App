@@ -59,18 +59,18 @@ export class ContactListPage implements OnInit {
     }
 
     onAdd(): void {
-        this.native.go("/contact-create");
+        this.native.go("/wallet/contact-create");
     }
 
     onEdit(item, event) {
         event.stopPropagation();
-        this.native.go("/contact-create", item);
+        this.native.go("/wallet/contact-create", item);
         return false;
     }
 
     onClick(item): void {
         if (!this.isHide) {
-            this.native.go("/contacts", { id: item.id, exatOption: JSON.stringify(this.params) });
+            this.native.go("/wallet/contacts", { id: item.id, exatOption: JSON.stringify(this.params) });
         }
         else {
             this.events.publish("address:update", item.address);

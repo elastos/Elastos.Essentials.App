@@ -220,7 +220,7 @@ export class CoinHomePage implements OnInit {
 
     onItem(item) {
         this.native.go(
-            '/coin-tx-info',
+            '/wallet/coin-tx-info',
             {
                 masterWalletId: this.masterWallet.id,
                 chainId: this.chainId,
@@ -230,12 +230,12 @@ export class CoinHomePage implements OnInit {
     }
 
     receiveFunds() {
-        this.native.go('/coin-receive');
+        this.native.go('/wallet/coin-receive');
     }
 
     sendFunds() {
         this.coinTransferService.transferType = TransferType.SEND;
-        this.native.go('/coin-transfer');
+        this.native.go('/wallet/coin-transfer');
     }
 
     transferFunds() {
@@ -249,13 +249,13 @@ export class CoinHomePage implements OnInit {
     // mainchain to sidechain
     rechargeFunds() {
         this.coinTransferService.transferType = TransferType.RECHARGE;
-        this.native.go('/coin-select');
+        this.native.go('/wallet/coin-select');
     }
 
     // sidechain to mainchain
     withdrawFunds() {
         this.coinTransferService.transferType = TransferType.WITHDRAW;
-        this.native.go('/coin-transfer');
+        this.native.go('/wallet/coin-transfer');
     }
 
     clickMore() {

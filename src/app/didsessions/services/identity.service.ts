@@ -192,7 +192,7 @@ export class IdentityService {
         Logger.log('didsessions', "Navigating to profile edition");
         this.navigateWithCompletion("editprofile", (name)=>{
             this.identityBeingCreated.name = name;
-            this.uxService.go('backupdid', { state: { create: true } });
+            this.uxService.go('/didsessions/backupdid', { state: { create: true } });
         });
     }
 
@@ -396,7 +396,7 @@ export class IdentityService {
           }
         } else {
           Logger.log('didsessions', 'New DID is already added');
-          this.uxService.go("/pickidentity");
+          this.uxService.go("/didsessions/pickidentity");
           this.alertDuplicateImport();
         }
     }

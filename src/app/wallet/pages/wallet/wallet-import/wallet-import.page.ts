@@ -215,7 +215,7 @@ export class WalletImportPage implements OnInit {
     }
 
     goToAdvancedImport() {
-        this.native.go('wallet-advanced-import');
+        this.native.go('/wallet/wallet-advanced-import');
     }
 
     ionSlideDidChange() {

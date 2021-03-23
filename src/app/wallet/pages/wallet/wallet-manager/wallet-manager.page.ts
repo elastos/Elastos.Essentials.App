@@ -63,15 +63,15 @@ export class WalletManagerPage implements OnInit {
         if (this.forIntent) {
             if (this.intent === 'access') {
                 this.walletAccessService.masterWalletId = masterWallet.id;
-                this.native.go('/access');
+                this.native.go('/wallet/access');
             } else if (this.intent === 'addcoin') {
                 this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
-                this.native.go("/coin-add-erc20", { contract: this.intentParams.contract });
+                this.native.go("/wallet/coin-add-erc20", { contract: this.intentParams.contract });
 
             }
         } else {
             this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
-            this.native.go("/wallet-settings");
+            this.native.go("/wallet/wallet-settings");
         }
     }
 

@@ -105,7 +105,7 @@ export class BackupDIDPage {
     nextClicked() {
         if (this.isCreation) {
             // Next button pressed: go to mnemonic verification screen.
-            this.uxService.go("/verifymnemonics", { mnemonicStr: this.identityService.identityBeingCreated.mnemonic });
+            this.uxService.go("/didsessions/verifymnemonics", { mnemonicStr: this.identityService.identityBeingCreated.mnemonic });
         }
         else {
             // TODO

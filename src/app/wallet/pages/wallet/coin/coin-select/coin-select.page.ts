@@ -67,6 +67,6 @@ export class CoinSelectPage implements OnInit {
         // Define subwallets to transfer to and from
         this.coinTransferService.subchainId = wallet.id;
 
-        this.native.go("/coin-transfer");
+        this.native.go("/wallet/coin-transfer");
     }
 }

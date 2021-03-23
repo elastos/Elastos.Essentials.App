@@ -21,6 +21,9 @@ connectivity.unregisterConnector("local-identity");
 connectivity.registerConnector(new InternalElastosConnector());
 connectivity.setActiveConnector(internalConnector.name);
 
+// Register Essentials' App DID to the connectivity SDK - For hive authentication flows.
+connectivity.setApplicationDID("did:elastos:ig1nqyyJhwTctdLyDFbZomSbZSjyMN1uor");
+
 // Setup Lottie animation player
 defineCustomElements(window);
 

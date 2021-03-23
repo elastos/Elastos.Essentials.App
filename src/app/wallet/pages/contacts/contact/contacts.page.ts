@@ -45,7 +45,7 @@ export class ContactsPage implements OnInit {
     }
 
     pay(address): void {
-        this.native.go("/coin-transfer", { addr: this.contactUser['address'] });
+        this.native.go("/wallet/coin-transfer", { addr: this.contactUser['address'] });
         this.events.publish("address:update", address);
     }
 }
