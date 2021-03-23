@@ -190,7 +190,7 @@ export class IdentityService {
         this.identityBeingCreated = new NewIdentity();
 
         Logger.log('didsessions', "Navigating to profile edition");
-        this.navigateWithCompletion("editprofile", (name)=>{
+        this.navigateWithCompletion("didsessions/editprofile", (name)=>{
             this.identityBeingCreated.name = name;
             this.uxService.go('/didsessions/backupdid', { state: { create: true } });
         });
@@ -290,7 +290,7 @@ export class IdentityService {
         Logger.log('didsessions', "startImportingMnemonic existingMnemonic:", existingMnemonic);
         if (!existingMnemonic) {
             Logger.log('didsessions', "Navigating to import DID");
-            this.navigateWithCompletion("importdid", async (mnemonic)=>{
+            this.navigateWithCompletion("didsessions/importdid", async (mnemonic)=>{
                 this.identityBeingCreated.mnemonic = mnemonic;
                 await this.createStoreAfterImport();
             });
@@ -340,7 +340,7 @@ export class IdentityService {
 
                 // More than one did was synced. Ask user which one he wants to keep during this import,
                 // as for now we only allow one import at a time.
-                this.navigateWithCompletion("chooseimporteddid", (createdDID)=>{
+                this.navigateWithCompletion("didsessions/chooseimporteddid", (createdDID)=>{
                     this.continueImportAfterCreatedDID(didStore, storePassword, createdDID);
                 }, {
                     dids: didStore.dids
@@ -353,7 +353,7 @@ export class IdentityService {
 
                 // TODO: show popup to user to tell him that no identity could be retrieved on chain, and that he can
                 // create a new profile
-                this.navigateWithCompletion("editprofile", async (returnedName) => {
+                this.navigateWithCompletion("didsessions/editprofile", async (returnedName) => {
                     this.identityBeingCreated.name = returnedName as string;
                     if (this.identityBeingCreated.name) {
                         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
@@ -386,7 +386,7 @@ export class IdentityService {
           else {
               // No existing name credential found in the DID, so we need to ask user to give us one
               Logger.log('didsessions', "No name credential found in the DID. Asking user to provide one.");
-              this.navigateWithCompletion("editprofile", async (profileName)=>{
+              this.navigateWithCompletion("didsessions/editprofile", async (profileName)=>{
                 // Add the name credential in the DID
                 await createdDID.addNameCredential(profileName, storePassword);
 

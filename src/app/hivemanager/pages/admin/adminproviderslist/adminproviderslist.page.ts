@@ -47,7 +47,7 @@ export class AdminProvidersListPage implements OnInit {
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon: TitleBarIcon) => {
       switch (icon.key) {
         case "adminproviderslist-addprovider":
-          this.nav.navigateTo(App.HIVE_MANAGER, "adminprovideredit");
+          this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminprovideredit");
           break;
       }
     });
@@ -60,6 +60,6 @@ export class AdminProvidersListPage implements OnInit {
   }
 
   async editProvider(provider: ManagedProvider) {
-    this.nav.navigateTo(App.HIVE_MANAGER, "adminprovideredit", { state: { providerId: provider.id } });
+    this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminprovideredit", { state: { providerId: provider.id } });
   }
 }

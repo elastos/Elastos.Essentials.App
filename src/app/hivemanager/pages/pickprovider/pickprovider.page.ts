@@ -264,11 +264,11 @@ export class PickProviderPage implements OnInit {
   }
 
   private goToAdminPanel() {
-    this.nav.navigateTo(App.HIVE_MANAGER, "adminproviderslist");
+    this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminproviderslist");
   }
 
   public changePlan() {
-    this.nav.navigateTo(App.HIVE_MANAGER, "pickplan");
+    this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/pickplan");
   }
 
   public transferVault() {

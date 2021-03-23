@@ -81,11 +81,11 @@ export class UXService {
         let identities = await this.didSessions.getIdentityEntries();
         if (identities.length == 0) {
             Logger.log("didsessions", "No existing identity. Navigating to language chooser then createidentity");
-            this.nav.navigateRoot(App.DID_SESSIONS, "language");
+            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/language");
         }
         else {
             Logger.log("didsessions", "Navigating to pickidentity");
-            this.nav.navigateRoot(App.DID_SESSIONS, "pickidentity");
+            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity");
         }
     }
 
