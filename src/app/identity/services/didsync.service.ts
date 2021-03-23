@@ -42,7 +42,6 @@ export class DIDSyncService {
     public native: Native,
     private authService: AuthService
   ) {
-    Logger.log("Identity", "DIDSyncService created");
     DIDSyncService.instance = this;
 
     this.subscribeEvents();

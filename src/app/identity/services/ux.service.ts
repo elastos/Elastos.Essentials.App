@@ -37,7 +37,6 @@ export class UXService {
         private globalIntentService: GlobalIntentService
     ) {
         UXService.instance = this;
-        Logger.log('TEST', 'UXService :', this)
     }
 
     async init() {

@@ -24,10 +24,7 @@ import { LanguagePage } from './pages/language/language.page';
 import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimporteddid.page';
 import { ScanPage } from './pages/scan/scan.page';
 import { PrintoptionsComponent } from './components/printoptions/printoptions.component';
-import { defineCustomElements } from '@teamhive/lottie-player/loader';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
-
-defineCustomElements(window);
 
 @NgModule({
   declarations: [
@@ -71,9 +68,7 @@ defineCustomElements(window);
     QRScanner,
     Platform,
     PopupProvider,
-    SplashScreen,
-    WebView,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    WebView
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

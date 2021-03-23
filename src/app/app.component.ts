@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { Platform, ModalController, NavController, IonRouterOutlet } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -26,6 +26,10 @@ import { GlobalNavService } from './services/global.nav.service';
 @Component({
     selector: 'app-root',
     template: '<ion-app><ion-router-outlet [swipeGesture]="false"></ion-router-outlet></ion-app>',
+    // BPI 20200322: With the onpush detection strategy angular seems to work 5 to 10x faster for rendering
+    // But this created some refresh bugs in some components, as we need to manually push more changes
+    // To be continued. NOTE: Comment out the line below if too many problems for now!
+    //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
     @ViewChild(IonRouterOutlet, { static: true }) routerOutlet: IonRouterOutlet;
@@ -86,6 +90,8 @@ export class AppComponent {
             await this.crCouncilVotingInitService.init();
             await this.crProposalVotingInitService.init();
             await this.developerToolsInitService.init();
+
+            Logger.log("Global", "All awaited init services have been initialized");
 
             // Navigate to the right startup screen
             Logger.log("Global", "Navigating to start screen");

@@ -17,10 +17,10 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Logger } from 'src/app/logger';
-import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
-import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
+import { WalletInitService } from 'src/app/wallet/services/init.service';
 
 type RunnableApp = {
     cssId:string;
@@ -77,7 +77,7 @@ export class AppmanagerService {
         this.language.activeLanguage.subscribe((lang)=>{
             this.initAppsList();
         });
-    
+
         this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             this.onIntentReceived(receivedIntent);
         });

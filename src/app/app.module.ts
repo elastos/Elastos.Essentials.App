@@ -16,22 +16,29 @@ import { AppComponent } from './app.component';
 import { LauncherModule } from './launcher/module';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedComponentsModule } from './components/sharedcomponents.module';
-import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { DIDSessionsModule } from './didsessions/module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ScannerModule } from './scanner/module';
-import { HiveManagerModule } from './hivemanager/module';
 import { SettingsModule } from './settings/module';
 import { TranslationsLoader } from 'src/translationsloader';
 import { ContactsModule } from './contacts/module';
-import { IdentityModule } from './identity/module';
 import { Logger } from './logger';
-import { WalletModule } from './wallet/module';
 import { DPoSVotingModule } from './dposvoting/module';
 import { CRCouncilVotingModule } from './crcouncilvoting/module';
 import { CRProposalVotingModule } from './crproposalvoting/module';
 import { DeveloperToolsModule } from './developertools/module';
+import { WalletInitModule } from './wallet/init.module';
+import { HiveManagerInitModule } from './hivemanager/init.module';
+import { IdentityInitModule } from './identity/init.module';
+import { ContactsInitModule } from './contacts/init.module';
+import { DIDSessionsInitModule } from './didsessions/init.module';
+import { ScannerInitModule } from './scanner/init.module';
+import { CRCouncilVotingInitModule } from './crcouncilvoting/init.module';
+import { CRProposalVotingInitModule } from './crproposalvoting/init.module';
+import { SettingsInitModule } from './settings/init.module';
+import { DPoSVotingInitModule } from './dposvoting/init.module';
+import { DeveloperToolsInitModule } from './developertools/init.module';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -89,21 +96,22 @@ export function TranslateLoaderFactory() {
     AppComponent
   ],
   imports: [
-    /*
-     * Sub-apps modules
-     */
     LauncherModule,
-    DIDSessionsModule,
-    ScannerModule,
-    HiveManagerModule,
-    SettingsModule,
-    ContactsModule,
-    IdentityModule,
-    WalletModule,
-    DPoSVotingModule,
-    CRCouncilVotingModule,
-    CRProposalVotingModule,
-    DeveloperToolsModule,
+
+    /*
+     * Sub-apps INIT (only - for bundle size / perf) modules
+     */
+    WalletInitModule,
+    HiveManagerInitModule,
+    IdentityInitModule,
+    ContactsInitModule,
+    DIDSessionsInitModule,
+    ScannerInitModule,
+    CRCouncilVotingInitModule,
+    CRProposalVotingInitModule,
+    SettingsInitModule,
+    DPoSVotingInitModule,
+    DeveloperToolsInitModule,
 
     /*
      * Generic modules

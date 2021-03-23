@@ -6,7 +6,6 @@ import { IonicStorageModule } from '@ionic/storage';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
-import { WarningComponent } from '../didsessions/components/warning/warning.component';
 import { SettingsWarningComponent } from './components/warning/warning.component';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { MenuPage } from './pages/menu/menu.page';
@@ -39,7 +38,7 @@ import { DevTestsPage } from './pages/devtests/devtests.page';
   ],
   bootstrap: [],
   entryComponents: [
-    WarningComponent
+    SettingsWarningComponent
   ],
   providers: [
     Platform

@@ -16,10 +16,10 @@ export class NavService {
 
         if (this.walletManager.getWalletsCount() > 0) {
             // Go to wallet's home page.
-            this.native.go("/wallet-home");
+            this.native.go("/wallet/wallet-home");
         }
         else {
-            this.native.go("/launcher");
+            this.native.go("/wallet/launcher");
         }
     }
 }

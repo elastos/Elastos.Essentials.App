@@ -89,6 +89,7 @@ export class NodesService {
   }
 
   async init() {
+    Logger.log("dposvoting", "Initializing the nodes service");
     this.getVisit();
     this.getStoredVotes();
     this.fetchStats();

@@ -1,4 +1,4 @@
-import { enableProdMode } from '@angular/core';
+import { ApplicationRef, enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
@@ -10,6 +10,7 @@ import { Logger } from './app/logger';
 import { defineCustomElements } from '@teamhive/lottie-player/loader';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { InternalElastosConnector } from './app/model/internalelastosconnector';
+import { enableDebugTools } from '@angular/platform-browser';
 
 // Replace default console logs with our own logger
 Logger.init(console);
@@ -30,5 +31,10 @@ if (environment.production) {
 
 // Load translations
 TranslationsLoader.loadAllModulesAndMerge().then(()=>{
-  platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.log(err));
+  Logger.log("global", "Bootstrapping the App Module");
+  platformBrowserDynamic().bootstrapModule(AppModule).then((module)=>{
+    let applicationRef = module.injector.get(ApplicationRef);
+    let appComponent = applicationRef.components[0];
+    enableDebugTools(appComponent);
+  }).catch(err => console.log(err));
 });

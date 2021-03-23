@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { AppRoutingModule } from './routing';
+import { HiveManagerRoutingModule } from './routing';
 import { IonicStorageModule } from '@ionic/storage';
 import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
 import { StorageService } from './services/storage.service';
@@ -32,7 +32,7 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
     FormsModule,
     ComponentsModule,
     SharedComponentsModule,
-    AppRoutingModule,
+    HiveManagerRoutingModule,
     TranslateModule,
     IonicStorageModule.forRoot()
   ],
