@@ -21,6 +21,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
+import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
 
 type RunnableApp = {
     cssId:string;
@@ -66,6 +67,7 @@ export class AppmanagerService {
         private storage: GlobalStorageService,
         private language: GlobalLanguageService,
         private hiveManagerInitService: HiveManagerInitService,
+        private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
         private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService
@@ -160,7 +162,7 @@ export class AppmanagerService {
                         name: this.translate.instant('app-dpos-voting'),
                         description: this.translate.instant('app-dpos-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: '/dposvoting/menu/vote'
+                        routerPath: startCall: () => this.dposVotingInitService.start()
                     },
                     {
                         cssId: 'CRCouncil',

@@ -9,7 +9,7 @@ import { IdentityService } from '../../services/identity.service';
 import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { ModalController, IonSlides } from '@ionic/angular';
 import { PrintoptionsComponent } from '../../components/printoptions/printoptions.component';
-import { PrinterPlugin, CordovaPlugins } from 'src/app/TMP_STUBS';
+//import { PrinterPlugin, CordovaPlugins } from 'src/app/TMP_STUBS';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';

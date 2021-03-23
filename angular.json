@@ -64,7 +64,8 @@
               "hash.js",
               "bignumber.js",
               "bn.js",
-              "web3"
+              "web3",
+              "@elastosfoundation/elastos-connectivity-sdk-cordova"
             ]
           },
           "configurations": {

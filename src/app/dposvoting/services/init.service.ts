@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { App, GlobalNavService } from 'src/app/services/global.nav.service';
 import { NodesService } from './nodes.service';
 
 @Injectable({
@@ -8,14 +8,14 @@ import { NodesService } from './nodes.service';
 export class DPoSVotingInitService {
   constructor(
     private nodesService: NodesService,
-    private didSessions: GlobalDIDSessionsService
+    private globalNav: GlobalNavService
   ) {}
 
   public async init(): Promise<void> {
-    this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
-      if (signedInIdentity) {
-        this.nodesService.init();
-      }
-    });
+  }
+
+  public async start() {
+    await this.nodesService.init();
+    this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/vote');
   }
 }
