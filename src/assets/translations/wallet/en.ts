@@ -393,7 +393,7 @@ export const en = {
     *********************************/
     'advanced-import': 'Fast mnemonic input',
     'advanced-import-intro': 'You can paste and enter your 12 mnemonic phrases in one line.',
-    'advanced-import-msg': '*Spaces are required between words',
+    'advanced-import-msg': '* Spaces are required between words',
     'paste-mnemonic': 'Paste or Enter 12 Mnemonics',
 
     /********************************************** Error ***********************************************/

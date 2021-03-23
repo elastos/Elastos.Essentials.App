@@ -42,7 +42,7 @@ export const zh = {
      'configure-network': '配置网络',
      'on': '开',
      'off': '关',
-     'developer-tools': 'Developer Tools',
+     'developer-tools': '开发者工具',
 
      /********** Select-net Page **********/
      'choose-network': '选择网络',

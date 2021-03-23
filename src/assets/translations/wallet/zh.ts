@@ -118,8 +118,8 @@ export const zh = {
     "coin-transaction-status-pending": "确认中",
     "coin-transaction-status-unconfirmed": "未确认",
     "text-coin-close-warning": "此币种将从列表中删除",
-    "erc20-transactions": "ERC20 token transactions",
-    "cannot-display": "cannot be displayed at this time",
+    "erc20-transactions": "ERC20币种交易",
+    "cannot-display": "目前无法显示",
 
     /*******************
     * Coin Select Page *
@@ -391,7 +391,7 @@ export const zh = {
     *********************************/
     'advanced-import': '快速输入助记词',
     'advanced-import-intro': '您可以直接粘贴或输入您的12个助记词',
-    'advanced-import-msg': '*助记词之间需要空格',
+    'advanced-import-msg': '* 助记词之间需要空格',
     'paste-mnemonic': '粘贴或输入12个助记词',
 
     /********************************************** Error ***********************************************/

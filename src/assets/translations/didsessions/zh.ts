@@ -7,6 +7,8 @@ export const zh = {
   'verify-mnemonic': '验证助记词',
   'pick-identity': '选择身份',
   'select-identity': '选择身份',
+  'your-private-qr-code': '您的私有QR码',
+  'your-private-key': '您的私钥',
 
   // Placeholder
   'enter-name-here': '在此输入名称',
@@ -68,7 +70,9 @@ export const zh = {
   'did-warning-info': '这是您的私有QR码，其中包含您的身份私钥，请勿与任何人共享。',
   'print-qrcode': '打印二维码',
   'manual-verify': '手动验证',
-  'verify': '验证',
+  'only-qrcode': '仅有QR码',
+  'qrcode-and-mnemonic-words': 'QR码和助记词',
+  'verify-did': '验证',
 };
 
 

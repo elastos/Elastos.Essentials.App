@@ -7,6 +7,8 @@ export const en = {
   'verify-mnemonic': 'Verify Mnemonic',
   'pick-identity': 'Pick Identity',
   'select-identity': 'Select identity',
+  'your-private-qr-code': 'Your Private QR Code',
+  'your-private-key': 'Your Private Key',
 
   // Placeholder
   'enter-name-here': 'Enter Name Here',
@@ -70,7 +72,9 @@ export const en = {
   'did-warning-info': 'This is your secret QR Code which holds your identity private key, don\'t share this with anyone.',
   'print-qrcode': 'Print QR Code',
   'manual-verify': 'Manual Verification',
-  'verify': 'Verify',
+  'only-qrcode': 'Only QR Code',
+  'qrcode-and-mnemonic-words': 'QR Code and Mnemonic words',
+  'verify-did': 'Verify',
 
  };
 
