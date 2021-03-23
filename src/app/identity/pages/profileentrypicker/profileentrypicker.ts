@@ -35,13 +35,14 @@ export class ProfileEntryPickerPage {
     let filterOutKeys: string[] = navParams.get("filterOut");
 
     this.availableItems = this.basicCredentialService.getBasicCredentialEntryList().filter((item)=>{
-      return !filterOutKeys.includes(item.key);
+      return !filterOutKeys.includes(item.key) && item.key !== 'avatar';
     });
   }
 
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(null);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null );
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.CLOSE });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.modalCtrl.dismiss();
     });

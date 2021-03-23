@@ -24,27 +24,22 @@
   min-height: 100%;
 
   .title {
-    margin: 17px auto 36px 20px;
+    padding: 10px 10px 20px;
     border-top: none;
 
-    span {
-      height: 37px;
-      font-family: Montserrat;
+    h1 {
+      margin: 0;
       font-size: 30px;
       font-weight: 600;
-      font-stretch: normal;
-      font-style: normal;
       line-height: 0.93;
-      letter-spacing: normal;
       text-align: left;
       color: #372153;
     }
   }
 
   ion-row {
-    height: 37px;
     border-top: 1px solid #dfdff4;
-    padding: 2.5px 0;
+    padding: 5px 0;
 
     .icon-container {
       display: flex;

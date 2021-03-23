@@ -236,7 +236,7 @@
 }
 
 .contacts-qrcode-component-dark {
-  --height: 55%;
+  --height: 60%;
   align-items: flex-end;
 
   .modal-wrapper {
@@ -271,11 +271,11 @@
 }
 
 @media screen and (max-height: 670px) {
-  .qrcode-modal {
-    --height: 74%;
+  .contacts-qrcode-component {
+    --height: 60%;
   }
 
-  .dark-qrcode-modal {
-    --height: 77%;
+  .contacts-qrcode-component-dark {
+    --height: 65%;
   }
 }

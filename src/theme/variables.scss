@@ -201,6 +201,27 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
       }
     }
   }
+
+  ion-refresher {
+    ion-refresher-content {
+      .refresher-pulling {
+        .refresher-pulling-icon {
+          background: #191a2f;
+          border: #191a2f;
+          color: white;
+        }
+      }
+
+      .refresher-refreshing {
+        .refresher-refreshing-icon {
+          background: #191a2f;
+          border: #191a2f;
+          color: white;
+
+        }
+      }
+    }
+  }
 }
 
 /*
