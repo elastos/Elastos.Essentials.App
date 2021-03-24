@@ -111,14 +111,14 @@ export class CredentialAccessRequestPage {
 
   public publishStatusFetched = false;
   public didNeedsToBePublished = false;
-  public publishStatusRequested = false;
+  public publishedDidRequested = false;
+  public publishingDidRequired = false;
 
   public mandatoryItems: ClaimRequest[] = [];
   public optionalItems: ClaimRequest[] = [];
 
   public denyReason: string = '';
   public canDeliver: boolean = true;
-  public publishingDidRequired: boolean = false;
 
   public showSpinner = false;
   public popup: any = null;
@@ -162,6 +162,7 @@ export class CredentialAccessRequestPage {
       this.receivedIntent = this.intentService.getReceivedIntent();
 
       await this.getRequestedTheme();
+      await this.requiresPublishing();
       await this.organizeRequestedClaims();
 
       Logger.log('Identity', "Request Dapp color", this.requestDappColor);
@@ -200,6 +201,28 @@ export class CredentialAccessRequestPage {
     });
   }
 
+  requiresPublishing() {
+    return new Promise((resolve) => {
+      // Intent service marks value as true if intent does not specify 'publisheddid' params
+      const publisheddidParams = this.receivedIntent.params.publisheddid;
+      Logger.log('publisheddid params', this.receivedIntent.params.publisheddid);
+
+      if(publisheddidParams) {
+        if(this.publishStatusFetched && !this.didNeedsToBePublished) {
+          this.publishingDidRequired = false;
+        } else {
+          this.alertDidNeedsPublishing();
+          this.publishingDidRequired = true;
+        }
+      } else {
+        // Request does not require published did
+        this.publishingDidRequired = false;
+      }
+
+      resolve();
+    });
+  }
+
   /**
    * From the raw list of claims requested by the caller, we create our internal model
    * ready for UI.
@@ -220,102 +243,90 @@ export class CredentialAccessRequestPage {
       // credential we will have to display the WHOLE fields inside the credential on this credacess screen
       // so that users know which infos are really going to be shared (credentials can't be split).
 
-      if(key === 'publisheddid') {
-        Logger.log('Identity', 'Requires published did?', claim);
-        this.publishStatusRequested = true;
-        this.handleRequestedStatusOfPublishedDid(claimIsRequired);
-      } else {
-        // Retrieve current value from active store credentials
-        let relatedCredential = this.findCredential(key);
-        if (!relatedCredential) {
-          Logger.warn('identity', "No credential found for requested claim:", key);
+      // Retrieve current value from active store credentials
+      let relatedCredential = this.findCredential(key);
+      if (!relatedCredential) {
+        Logger.warn('identity', "No credential found for requested claim:", key);
+      }
+
+      let credentialValue: string = null;
+      if (relatedCredential)
+        credentialValue = this.getBasicProfileCredentialValue(relatedCredential.pluginVerifiableCredential);
+
+      // Don't display optional items that user doesn't have.
+      if (!relatedCredential && !claimIsRequired)
+        continue;
+
+      let claimValue = this.credentialValueAsString(credentialValue);
+
+      let hasRelatedCredential: boolean = (relatedCredential != null);
+
+      let issuerInfo: IssuerInfo = {
+        canBeDelivered : hasRelatedCredential,
+        isExpired : false,
+        displayItem: null,
+        errorMessage: ""
+      };
+
+      let isExpired: boolean = false;
+
+      if (hasRelatedCredential) {
+        let credentialTypes: string[] = relatedCredential.pluginVerifiableCredential.getTypes();
+
+        //Check if this credential is expired when validated
+        if (!credentialTypes.includes("SelfProclaimedCredential"))  {
+          let expirationInfo : ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
+          isExpired = expirationInfo.daysToExpire <= 0;
         }
 
-        let credentialValue: string = null;
-        if (relatedCredential)
-          credentialValue = this.getBasicProfileCredentialValue(relatedCredential.pluginVerifiableCredential);
+        // Check if accepts self proclaimed credentials are accepted or
+        // In case of validated credential, if credential issuer match with claim request
+        if (!this.acceptsSelfProclaimedCredentials(claim.iss)) {
+          if (credentialTypes.includes("SelfProclaimedCredential"))  {
+            issuerInfo.canBeDelivered = false;
+            issuerInfo.errorMessage = "Credential issuer is required";
+          } else {
+            let issuerDid: string = relatedCredential.pluginVerifiableCredential.getIssuer()
+            let issuerExpirationInfo : ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
+            let issuerisExpired: boolean = issuerExpirationInfo.daysToExpire <= 0;
+            let issuerIsAccepted: boolean = this.acceptsIssuer(claim.iss, issuerDid);
+            issuerInfo.displayItem = await this.profileService.getIssuerDisplayEntryFromID(issuerDid)
+            issuerInfo.isExpired = issuerisExpired
+            issuerInfo.canBeDelivered = issuerIsAccepted && !issuerisExpired
 
-        // Don't display optional items that user doesn't have.
-        if (!relatedCredential && !claimIsRequired)
-          continue;
+            if (issuerisExpired)
+            {
+                issuerInfo.errorMessage = "Credential issuer DID is expired"
+            }
 
-        let claimValue = this.credentialValueAsString(credentialValue);
-
-        let hasRelatedCredential: boolean = (relatedCredential != null);
-
-        let issuerInfo: IssuerInfo = {
-          canBeDelivered : hasRelatedCredential,
-          isExpired : false,
-          displayItem: null,
-          errorMessage: ""
-        };
-
-        let isExpired: boolean = false;
-
-        if (hasRelatedCredential) {
-          let credentialTypes: string[] = relatedCredential.pluginVerifiableCredential.getTypes();
-
-          //Check if this credential is expired when validated
-          if (!credentialTypes.includes("SelfProclaimedCredential"))  {
-            let expirationInfo : ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
-            isExpired = expirationInfo.daysToExpire <= 0;
-          }
-
-          // Check if accepts self proclaimed credentials are accepted or
-          // In case of validated credential, if credential issuer match with claim request
-          if (!this.acceptsSelfProclaimedCredentials(claim.iss)) {
-            if (credentialTypes.includes("SelfProclaimedCredential"))  {
-              issuerInfo.canBeDelivered = false;
-              issuerInfo.errorMessage = "Credential issuer is required";
-            } else {
-              let issuerDid: string = relatedCredential.pluginVerifiableCredential.getIssuer()
-              let issuerExpirationInfo : ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
-              let issuerisExpired: boolean = issuerExpirationInfo.daysToExpire <= 0;
-              let issuerIsAccepted: boolean = this.acceptsIssuer(claim.iss, issuerDid);
-              issuerInfo.displayItem = await this.profileService.getIssuerDisplayEntryFromID(issuerDid)
-              issuerInfo.isExpired = issuerisExpired
-              issuerInfo.canBeDelivered = issuerIsAccepted && !issuerisExpired
-
-              if (issuerisExpired)
-              {
-                  issuerInfo.errorMessage = "Credential issuer DID is expired"
-              }
-
-              if (!issuerIsAccepted)
-              {
-                issuerInfo.errorMessage = "Credential issuer is not the same requested"
-              }
+            if (!issuerIsAccepted)
+            {
+              issuerInfo.errorMessage = "Credential issuer is not the same requested"
             }
           }
         }
-
-        let claimRequest: ClaimRequest = {
-          name: key,
-          value: claimValue,
-          credential: (relatedCredential?relatedCredential.pluginVerifiableCredential:null),
-          canBeDelivered: hasRelatedCredential,
-          issuer: issuerInfo,
-          selected: true,
-          isExpired: isExpired,
-          reason: ""
-        };
-
-        if (claimIsRequired) {
-          this.mandatoryItems.push(claimRequest);
-
-          // If at least one mandatory item is missing, we cannot complete the intent request.
-          if (!hasRelatedCredential || !issuerInfo.canBeDelivered)
-            this.canDeliver = false;
-        } else {
-          this.optionalItems.push(claimRequest);
-        }
       }
-    }
 
-    // If requested claims does not specify requirement for published DID and DID is not published,
-    // we prompt user to publish DID before proceeding
-    if(!this.publishStatusRequested && this.publishStatusFetched && this.didNeedsToBePublished) {
-      this.alertDidNeedsPublishing();
+      let claimRequest: ClaimRequest = {
+        name: key,
+        value: claimValue,
+        credential: (relatedCredential?relatedCredential.pluginVerifiableCredential:null),
+        canBeDelivered: hasRelatedCredential,
+        issuer: issuerInfo,
+        selected: true,
+        isExpired: isExpired,
+        reason: ""
+      };
+
+      if (claimIsRequired) {
+        this.mandatoryItems.push(claimRequest);
+
+        // If at least one mandatory item is missing, we cannot complete the intent request.
+        if (!hasRelatedCredential || !issuerInfo.canBeDelivered)
+          this.canDeliver = false;
+      } else {
+        this.optionalItems.push(claimRequest);
+      }
     }
   }
 
@@ -351,36 +362,6 @@ export class CredentialAccessRequestPage {
       selected: true,
       reason: ""
     };
-
-    this.mandatoryItems.push(claimRequest);
-  }
-
-  handleRequestedStatusOfPublishedDid(publishedDidIsRequired: boolean) {
-    const did: string = this.did.getDIDString();
-    const didDocument : DIDDocument = this.did.getDIDDocument();
-    const expiredState: ExpiredItem = this.expirationService.verifyDIDExpiration(did, didDocument , 0);
-
-    let claimRequest: ClaimRequest = {
-      name: "publish-status",
-      value: publishedDidIsRequired ? 'published-did-required' : 'published-did-not-required',
-      credential: null,
-      canBeDelivered: true,
-      issuer: {
-        canBeDelivered: true,
-        displayItem: null,
-        errorMessage: "",
-        isExpired: false
-      },
-      isExpired: (expiredState.daysToExpire <= 0),
-      selected: true,
-      reason: ""
-    };
-
-    // If requested claims requires published DID and DID is not published,
-    // we display a message on screen to ask them to publish DID before proceeding.
-    if(publishedDidIsRequired && this.publishStatusFetched && this.didNeedsToBePublished) {
-      this.publishingDidRequired = true;
-    }
 
     this.mandatoryItems.push(claimRequest);
   }

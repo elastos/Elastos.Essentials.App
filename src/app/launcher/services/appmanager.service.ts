@@ -112,7 +112,8 @@ export class AppmanagerService {
                         name: this.translate.instant('app-identity'),
                         description: this.translate.instant('app-identity-description'),
                         icon: '/assets/launcher/ios/app-icons/identity.svg',
-                        routerPath: '/identity/myprofile/home'
+                        // routerPath: '/identity/myprofile/home'
+                        routerPath: '/identity/credaccessrequest'
                     },
                     {
                         cssId: 'Contacts',

@@ -192,6 +192,7 @@ export class IntentReceiverService {
 
         let credAccessIntent: CredAccessIdentityIntent = intent;
         credAccessIntent.params.claims = credAccessIntent.params.claims || [];
+        credAccessIntent.params.publisheddid = credAccessIntent.params.publisheddid || true;
         credAccessIntent.params.nonce = credAccessIntent.params.nonce || "no-nonce";
         credAccessIntent.params.realm = credAccessIntent.params.realm || "no-realm";
         credAccessIntent.jwtExpirationDays = credAccessIntent.jwtExpirationDays || 1;

@@ -32,6 +32,7 @@ export type AppIdCredIssueIdentityIntent = IdentityIntent<AppIdCredIssueIdentity
  */
 export type CredAccessIdentityIntentParams = IdentityIntentParams & {
     claims: {},
+    publisheddid: boolean,
     customization: IdentityIntentCustomization,
     nonce: string,
     realm: string,
