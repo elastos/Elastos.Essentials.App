@@ -1,4 +1,5 @@
 import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { PayQuery, TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-cordova/dist/wallet";
 import { Logger } from "../logger";
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
@@ -50,7 +51,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
      * Wallet API
      */
 
-    async pay() {
+    async pay(query: PayQuery): Promise<TransactionResult>  {
         throw new Error("pay(): Method not implemented.");
     }
 
