@@ -79,8 +79,7 @@ export class Native {
         Logger.log("wallet", "Setting root router path to:", page);
         this.zone.run(() => {
             this.hideLoading();
-            this.globalNav.navigateTo(App.WALLET, page, { state: options });
-            //this.navCtrl.navigateRoot([page], { state: options });
+            this.globalNav.navigateRoot(App.WALLET, page, { state: options });
         });
     }
 

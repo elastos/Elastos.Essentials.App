@@ -45,13 +45,17 @@ export class GlobalNavService {
 
         while (this.canGoBack()) {
             let lastStep = this.navigationHistory[this.navigationHistory.length-1];
-            if (lastStep.context != context)
+            let last2Step = this.navigationHistory[this.navigationHistory.length-2];
+            if ((lastStep.context == context) && (last2Step.context != context)) {
                 break; // Found the previous context - stop unstacking.
-            else
+            }
+            else {
                 this.navigationHistory.pop(); // Same context, unstack the step
+            }
         }
 
         this.navCtrl.navigateBack(route, routerOptions);
+        // this.navigateTo(context, route, routerOptions);
     }
 
     /**
@@ -105,7 +109,6 @@ export class GlobalNavService {
         let previousStep = this.navigationHistory[this.navigationHistory.length-1];
 
         Logger.log("Nav", "Navigating back to", previousStep.route);
-
         this.navCtrl.navigateBack(previousStep.route, previousStep.routerOptions);
     }
 
@@ -114,11 +117,12 @@ export class GlobalNavService {
      */
     public exitCurrentContext() {
         Logger.log("Nav", "Navigating out of current context");
+
         let currentStep = this.navigationHistory[this.navigationHistory.length-1];
         this.navigationHistory.pop();
         if (!currentStep) {
-          Logger.error("Nav", "Can't get the currentStep, this.navigationHistory:", this.navigationHistory);
-          return;
+            Logger.error("Nav", "Can't get the currentStep, this.navigationHistory:", this.navigationHistory);
+            return;
         }
         let startContext = currentStep.context;
         while (this.canGoBack()) {
@@ -126,8 +130,8 @@ export class GlobalNavService {
             if (currentStep.context == startContext)
                 this.navigationHistory.pop(); // Same context, unstack the step
             else {
-                // Found the previous context, go there.
-                this.navigateTo(currentStep.context, currentStep.route, currentStep.routerOptions);
+                // Found the previous context, back to there.
+                this.navCtrl.navigateBack(currentStep.route, currentStep.routerOptions);
                 return;
             }
         }

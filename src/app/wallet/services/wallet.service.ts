@@ -407,7 +407,7 @@ export class WalletManager {
         this.startWalletSync(id);
 
         // Go to wallet's home page.
-        this.native.setRootRouter("/wallet-home");
+        this.native.setRootRouter("/wallet/wallet-home");
 
         // Get balance by rpc
         this.getAllSubwalletsBalanceByRPC(id);
@@ -439,7 +439,7 @@ export class WalletManager {
 
         if (Object.values(this.masterWallets).length > 0) {
 
-            this.native.setRootRouter("/wallet-home");
+            this.native.setRootRouter("/wallet/wallet-home");
         } else {
             this.goToLauncherScreen();
         }

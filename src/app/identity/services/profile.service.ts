@@ -303,7 +303,7 @@ export class ProfileService {
       }
 
       this.popover = null;
-      this.native.go("/identity/myprofile");
+      this.native.setRootRouter("/identity/myprofile");
     });
     return await this.popover.present();
   }
