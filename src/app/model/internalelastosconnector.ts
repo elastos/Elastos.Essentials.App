@@ -1,5 +1,4 @@
-import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
-import { PayQuery, TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-cordova/dist/wallet";
+import { Interfaces, PayQuery, TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { Logger } from "../logger";
 
 declare let essentialsIntent: EssentialsIntentPlugin.Intent;
