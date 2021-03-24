@@ -94,6 +94,7 @@ export class PublishPage {
     }
 
     ionViewWillEnter() {
+      this.titleBar.setTitle(this.translate.instant('publish'));
     }
 
     ionViewWillLeave() {

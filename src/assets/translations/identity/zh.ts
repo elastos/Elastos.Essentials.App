@@ -93,7 +93,7 @@ export const zh = {
 
     // page: publish
     'showing-all-visible-credentials': '显示所有可见凭证',
-    'toggle-credentials-to-publish': '切换要发布的凭据',
+    'toggle-credentials-to-publish': '选择要发布的凭据',
 
     // page: settings & advanced-settings
     'advanced-settings': '高级设置',
@@ -110,6 +110,7 @@ export const zh = {
     // component: options
     'edit-visibility': '编辑公开档案',
     'delete-credentials': '删除凭证',
+    'publish-title': '发布身份',
     'publish': '发布',
     'export': '导出',
 

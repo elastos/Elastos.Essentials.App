@@ -110,6 +110,7 @@ export const fr = {
     // component: options
     'edit-visibility': 'Modif. Visibilité',
     'delete-credentials': 'Supprimer',
+    'publish-title': 'Publier l\'identité',
     'publish': 'Publier',
     'export': 'Exporter',
 
