@@ -426,12 +426,12 @@ ion-fab {
 .darkContainer {
 
   .capsules {
-    span{
+    span {
       color: #ffffff;
     }
   }
   .capsules-section {
-    border-top: 1px solid #2f305a;
+    border-top: 1px solid #090910;
     color: #ffffff;
     .title {
       color: #ffffff;
@@ -600,28 +600,23 @@ ion-fab {
 }
 .capsules {
   height: 115px;
+  width: 100%;
 
   ion-col {
     --ion-grid-column-padding: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   span{
-    font-family: Montserrat;
     font-size: 13px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
+    font-weight: 500;
     line-height: 1.0;
-    letter-spacing: normal;
     color: #372153;
     word-wrap: break-word;
-    width: 100px;
-    height: 25px;
     text-align: center;
-
-
   }
-
 }
 
 .capsule-icon {

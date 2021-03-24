@@ -95,7 +95,7 @@
     </ion-col> -->
     </ion-row>
 
-    <ion-row class="capsules">
+    <ion-row class="capsules" *ngIf="profileService.appCreds.length">
       <ion-col>
         <ion-content>
           <ion-slides pager="false" [options]="slideOpts">
@@ -122,8 +122,8 @@
         </ion-content>
       </ion-col>
     </ion-row>
-    <ion-row class="capsules" *ngIf="profileService.appCreds.length == 0" class="ion-justify-content-center">
-      <ion-col size="8" class="not-found ion-align-self-center">
+    <ion-row class="capsules" *ngIf="profileService.appCreds.length == 0">
+      <ion-col size="12" class="not-found">
         <span> {{'no-capsules-title'|translate}}</span>
       </ion-col>
     </ion-row>

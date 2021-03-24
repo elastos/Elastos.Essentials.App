@@ -54,12 +54,18 @@
         <ion-row class="input-row">
             <ion-col size="12">
                 <ion-input
+                    *ngIf="!sendMax"
                     type="number"
-                    name="amount" ngDefaultControl
+                    name="amount"
+                    ngDefaultControl
                     placeholder="{{ 'amount' | translate }}"
                     [(ngModel)]="amount"
-                >
-                </ion-input>
+                ></ion-input>
+                <ion-input
+                    *ngIf="sendMax"
+                    [value]="masterWallet.subWallets[chainId].getDisplayBalance().toFixed(6)"
+                    (ionChange)="resetAmountInput()"
+                ></ion-input>
                 <p *ngIf="supportsMaxTransfer()" (click)="setMaxTransfer()">{{ 'max' | translate }}</p>
             </ion-col>
         </ion-row>
@@ -78,22 +84,26 @@
                 <p *ngIf="isStandardSubwallet(fromSubWallet)">{{ currencyService.selectedCurrency.symbol }}</p>
             </ion-col>
             <ion-col size="6" class="right-col">
-                <h5 *ngIf="sendMax">
-                    {{ 'transfer-all' | translate }}
-                </h5>
-                <ion-input *ngIf="!sendMax"
+                <ion-input
+                    *ngIf="!sendMax"
                     class="amount-input"
                     type="number"
-                    placeholder="0"
-                    name="amount2" ngDefaultControl
+                    name="amount"
+                    ngDefaultControl
+                    placeholder="{{ 'amount' | translate }}"
                     [(ngModel)]="amount"
-                >
-                </ion-input>
+                ></ion-input>
+                <ion-input
+                    *ngIf="sendMax"
+                    class="amount-input"
+                    [value]="masterWallet.subWallets[chainId].getDisplayBalance().toFixed(6)"
+                    (ionChange)="resetAmountInput()"
+                ></ion-input>
                 <p *ngIf="amount && !sendMax">
                     {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(amount)) }}
                 </p>
                 <p *ngIf="sendMax">
-                    {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.masterWallet.subWallets[chainId].getDisplayBalance())) }}
+                    {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.masterWallet.subWallets[chainId].getDisplayBalance().toFixed(6))) }}
                 </p>
             </ion-col>
         </ion-row>

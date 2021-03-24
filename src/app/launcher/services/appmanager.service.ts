@@ -190,7 +190,7 @@ export class AppmanagerService {
         if (visit || visit === true) {
             this.firstVisit = false;
         } else {
-            this.router.navigate(['launcher/onboard']);
+            this.globalNav.navigateRoot(App.LAUNCHER, 'launcher/onboard');
         }
     }
 

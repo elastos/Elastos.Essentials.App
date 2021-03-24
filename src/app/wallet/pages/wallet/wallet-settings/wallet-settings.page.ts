@@ -42,7 +42,6 @@ export class WalletSettingsPage implements OnInit {
     public settings = [
         {
             type: 'wallet-export',
-            // route: "/mnemonic-export",
             route: null,
             title: this.translate.instant("wallet-settings-backup-wallet"),
             subtitle: this.translate.instant("wallet-settings-backup-wallet-subtitle"),
@@ -51,7 +50,7 @@ export class WalletSettingsPage implements OnInit {
         },
         {
             type: 'wallet-name',
-            route: "/wallet-edit-name",
+            route: "/wallet/wallet-edit-name",
             title: this.translate.instant("wallet-settings-change-name"),
             subtitle: this.translate.instant("wallet-settings-change-name-subtitle"),
             icon: '/assets/wallet/settings/pen.svg',
@@ -59,20 +58,12 @@ export class WalletSettingsPage implements OnInit {
         },
         {
             type: 'wallet-color',
-            route: "/wallet-color",
+            route: "/wallet/wallet-color",
             title: this.translate.instant("wallet-settings-change-theme"),
             subtitle: this.translate.instant("wallet-settings-change-theme-subtitle"),
             icon: '/assets/wallet/settings/picture.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
         },
-        // TODO delete wallet-password-reset
-        // {
-        //     route: "/wallet-password-reset",
-        //     title: "Change Password",
-        //     subtitle: "Change your wallets secure pay password",
-        //     icon: '/assets/wallet/settings/lock.svg',
-        //     iconDarkmode: '/assets/wallet/settings/darkmode/lock.svg'
-        // },
         {
             type: 'coin-list',
             route: "/wallet/coin-list",

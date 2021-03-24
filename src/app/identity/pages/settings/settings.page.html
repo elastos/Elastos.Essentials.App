@@ -1,7 +1,7 @@
 <app-titlebar></app-titlebar>
 <ion-content>
   <ion-grid [class.dark-container]="theme.darkMode">
-    <ion-row class="section-row" [routerLink]="['/advanced-settings']">
+    <ion-row class="section-row" (click)="goToAdvancedSettings()">
       <ion-col size="9" class="left-col">
         <h1>{{ 'advanced-settings' | translate }}</h1>
       </ion-col>

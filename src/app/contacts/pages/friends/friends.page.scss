@@ -28,8 +28,14 @@
     }
 
     .activeSlide {
-      width: 100px;
-      height: 100px;
+      animation: animate;
+      animation-duration: 300ms;
+      animation-fill-mode: forwards;
+    
+      @keyframes animate {
+        0% { width: 66px; height: 66px; }
+        100% { width: 100px; height: 100px; }
+      }
     }
 
     h1 {

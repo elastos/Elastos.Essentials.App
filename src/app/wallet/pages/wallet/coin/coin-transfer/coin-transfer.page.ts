@@ -395,14 +395,15 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     setMaxTransfer() {
         this.zone.run(() => {
-            this.sendMax = !this.sendMax;
-            if (this.sendMax) {
-                // -1 means send max in spvsdk.
-                this.amount = -1;
-            } else {
-                this.amount = null;
-            }
+            this.sendMax = true;
+            // -1 means send max in spvsdk.
+            this.amount = -1;
         });
+    }
+
+    resetAmountInput() {
+        this.sendMax = false;
+        this.amount = null;
     }
 
     async goTransaction() {

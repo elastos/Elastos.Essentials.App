@@ -89,7 +89,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
             this.selectSubscription = null;
           });
         this.native.go(
-            '/coin-address',
+            '/wallet/coin-address',
             {
                 masterWalletId: this.masterWalletId,
                 chainId: this.chainId

@@ -18,10 +18,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 export class CoinAddressPage {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    addressList = [];
+    public addressList = [];
     public masterWalletId: string;
     public chainId: string;
-    curCount = 0;
+    public curCount = 0;
 
     constructor(
         public walletManager: WalletManager,
