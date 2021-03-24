@@ -29,8 +29,8 @@
     "types": [
       "node",
       "cordova",
-      "elastos-cordova-plugin-did",
-      "elastos-cordova-plugin-hive",
+      "@elastosfoundation/elastos-cordova-plugin-did",
+      "@elastosfoundation/elastos-cordova-plugin-hive",
       "elastos-essentials-plugin-intent",
       "elastos-essentials-plugin-passwordmanager",
       "elastos-essentials-plugin-wallet",
