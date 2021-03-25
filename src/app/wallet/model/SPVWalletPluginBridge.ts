@@ -164,6 +164,14 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    public destroy(): Promise<void> {
+      return new Promise((resolve, reject)=>{
+           walletManager.destroy([],
+              (ret) => { resolve(ret); },
+              (err) => { this.handleError(err, reject);  });
+      });
+    }
+
     public generateMnemonic(language: string): Promise<string> {
         return new Promise((resolve, reject)=>{
             walletManager.generateMnemonic([language],

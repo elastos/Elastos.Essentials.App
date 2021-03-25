@@ -536,8 +536,10 @@ export class WalletManager {
         const masterId = event.MasterWalletID;
         const chainId = event.ChainID;
 
-        Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
-        //Logger.log('wallet', event.Action, event.result);
+        if (event.Action != "OnETHSCEventHandled") {
+          Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
+          // Logger.log('wallet', event.Action, event.result);
+        }
 
         switch (event.Action) {
             case "OnTransactionStatusChanged":

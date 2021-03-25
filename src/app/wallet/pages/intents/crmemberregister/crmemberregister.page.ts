@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -32,6 +32,8 @@ import { AuthService } from '../../../services/auth.service';
 import BigNumber from 'bignumber.js';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -40,6 +42,8 @@ import { Logger } from 'src/app/logger';
     styleUrls: ['./crmemberregister.page.scss'],
 })
 export class CRMemberRegisterPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
     masterWallet: MasterWallet = null;
     intentTransfer: IntentTransfer;
     transfer: Transfer = null;
@@ -61,6 +65,7 @@ export class CRMemberRegisterPage implements OnInit {
                 public popupProvider: PopupProvider,
                 private coinTransferService: CoinTransferService,
                 private authService: AuthService,
+                public translate: TranslateService,
                 public native: Native,
                 public zone: NgZone) {
         this.init();
@@ -70,6 +75,8 @@ export class CRMemberRegisterPage implements OnInit {
     }
 
     ionViewDidEnter() {
+        // TODO
+        // this.titleBar.setTitle(this.translate.instant(''));
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
             // TODO: reject didtransaction if multi sign (show error popup)
             this.cancelOperation();

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
@@ -31,6 +31,8 @@ import { VoteType, CRProposalVoteInfo } from '../../../model/SPVWalletPluginBrid
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -39,6 +41,8 @@ import { Logger } from 'src/app/logger';
   styleUrls: ['./crproposalvoteagainst.page.scss'],
 })
 export class CRProposalVoteAgainstPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
     masterWalletId: string;
     sourceSubwallet: MainchainSubWallet = null;
     chainId: string; // ELA
@@ -50,6 +54,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
     constructor(public walletManager: WalletManager,
                 private coinTransferService: CoinTransferService,
                 private globalIntentService: GlobalIntentService,
+                public translate: TranslateService,
                 public native: Native,
                 public zone: NgZone,
                 public popupProvider: PopupProvider) {
@@ -60,6 +65,8 @@ export class CRProposalVoteAgainstPage implements OnInit {
     }
 
     async ionViewDidEnter() {
+        // TODO
+        // this.titleBar.setTitle(this.translate.instant(''));
         if (this.coinTransferService.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
             // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
             this.cancelOperation();

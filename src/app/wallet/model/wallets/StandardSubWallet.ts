@@ -202,7 +202,9 @@ export abstract class StandardSubWallet extends SubWallet {
         }
         this.progress = progress;
 
-        Logger.log("wallet", "Standard subwallet "+this.id+" got update sync progress request. Progress = "+progress);
+        if (this.id != StandardCoinName.ETHSC ) {
+            Logger.log("wallet", "Standard subwallet "+this.id+" got update sync progress request. Progress = "+progress);
+        }
 
         const curTimestampMs = (new Date()).getTime();
         const timeInverval = curTimestampMs - this.timestamp;

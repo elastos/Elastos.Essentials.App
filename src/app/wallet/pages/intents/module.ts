@@ -38,7 +38,8 @@ import { WaitForSyncPage } from './waitforsync/waitforsync.page';
             { path: 'crmemberregister', component: CRMemberRegisterPage },
             { path: 'crproposalvoteagainst', component: CRProposalVoteAgainstPage },
             { path: 'access', component: AccessPage },
-            { path: 'select-subwallet', component: SelectSubwalletPage }
+            { path: 'select-subwallet', component: SelectSubwalletPage },
+            { path: 'waitforsync', component: WaitForSyncPage },
         ])
     ],
     exports: [RouterModule],

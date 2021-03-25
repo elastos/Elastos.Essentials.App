@@ -112,16 +112,17 @@ export class SPVSyncService {
         const masterId = event.MasterWalletID;
         const chainId = event.ChainID;
 
-        Logger.log("wallet", "SubWallet message: ", masterId, chainId, event);
+        // Logger.log("wallet", "SubWallet message: ", masterId, chainId, event);
         // Logger.log("wallet", event.Action, event.result);
 
         switch (event.Action) {
             case 'OnBlockSyncProgress':
+                Logger.log("wallet", "SubWallet message: ", masterId, chainId, event);
                 this.handleBlockSyncProgressEvent(masterId, chainId, event);
                 break;
-            case 'OnBalanceChanged':
-                // Nothing to do for now
-                break;
+            // case 'OnBalanceChanged':
+            //     // Nothing to do for now
+            //     break;
             case 'OnETHSCEventHandled':
                 this.handleETHSCBlockSyncProgressEvent(masterId, chainId, event);
                 break;
