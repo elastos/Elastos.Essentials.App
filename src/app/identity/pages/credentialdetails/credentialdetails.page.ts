@@ -21,7 +21,7 @@ import { Subscription } from "rxjs";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
-import { isNullOrUndefined } from "lodash-es";
+import { isNil } from "lodash-es";
 import { Logger } from "src/app/logger";
 
 
@@ -202,8 +202,8 @@ export class CredentialDetailsPage {
     this.segment = "validator";
 
     if (
-      isNullOrUndefined(this.credentialId) ||
-      isNullOrUndefined(this.credentials) ||
+      isNil(this.credentialId) ||
+      isNil(this.credentials) ||
       this.credentials.length <= 0
     ) {
 
@@ -233,7 +233,7 @@ export class CredentialDetailsPage {
 
     let issuerDid = this.credential.pluginVerifiableCredential.getIssuer();
     //issuerDid = "did:elastos:ibXZJqeN19iTpvNvqo5vU9XH4PEGKhgS6d";
-    if (isNullOrUndefined(issuerDid) || issuerDid == "") return;
+    if (isNil(issuerDid) || issuerDid == "") return;
 
     this.issuer = await this.profileService.getIssuerDisplayEntryFromID(
       issuerDid

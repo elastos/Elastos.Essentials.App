@@ -20,7 +20,7 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { isNullOrUndefined } from 'util';
+import { isNil } from 'lodash-es';
 import { Logger } from 'src/app/logger';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -427,7 +427,7 @@ export class CredentialAccessRequestPage {
    */
   acceptsSelfProclaimedCredentials(iss: any): boolean {
     let response: boolean = true
-    if (!isNullOrUndefined(iss) && iss instanceof Object){
+    if (!isNil(iss) && iss instanceof Object){
       response =  iss["selfproclaimed"];
     }
 
@@ -442,7 +442,7 @@ export class CredentialAccessRequestPage {
   acceptsIssuer(iss: any, issuerDid: string): boolean {
     Logger.log('Identity', "acceptsIssuer", iss, issuerDid)
 
-    if (isNullOrUndefined(iss)) return true;
+    if (isNil(iss)) return true;
 
     let issuersAccepted: string[] = iss["did"] || []
 

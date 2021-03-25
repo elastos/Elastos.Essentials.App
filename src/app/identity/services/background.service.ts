@@ -7,7 +7,7 @@ import { Native } from './native';
 import { DIDService } from './did.service';
 import { AuthService } from './auth.service';
 import { ExpirationService } from './expiration.service';
-import { isNullOrUndefined } from 'lodash-es';
+import { isNil } from 'lodash-es';
 
 import * as moment from 'moment';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -126,7 +126,7 @@ export class BackgroundService {
         Logger.log("Identity", "Verify if expiration was already checked today");
           this.localStorage.get(this.EXPIRATION_STORAGE_KEY).then(storedChecked =>{
             // Verify if was checked today
-            if (!isNullOrUndefined(storedChecked))
+            if (!isNil(storedChecked))
             {
               let lastCheckDate = moment(storedChecked.last_check, "YYYY-MM-DD");
               resolve(moment({}).isSame(lastCheckDate,'day'));
