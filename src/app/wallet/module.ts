@@ -49,16 +49,8 @@ import { WalletRoutingModule } from './routing';
 
 @NgModule({
     declarations: [
-        TxConfirmComponent,
-        TxSuccessComponent,
-        HelpComponent,
-        ContactsComponent
     ],
     entryComponents: [
-        TxConfirmComponent,
-        TxSuccessComponent,
-        HelpComponent,
-        ContactsComponent
     ],
     imports: [
         CommonModule,

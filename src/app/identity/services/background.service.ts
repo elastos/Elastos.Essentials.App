@@ -7,7 +7,7 @@ import { Native } from './native';
 import { DIDService } from './did.service';
 import { AuthService } from './auth.service';
 import { ExpirationService } from './expiration.service';
-import { isNullOrUndefined } from 'lodash';
+import { isNullOrUndefined } from 'lodash-es';
 
 import * as moment from 'moment';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
