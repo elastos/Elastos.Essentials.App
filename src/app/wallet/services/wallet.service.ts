@@ -302,7 +302,7 @@ export class WalletManager {
     }
 
     private goToLauncherScreen() {
-        this.native.setRootRouter('/launcher');
+        this.native.setRootRouter('/wallet/launcher');
     }
 
     public async getCurrentMasterIdFromStorage(): Promise<string> {

@@ -57,7 +57,11 @@ export class CurrencyService {
     await this.getSavedPrices();
     await this.getSavedCurrency();
     await this.getSavedCurrencyDisplayPreference();
-    this.fetch();
+
+    // Wait a moment before fetching latest prices, to not struggle the main essentials boot sequence.
+    setTimeout(() => {
+      this.fetch();
+    }, 10000);
 
     Logger.log('wallet', "Currency service initialization complete");
   }

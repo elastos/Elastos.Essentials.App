@@ -20,99 +20,47 @@
  * SOFTWARE.
  */
 
-import { Component, NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes, NoPreloading } from '@angular/router';
-import { LauncherPage } from './pages/launcher/launcher.page';
-import { WalletSettingsPage } from './pages/wallet/wallet-settings/wallet-settings.page';
-import { ContactCreatePage } from './pages/contacts/contact-create/contact-create.page';
-import { ContactListPage } from './pages/contacts/contact-list/contact-list.page';
-import { ContactsPage } from './pages/contacts/contact/contacts.page';
-import { AboutPage } from './pages/about/about.page';
-import { AccessPage } from './pages/intents/access/access.page';
-import { DidTransactionPage } from './pages/intents/didtransaction/didtransaction.page';
-import { WaitForSyncPage } from './pages/intents/waitforsync/waitforsync.page';
-import { CRmembervotePage } from './pages/intents/crmembervote/crmembervote.page';
-import { DPoSVotePage } from './pages/intents/dposvote/dposvote.page';
-import { CRMemberRegisterPage } from './pages/intents/crmemberregister/crmemberregister.page';
-import { CoinAddressPage } from './pages/wallet/coin/coin-address/coin-address.page';
-import { CoinTransferPage } from './pages/wallet/coin/coin-transfer/coin-transfer.page';
-import { CoinTxInfoPage } from './pages/wallet/coin/coin-tx-info/coin-tx-info.page';
-import { CoinReceivePage } from './pages/wallet/coin/coin-receive/coin-receive.page';
-import { CoinSelectPage } from './pages/wallet/coin/coin-select/coin-select.page';
-import { CoinListPage } from './pages/wallet/coin/coin-list/coin-list.page';
-import { CoinHomePage } from './pages/wallet/coin/coin-home/coin-home.page';
-import { WalletCreatePage } from './pages/wallet/wallet-create/wallet-create.page';
-import { WalletImportPage } from './pages/wallet/wallet-import/wallet-import.page';
-import { WalletCreateNamePage } from './pages/wallet/wallet-create-name/wallet-create-name.page';
-import { MnemonicWritePage } from './pages/wallet/mnemonic/mnemonic-write/mnemonic-write.page';
-import { WalletPasswordResetPage } from './pages/wallet/wallet-password-reset/wallet-password-reset.page';
-import { WalletEditNamePage } from './pages/wallet/wallet-edit-name/wallet-edit-name.page';
-import { MnemonicExportPage } from './pages/wallet/mnemonic/mnemonic-export/mnemonic-export.page';
-import { MnemonicCreatePage } from './pages/wallet/mnemonic/mnemonic-create/mnemonic-create.page';
-import { SettingsPage } from './pages/settings/settings.page';
-import { WalletHomePage } from './pages/wallet/wallet-home/wallet-home.page';
-import { WalletManagerPage } from './pages/wallet/wallet-manager/wallet-manager.page';
-import { CRProposalVoteAgainstPage } from './pages/intents/crproposalvoteagainst/crproposalvoteagainst.page';
-import { EscTransactionPage } from './pages/intents/esctransaction/esctransaction.page';
-import { CurrencySelectPage } from './pages/settings/currency-select/currency-select.page';
-import { WalletColorPage } from './pages/wallet/wallet-color/wallet-color.page';
-import { CoinAddERC20Page } from './pages/wallet/coin/coin-add-erc20/coin-add-erc20.page';
-import { WalletAdvancedImportPage } from './pages/wallet/wallet-advanced-import/wallet-advanced-import.page';
-import { SelectSubwalletPage } from './pages/intents/select-subwallet/select-subwallet.page';
-import { CoinErc20DetailsPage } from './pages/wallet/coin/coin-erc20-details/coin-erc20-details.page';
-import { SwapTestPage } from './pages/swap-test/swap-test.page';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
     // Global
-    { path: 'launcher', component: LauncherPage },
-    { path: 'about', component: AboutPage },
-    { path: 'settings', component: SettingsPage },
-    { path: 'wallet-home', component: WalletHomePage },
-    { path: 'wallet-create', component: WalletCreatePage },
-    { path: 'wallet-import', component: WalletImportPage },
-    { path: 'wallet-advanced-import', component: WalletAdvancedImportPage },
-    { path: 'wallet-manager', component: WalletManagerPage },
-    { path: 'mnemonic-create', component: MnemonicCreatePage },
-    { path: 'wallet-create-name', component: WalletCreateNamePage },
-    { path: 'mnemonic-write', component: MnemonicWritePage },
-    { path: 'wallet-password-reset', component: WalletPasswordResetPage },
-    { path: 'wallet-edit-name', component: WalletEditNamePage },
-    { path: 'mnemonic-export', component: MnemonicExportPage },
-    { path: 'wallet-settings', component: WalletSettingsPage },
+    { path: 'launcher', loadChildren: ()=>import('./pages/launcher/module').then(m => m.LauncherModule) },
+    { path: 'about', loadChildren: ()=>import('./pages/about/module').then(m => m.AboutModule) },
+    { path: 'settings', loadChildren: ()=>import('./pages/settings/module').then(m => m.SettingsModule) },
+    { path: 'wallet-home', loadChildren: ()=>import('./pages/wallet/wallet-home/module').then(m => m.WalletHomeModule) },
+    { path: 'wallet-create', loadChildren: ()=>import('./pages/wallet/wallet-create/module').then(m => m.WalletCreateModule) },
+    { path: 'wallet-import', loadChildren: ()=>import('./pages/wallet/wallet-import/module').then(m => m.WalletImportModule) },
+    { path: 'wallet-advanced-import', loadChildren: ()=>import('./pages/wallet/wallet-advanced-import/module').then(m => m.WalletAdvancedImportModule) },
+    { path: 'wallet-manager', loadChildren: ()=>import('./pages/wallet/wallet-manager/module').then(m => m.WalletManagerModule) },
+    { path: 'wallet-create-name', loadChildren: ()=>import('./pages/wallet/wallet-create-name/module').then(m => m.WalletCreateNameModule) },
+    { path: 'wallet-password-reset', loadChildren: ()=>import('./pages/wallet/wallet-password-reset/module').then(m => m.WalletPasswordResetModule) },
+    { path: 'wallet-edit-name', loadChildren: ()=>import('./pages/wallet/wallet-edit-name/module').then(m => m.WalletEditNameModule) },
+    { path: 'wallet-settings', loadChildren: ()=>import('./pages/wallet/wallet-settings/module').then(m => m.WalletSettingsModule) },
+    { path: 'mnemonic', loadChildren: ()=>import('./pages/wallet/mnemonic/module').then(m => m.MnemonicModule) },
 
     // Settings
-    { path: 'wallet-color', component: WalletColorPage },
-    { path: 'currency-select', component: CurrencySelectPage },
+    { path: 'wallet-color', loadChildren: ()=>import('./pages/wallet/wallet-color/module').then(m => m.WalletColorModule) },
 
     // Coin
-    { path: 'coin', component: CoinHomePage },
-    { path: 'coin-address', component: CoinAddressPage },
-    { path: 'coin-list', component: CoinListPage },
-    { path: 'coin-select', component: CoinSelectPage },
-    { path: 'coin-receive', component: CoinReceivePage },
-    { path: 'coin-tx-info', component: CoinTxInfoPage },
-    { path: 'coin-transfer', component: CoinTransferPage },
-    { path: 'coin-add-erc20', component: CoinAddERC20Page },
-    { path: 'coin-erc20-details', component: CoinErc20DetailsPage },
+    { path: 'coin', loadChildren: ()=>import('./pages/wallet/coin/coin-home/module').then(m => m.CoinHomeModule) },
+    { path: 'coin-address', loadChildren: ()=>import('./pages/wallet/coin/coin-address/module').then(m => m.CoinAddressModule) },
+    { path: 'coin-list', loadChildren: ()=>import('./pages/wallet/coin/coin-list/module').then(m => m.CoinListModule) },
+    { path: 'coin-select', loadChildren: ()=>import('./pages/wallet/coin/coin-select/module').then(m => m.CoinSelectModule) },
+    { path: 'coin-receive', loadChildren: ()=>import('./pages/wallet/coin/coin-receive/module').then(m => m.CoinReceiveModule) },
+    { path: 'coin-tx-info', loadChildren: ()=>import('./pages/wallet/coin/coin-tx-info/module').then(m => m.CoinTxInfoModule) },
+    { path: 'coin-transfer', loadChildren: ()=>import('./pages/wallet/coin/coin-transfer/module').then(m => m.CoinTransferModule) },
+    { path: 'coin-add-erc20', loadChildren: ()=>import('./pages/wallet/coin/coin-add-erc20/module').then(m => m.CoinAddERC20Module) },
+    { path: 'coin-erc20-details', loadChildren: ()=>import('./pages/wallet/coin/coin-erc20-details/module').then(m => m.CoinERC20DetailsModule) },
 
     // Contacts
-    { path: 'contacts', component: ContactsPage },
-    { path: 'contact-list', component: ContactListPage },
-    { path: 'contact-create', component: ContactCreatePage},
+    { path: 'contacts', loadChildren: ()=>import('./pages/contacts/module').then(m => m.ContactsModule) },
 
     // Intents
-    { path: 'select-subwallet', component: SelectSubwalletPage },
-    { path: 'waitforsync', component: WaitForSyncPage },
-    { path: 'access', component: AccessPage },
-    { path: 'didtransaction', component: DidTransactionPage },
-    { path: 'esctransaction', component: EscTransactionPage },
-    { path: 'crmembervote', component: CRmembervotePage },
-    { path: 'dposvote', component: DPoSVotePage },
-    { path: 'crmemberregister', component: CRMemberRegisterPage },
-    { path: 'crproposalvoteagainst', component: CRProposalVoteAgainstPage },
+    { path: 'intents', loadChildren: ()=>import('./pages/intents/module').then(m => m.IntentsModule) },
 
     // TEST
-    { path: 'swap-test', component: SwapTestPage },
+    { path: 'swap-test', loadChildren: ()=>import('./pages/swap-test/module').then(m => m.SwapTestModule) },
 ];
 @NgModule({
     imports: [

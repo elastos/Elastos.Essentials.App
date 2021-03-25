@@ -288,7 +288,7 @@ export abstract class StandardSubWallet extends SubWallet {
                 await this.masterWallet.walletManager.native.hideLoading();
 
                 if (navigateHomeAfterCompletion)
-                    await this.masterWallet.walletManager.native.setRootRouter('/wallet-home');
+                    await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
 
                 resolve({
                     published: true,

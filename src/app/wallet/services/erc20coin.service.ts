@@ -23,48 +23,47 @@
 import { Injectable } from '@angular/core';
 import Web3 from 'web3';
 import { ERC20Coin } from '../model/Coin';
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
-import { NetworkType } from 'src/app/model/networktype';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
+import { WalletPrefsService } from './pref.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ERC20CoinService {
-    private activeNetwork: NetworkType;
-
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private erc20ABI: any;
 
-    constructor(private prefs: GlobalPreferencesService) {
+    constructor(private prefs: WalletPrefsService) {
     }
 
-    public async init() {
-        this.activeNetwork = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+    // Lazy web3 init for angular bundle optimization
+    private getWeb3(): Web3 {
+        if (this.web3)
+            return this.web3;
 
         const trinityWeb3Provider = new EssentialsWeb3Provider();
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
         this.erc20ABI = require('../../../assets/wallet/ethereum/StandardErc20ABI.json');
+
+        return this.web3;
     }
 
     public isAddress(address: string) {
-        return this.web3.utils.isAddress(address);
+        return this.getWeb3().utils.isAddress(address);
     }
 
     public async isContractAddress(address: string) {
-        const contractCode = await this.web3.eth.getCode(address);
+        const contractCode = await this.getWeb3().eth.getCode(address);
         return contractCode === '0x' ? false : true;
     }
 
     public async getCoinDecimals(address: string, ethAccountAddress: string) {
         let coinDecimals = 0;
-        const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
+        const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
         if (erc20Contract) {
             coinDecimals = await erc20Contract.methods.decimals().call();
             Logger.log('wallet', 'Coin decimals:', coinDecimals);
@@ -73,7 +72,7 @@ export class ERC20CoinService {
     }
 
     public async getCoinInfo(address: string, ethAccountAddress: string) {
-        const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
+        const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
         Logger.log('wallet', 'erc20Contract', erc20Contract);
 
         const coinName = await erc20Contract.methods.name().call();
@@ -90,7 +89,7 @@ export class ERC20CoinService {
 
     public async getERC20Coin(address: string, ethAccountAddress: string) {
         const coinInfo = await this.getCoinInfo(address, ethAccountAddress);
-        const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinSymbol, coinInfo.coinName, address, this.activeNetwork, false);
+        const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinSymbol, coinInfo.coinName, address, this.prefs.activeNetwork, false);
         return newCoin;
     }
 }

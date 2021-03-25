@@ -62,7 +62,7 @@ export class SettingsPage implements OnInit {
             type: 'wallet-manager'
         },
         {
-            route: "/wallet/currency-select",
+            route: "/wallet/settings/currency-select",
             title: this.translate.instant("settings-currency"),
             subtitle: this.translate.instant("settings-currency-subtitle"),
             icon: '/assets/wallet/settings/dollar.svg',

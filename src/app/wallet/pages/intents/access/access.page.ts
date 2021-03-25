@@ -165,7 +165,7 @@ export class AccessPage implements OnInit {
 
     async onShare() {
         if (this.exportMnemonic) {
-            this.native.go('/wallet/mnemonic-export', { fromIntent: true });
+            this.native.go('/wallet/mnemonic/export', { fromIntent: true });
         } else {
             const selectedClaim = this.buildDeliverableList();
             await this.globalIntentService.sendIntentResponse(

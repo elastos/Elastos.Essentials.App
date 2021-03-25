@@ -7,13 +7,13 @@ import { Events } from './events.service';
 import { CoinService } from './coin.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
-import { ERC20CoinService } from './erc20coin.service';
 import { IntentService } from './intent.service';
 import { NavService } from './nav.service';
 import { WalletManager } from './wallet.service';
 import { LocalStorage } from './storage.service';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { WalletPrefsService } from './pref.service';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,7 @@ export class WalletInitService {
     public modalCtrl: ModalController,
     private coinService: CoinService,
     private contactsService: ContactsService,
-    private erc20CoinService: ERC20CoinService,
+    private prefs: WalletPrefsService,
     private uiService: UiService,
     private didSessions: GlobalDIDSessionsService
   ) {}
@@ -45,11 +45,11 @@ export class WalletInitService {
       if (signedInIdentity) {
         Logger.log("Wallet", "Wallet service is initializing");
 
+        await this.prefs.init();
         await this.coinService.init();
         await this.currencyService.init();
         await this.contactsService.init();
         await this.uiService.init();
-        await this.erc20CoinService.init();
 
         // Wait until the wallet manager is ready before showing the first screen.
         // TODO: rework

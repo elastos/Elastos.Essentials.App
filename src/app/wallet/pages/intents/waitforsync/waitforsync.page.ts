@@ -95,43 +95,43 @@ export class WaitForSyncPage implements OnInit {
         switch (this.coinTransferService.intentTransfer.action) {
             case 'crmembervote':
                 this.action = 'text-vote-crcouncil';
-                this.nextScreen = '/wallet/crmembervote';
+                this.nextScreen = '/wallet/intents/crmembervote';
                 break;
             case 'crmemberregister':
                 this.action = 'text-crmember-register';
-                this.nextScreen = '/wallet/crmemberregister';
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'crmemberunregister':
                 this.action = 'text-crmember-unregister';
-                this.nextScreen = '/wallet/crmemberregister';
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'crmemberupdate':
                 this.action = 'text-crmember-update';
-                this.nextScreen = '/wallet/crmemberregister';
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'crmemberretrieve':
                 this.action = 'text-crmember-retrieve';
-                this.nextScreen = '/wallet/crmemberregister';
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'didtransaction':
                 this.action = 'text-did';
-                this.nextScreen = '/wallet/didtransaction';
+                this.nextScreen = '/wallet/intents/didtransaction';
                 break;
             case 'esctransaction':
                 this.action = 'text-esc';
-                this.nextScreen = '/wallet/esctransaction';
+                this.nextScreen = '/wallet/intents/esctransaction';
                 break;
             case 'dposvotetransaction':
                 this.action = 'text-dposvote';
-                this.nextScreen = '/wallet/dposvote';
+                this.nextScreen = '/wallet/intents/dposvote';
                 break;
             case 'pay':
                 this.action = 'text-transfer';
-                this.nextScreen = '/wallet/coin-transfer';
+                this.nextScreen = '/wallet/intents/coin-transfer';
                 break;
             case 'crproposalvoteagainst':
                 this.action = 'Vote against proposal';
-                this.nextScreen = '/wallet/crproposalvoteagainst';
+                this.nextScreen = '/wallet/intents/crproposalvoteagainst';
                 break;
             default:
                 Logger.log('wallet', 'Please check the action - ' + this.action + ' is not supported.');

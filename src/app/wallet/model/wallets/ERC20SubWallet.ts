@@ -355,7 +355,7 @@ export class ERC20SubWallet extends SubWallet {
                 Logger.log('wallet', "Published transaction id:", publishedTransaction.TxHash);
 
                 await this.masterWallet.walletManager.native.hideLoading();
-                await this.masterWallet.walletManager.native.setRootRouter('/wallet-home');
+                await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
 
                 resolve({
                     published: true,

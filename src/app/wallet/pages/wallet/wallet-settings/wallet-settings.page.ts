@@ -124,7 +124,7 @@ export class WalletSettingsPage implements OnInit {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
-                this.native.go('/wallet/mnemonic-export', { payPassword: payPassword });
+                this.native.go('/wallet/mnemonic/export', { payPassword: payPassword });
             }
         } catch (e) {
             Logger.error('wallet', 'MnemonicExportPage getWalletPassword error:' + e);

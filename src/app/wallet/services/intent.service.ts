@@ -62,7 +62,7 @@ export class IntentService {
         if (this.walletList.length === 0) {
             const toCreateWallet = await this.popupProvider.ionicConfirm('intent-no-wallet-title', 'intent-no-wallet-msg', 'ok', 'exit');
             if (toCreateWallet) {
-                this.native.setRootRouter('launcher');
+                this.native.setRootRouter('/wallet/launcher');
                 // Should call sendIntentResponse?
             }  else {
                 await this.globalIntentService.sendIntentResponse({message: 'No active master wallet!', status: 'error'}, intent.intentId);
@@ -207,9 +207,9 @@ export class IntentService {
             const masterWallet = this.walletList[0];
             this.coinTransferService.masterWalletId = masterWallet.id;
             this.coinTransferService.walletInfo = masterWallet.account;
-            this.native.setRootRouter('/wallet/waitforsync', {rootPage: true});
+            this.native.setRootRouter('/wallet/intents/waitforsync', {rootPage: true});
         } else {
-            this.native.setRootRouter('/wallet/select-subwallet');
+            this.native.setRootRouter('/wallet/intents/select-subwallet');
         }
     }
 
@@ -223,10 +223,10 @@ export class IntentService {
         if (this.walletList.length === 1) {
             const masterWallet = this.walletList[0];
             this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
-            this.native.setRootRouter("/coin-add-erc20", { contract: intent.params.contract, rootPage: true });
+            this.native.setRootRouter("/wallet/coin-add-erc20", { contract: intent.params.contract, rootPage: true });
         } else {
             this.native.setRootRouter(
-                'wallet-manager',
+                '/wallet/wallet-manager',
                 {
                     forIntent: true,
                     intent: 'addcoin',
@@ -246,10 +246,10 @@ export class IntentService {
         if (this.walletList.length === 1) {
             const masterWallet = this.walletList[0];
             this.walletAccessService.masterWalletId = masterWallet.id;
-            this.native.setRootRouter('/access', { rootPage: true});
+            this.native.setRootRouter('/wallet/intents/access', { rootPage: true});
         } else {
             this.native.setRootRouter(
-                'wallet-manager',
+                '/wallet/wallet-manager',
                 {
                     forIntent: true,
                     intent: 'access',

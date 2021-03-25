@@ -59,12 +59,12 @@ export class ContactListPage implements OnInit {
     }
 
     onAdd(): void {
-        this.native.go("/wallet/contact-create");
+        this.native.go("/wallet/contacts/list");
     }
 
     onEdit(item, event) {
         event.stopPropagation();
-        this.native.go("/wallet/contact-create", item);
+        this.native.go("/wallet/contacts/create", item);
         return false;
     }
 

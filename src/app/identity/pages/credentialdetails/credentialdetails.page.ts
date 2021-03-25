@@ -21,7 +21,7 @@ import { Subscription } from "rxjs";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
-import { isNullOrUndefined } from "util";
+import { isNullOrUndefined } from "lodash";
 import { Logger } from "src/app/logger";
 
 

@@ -58,7 +58,6 @@
             "allowedCommonJsDependencies": [
               "easyqrcodejs",
               "hammerjs",
-              "dragula",
               "qrcode",
               "lodash",
               "hash.js",

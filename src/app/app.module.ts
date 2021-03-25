@@ -11,7 +11,6 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
 
-import { DragulaModule } from 'ng2-dragula';
 import { AppComponent } from './app.component';
 import { LauncherModule } from './launcher/module';
 import { AppRoutingModule } from './app-routing.module';
@@ -127,7 +126,6 @@ export function TranslateLoaderFactory() {
       },
       missingTranslationHandler: {provide: MissingTranslationHandler, useClass: CustomMissingTranslationHandler},
     }),
-    DragulaModule.forRoot(),
     IonicStorageModule.forRoot({
       name: '__essentials.db',
       driverOrder: ['sqlite', 'indexeddb', 'websql', 'localstorage']
