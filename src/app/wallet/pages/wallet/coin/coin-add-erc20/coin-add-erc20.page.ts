@@ -208,7 +208,7 @@ export class CoinAddERC20Page implements OnInit {
                     this.walletEditionService.intentTransfer.intentId
                 ); */
 
-                this.native.go("/wallet/wallet-home");
+                this.native.setRootRouter("/wallet/wallet-home");
             } else {
                 this.native.pop();
             }

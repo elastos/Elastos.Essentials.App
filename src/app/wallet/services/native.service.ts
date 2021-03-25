@@ -68,7 +68,7 @@ export class Native {
     }
 
     public pop() {
-        this.navCtrl.pop();
+        this.globalNav.navigateBack();
     }
 
     public openUrl(url: string) {
