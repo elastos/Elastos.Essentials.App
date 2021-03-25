@@ -1,7 +1,7 @@
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-@Component({ template: "<div>Default root empty page</div>" })
+@Component({ template: "<div></div>" })
 export class EmptyPage  {}
 
 const routes: Routes = [

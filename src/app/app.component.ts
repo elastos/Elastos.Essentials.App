@@ -98,12 +98,18 @@ export class AppComponent {
             let entry = await this.didSessions.getSignedInIdentity();
             if (entry != null) {
                 Logger.log("Global", "An active DID exists, navigating to launcher home");
+
+                // Make sure to load the active user theme preference before entering the home screen
+                // to avoid blinking from light to dark modes while theme is fetched from preferences
+                await this.theme.fetchThemeFromPreferences();
+
+                // Navigate to home screen
                 this.globalNav.navigateHome();
-                //this.navController.navigateRoot(['/identity/myprofile/home']);
             } else {
                 Logger.log("Global", "No active DID, navigating to DID sessions");
+
+                // Navigate to DID creation
                 this.globalNav.navigateTo("didsessions", '/didsessions/pickidentity');
-                // this.navController.navigateRoot(['/identity/myprofile']);
             }
         });
     }

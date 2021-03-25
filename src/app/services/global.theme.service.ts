@@ -20,8 +20,6 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 export class GlobalThemeService {
   public activeTheme = new BehaviorSubject<AppTheme>(AppTheme.LIGHT);
 
-  public isAndroid = false;
-
   constructor(
     private platform: Platform,
     private prefs: GlobalPreferencesService,
@@ -53,14 +51,11 @@ export class GlobalThemeService {
   }
 
   public async fetchThemeFromPreferences() {
-    if (this.platform.platforms().indexOf('android') === 0) {
-      this.isAndroid = true;
+    // Let's initialize the backup service asynchronously without blocking the UI
+    // TODO @chad: why is ths backup service initialized from the theme service ?
+    // TODO @chad: this is launcher's backup service. Move to launcher folder and initialize in a better location
+    // this.backupService.init();
 
-      // Let's initialize the backup service asynchronously without blocking the UI
-      // TODO @chad: why is ths backup service initialized from the theme service ?
-      // TODO @chad: this is launcher's backup service. Move to launcher folder and initialize in a better location
-      // this.backupService.init();
-    }
     const currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
     passwordManager.setDarkMode(currentlyUsingDarkMode);
     if (currentlyUsingDarkMode)
