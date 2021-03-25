@@ -27,7 +27,7 @@ type StorageProvider = {
 export class PickProviderPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public checkingInitialStatus: boolean = false;
+  public checkingInitialStatus: boolean = true;
   public vaultProviderCouldBeContacted: boolean = false;
   private vaultLinkStatus: VaultLinkStatus = null;
   private forceProviderChange = false;
@@ -91,6 +91,9 @@ export class PickProviderPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setMenuVisibility(true);
+
     const menuItems: TitleBarMenuItem[] = [
       {
         title: this.translate.instant('hive-menu.vault-providers-administration'),
@@ -110,8 +113,6 @@ export class PickProviderPage implements OnInit {
       });
     }
 
-    this.titleBar.setNavigationMode(null);
-    this.titleBar.setMenuVisibility(true);
     this.titleBar.setupMenuItems(menuItems);
 
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (clickedIcon: TitleBarMenuItem) => {
@@ -134,7 +135,7 @@ export class PickProviderPage implements OnInit {
 
 
   ionViewDidEnter(){
-    this.checkInitialStatus();
+    this.checkInitialStatus(true);
   }
 
   ionViewWillLeave() {
@@ -148,8 +149,8 @@ export class PickProviderPage implements OnInit {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
-  private async checkInitialStatus() {
-    if (this.checkingInitialStatus)
+  private async checkInitialStatus(forceCheck = false) {
+    if (this.checkingInitialStatus && !forceCheck)
       return;
 
     // Reset all states
