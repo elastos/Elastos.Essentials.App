@@ -183,7 +183,6 @@ export class ProfilePage {
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
       Logger.log("identity", "Has credentials?", this.hasCredential);
-      Logger.log("identity", "Credentials", JSON.stringify(this.credentials));
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {
@@ -209,7 +208,6 @@ export class ProfilePage {
   }
 
   ionViewWillEnter() {
-    Logger.log("identity", "ionWillEnter");
     this.buildAppAndAvatarCreds(false);
     this.titleBar.setNavigationMode(null);
 
@@ -239,14 +237,8 @@ export class ProfilePage {
   }
 
   ionViewDidEnter() {
-    Logger.log("identity", "iondidenter profile");
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
-
-
-    Logger.log("identity",
-      "MyProfilePage ionViewDidEnter did: " + this.profileService.didString
-    );
   }
 
   async checkDidForPublish(identity: DID) {
@@ -387,13 +379,6 @@ export class ProfilePage {
         hasAvatar = true;
         this.hiveService.rawImage =
           "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        // Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
-
-        // if (publishAvatar) {
-        //   Logger.log("identity", "Prompting avatar publish");
-        //   cred.willingToBePubliclyVisible = true;
-        //   this.profileService.showWarning("publishVisibility", null);
-        // }
       }
       // Find Description Credential
       if (cred.credential.getSubject().hasOwnProperty("description")) {
@@ -421,13 +406,6 @@ export class ProfilePage {
         hasAvatar = true;
         this.hiveService.rawImage =
           "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        // Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
-
-        // if (publishAvatar) {
-        //   Logger.log("identity", "Prompting avatar publish");
-        //   cred.willingToBePubliclyVisible = true;
-        //   this.profileService.showWarning("publishVisibility", null);
-        // }
       }
       // Find Description Credentials
       if (cred.credential.getSubject().hasOwnProperty("description")) {

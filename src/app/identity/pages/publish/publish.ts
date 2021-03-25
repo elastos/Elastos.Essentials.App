@@ -57,37 +57,8 @@ export class PublishPage {
         this.profileService.invisibleCredentials.forEach(val => {
             if (val.credential.getSubject().hasOwnProperty("apppackage") || (val.credential.getFragment() == "avatar" && val.credential.getSubject().hasOwnProperty["data"]))
                 this._publishableCredentials.push(val);
-            //Logger.log('Identity', "av " + JSON.stringify(val.credential.getFragment()));
 
         });
-        //Logger.log('Identity', "pc " + this._publishableCredentials.length);
-
-        // this.events.subscribe(
-        //     "did:publicationstatus",
-        //     (status: DIDPublicationStatusEvent) => {
-        //         let activeDid = this.didService.getActiveDid();
-        //         if (activeDid && activeDid === status.did)
-        //             this.profileService.didNeedsToBePublished = status.shouldPublish;
-        //     }
-        // );
-
-        // this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
-        //     Logger.log('Identity', "Publish avatar?", publishAvatar);
-        //     // When the did document content changes, we rebuild our profile entries on screen.
-        //     this.init(publishAvatar);
-        // });
-
-        // this.events.subscribe("did:credentialadded", () => {
-        //     this.zone.run(() => {
-        //         this.init();
-        //     });
-        // });
-
-        // this.events.subscribe("did:promptpublishdid", () => {
-        //     this.zone.run(() => {
-        //         this.profileService.showWarning("publishIdentity", null);
-        //     });
-        // });
     }
 
     init() {

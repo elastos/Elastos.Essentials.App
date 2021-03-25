@@ -41,8 +41,7 @@ export class DIDService {
   }
 
   public async displayDefaultScreen() {
-    this.native.setRootRouter("/myprofile");
-    // this.native.setRootRouter("/credaccessrequest");
+    this.native.setRootRouter("/identity/myprofile");
   }
 
   /**
@@ -156,7 +155,7 @@ export class DIDService {
       Logger.error('identity', "Unable to load the previously selected DID store");
       this.handleNull(); // TODO: go to DID list instead
     } else {
-      if (this.getActiveDid() !== null) this.native.setRootRouter("/myprofile");
+      if (this.getActiveDid() !== null) this.native.setRootRouter("/identity/myprofile");
       // this.native.setRootRouter('/noidentity');
       else {
         // Oops, no active DID...

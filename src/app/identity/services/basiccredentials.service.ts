@@ -73,9 +73,7 @@ export class BasicCredentialsService {
       return i.key == key;
     });
 
-    if (info == null)
-      Logger.warn('identity', "No basic credential info found for key " + key + "!");
-    else {
+    if (info != null) {
       info.isVisible = isVisible;
     }
     return info;

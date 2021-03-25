@@ -171,10 +171,7 @@ export class ProfileService {
 
         // Try to retrieve a standard property info from this property
         let basicCredentialInfo = BasicCredentialsService.instance.getBasicCredentialInfoByKey(p, cred.isVisible);
-        if (!basicCredentialInfo) {
-          Logger.warn('identity', "Unhandled basic credential " + p);
-        }
-        else {
+        if (basicCredentialInfo) {
           profile.setValue(basicCredentialInfo, props[p]);
         }
       }

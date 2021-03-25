@@ -64,7 +64,7 @@ export class IntentReceiverService {
                     }
                     else {
                         // We have to show a UI confirmation so let's do it.
-                        this.native.setRootRouter("/appidcredissuerequest");
+                        this.native.setRootRouter("/identity/intents/appidcredissuerequest");
                     }
                 }
                 else {
@@ -76,7 +76,7 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received credential access intent request");
                 if (this.checkCredAccessIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/credaccessrequest");
+                    this.native.setRootRouter("/identity/intents/credaccessrequest");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
@@ -87,7 +87,7 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received credential import intent request");
                 if (this.checkCredImportIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/credimportrequest");
+                    this.native.setRootRouter("/identity/intents/credimportrequest");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
@@ -98,7 +98,7 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received credential issue intent request");
                 if (this.checkCredIssueIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/credissuerequest");
+                    this.native.setRootRouter("/identity/intents/credissuerequest");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
@@ -109,7 +109,7 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received didsign intent request");
                 if (this.checkSignIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/signrequest");
+                    this.native.setRootRouter("/identity/intents/signrequest");
                 }
                 else {
                     Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
@@ -121,14 +121,14 @@ export class IntentReceiverService {
             case 'promptpublishdid':
                 // param is not required
                 await this.uxService.loadIdentityAndShow(false);
-                await this.native.setRootRouter('/myprofile');
+                await this.native.setRootRouter('/identity/myprofile');
                 this.events.publish('did:promptpublishdid');
                 break;
             case "registerapplicationprofile":
                 Logger.log('identity', "Received register application profile intent request");
                 if (this.checkRegAppProfileIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/regappprofilerequest");
+                    this.native.setRootRouter("/identity/intents/regappprofilerequest");
                 }
                 else {
                     Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
@@ -141,7 +141,7 @@ export class IntentReceiverService {
                 Logger.log('identity', "Received set hiveprovider intent request");
                 if (this.checkSetHiveProviderIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/sethiveproviderrequest");
+                    this.native.setRootRouter("/identity/intents/sethiveproviderrequest");
                 }
                 else {
                     Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);

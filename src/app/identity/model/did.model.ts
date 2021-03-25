@@ -129,31 +129,6 @@ export class DID {
     getBasicProfile(): Profile {
         //let profile = Profile.createDefaultProfile();
         let profile = new Profile();
-
-        // // We normally have one credential for each profile field
-        // this.credentials.map((cred) => {
-        //     let props = cred.pluginVerifiableCredential.getSubject(); // Credentials properties
-        //     if (!props) {
-        //         Logger.warn('identity', "Found an empty credential subject while trying to build profile, this should not happen...");
-        //         return;
-        //     }
-
-        //     // Loop over each property in the credential (even if normally there is only one property per credential)
-        //     for (let p of Object.keys(props)) {
-        //         // Skip the special entry "id" that exists in every credential.
-        //         if (p == "id") continue;
-
-        //         // Try to retrieve a standard property info from this property
-        //         let basicCredentialInfo = BasicCredentialsService.instance.getBasicCredentialInfoByKey(p);
-        //         if (!basicCredentialInfo) {
-        //             Logger.warn('identity', "Unhandled basic credential " + p);
-        //         }
-        //         else {
-        //             profile.setValue(basicCredentialInfo, props[p]);
-        //         }
-        //     }
-        // });
-
         Logger.log('Identity', "Basic profile:", profile);
         return profile;
     }

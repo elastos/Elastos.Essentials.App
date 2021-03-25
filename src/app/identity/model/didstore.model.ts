@@ -48,7 +48,7 @@ export class DIDStore {
         }
 
         // Create a private root key
-        Logger.log('didsessions', "Creating private root key");
+        Logger.log('identity', "Creating private root key");
         await this.initPluginPrivateIdentity(mnemonicLang, mnemonic, mnemonicPass, storePass, true);
 
         return true;
@@ -59,12 +59,12 @@ export class DIDStore {
         if (!didStoreId)
             didStoreId = Config.uuid(6, 16);
 
-        Logger.log('didsessions', "Initializing a new DID Store with ID " + didStoreId);
+        Logger.log('identity', "Initializing a new DID Store with ID " + didStoreId);
         try {
             await this.initDidStore(didStoreId);
         }
         catch (e) {
-            Logger.log('didsessions', 'initNewDidStore: e:', e)
+            Logger.log('identity', 'initNewDidStore: e:', e)
             throw e;
         }
     }
@@ -86,7 +86,7 @@ export class DIDStore {
 
             let pluginDids = await this.listPluginDids();
 
-            Logger.log("DIDSessions", "Plugin DIDs:", pluginDids);
+            Logger.log('identity', "Plugin DIDs:", pluginDids);
             if (pluginDids.length == 0) {
                 // Something went wrong earlier, no DID in the DID store...
                 Logger.warn('identity', "No DID in the DID Store, that's a bit strange but we want to continue here.")
@@ -134,7 +134,7 @@ export class DIDStore {
                 this.dids.push(did);
             }
             else {
-                Logger.log('didsessions', "DID " + pluginDid.getDIDString() + " was listed by the DID plugin but deleted locally earlier. Skipping it.");
+                Logger.log('identity', "DID " + pluginDid.getDIDString() + " was listed by the DID plugin but deleted locally earlier. Skipping it.");
             }
         }
         Logger.log("Identity", "Loaded DIDs:", this.dids);
@@ -163,7 +163,7 @@ export class DIDStore {
         try {
             // Create and add a DID to the DID store in physical storage.
             createdDid = await this.createPluginDid(newDid.password, "");
-            Logger.log('didsessions', "Created DID:", createdDid);
+            Logger.log('identity', "Created DID:", createdDid);
         }
         catch (e) {
             Logger.error('identity', "Create DID exception", e);
@@ -201,7 +201,7 @@ export class DIDStore {
         // Mark as deleted in permanent storage
         await this.markDIDAsDeleted(did.getDIDString());
 
-        Logger.log('didsessions', "Deleted DID");
+        Logger.log('identity', "Deleted DID");
 
         await this.setActiveDid(null);
     }
@@ -212,12 +212,12 @@ export class DIDStore {
     }
 
     private async markDIDAsDeleted(didString: DIDPlugin.DIDString) {
-        Logger.log('didsessions', "Marking DID " + didString + " as deleted in storage");
+        Logger.log('identity', "Marking DID " + didString + " as deleted in storage");
         await LocalStorage.instance.set("deleted-did-" + didString, true);
     }
 
     private async removeDIDFromDeleted(didString: DIDPlugin.DIDString) {
-        Logger.log('didsessions', "Remove DID " + didString + " from deleted in storage");
+        Logger.log('identity', "Remove DID " + didString + " from deleted in storage");
         await LocalStorage.instance.remove("deleted-did-" + didString);
     }
 
@@ -233,7 +233,7 @@ export class DIDStore {
                     resolve(pluginDidStore);
                 },
                 (err) => {
-                    Logger.log('didsessions', 'initPluginDidStore error:', err);
+                    Logger.log('identity', 'initPluginDidStore error:', err);
                     reject(DIDHelper.reworkedPluginException(err))
                 },
             );
@@ -247,27 +247,27 @@ export class DIDStore {
      */
     private createIdTransactionCallback(payload: string, memo: string) {
         let jsonPayload = JSON.parse(payload);
-        Logger.log('didsessions', "Received id transaction callback with payload: ", jsonPayload);
+        Logger.log('identity', "Received id transaction callback with payload: ", jsonPayload);
         let params = {
             didrequest: jsonPayload
         }
 
-        Logger.log('didsessions', "Sending didtransaction intent with params:", params);
+        Logger.log('identity', "Sending didtransaction intent with params:", params);
 
         essentialsIntent.sendIntent("https://wallet.elastos.net/didtransaction", params, {}, (response) => {
-            Logger.log('didsessions', "Got didtransaction intent response.", response);
+            Logger.log('identity', "Got didtransaction intent response.", response);
 
             // If txid is set in the response this means a transaction has been sent on chain.
             // If null, this means user has cancelled the operation (no ELA, etc).
             if (response.result && response.result.txid) {
-                Logger.log('didsessions', 'didtransaction response.result.txid ', response.result.txid);
+                Logger.log('identity', 'didtransaction response.result.txid ', response.result.txid);
                 this.events.publish("diddocument:publishresult", {
                     didStore: this,
                     published: true
                 });
             }
             else {
-                Logger.log('didsessions', 'didtransaction response.result.txid is null');
+                Logger.log('identity', 'didtransaction response.result.txid is null');
                 this.events.publish("diddocument:publishresult", {
                     didStore: this,
                     cancelled: true
@@ -327,12 +327,12 @@ export class DIDStore {
     }
 
     createPluginDid(passphrase, hint = ""): Promise<DIDPlugin.DID> {
-        Logger.log('didsessions', "Creating DID");
+        Logger.log('identity', "Creating DID");
         return new Promise((resolve, reject) => {
             this.pluginDidStore.newDid(
                 passphrase, hint,
                 (did) => {
-                    Logger.log('didsessions', "Created plugin DID:", did);
+                    Logger.log('identity', "Created plugin DID:", did);
                     resolve(did)
                 },
                 (err) => { reject(err) },

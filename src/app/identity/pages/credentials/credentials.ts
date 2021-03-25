@@ -157,7 +157,6 @@ export class CredentialsPage {
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
       Logger.log("identity", "Has credentials?", this.hasCredential);
-      Logger.log("identity", "Credentials", JSON.stringify(this.credentials));
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {
@@ -212,55 +211,6 @@ export class CredentialsPage {
     }
     return true;
   }
-
-  // isCredSyncOnChain(credential: DIDPlugin.VerifiableCredential): boolean {
-
-  //   const howLong = this.timer();
-  //   // do some stuff
-
-  //   if (this.currentOnChainDIDDocument === null) {
-
-  //     Logger.log("identity", "1: " + Logger.log("identity", howLong.ms));
-  //     return false;
-
-  //   }
-
-  //   let fragment = credential.getFragment();
-  //   let localValue = credential.getSubject()[fragment];
-
-  //   let chainValue = this.currentOnChainDIDDocument.getCredentialById(new DIDURL("#" + fragment));
-  //   if (!chainValue) {
-  //     Logger.log("identity", "2: " + Logger.log("identity", howLong.ms));
-  //     return false;
-  //   }
-
-  //   if (!localValue) {
-  //     Logger.log("identity", "3: " + Logger.log("identity", howLong.ms));
-  //     //handling capsules credential
-  //     localValue = this.getLocalCredByProperty(credential, "apppackage");
-  //     if (localValue) {
-  //       let apppackage = chainValue.getSubject().apppackage;
-
-  //       return localValue === apppackage;
-  //       Logger.log("identity", "4: " + Logger.log("identity", howLong.ms));
-  //     }
-  //     else {
-  //       // handle external credentials
-  //       return true;
-  //     }
-  //   }
-
-  //   chainValue = chainValue.getSubject()[fragment];
-
-  //   if (typeof localValue === "object" || typeof chainValue === "object") {
-  //     //avatar
-  //     Logger.log("identity", "5: " + Logger.log("identity", howLong.ms));
-  //     return JSON.stringify(localValue) === JSON.stringify(chainValue);
-  //   }
-
-
-  //   return localValue === chainValue;
-  // }
 
   getLocalCredByProperty(credential: DIDPlugin.VerifiableCredential, property: string): string {
     const credHasProp = credential
@@ -349,7 +299,7 @@ export class CredentialsPage {
         hasAvatar = true;
         this.hiveService.rawImage =
           "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
+        Logger.log("identity", "Profile has avatar");
 
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");
@@ -383,7 +333,7 @@ export class CredentialsPage {
         hasAvatar = true;
         // this.hiveService.rawImage =
         //   "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
+        Logger.log("identity", "Profile has avatar");
 
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");

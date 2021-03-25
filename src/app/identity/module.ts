@@ -29,7 +29,6 @@ import { ProfileEntryPickerPage } from "./pages/profileentrypicker/profileentryp
 import { SignRequestPage } from "./pages/intents/signrequest/signrequest";
 import { AppIdCredentialIssueRequestPage } from "./pages/intents/appidcredentialissuerequest/appidcredentialissuerequest";
 import { CredentialIssueRequestPage } from "./pages/intents/credentialissuerequest/credentialissuerequest";
-import { NotSignedInPage } from "./pages/notsignedin/notsignedin";
 import { WarningComponent } from "./components/warning/warning.component";
 import { OptionsComponent } from "./components/options/options.component";
 import { PictureComponent } from "./components/picture/picture.component";
@@ -44,22 +43,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
 
 @NgModule({
   declarations: [
-    CountryPickerPage,
-    AppIdCredentialIssueRequestPage,
-    CredentialAccessRequestPage,
-    CredentialIssueRequestPage,
-    CredentialImportRequestPage,
-    CredentialDetailsPage,
-    EditProfilePage,
-    ExportmnemonicPage,
-    PublishPage,
-    RegisterApplicationProfileRequestPage,
-    SetHiveProviderRequestPage,
-    SignRequestPage,
-    ProfileEntryPickerPage,
-    NotSignedInPage,
-    SettingsPage,
-    AdvancedSettingsPage,
     OptionsComponent,
     WarningComponent,
     PictureComponent,
@@ -71,7 +54,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
     IonicModule,
     IdentityRoutingModule,
     ComponentsModule,
-    SharedComponentsModule,
     FormsModule,
     IonBottomDrawerModule,
     QRCodeModule,
@@ -82,7 +64,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
   bootstrap: [],
   entryComponents: [
     ShowQRCodeComponent,
-    ProfileEntryPickerPage,
     OptionsComponent,
     WarningComponent,
     PictureComponent,

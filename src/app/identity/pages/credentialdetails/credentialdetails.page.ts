@@ -191,12 +191,10 @@ export class CredentialDetailsPage {
 
     if (this.isApp()) {
       this.getAppIcon();
-      Logger.log('Identity', this.appIcon);
     }
   }
 
   async selectCredential() {
-    Logger.log('Identity', "select");
     this.credential = null;
     this.issuer = null;
     this.segment = "validator";
@@ -463,11 +461,8 @@ export class CredentialDetailsPage {
   async isLocalCredSyncOnChain() {
 
     let didString = this.didService.getActiveDid().getDIDString();
-    Logger.log('Identity', 'didstring ' + didString);
     this.currentOnChainDIDDocument = await this.didSyncService.getDIDDocumentFromDID(didString);
-    Logger.log('Identity', "0");
     if (this.currentOnChainDIDDocument === null) {
-      Logger.log('Identity', "1");
       this.isPublished = false;
       return false;
     }
@@ -477,7 +472,6 @@ export class CredentialDetailsPage {
 
     let chainValue = this.currentOnChainDIDDocument.getCredentialById(new DIDURL("#" + fragment));
     if (!chainValue) {
-      Logger.log('Identity', "1");
       this.isPublished = false;
       return false;
     }
@@ -488,13 +482,11 @@ export class CredentialDetailsPage {
       if (localValue) {
         let apppackage = chainValue.getSubject().apppackage;
         this.isPublished = localValue === apppackage;
-        Logger.log('Identity', "3");
         return;
       }
       else {
         // handle external credentials
         this.isPublished = true;
-        Logger.log('Identity', "3.5");
         return;
       }
     }
@@ -504,12 +496,10 @@ export class CredentialDetailsPage {
     if (typeof localValue === "object" || typeof chainValue === "object") {
       //avatar
       this.isPublished = JSON.stringify(localValue) === JSON.stringify(chainValue);
-      Logger.log('Identity', "4");
       return;
     }
 
     Logger.log('Identity', 'Local ' + localValue + " ; Chain " + chainValue);
-    Logger.log('Identity', "5");
     this.isPublished = localValue === chainValue;
   }
 

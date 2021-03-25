@@ -178,7 +178,6 @@ export class MyProfilePage {
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
       Logger.log("identity", "Has credentials?", this.hasCredential);
-      Logger.log("identity", "Credentials", JSON.stringify(this.credentials));
 
       // Sort credentials by title
       this.credentials.sort((c1, c2) => {
@@ -232,14 +231,8 @@ export class MyProfilePage {
   }
 
   ionViewDidEnter() {
-    Logger.log("identity", "ionDidEnter");
-    Logger.log("identity", "Dark theme : ", this.theme.darkMode);
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
-
-    Logger.log("identity",
-      "MyProfilePage ionViewDidEnter did: " + this.profileService.didString
-    );
   }
 
   ionViewWillLeave() {
@@ -401,7 +394,7 @@ export class MyProfilePage {
         // TODO: avatar is null
         this.hiveService.rawImage =
           "data:image/png;base64," + cred.credential.getSubject().avatar.data;
-        Logger.log("identity", "Profile has avatar", this.hiveService.rawImage);
+        Logger.log("identity", "Profile has avatar");
 
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");
