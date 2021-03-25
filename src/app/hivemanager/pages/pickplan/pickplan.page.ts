@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { HiveService, VaultLinkStatus } from '../../services/hive.service';
+import { HiveService } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../services/app.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { App, GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-pickplan',
@@ -26,6 +25,7 @@ export class PickPlanPage implements OnInit {
     public zone: NgZone,
     private hiveService: HiveService,
     private route: ActivatedRoute,
+    private nav: GlobalNavService,
     public theme: GlobalThemeService,
     private translate: TranslateService,
   ) {}
@@ -58,11 +58,6 @@ export class PickPlanPage implements OnInit {
 
   public pickPlan(plan: HivePlugin.Payment.PricingPlan) {
     Logger.log("hivemanager", "pick plan", plan);
-
-    this.navCtrl.navigateForward("pickplanpurchase", {
-      queryParams: {
-        planName: plan.getName()
-      }
-    });
+    this.nav.navigateTo(App.HIVE_MANAGER, "/hivemanager/pickplanpurchase", { queryParams: { planName: plan.getName() } });
   }
 }
