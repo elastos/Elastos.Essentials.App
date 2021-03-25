@@ -64,8 +64,7 @@
               "hash.js",
               "bignumber.js",
               "bn.js",
-              "web3",
-              "@elastosfoundation/elastos-connectivity-sdk-cordova"
+              "web3"
             ]
           },
           "configurations": {
@@ -77,7 +76,7 @@
                 }
               ],
               "optimization": true,
-              "outputHashing": "all",
+              "outputHashing": "none",
               "sourceMap": true,
               "namedChunks": true,
               "aot": true,
