@@ -31,8 +31,6 @@ export class VotePage implements OnInit {
   // Toast for voteFailed/voteSuccess
   private toast: any = null;
 
-  public isAndroid = false;
-
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
@@ -47,9 +45,6 @@ export class VotePage implements OnInit {
   }
 
   ngOnInit() {
-    if (this.platform.platforms().indexOf('android') === 0) {
-      this.isAndroid = true;
-    }
   }
 
   ionViewWillEnter() {
