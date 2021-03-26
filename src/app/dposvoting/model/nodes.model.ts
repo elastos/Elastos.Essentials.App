@@ -1,4 +1,4 @@
-// data for http://api.elastos.io:20336
+// data for https://api.elastos.io/ela
 export type Node = {
     active: boolean;
     cancelheight: number;

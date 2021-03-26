@@ -33,11 +33,11 @@ export class GlobalPreferencesService {
       "chain.network.type": "MainNet",
       "chain.network.config": "",
       "chain.network.configurl": "",
-      "mainchain.rpcapi": "http://api.elastos.io:20336",
-      "sidechain.id.rpcapi": "http://api.elastos.io:20606",
-      "sidechain.eth.oracle": "http://api.elastos.io:20632",
-      "sidechain.eth.apimisc": "http://api.elastos.io:20634",
-      "sidechain.eth.rpcapi": "http://api.elastos.io:20636",
+      "mainchain.rpcapi": "https://api.elastos.io/ela",
+      "sidechain.id.rpcapi": "https://api.elastos.io/did",
+      "sidechain.eth.oracle": "https://api.elastos.io/oracle",
+      "sidechain.eth.apimisc": "https://api.elastos.io/misc",
+      "sidechain.eth.rpcapi": "https://api.elastos.io/eth",
       "trinitycli.runaddress": ""
     };
   }

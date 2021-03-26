@@ -43,21 +43,21 @@ export class DeveloperService {
     {
       type: 'main-net',
       code: 'MainNet',
-      mainChainRPCApi: 'http://api.elastos.io:20336',
-      idChainRPCApi: 'http://api.elastos.io:20606',
-      ethscRPCApi: 'http://api.elastos.io:20636',
-      ethscApiMisc: 'http://api.elastos.io:20634',
-      ethscOracle: 'http://api.elastos.io:20632',
+      mainChainRPCApi: 'https://api.elastos.io/ela',
+      idChainRPCApi: 'https://api.elastos.io/did',
+      ethscRPCApi: 'https://api.elastos.io/eth',
+      ethscApiMisc: 'https://api.elastos.io/misc',
+      ethscOracle: 'https://api.elastos.io/oracle2',
       icon: '/assets/icon/main.svg'
     },
     {
       type: 'test-net',
       code: 'TestNet',
-      mainChainRPCApi: 'http://api.elastos.io:21336',
-      idChainRPCApi: 'http://api.elastos.io:21606',
-      ethscRPCApi: 'http://api.elastos.io:21636',
-      ethscApiMisc: 'http://api.elastos.io:21634',
-      ethscOracle: 'http://api.elastos.io:21632',
+      mainChainRPCApi: 'https://api-testnet.elastos.io/ela',
+      idChainRPCApi: 'https://api-testnet.elastos.io/did',
+      ethscRPCApi: 'https://api-testnet.elastos.io/eth',
+      ethscApiMisc: 'https://api-testnet.elastos.io/misc',
+      ethscOracle: 'https://api-testnet.elastos.io/oracle',
       icon: '/assets/icon/test.svg'
     },
     {

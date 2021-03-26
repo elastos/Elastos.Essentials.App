@@ -58,7 +58,7 @@ export class CandidatesService {
 
   fetchCandidates() {
     Logger.log('crcouncil', 'Fetching Candidates..');
-    this.http.post<any>('http://api.elastos.io:20336/', this.params, this.httpOptions).subscribe((res) => {
+    this.http.post<any>('https://api.elastos.io/ela/', this.params, this.httpOptions).subscribe((res) => {
       Logger.log('crcouncil', 'Candidates fetched', res);
       if(res.result.crcandidatesinfo) {
         this.candidates = res.result.crcandidatesinfo;

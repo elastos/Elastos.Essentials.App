@@ -19,9 +19,9 @@ type JSONRPCResponse = {
     providedIn: 'root'
 })
 export class JsonRPCService {
-    private mainchainRPCApiUrl = 'http://api.elastos.io:20336';
-    private IDChainRPCApiUrl = 'http://api.elastos.io:20606';
-    private ethscOracleRPCApiUrl = 'http://api.elastos.io:20632';
+    private mainchainRPCApiUrl = 'https://api.elastos.io/ela';
+    private IDChainRPCApiUrl = 'https://api.elastos.io/did';
+    private ethscOracleRPCApiUrl = 'https://api.elastos.io/oracle';
 
     constructor(private http: HttpClient, private prefs: GlobalPreferencesService) {
     }

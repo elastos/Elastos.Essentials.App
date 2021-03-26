@@ -136,7 +136,7 @@ export class SwapTestPage implements OnInit {
             Logger.log('wallet', "currencyAmountIn:", currencyAmountIn)
 
             let etherjsTrinityProvider = new JsonRpcProvider({
-                url: "http://api.elastos.io:20636" // TODO: change according to network in settings
+                url: "https://api.elastos.io/eth" // TODO: change according to network in settings
             });
 
             this.status.push("Fetching pair data");

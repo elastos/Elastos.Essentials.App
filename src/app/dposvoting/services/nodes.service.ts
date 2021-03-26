@@ -65,7 +65,7 @@ export class NodesService {
 
   // Fetch
   private nodeApi: string = 'https://node1.elaphant.app/api/';
-  private apiRPC: string = 'http://api.elastos.io:20336';
+  private apiRPC: string = 'https://api.elastos.io/ela';
   private elaNodeUrl: string = 'https://elanodes.com/wp-content/uploads/custom/images/';
   private proxyurl = "https://cors-anywhere.herokuapp.com/";
 
