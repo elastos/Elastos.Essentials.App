@@ -22,7 +22,6 @@
 
 /****************** Angular ******************/
 import { NgModule } from '@angular/core';
-import { QRCodeModule } from 'angularx-qrcode';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -46,7 +45,6 @@ import { PopupProvider } from './services/popup.service';
         IonicModule,
         IonicStorageModule,
         HttpClientModule,
-        QRCodeModule,
         TranslateModule
     ],
     providers: [

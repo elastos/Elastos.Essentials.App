@@ -1,22 +1,22 @@
-import { Hive, DID, Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { Hive, DID, Interfaces, storage as connectivityStorage, logger as connectivityLogger } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { Logger } from "../logger";
 import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
 import { GlobalStorageService } from "../services/global.storage.service";
 
 export class EssentialsDIDKeyValueStore implements Interfaces.IKeyValueStorage {
-    constructor(private storage: GlobalStorageService, private context: string) {
+    constructor(private storage: GlobalStorageService) {
     }
 
     set<T>(key: string, value: T): Promise<void>{
-        return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, this.context, key, value);
+        return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "connectivitysdk", key, value);
     }
 
     get<T>(key: string, defaultValue: T): Promise<T> {
-        return this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, this.context, key, defaultValue);
+        return this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "connectivitysdk", key, defaultValue);
     }
 
     unset(key: string): Promise<void> {
-        return this.storage.deleteSetting(GlobalDIDSessionsService.signedInDIDString, this.context, key);
+        return this.storage.deleteSetting(GlobalDIDSessionsService.signedInDIDString, "connectivitysdk", key);
     }
 }
 
@@ -35,35 +35,35 @@ class EssentialsLogger implements Interfaces.ILogger {
 export class ElastosSDKHelper {
     private static setupCompleted = false;
 
-    constructor() {}
+    constructor() {
+    }
+
+    public static init() {
+        connectivityLogger.setLoggerLayer(new EssentialsLogger());
+        connectivityStorage.setStorageLayer(new EssentialsDIDKeyValueStore(GlobalStorageService.instance));
+    }
 
     /**
      * @param context Isolation context to be able to handle multiple app instance DIDs, etc. Usually, the "app module name"
      */
-    public newDIDHelper(context: string): DID.DIDAccess {
+    public newDIDHelper(): DID.DIDAccess {
         let didHelper = new DID.DIDAccess();
-        // TODO BPI didHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
-        didHelper.setLogger(new EssentialsLogger());
         return didHelper;
     }
 
     /**
      * @param context Isolation context to be able to handle multiple auth tokens, etc. Usually, the "app module name"
      */
-    public newHiveAuthHelper(context: string): Hive.AuthHelper {
+    public newHiveAuthHelper(): Hive.AuthHelper {
         let authHelper = new Hive.AuthHelper();
-        // TODO BPI authHelper.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
-        authHelper.setLogger(new EssentialsLogger());
         return authHelper;
     }
 
     /**
      * @param context Isolation context to be able to handle multiple auth tokens, etc. Usually, the "app module name"
      */
-    public newHiveDataSync(context: string, userVault: HivePlugin.Vault, showDebugLogs: boolean = false): Hive.DataSync.HiveDataSync {
+    public newHiveDataSync(userVault: HivePlugin.Vault, showDebugLogs: boolean = false): Hive.DataSync.HiveDataSync {
         let dataSync = new Hive.DataSync.HiveDataSync(userVault, showDebugLogs);
-        dataSync.setStorage(new EssentialsDIDKeyValueStore(GlobalStorageService.instance, context));
-        dataSync.setLogger(new EssentialsLogger());
         return dataSync;
     }
 }

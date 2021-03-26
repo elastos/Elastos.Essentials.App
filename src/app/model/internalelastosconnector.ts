@@ -29,7 +29,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
                     appinstancedid: appInstanceDID
                 });
 
-                console.log("Got response for the appidcredissue intent", res);
+                Logger.log("connector", "Got response for the appidcredissue intent", res);
 
                 if (!res || !res.result || !res.result.credential) {
                     console.warn("Missing credential information. The operation was maybe cancelled.");
@@ -40,7 +40,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
                 resolve(credential);
             }
             catch (err) {
-                console.log("generateAppIDCredential() error:", err);
+                Logger.error("connector", "generateAppIDCredential() error:", err);
                 resolve(null);
             }
         });

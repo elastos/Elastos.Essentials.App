@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { CoinErc20DetailsPage } from './coin-erc20-details.page';
+import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
     declarations: [CoinErc20DetailsPage],
@@ -14,6 +15,7 @@ import { CoinErc20DetailsPage } from './coin-erc20-details.page';
         CommonModule,
         FormsModule,
         IonicModule,
+        QRCodeModule,
         TranslateModule,
         RouterModule.forChild([{ path: '', component: CoinErc20DetailsPage }])
     ],

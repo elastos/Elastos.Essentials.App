@@ -20,11 +20,9 @@ export class TitlebarmenuitemComponent implements OnInit {
 
   ngOnInit() {
     this.menuItems = this.navParams.get('items');
-    console.log('Titlebar menu items', this.menuItems);
   }
 
   onTitlebarMenuItemClicked(item: TitleBarMenuItem) {
-    console.log('Titlebar menu item clicked', item);
     this.popoverCtrl.dismiss({
       item: item
     });

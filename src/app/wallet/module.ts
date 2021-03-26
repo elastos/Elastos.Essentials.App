@@ -22,7 +22,6 @@
 
 /****************** Angular ******************/
 import { NgModule } from '@angular/core';
-import { QRCodeModule } from 'angularx-qrcode';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -57,7 +56,6 @@ import { WalletRoutingModule } from './routing';
         FormsModule,
         ComponentsModule,
         HttpClientModule,
-        QRCodeModule,
         TranslateModule
     ],
     providers: [

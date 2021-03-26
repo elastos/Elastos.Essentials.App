@@ -105,18 +105,7 @@ export class BackupRestoreService {
   private async setupBackupHelper() {
     this.log("Backup helper setup starting");
 
-    const didHelper = new ElastosSDKHelper().newDIDHelper("wallet");
-    let credential: DIDPlugin.VerifiableCredential = await didHelper.getExistingAppIdentityCredential();
-    if (!credential) {
-      credential = await didHelper.generateAppIdCredential();
-      if (!credential) {
-        // maybe user cancelled this action.
-        this.logDebug("Maybe cancelled or no credential?");
-        return false;
-      }
-    }
-    const userDID = credential.getIssuer();
-    this.logDebug("Current user DID:", userDID);
+    const userDID = GlobalDIDSessionsService.signedInDIDString;
 
     this.userVault = null;
 
@@ -139,7 +128,7 @@ export class BackupRestoreService {
       }
     }
 
-    const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper("wallet");
+    const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
     const hiveClient = await hiveAuthHelper.getClientWithAuth();
     this.log("Got hive client. Resolving vault...", hiveClient);
 
@@ -165,7 +154,7 @@ export class BackupRestoreService {
 
     this.log("Using vault for user:", this.userVault.getVaultOwnerDid(), "at:", this.userVault.getVaultProviderAddress());
 
-    this.backupRestoreHelper = new ElastosSDKHelper().newHiveDataSync("wallet", this.userVault, true);
+    this.backupRestoreHelper = new ElastosSDKHelper().newHiveDataSync(this.userVault, true);
     this.log("Backup restore helper initialized", this.backupRestoreHelper);
     return true;
   }

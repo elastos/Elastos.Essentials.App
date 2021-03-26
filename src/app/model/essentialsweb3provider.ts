@@ -1,5 +1,6 @@
 import { AbstractProvider, RequestArguments } from "web3-core";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
+import { Logger } from "../logger";
 import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
 import { GlobalPreferencesService } from "../services/global.preferences.service";
 
@@ -31,11 +32,11 @@ export class EssentialsWeb3Provider implements AbstractProvider {
                     var result = request.responseText;
 
                     try {
-                        console.log("Ethereum JSON RPC call result:", result, "for payload:", payload);
+                        Logger.log("global", "Ethereum JSON RPC call result:", result, "for payload:", payload);
                         result = JSON.parse(result);
                         resolve(result);
                     } catch(e) {
-                        console.log("JSON parse error");
+                        Logger.error("global", "Ethereum response: JSON parse error");
                         reject("Invalid JSON response returned by the JSON RPC");
                     }
                 }
@@ -60,7 +61,7 @@ export class EssentialsWeb3Provider implements AbstractProvider {
 
     // Mandatory method: sendAsync()
     async sendAsync(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        console.log("Essentials Web3 provider sendAsync payload", payload);
+        Logger.log("global", "Essentials Web3 provider sendAsync payload", payload);
         switch (payload.method) {
             // All methods not handled above are sent through JSON RPC API to the user-defined node url.
             default:
@@ -69,7 +70,7 @@ export class EssentialsWeb3Provider implements AbstractProvider {
                     callback(null, result);
                 }
                 catch(e) {
-                    console.log("callJsonRPC catched");
+                    Logger.error("global", "callJsonRPC catched");
                     callback(e);
                 }
         }

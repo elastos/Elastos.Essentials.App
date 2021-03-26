@@ -94,7 +94,7 @@ export class AdminService {
    * Created a new Administration DID for a given vault provider configuration
    */
   public async createAdminDID(provider: ManagedProvider): Promise<DID.FastDIDCreationResult> {
-    let didHelper = new ElastosSDKHelper().newDIDHelper("hivemanager");
+    let didHelper = new ElastosSDKHelper().newDIDHelper();
     let createdDIDInfo = await didHelper.fastCreateDID("ENGLISH");
 
     // Save the password to the password manager

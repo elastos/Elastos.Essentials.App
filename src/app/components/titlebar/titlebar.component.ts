@@ -299,7 +299,6 @@ export class TitleBarComponent {
       event: ev
     });
     this.menu.onWillDismiss().then((res) => {
-      console.log('Titlebar menu res', res);
       if(res.data) {
         this.listenableIconClicked(res.data.item);
       }

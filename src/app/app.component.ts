@@ -22,6 +22,9 @@ import { DPoSVotingInitService } from './dposvoting/services/init.service';
 import { CRProposalVotingInitService } from './crproposalvoting/services/init.service';
 import { DeveloperToolsInitService } from './developertools/services/init.service';
 import { GlobalNavService } from './services/global.nav.service';
+import { ElastosSDKHelper } from './helpers/elastossdk.helper';
+import { InternalElastosConnector } from './model/internalelastosconnector';
+import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
 @Component({
     selector: 'app-root',
@@ -68,8 +71,21 @@ export class AppComponent {
         this.platform.ready().then(async () => {
             Logger.log("Global", "Main app component initialization is starting");
 
+            // Force Essentials orientation to portrait only
             this.screenOrientation.lock("portrait");
 
+            // Initialize our connectivity SDK helper (customize the connectivity SDK logger, storage layers)
+            ElastosSDKHelper.init();
+
+            // Use our own internal connector for the connectivity SDK
+            let internalConnector = new InternalElastosConnector();
+            connectivity.registerConnector(new InternalElastosConnector());
+            connectivity.setActiveConnector(internalConnector.name);
+
+            // Register Essentials' App DID to the connectivity SDK - For hive authentication flows.
+            connectivity.setApplicationDID("did:elastos:ig1nqyyJhwTctdLyDFbZomSbZSjyMN1uor");
+
+            // Catch android back key for navigation
             this.setupBackKeyNavigation();
 
             // TODO screen.orientation.lock('portrait');

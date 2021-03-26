@@ -11,17 +11,10 @@ import { defineCustomElements } from '@teamhive/lottie-player/loader';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { InternalElastosConnector } from './app/model/internalelastosconnector';
 import { enableDebugTools } from '@angular/platform-browser';
+import { ElastosSDKHelper } from './app/helpers/elastossdk.helper';
 
 // Replace default console logs with our own logger
 Logger.init(console);
-
-// Use our own internal connector for the connectivity SDK
-let internalConnector = new InternalElastosConnector();
-connectivity.registerConnector(new InternalElastosConnector());
-connectivity.setActiveConnector(internalConnector.name);
-
-// Register Essentials' App DID to the connectivity SDK - For hive authentication flows.
-connectivity.setApplicationDID("did:elastos:ig1nqyyJhwTctdLyDFbZomSbZSjyMN1uor");
 
 // Setup Lottie animation player
 defineCustomElements(window);

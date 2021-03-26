@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { CoinReceivePage } from './coin-receive.page';
+import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
     declarations: [CoinReceivePage],
@@ -14,6 +15,7 @@ import { CoinReceivePage } from './coin-receive.page';
         CommonModule,
         FormsModule,
         IonicModule,
+        QRCodeModule,
         TranslateModule,
         RouterModule.forChild([{ path: '', component: CoinReceivePage }])
     ],

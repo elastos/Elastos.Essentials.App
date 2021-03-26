@@ -36,7 +36,7 @@ export class BackupService {
     });
 
     try {
-      const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper("contacts");
+      const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
 
       const hiveClient = await hiveAuthHelper.getClientWithAuth((authError)=>{
         Logger.warn("contacts", "Hive authentication error callback: ", authError);
@@ -57,7 +57,7 @@ export class BackupService {
 
       Logger.log("contacts", "User vault retrieved. Now creating a new backup restore helper instance", this.userVault);
 
-      this.backupRestoreHelper = new ElastosSDKHelper().newHiveDataSync("contacts", this.userVault, true);
+      this.backupRestoreHelper = new ElastosSDKHelper().newHiveDataSync(this.userVault, true);
 
       this.restoredContacts = [];
       this.backupRestoreHelper.addSyncContext("contacts",

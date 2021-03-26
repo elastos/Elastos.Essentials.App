@@ -61,7 +61,7 @@ export class HiveService {
   ) {}
 
   async init() {
-    let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper("hivemanager");
+    let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
     this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
       Logger.error("HiveManager", "Authentication error:", err);
     });
