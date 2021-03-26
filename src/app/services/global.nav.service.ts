@@ -3,6 +3,7 @@ import { ModalController, NavController } from '@ionic/angular';
 import { Logger } from '../logger';
 
 export enum Direction {
+    NONE = "none",
     FORWARD = "forward",
     BACK = "back"
 }
@@ -92,7 +93,11 @@ export class GlobalNavService {
         };
         this.navigationHistory = [];
         this.navigationHistory.push(launcherHome);
-        this.navCtrl.navigateRoot(launcherHome.route, {animationDirection: direction});
+
+        if (direction != Direction.NONE) // No animation - ex for the first arrival on the launcher home
+            this.navCtrl.navigateRoot(launcherHome.route, {animationDirection: direction});
+        else
+            this.navCtrl.navigateRoot(launcherHome.route);
     }
 
     public navigateTo(context: string, route: string, routerOptions?: any) {

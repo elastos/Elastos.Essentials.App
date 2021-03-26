@@ -21,7 +21,7 @@ import { DPoSVotingInitService } from './dposvoting/services/init.service';
 // import { CRCouncilVotingInitService } from './crcouncilvoting/services/init.service';
 import { CRProposalVotingInitService } from './crproposalvoting/services/init.service';
 import { DeveloperToolsInitService } from './developertools/services/init.service';
-import { GlobalNavService } from './services/global.nav.service';
+import { Direction, GlobalNavService } from './services/global.nav.service';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { InternalElastosConnector } from './model/internalelastosconnector';
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
@@ -120,7 +120,7 @@ export class AppComponent {
                 await this.theme.fetchThemeFromPreferences();
 
                 // Navigate to home screen
-                this.globalNav.navigateHome();
+                this.globalNav.navigateHome(Direction.NONE);
             } else {
                 Logger.log("Global", "No active DID, navigating to DID sessions");
 
