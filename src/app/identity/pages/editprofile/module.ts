@@ -6,10 +6,14 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { ComponentsModule } from '../../components/components.module';
+import { ProfileEntryPickerPage } from '../profileentrypicker/profileentrypicker';
 import { EditProfilePage } from './editprofile';
 
 @NgModule({
-    declarations: [EditProfilePage],
+    declarations: [
+        EditProfilePage,
+        ProfileEntryPickerPage
+    ],
     imports: [
         SharedComponentsModule,
         ComponentsModule,
