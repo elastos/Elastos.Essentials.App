@@ -38,7 +38,7 @@ export class HomePage {
 
   openApp(app: StorageDApp) {
     this.nav.navigateTo(
-      App.DEVELOPER_TOOLS, "appdetails", { state: { "app": app } }
+      App.DEVELOPER_TOOLS, "/developertools/appdetails", { state: { "app": app } }
     );
   }
 }

@@ -27,7 +27,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 })
 export class AppDetailsPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
-  
+
   app: StorageDApp = null;
   didSession: DIDSession = null;
 
@@ -136,7 +136,7 @@ export class AppDetailsPage {
   publishAppToElastOS() {
     this.nav.navigateTo(
       App.DEVELOPER_TOOLS,
-      "publishapptrinity", 
+      "/developertools/publishapptrinity",
       {
         state: {
           "app": this.app,
