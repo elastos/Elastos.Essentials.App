@@ -1,4 +1,4 @@
-<app-titlebar></app-titlebar>
+
 
 <!---------- CRC CANDIDATES ---------->
 <!-- <div *ngIf="candidatesService.candidates.length > 0" class="ion-text-center header">
@@ -6,6 +6,7 @@
 </div> -->
 
 <ion-content *ngIf="candidatesService.candidates.length > 0">
+  <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding">
     <app-candidate-slider
       *ngIf="showCandidate"
@@ -67,6 +68,7 @@
 </ion-header> -->
 
 <ion-content *ngIf="candidatesService.council.length > 0">
+  <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding">
     <ion-list lines="none" class="candidate-list">
       <ion-virtual-scroll [items]="candidatesService.council"  approxItemHeight="240px">

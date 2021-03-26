@@ -1,6 +1,5 @@
-<app-titlebar></app-titlebar>
-
 <ion-content [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
+  <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.dark-container]="theme.darkMode">
     <!--------- Identity ---------->
     <ion-row *ngIf="didService.signedIdentity" class="id-row ion-activatable ripple">

@@ -40,10 +40,6 @@ import { Native } from './services/native.service';
 import { PopupProvider } from './services/popup.service';
 
 /****************** Components ******************/
-import { TxConfirmComponent } from './components/tx-confirm/tx-confirm.component';
-import { TxSuccessComponent } from './components/tx-success/tx-success.component';
-import { HelpComponent } from './components/help/help.component';
-import { ContactsComponent } from './components/contacts/contacts.component';
 import { CommonModule } from '@angular/common';
 import { WalletRoutingModule } from './routing';
 

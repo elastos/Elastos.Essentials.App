@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { Logger } from '../logger';
 
+export enum Direction {
+    FORWARD = "forward",
+    BACK = "back"
+}
+
 export enum App {
     DID_SESSIONS = "didsessions",
     LAUNCHER = "launcher",
@@ -40,7 +45,7 @@ export class GlobalNavService {
      * Deletes all recent steps as long as they belong to the given context.
      * This basically comes back to the root of a "dApp".
      */
-    public navigateRoot(context: string, route: string, routerOptions?: any) {
+    public navigateRoot(context: string, route: string, navOptions?: any) {
         Logger.log("Nav", "Setting "+context+" navigation context root to: "+route);
 
         while (this.canGoBack()) {
@@ -54,7 +59,7 @@ export class GlobalNavService {
             }
         }
 
-        this.navCtrl.navigateBack(route, routerOptions);
+        this.navCtrl.navigateRoot(route, navOptions );
         // this.navigateTo(context, route, routerOptions);
     }
 
@@ -71,14 +76,14 @@ export class GlobalNavService {
         };
         this.navigationHistory = [];
         this.navigationHistory.push(didSessionHome);
-        this.navCtrl.navigateRoot(didSessionHome.route);
+        this.navCtrl.navigateRoot(didSessionHome.route, {animationDirection: 'back'});
     }
 
     /**
      * Navigates back to the launcher home and clears the whole navigation history for all
      * contexts. Fresh restart.
      */
-    public navigateHome() {
+    public navigateHome(direction = Direction.BACK) {
         Logger.log("Nav", "Navigating to launcher home");
 
         let launcherHome = {
@@ -87,7 +92,7 @@ export class GlobalNavService {
         };
         this.navigationHistory = [];
         this.navigationHistory.push(launcherHome);
-        this.navCtrl.navigateRoot(launcherHome.route);
+        this.navCtrl.navigateRoot(launcherHome.route, {animationDirection: direction});
     }
 
     public navigateTo(context: string, route: string, routerOptions?: any) {

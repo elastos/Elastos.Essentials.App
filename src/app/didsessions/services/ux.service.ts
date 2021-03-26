@@ -7,7 +7,7 @@ import { Events } from './events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService, App, Direction } from 'src/app/services/global.nav.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 let selfUxService: UXService = null;
@@ -81,11 +81,11 @@ export class UXService {
         let identities = await this.didSessions.getIdentityEntries();
         if (identities.length == 0) {
             Logger.log("didsessions", "No existing identity. Navigating to language chooser then createidentity");
-            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/language");
+            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/language", { animationDirection: Direction.FORWARD });
         }
         else {
             Logger.log("didsessions", "Navigating to pickidentity");
-            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity");
+            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity", { animationDirection: Direction.FORWARD });
         }
     }
 
@@ -98,7 +98,7 @@ export class UXService {
     }
 
     public goToLauncer() {
-      this.nav.navigateHome();
+      this.nav.navigateHome(Direction.FORWARD);
     }
 
     public translateInstant(key: string): string {

@@ -1,10 +1,6 @@
-<app-titlebar></app-titlebar>
-<ion-content *ngIf="masterWalletList.length > 0">
 
-   <!--  <ion-button (click)="native.go('coin-erc20-details')">
-        <ion-label>Test page</ion-label>
-    </ion-button> -->
-
+<ion-content>
+    <app-titlebar></app-titlebar>
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content>
         </ion-refresher-content>

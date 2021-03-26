@@ -1,5 +1,5 @@
-<app-titlebar></app-titlebar>
 <ion-content>
+  <app-titlebar></app-titlebar>
   <ion-grid class="ion-text-center container">
       <p>{{ 'advanced-import-intro' | translate }}</p>
       <ion-row class="txt-container">
@@ -15,7 +15,7 @@
       <h1>{{ 'advanced-import-msg' | translate }}</h1>
       <ion-row class="btn-container">
         <ion-button [disabled]='!inputMnemonicCompleted()'(click)="onImport()">
-          <ion-label>{{ 'import-wallet' | translate }}</ion-label>
+          {{ 'import-wallet' | translate }}
         </ion-button>
       </ion-row>
   </ion-grid>

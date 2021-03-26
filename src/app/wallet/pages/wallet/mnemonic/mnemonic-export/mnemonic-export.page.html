@@ -1,5 +1,5 @@
-<app-titlebar></app-titlebar>
 <ion-content>
+    <app-titlebar></app-titlebar>
     <ion-grid *ngIf="hideMnemonic" class="verify-container ion-no-padding ion-no-margin" [class.verify-dark-container]="theme.darkMode">
         <ion-row class="btn-container">
             <ion-button (click)="onExport()">

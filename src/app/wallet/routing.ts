@@ -26,7 +26,6 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
     // Global
     { path: 'launcher', loadChildren: ()=>import('./pages/launcher/module').then(m => m.LauncherModule) },
-    { path: 'about', loadChildren: ()=>import('./pages/about/module').then(m => m.AboutModule) },
     { path: 'settings', loadChildren: ()=>import('./pages/settings/module').then(m => m.SettingsModule) },
     { path: 'wallet-home', loadChildren: ()=>import('./pages/wallet/wallet-home/module').then(m => m.WalletHomeModule) },
     { path: 'wallet-create', loadChildren: ()=>import('./pages/wallet/wallet-create/module').then(m => m.WalletCreateModule) },
@@ -34,7 +33,6 @@ const routes: Routes = [
     { path: 'wallet-advanced-import', loadChildren: ()=>import('./pages/wallet/wallet-advanced-import/module').then(m => m.WalletAdvancedImportModule) },
     { path: 'wallet-manager', loadChildren: ()=>import('./pages/wallet/wallet-manager/module').then(m => m.WalletManagerModule) },
     { path: 'wallet-create-name', loadChildren: ()=>import('./pages/wallet/wallet-create-name/module').then(m => m.WalletCreateNameModule) },
-    { path: 'wallet-password-reset', loadChildren: ()=>import('./pages/wallet/wallet-password-reset/module').then(m => m.WalletPasswordResetModule) },
     { path: 'wallet-edit-name', loadChildren: ()=>import('./pages/wallet/wallet-edit-name/module').then(m => m.WalletEditNameModule) },
     { path: 'wallet-settings', loadChildren: ()=>import('./pages/wallet/wallet-settings/module').then(m => m.WalletSettingsModule) },
     { path: 'mnemonic', loadChildren: ()=>import('./pages/wallet/mnemonic/module').then(m => m.MnemonicModule) },
@@ -52,9 +50,6 @@ const routes: Routes = [
     { path: 'coin-transfer', loadChildren: ()=>import('./pages/wallet/coin/coin-transfer/module').then(m => m.CoinTransferModule) },
     { path: 'coin-add-erc20', loadChildren: ()=>import('./pages/wallet/coin/coin-add-erc20/module').then(m => m.CoinAddERC20Module) },
     { path: 'coin-erc20-details', loadChildren: ()=>import('./pages/wallet/coin/coin-erc20-details/module').then(m => m.CoinERC20DetailsModule) },
-
-    // Contacts
-    { path: 'contacts', loadChildren: ()=>import('./pages/contacts/module').then(m => m.ContactsModule) },
 
     // Intents
     { path: 'intents', loadChildren: ()=>import('./pages/intents/module').then(m => m.IntentsModule) },

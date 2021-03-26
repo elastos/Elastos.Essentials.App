@@ -38,7 +38,7 @@ export class AppService {
 
     switch (icon.key) {
       case 'backToHome':
-        this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
+        this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends', { animationDirection: 'back' });
         break;
       case 'add':
         this.globalNav.navigateTo(App.CONTACTS, '/contacts/add');

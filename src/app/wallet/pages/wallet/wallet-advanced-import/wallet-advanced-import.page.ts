@@ -59,6 +59,7 @@ export class WalletAdvancedImportPage implements OnInit {
         if (payPassword) {
             await this.native.showLoading(this.translate.instant('please-wait'));
             await this.importWalletWithMnemonic(payPassword);
+            this.native.hideLoading();
         }
     } else {
         this.native.toast(this.translate.instant("mnemonic-import-missing-words"));

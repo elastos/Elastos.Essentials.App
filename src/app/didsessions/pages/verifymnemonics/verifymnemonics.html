@@ -1,6 +1,5 @@
-<app-titlebar></app-titlebar>
-
 <ion-content>
+  <app-titlebar></app-titlebar>
   <div class="ion-text-center container" [class.darkContainer]="theme.darkMode">
     <ion-row class="mnemonic-row">
       <ion-col size="3.6" *ngFor="let selected of selectedList" [class.selectedCol]="isWord(selected)" (click)="removeWord(selected, selectedList.indexOf(selected))">

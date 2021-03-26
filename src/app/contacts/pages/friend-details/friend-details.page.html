@@ -1,5 +1,5 @@
-<app-titlebar></app-titlebar>
 <ion-content>
+  <app-titlebar></app-titlebar>
   <ion-grid *ngIf="contact" class="container" [class.blur]="popupService.deletePopup" [class.darkContainer]="theme.darkMode">
     <div class="header">
       <img [src]="uxService.getAvatar(contact)" class="profile-img">
@@ -254,12 +254,12 @@
                 <img [src]="appInfo.app ? getAppIcon(appInfo.app.id) : '/assets/icon/elalogo.svg'">
               </ion-avatar>
             </ion-col>
-            <ion-col size="5" class="appInfo-col">
+            <ion-col size="8.5" class="appInfo-col">
               <h4 *ngIf="appInfo.app">{{ appInfo.app.name }}</h4>
               <h4 *ngIf="!appInfo.app">{{ appInfo.packageId }}</h4>
               <p *ngIf="appInfo.action">{{ appInfo.action }}</p>
             </ion-col>
-            <ion-col offset="0.5" size="3" class="btn-col">
+       <!--      <ion-col offset="0.5" size="3" class="btn-col">
               <ion-button *ngIf="!appInfo.isInstalled" color="tertiary" (click)="discoverApp(appInfo.packageId)">
                 <ion-label>{{ 'discover' | translate }}</ion-label>
               </ion-button>
@@ -269,7 +269,7 @@
               <ion-button *ngIf="appInfo.isInstalled && !appInfo.app" color="tertiary" (click)="appService.startApp(appInfo.packageId)">
                 <ion-label>{{ 'open' | translate }}</ion-label>
               </ion-button>
-            </ion-col>
+            </ion-col> -->
           </ion-row>
         </ion-grid>
       </ion-item>

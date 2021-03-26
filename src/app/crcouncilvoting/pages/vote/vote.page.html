@@ -4,8 +4,8 @@
   </div>
 </ion-header> -->
 
-<app-titlebar></app-titlebar>
 <ion-content>
+  <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding">
     <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
       <ion-item class="candidate" color="primary" *ngFor="let candidate of candidatesService.selectedCandidates" lines="none">

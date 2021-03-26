@@ -1,5 +1,5 @@
-<app-titlebar></app-titlebar>
 <ion-content>
+    <app-titlebar title="text-vote-crcouncil"></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="masterWallet && masterWallet.subWallets[chainId]">
         <ion-card>
             <img-loader [src]="!theme.darkMode ? 'assets/wallet/intents/syncing.svg' : 'assets/wallet/intents/darkmode/syncing.svg'" useImg></img-loader>

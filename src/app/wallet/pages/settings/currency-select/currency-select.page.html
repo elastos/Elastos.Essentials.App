@@ -1,12 +1,12 @@
-<app-titlebar></app-titlebar>
 <ion-content>
-  <ion-grid class="container" [class.dark-container]="theme.darkMode">
-      <ion-row class="main-title-row">
-          <ion-col size="12">
-              <p>{{ 'available-currencies' | translate }}</p>
-          </ion-col>
-      </ion-row>
-      <ion-row
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <ion-row class="main-title-row">
+            <ion-col size="12">
+                <p>{{ 'available-currencies' | translate }}</p>
+            </ion-col>
+        </ion-row>
+        <ion-row
             class="subwallet-row ripple ion-activatable"
             [class.dark-subwallet-row]="theme.darkMode"
             *ngFor="let currency of currencyService.currencies"
@@ -20,9 +20,9 @@
                 <p>{{ currency.name | translate }}</p>
             </ion-col>
             <ion-col size="2" class="right-col">
-              <ion-icon *ngIf="currencyService.selectedCurrency.symbol === currency.symbol" name="checkmark" mode="ios"></ion-icon>
+                <ion-icon *ngIf="currencyService.selectedCurrency.symbol === currency.symbol" name="checkmark" mode="ios"></ion-icon>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
-  </ion-grid>
+    </ion-grid>
 </ion-content>

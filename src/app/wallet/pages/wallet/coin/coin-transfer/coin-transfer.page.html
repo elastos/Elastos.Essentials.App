@@ -1,7 +1,9 @@
-<app-titlebar></app-titlebar>
-<!------------------ RECHARGE ------------------>
-<ion-content *ngIf="transferType === 1 || transferType === 4">
-    <ion-grid class="recharge-container" [class.recharge-dark-container]="theme.darkMode" [class.blur]="native.popup">
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <!------------------ RECHARGE ------------------>
+
+    <ion-grid *ngIf="transferType === 1 || transferType === 4" class="recharge-container" [class.recharge-dark-container]="theme.darkMode" [class.blur]="native.popup">
         <ion-row class="main-title-row">
             <ion-col size="12">
                 <p>{{ 'transfer-from' | translate }}</p>
@@ -70,11 +72,10 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-</ion-content>
 
-<!------------------ SEND ------------------>
-<ion-content *ngIf="transferType === 2">
-    <ion-grid class="send-container" [class.send-dark-container]="theme.darkMode" [class.blur]="native.popup">
+    <!------------------ SEND ------------------>
+
+    <ion-grid *ngIf="transferType === 2" class="send-container" [class.send-dark-container]="theme.darkMode" [class.blur]="native.popup">
         <img class="header-img" [src]="!theme.darkMode ? 'assets/wallet/coins/ela-black.svg' : 'assets/wallet/coins/ela-white.svg'"/>
 
         <h1>{{ 'enter-amount' | translate }}</h1>
@@ -159,30 +160,10 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-</ion-content>
 
-<!------------------ RECHARGE AND SEND FOOTER ------------------>
-<ion-footer
-    *ngIf="!native.popup && transferType !== 3"
-    class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
->
-    <ion-row *ngIf="!waitingForSyncCompletion" class="btn-container">
-        <ion-button color="primary" [disabled]="!valuesValid()" (click)="goTransaction()">
-            <ion-label>{{ getButtonLabel() | translate }}</ion-label>
-        </ion-button>
-    </ion-row>
-    <ion-row *ngIf="waitingForSyncCompletion" class="syncing-container">
-        <ion-card-title>{{ 'waitforsync-loading' | translate }}</ion-card-title>
-        <ion-card-subtitle>
-            {{ 'waitforsync-intro' | translate }}
-        </ion-card-subtitle>
-        <span>&#8226; {{ 'sync-progress' | translate: { progress: fromSubWallet.progress } }}</span>
-    </ion-row>
-</ion-footer>
+    <!------------------ PAY INTENT ------------------>
 
-<!------------------ PAY INTENT ------------------>
-<ion-content *ngIf="transferType === 3">
-    <div class="pay-container" [class.dark-pay-container]="theme.darkMode">
+    <div *ngIf="transferType === 3" class="pay-container" [class.dark-pay-container]="theme.darkMode">
         <img class="header-img" src="./assets/wallet/tx/send.svg">
         <h1>{{ 'coin-transfer-send-title' | translate: { coinName: fromSubWallet.getDisplayTokenName() } }}</h1>
         <h2>{{ 'confirm-transaction-title' | translate }}</h2>
@@ -228,7 +209,28 @@
     </div>
 </ion-content>
 
+<!------------------ RECHARGE AND SEND FOOTER ------------------>
+
+<ion-footer
+    *ngIf="!native.popup && transferType !== 3"
+    class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
+>
+    <ion-row *ngIf="!waitingForSyncCompletion" class="btn-container">
+        <ion-button color="primary" [disabled]="!valuesValid()" (click)="goTransaction()">
+            <ion-label>{{ getButtonLabel() | translate }}</ion-label>
+        </ion-button>
+    </ion-row>
+    <ion-row *ngIf="waitingForSyncCompletion" class="syncing-container">
+        <ion-card-title>{{ 'waitforsync-loading' | translate }}</ion-card-title>
+        <ion-card-subtitle>
+            {{ 'waitforsync-intro' | translate }}
+        </ion-card-subtitle>
+        <span>&#8226; {{ 'sync-progress' | translate: { progress: fromSubWallet.progress } }}</span>
+    </ion-row>
+</ion-footer>
+
 <!------------------ PAY INTENT FOOTER ------------------>
+
 <ion-footer
     class="pay-footer ion-no-border" [class.dark-pay-footer]="theme.darkMode"
     *ngIf="transferType === 3"

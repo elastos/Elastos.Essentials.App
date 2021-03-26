@@ -1,6 +1,5 @@
-<app-titlebar></app-titlebar>
-
 <ion-content *ngIf="hasConfigSections">
+    <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-row class="section" *ngFor="let section of sections" (click)="open(section.router)">
             <ion-col size="11" class="title-col">

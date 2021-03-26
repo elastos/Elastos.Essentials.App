@@ -1,6 +1,5 @@
-<app-titlebar></app-titlebar>
-
 <ion-content>
+  <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
     <ion-row>
       <ion-input
@@ -11,8 +10,7 @@
         [(ngModel)]="didInput"
         mode="ios"
         name="didInput" ngDefaultControl
-      >  
-      </ion-input>
+      ></ion-input>
     </ion-row>
     <ion-row class="btn-container">
       <ion-button (click)="addContact()">

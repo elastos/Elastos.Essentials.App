@@ -39,7 +39,6 @@ export class PopupService {
 
   async showDeletePrompt(contact: Contact) {
     this.deletePopup = await this.popoverCtrl.create({
-      mode: 'ios',
       cssClass: 'warning-component',
       component: DeleteComponent,
       componentProps: {

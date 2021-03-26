@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-onboard',
@@ -13,6 +14,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 })
 export class OnboardPage implements OnInit {
 
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('slider', {static: false}) slider: IonSlides;
 
   hidden = true;
