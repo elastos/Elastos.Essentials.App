@@ -1,7 +1,6 @@
-<app-titlebar>
-</app-titlebar>
-
 <ion-content no-scroll [ngClass]="{'transparentBody':isCameraShown}">
+    <app-titlebar></app-titlebar>
+            
     <!-- Camera ON -->
     <div *ngIf="isCameraShown; else showNothing" style="text-align: center">
         <div class='qrscanner-area'> </div>
