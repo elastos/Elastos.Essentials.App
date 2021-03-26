@@ -4,8 +4,7 @@
       <ion-grid>
         <ion-row class="header-container">
           <ion-col size="3" class="img-container">
-            <img-loader *ngIf="!candidate.imageUrl" useImg><img src='/assets/crcouncilvoting/icon/avatar.png'></img-loader>
-            <img-loader *ngIf="candidate.imageUrl" class="can-img"useImg><img [src]="candidate.imageUrl"></img-loader>
+            <img [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
           </ion-col>
           <ion-col size="9" class="name-container">
             <ion-card-title>

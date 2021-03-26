@@ -18,7 +18,7 @@ import { WalletInitService } from './wallet/services/init.service'
 import { Logger } from './logger';
 import { GlobalIntentService } from './services/global.intent.service';
 import { DPoSVotingInitService } from './dposvoting/services/init.service';
-import { CRCouncilVotingInitService } from './crcouncilvoting/services/init.service';
+// import { CRCouncilVotingInitService } from './crcouncilvoting/services/init.service';
 import { CRProposalVotingInitService } from './crproposalvoting/services/init.service';
 import { DeveloperToolsInitService } from './developertools/services/init.service';
 import { GlobalNavService } from './services/global.nav.service';
@@ -53,7 +53,7 @@ export class AppComponent {
         private dposVotingInitService: DPoSVotingInitService,
         private language: GlobalLanguageService,
         private intentService: GlobalIntentService,
-        private crCouncilVotingInitService: CRCouncilVotingInitService,
+        // private crCouncilVotingInitService: CRCouncilVotingInitService,
         private crProposalVotingInitService: CRProposalVotingInitService,
         private developerToolsInitService: DeveloperToolsInitService,
         private screenOrientation: ScreenOrientation
@@ -87,7 +87,7 @@ export class AppComponent {
             await this.identityInitService.init();
             await this.walletInitService.init();
             await this.dposVotingInitService.init();
-            await this.crCouncilVotingInitService.init();
+            // await this.crCouncilVotingInitService.init();
             await this.crProposalVotingInitService.init();
             await this.developerToolsInitService.init();
 

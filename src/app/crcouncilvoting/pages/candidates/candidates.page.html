@@ -1,13 +1,7 @@
-
-
-<!---------- CRC CANDIDATES ---------->
-<!-- <div *ngIf="candidatesService.candidates.length > 0" class="ion-text-center header">
-  <ion-label>Cyber Republic Candidates</ion-label>
-</div> -->
-
-<ion-content *ngIf="candidatesService.candidates.length > 0">
+<ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid class="container ion-no-padding">
+
+  <ion-grid *ngIf="candidatesService.candidates.length > 0" class="container ion-no-padding">
     <app-candidate-slider
       *ngIf="showCandidate"
       [candidate]="candidate"
@@ -54,22 +48,7 @@
     </ion-list>
   </ion-grid>
 
-  <div class="add-btn ion-activatable ripple" (click)="walletAlert()">
-    <h1>{{ 'dist-votes' | translate }}</h1>
-    <ion-ripple-effect></ion-ripple-effect>
-  </div>
-</ion-content>
-
-<!---------- CRC COUNCIL ---------->
-<!-- <ion-header *ngIf="candidatesService.council.length > 0">
-  <div class="ion-text-center header">
-    <ion-label>CR Council Members</ion-label>
-  </div>
-</ion-header> -->
-
-<ion-content *ngIf="candidatesService.council.length > 0">
-  <app-titlebar></app-titlebar>
-  <ion-grid class="container ion-no-padding">
+  <ion-grid *ngIf="candidatesService.council.length > 0" class="container ion-no-padding">
     <ion-list lines="none" class="candidate-list">
       <ion-virtual-scroll [items]="candidatesService.council"  approxItemHeight="240px">
         <ion-item class="candidate" *virtualItem="let member">
@@ -99,16 +78,15 @@
     </ion-list>
   </ion-grid>
 
-  <!-- <div class="add-btn ion-activatable ripple">
-    <h1>{{ getCouncilStartDate() }}</h1>
-    <ion-ripple-effect></ion-ripple-effect>
-  </div> -->
-</ion-content>
-
-<ion-content *ngIf="candidatesService.candidates.length === 0 && candidatesService.council.length === 0">
-  <ion-grid class="spinner-container ion-no-padding">
+  <ion-grid *ngIf="candidatesService.candidates.length === 0 && candidatesService.council.length === 0" class="spinner-container ion-no-padding">
     <div class="spinner">
       <ion-spinner name="bubbles"></ion-spinner>
     </div>
   </ion-grid>
+
+  <div *ngIf="candidatesService.candidates.length > 0" class="add-btn ion-activatable ripple" (click)="walletAlert()">
+    <h1>{{ 'dist-votes' | translate }}</h1>
+    <ion-ripple-effect></ion-ripple-effect>
+  </div>
 </ion-content>
+

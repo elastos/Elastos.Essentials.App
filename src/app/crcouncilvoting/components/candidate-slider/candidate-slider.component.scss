@@ -24,17 +24,10 @@
           justify-content: center;
           align-items: center;
 
-          img-loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+          img {
             border-radius: 10px;
-            overflow: hidden;
-
-            img {
-              width: 45px;
-              height: 45px;
-            }
+            width: 45px;
+            height: 45px;
           }
         }
 

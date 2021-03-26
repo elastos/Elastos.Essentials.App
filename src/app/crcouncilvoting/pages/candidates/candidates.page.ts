@@ -40,6 +40,7 @@ export class CandidatesPage implements OnInit {
 
   ngOnInit() {
     this.showCandidate = false;
+    this.candidatesService.init();
   }
 
   ionViewWillEnter() {
