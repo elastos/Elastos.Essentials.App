@@ -112,7 +112,7 @@ export function TranslateLoaderFactory() {
     //HttpClientModule,
     SharedComponentsModule,
     IonicModule.forRoot({
-      mode: 'md',
+      mode: 'ios',
       scrollAssist: false,
       scrollPadding: false,
       navAnimation: iosTransitionAnimation

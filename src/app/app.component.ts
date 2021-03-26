@@ -39,7 +39,6 @@ export class AppComponent {
 
     constructor(
         private platform: Platform,
-        public modalCtrl: ModalController,
         public splashScreen: SplashScreen,
         public storage: GlobalStorageService,
         public theme: GlobalThemeService,
