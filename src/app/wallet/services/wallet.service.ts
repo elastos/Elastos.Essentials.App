@@ -444,7 +444,6 @@ export class WalletManager {
             this.goToLauncherScreen();
         }
     }
-
     /**
      * Save master wallets list to permanent local storage.
      */
@@ -463,7 +462,7 @@ export class WalletManager {
 
     public async stopSyncAllWallet() {
       for (const masterWallet of Object.values(this.masterWallets)) {
-          this.stopWalletSync(masterWallet.id);
+          await this.stopWalletSync(masterWallet.id);
       }
   }
 

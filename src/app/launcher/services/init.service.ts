@@ -27,6 +27,9 @@ export class LauncherInitService {
         // No blocking services start
         this.appManagerService.init();
         this.tipsService.init();
+      } else {
+        this.appManagerService.stop();
+        // TODO something else need to stop?
       }
     });
   }

@@ -22,6 +22,7 @@ import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
+import { Subscription } from 'rxjs';
 
 type RunnableApp = {
     cssId:string;
@@ -53,6 +54,9 @@ export class AppmanagerService {
     /* Onboard */
     private firstVisit = false;
 
+    private subscription: Subscription = null;
+    private languageSubscription: Subscription = null;
+
     constructor(
         private sanitizer: DomSanitizer,
         public zone: NgZone,
@@ -76,11 +80,11 @@ export class AppmanagerService {
     public async init() {
         Logger.log("Launcher", 'App manager service is initializing');
 
-        this.language.activeLanguage.subscribe((lang)=>{
+        this.languageSubscription = this.language.activeLanguage.subscribe((lang)=>{
             this.initAppsList();
         });
 
-        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+        this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             this.onIntentReceived(receivedIntent);
         });
 
@@ -91,6 +95,17 @@ export class AppmanagerService {
         this.events.subscribe("notifications.tip", (notification) => {
             this.presentTip(notification);
         });
+    }
+
+    public stop() {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
+      if (this.languageSubscription) {
+        this.languageSubscription.unsubscribe();
+        this.languageSubscription = null;
+      }
     }
 
     private initAppsList() {
@@ -154,7 +169,7 @@ export class AppmanagerService {
                     },
                 ]
             },
-           /*  {
+             {
                 type: 'voting',
                 apps: [
                     {
@@ -163,7 +178,7 @@ export class AppmanagerService {
                         name: this.translate.instant('app-dpos-voting'),
                         description: this.translate.instant('app-dpos-description'),
                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: startCall: () => this.dposVotingInitService.start()
+                        startCall: () => this.dposVotingInitService.start()
                     },
                     {
                         cssId: 'CRCouncil',
@@ -182,7 +197,7 @@ export class AppmanagerService {
                         routerPath: '/crproposalvoting/proposals/ALL'
                     },
                 ]
-            } */
+            }
         ];
     }
 

@@ -27,8 +27,7 @@ export enum ScanType {
 })
 export class IntentService {
     private walletList: MasterWallet [] = null;
-    public subscription: Subscription;
-
+    private subscription: Subscription = null;
 
     constructor(
         public events: Events,
@@ -40,7 +39,6 @@ export class IntentService {
         private walletAccessService: WalletAccessService,
         private walletEditionService: WalletEditionService,
         private globalIntentService: GlobalIntentService,
-        private globalNav: GlobalNavService
     ) {
     }
 
@@ -62,7 +60,10 @@ export class IntentService {
     }
 
     removeIntentListener() {
-      this.subscription.unsubscribe();
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
     }
 
     async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {

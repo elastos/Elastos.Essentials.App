@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { PopupService } from './popup.service';
@@ -42,7 +43,7 @@ export type CreateSuggestionCommand = CRWebsiteCommand & {
 export class CROperationsService {
     private onGoingCreateSuggestionCommand: CreateSuggestionCommand;
     private onGoingVoteForProposalcommand: VoteForProposalCommand;
-
+    private subscription: Subscription = null;
 
     constructor(
         private router: Router,
@@ -52,10 +53,16 @@ export class CROperationsService {
 
     async init() {
         Logger.log("crproposal", "CROperationsService is initializing");
-
-        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+        this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             this.handledReceivedIntent(receivedIntent);
         });
+    }
+
+    public stop() {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
     }
 
     addOnItemClickedListener(icon) {

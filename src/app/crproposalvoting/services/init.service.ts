@@ -21,6 +21,9 @@ export class CRProposalVotingInitService {
         this.uxService.init();
         this.crOperations.init();
         this.appService.getTimeCheckedForProposals();
+      } else {
+        this.crOperations.stop();
+        // TODO something else need to stop?
       }
     });
   }
