@@ -13,6 +13,7 @@ import { PopupProvider } from './popup.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Subscription } from 'rxjs';
 
 export enum ScanType {
   Address     = 1,
@@ -26,6 +27,8 @@ export enum ScanType {
 })
 export class IntentService {
     private walletList: MasterWallet [] = null;
+    public subscription: Subscription;
+
 
     constructor(
         public events: Events,
@@ -48,10 +51,18 @@ export class IntentService {
         this.addIntentListener();
     }
 
+    public stop() {
+        this.removeIntentListener();
+    }
+
     addIntentListener() {
-        this.globalIntentService.intentListener.subscribe((intent: EssentialsIntentPlugin.ReceivedIntent) => {
+        this.subscription = this.globalIntentService.intentListener.subscribe((intent: EssentialsIntentPlugin.ReceivedIntent) => {
             this.onReceiveIntent(intent);
         });
+    }
+
+    removeIntentListener() {
+      this.subscription.unsubscribe();
     }
 
     async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {

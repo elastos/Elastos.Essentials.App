@@ -461,6 +461,12 @@ export class WalletManager {
         }
     }
 
+    public async stopSyncAllWallet() {
+      for (const masterWallet of Object.values(this.masterWallets)) {
+          this.stopWalletSync(masterWallet.id);
+      }
+  }
+
     /**
      * Inform the background service (via RPC) that we want to start syncing a wallet.
      * If there is another wallet syncing, its on going sync will be stopped first.
@@ -537,7 +543,7 @@ export class WalletManager {
         const chainId = event.ChainID;
 
         if (event.Action != "OnETHSCEventHandled") {
-          Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
+          // Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
           // Logger.log('wallet', event.Action, event.result);
         }
 

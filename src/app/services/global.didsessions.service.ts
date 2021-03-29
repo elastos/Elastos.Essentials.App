@@ -141,15 +141,15 @@ export class GlobalDIDSessionsService {
 
     this.signedInIdentity = null;
     GlobalDIDSessionsService.signedInDIDString = null;
-    passwordManager.setCurrentDID(null);
-    await this.destroyWallet();
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
 
-    this.signedInIdentityListener.next(null);
+    await this.signedInIdentityListener.next(null);
 
     // TODO: Stop all background services, destroy plugins.
+    passwordManager.setCurrentDID(null);
+    await this.destroyWallet();
 
     this.globalNavService.navigateDIDSessionHome();
   }

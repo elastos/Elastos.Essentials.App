@@ -6,6 +6,7 @@ import { StandardCoinName } from './Coin';
 import { AllTransactions } from './Transaction';
 import { Events } from '../services/events.service';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -1000,6 +1001,12 @@ export class SPVWalletPluginBridge {
     // TODO: replace hardcoded error code with enum: http://elastos.ela.spv.cpp/SDK/Common/ErrorChecker.h
     handleError(err: any, promiseRejectHandler: (reason?: any)=>void): any {
         this.native.hideLoading();
+
+        if (GlobalDIDSessionsService.signedInDIDString == null) {
+          // Sign out
+          Logger.warn('wallet', 'did sign out, Filter this error:', err);
+          return;
+        }
         Logger.error('wallet', err);
 
         let error = err["code"]

@@ -60,8 +60,15 @@ export class WalletInitService {
 
         await this.walletManager.init();
         await this.intentService.init();
+      } else {
+        await this.stop();
       }
     });
+  }
+
+  public async stop(): Promise<void> {
+    await this.intentService.stop();
+    await this.walletManager.stopSyncAllWallet();
   }
 
   public start() {
