@@ -47,7 +47,7 @@ export class DeveloperService {
       idChainRPCApi: 'https://api.elastos.io/did',
       ethscRPCApi: 'https://api.elastos.io/eth',
       ethscApiMisc: 'https://api.elastos.io/misc',
-      ethscOracle: 'https://api.elastos.io/oracle2',
+      ethscOracle: 'https://api.elastos.io/oracle',
       icon: '/assets/icon/main.svg'
     },
     {
