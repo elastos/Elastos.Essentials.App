@@ -1,28 +1,3 @@
-<!-- <ion-header class="ion-no-border">
-  <ion-toolbar mode="ios" [ngStyle]="{ '--background': theme.backgroundColor }">
-    <ion-buttons slot="start">
-      <ion-button *ngIf="icons[0].visible" (click)="outerLeftIconClicked()">
-        <img [src]="getIconPath(0)">
-      </ion-button>
-      <ion-button *ngIf="icons[1].visible" (click)="innerLeftIconClicked()">
-        <img [src]="getIconPath(1)">
-      </ion-button>
-    </ion-buttons>
-    <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button [class.hidden]="!icons[2].visible"  (click)="innerRightIconClicked()">
-        <img *ngIf="icons[2].visible" [src]="getIconPath(2)">
-      </ion-button>
-      <ion-button *ngIf="!menuVisible && icons[3].visible"  (click)="outerRightIconClicked($event)">
-        <img [src]="getIconPath(3)">
-      </ion-button>
-      <ion-button *ngIf="menuVisible"  (click)="outerRightIconClicked($event)">
-        <img [src]="getIconPath(3)">
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header> -->
-
 <ion-header class="ion-no-border">
   <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
     <ion-col size="1.25">
