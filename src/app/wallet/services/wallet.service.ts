@@ -168,6 +168,12 @@ export class WalletManager {
         this.initBackupService();
     }
 
+    async stop() {
+      this.removeSubWalletListener();
+      await this.stopSyncAllWallet();
+      // TODO: stop backup service?
+    }
+
     private async initWallets(): Promise<boolean> {
         try {
             // NetWork Type
@@ -532,6 +538,14 @@ export class WalletManager {
                 this.handleSubWalletEvent(event);
             });
         });
+    }
+
+    /**
+     * Remove listening to all events from the SPV SDK.
+     */
+     public removeSubWalletListener() {
+        Logger.log('wallet', "Remove wallet listener");
+        this.spvBridge.removeWalletListener();
     }
 
     /**

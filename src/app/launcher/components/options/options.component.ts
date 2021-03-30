@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { GlobalThemeService } from '../../../services/global.theme.service';
 import { DIDManagerService } from '../../services/didmanager.service';
+import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
+
 
 @Component({
   selector: 'app-options',
@@ -14,13 +16,15 @@ export class OptionsComponent implements OnInit {
     public theme: GlobalThemeService,
     private didService: DIDManagerService,
     private popoverCtrl: PopoverController,
+    private appBackGroundService: GlobalAppBackgroundService
   ) { }
 
   ngOnInit() {
   }
 
-  signOut() {
+  async signOut() {
     this.popoverCtrl.dismiss();
+    await this.appBackGroundService.stop();
     this.didService.signOut();
   }
 

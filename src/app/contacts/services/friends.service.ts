@@ -90,15 +90,12 @@ export class FriendsService {
   }
 
   async init() {
-    this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
-      // Refresh content for each signing in user (different contacts list for now).
-      if (signedInIdentity) {
-        await this.getVisit();
-        await this.getStoredContacts();
-        this.getContactNotifierContacts();
-      }
-    });
+      await this.getVisit();
+      await this.getStoredContacts();
+      this.getContactNotifierContacts();
   }
+
+
 
   /******************************************************
   * Get Visit, if first time, add a fake 'First Contact' *

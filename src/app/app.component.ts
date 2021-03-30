@@ -25,6 +25,7 @@ import { Direction, GlobalNavService } from './services/global.nav.service';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { InternalElastosConnector } from './model/internalelastosconnector';
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { GlobalAppBackgroundService } from './services/global.appbackground.service';
 
 @Component({
     selector: 'app-root',
@@ -44,6 +45,7 @@ export class AppComponent {
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService,
+        private globalAppBackgroundService: GlobalAppBackgroundService,
         private launcherInitService: LauncherInitService,
         private didSessionsInitService: DIDSessionsInitService,
         private scannerInitService: ScannerInitService,
@@ -93,18 +95,7 @@ export class AppComponent {
             await this.language.init();
 
             // "DApps" initializations
-            await this.didSessionsInitService.init();
-            await this.launcherInitService.init();
-            await this.scannerInitService.init();
-            await this.hiveManagerInitService.init();
-            await this.settingsInitService.init();
-            await this.contactsInitService.init();
-            await this.identityInitService.init();
-            await this.walletInitService.init();
-            await this.dposVotingInitService.init();
-            // await this.crCouncilVotingInitService.init();
-            await this.crProposalVotingInitService.init();
-            await this.developerToolsInitService.init();
+            this.globalAppBackgroundService.init();
 
             Logger.log("Global", "All awaited init services have been initialized");
 

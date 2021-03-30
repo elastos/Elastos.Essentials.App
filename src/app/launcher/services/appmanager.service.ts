@@ -54,7 +54,9 @@ export class AppmanagerService {
     /* Onboard */
     private firstVisit = false;
 
-    private subscription: Subscription = null;
+    private intentSubscription: Subscription = null;
+    private updateSubscription: Subscription = null;
+    private tipSubscription: Subscription = null;
     private languageSubscription: Subscription = null;
 
     constructor(
@@ -84,23 +86,31 @@ export class AppmanagerService {
             this.initAppsList();
         });
 
-        this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+        this.intentSubscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             this.onIntentReceived(receivedIntent);
         });
 
-        this.events.subscribe("updateNotifications", () => {
+        this.updateSubscription = this.events.subscribe("updateNotifications", () => {
             // TODO @chad this.notification.fillAppInfoToNotification(this.installService.appInfos);
         });
 
-        this.events.subscribe("notifications.tip", (notification) => {
+        this.tipSubscription = this.events.subscribe("notifications.tip", (notification) => {
             this.presentTip(notification);
         });
     }
 
     public stop() {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-        this.subscription = null;
+      if (this.intentSubscription) {
+        this.intentSubscription.unsubscribe();
+        this.intentSubscription = null;
+      }
+      if (this.updateSubscription) {
+        this.updateSubscription.unsubscribe();
+        this.updateSubscription = null;
+      }
+      if (this.tipSubscription) {
+        this.tipSubscription.unsubscribe();
+        this.tipSubscription = null;
       }
       if (this.languageSubscription) {
         this.languageSubscription.unsubscribe();
@@ -169,35 +179,35 @@ export class AppmanagerService {
                     },
                 ]
             },
-             {
-                type: 'voting',
-                apps: [
-                    {
-                        cssId: 'DPoS',
-                        routerContext: App.DPOS_VOTING,
-                        name: this.translate.instant('app-dpos-voting'),
-                        description: this.translate.instant('app-dpos-description'),
-                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        startCall: () => this.dposVotingInitService.start()
-                    },
-                    {
-                        cssId: 'CRCouncil',
-                        routerContext: App.CRCOUNCIL_VOTING,
-                        name: this.translate.instant('app-cr-council'),
-                        description: this.translate.instant('app-crcouncil-description'),
-                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: '/crcouncilvoting/candidates'
-                    },
-                    {
-                        cssId: 'CRProposal',
-                        routerContext: App.CRPROPOSAL_VOTING,
-                        name: this.translate.instant('app-cr-proposal'),
-                        description: this.translate.instant('app-crproposal-description'),
-                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
-                        routerPath: '/crproposalvoting/proposals/ALL'
-                    },
-                ]
-            }
+            //  {
+            //     type: 'voting',
+            //     apps: [
+            //         {
+            //             cssId: 'DPoS',
+            //             routerContext: App.DPOS_VOTING,
+            //             name: this.translate.instant('app-dpos-voting'),
+            //             description: this.translate.instant('app-dpos-description'),
+            //             icon: '/assets/launcher/ios/app-icons/scanner.svg',
+            //             startCall: () => this.dposVotingInitService.start()
+            //         },
+            //         {
+            //             cssId: 'CRCouncil',
+            //             routerContext: App.CRCOUNCIL_VOTING,
+            //             name: this.translate.instant('app-cr-council'),
+            //             description: this.translate.instant('app-crcouncil-description'),
+            //             icon: '/assets/launcher/ios/app-icons/scanner.svg',
+            //             routerPath: '/crcouncilvoting/candidates'
+            //         },
+            //         {
+            //             cssId: 'CRProposal',
+            //             routerContext: App.CRPROPOSAL_VOTING,
+            //             name: this.translate.instant('app-cr-proposal'),
+            //             description: this.translate.instant('app-crproposal-description'),
+            //             icon: '/assets/launcher/ios/app-icons/scanner.svg',
+            //             routerPath: '/crproposalvoting/proposals/ALL'
+            //         },
+            //     ]
+            // }
         ];
     }
 

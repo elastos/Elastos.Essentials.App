@@ -14,6 +14,7 @@ import { LocalStorage } from './storage.service';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { WalletPrefsService } from './pref.service';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ import { WalletPrefsService } from './pref.service';
 export class WalletInitService {
   private walletServiceInitialized = false;
   private waitforServiceInitialized = false;
+  private subscription: Subscription = null;
 
   constructor(
     private intentService: IntentService,
@@ -53,22 +55,29 @@ export class WalletInitService {
 
         // Wait until the wallet manager is ready before showing the first screen.
         // TODO: rework
-        this.events.subscribe("walletmanager:initialized", () => {
+        this.subscription = this.events.subscribe("walletmanager:initialized", () => {
             Logger.log("wallet", "walletmanager:initialized event received");
             this.walletServiceInitialized = true;
         });
 
         await this.walletManager.init();
         await this.intentService.init();
-      } else {
-        await this.stop();
       }
     });
   }
 
   public async stop(): Promise<void> {
+    Logger.log('wallet', 'init service stopping')
+    await this.prefs.stop();
+    this.currencyService.stop();
+    await this.walletManager.stop();
     await this.intentService.stop();
-    await this.walletManager.stopSyncAllWallet();
+
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
+    Logger.log('wallet', 'init service stopped')
   }
 
   public start() {
@@ -78,10 +87,11 @@ export class WalletInitService {
       if (!this.waitforServiceInitialized) {
         this.waitforServiceInitialized = true;
         // Wait until the wallet manager is ready before showing the first screen.
-        this.events.subscribe("walletmanager:initialized", () => {
+        let subscription = this.events.subscribe("walletmanager:initialized", () => {
           Logger.log("wallet", "walletmanager:initialized event received, showStartupScreen");
           this.navService.showStartupScreen();
           this.waitforServiceInitialized = false;
+          subscription.unsubscribe();
         });
       } else {
         Logger.log("wallet", "Wallet service is initializing, The Wallet will be displayed when the service is initialized.");

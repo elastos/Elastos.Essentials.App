@@ -17,6 +17,8 @@ type Currency = {
 export class CurrencyService {
   public static instance: CurrencyService = null;
 
+  private stopService = false;
+
   public elaStats: any;
   // cors-anywhere: CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
   private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
@@ -54,16 +56,23 @@ export class CurrencyService {
   }
 
   async init() {
+    this.stopService = false;
     await this.getSavedPrices();
     await this.getSavedCurrency();
     await this.getSavedCurrencyDisplayPreference();
 
     // Wait a moment before fetching latest prices, to not struggle the main essentials boot sequence.
     setTimeout(() => {
-      this.fetch();
+      if (!this.stopService) {
+        this.fetch();
+      }
     }, 10000);
 
     Logger.log('wallet', "Currency service initialization complete");
+  }
+
+  stop() {
+    this.stopService = true;
   }
 
   getSavedPrices(): Promise<void> {

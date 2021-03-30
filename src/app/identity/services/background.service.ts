@@ -24,6 +24,8 @@ export interface LastExpirationNotification {
 })
 export class BackgroundService {
     private EXPIRATION_STORAGE_KEY : string = "LastExpirationVerification";
+    private synchronizeTimeout: NodeJS.Timeout = null;
+    private notifyTimeout: NodeJS.Timeout = null;
 
     constructor(
         public zone: NgZone,
@@ -39,7 +41,6 @@ export class BackgroundService {
     }
 
     public async init() {
-      // TODO: STOP TIMERS WHEN SWITCHING TO ANOTHER DID USER HERE!
       this.didsessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
         if (signedInIdentity) {
           Logger.log("Identity", "Identity background service is initializing for",signedInIdentity.didString);
@@ -48,14 +49,18 @@ export class BackgroundService {
           await this.didService.loadGlobalIdentity();
 
           // Wait a moment when elastOS starts, before starting a background sync.
-          setTimeout(() => {
+          this.synchronizeTimeout = setTimeout(() => {
             this.synchronizeActiveDIDAndRepeat();
           }, 30*1000); // 30 seconds
 
           //Notify expired DID and credentials
-          setTimeout(async () => {
+          this.notifyTimeout = setTimeout(async () => {
             await this.notifyExpiredCredentials();
           }, 5 * 1000); // 5 seconds
+        } else {
+          // Sign out
+          clearTimeout(this.synchronizeTimeout);
+          clearTimeout(this.notifyTimeout);
         }
       });
     }
@@ -69,7 +74,7 @@ export class BackgroundService {
         await this.didService.getActiveDidStore().synchronize(this.authService.getCurrentUserPassword());
         Logger.log("Identity", "Synchronization ended");
 
-        setTimeout(() => {
+        this.synchronizeTimeout = setTimeout(() => {
           this.synchronizeActiveDIDAndRepeat();
         }, 30*60*1000); // Repeat after 30 minutes
       }, () => {
@@ -77,7 +82,7 @@ export class BackgroundService {
         Logger.log("Identity", "Password operation cancelled");
         this.native.hideLoading();
 
-        setTimeout(()=>{
+        this.synchronizeTimeout = setTimeout(()=>{
           this.synchronizeActiveDIDAndRepeat();
         }, 1*60*1000); // Retry after 1 minute
       }, false);
@@ -88,7 +93,7 @@ export class BackgroundService {
         if (await this.isExpirationAlreadyVerifiedToday()){
           Logger.log("Identity", "Expiration was already checked today, next verification in 24h");
 
-          setTimeout(()=>{
+          this.notifyTimeout = setTimeout(()=>{
             this.notifyExpiredCredentials();
           }, 24*60*60*1000); // Repeat after 24 hours
         } else {
@@ -96,8 +101,7 @@ export class BackgroundService {
           let maxDaysToExpire: number = 7;
           let expirations = await this.expirationService.getElementsAboutToExpireOnActiveDID(maxDaysToExpire);
 
-          if (expirations.length > 0)
-          {
+          if (expirations.length > 0) {
             Logger.log("Identity", "Sending expirations notifications");
             expirations.forEach(expiration =>{
               this.notifications.sendNotification({
@@ -113,7 +117,7 @@ export class BackgroundService {
           }
           await this.localStorage.set(this.EXPIRATION_STORAGE_KEY, lastCheck);
 
-          setTimeout(()=>{
+          this.notifyTimeout = setTimeout(()=>{
             this.notifyExpiredCredentials();
           }, 24*60*60*1000); // Repeat after 24 hours
 
@@ -126,8 +130,7 @@ export class BackgroundService {
         Logger.log("Identity", "Verify if expiration was already checked today");
           this.localStorage.get(this.EXPIRATION_STORAGE_KEY).then(storedChecked =>{
             // Verify if was checked today
-            if (!isNil(storedChecked))
-            {
+            if (!isNil(storedChecked)) {
               let lastCheckDate = moment(storedChecked.last_check, "YYYY-MM-DD");
               resolve(moment({}).isSame(lastCheckDate,'day'));
             } else {
@@ -138,6 +141,4 @@ export class BackgroundService {
           })
       });
     }
-
-
 }
