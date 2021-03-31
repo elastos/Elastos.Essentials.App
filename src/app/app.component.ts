@@ -95,7 +95,7 @@ export class AppComponent {
             await this.language.init();
 
             // "DApps" initializations
-            this.globalAppBackgroundService.init();
+            await this.globalAppBackgroundService.init();
 
             Logger.log("Global", "All awaited init services have been initialized");
 

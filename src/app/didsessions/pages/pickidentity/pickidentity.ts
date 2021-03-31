@@ -10,6 +10,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 @Component({
   selector: 'page-pickidentity',
@@ -33,6 +34,7 @@ export class PickIdentityPage {
     public translate: TranslateService,
     private events: Events,
     public popupProvider: PopupProvider,
+    private splashScreen: SplashScreen,
     private didSessions: GlobalDIDSessionsService,
   ) {
       this.events.subscribe("identityadded", newIdentity => {
@@ -59,6 +61,11 @@ export class PickIdentityPage {
     this.loadIdentities();
 
     this.identityService.getSignedIdentity();
+  }
+
+  ionViewDidEnter() {
+    // We are ready, we can hide the splash screen
+    this.splashScreen.hide();
   }
 
   ionViewWillLeave() {
