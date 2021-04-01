@@ -7,11 +7,11 @@ const patch_dirs = [
     "platform": "android",
     "patch_dir": "patches/after_platform_add_android"
   },
-//   {
-//     "hook": "after_platform_add",
-//     "platform": "ios",
-//     "patch_dir": "patches/after_platform_add_ios"
-//   },
+  // {
+  //   "hook": "after_platform_add",
+  //   "platform": "ios",
+  //   "patch_dir": "patches/after_platform_add_ios"
+  // },
   {
     "hook": "before_plugin_install",
     "platform": "android",
@@ -24,12 +24,12 @@ const patch_dirs = [
     "plugin_id": "cordova-plugin-firebase-lib",
     "patch_dir": "patches/before_plugin_install_firebase"
   },
-  {
-    "hook": "before_plugin_install",
-    "platform": "ios",
-    "plugin_id": "cordova-plugin-screen-orientation",
-    "patch_dir": "patches/before_plugin_install_orientation"
-  },
+  // {
+  //   "hook": "before_plugin_install",
+  //   "platform": "ios",
+  //   "plugin_id": "cordova-plugin-screen-orientation",
+  //   "patch_dir": "patches/before_plugin_install_orientation"
+  // },
   {
     "hook": "before_plugin_install",
     "platform": "android",
