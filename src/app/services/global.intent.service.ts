@@ -16,10 +16,13 @@ export class GlobalIntentService {
 
   public async init(): Promise<void> {
     Logger.log("Intents", "Global intent service is initializing");
+  }
 
+  public async listen() {
+    Logger.log("Intents", "Listening to external incoming intents");
     essentialsIntent.addIntentListener((receivedIntent)=>{
-    Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
-      this.intentListener.next(receivedIntent);
+      Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
+        this.intentListener.next(receivedIntent);
     });
   }
 

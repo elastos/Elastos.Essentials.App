@@ -99,6 +99,10 @@ export class AppComponent {
 
             Logger.log("Global", "All awaited init services have been initialized");
 
+            // Now that all services are initialized, we can start listening to external intents.
+            // All the subscribers may now be listening to received intents
+            await this.intentService.listen();
+
             // Navigate to the right startup screen
             Logger.log("Global", "Navigating to start screen");
             let entry = await this.didSessions.getSignedInIdentity();

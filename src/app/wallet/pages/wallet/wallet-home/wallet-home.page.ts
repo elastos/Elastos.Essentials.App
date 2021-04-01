@@ -92,7 +92,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private backupService: BackupRestoreService,
         private storage: LocalStorage,
     ) {
-      Logger.log('TEST', 'Homepage constructor:', this)
     }
 
     ngOnInit() {

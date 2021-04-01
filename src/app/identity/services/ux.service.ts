@@ -40,9 +40,6 @@ export class UXService {
     }
 
     async init() {
-        this.globalIntentService.intentListener.subscribe((intent)=>{
-          this.onReceive(intent);
-      });
     }
 
     /**
@@ -77,27 +74,6 @@ export class UXService {
 
     public translateInstant(key: string): string {
         return this.translate.instant(key);
-    }
-
-    onReceive = (ret) => {
-        Logger.log('identity', 'onReceive', ret);
-        var params: any = ret.message;
-        if (typeof (params) == "string") {
-            try {
-                params = JSON.parse(params);
-            } catch (e) {
-                Logger.log('identity', 'Params are not JSON format: ', params);
-            }
-        }
-        switch (ret.type) {
-            case MessageType.INTERNAL:
-                switch (ret.message) {
-                    case 'navback':
-                        this.titlebarBackButtonHandle();
-                        break;
-                }
-                break;
-        }
     }
 
     async titlebarBackButtonHandle() {

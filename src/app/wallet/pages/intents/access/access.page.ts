@@ -64,13 +64,9 @@ export class AccessPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('access-title'));
-        if (!this.rootPage) {
-            // TODO @chad this.appService.setBackKeyVisibility(true);
-        }
     }
 
     ionViewWillLeave() {
-        // TODO @chad this.appService.setBackKeyVisibility(false);
     }
 
     init() {

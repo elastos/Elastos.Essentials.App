@@ -22,6 +22,7 @@ import { IntentReceiverService } from '../../../services/intentreceiver.service'
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { isNil } from 'lodash-es';
 import { Logger } from 'src/app/logger';
+import { PopupProvider } from 'src/app/identity/services/popup';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -121,7 +122,7 @@ export class CredentialAccessRequestPage {
   public canDeliver: boolean = true;
 
   public showSpinner = false;
-  public popup: any = null;
+  public popup: HTMLIonPopoverElement = null;
 
   constructor(
     private zone: NgZone,
@@ -136,6 +137,7 @@ export class CredentialAccessRequestPage {
     private expirationService: ExpirationService,
     private didSyncService: DIDSyncService,
     public theme: ThemeService,
+    private popupService: PopupProvider,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private globalIntentService: GlobalIntentService,
@@ -539,7 +541,7 @@ export class CredentialAccessRequestPage {
           }
         }
         catch (e) {
-          await this.popup.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. "+e);
+          this.popup = await this.popupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. "+e);
           this.showSpinner = false;
         }
       }, () => {
