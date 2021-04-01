@@ -15,8 +15,8 @@ module.exports = function(ctx) {
         xcode = require('xcode');
 
   let runtimeProjPath = 'platforms/ios/elastOS.xcodeproj/project.pbxproj',
-      runtimeProj = xcode.project(runtimeProjPath),
-      cordovaProjPath = 'platforms/ios/CordovaLib/CordovaLib.xcodeproj/project.pbxproj',
+      runtimeProj = xcode.project(runtimeProjPath);
+      // cordovaProjPath = 'platforms/ios/CordovaLib/CordovaLib.xcodeproj/project.pbxproj',
       // cordovaProj = xcode.project(cordovaProjPath);
 
   runtimeProj.parse(function (err) {
@@ -30,7 +30,7 @@ module.exports = function(ctx) {
       runtimeProj.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks', null, 'frameworks');
     }
 
-    let options = { customFramework: true, embed: embed, sign: true };
+    // let options = { customFramework: true, embed: embed, sign: true };
     runtimeProj.addFramework('libz.tbd');
     runtimeProj.addFramework('libresolv.9.dylib');// for wallet plugin: Ethereum
 
