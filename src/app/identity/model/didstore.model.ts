@@ -8,7 +8,7 @@ import { Events } from '../services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 
-declare let essentialsIntent: any; // TODO
+declare let essentialsIntentManager: any; // TODO
 declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDStore {
@@ -254,7 +254,7 @@ export class DIDStore {
 
         Logger.log('identity', "Sending didtransaction intent with params:", params);
 
-        essentialsIntent.sendIntent("https://wallet.elastos.net/didtransaction", params, {}, (response) => {
+        essentialsIntentManager.sendIntent("https://wallet.elastos.net/didtransaction", params, {}, (response) => {
             Logger.log('identity', "Got didtransaction intent response.", response);
 
             // If txid is set in the response this means a transaction has been sent on chain.

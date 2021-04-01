@@ -389,7 +389,7 @@ export class ScanPage {
         this.stopScanning();
         await this.hideCamera();
 
-        // TODO @chad, navigate somewhere else instead - essentialsIntent.close();
+        // TODO @chad, navigate somewhere else instead - essentialsIntentManager.close();
     }
 
     public async showLoading() {

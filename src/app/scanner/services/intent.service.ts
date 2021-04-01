@@ -24,7 +24,7 @@ export class IntentService {
 
     public async init() {
         /*Logger.log('Scanner', "Checking if there are pending intents");
-        essentialsIntent.hasPendingIntent((hasPendingIntent: boolean)=>{
+        essentialsIntentManager.hasPendingIntent((hasPendingIntent: boolean)=>{
             if (hasPendingIntent) {
                 // Do nothing, the intent listener will show the appropriate screen.
                 Logger.log('Scanner', "There are some pending intents.");

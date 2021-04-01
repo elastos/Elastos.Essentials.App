@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalNavService } from './global.nav.service';
 
-declare let essentialsIntent: EssentialsIntentPlugin.Intent;
+declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class GlobalIntentService {
 
   public async listen() {
     Logger.log("Intents", "Listening to external incoming intents");
-    essentialsIntent.addIntentListener((receivedIntent)=>{
+    essentialsIntentManager.addIntentListener((receivedIntent)=>{
       Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
         this.intentListener.next(receivedIntent);
     });
@@ -28,17 +28,17 @@ export class GlobalIntentService {
 
   sendIntent(action: string, params?: any): Promise<any> {
     Logger.log("Intents", "Sending intent", action, params);
-    return essentialsIntent.sendIntent(action, params);
+    return essentialsIntentManager.sendIntent(action, params);
   }
 
   sendUrlIntent(url: string): Promise<any> {
     Logger.log("Intents", "Sending url intent", url);
-    return essentialsIntent.sendUrlIntent(url)
+    return essentialsIntentManager.sendUrlIntent(url)
   }
 
   sendIntentResponse(result: any, intentId: number): Promise<void> {
     Logger.log("Intents", "Sending intent response ", result, intentId);
     this.globalNav.exitCurrentContext();
-    return essentialsIntent.sendIntentResponse(result, intentId);
+    return essentialsIntentManager.sendIntentResponse(result, intentId);
   }
 }
