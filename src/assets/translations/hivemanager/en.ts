@@ -2,6 +2,8 @@ export const en = {
 
   /********** Prompts **********/
   "toast.provide-name": "Please provide your provider a name",
+  "toast.provide-name-update": "Provider name updated",
+  "toast.provide-name2": "Please add a name to your provider",
   "toast.copied": "Copied to clipboard!",
   "alert.delete-title": "Confirm Delete",
   "alert.delete-msg": "Are you sure you want to delete this configuration?",

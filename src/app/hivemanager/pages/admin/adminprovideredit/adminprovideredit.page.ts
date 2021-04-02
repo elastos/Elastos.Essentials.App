@@ -114,9 +114,9 @@ export class AdminProviderEditPage implements OnInit {
   async updateName() {
     if(this.managedProvider.name) {
       await this.adminService.updateAndSaveProvider(this.managedProvider);
-      this.native.genericToast('Provider name updated', 2000);
+      this.native.genericToast('toast.provide-name-update', 2000);
     } else {
-      this.native.genericToast('Please add a name to your provider', 2000);
+      this.native.genericToast('toast.provide-name2', 2000);
       this.managedProvider.name = this.oldName;
     }
   }
