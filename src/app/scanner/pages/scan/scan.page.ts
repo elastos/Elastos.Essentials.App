@@ -12,6 +12,7 @@ import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { ESSENTIALS_CONNECT_URL_PREFIX, GlobalConnectService } from 'src/app/services/global.connect.service';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
 QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
@@ -50,6 +51,7 @@ export class ScanPage {
         private loadingController: LoadingController,
         private theme: GlobalThemeService,
         private globalIntentService: GlobalIntentService,
+        private globalConnectService: GlobalConnectService,
         private translate: TranslateService,
     ) {
         this.route.queryParams.subscribe((params: any) => {
@@ -276,6 +278,10 @@ export class ScanPage {
             // Special case - DID FORMAT CHECK - DIDs are considered as URLs by the URL class
             if (this.contentIsElastosDID(scannedContent)) {
                 this.sendIntentAsRaw(scannedContent)
+            }
+            // Special case: essentials connect qr codes
+            else if (scannedContent.startsWith(ESSENTIALS_CONNECT_URL_PREFIX)) {
+                this.globalConnectService.processEssentialsConnectUrl(scannedContent);
             }
             else {
                 this.sendIntentAsUrl(scannedContent)
