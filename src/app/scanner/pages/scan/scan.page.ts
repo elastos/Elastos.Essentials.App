@@ -1,8 +1,8 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Platform, LoadingController } from '@ionic/angular';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { LoadingController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular'
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IntentService } from '../../services/intent.service';
 import QrScanner from 'qr-scanner';
@@ -10,9 +10,10 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { ESSENTIALS_CONNECT_URL_PREFIX, GlobalConnectService } from 'src/app/services/global.connect.service';
+import { isObject } from 'lodash-es';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
 QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
@@ -42,8 +43,8 @@ export class ScanPage {
 
     constructor(
         public route: ActivatedRoute,
+        public router: Router,
         private qrScanner: QRScanner,
-        private platform: Platform,
         private ngZone: NgZone,
         private intentService: IntentService,
         private zone: NgZone,
@@ -54,9 +55,10 @@ export class ScanPage {
         private globalConnectService: GlobalConnectService,
         private translate: TranslateService,
     ) {
-        this.route.queryParams.subscribe((params: any) => {
-            this.fromIntentRequest = (params.fromIntent == "true");
-        });
+        const navigation = this.router.getCurrentNavigation();
+        if (isObject(navigation.extras.state)) {
+            this.fromIntentRequest = navigation.extras.state.fromIntent;
+        }
     }
 
     ionViewWillEnter() {
@@ -166,7 +168,7 @@ export class ScanPage {
     }
 
     showGalleryTitlebarKey(show: boolean) {
-      if(show) {
+      if (show) {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
             key: "gallery",
             iconPath: !this.theme.darkMode ? "assets/scanner/imgs/upload.svg" : "assets/scanner/imgs/darkmode/upload.svg"
@@ -180,7 +182,7 @@ export class ScanPage {
      * Initiates a QR code scanning from a picture chosen from the library by the user.
      */
     async scanFromLibrary() {
-        if(this.alert) {
+        if (this.alert) {
           this.alertController.dismiss();
           this.alert = null;
         }

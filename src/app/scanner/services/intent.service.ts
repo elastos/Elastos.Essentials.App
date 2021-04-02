@@ -1,9 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Platform, NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from '../../services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
+import { NavigationExtras } from '@angular/router';
 
 
 @Injectable({
@@ -13,9 +13,7 @@ export class IntentService {
     private intentRequest: EssentialsIntentPlugin.ReceivedIntent;
 
     constructor(
-        private platform: Platform,
-        private navCtrl: NavController,
-        private router: Router,
+        private globalNav: GlobalNavService,
         private ngZone: NgZone,
         private translate: TranslateService,
         private globalIntentService: GlobalIntentService,
@@ -58,15 +56,14 @@ export class IntentService {
     }
 
     private showScanScreen(fromIntentRequest: boolean) {
-        this.navCtrl.setDirection('root');
-        let queryParams = {
+        const props: NavigationExtras = {
+          state: {
             fromIntent: fromIntentRequest
-        };
+          }
+        }
 
         this.ngZone.run(() => {
-            this.router.navigate(["/scanner/scan"], {
-                queryParams: queryParams
-            });
+            this.globalNav.navigateRoot("/scanner", "/scanner/scan", props);
         });
     }
 

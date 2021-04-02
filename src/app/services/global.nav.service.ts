@@ -46,7 +46,7 @@ export class GlobalNavService {
      * Deletes all recent steps as long as they belong to the given context.
      * This basically comes back to the root of a "dApp".
      */
-    public navigateRoot(context: string, route: string, navOptions?: any) {
+    public navigateRoot(context: string, route: string, routerOptions?: any) {
         Logger.log("Nav", "Setting "+context+" navigation context root to: "+route);
 
         while (this.canGoBack()) {
@@ -60,8 +60,8 @@ export class GlobalNavService {
             }
         }
 
-        this.navCtrl.navigateRoot(route, navOptions );
-        // this.navigateTo(context, route, routerOptions);
+        this.navigationHistory.push({context, route, routerOptions});
+        this.navCtrl.navigateRoot(route, routerOptions);
     }
 
     /**
