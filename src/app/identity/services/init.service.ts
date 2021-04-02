@@ -4,6 +4,7 @@ import { BackgroundService } from './background.service';
 import { HiveService } from './hive.service';
 import { IntentReceiverService } from './intentreceiver.service';
 import { TranslationService } from './translation.service';
+import { DIDEvents } from './events';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class IdentityInitService {
     private uxService: UXService,
     private hiveService: HiveService,
     private backgroundService: BackgroundService,
+    public didEvents: DIDEvents,
     private intentReceiverService: IntentReceiverService,
     public translationService: TranslationService // Don't delete, static instance initialized
   ) {}
