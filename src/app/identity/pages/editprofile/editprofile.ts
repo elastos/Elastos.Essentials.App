@@ -171,19 +171,7 @@ export class EditProfilePage {
 
   /********** For 'avatar' entry **********/
   async getPhoto() {
-
-    this.showmenuSubscription = this.events.subscribe("editprofile-showmenu", (params: CountryCodeInfo) => {
-      this.zone.run(() => {
-        this.showMenu();
-      });
-      this.showmenuSubscription.unsubscribe();
-    });
-
     Logger.log('Identity', "ENTRIES :", JSON.stringify(this.profile.entries));
-
-
-
-    //Logger.log('Identity', "PIC ENTRY", entry);
     const modal = await this.modalCtrl.create({
       component: PictureComponent,
       componentProps: {},
@@ -433,13 +421,6 @@ export class EditProfilePage {
    * user pick a profile entry to create.
    *******************************************/
   async addProfileEntry() {
-    this.showmenuSubscription = this.events.subscribe("editprofile-showmenu", (params: CountryCodeInfo) => {
-      this.zone.run(() => {
-        this.showMenu();
-      });
-      this.showmenuSubscription.unsubscribe();
-    });
-
     let existingProfileItems: string[] = []; // List of credential keys - items already in the profile to filter out
     this.profile.entries.map((e) => {
       existingProfileItems.push(e.key);

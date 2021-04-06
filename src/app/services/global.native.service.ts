@@ -11,6 +11,7 @@ import { GlobalThemeService, AppTheme } from 'src/app/services/global.theme.serv
 export class GlobalNativeService {
     public loader: HTMLIonLoadingElement = null;
     public alert = null;
+    private loadingCtrlCreating = false;
 
     constructor(
       private toastCtrl: ToastController,
@@ -85,7 +86,11 @@ export class GlobalNativeService {
 
     public async showLoading(message: string = 'please-wait') {
         let isDarkMode = this.theme.activeTheme.value == AppTheme.DARK;
+        if (this.loadingCtrlCreating) {// Just in case.
+            return;
+        }
         await this.hideLoading();
+        this.loadingCtrlCreating = true;
         this.loader = await this.loadingCtrl.create({
             mode: 'ios',
             cssClass: !isDarkMode ? 'custom-loader-wrapper' : 'dark-custom-loader-wrapper',
@@ -96,7 +101,7 @@ export class GlobalNativeService {
         this.loader.onWillDismiss().then(() => {
             this.loader = null;
         });
-
+        this.loadingCtrlCreating = false;
         return await this.loader.present();
     }
 
