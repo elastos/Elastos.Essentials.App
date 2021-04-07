@@ -171,7 +171,7 @@ export class ScanPage {
       if (show) {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
             key: "gallery",
-            iconPath: !this.theme.darkMode ? "assets/scanner/imgs/upload.svg" : "assets/scanner/imgs/darkmode/upload.svg"
+            iconPath: !this.theme.darkMode ? "assets/scanner/imgs/gallery.svg" : "assets/scanner/imgs/darkmode/gallery.svg"
         });
       } else {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
