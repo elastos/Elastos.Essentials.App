@@ -282,7 +282,7 @@ export class ProfileService {
     Logger.log("identity", "Opening warning");
     this.popover = await this.popoverCtrl.create({
       mode: "ios",
-      cssClass: "warning-component",
+      cssClass: "identity-warning-component",
       component: WarningComponent,
       componentProps: {
         warning: warning,
