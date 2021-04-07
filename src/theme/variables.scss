@@ -55,12 +55,12 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-tertiary-tint: #7e57ff;
 
   /** success **/
-  --ion-color-success: #565bdb;
-  --ion-color-success-rgb: 86,91,219;
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45,211,111;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255,255,255;
-  --ion-color-success-shade: #4c50c1;
-  --ion-color-success-tint: #676bdf;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
 
   /** warning **/
   --ion-color-warning: #ffce00;
@@ -79,12 +79,12 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-danger-tint: #f25454;
 
   /** dark **/
-  --ion-color-dark: #222428;
-  --ion-color-dark-rgb: 34, 34, 34;
+  --ion-color-dark: linear-gradient(to bottom, #181d20 0%,  #21313d 100%);
+  --ion-color-dark-rgb: 24,29,32;
   --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-contrast-rgb: 255, 255, 255;
-  --ion-color-dark-shade: #1e2023;
-  --ion-color-dark-tint: #383a3e;
+  --ion-color-dark-contrast-rgb: 255,255,255;
+  --ion-color-dark-shade: #151a1c;
+  --ion-color-dark-tint: #2f3436;
 
   /** medium **/
   --ion-color-medium: #f0f1ff;
@@ -140,12 +140,12 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-tertiary-tint: #7e57ff;
 
   /** success **/
-  --ion-color-success: #565bdb;
-  --ion-color-success-rgb: 86,91,219;
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45,211,111;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255,255,255;
-  --ion-color-success-shade: #4c50c1;
-  --ion-color-success-tint: #676bdf;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
 
   /** warning **/
   --ion-color-warning: #ffce00;
@@ -164,12 +164,12 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-danger-tint: #f25454;
 
   /** dark **/
-  --ion-color-dark: #222428;
-  --ion-color-dark-rgb: 34, 34, 34;
+  --ion-color-dark: linear-gradient(to bottom, #181d20 0%,  #21313d 100%);
+  --ion-color-dark-rgb: 24,29,32;
   --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-contrast-rgb: 255, 255, 255;
-  --ion-color-dark-shade: #1e2023;
-  --ion-color-dark-tint: #383a3e;
+  --ion-color-dark-contrast-rgb: 255,255,255;
+  --ion-color-dark-shade: #151a1c;
+  --ion-color-dark-tint: #2f3436;
 
   /** Pop-up rows/toast colors **/
   --ion-color-medium: #f0f1ff;

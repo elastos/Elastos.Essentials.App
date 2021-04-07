@@ -37,18 +37,18 @@ export class GlobalNativeService {
         }).then(toast => toast.present());
     }
 
-    genericToast(msg: string, duration: number = 2000) {
+    genericToast(msg: string, duration: number = 2000, color: string = "primary") {
       const translation = this.translate.instant(msg);
       this.toastCtrl.create({
           mode: 'ios',
           header: translation,
           duration: duration,
           position: 'bottom',
-          color: 'primary'
+          color: color
       }).then(toast => toast.present());
     }
 
-    toastWithTitle(header: string, msg: string, duration: number = 2000) {
+    toastWithTitle(header: string, msg: string, duration: number = 2000, color: string = "primary") {
         const translatedHeader = this.translate.instant(header)
         const translatedMsg = this.translate.instant(msg);
         this.toastCtrl.create({
@@ -57,7 +57,7 @@ export class GlobalNativeService {
             message: translatedMsg,
             duration: duration,
             position: 'bottom',
-            color: 'primary'
+            color: color
         }).then(toast => toast.present());
     }
 

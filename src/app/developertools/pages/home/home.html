@@ -4,7 +4,7 @@
 
     <div class="ion-text-center">
       <h1 *ngIf="dappService.getDApps().length > 0">{{ 'my-apps' | translate }}</h1>
-      <h1 *ngIf="dappService.getDApps().length === 0">{{ 'no-capsules' | translate }}</h1>
+      <h1 *ngIf="dappService.getDApps().length === 0">{{ 'no-apps-available' | translate }}</h1>
     </div>
 
     <ion-card *ngFor="let app of dappService.getDApps()" (click)="openApp(app)">

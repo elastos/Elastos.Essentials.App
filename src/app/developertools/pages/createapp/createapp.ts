@@ -7,6 +7,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Component({
   selector: 'page-createapp',
@@ -35,7 +36,7 @@ export class CreateAppPage {
   constructor(
     public dAppService: DAppService,
     private nav: GlobalNavService,
-    private router: Router,
+    private native: GlobalNativeService,
     public translate: TranslateService
   ) {
   }
@@ -65,10 +66,20 @@ export class CreateAppPage {
   }
 
   async createApp() {
-    if (!this.importDID)
-      this.createdDApp = await this.dAppService.createDApp(this.appName);
-    else
-      this.createdDApp = await this.dAppService.createDAppUsingMnemonic(this.appName, this.mnemonicToImport, this.mnemonicToImportPassphrase);
+    if(this.appName) {
+      if (!this.importDID) {
+        this.createdDApp = await this.dAppService.createDApp(this.appName);
+      } else {
+        this.createdDApp = await this.dAppService.createDAppUsingMnemonic(
+          this.appName,
+          this.mnemonicToImport,
+          this.mnemonicToImportPassphrase
+        );
+      }
+    } else {
+      this.native.genericToast(this.translate.instant('provide-name'), 2000, 'dark');
+    }
+
   }
 
   endAppCreation() {

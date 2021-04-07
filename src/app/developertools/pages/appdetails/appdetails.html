@@ -144,7 +144,7 @@
 
     </ion-list>
 
-    <ion-button *ngIf="appDIDDocumentStatusWasChecked && appIdentityNeedsToBePublished()" (click)="publishAppIdentity()">
+    <ion-button *ngIf="appDIDDocumentStatusWasChecked && appIdentityNeedsToBePublished()"  color="dark" (click)="publishAppIdentity()">
       <ion-label>{{ 'publish-app-did' | translate }}</ion-label>
     </ion-button>
 
