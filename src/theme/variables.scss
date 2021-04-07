@@ -39,12 +39,12 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-primary-tint: #8142d4;
 
   /** secondary **/
-  --ion-color-secondary: #f0f1ff;
-  --ion-color-secondary-rgb: 240,241,255;
-  --ion-color-secondary-contrast: #000000;
-  --ion-color-secondary-contrast-rgb: 0,0,0;
-  --ion-color-secondary-shade: #d3d4e0;
-  --ion-color-secondary-tint: #f2f2ff;
+  --ion-color-secondary: linear-gradient(to bottom, #4a118d, #39136a);
+  --ion-color-secondary-rgb: 74,17,141;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255,255,255;
+  --ion-color-secondary-shade: #410f7c;
+  --ion-color-secondary-tint: #5c2998;
 
   /** tertiary **/
   --ion-color-tertiary: #7044ff;

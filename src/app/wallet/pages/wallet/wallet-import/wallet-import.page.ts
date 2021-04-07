@@ -180,6 +180,7 @@ export class WalletImportPage implements OnInit {
                 if (payPassword) {
                     await this.native.showLoading(this.translate.instant('please-wait'));
                     await this.importWalletWithMnemonic(payPassword);
+                    await this.native.hideLoading();
                 } else {
                     // Cancelled, do nothing
                 }

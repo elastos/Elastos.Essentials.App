@@ -14,7 +14,7 @@
       </ion-row>
       <h1>{{ 'advanced-import-msg' | translate }}</h1>
       <ion-row class="btn-container">
-        <ion-button [disabled]='!inputMnemonicCompleted()'(click)="onImport()">
+        <ion-button color="secondary" [disabled]='!inputMnemonicCompleted()'(click)="onImport()">
           {{ 'import-wallet' | translate }}
         </ion-button>
       </ion-row>

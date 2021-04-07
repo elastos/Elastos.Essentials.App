@@ -131,13 +131,14 @@ export class MnemonicWritePage implements OnInit {
                     if (payPassword) {
                         await this.native.showLoading(this.translate.instant('please-wait'));
                         await this.walletManager.createNewMasterWallet(
-                                this.walletCreationService.masterId,
-                                this.walletCreationService.name,
-                                this.mnemonicStr,
-                                this.walletCreationService.mnemonicPassword,
-                                payPassword,
-                                this.walletCreationService.singleAddress
+                            this.walletCreationService.masterId,
+                            this.walletCreationService.name,
+                            this.mnemonicStr,
+                            this.walletCreationService.mnemonicPassword,
+                            payPassword,
+                            this.walletCreationService.singleAddress
                         );
+                        await this.native.hideLoading();
 
                         this.events.publish("masterwalletcount:changed", {
                             action: 'add',
