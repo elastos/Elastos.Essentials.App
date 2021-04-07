@@ -4,6 +4,7 @@
   height: 302px;
   background: #ffffff;
   border-radius: 12px;
+  border: 1.2px solid #f55555;
 
   .header {
     height: 112px;
@@ -86,10 +87,6 @@
       }
     }
   }
-}
-
-.deleteContainer {
-  border: 1.2px solid #f55555;
 }
 
 .ripple {

@@ -85,7 +85,7 @@ export class UXService {
         }
         else {
             Logger.log("didsessions", "Navigating to pickidentity");
-            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity", { animationDirection: Direction.FORWARD });
+            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity", { animationDirection: Direction.BACK });
         }
     }
 

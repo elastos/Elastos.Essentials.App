@@ -5,6 +5,8 @@ ion-grid {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  background: #ffffff;
+  color: #353650;
 
   ion-row {
     padding: 10px 20px 10px 12px;
@@ -15,7 +17,6 @@ ion-grid {
       margin-top: 3px;
       font-size: 14px;
       font-weight: 500;
-      color: #161740;
     }
 
     ion-img {
@@ -37,21 +38,3 @@ ion-grid {
     }
   }
 }
-
-.darkContainer {
-  ion-row {
-    ion-label {
-      color: #ffffff;
-    }
-
-    #delete {
-      color: #f55555;
-    }
-
-    #sign{
-      color: #8d91ff;
-    }
-  }
-}
-
-

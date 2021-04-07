@@ -8,6 +8,8 @@
 /********************** WARNING POPUP **********************/
 .warning-component {
   --min-height: 302px;
+  --ion-background-color: #ffffff;
+
   animation: animate;
   animation-duration: 300ms;
   animation-fill-mode: forwards;
@@ -33,6 +35,8 @@
 
 /********************** OPTIONS POPUP **********************/
 .options-component {
+  --ion-background-color: #ffffff;
+
   position: fixed;
   top: 0;
   right: 0;
@@ -138,6 +142,7 @@
 /********************** DIDSESSSIONS **********************/
 .didsessions-printoptions-component {
     --height: 300px;
+    --ion-background-color: #ffffff;
     align-items: flex-end;
 
     .modal-wrapper {
@@ -152,6 +157,7 @@
 
 .didsessions-mnemonicpasscheck-component {
     --height: 350px;
+    --ion-background-color: #ffffff;
     align-items: flex-end;
 
     .modal-wrapper {
