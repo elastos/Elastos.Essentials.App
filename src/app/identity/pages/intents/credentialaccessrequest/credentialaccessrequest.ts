@@ -16,7 +16,7 @@ import { AlertController, PopoverController } from '@ionic/angular';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ThemeService } from 'src/app/didsessions/services/theme.service';
-import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -123,6 +123,7 @@ export class CredentialAccessRequestPage {
 
   public showSpinner = false;
   public popup: HTMLIonPopoverElement = null;
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private zone: NgZone,
@@ -146,8 +147,12 @@ export class CredentialAccessRequestPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
     this.titleBar.setTitle(' ');
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      this.titleBar.globalNav.navigateHome();
+    });
 
     this.mandatoryItems = [];
     this.optionalItems = [];

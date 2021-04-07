@@ -44,7 +44,7 @@ export class TitleBarComponent {
   constructor(
     public themeService: GlobalThemeService,
     private popoverCtrl: PopoverController,
-    private globalNav: GlobalNavService,
+    public globalNav: GlobalNavService,
     public globalNotifications: GlobalNotificationsService,
   ) {
     themeService.activeTheme.subscribe((activeTheme) => {
