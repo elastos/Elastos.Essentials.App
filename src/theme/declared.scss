@@ -7,15 +7,12 @@
 
 /********************** OPTIONS POPUP **********************/
 .options-component {
-  --ion-background-color: #ffffff;
-
-  position: fixed;
-  top: 0;
-  right: 0;
+  --background: #ffffff;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 .dark-options-component {
+  --background: #2e2f4e;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
@@ -114,7 +111,7 @@
 /********************** DIDSESSSIONS **********************/
 .didsessions-printoptions-component {
     --height: 300px;
-    --ion-background-color: #ffffff;
+    --background: #ffffff;
     align-items: flex-end;
 
     .modal-wrapper {
@@ -129,7 +126,7 @@
 
 .didsessions-mnemonicpasscheck-component {
     --height: 350px;
-    --ion-background-color: #ffffff;
+    --background: #ffffff;
     align-items: flex-end;
 
     .modal-wrapper {
@@ -144,7 +141,7 @@
 
 .didsessions-warning-component {
   --min-height: 302px;
-  --ion-background-color: #ffffff;
+  --background: #ffffff;
 
   animation: didsessionsWarningAnimate;
   animation-duration: 300ms;

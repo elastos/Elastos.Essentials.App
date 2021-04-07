@@ -95,10 +95,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        /* TODO @chad titleBarManager.addOnItemClickedListener(this.onItemClickedListener = (menuIcon: any) => {
-            this.handleItem(menuIcon.key);
-        });*/
-
         this.updateWallet();
 
         this.walletChangedSubscription = this.events.subscribe("masterwalletcount:changed", (result) => {

@@ -129,6 +129,7 @@ export class AppmanagerService {
                         routerContext: App.WALLET,
                         description: this.translate.instant('app-wallet-description'),
                         icon: '/assets/launcher/ios/app-icons/wallet.svg',
+                        // routerPath: '/wallet/wallet-home'
                         startCall: () => this.walletInitService.start()
                     },
                     {
@@ -179,35 +180,35 @@ export class AppmanagerService {
                     },
                 ]
             },
-            //  {
-            //     type: 'voting',
-            //     apps: [
-            //         {
-            //             cssId: 'DPoS',
-            //             routerContext: App.DPOS_VOTING,
-            //             name: this.translate.instant('app-dpos-voting'),
-            //             description: this.translate.instant('app-dpos-description'),
-            //             icon: '/assets/launcher/ios/app-icons/scanner.svg',
-            //             startCall: () => this.dposVotingInitService.start()
-            //         },
-            //         {
-            //             cssId: 'CRCouncil',
-            //             routerContext: App.CRCOUNCIL_VOTING,
-            //             name: this.translate.instant('app-cr-council'),
-            //             description: this.translate.instant('app-crcouncil-description'),
-            //             icon: '/assets/launcher/ios/app-icons/scanner.svg',
-            //             routerPath: '/crcouncilvoting/candidates'
-            //         },
-            //         {
-            //             cssId: 'CRProposal',
-            //             routerContext: App.CRPROPOSAL_VOTING,
-            //             name: this.translate.instant('app-cr-proposal'),
-            //             description: this.translate.instant('app-crproposal-description'),
-            //             icon: '/assets/launcher/ios/app-icons/scanner.svg',
-            //             routerPath: '/crproposalvoting/proposals/ALL'
-            //         },
-            //     ]
-            // }
+            /* {
+                 type: 'voting',
+                 apps: [
+                {
+                         cssId: 'DPoS',
+                        routerContext: App.DPOS_VOTING,
+                         name: this.translate.instant('app-dpos-voting'),
+                         description: this.translate.instant('app-dpos-description'),
+                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                         startCall: () => this.dposVotingInitService.start()
+                     },
+                     {
+                         cssId: 'CRCouncil',
+                         routerContext: App.CRCOUNCIL_VOTING,
+             name: this.translate.instant('app-cr-council'),
+                       description: this.translate.instant('app-crcouncil-description'),
+                     icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        routerPath: '/crcouncilvoting/candidates'
+                    },
+                     {
+                         cssId: 'CRProposal',
+                     routerContext: App.CRPROPOSAL_VOTING,
+                        name: this.translate.instant('app-cr-proposal'),
+                        description: this.translate.instant('app-crproposal-description'),
+                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        routerPath: '/crproposalvoting/proposals/ALL'
+                     },
+                ]
+            } */
         ];
     }
 

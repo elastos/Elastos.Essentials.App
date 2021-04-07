@@ -128,7 +128,7 @@ export class HomePage implements OnInit {
       component: OptionsComponent,
       componentProps: {
       },
-      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options' : 'darkOptions',
+      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'dark-options-component',
       event: ev,
       translucent: false
     });

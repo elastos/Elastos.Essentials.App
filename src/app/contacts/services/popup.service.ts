@@ -58,7 +58,7 @@ export class PopupService {
     this.optionsPopup = await this.popoverCtrl.create({
       mode: 'ios',
       component: OptionsComponent,
-      cssClass: !this.theme.darkMode ? '.options-component' : 'dark-options-component',
+      cssClass: !this.theme.darkMode ? 'options-component' : 'dark-options-component',
       event: ev,
       componentProps: {
         contact: contact,
