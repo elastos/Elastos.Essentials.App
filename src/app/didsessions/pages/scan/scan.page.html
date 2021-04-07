@@ -1,0 +1,6 @@
+<ion-content [class.notScanning]="!scanning" [class.scan]="scanning">
+  <app-titlebar></app-titlebar>
+  <div [class.hidden]="!scanning" class='qrscanner-area'> </div>
+  <div [class.hidden]="!scanning" class='through-line'></div>
+</ion-content>
+

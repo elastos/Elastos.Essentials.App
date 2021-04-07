@@ -1,0 +1,196 @@
+@import "src/app/crcouncilvoting/root.scss";
+
+.header {
+  ion-label {
+    font-size: 14px;
+
+    span {
+      font-weight: 700;
+      font-size: 20px;
+    }
+  }
+}
+
+.container {
+  min-height: 100%;
+  padding-top: 12%;
+  padding-bottom: 16%;
+  background: #181d20;
+
+  .candidate-list {
+    padding: 0px 0px 1px;
+    background: #181d20;
+
+    ion-item {
+      margin: 6px 0;
+      --padding-start: 0px;
+      --padding-end: 0px;
+      --inner-padding-end: 0px;
+
+      ion-grid {
+        padding: 10px 15px;
+
+        .candidate-title {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+
+          ion-img, img {
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+          }
+
+          ion-label {
+            margin-left: 10px;
+
+            h4 {
+              font-weight: 600;
+              font-size: 12px;
+              color: #1de9b6;
+            }
+          }
+        }
+
+        .candidate-input {
+          display: flex;
+          justify-content: flex-end;
+          align-items: flex-end;
+
+          ion-input {
+            border-bottom: 1px solid  #1de9b6;
+            --padding-start: 0px;
+            --padding-end: 0px;
+          }
+
+          ion-label {
+            margin-left: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+.dist-btn, .vote-btn {
+  position: fixed;
+  bottom: 0;
+  z-index: 2;
+  width: 49.9%;
+  height: 8%;
+  border-top-left-radius: 33px;
+  border-top-right-radius: 33px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: btns;
+  animation-duration: 1000ms;
+  animation-fill-mode: forwards;
+
+  @keyframes btns {
+    0% { bottom: -100px }
+    100% { bottom: 0px }
+  }
+
+  h1 {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+.dist-btn {
+  background: linear-gradient(to left, #434d72 0%, #1acda0 100%);
+  left: 0;
+}
+
+.vote-btn {
+  background: linear-gradient(to right, #434d72 0%, #1acda0 100%);
+  right: 0;
+}
+
+.ripple-tab {
+  overflow: hidden;
+}
+
+// Show vote button if candidates are selected //
+.ballot-box {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 10%;
+  background: linear-gradient(to left, #434d72 0%, #1acda0 100%);
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: candidatesSelected;
+  animation-duration: 1000ms;
+  animation-fill-mode: forwards;
+
+  @keyframes candidatesSelected {
+    0% { bottom: -100px }
+    100% { bottom: 0px }
+  }
+
+  ion-img {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    transform: rotate(180deg);
+  }
+
+  // Move logo from left to right if votes are casting //
+  .voting-logo {
+    animation: voting-logo;
+    animation-duration: 1000ms;
+    animation-fill-mode: forwards;
+
+    @keyframes voting-logo {
+      0% { left: 0% }
+      100% { left: 46.5%; }
+    }
+  }
+
+  h1 {
+    margin: 25px;
+    color: white;
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  // Fade initial title if votes are casting ..
+  .voting-title {
+    animation: voting-title;
+    animation-duration: 500ms;
+    animation-fill-mode: forwards;
+
+    @keyframes voting-title {
+      0% { opacity: 1 }
+      100% { opacity: 0 }
+    }
+  }
+
+  // Show post title if votes are casted
+  .votes-casted-title {
+    margin-left: 12.5px;
+    animation: voted-title;
+    animation-duration: 1000ms;
+    animation-fill-mode: forwards;
+
+    @keyframes voted-title {
+      0% { opacity: 0 }
+      100% { opacity: 1 }
+    }
+  }
+}
+
+.blur {
+  filter: blur(2px);
+}

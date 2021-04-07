@@ -1,0 +1,19 @@
+@import "src/app/identity/root.scss";
+
+ion-list {
+  ion-item {
+    border-bottom: 1px solid #f0f1ff;
+
+    ion-label {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.27;
+    }
+  }
+}
+
+.dark-container {
+  ion-item {
+    border-bottom: 1px solid #2f305a;
+  }
+}

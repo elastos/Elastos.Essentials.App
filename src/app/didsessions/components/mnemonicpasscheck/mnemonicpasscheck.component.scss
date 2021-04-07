@@ -1,0 +1,86 @@
+@import 'src/app/didsessions/root.scss';
+
+.container {
+  padding: 25px;
+  background: #ffffff;
+
+  .header-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      margin: 10px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .btn-row {
+    padding-top: 20px;
+    width: 100%;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+  }
+
+  #first-input-row {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .input-row {
+    display: flex;
+    flex-direction: column;
+
+    ion-input {
+      height: 50px;
+      width: 100%;
+      background: #f0f1ff;
+      --padding-start: 12px;
+      --padding-top: 13px;
+      --padding-bottom: 13px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .password-failed-info {
+      color: #FF6464;
+      font-weight:700;
+      font-size: 10px;
+      margin-top: 5px;
+    }
+  }
+}
+
+/* .darkContainer {
+  background: #262641;
+
+  .header-row {
+    h1 {
+      color: #fdfeff;
+    }
+  }
+
+  .input-row {
+    ion-input {
+      background: #464660;
+      color: #ababb7;
+    }
+  }
+}
+ */

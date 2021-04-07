@@ -1,0 +1,59 @@
+@import "src/app/developertools/root.scss";
+
+.container {
+  min-height: 100%;
+  background: #FAFAFA;
+  padding: 30px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 900;
+  }
+
+  p, h1, ion-label {
+    color: #21313d;
+  }
+
+  ion-list {
+    background: #FAFAFA;
+
+    ion-title {
+      padding: 15px 0 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #21313d;
+    }
+
+    ion-item {
+      --padding-start: 0px;
+      --background: #FAFAFA;
+      overflow: visible;
+      font-size: 12px;
+      font-weight: 500;
+
+      ion-input, ion-label {
+        font-size: 12px;
+        font-weight: 500;
+        white-space: pre-wrap !important;
+      }
+
+      ion-input {
+        --background: #FAFAFA;
+        --color: #21313d;
+        --padding-top: 0;
+        --padding-bottom: 0;
+      }
+    }
+  }
+}
+
+.wrong-password {
+  color: #f04141;
+  font-size: 12px;
+}
+
+.dark-container {
+
+}
+

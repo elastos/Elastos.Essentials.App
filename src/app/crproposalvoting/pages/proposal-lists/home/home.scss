@@ -1,0 +1,25 @@
+@import "src/app/crproposalvoting/root.scss";
+
+ion-tabs {
+  ion-tab-bar {
+    ion-tab-button {
+      ion-label {
+        color: black;
+        letter-spacing: -0.5px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.darkTabs {
+  border: white;
+  ion-tab-bar {
+    border: white;
+    ion-tab-button {
+      ion-label {
+        color: white;
+      }
+    }
+  }
+}

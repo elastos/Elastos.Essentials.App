@@ -1,0 +1,114 @@
+@import "src/app/launcher/root.scss";
+
+.hidden {
+  display:none
+}
+
+.onboard-container {
+  min-height: 100%;
+  width: 100%;
+  background-image: url("/assets/background/background-light-small.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin: 0 auto;
+  padding-top: 67px;
+
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 14.4px 0;
+    padding: 0 16px;
+    
+    img {
+      width: 135px;
+      height: 133px;
+    }
+  }
+
+  .slide {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1, p, .btn-container {
+      margin: 14.4px 0;
+      width: 366px;
+      padding: 0 16px;
+    }
+
+    h1 {
+      height: 74px;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.23;
+      // letter-spacing: 0.3px;
+      color: #ffffff;
+    }
+  
+    p {
+      height: 227px;
+      font-size: 14.4px;
+      font-weight: 500;
+      line-height: 1.56;
+      // letter-spacing: 0.9px;
+      color: #ffffff !important;
+    }
+
+    .btn-container {
+      ion-button {
+        --box-shadow: none;
+        border-radius: 11px;
+        background-color: #ffffff;
+        width: 100%;
+        height: 40px;
+  
+        ion-label {
+          font-size: 13px;
+          font-weight: 600;
+          line-height: 5.23;
+          // letter-spacing: 1.52px;
+          color: #6e75f0;
+          // color: #000000;
+  
+        }
+      }
+    }
+  }
+}
+
+/** Dark Mode **/
+.dark-container {
+  background-image: url("/assets/background/background-dark-small.jpg");
+}
+
+@media screen and (max-height: 640px) {
+  .onboard-container {  
+    padding-top: 53.6px;
+    
+    .logo-container {
+      img {
+        width: 90px;
+        height: 89px;
+      }
+    }
+  
+    .slide {
+      h1, p, .btn-container {
+        width: 285px;
+      }
+
+      h1 {
+        height: 59.2px;
+        font-size: 19.2px;
+      }
+    
+      p {
+        height: 181px;
+        font-size: 11.5px;
+      }
+    }
+  }
+}

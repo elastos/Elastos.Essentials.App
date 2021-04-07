@@ -1,0 +1,51 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container">
+        <ion-row
+            class="card-row"
+            [ngStyle]="
+            {
+                'background-image': masterWallet.theme ?
+                'url(' + masterWallet.theme.background + ')' :
+                'url(/assets/wallet/cards/maincards/card-purple.svg)'
+            }"
+        >
+            <ion-row class="card-label-row">
+                <ion-row class="top-row">
+                    <ion-col size="12" class="left-col">
+                        <h1>{{ masterWallet.name }}</h1>
+                    </ion-col>
+                </ion-row>
+                <h2></h2>
+                <h3>{{ 'total-amount' | translate }}</h3>
+                <div (click)="currencyService.toggleCurrencyDisplay()">
+                    <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(masterWallet.getDisplayBalance())">.</span>
+                        <span class="decimals">{{ Util.getDecimalBalance(masterWallet.getDisplayBalance()) }}</span>
+                        <span class="ela">  ELA</span>
+                    </h4>
+                    <h4 *ngIf="currencyService.useCurrency">{{ Util.getWholeBalance(currencyService.getCurrencyBalance(masterWallet.getDisplayBalance())) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.getDisplayBalance()))">.</span>
+                        <span class="decimals">{{ Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.getDisplayBalance())) }}</span>
+                        <span class="ela">  {{ currencyService.selectedCurrency.symbol }}</span>
+                    </h4>
+                </div>
+            </ion-row>
+            <div
+                class="arrow-down"
+                [ngStyle]="{ 'background-color': masterWallet.theme ? masterWallet.theme.color : '#752fcf' }">
+            </div>
+        </ion-row>
+        <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode" *ngFor="let item of settings" (click)="goToSetting(item)">
+            <ion-col size="1.25" class="left-col">
+                <img [src]="!theme.darkMode ? item.icon : item.iconDarkmode" />
+            </ion-col>
+            <ion-col size="9.5" class="middle-col">
+                <h1>{{ item.title }}</h1>
+                <p>{{ item.subtitle }}</p>
+            </ion-col>
+            <ion-col size="1.25" class="right-col">
+                <img [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'"/>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+    </ion-grid>
+</ion-content>

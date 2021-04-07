@@ -1,0 +1,129 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+  background: #ffffff;
+  height: 100%;
+  border: 1.2px solid #620ad4;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 25px 5px;
+
+  img {
+    width: 67.2px;
+    height: 67.2px;
+    object-fit: contain;
+  }
+
+  h1, h2, h3, h4 {
+    color: #161740;
+    margin: 0;
+    padding: 0 15px;
+    width: 100%;
+  }
+
+  h1, h2 {
+    text-align: center;
+  }
+
+  h3, h4 {
+    text-align: left;
+    font-size: 13px;
+  }
+  
+  h1 {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  h2 {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  h3 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: 700;
+  }
+
+  h4 {
+    padding-top: 0;
+    padding-bottom: 10px;
+    font-weight: 400;
+  }
+
+  .btn-row {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .btn {
+      height: 41px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+
+      ion-label {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+
+    .cancel {
+      box-shadow: 0 3px 15px 0 #ededf0;
+      background-color: #ffffff;
+
+      ion-label {
+        color: #000000;
+      }
+    }
+
+    .confirm {
+      box-shadow: 0 3px 15px 0 #ededf0;
+      background-color: #6e23d0;
+
+      ion-label {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+.darkContainer {
+  background: #2b2c49;
+
+  h1, h2, h3 {
+    color: #ffffff;
+  }
+
+  h4 {
+    color: #8888b0;
+  }
+
+  .btn-row {
+
+    .cancel {
+      box-shadow: 0 3px 6px 0 #151626;
+      background-color: #202039;
+
+      ion-label {
+        color: #ffffff;
+      }
+    }
+
+    .confirm {
+      box-shadow: 0 3px 15px 0 #151626;
+    }
+  }
+}
+

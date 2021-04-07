@@ -1,0 +1,18 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+
+  <h1>{{ name }} {{ 'identity' | translate }}</h1>
+  <div>
+    <qrcode [qrdata]="qrCodeString" [size]="150"></qrcode>
+  </div>
+  <h2>{{ didString.slice(4,16) }}...{{ didString.slice(40,46) }}</h2>
+
+  <ion-row class="footer">
+    <ion-button (click)="shareInvitationLink()">
+      <ion-label>{{ 'share' | translate }}</ion-label>
+    </ion-button>
+    <ion-button (click)="copyDIDToClipboard()">
+      <ion-label>{{ 'copy-to-clipboard' | translate }}</ion-label>
+    </ion-button>
+  </ion-row>
+
+</ion-grid>

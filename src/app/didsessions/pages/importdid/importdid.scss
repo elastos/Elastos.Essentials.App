@@ -1,0 +1,242 @@
+@import 'src/app/didsessions/root.scss';
+
+.container {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .mnemonic-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: space-between;
+    width: 100%;
+
+    ion-col {
+      height: 40px;
+      background: #f0f1ff;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .mnemonic-index {
+        position: absolute;
+        z-index: 100;
+        top: -11px;
+        left: -11px;
+        width: 22px;
+        height: 22px;
+        background: #f0f1ff;
+        border-radius: 100%;
+        border: 2px solid #f8f8ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 9px;
+      }
+    }
+
+    .selectedCol {
+      background: linear-gradient(to bottom, #732dcf, #640fd4);
+
+      .mnemonic-index {
+        background: linear-gradient(to bottom, #732dcf, #640fd4);
+        color: #f8f8ff;
+      }
+
+      ion-label {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.25;
+        letter-spacing: -0.29px;
+        color: #f8f8ff;
+      }
+    }
+  }
+
+  p {
+    padding: 0 15px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    text-align: center;
+  }
+
+  .input-row {
+    width: 100%;
+    padding: 30px 15px;
+
+    ion-textarea {
+      background: #f0f1ff;
+      border-radius: 8px;
+      font-size: 13px;
+      text-transform: lowercase;
+      height: 100px;
+      --padding-top: 15px;
+      --padding-start: 12px;
+      --padding-end: 12px;
+    }
+  }
+
+  .footer {
+  }
+}
+
+@media screen and (max-height: 670px) {
+  .container {
+    .mnemonic-row {
+      ion-col {
+        margin-bottom: 15px;
+      }
+    }
+  }
+}
+
+
+/* .container {
+  padding: 50px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .mnemonic-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: space-between;
+    width: 100%;
+
+    ion-col {
+      height: 35px;
+      background: #f0f1ff;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .mnemonic-index {
+        position: absolute;
+        z-index: 100;
+        top: -11px;
+        left: -11px;
+        width: 22px;
+        height: 22px;
+        background: #f0f1ff;
+        border-radius: 100%;
+        border: 2px solid #fdfeff;
+        color: #161740;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 9px;
+      }
+    }
+
+    .selectedCol {
+      background: #565bdb;
+
+      .mnemonic-index {
+        background: #565bdb;
+        color: #fdfeff;
+      }
+
+      ion-label {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.25;
+        letter-spacing: -0.29px;
+        color: #fdfeff;
+      }
+    }
+  }
+
+  p {
+    margin: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.56;
+    color: #161740;
+  }
+
+  .input-row {
+    width: 100%;
+    padding: 15px;
+
+    ion-textarea {
+      background: #f0f1ff;
+      border-radius: 8px;
+      font-size: 13px;
+      text-transform: lowercase;
+      height: 100px;
+      --padding-top: 15px;
+      --padding-start: 12px;
+      --padding-end: 12px;
+    }
+  }
+
+  .btn-row {
+    padding: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.darkContainer {
+  .mnemonic-row {
+    ion-col {
+      background: #464660;
+
+      .mnemonic-index {
+        background: #464660;
+        border: 2px solid #191a2f;
+        color: #fdfeff;
+      }
+    }
+
+    .selectedCol {
+      background: #565bdb;
+
+      .mnemonic-index {
+        background: #565bdb;
+        color: #fdfeff;
+      }
+
+      ion-label {
+        color: #fdfeff;
+      }
+    }
+  }
+
+  .input-row {
+    ion-textarea {
+      background: #464660;
+      color: #ababb7;
+    }
+
+    ion-input {
+      background: #464660;
+      color: #ababb7;
+    }
+  }
+
+  p {
+    color: #fdfeff;
+  }
+}
+
+
+@media screen and (max-height: 670px) {
+  .container {
+    .mnemonic-row {
+      ion-col {
+        margin-bottom: 15px;
+      }
+    }
+  }
+}
+ */

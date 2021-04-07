@@ -1,0 +1,45 @@
+* {
+  font-family: 'Raleway' !important;
+  background: transparent;
+}
+
+.spinner {
+  position: fixed;
+  z-index: 2;
+  top: 40%;
+  left: 46.5%;
+
+  ion-spinner {
+    transform: scale(2);
+  }
+}
+
+/** Header **/
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 6.5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(40deg, #181d20 0%, #1acda0 50%, #181d20 100%);
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  animation: showHeader;
+  animation-duration: 1000ms;
+  animation-fill-mode: forwards;
+
+  @keyframes showHeader {
+    0% { top: -100px }
+    100% { top: 0%; }
+  }
+
+  ion-label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #ffffff;
+  }
+}

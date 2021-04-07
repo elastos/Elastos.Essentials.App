@@ -1,0 +1,46 @@
+<ion-grid *ngIf="options === 'profile'" [class.darkContainer]="theme.darkMode">
+    <ion-row class="ion-activatable ripple" (click)="profileService.shareIdentity()">
+      <ion-label>{{ 'share' | translate }}</ion-label>
+      <img *ngIf="!theme.darkMode" src="/assets/identity/lightmode/share.svg">
+      <img *ngIf="theme.darkMode" src="/assets/identity/darkmode/share.svg">
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+
+    <ion-row
+      *ngIf="profileService.publishStatusFetched && profileService.didNeedsToBePublished"
+      class="ion-activatable ripple"
+      (click)="profileService.showWarning('publishIdentity')"
+    >
+      <ion-label id="publish">{{ 'publish' | translate }}</ion-label>
+      <img src="/assets/identity/default/publish.svg">
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+
+    <ion-row class="ion-activatable ripple" (click)="exportMnemonic()">
+      <ion-label id="visibility">{{ 'export' | translate }}</ion-label>
+      <ion-icon id="visibility" name="lock"></ion-icon>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+</ion-grid>
+
+<ion-grid *ngIf="options === 'edit'" [class.darkContainer]="theme.darkMode">
+  <ion-row class="ion-activatable ripple"  (click)="profileService.editProfile()">
+    <ion-label>{{ 'edit-profile' | translate }}</ion-label>
+    <img *ngIf="!theme.darkMode" class="edit-img" src="/assets/identity/lightmode/edit.svg">
+    <img *ngIf="theme.darkMode"  class="edit-img" src="/assets/identity/darkmode/edit.svg">
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-row>
+
+  <ion-row class="ion-activatable ripple" (click)="profileService.editVisibility()">
+    <ion-label id="visibility">{{ 'edit-visibility' | translate }}</ion-label>
+    <img class="edit-img" src="/assets/identity/default/visibility.svg">
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-row>
+
+  <ion-row class="ion-activatable ripple" (click)="profileService.deleteCredentials()">
+    <ion-label id="delete">{{ 'delete-credentials' | translate }}</ion-label>
+    <img class="edit-img" src="/assets/identity/images/delete.svg">
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-row>
+</ion-grid>
+

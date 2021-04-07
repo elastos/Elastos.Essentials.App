@@ -1,0 +1,44 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
+    <!-- Developer Tools -->
+    <ion-row class="section-row" (click)="go('/developertools/home')">
+      <ion-col size="9" class="left-col">
+        <h1>{{ 'developer-tools' | translate }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <img src="assets/settings/default/right-arrow.svg">
+      </ion-col>
+    </ion-row>
+    <!-- Config Network -->
+    <ion-row class="section-row" (click)="go('/settings/select-net')">
+      <ion-col size="9" class="left-col">
+        <h1>{{ 'configure-network' | translate }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <img src="assets/settings/default/right-arrow.svg">
+      </ion-col>
+    </ion-row>
+    <!-- Config Background Services -->
+    <ion-row class="section-row" >
+      <ion-col size="10.5" class="left-col">
+        <h1>{{ getBackgroundServicesTitle() }}</h1>
+      </ion-col>
+      <ion-col size="1.5" class="right-col">
+        <div (click)="developer.toggleBackgroundServices()">
+          <ion-toggle *ngIf="developer.backgroundServicesEnabled" checked mode="ios"></ion-toggle>
+          <ion-toggle *ngIf="!developer.backgroundServicesEnabled" mode="ios"></ion-toggle>
+        </div>
+      </ion-col>
+    </ion-row>
+    <!-- Essentials development tests -->
+    <ion-row class="section-row" (click)="go('/settings/devtests')">
+      <ion-col size="9" class="left-col">
+        <h1>Essentials Tests</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <img src="assets/settings/default/right-arrow.svg">
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

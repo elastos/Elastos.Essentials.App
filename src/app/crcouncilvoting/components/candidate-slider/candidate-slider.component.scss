@@ -1,0 +1,110 @@
+@import "src/app/crcouncilvoting/root.scss";
+
+.can-slides {
+  position: fixed;
+  top: 25%;
+  left: 0px;
+  right: 0px;
+
+  ion-card {
+    min-width: 97%;
+    padding: 0;
+    border-radius: 10px;
+
+    ion-grid {
+      padding: 0;
+
+      .header-container {
+        padding: 12px;
+        margin-left: 9px;
+        border-bottom: solid 2px #181d20;
+
+        .img-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          img {
+            border-radius: 10px;
+            width: 45px;
+            height: 45px;
+          }
+        }
+
+        .name-container {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+
+          ion-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            overflow: hidden;
+          }
+        }
+      }
+
+      ion-card-content {
+        padding: 0;
+
+        .detail-container {
+          justify-content: space-between;
+          border-bottom: solid 2px #181d20;
+          margin-left: 9px;
+          padding: 12px 24px;
+
+          h3, p {
+            font-size: 12px !important;
+            font-weight: 600;
+            margin: 0;
+          }
+
+          p {
+            color: white !important;
+            padding-right: 0;
+          }
+        }
+
+        .website {
+          justify-content: space-between;
+          border-bottom: solid 2px #181d20;
+          margin-left: 9px;
+          margin-bottom: 36px;
+          padding: 12px 24px;
+          flex-wrap: nowrap;
+
+          h3, p {
+            margin: 0;
+            font-size: 12px !important;
+            font-weight: 600;
+          }
+
+          p {
+            color: white !important;
+            padding-right: 10px;
+          }
+
+          a {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+
+  ion-card:active {
+    .can-img {
+      position: fixed;
+      z-index: 2;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      transform:scale(6);
+      -ms-transform:scale(6); /* IE 9 */
+      -moz-transform:scale(6); /* Firefox */
+      -webkit-transform:scale(6); /* Safari and Chrome */
+      -o-transform:scale(6); /* Opera */
+    }
+  }
+}

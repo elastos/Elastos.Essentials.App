@@ -1,0 +1,54 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-slides
+    #slide
+    pager="true"
+    [options]="slideOpts"
+    [class.hidden]="hidden"
+    (ionSlideWillChange)="getActiveSlide()"
+    class="ion-text-center"
+  >
+    <ion-slide id="slide1">
+      <img src="assets/didsessions/onboard/welcome.svg">
+<!--       <ion-label>Welcome to the modern internet, where you can browse the new web securely while maintaining control of your own digital identity, data and other forms of digital assets.</ion-label> -->
+      <ion-label>{{ 'welcome-message1' | translate }}</ion-label>
+    </ion-slide>
+
+    <ion-slide id="slide2">
+      <img src="assets/didsessions/icon/ela.svg">
+<!--       <lottie-player src="/assets/animations/device.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player> -->
+      <ion-label>{{ 'welcome-message2' | translate }}</ion-label>
+    </ion-slide>
+
+    <ion-slide id="slide2">
+      <img src="assets/didsessions/onboard/did.svg">
+      <ion-label>{{ 'welcome-message3' | translate }}</ion-label>
+    </ion-slide>
+
+  </ion-slides>
+  <div class="footer">
+    <ion-button *ngIf="slideIndex === 0" (click)="nextSlide()">{{ 'begin' | translate }}</ion-button>
+    <ion-button *ngIf="slideIndex === 1" (click)="nextSlide()">{{ 'continue' | translate }}</ion-button>
+    <div *ngIf="slideIndex >= 2">
+      <ion-button (click)="createNewIdentity()">
+        {{ 'new' | translate }}
+      </ion-button>
+      <ion-button (click)="importIdentity()">
+        {{ 'import' | translate }}
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+
+<!-- <ion-footer class="ion-no-border">
+  <ion-button *ngIf="slideIndex === 0" (click)="nextSlide()">Begin</ion-button>
+  <ion-button *ngIf="slideIndex === 1" (click)="nextSlide()">Continue</ion-button>
+  <div *ngIf="slideIndex >= 2">
+    <ion-button (click)="createNewIdentity()">
+      {{ 'new' | translate }}
+    </ion-button>
+    <ion-button (click)="importIdentity()">
+      {{ 'import' | translate }}
+    </ion-button>
+  </div>
+</ion-footer> -->

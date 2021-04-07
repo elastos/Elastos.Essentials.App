@@ -1,0 +1,73 @@
+@import "src/app/identity/root.scss";
+
+.darkContainer {
+  .container {
+    .title {
+      border-top: none;
+      span {
+        color: #ffffff;
+      }
+    }
+    ion-row {
+      border-top: 1px solid #2f305a;
+
+      .label-container {
+        ion-label {
+          color: #ffffff;
+        }
+      }
+    }
+  }
+}
+
+.container {
+  min-height: 100%;
+
+  .title {
+    padding: 10px 10px 20px;
+    border-top: none;
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 0.93;
+      text-align: left;
+      color: #372153;
+    }
+  }
+
+  ion-row {
+    border-top: 1px solid #dfdff4;
+    padding: 5px 0;
+
+    .icon-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        height: 15px;
+        width: 15px;
+      }
+    }
+
+    .label-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      ion-label {
+        font-family: Montserrat;
+        font-size: 13px;
+        font-weight: 600;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.62;
+        letter-spacing: normal;
+        text-align: left;
+        color: #372153;
+      }
+    }
+  }
+}

@@ -1,0 +1,198 @@
+@import "src/app/identity/root.scss";
+
+ion-toggle {
+  zoom: 0.7;
+}
+
+.show-profile {
+  font-family: Montserrat;
+  font-size: 14px;
+  font-weight: 600;
+  height: 20px;
+  float: right;;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.29;
+  letter-spacing: normal;
+  text-align: center;
+  color: #372153;
+  margin-bottom: 5px;
+  margin-right: 2px;
+  padding: 2px;
+}
+
+
+.container {
+  .icon-section {
+    width: 215.1px;
+    height: 214.6px;
+    margin: 0 auto;
+    object-fit: contain;
+    display: flex;
+    justify-content: center;
+    color: #ffffff;
+    background-image: url("/assets/identity/svg/empty-balloon.svg");
+    background-blend-mode: multiply;
+    padding: 35px;
+
+    ion-icon {
+      display: block;
+      margin: auto;
+      width: 70%;
+      height: 70%;
+    }
+    img {
+      display: block;
+      margin: auto;
+      border-radius: 50%;
+      object-fit: cover;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .btn-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+
+    ion-button {
+      height: 50px;
+      width: 90%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+  }
+}
+
+.darkContainer {
+  .show-profile {
+    color: white;
+  }
+
+  .label-container {
+    ion-label,
+    span {
+      --color: #ffffff;
+    }
+  }
+  .edit-container {
+    ion-label,
+    ion-select,
+    ion-datetime,
+    ion-input {
+      color: #ffffff;
+    }
+  }
+  .main-row {
+    border-top: 1px solid #2f305a;
+  }
+}
+
+.edit-avatar {
+  span {
+    font-family: Montserrat;
+    font-size: 13px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.62;
+    letter-spacing: normal;
+    color: #565bdb;
+    margin: 10px 45px 20px 45px;
+  }
+}
+
+.background-balloon {
+  width: 215.1px;
+  height: 214.6px;
+  object-fit: contain;
+  display: block;
+}
+
+.label-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  ion-label, span {
+    font-family: Montserrat;
+    font-size: 13px;
+    font-weight: 600;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.62;
+    letter-spacing: normal;
+    text-align: left;
+    --color: #372153;
+  }
+}
+
+.main-row {
+  border-top: 1px solid #dfdff4;
+}
+
+ion-col {
+  padding: 0px;
+}
+
+ion-row {
+  height: auto;
+  padding: 0 0;
+
+  .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.edit-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 0;
+
+  ion-input,
+  ion-label,
+  ion-select,
+  ion-datetime {
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.29;
+    letter-spacing: normal;
+    text-align: left;
+    color: #372153;
+    --padding-bottom: 3px;
+    --padding-end: 5px;
+    --padding-top: 3px;
+  }
+
+  ion-input, ion-datetime {
+    --padding-start: 0px;
+  }
+
+  ion-select {
+    width: 150px;
+    margin-left: -15px;
+  }
+}
+
+img {
+  width: 15.1px;
+  height: 15.1px;
+  object-fit: contain;
+}
+
+.add-row {
+  padding: 10px 0;
+}

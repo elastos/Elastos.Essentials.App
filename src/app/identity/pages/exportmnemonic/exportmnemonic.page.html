@@ -1,0 +1,20 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <div class="ion-text-center container" [class.darkContainer]="theme.darkMode">
+    <ion-row class="mnemonic-row">
+      <ion-col size="3.6" *ngFor="let mnemonic of mnemonicList">
+        <div class="mnemonic-index">{{ mnemonicList.indexOf(mnemonic) + 1 }}</div>
+        <ion-label>{{ mnemonic }}</ion-label>
+      </ion-col>
+    </ion-row>
+    <h1>{{ 'your-mnemonic' | translate }}</h1>
+    <p>
+      {{ 'your-mnemonic-prompt1' | translate }}<b>{{ 'your-mnemonic-prompt2' | translate }}</b>{{ 'your-mnemonic-prompt3' | translate }}<br><br>
+    </p>
+    <ion-row class="btn-row">
+      <ion-button color="success" (click)="return()">
+        <ion-label>{{ 'back-to-identity' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </div>
+</ion-content>

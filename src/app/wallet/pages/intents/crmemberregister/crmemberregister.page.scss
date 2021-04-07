@@ -1,0 +1,43 @@
+@import 'src/app/wallet/root.scss';
+
+.text-right {
+    text-align: right;
+}
+.bottom-border {
+    border-bottom: 1px solid #dddddd;
+}
+.top-border {
+    border-top: 1px solid #dddddd;
+}
+.font-size-1 {
+    font-size: 16px;
+}
+
+ion-note {
+    font-size: 12px;
+}
+
+ion-icon {
+    margin-left: px2rem(20px);
+    width: px2rem(32px);
+    height: px2rem(32px);
+}
+
+.intro {
+    font-size: 2em;
+    margin:14vw;
+}
+
+.notes {
+    margin-top: 5vh;
+}
+
+.note {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size:1.2em;
+}
+
+.note-entry {
+    margin-bottom:10px;
+}

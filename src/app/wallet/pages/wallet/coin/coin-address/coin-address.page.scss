@@ -1,0 +1,37 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+    min-height: 100%;
+    padding: 20px;
+
+    .main-title-row {
+        margin-bottom: 10px;
+        margin-left: 5px;
+
+      p {
+          margin: 0;
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: -0.33px;
+          text-align: left;
+          color: #818181;
+      }
+    }
+}
+
+.subwallet-row {
+    padding: 15px;
+
+    p {
+        font-weight: 500;
+    }
+}
+
+.dark-container {
+    .main-title-row {
+        p {
+            color: #8888b0
+        }
+    }
+}

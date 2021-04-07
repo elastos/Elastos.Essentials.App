@@ -1,0 +1,38 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+  min-height: 348px;
+  background: #ffffff;
+  border: 1.2px solid #620ad4;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 25px 5px;
+  position: relative;
+
+  h1 {
+    color: #161740;
+    font-size: 30px;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .btn-container {
+    position: absolute;
+    bottom: 25px;
+    z-index: 100;
+    width: 95%;
+  }
+}
+
+.darkContainer {
+  background: #2b2c49;
+
+  h1 {
+    color: #ffffff;
+  }
+}
+

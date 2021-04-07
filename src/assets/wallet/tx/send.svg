@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Component_1045_1" width="67.201" height="67.201" data-name="Component 1045 – 1" viewBox="0 0 67.201 67.201">
+    <defs>
+        <style>
+            .cls-3{stroke:#fff;fill:none;stroke-width:2px;stroke-linecap:square}
+        </style>
+    </defs>
+    <path id="Path_21720" d="M33.6 0A33.6 33.6 0 1 1 0 33.6 33.6 33.6 0 0 1 33.6 0z" data-name="Path 21720"/>
+    <g id="Component_1044_1" data-name="Component 1044 – 1" transform="translate(9.253 17.332)">
+        <g id="Group_13401" data-name="Group 13401" transform="translate(0 5.378)">
+            <text id="title" fill="#fff" stroke="#fff" stroke-width="0.3px" font-family="Montserrat-Light, Montserrat" font-size="39px" font-weight="300" letter-spacing="0.08em" transform="rotate(-90 33.237 -4.763)">
+                <tspan x="0" y="0">C</tspan>
+            </text>
+        </g>
+        <g id="Group_13402" data-name="Group 13402" transform="translate(20.441)">
+            <path id="Line_13" fill="none" stroke="#fff" stroke-width="2px" d="M0 0L0 18.212" data-name="Line 13" transform="translate(4.047)"/>
+            <path id="Line_14" d="M0 0L4.047 4.047" class="cls-3" data-name="Line 14" transform="translate(4.047)"/>
+            <path id="Line_15" d="M4.047 0L0 4.047" class="cls-3" data-name="Line 15"/>
+        </g>
+    </g>
+</svg>

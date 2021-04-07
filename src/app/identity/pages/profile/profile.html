@@ -1,0 +1,131 @@
+<ion-content class="content">
+  <app-titlebar></app-titlebar>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-row>
+      <div class="icon-section">
+        <ion-icon *ngIf="!hiveService.rawImage" mode="ios" name="person"></ion-icon>
+        <div *ngIf="hiveService.rawImage">
+          <img [src]="hiveService.rawImage" />
+        </div>
+      </div>
+    </ion-row>
+
+    <ion-row class="section2">
+      <ion-col size="9">
+        <div>
+          <ion-label *ngIf="profile" class="username">{{ profile.getName() }}</ion-label>
+        </div>
+      </ion-col>
+      <ion-col size="1.5">
+        <img class="qrcode" src="{{ this.theme.darkMode ? '/assets/identity/svg/qrcode-dark.svg' : '/assets/identity/svg/qrcode.svg' }}"
+          (click)="showQRCode()" />
+      </ion-col>
+      <ion-col size="1.5">
+        <img class="dots" src="{{ this.theme.darkMode ? '/assets/identity/svg/share-dark.svg' : '/assets/identity/svg/share.svg' }}"
+          (click)="profileService.shareIdentity()" />
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="description">
+        <div> {{ profile.getDescription() }} </div>
+      </ion-col>
+    </ion-row>
+
+    <!-- <ion-row class="alert-section">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="1" class="detail-col">
+            <img *ngIf="profileService.verifiedCredentials.length == 0" src="/assets/identity/svg/circle-with-x.svg"
+              class="alert"></img>
+            <img *ngIf="profileService.verifiedCredentials.length != 0" src="/assets/identity/svg/badge.svg" class="alert">
+            </img>
+          </ion-col>
+          <ion-col size="11">
+            <span>{{ profileService.verifiedCredentials.length }} {{ 'credentials-verified' | translate}}
+            </span>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-row> -->
+
+    <ion-row class="hive-wrapper">
+      <ion-col size="12">
+        <div>
+          <div class="hive-background">
+            <img class="baloon" src="/assets/identity/svg/hive-ballon.svg" />
+            <img class="icon" src="/assets/identity/svg/hive.svg" />
+          </div>
+          <div class="hive-foreground">
+            <div class="hive-title">{{ 'hive-storage-vault' | translate }}</div>
+            <div *ngIf="!profileService.publishedDIDDocument || hiveIsloaded" class="hive-address">
+              {{ hiveVault ? hiveVault.getEndpoint() : 'not-set' | translate }}</div>
+            <div class="hive-loading" *ngIf="profileService.publishedDIDDocument && !hiveIsloaded"><img src="/assets/identity/svg/loader.gif"></div>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="profile-section">
+      <div class="profile-header">
+        <span class="aboutme">{{ 'about-me' | translate }}</span>
+        <span class="edit" (click)="profileService.editProfile();">{{ 'edit' | translate }}&nbsp;<img
+            src="{{ this.theme.darkMode ? '../../../assets/identity/svg/chevron-thin-right-dark.svg' : '../../../assets/identity/svg/chevron-thin-right.svg' }}"></span>
+      </div>
+      <div class="profile" *ngIf="this.profileService.profileEntries.length > 0">
+        <ion-row *ngFor="let entry of this.profileService.profileEntries">
+          <ion-col size="1">
+            <!-- <ion-icon mode="ios" [name]="getCredIcon(entry)"></ion-icon> -->
+            <img [src]="getCredIconSrc(entry)">
+          </ion-col>
+          <ion-col size="11">
+            <ion-label class="title">{{ getCredentialValue(entry.credential) | translate }}</ion-label>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-row>
+
+    <ion-row class="capsules-section">
+      <span class="title">{{ 'my-capsules' | translate}}</span>
+      <!-- <ion-col size="4"
+      ><span class="show-all">{{ 'show-all ' | translate}}</span>
+      <ion-icon
+        src="{{ this.theme.darkMode ? '/assets/identity/svg/chevron-thin-right-dark.svg' : '/assets/identity/svg/chevron-thin-right.svg' }}"
+        class="chevron-thin-right"
+      ></ion-icon>
+    </ion-col> -->
+    </ion-row>
+
+    <ion-row class="capsules" *ngIf="profileService.appCreds.length">
+      <ion-col>
+        <ion-content>
+          <ion-slides pager="false" [options]="slideOpts">
+            <div *ngFor="let appCred of profileService.appCreds">
+              <ion-slide>
+                <ion-grid>
+                  <ion-row class="ion-align-items-center">
+                    <ion-col>
+                      <img class="capsule-icon" src="{{ appCred.appInfo.app ? getAppIcon(appCred.appInfo.app.id)
+                        : '/assets/identity/icon/default-icon.svg' }}" />
+                    </ion-col>
+
+                  </ion-row>
+                  <ion-row>
+                    <span>{{ appCred.appInfo.app ? appCred.appInfo.app.name : appCred.credential.getSubject().identifier }}</span>
+                  </ion-row>
+
+                </ion-grid>
+
+
+              </ion-slide>
+            </div>
+          </ion-slides>
+        </ion-content>
+      </ion-col>
+    </ion-row>
+    <ion-row class="capsules" *ngIf="profileService.appCreds.length == 0">
+      <ion-col size="12" class="not-found">
+        <span> {{'no-capsules-title'|translate}}</span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,115 @@
+@import "src/app/identity/root.scss";
+
+.container {
+  padding: 50px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .mnemonic-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: space-between;
+
+    ion-col {
+      height: 40px;
+      background: #565bdb;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .mnemonic-index {
+        position: absolute;
+        z-index: 100;
+        top: -11px;
+        left: -11px;
+        width: 22px;
+        height: 22px;
+        background: #565bdb;
+        border-radius: 100%;
+        border: 2px solid #fdfeff;
+        color: #fdfeff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 9px;
+      }
+
+      ion-label {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.25;
+        letter-spacing: -0.29px;
+        color: #fdfeff;
+      }
+    }
+  }
+
+  h1, p, .btn-row {
+    margin: 0;
+    padding: 16px 8px;
+  }
+
+  h1 {
+    padding-top: 24px;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    color: #161740;
+  }
+
+  p {
+    padding-bottom: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.56;
+    color: #161740;
+  }
+
+  .btn-row {
+    padding: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      --border-radius: 8px;
+
+      ion-label {
+        text-transform: none;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: -0.43px;
+      }
+    }
+  }
+}
+
+.darkContainer {
+  h1, p {
+    color: #fdfeff;
+  }
+
+  .mnemonic-row {
+    ion-col {
+      .mnemonic-index {
+        border: 2px solid #191a2f;
+      }
+    }
+  }
+}
+
+@media screen and (max-height: 670px) {
+  .container {
+    .mnemonic-row {
+      ion-col {
+        margin-bottom: 15px;
+      }
+    }
+  }
+}

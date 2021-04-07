@@ -1,0 +1,89 @@
+<ion-content>
+  <ion-grid class="container">
+    <ion-slides
+      #slide
+      pager="true"
+      [options]="slideOpts"
+      [class.hidden]="hidden"
+    >
+
+      <ion-slide>
+        <ion-card-title>
+          <ion-row class="img-container">
+            <img src="../assets/dposvoting/icon/onboard1.svg">
+          </ion-row>
+          <ion-row>
+            <ion-col offset="1.25" size="9.5">
+              <h4 class="title">{{ 'home-welcome' | translate }}</h4>
+            </ion-col>
+            <ion-col size="1.25" class="arrow-container" (click)="next(slide)">
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </ion-col>
+          </ion-row>
+          <p class="subtitle">
+            {{ 'home-dpos-description' | translate }}
+          </p>
+          <ion-row class="btn-container">
+            <div class="btn" (click)="next(slide)">
+              <ion-label>{{ 'next' | translate }}</ion-label>
+            </div>
+          </ion-row>
+        </ion-card-title>
+      </ion-slide>
+
+      <ion-slide>
+        <ion-card-title>
+          <ion-row class="img-container">
+            <img src="../assets/dposvoting/icon/onboard2.svg">
+          </ion-row>
+          <ion-row>
+            <ion-col size="1.25" class="arrow-container" (click)="prev(slide)">
+              <ion-icon name="arrow-back-outline"></ion-icon>
+            </ion-col>
+            <ion-col>
+              <h4 class="title" size="9.5">{{ 'home-votes-ela' | translate }}</h4>
+            </ion-col>
+            <ion-col size="1.25" class="arrow-container" (click)="next(slide)">
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </ion-col>
+          </ion-row>
+          <p class="subtitle">
+            {{ 'home-dpos-description-ela' | translate }}
+          </p>
+          <ion-row class="btn-container">
+            <div class="btn" (click)="next(slide)">
+              <ion-label>{{ 'next' | translate }}</ion-label>
+            </div>
+          </ion-row>
+        </ion-card-title>
+      </ion-slide>
+
+      <ion-slide>
+        <ion-card-title>
+          <ion-row class="img-container">
+            <img src="../assets/dposvoting/icon/onboard3.svg">
+          </ion-row>
+          <ion-row>
+            <ion-col size="1.25" class="arrow-container" (click)="prev(slide)">
+              <ion-icon name="arrow-back-outline"></ion-icon>
+            </ion-col>
+            <ion-col>
+              <h4 class="title">{{ 'home-transactions' | translate }}</h4>
+            </ion-col>
+            <ion-col size="1.25">
+            </ion-col>
+          </ion-row>
+          <p class="subtitle">
+            {{ 'home-dpos-description-pay' | translate }}
+          </p>
+          <ion-row class="btn-container">
+            <div class="btn" (click)="goToVote()">
+              <ion-label>{{ 'home-next' | translate }}</ion-label>
+            </div>
+          </ion-row>
+        </ion-card-title>
+      </ion-slide>
+
+    </ion-slides>
+  </ion-grid>
+</ion-content>

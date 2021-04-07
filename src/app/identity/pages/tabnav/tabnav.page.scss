@@ -1,0 +1,108 @@
+@import "src/app/identity/root.scss";
+
+.dark-tabs {
+  ion-tab-bar {
+    background: #161723;
+
+    ion-tab-button {
+      background: #161723;
+    }
+  }
+
+  ion-label {
+    color: #464660;;
+  }
+
+  .tab-selected {
+    ion-label {
+      color: #ffffff;
+    }
+  }
+
+  .home-run {
+    content:url('/assets/identity/buttons/home-run-dark.svg');
+  }
+
+  .Profile {
+    content:url('/assets/identity/buttons/profile-dark.svg');
+  }
+
+
+  .Credentials {
+    content:url('/assets/identity/buttons/credentials-dark.svg');
+  }
+
+  .selected {
+    .Credentials {
+      content:url('/assets/identity/buttons/credentials-selected-dark.svg');
+    }
+    .Profile {
+      content:url('/assets/identity/buttons/profile-selected-dark.svg');
+    }
+    .home-run {
+      content:url('/assets/identity/buttons/home-run-selected-dark.svg');
+    }
+  }
+}
+
+
+ion-tab-bar {
+  width: 100%;
+  height: 80px;
+  box-shadow: 0 -5px 25px 0 rgba(188, 188, 188, 0.16);
+  background-color: #f5f5fd;
+}
+
+.home-run {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+  content:url('/assets/identity/buttons/home-run.svg');
+}
+
+.Profile {
+  width: 19.4px;
+  height: 23.2px;
+  object-fit: contain;
+  content:url('/assets/identity/buttons/profile.svg');
+}
+
+
+.Credentials {
+  width: 21.5px;
+  height: 21.5px;
+  object-fit: contain;
+  content:url('/assets/identity/buttons/credentials.svg');
+}
+
+.selected {
+  .Credentials {
+    content:url('/assets/identity/buttons/credentials-selected.svg');
+  }
+  .Profile {
+    content:url('/assets/identity/buttons/profile-selected.svg');
+  }
+  .home-run {
+    content:url('/assets/identity/buttons/home-run-selected.svg');
+  }
+}
+
+
+ion-label {
+  height: 26px;
+  font-size: 10px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 3;
+  letter-spacing: normal;
+  text-align: center;
+  color: #bebeeb;
+}
+
+.tab-selected {
+  ion-label {
+    color: #372153;
+  }
+
+}

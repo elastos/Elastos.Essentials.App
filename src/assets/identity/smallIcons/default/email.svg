@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="EmailIcon" width="14.188" height="12.408" viewBox="0 0 14.188 12.408">
+    <defs>
+        <style>
+            .cls-1{fill:#565bdb}
+        </style>
+    </defs>
+    <path id="Path_22132" d="M13.993 28.75l-5.818 5.818a1.53 1.53 0 0 1-2.162 0L.195 28.75A1.52 1.52 0 0 0 0 29.5v9.35a1.53 1.53 0 0 0 1.529 1.529h11.13a1.53 1.53 0 0 0 1.529-1.529V29.5a1.52 1.52 0 0 0-.195-.75zm0 0" class="cls-1" transform="translate(0 -27.967)"/>
+    <path id="Path_22133" d="M35.054 6.513L40.872.695A1.519 1.519 0 0 0 40.126.5H29a1.519 1.519 0 0 0-.746.195l5.818 5.818a.7.7 0 0 0 .982 0zm0 0" class="cls-1" transform="translate(-27.467 -.5)"/>
+</svg>

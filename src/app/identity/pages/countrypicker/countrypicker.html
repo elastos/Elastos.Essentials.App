@@ -1,0 +1,18 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+<!--   <ion-list class="ion-padding" [class.dark-container]="theme.darkMode">
+    <ion-virtual-scroll [items]="areaList" approxItemHeight="320px">
+      <ion-item *virtualItem="let item" (click)="selectItem(item)">
+        <ion-label>{{ item.name }}</ion-label>
+      </ion-item>
+    </ion-virtual-scroll>
+  </ion-list> -->
+
+  <ion-list class="ion-padding" [class.dark-container]="theme.darkMode">
+    <ion-item *ngFor="let item of areaList" (click)="selectItem(item)">
+      <ion-label>{{ item.name }}</ion-label>
+    </ion-item>
+  </ion-list>
+  
+</ion-content>
+

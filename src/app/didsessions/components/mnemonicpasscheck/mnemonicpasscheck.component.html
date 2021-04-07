@@ -1,0 +1,37 @@
+<div class="container" *ngIf="!askedIfHasPassphrase">
+  <ion-row class="header-row">
+    <img src="/assets/didsessions/default/securityWarning.svg">
+    <h1 class="ion-text-center">{{ 'mnemonicpasscheck-question' | translate }}</h1>
+  </ion-row>
+
+  <ion-row class="btn-row">
+    <ion-button (click)="hasPassphrase()">
+      <ion-label>{{ 'mnemonicpasscheck-have-passphrase' | translate }}</ion-label>
+    </ion-button>
+    <ion-button (click)="noPassphrase()">
+      <ion-label>{{ 'mnemonicpasscheck-no-passphrase' | translate }}</ion-label>
+    </ion-button>
+  </ion-row>
+</div>
+
+<div class="container" *ngIf="askedIfHasPassphrase">
+  <ion-row class="header-row">
+    <img src="/assets/didsessions/default/securityWarning.svg">
+    <h1 class="ion-text-center">{{ 'mnemonicpassword-intro' | translate }}</h1>
+  </ion-row>
+
+  <ion-row id="first-input-row" class="input-row">
+    <ion-input [placeholder]="'text-password-input'|translate" #pwd [(ngModel)]="password" type="password" (keyup)="moveFocus(rptpwd, $event)" name="password" ngDefaultControl></ion-input>
+  </ion-row>
+
+  <ion-row class="input-row">
+    <ion-input [placeholder]="'repeat-password'|translate" #rptpwd [(ngModel)]="passwordConfirmation" type="password" name="passwordConfirmation" ngDefaultControl></ion-input>
+    <div class="password-failed-info" *ngIf="!passwordsMatch() && passwordConfirmation !== '' && password !== ''">{{ 'wrong-password' | translate }}</div>
+  </ion-row>
+
+  <ion-row class="btn-row">
+    <ion-button (click)="submit()">
+      <ion-label>{{ 'submit' | translate }}</ion-label>
+    </ion-button>
+  </ion-row>
+</div>

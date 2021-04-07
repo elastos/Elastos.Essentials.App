@@ -1,0 +1,50 @@
+@import 'src/app/contacts/root.scss';
+
+ion-grid {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  ion-row {
+    padding: 10px 20px 10px 12px;
+    display: flex;
+    justify-content: space-between;
+
+    ion-label {
+      margin-top: 3px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #161740;
+    }
+
+    .delete {
+      color: #f55555;
+    }
+
+    .favorite {
+      color: #ffce00;
+    }
+
+    ion-img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.darkContainer {
+  ion-row {
+    ion-label {
+      color: #ffffff;
+    }
+
+    .delete {
+      color: #f55555;
+    }
+
+    .favorite {
+      color: #ffce00;
+    }
+  }
+}

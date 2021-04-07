@@ -1,0 +1,158 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100%;
+    margin: 0;
+    padding: 30px 20px;
+
+    .icon-container {
+        position: relative;
+
+        img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+        }
+
+        .ela-icon {
+            position: absolute;
+            z-index: 10;
+            top: -4px;
+            left: -2px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #000000;
+            border: 3px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            img {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    .coinTitle {
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        word-break: break-all;
+        margin: 5px 10px 20px;
+    }
+
+    .qrcode-container {
+        border-radius: 21px;
+        background-color: #ffffff;
+        padding: 20px;
+        zoom: 1.2;
+    }
+
+    h1, h2, p {
+        margin: 0;
+        font-weight: 400;
+    }
+
+    h1 {
+        font-size: 13px;
+        margin: 20px;
+    }
+
+    h2 {
+        width: 100%;
+        margin-bottom: 25px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        border-radius: 17px;
+        background-color: #ffffff;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        padding: 20px;
+    }
+
+    p {
+        font-size: 12px;
+        font-weight: 300;
+        letter-spacing: 0.6px;
+        margin-bottom: 60px;
+    }
+
+    .btn {
+        height: 47px;
+        width: 46.5%;
+        position: fixed;
+        bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+
+        ion-label {
+            font-size: 17px;
+            font-weight: 500;
+        }
+    }
+
+    .cancel {
+        left: 2%;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        // background-color: #ff4961;
+        background-color: #ffffff;
+
+        ion-label {
+            // color: #ffffff;
+            color: #000000;
+        }
+    }
+
+    .expand {
+        left: 4%;
+        right: 4%;
+        width: 92%;
+    }
+
+    .confirm {
+        right: 2%;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        background-color: #6e23d0;
+
+        ion-label {
+            color: #ffffff;
+        }
+    }
+}
+
+.dark-container {
+    background:#191a2f;
+
+    h2 {
+        box-shadow: 0 3px 15px 0 #151626;
+        background-color: #2b2c49;
+    }
+
+    .icon-container {
+        .ela-icon {
+            border: 3px solid #191a2f;
+        }
+    }
+
+    .cancel {
+        box-shadow: 0 3px 6px 0 #151626;
+        background-color: #202039;
+
+        ion-label {
+            color: #ffffff;
+        }
+    }
+
+    .confirm {
+        box-shadow: 0 3px 15px 0 #151626;
+    }
+}

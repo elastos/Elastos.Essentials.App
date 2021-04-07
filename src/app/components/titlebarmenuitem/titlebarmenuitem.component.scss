@@ -1,0 +1,18 @@
+ion-grid {
+    ion-row {
+        ion-col {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+    
+            ion-label {
+                font-size: 12px;
+                font-weight: 500;
+            }
+    
+            img {
+                font-size: 15px;
+            }
+        }
+    }
+}

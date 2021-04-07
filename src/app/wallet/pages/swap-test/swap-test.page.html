@@ -1,0 +1,16 @@
+<ion-content padding>
+    <app-titlebar></app-titlebar>
+    <ion-list lines="none">
+        <ion-item>
+            <ion-button (click)="swapELAToDMA()">Swap ELA to DMA</ion-button>
+        </ion-item>
+        <ion-item>
+            <ion-button (click)="swapDMAToELA()">Swap DMA to ELA</ion-button>
+        </ion-item>
+        <ion-grid>
+            <ion-row *ngFor="let info of status" style="background:white;padding:10px" >
+                <p style="color:#444">{{ info }}</p>
+            </ion-row>
+        </ion-grid>
+    </ion-list>
+</ion-content>

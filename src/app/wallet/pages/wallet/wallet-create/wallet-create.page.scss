@@ -1,0 +1,98 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+    min-height: 100%;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-image: url('/assets/wallet/background/background.svg');
+    object-fit: cover;
+
+    p {
+        margin: 0;
+        padding: 30px;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.26;
+        letter-spacing: -0.46px;
+        text-align: center;
+        color: #fdfeff;
+    }
+
+    ion-row {
+        margin-bottom: 15px;
+        width: 95%;
+
+        ion-input {
+            background: #803fd5;
+            font-weight: 400;
+            letter-spacing: -0.34px;
+            text-align: left;
+            color: #fdfeff;
+            --padding-start: 12px;
+        }
+    }
+
+    .toggle-row {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+        padding: 0 15px;
+
+        ion-col {
+            margin-bottom: 15px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .left-col {
+            justify-content: flex-start;
+
+            h1 {
+                margin: 0;
+                font-size: 16px;
+                font-weight: 500;
+                letter-spacing: 0.9px;
+                text-align: left;
+                color: #ffffff;
+            }
+        }
+
+        .right-col {
+            justify-content: flex-end;
+
+            ion-toggle {
+                zoom: 0.8;
+            }
+        }
+    }
+
+    .password-row {
+        margin-top: 15px;
+        padding: 0;
+        background: #803fd5;
+        border-radius: 8px;
+
+        ion-col {
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            ion-icon {
+                width: 25px;
+                height: 25px;
+                color: #ffffff;
+            }
+        }
+    }
+
+    .btn-row {
+        margin-top: 30px;
+        width: 100%;
+    }
+}

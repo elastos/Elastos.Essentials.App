@@ -1,0 +1,78 @@
+@import 'src/app/didsessions/root.scss';
+
+.container {
+  padding: 15px;
+  margin: 0;
+
+  .id-row {
+    background: #ffffff;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    border-radius: 16px;
+    padding: 4px;
+    margin-bottom: 10px;
+
+    .img-col {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      img {
+        width: 41px;
+        height: 41px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.25px solid #6d74ef;
+      }
+
+      .signedIn {
+        border-radius: 100%;
+        border: 1px solid #6d74ef;
+        width: 40px;
+        height: 40px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 100%;
+        }
+
+        .indicator {
+          position: absolute;
+          bottom: 8px;
+          z-index: 10;
+          border-radius: 100%;
+          height: 10px;
+          width: 10px;
+          background: #2dd36f;
+        }
+      }
+    }
+
+    .info-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+
+      h1 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0;
+        font-size: 9px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .btn-row {
+    padding: 30px 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+

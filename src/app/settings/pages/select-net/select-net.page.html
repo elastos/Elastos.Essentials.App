@@ -1,0 +1,50 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
+    <!-- Network Lists -->
+    <ion-row
+      *ngFor="let network of developer.networks"
+      class="section-row"
+      (click)="
+        developer.selectNet(
+          network.code,
+          network.mainChainRPCApi,
+          network.idChainRPCApi,
+          network.ethscRPCApi,
+          network.ethscApiMisc,
+          network.ethscOracle
+        )"
+      >
+        <ion-col size="9" class="left-col">
+          <h1>{{ network.type | translate }}</h1>
+        </ion-col>
+        <ion-col size="3" class="right-col">
+          <ion-icon *ngIf="developer.selectedNet === network.code" name="checkmark"></ion-icon>
+        </ion-col>
+    </ion-row>
+    <!-- Config Private Net -->
+    <ion-row *ngIf="developer.selectedNet === 'PrvNet'" class="section-row input-row remove-border">
+      <ion-col class="left-col" size="9.5">
+        <ion-input
+          [(ngModel)]="developer.privateNet.configUrl"
+          placeholder="Enter config URL"
+          name="privnetConfigUrl" ngDefaultControl
+          type="text" clearInput  required>
+        </ion-input>
+        <ion-input
+          id="add-margin"
+          name="privnetResolveUrl" ngDefaultControl
+          [(ngModel)]="developer.privateNet.resolveUrl"
+          placeholder="Enter resolve URL"
+          type="text" clearInput  required>
+        </ion-input>
+      </ion-col>
+      <ion-col class="right-col" size="2.5" (click)="developer.configNetwork()">
+        <div class="btn-container ion-activatable ripple">
+          <ion-icon name="send" mode="ios"></ion-icon>
+          <ion-ripple-effect></ion-ripple-effect>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

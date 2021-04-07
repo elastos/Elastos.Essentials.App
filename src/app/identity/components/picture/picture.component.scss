@@ -1,0 +1,78 @@
+@import "src/app/identity/root.scss";
+
+ion-grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  margin: 0;
+
+  img {
+    margin-left: auto;
+    margin-right: auto;
+    height: 250px;
+    width: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1.75px solid #6d74ef;
+  }
+
+  img:active {
+    border-radius: 0;
+    border: none;
+    position: relative;
+    z-index: 2;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform:scale(1.7);
+    -ms-transform:scale(1.7); /* IE 9 */
+    -moz-transform:scale(1.7); /* Firefox */
+    -webkit-transform:scale(1.7); /* Safari and Chrome */
+    -o-transform:scale(1.7); /* Opera */
+  }
+
+  .btn-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    ion-button {
+      height: 50px;
+      width: 75%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #191a2f;
+  }
+
+  ion-spinner {
+    transform: scale(1.5);
+    color: #191a2f;
+  }
+
+  .submit {
+    margin-top: 50px;
+  }
+}
+
+.darkContainer {
+  div {
+    ion-spinner {
+      color: #fdfeff;
+    }
+  }
+  h1 {
+    color: #fdfeff;
+  }
+}

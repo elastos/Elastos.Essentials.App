@@ -1,0 +1,241 @@
+@import 'src/app/contacts/root.scss';
+
+.container {
+  padding: 40px 0 80px;
+
+  .profile-img {
+    object-fit: cover;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 1.75px solid #6d74ef;
+  }
+
+  ion-slide {
+    width: 100px;
+    height: 100px;
+    padding: 0;
+  }
+
+  ion-slide, .slide-content, .no-contacts {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .inactiveSlide {
+      width: 66px;
+      height: 66px;
+    }
+
+    .activeSlide {
+      animation: animate;
+      animation-duration: 300ms;
+      animation-fill-mode: forwards;
+    
+      @keyframes animate {
+        0% { width: 66px; height: 66px; }
+        100% { width: 100px; height: 100px; }
+      }
+    }
+
+    h1 {
+      margin: 0;
+      padding: 15px 30px 7.5px;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.21;
+      text-align: center;
+    }
+
+    p {
+      margin: 0;
+      padding: 0px 60px 15px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .btn-row {
+      padding: 15px 30px 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      div {
+        border-radius: 100%;
+        margin: 0 7.5px;
+        height: 46px;
+        width: 46px;
+
+        img {
+          height: 46px;
+          width: 46px;
+        }
+      }
+    }
+
+    .disabled-btn-row {
+      img {
+        margin: 0 7.5px;
+      }
+    }
+  }
+
+  ion-segment {
+    padding: 0px 45px;
+    --background: transparent;
+
+    ion-segment-button {
+      margin: 0 10px;
+      height: 35px;
+      --border-color: #161740 !important;
+      --border-radius: 0;
+      --border-style: none;
+      --indicator-color: none;
+      --indicator-box-shadow: none;
+
+      ion-label {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 0.45px;
+        text-transform: none;
+        color: #b2b7fa;
+      }
+    }
+
+    .active {
+      border-bottom: 2.7px solid #161740 !important;
+      border-radius: 4px;
+      background: transparent;
+
+      ion-label {
+        color: #161740;
+      }
+    }
+  }
+
+  ion-list {
+   padding-top: 30px;
+   margin: 0;
+
+    ion-item {
+      --padding-start: 0px;
+      --inner-padding-end: 0px;
+
+      ion-col {
+        padding: 0;
+        display: flex;
+        align-items: center;
+
+        img {
+          width: 50px;
+          height: 50px;
+        }
+
+        ion-label {
+          font-size: 18px;
+          font-weight: 600;
+          line-height: 1.2;
+        }
+      }  
+    }
+
+    .first-col {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .letter {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8888b0;
+      }
+    }
+  }
+
+  .ordered-list {
+    padding-top: 15px;
+  }
+
+  .onboard-msg {
+    h1 {
+      margin: 0;
+      padding: 21px 0px;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.21;
+      text-align: center;
+    }
+
+    p {
+      margin: 0;
+      padding: 0 60px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 23px;
+      letter-spacing: 0.75px;
+      text-align: center;
+    }
+  }
+
+  .activeItem {
+    --background: #f0f1ff;
+  }
+
+  .itemOption {
+    background: transparent;
+  
+    img {
+      height: 20px;
+      width: 20px
+    }
+  }
+  
+  .activeItemOption {
+    background: #f0f1ff;
+  }    
+}
+
+
+/******************** Ion-item option ********************/
+
+.darkContainer {
+  ion-segment {
+    .active {
+      border-bottom: 2.7px solid #ffffff !important;
+
+      ion-label {
+        color: #ffffff;
+      }
+    }
+  }
+
+  ion-list {
+    background: #191a2f;
+  }
+
+  .activeItem {
+    --background: #262641;
+  }
+
+  .activeItemOption {
+    background: #262641;
+  }
+}
+
+@media screen and (max-height: 670px) {
+  .container {
+    .onboard-msg {
+      h1 {
+        padding: 21px 0px 10.5px;
+        font-size: 26px;
+      }
+
+      p {
+        font-size: 13px;
+      }
+    }
+  }
+}

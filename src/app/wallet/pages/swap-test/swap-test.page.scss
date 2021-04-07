@@ -1,0 +1,23 @@
+@import 'src/app/wallet/root.scss';
+
+#logo {
+    text-align: center;
+    img {
+        margin-top: px2rem(50px);
+        width: px2rem(130px);
+        height: px2rem(130px);
+    }
+    div {
+        margin-top: px2rem(25px);
+        color: #999999;
+        font-size: 14px;
+    }
+}
+
+ion-list {
+    margin-top: px2rem(75px);
+}
+
+p {
+    color: #666;
+}

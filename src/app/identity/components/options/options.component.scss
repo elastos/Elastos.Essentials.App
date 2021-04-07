@@ -1,0 +1,67 @@
+@import "src/app/identity/root.scss";
+
+ion-grid {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  ion-row {
+    padding: 10px 20px 10px 12px;
+    display: flex;
+    justify-content: space-between;
+
+    ion-label {
+      margin-top: 3px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #161740;
+    }
+
+    img, ion-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .edit-img {
+      width: 16px;
+      height: 16px;
+      position: relative;
+      top: 4px;
+    }
+
+    #publish {
+      color: #ffc600;
+    }
+
+    #delete {
+      color: #f55555;
+    }
+
+    #visibility {
+      color: #8d91ff;
+    }
+  }
+}
+
+.darkContainer {
+  ion-row {
+    ion-label {
+      color: #ffffff;
+    }
+
+    #publish {
+      color: #ffc600;
+    }
+
+    #delete {
+      color: #f55555;
+    }
+
+    #visibility {
+      color: #8d91ff;
+    }
+  }
+}
+
+

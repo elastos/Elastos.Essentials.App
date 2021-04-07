@@ -1,0 +1,225 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="container" [class.blur]="popupService.deletePopup" [class.darkContainer]="theme.darkMode">
+    <div class="header">
+
+      <!-- Empty Contacts -->
+      <div *ngIf="friendsService.contacts.length === 0" class="no-contacts">
+        <img class="profile-img" src="/assets/contacts/images/default-contact.svg">
+        <h1>{{ 'no-contacts' | translate }}</h1>
+        <p>{{ 'add-a-contact' | translate }}</p>
+        <ion-row class="btn-row disabled-btn-row">
+          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/disable/scan.svg' : '/assets/contacts/buttons/darkmode/disable/scan.svg'">
+          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/disable/edit.svg' : '/assets/contacts/buttons/darkmode/disable/edit.svg'">
+          <img [src]="!theme.darkMode ? '/assets/contacts/buttons/disable/options.svg' : '/assets/contacts/buttons/darkmode/disable/options.svg'">
+        </ion-row>
+      </div>
+
+      <!-- Contacts Img Slide -->
+      <ion-slides *ngIf="friendsService.contacts.length" #slider [options]="slideOpts" (ionSlideDidChange)="getActiveSlide()">
+        <ion-slide *ngFor="let contact of friendsService.contacts">
+          <img
+            [src]="uxService.getAvatar(contact)"
+            class="inactiveSlide profile-img"
+            [class.activeSlide]="contact === friendsService.activeSlide || firstContact()"
+            (click)="goToContact(contact)"
+          >
+        </ion-slide>
+      </ion-slides>
+
+      <!-- Contact management for active slides when detected -->
+      <div class="slide-content" *ngIf="friendsService.contacts.length && friendsService.activeSlide">
+        <h1>{{ uxService.getDisplayableName(friendsService.activeSlide) }}</h1>
+        <p>{{ uxService.getDisplayableBio(friendsService.activeSlide) }}</p>
+        <ion-row class="btn-row">
+          <div class="ion-activatable ripple">
+            <img
+              [src]="!theme.darkMode ? '/assets/contacts/buttons/scan.svg' : '/assets/contacts/buttons/darkmode/scan.svg'"
+              (click)="popupService.showQRCode(friendsService.activeSlide)"
+            >
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+          <div class="ion-activatable ripple">
+            <img
+              [src]="!theme.darkMode ? '/assets/contacts/buttons/edit.svg' : '/assets/contacts/buttons/darkmode/edit.svg'"
+              (click)="friendsService.showCustomization(friendsService.activeSlide, false)"
+            >
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+          <div class="ion-activatable ripple">
+            <img
+              [src]="!theme.darkMode ? '/assets/contacts/buttons/options.svg' : '/assets/contacts/buttons/darkmode/options.svg'"
+              (click)="popupService.showOptions($event, friendsService.activeSlide)"
+            >
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+        </ion-row>
+      </div>
+      <!--
+          Contact management for first contact -
+          Usually we will use active slides, but for first contact,
+          page fails to detect active slide since it is loaded
+          before service can resolve the first contact
+      -->
+      <div class="slide-content" *ngIf="!friendsService.activeSlide && firstContact()">
+        <h1>{{ uxService.getDisplayableName(friendsService.contacts[0]) }}</h1>
+        <p>{{ uxService.getDisplayableBio(friendsService.contacts[0]) }}</p>
+        <ion-row class="btn-row">
+          <div class="ion-activatable ripple">
+            <img
+              [src]="!theme.darkMode ? '/assets/contacts/buttons/scan.svg' : '/assets/contacts/buttons/darkmode/scan.svg'"
+              (click)="popupService.showQRCode(friendsService.contacts[0])"
+            >
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+          <div class="ion-activatable ripple">
+            <img
+              [src]="!theme.darkMode ? '/assets/contacts/buttons/edit.svg' : '/assets/contacts/buttons/darkmode/edit.svg'"
+              (click)="friendsService.showCustomization(friendsService.contacts[0])"
+            >
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+          <div class="ion-activatable ripple">
+            <img
+              [src]="!theme.darkMode ? '/assets/contacts/buttons/options.svg' : '/assets/contacts/buttons/darkmode/options.svg'"
+              (click)="popupService.showOptions($event, friendsService.contacts[0])"
+            >
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+        </ion-row>
+      </div>
+    </div>
+
+    <!-- Contacts List Tabs -->
+    <ion-segment mode="ios">
+      <ion-segment-button [class.active]="!favActive" (click)="changeList(false)">
+        <ion-label>{{ 'all-contacts' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [class.active]="favActive" (click)="changeList(true)">
+        <ion-label>{{ 'favorites' | translate }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- All Contacts -->
+    <ion-list *ngIf="friendsService.contacts.length > 0 && !favActive" class="ordered-list">
+      <ion-grid class="ion-no-padding" *ngFor="let letter of friendsService.letters">
+        <ion-grid>
+          <ion-row>
+            <ion-col offset="0.5" size="2" class="first-col">
+              <ion-label class="letter ion-text-center">{{ letter }}</ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-item-sliding *ngFor="let contact of friendsService.contacts">
+          <!-- HAS CONTACT NAME -->
+          <ion-item
+            [class.activeItem]="
+              contact === friendsService.activeSlide ||
+              !friendsService.activeSlide && firstContact() ?
+              'secondary' : null"
+            detail="false"
+            lines="none"
+            *ngIf="uxService.contactHasName(contact, letter)"
+            (click)="goToContact(contact)"
+          >
+            <ion-grid>
+              <ion-row>
+                <ion-col offset="0.5" size="2" class="first-col">
+                  <img class="profile-img" [src]="uxService.getAvatar(contact)">
+                </ion-col>
+                <ion-col offset="0.125" size="9.125">
+                  <ion-label mode='md'>
+                    {{ uxService.getDisplayableName(contact) }}
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+          <!-- HAS NO CONTACT NAME -->
+          <ion-item
+            [class.activeItem]="contact === friendsService.activeSlide"
+            detail="false"
+            lines="none"
+            (click)="goToContact(contact)"
+            *ngIf="
+              !contact.credentials.name && !contact.customName && letter === 'Anonymous' ||
+              !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && letter === 'Anonymous'
+            "
+          >
+          <ion-grid>
+            <ion-row>
+              <ion-col offset="0.5" size="2" class="first-col">
+                <img class="profile-img" [src]="uxService.getAvatar(contact)">
+              </ion-col>
+              <ion-col offset="0.125" size="9.125">
+                <ion-label>
+                  {{ 'anonymous-contact' | translate }}
+                </ion-label>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="friendsService.toggleFav(contact)">
+            <img *ngIf="contact.isFav" src="/assets/contacts/images/favorite.svg">
+            <img *ngIf="!contact.isFav" [src]="!theme.darkMode ? '/assets/contacts/images/unfavorite.svg' : '/assets/contacts/images/darkmode/unfavorite.svg'">
+          </ion-item-option>
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="didService.shareIdentity(contact)">
+            <img [src]="!theme.darkMode ? '/assets/contacts/images/share.svg' : '/assets/contacts/images/darkmode/share.svg'">
+          </ion-item-option>
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="popupService.showDeletePrompt(contact)">
+            <img src="/assets/contacts/images/delete.svg">
+          </ion-item-option>
+        </ion-item-options>
+        </ion-item-sliding>
+      </ion-grid>
+    </ion-list>
+
+    <!-- Favorite Contacts -->
+    <ion-list *ngIf="friendsService.contacts.length > 0 && favActive">
+      <ion-item-sliding *ngFor="let contact of getFavorites()">
+        <ion-item
+          [class.activeItem]="
+            contact === friendsService.activeSlide ||
+            !friendsService.activeSlide && firstContact() ?
+            'secondary' : null"
+          detail="false"
+          lines="none"
+          (click)="goToContact(contact)"
+        >
+          <ion-grid>
+            <ion-row>
+              <ion-col offset="0.5" size="2" class="first-col">
+                <img class="profile-img" [src]="uxService.getAvatar(contact)">
+              </ion-col>
+              <ion-col offset="0.125" size="9.125">
+                <ion-label mode='md'>
+                  {{ uxService.getDisplayableName(contact) }}
+                </ion-label>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="friendsService.toggleFav(contact)">
+            <img src="/assets/contacts/images/favorite.svg">
+          </ion-item-option>
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="didService.shareIdentity(contact)">
+            <img [src]="!theme.darkMode ? '/assets/contacts/images/share.svg' : '/assets/contacts/images/darkmode/share.svg'">
+          </ion-item-option>
+          <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="popupService.showDeletePrompt(contact)">
+            <img src="/assets/contacts/images/delete.svg">
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <!-- Empty Contacts -->
+    <div *ngIf="firstContact()" class="onboard-msg">
+      <h1>{{ 'no-contacts' | translate }}</h1>
+      <p>{{ 'starter-contact' | translate }}</p>
+    </div>
+
+  </ion-grid>
+
+</ion-content>

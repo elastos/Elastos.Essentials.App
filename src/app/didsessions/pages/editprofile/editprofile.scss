@@ -1,0 +1,75 @@
+@import 'src/app/didsessions/root.scss';
+
+.container {
+  padding: 20px;
+
+  ion-row {
+    margin: 0 0 10px 2.5px;
+
+    ion-label {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  ion-input {
+    --padding-start: 12px;
+    --padding-top: 13px;
+    --padding-bottom: 13px;
+    height: 47.5px;
+    width: 100%;
+    background: #f0f1ff;
+    color: black;
+    // box-shadow: 0 3px 15px 0 #ededf0;
+    border-radius: 8px;
+    font-size: 13px;
+    text-align: left;
+  }
+}
+
+/* .container {
+  padding: 25px;
+
+  ion-row {
+    padding: 8px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    ion-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    ion-input {
+      --padding-start: 12px;
+      --padding-top: 13px;
+      --padding-bottom: 13px;
+      margin-bottom: 16px;
+      width: 100%;
+      background: #f0f1ff;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: left;
+    }
+  }
+
+  ion-button {
+    ion-label {
+      text-transform: none;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.43px;
+    }
+  }
+}
+
+.darkContainer {
+  ion-row {
+    ion-input {
+      background: #464660;
+    }
+  }
+}
+ */

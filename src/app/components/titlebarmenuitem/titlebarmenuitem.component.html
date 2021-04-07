@@ -1,0 +1,9 @@
+<ion-grid>
+    <ion-row *ngFor="let item of menuItems" class="ripple ion-activatable" (click)="onTitlebarMenuItemClicked(item)">
+        <ion-col size="12">
+            <ion-label>{{ item.title }}</ion-label>
+            <img [src]="getIconPath(item.iconPath)">
+        </ion-col>
+        <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+</ion-grid>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="prefix__Component_399_6" width="46" height="46" data-name="Component 399 – 6" viewBox="0 0 46 46">
+    <circle id="prefix__Ellipse_333" cx="23" cy="23" r="23" data-name="Ellipse 333" style="fill:#f0f1ff"/>
+    <g id="prefix__new-message" transform="translate(16.142 16.142)">
+        <path id="prefix__new-message-2" d="M16.049 2.3a1.808 1.808 0 0 0-1.749-.655L7.029 8.907l-1.222 3.634 3.632-1.223L16.7 4.05a1.811 1.811 0 0 0-.651-1.75zm-6.368 8.226l-.4.4-1.239.421a1.858 1.858 0 0 0-.419-.623A1.88 1.88 0 0 0 7 10.3l.421-1.239.4-.4a1.7 1.7 0 0 1 1.293.566 1.7 1.7 0 0 1 .567 1.294zm4.539 4.539H3.283V4.128h4.206l1.683-1.683H3.283A1.688 1.688 0 0 0 1.6 4.128v10.937a1.688 1.688 0 0 0 1.683 1.683H14.22a1.688 1.688 0 0 0 1.68-1.683V9.176l-1.68 1.682v4.207z" data-name="new-message" transform="translate(-1.6 -1.607)" style="fill:#dddddd"/>
+    </g>
+</svg>

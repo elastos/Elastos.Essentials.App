@@ -1,0 +1,68 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="ion-text-center container">
+
+        <!-- Name -->
+        <p>{{ 'enter-wallet-name' | translate }}</p>
+        <ion-row>
+            <ion-input
+                type="text"
+                name="name" ngDefaultControl
+                [placeholder]="'enter-name' | translate"
+                [(ngModel)]="wallet.name">
+            </ion-input>
+        </ion-row>
+
+        <!-- Toggles -->
+        <ion-row class="toggle-row">
+            <ion-col class="left-col" size="10">
+                <h1 *ngIf="wallet.singleAddress">{{ 'single-address' | translate }}</h1>
+                <h1 *ngIf="!wallet.singleAddress">{{ 'multiple-address' | translate }}</h1>
+            </ion-col>
+            <ion-col class="right-col" size="2">
+                <ion-toggle  mode="ios" color="tertiary" [(ngModel)]="wallet.singleAddress" (ionChange)="updateSingleAddress($event)"></ion-toggle>
+            </ion-col>
+            <ion-col class="left-col" size="10">
+                <h1 *ngIf="useMenmonicPassphrase">{{ 'use-passphrase' | translate }}</h1>
+                <h1 *ngIf="!useMenmonicPassphrase">{{ 'not-use-passphrase' | translate }}</h1>
+            </ion-col>
+            <ion-col class="right-col" size="2">
+                <ion-toggle mode="ios" color="tertiary" [(ngModel)]="useMenmonicPassphrase"></ion-toggle>
+            </ion-col>
+        </ion-row>
+
+        <!-- Passphrase Inputs -->
+        <ion-row class="password-row" *ngIf="useMenmonicPassphrase">
+            <ion-col size="10">
+                <ion-input
+                    type="text"
+                    name="mnemonicPassword" ngDefaultControl
+                    placeholder="{{ 'mnemonic-input-passphrase' | translate }}"
+                    [(ngModel)]="wallet.mnemonicPassword"
+                    (keypress)="goToNextInput($event.keyCode, input)">
+                </ion-input>
+            </ion-col>
+            <ion-col size="2" (click)="showHelp($event)">
+                <ion-icon mode="ios" name="help"></ion-icon>
+            </ion-col>
+        </ion-row>
+        <ion-row *ngIf="walletCreationService.type === 1 && useMenmonicPassphrase">
+            <ion-input
+                #input
+                type="text"
+                name="mnemonicPasswordRepeat" ngDefaultControl
+                placeholder="{{ 'mnemonic-reinput-passphrase' | translate }}"
+                [(ngModel)]="repeatMnemonicPassword">
+            </ion-input>
+        </ion-row>
+
+        <!-- Button -->
+        <ion-row class="btn-row">
+            <ion-button color="secondary" [disabled]='!wallet.name' (click)="onCreate()">
+                <ion-label>{{ 'continue' | translate }}</ion-label>
+            </ion-button>
+        </ion-row>
+
+    </ion-grid>
+</ion-content>
+

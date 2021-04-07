@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18.474" height="18.474" viewBox="0 0 18.474 18.474">
+    <defs>
+        <style>
+            .prefix__cls-2{fill:none;stroke:#565bdb;stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:round}
+        </style>
+    </defs>
+    <g id="prefix__Component_497_1" data-name="Component 497 – 1" transform="translate(.75 .75)">
+        <path id="prefix__Path_10" d="M8.487 0A8.487 8.487 0 1 1 0 8.487 8.487 8.487 0 0 1 8.487 0z" data-name="Path 10" style="fill:none;stroke:#565bdb;stroke-width:1.5px"/>
+        <path id="prefix__Check" d="M.223 4.754L0 5.02 3.985 0" class="prefix__cls-2" transform="rotate(-7 54.964 -59.09)"/>
+        <path id="prefix__Check-2" d="M0 0l2.354 1.56" class="prefix__cls-2" data-name="Check" transform="rotate(-7 84.583 -41.598)"/>
+    </g>
+</svg>

@@ -1,0 +1,53 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <div class="container">
+
+    <ion-row class="ion-text-center">
+      <h1>{{ 'more-than-one-import-did-pick-one' | translate }} </h1>
+    </ion-row>
+
+    <ion-row class="item" *ngFor="let did of importedDids" (click)="selectDID(did)">
+      <ion-col size="10" class="id-col">
+        <h2>{{ did.getNameCredentialValue() }}</h2>
+        <p>{{ did.getDIDString() }}</p>
+      </ion-col>
+      <ion-col size="2" class="checkbox-col">
+        <ion-img *ngIf="selectedDid !== did" src="assets/didsessions/default/empty-checkbox.svg"></ion-img>
+        <ion-img *ngIf="selectedDid === did" src="assets/didsessions/default/filled-checkbox.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="btn-row ion-text-center" *ngIf="selectedDid">
+      <ion-button color="success" (click)="continue()">
+        <ion-label>{{ 'continue' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+
+  </div>
+</ion-content>
+
+
+<!-- TEST PAGE WITH FAKE DATA -->
+<!-- <ion-content>
+  <div class="container">
+    <ion-row class="ion-text-center">
+      <h1>{{ 'more-than-one-import-did-pick-one' | translate }} </h1>
+    </ion-row>
+    <ion-row class="item">
+      <ion-col size="10" class="id-col">
+        <h2>Chad</h2>
+        <p>elastos:12345678910</p>
+      </ion-col>
+      <ion-col size="2" class="checkbox-col">
+        <ion-img src="assets/default/empty-checkbox.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+      <ion-row class="btn-row ion-text-center">
+      <ion-button color="success" (click)="continue()">
+        <ion-label>{{ 'continue' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </div>
+</ion-content>
+ -->

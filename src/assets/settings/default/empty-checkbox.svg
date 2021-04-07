@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+    <defs>
+        <filter id="prefix__btn" width="48" height="48" x="0" y="0" filterUnits="userSpaceOnUse">
+            <feOffset dy="5"/>
+            <feGaussianBlur result="blur" stdDeviation="5"/>
+            <feFlood flood-opacity=".149"/>
+            <feComposite in2="blur" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+    </defs>
+    <g id="prefix__Radio_Button_Off_Icon" data-name="Radio Button Off Icon" transform="translate(11 6)">
+        <rect id="prefix__base" width="26.123" height="26" rx="13" style="fill:#ddd"/>
+        <g transform="translate(-11 -6)">
+            <circle id="prefix__btn-2" cx="9" cy="9" r="9" data-name="btn" transform="translate(15 10)" style="fill:#f8f8ff"/>
+        </g>
+    </g>
+</svg>

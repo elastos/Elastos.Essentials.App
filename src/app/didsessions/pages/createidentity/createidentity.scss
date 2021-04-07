@@ -1,0 +1,136 @@
+@import 'src/app/didsessions/root.scss';
+
+ion-slides {
+  height: 80%;
+}
+
+ion-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 45px;
+  height: 100%;
+  position: relative;
+  top: 5%;
+
+  ion-label {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    margin-top: 45px;
+  }
+}
+
+#slide1 {
+  img {
+    width: 120px;
+    height: 120px;
+
+    animation: imgAnimate;
+    animation-duration: 800ms;
+    animation-fill-mode: forwards;
+
+    @keyframes imgAnimate {
+      0% { width: 0px; height: 0px; }
+      100% { width: 200px; height: 200px; }
+    }
+  }
+}
+
+#slide2 {
+  img {
+    position: absolute;
+    bottom: 50%;
+    animation: imgAnimate2;
+    animation-duration: 1600ms;
+    animation-iteration-count:infinite;
+    animation-fill-mode: forwards;
+
+    @keyframes imgAnimate2 {
+      0% { width: 115px; height: 115px; }
+      25% { width: 120px; height: 120px; }
+      50% { width: 115px; height: 115px; }
+      75% { width: 120px; height: 120px; }
+      100% { width: 115px; height: 115px; }
+    }
+  }
+
+  ion-label {
+    position: relative;
+    top: 50px;
+  }
+}
+
+/* ion-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 75px 25px;
+
+  img {
+    width: 200px;
+    height: 225px;
+    padding-bottom: 32px;
+  }
+
+  h1, p, .btn-row {
+    margin: 0;
+    padding: 16px 8px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+
+  p {
+    font-size: 16px;
+    font-weight: 500;
+    padding-bottom: 64px;
+  }
+
+  .btn-row {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    ion-button {
+      ion-img {
+        height: 20px;
+        width: 20px;
+        margin-right: 16px;
+      }
+    }
+
+    .import-btn {
+      border-radius: 8px;
+      border: 1.5px solid #161740;
+
+      ion-label {
+        color: #161740;
+      }
+    }
+  }
+}
+
+@media screen and (max-height: 670px) {
+  ion-slide {
+    padding: 37.5px 25px;
+
+    img {
+      padding-bottom: 16px;
+    }
+
+    h1, p, .btn-row {
+      padding: 8px;
+    }
+
+    p {
+      padding-bottom: 32px;
+    }
+  }
+}
+ */

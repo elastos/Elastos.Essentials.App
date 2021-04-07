@@ -1,0 +1,23 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+
+  <ion-row class="ion-activatable ripple" (click)="didService.shareIdentity(contact)">
+    <ion-label>{{ 'share' | translate }}</ion-label>
+    <ion-img [src]="!theme.darkMode ? '/assets/contacts/images/share.svg' : '/assets/contacts/images/darkmode/share.svg'"></ion-img>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-row>
+
+  <ion-row class="ion-activatable ripple" (click)="friendsService.toggleFav(contact)">
+    <ion-label [class.favorite]="contact.isFav">{{ 'favorite' | translate }}</ion-label>
+    <ion-img *ngIf="contact.isFav" src="/assets/contacts/images/favorite.svg"></ion-img>
+    <ion-img *ngIf="!contact.isFav" [src]="!theme.darkMode ? '/assets/contacts/images/unfavorite.svg' : '/assets/contacts/images/darkmode/unfavorite.svg'"></ion-img>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-row>
+
+  <ion-row class="ion-activatable ripple" (click)="deleteContact()">
+    <ion-label class="delete">{{ 'delete' | translate }}</ion-label>
+    <ion-img src="/assets/contacts/images/delete.svg"></ion-img>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-row>
+
+</ion-grid>
+

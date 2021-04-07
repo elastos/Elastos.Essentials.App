@@ -1,0 +1,69 @@
+@import '../../root.scss';
+
+.container {
+  background: hsl(225, 22%, 96%);
+  min-height: 100%;
+  padding-top: 15%;
+
+  ion-list {
+    padding: 0;
+    margin: 0;
+    min-height: 100%;
+    border-top: solid 1px rgb(216, 216, 216);
+    background: hsl(225, 22%, 96%);
+
+    ion-item {
+      --inner-padding-end: 0px;
+      --padding-start: 0px;
+      margin: 0;
+      padding: 0;
+
+      ion-row {
+        padding: 5px 0;
+
+        .img-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            max-width: 45px;
+            max-height: 45px;
+          }
+        }
+
+        .stat-container {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+
+          ion-label {
+            h4 {
+              font-size: 13px;
+              font-weight: 600;
+              color: #666666;
+            }
+          }
+        }
+
+        .number-container {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #666666;
+            text-align: right;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.loading-container {
+  padding-top: 0;
+}

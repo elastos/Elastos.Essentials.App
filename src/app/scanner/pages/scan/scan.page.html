@@ -1,0 +1,23 @@
+<ion-content no-scroll [ngClass]="{'transparentBody':isCameraShown}">
+    <app-titlebar></app-titlebar>
+            
+    <!-- Camera ON -->
+    <div *ngIf="isCameraShown; else showNothing" style="text-align: center">
+        <div class='qrscanner-area'> </div>
+        <div class='through-line'></div>
+
+        <ion-fab vertical="bottom" horizontal="end">
+            <ion-fab-button color="secondary" (click)="toggleLight()">
+                <ion-icon name="flash"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+
+        <!-- DEBUG <div style="width:100%;padding:10px;background:green; color:white" *ngIf="contentWasScanned">
+            {{scannedText}}
+        </div>-->
+    </div>
+    <!-- Camera OFF -->
+    <ng-template #showNothing>
+      <div style="height: 100%;"></div>
+    </ng-template>
+</ion-content>

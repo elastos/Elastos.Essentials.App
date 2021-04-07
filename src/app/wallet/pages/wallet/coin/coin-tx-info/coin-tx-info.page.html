@@ -1,0 +1,43 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid [class.dark-container]="theme.darkMode">
+
+        <!-- TRANSACTION HEADER -->
+        <ion-card
+            [class.received]="type === 1"
+            [class.sent]="type === 2"
+            [class.transferred]="type === 3"
+        >
+            <div class="icon-container">
+                <img [src]="payStatusIcon">
+            </div>
+            <ion-card-title>{{ transactionInfo.name | translate }}</ion-card-title>
+            <ion-card-subtitle>{{ symbol }}{{ amount }}</ion-card-subtitle>
+            <p
+                [class.complete]="status === 'Confirmed'"
+                [class.pending]="status === 'Pending'"
+                [class.incomplete]="status === 'Incomplete'"
+            > {{ statusName }}
+            </p>
+        </ion-card>
+
+        <!-- TRANSACTION DETAILS -->
+        <div *ngFor="let item of txDetails">
+            <ion-row *ngIf="item.value" class="item-row">
+                <ion-col size="11" class="title-col">
+                    <h1>{{ item.title | translate }}</h1> &nbsp;&nbsp;
+                    <ion-icon *ngIf="worthCopying(item)" mode="ios" name="copy" (click)="copy(item.value)"></ion-icon>
+                </ion-col>
+                <ion-col size="1" class="arrow-col" (click)="item.show = ! item.show">
+                    <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'" [class.rotate]="item.show"/>
+                </ion-col>
+                <div *ngIf="item.show" class="details-container" (click)="item.show = ! item.show">
+                    <div class="details-row">
+                        <h2>{{ item.value }}</h2>
+                    </div>
+                </div>
+            </ion-row>
+        </div>
+
+    </ion-grid>
+</ion-content>

@@ -1,0 +1,41 @@
+@import "src/app/identity/root.scss";
+
+.container {
+  // min-height: 348px;
+  background: #ffffff;
+  border: 1.2px solid #565bdb;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 25px 5px;
+  position: relative;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  p {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    padding: 0 30px;
+    margin-top: 10px;
+  }
+
+  .btn-container {
+    position: absolute;
+    bottom: 25px;
+    z-index: 100;
+    width: 95%;
+  }
+}
+
+.darkContainer {
+  background: #2b2c49;
+}
+

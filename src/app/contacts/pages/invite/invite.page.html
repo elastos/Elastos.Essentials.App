@@ -1,0 +1,160 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid *ngIf="!isFilter" class="container" [class.darkContainer]="theme.darkMode">
+    <ion-row class="btn-container">
+      <ion-button color="success" (click)="inviteClicked()">
+        <ion-label>{{ buttonLabel }}</ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-list>
+      <div class="ion-no-padding" *ngFor="let letter of letters">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="2" class="first-col" [class.no-name]="letter === 'Anonymous'">
+              <ion-label class="letter ion-text-center">{{ letter }}</ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div *ngFor="let contact of getContacts()">
+          <ion-item
+            *ngIf="uxService.contactHasName(contact, letter)"
+            lines="none" detail="false">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="2" class="first-col">
+                  <img [src]="uxService.getAvatar(contact)" class="profile-img">
+                </ion-col>
+                <ion-col offset="0.25" size="8.5">
+                  <ion-label mode='md'>
+                    {{ uxService.getDisplayableName(contact) }}
+                  </ion-label>
+                </ion-col>
+                <ion-col size="1.25">
+                  <ion-checkbox
+                    mode="ios"
+                    color="success"
+                    value="contact"
+                    [(ngModel)]="contact.isPicked"
+                    [disabled]="isSingleInvite && singlePicked(false) && !contact.isPicked"
+                  >
+                  </ion-checkbox>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+          <ion-item
+            *ngIf="
+              !contact.credentials.name && !contact.customName && letter === 'Anonymous' ||
+              !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && letter === 'Anonymous'
+            "
+            lines="none"
+            detail="false"
+          >
+            <ion-grid>
+              <ion-row>
+                <ion-col size="2" class="first-col">
+                  <img [src]="uxService.getAvatar(contact)" class="profile-img">
+                </ion-col>
+                <ion-col offset="0.25" size="8.5">
+                  <ion-label>
+                    {{ 'anonymous-contact' | translate }}
+                  </ion-label>
+                </ion-col>
+                <ion-col size="1.25">
+                  <ion-checkbox
+                    mode="ios"
+                    color="success"
+                    value="contact"
+                    [(ngModel)]="contact.isPicked"
+                    [disabled]="isSingleInvite && singlePicked(false) && !contact.isPicked"
+                  >
+                  </ion-checkbox>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+        </div>
+      </div>
+    </ion-list>
+  </ion-grid>
+
+  <ion-grid *ngIf="isFilter" class="container" [class.darkContainer]="theme.darkMode">
+    <ion-row class="btn-container">
+      <ion-button color="success" (click)="inviteClicked()">
+        <ion-label>{{ buttonLabel }}</ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-list>
+      <div class="ion-no-padding" *ngFor="let letter of letters">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="2" class="first-col" [class.no-name]="letter === 'Anonymous'">
+              <ion-label class="letter ion-text-center">{{ letter }}</ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div *ngFor="let contact of friendsService.filteredContacts">
+          <ion-item
+            *ngIf="uxService.contactHasName(contact, letter)"
+            lines="none"
+            detail="false"
+          >
+            <ion-grid>
+              <ion-row>
+                <ion-col size="2" class="first-col">
+                  <img [src]="uxService.getAvatar(contact)" class="profile-img">
+                </ion-col>
+                <ion-col offset="0.25" size="8.5">
+                  <ion-label mode='md'>
+                    {{ uxService.getDisplayableName(contact) }}
+                  </ion-label>
+                </ion-col>
+                <ion-col size="1.25">
+                  <ion-checkbox
+                    mode="ios"
+                    color="success"
+                    value="contact"
+                    [(ngModel)]="contact.isPicked"
+                    [disabled]="isSingleInvite && singlePicked(true) && !contact.isPicked"
+                  >
+                  </ion-checkbox>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+          <ion-item
+            *ngIf="
+              !contact.credentials.name && !contact.customName && letter === 'Anonymous' ||
+              !contact.credentials.name && contact.customName && contact.customName === 'Anonymous Contact' && letter === 'Anonymous'
+            "
+            lines="none"
+            detail="false"
+          >
+            <ion-grid>
+              <ion-row>
+                <ion-col size="2" class="first-col">
+                  <img [src]="uxService.getAvatar(contact)" class="profile-img">
+                </ion-col>
+                <ion-col offset="0.25" size="8.5">
+                  <ion-label>
+                    {{ 'anonymous-contact' | translate }}
+                  </ion-label>
+                </ion-col>
+                <ion-col size="1.25">
+                  <ion-checkbox
+                    mode="ios"
+                    color="success"
+                    value="contact"
+                    [(ngModel)]="contact.isPicked"
+                    [disabled]="isSingleInvite && singlePicked(true) && !contact.isPicked"
+                  >
+                  </ion-checkbox>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+        </div>
+      </div>
+    </ion-list>
+  </ion-grid>
+</ion-content>

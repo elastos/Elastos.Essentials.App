@@ -1,0 +1,17 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid [class.dark-container]="theme.darkMode">
+    <ion-row class="main-title-row">
+      <ion-col size="12">
+        <p>{{ 'available-options' | translate }}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="options-row top-row ion-activatable ripple" (click)="startSync()">
+      <ion-col size="12">
+        <ion-icon name="refresh"></ion-icon>
+        <ion-label>{{ 'sync-did-profile' | translate }}</ion-label>
+      </ion-col>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+  </ion-grid>
+</ion-content>
