@@ -5,34 +5,6 @@
   --ion-text-color: #000000;
 }
 
-/********************** WARNING POPUP **********************/
-.warning-component {
-  --min-height: 302px;
-  --ion-background-color: #ffffff;
-
-  animation: animate;
-  animation-duration: 300ms;
-  animation-fill-mode: forwards;
-
-  @keyframes animate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
-  }
-
-  ion-backdrop {
-    background: transparent !important;
-  }
-  .popover-wrapper{
-    .popover-content {
-      position: relative !important;
-      margin: 0 auto !important;
-      left: auto !important;
-      top: auto !important;
-      width:85vw  !important;
-    }
-  }
-}
-
 /********************** OPTIONS POPUP **********************/
 .options-component {
   --ion-background-color: #ffffff;
@@ -170,6 +142,34 @@
     }
 }
 
+.didsessions-warning-component {
+  --min-height: 302px;
+  --ion-background-color: #ffffff;
+
+  animation: didsessionsWarningAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes didsessionsWarningAnimate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+    }
+  }
+}
+
 /********************** IDENTITY **********************/
 .identity-showqrcode-component {
   --height: 66%;
@@ -194,11 +194,11 @@
 
 .wallet-tx-component {
   --background: transparent;
-  animation: animate;
+  animation: walletTxAnimate;
   animation-duration: 300ms;
   animation-fill-mode: forwards;
 
-  @keyframes animate {
+  @keyframes walletTxAnimate {
     0% { bottom: -1000px }
     100% { bottom: 0px }
   }
@@ -250,6 +250,33 @@
       width: 100%;
       border-top-left-radius: 50px;
       border-top-right-radius: 50px;
+  }
+}
+
+.contacts-warning-component {
+  --min-height: 302px;
+
+  animation: contactsWarningAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes contactsWarningAnimate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+    }
   }
 }
 

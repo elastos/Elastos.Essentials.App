@@ -143,7 +143,7 @@ export class UXService {
     private async showDeletePrompt(identity) {
       this.popover = await this.popoverCtrl.create({
         mode: 'ios',
-        cssClass: 'warning-component',
+        cssClass: 'didsessions-warning-component',
         component: WarningComponent,
         componentProps: {
           identityEntry: identity
