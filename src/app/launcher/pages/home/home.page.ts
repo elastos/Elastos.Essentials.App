@@ -60,6 +60,7 @@ export class HomePage implements OnInit {
     };
     this.notificationsService.sendNotification(notification); */
 
+    this.titleBar.setTitle('elastos-essentials');
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {

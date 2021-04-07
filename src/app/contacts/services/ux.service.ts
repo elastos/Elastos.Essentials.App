@@ -17,7 +17,7 @@ export class UxService {
     } else if(contact.credentials.avatar && !contact.avatarLocal) {
       return 'data:'+contact.credentials.avatar.contentType+';base64,'+contact.credentials.avatar.data;
     } else {
-      return '/assets/images/default-contact.svg';
+      return 'assets/contacts/images/default-contact.svg';
     }
   }
 
