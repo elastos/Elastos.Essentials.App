@@ -16,13 +16,13 @@ ion-slides {
     .qr-container {
       background: white;
       border-radius: 17px;
-      padding: 25px 12.5px;
+      padding: 20px 10px;
       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16);
 
       h1 {
         margin-top: 0;
         margin-bottom: 10px;
-        font-size: 25px;
+        font-size: 22px;
         font-weight: 700;
         letter-spacing: -0.5px;
       }
@@ -99,6 +99,17 @@ ion-slides {
       font-weight: 500;
       letter-spacing: -0.5px;
       text-align: center;
+    }
+  }
+}
+
+@media screen and (min-height: 670px) {
+  ion-slides {
+    .first-slide {
+      .qr-container {
+        #qrcode {
+        }
+      }
     }
   }
 }

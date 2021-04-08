@@ -116,8 +116,8 @@ export class BackupDIDPage {
       const options = {
         // Basic
         text: this.mnemonic,
-        width: 250,
-        height: 250,
+        width: 200,
+        height: 200,
         colorDark : "#000000",
         colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.L,
