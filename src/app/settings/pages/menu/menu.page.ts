@@ -79,7 +79,6 @@ export class MenuPage implements OnInit {
   }
 
   toggleDeveloperMode() {
-    this.prefs.developerMode = !this.prefs.developerMode;
     this.prefsService.setPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode", this.prefs.developerMode);
     if (!this.prefs.developerMode) {
         this.developer.resetNet();
