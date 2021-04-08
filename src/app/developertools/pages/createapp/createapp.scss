@@ -1,9 +1,127 @@
 @import "src/app/developertools/root.scss";
 
 .container {
+  min-height: 100%;
+  background: #FAFAFA;
+  padding: 30px 30px 60px;
+
+  p, h1, ion-label {
+    color: #21313d;
+    margin: 0;
+  }
+
+  h1 {
+    font-size: 24px;
+    text-align: center;
+    font-weight: 900;
+    margin-bottom: 5px;
+  }
+
+  ion-card {
+    background: linear-gradient(to bottom, #181d20 0%,  #21313d 100%);
+    padding: 30px;
+    margin: 0;
+    border-radius: 15px;
+
+    ion-card-title {
+      color: white;
+    }
+
+    ion-card-subtitle {
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 2px;
+    }
+
+    h5 {
+      margin: 0;
+      font-size: 14px;
+      color: white;
+    }
+  }
+
+  ion-row {
+    ion-col {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+  }
+
+  ion-list {
+    margin-top: 10px;
+    background: transparent;
+
+    ion-row {
+      border-bottom: 0.5px solid #21313d;
+      padding: 10px 0;
+
+      ion-col {
+        padding-left: 0;
+        padding-right: 0;
+
+        p {
+          margin: 0;
+          font-size: 14px;
+          font-weight: 700;
+        }
+
+        ion-icon {
+          font-size: 16px;
+        }
+
+        ion-label {
+          font-size: 12px;
+          font-weight: 600;
+          word-wrap: break-word;
+          white-space: pre-wrap !important;
+        }
+
+        ion-input {
+          --background: #FAFAFA;
+          --color: #21313d;
+          --padding-top: 0;
+          --padding-bottom: 0;
+        }
+      }
+    }
+
+    .toggle-row {
+      margin: 15px 0;
+      border-bottom: none;
+
+      ion-col {
+        p {
+          padding: 0;
+          font-size: 14px;
+        }
+    
+        ion-toggle {
+          padding-left: 0;
+          zoom: 0.8;
+        }
+      }
+    }
+  }
+
+  ion-button {
+    margin-top: 30px;
+  }
+}
+
+/* .container {
   min-height: 120%;
   background: #FAFAFA;
   padding: 30px;
+
+  ion-button {
+    margin-top: 30px;
+  }
 
   h1 {
     margin: 0px 0px 15px;
@@ -88,3 +206,4 @@
   }
 }
 
+ */
