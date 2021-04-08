@@ -14,7 +14,7 @@
       </ion-col>
     </ion-row>
 
-    <div class="footer">
+    <div *ngIf="allWordsSelected" class="footer">
       <ion-button (click)="nextClicked()">
         {{ 'continue' | translate }}
       </ion-button>

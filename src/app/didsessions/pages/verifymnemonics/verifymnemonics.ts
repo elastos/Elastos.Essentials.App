@@ -99,7 +99,7 @@ export class VerifyMnemonicsPage {
         return;
       }
 
-      this.addButton();
+      this.toggleButton();
     }
 
     public addWord(index: number, item: MnemonicWord): void {
@@ -107,10 +107,10 @@ export class VerifyMnemonicsPage {
       this.selectedList[nextItem] = item.text;
       this.mnemonicList[index].selected = true;
 
-      this.addButton();
+      this.toggleButton();
     }
 
-    public addButton() {
+    public toggleButton() {
       let word = this.mnemonicList.find((mnemonic) => mnemonic.selected !== true);
       if(!word) {
         this.allWordsSelected = true;
@@ -157,7 +157,7 @@ export class VerifyMnemonicsPage {
     }
 
     allWordsMatch() {
-         return true; // for test
+        return true; // for test
 
         let selectComplete = this.selectedList.length === this.mnemonicList.length ? true : false;
         if (selectComplete) {

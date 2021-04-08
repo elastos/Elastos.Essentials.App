@@ -1,6 +1,7 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <div class="ion-text-center container" [class.blur]="loadingIdentity" [class.darkContainer]="theme.darkMode">
+
     <ion-row class="mnemonic-row" *ngFor="let i of [1,4,7,10]">
       <ion-col size="3.6" [class.selectedCol]="isWord(mnemonicWords[i - 1])">
         <div class="mnemonic-index">{{ i }}</div>
@@ -15,9 +16,9 @@
         <ion-label >{{ mnemonicWords[i + 1] }}</ion-label>
       </ion-col>
     </ion-row>
-    <p>
-      {{ 'import-prompt' | translate }}
-    </p>
+
+    <p>{{ 'import-prompt' | translate }}</p>
+
     <ion-row class="input-row">
       <ion-textarea
         *ngIf="!readonly"
@@ -34,11 +35,12 @@
       </ion-textarea>
     </ion-row>
 
-    <div *ngIf="inputMnemonicCompleted()" class="footer">
+    <ion-row *ngIf="inputMnemonicCompleted()" class="btn-row">
       <ion-button (click)="promptStorePassword()">
         {{ 'continue' | translate }}
       </ion-button>
-    </div>
+    </ion-row>
+
   </div>
 
 </ion-content>
