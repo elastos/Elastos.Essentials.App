@@ -3,7 +3,7 @@ export const fr = {
   /********** Prompts **********/
   "toast.provide-name": "Veuillez donner un nom à votre fournisseur de stockage",
   "toast.provide-name-update": "Provider name updated",
-  "toast.provide-name2": "Please add a name to your provider",
+  "toast.provide-name2": "Veuillez ajouter un nom pour le fournisseur de stockage",
   "toast.copied": "Copié dans le presse-papier!",
   "alert.delete-title": "Confirmer la suppression",
   "alert.delete-msg": "Confirmez-vous la suppression de cette configuration?",
