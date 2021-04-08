@@ -108,6 +108,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private syncSubscription: Subscription = null;
     private addressUpdateSubscription: Subscription = null;
 
+    // Input
+    public inputActive = false;
+
     constructor(
         public route: ActivatedRoute,
         public walletManager: WalletManager,

@@ -11,6 +11,7 @@ import { Events } from '../../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
     selector: 'app-mnemonic-write',
@@ -44,7 +45,8 @@ export class MnemonicWritePage implements OnInit {
         private walletCreationService: WalletCreationService,
         public zone: NgZone,
         private modalCtrl: ModalController,
-        private translate: TranslateService
+        private translate: TranslateService,
+        public keyboard: Keyboard
     ) {
         this.mnemonicStr = this.native.clone(this.walletCreationService.mnemonicStr);
     }

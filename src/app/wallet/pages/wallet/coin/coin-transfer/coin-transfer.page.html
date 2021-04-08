@@ -122,8 +122,10 @@
                     clearInput
                     placeholder="{{ 'transfer-receiver-address' | translate}}"
                     [(ngModel)]="toAddress"
-                    name="toAddress" ngDefaultControl
-                    (input)='onSendToAddressInput($event.target.value)'>
+                    name="toAddress"
+                    ngDefaultControl
+                    (input)='onSendToAddressInput($event.target.value)'
+                >
                 </ion-input>
                 <div class="scan-btn ripple ion-activatable">
                     <img (click)="goScan()" [src]="!theme.darkMode ? 'assets/wallet/icons/scan.svg' : 'assets/wallet/icons/darkmode/scan.svg'"/>
@@ -152,7 +154,8 @@
                 <ion-input
                     type="text"
                     clearInput
-                    name="memo" ngDefaultControl
+                    name="memo"
+                    ngDefaultControl
                     placeholder="{{ 'tx-info-memo' | translate }}"
                     [(ngModel)]="memo"
                 >
@@ -212,7 +215,7 @@
 <!------------------ RECHARGE AND SEND FOOTER ------------------>
 
 <ion-footer
-    *ngIf="!native.popup && transferType !== 3"
+    *ngIf="!native.popup && !keyboard.isVisible && transferType !== 3"
     class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
 >
     <ion-row *ngIf="!waitingForSyncCompletion" class="btn-container">
