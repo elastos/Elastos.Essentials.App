@@ -151,7 +151,7 @@ export class CredentialAccessRequestPage {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.titleBar.globalNav.navigateHome();
+      this.titleBar.globalNav.exitCurrentContext();
     });
 
     this.mandatoryItems = [];
