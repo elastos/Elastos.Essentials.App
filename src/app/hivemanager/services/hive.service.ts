@@ -74,6 +74,12 @@ export class HiveService {
     }
   }
 
+  stop() {
+    this.vaultLinkStatus = null;
+    this.activeVault = null;
+    // TODO stop hive
+  }
+
   /**
    * Check vault phase:
    * - Get address vault DID (did document)

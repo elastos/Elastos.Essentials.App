@@ -23,6 +23,8 @@ export class HiveManagerInitService {
         await this.hiveService.init();
 
         this.backgroundService.init();
+      } else {
+        this.hiveService.stop();
       }
     });
   }
