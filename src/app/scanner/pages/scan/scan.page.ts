@@ -243,7 +243,6 @@ export class ScanPage {
                 }
             }
             , (err)=>{
-                Logger.error("Scanner", err);
                 // 'No Image Selected': User canceled.
                 if (err === 'No Image Selected') {
                     this.hideLoading();
@@ -252,6 +251,7 @@ export class ScanPage {
                         this.startScanningProcess();
                     });
                 } else {
+                    Logger.error("Scanner", err);
                     this.alertNoScannedContent('sorry', 'gallery-err');
                 }
             }, {

@@ -1,11 +1,8 @@
-import { NgModule, ErrorHandler, Injectable } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
-import { ModalController, AngularDelegate, AlertController } from '@ionic/angular';
-import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
-import { RouteReuseStrategy } from '@angular/router';
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { ModalController, AngularDelegate } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { ScannerRoutingModule } from './routing';
 

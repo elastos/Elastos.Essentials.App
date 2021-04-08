@@ -2,7 +2,6 @@
 
 module.exports = function(ctx) {
   // console.log(JSON.stringify(ctx, null, 2));
-  console.log("Running modify_xcode_project.js");
 
   // make sure ios platform is part of platform add
   if (!ctx.opts.platforms.some((val) => val.startsWith("ios"))) {
