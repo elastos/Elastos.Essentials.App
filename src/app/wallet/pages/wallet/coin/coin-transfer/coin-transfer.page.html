@@ -158,6 +158,8 @@
                     ngDefaultControl
                     placeholder="{{ 'tx-info-memo' | translate }}"
                     [(ngModel)]="memo"
+                    (ionFocus)="showKeyboard()"
+                    (ionBlur)="hideKeyboard()"
                 >
                 </ion-input>
             </ion-col>

@@ -718,4 +718,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 return 'send';
         }
     }
+
+    showKeyboard() {
+        this.keyboard.show();
+    }
+
+    hideKeyboard() {
+        this.keyboard.hide();
+    }
 }
