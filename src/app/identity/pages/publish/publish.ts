@@ -30,6 +30,7 @@ export class PublishPage {
 
     avatarImg = "";
     _publishableCredentials: CredentialDisplayEntry[] = [];
+    public unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
 
     constructor(
         public events: Events,
@@ -66,6 +67,7 @@ export class PublishPage {
 
     ionViewWillEnter() {
       this.titleBar.setTitle(this.translate.instant('publish'));
+      this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
     }
 
     ionViewWillLeave() {

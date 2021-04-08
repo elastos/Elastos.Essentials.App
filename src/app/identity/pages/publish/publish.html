@@ -7,12 +7,12 @@
         <span>- {{ 'toggle-credentials-to-publish'| translate }}</span>
 
         <div class="alert-section">
-            <img *ngIf="profileService.getPublishedCredentials().length > 0" src="/assets/identity/svg/credential-published.svg"
+            <img *ngIf="unchangedPublishedCredentials.length > 0" src="/assets/identity/svg/credential-published.svg"
                 class="published" />
             <img *ngIf="profileService.getPublishedCredentials().length == 0" src="/assets/identity/svg/publish-gray.svg"
                 class="published" />
 
-            <span>{{ profileService.getPublishedCredentials().length }}/{{ profileService.allCreds.length }}
+            <span>{{ unchangedPublishedCredentials.length }}/{{ profileService.allCreds.length }}
                 {{ 'credentials-published-on-blockchain' | translate }}
             </span>
         </div>
@@ -39,8 +39,8 @@
                             </ion-col>
                             <ion-col size="2">
                                 <div class="card-action">
-                                    <ion-toggle 
-                                        [(ngModel)]="entry.isVisible" mode="ios" 
+                                    <ion-toggle
+                                        [(ngModel)]="entry.isVisible" mode="ios"
                                         (ngModelChange)="onVisibilityChange($event, entry)">
                                     </ion-toggle>
                                 </div>
