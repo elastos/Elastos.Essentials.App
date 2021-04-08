@@ -30,6 +30,7 @@ import { CRProposalVotingInitModule } from './crproposalvoting/init.module';
 import { SettingsInitModule } from './settings/init.module';
 import { DPoSVotingInitModule } from './dposvoting/init.module';
 import { DeveloperToolsInitModule } from './developertools/init.module';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -133,6 +134,7 @@ export function TranslateLoaderFactory() {
     BrowserAnimationsModule,
   ],
   providers: [
+    Keyboard,
     ScreenOrientation,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
