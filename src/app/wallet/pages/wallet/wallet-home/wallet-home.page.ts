@@ -74,6 +74,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public CoinType = CoinType;
     public SELA = Config.SELA;
 
+    public hideRefresher = true;
+
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -95,6 +97,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.showRefresher();
         this.updateWallet();
 
         this.walletChangedSubscription = this.events.subscribe("masterwalletcount:changed", (result) => {
@@ -113,6 +116,12 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 }
             });
         });
+    }
+
+    showRefresher() {
+        setTimeout(() => {
+            this.hideRefresher = false;
+        }, 4000);
     }
 
     updateWallet() {
