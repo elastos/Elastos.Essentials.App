@@ -156,9 +156,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.native.popup) {
             this.native.popup.dismiss();
         }
-
-        this.setContactsKeyVisibility(false);
-        this.setCryptonamesKeyVisibility(false);
     }
 
     ngOnDestroy() {
@@ -180,13 +177,22 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     setCryptonamesKeyVisibility(showKey: boolean) {
         if (showKey) {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+                key: "cryptonames",
+                iconPath: "assets/wallet/icons/cryptoname.png"
+            });
+        } else {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+        }
+        
+    /*     if (showKey) {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
                 key: "cryptonames",
                 iconPath: "assets/wallet/icons/cryptoname.png"
             });
         } else {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, null);
-        }
+        } */
     }
 
     async init() {
@@ -238,8 +244,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.transaction = this.createSendTransaction;
 
                 if (this.chainId === StandardCoinName.ELA) {
-                    // Always show contacts app key
-                    this.setContactsKeyVisibility(true);
+                    // Always show contacts app key - Removed for now, intent seems to be broken
+                    // this.setContactsKeyVisibility(true);
+                    this.setContactsKeyVisibility(false);
 
                     // Only show cryptonames key if user has previously used crypto names
                     if (this.contactsService.contacts.length) {
@@ -639,10 +646,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async showCryptonames() {
-        this.setContactsKeyVisibility(false);
-        this.setCryptonamesKeyVisibility(false);
-        this.titleBar.setTitle('select-address');
-
         this.modal = await this.modalCtrl.create({
             component: ContactsComponent,
             componentProps: {
@@ -656,11 +659,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
 
             this.modal = null;
-
-            this.titleBar.setTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
-            this.setContactsKeyVisibility(true);
-            this.setCryptonamesKeyVisibility(true);
-
         });
         this.modal.present();
     }

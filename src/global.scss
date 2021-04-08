@@ -134,8 +134,69 @@
 /** Simple class to apply theme background **/
 .lightmode {
     background: #f8f8ff;
+
+  /*   ion-refresher {
+        background: #f8f8ff;
+        color: #191a2f;
+    
+        ion-refresher-content {
+            background: #f8f8ff;
+            color: #191a2f;
+    
+            .refresher-pulling {
+                background: #f8f8ff;
+                color: #191a2f;
+    
+                .refresher-pulling-icon {
+                    background: #f8f8ff;
+                    border: #f8f8ff;
+                    color: #191a2f;
+                }
+            }
+    
+            .refresher-refreshing {
+                background: #f8f8ff;
+                color: #191a2f;
+                
+                .refresher-refreshing-icon {
+                    background: #f8f8ff;
+                    border: #f8f8ff;
+                    color: #191a2f;
+                }
+            }
+        }
+    } */
 }
 
 .darkmode {
     background: #191a2f;
+
+   /*  ion-refresher {
+        background: #191a2f;
+        color: white;
+        
+        ion-refresher-content {
+            background: #191a2f;
+            color: white;
+    
+            .refresher-pulling {
+                background: #191a2f;
+                color: white;
+    
+                .refresher-pulling-icon {
+                    background: #191a2f;
+                    border: #191a2f;
+                    color: white;
+                }
+        }
+    
+            .refresher-refreshing {
+                .refresher-refreshing-icon {
+                    background: #191a2f;
+                    border: #191a2f;
+                    color: white;
+                }
+            }
+        }
+    } */
 }

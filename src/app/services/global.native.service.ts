@@ -86,17 +86,19 @@ export class GlobalNativeService {
 
     public async showLoading(message: string = 'please-wait') {
         let isDarkMode = this.theme.activeTheme.value == AppTheme.DARK;
-        if (this.loadingCtrlCreating) {// Just in case.
+        if (this.loadingCtrlCreating) { // Just in case.
             return;
         }
         await this.hideLoading();
         this.loadingCtrlCreating = true;
         this.loader = await this.loadingCtrl.create({
             mode: 'ios',
-            cssClass: !isDarkMode ? 'custom-loader-wrapper' : 'dark-custom-loader-wrapper',
-            spinner: null,
-            message: !isDarkMode ? '<div class="custom-loader"><div class="lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>' : '<div class="dark-custom-loader"><div class="dark-lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>',
             translucent: false,
+            spinner: 'crescent',
+            cssClass: !isDarkMode ? 'custom-loader' : 'dark-custom-loader',
+            message: message
+            // cssClass: !isDarkMode ? 'custom-loader-wrapper' : 'dark-custom-loader-wrapper',
+            // message: !isDarkMode ? '<div class="custom-loader"><div class="lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>' : '<div class="dark-custom-loader"><div class="dark-lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>',
         });
         this.loader.onWillDismiss().then(() => {
             this.loader = null;

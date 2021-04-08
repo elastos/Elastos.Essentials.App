@@ -1,8 +1,8 @@
-<ion-content>
+<ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
+
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-        <ion-refresher-content>
-        </ion-refresher-content>
+        <ion-refresher-content refreshingSpinner="crescent"></ion-refresher-content>
     </ion-refresher>
     
     <ion-row class="refresh-row" [class.dark-refresh-row]="theme.darkMode" *ngIf="!uiService.returnedUser">

@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, LoadingController } from '@ionic/angular';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 import { Events } from './events.service';
@@ -22,6 +22,7 @@ export class UXService {
     public popover: any = null; // Generic Popover
     public modal: any = null;
     public options: any = null; // Options Popover
+    private loader: any = null;
 
     constructor(
         public translate: TranslateService,
@@ -30,7 +31,8 @@ export class UXService {
         private native: GlobalNativeService,
         private popoverCtrl: PopoverController,
         private events: Events,
-        private didSessions: GlobalDIDSessionsService
+        private didSessions: GlobalDIDSessionsService,
+        private loadingCtrl: LoadingController
     ) {
         selfUxService = this;
         UXService.instance = this;
@@ -113,12 +115,26 @@ export class UXService {
       this.native.genericToast(message, duration);
     }
 
-    public async showLoading(content: string) {
-      this.native.showLoading(content);
+    public async showLoading(message: string) {
+      await this.hideLoading();
+      this.loader = await this.loadingCtrl.create({
+        mode: 'ios',
+        translucent: false,
+        spinner: 'crescent',
+        cssClass: 'custom-loader',
+        message: message
+      });
+      this.loader.onWillDismiss().then(() => {
+        this.loader = null;
+      });
+      return await this.loader.present();
     };
 
     public async hideLoading() {
-      await this.native.hideLoading();
+      if (this.loader) {
+        await this.loader.dismiss();
+        this.loader = null;
+      }
     }
 
     async showOptions(ev: any, identityEntry: IdentityEntry) {

@@ -217,7 +217,6 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
           background: #191a2f;
           border: #191a2f;
           color: white;
-
         }
       }
     }
@@ -260,10 +259,6 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-ion-row {
-  width: 100%;
-}
-
 .footer {
   position: fixed;
   bottom: 0;
@@ -290,20 +285,3 @@ ion-row {
   }
 }
 
-ion-footer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 15px 10px;
-
-  ion-button {
-    height: 50px;
-    width: 100%;
-    --background: linear-gradient(to bottom, #732dcf, #640fd4);
-    --border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.1px;
-  }
-}

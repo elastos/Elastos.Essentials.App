@@ -21,7 +21,21 @@
 }
 
 /********************** LOADER **********************/
-.custom-loader-wrapper {
+.custom-loader {
+  --spinner-color: #353650;
+  --background: #ffffff;
+  color: #353650;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.dark-custom-loader {
+  --spinner-color: white;
+  --background: #2e2f4e;
+  color: white;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+/* .custom-loader-wrapper {
   --background: white;
 }
 
@@ -64,7 +78,6 @@
     }
 }
 
-/** Darkmode loader controller **/
 .dark-custom-loader-wrapper {
     --background: #2e2f4e;
 }
@@ -106,7 +119,7 @@
     100% {
         transform: rotate(360deg);
     }
-}
+} */
 
 /********************** DIDSESSSIONS **********************/
 .didsessions-printoptions-component {
