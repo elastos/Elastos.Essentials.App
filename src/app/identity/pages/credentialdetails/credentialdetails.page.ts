@@ -12,7 +12,6 @@ import { ProfileService } from "../../services/profile.service";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { HiveService } from "../../services/hive.service";
 import { HttpClient } from "@angular/common/http";
-import { Native } from "../../services/native";
 import * as moment from "moment";
 import { DIDDocument } from "../../model/diddocument.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
@@ -38,6 +37,11 @@ type IssuerDisplayEntry = {
   avatar: string;
 };
 
+type DisplayProperty = {
+  name: string;
+  value: string;
+};
+
 type CredentialDisplayEntry = {
   credential: DIDPlugin.VerifiableCredential;
   issuer: string;
@@ -55,37 +59,26 @@ export class CredentialDetailsPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public profile: Profile;
-
   public credentials: VerifiableCredential[];
-
-  public hasCredential: boolean = false;
-  public creatingIdentity: boolean = false;
-
-  public fetchingApps = false;
-
-  public segment: string = "validator";
-
   public currentOnChainDIDDocument: DIDDocument = null;
-
-  public credentialId: string = null;
-
-  public isPublished: boolean = true;
-
-  public isVisible: boolean = false;
-
-  public hasCheckedCredentia: boolean = false;
-
   public credential: VerifiableCredential;
-
   public issuer: IssuerDisplayEntry;
 
+  public segment: string = "validator";
+  public credentialId: string = null;
   public appIcon: string;
+
+  public isPublished: boolean = true;
+  public isVisible: boolean = false;
+  public hasCheckedCredentia: boolean = false;
 
   private didchangedSubscription: Subscription = null;
   private publicationstatusSubscription: Subscription = null;
   private documentChangedSubscription: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
   private promptpublishdidSubscription: Subscription = null;
+
+  public displayableProperties: DisplayProperty[];
 
   constructor(
     private http: HttpClient,
@@ -96,7 +89,6 @@ export class CredentialDetailsPage {
     private translate: TranslateService,
     private didService: DIDService,
     private didSyncService: DIDSyncService,
-    private native: Native,
     public theme: GlobalThemeService,
     public hiveService: HiveService,
     public actionSheetController: ActionSheetController,
@@ -109,11 +101,8 @@ export class CredentialDetailsPage {
 
   async ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
-
-
     if (navigation.extras.state.credentialId) {
       this.credentialId = navigation.extras.state.credentialId;
-
       await this.selectCredential();
     }
 
@@ -176,6 +165,7 @@ export class CredentialDetailsPage {
 
   ionViewWillEnter() {
     this.getIssuer();
+    this.displayableProperties = this.getDisplayableProperties();
   }
 
   ionViewWillLeave() {
@@ -204,10 +194,7 @@ export class CredentialDetailsPage {
       isNil(this.credentials) ||
       this.credentials.length <= 0
     ) {
-
-
       return;
-
     }
 
     let selected = this.credentials.filter(
@@ -215,7 +202,6 @@ export class CredentialDetailsPage {
     );
 
     if (selected.length > 0) this.credential = selected[0];
-
 
     if (this.credential == null) { return; }
 
@@ -228,7 +214,6 @@ export class CredentialDetailsPage {
   }
 
   async getIssuer() {
-
     let issuerDid = this.credential.pluginVerifiableCredential.getIssuer();
     //issuerDid = "did:elastos:ibXZJqeN19iTpvNvqo5vU9XH4PEGKhgS6d";
     if (isNil(issuerDid) || issuerDid == "") return;
@@ -237,8 +222,6 @@ export class CredentialDetailsPage {
       issuerDid
     );
   }
-
-
 
   getDisplayableCredentialTitle(): string {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
@@ -251,7 +234,7 @@ export class CredentialDetailsPage {
     return translated;
   }
 
-  displayableProperties() {
+  getDisplayableProperties() {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
     if (fragment === "avatar") return [];
 
@@ -292,8 +275,6 @@ export class CredentialDetailsPage {
   hasIssuerName() {
     return this.issuer.name !== null && this.issuer.name !== "";
   }
-
-
 
   isVerified() {
     let types = this.credential.pluginVerifiableCredential.getTypes();
@@ -337,13 +318,11 @@ export class CredentialDetailsPage {
         });
   }
 
-
   isApp() {
     return this.credential.pluginVerifiableCredential
       .getSubject()
       .hasOwnProperty("apppackage");
   }
-
 
   getCredIcon(): string {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
@@ -459,7 +438,6 @@ export class CredentialDetailsPage {
   }
 
   async isLocalCredSyncOnChain() {
-
     let didString = this.didService.getActiveDid().getDIDString();
     this.currentOnChainDIDDocument = await this.didSyncService.getDIDDocumentFromDID(didString);
     if (this.currentOnChainDIDDocument === null) {

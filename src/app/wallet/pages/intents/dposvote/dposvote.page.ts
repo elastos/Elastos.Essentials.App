@@ -27,13 +27,12 @@ import { WalletManager } from '../../../services/wallet.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
-import BigNumber from 'bignumber.js';
 import { Config } from '../../../config/Config';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { NavController } from '@ionic/angular';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 
 @Component({
@@ -59,8 +58,8 @@ export class DPoSVotePage implements OnInit {
         public popupProvider: PopupProvider,
         public theme: GlobalThemeService,
         private translate: TranslateService,
-        private navCtrl: NavController,
-        private globalIntentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService,
+        private globalNav: GlobalNavService,
     ) {
         this.init();
     }
@@ -109,7 +108,7 @@ export class DPoSVotePage implements OnInit {
                 this.intentTransfer.intentId);
         } catch (err) {
             Logger.error('wallet', 'wallet app -> dposvote pg -> cancelOperation err', err);
-            this.navCtrl.back();
+            this.globalNav.navigateBack();
         }
     }
 

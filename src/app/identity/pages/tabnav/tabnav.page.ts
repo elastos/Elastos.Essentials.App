@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { IonTabs, NavController } from "@ionic/angular";
+import { IonTabs } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode, BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
-import { Router } from "@angular/router";
 import { Logger } from "src/app/logger";
 
 @Component({
@@ -18,8 +15,6 @@ export class TabnavPage implements OnInit {
   constructor(
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    private navCtrl: NavController,
-    public router: Router
   ) { }
 
   public selectedTab: string;

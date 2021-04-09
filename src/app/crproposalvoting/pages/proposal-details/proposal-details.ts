@@ -1,5 +1,4 @@
 import { Component, NgZone, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { ProposalService } from '../../services/proposal.service';
 import { ProposalSearchResult } from '../../model/proposal-search-result';
 import { ActivatedRoute } from '@angular/router';
@@ -35,7 +34,6 @@ export class ProposalDetailsPage {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
-    public navCtrl: NavController,
     public uxService: UXService,
     private route: ActivatedRoute,
     private proposalService: ProposalService,

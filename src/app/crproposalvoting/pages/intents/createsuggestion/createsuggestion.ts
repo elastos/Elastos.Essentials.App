@@ -1,7 +1,5 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { ProposalService } from '../../../services/proposal.service';
-import { UXService } from '../../../services/ux.service';
 import { ActivatedRoute } from '@angular/router';
 import { SuggestionDetails } from '../../../model/suggestion-details';
 import { CreateSuggestionCommand, CROperationsService } from '../../../services/croperations.service';
@@ -28,7 +26,6 @@ export class CreateSuggestionPage {
   public signingAndSendingSuggestionResponse = false;
 
   constructor(
-    public navCtrl: NavController,
     private proposalService: ProposalService,
     private crOperations: CROperationsService,
     private route: ActivatedRoute,

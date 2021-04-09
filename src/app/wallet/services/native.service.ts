@@ -21,7 +21,7 @@
  */
 
 import { Injectable, NgZone } from '@angular/core';
-import { LoadingController, NavController, PopoverController } from '@ionic/angular';
+import { LoadingController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { HelpComponent } from '../components/help/help.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -40,7 +40,6 @@ export class Native {
         public translate: TranslateService,
         private loadingCtrl: LoadingController,
         public popoverCtrl: PopoverController,
-        private navCtrl: NavController,
         private zone: NgZone,
         private globalNative: GlobalNativeService,
         private globalNav: GlobalNavService

@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { NavController, IonSlides, Platform, ModalController } from '@ionic/angular';
+import { IonSlides, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { Router } from '@angular/router';
 import { DrawerState } from 'ion-bottom-drawer';

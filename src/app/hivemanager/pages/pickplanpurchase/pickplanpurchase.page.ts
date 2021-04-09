@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { NgZone } from '@angular/core';
 import { HiveService } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { App, GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-pickplanpurchase',
@@ -17,11 +17,11 @@ export class PickPlanPurchasePage implements OnInit {
   public planToPurchase: HivePlugin.Payment.PricingPlan = null;
 
   constructor(
-    public navCtrl: NavController,
     public zone: NgZone,
     private hiveService: HiveService,
     private route: ActivatedRoute,
     public theme: GlobalThemeService,
+    private globalNav: GlobalNavService,
     private translate: TranslateService
   ) {}
 
@@ -39,6 +39,6 @@ export class PickPlanPurchasePage implements OnInit {
     let pricingInfo = await this.hiveService.getPricingInfo();
     await this.hiveService.purchasePlan(pricingInfo.getPaymentSettings(), this.planToPurchase);
 
-    this.navCtrl.navigateRoot("/hivemanager/pickprovider");
+    this.globalNav.navigateTo(App.HIVE_MANAGER, "/hivemanager/pickprovider");
   }
 }

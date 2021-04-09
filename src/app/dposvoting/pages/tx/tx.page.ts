@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
 import * as moment from 'moment';
 
 import { Vote } from '../../model/history.model';
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-tx',
@@ -27,13 +27,13 @@ export class TxPage implements OnInit {
   constructor(
     public nodesService: NodesService,
     private route: ActivatedRoute,
-    private navCtrl: NavController,
+    private globalNav: GlobalNavService,
   ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
       if (!paramMap.has('txId')) {
-        this.navCtrl.navigateBack('/menu/history');
+        this.globalNav.navigateBack();
         return;
       }
       this.vote = this.nodesService.getVote(paramMap.get('txId'));

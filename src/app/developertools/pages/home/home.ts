@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { DAppService } from '../../services/dapp.service';
 import { StorageDApp } from '../../model/storagedapp.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -17,7 +16,6 @@ export class HomePage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   constructor(
-    public navCtrl: NavController,
     public dappService: DAppService,
     public translate: TranslateService,
     private nav: GlobalNavService

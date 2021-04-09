@@ -3,13 +3,14 @@ import { Router } from '@angular/router';
 
 import { Util } from '../../services/util';
 import { TranslateService } from '@ngx-translate/core';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 type MnemonicWord = {
     text: string;
@@ -38,7 +39,7 @@ export class VerifyMnemonicsPage {
       public theme: GlobalThemeService,
       private translate: TranslateService,
       private alertCtrl: AlertController,
-      private navCtrl: NavController
+      private globalNav: GlobalNavService,
     ) {
       this.init();
     }
@@ -144,7 +145,7 @@ export class VerifyMnemonicsPage {
           {
             text: this.translate.instant('Okay'),
             handler: () => {
-              this.navCtrl.back();
+              this.globalNav.navigateBack();
             }
           }
         ]
@@ -158,7 +159,7 @@ export class VerifyMnemonicsPage {
     }
 
     allWordsMatch() {
-        return true; // for test
+        // return true; // for test
 
         let selectComplete = this.selectedList.length === this.mnemonicList.length ? true : false;
         if (selectComplete) {

@@ -1,10 +1,7 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { ProposalService } from '../../../services/proposal.service';
-import { UXService } from '../../../services/ux.service';
 import { ActivatedRoute } from '@angular/router';
 import { CROperationsService, VoteForProposalCommand } from '../../../services/croperations.service';
-import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -24,8 +21,6 @@ export class VoteForProposalPage {
   public sendingResponse = false;
 
   constructor(
-    public navCtrl: NavController,
-    private proposalService: ProposalService,
     private crOperations: CROperationsService,
     private route: ActivatedRoute,
     private zone: NgZone,

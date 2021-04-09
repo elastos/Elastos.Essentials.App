@@ -1,5 +1,4 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Platform, NavController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { FriendsService } from './friends.service';
@@ -10,9 +9,7 @@ import { FriendsService } from './friends.service';
 })
 export class IntentService {
   constructor(
-    private platform: Platform,
     private zone: NgZone,
-    private navCtrl: NavController,
     private friendsService: FriendsService,
     private intentService: GlobalIntentService,
     private globalIntentService: GlobalIntentService,

@@ -1,9 +1,7 @@
-import { Injectable, NgZone, ViewChild } from '@angular/core';
+import { Injectable, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Platform, ModalController, NavController } from '@ionic/angular';
 import { DIDService } from './did.service';
 import { Events } from './events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -32,8 +30,6 @@ export class UXService {
         public translate: TranslateService,
         public events: Events,
         private didService: DIDService,
-        private modalCtrl: ModalController,
-        private navCtrl: NavController,
         private globalIntentService: GlobalIntentService
     ) {
         UXService.instance = this;
@@ -74,18 +70,6 @@ export class UXService {
 
     public translateInstant(key: string): string {
         return this.translate.instant(key);
-    }
-
-    async titlebarBackButtonHandle() {
-        // to check alert, action, popover, menu ?
-        // ...
-        const modal = await this.modalCtrl.getTop();
-        if (modal) {
-            modal.dismiss();
-            return;
-        }
-
-        this.navCtrl.back();
     }
 
     public async getAppDid(appId: string): Promise<string> {

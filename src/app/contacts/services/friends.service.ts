@@ -72,8 +72,6 @@ export class FriendsService {
   }
 
   constructor(
-    //private router: Router,
-    //private navController: NavController,
     private globalNav: GlobalNavService,
     public zone: NgZone,
     private clipboard: Clipboard,

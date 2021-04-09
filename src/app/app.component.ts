@@ -1,26 +1,14 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { Platform, ModalController, NavController, IonRouterOutlet } from '@ionic/angular';
+import { Component, ViewChild } from '@angular/core';
+import { Platform, IonRouterOutlet } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 import { GlobalStorageService } from './services/global.storage.service';
 import { GlobalThemeService } from './services/global.theme.service';
-import { LauncherInitService } from './launcher/services/init.service';
-import { DIDSessionsInitService } from './didsessions/services/init.service';
 import { GlobalDIDSessionsService } from './services/global.didsessions.service';
-import { ScannerInitService } from './scanner/services/init.service';
-import { HiveManagerInitService } from './hivemanager/services/init.service';
-import { SettingsInitService } from './settings/services/init.service';
 import { GlobalLanguageService } from './services/global.language.service';
-import { ContactsInitService } from './contacts/services/init.service';
-import { IdentityInitService } from './identity/services/init.service';
-import { WalletInitService } from './wallet/services/init.service'
 import { Logger } from './logger';
 import { GlobalIntentService } from './services/global.intent.service';
-import { DPoSVotingInitService } from './dposvoting/services/init.service';
-// import { CRCouncilVotingInitService } from './crcouncilvoting/services/init.service';
-import { CRProposalVotingInitService } from './crproposalvoting/services/init.service';
-import { DeveloperToolsInitService } from './developertools/services/init.service';
 import { Direction, GlobalNavService } from './services/global.nav.service';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { InternalElastosConnector } from './model/internalelastosconnector';
@@ -46,20 +34,8 @@ export class AppComponent {
         private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService,
         private globalAppBackgroundService: GlobalAppBackgroundService,
-        private launcherInitService: LauncherInitService,
-        private didSessionsInitService: DIDSessionsInitService,
-        private scannerInitService: ScannerInitService,
-        private hiveManagerInitService: HiveManagerInitService,
-        private settingsInitService: SettingsInitService,
-        private contactsInitService: ContactsInitService,
-        private identityInitService: IdentityInitService,
-        private walletInitService: WalletInitService,
-        private dposVotingInitService: DPoSVotingInitService,
         private language: GlobalLanguageService,
         private intentService: GlobalIntentService,
-        // private crCouncilVotingInitService: CRCouncilVotingInitService,
-        private crProposalVotingInitService: CRProposalVotingInitService,
-        private developerToolsInitService: DeveloperToolsInitService,
         private screenOrientation: ScreenOrientation
     ) {
     }

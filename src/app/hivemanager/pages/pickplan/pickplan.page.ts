@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
 import { HiveService } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
@@ -21,7 +20,6 @@ export class PickPlanPage implements OnInit {
   public pricingInfo: HivePlugin.Payment.PricingInfo = null;
 
   constructor(
-    public navCtrl: NavController,
     public zone: NgZone,
     private hiveService: HiveService,
     private route: ActivatedRoute,

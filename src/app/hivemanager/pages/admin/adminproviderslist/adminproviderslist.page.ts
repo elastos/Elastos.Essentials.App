@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
 
 import { AdminService } from '../../../services/admin.service';
@@ -27,7 +26,6 @@ export class AdminProvidersListPage implements OnInit {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
-    public navCtrl: NavController,
     public zone: NgZone,
     private adminService: AdminService,
     private translate: TranslateService,

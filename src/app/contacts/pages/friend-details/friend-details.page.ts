@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 
-import { NavController } from '@ionic/angular';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 
 import * as moment from 'moment';
@@ -22,6 +21,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarNavigationMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 
 type DisplayableAppInfo = {
@@ -55,18 +55,17 @@ export class FriendDetailsPage implements OnInit {
     private native: NativeService,
     private route: ActivatedRoute,
     private zone: NgZone,
-    private navCtrl: NavController,
     private http: HttpClient,
     public translate: TranslateService,
     public theme: GlobalThemeService,
     private clipboard: Clipboard,
-    private globalIntentService: GlobalIntentService,
+    private globalNavService: GlobalNavService,
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
       if (!paramMap.has('friendId')) {
-        this.navCtrl.navigateBack('/friends');
+        this.globalNavService.navigateRoot('contacts', '/contacts/friends');
         return;
       }
 

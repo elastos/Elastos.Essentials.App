@@ -1,5 +1,5 @@
-import { Component, ViewChild, NgZone, OnInit } from '@angular/core';
-import { NavController, IonContent, IonInput } from '@ionic/angular';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { IonContent, IonInput } from '@ionic/angular';
 import { ProposalService } from '../../../services/proposal.service';
 import { ProposalsSearchResponse } from '../../../model/proposal-search-response';
 import { ProposalSearchResult } from '../../../model/proposal-search-result';
@@ -35,7 +35,6 @@ export class ProposalListingPage implements OnInit {
   private searchPage = 1;
 
   constructor(
-    public navCtrl: NavController,
     public uxService: UXService,
     public theme: GlobalThemeService,
     private proposalService: ProposalService,

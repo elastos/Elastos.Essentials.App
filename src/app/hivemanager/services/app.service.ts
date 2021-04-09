@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
@@ -13,7 +12,6 @@ export class AppService {
     private postSignInQueryParams: any = null;
 
     constructor(
-        private navController: NavController,
         private intents: GlobalIntentService,
         private nav: GlobalNavService
     ) {
@@ -40,7 +38,7 @@ export class AppService {
     }
 
     public goToPostSignInRoute() {
-        this.navController.navigateRoot(this.postSignInRoute, {
+        this.nav.navigateRoot(App.HIVE_MANAGER, this.postSignInRoute, {
             queryParams: this.postSignInQueryParams
         });
     }

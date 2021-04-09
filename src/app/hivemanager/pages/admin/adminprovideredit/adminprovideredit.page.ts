@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 import { ManagedProvider } from '../../../model/managedprovider';
 import { PopupService } from '../../../services/popup.service';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 type StorageProvider = {
   name: string,
@@ -34,16 +34,14 @@ export class AdminProviderEditPage implements OnInit {
   public adminDIDPublished: boolean = false;
 
   constructor(
-    public navCtrl: NavController,
     public zone: NgZone,
     public alertController:AlertController,
-    private route: ActivatedRoute,
     private router: Router,
     private adminService: AdminService,
     private popup: PopupService,
-    private clipboard: Clipboard,
     public theme: GlobalThemeService,
     private native: GlobalNativeService,
+    private globalNav: GlobalNavService,
     private translate: TranslateService,
     // public navParams: NavParams // Err - No provider for Navparams
   ) {
@@ -129,7 +127,7 @@ export class AdminProviderEditPage implements OnInit {
     let confirmed = await this.popup.ionicConfirm("alert.delete-title", "alert.delete-msg", "alert.delete", "alert.cancel");
     if (confirmed) {
       await this.adminService.deleteProvider(this.managedProvider);
-      this.navCtrl.back();
+      this.globalNav.navigateBack();
     }
   }
 

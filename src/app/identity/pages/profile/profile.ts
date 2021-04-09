@@ -1,10 +1,6 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import {
-  ModalController,
-  NavController,
-  ActionSheetController,
-} from "@ionic/angular";
+import { ModalController, ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
@@ -24,7 +20,6 @@ import { DIDDocument } from "../../model/diddocument.model";
 import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
@@ -93,7 +88,6 @@ export class ProfilePage {
     public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
-    public navCtrl: NavController
   ) {
     this.init();
   }

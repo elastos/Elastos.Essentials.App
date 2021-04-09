@@ -1,8 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { DAppService } from '../../services/dapp.service';
 import { CreatedDApp } from '../../model/customtypes';
-import { Router } from '@angular/router';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem, TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';

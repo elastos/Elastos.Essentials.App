@@ -1,6 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController, IonInput, ModalController, Platform } from '@ionic/angular';
+import { IonInput, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Util } from '../../services/util';
@@ -54,7 +54,6 @@ export class ImportDIDPage {
         public router: Router,
         public zone: NgZone,
         public platform: Platform,
-        public navCtrl: NavController,
         private modalCtrl: ModalController,
         private identityService: IdentityService,
         private uxService: UXService,

@@ -4,10 +4,10 @@ import { WalletManager } from '../../../../services/wallet.service';
 import { Util } from '../../../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
 import { Events } from '../../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
     selector: 'app-coin-address',
@@ -26,7 +26,7 @@ export class CoinAddressPage {
     constructor(
         public walletManager: WalletManager,
         public native: Native,
-        private navCtrl: NavController,
+        private globalNav: GlobalNavService,
         public router: Router,
         public events: Events,
         public theme: GlobalThemeService,
@@ -78,7 +78,7 @@ export class CoinAddressPage {
 
     selectAddress(address) {
         this.events.publish('selectaddress', address);
-        this.navCtrl.back();
+        this.globalNav.navigateBack();
     }
 
     doInfinite(event) {

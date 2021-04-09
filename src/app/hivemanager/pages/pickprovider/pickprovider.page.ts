@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController, AlertController, PopoverController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
 import { HiveService, PaidIncompleteOrder, VaultLinkStatus } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
@@ -48,7 +48,6 @@ export class PickProviderPage implements OnInit {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
-    public navCtrl: NavController,
     public zone: NgZone,
     public alertController:AlertController,
     private translate: TranslateService,
