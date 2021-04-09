@@ -70,23 +70,6 @@
   }
 
   .btn-row {
-    padding: 15px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-
-    ion-button {
-      height: 50px;
-      width: 100%;
-      --border-radius: 8px;
-
-      ion-label {
-        text-transform: none;
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: -0.43px;
-      }
-    }
   }
 }
 

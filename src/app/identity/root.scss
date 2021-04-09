@@ -7,6 +7,15 @@ ion-item {
   --background-activated: none;
 }
 
+ion-button {
+  height: 50px;
+  width: 100%;
+  --border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
 .loader {
   --spinner-color: #000000;
   --background: #ffffff;

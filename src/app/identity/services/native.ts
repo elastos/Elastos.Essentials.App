@@ -43,9 +43,8 @@ export class Native {
       this.native.genericToast(msg, duration);
   }
 
-  public toast_trans(msg: string = '', duration: number = 2000): void {
-      let message = this.translate.instant(msg);
-      this.native.genericToast(msg, duration);
+  public toast_trans(msg: string = '', duration: number = 2000, color = "tertiary"): void {
+      this.native.genericToast(msg, duration, color);
   }
 
   copyClipboard(text) {

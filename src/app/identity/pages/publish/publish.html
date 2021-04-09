@@ -40,6 +40,7 @@
                             <ion-col size="2">
                                 <div class="card-action">
                                     <ion-toggle
+                                        color="tertiary"
                                         [(ngModel)]="entry.isVisible" mode="ios"
                                         (ngModelChange)="onVisibilityChange($event, entry)">
                                     </ion-toggle>
@@ -51,7 +52,7 @@
             </div>
         </div>
         <ion-row class="btn-row">
-            <ion-button (click)="profileService.showWarning('publishIdentity', '')">
+            <ion-button color="tertiary" (click)="profileService.showWarning('publishIdentity', '')">
                 {{ 'confirm' | translate }}
             </ion-button>
         </ion-row>
