@@ -82,15 +82,15 @@
       </div>
     </ion-row>
 
-    <ion-row class="capsules-section">
+   <!--  <ion-row class="capsules-section">
       <span class="title">{{ 'my-capsules' | translate}}</span>
-      <!-- <ion-col size="4"
+      <ion-col size="4"
       ><span class="show-all">{{ 'show-all ' | translate}}</span>
       <ion-icon
         src="{{ this.theme.darkMode ? '/assets/identity/svg/chevron-thin-right-dark.svg' : '/assets/identity/svg/chevron-thin-right.svg' }}"
         class="chevron-thin-right"
       ></ion-icon>
-    </ion-col> -->
+    </ion-col>
     </ion-row>
 
     <ion-row class="capsules" *ngIf="profileService.appCreds.length">
@@ -124,6 +124,6 @@
       <ion-col size="12" class="not-found">
         <span> {{'no-capsules-title'|translate}}</span>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
   </ion-grid>
 </ion-content>

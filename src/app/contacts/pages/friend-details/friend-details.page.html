@@ -21,14 +21,14 @@
       </ion-row>
     </div>
 
-    <ion-segment mode="ios">
+<!--     <ion-segment mode="ios">
       <ion-segment-button [class.active]="detailsActive" (click)="changeList(true)">
         <ion-label>{{ 'details' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button [class.active]="!detailsActive" (click)="changeList(false)">
         <ion-label>{{ 'apps' | translate }}</ion-label>
       </ion-segment-button>
-    </ion-segment>
+    </ion-segment> -->
 
     <ion-list *ngIf="detailsActive">
       <ion-row class="profile-data" *ngIf="contact.credentials.name">
@@ -239,7 +239,7 @@
       </ion-row>
     </ion-list>
 
-    <ion-list *ngIf="!detailsActive && contactsApps.length > 0 && !fetchingApps">
+  <!--   <ion-list *ngIf="!detailsActive && contactsApps.length > 0 && !fetchingApps">
       <ion-item
         class="app"
         *ngFor="let appInfo of contactsApps"
@@ -259,7 +259,7 @@
               <h4 *ngIf="!appInfo.app">{{ appInfo.packageId }}</h4>
               <p *ngIf="appInfo.action">{{ appInfo.action }}</p>
             </ion-col>
-       <!--      <ion-col offset="0.5" size="3" class="btn-col">
+            <ion-col offset="0.5" size="3" class="btn-col">
               <ion-button *ngIf="!appInfo.isInstalled" color="tertiary" (click)="discoverApp(appInfo.packageId)">
                 <ion-label>{{ 'discover' | translate }}</ion-label>
               </ion-button>
@@ -269,11 +269,11 @@
               <ion-button *ngIf="appInfo.isInstalled && !appInfo.app" color="tertiary" (click)="appService.startApp(appInfo.packageId)">
                 <ion-label>{{ 'open' | translate }}</ion-label>
               </ion-button>
-            </ion-col> -->
+            </ion-col>
           </ion-row>
         </ion-grid>
       </ion-item>
-    </ion-list>
+    </ion-list> -->
 
     <!-- Apps Loader -->
     <ion-list *ngIf="!detailsActive && fetchingApps">

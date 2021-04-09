@@ -171,8 +171,6 @@ export class CredentialsPage {
       this.checkDidForPublish(identity);
       this.buildDetailEntries();
       //this.buildCredentialEntries(publishAvatar);
-
-
     }
   }
 
@@ -184,9 +182,8 @@ export class CredentialsPage {
   ionViewDidEnter() {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
-
     this.init();
-
+    // console.log('ALL CREDS', this.profileService.allCreds);
   }
 
   async checkDidForPublish(identity: DID) {
@@ -682,25 +679,31 @@ export class CredentialsPage {
     return issuer.did;
   }
 
-
   credentialsListChanged(ev: any) {
     this.segment = ev.detail.value;
   }
 
   get filteredCredentials(): CredentialDisplayEntry[] {
+   /*  if (this.segment == "all") return this.profileService.allCreds
+    if (this.segment == "hidden") return this.profileService.invisibleCredentials
+    if (this.segment == "visible") return this.profileService.visibleCredentials */
 
-    if (this.segment == "all") return this.profileService.allCreds;
-    if (this.segment == "hidden") return this.profileService.invisibleCredentials;
-    if (this.segment == "visible") return this.profileService.visibleCredentials;
-
-
+    if (this.segment == "all") return this.profileService.allCreds.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
+    if (this.segment == "hidden") return this.profileService.invisibleCredentials.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
+    if (this.segment == "visible") return this.profileService.visibleCredentials.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
 
     return this.profileService.allCreds.filter((item) => {
       let types = item.credential.getTypes();
       let isVerified = !types.includes("SelfProclaimedCredential");
 
-      if (this.segment == "verified" && isVerified) return true;
-      if (this.segment == "unverified" && !isVerified) return true;
+     /*  if (this.segment == "verified" && isVerified) return true;
+      if (this.segment == "unverified" && !isVerified) return true; */
+
+      let subjects = item.credential.getSubject();
+      let isApp = subjects.hasOwnProperty("apppackage");
+
+      if (this.segment == "verified" && isVerified && !isApp) return true;
+      if (this.segment == "unverified" && !isVerified && !isApp) return true;
 
       return false;
     });
