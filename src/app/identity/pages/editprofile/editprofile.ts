@@ -271,7 +271,7 @@ export class EditProfilePage {
         Logger.log('Identity', "Password provided and valid. Now saving profile");
         // We are editing an existing DID: just ask the DID to save its profile.
         // DID being created are NOT saved here.
-        await this.native.showLoading("loading-msg");
+        await this.native.showLoading(this.translate.instant('loading-msg'));
 
         Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
         await this.didService
@@ -302,7 +302,7 @@ export class EditProfilePage {
           Logger.log('Identity', "Password provided and valid. Now saving profile");
           // We are editing an existing DID: just ask the DID to save its profile.
           // DID being created are NOT saved here.
-          await this.native.showLoading("loading-msg");
+          await this.native.showLoading(this.translate.instant('loading-msg'));
 
           Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
           await this.didService

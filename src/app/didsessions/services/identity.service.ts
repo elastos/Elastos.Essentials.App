@@ -317,7 +317,7 @@ export class IdentityService {
 
         // Synchronize the store with chain
         Logger.log('didsessions', "Synchronizing identities");
-        await this.uxService.showLoading("retrieve-prompt");
+        await this.uxService.showLoading(this.translate.instant('retrieve-prompt'));
 
         try {
             await didStore.synchronize(storePassword);

@@ -23,7 +23,7 @@ export const zh = {
     'app-identity-status': '应用程序身份状态',
     'app-did-published?': '应用 DID 是否已经发布?',
     'dev-did-published?': '开发者 DID 是否已经发布?',
-    'app-did-copied': '应用程序 DID 已经复制到剪切板d',
+    'app-did-copied': '应用程序 DID 已经复制到剪切板',
     'checking': '正在检查...',
     'yes-published': '是的 - 已经发布成功',
     'no-published': '请发布',

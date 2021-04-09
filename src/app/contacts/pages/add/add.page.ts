@@ -66,7 +66,7 @@ export class AddPage implements OnInit {
     } else if(await this.didService.getUserDID() === this.didInput) {
       this.native.genericToast('please-dont-add-self');
     } else {
-      this.native.showLoading('please-wait');
+      this.native.showLoading(this.translate.instant('please-wait'));
       Logger.log('contacts', "Resolving DID Document");
 
       await this.friendsService.resolveDIDDocument(this.didInput, false);

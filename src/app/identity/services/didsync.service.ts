@@ -80,7 +80,7 @@ export class DIDSyncService {
    */
   public async publishActiveDIDDIDDocument(password: string) {
     try {
-      await this.native.showLoading("please-wait");
+      await this.native.showLoading(this.translate.instant('please-wait'));
       await this.didService
         .getActiveDidStore()
         .getActiveDid()
