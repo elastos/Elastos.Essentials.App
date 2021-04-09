@@ -11,16 +11,12 @@
         <ion-icon [ngStyle]="{'color': languageService.selectedLanguage === language.code ? '#732dcf' : '#dddddd' }" name="checkmark"></ion-icon>
       </ion-col>
     </ion-row>
-
-    <div class="footer">
-      <ion-button (click)="continue()">{{ 'confirm' | translate }}</ion-button>
-    </div>
   </ion-grid>
 </ion-content>
 
-<!-- <ion-footer class="ion-no-border">
-  <ion-button (click)="continue()">Confirm</ion-button>
-</ion-footer> -->
+<div class="footer">
+  <ion-button (click)="continue()">{{ 'confirm' | translate }}</ion-button>
+</div>
 
 <!-- <ion-content>
   <ion-grid class="container ion-no-padding ion-no-margin" color="light" [class.dark-container]="theme.darkMode">
