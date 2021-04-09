@@ -203,6 +203,7 @@ export class ProfilePage {
 
   ionViewWillEnter() {
     this.buildAppAndAvatarCreds(false);
+    this.titleBar.setTitle(this.translate.instant("my-identity"));
     this.titleBar.setNavigationMode(null);
 
     // this.profileService.didString = this.didService

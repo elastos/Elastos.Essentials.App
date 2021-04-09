@@ -4,9 +4,7 @@
     <ion-row>
       <div class="icon-section">
         <ion-icon *ngIf="!hiveService.rawImage" mode="ios" name="person"></ion-icon>
-        <div *ngIf="hiveService.rawImage">
-          <img [src]="hiveService.rawImage" />
-        </div>
+        <img *ngIf="hiveService.rawImage" [src]="hiveService.rawImage" />
       </div>
     </ion-row>
 

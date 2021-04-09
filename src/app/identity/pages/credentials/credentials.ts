@@ -149,7 +149,7 @@ export class CredentialsPage {
     if (identity) {
       // Happens when importing a new mnemonic over an existing one
       this.profile = identity.getBasicProfile();
-      Logger.log("identity", 
+      Logger.log("identity",
         "Credentials Page is using this profile:",
         JSON.stringify(this.profile)
       );
@@ -177,6 +177,7 @@ export class CredentialsPage {
   }
 
   ionViewWillEnter() {
+    this.titleBar.setTitle(this.translate.instant("my-identity"));
     this.titleBar.setNavigationMode(null);
   }
 
