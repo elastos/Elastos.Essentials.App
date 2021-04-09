@@ -2,7 +2,7 @@
     <app-titlebar title="text-vote-crcouncil"></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
-            <img-loader [src]="!theme.darkMode ? 'assets/wallet/intents/dpos.svg' : 'assets/wallet/intents/darkmode/dpos.svg'" useImg></img-loader>
+            <img [src]="!theme.darkMode ? 'assets/wallet/intents/dpos.svg' : 'assets/wallet/intents/darkmode/dpos.svg'">
             <ion-card-title>{{ 'dposvote-you-are-voting' | translate }}</ion-card-title>
             <ion-card-subtitle>{{ 'dposvote-transaction-fees' | translate }}</ion-card-subtitle>
         </ion-card>
