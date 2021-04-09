@@ -13,142 +13,131 @@
    <!-- Manage Screen -->
   <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="didStorePasswordIsValid">
 
-    <ion-row class="section-row">
-      <ion-col size="12">
-        <h1>{{ 'generic-app-info' | translate }}</h1>
-      </ion-col>
-    </ion-row>
-    
-    <ion-list>
-
-      <!--<ion-row>
-        <p>Icon</p>
-        <ion-label detail="false">
-          <ion-img [src]="getAppIcon()" (click)="selectAndUploadAppIconFromLibrary()"></ion-img>
-        </ion-label>
-      </ion-row>-->
-
-      <ion-row>
+    <div class="section-container">
+      <ion-row class="section-title-row">
         <ion-col size="12">
-          <p>{{ 'title' | translate }}</p>
-        </ion-col>
-        <ion-col size="12">
-          <ion-label>{{ app.name }}</ion-label>
+          <h1>{{ 'generic-app-info' | translate }}</h1>
         </ion-col>
       </ion-row>
+      <ion-list>
+        <ion-row>
+          <ion-col size="12">
+            <p>{{ 'title' | translate }}</p>
+          </ion-col>
+          <ion-col size="12">
+            <ion-label>{{ app.name }}</ion-label>
+          </ion-col>
+        </ion-row>
 
-      <!--<ion-row *ngIf="appDIDDocumentStatusWasChecked">
-        <p>Short description</p>
-        <ion-label detail="false">
-          <ion-label></ion-label>
-        </ion-label>
-      </ion-row>
-      <ion-row *ngIf="appDIDDocumentStatusWasChecked">
-        <p>Long description</p>
-        <ion-label detail="false">
-          <ion-label></ion-label>
-        </ion-label>
-      </ion-row>-->
-    </ion-list>
+        <!--<ion-row>
+          <p>Icon</p>
+          <ion-label detail="false">
+            <ion-img [src]="getAppIcon()" (click)="selectAndUploadAppIconFromLibrary()"></ion-img>
+          </ion-label>
+        </ion-row>
+        <ion-row *ngIf="appDIDDocumentStatusWasChecked">
+          <p>Short description</p>
+          <ion-label detail="false">
+            <ion-label></ion-label>
+          </ion-label>
+        </ion-row>
+        <ion-row *ngIf="appDIDDocumentStatusWasChecked">
+          <p>Long description</p>
+          <ion-label detail="false">
+            <ion-label></ion-label>
+          </ion-label>
+        </ion-row>-->
+      </ion-list>
+    </div>
 
-    <ion-row class="section-row">
-      <ion-col size="12">
-        <h1>{{ 'app-identity-status' | translate }} </h1>
-        <ion-icon name="help-circle" (click)='dAppService.showHelp($event, appIdentityHelpMessage)'></ion-icon>
-      </ion-col>
-    </ion-row>
-
-    <ion-list>
-    
-      <ion-row>
+    <div class="section-container">
+      <ion-row class="section-title-row">
         <ion-col size="12">
-          <p>DID</p>
-          <ion-icon name="copy" (click)="copyAppDIDToClipboard()"></ion-icon>
-        </ion-col>
-        <ion-col size="12">
-          <ion-label>{{ app.didString }}</ion-label>
-        </ion-col>
-      </ion-row>
-
-      <ion-row>
-        <ion-col size="12">
-          <p>{{ 'mnemonic' | translate }}</p>
-        </ion-col>
-        <ion-col size=12>
-          <ion-label>{{ didSession.mnemonic }}</ion-label>
+          <h1>{{ 'app-identity-status' | translate }} </h1>
+          <ion-icon name="help-circle" (click)='dAppService.showHelp($event, appIdentityHelpMessage)'></ion-icon>
         </ion-col>
       </ion-row>
-
-      <ion-row>
-        <ion-col size="12">
-          <p>{{ 'app-did-published?' | translate }}</p>
-        </ion-col>
-        <ion-col size="12">
-          <ion-label *ngIf="!appDIDDocumentStatusWasChecked" style="color:grey">{{ 'checking' | translate }}</ion-label>
-          <ion-label *ngIf="appDIDDocumentStatusWasChecked && appDIDDocument" style="color:green">{{ 'yes-published' | translate }}</ion-label>
-          <ion-label *ngIf="appDIDDocumentStatusWasChecked && !appDIDDocument" style="color:red">{{ 'no-published' | translate }}</ion-label>
-        </ion-col>
-      </ion-row>
-
-      <ion-row *ngIf="appDIDDocumentStatusWasChecked">
-        <ion-col size="12">
-          <p>{{ 'dev-did-published?' | translate }}</p>
-        </ion-col>
-        <ion-col size="12">
-          <ion-label detail="false" *ngIf="developerDIDDocument" style="color:green">{{ 'yes-published' | translate }}</ion-label>
-          <ion-label detail="false" *ngIf="!developerDIDDocument" style="color:red">{{ 'no-published' | translate }}</ion-label>
-        </ion-col>
-      </ion-row>
-
-      <ion-row *ngIf="appDIDDocumentStatusWasChecked">
-        <ion-col size="12">
-          <p>{{ 'app-attached-to-dev' | translate }}</p>
-        </ion-col>
-        <ion-col size="12">
-          <ion-label detail="false" *ngIf="getOnChainAppDeveloperDID()" style="color:green">{{ 'yes-published' | translate }}</ion-label>
-          <ion-label detail="false" *ngIf="!getOnChainAppDeveloperDID()" style="color:red">{{ 'no-published' | translate }}</ion-label>
-        </ion-col>
-      </ion-row>
-
-      <ion-row *ngIf="appDIDDocumentStatusWasChecked">
-        <ion-col size="12">
-          <p>{{ 'native-redirect-url' | translate }} </p>
-          <ion-icon name="help-circle" (click)='dAppService.showHelp($event, nativeRedirectUrlHelpMessage)'></ion-icon>
-        </ion-col>
-        <ion-col size="12">
-          <ion-input [(ngModel)]="nativeRedirectUrl" placeholder="Set your intents redirect url here if any"></ion-input>
-        </ion-col>
-      </ion-row>
-
-      <ion-row *ngIf="appDIDDocumentStatusWasChecked">
-        <ion-col size="12">
-          <p>{{ 'native-scheme' | translate }}</p>
-          <ion-icon name="help-circle" (click)='dAppService.showHelp($event, nativeCustomSchemeHelpMessage)'></ion-icon>
-        </ion-col>
-        <ion-col size="12">
-          <ion-input [(ngModel)]="nativeCustomScheme" placeholder="Set your custom scheme here if any"></ion-input>
-        </ion-col>
-      </ion-row>
-
-      <ion-row *ngIf="appDIDDocumentStatusWasChecked">
-        <ion-col size="12">
-            <p>{{ 'native-callback-url' | translate }}</p>
-            <ion-icon name="help-circle" (click)='dAppService.showHelp($event, nativeCallbackUrlHelpMessage)'></ion-icon>
-        </ion-col>
-        <ion-col size="12">
-          <ion-input [(ngModel)]="nativeCallbackUrl" placeholder="Set your intents callback url here if any"></ion-input>
-        </ion-col>
-      </ion-row>
-
-    </ion-list>
+      <ion-list>
+        <ion-row>
+          <ion-col size="12">
+            <p>DID</p>
+            <ion-icon name="copy" (click)="copyAppDIDToClipboard()"></ion-icon>
+          </ion-col>
+          <ion-col size="12">
+            <ion-label>{{ app.didString }}</ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <p>{{ 'mnemonic' | translate }}</p>
+          </ion-col>
+          <ion-col size=12>
+            <ion-label>{{ didSession.mnemonic }}</ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <p>{{ 'app-did-published?' | translate }}</p>
+          </ion-col>
+          <ion-col size="12">
+            <ion-label *ngIf="!appDIDDocumentStatusWasChecked" style="color:grey">{{ 'checking' | translate }}</ion-label>
+            <ion-label *ngIf="appDIDDocumentStatusWasChecked && appDIDDocument" style="color:green">{{ 'yes-published' | translate }}</ion-label>
+            <ion-label *ngIf="appDIDDocumentStatusWasChecked && !appDIDDocument" style="color:red">{{ 'no-published' | translate }}</ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="appDIDDocumentStatusWasChecked">
+          <ion-col size="12">
+            <p>{{ 'dev-did-published?' | translate }}</p>
+          </ion-col>
+          <ion-col size="12">
+            <ion-label detail="false" *ngIf="developerDIDDocument" style="color:green">{{ 'yes-published' | translate }}</ion-label>
+            <ion-label detail="false" *ngIf="!developerDIDDocument" style="color:red">{{ 'no-published' | translate }}</ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="appDIDDocumentStatusWasChecked">
+          <ion-col size="12">
+            <p>{{ 'app-attached-to-dev' | translate }}</p>
+          </ion-col>
+          <ion-col size="12">
+            <ion-label detail="false" *ngIf="getOnChainAppDeveloperDID()" style="color:green">{{ 'yes-published' | translate }}</ion-label>
+            <ion-label detail="false" *ngIf="!getOnChainAppDeveloperDID()" style="color:red">{{ 'no-published' | translate }}</ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="appDIDDocumentStatusWasChecked" class="input-row">
+          <ion-col size="12">
+            <p>{{ 'native-redirect-url' | translate }} </p>
+            <ion-icon name="help-circle" (click)='dAppService.showHelp($event, nativeRedirectUrlHelpMessage)'></ion-icon>
+          </ion-col>
+          <ion-col size="12">
+            <ion-input [(ngModel)]="nativeRedirectUrl" placeholder="Set your intents redirect url here if any"></ion-input>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="appDIDDocumentStatusWasChecked" class="input-row">
+          <ion-col size="12">
+            <p>{{ 'native-scheme' | translate }}</p>
+            <ion-icon name="help-circle" (click)='dAppService.showHelp($event, nativeCustomSchemeHelpMessage)'></ion-icon>
+          </ion-col>
+          <ion-col size="12">
+            <ion-input [(ngModel)]="nativeCustomScheme" placeholder="Set your custom scheme here if any"></ion-input>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="appDIDDocumentStatusWasChecked" class="input-row">
+          <ion-col size="12">
+              <p>{{ 'native-callback-url' | translate }}</p>
+              <ion-icon name="help-circle" (click)='dAppService.showHelp($event, nativeCallbackUrlHelpMessage)'></ion-icon>
+          </ion-col>
+          <ion-col size="12">
+            <ion-input [(ngModel)]="nativeCallbackUrl" placeholder="Set your intents callback url here if any"></ion-input>
+          </ion-col>
+        </ion-row>
+      </ion-list>
+    </div>
 
     <ion-button *ngIf="appDIDDocumentStatusWasChecked && appIdentityNeedsToBePublished()"  color="dark" (click)="publishAppIdentity()">
       <ion-label>{{ 'publish-app-did' | translate }}</ion-label>
     </ion-button>
 
     <p *ngIf="!appIdentityNeedsToBePublished()" style="color:green">{{ 'up-to-date' | translate }}</p>
-
-    <br/><br/>
 
     <!-- HIDDEN FOR NOW
     <ion-row class="ion-text-center">

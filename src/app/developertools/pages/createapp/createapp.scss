@@ -59,7 +59,7 @@
 
     ion-row {
       border-bottom: 0.5px solid #21313d;
-      padding: 10px 0;
+      padding: 12.5px 0;
 
       ion-col {
         padding-left: 0;
@@ -89,6 +89,10 @@
           --padding-bottom: 0;
         }
       }
+    }
+
+    .input-row {
+      padding-bottom: 5px;
     }
 
     .toggle-row {

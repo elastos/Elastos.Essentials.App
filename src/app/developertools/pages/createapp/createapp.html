@@ -3,6 +3,7 @@
 
   <!-- Create App Screen -->
   <ion-grid class="container" *ngIf="!createdDApp">
+
     <ion-row>
       <ion-col size="12" class="ion-text-center">
         <h1>{{ 'create-new-app' | translate }}</h1>
@@ -14,7 +15,7 @@
     </ion-card>
 
     <ion-list>
-      <ion-row>
+      <ion-row class="input-row">
         <ion-col size="12">
           <p>{{ 'app-name' | translate }}</p>
         </ion-col>
@@ -31,7 +32,7 @@
         </ion-col>
       </ion-row>
 
-      <ion-row *ngIf="importDID">
+      <ion-row *ngIf="importDID" class="input-row">
         <ion-col size="12">
           <p>{{ 'existing-app-did-mnemonic' | translate }}</p>
           <ion-icon name="help-circle" (click)='dAppService.showHelp($event, helpMessage2)'></ion-icon>
@@ -41,7 +42,7 @@
         </ion-col>
       </ion-row>
 
-      <ion-row *ngIf="importDID">
+      <ion-row *ngIf="importDID" class="input-row">
         <ion-col size="12">
           <p>{{ 'mnemonic-passphrase' | translate }} <span>{{ 'if-any' | translate }} </span></p>
           <ion-icon name="help-circle" (click)='dAppService.showHelp($event, helpMessage3)'></ion-icon>
