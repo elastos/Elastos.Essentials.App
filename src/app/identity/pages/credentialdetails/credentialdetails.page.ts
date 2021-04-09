@@ -166,6 +166,7 @@ export class CredentialDetailsPage {
   ionViewWillEnter() {
     this.getIssuer();
     this.displayableProperties = this.getDisplayableProperties();
+    this.titleBar.setTitle(this.translate.instant('credentialdetails-title'));
   }
 
   ionViewWillLeave() {

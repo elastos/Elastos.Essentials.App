@@ -44,6 +44,7 @@ export const zh = {
 
 
     // page: credential-details
+    'credentialdetails-title': '凭证详情',
     'credentialdetails-show-on-profile': '公开',
     'credentialdetails-self-proclaimed-credential': '自申明凭证',
     'credential-published-on-blockchain': '凭证已发布到链上',

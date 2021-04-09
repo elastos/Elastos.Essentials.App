@@ -44,6 +44,7 @@ export const fr = {
 
 
     // page: credential-details
+    'credentialdetails-title': 'Des détails Crédentiel ',
     'credentialdetails-show-on-profile': 'Montrer dans le profil public',
     'credentialdetails-self-proclaimed-credential': 'Crédentiel Auto-Proclamé',
     'credential-published-on-blockchain': 'Crédentiel Publié sur la chaîne de blocs',

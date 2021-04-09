@@ -44,6 +44,7 @@ export const en = {
     'about-me': 'About Me',
 
     // page: credential-details
+    'credentialdetails-title': 'Credential Details',
     'credentialdetails-show-on-profile': 'Show on public profile',
     'credentialdetails-self-proclaimed-credential': 'Self-Proclaimed Credential',
     'credential-published-on-blockchain': 'Credential Published on Blockchain',

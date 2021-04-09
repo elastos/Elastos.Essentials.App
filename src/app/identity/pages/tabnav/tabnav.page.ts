@@ -24,6 +24,7 @@ export class TabnavPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.tabs.select(this.selectedTab);
   }
 
   ionViewWillLeave() {
