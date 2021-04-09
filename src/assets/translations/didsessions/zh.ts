@@ -7,7 +7,7 @@ export const zh = {
   'verify-mnemonic': '验证助记词',
   'pick-identity': '选择身份',
   'select-identity': '选择身份',
-  'your-private-qr-code': '您的私有QR码',
+  'your-private-qr-code': '您的私有二维码',
   'your-private-key': '您的私钥',
 
   // Placeholder
@@ -60,19 +60,20 @@ export const zh = {
 
   // Delete Identity
   'delete-identity': '删除身份',
-  'delete-identity-prompt': '此身份信息将从本机删除，您随时可以再次导入它。',
+  'delete-identity-prompt': '此身份信息将从本机删除，您可以随时再次导入此身份。',
 
   // retrieve identities
   'retrieve-prompt': '正在获取身份信息，请稍候...',
 
   // Backup
   'decentralized-id': '分布式 ID',
-  'did-warning-info': '这是您的私有QR码，其中包含您的身份私钥，请勿与任何人共享。',
+  'did-warning-info': '这是您的私有二维码，其中包含您的身份私钥，请勿与任何人共享。',
   'print-qrcode': '打印二维码',
   'manual-verify': '手动验证',
-  'only-qrcode': '仅有QR码',
-  'qrcode-and-mnemonic-words': 'QR码和助记词',
+  'only-qrcode': '只打印二维码',
+  'qrcode-and-mnemonic-words': '打印 二维码码+助记词',
   'verify-did': '验证',
+  'print-title': '请保存好此私钥!',
 };
 
 

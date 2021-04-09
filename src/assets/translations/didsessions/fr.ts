@@ -72,6 +72,7 @@ export const fr = {
   'only-qrcode': 'Only QR Code',
   'qrcode-and-mnemonic-words': 'QR Code and Mnemonic words',
   'verify-did': 'Verify',
+  'print-title': 'KEEP THIS PRIVATE!',
 };
 
 
