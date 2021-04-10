@@ -688,7 +688,7 @@ export class CredentialsPage {
     if (this.segment == "hidden") return this.profileService.invisibleCredentials
     if (this.segment == "visible") return this.profileService.visibleCredentials */
 
-    if (this.segment == "all") return this.profileService.allCreds.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
+    if (this.segment == "all") return this.profileService.allCreds.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));
     if (this.segment == "hidden") return this.profileService.invisibleCredentials.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
     if (this.segment == "visible") return this.profileService.visibleCredentials.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
 

@@ -5,55 +5,69 @@
   width: 100%;
   padding: 5px 13px 13px 13px;
 
-  .avatar-row {
-    .icon-section {
-      width: 215.1px;
-      height: 214.6px;
-      margin: 0 auto;
-      object-fit: contain;
+  .header-grid {
+    padding: 0 10px 10px;
+
+    .avatar-row {
+      .icon-section {
+        width: 215.1px;
+        height: 214.6px;
+        margin: 0 auto;
+        object-fit: contain;
+        display: flex;
+        justify-content: center;
+        color: #ffffff;
+        background-image: url("/assets/identity/svg/empty-balloon.svg");
+        background-blend-mode: multiply;
+        padding: 35px;
+  
+        ion-icon {
+          display: block;
+          margin: auto;
+          width: 70%;
+          height: 70%;
+        }
+  
+        img {
+          display: block;
+          margin: auto;
+          border-radius: 50%;
+          object-fit: cover;
+          overflow: hidden;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .title-row {
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      color: #ffffff;
-      background-image: url("/assets/identity/svg/empty-balloon.svg");
-      background-blend-mode: multiply;
-      padding: 35px;
-
-      ion-icon {
-        display: block;
-        margin: auto;
-        width: 70%;
-        height: 70%;
+      align-items: flex-start;
+      margin: 20px 0 10px;
+  
+      ion-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+  
+        p, h1 {
+          margin: 0;
+        }
+  
+        p {
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: 0.65px;
+        }
+    
+        h1 {
+          font-size: 24px;
+          font-weight: 600;
+        }
       }
-
-      img {
-        display: block;
-        margin: auto;
-        border-radius: 50%;
-        object-fit: cover;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-
-  .title-row {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    margin-top: 5px;
-    margin-left: 18px;
-
-    .welcome-back {
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .username {
-      font-size: 24px;
-      font-weight: 700;
     }
   }
 
@@ -133,10 +147,12 @@
   }
 
   .options-grid {
-    .title-row {
-      padding-bottom: 0;
+    padding: 10px;
 
-      h1 {
+    .title-row {
+      margin-bottom: 5px;
+
+      p {
         margin: 0;
         font-size: 13px;
         font-weight: 600;
@@ -148,7 +164,6 @@
       display: flex;
       justify-content: space-between;
       align-items: space-between;
-      padding: 10px;
 
       ion-col {
         display: flex;

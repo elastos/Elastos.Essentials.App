@@ -11,7 +11,7 @@
 
     <ion-row class="bio-row">
       <ion-col size="9.5" class="name-col">
-        <ion-label *ngIf="profile">{{ profile.getName() }}</ion-label>
+        <h1 *ngIf="profile">{{ profile.getName() }}</h1>
       </ion-col>
       <ion-col size="2.5" class="icon-col">
         <img 
@@ -26,7 +26,7 @@
         >
       </ion-col>
       <ion-col size="12"  class="description-col">
-        <ion-label>{{ profile.getDescription() }}</ion-label> 
+        <p>{{ profile.getDescription() }}</p> 
       </ion-col>
     </ion-row>
 

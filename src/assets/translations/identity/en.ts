@@ -67,7 +67,7 @@ export const en = {
     'publish-popup-confirm-question': 'Are you sure?',
 
     // page: editprofile
-    'edit-avatar': 'edit avatar',
+    'edit-avatar': 'Edit Avatar',
     'show-on-profile': 'Show on Profile',
     'add-field': 'Add field',
     'edit-profile': 'Edit Profile',

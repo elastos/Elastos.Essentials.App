@@ -1,18 +1,22 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <ion-row class="avatar-row">
-      <div class="icon-section">
-        <ion-icon *ngIf="!hiveService.rawImage" mode="ios" name="person"></ion-icon>
-        <img *ngIf="hiveService.rawImage" [src]="hiveService.rawImage" />
-      </div>
-    </ion-row>
-    
-    <ion-row class="title-row">
-      <span class="welcome-back">{{ 'welcome-back' | translate }}</span>
-      <span class="username" *ngIf="profile">{{ getProfileName() }}</span>
-    </ion-row>
 
+    <ion-grid class="header-grid">
+      <ion-row class="avatar-row">
+        <div class="icon-section">
+          <ion-icon *ngIf="!hiveService.rawImage" mode="ios" name="person"></ion-icon>
+          <img *ngIf="hiveService.rawImage" [src]="hiveService.rawImage" />
+        </div>
+      </ion-row>
+      <ion-row class="title-row">
+        <ion-col>
+          <p>{{ 'welcome-back' | translate }}</p>
+          <h1 *ngIf="profile">{{ getProfileName() }}</h1>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+ 
     <ion-grid  class="status-grid">
       <ion-row *ngIf="profileService.isPublishStatusFetched() && !profileService.didNeedsToBePublished">
         <ion-col size="1.5">
@@ -78,7 +82,9 @@
   
     <ion-grid class="options-grid">
       <ion-row class="title-row">
-        <h1>{{ 'current-options' | translate }}</h1>
+        <ion-col>
+          <p>{{ 'current-options' | translate }}</p>
+        </ion-col>
       </ion-row>
       <ion-row class="options-row">
         <ion-col size="5.8" class="publish" (click)="profileService.publish()">
