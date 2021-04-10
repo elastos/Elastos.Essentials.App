@@ -1,31 +1,32 @@
 <ion-content class="content">
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <ion-row>
+
+    <ion-row class="avatar-row">
       <div class="icon-section">
         <ion-icon *ngIf="!hiveService.rawImage" mode="ios" name="person"></ion-icon>
         <img *ngIf="hiveService.rawImage" [src]="hiveService.rawImage" />
       </div>
     </ion-row>
 
-    <ion-row class="section2">
-      <ion-col size="9">
-        <div>
-          <ion-label *ngIf="profile" class="username">{{ profile.getName() }}</ion-label>
-        </div>
+    <ion-row class="bio-row">
+      <ion-col size="9.5" class="name-col">
+        <ion-label *ngIf="profile">{{ profile.getName() }}</ion-label>
       </ion-col>
-      <ion-col size="1.5">
-        <img class="qrcode" src="{{ this.theme.darkMode ? '/assets/identity/svg/qrcode-dark.svg' : '/assets/identity/svg/qrcode.svg' }}"
-          (click)="showQRCode()" />
+      <ion-col size="2.5" class="icon-col">
+        <img 
+          class="qrcode"
+          src="{{ this.theme.darkMode ? '/assets/identity/svg/qrcode-dark.svg' : '/assets/identity/svg/qrcode.svg' }}"
+          (click)="showQRCode()" 
+        >
+        <img
+          class="dots"
+          src="{{ this.theme.darkMode ? '/assets/identity/svg/share-dark.svg' : '/assets/identity/svg/share.svg' }}"
+          (click)="profileService.shareIdentity()"
+        >
       </ion-col>
-      <ion-col size="1.5">
-        <img class="dots" src="{{ this.theme.darkMode ? '/assets/identity/svg/share-dark.svg' : '/assets/identity/svg/share.svg' }}"
-          (click)="profileService.shareIdentity()" />
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="description">
-        <div> {{ profile.getDescription() }} </div>
+      <ion-col size="12"  class="description-col">
+        <ion-label>{{ profile.getDescription() }}</ion-label> 
       </ion-col>
     </ion-row>
 
@@ -46,7 +47,7 @@
       </ion-grid>
     </ion-row> -->
 
-    <ion-row class="hive-wrapper">
+    <ion-row class="hive-row">
       <ion-col size="12">
         <div>
           <div class="hive-background">
@@ -63,20 +64,21 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="profile-section">
-      <div class="profile-header">
-        <span class="aboutme">{{ 'about-me' | translate }}</span>
-        <span class="edit" (click)="profileService.editProfile();">{{ 'edit' | translate }}&nbsp;<img
-            src="{{ this.theme.darkMode ? '../../../assets/identity/svg/chevron-thin-right-dark.svg' : '../../../assets/identity/svg/chevron-thin-right.svg' }}"></span>
-      </div>
-      <div class="profile" *ngIf="this.profileService.profileEntries.length > 0">
+    <ion-row class="profile-row">
+      <ion-col size="9.5" class="title-col">
+        <span>{{ 'about-me' | translate }}</span>
+      </ion-col>
+      <ion-col size="2.5" class="edit-col">
+        <span (click)="profileService.editProfile();">{{ 'edit' | translate }}
+        <img src="{{ this.theme.darkMode ? '../../../assets/identity/svg/chevron-thin-right-dark.svg' : '../../../assets/identity/svg/chevron-thin-right.svg' }}"></span>
+      </ion-col>
+      <div class="cred-container" *ngIf="this.profileService.profileEntries.length > 0">
         <ion-row *ngFor="let entry of this.profileService.profileEntries">
           <ion-col size="1">
-            <!-- <ion-icon mode="ios" [name]="getCredIcon(entry)"></ion-icon> -->
             <img [src]="getCredIconSrc(entry)">
           </ion-col>
           <ion-col size="11">
-            <ion-label class="title">{{ getCredentialValue(entry.credential) | translate }}</ion-label>
+            <ion-label>{{ getCredentialValue(entry.credential) | translate }}</ion-label>
           </ion-col>
         </ion-row>
       </div>

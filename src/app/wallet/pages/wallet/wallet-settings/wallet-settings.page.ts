@@ -80,14 +80,14 @@ export class WalletSettingsPage implements OnInit {
             icon: '/assets/wallet/settings/trash.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
         },
-        {
+  /*       {
             type: 'wallet-swap',
             route: "/wallet/swap-test",
             title: this.translate.instant("SWAP TEST"),
             subtitle: this.translate.instant("This is a temporary screen"),
             icon: '/assets/wallet/settings/trash.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
-        },
+        }, */
     ];
 
     constructor(

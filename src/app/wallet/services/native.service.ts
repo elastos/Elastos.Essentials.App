@@ -46,6 +46,21 @@ export class Native {
     ) {
     }
 
+    init() {
+        // TODO
+ /*        this.translate.onLangChange.subscribe(data => {
+            let lang = data.lang;
+
+            if (lang === 'zh') {
+                this.setMnemonicLang("CHINESE_SIMPLIFIED");
+            } else if (lang === 'fr') {
+                this.setMnemonicLang("FRENCH");
+            } else {
+                this.setMnemonicLang("ENGLISH");
+            }
+        }); */
+    }
+
     public toast(msg: string = '操作完成', duration: number = 2000): void {
         this.globalNative.genericToast(msg, duration);
     }
