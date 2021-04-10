@@ -10,7 +10,7 @@
         margin-left:15px;
     }
 
-    span {
+    .message {
         margin-top: 12px;
         display: block;
         margin-left: 15px;
@@ -19,6 +19,31 @@
         letter-spacing: 0.6px;
         text-align: left;
         color: #8e8fac;
+    }
+
+    .status-grid {
+        padding: 10px;
+        border-top: 2px solid white;
+        border-bottom: 2px solid white;
+        margin-top: 5px;
+    
+        ion-row {
+            ion-col {
+                display: flex;
+                align-items: center;
+        
+                ion-label {
+                    font-weight: 500;
+                    font-size: 13px;
+                }
+        
+                .published {
+                    width: 24.8px;
+                    height: 19.6px;
+                    object-fit: contain;
+                }
+            }
+        }
     }
 
     .alert-section {
@@ -39,9 +64,9 @@
         }
     }
 
-    .list-credentials-section {
+    .credentials {
         .card {
-            padding-top:8px;
+            padding-top: 8px;
         }
 
         .card-icon {
@@ -78,50 +103,48 @@
             border-radius: 18px;
             box-shadow: 0 3px 15px 0 #ededf0;
             background-image: linear-gradient(to right, #ede6ff, #ffffff 1%, #ffffff 81%);
-            padding-left: 40px;
-            padding-top: 0px;
-            padding-bottom: 7px;
-            padding-right: 7px;
+            display: flex;
+            align-items: center;
 
+            .card-body {
+                width: 100%;
+                padding-top: 5px;
+                padding-bottom: 5px;
+
+                .labels-col {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: flex-start; 
+
+                    .card-title {
+                        font-size: 15px;
+                        font-weight: 600;
+                        text-align: left;
+                        color: #191a2f;
+                    }
+    
+                    .card-value {
+                        font-size: 13px;
+                        font-weight: 500;
+                        text-align: left;
+                        color: #191a2f;
+                        word-break: break-all;
+                        margin-top: 5px;
+                    }
+                }
+
+                .toggle-col {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+    
+                    ion-toggle {
+                        zoom: 0.7;
+                    }            
+                }
+            }
         }
-
-        .card-body {
-            width: 100%;
-        }
-
-        .card-action {
-            width: 60px;
-            height: 100%;  vertical-align: middle;
-            padding-top: 20px;
-        }
-
-        ion-toggle{
-            zoom: 0.7;
-            vertical-align: middle;
-        }
-
-        .card-title {
-            font-size: 17px;
-            font-weight: 500;
-            line-height: 1;
-            text-align: left;
-            color: #191a2f;
-        }
-
-        .card-title-icons {
-            float: right;
-        }
-
-        .card-value {
-            display: block;
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 1.19;
-            text-align: left;
-            color: #191a2f;
-            padding-bottom: 5px;
-        }
-
     }
 
     .btn-row {
@@ -153,7 +176,7 @@
         border-bottom: 2px solid #090910;
     }
 
-    .list-credentials-section {
+    .credentials {
         .card-internal {
             box-shadow: 0 3px 15px 0 #151515;
             background-color: #2a2a4d;
@@ -163,6 +186,7 @@
         .card-title {
             color: white;
         }
+
         .card-value {
             color: white;
         }
