@@ -1,31 +1,38 @@
 @import "src/app/identity/root.scss";
 
 .container {
-    padding: 5px;
+    padding: 13px 0;
 
-    h1 {
-        font-size: 30px;
-        font-weight: 600;
-        text-align: left;
-        margin-left:15px;
-    }
+    .header {
+        padding: 0 15px;
 
-    .message {
-        margin-top: 12px;
-        display: block;
-        margin-left: 15px;
-        font-size: 12px;
-        line-height: 1;
-        letter-spacing: 0.6px;
-        text-align: left;
-        color: #8e8fac;
+        ion-col {
+            padding-left: 0;
+            padding-right: 0;
+
+            ion-label {
+                font-size: 30px;
+                font-weight: 600;
+                line-height: 0.93;
+                text-align: left;
+            }
+
+            span {
+                display: block;
+                font-size: 12px;
+                line-height: 1;
+                letter-spacing: 0.6px;
+                text-align: left;
+                color: #8e8fac;
+            }        
+        }
     }
 
     .status-grid {
         padding: 10px;
         border-top: 2px solid white;
         border-bottom: 2px solid white;
-        margin-top: 5px;
+        margin: 10px 15px;
     
         ion-row {
             ion-col {
@@ -43,24 +50,6 @@
                     object-fit: contain;
                 }
             }
-        }
-    }
-
-    .alert-section {
-        border-top: 2px solid white;
-        border-bottom: 2px solid white;
-        margin: 20px 0;
-        padding: 10px 20px;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-
-        span {
-            font-size: 14px;
-            font-weight: 500;
-            text-align: left;
-            margin-top: 0;
-            margin-left: 15px;
         }
     }
 
@@ -167,11 +156,7 @@
 }
 
 .darkContainer {
-    span {
-        color: #ffffff;
-    }
-
-    .alert-section {
+    .status-grid {
         border-top: 2px solid #090910;
         border-bottom: 2px solid #090910;
     }
@@ -181,14 +166,18 @@
             box-shadow: 0 3px 15px 0 #151515;
             background-color: #2a2a4d;
             background-image: none;
-        }
 
-        .card-title {
-            color: white;
-        }
-
-        .card-value {
-            color: white;
+            .card-body {
+                .labels-col {
+                    .card-title {
+                        color: white;
+                    }
+            
+                    .card-value {
+                        color: white;
+                    }
+                }
+            }
         }
     }
 }
