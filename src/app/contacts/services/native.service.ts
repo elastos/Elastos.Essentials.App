@@ -20,11 +20,11 @@ export class NativeService {
 
   /********* Toasts *********/
   async genericToast(msg: string, duration: number = 3000) {
-    this.globalNative.genericToast(msg, duration)
+    this.globalNative.genericToast(msg, duration, "success");
   }
 
   async shareToast() {
-    this.globalNative.genericToast(this.translate.instant('contact-copied'), 3000);
+    this.globalNative.genericToast(this.translate.instant('contact-copied'), 3000, "success");
   }
 
   async didResolveErr(err: string) {

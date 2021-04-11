@@ -74,13 +74,22 @@
     .icon-col {
       justify-content: flex-end;
 
-      img {
-        height: 22px;
-        width: 22px;
+      div {
+        height: 35px;
+        width: 35px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 100%;
+
+        img {
+          height: 66%;
+          width: 66%;
+        }
       }
 
       .dots {
-        margin-left: 15px;
+        margin-left: 5px;
       }
     }
   }

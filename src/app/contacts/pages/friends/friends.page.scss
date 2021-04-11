@@ -7,7 +7,6 @@
     object-fit: cover;
     overflow: hidden;
     border-radius: 50%;
-    border: 1.75px solid #6d74ef;
   }
 
   ion-slide {
@@ -182,6 +181,10 @@
 
   .activeItem {
     --background: #f0f1ff;
+  }
+
+  ion-item-options {
+    border-bottom: none;
   }
 
   .itemOption {

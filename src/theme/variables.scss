@@ -30,7 +30,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
 // http://ionicframework.com/docs/theming/
 
 :root {
-  /** primary **/
+  /** Wallet - primary **/
   --ion-color-primary: linear-gradient(to bottom, #732dcf, #640fd4);
   --ion-color-primary-rgb: 115,45,207;
   --ion-color-primary-contrast: #ffffff;
@@ -38,7 +38,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-primary-shade: #6528b6;
   --ion-color-primary-tint: #8142d4;
 
-  /** secondary **/
+  /** Wallet 2 - secondary **/
   --ion-color-secondary: linear-gradient(to bottom, #4a118d, #39136a);
   --ion-color-secondary-rgb: 74,17,141;
   --ion-color-secondary-contrast: #ffffff;
@@ -46,7 +46,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-secondary-shade: #410f7c;
   --ion-color-secondary-tint: #5c2998;
 
-  /** tertiary **/
+  /** Identity - tertiary **/
   --ion-color-tertiary: #565bdb;
   --ion-color-tertiary-rgb: 86,91,219;
   --ion-color-tertiary-contrast: #ffffff;
@@ -54,13 +54,13 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-tertiary-shade: #4c50c1;
   --ion-color-tertiary-tint: #676bdf;
 
-  /** success **/
-  --ion-color-success: #2dd36f;
-  --ion-color-success-rgb: 45,211,111;
+  /** Contacts - success **/
+  --ion-color-success: #4620b0;
+  --ion-color-success-rgb: 70,32,176;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255,255,255;
-  --ion-color-success-shade: #28ba62;
-  --ion-color-success-tint: #42d77d;
+  --ion-color-success-shade: #3e1c9b;
+  --ion-color-success-tint: #5936b8;
 
   /** warning **/
   --ion-color-warning: #ffce00;
@@ -115,7 +115,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
  */
 
  body.dark {
-  /** primary **/
+  /** Wallet - primary **/
   --ion-color-primary: linear-gradient(to bottom, #732dcf, #640fd4);
   --ion-color-primary-rgb: 115,45,207;
   --ion-color-primary-contrast: #ffffff;
@@ -123,7 +123,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-primary-shade: #6528b6;
   --ion-color-primary-tint: #8142d4;
 
-  /** secondary **/
+  /** Wallet 2 - secondary **/
   --ion-color-secondary: linear-gradient(to bottom, #4a118d, #39136a);
   --ion-color-secondary-rgb: 74,17,141;
   --ion-color-secondary-contrast: #ffffff;
@@ -131,7 +131,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-secondary-shade: #410f7c;
   --ion-color-secondary-tint: #5c2998;
 
-  /** tertiary **/
+  /** Identity - tertiary **/
   --ion-color-tertiary: #565bdb;
   --ion-color-tertiary-rgb: 86,91,219;
   --ion-color-tertiary-contrast: #ffffff;
@@ -139,13 +139,13 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-color-tertiary-shade: #4c50c1;
   --ion-color-tertiary-tint: #676bdf;
 
-  /** success **/
-  --ion-color-success: #2dd36f;
-  --ion-color-success-rgb: 45,211,111;
+  /** Contacts - success **/
+  --ion-color-success: #4620b0;
+  --ion-color-success-rgb: 70,32,176;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255,255,255;
-  --ion-color-success-shade: #28ba62;
-  --ion-color-success-tint: #42d77d;
+  --ion-color-success-shade: #3e1c9b;
+  --ion-color-success-tint: #5936b8;
 
   /** warning **/
   --ion-color-warning: #ffce00;

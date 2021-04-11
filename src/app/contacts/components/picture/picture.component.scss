@@ -15,7 +15,7 @@ ion-grid {
     width: 250px;
     object-fit: cover;
     border-radius: 50%;
-    border: 1.75px solid #732dcf;
+    border: 1.75px solid #4620b0;
   }
 
   img:active {
@@ -43,7 +43,6 @@ ion-grid {
     ion-button {
       height: 50px;
       width: 75%;
-      --background: linear-gradient(to bottom, #732dcf, #640fd4);
       --border-radius: 8px;
       font-size: 14px;
       font-weight: 500;
@@ -73,6 +72,7 @@ ion-grid {
       color: #fdfeff;
     }
   }
+
   h1 {
     color: #fdfeff;
   }

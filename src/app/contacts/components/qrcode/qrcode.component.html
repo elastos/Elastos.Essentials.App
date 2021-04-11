@@ -7,10 +7,10 @@
   <h2>{{ didString.slice(4,16) }}...{{ didString.slice(40,46) }}</h2>
 
   <ion-row class="footer">
-    <ion-button (click)="shareInvitationLink()">
+    <ion-button color="success" (click)="shareInvitationLink()">
       <ion-label>{{ 'share' | translate }}</ion-label>
     </ion-button>
-    <ion-button (click)="copyDIDToClipboard()">
+    <ion-button color="success" (click)="copyDIDToClipboard()">
       <ion-label>{{ 'copy-to-clipboard' | translate }}</ion-label>
     </ion-button>
   </ion-row>

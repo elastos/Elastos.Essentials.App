@@ -3,11 +3,11 @@
 <ion-content>
   <ion-grid *ngIf="!avatar || !avatar.data">
     <ion-row class="btn-row">
-      <ion-button (click)="takePicture(1)">
-        <ion-label>{{ 'take-pictures' | translate }}</ion-label>
+      <ion-button color="success" (click)="takePicture(1)">
+        {{ 'take-pictures' | translate }}
       </ion-button>
-      <ion-button (click)="takePicture(0)">
-        <ion-label>{{ 'photo-library' | translate }}</ion-label>
+      <ion-button color="success" (click)="takePicture(0)">
+        {{ 'photo-library' | translate }}
       </ion-button>
     </ion-row>
   </ion-grid>
@@ -15,11 +15,11 @@
   <ion-grid *ngIf="avatar && avatar.data && !oldAvatar">
     <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
     <ion-row class="btn-row submit">
-      <ion-button (click)="submit(true)">
-        <ion-label>{{ 'use' | translate }}</ion-label>
+      <ion-button color="success" (click)="submit(true)">
+        {{ 'use' | translate }}
       </ion-button>
-      <ion-button (click)="avatar.data = null">
-        <ion-label>{{ 'change' | translate }}</ion-label>
+      <ion-button color="success" (click)="avatar.data = null">
+        {{ 'change' | translate }}
       </ion-button>
     </ion-row>
   </ion-grid>
@@ -27,13 +27,13 @@
   <ion-grid *ngIf="avatar && avatar.data && oldAvatar">
     <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
     <ion-row class="btn-row submit">
-      <ion-button (click)="submit(true)">
+      <ion-button color="success" (click)="submit(true)">
         <ion-label>{{ 'use' | translate }}</ion-label>
       </ion-button>
-      <ion-button (click)="avatar.data = null">
+      <ion-button color="success" (click)="avatar.data = null">
         <ion-label>{{ 'change' | translate }}</ion-label>
       </ion-button>
-      <ion-button (click)="submit(false)">
+      <ion-button color="success" (click)="submit(false)">
         <ion-label>{{ 'delete' | translate }}</ion-label>
       </ion-button>
     </ion-row>

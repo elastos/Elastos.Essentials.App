@@ -10,20 +10,24 @@
     </ion-row>
 
     <ion-row class="bio-row">
-      <ion-col size="9.5" class="name-col">
+      <ion-col size="8" class="name-col">
         <h1 *ngIf="profile">{{ profile.getName() }}</h1>
       </ion-col>
-      <ion-col size="2.5" class="icon-col">
-        <img 
-          class="qrcode"
-          src="{{ this.theme.darkMode ? '/assets/identity/svg/qrcode-dark.svg' : '/assets/identity/svg/qrcode.svg' }}"
-          (click)="showQRCode()" 
-        >
-        <img
-          class="dots"
-          src="{{ this.theme.darkMode ? '/assets/identity/svg/share-dark.svg' : '/assets/identity/svg/share.svg' }}"
-          (click)="profileService.shareIdentity()"
-        >
+      <ion-col size="4" class="icon-col">
+        <div class="qrcode ripple ion-activatable">
+          <img 
+            src="{{ this.theme.darkMode ? '/assets/identity/svg/qrcode-dark.svg' : '/assets/identity/svg/qrcode.svg' }}"
+            (click)="showQRCode()" 
+          >
+          <ion-ripple-effect></ion-ripple-effect>
+        </div>
+        <div class="dots ripple ion-activatable">
+          <img
+            src="{{ this.theme.darkMode ? '/assets/identity/svg/share-dark.svg' : '/assets/identity/svg/share.svg' }}"
+            (click)="profileService.shareIdentity()"
+          >
+          <ion-ripple-effect></ion-ripple-effect>
+        </div>
       </ion-col>
       <ion-col size="12" class="description-col">
         <p>{{ profile.getDescription() }}</p> 

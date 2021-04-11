@@ -87,26 +87,30 @@
         </ion-col>
       </ion-row>
       <ion-row class="options-row">
-        <ion-col size="5.8" class="publish" (click)="profileService.publish()">
+        <ion-col size="5.8" class="publish ripple ion-activatable" (click)="profileService.publish()">
           <img src=" /assets/identity/svg/publish-button.svg" />
           <h2>{{ 'publish' | translate}}</h2>
           <span>{{ 'publish-description' | translate }}</span>
+          <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
-        <ion-col size="5.8"class="edit" (click)="profileService.editProfile()">
+        <ion-col size="5.8"class="edit ripple ion-activatable" (click)="profileService.editProfile()">
           <img src="{{ this.theme.darkMode ? '/assets/identity/svg/edit-button-dark.svg' : '/assets/identity/svg/edit-button.svg' }}" />
           <h2>{{ 'edit' | translate}}</h2>
           <span>{{ 'edit-description' | translate }}</span>
+          <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
-        <ion-col size="5.8" class="share" (click)="profileService.shareIdentity()">
+        <ion-col size="5.8" class="share ripple ion-activatable" (click)="profileService.shareIdentity()">
           <img
             src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button-dark.svg' : '/assets/identity/svg/share-button.svg' }}" />
           <h2>{{ 'share' | translate}}</h2>
           <span>{{ 'share-description' | translate }} </span>
+          <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
-        <ion-col size="5.8" class="export" (click)="exportMnemonic()">
+        <ion-col size="5.8" class="export ripple ion-activatable" (click)="exportMnemonic()">
           <img src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button-dark.svg' : '/assets/identity/svg/share-button.svg' }}" />
           <h2>{{ 'export-mnemonics' | translate}}</h2>
           <span>{{ 'export-mnemonics-description' | translate}}</span>
+          <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
       </ion-row>
     </ion-grid>
