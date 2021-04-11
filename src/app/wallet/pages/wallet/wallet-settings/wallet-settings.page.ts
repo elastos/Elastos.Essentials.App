@@ -15,6 +15,8 @@ import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { PopoverController } from '@ionic/angular';
+import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 
 @Component({
     selector: 'app-wallet-settings',
@@ -34,6 +36,7 @@ export class WalletSettingsPage implements OnInit {
 
     public currentLanguageName = "";
     public readonly = "";
+    public popover: any = null;
 
     // Helpers
     public Util = Util;
@@ -103,6 +106,7 @@ export class WalletSettingsPage implements OnInit {
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         private authService: AuthService,
+        private popoverCtrl: PopoverController
     ) {
     }
 
@@ -135,6 +139,8 @@ export class WalletSettingsPage implements OnInit {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
+               // this.showDeletePrompt();
+                  
                 const confirmToDelete = await this.popupProvider.ionicConfirm('delete-wallet-confirm-title', 'delete-wallet-confirm-subtitle');
                 if (confirmToDelete) {
                     await this.destroyWallet(this.masterWalletId);
@@ -143,6 +149,25 @@ export class WalletSettingsPage implements OnInit {
         } catch (e) {
             Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
         }
+    }
+
+    async showDeletePrompt() {
+        this.popover = await this.popoverCtrl.create({
+            mode: 'ios',
+            cssClass: 'wallet-warning-component',
+            component: WarningComponent,
+            translucent: false
+        });
+    
+        this.popover.onWillDismiss().then(async (params) => {
+            this.popover = null;
+
+            if(params.data.delete) {
+                await this.destroyWallet(this.masterWalletId);
+            }
+        });
+    
+        return await this.popover.present();
     }
 
     public async destroyWallet(id: string) {

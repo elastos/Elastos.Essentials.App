@@ -8,13 +8,15 @@ import { ContactsComponent } from './contacts/contacts.component';
 import { HelpComponent } from './help/help.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from './tx-success/tx-success.component';
+import { WarningComponent } from 'src/app/didsessions/components/warning/warning.component';
 
 @NgModule({
   declarations: [
     TxConfirmComponent,
     TxSuccessComponent,
     HelpComponent,
-    ContactsComponent
+    ContactsComponent,
+    WarningComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +33,8 @@ import { TxSuccessComponent } from './tx-success/tx-success.component';
     TxConfirmComponent,
     TxSuccessComponent,
     HelpComponent,
-    ContactsComponent
+    ContactsComponent,
+    WarningComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

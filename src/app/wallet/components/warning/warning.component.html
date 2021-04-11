@@ -1,0 +1,27 @@
+<div class="container">
+
+  <ion-row class="header">
+    <img src="/assets/didsessions/default/deleteWarning.svg">
+    <h1 class="ion-padding-horizontal ion-text-center">{{ 'wallet-delete' | translate }}</h1>
+  </ion-row>
+
+  <ion-row>
+    <ion-col class="message ion-padding">
+      <p class="ion-padding">
+        {{ 'delete-wallet-confirm-subtitle' | translate }}
+      </p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row  class="btn-row">
+    <ion-col class="btn ripple ion-activatable" size="5" (click)="cancel()">
+      <ion-label>{{ 'cancel' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+    <ion-col class="btn ripple ion-activatable" size="5" (click)="delete()">
+      <ion-label>{{ 'continue' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+  
+</div>

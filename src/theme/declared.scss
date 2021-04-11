@@ -255,6 +255,34 @@
   }
 }
 
+.wallet-warning-component {
+  --min-height: 302px;
+  --background: #ffffff;
+
+  animation: walletWarningAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes walletWarningAnimate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+    }
+  }
+}
+
 .wallet-loader {
   --spinner-color: white;
   --background: #801fff;
