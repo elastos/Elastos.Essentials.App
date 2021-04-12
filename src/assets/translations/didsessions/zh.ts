@@ -71,7 +71,7 @@ export const zh = {
   'print-qrcode': '打印二维码',
   'manual-verify': '手动验证',
   'only-qrcode': '只打印二维码',
-  'qrcode-and-mnemonic-words': '打印 二维码码+助记词',
+  'qrcode-and-mnemonic-words': '打印 二维码+助记词',
   'verify-did': '验证',
   'print-title': '请保存好此私钥!',
 };
