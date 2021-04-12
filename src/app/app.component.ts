@@ -66,9 +66,9 @@ export class AppComponent {
             this.setupBackKeyNavigation();
 
             // TODO screen.orientation.lock('portrait');
+            await this.language.init();
             await this.intentService.init();
             await this.didSessions.init();
-            await this.language.init();
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();

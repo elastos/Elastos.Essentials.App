@@ -66,7 +66,7 @@ export class GlobalLanguageService {
       }
     });
 
-    //await this.fetchLanguageInfo();
+    // await this.fetchLanguageInfo();
   }
 
   /**
@@ -108,7 +108,7 @@ export class GlobalLanguageService {
 
     Logger.log("LanguageService", "System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
 
-    let actualLanguage = this.userDefinedLanguageInUse() ? this.selectedLanguage : this.systemLanguage;
+    let actualLanguage = this.userNotDefinedLanguageInUse() ? this.systemLanguage : this.selectedLanguage;
     this.setAppLanguage(actualLanguage);
 
     this.activeLanguage.next(actualLanguage);
@@ -117,7 +117,7 @@ export class GlobalLanguageService {
   /**
    * Tells whether the current language is a language defined by the user, or the default system one.
    */
-  public userDefinedLanguageInUse(): boolean {
+  public userNotDefinedLanguageInUse(): boolean {
     return !this.selectedLanguage || this.selectedLanguage == "native system";
   }
 
