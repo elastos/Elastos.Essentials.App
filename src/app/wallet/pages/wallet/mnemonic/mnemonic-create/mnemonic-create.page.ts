@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../../../../services/events.service';
 import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 
 @Component({
     selector: 'app-mnemonic-create',
@@ -39,7 +40,8 @@ export class MnemonicCreatePage implements OnInit {
         public events: Events,
         public zone: NgZone,
         private walletCreationService: WalletCreationService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private prefs: WalletPrefsService
     ) {
         native.showLoading().then(() => {
             this.init();
@@ -58,7 +60,7 @@ export class MnemonicCreatePage implements OnInit {
 
     async init() {
         this.masterWalletId = Util.uuid(6, 16);
-        this.mnemonicStr = await this.walletManager.spvBridge.generateMnemonic(this.native.getMnemonicLang());
+        this.mnemonicStr = await this.walletManager.spvBridge.generateMnemonic(this.prefs.getMnemonicLang());
         this.native.hideLoading();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/);
         this.zone.run(()=>{
