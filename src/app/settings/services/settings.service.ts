@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 // import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
@@ -12,7 +13,8 @@ export class SettingsService {
   constructor(
     private sanitizer: DomSanitizer,
     // private globalIntentService: GlobalIntentService,
-    private native: GlobalNativeService
+    private native: GlobalNativeService,
+    private appVersion: AppVersion
   ) { }
 
   async init() {
@@ -28,10 +30,10 @@ export class SettingsService {
   }
 
   getRuntimeVersion() {
-    // TODO
-    // this.globalIntentService.getVersion((val) => {
-    //   this.version = val;
-    //   Logger.log('settings', 'elastOS version', this.version);
-    // });
+    this.appVersion.getVersionNumber().then(res => {
+      this.version = res;
+    }).catch(error => {
+      alert(error);
+    });
   }
 }

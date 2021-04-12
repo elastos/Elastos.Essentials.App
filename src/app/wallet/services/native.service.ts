@@ -22,7 +22,6 @@
 
 import { Injectable, NgZone } from '@angular/core';
 import { LoadingController, PopoverController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
 import { HelpComponent } from '../components/help/help.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
@@ -31,35 +30,17 @@ import { Logger } from 'src/app/logger';
 @Injectable()
 export class Native {
 
-    private mnemonicLang: string = "english";
     private loader: HTMLIonLoadingElement = null;
     public popup: any = null;
     private loadingCtrlCreating = false;
 
     constructor(
-        public translate: TranslateService,
         private loadingCtrl: LoadingController,
         public popoverCtrl: PopoverController,
         private zone: NgZone,
         private globalNative: GlobalNativeService,
-        private globalNav: GlobalNavService
-    ) {
-    }
-
-    init() {
-        // TODO
- /*        this.translate.onLangChange.subscribe(data => {
-            let lang = data.lang;
-
-            if (lang === 'zh') {
-                this.setMnemonicLang("CHINESE_SIMPLIFIED");
-            } else if (lang === 'fr') {
-                this.setMnemonicLang("FRENCH");
-            } else {
-                this.setMnemonicLang("ENGLISH");
-            }
-        }); */
-    }
+        private globalNav: GlobalNavService,
+    ) {}
 
     public toast(msg: string = '操作完成', duration: number = 2000): void {
         this.globalNative.genericToast(msg, duration);
@@ -95,14 +76,6 @@ export class Native {
             this.hideLoading();
             this.globalNav.navigateRoot(App.WALLET, page, { state: options });
         });
-    }
-
-    public getMnemonicLang(): string {
-        return this.mnemonicLang;
-    }
-
-    public setMnemonicLang(lang) {
-        this.mnemonicLang = lang;
     }
 
     public clone(myObj) {
