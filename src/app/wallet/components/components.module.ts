@@ -8,7 +8,7 @@ import { ContactsComponent } from './contacts/contacts.component';
 import { HelpComponent } from './help/help.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from './tx-success/tx-success.component';
-import { WarningComponent } from 'src/app/didsessions/components/warning/warning.component';
+import { WarningComponent } from './warning/warning.component';
 
 @NgModule({
   declarations: [
