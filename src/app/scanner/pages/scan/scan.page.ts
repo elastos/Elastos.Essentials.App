@@ -14,6 +14,7 @@ import { TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem } from 'src/app/compon
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { ESSENTIALS_CONNECT_URL_PREFIX, GlobalConnectService } from 'src/app/services/global.connect.service';
 import { isObject } from 'lodash-es';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
 QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
@@ -53,6 +54,7 @@ export class ScanPage {
         private theme: GlobalThemeService,
         private globalIntentService: GlobalIntentService,
         private globalConnectService: GlobalConnectService,
+        private globalNav: GlobalNavService,
         private translate: TranslateService,
     ) {
         const navigation = this.router.getCurrentNavigation();
@@ -274,6 +276,9 @@ export class ScanPage {
      * (ex: scanned content is a ELA address, so user may choose to open the wallet app to send ELA to this address)
      */
     runScannedContent(scannedContent: string) {
+        // pop scanner from navigation history, so the nav will not navigate to scanner.
+        this.globalNav.exitCurrentContext(false);
+
         try {
             new URL(scannedContent);
 
