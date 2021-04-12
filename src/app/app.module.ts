@@ -6,6 +6,7 @@ import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLo
 import { Observable } from 'rxjs';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IonicStorageModule } from '@ionic/storage';
@@ -134,6 +135,7 @@ export function TranslateLoaderFactory() {
     BrowserAnimationsModule,
   ],
   providers: [
+    AppVersion,
     Keyboard,
     ScreenOrientation,
     SplashScreen,

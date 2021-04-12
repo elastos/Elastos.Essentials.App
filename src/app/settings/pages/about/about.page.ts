@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 @Component({
   selector: 'app-about',
@@ -39,10 +40,21 @@ export class AboutPage implements OnInit {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
+    private appVersion: AppVersion
   ) { }
 
   ngOnInit() {
-    this.version = this.settings.version;
+    this.appVersion.getVersionNumber().then(res => {
+      this.version = res;
+    }).catch(error => {
+      alert(error);
+    });
+
+    // this.appVersion.getVersionCode().then(res => {
+    //   Logger.log('settings', 'versionCode:', res)
+    // }).catch(error => {
+    //   alert(error);
+    // });
   }
 
   ionViewWillEnter() {
