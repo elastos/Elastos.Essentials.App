@@ -17,7 +17,7 @@ import { isObject } from 'lodash-es';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 // The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
-QrScanner.WORKER_PATH = "./assets/qr-scanner-worker.min.js"
+QrScanner.WORKER_PATH = "./assets/scanner/qr-scanner-worker.min.js"
 
 export type ScanPageRouteParams = {
     fromIntent: boolean
