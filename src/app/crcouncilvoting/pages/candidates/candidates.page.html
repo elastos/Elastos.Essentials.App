@@ -1,7 +1,7 @@
 <ion-content>
   <app-titlebar></app-titlebar>
 
-  <ion-grid *ngIf="candidatesService.candidates.length > 0" class="container ion-no-padding">
+  <ion-grid *ngIf="candidatesService.candidates.length > 0" id="add-padding-bottom" class="container ion-no-padding" [class.dark-container]="theme.darkMode">
     <app-candidate-slider
       *ngIf="showCandidate"
       [candidate]="candidate"
@@ -12,34 +12,28 @@
       <ion-virtual-scroll [items]="candidatesService.candidates"  approxItemHeight="240px">
         <ion-item class="candidate" [class.selected]="!candidateIsSelected(candidate)" *virtualItem="let candidate">
           <ion-grid class="ion-no-padding">
-            <ion-row class="ion-no-padding">
+            <ion-row>
               <ion-col
-                size="1"
-                class="rank-container ion-no-padding"
+                size="1.25"
+                class="rank-col"
                 (click)="_showCandidate(candidatesService.candidates.indexOf(candidate), candidate)"
               >
                 {{ candidatesService.candidates.indexOf(candidate) + 1 }}
               </ion-col>
-              <ion-col size="2" class="img-container" (click)="_showCandidate(candidatesService.candidates.indexOf(candidate), candidate)">
+              <ion-col size="1.5" class="img-col" (click)="_showCandidate(candidatesService.candidates.indexOf(candidate), candidate)">
                 <img [src]="candidate.imageUrl ? candidate.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
               </ion-col>
-              <ion-col size="8" (click)="_showCandidate(candidatesService.candidates.indexOf(candidate), candidate)">
+              <ion-col size="8.25" class="label-col" (click)="_showCandidate(candidatesService.candidates.indexOf(candidate), candidate)">
                 <ion-label>
                   <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}</h4>
                   <p>
-                    <ion-icon name="pin"></ion-icon> {{ candidate.location }} &nbsp;
+                    <ion-icon name="navigate"></ion-icon> {{ candidate.location }} &nbsp;
                     <span class="votes">{{ fixVotes(candidate.votes) }}</span> {{ 'votes' | translate }}
                   </p>
                 </ion-label>
               </ion-col>
-
-              <ion-col *ngIf="!candidateIsSelected(candidate)" size="1" class="check-container" (click)="addCandidate(candidate)">
-                <div class="custom-checkbox"></div>
-              </ion-col>
-              <ion-col *ngIf="candidateIsSelected(candidate)" size="1" class="check-container" (click)="addCandidate(candidate)">
-                <div class="custom-checkbox">
-                  <ion-icon name="checkmark"></ion-icon>
-                </div>
+              <ion-col size="1" class="checkbox-col" (click)="addCandidate(candidate)">
+                <ion-checkbox [value]="candidateIsSelected(candidate)"></ion-checkbox>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -48,27 +42,25 @@
     </ion-list>
   </ion-grid>
 
-  <ion-grid *ngIf="candidatesService.council.length > 0" class="container ion-no-padding">
+  <ion-grid *ngIf="candidatesService.council.length > 0" class="container ion-no-padding" [class.dark-container]="theme.darkMode">
     <ion-list lines="none" class="candidate-list">
       <ion-virtual-scroll [items]="candidatesService.council"  approxItemHeight="240px">
         <ion-item class="candidate" *virtualItem="let member">
-          <ion-grid class="ion-no-padding">
-            <ion-row class="ion-no-padding">
+          <ion-grid>
+            <ion-row>
               <ion-col
-                size="1"
-                class="rank-container ion-no-padding"
+                size="1.25"
+                class="rank-col"
               >
                 {{ candidatesService.council.indexOf(member) + 1 }}
               </ion-col>
-              <ion-col size="2" class="img-container">
+              <ion-col size="1.5" class="img-col">
                 <img [src]="member.avatar ? member.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
               </ion-col>
-              <ion-col size="8">
+              <ion-col class="label-col" size="8.25">
                 <ion-label>
                   <h4>{{ member.didName }}</h4>
-                  <p class="selected">
-                    <ion-icon name="pin"></ion-icon> {{ member.location }} &nbsp;
-                  </p>
+                  <p><ion-icon name="navigate"></ion-icon> {{ member.location }}</p>
                 </ion-label>
               </ion-col>
             </ion-row>

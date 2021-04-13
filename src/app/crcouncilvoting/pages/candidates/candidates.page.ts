@@ -12,6 +12,7 @@ import { GlobalNavService } from "src/app/services/global.nav.service";
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Logger } from "src/app/logger";
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 
 @Component({
@@ -27,6 +28,7 @@ export class CandidatesPage implements OnInit {
     private storage: StorageService,
     private globalNav: GlobalNavService,
     private globalIntentService: GlobalIntentService,
+    public theme: GlobalThemeService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     public translate: TranslateService
@@ -44,7 +46,6 @@ export class CandidatesPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTheme('linear-gradient(40deg, #181d20 0%, #1acda0 50%, #181d20 100%)', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
 
     if(this.candidatesService.candidates.length) {

@@ -22,8 +22,10 @@
                 class="ion-text-center"
                 (ionBlur)="setInputDefault($event.target.value)"
                 type="number"
-                name="userVotes" ngDefaultControl
-                [(ngModel)]="candidate.userVotes">
+                name="userVotes"
+                ngDefaultControl
+                [(ngModel)]="candidate.userVotes"
+              >
               </ion-input>
               <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
             </ion-col>
@@ -36,12 +38,6 @@
       <ion-spinner name="bubbles" color="success"></ion-spinner>
     </div>
   </ion-grid>
-
-  <!-- <div class="ballot-box" (click)="castVote()">
-    <h1 *ngIf="votesCasted" class="votes-casted-title">VOTES CASTED</h1>
-    <ion-img [class.voting-logo]="castingVote" src='/assets/crcouncilvoting/images/cybericon.svg'></ion-img>
-    <h1 *ngIf="!votesCasted" [class.voting-title]="castingVote">CAST VOTES</h1>
-  </div> -->
 
   <div class="dist-btn ion-activatable ripple" (click)="distribute()">
     <h1>{{ 'dist-equally' | translate }}</h1>
