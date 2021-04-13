@@ -3,7 +3,6 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { PopupProvider } from './popup.service';
 import { UiService } from './ui.service';
-import { Events } from './events.service';
 import { CoinService } from './coin.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
@@ -15,6 +14,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { WalletPrefsService } from './pref.service';
 import { Subscription } from 'rxjs';
+import { Events } from 'src/app/services/events.service';
 
 @Injectable({
   providedIn: 'root'

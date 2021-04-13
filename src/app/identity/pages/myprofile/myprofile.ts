@@ -16,13 +16,13 @@ import { Native } from "../../services/native";
 import { DID } from "../../model/did.model";
 import { DIDDocument } from "../../model/diddocument.model";
 import { AuthService } from "../../services/auth.service";
-import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { Logger } from "src/app/logger";
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { Events } from "src/app/services/events.service";
 
 
 type ProfileDisplayEntry = {

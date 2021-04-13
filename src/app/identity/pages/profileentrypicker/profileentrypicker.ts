@@ -3,13 +3,12 @@ import { ModalController, NavParams } from '@ionic/angular';
 
 import { BasicCredentialInfo } from '../../model/basiccredentialinfo.model';
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
-import { Router } from '@angular/router';
 import { BasicCredentialEntry } from '../../model/basiccredentialentry.model';
-import { Events } from '../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'page-profileentrypicker',

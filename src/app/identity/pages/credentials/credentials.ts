@@ -17,12 +17,12 @@ import { Native } from "../../services/native";
 import { DID } from "../../model/did.model";
 import { DIDDocument } from "../../model/diddocument.model";
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
-import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { ProfileService } from "../../services/profile.service";
 import { Logger } from "src/app/logger";
+import { Events } from "src/app/services/events.service";
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id

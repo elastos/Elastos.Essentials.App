@@ -16,11 +16,11 @@ import { WrongPasswordException } from '../model/exceptions/wrongpasswordexcepti
 import { BiometricAuthenticationFailedException } from '../model/exceptions/biometricauthenticationfailed.exception';
 import { BiometricLockedoutException } from '../model/exceptions/biometriclockedout.exception';
 import { UXService } from './ux.service';
-import { Events } from './events.service';
 import { GlobalDIDSessionsService, IdentityEntry, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Events } from 'src/app/services/events.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;

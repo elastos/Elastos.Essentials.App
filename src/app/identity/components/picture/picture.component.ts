@@ -3,11 +3,11 @@ import { NavParams, ModalController } from '@ionic/angular';
 import { ProfileService } from '../../services/profile.service';
 import { HiveService } from '../../services/hive.service';
 import { LocalStorage } from '../../services/localstorage';
-import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-picture',

@@ -4,9 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { PopoverController, MenuController, ModalController } from '@ionic/angular';
 
-import { NotificationManagerService } from './notificationmanager.service';
 import { DIDManagerService } from './didmanager.service';
-import { Events } from './events.service';
 
 import { NotificationsPage } from '../pages/notifications/notifications.page';
 import { TipsPage } from '../pages/tips/tips.page';
@@ -23,6 +21,7 @@ import { HiveManagerInitService } from 'src/app/hivemanager/services/init.servic
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
 import { Subscription } from 'rxjs';
+import { Events } from 'src/app/services/events.service';
 
 type RunnableApp = {
     cssId:string;
@@ -66,7 +65,6 @@ export class AppmanagerService {
         private modalController: ModalController,
         public menuCtrl: MenuController,
         private translate: TranslateService,
-        private router: Router,
         private events: Events,
         private didService: DIDManagerService,
         private native: GlobalNativeService,

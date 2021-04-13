@@ -25,11 +25,11 @@ import { Coin, CoinID, CoinType, ERC20Coin, StandardCoin } from '../model/Coin';
 import { StandardCoinName } from '../model/Coin';
 import { LocalStorage } from './storage.service';
 import { MasterWallet } from '../model/wallets/MasterWallet';
-import { Events } from './events.service';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Injectable({
     providedIn: 'root'

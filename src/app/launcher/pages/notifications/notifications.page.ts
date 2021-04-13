@@ -11,11 +11,10 @@ import {
   LauncherNotificationType
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
-import { Events } from '../../services/events.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { ThrowStmt } from '@angular/compiler';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-notifications',

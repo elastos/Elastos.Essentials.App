@@ -17,11 +17,11 @@ import { HttpClient } from "@angular/common/http";
 import { Native } from "../../services/native";
 import { DID } from "../../model/did.model";
 import { DIDDocument } from "../../model/diddocument.model";
-import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { Logger } from "src/app/logger";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Events } from "src/app/services/events.service";
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id

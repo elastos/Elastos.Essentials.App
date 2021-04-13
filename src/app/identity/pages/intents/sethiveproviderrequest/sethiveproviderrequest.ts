@@ -6,7 +6,6 @@ import { AuthService } from '../../../services/auth.service';
 import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
 import { ProfileService } from '../../../services/profile.service';
 import { DIDSyncService } from '../../../services/didsync.service';
-import { Events } from '../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { ThemeService } from 'src/app/didsessions/services/theme.service';
@@ -14,6 +13,7 @@ import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.i
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { Subscription } from 'rxjs';
+import { Events } from 'src/app/services/events.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 

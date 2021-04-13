@@ -4,20 +4,16 @@ import { TranslateService } from "@ngx-translate/core";
 import { LocalStorage } from "./localstorage";
 import { PopupProvider } from "./popup";
 import { Native } from "./native";
-import { DIDStore } from "../model/didstore.model";
-import { Config } from "./config";
-import { DIDEntry } from "../model/didentry.model";
 import { DID } from "../model/did.model";
-import { NewDID } from "../model/newdid.model";
 import {
   DIDDocumentPublishEvent,
   DIDPublicationStatusEvent,
 } from "../model/eventtypes.model";
 import { DIDService } from "./did.service";
 import { DIDDocument } from "../model/diddocument.model";
-import { Events } from "./events.service";
 import { AuthService } from "./auth.service";
 import { Logger } from "src/app/logger";
+import { Events } from "src/app/services/events.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -31,7 +27,6 @@ export class DIDSyncService {
   public needToPublishStatuses: Map<DID, boolean> = new Map();
 
   constructor(
-    private platform: Platform,
     public zone: NgZone,
     private translate: TranslateService,
     public toastCtrl: ToastController,

@@ -8,11 +8,10 @@ import { Native } from "./native";
 import { DIDStore } from "../model/didstore.model";
 import { DID } from "../model/did.model";
 import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
-import { Events } from "./events.service";
-import { AuthService } from "./auth.service";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { Events } from "src/app/services/events.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;

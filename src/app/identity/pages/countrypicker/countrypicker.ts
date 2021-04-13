@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { area } from '../../../../assets/identity/area/area';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Native } from '../../services/native';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'page-countrypicker',

@@ -10,7 +10,6 @@ import { UxService } from '../../services/ux.service';
 import { Contact } from '../../models/contact.model';
 import { PopupService } from '../../services/popup.service';
 import { AppService } from '../../services/app.service';
-import { Events } from '../../services/events.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -18,6 +17,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-friends',

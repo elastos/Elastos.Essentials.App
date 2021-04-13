@@ -7,10 +7,9 @@ import { DIDHelper } from '../helpers/did.helper';
 import { DIDEvents } from '../services/events';
 import { VerifiableCredential } from './verifiablecredential.model';
 import { Avatar } from '../services/hive.service';
-import { ProfileService } from '../services/profile.service';
-import { Events } from '../services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 export class DID {
     public credentials: VerifiableCredential[] = [];

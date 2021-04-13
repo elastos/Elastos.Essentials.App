@@ -8,10 +8,10 @@ import { PopupProvider } from '../../../services/popup.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
 import { AuthService } from '../../../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 export enum MnemonicLanguage {
   CHINESE_SIMPLIFIED,
@@ -185,8 +185,9 @@ export class WalletImportPage implements OnInit {
                     // Cancelled, do nothing
                 }
             } catch(err) {
-                Logger.error('wallet', 'CreateWalet error:', err)
+                Logger.error('wallet', 'Create Walet error:', err)
             }
+            await this.native.hideLoading();
 
             this.walletIsCreating = false;
         } else {

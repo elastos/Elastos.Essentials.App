@@ -44,7 +44,6 @@ import { TxSuccessComponent } from '../../../../components/tx-success/tx-success
 import { ContactsService } from '../../../../services/contacts.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { MainAndIDChainSubWallet } from '../../../../model/wallets/MainAndIDChainSubWallet';
-import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -52,6 +51,7 @@ import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/compon
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 
 @Component({
@@ -184,7 +184,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         } else {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
         }
-        
+
     /*     if (showKey) {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
                 key: "cryptonames",

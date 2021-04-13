@@ -8,12 +8,12 @@ import { WalletEditionService } from '../../../../services/walletedition.service
 import { TranslateService } from '@ngx-translate/core';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { WalletAccessService } from '../../../../services/walletaccess.service';
-import { Events } from '../../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
     selector: 'app-mnemonic-export',

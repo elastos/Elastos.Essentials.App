@@ -7,11 +7,11 @@ import { WalletManager } from '../../../../services/wallet.service';
 import { AuthService } from '../../../../services/auth.service';
 import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '../../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
     selector: 'app-mnemonic-write',
@@ -108,7 +108,7 @@ export class MnemonicWritePage implements OnInit {
 
     allInputsFilled() {
         let inputsFilled = true;
-        return inputsFilled; // for test
+        // return inputsFilled; // for test
         this.inputStr = '';
         this.inputList.forEach((word) => {
             if (word.input === '') {
@@ -122,8 +122,8 @@ export class MnemonicWritePage implements OnInit {
 
     async onCreate() {
         if (this.allInputsFilled()) {
-            if (true) { // for test
-            // if (this.inputStr.replace(/\s+/g, "").toLowerCase() === this.mnemonicStr.replace(/\s+/g, "")) {
+            // if (true) { // for test
+            if (this.inputStr.replace(/\s+/g, "").toLowerCase() === this.mnemonicStr.replace(/\s+/g, "")) {
                 if (this.walletCreationService.isMulti) {
                     this.native.go("/wallet/mpublickey");
                 } else {

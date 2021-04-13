@@ -5,10 +5,10 @@ import { Util } from "../../../model/Util";
 import { TranslateService } from '@ngx-translate/core';
 import { WalletManager } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
-import { Events } from '../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-wallet-advanced-import',

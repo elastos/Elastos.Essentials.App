@@ -9,10 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { WalletAccessService } from '../../../services/walletaccess.service';
 import { Router } from '@angular/router';
 import { CurrencyService } from '../../../services/currency.service';
-import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 
 @Component({

@@ -7,10 +7,10 @@ import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '../../../../services/events.service';
 import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
     selector: 'app-mnemonic-create',

@@ -4,9 +4,9 @@ import { PopupProvider } from '../services/popup.service';
 import { Config } from '../config/Config';
 import { StandardCoinName } from './Coin';
 import { AllTransactions } from './Transaction';
-import { Events } from '../services/events.service';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Events } from 'src/app/services/events.service';
 
 declare let walletManager: WalletPlugin.WalletManager;
 

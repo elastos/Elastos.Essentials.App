@@ -9,12 +9,12 @@ import { StorageService } from './storage.service';
 import { Contact } from '../models/contact.model';
 import { Avatar } from '../models/avatar';
 import { DidService } from './did.service';
-import { Events } from './events.service';
 import { ContactNotifierService, Contact as ContactNotifierContact } from 'src/app/services/contactnotifier.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Events } from 'src/app/services/events.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 

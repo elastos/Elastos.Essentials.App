@@ -45,11 +45,11 @@ import { BackupRestoreService } from './backuprestore.service';
 import { StandardSubWallet } from '../model/wallets/StandardSubWallet';
 import { MainAndIDChainSubWallet } from '../model/wallets/MainAndIDChainSubWallet';
 import { ETHChainSubWallet } from '../model/wallets/ETHChainSubWallet';
-import { Events } from './events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
+import { Events } from 'src/app/services/events.service';
 
 
 class TransactionMapEntry {

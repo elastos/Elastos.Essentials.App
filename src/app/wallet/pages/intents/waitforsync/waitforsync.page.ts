@@ -12,12 +12,12 @@ import { UiService } from '../../../services/ui.service';
 import { SubWallet } from '../../../model/wallets/SubWallet';
 import { Util } from '../../../model/Util';
 import { Router } from '@angular/router';
-import { Events } from '../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 
 @Component({

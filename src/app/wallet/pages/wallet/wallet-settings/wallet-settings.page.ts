@@ -11,12 +11,12 @@ import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
 import { AuthService } from '../../../services/auth.service';
-import { Events } from '../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { PopoverController } from '@ionic/angular';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
     selector: 'app-wallet-settings',
@@ -140,7 +140,7 @@ export class WalletSettingsPage implements OnInit {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
                // this.showDeletePrompt();
-                  
+
                 const confirmToDelete = await this.popupProvider.ionicConfirm('delete-wallet-confirm-title', 'delete-wallet-confirm-subtitle');
                 if (confirmToDelete) {
                     await this.destroyWallet(this.masterWalletId);
@@ -158,7 +158,7 @@ export class WalletSettingsPage implements OnInit {
             component: WarningComponent,
             translucent: false
         });
-    
+
         this.popover.onWillDismiss().then(async (params) => {
             this.popover = null;
 
@@ -166,7 +166,7 @@ export class WalletSettingsPage implements OnInit {
                 await this.destroyWallet(this.masterWalletId);
             }
         });
-    
+
         return await this.popover.present();
     }
 

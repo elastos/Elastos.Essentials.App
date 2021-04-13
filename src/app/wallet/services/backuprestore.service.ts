@@ -11,7 +11,6 @@ import { WalletManager } from './wallet.service';
 import { CoinService } from './coin.service';
 import { PopupProvider } from './popup.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from './events.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
@@ -19,6 +18,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
 import { Interfaces, Hive } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Events } from 'src/app/services/events.service';
 
 declare let walletManager: WalletPlugin.WalletManager;
 declare let hiveManager: HivePlugin.HiveManager;

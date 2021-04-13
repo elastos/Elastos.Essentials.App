@@ -7,7 +7,6 @@ import { AuthService } from '../../../services/auth.service';
 import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
 import { ProfileService } from '../../../services/profile.service';
 import { DIDSyncService } from '../../../services/didsync.service';
-import { Events } from '../../../services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
@@ -15,6 +14,7 @@ import { RegAppProfileIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { Subscription } from 'rxjs';
+import { Events } from 'src/app/services/events.service';
 
 // TODO: Show credential(s) content that will be created to the user. He needs to make sure for example
 // that no shared credential will overwrite existing ones like "name" or "email"...

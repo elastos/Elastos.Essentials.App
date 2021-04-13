@@ -6,9 +6,9 @@ import { FriendsService } from './friends.service';
 import { OptionsComponent } from '../components/options/options.component';
 import { UxService } from './ux.service';
 import { QRCodeComponent } from '../components/qrcode/qrcode.component';
-import { Events } from './events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Injectable({
   providedIn: 'root'

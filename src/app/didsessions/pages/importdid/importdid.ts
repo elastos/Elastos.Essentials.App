@@ -9,10 +9,10 @@ import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
-import { Events } from 'src/app/didsessions/services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 /**
  * Import algorithm:

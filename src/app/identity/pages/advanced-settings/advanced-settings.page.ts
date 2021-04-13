@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Events } from '../../services/events.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DIDService } from '../../services/did.service';
 import { Native } from '../../services/native';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-advanced-settings',

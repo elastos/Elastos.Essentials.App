@@ -4,10 +4,10 @@ import { WalletManager } from '../../../../services/wallet.service';
 import { Util } from '../../../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
-import { Events } from '../../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
     selector: 'app-coin-address',

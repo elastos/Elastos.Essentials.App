@@ -14,11 +14,11 @@ import { SubWallet } from '../../../../model/wallets/SubWallet';
 import { ETHChainSubWallet } from '../../../../model/wallets/ETHChainSubWallet';
 import { CoinService } from '../../../../services/coin.service';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';
-import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 class TransactionDetail {
     type: string;

@@ -13,12 +13,12 @@ import { Util } from '../../../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { UiService } from '../../../../services/ui.service';
 import { CurrencyService } from '../../../../services/currency.service';
-import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 type EditableCoinInfo = {
     coin: Coin,

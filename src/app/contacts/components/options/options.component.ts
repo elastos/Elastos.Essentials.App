@@ -6,9 +6,9 @@ import { FriendsService } from '../../services/friends.service';
 import { DidService } from '../../services/did.service';
 
 import { Contact } from '../../models/contact.model';
-import { Events } from '../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-options',

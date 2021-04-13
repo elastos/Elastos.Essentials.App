@@ -8,12 +8,12 @@ import { WalletAccessService } from './walletaccess.service';
 import { WalletManager } from './wallet.service';
 import { MasterWallet } from '../model/wallets/MasterWallet';
 import { WalletEditionService } from './walletedition.service';
-import { Events } from './events.service';
 import { PopupProvider } from './popup.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Subscription } from 'rxjs';
+import { Events } from 'src/app/services/events.service';
 
 export enum ScanType {
   Address     = 1,

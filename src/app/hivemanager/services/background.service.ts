@@ -4,10 +4,9 @@ import { Platform, ToastController } from '@ionic/angular';
 import * as moment from 'moment';
 import { StorageService } from './storage.service';
 import { HiveService } from './hive.service';
-import { TranslateService } from '@ngx-translate/core';
-import { Events } from './events.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService, App } from 'src/app/services/global.notifications.service';
+import { Events } from 'src/app/services/events.service';
 
 @Injectable({
     providedIn: 'root'

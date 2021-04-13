@@ -5,7 +5,7 @@ import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
-import { Events } from '../../services/events.service';
+import { Events } from 'src/app/services/events.service';
 
 /**
  * Result of calls to signAndSendRawTransaction().

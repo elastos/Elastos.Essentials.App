@@ -2,10 +2,10 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
-import { Events } from 'src/app/didsessions/services/events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, TitleBarForegroundMode, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-scan',

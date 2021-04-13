@@ -29,9 +29,9 @@ import { PopupProvider } from './popup.service';
 import { WalletManager } from './wallet.service';
 import { LocalStorage } from './storage.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from './events.service';
 import { GlobalNotificationsService, NotificationRequest } from 'src/app/services/global.notifications.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 export type InAppRPCMessage = {
     method: RPCMethod;

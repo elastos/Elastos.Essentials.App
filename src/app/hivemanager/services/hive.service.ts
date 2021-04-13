@@ -5,12 +5,12 @@ import * as moment from 'moment';
 import { PopupService } from './popup.service';
 import { Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from './events.service';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Events } from 'src/app/services/events.service';
 
 declare let hiveManager: HivePlugin.HiveManager;
 

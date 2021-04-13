@@ -6,11 +6,11 @@ import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
 import { StandardCoinName } from '../../../../model/Coin';
-import { Events } from '../../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
     selector: 'app-coin-receive',

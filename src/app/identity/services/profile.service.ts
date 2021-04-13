@@ -10,10 +10,10 @@ import { DIDDocument } from "../model/diddocument.model";
 import { DIDURL } from "../model/didurl.model";
 import { BasicCredentialsService } from './basiccredentials.service';
 import { Profile } from "../model/profile.model";
-import { Events } from "./events.service";
 import { ContactNotifierService } from "src/app/services/contactnotifier.service";
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { Events } from "src/app/services/events.service";
 
 var deepEqual = require('deep-equal');
 

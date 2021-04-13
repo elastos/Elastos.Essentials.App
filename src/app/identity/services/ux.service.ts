@@ -1,10 +1,10 @@
 import { Injectable, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DIDService } from './did.service';
-import { Events } from './events.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Events } from 'src/app/services/events.service';
 
 
 enum MessageType {

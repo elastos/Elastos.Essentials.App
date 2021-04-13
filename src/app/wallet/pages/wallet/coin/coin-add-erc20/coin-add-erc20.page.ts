@@ -11,7 +11,6 @@ import { PopupProvider } from '../../../../services/popup.service';
 import { CoinService } from '../../../../services/coin.service';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';
 import { Util } from '../../../../model/Util';
-import { Events } from '../../../../services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -19,6 +18,7 @@ import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/title
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 
 @Component({

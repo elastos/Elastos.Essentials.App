@@ -4,12 +4,11 @@ import { TranslateService } from "@ngx-translate/core";
 import { ProfileService } from "../../services/profile.service";
 import { HiveService } from "../../services/hive.service";
 import { BasicCredentialsService } from "../../services/basiccredentials.service";
-import { Events } from "../../services/events.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { Subscription } from "rxjs";
+import { Events } from "src/app/services/events.service";
 
 type CredentialDisplayEntry = {
     credential: DIDPlugin.VerifiableCredential;

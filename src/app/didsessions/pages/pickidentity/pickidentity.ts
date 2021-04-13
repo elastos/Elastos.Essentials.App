@@ -3,13 +3,13 @@ import { IdentityService, IdentityGroup } from 'src/app/didsessions/services/ide
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from 'src/app/didsessions/services/events.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'page-pickidentity',

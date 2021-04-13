@@ -3,12 +3,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { PopoverController, LoadingController } from '@ionic/angular';
 import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
-import { Events } from './events.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService, App, Direction } from 'src/app/services/global.nav.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { Events } from 'src/app/services/events.service';
 
 let selfUxService: UXService = null;
 

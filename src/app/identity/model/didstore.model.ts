@@ -4,10 +4,10 @@ import { Config } from '../services/config';
 import { DIDDocument } from './diddocument.model';
 import { DIDHelper } from '../helpers/did.helper';
 import { LocalStorage } from '../services/localstorage';
-import { Events } from '../services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Events } from 'src/app/services/events.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 

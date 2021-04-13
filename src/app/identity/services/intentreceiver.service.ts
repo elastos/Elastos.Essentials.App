@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Native } from './native';
 
-import { Config } from './config';
 import { Util } from './util';
 import { PopupProvider } from './popup';
 import { AppIDService } from './appid.service';
 import { UXService } from './ux.service';
-import { Events } from './events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { IdentityIntent, AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent, CredImportIdentityIntent } from '../model/identity.intents';
+import { Events } from 'src/app/services/events.service';
 
 
 @Injectable({

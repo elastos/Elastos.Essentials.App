@@ -7,7 +7,6 @@ import { Native } from "../../services/native";
 import { Util } from "../../services/util";
 import { DIDService } from "../../services/did.service";
 import { AuthService } from "../../services/auth.service";
-import { UXService } from "../../services/ux.service";
 import { ProfileService } from "../../services/profile.service";
 import { HiveService } from "../../services/hive.service";
 
@@ -22,12 +21,12 @@ import { PictureComponent } from "../../components/picture/picture.component";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { PopupProvider } from "../../services/popup";
 import { DIDURL } from "../../model/didurl.model";
-import { Events } from "../../services/events.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
+import { Events } from "src/app/services/events.service";
 
 @Component({
   selector: "page-editprofile",

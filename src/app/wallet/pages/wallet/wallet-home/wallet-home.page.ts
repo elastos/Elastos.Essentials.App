@@ -37,13 +37,13 @@ import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
 import { IonSlides } from '@ionic/angular';
 import { BackupRestoreService } from '../../../services/backuprestore.service';
 import { LocalStorage } from '../../../services/storage.service';
-import { Events } from '../../../services/events.service';
 import { Subscription } from 'rxjs';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
 
 
 @Component({
