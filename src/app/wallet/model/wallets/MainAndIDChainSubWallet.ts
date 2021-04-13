@@ -23,7 +23,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         const transactionInfo = await super.getTransactionInfo(transaction, translate);
 
         transactionInfo.amount = new BigNumber(transaction.Amount, 10).dividedBy(Config.SELAAsBigNumber);
-        transactionInfo.txId = transaction.TxHash;
+        transactionInfo.txid = transaction.TxHash;
         transactionInfo.confirmStatus = transaction.ConfirmStatus;
 
         if (transaction.Direction === TransactionDirection.RECEIVED) {
@@ -41,10 +41,10 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     public async updateBalance() {
-        Logger.log("wallet", 'MainAndIDChainSubWallet updateBalance ', this.id,
-                    ' syncTimestamp:', this.syncTimestamp,
-                    ' timestampRPC:', this.timestampRPC,
-                    ' this.progress:', this.progress);
+        // Logger.log("wallet", 'MainAndIDChainSubWallet updateBalance ', this.id,
+        //             ' syncTimestamp:', this.syncTimestamp,
+        //             ' timestampRPC:', this.timestampRPC,
+        //             ' this.progress:', this.progress);
 
         // if the balance form spvsdk is newer, then use it.
         if ((this.progress === 100) || (this.syncTimestamp > this.timestampRPC)) {

@@ -72,7 +72,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
         transactionInfo.amount = new BigNumber(transaction.Amount).dividedBy(Config.WEI);
         transactionInfo.fee = transaction.Fee / Config.WEI;
-        transactionInfo.txId = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
+        transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
 
         // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
         transactionInfo.confirmStatus = transaction.Confirmations;
@@ -158,8 +158,14 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     private async getBalanceByWeb3() {
         const address = await this.getTokenAddress();
-        const balanceString = await this.web3.eth.getBalance(address);
-        return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
+        try {
+          const balanceString = await this.web3.eth.getBalance(address);
+          return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
+        }
+        catch (e) {
+          Logger.error('wallet', 'getBalanceByWeb3 exception:', e);
+          return new BigNumber(NaN);
+        }
     }
 
     public async updateBalance(): Promise<void> {

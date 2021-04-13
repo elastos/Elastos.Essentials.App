@@ -32,11 +32,11 @@ export class TxPage implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
-      if (!paramMap.has('txId')) {
+      if (!paramMap.has('txid')) {
         this.globalNav.navigateBack();
         return;
       }
-      this.vote = this.nodesService.getVote(paramMap.get('txId'));
+      this.vote = this.nodesService.getVote(paramMap.get('txid'));
       this.getNodes();
       Logger.log('dposvoting', this.vote);
     });

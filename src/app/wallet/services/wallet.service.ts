@@ -562,8 +562,8 @@ export class WalletManager {
 
         switch (event.Action) {
             case "OnTransactionStatusChanged":
-                if (this.transactionMap[event.txId]) {
-                    this.transactionMap[event.txId].Status = event.status;
+                if (this.transactionMap[event.txid]) {
+                    this.transactionMap[event.txid].Status = event.status;
                 }
                 break;
             case "OnBlockSyncProgress":

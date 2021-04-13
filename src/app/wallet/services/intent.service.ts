@@ -72,11 +72,13 @@ export class IntentService {
 
         this.walletList = this.walletManager.getWalletsList();
         if (this.walletList.length === 0) {
+            this.native.setRootRouter('/wallet/launcher');
             const toCreateWallet = await this.popupProvider.ionicConfirm('intent-no-wallet-title', 'intent-no-wallet-msg', 'ok', 'exit');
             if (toCreateWallet) {
-                this.native.setRootRouter('/wallet/launcher');
+                // TODO
                 // Should call sendIntentResponse?
             }  else {
+                // sendIntentResponse will exit current context, so must call setRootRouter('/wallet/launcher') first.
                 await this.globalIntentService.sendIntentResponse({message: 'No active master wallet!', status: 'error'}, intent.intentId);
             }
             return false;

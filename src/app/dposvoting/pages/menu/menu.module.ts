@@ -61,7 +61,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'history/:txId',
+        path: 'history/:txid',
         children: [
           {
             path: "",

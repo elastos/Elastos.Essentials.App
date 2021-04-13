@@ -179,8 +179,8 @@ export class ERC20SubWallet extends SubWallet {
         return allTransactions;
     }
 
-    public async getTransactionDetails(txId: string): Promise<AllTransactions> {
-        const transactionDetails = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txId, this.id);
+    public async getTransactionDetails(txid: string): Promise<AllTransactions> {
+        const transactionDetails = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
         return transactionDetails;
     }
 
@@ -196,7 +196,7 @@ export class ERC20SubWallet extends SubWallet {
 
         transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.Amount).dividedBy(this.tokenDecimals) : new BigNumber(transaction.Amount);
         transactionInfo.fee = this.tokenDecimals > 0 ? transaction.Fee / this.tokenDecimals : transaction.Fee;
-        transactionInfo.txId = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
+        transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
         // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
         transactionInfo.confirmStatus = transaction.Confirmations;
 
@@ -304,7 +304,7 @@ export class ERC20SubWallet extends SubWallet {
                 Logger.log('wallet', "No password received. Cancelling");
                 resolve({
                     published: false,
-                    txId: null,
+                    txid: null,
                     status: 'cancelled'
                 });
                 return;
@@ -338,16 +338,16 @@ export class ERC20SubWallet extends SubWallet {
 
                 setTimeout(async () => {
                     let status = 'published';
-                    let txId = publishedTransaction.TxHash;
-                    const code = this.masterWallet.walletManager.getTxCode(txId);
+                    let txid = publishedTransaction.TxHash;
+                    const code = this.masterWallet.walletManager.getTxCode(txid);
                     if (code !== 0) {
-                        txId = null;
+                        txid = null;
                         status = 'error';
                     }
                     this.masterWallet.walletManager.native.hideLoading();
                     resolve({
                         published: true,
-                        txId: txId,
+                        txid: txid,
                         status
                     });
                 }, 5000); // wait for 5s for txPublished
@@ -360,7 +360,7 @@ export class ERC20SubWallet extends SubWallet {
                 resolve({
                     published: true,
                     status: 'published',
-                    txId: publishedTransaction.TxHash
+                    txid: publishedTransaction.TxHash
                 });
             }
         });

@@ -149,7 +149,7 @@ export class VotePage implements OnInit, OnDestroy {
       mode: 'ios',
       position: 'middle',
       header: 'Voted successfully casted!',
-      message: 'Txid:' + txid.slice(0,30) + '...',
+      message: 'txid:' + txid.slice(0,30) + '...',
       color: 'tertiary',
       cssClass: 'customToast',
       buttons: [

@@ -65,7 +65,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
             callback(null, {
                 jsonrpc: "2.0",
                 id: payload.id as number,
-                result: publicationResult.txId // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
+                result: publicationResult.txid // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
             });
         }
         else {

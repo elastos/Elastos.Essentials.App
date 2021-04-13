@@ -82,19 +82,19 @@ export class VotePage implements OnInit {
 
         Logger.log('dposvoting', 'Insent sent sucessfully', res);
 
-        if(res.result.txId === null ) {
+        if(res.result.txid === null ) {
           votesSent = true;
           this.voteFailed('vote-cancelled');
         } else {
           votesSent = true;
           this.voted = true;
           let date = new Date;
-          let txId: string = res.result.txId;
+          let txid: string = res.result.txid;
 
-          this.nodesService._votes = this.nodesService._votes.concat({ date: date, tx: txId, keys: castedNodeKeys });
+          this.nodesService._votes = this.nodesService._votes.concat({ date: date, tx: txid, keys: castedNodeKeys });
           Logger.log('dposvoting', 'Vote history updated', this.nodesService._votes);
           this.storageService.setVotes(this.nodesService._votes);
-          this.voteSuccess(res.result.txId);
+          this.voteSuccess(res.result.txid);
         }
       }
       catch (err) {
@@ -181,7 +181,7 @@ export class VotePage implements OnInit {
     this.toast = await this.toastController.create({
       position: 'bottom',
       header: this.translate.instant('vote-success'),
-      message: 'TxId:' + res.slice(0,30) + '...',
+      message: 'txid:' + res.slice(0,30) + '...',
       color: "primary",
       buttons: [
         {

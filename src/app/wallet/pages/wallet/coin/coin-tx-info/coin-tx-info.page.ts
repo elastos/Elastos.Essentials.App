@@ -120,7 +120,7 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     async getTransactionDetails() {
-        const allTransactions = await this.subWallet.getTransactionDetails(this.transactionInfo.txId);
+        const allTransactions = await this.subWallet.getTransactionDetails(this.transactionInfo.txid);
 
         const transaction = allTransactions.Transactions[0];
         Logger.log('wallet', 'More tx info', transaction);
@@ -210,9 +210,9 @@ export class CoinTxInfoPage implements OnInit {
                 show: false,
             },
             {
-                type: 'txId',
+                type: 'txid',
                 title: 'tx-info-transaction-id',
-                value: this.transactionInfo.txId,
+                value: this.transactionInfo.txid,
                 show: false,
             },
         );
@@ -281,11 +281,11 @@ export class CoinTxInfoPage implements OnInit {
         }
     }
 
-    goWebSite(chainId, txId) {
+    goWebSite(chainId, txid) {
         if (chainId === StandardCoinName.ELA) {
-            this.native.openUrl(this.blockchain_url + 'tx/' + txId);
+            this.native.openUrl(this.blockchain_url + 'tx/' + txid);
         } else {
-            this.native.openUrl(this.idchain_url + 'tx/' + txId);
+            this.native.openUrl(this.idchain_url + 'tx/' + txid);
         }
     }
 
@@ -363,7 +363,7 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     worthCopying(item: TransactionDetail) {
-        if (item.type === 'blockId' || item.type === 'txId' || item.type === 'address' || item.type === 'contractAddress') {
+        if (item.type === 'blockId' || item.type === 'txid' || item.type === 'address' || item.type === 'contractAddress') {
             return true;
         } else {
             return false;

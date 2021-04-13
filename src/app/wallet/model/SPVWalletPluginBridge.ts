@@ -39,7 +39,7 @@ export type SPVWalletMessage = {
     MasterWalletID: string;
     ChainID: StandardCoinName;
     Action: string;
-    txId: string;
+    txid: string;
     status: string;
     Progress: number;
     LastBlockTime: number;

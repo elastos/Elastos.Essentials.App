@@ -13,6 +13,7 @@ import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { Subscription } from 'rxjs';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -25,6 +26,7 @@ export class SetHiveProviderRequestPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public receivedIntent: SetHiveProviderIdentityIntent = null;
+  private publishresultSubscription: Subscription = null;
 
   constructor(
     private didService: DIDService,
@@ -38,16 +40,10 @@ export class SetHiveProviderRequestPage {
   ) {
   }
 
-  ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('sethiveprovider-title'));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
-    this.receivedIntent = this.intentService.getReceivedIntent();
-  }
-
-  ionViewDidEnter() {
+  ngOnInit() {
     // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
     // request initiated by publish() on a did document.
-    this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
+    this.publishresultSubscription = this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
       Logger.log("identity", "diddocument:publishresultpopupclosed event received in sethiveprovider request", result);
       let status = 'error';
       if (result.published) {
@@ -57,6 +53,19 @@ export class SetHiveProviderRequestPage {
       }
       await this.sendIntentResponse(status);
     });
+  }
+
+  ngOnDestroy() {
+    if (this.publishresultSubscription) {
+      this.publishresultSubscription.unsubscribe();
+      this.publishresultSubscription = null;
+    }
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setTitle(this.translate.instant('sethiveprovider-title'));
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
+    this.receivedIntent = this.intentService.getReceivedIntent();
   }
 
   async acceptRequest() {

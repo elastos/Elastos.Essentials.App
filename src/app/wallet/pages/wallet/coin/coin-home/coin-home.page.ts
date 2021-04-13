@@ -283,22 +283,22 @@ export class CoinHomePage implements OnInit {
     }
 
     CheckPublishTx() {
-        for (const txId in this.walletManager.transactionMap) {
-            if (this.getIndexByTxId(txId)) {
-                delete this.walletManager.transactionMap[txId];
+        for (const txid in this.walletManager.transactionMap) {
+            if (this.getIndexByTxId(txid)) {
+                delete this.walletManager.transactionMap[txid];
             }
         }
 
-        Logger.log('wallet', 'Fail txId:', this.walletManager.transactionMap);
-        for (const txId in this.walletManager.transactionMap) {
-            this.popupProvider.ionicAlert_PublishedTx_fail('confirmTitle', txId, txId);
+        Logger.log('wallet', 'Fail txid:', this.walletManager.transactionMap);
+        for (const txid in this.walletManager.transactionMap) {
+            this.popupProvider.ionicAlert_PublishedTx_fail('confirmTitle', txid, txid);
         }
 
         this.walletManager.cleanTransactionMap();
     }
 
-    getIndexByTxId(txId: string) {
-        return this.transferList.findIndex(e => e.txId === txId);
+    getIndexByTxId(txid: string) {
+        return this.transferList.findIndex(e => e.txid === txid);
     }
 
     async checkUTXOCount() {

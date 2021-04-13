@@ -12,7 +12,7 @@ import { Events } from '../../services/events.service';
  */
 export type RawTransactionPublishResult = {
     published: boolean; // Whether the transaction was successfully published to the node/spvsdk or not
-    txId?: string; // In case of successful publication, ID of the published transaction.
+    txid?: string; // In case of successful publication, ID of the published transaction.
     status?: string; // published, cancelled, error
 }
 
@@ -199,13 +199,13 @@ export abstract class SubWallet {
             statusName: this.getTransactionStatusName(transaction.Status, translate),
             symbol: '', // Defined by inherited classes
             timestamp,
-            txId: null, // Defined by inherited classes
+            txid: null, // Defined by inherited classes
             type: null, // Defined by inherited classes
         };
         return transactionInfo;
     }
 
-    public abstract getTransactionDetails(txId: string): Promise<AllTransactions>;
+    public abstract getTransactionDetails(txid: string): Promise<AllTransactions>;
 
     public abstract createPaymentTransaction(toAddress: string, amount: string, memo: string): Promise<string>;
     public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string>;

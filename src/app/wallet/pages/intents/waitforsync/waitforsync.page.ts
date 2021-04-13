@@ -37,7 +37,7 @@ export class WaitForSyncPage implements OnInit {
     public subWallet: SubWallet;
 
     chainId: StandardCoinName;
-    txId: string;
+    txid: string;
     walletInfo = {};
 
     action = '';

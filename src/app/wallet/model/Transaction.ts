@@ -40,7 +40,7 @@ export type TransactionInfo = {
     statusName: string,
     symbol: string,
     timestamp: number,
-    txId: string,
+    txid: string,
     type: TransactionType,
 };
 

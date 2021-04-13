@@ -139,8 +139,8 @@ export abstract class StandardSubWallet extends SubWallet {
         return transactionName;
     }
 
-    public async getTransactionDetails(txId: string): Promise<AllTransactions> {
-        const transactionDetails = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txId);
+    public async getTransactionDetails(txid: string): Promise<AllTransactions> {
+        const transactionDetails = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
         return transactionDetails;
     }
 
@@ -176,9 +176,9 @@ export abstract class StandardSubWallet extends SubWallet {
         return null;
     }
 
-    protected isVoteTransaction(txId: string): Promise<any> {
+    protected isVoteTransaction(txid: string): Promise<any> {
         return new Promise(async (resolve) => {
-            const transactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txId);
+            const transactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
             const transaction = transactions.Transactions[0];
             if (!Util.isNull(transaction.OutputPayload) && (transaction.OutputPayload.length > 0)) {
                 resolve(true);
@@ -203,7 +203,7 @@ export abstract class StandardSubWallet extends SubWallet {
         this.progress = progress;
 
         if (this.id != StandardCoinName.ETHSC ) {
-            Logger.log("wallet", "Standard subwallet "+this.id+" got update sync progress request. Progress = "+progress);
+            // Logger.log("wallet", "Standard subwallet "+this.id+" got update sync progress request. Progress = "+progress);
         }
 
         const curTimestampMs = (new Date()).getTime();
@@ -236,7 +236,7 @@ export abstract class StandardSubWallet extends SubWallet {
                 Logger.log("wallet", "No password received. Cancelling");
                 resolve({
                   published: false,
-                  txId: null,
+                  txid: null,
                   status: 'cancelled'
                 });
                 return;
@@ -270,17 +270,17 @@ export abstract class StandardSubWallet extends SubWallet {
 
                 setTimeout(async () => {
                     let status = 'published';
-                    let txId = publishedTransaction.TxHash;
-                    const code = this.masterWallet.walletManager.getTxCode(txId);
+                    let txid = publishedTransaction.TxHash;
+                    const code = this.masterWallet.walletManager.getTxCode(txid);
                     if (code !== 0) {
-                        txId = null;
+                        txid = null;
                         status = 'error';
                     }
                     this.masterWallet.walletManager.native.hideLoading();
 
                     resolve({
                       published: true,
-                      txId: txId,
+                      txid: txid,
                       status,
                     });
                 }, 5000); // wait for 5s for txPublished
@@ -295,7 +295,7 @@ export abstract class StandardSubWallet extends SubWallet {
                 resolve({
                     published: true,
                     status: 'published',
-                    txId: publishedTransaction.TxHash
+                    txid: publishedTransaction.TxHash
                 });
             }
         });
