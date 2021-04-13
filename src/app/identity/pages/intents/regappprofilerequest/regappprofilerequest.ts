@@ -14,6 +14,7 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { RegAppProfileIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { Subscription } from 'rxjs';
 
 // TODO: Show credential(s) content that will be created to the user. He needs to make sure for example
 // that no shared credential will overwrite existing ones like "name" or "email"...
@@ -55,6 +56,7 @@ export class RegisterApplicationProfileRequestPage {
   denyReason = '';
 
   public shouldPublishOnSidechain: boolean = true;
+  private publishresultSubscription: Subscription = null;
 
   constructor(
     private didService: DIDService,
@@ -66,6 +68,24 @@ export class RegisterApplicationProfileRequestPage {
     public theme: GlobalThemeService,
     private intentService: IntentReceiverService
   ) {
+  }
+
+  ngOnInit() {
+    // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
+    // request initiated by publish() on a did document.
+    this.publishresultSubscription = this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
+      Logger.log("identity", "diddocument:publishresultpopupclosed event received in regappprofile request", result);
+      if (result.published) {
+        await this.sendIntentResponse();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.publishresultSubscription) {
+      this.publishresultSubscription.unsubscribe();
+      this.publishresultSubscription = null;
+    }
   }
 
   ionViewWillEnter() {
@@ -82,17 +102,6 @@ export class RegisterApplicationProfileRequestPage {
       this.receivedIntent.params.sharedclaims = [];
 
     Logger.log("identity", "Modified request data:", this.receivedIntent);
-  }
-
-  ionViewDidEnter() {
-    // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
-    // request initiated by publish() on a did document.
-    this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
-      Logger.log("identity", "diddocument:publishresultpopupclosed event received in regappprofile request", result);
-      if (result.published) {
-        await this.sendIntentResponse();
-      }
-    });
   }
 
   async acceptRequest() {

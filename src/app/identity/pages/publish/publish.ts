@@ -9,6 +9,7 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
+import { Subscription } from "rxjs";
 
 type CredentialDisplayEntry = {
     credential: DIDPlugin.VerifiableCredential;
@@ -31,6 +32,7 @@ export class PublishPage {
     avatarImg = "";
     _publishableCredentials: CredentialDisplayEntry[] = [];
     public unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
+    private subscription: Subscription = null;
 
     constructor(
         public events: Events,
@@ -47,7 +49,7 @@ export class PublishPage {
     }
 
     ngOnInit() {
-        this.events.subscribe("did:didchanged", () => {
+        this.subscription = this.events.subscribe("did:didchanged", () => {
             this.zone.run(() => {
                 this.init();
             });
@@ -63,6 +65,13 @@ export class PublishPage {
             if (!val.credential.getSubject().hasOwnProperty("apppackage") || (val.credential.getFragment() == "avatar" && val.credential.getSubject().hasOwnProperty["data"]))
                 this._publishableCredentials.push(val);
         });
+    }
+
+    ngOnDestroy() {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
     }
 
     init() {
