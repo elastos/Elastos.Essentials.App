@@ -121,7 +121,7 @@ export class IntentReceiverService {
             case 'promptpublishdid':
                 // param is not required
                 await this.uxService.loadIdentityAndShow(false);
-                await this.native.setRootRouter('/identity/myprofile');
+                await this.native.setRootRouter('/identity/myprofile/home');
                 this.events.publish('did:promptpublishdid');
                 break;
             case "registerapplicationprofile":

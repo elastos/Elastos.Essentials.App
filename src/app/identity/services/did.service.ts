@@ -12,6 +12,7 @@ import { Events } from "./events.service";
 import { AuthService } from "./auth.service";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { Logger } from "src/app/logger";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -31,7 +32,8 @@ export class DIDService {
     public localStorage: LocalStorage,
     private popupProvider: PopupProvider,
     public native: Native,
-    private didSessions: GlobalDIDSessionsService
+    private didSessions: GlobalDIDSessionsService,
+    private globalIntentService: GlobalIntentService
   ) {
     DIDService.instance = this;
   }
@@ -41,7 +43,7 @@ export class DIDService {
   }
 
   public async displayDefaultScreen() {
-    this.native.setRootRouter("/identity/myprofile");
+    this.native.setRootRouter("/identity/myprofile/home");
   }
 
   /**
@@ -86,7 +88,7 @@ export class DIDService {
         return;
       }
 
-      let didStore = await DIDStore.loadFromDidStoreId(storeId, this.events, this.didSessions);
+      let didStore = await DIDStore.loadFromDidStoreId(storeId, this.events, this.didSessions, this.globalIntentService);
       if (!didStore) {
         this.popupProvider.ionicAlert(
           "Store load error",
@@ -155,7 +157,7 @@ export class DIDService {
       Logger.error('identity', "Unable to load the previously selected DID store");
       this.handleNull(); // TODO: go to DID list instead
     } else {
-      if (this.getActiveDid() !== null) this.native.setRootRouter("/identity/myprofile");
+      if (this.getActiveDid() !== null) this.native.setRootRouter("/identity/myprofile/home");
       // this.native.setRootRouter('/noidentity');
       else {
         // Oops, no active DID...
@@ -166,7 +168,7 @@ export class DIDService {
   }
 
   public async newDidStore() {
-    let didStore = new DIDStore(this.events, this.didSessions);
+    let didStore = new DIDStore(this.events, this.didSessions, this.globalIntentService);
     try {
       await didStore.initNewDidStore();
     } catch (e) {

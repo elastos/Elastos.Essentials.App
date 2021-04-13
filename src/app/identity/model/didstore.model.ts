@@ -7,8 +7,8 @@ import { LocalStorage } from '../services/localstorage';
 import { Events } from '../services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
-declare let essentialsIntentManager: any; // TODO
 declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDStore {
@@ -16,7 +16,10 @@ export class DIDStore {
     public dids: DID[] = [];
     private activeDid: DID = null;
 
-    constructor(private events: Events, private didSessions: GlobalDIDSessionsService) { }
+    constructor(private events: Events,
+                private didSessions: GlobalDIDSessionsService,
+                private globalIntentService: GlobalIntentService
+    ) { }
 
     public getActiveDid(): DID {
         return this.activeDid
@@ -103,10 +106,10 @@ export class DIDStore {
     /**
      * Fills this object model by loading a plugin DID store with all its contained DIDs, credentials, etc.
      */
-    public static async loadFromDidStoreId(didStoreId: string, events: Events, didSessions: GlobalDIDSessionsService): Promise<DIDStore> {
+    public static async loadFromDidStoreId(didStoreId: string, events: Events, didSessions: GlobalDIDSessionsService, intentService: GlobalIntentService): Promise<DIDStore> {
         Logger.log("Identity", "Loading all data from DID Store " + didStoreId);
 
-        let didStore = new DIDStore(events, didSessions);
+        let didStore = new DIDStore(events, didSessions, intentService);
         await didStore.loadAll(didStoreId, false);
 
         return didStore;
@@ -245,7 +248,7 @@ export class DIDStore {
      * that we have to forward to the wallet application so it can write the did request on the did
      * sidechain for us.
      */
-    private createIdTransactionCallback(payload: string, memo: string) {
+    private async createIdTransactionCallback(payload: string, memo: string) {
         let jsonPayload = JSON.parse(payload);
         Logger.log('identity', "Received id transaction callback with payload: ", jsonPayload);
         let params = {
@@ -254,7 +257,9 @@ export class DIDStore {
 
         Logger.log('identity', "Sending didtransaction intent with params:", params);
 
-        essentialsIntentManager.sendIntent("https://wallet.elastos.net/didtransaction", params, {}, (response) => {
+        try {
+            let response = await this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", params);
+
             Logger.log('identity', "Got didtransaction intent response.", response);
 
             // If txid is set in the response this means a transaction has been sent on chain.
@@ -273,13 +278,14 @@ export class DIDStore {
                     cancelled: true
                 });
             }
-        }, (err) => {
+        }
+        catch (err) {
             Logger.error('identity', "Failed to send app manager didtransaction intent!", err);
             this.events.publish("diddocument:publishresult", {
                 didStore: this,
                 error: true
             });
-        });
+        };
     }
 
     public async loadDidDocument(didString: string): Promise<DIDDocument> {
