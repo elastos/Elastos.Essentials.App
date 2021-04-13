@@ -83,7 +83,7 @@ export class ProfilePage {
     private didSyncService: DIDSyncService,
     private modalCtrl: ModalController,
     private uxService: UXService,
-    private native: Native,
+    public native: Native,
     public theme: GlobalThemeService,
     public hiveService: HiveService,
     public profileService: ProfileService,

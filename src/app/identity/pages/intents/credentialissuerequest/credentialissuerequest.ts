@@ -6,11 +6,11 @@ import { AuthService } from '../../../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DIDURL } from '../../../model/didurl.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { CredIssueIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 // TODO: Verify and show clear errors in case data is missing in credentials (expiration date, issuer, etc).
 // TODO: Resolve issuer's DID and try to display more user friendly information about the issuer
@@ -72,7 +72,7 @@ export class CredentialIssueRequestPage {
     private authService: AuthService,
     private appServices: UXService,
     private translate: TranslateService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private intentService: IntentReceiverService
   ) {
   }

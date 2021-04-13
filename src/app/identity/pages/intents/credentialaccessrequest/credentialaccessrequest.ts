@@ -15,7 +15,6 @@ import { DID } from '../../../model/did.model';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { CredAccessIdentityIntent } from '../../../model/identity.intents';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
@@ -23,6 +22,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { isNil } from 'lodash-es';
 import { Logger } from 'src/app/logger';
 import { PopupProvider } from 'src/app/identity/services/popup';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -137,7 +137,7 @@ export class CredentialAccessRequestPage {
     private profileService: ProfileService,
     private expirationService: ExpirationService,
     private didSyncService: DIDSyncService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private popupService: PopupProvider,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,

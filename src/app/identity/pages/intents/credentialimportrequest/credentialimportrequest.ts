@@ -6,11 +6,11 @@ import { AuthService } from '../../../services/auth.service';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { CredImportIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -75,7 +75,7 @@ export class CredentialImportRequestPage {
     private popup: PopupProvider,
     private appServices: UXService,
     private translate: TranslateService,
-    public theme: ThemeService,
+    public theme: GlobalThemeService,
     private intentService: IntentReceiverService
   ) {
   }
