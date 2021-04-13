@@ -32,6 +32,7 @@ export const en = {
   'import-again-yes': 'Yes',
 
   // Create screen
+  'elastos-essentials': 'Elastos Essentials',
   'welcome-message1': 'Welcome to the modern internet, where you take control of your own digital identity in a secured sand-box environment.',
   'welcome-message2': 'This will give you the ability to verify your identity and its credentials seamlessly across all applications without losing your privacy and data.',
   'welcome-message3': "Let's start by creating your first decentralized identity or import one that you already own.",
