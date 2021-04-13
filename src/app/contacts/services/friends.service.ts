@@ -797,7 +797,7 @@ export class FriendsService {
       if(targetContact) {
         this.globalNav.navigateTo('contacts', '/contacts/friends/'+didString);
       } else {
-        this.native.showLoading('please-wait');
+        this.native.showLoading(this.translate.instant('please-wait'));
         await this.resolveDIDDocument(didString, false);
         this.native.hideLoading();
       }
