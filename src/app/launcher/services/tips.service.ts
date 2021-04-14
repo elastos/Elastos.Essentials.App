@@ -15,7 +15,7 @@ const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Service responsible for rotating tips displayed to users as notifications,
- * in order to better understand elastOS.
+ * in order to better understand Elastos Essentials.
  */
 @Injectable({
   providedIn: 'root'

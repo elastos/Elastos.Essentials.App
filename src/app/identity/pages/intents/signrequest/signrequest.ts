@@ -83,7 +83,7 @@ export class SignRequestPage {
       }
 
       // Return the signature info as a signed JWT in case runtime needs to send this response through a URL
-      // callback. If that's inside elastOS, the JWT will be parsed and the calling app will receive the
+      // callback. If that's inside Elastos Essentials, the JWT will be parsed and the calling app will receive the
       // signature payload.
       let jwtToken = await this.didService.getActiveDid().getDIDDocument().createJWT(payload,
       1, this.authService.getCurrentUserPassword());

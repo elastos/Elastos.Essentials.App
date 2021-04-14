@@ -68,7 +68,6 @@ export class GlobalThemeService {
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
   }
 
-  // Convenient getter for backward compatibility from elastOS 1.x
   public get darkMode() {
     return this.activeTheme.value == AppTheme.DARK;
   }

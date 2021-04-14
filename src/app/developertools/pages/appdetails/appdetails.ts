@@ -37,7 +37,7 @@ export class AppDetailsPage {
   appDIDDocumentStatusWasChecked = false; // Whether the App DID document has been checked on chain or not yet
   appDIDDocument: DIDPlugin.DIDDocument = null;
   developerDIDDocument: DIDPlugin.DIDDocument = null;
-  trinityPubStatusWasChecked = false; // Whether the elastOS application publication status was checked
+  trinityPubStatusWasChecked = false; // Whether the Elastos Essentials application publication status was checked
   signedInUserDID: string = null;
 
   public base64iconPath: string = null;
@@ -46,7 +46,7 @@ export class AppDetailsPage {
   public nativeCustomScheme: string = "";
   public nativeCallbackUrl: string = "";
 
-  public appIdentityHelpMessage = "Your application identifier on the Elastos DID chain is independant from any publication or platform such as elastOS or native Android/iOS. It is only a way to proove ownerships, but this is a mandatory step to start with.";
+  public appIdentityHelpMessage = "Your application identifier on the Elastos DID chain is independant from any publication or platform such as Elastos Essentials or native Android/iOS. It is only a way to proove ownerships, but this is a mandatory step to start with.";
   public nativeRedirectUrlHelpMessage = "Native applications need to save their intent scheme base url in their public DID document, in order to secure inter application communications. Ex: https://elastosapp.mysite.org. Redirect URLs send native intent on mobile devices. Used by native mobile apps.";
   public nativeCustomSchemeHelpMessage = "Native applications (android) should provide a short custom scheme (ex: myapp) that are used for example by trinity native to send intent responses. For trinity native, this custom name must match the one configured in trinitynative.json.";
   public nativeCallbackUrlHelpMessage = "Native applications need to save their intent scheme base url in their public DID document, in order to secure inter application communications. Ex: https://elastosapp.mysite.org. Callback URLs send HTTP POST requests to a remote HTTP server. Used by websites.";
@@ -133,7 +133,7 @@ export class AppDetailsPage {
     this.identityService.publishAppIdentity(this.didSession, this.nativeRedirectUrl, this.nativeCallbackUrl, this.nativeCustomScheme);
   }
 
-  publishAppToElastOS() {
+  publishAppToElastos() {
     this.nav.navigateTo(
       App.DEVELOPER_TOOLS,
       "/developertools/publishapptrinity",

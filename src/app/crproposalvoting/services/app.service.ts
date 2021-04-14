@@ -70,7 +70,7 @@ export class AppService {
     this.storage.set('lastProposalChecked', proposals[0].id);
     Logger.log('crproposal', 'Background service: Last proposal checked by id', lastCheckedProposal);
 
-    // Send notification new proposals since user last visited elastOS
+    // Send notification new proposals since user last visited Elastos Essentials
     if(lastCheckedProposal) {
       const targetProposal = proposals.find(proposal => proposal.id === lastCheckedProposal);
       const targetProposalIndex = proposals.indexOf(targetProposal);

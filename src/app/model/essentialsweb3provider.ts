@@ -8,7 +8,7 @@ export class EssentialsWeb3Provider implements AbstractProvider {
     rpcApiEndpoint: string = null; // RPC API server url. Do NOT read this value directly.
 
     /**
-     * Returns the previously fetched RPC API endpoint from elastOS's preferences
+     * Returns the previously fetched RPC API endpoint from Elastos Essentials's preferences
      */
     private getRPCApiEndpoint(): Promise<string> {
         if (this.rpcApiEndpoint != null)

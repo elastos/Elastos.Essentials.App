@@ -48,7 +48,7 @@ export class BackgroundService {
           // Initialize the active DID
           await this.didService.loadGlobalIdentity();
 
-          // Wait a moment when elastOS starts, before starting a background sync.
+          // Wait a moment when Elastos Essentials starts, before starting a background sync.
           this.synchronizeTimeout = setTimeout(() => {
             this.synchronizeActiveDIDAndRepeat();
           }, 30*1000); // 30 seconds

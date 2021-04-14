@@ -39,25 +39,14 @@ export const fr = {
     'dapp-browser': "Navigateur de capsules",
     'recent': 'Récents',
     'welcome': 'Bienvenue',
-    'no-apps-title': 'Aucune Application?',
-    'no-apps-message': "Vous pouvez trouver des applications elastOS à partir de vos contacts ou des réseaux sociaux. Plus vous explorez l'écosystème elastOS, plus vous trouverez d'applications",
     'open-our-app': "Vous pouvez commencer par ouvrir la",
     'open-our-app2': "Vous pouvez commencer par ouvrir le",
-    'identity-demo': "Démo d'identité",
-    'capsule-marketplace': 'Marché des capsules',
     'main': 'Commencer',
     'utilities': 'Utilitaires',
     'voting': 'Voting',
     'other': 'Autres',
 
     /********** Onboard Page **********/
-    'welcome-to-a': 'Bienvenue dans un',
-    'secure-environment': 'environnement sécurisé',
-    'introduction-0': 'Ce que vous connaissez d\'internet est bloqué par défaut dans elastOS. Vous êtes maintenant libre de naviguer parmi des applications décentralisées, gérer votre propre identité votre portefeuille dans un environnement sécurisé où les communications http sont bloquées.',
-    'entire-ecosystem-that': 'Ecosystème',
-    'we-call-capsules': "que l\'on appelle 'Capsules'",
-    'introduction-1': 'Vous pouvez ici utiliser vos capsules préférées qui peuvent être des objets numériques ou des mini-sites web. Conservez vos favoirs sur l\'écran d\'accueil et explorez de nouvelles capsules que vous trouverez via vos contacts.',
-    'enter-elastos': 'Entrer dans elastOS',
 
     /********** iOS apps **********/
     'app-wallet': 'Portefeuille',

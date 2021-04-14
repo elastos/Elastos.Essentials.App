@@ -12,7 +12,7 @@ export class PrefsService {
 
     /**
      * Returns the currently active network such as mainnet or testnet.
-     * Retrieved from elastOS' global preferences.
+     * Retrieved from Elastos Essentials' global preferences.
      */
     public async getActiveNetworkType(): Promise<NetworkType> {
         let value = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, "chain.network.type");

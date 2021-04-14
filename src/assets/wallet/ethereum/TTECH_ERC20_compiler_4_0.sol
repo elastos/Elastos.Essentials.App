@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: UNLICENSED
 
 /*
- * Very basic test ERC20 contract for the trinity tech demo token used in the elastOS wallet.
+ * Very basic test ERC20 contract for the trinity tech demo token used in the Elastos Essentials wallet.
  * 20200916: This contract can be compiled only with solidity 0.4 because the Elastos ETH sidechain
  * only supports this version for now.
  */

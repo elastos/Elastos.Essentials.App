@@ -75,7 +75,7 @@ export interface RPCUpdateWalletInfoParams {
     providedIn: 'root'
 })
 /**
- * Service responsible for managing sync status for SPV wallets. It can be initiated from a elastOS
+ * Service responsible for managing sync status for SPV wallets. It can be initiated from a Elastos Essentials
  * background service context or directly from the application, depending on users preferences.
  * By default, it runs in the background service.
  */
@@ -223,7 +223,7 @@ export class SPVSyncService {
     }
 
     /**
-     * Sends a system notification inside elastOS when the wallet completes his synchronization for the first time.
+     * Sends a system notification inside Elastos Essentials when the wallet completes his synchronization for the first time.
      * This way, users know when they can start using their wallet in third party apps.
      */
     private async sendSyncCompletedNotification(chainId) {

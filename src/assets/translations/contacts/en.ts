@@ -36,7 +36,7 @@ export const en = {
   'did': 'Identity',
   'elaWallet': 'ELA Address',
   'carrier': 'Carrier Address',
-  'elastos-notifications-carrier-address': 'elastOS Notifications Carrier Address',
+  'elastos-notifications-carrier-address': 'Elastos Notifications Carrier Address',
 
   /********** Add Pg **********/
   'open-scanner': 'Open QR Scanner',
@@ -83,20 +83,4 @@ export const en = {
   'delete-msg2': 'You can always add them back again!',
   'are-you-sure': 'Are you sure?',
   'was-deleted': ' was deleted',
-
-  /********** First Contact **********/
-  'first-contact': 'My First Contact',
-  'contact-note': 'Hi! Click me to see my profile and see what Capsules I have',
-  'contact-copied': 'Contact copied',
-  'resolve-error-header': 'There was an error',
-  'resolve-error-info': 'Sorry, we can\'t find your friend on chain. Did he make his DID profile public ?',
-  'diddemo-description': 'This is a basic demo which demonstrates the identity service',
-  'carrierdemo-description': 'This is a basic demo which demonstrates P2P networking',
-  'academy-description': 'Learn elastOS the fun way! Quizzes, chats, guilds, level up & earn points!',
-  'crcvoting-description': 'Let your voice be heard and vote for your CRC candidate!',
-  'dposvoting-description': 'Vote for your favorite Supernodes and earn ELA along the way',
-  'blockchain-description': 'Check for any block, transaction or address ever created on Elastos!',
-  'redpacket-description': 'Show some love to your friends by giving them ELA!',
-};
-
-
+}

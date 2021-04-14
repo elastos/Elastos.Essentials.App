@@ -217,7 +217,7 @@ export class TitleBarComponent {
   }
 
   /**
-   * Toggles the visibility status of both the elastOS internal title bar, and the native system
+   * Toggles the visibility status of both the Elastos Essentials internal title bar, and the native system
    * status bar. Hiding both bars makes the application become fullscreen.
    *
    * Note that calling this API requires a user permission in order to safely enter fullscreen mode.

@@ -28,14 +28,13 @@ export const en = {
     'credentials-modified': 'Local credentials out of sync',
     'credentials-modified-description': 'Republish your profile to synchronize',
 
-
     // page: profile
     'my-capsules': 'My Capsules',
     'show-all': 'Show All',
     'no-capsules-title': 'No Capsules found',
     'no-capsules-text': 'You can find capsules from the Elastos community. Depending on the capsule, you will be able to register it to your Capsule Profile for you to share and everybody else to see.',
     'not-set': 'Not set',
-    'credentials': 'Credentials',
+    'credentials': 'Credentials', 
     'male': 'Male',
     'female': 'Female',
     'published': 'Published',

@@ -83,20 +83,6 @@ export const fr = {
   'delete-msg2': 'Vous pourrez toujours ajouter à nouveau ce contact à votre liste plus tard.',
   'are-you-sure': 'Etes-vous sûr(e)?',
   'was-deleted': ' a été supprimé(e)',
-
-  /********** First Contact **********/
-  'first-contact': 'Mon premier contact',
-  'contact-note': 'Hey! Cliquez pour voir mon profil.',
-  'contact-copied': 'Contact copié',
-  'resolve-error-header': 'Il y a eu une erreur',
-  'resolve-error-info': 'Désolé, impossible de trouver le profil du contact. Son identité est-elle publiée?',
-  'diddemo-description': 'This is a basic demo which demonstrates the identity service',
-  'carrierdemo-description': 'This is a basic demo which demonstrates P2P networking',
-  'academy-description': 'Learn elastOS the fun way! Quizzes, chats, guilds, level up & earn points!',
-  'crcvoting-description': 'Let your voice be heard and vote for your CRC candidate!',
-  'dposvoting-description': 'Vote for your favorite Supernodes and earn ELA along the way',
-  'blockchain-description': 'Check for any block, transaction or address ever created on Elastos!',
-  'redpacket-description': 'Show some love to your friends by giving them ELA!',
 };
 
 

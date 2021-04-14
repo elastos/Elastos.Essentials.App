@@ -83,18 +83,4 @@ export const zh = {
   'delete-msg2': '删除后仍可重新添加为联系人',
   'are-you-sure': '确定删除?',
   'was-deleted': '已被删除',
-
-  /********** First Contact **********/
-  'first-contact': '默认联系人',
-  'contact-note': '嗨! 请点击我查看我的个人资料，看看我有哪些胶囊',
-  'contact-copied': '联系人已复制',
-  'resolve-error-header': '错误',
-  'resolve-error-info': '抱歉，链上找不到此好友的信息。或许他的DID还没有发布？',
-  'diddemo-description': '这是一个演示身份服务的基本演示',
-  'carrierdemo-description': '这是一个演示P2P网络的基本演示',
-  'academy-description': '通过有趣的方式学习elastOS！ 知识竞答，聊天，公会，升级并赚取积分！',
-  'crcvoting-description': '让别人听到您的声音并为您的CRC候选人投票！',
-  'dposvoting-description': '给您最喜欢的超级节点投票，同时赚取ELA！',
-  'blockchain-description': '检查在Elastos上创建的任何区块、交易或地址！',
-  'redpacket-description': '通过给您的朋友发ELA红包来表达您的爱！',
 };
