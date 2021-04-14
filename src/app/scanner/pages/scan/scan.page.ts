@@ -209,7 +209,11 @@ export class ScanPage {
 
                                 let code: string;
                                 try {
-                                    code = await QrScanner.scanImage(image);
+                                    // why?
+                                    // We create worker manually.
+                                    // if use 'QrScanner.scanImage(image)', it will create BarcodeDetector engine in some devices, and it can't get the qr code.
+                                    let worker: Worker = new Worker(QrScanner.WORKER_PATH)
+                                    code = await QrScanner.scanImage(image, null, worker);
                                 }
                                 catch (err) {
                                     //debugger;

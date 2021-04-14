@@ -4,7 +4,7 @@
     position: fixed;
     height: 100%;
     width: 100%;
-    background: url("../../../../assets//scanner/imgs/scanner.svg") no-repeat center center;
+    background: url("../../../../assets/scanner/imgs/scanner.svg") no-repeat center center;
     background-size: contain;
 }
 
@@ -20,27 +20,27 @@
 @keyframes lineAnimation {
     0% {
         background: #f04141;
-        top: 35%;
+        top: 40%;
     }
     20% {
         background: #ffc409;
-        top: 40%;
+        top: 45%;
     }
     40% {
         background: #3dc2ff;
-        top: 45%;
+        top: 50%;
     }
     60% {
         background: #2dd36f;
-        top: 50%;
+        top: 55%;
     }
     80% {
         background: #4854e0;
-        top: 55%;
+        top: 60%;
     }
     100% {
         background: #eb445a;
-        top: 60%;
+        top: 65%;
     }
 }
 
