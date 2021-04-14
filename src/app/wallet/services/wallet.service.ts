@@ -361,7 +361,6 @@ export class WalletManager {
         singleAddress: boolean
     ) {
         Logger.log('wallet', "Importing new master wallet with mnemonic");
-
         await this.spvBridge.importWalletWithMnemonic(masterId, mnemonicStr, mnemonicPassword, payPassword, singleAddress);
 
         const account: WalletAccount = {

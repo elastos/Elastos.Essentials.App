@@ -999,8 +999,8 @@ export class SPVWalletPluginBridge {
     // TODO: Replace this to improve the error object (exception, message) only, not
     // show any popup or send message. Each method should handle that case by case
     // TODO: replace hardcoded error code with enum: http://elastos.ela.spv.cpp/SDK/Common/ErrorChecker.h
-    handleError(err: any, promiseRejectHandler: (reason?: any)=>void): any {
-        this.native.hideLoading();
+    async handleError(err: any, promiseRejectHandler: (reason?: any)=>void) {
+        await this.native.hideLoading();
 
         if (GlobalDIDSessionsService.signedInDIDString == null) {
           // Sign out

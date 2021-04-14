@@ -175,19 +175,17 @@ export class WalletImportPage implements OnInit {
             }
             Logger.log('wallet', 'Input string is valid');
             this.walletIsCreating = true;
-            try {
-                const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
-                if (payPassword) {
+            const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
+            if (payPassword) {
+                try {
                     await this.native.showLoading(this.translate.instant('please-wait'));
                     await this.importWalletWithMnemonic(payPassword);
                     await this.native.hideLoading();
-                } else {
-                    // Cancelled, do nothing
+                } catch (err) {
+                    await this.native.hideLoading();
+                    Logger.error('wallet', 'Wallet import error:', err);
                 }
-            } catch(err) {
-                Logger.error('wallet', 'Create Walet error:', err)
             }
-            await this.native.hideLoading();
 
             this.walletIsCreating = false;
         } else {

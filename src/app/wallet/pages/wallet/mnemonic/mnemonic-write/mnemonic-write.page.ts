@@ -131,23 +131,26 @@ export class MnemonicWritePage implements OnInit {
 
                     const payPassword = await this.authService.createAndSaveWalletPassword(this.walletCreationService.masterId);
                     if (payPassword) {
-                        await this.native.showLoading(this.translate.instant('please-wait'));
-                        await this.walletManager.createNewMasterWallet(
-                            this.walletCreationService.masterId,
-                            this.walletCreationService.name,
-                            this.mnemonicStr,
-                            this.walletCreationService.mnemonicPassword,
-                            payPassword,
-                            this.walletCreationService.singleAddress
-                        );
-                        await this.native.hideLoading();
+                        try {
+                            await this.native.showLoading(this.translate.instant('please-wait'));
+                            await this.walletManager.createNewMasterWallet(
+                                this.walletCreationService.masterId,
+                                this.walletCreationService.name,
+                                this.mnemonicStr,
+                                this.walletCreationService.mnemonicPassword,
+                                payPassword,
+                                this.walletCreationService.singleAddress
+                            );
+                            await this.native.hideLoading();
 
-                        this.events.publish("masterwalletcount:changed", {
-                            action: 'add',
-                            walletId: this.walletCreationService.masterId
-                        });
-                    } else {
-                        // Cancelled, do nothing
+                            this.events.publish("masterwalletcount:changed", {
+                                action: 'add',
+                                walletId: this.walletCreationService.masterId
+                            });
+                        } catch (err) {
+                            await this.native.hideLoading();
+                            Logger.error('wallet', 'Wallet create error:', err);
+                        }
                     }
                 }
 
