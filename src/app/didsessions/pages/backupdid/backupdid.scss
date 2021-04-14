@@ -1,7 +1,7 @@
 @import 'src/app/didsessions/root.scss';
 
 ion-slides {
-  height: calc(100% - (150px + 40px));
+  height: calc(100% - (150px + 40px)); // Substract height of slides on approximate height of footer
 
   ion-slide {
     display: flex;

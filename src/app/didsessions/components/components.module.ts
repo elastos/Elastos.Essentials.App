@@ -4,10 +4,12 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MnemonicPassCheckComponent } from './mnemonicpasscheck/mnemonicpasscheck.component';
+import { WarningComponent } from './warning/warning.component';
 
 @NgModule({
   declarations: [
     MnemonicPassCheckComponent,
+    WarningComponent
   ],
   imports: [
     CommonModule,
@@ -17,11 +19,13 @@ import { MnemonicPassCheckComponent } from './mnemonicpasscheck/mnemonicpasschec
   ],
   exports: [
     MnemonicPassCheckComponent,
+    WarningComponent
   ],
   providers: [
   ],
   entryComponents: [
     MnemonicPassCheckComponent,
+    WarningComponent
   ],
 })
 export class ComponentsModule { }

@@ -212,7 +212,7 @@ export const fr = {
     "wallet-settings-manage-coin-list-subtitle": "Sélectionnez les jetons à gérer dans votre portefeuille.",
     "wallet-settings-delete-wallet": "Supprimer le Portefeuille",
     "wallet-settings-delete-wallet-subtitle": "Votre argent ne sera pas supprimé. Vous pourrez réimporter votre portefeuille plus tard.",
-    "delete-wallet-confirm-title": "Confirmer la suppression?",
+    "delete-wallet-confirm-title": "Supprimer le Portefeuille",
     "delete-wallet-confirm-subtitle": "Votre portefeuille sera supprimé de cet appareil. Vous pourrez le réimporter plus tard mais veillez à enregistrer votre mnémonique avant la suppression.",
 
     /************************

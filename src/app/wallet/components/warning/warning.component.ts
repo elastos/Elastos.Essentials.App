@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { PopoverController, NavParams } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -12,7 +12,6 @@ export class WarningComponent implements OnInit {
 
   constructor(
     public theme: GlobalThemeService,
-    private navParams: NavParams,
     private popoverCtrl: PopoverController,
     public translate: TranslateService
   ) { }

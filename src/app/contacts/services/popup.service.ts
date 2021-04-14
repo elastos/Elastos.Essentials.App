@@ -30,7 +30,7 @@ export class PopupService {
     private zone: NgZone,
     private events: Events
   ) {
-    this.events.subscribe('showDeletePrompt', (contact) => {
+    this.events.subscribe('showDeleteContactPrompt', (contact) => {
       this.zone.run(() => {
         this.showDeletePrompt(contact);
       });

@@ -34,6 +34,6 @@ export class OptionsComponent implements OnInit {
 
   showWarning() {
     this.popoverCtrl.dismiss();
-    this.events.publish('showDeletePrompt', this.identityEntry);
+    this.events.publish('showDeleteIdentityPrompt', this.identityEntry);
   }
 }

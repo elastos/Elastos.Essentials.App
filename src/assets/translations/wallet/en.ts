@@ -213,7 +213,7 @@ export const en = {
     "wallet-settings-manage-coin-list-subtitle": "Check which coins to display",
     "wallet-settings-delete-wallet": "Delete Wallet",
     "wallet-settings-delete-wallet-subtitle": "This will not delete your assets, you can always import this wallet again",
-    "delete-wallet-confirm-title": "Confirm deletion?",
+    "delete-wallet-confirm-title": "Delete Wallet",
     "delete-wallet-confirm-subtitle": "Your wallet will be deleted from this device. You can re-import it later but make sure to backup your mnemonics first.",
 
     /************************

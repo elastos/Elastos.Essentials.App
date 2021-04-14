@@ -37,7 +37,7 @@ export class OptionsComponent implements OnInit {
   }
 
   async deleteContact() {
-    this.events.publish( 'showDeletePrompt', this.contact );
+    this.events.publish( 'showDeleteContactPrompt', this.contact );
     this.popover.dismiss();
   }
 }

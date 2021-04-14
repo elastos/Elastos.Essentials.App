@@ -37,7 +37,7 @@ export class UXService {
         selfUxService = this;
         UXService.instance = this;
 
-        this.events.subscribe('showDeletePrompt', (identity) => {
+        this.events.subscribe('showDeleteIdentityPrompt', (identity) => {
           this.zone.run(() => {
             this.showDeletePrompt(identity);
           });

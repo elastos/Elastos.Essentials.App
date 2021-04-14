@@ -2,9 +2,9 @@
 
 .container {
   height: 302px;
-  border-radius: 12px;
-  border: 1.2px solid #f55555;
   background: #ffffff;
+  border: 1.2px solid #f55555;
+  border-radius: 12px;
 
   .header {
     height: 112px;
@@ -61,7 +61,7 @@
   }
 }
 
-.darkContainer {
+.dark-container {
   background: #47495a;
 
   .header {

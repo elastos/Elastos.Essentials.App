@@ -4,6 +4,7 @@ import { PopoverController, NavParams } from '@ionic/angular';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-warning',
@@ -17,7 +18,8 @@ export class WarningComponent implements OnInit {
     public theme: GlobalThemeService,
     private navParams: NavParams,
     private popoverCtrl: PopoverController,
-    private events: Events
+    private events: Events,
+    public translate: TranslateService
   ) { }
 
   ngOnInit() {

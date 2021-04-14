@@ -139,12 +139,12 @@ export class WalletSettingsPage implements OnInit {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
-               // this.showDeletePrompt();
+               this.showDeletePrompt();
 
-                const confirmToDelete = await this.popupProvider.ionicConfirm('delete-wallet-confirm-title', 'delete-wallet-confirm-subtitle');
+        /*         const confirmToDelete = await this.popupProvider.ionicConfirm('delete-wallet-confirm-title', 'delete-wallet-confirm-subtitle');
                 if (confirmToDelete) {
                     await this.destroyWallet(this.masterWalletId);
-                }
+                } */
             }
         } catch (e) {
             Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
