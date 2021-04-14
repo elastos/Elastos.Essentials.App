@@ -107,6 +107,32 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
 
   --ion-text-color: #353650;
   --ion-text-color-rgb: 255,255,255;
+
+  ion-refresher {
+    background: #f8f8ff;
+
+    ion-refresher-content {
+      background: #f8f8ff;
+
+      .refresher-pulling {
+        background: #f8f8ff;
+
+        .refresher-pulling-icon {
+          background: #f8f8ff;
+          color: #353650;
+        }
+      }
+
+      .refresher-refreshing {
+        background: #f8f8ff;
+        
+        .refresher-refreshing-icon {
+          background: #f8f8ff;
+          color: #353650;
+        }
+      }
+    }
+  }
 }
 
 /*
@@ -203,8 +229,17 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   }
 
   ion-refresher {
+    background: #191a2f;
+    border: #191a2f;
+
     ion-refresher-content {
+      background: #191a2f;
+      border: #191a2f;
+
       .refresher-pulling {
+        background: #191a2f;
+        border: #191a2f;
+
         .refresher-pulling-icon {
           background: #191a2f;
           border: #191a2f;
@@ -213,6 +248,9 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
       }
 
       .refresher-refreshing {
+        background: #191a2f;
+        border: #191a2f;
+
         .refresher-refreshing-icon {
           background: #191a2f;
           border: #191a2f;

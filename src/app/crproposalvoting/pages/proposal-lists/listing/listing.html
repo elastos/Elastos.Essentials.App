@@ -1,4 +1,4 @@
-<ion-content [scrollEvents]="true" #content [class.darkContent]="theme.darkMode">
+<ion-content [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode" [class.darkmode]="theme.darkMode">
 
     <ion-refresher class="ion-margin-top" slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="crescent">
