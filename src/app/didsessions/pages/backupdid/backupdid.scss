@@ -1,7 +1,7 @@
 @import 'src/app/didsessions/root.scss';
 
 ion-slides {
-  height: 80%;
+  height: calc(100% - (150px + 40px));
 
   ion-slide {
     display: flex;
@@ -100,6 +100,9 @@ ion-slides {
       letter-spacing: -0.5px;
       text-align: center;
     }
+  }
+
+  .footer {
   }
 }
 
