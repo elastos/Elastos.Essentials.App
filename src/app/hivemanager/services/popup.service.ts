@@ -36,6 +36,7 @@ export class PopupService {
                     text: this.translate.instant(okText),
                     handler: () => {
                         Logger.log('HiveManager', 'ionicAlert Ok clicked');
+                        this.alert = null;
                         resolve();
                     }
                 }]
@@ -60,6 +61,7 @@ export class PopupService {
                     text: this.translate.instant(cancelText),
                     handler: () => {
                         Logger.log('HiveManager', 'ionicConfirm Disagree clicked');
+                        this.alert = null;
                         resolve(false);
                     }
                 },
@@ -67,6 +69,7 @@ export class PopupService {
                     text: this.translate.instant(okText),
                     handler: () => {
                         Logger.log('HiveManager', 'Agree clicked');
+                        this.alert = null;
                         resolve(true);
                     }
                 }]
@@ -104,6 +107,7 @@ export class PopupService {
                 text: this.translate.instant(cancelText),
                 handler: data => {
                     Logger.log('HiveManager', 'Cancel clicked');
+                    this.alert = null;
                     resolve(null);
                 }
             },
@@ -111,6 +115,7 @@ export class PopupService {
                 text: this.translate.instant(okText),
                 handler: data => {
                     Logger.log('HiveManager', 'Saved clicked');
+                    this.alert = null;
                     resolve(data[0]);
                 }
             }]
