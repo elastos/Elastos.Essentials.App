@@ -16,13 +16,13 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "es2020",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
     "resolveJsonModule": true,
-    "target": "es5",
+    "module": "esnext",
+    "target": "esnext",
     "typeRoots": [
       "node_modules/@types",
     ],
@@ -37,7 +37,7 @@
       "cordova-plugin-camera"
     ],
     "lib": [
-      "es2018",
+      "esnext",
       "dom"
     ],
     "paths": {

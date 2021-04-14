@@ -148,7 +148,7 @@ export class SwapTestPage implements OnInit {
             Logger.log('wallet', "ROUTE INVERT MIDPRICE:", route.midPrice.invert().toSignificant(6)) // 0.00496756
 
             this.status.push("Computing trade");
-            let trade = Trade.bestTradeExactIn([pair], currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })[0] ?? null;
+            let trade = Trade.bestTradeExactIn([pair], currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })[0] || null;
             Logger.log('wallet', "TRADE:", trade);
 
             let accountAddress = await this.getEthAddress();
