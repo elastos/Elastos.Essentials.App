@@ -79,18 +79,9 @@ export class IdentityService {
     }
 
     async init() {
+        this.setMnemonicLangByLanguage(this.translate.currentLang);
         this.translate.onLangChange.subscribe(data => {
-            let lang = data.lang;
-            Logger.log("DIDSessions", "Setting current mnemonic language to "+lang);
-
-            // Settings DID SDK language
-            if (lang === 'zh') {
-                this.setMnemonicLang("CHINESE_SIMPLIFIED");
-            } else if (lang === 'fr') {
-                this.setMnemonicLang("FRENCH");
-            } else {
-                this.setMnemonicLang("ENGLISH");
-            }
+            this.setMnemonicLangByLanguage(data.lang);
         });
     }
 
@@ -555,11 +546,23 @@ export class IdentityService {
       }
     }
 
+    private setMnemonicLangByLanguage(lang) {
+      // Settings DID SDK language
+      if (lang === 'zh') {
+        this.setMnemonicLang("CHINESE_SIMPLIFIED");
+      } else if (lang === 'fr') {
+          this.setMnemonicLang("FRENCH");
+      } else {
+          this.setMnemonicLang("ENGLISH");
+      }
+    }
+
     public getMnemonicLang(): DIDPlugin.MnemonicLanguage {
         return this.mnemonicLang;
     }
 
     public setMnemonicLang(lang: DIDPlugin.MnemonicLanguage) {
+        Logger.log("DIDSessions", "Setting current mnemonic language to "+lang);
         this.mnemonicLang = lang;
     }
 
