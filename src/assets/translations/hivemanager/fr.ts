@@ -22,6 +22,8 @@ export const fr = {
   "alert.plan-has-been-configured": "La formule a été correctement mise en place",
   "alert.operation-not-completed-title": "Opération non terminée",
   "alert.operation-not-completed-text": "Votre formule de stockage demeure inchangée - l\'opération a été annulée, ou le paiement a échoué.",
+  "alert.didpublish-title": 'DID is unpublished',
+  "alert.didpublish-msg": 'Your DID has not been published yet. Publish now？<br/><br/>After publishing, please wait a few minutes to retry activating here.',
 
   /********** Screens **********/
   "signin": {

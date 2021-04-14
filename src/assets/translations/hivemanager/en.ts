@@ -22,6 +22,8 @@ export const en = {
   "alert.plan-has-been-configured": "Your plan has successfully been configured",
   "alert.operation-not-completed-title": "Operation not completed",
   "alert.operation-not-completed-text": "Your storage plan remains unchanged - the operation was cancelled or the payment has failed.",
+  "alert.didpublish-title": 'DID is unpublished',
+  "alert.didpublish-msg": 'Your DID has not been published yet. Publish now？<br/><br/>After publishing, please wait a few minutes to retry activating here.',
 
   /********** Screens **********/
   "signin": {

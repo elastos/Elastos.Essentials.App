@@ -13,6 +13,8 @@ import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalNavService, App } from 'src/app/services/global.nav.service';
 import { Events } from 'src/app/services/events.service';
+import { ProfileService } from 'src/app/identity/services/profile.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 
 type StorageProvider = {
   name: string,
@@ -55,9 +57,11 @@ export class PickProviderPage implements OnInit {
     private route: ActivatedRoute,
     public theme: GlobalThemeService,
     private nav: GlobalNavService,
+    private globalIntentService: GlobalIntentService,
     private popup: PopupService,
     private prefs: PrefsService,
     private events: Events,
+    public profileService: ProfileService,
   ) {}
 
   async ngOnInit() {
@@ -207,8 +211,18 @@ export class PickProviderPage implements OnInit {
 
   private async publishProvider(providerName: string, providerAddress: string) {
     Logger.log("HiveManager", "Publishing vault provider", providerName, providerAddress);
-    this.publishingProvider = true;
 
+    let diddocment = await this.profileService.fetchPublishedDIDDocument();
+    if (diddocment === null) {
+      Logger.log('HiveManager', 'DID is not published!')
+      let confirmed = await this.popup.ionicConfirm("alert.didpublish-title", "alert.didpublish-msg");
+      if (confirmed) {
+        this.globalIntentService.sendIntent("https://did.elastos.net/promptpublishdid", null);
+      }
+      return;
+    }
+
+    this.publishingProvider = true;
     let publicationStarted = await this.hiveService.publishVaultProvider(providerName, providerAddress);
 
     this.publishingProvider = false;

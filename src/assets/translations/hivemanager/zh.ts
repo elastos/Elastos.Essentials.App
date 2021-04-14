@@ -22,6 +22,8 @@ export const zh = {
   "alert.plan-has-been-configured": "您的计划已成功配置",
   "alert.operation-not-completed-title": "操作未完成",
   "alert.operation-not-completed-text": "您的存储空间方案保持不变-操作已取消或付款失败。",
+  "alert.didpublish-title": 'DID未发布',
+  "alert.didpublish-msg": '您的 DID 还未发布，发布后才能使用 Hive服务，立即发布？<br/><br/>发布后请等待几分钟再尝试重新注册。',
 
   /********** Screens **********/
   "signin": {
