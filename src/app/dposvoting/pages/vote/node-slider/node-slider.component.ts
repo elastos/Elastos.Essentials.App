@@ -3,6 +3,7 @@ import { Node } from '../../../model/nodes.model';
 import { IonSlides } from '@ionic/angular';
 import { NodesService } from '../../../services/nodes.service';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-node-slider-vote',
@@ -28,7 +29,8 @@ export class NodeSliderComponent implements OnInit {
   };
 
   constructor(
-    public nodesService: NodesService
+    public nodesService: NodesService,
+    public theme: GlobalThemeService
   ) {
   }
 

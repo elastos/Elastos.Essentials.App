@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 
@@ -7,6 +7,8 @@ import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-tx',
@@ -14,6 +16,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
   styleUrls: ['./tx.page.scss'],
 })
 export class TxPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   // Initial values
   public vote: Vote;
@@ -40,6 +43,12 @@ export class TxPage implements OnInit {
       this.getNodes();
       Logger.log('dposvoting', this.vote);
     });
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+    this.titleBar.setNavigationMode(null);
   }
 
   getNodes() {

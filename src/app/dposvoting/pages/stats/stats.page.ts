@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NodesService } from '../../services/nodes.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-stats',
@@ -7,13 +10,17 @@ import { NodesService } from '../../services/nodes.service';
   styleUrls: ['./stats.page.scss'],
 })
 export class StatsPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  constructor(public nodesService: NodesService) { }
+  constructor(public nodesService: NodesService, public theme: GlobalThemeService) { }
 
   ngOnInit() {
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
+    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+    this.titleBar.setNavigationMode(null);
   }
 
   updateStats(event) {

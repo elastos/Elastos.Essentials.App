@@ -1,10 +1,10 @@
-<div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
-  <ion-label>{{ 'history-votes-overview' | translate }}</ion-label>
-</div>
-
 <ion-content>
-
-  <ion-grid *ngIf="nodesService._nodes.length > 0 && nodesService._votes.length > 0" class="container">
+  <app-titlebar></app-titlebar>
+  <div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
+    <ion-label>{{ 'history-votes-overview' | translate }}</ion-label>
+  </div>
+    
+  <ion-grid *ngIf="nodesService._nodes.length > 0 && nodesService._votes.length > 0" class="container" [class.dark-container]="theme.darkMode">
     <ion-list>
       <ion-item *ngFor="let vote of nodesService._votes" [routerLink]="['/', 'menu', 'history', vote.tx]" color="light" detail>
         <ion-grid class="ion-padding-horizontal">

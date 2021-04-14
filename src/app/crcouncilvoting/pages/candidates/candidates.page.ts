@@ -46,14 +46,27 @@ export class CandidatesPage implements OnInit {
   }
 
   ionViewWillEnter() {
+/*     this.titleBar.setNavigationMode(null);
+    this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
-
+    this.titleBar.setTitle(this.translate.instant('council-voting'));
+ */
     if(this.candidatesService.candidates.length) {
       this.titleBar.setTitle(this.translate.instant('council-candidates'));
     } else if(this.candidatesService.council.length){
       this.titleBar.setTitle(this.translate.instant('council-members'));
     } else {
       this.titleBar.setTitle(this.translate.instant('council-voting'));
+    }
+  }
+
+  getTitle() {
+    if(this.candidatesService.candidates.length) {
+      return 'council-candidates';
+    } else if(this.candidatesService.council.length){
+      return 'council-members';
+    } else {
+      return 'council-voting';
     }
   }
 

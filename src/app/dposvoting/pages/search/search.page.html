@@ -1,17 +1,17 @@
-
-<div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
-  <div class="search-container">
-    <ion-input
-      placeholder="{{ 'search-supernode' | translate }}"
-      [(ngModel)]="_node"
-      (ngModelChange)="filterNodes($event)"
-      mode="ios"
-    >
-    </ion-input>
-  </div>
-</div>
-
 <ion-content>
+  <app-titlebar></app-titlebar>
+  <div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
+    <div class="search-container">
+      <ion-input
+        placeholder="{{ 'search-supernode' | translate }}"
+        [(ngModel)]="_node"
+        (ngModelChange)="filterNodes($event)"
+        mode="ios"
+      >
+      </ion-input>
+    </div>
+  </div>
+  
   <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length > 0">
 
     <app-node-slider-search
@@ -23,7 +23,7 @@
     >
     </app-node-slider-search>
 
-    <ion-list lines="none" [class.blur]="showNode" class="node-list">
+    <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.dark-node-list]="theme.darkMode">
       <ion-virtual-scroll [items]="filteredNodes"  approxItemHeight="240px">
         <ion-item *virtualItem="let node">
           <ion-grid class="ion-no-padding">
@@ -44,15 +44,16 @@
               </ion-col>
               <ion-col
                 size="7.5"
+                class="label-col"
                 (click)="_showNode(filteredNodes.indexOf(node), node)"
               >
                 <ion-label>
                   <h4>{{ node.nickname }}</h4>
                   <p>
                     <span [class.inactive]="node.state !== 'Active'">
-                      <ion-icon name="navigate"></ion-icon>{{ node.Location }}
+                      <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                     </span>
-                    &nbsp; {{ getVotePercent(node.votes) }}% of Votes
+                    &#8226; {{ getVotePercent(node.votes) }}% of Votes
                   </p>
                 </ion-label>
               </ion-col>

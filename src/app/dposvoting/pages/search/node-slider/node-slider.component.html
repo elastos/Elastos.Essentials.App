@@ -1,4 +1,4 @@
-<ion-slides [options]="slideOpts" (ionSlideNextEnd)="loadNext()" class="node-slides">
+<ion-slides [options]="slideOpts" (ionSlideNextEnd)="loadNext()" class="node-slides" [class.dark-node-slides]="theme.darkMode">
   <ion-slide *ngFor="let node of _nodes">
     <ion-card class="ion-text-center">
       <ion-grid>

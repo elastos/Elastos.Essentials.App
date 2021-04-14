@@ -5,17 +5,23 @@
 }
 
 .container {
+  // padding-top: 15%;
+
   .candidate-list {
     padding: 0px 0px 1px;
 
     ion-item {
-      margin-bottom: 5px;
+      margin: 5px 0;
       box-shadow: 0 3px 15px 0 #ededf0;
       --background:  #ffffff;
       --padding-start: 0px;
 
       ion-grid {
-        padding: 7.5px 0;
+        padding: 5px 0;
+      }
+
+      ion-row {
+        padding: 5px 0;
       }
 
       .rank-col {
@@ -51,7 +57,6 @@
           h4 {
             font-size: 14px;
             font-weight: 600;
-            letter-spacing: -0.5px;
           }
   
           p {
@@ -143,8 +148,7 @@
 
   .spinner {
     ion-spinner {
-      color: #732dcf;
-      transform: scale(2);
+      zoom: 0.8;
     }
   }
 }

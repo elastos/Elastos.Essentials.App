@@ -3,6 +3,7 @@ import { IonSlides } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { Candidate } from '../../model/candidates.model';
 import { CandidatesService } from '../../services/candidates.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-candidate-slider',
@@ -25,7 +26,7 @@ export class CandidateSliderComponent implements OnInit {
     slidesPerView: 1.2
   };
 
-  constructor(public candidatesService: CandidatesService) { }
+  constructor(public candidatesService: CandidatesService, public theme: GlobalThemeService) { }
 
   ngOnInit() {
     this.displayedCandidates = this.candidatesService.candidates.slice(0, this.candidateIndex + 2);

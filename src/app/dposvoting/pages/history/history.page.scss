@@ -1,7 +1,6 @@
 @import '../../root.scss';
 
 .container {
-  background: hsl(225, 22%, 96%);
   min-height: 100%;
   padding-top: 15%;
 
@@ -9,8 +8,6 @@
     padding: 0;
     margin: 0;
     min-height: 100%;
-    border-top: solid 1px rgb(216, 216, 216);
-    background: hsl(225, 22%, 96%);
 
     ion-item {
       --padding-start: 0px;
@@ -30,15 +27,22 @@
       .date {
         font-weight: 600;
         font-size: 13px;
-        color: #666666 !important;
       }
 
       .tx {
         margin-top: 5px;
         font-size: 11px;
         font-weight: 600;
-        color: #989aa2;
       }
+    }
+  }
+}
+
+.dark-container {
+  ion-list {
+    ion-item {
+      box-shadow: 0 3px 15px 0 #151626;
+      --background:  #2b2c49;  
     }
   }
 }
@@ -55,7 +59,6 @@
     ion-label {
       font-size: 16px !important;
       font-weight: 500 !important;
-      color: #666666;
     }
   }
 }

@@ -1,6 +1,5 @@
 <ion-content>
-  <app-titlebar></app-titlebar>
-  <ion-tabs>
+  <ion-tabs [class.dark-tabs]="theme.darkMode">
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="vote">
         <ion-icon name="list-circle"></ion-icon>

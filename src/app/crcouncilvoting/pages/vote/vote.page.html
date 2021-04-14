@@ -1,11 +1,8 @@
-<!-- <ion-header>
+<ion-content>
+  <app-titlebar></app-titlebar>
   <div class="ion-text-center header">
     <ion-label><span>{{ getElaRemainder() }}</span>/{{ totalEla }} votes remaining</ion-label>
   </div>
-</ion-header> -->
-
-<ion-content>
-  <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding">
     <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
       <ion-item class="candidate" color="primary" *ngFor="let candidate of candidatesService.selectedCandidates" lines="none">
@@ -35,7 +32,7 @@
     </ion-list>
 
     <div class="spinner" *ngIf="castingVote">
-      <ion-spinner name="bubbles" color="success"></ion-spinner>
+      <ion-spinner name="bubbles"></ion-spinner>
     </div>
   </ion-grid>
 

@@ -4,6 +4,9 @@ import { IonInput } from '@ionic/angular';
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-search',
@@ -11,7 +14,7 @@ import { Logger } from 'src/app/logger';
   styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
   @ViewChild('search', {static: false}) search: IonInput;
 
   // Search values
@@ -25,9 +28,16 @@ export class SearchPage implements OnInit {
 
   constructor(
     public nodesService: NodesService,
+    public theme: GlobalThemeService
   ) {}
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {

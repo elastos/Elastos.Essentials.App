@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ToastController, Platform, AlertController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ToastController, AlertController } from '@ionic/angular';
 
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
@@ -7,7 +7,9 @@ import { StorageService } from '../../services/storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIcon, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 
 @Component({
@@ -16,6 +18,7 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
   styleUrls: ['./vote.page.scss'],
 })
 export class VotePage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   // Values
   public selectedNodes: number = 0;
@@ -31,16 +34,14 @@ export class VotePage implements OnInit {
   // Toast for voteFailed/voteSuccess
   private toast: any = null;
 
-  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
-
   constructor(
-    private platform: Platform,
     public nodesService: NodesService,
     private storageService: StorageService,
     private toastController: ToastController,
     private alertController: AlertController,
     private translate: TranslateService,
     private globalIntentService: GlobalIntentService,
+    public theme: GlobalThemeService
   ) {
   }
 
@@ -48,17 +49,12 @@ export class VotePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    /* TODO @chad titleBarManager.setupMenuItems([{key: 'registerApp', iconPath: TitleBarPlugin.BuiltInIcon.EDIT, title: 'Register Capsule'}]);
-    titleBarManager.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon) => {
-      if (menuIcon.key === "registerApp") {
-        Logger.log('dposvoting', 'Menu item clicked');
-        this.registerAppAlert();
-      }
-    });*/
+    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+    this.titleBar.setNavigationMode(null);
   }
 
   ionViewWillLeave() {
-    // this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   //// Vote intent ////

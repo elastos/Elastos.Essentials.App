@@ -1,9 +1,9 @@
-
-<div class="ion-text-center header">
-  <ion-label>{{ modDate(vote.date) }}</ion-label>
-</div>
-
 <ion-content>
+  <app-titlebar></app-titlebar>
+  <div class="ion-text-center header">
+    <ion-label>{{ modDate(vote.date) }}</ion-label>
+  </div>
+  
   <ion-grid class="container ion-no-padding">
     <app-node-slider-tx
       *ngIf="showNode"
@@ -33,15 +33,16 @@
               </ion-col>
               <ion-col
                 size="7.5"
+                class="label-col"
                 (click)="_showNode(_nodes.indexOf(node), node)"
               >
                 <ion-label>
                   <h4>{{ node.nickname }}</h4>
                   <p>
                     <span [class.inactive]="node.state !== 'Active'">
-                      <ion-icon name="navigate"></ion-icon>{{ node.Location }}
+                      <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                     </span>
-                    &nbsp; {{ getVotePercent(node.votes) }}% of Votes
+                    &#8226; {{ getVotePercent(node.votes) }}% of Votes
                   </p>
                 </ion-label>
               </ion-col>

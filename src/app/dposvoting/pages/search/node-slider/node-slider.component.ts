@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { Node } from '../../../model/nodes.model';
 import { NodesService } from '../../../services/nodes.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'app-node-slider-search',
@@ -25,7 +26,8 @@ export class NodeSliderComponent implements OnInit {
   };
 
   constructor(
-    public nodesService: NodesService
+    public nodesService: NodesService,
+    public theme: GlobalThemeService
   ) {
   }
 

@@ -1,17 +1,16 @@
-<div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
-  <ion-label>{{ 'stats-overview' | translate }}</ion-label>
-</div>
-
 <ion-content>
-
-  <ion-refresher class="ion-margin-top ion-padding-top" slot="fixed" (ionRefresh)="updateStats($event)">
+  <app-titlebar></app-titlebar>
+  <div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
+    <ion-label>{{ 'stats-overview' | translate }}</ion-label>
+  </div>
+  
+<!--   <ion-refresher class="ion-margin-top ion-padding-top" slot="fixed" (ionRefresh)="updateStats($event)">
     <ion-refresher-content class="ion-margin-top ion-padding-top"></ion-refresher-content>
   </ion-refresher>
-
-  <ion-grid *ngIf="nodesService._nodes.length > 0" class="container ion-no-padding ion-no-margin">
+ -->
+  <ion-grid *ngIf="nodesService._nodes.length > 0" class="container ion-no-padding ion-no-margin" [class.dark-container]="theme.darkMode">
     <ion-list>
-
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -29,7 +28,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -47,7 +46,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -65,7 +64,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -83,7 +82,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -101,7 +100,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -119,7 +118,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -137,7 +136,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -155,7 +154,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -173,7 +172,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -191,7 +190,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -209,7 +208,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -227,7 +226,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -245,7 +244,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -263,7 +262,7 @@
         </ion-grid>
       </ion-item>
 
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -285,7 +284,7 @@
 
   <ion-grid *ngIf="nodesService._nodes.length === 0" class="container ion-no-padding" [class.loading-container]="nodesService._nodes.length === 0">
     <ion-list>
-      <ion-item color="light" class="first">
+      <ion-item class="first">
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -302,7 +301,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light" class="first">
+      <ion-item class="first">
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -319,7 +318,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light" class="first">
+      <ion-item class="first">
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -336,7 +335,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -353,7 +352,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -370,7 +369,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -387,7 +386,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -404,7 +403,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -421,7 +420,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -438,7 +437,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -455,7 +454,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -472,7 +471,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -489,7 +488,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
@@ -506,7 +505,7 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item color="light">
+      <ion-item>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="2" class="img-container">
