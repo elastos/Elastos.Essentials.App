@@ -785,7 +785,7 @@ export class FriendsService {
       }
     });
 
-    this.globalNav.navigateTo('friends', '/contacts/friends/'+id);
+    this.globalNav.navigateBack();
   }
 
   /********************************************************
