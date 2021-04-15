@@ -71,7 +71,7 @@ export class WalletImportPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        this.titleBar.setTitle(' ');
+        this.titleBar.setTitle(this.translate.instant('import-wallet'));
     }
 
 
