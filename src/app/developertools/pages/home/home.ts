@@ -5,7 +5,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from "src/app/model/app.enum"
 
 @Component({
   selector: 'page-home',

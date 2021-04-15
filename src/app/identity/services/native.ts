@@ -1,10 +1,10 @@
-
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isString } from 'lodash-es';
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from "src/app/model/app.enum"
 
 @Injectable({
     providedIn: 'root'

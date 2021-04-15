@@ -11,10 +11,11 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarMenuItem, BuiltInIcon, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Events } from 'src/app/services/events.service';
 import { ProfileService } from 'src/app/identity/services/profile.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { App } from "src/app/model/app.enum"
 
 type StorageProvider = {
   name: string,

@@ -6,7 +6,6 @@ export const fr = {
     'getting-ready': 'Préparation',
     'added-fav': 'ajoutée aux favoris',
     'removed-fav': 'supprimée des favoris',
-    'system-notification': 'Notification système',
     'contact-notification': 'De l\'un de vos contacts',
     'from-unknown-contact': 'Contact inconnu',
     "not-available-on-ios": "Fonctionnalité non disponible sur iOS",
@@ -15,28 +14,15 @@ export const fr = {
     'signing-out': 'Déconnexion...',
     'no-app-can-handle-request': "Aucune application ne peut prendre en charge cette requête",
 
-    /********** Running & Notifications Page **********/
-    'running': 'Applications actives',
-    'no-running': 'Aucune application active!',
+    /********** Notifications Page **********/
     'notifications': 'Notifications',
     'no-empty': 'Vide',
     'no-notif': 'Aucune notification!',
-    'close-apps': 'Tout fermer',
     'close-notifs': 'Fermer les Notifications',
-    'capsule-updated': 'Capsule mise à jour',
-    'dapp-update-new-version': ' a une nouvelle version! Touchez pour l\'essayer',
-    'dappstore-update-new-version': ' capsules ont des mises à jour disponibles! Touchez pour ouvrir le marché des capsules!',
-
-    /********** Recent Apps Page **********/
-    'recent-apps': 'Capsules récentes',
-    'browsed-apps-mt': 'Pas d\'historique de navigation',
-    'installed-apps': 'Capsules Installées',
-    'installed-apps-mt': 'Vous n\'avez aucune capsule installée',
-    'share-dapp': 'Essayez cette appli: ',
+    'system-notification': 'Notification système',
 
     /********** Home Page **********/
     'elastos-essentials': 'Elastos Essentials',
-    'dapp-browser': "Navigateur de capsules",
     'recent': 'Récents',
     'welcome': 'Bienvenue',
     'open-our-app': "Vous pouvez commencer par ouvrir la",
@@ -48,7 +34,7 @@ export const fr = {
 
     /********** Onboard Page **********/
 
-    /********** iOS apps **********/
+    /********** Apps **********/
     'app-wallet': 'Portefeuille',
     'app-wallet-description': 'Gérez vos ELA',
     'app-identity': 'Identité',
@@ -69,6 +55,7 @@ export const fr = {
     'app-crcouncil-description': 'Cyber Republic council members',
     'app-cr-proposal': 'CR Proposal',
     'app-crproposal-description': 'Cyber Republic proposals',
+    'app-dev-tools': 'Developer Tools',
 
     /*********** Tips generic ************/
     'tip-of-the-day': 'Astuce du jour',

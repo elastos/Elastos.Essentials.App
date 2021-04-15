@@ -6,7 +6,8 @@ import { ManagedProvider } from '../../../model/managedprovider';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from "src/app/model/app.enum"
 
 type StorageProvider = {
   name: string,

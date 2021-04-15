@@ -93,8 +93,6 @@ export class FriendsService {
       this.getContactNotifierContacts();
   }
 
-
-
   /******************************************************
   * Get Visit, if first time, add a fake 'First Contact' *
   *******************************************************/

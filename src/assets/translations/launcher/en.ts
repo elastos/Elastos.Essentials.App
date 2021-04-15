@@ -6,7 +6,6 @@ export const en = {
     'getting-ready': 'Getting ready',
     'added-fav': 'added to favorites',
     'removed-fav': 'removed from favorites',
-    'system-notification': 'System notification',
     'contact-notification': 'From one of your contacts',
     'from-unknown-contact': 'From an unknown contact',
     "not-available-on-ios": "Feature not available on iOS",
@@ -15,28 +14,15 @@ export const en = {
     'signing-out': 'Signing out...',
     'no-app-can-handle-request': 'No application can handle the requested action',
 
-    /********** Running & Notifications Page **********/
-    'running': 'Running Capsules',
-    'no-running': 'You have no capsules running',
+    /********** Notifications Page **********/
     'notifications': 'Notifications',
     'no-empty': 'All Empty',
     'no-notif': 'You have no notifications',
-    'close-apps': 'Close Apps',
     'close-notifs': 'Close Notifications',
-    'capsule-updated': 'Capsule updated',
-    'dapp-update-new-version': ' has a new version! Touch to try it!',
-    'dappstore-update-new-version': ' capsules have available updates! Touch to open the Capsule Markerplace!',
-
-    /********** Recent Apps Page **********/
-    'recent-apps': 'Recent Capsules',
-    'browsed-apps-mt': 'You have no browsing history',
-    'installed-apps': 'Installed Capsules',
-    'installed-apps-mt': 'You don\'t have any installed capsules',
-    'share-dapp': 'Try this app: ',
+    'system-notification': 'System Notification',
 
     /********** Home Page **********/
     'elastos-essentials': 'Elastos Essentials',
-    'dapp-browser': 'Capsule Browser',
     'recent': 'Recent',
     'welcome': 'Welcome',
     'open-our-app': 'You can start by opening the',
@@ -48,7 +34,7 @@ export const en = {
 
     /********** Onboard Page **********/
 
-    /********** iOS apps **********/
+    /********** Apps **********/
     'app-wallet': 'Wallet',
     'app-wallet-description': 'Manage your ELA',
     'app-identity': 'Identity',
@@ -69,6 +55,7 @@ export const en = {
     'app-crcouncil-description': 'Cyber Republic council members',
     'app-cr-proposal': 'CR Proposal',
     'app-crproposal-description': 'Cyber Republic proposals',
+    'app-dev-tools': 'Developer Tools',
 
     /*********** Tips generic ************/
     'tip-of-the-day': 'Tip of the day',

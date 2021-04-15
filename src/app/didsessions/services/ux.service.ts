@@ -6,9 +6,10 @@ import { WarningComponent } from '../components/warning/warning.component';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { GlobalNavService, App, Direction } from 'src/app/services/global.nav.service';
+import { GlobalNavService, Direction } from 'src/app/services/global.nav.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Events } from 'src/app/services/events.service';
+import { App } from "src/app/model/app.enum"
 
 let selfUxService: UXService = null;
 

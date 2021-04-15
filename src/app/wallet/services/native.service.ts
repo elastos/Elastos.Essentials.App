@@ -24,8 +24,9 @@ import { Injectable, NgZone } from '@angular/core';
 import { LoadingController, PopoverController } from '@ionic/angular';
 import { HelpComponent } from '../components/help/help.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum"
 
 @Injectable()
 export class Native {

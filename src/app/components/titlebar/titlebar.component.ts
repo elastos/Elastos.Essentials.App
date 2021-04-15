@@ -24,7 +24,6 @@ export class TitleBarComponent {
 
   public visibile: boolean = true;
   public menuVisible: boolean = false;
-  public newNotifications: boolean = false;
   private navigationMode: TitleBarNavigationMode;
 
   public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };

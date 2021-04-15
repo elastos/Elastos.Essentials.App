@@ -6,7 +6,6 @@ export const zh = {
     'getting-ready': '安装中',
     'added-fav': '添加到收藏',
     'removed-fav': '取消收藏',
-    'system-notification': '系统消息',
     'contact-notification': '好友的消息',
     'from-unknown-contact': '陌生人的消息',
     "not-available-on-ios": "功能在iOS上不可用",
@@ -15,28 +14,15 @@ export const zh = {
     'signing-out': '注销中...',
     'no-app-can-handle-request': '没有应用程序可以处理此请求',
 
-    /********** Running & Notifications Page **********/
-    'running': '正在运行',
-    'no-running': '暂无正在运行的应用',
+    /********** Notifications Page **********/
     'notifications': '消息通知',
     'no-empty': '空空如也',
     'no-notif': '没有新的消息!',
-    'close-apps': '全部关闭',
     'close-notifs': '关闭通知',
-    'capsule-updated': '胶囊有更新了',
-    'dapp-update-new-version': '有新版本了！ 点击即可查看！',
-    'dappstore-update-new-version': '个胶囊有新版本了！ 点击可启动胶囊市场!',
-
-    /********** Recent Apps Page **********/
-    'recent-apps': '最近浏览',
-    'browsed-apps-mt': '您还未浏览过任何胶囊',
-    'installed-apps': '已安装胶囊',
-    'installed-apps-mt': '您没有安装任何胶囊',
-    'share-dapp': '试试这个程序： ',
+    'system-notification': '系统消息',
 
     /********** Home Page **********/
     'elastos-essentials': 'Elastos Essentials',
-    'dapp-browser': '胶囊浏览器',
     'recent': '最近使用',
     'welcome': '欢迎',
     'open-our-app': '您可以打开',
@@ -48,7 +34,7 @@ export const zh = {
 
     /********** Onboard Page **********/
 
-    /********** iOS apps **********/
+    /********** Apps **********/
     'app-wallet': '钱包',
     'app-wallet-description': '管理您的ELA',
     'app-identity': '身份',
@@ -69,6 +55,7 @@ export const zh = {
     'app-crcouncil-description': 'CR 委员会成员',
     'app-cr-proposal': 'CR 提案',
     'app-crproposal-description': '参与社区运营共治',
+    'app-dev-tools': 'Developer Tools',
 
     /*********** Tips generic ************/
     'tip-of-the-day': '每日提示',

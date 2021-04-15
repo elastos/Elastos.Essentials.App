@@ -5,7 +5,8 @@ import * as moment from 'moment';
 import { StorageService } from './storage.service';
 import { HiveService } from './hive.service';
 import { Logger } from 'src/app/logger';
-import { GlobalNotificationsService, App } from 'src/app/services/global.notifications.service';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { App } from "src/app/model/app.enum"
 import { Events } from 'src/app/services/events.service';
 
 @Injectable({

@@ -15,8 +15,9 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBar
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { App } from "src/app/model/app.enum"
 
 // TODO: When opening the screen we could fetch the existing app on chain and display its info.
 

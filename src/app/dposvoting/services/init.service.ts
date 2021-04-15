@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { App, GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { NodesService } from './nodes.service';
+import { App } from "src/app/model/app.enum"
 
 @Injectable({
   providedIn: 'root'

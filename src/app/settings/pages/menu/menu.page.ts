@@ -5,7 +5,8 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from "src/app/model/app.enum"
 
 type Preferences = {
   developerMode: boolean

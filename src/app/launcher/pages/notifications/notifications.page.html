@@ -11,16 +11,16 @@
                     <ion-row class="notif-row">
                         <ion-col class="name-col" size="7.5">
                             <img [src]="getNotificationIcon(notification)"/>
-                            <h2>{{ getNotificationHeader(notification) }}</h2>
+                            <h2>{{ getNotificationHeader(notification) | translate }}</h2>
                         </ion-col>
                         <ion-col class="date-col" size="4.5" (click)="close(notification)">
                             <p>{{ getNotificationDate(notification) }}</p>
                         </ion-col>
                         <ion-col size="12" class="title-col" (click)="start(notification)">
-                            <p>{{ getNotificationTitle(notification) }}</p>
+                            <p>{{ getNotificationTitle(notification) | translate }}</p>
                         </ion-col>
                         <ion-col size="12" class="message-col" (click)="start(notification)">
-                            <p>{{ getNotificationMessage(notification) }}</p>
+                            <p>{{ getNotificationMessage(notification) | translate }}</p>
                         </ion-col>
                         <ion-ripple-effect></ion-ripple-effect>
                     </ion-row>

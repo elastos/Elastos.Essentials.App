@@ -4,7 +4,8 @@ import { FriendsService } from './friends.service';
 import { StorageService } from './storage.service';
 import { PopupService } from './popup.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from "src/app/model/app.enum"
 
 @Injectable({
   providedIn: 'root'

@@ -1,19 +1,5 @@
 import { Injectable } from "@angular/core";
-
-export enum App {
-    DID_SESSIONS = "didsessions",
-    LAUNCHER = "launcher",
-    IDENTITY = "identity",
-    CONTACTS = "contacts",
-    WALLET = "wallet",
-    CRCOUNCIL_VOTING = "crcouncilvoting",
-    CRPROPOSAL_VOTING = "crproposalvoting",
-    DEVELOPER_TOOLS = "developertools",
-    DPOS_VOTING = "dposvoting",
-    HIVE_MANAGER = "hivemanager",
-    SETTINGS = "settings",
-    SCANNER = "scanner"
-}
+import { App } from "src/app/model/app.enum"
 
 /**
  * Object used to generate a notification.
@@ -27,7 +13,7 @@ export type NotificationRequest = {
     message: string;
     /** App that sent notification */
     app?: App;
-
+    
     /** Process of deprecating **/
     url?: string;
     emitter?: string;
@@ -41,7 +27,6 @@ export type Notification = NotificationRequest & {
     notificationId: string;
     /** timestamp of the notification. */
     sent_date: number;
-
     /** Process of deprecating **/
     appId?: string;
 }
@@ -68,16 +53,21 @@ export class GlobalNotificationsService {
     * @returns A promise that can be awaited and catched in case or error.
     */
     public async sendNotification(request: NotificationRequest): Promise<void> {
-        this.newNotifications++;
-        this.notifications = this.notifications.filter(notification => notification.notificationId !== request.key);
+        const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+        const notificationsLength = this.notifications.length;
+        this.notifications = this.notifications.filter(notification => notification.key !== request.key);
         this.notifications.push({
             key: request.key,
             title: request.title,
             message: request.message,
             app: request.app ? request.app : null,
-            notificationId: request.key ,
+            notificationId: characters.charAt(Math.floor(Math.random() * characters.length)),
             sent_date: Date.now()
         });
+
+        if(this.notifications.length > notificationsLength) {
+            this.newNotifications++;
+        }
 
         console.log('Notifications', this.notifications);
         return null;

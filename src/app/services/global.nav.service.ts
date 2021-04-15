@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController, NavController } from '@ionic/angular';
 import { Logger } from '../logger';
+import { App } from "src/app/model/app.enum"
 
 export enum Direction {
     NONE = "none",
@@ -9,7 +10,7 @@ export enum Direction {
     BACK = "back"
 }
 
-export enum App {
+/* export enum App {
     DID_SESSIONS = "didsessions",
     LAUNCHER = "launcher",
     IDENTITY = "identity",
@@ -22,7 +23,7 @@ export enum App {
     HIVE_MANAGER = "hivemanager",
     SETTINGS = "settings",
     SCANNER = "scanner"
-}
+} */
 
 type NavigationStep = {
     context: string;

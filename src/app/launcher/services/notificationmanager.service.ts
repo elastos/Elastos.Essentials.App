@@ -1,8 +1,10 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { ContactAvatar } from 'src/app/services/contactnotifier.service';
-import { GlobalNotificationsService, Notification, App } from 'src/app/services/global.notifications.service';
+import { GlobalNotificationsService, Notification } from 'src/app/services/global.notifications.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { App } from "src/app/model/app.enum"
 
 export const enum LauncherNotificationType {
   SYSTEM,
@@ -26,80 +28,36 @@ export class NotificationManagerService {
 
   constructor(
     private platform: Platform,
-    private zone: NgZone,
-    private globalNotifications: GlobalNotificationsService
+    private globalNotifications: GlobalNotificationsService,
+    private theme: GlobalThemeService
   ) {
     this.platform.ready().then(() => {
       // this.setNotificationListener();
-      this.getNotifications();
+      this.init();
     });
   }
 
-  /*public async sendNotification(request: NotificationRequest): Promise<void> {
-    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-    this.notifications.push({
-      key: request.key,
-      title: request.title,
-      message: request.message,
-      url: request.url,
-      emitter: request.emitter,
-      notificationId: characters.charAt(Math.floor(Math.random() * characters.length)),
-      appId: request.url,
-      sent_date: Date.now(),
-    });
-
-    //
-
-    return null;
-  }*/
-
-  /**
-   * Removes a received notification from the notifications list permanently.
-   *
-   * @param notificationId Notification ID
-   */
-  public clearNotification(notificationId: string) {
-    this.notifications = this.notifications.filter((notification) => notification.notificationId !== notificationId);
-    this.globalNotifications.clearNotification(notificationId);
+  init() {
+    this.getNotifications();
   }
-
-
- /*  setNotificationListener() {
-    this.globalNotifications.setNotificationListener((notification) => {
-      Logger.log('Launcher', 'new notification:', notification);
-
-      this.zone.run(() => {
-        if (!this.isValidNotification(notification)) {
-          return;
-        }
-
-        // Update notifications
-        this.notifications = this.notifications.filter((item) => item.notificationId !== notification.notificationId);
-        this.notifications.unshift(notification);
-        this.updateBadge();
-      });
-    });
-  } */
-
   async getNotifications() {
-    const notifications = await this.globalNotifications.getNotifications();
-    Logger.log("Launcher", "Got notifications from the notification manager: " + JSON.stringify(notifications));
-    this.fillAppInfoToNotification(notifications);
+    this.notifications = await this.globalNotifications.getNotifications();
+    Logger.log("Launcher", "Got notifications from the notification manager: " + JSON.stringify(this.notifications));
+    this.fillAppInfoToNotification();
 
     if(this.globalNotifications.newNotifications > 0) {
       this.newNotifications = true;
     }
   }
 
-  async fillAppInfoToNotification(allApps: Notification[]) {
+  async fillAppInfoToNotification() {
     this.clearUselessNotification();
-
     for (let notification of this.notifications) {
       if (this.isNotificationATip(notification)) {
         notification.type = LauncherNotificationType.TIP;
-      }
-      else if (notification.emitter && (notification.emitter !== '')) {
+      } else if (notification.emitter && (notification.emitter !== '')) {
         notification.type = LauncherNotificationType.CONTACT;
+
         // Resolve contact to show a nice name.
  /*        const contact = await contactNotifier.resolveContact(notification.emitter);
         if (contact) {
@@ -110,14 +68,13 @@ export class NotificationManagerService {
           notification.contactName = null;
           notification.contactAvatar = null;
         } */
-      } else if (notification.appId === 'system' || notification.appId === "org.elastos.trinity.launcher") {
+        
+      } else if (notification.app === App.LAUNCHER) {
         notification.type = LauncherNotificationType.SYSTEM;
       } else {
         notification.type = LauncherNotificationType.NORMAL;
       }
     }
-
-    this.notifications = this.notifications.filter((item) => item.notificationId !== null);
 
     Logger.log('Launcher', 'notifications:', this.notifications);
   }
@@ -133,6 +90,16 @@ export class NotificationManagerService {
 
     // remove from array
     this.notifications = this.notifications.filter((item) => item.notificationId !== null);
+  }
+
+  /**
+   * Removes a received notification from the notifications list permanently.
+   *
+   * @param notificationId Notification ID
+   */
+  public clearNotification(notificationId: string) {
+    this.notifications = this.notifications.filter((notification) => notification.notificationId !== notificationId);
+    this.globalNotifications.clearNotification(notificationId);
   }
 
   // if no appid and no emitter, automatically delete the notification, because we don't know what to do with it.
@@ -169,29 +136,25 @@ export class NotificationManagerService {
   getAppTitle(app: App) {
     switch (app) {
       case App.CONTACTS:
-        return 'wallet';
+        return 'app-contacts';
       case App.CRCOUNCIL_VOTING:
-        return 'crcouncil-voting';
+        return 'app-cr-council';
       case App.CRPROPOSAL_VOTING:
-        return 'crproposal-voting';
+        return 'app-cr-proposal';
       case App.SCANNER:
-        return 'scanner';
-      case App.DEVELOPER_TOOLS:
-        return 'developer-tools';
-      case App.DID_SESSIONS:
-        return 'did-sessions';
+        return 'app-scanner';
       case App.DPOS_VOTING:
-        return 'dpos-voting';
+        return 'app-dpos-voting';
       case App.HIVE_MANAGER:
-        return 'hive-manager';
+        return 'app-hive';
       case App.IDENTITY:
-        return 'identity';
-      case App.LAUNCHER:
-        return 'launcher';
+        return 'app-identity';
       case App.SETTINGS:
-        return 'settings';
+        return 'app-settings';
       case App.WALLET:
-        return 'wallet';
+        return 'app-wallet';
+      case App.DEVELOPER_TOOLS:
+        return 'app-dev-tools';
       default:
         return 'system-notification';
     }
@@ -200,31 +163,48 @@ export class NotificationManagerService {
   getAppIcon(app: App) {
     switch (app) {
       case App.CONTACTS:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/contacts/images/logo.png';
       case App.CRCOUNCIL_VOTING:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/crcouncilvoting/images/logo.png';
       case App.CRPROPOSAL_VOTING:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/crproposalvoting/images/logo.png';
       case App.SCANNER:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/scanner/imgs/logo.png';
       case App.DEVELOPER_TOOLS:
-        return 'assets/launcher/notifications/apps/elastos.png';
-      case App.DID_SESSIONS:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/developertools/images/logo.png';
       case App.DPOS_VOTING:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/dposvoting/images/logo.png';
       case App.HIVE_MANAGER:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/hivemanager/images/logo.png';
       case App.IDENTITY:
-        return 'assets/launcher/notifications/apps/elastos.png';
-      case App.LAUNCHER:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/identity/images/logo.png';
       case App.SETTINGS:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/settings/icon/logo.png';
       case App.WALLET:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        return 'assets/wallet/images/logo.png';
       default:
-        return 'assets/launcher/notifications/apps/elastos.png';
+        if (this.theme.darkMode) {
+          return "assets/launcher/icons/dark_mode/elalogo.svg";
+        } else {
+          return "assets/launcher/icons/elalogo.svg";
+        }
     }
   }
+
+   /*  setNotificationListener() {
+    this.globalNotifications.setNotificationListener((notification) => {
+      Logger.log('Launcher', 'new notification:', notification);
+
+      this.zone.run(() => {
+        if (!this.isValidNotification(notification)) {
+          return;
+        }
+
+        // Update notifications
+        this.notifications = this.notifications.filter((item) => item.notificationId !== notification.notificationId);
+        this.notifications.unshift(notification);
+        this.updateBadge();
+      });
+    });
+  } */
 }

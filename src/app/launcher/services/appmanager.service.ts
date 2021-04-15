@@ -16,12 +16,13 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
+import { App } from "src/app/model/app.enum"
 
 type RunnableApp = {
     cssId:string;
@@ -70,11 +71,12 @@ export class AppmanagerService {
         private native: GlobalNativeService,
         private storage: GlobalStorageService,
         private language: GlobalLanguageService,
+        private globalIntentService: GlobalIntentService,
+        private globalNav: GlobalNavService,
+        // In-app Services
         private hiveManagerInitService: HiveManagerInitService,
         private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
-        private globalIntentService: GlobalIntentService,
-        private globalNav: GlobalNavService
     ) {}
 
     public async init() {

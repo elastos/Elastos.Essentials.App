@@ -4,7 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../services/settings.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService, App } from 'src/app/services/global.nav.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from "src/app/model/app.enum"
 
 @Component({
   selector: 'app-developer',

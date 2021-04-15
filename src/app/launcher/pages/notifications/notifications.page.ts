@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import * as moment from 'moment';
 
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import {
   NotificationManagerService,
   LauncherNotification,
@@ -15,6 +15,11 @@ import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Events } from 'src/app/services/events.service';
+import { App } from "src/app/model/app.enum"
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
+import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
+import { WalletInitService } from 'src/app/wallet/services/init.service';
 
 @Component({
   selector: 'app-notifications',
@@ -30,14 +35,20 @@ export class NotificationsPage implements OnInit {
     private sanitizer: DomSanitizer,
     private modalController: ModalController,
     public notificationService: NotificationManagerService,
+    private globalNav: GlobalNavService,
     public theme: GlobalThemeService,
     public translate: TranslateService,
     private tipsService: TipsService,
-    private events: Events
+    private events: Events,
+    // In-app Services
+    private hiveManagerInitService: HiveManagerInitService,
+    private dposVotingInitService: DPoSVotingInitService,
+    private walletInitService: WalletInitService,
   ) {
   }
 
   ngOnInit() {
+    this.notificationService.init();
     this.notificationService.resetNewNotifications();
   }
 
@@ -68,22 +79,31 @@ export class NotificationsPage implements OnInit {
 
       const tipData = JSON.parse(notification.message);
       this.events.publish('notifications.tip', this.tipsService.findTipByIdentifier(tipData.key));
-    }
-    else if (notification.url && (notification.url !== '')) {
-      Logger.log('Launcher', 'NotificationsComponent sendUrlIntent');
-
-      // NOTE @chad: try to avoid the dependency notif page -> app manager service -> notif page
-      // For this, i think the notif page could avoid calling appservice directly and instand, send a kind of
-      // "open notification request" event that would be handled by the app manager service to execute the commented
-      // code below.
-
-      /* TODO @chad
-      this.essentialsIntentManager.sendUrlIntent(notification.url,
-        () => {Logger.log('Launcher', 'sendUrlIntent success'); },
-        (error) => {Logger.log('Launcher', 'NotificationsComponent sendUrlIntent failed, ', error); }
-      );*/
     } else {
-      // TODO @chad this.essentialsIntentManager.start(notification.app.id);
+      switch (notification.app) {
+        case App.CONTACTS:
+          this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends');
+        case App.CRCOUNCIL_VOTING:
+        this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+        case App.CRPROPOSAL_VOTING:
+          this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, '/crproposalvoting/proposals/ALL');
+        case App.SCANNER:
+          this.globalNav.navigateTo(App.SCANNER, '/scanner/scan');
+        case App.DEVELOPER_TOOLS:
+          this.globalNav.navigateTo(App.DEVELOPER_TOOLS, '/developertools/home');
+        case App.DPOS_VOTING:
+          this.dposVotingInitService.start()
+        case App.HIVE_MANAGER:
+          this.hiveManagerInitService.start();
+        case App.IDENTITY:
+          this.globalNav.navigateTo(App.IDENTITY, '/identity/myprofile/home');
+        case App.SETTINGS:
+          this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
+        case App.WALLET:
+          this.walletInitService.start();
+        default:
+          Logger.log('Launcher', "Notifications.page.start - No routing available");
+      }
     }
   }
 
@@ -109,26 +129,25 @@ export class NotificationsPage implements OnInit {
   }
 
   getNotificationIcon(notification: LauncherNotification) {
-    console.log('NOTIFICATION', notification);
     if (notification.type === LauncherNotificationType.SYSTEM) {
-      if (this.theme.activeTheme.value == AppTheme.DARK) {
-        return "assets/icons/dark_mode/elalogo.svg";
+      if (this.theme.darkMode) {
+        return "assets/launcher/icons/dark_mode/elalogo.svg";
       } else {
-        return "assets/icons/elalogo.svg";
+        return "assets/launcher/icons/elalogo.svg";
       }
     } else if (notification.type === LauncherNotificationType.CONTACT) {
       if (notification.contactAvatar && Object.keys(notification.contactAvatar).length !== 0) {
         return 'data:'+notification.contactAvatar.contentType+';base64,'+notification.contactAvatar.base64ImageData;
       } else {
-        return "assets/icons/contact.png";
+        return "assets/launcher/icons/contact.png";
       }
     } else if (notification.type === LauncherNotificationType.NORMAL && notification.app) {
       return this.notificationService.getAppIcon(notification.app);
     } else {
-      if (this.theme.activeTheme.value == AppTheme.DARK) {
-        return "assets/icons/dark_mode/elalogo.svg";
+      if (this.theme.darkMode) {
+        return "assets/launcher/icons/dark_mode/elalogo.svg";
       } else {
-        return "assets/icons/elalogo.svg";
+        return "assets/launcher/icons/elalogo.svg";
       }
     }
   }

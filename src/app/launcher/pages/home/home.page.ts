@@ -7,7 +7,6 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 
 import * as moment from 'moment';
-import { NotificationManagerService } from '../../services/notificationmanager.service';
 import { OptionsComponent } from '../../components/options/options.component';
 import { DIDManagerService } from '../../services/didmanager.service';
 import { AppmanagerService } from '../../services/appmanager.service';
@@ -17,7 +16,8 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NotificationsPage } from '../notifications/notifications.page';
-import { GlobalNotificationsService, App } from 'src/app/services/global.notifications.service';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { App } from "src/app/model/app.enum"
 
 @Component({
   selector: 'app-home',
@@ -39,7 +39,7 @@ export class HomePage implements OnInit {
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
     public splashScreen: SplashScreen,
-    private notificationsService: NotificationManagerService,
+    private globalNotifications: GlobalNotificationsService,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
     private nav: GlobalNavService,
@@ -52,13 +52,13 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
- /*    const notification = {
+   /*  const notification = {
       key: 'storagePlanExpiring',
       title: 'Storage Plan Expiring',
       message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
-      app: App.LAUNCHER
+      app: App.WALLET
     };
-    this.notificationsService.sendNotification(notification); */
+    this.globalNotifications.sendNotification(notification); */
 
     this.titleBar.setTitle('elastos-essentials');
     this.titleBar.setNavigationMode(null);
@@ -71,9 +71,6 @@ export class HomePage implements OnInit {
         this.showNotifications();
       }
     });
-    if(this.notificationsService.newNotifications) {
-      this.titleBar.newNotifications = true;
-    }
 
     if (this.didService.signedIdentity) { // Should not happend, just in case - for ionic hot reload
       this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
@@ -101,7 +98,6 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.titleBar.newNotifications = false;
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.popover) {
       this.popover.dimiss();
