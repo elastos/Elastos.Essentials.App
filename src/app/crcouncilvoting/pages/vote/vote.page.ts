@@ -8,6 +8,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class VotePage implements OnInit, OnDestroy {
     private toastCtrl: ToastController,
     private globalNav: GlobalNavService,
     private globalIntentService: GlobalIntentService,
+    public theme: GlobalThemeService,
     private route: ActivatedRoute,
     public translate: TranslateService
   ) { }

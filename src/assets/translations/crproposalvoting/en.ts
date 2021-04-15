@@ -28,7 +28,7 @@ export const en = {
     'status-notification': 'Under Community Review',
     'status-active': 'Active',
     'status-final': 'Approved',
-    'status-rejected': 'Rejuectd',
+    'status-rejected': 'Rejected',
 
     // Intent Screens
     'create-suggestion': 'Create Suggestion',

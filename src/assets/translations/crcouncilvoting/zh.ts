@@ -5,6 +5,7 @@ export const zh = {
     'my-candidates': '我的候选人',
     'vote-history': '投票历史',
     'votes': '投票',
+    'votes-remaining': 'Votes Remaining',
     'dist-votes': '分配投票',
     'pledge-ela': '抵押 ELA',
     'dist-equally': '平均分配',

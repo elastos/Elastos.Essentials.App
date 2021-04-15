@@ -1,7 +1,27 @@
 @import "src/app/crcouncilvoting/root.scss";
 
+/** Header **/
+.header {
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  height: 8%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #732dcf;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+
+  ion-label {
+    font-weight: 500;
+    font-size: 18px;
+    color: #ffffff;
+  }
+}
+
 #add-padding-bottom {
-  padding-bottom: 16%;
+  padding-bottom: 20%;
 }
 
 .container {
@@ -11,7 +31,7 @@
     padding: 0px 0px 1px;
 
     ion-item {
-      margin: 5px 0;
+      margin: 2px 0;
       box-shadow: 0 3px 15px 0 #ededf0;
       --background:  #ffffff;
       --padding-start: 0px;

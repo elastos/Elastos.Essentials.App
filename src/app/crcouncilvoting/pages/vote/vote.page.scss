@@ -1,26 +1,37 @@
 @import "src/app/crcouncilvoting/root.scss";
 
-.header {
-  ion-label {
-    font-size: 14px;
-
-    span {
-      font-weight: 700;
-      font-size: 20px;
-    }
-  }
-}
-
 .container {
   min-height: 100%;
-  padding-top: 12%;
-  padding-bottom: 16%;
+  padding-top: 10px;
+
+  .votes-header {
+    border-radius: 17px;
+    padding: 15px;
+    margin: 0 10px 12.5px;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    ion-label {
+      font-size: 16px;
+      font-weight: 600;
+  
+      span {
+        display: inline;
+        font-weight: 700;
+        font-size: 22px;
+      }
+    }
+  }
 
   .candidate-list {
     padding: 0px 0px 1px;
+    padding-bottom: 20%;
 
     ion-item {
-      margin: 6px 0;
+      margin: 2px 0;
       box-shadow: 0 3px 15px 0 #ededf0;
       --background:  #ffffff;
       --padding-start: 0px;
@@ -58,7 +69,7 @@
           align-items: flex-end;
 
           ion-input {
-            border-bottom: 1px solid #732dcf;
+            border-bottom: 1.25px solid #732dcf;
             --padding-start: 0px;
             --padding-end: 0px;
           }
@@ -72,50 +83,67 @@
       }
     }
   }
+
+  .btn {
+    height: 50px;
+    width: 46.5%;
+    position: fixed;
+    bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+
+    ion-label {
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
+
+  .cancel {
+    left: 2%;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #ffffff;
+
+    ion-label {
+      color: #000000;
+    }
+  }
+
+  .confirm {
+    right: 2%;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #6e23d0;
+
+    ion-label {
+      color: #ffffff;
+    }
+  }
 }
 
 .dark-container {
+  .votes-header {
+    box-shadow: 0 3px 15px 0 #151626;
+    background:  #2b2c49;
+  }
+
   .candidate-list {
     ion-item {
       box-shadow: 0 3px 15px 0 #151626;
       --background:  #2b2c49;
     }
   }
-}
 
-.dist-btn, .vote-btn {
-  position: fixed;
-  bottom: 0;
-  z-index: 2;
-  width: 49.9%;
-  height: 8%;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: btns;
-  animation-duration: 1000ms;
-  animation-fill-mode: forwards;
+  .cancel {
+    box-shadow: 0 3px 6px 0 #151626;
+    background-color: #202039;
 
-  @keyframes btns {
-    0% { bottom: -100px }
-    100% { bottom: 0px }
+    ion-label {
+        color: #ffffff;
+    }
   }
 
-  h1 {
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
+  .confirm {
+    box-shadow: 0 3px 15px 0 #151626;
   }
-}
-
-.dist-btn {
-  background: linear-gradient(to bottom, #732dcf, #640fd4);
-  left: 0;
-}
-
-.vote-btn {
-  background: linear-gradient(to bottom, #732dcf, #640fd4);
-  right: 0;
 }

@@ -1,22 +1,5 @@
-ion-tabs {
-  ion-tab-bar {
-    display: flex;
-    overflow-x: scroll;
-    ion-tab-button {
-      overflow: visible;
-      margin: 10px;
-      ion-label {
-        font-weight: 500;
-      }
-    }
-  }
-}
-
-ion-tab-button.tab-selected {
-  ion-icon, ion-label {
-    color: var(--ion-color-primary) !important;
-    --ion-color-base: var(--ion-color-primary) !important;
-  }
+* {
+  // font-family: 'Raleway' !important;
 }
 
 /** General Spinner **/

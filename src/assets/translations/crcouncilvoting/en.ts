@@ -5,6 +5,7 @@ export const en = {
     'my-candidates': 'My Candidates',
     'vote-history': 'Vote History',
     'votes': 'votes',
+    'votes-remaining': 'Votes Remaining',
     'dist-votes': 'Distribute Votes',
     'pledge-ela': 'Pledge ELA',
     'dist-equally': 'Distribute Equally',

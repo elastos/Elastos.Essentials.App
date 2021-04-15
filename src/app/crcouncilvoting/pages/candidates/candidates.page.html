@@ -46,7 +46,7 @@
     </ion-list>
   </ion-grid>
 
-  <ion-grid *ngIf="candidatesService.council.length > 0" class="container ion-no-padding" [class.dark-container]="theme.darkMode">
+  <ion-grid *ngIf="candidatesService.council.length > 0"  class="container ion-no-padding" [class.dark-container]="theme.darkMode">
     <ion-list lines="none" class="candidate-list">
       <ion-virtual-scroll [items]="candidatesService.council"  approxItemHeight="240px">
         <ion-item class="candidate" *virtualItem="let member">
@@ -80,9 +80,10 @@
     </div>
   </ion-grid>
 
-  <div *ngIf="candidatesService.candidates.length > 0" class="add-btn ion-activatable ripple" (click)="walletAlert()">
-    <h1>{{ 'dist-votes' | translate }}</h1>
-    <ion-ripple-effect></ion-ripple-effect>
+  <div *ngIf="candidatesService.candidates.length > 0" class="footer" (click)="walletAlert()">
+    <ion-button [disabled]="!candidatesService.selectedCandidates.length" (click)="walletAlert()">
+      {{ 'dist-votes' | translate }}
+    </ion-button>
   </div>
 </ion-content>
 

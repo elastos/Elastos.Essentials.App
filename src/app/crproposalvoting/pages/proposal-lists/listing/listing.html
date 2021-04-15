@@ -1,5 +1,4 @@
 <ion-content [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode" [class.darkmode]="theme.darkMode">
-
     <ion-refresher class="ion-margin-top" slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="crescent">
         </ion-refresher-content>
@@ -92,7 +91,7 @@
     </ion-grid>
 
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreProposals($event)">
-        <ion-infinite-scroll-content class="ion-padding-top">
+        <ion-infinite-scroll-content class="ion-padding-top" loadingSpinner="crescent">
         </ion-infinite-scroll-content>
     </ion-infinite-scroll>
 
