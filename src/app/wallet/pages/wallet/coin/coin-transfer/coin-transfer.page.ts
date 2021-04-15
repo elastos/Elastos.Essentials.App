@@ -168,7 +168,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (showKey) {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
                 key: "contacts",
-                iconPath: !this.theme.darkMode ? "assets/wallet/icons/contacts.png" : "assets/wallet/icons/darkmode/contacts.png"
+                iconPath: !this.theme.darkMode ? "assets/wallet/icons/contacts.svg" : "assets/wallet/icons/darkmode/contacts.svg"
             });
         } else {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
