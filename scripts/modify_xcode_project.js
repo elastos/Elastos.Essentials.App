@@ -13,25 +13,25 @@ module.exports = function(ctx) {
         join = require('path').join,
         xcode = require('xcode');
 
-  let runtimeProjPath = 'platforms/ios/elastOS.xcodeproj/project.pbxproj',
-      runtimeProj = xcode.project(runtimeProjPath);
+  let projectPath = 'platforms/ios/Essentials.xcodeproj/project.pbxproj',
+      essentialsProj = xcode.project(projectPath);
       // cordovaProjPath = 'platforms/ios/CordovaLib/CordovaLib.xcodeproj/project.pbxproj',
       // cordovaProj = xcode.project(cordovaProjPath);
 
-  runtimeProj.parse(function (err) {
+  essentialsProj.parse(function (err) {
     //
     // Embed frameworks and binaries
     //
     let embed = true;
-    let existsEmbedFrameworks = runtimeProj.buildPhaseObject('PBXCopyFilesBuildPhase', 'Embed Frameworks');
+    let existsEmbedFrameworks = essentialsProj.buildPhaseObject('PBXCopyFilesBuildPhase', 'Embed Frameworks');
     if (!existsEmbedFrameworks && embed) {
       // "Embed Frameworks" Build Phase (Embedded Binaries) does not exist, creating it.
-      runtimeProj.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks', null, 'frameworks');
+      essentialsProj.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed Frameworks', null, 'frameworks');
     }
 
     // let options = { customFramework: true, embed: embed, sign: true };
-    runtimeProj.addFramework('libz.tbd');
-    runtimeProj.addFramework('libresolv.9.dylib');// for wallet plugin: Ethereum
+    essentialsProj.addFramework('libz.tbd');
+    essentialsProj.addFramework('libresolv.9.dylib');// for wallet plugin: Ethereum
 
     //
     // Build phase to strip invalid framework files ARCHs for itunes publication
@@ -41,25 +41,25 @@ module.exports = function(ctx) {
       shellPath: '/bin/sh',
       shellScript: stripBuildPhaseCommand
     };
-    runtimeProj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Strip non-target ARCHS from fat frameworks for publishing', null, stripOptions);
+    essentialsProj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Strip non-target ARCHS from fat frameworks for publishing', null, stripOptions);
 
     //
     // Add build settings
     //
-    runtimeProj.addToBuildSettings("SWIFT_VERSION", "5.2");
-    // runtimeProj.addToBuildSettings("PRODUCT_BUNDLE_IDENTIFIER", "org.elastos.trinity.browser");
-    runtimeProj.addToBuildSettings("CLANG_CXX_LANGUAGE_STANDARD", "\"c++0x\"");
-    runtimeProj.addToBuildSettings("MARKETING_VERSION", "1.1.0");
+    essentialsProj.addToBuildSettings("SWIFT_VERSION", "5.2");
+    // essentialsProj.addToBuildSettings("PRODUCT_BUNDLE_IDENTIFIER", "org.elastos.trinity.browser");
+    essentialsProj.addToBuildSettings("CLANG_CXX_LANGUAGE_STANDARD", "\"c++0x\"");
+    essentialsProj.addToBuildSettings("MARKETING_VERSION", "1.1.0");
 
     //
     // Set SWIFT_OPTIMIZATION_LEVEL -Onone for Debug
     //
-    runtimeProj.updateBuildProperty('SWIFT_OPTIMIZATION_LEVEL', '"-Onone"', 'Debug');
+    essentialsProj.updateBuildProperty('SWIFT_OPTIMIZATION_LEVEL', '"-Onone"', 'Debug');
 
     //
     // Write back the new XCode project
     //
-    console.log("Writing to " + runtimeProjPath);
-    fs.writeFileSync(runtimeProjPath, runtimeProj.writeSync());
+    console.log("Writing to " + projectPath);
+    fs.writeFileSync(projectPath, essentialsProj.writeSync());
   });
 }
