@@ -177,22 +177,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     setCryptonamesKeyVisibility(showKey: boolean) {
         if (showKey) {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-                key: "cryptonames",
-                iconPath: "assets/wallet/icons/cryptoname.png"
-            });
-        } else {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-        }
-
-    /*     if (showKey) {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
                 key: "cryptonames",
                 iconPath: "assets/wallet/icons/cryptoname.png"
             });
         } else {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, null);
-        } */
+        }
     }
 
     async init() {
@@ -244,9 +235,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.transaction = this.createSendTransaction;
 
                 if (this.chainId === StandardCoinName.ELA) {
-                    // Always show contacts app key - Removed for now, intent seems to be broken
-                    // this.setContactsKeyVisibility(true);
-                    this.setContactsKeyVisibility(false);
+                    // Always show contacts app key
+                    this.setContactsKeyVisibility(true);
 
                     // Only show cryptonames key if user has previously used crypto names
                     if (this.contactsService.contacts.length) {
