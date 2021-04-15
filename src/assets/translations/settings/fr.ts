@@ -3,7 +3,7 @@ export const fr = {
     /********** Menu Page **********/
     // Titles
     'capsule-setting': "Gestionnaire d'application",
-    'about-setting': "A propos d'elastOS",
+    'about-setting': "A propos d'Elastos Essentials",
     'developer-setting': 'Options pour développeurs',
     'display-setting': 'Thème',
     'dev-mode': 'Mode développeur',
@@ -38,7 +38,7 @@ export const fr = {
     'developer-options': 'Options pour développeurs',
     'background-services-enabled': 'Background services activés',
     'background-services-disabled': 'Background services désactivés',
-    'please-restart': 'Veuillez redémarrer elastOS pour rendre ces changements actifs',
+    'please-restart': 'Veuillez redémarrer Elastos Essentials pour rendre ces changements actifs',
     'configure-network': 'Configuration du réseau',
     'on': 'ACTIF',
     'off': 'INACTIF',
@@ -85,7 +85,7 @@ export const fr = {
     'entertainment': 'Divertissement',
     'travel': 'Voyage',
     'health': 'Santé',
-    'techdemo': "Démo d'elastOS",
+    'techdemo': "Démo d'Elastos Essentials",
 };
 
 

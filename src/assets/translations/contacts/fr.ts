@@ -36,7 +36,7 @@ export const fr = {
   'did': 'Identité',
   'elaWallet': 'Adresse ELA',
   'carrier': 'Adresse de communication Carrier',
-  'elastos-notifications-carrier-address': 'Adresse pour les notifications elastOS',
+  'elastos-notifications-carrier-address': 'Adresse pour les notifications Essentials',
 
   /********** Add Pg **********/
   'open-scanner': 'Ouvrir le scanner QR',

@@ -62,6 +62,6 @@ export const fr = {
     'language-setting': 'Sélection de la langue',
 
     // Sharing
-    'share-friend': 'Ajouter mon contact dans elastOS',
+    'share-friend': 'Ajouter mon contact dans Elastos Essentials',
     'share-add-me-as-friend': 'Ajoutez moi comme contact',
 }
