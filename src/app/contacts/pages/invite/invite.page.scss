@@ -2,6 +2,7 @@
 
 .container {
   min-height: 100%;
+  padding: 0;
 
   .profile-img {
     object-fit: cover;
@@ -10,7 +11,16 @@
   }
 
   .btn-container {
-    padding: 30px 15px 0;
+    padding: 15px 15px 0;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
   }
 
   .msg-container {

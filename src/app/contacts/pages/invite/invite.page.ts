@@ -8,8 +8,9 @@ import { UxService } from '../../services/ux.service';
 import { Contact } from '../../models/contact.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 @Component({
   selector: 'app-invite',
@@ -33,13 +34,15 @@ export class InvitePage implements OnInit {
     public uxService: UxService,
     private route: ActivatedRoute,
     public translate: TranslateService,
+    private globalNav: GlobalNavService,
     public theme: GlobalThemeService
   ) {}
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       Logger.log('contacts', 'pickfriend', params);
-      this.titleBar.setTitle(this.translate.instant('contacts'));
 
       if (params.singleInvite === "true") {
         this.isSingleInvite = true;
@@ -66,8 +69,12 @@ export class InvitePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+    this.titleBar.setTitle(this.translate.instant('contacts'));
+    this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      this.globalNav.navigateBack();
+    });
   }
 
   ionViewDidEnter() {
