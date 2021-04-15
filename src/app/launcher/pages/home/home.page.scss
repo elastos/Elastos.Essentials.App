@@ -1,9 +1,9 @@
 @import "src/app/launcher/root.scss";
 
 ion-content {
-  --offset-bottom: auto!important;
+/*   --offset-bottom: auto!important;
   --overflow: hidden;
-  overflow: auto;
+  overflow: auto; */
   &::-webkit-scrollbar {
     display: none;
   }
