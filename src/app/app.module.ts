@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable, NgModule } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
+import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -81,6 +81,55 @@ export function TranslateLoaderFactory() {
   return new CustomTranslateLoader();
 }
 
+// TMP BPI TEST - 2021.04.15 : Keep this code for now, we could use it in the future
+/*export class CustomRouteReuseStrategy implements RouteReuseStrategy {
+  private storedRoutes = new Map<string, DetachedRouteHandle>();
+
+  // Determines if this route (and its subtree) should be detached to be reused later
+  shouldDetach(route: ActivatedRouteSnapshot): boolean {
+    Logger.warn("ROUTINGDEBUG", "shouldDetach", route);
+    let shouldDetach = true; //route.routeConfig.path === 'list';
+    Logger.warn("ROUTINGDEBUG", "shouldDetach?", shouldDetach);
+    return shouldDetach;
+  }
+
+  // Stores the detached route.
+  // Storing a null value should erase the previously stored value.
+  store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
+    Logger.warn("ROUTINGDEBUG", "store", route, handle);
+    this.storedRoutes.set(route.routeConfig.path, handle);
+  }
+
+  // Determines if this route (and its subtree) should be reattached
+  shouldAttach(route: ActivatedRouteSnapshot): boolean {
+    Logger.warn("ROUTINGDEBUG", "shouldAttach", route);
+    let shouldAttach = !!route.routeConfig && !!this.storedRoutes.get(route.routeConfig.path);
+    //let shouldAttach = true;
+    Logger.warn("ROUTINGDEBUG", "shouldAttach?", shouldAttach);
+    return shouldAttach;
+  }
+
+  // Retrieves the previously stored route
+  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
+    Logger.warn("ROUTINGDEBUG", "retrieve", route);
+    let retrieved:DetachedRouteHandle = null;
+    if (route.routeConfig)
+      retrieved = this.storedRoutes.get(route.routeConfig.path) || null;
+    Logger.warn("ROUTINGDEBUG", "retrieveD", retrieved);
+    return retrieved;
+  }
+
+  // Determines if a route should be reused
+  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
+    Logger.warn("ROUTINGDEBUG", "shouldReuseRoute", future, curr);
+    let shouldReuse = false;
+    //if (future.routeConfig)
+     // shouldReuse = !!this.storedRoutes.get(future.routeConfig.path); //future.routeConfig === curr.routeConfig;
+    Logger.warn("ROUTINGDEBUG", "shouldReuse?", shouldReuse);
+    return shouldReuse;
+  }
+}*/
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -140,6 +189,7 @@ export function TranslateLoaderFactory() {
     ScreenOrientation,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+   // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
     { provide: ErrorHandler, useClass: SentryErrorHandler },
     //{ provide: TranslateModule, deps: [TranslationsLoader.loadAllModulesAndMerge("")]}
   ],

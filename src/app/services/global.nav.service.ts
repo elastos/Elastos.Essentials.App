@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { ModalController, NavController } from '@ionic/angular';
 import { Logger } from '../logger';
 
@@ -39,6 +40,7 @@ export class GlobalNavService {
 
     constructor(
       private navCtrl: NavController,
+      private router: Router,
       public modalController: ModalController
     ) { }
 
@@ -61,7 +63,16 @@ export class GlobalNavService {
         }
 
         this.navigationHistory.push({context, route, routerOptions});
-        this.navCtrl.navigateRoot(route, routerOptions);
+
+        // 2021.04.15 - BPI NOTE: Even if on our side we clear the history, we have to call navigateForward()
+        // in angular so that the views are not destroyed when calling intent. If we call navigateRoot(), the ionic
+        // routing clears its stack and when we go back, it will re-created the calling screen, which won't be able
+        // to receive and display the intent result (UI context fully lost). Note that navigating forward forever could
+        // create a major performance or memory issue, not sure. To be followed up, but no better solution for now,
+        // as it is not possible to use a custom RouterReuseStrategy with ionic (which could or could not have helped
+        // to solve this 'sendIntent' problem).
+        //this.navCtrl.navigateRoot(route, routerOptions);
+        this.navCtrl.navigateForward(route, routerOptions);
     }
 
     /**

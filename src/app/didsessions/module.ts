@@ -1,10 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { DIDSessionsRoutingModule } from './routing';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 import { PickIdentityPage } from './pages/pickidentity/pickidentity';
