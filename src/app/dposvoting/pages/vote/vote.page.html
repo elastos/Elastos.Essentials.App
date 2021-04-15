@@ -19,7 +19,7 @@
     </app-node-slider-vote>
 
     <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.dark-node-list]="theme.darkMode">
-      <ion-virtual-scroll [items]="nodesService.activeNodes"  approxItemHeight="240px">
+      <!-- <ion-virtual-scroll [items]="nodesService.activeNodes"  approxItemHeight="240px">
         <ion-item *virtualItem="let node">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">
@@ -58,13 +58,52 @@
             </ion-row>
           </ion-grid>
         </ion-item>
-      </ion-virtual-scroll>
+      </ion-virtual-scroll> -->
+
+        <ion-item *ngFor="let node of nodesService.activeNodes">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-no-padding">
+              <ion-col
+                size="1"
+                class="rank-container ion-no-padding"
+                (click)="_showNode(nodesService.activeNodes.indexOf(node), node)"
+              >
+                {{ nodesService.activeNodes.indexOf(node) + 1 }}
+              </ion-col>
+              <ion-col
+                size="2"
+                class="img-container"
+                (click)="_showNode(nodesService.activeNodes.indexOf(node), node)"
+              >
+                <img [src]="node.imageUrl ? node.imageUrl : '../assets/dposvoting/icon/elastos-icon.svg'">
+              </ion-col>
+              <ion-col
+                size="7.5"
+                (click)="_showNode(nodesService.activeNodes.indexOf(node), node)"
+                class="label-col"
+              >
+                <ion-label>
+                  <h4>{{ node.nickname }}</h4>
+                  <p>
+                    <span [class.inactive]="node.state !== 'Active'">
+                      <ion-icon name="navigate"></ion-icon> {{ node.Location }}
+                    </span>
+                    &#8226; {{ getVotePercent(node.votes) }}% of Votes
+                  </p>
+                </ion-label>
+              </ion-col>
+              <ion-col size="1.5" class="checkbox-container">
+                <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios" [disabled]="selectedNodes > 35 && !node.isChecked"></ion-checkbox>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
     </ion-list>
 
   </ion-grid>
 
   <ion-grid class="ion-no-padding" *ngIf="nodesService._nodes.length === 0 ">
-    <ion-list class="node-list">
+    <ion-list class="node-list" [class.dark-node-list]="theme.darkMode">
       <ion-item lines="none">
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
