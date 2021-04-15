@@ -1,7 +1,7 @@
 @import 'src/app/didsessions/root.scss';
 
 ion-slides {
-  height: 80%;
+  height: calc(100% - (150px + 40px)); // Substract height of slides on approximate height of footer
 }
 
 ion-slide {
@@ -9,10 +9,8 @@ ion-slide {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 45px;
+  padding: 90px 45px 45px;
   height: 100%;
-  position: relative;
-  top: 5%;
 
   ion-label {
     font-size: 15px;
