@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController, NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 import { Logger } from '../logger';
 import { App } from "src/app/model/app.enum"
 
@@ -42,7 +42,6 @@ export class GlobalNavService {
     constructor(
       private navCtrl: NavController,
       private router: Router,
-      public modalController: ModalController
     ) { }
 
     /**

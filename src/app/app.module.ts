@@ -33,10 +33,23 @@ import { DPoSVotingInitModule } from './dposvoting/init.module';
 import { DeveloperToolsInitModule } from './developertools/init.module';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
+import * as Sentry from '@sentry/browser';
+import { RewriteFrames } from '@sentry/integrations';
+import { GlobalNativeService } from './services/global.native.service';
+
+
+Sentry.init({
+  dsn: "https://1de99f1d75654d479051bfdce1537821@sentry.io/5722236",
+  release: "default",
+  integrations: [
+    new RewriteFrames(),
+  ]
+});
+
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
   constructor(
-    // TODO public native: NativeService,
+    public native: GlobalNativeService,
   ) {
   }
 
@@ -45,17 +58,20 @@ export class SentryErrorHandler implements ErrorHandler {
     Logger.error("Sentry", document.URL);
 
     // Only send reports to sentry if we are not debugging.
-    if (document.URL.includes('launcher')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
-      // TODO @zhiming Sentry.captureException(error.originalError || error);
-      //Sentry.showReportDialog({ eventId });
+    if (document.URL.includes('localhost')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
+      /*const eventId = */ Sentry.captureException(error.originalError || error);
+      // Sentry.showReportDialog({ eventId });
     }
 
-    /* TODO this.native.genericAlert(
-      'Sorry, the application encountered an error. This has been reported to the team.',
-      'Error'
-    );*/
+    if (error.promise && error.promise.__zone_symbol__value && 'skipsentry' === error.promise.__zone_symbol__value.type) {
+      // Do not popop error dialog, but still send to sentry for debug.
+      Logger.error("Sentry", 'This exception has been handled:', error);
+    } else {
+      this.native.genericAlert('sentry-message', 'sentry-error');
+    }
   }
 }
+
 
 /**
  * NOTE: BPI 20210226: Tried to have one translation loader per dapp module, using forChild / isolate,

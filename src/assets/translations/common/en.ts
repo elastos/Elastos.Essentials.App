@@ -36,6 +36,8 @@ export const en = {
     'please-wait': "Please wait...",
     'sorry': 'Sorry',
     'name-is-missing': "Please enter a name",
+    'sentry-error': 'Error',
+    'sentry-message': 'Sorry, the application encountered an error. This has been reported to the team.',
 
     // Related to DID
     'sign-in': 'Sign In',
