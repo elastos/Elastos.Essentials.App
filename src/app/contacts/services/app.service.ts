@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { FriendsService } from './friends.service';
-import { StorageService } from './storage.service';
 import { PopupService } from './popup.service';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { App } from "src/app/model/app.enum"
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class AppService {
 
   constructor(
     private friendsService: FriendsService,
-    private storageService: StorageService,
+    private storage: GlobalStorageService,
     private popupService: PopupService,
     private globalNav: GlobalNavService
   ) {
@@ -54,6 +55,6 @@ export class AppService {
   ************************ Misc ***************************
   *********************************************************/
   deleteStorage() {
-    this.storageService.setVisit(false);
+    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'contacts', 'visited', false)
   }
 }

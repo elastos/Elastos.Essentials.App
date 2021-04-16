@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { StorageService } from './storage.service';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { PopupService } from './popup.service';
@@ -51,8 +50,7 @@ export class HiveService {
 
   constructor(
     private router: Router,
-    private storage: StorageService,
-    private globalStorage: GlobalStorageService,
+    private storage: GlobalStorageService,
     private popup: PopupService,
     private events: Events,
     public translate: TranslateService,
@@ -220,12 +218,12 @@ export class HiveService {
   }
 
   private async getLastPublishedTime(): Promise<Date> {
-    let lastPublishedTime = await this.storage.get<number>("publicationrequesttime");
+    let lastPublishedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "publicationrequesttime", 0);
     return new Date(lastPublishedTime);
   }
 
   private async saveLastPublishedTime(): Promise<void> {
-    await this.storage.set("publicationrequesttime", Date.now());
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "publicationrequesttime", Date.now());
   }
 
   /**
@@ -445,7 +443,7 @@ export class HiveService {
       // Remove the pending order from our temporary list.
       pendingPaidOrders.splice(orderIndex, 1);
       Logger.log("HiveManager", "Removing the order from pending paid orders list because it's finalized. New pendingPaidOrders: ", pendingPaidOrders);
-      await this.storage.setJson("pendingPaidOrders", pendingPaidOrders);
+      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
     }
   }
 
@@ -453,7 +451,7 @@ export class HiveService {
    * List of orders that have been actually paid by the user but not sent to the hive node.
    */
   public async getPaidIncompleteOrders(): Promise<PaidIncompleteOrder[]> {
-    let pendingPaidOrders = await this.storage.getJson("pendingPaidOrders") as PaidIncompleteOrder[];
+    let pendingPaidOrders = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "pendingPaidOrders", []) as PaidIncompleteOrder[];
     if (!pendingPaidOrders) {
       return [];
     }
@@ -469,7 +467,7 @@ export class HiveService {
       vaultAddress: vaultAddress,
       planName: planName
     });
-    await this.storage.setJson("pendingPaidOrders", pendingPaidOrders);
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
   }
 
   private sortOrdersByMostRecentFirst(orders: HivePlugin.Payment.Order[]): HivePlugin.Payment.Order[] {

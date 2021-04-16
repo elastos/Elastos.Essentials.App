@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 
 import { DidService } from './did.service';
 import { Contact } from '../models/contact.model';
 import { FriendsService } from './friends.service';
 import { Hive } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 
@@ -20,11 +18,9 @@ export class BackupService {
   public restoredContacts: Contact[] = [];
 
   constructor(
-    private translate: TranslateService,
     private events: Events,
     private didService: DidService,
     private friendsService: FriendsService,
-    private storage: GlobalStorageService
   ) { }
 
   async init() {

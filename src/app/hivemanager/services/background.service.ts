@@ -1,13 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Platform, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 import * as moment from 'moment';
-import { StorageService } from './storage.service';
 import { HiveService } from './hive.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { App } from "src/app/model/app.enum"
 import { Events } from 'src/app/services/events.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +21,7 @@ export class BackgroundService {
         public zone: NgZone,
         public toastCtrl: ToastController,
         public events: Events,
-        private storage: StorageService,
+        private storage: GlobalStorageService,
         private hiveService: HiveService,
         private notificationsManager: GlobalNotificationsService
     ) {
@@ -44,19 +45,19 @@ export class BackgroundService {
     }
 
     async getTimeCheck() {
-        const lastCheckedTime = await this.storage.get('timeCheckedForExpiration');
+        const lastCheckedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', 0);
         Logger.log("HiveManager", 'Background service: Time-checked for expiration', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
         const today = new Date();
         if(lastCheckedTime) {
             if(!moment(lastCheckedTime).isSame(today, 'd')) {
-                this.storage.set('timeCheckedForExpiration', today);
+                this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
                 this.checkPlanExpiration(today);
             } else {
                 Logger.log("hivemanager", 'Background service: Plan expiration already checked today');
             }
         } else {
-            this.storage.set('timeCheckedForExpiration', today);
+            this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', today);
             this.checkPlanExpiration(today);
         }
     }

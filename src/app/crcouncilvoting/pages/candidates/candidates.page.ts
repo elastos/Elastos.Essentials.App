@@ -3,16 +3,16 @@ import { ToastController, AlertController } from "@ionic/angular";
 import { CandidatesService } from "../../services/candidates.service";
 import { Candidate } from "../../model/candidates.model";
 import { NavigationExtras } from "@angular/router";
-import { StorageService } from "../../services/storage.service";
 
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Logger } from "src/app/logger";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
+import { GlobalStorageService } from "src/app/services/global.storage.service";
 
 
 @Component({
@@ -25,7 +25,7 @@ export class CandidatesPage implements OnInit {
 
   constructor(
     public candidatesService: CandidatesService,
-    private storage: StorageService,
+    private storage: GlobalStorageService,
     private globalNav: GlobalNavService,
     private globalIntentService: GlobalIntentService,
     public theme: GlobalThemeService,
@@ -217,6 +217,6 @@ export class CandidatesPage implements OnInit {
   }
 
   deleteStorage() {
-    this.storage.setVotes([]);
+    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
   }
 }

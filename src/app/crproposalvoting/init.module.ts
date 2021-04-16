@@ -3,7 +3,6 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpClientModule } from '@angular/common/http';
 import { PopupService } from './services/popup.service';
-import { StorageService } from './services/storage.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
@@ -20,7 +19,6 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   providers: [
     Platform,
-    StorageService,
     PopupService
   ],
   schemas: []

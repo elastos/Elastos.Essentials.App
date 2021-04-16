@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { StorageService } from './storage.service';
 import { Node } from '../model/nodes.model';
 import { Vote } from '../model/history.model';
 import { Mainchain, Voters, Price, Block } from '../model/stats.model';
@@ -10,6 +9,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 
 @Injectable({
@@ -71,8 +72,7 @@ export class NodesService {
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-    private storageService: StorageService,
+    private storage: GlobalStorageService,
     private globalIntentService: GlobalIntentService,
   ) {}
 
@@ -105,7 +105,7 @@ export class NodesService {
 
    // Storage
    getVisit() {
-    this.storageService.getVisit().then(data => {
+    this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'visited', false).then(data => {
       if(data || data === true) {
         this.firstVisit = false;
       }
@@ -113,7 +113,7 @@ export class NodesService {
    }
 
    getStoredVotes() {
-    this.storageService.getVotes().then(data => {
+    this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'votes', []).then(data => {
       Logger.log('dposvoting', 'Vote history', data);
       if(data && data.length > 0) {
         // filter invalid votes.
@@ -123,7 +123,7 @@ export class NodesService {
   }
 
   getStoredNodes() {
-    this.storageService.getNodes().then(data => {
+    this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'nodes', []).then(data => {
       Logger.log('dposvoting', data);
       this._nodes.map(node => {
         if (data && data.includes(node.ownerpublickey) && node.state === 'Active') {

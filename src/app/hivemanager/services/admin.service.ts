@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import { StorageService } from './storage.service';
-import { Router } from '@angular/router';
-import { PopupService } from './popup.service';
 import { ManagedProvider } from '../model/managedprovider';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -19,18 +17,15 @@ export class AdminService {
   private client: HivePlugin.Client;
 
   constructor(
-    private router: Router,
-    private storage: StorageService,
-    private globalStorage: GlobalStorageService,
+    private storage: GlobalStorageService,
     private globalIntentService: GlobalIntentService,
-    private popup: PopupService,
   ) {}
 
   async init() {
   }
 
   public async getManagedProviders(): Promise<ManagedProvider[]> {
-    let providers = await this.storage.getJson("admin-managedproviders") as ManagedProvider[];
+    let providers = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "admin-managedproviders", []) as ManagedProvider[];
     if (!providers)
       providers = [];
 
@@ -42,7 +37,7 @@ export class AdminService {
 
   public async saveManagedProviders(providers: ManagedProvider[]): Promise<void> {
     Logger.log('HiveManager', "Saving all providers:", providers);
-    return await this.storage.setJson("admin-managedproviders", providers);
+    return await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "admin-managedproviders", providers);
   }
 
   public async getManagedProviderById(id: string): Promise<ManagedProvider> {

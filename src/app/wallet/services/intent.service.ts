@@ -11,7 +11,6 @@ import { WalletEditionService } from './walletedition.service';
 import { PopupProvider } from './popup.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
 

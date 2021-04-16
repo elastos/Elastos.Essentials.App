@@ -4,7 +4,6 @@ import { NavigationExtras } from '@angular/router';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 
 import { NativeService } from './native.service';
-import { StorageService } from './storage.service';
 
 import { Contact } from '../models/contact.model';
 import { Avatar } from '../models/avatar';
@@ -15,6 +14,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -77,10 +77,9 @@ export class FriendsService {
     private clipboard: Clipboard,
     public translate: TranslateService,
     private native: NativeService,
-    public storageService: StorageService,
+    private storage: GlobalStorageService,
     private events: Events,
     private didService: DidService,
-    private didSessions: GlobalDIDSessionsService,
     private contactNotifier: ContactNotifierService,
     private globalIntentService: GlobalIntentService,
   ) {
@@ -97,12 +96,11 @@ export class FriendsService {
   * Get Visit, if first time, add a fake 'First Contact' *
   *******************************************************/
   async getVisit() {
-    this.storageService.getVisit().then(async data => {
-      if (!data) {
-        await this.resolveDIDDocument('did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2', false, null, false);
-        this.storageService.setVisit(true);
-      }
-    });
+    let visit = await this.storage.getSetting<boolean>(GlobalDIDSessionsService.signedInDIDString, "contacts", 'visited', false);
+    if (!visit) {
+      await this.resolveDIDDocument('did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2', false, null, false);
+      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'contacts', 'visited', true)
+    }
   }
 
   /******************************
@@ -110,7 +108,8 @@ export class FriendsService {
   *******************************/
   getStoredContacts(): Promise<Contact[]> {
     return new Promise((resolve, reject) => {
-      this.storageService.getContacts().then(contacts => {
+
+      this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", []).then(contacts => {
         Logger.log("Contacts", 'Stored contacts fetched', contacts);
         this.contactsFetched = true;
 
@@ -266,7 +265,7 @@ export class FriendsService {
 
         if(carrierAddress) {
           this.contacts[this.contacts.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
-          this.storageService.setContacts(this.contacts);
+          await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", this.contacts);
           this.globalNav.navigateTo('contacts', '/contacts/friends/'+targetContact.id);
           this.native.genericToast(promptName + this.translate.instant('did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
@@ -958,9 +957,9 @@ export class FriendsService {
   /********************************************************
   ************* Manage Favorite Contacts ******************
   *********************************************************/
-  toggleFav(contact: Contact) {
+  async toggleFav(contact: Contact) {
     contact.isFav = !contact.isFav;
-    this.storageService.setContacts(this.contacts);
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", this.contacts);
   }
 
   /********************************************************
@@ -1031,8 +1030,8 @@ export class FriendsService {
     }
   }
 
-  saveContactsState() {
-    this.storageService.setContacts(this.contacts);
+  async saveContactsState() {
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", this.contacts);
     this.sortContacts();
   }
 }

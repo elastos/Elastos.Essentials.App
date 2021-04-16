@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { StorageService } from '../../services/storage.service';
 import { Router } from '@angular/router';
 import { IonSlides, Platform } from '@ionic/angular';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class HomePage implements OnInit {
 
   constructor(
     private router: Router,
-    private storageService: StorageService,
+    private storage: GlobalStorageService,
     private platform: Platform,
   ) {
   }
@@ -64,7 +65,7 @@ export class HomePage implements OnInit {
   }
 
   goToVote() {
-    this.storageService.setVisit(true);
+    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "visited", true);
     this.router.navigate(['menu/vote']);
   }
 }

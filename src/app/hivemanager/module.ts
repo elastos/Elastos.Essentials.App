@@ -4,7 +4,6 @@ import { Platform } from '@ionic/angular';
 import { HiveManagerRoutingModule } from './routing';
 import { IonicStorageModule } from '@ionic/storage';
 import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
-import { StorageService } from './services/storage.service';
 import { PopupService } from './services/popup.service';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -40,7 +39,6 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
   entryComponents: [
   ],
   providers: [
-    StorageService,
     PopupService,
     Platform,
     Clipboard

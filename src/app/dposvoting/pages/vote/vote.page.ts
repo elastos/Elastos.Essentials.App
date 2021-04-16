@@ -3,13 +3,14 @@ import { ToastController, AlertController } from '@ionic/angular';
 
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
-import { StorageService } from '../../services/storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { TitleBarIcon, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 
 @Component({
@@ -36,7 +37,7 @@ export class VotePage implements OnInit {
 
   constructor(
     public nodesService: NodesService,
-    private storageService: StorageService,
+    private storage: GlobalStorageService,
     private toastController: ToastController,
     private alertController: AlertController,
     private translate: TranslateService,
@@ -68,7 +69,7 @@ export class VotePage implements OnInit {
 
     if (castedNodeKeys.length > 0) {
       Logger.log('dposvoting', castedNodeKeys);
-      this.storageService.setNodes(castedNodeKeys);
+      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "nodes", castedNodeKeys);
       let votesSent: boolean = false;
 
       try {
@@ -89,7 +90,7 @@ export class VotePage implements OnInit {
 
           this.nodesService._votes = this.nodesService._votes.concat({ date: date, tx: txid, keys: castedNodeKeys });
           Logger.log('dposvoting', 'Vote history updated', this.nodesService._votes);
-          this.storageService.setVotes(this.nodesService._votes);
+          this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "votes", this.nodesService._votes);
           this.voteSuccess(res.result.txid);
         }
       }

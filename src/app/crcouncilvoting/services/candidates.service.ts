@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Candidate } from '../model/candidates.model';
-import { StorageService } from './storage.service';
-import { Platform, AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { Selected } from '../model/selected.model';
 import { CouncilMember } from '../model/council.model';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class CandidatesService {
     private globalNav: GlobalNavService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private storageService: StorageService
+    private storage: GlobalStorageService
   ) { }
 
 
@@ -48,7 +49,7 @@ export class CandidatesService {
   }
 
   getSelectedCandidates() {
-    this.storageService.getVotes().then(data => {
+    this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
       Logger.log('crcouncil', 'Selected Candidates', data);
       if(data) {
         this.selectedCandidates = data;

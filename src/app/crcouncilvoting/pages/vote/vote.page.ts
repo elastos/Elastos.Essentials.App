@@ -1,7 +1,6 @@
 import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { CandidatesService } from '../../services/candidates.service';
 import { ToastController } from '@ionic/angular';
-import { StorageService } from '../../services/storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -9,6 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 
 @Component({
@@ -21,7 +22,7 @@ export class VotePage implements OnInit, OnDestroy {
 
   constructor(
     public candidatesService: CandidatesService,
-    private storageService: StorageService,
+    private storage: GlobalStorageService,
     private toastCtrl: ToastController,
     private globalNav: GlobalNavService,
     private globalIntentService: GlobalIntentService,
@@ -90,7 +91,7 @@ export class VotePage implements OnInit, OnDestroy {
       this.toastErr('You are not allowed to pledge more ELA than you own');
     } else {
       Logger.log('crcouncil', votedCandidates);
-      this.storageService.setVotes(this.candidatesService.selectedCandidates);
+      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.candidatesService.selectedCandidates);
       this.castingVote = true;
       this.votesCasted = false;
 

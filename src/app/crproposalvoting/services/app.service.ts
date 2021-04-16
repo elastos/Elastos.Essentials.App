@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { StorageService } from './storage.service';
 import { ProposalService } from './proposal.service';
 import { ProposalStatus } from '../model/proposal-status';
 
 import * as moment from 'moment';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { Logger } from 'src/app/logger';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 
 @Injectable({
@@ -14,24 +15,24 @@ import { Logger } from 'src/app/logger';
 export class AppService {
   constructor(
     public proposalService: ProposalService,
-    private storage: StorageService,
+    private storage: GlobalStorageService,
     private notifications: GlobalNotificationsService,
   ) { }
 
   public async getTimeCheckedForProposals() {
-    const lastCheckedTime = await this.storage.get('timeCheckedForProposals');
+    const lastCheckedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", null);
     Logger.log('crproposal', 'Background service: Time-checked for proposals', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
     const today = new Date();
     if(lastCheckedTime) {
         if(!moment(lastCheckedTime).isSame(today, 'd')) {
-            this.storage.set('timeCheckedForProposals', today);
+            this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
             this.checkForNewProposals(today);
         } else {
             Logger.log('crproposal', 'Background service: Proposals already checked today');
         }
     } else {
-        this.storage.set('timeCheckedForProposals', today);
+        this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
         this.checkForNewProposals(today);
     }
   }
@@ -66,8 +67,8 @@ export class AppService {
       this.notifications.sendNotification(notification);
     }
 
-    const lastCheckedProposal = await this.storage.get('lastProposalChecked');
-    this.storage.set('lastProposalChecked', proposals[0].id);
+    const lastCheckedProposal = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "lastProposalChecked", null);
+    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "lastProposalChecked", proposals[0].id);
     Logger.log('crproposal', 'Background service: Last proposal checked by id', lastCheckedProposal);
 
     // Send notification new proposals since user last visited Elastos Essentials
