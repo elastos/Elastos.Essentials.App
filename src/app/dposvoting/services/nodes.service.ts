@@ -31,6 +31,9 @@ export class NodesService {
   public price: Price;
   public block: Block;
 
+  // Empty List - Used to loop dummy items while data is being fetched
+  public emptyList = [];
+
   // Storage
   private firstVisit: boolean = false;
   public _votes: Vote[] = [
@@ -90,10 +93,15 @@ export class NodesService {
 
   async init() {
     Logger.log("dposvoting", "Initializing the nodes service");
-    this.getVisit();
-    this.getStoredVotes();
-    this.fetchStats();
-    this.fetchNodes();
+
+    for(let i = 0; i < 20; i ++) {
+      this.emptyList.push('');
+    }
+
+    // await this.getVisit();
+    // await this.getStoredVotes();
+    await this.fetchStats();
+    await this.fetchNodes();
   }
 
   // Titlebar
@@ -162,43 +170,50 @@ export class NodesService {
   }
 
   fetchNodes() {
-    Logger.log('dposvoting', 'Fetching Nodes..');
-    const param = {
-        method: 'listproducers',
-        params: {
-            state: 'all'
-            // state: 'active'
-        },
-    };
+    return new Promise((resolve, reject) => {
+      Logger.log('dposvoting', 'Fetching Nodes..');
+      const param = {
+          method: 'listproducers',
+          params: {
+              state: 'all'
+              // state: 'active'
+          },
+      };
 
-    try {
+      try {
         const httpOptions = {
-            headers: new HttpHeaders({'Content-Type': 'application/json',})
+          headers: new HttpHeaders({'Content-Type': 'application/json',})
         };
+
         this.http.post(this.apiRPC, JSON.stringify(param), httpOptions)
-            .subscribe((res: any) => {
-                if (res && res.result) {
-                    res.result.producers.map(node => {
-                        node.index += 1; // the index start from 0;
-                    });
+          .subscribe((res: any) => {
+            if (res && res.result) {
+              res.result.producers.map(node => {
+                  node.index += 1; // the index start from 0;
+              });
 
-                    this._nodes = res.result.producers;
-                    this.activeNodes = this._nodes.filter(node => node.state === 'Active');
-                    this.getNodeIcon();
-                    this.getStoredNodes();
-                    this.totalVotes = res.result.totalvotes;
-                    // Logger.log('dposvoting', 'Nodes Added..', this._nodes);
-                    // Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
-                }
-            }, (err) => {
-                Logger.log('dposvoting', 'JsonRPCService httpRequest error:', JSON.stringify(err));
-            });
-    } catch (e) {
-      Logger.error('dposvoting', ' error:', e)
-    }
+              this._nodes = res.result.producers;
+              this.activeNodes = this._nodes.filter(node => node.state === 'Active');
+              this.getNodeIcon();
+              this.getStoredNodes();
+              this.totalVotes = res.result.totalvotes;
 
-    // to show the Daily Rewards, but it is too slow.
-    this.fetchReward();
+              Logger.log('dposvoting', 'Nodes Added..', this._nodes);
+              Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
+
+              // to show the Daily Rewards, but it is too slow.
+              // this.fetchReward();
+              resolve();
+            }
+          }, (err) => {
+            Logger.log('dposvoting', 'JsonRPCService httpRequest error:', JSON.stringify(err));
+            reject(err);
+          });
+        } catch (e) {
+          Logger.error('dposvoting', ' error:', e)
+        }
+    });
+    
   }
 
   async fetchReward() {

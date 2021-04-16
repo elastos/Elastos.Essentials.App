@@ -1,6 +1,6 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
+  <div class="ion-text-center header">
     <ion-label>{{ 'stats-overview' | translate }}</ion-label>
   </div>
   
@@ -8,7 +8,7 @@
     <ion-refresher-content class="ion-margin-top ion-padding-top"></ion-refresher-content>
   </ion-refresher>
  -->
-  <ion-grid *ngIf="nodesService._nodes.length > 0" class="container ion-no-padding ion-no-margin" [class.dark-container]="theme.darkMode">
+  <ion-grid *ngIf="nodesService._nodes.length; else emptyList" class="container ion-no-padding ion-no-margin" [class.dark-container]="theme.darkMode">
     <ion-list>
       <ion-item>
         <ion-grid class="ion-no-padding">
@@ -282,248 +282,30 @@
     </ion-list>
   </ion-grid>
 
-  <ion-grid *ngIf="nodesService._nodes.length === 0" class="container ion-no-padding" [class.loading-container]="nodesService._nodes.length === 0">
-    <ion-list>
-      <ion-item class="first">
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="first">
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item class="first">
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col size="2" class="img-container">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-            <ion-col size="5">
-              <ion-label>
-                <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
-              </ion-label>
-            </ion-col>
-            <ion-col size="5" class="number-container ion-padding-end">
-              <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-    </ion-list>
-  </ion-grid>
+  <ng-template #emptyList>
+    <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
+      <ion-list>
+        <ion-item *ngFor="let empty of nodesService.emptyList">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-no-padding">
+              <ion-col size="2" class="img-container">
+                <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
+              </ion-col>
+              <ion-col size="5">
+                <ion-label>
+                  <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
+                </ion-label>
+              </ion-col>
+              <ion-col size="5" class="number-container ion-padding-end">
+                <ion-skeleton-text animated style="width: 40%; height: 100%;"></ion-skeleton-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+      </ion-list>
+    </ion-grid>
+  </ng-template>
+ 
 
 </ion-content>
 

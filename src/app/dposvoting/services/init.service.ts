@@ -16,7 +16,7 @@ export class DPoSVotingInitService {
   }
 
   public async start() {
-    await this.nodesService.init();
+    this.nodesService.init();
     this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/vote');
   }
 }
