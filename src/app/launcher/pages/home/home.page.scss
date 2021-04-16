@@ -160,39 +160,43 @@ ion-content {
     }
 
     #Wallet {
-      background-image: url('/assets/launcher/ios/app-backgrounds/wallet.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/wallet.svg');
     }
 
     #Identity {
-      background-image: url('/assets/launcher/ios/app-backgrounds/identity.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/identity.svg');
     }
 
     #Contacts {
-      background-image: url('/assets/launcher/ios/app-backgrounds/contacts.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/contacts.svg');
     }
 
     #Passwords {
-      background-image: url('/assets/launcher/ios/app-backgrounds/password.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/password.svg');
     }
 
     #Hive {
-      background-image: url('/assets/launcher/ios/app-backgrounds/hive.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/hive.svg');
     }
 
     #DPoS {
-      background-image: url('/assets/launcher/ios/app-backgrounds/other.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/dpos.svg');
     }
 
     #CRCouncil {
-      background-image: url('/assets/launcher/ios/app-backgrounds/other.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/council.svg');
     }
 
     #CRProposal {
-      background-image: url('/assets/launcher/ios/app-backgrounds/other.svg');
+      background-image: url('/assets/launcher/apps/app-backgrounds/proposal.svg');
     }
 
-    #Other {
-      background-image: url('/assets/launcher/ios/app-backgrounds/other.svg');
+    #Settings {
+      background-image: url('/assets/launcher/apps/app-backgrounds/settings.svg');
+    }
+
+    #Scanner {
+      background-image: url('/assets/launcher/apps/app-backgrounds/scanner.svg');
     }
   }
 }

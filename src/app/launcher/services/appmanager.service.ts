@@ -128,7 +128,7 @@ export class AppmanagerService {
                         name: this.translate.instant('app-wallet'),
                         routerContext: App.WALLET,
                         description: this.translate.instant('app-wallet-description'),
-                        icon: '/assets/launcher/ios/app-icons/wallet.svg',
+                        icon: '/assets/launcher/apps/app-icons/wallet.svg',
                         // routerPath: '/wallet/wallet-home'
                         startCall: () => this.walletInitService.start()
                     },
@@ -137,7 +137,7 @@ export class AppmanagerService {
                         routerContext: App.IDENTITY,
                         name: this.translate.instant('app-identity'),
                         description: this.translate.instant('app-identity-description'),
-                        icon: '/assets/launcher/ios/app-icons/identity.svg',
+                        icon: '/assets/launcher/apps/app-icons/identity.svg',
                         routerPath: '/identity/myprofile/home'
                         // routerPath: '/identity/credaccessrequest'
                     },
@@ -146,7 +146,7 @@ export class AppmanagerService {
                         routerContext: App.CONTACTS,
                         name: this.translate.instant('app-contacts'),
                         description: this.translate.instant('app-contacts-description'),
-                        icon: '/assets/launcher/ios/app-icons/contacts.svg',
+                        icon: '/assets/launcher/apps/app-icons/contacts.svg',
                         routerPath: '/contacts/friends'
                     },
                 ]
@@ -159,23 +159,23 @@ export class AppmanagerService {
                         routerContext: App.HIVE_MANAGER,
                         name: this.translate.instant('app-hive'),
                         description: this.translate.instant('app-hive-description'),
-                        icon: '/assets/launcher/ios/app-icons/hive.svg',
+                        icon: '/assets/launcher/apps/app-icons/hive.svg',
                         startCall: () => this.hiveManagerInitService.start()
                     },
                     {
-                        cssId: 'Other',
+                        cssId: 'Scanner',
                         routerContext: App.SCANNER,
                         name: this.translate.instant('app-scanner'),
                         description: this.translate.instant('app-scanner-description'),
-                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
                         routerPath: '/scanner/scan'
                     },
                     {
-                        cssId: 'Other',
+                        cssId: 'Settings',
                         routerContext: App.SETTINGS,
                         name: this.translate.instant('app-settings'),
                         description: this.translate.instant('app-settings-description'),
-                        icon: '/assets/launcher/ios/app-icons/settings.svg',
+                        icon: '/assets/launcher/apps/app-icons/settings.svg',
                         routerPath: '/settings/menu'
                     },
                 ]
@@ -188,7 +188,7 @@ export class AppmanagerService {
                         routerContext: App.DPOS_VOTING,
                          name: this.translate.instant('app-dpos-voting'),
                          description: this.translate.instant('app-dpos-description'),
-                         icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                         icon: '/assets/launcher/apps/app-icons/scanner.svg',
                          startCall: () => this.dposVotingInitService.start()
                     },
                     {
@@ -196,7 +196,7 @@ export class AppmanagerService {
                         routerContext: App.CRCOUNCIL_VOTING,
                         name: this.translate.instant('app-cr-council'),
                         description: this.translate.instant('app-crcouncil-description'),
-                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
                         routerPath: '/crcouncilvoting/candidates'
                         // routerPath: '/crcouncilvoting/vote'
                     },
@@ -205,7 +205,7 @@ export class AppmanagerService {
                         routerContext: App.CRPROPOSAL_VOTING,
                         name: this.translate.instant('app-cr-proposal'),
                         description: this.translate.instant('app-crproposal-description'),
-                        icon: '/assets/launcher/ios/app-icons/scanner.svg',
+                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
                         routerPath: '/crproposalvoting/proposals/ALL'
                     },
                 ]
