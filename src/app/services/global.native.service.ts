@@ -11,6 +11,7 @@ import { GlobalThemeService, AppTheme } from 'src/app/services/global.theme.serv
 export class GlobalNativeService {
     public loader: HTMLIonLoadingElement = null;
     public alert = null;
+    private alertCtrlCreating = false;
     private loadingCtrlCreating = false;
 
     constructor(
@@ -61,7 +62,12 @@ export class GlobalNativeService {
         }).then(toast => toast.present());
     }
 
-    async genericAlert(msg: string, title?: string) {
+    async genericAlert(msg: string, title?: string, skipIfAlreadyPopup = false) {
+      if (skipIfAlreadyPopup && (this.alert || this.alertCtrlCreating)) {
+            return;
+        }
+
+        this.alertCtrlCreating = true;
         await this.hideAlert();
         this.alert = await this.alertCtrl.create({
             mode: 'ios',
@@ -73,7 +79,7 @@ export class GlobalNativeService {
         this.alert.onWillDismiss().then(() => {
             this.alert = null;
         });
-
+        this.alertCtrlCreating = false;
         return await this.alert.present();
     }
 

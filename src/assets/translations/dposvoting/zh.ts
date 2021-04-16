@@ -1,7 +1,7 @@
 export const zh = {
 
     /********** History **********/
-    'history-votes-overview': '投票总览',
+    'history-votes-overview': '投票记录',
     'history-no-records': '空空如也',
 
     /********** Home **********/

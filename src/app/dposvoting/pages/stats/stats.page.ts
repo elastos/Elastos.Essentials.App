@@ -3,6 +3,7 @@ import { NodesService } from '../../services/nodes.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-stats',
@@ -12,13 +13,13 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 export class StatsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  constructor(public nodesService: NodesService, public theme: GlobalThemeService) { }
+  constructor(public nodesService: NodesService, public translate: TranslateService, public theme: GlobalThemeService) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTitle(this.translate.instant('app-dpos-voting'));
     this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
   }

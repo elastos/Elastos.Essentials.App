@@ -116,7 +116,8 @@ export class NodesService {
     this.storageService.getVotes().then(data => {
       Logger.log('dposvoting', 'Vote history', data);
       if(data && data.length > 0) {
-        this._votes = data;
+        // filter invalid votes.
+        this._votes = data.filter(c => {return c.tx;});;
       }
     });
   }

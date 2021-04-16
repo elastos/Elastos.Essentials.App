@@ -8,7 +8,8 @@ import { Node } from '../../model/nodes.model';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tx',
@@ -30,6 +31,7 @@ export class TxPage implements OnInit {
   constructor(
     public nodesService: NodesService,
     private route: ActivatedRoute,
+    public translate: TranslateService,
     private globalNav: GlobalNavService,
   ) { }
 
@@ -41,14 +43,13 @@ export class TxPage implements OnInit {
       }
       this.vote = this.nodesService.getVote(paramMap.get('txid'));
       this.getNodes();
-      Logger.log('dposvoting', this.vote);
     });
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTitle(this.translate.instant('app-dpos-voting'));
     this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-    this.titleBar.setNavigationMode(null);
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
   }
 
   getNodes() {
@@ -60,7 +61,7 @@ export class TxPage implements OnInit {
   }
 
   modDate(date) {
-    return moment(date).format("MMM Do YY, h:mm:ss a");
+    return moment(date).format("MMM Do YYYY, h:mm:ss a");
   }
 
   //// Define Values ////

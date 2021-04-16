@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-search',
@@ -28,6 +29,7 @@ export class SearchPage implements OnInit {
 
   constructor(
     public nodesService: NodesService,
+    public translate: TranslateService,
     public theme: GlobalThemeService
   ) {}
 
@@ -35,7 +37,7 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTitle(this.translate.instant('app-dpos-voting'));
     this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
   }

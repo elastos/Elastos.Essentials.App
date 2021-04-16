@@ -49,7 +49,7 @@ export class VotePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTitle(this.translate.instant('app-dpos-voting'));
     this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
   }

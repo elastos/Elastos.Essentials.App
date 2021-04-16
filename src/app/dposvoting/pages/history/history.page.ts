@@ -6,6 +6,9 @@ import { Vote } from '../../model/history.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TranslateService } from '@ngx-translate/core';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from 'src/app/model/app.enum';
 
 @Component({
   selector: 'app-history',
@@ -17,18 +20,25 @@ export class HistoryPage implements OnInit {
 
   public _votes: Vote[] = [];
 
-  constructor(public nodesService: NodesService, public theme: GlobalThemeService) { }
+  constructor(public nodesService: NodesService,
+              public translate: TranslateService,
+              private globalNav: GlobalNavService,
+              public theme: GlobalThemeService) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle('DPoS Voting');
+    this.titleBar.setTitle(this.translate.instant('app-dpos-voting'));
     this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
   }
 
+  showVoteDetail(vote:Vote) {
+    this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/history/'+ vote.tx);
+  }
+
   modDate(date) {
-    return moment(date).format("MMM Do YY, h:mm:ss a");
+    return moment(date).format("MMM Do YYYY, h:mm:ss a");
   }
 }

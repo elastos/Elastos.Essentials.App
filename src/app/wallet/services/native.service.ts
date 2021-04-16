@@ -102,10 +102,11 @@ export class Native {
             Logger.log("wallet", 'loadingCtrl is preparing, skip')
             return;
         }
-        // Hide a previous loader in case there was one already.
-        await this.hideLoading();
 
         this.loadingCtrlCreating = true;
+
+        // Hide a previous loader in case there was one already.
+        await this.hideLoading();
         this.loader = await this.loadingCtrl.create({
             mode: 'ios',
             cssClass: 'wallet-loader',

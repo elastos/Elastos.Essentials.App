@@ -3,6 +3,7 @@
   <div *ngIf="nodesService._nodes.length > 0" class="ion-text-center header">
     <div class="search-container">
       <ion-input
+        #search
         placeholder="{{ 'search-supernode' | translate }}"
         [(ngModel)]="_node"
         (ngModelChange)="filterNodes($event)"
@@ -12,7 +13,7 @@
       </ion-input>
     </div>
   </div>
-  
+
   <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length > 0">
 
     <app-node-slider-search
