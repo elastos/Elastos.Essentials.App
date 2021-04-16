@@ -52,13 +52,15 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
-   /*  const notification = {
-      key: 'storagePlanExpiring',
-      title: 'Storage Plan Expiring',
-      message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
-      app: App.WALLET
-    };
-    this.globalNotifications.sendNotification(notification); */
+    /* setTimeout(()=>{
+      const notification = {
+        key: 'storagePlanExpiring',
+        title: 'Storage Plan Expiring',
+        message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
+        app: App.WALLET
+      };
+      this.globalNotifications.sendNotification(notification);
+    }, 2000); */
 
     this.titleBar.setTitle('elastos-essentials');
     this.titleBar.setNavigationMode(null);

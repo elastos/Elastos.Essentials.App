@@ -68,7 +68,7 @@ export class NotificationManagerService {
           notification.contactName = null;
           notification.contactAvatar = null;
         } */
-        
+
       } else if (notification.app === App.LAUNCHER) {
         notification.type = LauncherNotificationType.SYSTEM;
       } else {

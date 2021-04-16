@@ -1,5 +1,9 @@
+import { Subject } from "rxjs";
 import { Injectable } from "@angular/core";
 import { App } from "src/app/model/app.enum"
+import { Logger } from "../logger";
+import { GlobalStorageService } from "../services/global.storage.service";
+import { GlobalDIDSessionsService } from "./global.didsessions.service";
 
 /**
  * Object used to generate a notification.
@@ -13,7 +17,7 @@ export type NotificationRequest = {
     message: string;
     /** App that sent notification */
     app?: App;
-    
+
     /** Process of deprecating **/
     url?: string;
     emitter?: string;
@@ -35,12 +39,22 @@ export type Notification = NotificationRequest & {
     providedIn: 'root'
 })
 export class GlobalNotificationsService {
-
     public newNotifications = 0;
     public notifications: Notification[] = [];
-    private itemClickedListeners: ((notification) => void)[] = [];
+    private notificationsListener: Subject<Notification> = new Subject();
 
-    constructor() {
+    constructor(
+        private globalStorageService: GlobalStorageService,
+        private didSessions: GlobalDIDSessionsService
+    ) {}
+
+    public async init() {
+        this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
+            if (signedInIdentity) {
+                this.notifications = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "notifications", "notifications", []);
+                Logger.log("notifications", "Loaded existed notifications", this.notifications);
+            }
+        });
     }
 
     /**
@@ -56,20 +70,25 @@ export class GlobalNotificationsService {
         const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
         const notificationsLength = this.notifications.length;
         this.notifications = this.notifications.filter(notification => notification.key !== request.key);
-        this.notifications.push({
+        let notification: Notification = {
             key: request.key,
             title: request.title,
             message: request.message,
             app: request.app ? request.app : null,
             notificationId: characters.charAt(Math.floor(Math.random() * characters.length)),
             sent_date: Date.now()
-        });
+        };
+        this.notifications.push(notification);
+        this.saveNotifications();
+
+        Logger.log('Notifications', "Sending notification", notification);
 
         if(this.notifications.length > notificationsLength) {
             this.newNotifications++;
         }
 
-        console.log('Notifications', this.notifications);
+        this.notificationsListener.next(notification);
+
         return null;
     }
 
@@ -89,9 +108,19 @@ export class GlobalNotificationsService {
      */
     public clearNotification(notificationId: string) {
         this.notifications = this.notifications.filter(notification => notification.notificationId !== notificationId);
+        this.saveNotifications();
+    }
+
+    /**
+     * Saves current notifications array to persistent storage.
+     */
+    private saveNotifications() {
+        this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "notifications", "notifications", this.notifications);
     }
 
     public setNotificationListener(onNotification: (notification: Notification) => void) {
-        this.itemClickedListeners.push(onNotification);
+        this.notificationsListener.subscribe((notification)=>{
+            onNotification(notification);
+        });
     }
 }

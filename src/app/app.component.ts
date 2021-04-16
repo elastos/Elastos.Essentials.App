@@ -14,6 +14,7 @@ import { ElastosSDKHelper } from './helpers/elastossdk.helper';
 import { InternalElastosConnector } from './model/internalelastosconnector';
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
+import { GlobalNotificationsService } from './services/global.notifications.service';
 
 @Component({
     selector: 'app-root',
@@ -36,7 +37,8 @@ export class AppComponent {
         private globalAppBackgroundService: GlobalAppBackgroundService,
         private language: GlobalLanguageService,
         private intentService: GlobalIntentService,
-        private screenOrientation: ScreenOrientation
+        private screenOrientation: ScreenOrientation,
+        private notificationsService: GlobalNotificationsService
     ) {
     }
 
@@ -67,6 +69,7 @@ export class AppComponent {
 
             // TODO screen.orientation.lock('portrait');
             await this.language.init();
+            await this.notificationsService.init();
             await this.intentService.init();
             await this.didSessions.init();
 

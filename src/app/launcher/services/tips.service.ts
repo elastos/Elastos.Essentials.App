@@ -162,6 +162,8 @@ export class TipsService {
         // value must be a ISO string
         let latestSentTipTime = moment(value);
 
+        console.error(latestSentTipTime, moment())
+
         // Right time to show if last time we have shown a tip was more than X hours ago.
         resolve(latestSentTipTime.add(DURATION_MIN_BETWEEN_2_TIPS_MS, "hours").isBefore(moment()));
         //resolve(true);
