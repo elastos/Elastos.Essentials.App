@@ -3,15 +3,15 @@
 
     <!-- Loaders -->
     <div *ngIf="checkingInitialStatus" class="container center ion-text-center">
-        <ion-spinner></ion-spinner>
+        <ion-spinner name="crescent"></ion-spinner>
         <h4>{{ 'pickprovider.please-wait'  | translate }} <br> {{ 'pickprovider.checking-status'  | translate }}</h4>
     </div>
     <div *ngIf="publishingProvider" class="container center ion-text-center">
-        <ion-spinner></ion-spinner>
+        <ion-spinner name="crescent"></ion-spinner>
         <h4>{{ 'pickprovider.activating-provider'  | translate }}</h4>
     </div>
     <div *ngIf="vaultProviderCouldBeContacted && !checkingInitialStatus && publishInProgress()"  class="container center ion-text-center">
-        <ion-spinner></ion-spinner>
+        <ion-spinner name="crescent"></ion-spinner>
         <h4 class="ion-padding">{{ 'pickprovider.hivevault-publishing' | translate }}</h4>
     </div>
 
@@ -58,7 +58,7 @@
         <h3>{{ 'pickprovider.primary-plan'  | translate }}</h3>
         <div *ngIf="fetchingActivePaymentPlan" style="width:100%">
             <div class="bubble ion-text-center ion-padding">
-                <ion-spinner></ion-spinner> <br><br>
+                <ion-spinner name="crescent"></ion-spinner> <br><br>
                 <p>{{ 'pickprovider.please-wait'  | translate }} <br> {{ 'pickprovider.retrieving-plan'  | translate }}</p>
             </div>
         </div>
@@ -91,7 +91,7 @@
         <h3>{{ 'pickprovider.pending-orders' | translate }}</h3>
         <div *ngIf="fetchingOrdersAwaitingTxConfirmation" style="width:100%">
             <div class="bubble ion-text-center ion-padding">
-                <ion-spinner></ion-spinner>
+                <ion-spinner name="crescent"></ion-spinner>
                 <p>{{ 'pickprovider.please-wait'  | translate }} <br> {{ 'pickprovider.retrieving-orders'  | translate }}</p>
             </div>
         </div>

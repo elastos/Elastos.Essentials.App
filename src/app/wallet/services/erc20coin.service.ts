@@ -35,6 +35,11 @@ export class ERC20CoinService {
     private web3: Web3;
     private erc20ABI: any;
 
+    // Addresses to test
+    // 0xe125585c7588503927c0b733a9ebd3b8af0a940d
+    // 0xdeeddbe67ff585af58622c904b04fca615ffe8aa
+    // 0xa438928dbad409fd927029156542aa7b466508d9
+
     constructor(private prefs: WalletPrefsService) {
     }
 

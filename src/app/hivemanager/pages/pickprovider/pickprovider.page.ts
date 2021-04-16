@@ -32,7 +32,7 @@ export class PickProviderPage implements OnInit {
 
   public checkingInitialStatus: boolean = true;
   public vaultProviderCouldBeContacted: boolean = false;
-  private vaultLinkStatus: VaultLinkStatus = null;
+  public vaultLinkStatus: VaultLinkStatus = null;
   private forceProviderChange = false;
   private developerMode = false;
   public manualProviderAddress: string = null;

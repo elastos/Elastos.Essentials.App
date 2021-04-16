@@ -16,7 +16,8 @@ import { ESSENTIALS_CONNECT_URL_PREFIX, GlobalConnectService } from 'src/app/ser
 import { isObject } from 'lodash-es';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 
-// The worker JS file from qr-scanner must be copied manually from the qr-scanner node_modules sources and copied to our assets/ folder
+// The worker JS file from qr-scanner must be copied manually from 
+// the qr-scanner node_modules sources and copied to our assets/folder
 QrScanner.WORKER_PATH = "./assets/scanner/qr-scanner-worker.min.js"
 
 export type ScanPageRouteParams = {
@@ -51,7 +52,7 @@ export class ScanPage {
         private zone: NgZone,
         private alertController: AlertController,
         private loadingController: LoadingController,
-        private theme: GlobalThemeService,
+        public theme: GlobalThemeService,
         private globalIntentService: GlobalIntentService,
         private globalConnectService: GlobalConnectService,
         private globalNav: GlobalNavService,
@@ -64,6 +65,7 @@ export class ScanPage {
     }
 
     ionViewWillEnter() {
+        this.titleBar.setTitle(this.translate.instant('app-scanner'));
         this.titleBar.setNavigationMode(null);
         this.showGalleryTitlebarKey(true);
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem)=>{
@@ -405,8 +407,6 @@ export class ScanPage {
 
         this.stopScanning();
         await this.hideCamera();
-
-        // TODO @chad, navigate somewhere else instead - essentialsIntentManager.close();
     }
 
     public async showLoading() {

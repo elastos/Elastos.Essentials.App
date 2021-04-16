@@ -1,6 +1,7 @@
 ion-header {
     position: sticky;
     top: 0;
+    z-index: 1000000;
 
     ion-row {
         width: 100%;

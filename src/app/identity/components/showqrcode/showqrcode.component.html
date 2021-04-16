@@ -1,4 +1,23 @@
 <ion-grid [class.darkContainer]="theme.darkMode">
+
+  <h1>{{ "my-identity-qr-code" | translate }}</h1>
+  <div>
+    <qrcode [qrdata]="qrCodeString" [size]="150"></qrcode>
+  </div>
+  <h2>{{ didString.slice(4,16) }}...{{ didString.slice(40,46) }}</h2>
+
+  <ion-row class="footer">
+    <ion-button color="tertiary"  (click)="copyDIDToClipboard()">
+      <ion-label>{{ 'copy-to-clipboard' | translate }}</ion-label>
+    </ion-button>
+    <ion-button color="tertiary" (click)="hideModal()">
+      <ion-label>{{ "back" | translate }}</ion-label>
+    </ion-button>
+  </ion-row>
+
+</ion-grid>
+
+<!-- <ion-grid [class.darkContainer]="theme.darkMode">
   <ion-row class="ion-text-center">
     <h1 class="title">{{ "my-identity-qr-code" | translate }}</h1>
   </ion-row>
@@ -11,7 +30,6 @@
   </ion-row>
 
   <ion-row class="ion-text-center ion-justify-content-center">
-    <!-- <h2>{{ didString.slice(4, 16) }}...{{ didString.slice(40, 46) }}</h2> -->
     <ion-col size="6">
       <span class="did">{{ didString }}</span>
     </ion-col>
@@ -29,4 +47,4 @@
       <ion-label>{{ "back" | translate }}</ion-label>
     </ion-button>
   </ion-row>
-</ion-grid>
+</ion-grid> -->

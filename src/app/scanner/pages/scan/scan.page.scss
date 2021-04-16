@@ -47,3 +47,19 @@
 .transparentBody {
     --background: none transparent;
 }
+
+ion-fab-button {
+    --background: #ffffff;
+
+    ion-icon {
+        color: #353650;
+    }
+}
+
+.dark-fab {
+    --background: #191a2f;
+
+    ion-icon {
+        color: #ffffff;
+    }
+}

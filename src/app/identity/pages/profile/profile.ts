@@ -472,8 +472,6 @@ export class ProfilePage {
     return iconUrl;
   }
 
-
-
   /**********************************************
    Update data's visibility's selection for both
    'credentials' and 'data' tab
@@ -543,7 +541,7 @@ export class ProfilePage {
         didString: this.profileService.didString,
         qrCodeString: await this.profileService.getAddFriendShareableUrl(),
       },
-      cssClass: "identity-showqrcode-component",
+      cssClass: !this.theme.darkMode ? "identity-showqrcode-component" : 'identity-showqrcode-component-dark',
     });
     modal.onDidDismiss().then((params) => { });
     modal.present();

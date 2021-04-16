@@ -7,7 +7,7 @@
         <div class='through-line'></div>
 
         <ion-fab vertical="bottom" horizontal="end">
-            <ion-fab-button color="secondary" (click)="toggleLight()">
+            <ion-fab-button [class.dark-fab]="theme.darkMode" (click)="toggleLight()">
                 <ion-icon name="flash"></ion-icon>
             </ion-fab-button>
         </ion-fab>
@@ -16,6 +16,7 @@
             {{scannedText}}
         </div>-->
     </div>
+
     <!-- Camera OFF -->
     <ng-template #showNothing>
       <div style="height: 100%;"></div>
