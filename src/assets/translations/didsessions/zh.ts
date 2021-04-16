@@ -32,7 +32,6 @@ export const zh = {
   'import-again-yes': '是的',
 
   // Create screen
-  'elastos-essentials': 'Elastos Essentials',
   'welcome-message1': '欢迎使用新一代互联网，您可以在安全的沙盒环境中控制自己的数字身份。',
   'welcome-message2': '您可以在所有应用程序中无缝验证您的身份及其凭据，而且不会泄露您的隐私和数据。',
   // 'welcome-message3': "首先，创建您的 分布式身份 或导入您已经拥有的身份。",

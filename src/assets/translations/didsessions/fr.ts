@@ -31,7 +31,6 @@ export const fr = {
   'import-again-yes': 'Oui',
 
   // Create screen
-  'elastos-essentials': 'Elastos Essentials',
   'welcome-message1': 'Bienvenue dans l\'internet moderne, dans lequel vous prenez le contrôle de votre identité numérique.',
   'welcome-message2': 'Vous pouvez désormais gérer votre identité et vérifier celle des autres, sans devoir fournir toutes vos données à un tiers.',
   'welcome-message3': "Commençons par créer",

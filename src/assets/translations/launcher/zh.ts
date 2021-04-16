@@ -22,7 +22,6 @@ export const zh = {
     'system-notification': '系统消息',
 
     /********** Home Page **********/
-    'elastos-essentials': 'Elastos Essentials',
     'recent': '最近使用',
     'welcome': '欢迎',
     'open-our-app': '您可以打开',

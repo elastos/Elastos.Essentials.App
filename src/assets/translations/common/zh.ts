@@ -1,5 +1,5 @@
 export const zh = {
-    'application-name': 'Elastos Essentials',
+    'elastos-essentials': 'Elastos Essentials',
 
     // Generic actions
     'delete': '删除',

@@ -1,5 +1,5 @@
 export const fr = {
-    'application-name': 'Elastos Essentials',
+    'elastos-essentials': 'Elastos Essentials',
 
     // Generic actions
     'delete': 'Supprimer',

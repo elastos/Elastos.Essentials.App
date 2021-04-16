@@ -22,7 +22,6 @@ export const en = {
     'system-notification': 'System Notification',
 
     /********** Home Page **********/
-    'elastos-essentials': 'Elastos Essentials',
     'recent': 'Recent',
     'welcome': 'Welcome',
     'open-our-app': 'You can start by opening the',
