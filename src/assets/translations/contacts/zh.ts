@@ -36,7 +36,7 @@ export const zh = {
   'did': '身份码',
   'elaWallet': 'ELA 地址',
   'carrier': 'Carrier 地址',
-  'elastos-notifications-carrier-address': 'elastOS通知Carrier地址',
+  'elastos-notifications-carrier-address': 'Elastos Essentials 通知Carrier地址',
 
   /********** Add Pg **********/
   'open-scanner': '扫一扫',

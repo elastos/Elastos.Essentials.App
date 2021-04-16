@@ -14,7 +14,7 @@ export const zh = {
      'advanced-setting': '高级设置',
      'change-lang': '更改全局语言',
      'manage-pw': '管理您的密码',
-     'about-elastos': 'elastOS 详情',
+     'about-elastos': 'Elastos Essentials 详情',
      // Other
      'light-mode-on': '浅色主题',
      'dark-mode-on': '深色主题',
@@ -38,7 +38,7 @@ export const zh = {
      'developer-options': '开发者选项',
      'background-services-enabled': '启用后台服务',
      'background-services-disabled': '禁用后台服务',
-     'please-restart': '请重新启动elastOS以应用更改',
+     'please-restart': '请重新启动 Elastos Essentials 以应用更改',
      'configure-network': '配置网络',
      'on': '开',
      'off': '关',
