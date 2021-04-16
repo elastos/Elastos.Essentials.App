@@ -38,7 +38,6 @@ export class CandidatesPage implements OnInit {
   public showCandidate = false;
   public candidateIndex: number;
   public addingCandidates = false;
-  onItemClickedListener: any;
 
   ngOnInit() {
     this.showCandidate = false;
@@ -46,17 +45,12 @@ export class CandidatesPage implements OnInit {
   }
 
   ionViewWillEnter() {
-/*     this.titleBar.setNavigationMode(null);
-    this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-    this.titleBar.setNavigationMode(null);
-    this.titleBar.setTitle(this.translate.instant('council-voting'));
- */
     if(this.candidatesService.candidates.length) {
       this.titleBar.setTitle(this.translate.instant('council-candidates'));
     } else if(this.candidatesService.council.length){
       this.titleBar.setTitle(this.translate.instant('council-members'));
     } else {
-      this.titleBar.setTitle(this.translate.instant('council-voting'));
+      this.titleBar.setTitle(this.translate.instant('app-cr-council'));
     }
   }
 
@@ -69,7 +63,6 @@ export class CandidatesPage implements OnInit {
       return 'council-voting';
     }
   }
-
 
   /****************** Select Candidate *******************/
   addCandidate(candidate: Candidate) {

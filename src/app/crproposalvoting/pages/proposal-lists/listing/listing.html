@@ -1,4 +1,5 @@
 <ion-content [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode" [class.darkmode]="theme.darkMode">
+    <app-titlebar></app-titlebar>
     <ion-refresher class="ion-margin-top" slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="crescent">
         </ion-refresher-content>
@@ -27,9 +28,16 @@
                     <h1><span>#</span>{{ proposal.id }}</h1>
                 </ion-col>
                 <ion-col size="8.5" class="middle-col">
-                    <h1>{{ proposal.proposedBy }}</h1>
-                    <p class="date">{{ uxService.formatDate(proposal.createdAt) }}</p>
-                    <p class="status">{{ uxService.getDisplayableStatus(proposal.status) }}</p>
+                    <h1>{{ proposal.title }}</h1>
+                    <p class="date">{{ uxService.formatDate(proposal.createdAt) }} &#8226; {{ proposal.proposedBy }}</p>
+                    <p 
+                        class="status"
+                        [class.final]="proposal.status === 'FINAL'"
+                        [class.active]="proposal.status === 'ACTIVE'"
+                        [class.rejected]="proposal.status === 'REJECTED'"
+                    >
+                        {{ uxService.getDisplayableStatus(proposal.status) }}
+                    </p>
                 </ion-col>
                 <ion-col size="1.5" class="right-col">
                     <ion-img [src]="!theme.darkMode ? '/assets/crproposalvoting/icons/right-arrow.svg' : '/assets/crproposalvoting/icons/darkmode/right-arrow.svg'"></ion-img>

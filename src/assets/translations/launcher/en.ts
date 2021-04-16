@@ -48,7 +48,7 @@ export const en = {
     'app-scanner-description': 'Scan anything',
     'app-settings': 'Settings',
     'app-settings-description': 'Manage Elastos Essentials',
-    'app-dpos-voting': 'DPoS voting',
+    'app-dpos-voting': 'DPoS Voting',
     'app-dpos-description': 'DPoS Supernodes',
     'app-cr-council': 'CR Council',
     'app-crcouncil-description': 'Cyber Republic council members',

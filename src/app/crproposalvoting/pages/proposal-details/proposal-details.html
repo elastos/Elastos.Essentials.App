@@ -5,7 +5,13 @@
       <ion-card>
         <ion-card-title>{{ 'proposal' | translate }} <span>#</span>{{ proposal.id }}</ion-card-title>
         <ion-card-subtitle>{{ 'by' | translate }} {{ proposal.proposedBy }} &#8226; {{ uxService.formatDate(proposal.createdAt) }}</ion-card-subtitle>
-        <p [class.FINAL]="proposal.status === 'FINAL'" [class.REJECTED]="proposal.status === 'REJECTED'">{{ uxService.getDisplayableStatus(proposal.status) }}</p>
+        <p 
+          [class.final]="proposal.status === 'FINAL'"
+          [class.active]="proposal.status === 'ACTIVE'"
+          [class.rejected]="proposal.status === 'REJECTED'"
+        >
+          {{ uxService.getDisplayableStatus(proposal.status) }}
+        </p>
       </ion-card>
 
       <ion-row *ngFor="let item of proposalDetails" class="section-row">

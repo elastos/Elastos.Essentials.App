@@ -1,18 +1,14 @@
-import { Component, NgZone, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ProposalService } from '../../services/proposal.service';
 import { ProposalSearchResult } from '../../model/proposal-search-result';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ProposalDetails, VoteResultType } from '../../model/proposal-details';
 import { UXService } from '../../services/ux.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
-import { App } from "src/app/model/app.enum"
-
 
 type MergedProposalInfo = ProposalSearchResult & ProposalDetails;
 
@@ -32,56 +28,44 @@ export class ProposalDetailsPage {
 
   activeTab = 1;
 
-  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
-
   constructor(
     public uxService: UXService,
-    private route: ActivatedRoute,
+    private router: Router,
     private proposalService: ProposalService,
-    private zone: NgZone,
     private changeDetector: ChangeDetectorRef,
     public theme: GlobalThemeService,
-    private nav: GlobalNavService,
     private globalIntentService: GlobalIntentService,
     private translate: TranslateService
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if(navigation.extras.state) {
+      const proposalId = navigation.extras.state.proposalId;
+      Logger.log('CRProposal', 'Proposal details id', proposalId);
+      this.init(proposalId);
+    }
+  }
+
+  async init(proposalId) {
+    this.proposal = null;
+    let proposalSearchResult = this.proposalService.getFetchedProposalById(proposalId);
+    let proposalDetails = await this.proposalService.fetchProposalDetails(proposalId);
+
+    this.proposal = Object.assign(proposalSearchResult, proposalDetails);
+    this.addProposalDetails();
+    this.titleBar.setTitle(this.translate.instant('proposal-details'));
+    Logger.log('CRProposal', "Merged proposal info:", this.proposal)
   }
 
   ionViewDidEnter() {
   }
 
   async ionViewWillEnter() {
-    // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle(this.translate.instant('loading-proposal'));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if(icon.key === 'backToHome') {
-        Logger.log('crproposal', 'LISTENING TO TITLEBAR!');
-        this.nav.navigateRoot(App.CRCOUNCIL_VOTING, '/crproposalvoting/proposals/ALL');
-      }
-    });
-
     this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
-
-    this.route.queryParams.subscribe(async (data: {proposalId: number})=>{
-      this.zone.run(async ()=>{
-        this.proposal = null;
-
-        let proposalSearchResult = this.proposalService.getFetchedProposalById(data.proposalId);
-        let proposalDetails = await this.proposalService.fetchProposalDetails(data.proposalId);
-
-        this.proposal = Object.assign(proposalSearchResult, proposalDetails);
-        this.addProposalDetails();
-        // titleBarManager.setTitle('Proposal ' + '#' + this.proposal.id);
-        this.titleBar.setTitle(this.translate.instant('proposal-details'));
-        Logger.log('crproposal', "Merged proposal info:", this.proposal)
-      });
-    });
   }
 
   ionViewDidLeave() {
-    this.titleBar.setTitle(this.translate.instant('proposals'));
-    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    // this.titleBar.setTitle(this.translate.instant('proposals'));
   }
 
   addProposalDetails() {

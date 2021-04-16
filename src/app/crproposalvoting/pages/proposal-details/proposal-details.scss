@@ -44,11 +44,15 @@ ion-grid {
             color: #8888b0;
         }
 
-        .FINAL {
-            color: #10dc60;
+        .active {
+            color: #ffc409;
         }
-          
-        .REJECTED {
+
+        .final {
+            color: #2dd36f;
+        }
+        
+        .rejected {
             color: #f04141;
         }
     }

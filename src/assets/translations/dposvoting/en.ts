@@ -1,6 +1,6 @@
 export const en = {
 
-  /********** History **********/
+    /********** History **********/
     'history-votes-overview': 'Votes Overview',
     'history-no-records': 'No records yet..',
 

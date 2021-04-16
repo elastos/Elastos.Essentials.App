@@ -7,7 +7,7 @@ import { CreateSuggestionPage } from './pages/intents/createsuggestion/createsug
 import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforproposal';
 
 const routes: Routes = [
-  {
+/*   {
     path: 'proposals', component: ProposalListsHomePage,
     children: [
       {
@@ -15,6 +15,9 @@ const routes: Routes = [
         component: ProposalListingPage,
       },
     ],
+  }, */
+  {
+    path: 'proposals/:proposalType', component: ProposalListingPage,
   },
   {
     path: 'proposal-details', component: ProposalDetailsPage

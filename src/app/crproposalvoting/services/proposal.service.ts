@@ -13,6 +13,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum'
 
 @Injectable({
     providedIn: 'root'
@@ -130,11 +131,13 @@ export class ProposalService {
     }
 
     public navigateToProposalDetailsPage(proposal: ProposalSearchResult) {
-        this.router.navigate(["/crproposalvoting/proposal-details"], {
+        this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalId: proposal.id } });
+
+        /* this.router.navigate(["/crproposalvoting/proposal-details"], {
             queryParams: {
                 proposalId: proposal.id
             }
-        })
+        }) */
     }
 
     public getFetchedProposalById(proposalId: number): ProposalSearchResult {

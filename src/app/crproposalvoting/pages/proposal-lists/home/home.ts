@@ -1,6 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -8,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./home.scss']
 })
 export class ProposalListsHomePage {
-  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
   
   constructor(
     public theme: GlobalThemeService,
@@ -17,7 +15,5 @@ export class ProposalListsHomePage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('proposals'));
-    this.titleBar.setNavigationMode(null);
   }
 }

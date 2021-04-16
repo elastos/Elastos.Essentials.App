@@ -10,6 +10,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
+import { init } from 'svelte-i18n';
 
 @Component({
   selector: 'page-proposal-listing',
@@ -42,8 +43,7 @@ export class ProposalListingPage implements OnInit {
     public translate: TranslateService
   ) {
     this.proposalType = this.route.snapshot.params.proposalType as ProposalStatus;
-
-    Logger.log('crproposal', this.proposalType, 'Proposal type');
+    Logger.log('CRProposal', this.proposalType, 'Proposal type');
     this.allProposalsLoaded = false;
   }
 
@@ -51,16 +51,18 @@ export class ProposalListingPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.allProposalsLoaded = false;
-  }
-
-  async ionViewDidEnter() {
-    if (!this.proposalsFetched) {
-      await this.fetchProposals();
-    }
+    this.init();
   }
 
   ionViewWillLeave() {
+  }
+
+  async init() {
+    this.titleBar.setTitle(this.translate.instant('app-cr-proposal'));
+
+    if (!this.proposalsFetched) {
+      await this.fetchProposals();
+    }
   }
 
   async fetchProposals() {
