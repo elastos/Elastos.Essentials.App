@@ -33,11 +33,10 @@ export const fr = {
   // Create screen
   'elastos-essentials': 'Elastos Essentials',
   'welcome-message1': 'Bienvenue dans l\'internet moderne, dans lequel vous prenez le contrôle de votre identité numérique.',
-  'welcome-message2': 'This will give you the ability to verify your identity and its credentials seamlessly across all applications without losing your privacy and data.',
-  // 'welcome-message3': "Let's start by creating your first decentralized identity or import one that you already own.",
-  'welcome-message3': "Let's start by creating",
-  'welcome-message3.1': "your first decentralized identity",
-  'welcome-message3.2': "or import one that you already own.",
+  'welcome-message2': 'Vous pouvez désormais gérer votre identité et vérifier celle des autres, sans devoir fournir toutes vos données à un tiers.',
+  'welcome-message3': "Commençons par créer",
+  'welcome-message3.1': "votre première identité décentralisée",
+  'welcome-message3.2': "ou par en importer une existante.",
   'create-message': 'Créez une toute nouvelle identité ou importez une identité que vous possédez déjà',
   'new': 'Nouvelle',
   'import': 'Importer',
@@ -69,14 +68,12 @@ export const fr = {
   'retrieve-prompt': 'Recherche et importation des identités, veuillez patienter.',
 
   // Backup
-  'decentralized-id': 'Decentralized ID',
-  'did-warning-info': 'This is your secret QR Code which holds your identity private key, don\'t share this with anyone.',
-  'print-qrcode': 'Print QR Code',
-  'manual-verify': 'Manual Verification',
-  'only-qrcode': 'Only QR Code',
-  'qrcode-and-mnemonic-words': 'QR Code and Mnemonic words',
-  'verify-did': 'Verify',
-  'print-title': 'KEEP THIS PRIVATE!',
+  'decentralized-id': 'ID décentralisé',
+  'did-warning-info': 'Ceci est la QR code qui contient la clé secrète de votre identité. Ne le partagez avec personne.',
+  'print-qrcode': 'Imprimer le QR Code',
+  'manual-verify': 'Vérification Manuelle',
+  'only-qrcode': 'QR code uniquement',
+  'qrcode-and-mnemonic-words': 'QR Code et Clé Papier',
+  'verify-did': 'Vérifier',
+  'print-title': 'GARDEZ CECI SECRET!',
 };
-
-
