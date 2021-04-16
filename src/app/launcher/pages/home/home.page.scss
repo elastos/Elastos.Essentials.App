@@ -45,11 +45,17 @@ ion-content {
       align-items: flex-start;
       width: 100%;
 
-      .fittext-container {
-        width: 100%;
+      .fittext  {
+        display: block;
+        font-size: 6vw;
+        font-weight: 500;
+        letter-spacing: -0.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
       }
 
-      h1, h2, .fittext {
+      h1, .fittext {
         margin: 0;
         text-align: left;
         color: #000000;
@@ -60,13 +66,6 @@ ion-content {
         font-weight: 700;
         letter-spacing: 2.4px;
         margin-bottom: 3px;
-      }
-
-      h2, .fittext  {
-        font-size: 24px;
-        font-weight: 500;
-        letter-spacing: 0.28px;
-        word-wrap: break-word;
       }
     }
 

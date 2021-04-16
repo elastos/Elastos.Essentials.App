@@ -18,9 +18,7 @@
 
       <ion-col size="7.25" class="mid-col" (click)="showMyIdentity()">
         <h1>{{ getDateFromNow().toUpperCase() }}</h1>
-        <div class="fittext-container">
-          <h2>{{ didService.signedIdentity.name }}</h2>
-        </div>
+        <div class="fittext">{{ didService.signedIdentity.name }}</div>
       </ion-col>
       <ion-col offset="0.75" size="1.25" class="right-col" (click)="showOptions($event)">
         <img [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
