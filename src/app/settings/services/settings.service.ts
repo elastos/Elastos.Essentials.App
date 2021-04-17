@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-// import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { Logger } from 'src/app/logger';
+
+declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +14,25 @@ export class SettingsService {
 
   constructor(
     private sanitizer: DomSanitizer,
-    // private globalIntentService: GlobalIntentService,
     private native: GlobalNativeService,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
   ) { }
 
   async init() {
     this.getRuntimeVersion();
+  }
+
+  public async changePassword() {
+    Logger.log('Settings', 'changePassword');
+
+    try {
+      const result = await passwordManager.changeMasterPassword();
+      Logger.log('Settings', 'changePassword result', result);
+      result ? this.native.genericToast('change-pw-success') : this.native.genericToast('change-pw-fail');
+    } catch(err) {
+      Logger.log('Settings', 'changePassword err', err);
+      this.native.genericToast('change-pw-fail');
+    }
   }
 
   sanitize(url: string) {

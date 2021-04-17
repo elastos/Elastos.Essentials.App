@@ -1,5 +1,9 @@
 export const fr = {
 
+    /********** Generic **********/
+    'change-pw-success': 'Password reset was successful',
+    'change-pw-fail': 'Password reset failed. Please try again later',
+
     /********** Menu Page **********/
     // Titles
     'capsule-setting': "Gestionnaire d'application",
@@ -13,6 +17,7 @@ export const fr = {
     'your-app-details': 'DETAILS SUR VOS CAPSULES',
     'advanced-setting': 'PARAMETRES AVANCES',
     'change-lang': 'MODIFIER LA LANGUE GLOBALE',
+    'change-pw': 'CHANGE PASSWORD',
     'manage-pw': 'GERER VOS MOTS DE PASSE',
     'about-elastos': 'DETAILS SUR ELASTOS',
     // Other
@@ -22,8 +27,6 @@ export const fr = {
     'light': 'CLAIR',
     'log-out': 'Changer d\'utilisateur',
     'help':'Aide',
-
-    /********** Language Page **********/
 
     /********** About Page **********/
     'version': 'Version',

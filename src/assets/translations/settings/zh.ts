@@ -1,5 +1,9 @@
 export const zh = {
 
+     /********** Generic **********/
+    'change-pw-success': 'Password reset was successful',
+    'change-pw-fail': 'Password reset failed. Please try again later',
+
      /********** Language Page **********/
      // Titles
      'capsule-setting': '胶囊管理',
@@ -13,6 +17,7 @@ export const zh = {
      'your-app-details': '查看胶囊详情',
      'advanced-setting': '高级设置',
      'change-lang': '更改全局语言',
+     'change-pw': 'CHANGE PASSWORD',
      'manage-pw': '管理您的密码',
      'about-elastos': 'Elastos Essentials 详情',
      // Other
@@ -22,8 +27,6 @@ export const zh = {
      'light': '浅',
      'log-out': '注销',
      'help':'帮助',
-
-     /********** Language Page **********/
 
      /********** About Page **********/
      'version': '版本号',

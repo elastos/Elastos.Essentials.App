@@ -7,6 +7,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { App } from "src/app/model/app.enum"
+import { SettingsService } from '../../services/settings.service';
 
 type Preferences = {
   developerMode: boolean
@@ -56,6 +57,7 @@ export class MenuPage implements OnInit {
     public translate: TranslateService,
     private nav: GlobalNavService,
     private prefsService: GlobalPreferencesService,
+    private settingsService: SettingsService
   ) {
     this.init();
   }
@@ -77,6 +79,10 @@ export class MenuPage implements OnInit {
   }
 
   ionViewDidEnter() {
+  }
+
+  async onChangePassword() {
+    await this.settingsService.changePassword();
   }
 
   toggleDeveloperMode() {

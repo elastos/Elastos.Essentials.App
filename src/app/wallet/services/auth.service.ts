@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { LocalStorage } from './storage.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -11,7 +12,7 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 export class AuthService {
     public static instance: AuthService = null;
 
-    constructor(private storage: LocalStorage) {
+    constructor(private storage: LocalStorage, private native: GlobalNativeService) {
         AuthService.instance = this;
     }
 

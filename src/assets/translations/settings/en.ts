@@ -1,5 +1,9 @@
 export const en = {
 
+    /********** Generic **********/
+    'change-pw-success': 'Password reset was successful',
+    'change-pw-fail': 'Password reset failed. Please try again later',
+
     /********** Menu Page **********/
     // Titles
     'capsule-setting': 'Capsule Settings',
@@ -14,6 +18,7 @@ export const en = {
     'advanced-setting': 'ADVANCED SETTINGS',
     'change-lang': 'CHANGE GLOBAL LANGUAGE',
     'manage-pw': 'MANAGE PASSWORD',
+    'change-pw': 'CHANGE PASSWORD',
     'about-elastos': 'DETAILS ABOUT ELASTOS ESSENTIALS',
     // Other
     'light-mode-on': 'LIGHT MODE ON',
@@ -22,8 +27,6 @@ export const en = {
     'light': 'LIGHT',
     'log-out': 'Log Out',
     'help':'Help',
-
-    /********** Language Page **********/
 
     /********** About Page **********/
     'version': 'Version',
