@@ -749,4 +749,8 @@ export class MyProfilePage {
       true
     );
   }
+
+  testPage() {
+    this.native.go("/identity/publishing")
+  }
 }

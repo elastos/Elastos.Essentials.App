@@ -87,6 +87,7 @@ export class ProfileService {
   private fetchingPublishedDIDDocument = false;
   private fetchedPublishedDIDDocument = false; // TODO: DUPLICATE - DIDSync service also fetches the document and deals with set/isPublishStatus()
   public publishedDIDDocument: DIDDocument = null;
+  
   // Publish status
   public didNeedsToBePublished: boolean = false;
   private publishStatusFetched: boolean = false;

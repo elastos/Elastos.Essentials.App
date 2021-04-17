@@ -29,8 +29,8 @@ export class SettingsPage implements OnInit {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
   }
 
-  goToAdvancedSettings() {
-    this.globalNav.navigateTo(App.IDENTITY, '/identity/advanced-settings');
+  goToSettings(route: string) {
+    this.globalNav.navigateTo(App.IDENTITY, route);
   }
 
 }

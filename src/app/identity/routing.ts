@@ -18,6 +18,7 @@ const routes: Routes = [
   { path: 'advanced-settings', loadChildren: ()=>import('./pages/advanced-settings/module').then(m => m.AdvancedSettingsModule) },
   { path: "exportmnemonic", loadChildren: ()=>import('./pages/exportmnemonic/module').then(m => m.ExportMnemonicModule) },
   { path: "intents", loadChildren: ()=>import('./pages/intents/module').then(m => m.IntentsModule) },
+  { path: "publishing", loadChildren: ()=>import('./pages/publishing/module').then(m => m.PublishingModule) },
 ];
 
 @NgModule({

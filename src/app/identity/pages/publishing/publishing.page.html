@@ -1,0 +1,59 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="ion-text-center" [class.dark-process-container]="theme.darkMode">
+    <ion-row class="steps-row">
+      <ion-col size="12">
+        <ion-label>
+          <h1>{{ 'publishing.create-did' | translate }}</h1>
+          <h2>{{ 'publishing.create-did-msg' | translate }}</h2>
+        </ion-label>
+        <ion-icon class="done" name="checkmark-circle-outline"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-icon name="arrow-down-circle-outline"></ion-icon>
+    <ion-row class="steps-row">
+      <ion-col size="12">
+        <ion-label>
+          <h1>{{ 'publishing.publish-did' | translate }}</h1>
+          <h2>{{ 'publishing.publish-did-msg' | translate }}</h2>
+        </ion-label>
+        <ion-icon *ngIf="didIsPublished()" class="done" name="checkmark-circle-outline"></ion-icon>
+      <!--   <ion-icon class="pending" name="timer-outline"></ion-icon> -->
+        <ion-spinner *ngIf="!didIsPublished()" name="crescent"></ion-spinner>
+      </ion-col>
+    </ion-row>
+    <ion-icon name="arrow-down-circle-outline"></ion-icon>
+    <ion-row class="steps-row">
+      <ion-col size="12">
+        <ion-label>
+          <h1>{{ 'publishing.config-storage' | translate }}</h1>
+          <h2>{{ 'publishing.config-storage-msg' | translate }}</h2>
+        </ion-label>
+        <ion-icon *ngIf="didIsPublished()" class="done" name="checkmark-circle-outline"></ion-icon>
+        <ion-icon *ngIf="!didIsPublished()" class="pending" name="timer-outline"></ion-icon>
+<!--         <ion-spinner *ngIf="!didIsPublished()" name="crescent"></ion-spinner> -->
+      </ion-col>
+    </ion-row>
+
+    <div *ngIf="!didIsPublished()" class="progress-msg">
+      <p>{{ 'publishing.progress-msg' | translate }}</p>
+    </div>
+
+    <div *ngIf="didIsPublished()" class="done-msg">
+      <lottie-player src="/assets/wallet/animations/success.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay></lottie-player>
+      <p>{{ 'publishing.done-msg' | translate }}</p>
+    </div>
+
+  </ion-grid>
+
+  <div class="footer">
+    <div *ngIf="!didIsPublished()" class="ion-margin-bottom">
+      <p><strong>{{ getProgress() }}</strong><span>% {{ 'publishing.takes-long-time' | translate }}</span></p>
+      <ion-progress-bar mode="ios" color="tertiary" type="determinate" [value]="progress"></ion-progress-bar>
+    </div>
+    <ion-button color="tertiary" (click)="returnHome()">
+      {{ 'back' | translate }}
+    </ion-button>
+  </div>
+</ion-content>
+

@@ -96,7 +96,21 @@ export const fr = {
     'showing-all-visible-credentials': 'Montrez Tous les Crédentiels Visibles',
     'toggle-credentials-to-publish': 'Sélectionnez les Crédentiels à Publier',
 
+    // page: publishing
+    "publishing": {
+        "create-did": "Create Identity",
+        "create-did-msg": "Add a new Identity locally on your device",
+        "publish-did": "Publish Identity",
+        "publish-did-msg": "Record identity to the public repository. This step takes between 10 and 15 minutes.",
+        "config-storage": "Configure Storage",
+        "config-storage-msg": "Setup a personal storage for your Identity\'s data.",
+        "progress-msg": "Please don\'t hesitate to leave at any time. Your Identity will continue to publish while you are away.",
+        "done-msg": "All done, you now have a decentralized identity and storage space! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.",
+        "takes-long-time": "(this takes several minutes)",
+    },
+
     // page: settings & advanced-settings
+    'publication-status': 'Publication Status',
     'advanced-settings': 'Paramètres avancés',
     'available-options': 'Options disponibles',
     'sync-did-profile': 'Synchroniser l\'identité',
