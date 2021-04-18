@@ -1,6 +1,6 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-button (click)="testPage()">Test Publishing</ion-button>
+  <!-- <ion-button (click)="testPage()">Test Publishing</ion-button> -->
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
 
     <ion-grid class="header-grid">
@@ -108,7 +108,7 @@
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
         <ion-col size="5.8" class="export ripple ion-activatable" (click)="exportMnemonic()">
-          <img src="{{ this.theme.darkMode ? '/assets/identity/svg/share-button-dark.svg' : '/assets/identity/svg/share-button.svg' }}" />
+          <img src="{{ this.theme.darkMode ? '/assets/identity/svg/export.svg' : '/assets/identity/svg/export-dark.svg' }}" />
           <h2>{{ 'export-mnemonics' | translate}}</h2>
           <span>{{ 'export-mnemonics-description' | translate}}</span>
           <ion-ripple-effect></ion-ripple-effect>

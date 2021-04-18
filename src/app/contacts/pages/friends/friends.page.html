@@ -113,6 +113,7 @@
         <ion-item-sliding *ngFor="let contact of friendsService.contacts">
           <!-- HAS CONTACT NAME -->
           <ion-item
+            class="ripple ion-activatable"
             [class.activeItem]="
               contact === friendsService.activeSlide ||
               !friendsService.activeSlide && firstContact() ?
@@ -134,9 +135,11 @@
                 </ion-col>
               </ion-row>
             </ion-grid>
+            <ion-ripple-effect></ion-ripple-effect>
           </ion-item>
           <!-- HAS NO CONTACT NAME -->
           <ion-item
+            class="ripple ion-activatable"
             [class.activeItem]="contact === friendsService.activeSlide"
             detail="false"
             lines="none"
@@ -158,6 +161,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
+          <ion-ripple-effect></ion-ripple-effect>
         </ion-item>
         <ion-item-options side="end">
           <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="friendsService.toggleFav(contact)">
@@ -179,6 +183,7 @@
     <ion-list *ngIf="friendsService.contacts.length > 0 && favActive">
       <ion-item-sliding *ngFor="let contact of getFavorites()">
         <ion-item
+          class="ripple ion-activatable"
           [class.activeItem]="
             contact === friendsService.activeSlide ||
             !friendsService.activeSlide && firstContact() ?
@@ -199,6 +204,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
+          <ion-ripple-effect></ion-ripple-effect>
         </ion-item>
         <ion-item-options side="end">
           <ion-item-option class="itemOption" [class.activeItemOption]="contact === friendsService.activeSlide" (click)="friendsService.toggleFav(contact)">

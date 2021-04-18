@@ -8,7 +8,12 @@
     <ion-refresher-content class="ion-margin-top ion-padding-top"></ion-refresher-content>
   </ion-refresher>
  -->
-  <ion-grid *ngIf="nodesService._nodes.length; else emptyList" class="container ion-no-padding ion-no-margin" [class.dark-container]="theme.darkMode">
+ 
+  <ion-grid 
+    *ngIf="nodesService._nodes.length; else loadingList"
+    class="container ion-no-padding ion-no-margin"
+    [class.dark-container]="theme.darkMode"
+  >
     <ion-list>
       <ion-item>
         <ion-grid class="ion-no-padding">
@@ -282,9 +287,9 @@
     </ion-list>
   </ion-grid>
 
-  <ng-template #emptyList>
+  <ng-template #loadingList>
     <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
-      <ion-list>
+      <ion-list [class.loading-list]="!theme.darkMode">
         <ion-item *ngFor="let empty of nodesService.emptyList">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">

@@ -12,6 +12,7 @@
     ion-item {
       --padding-start: 0px;
       --background: #ffffff;
+      margin-bottom: 1px;
 
       ion-row {
         padding: 2.5px 0;
@@ -43,6 +44,7 @@
     ion-item {
       box-shadow: 0 3px 15px 0 #151626;
       --background:  #2b2c49;  
+      --border-color: #2e2f4e;
     }
   }
 }

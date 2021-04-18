@@ -16,9 +16,10 @@ export class DIDStore {
     public dids: DID[] = [];
     private activeDid: DID = null;
 
-    constructor(private events: Events,
-                private didSessions: GlobalDIDSessionsService,
-                private globalIntentService: GlobalIntentService
+    constructor(
+        private events: Events,
+        private didSessions: GlobalDIDSessionsService,
+        private globalIntentService: GlobalIntentService
     ) { }
 
     public getActiveDid(): DID {

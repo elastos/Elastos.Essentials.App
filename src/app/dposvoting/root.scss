@@ -276,6 +276,20 @@
   }
 }
 
+.loading-list {
+  ion-item {
+    ion-grid {
+      ion-row {
+        ion-col {
+          ion-skeleton-text {
+            --background-rgb: 77, 77, 77;
+          }
+        }
+      }
+    }
+  }
+}
+
 /************************************ 
   ROOT TABS
   pages ~ app

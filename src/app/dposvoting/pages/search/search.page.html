@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length; else emptyList">
+  <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length; else loadingList">
 
     <app-node-slider-search
       *ngIf="showNode"
@@ -69,9 +69,9 @@
     </ion-list>
   </ion-grid>
 
-  <ng-template #emptyList>
+  <ng-template #loadingList>
     <ion-grid class="container ion-no-padding">
-      <ion-list class="node-list" [class.dark-node-list]="theme.darkMode">
+      <ion-list class="node-list" [class.dark-node-list]="theme.darkMode" [class.loading-list]="!theme.darkMode">
         <ion-item *ngFor='let empty of nodesService.emptyList' lines="none">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">

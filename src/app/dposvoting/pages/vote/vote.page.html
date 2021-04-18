@@ -4,7 +4,7 @@
     <ion-label><span>{{ getSelectedNodes() }}</span>/36 {{ 'vote-selected' | translate }}</ion-label>
   </div>
   
-  <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length; else emptyList">
+  <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length; else loadingList">
 
 <!--     <ion-button [routerLink]="['/dposvoting/home']">
       GO HOME
@@ -60,9 +60,9 @@
     </ion-list>
   </ion-grid>
 
-  <ng-template #emptyList>
+  <ng-template #loadingList>
     <ion-grid class="container ion-no-padding">
-      <ion-list class="node-list" [class.dark-node-list]="theme.darkMode">
+      <ion-list class="node-list" [class.dark-node-list]="theme.darkMode" [class.loading-list]="!theme.darkMode">
         <ion-item lines="none" *ngFor='let empty of nodesService.emptyList'>
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">
