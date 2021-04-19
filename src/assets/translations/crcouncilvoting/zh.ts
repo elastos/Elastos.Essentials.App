@@ -23,6 +23,7 @@ export const zh = {
     'get-ela-failed-message': '钱包中有ELA 才能进行 CR 委员投票',
     'vote-success': '投票成功!',
     'vote-failed': '投票失败',
+    'vote-incomplete': '投票失败',
     'cr-voting-ended': 'CR委员选举已经结束',
     'cr-voting-ended-message': '在下一轮选举之前不会有任何投票',
     'cr-council-no-available' : 'CR委员投票暂时不可用, 请稍后再试'

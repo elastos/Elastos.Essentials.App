@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Config } from '../config/config';
 import { ProposalStatus } from '../model/proposal-status';
 import { ProposalsSearchResponse } from '../model/proposal-search-response';
 import { ProposalSearchResult } from '../model/proposal-search-result';
-import { Router } from '@angular/router';
 import { ProposalDetails } from '../model/proposal-details';
 import { ProposalsDetailsResponse } from '../model/proposal-details-response';
 import { SuggestionDetails } from '../model/suggestion-details';
@@ -23,22 +21,13 @@ export class ProposalService {
 
     constructor(
         private http: HttpClient,
-        private router: Router,
         private prefs: GlobalPreferencesService,
         private nav: GlobalNavService
     ) {}
 
     private getCRProposalAPI(): Promise<string> {
-		return new Promise(async (resolve)=>{
-            let value = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, "chain.network.type");
-            if (value == "MainNet")
-                resolve(Config.CR_PROPOSAL_API_MAINNET);
-            else if (value == "PrvNet")
-                resolve(Config.CR_PROPOSAL_API_PRIVNET);
-            else
-                resolve(null);
-        });
-	}
+        return this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
+	  }
 
     public async fetchProposals(status: ProposalStatus, page: number): Promise<ProposalsSearchResponse> {
         let apiUrl = await this.getCRProposalAPI();

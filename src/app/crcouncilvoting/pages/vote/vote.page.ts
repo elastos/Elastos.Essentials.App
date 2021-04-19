@@ -102,9 +102,9 @@ export class VotePage implements OnInit, OnDestroy {
 
           if(res.result.txid === null ) {
             this.castingVote = false;
-            this.voteFailedToast('Vote processing was incomplete');
+            this.voteFailedToast('vote-incomplete');
           } else {
-            Logger.log('crcouncil', 'Insent sent sucessfully', res);
+            Logger.log('crcouncil', 'Intent sent sucessfully', res);
             this.castingVote = false;
             this.votesCasted = true;
             this.voteSuccessToast(res.result.txid);

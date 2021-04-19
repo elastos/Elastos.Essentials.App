@@ -22,6 +22,7 @@ export const fr = {
     'get-ela-failed-message': 'ELA balance is needed to assess your voting rights',
     'vote-success': 'Voted successfully casted!',
     'vote-failed': 'There was an error with casting votes..',
+    'vote-incomplete': 'Vote processing was incomplete',
     'cr-voting-ended': 'The CRC Election has ended',
     'cr-voting-ended-message': 'There won\'t be any voting here until the next election cycle',
     'cr-council-no-available' : 'The CRC Council is not available at this time, please try again later'
