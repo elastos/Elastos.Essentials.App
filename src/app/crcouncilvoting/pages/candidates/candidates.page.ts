@@ -79,7 +79,7 @@ export class CandidatesPage implements OnInit {
     try {
       let res = await this.globalIntentService.sendIntent(
         "https://wallet.elastos.net/walletaccess",
-        { elaamount: { reason: "For CRC voting rights" } });
+        { elaamount: { reason: this.translate.instant("walletaccess-reason") } });
       if (res.result.walletinfo) {
         let props: NavigationExtras = {
           queryParams: {
@@ -125,26 +125,26 @@ export class CandidatesPage implements OnInit {
 
   /****************** Toasts/Alerts *******************/
   async toastWalletErr() {
-    this.toastCtrl.create({
+    const toast = await this.toastCtrl.create({
       mode: "ios",
       position: "top",
       color: "primary",
-      header: "Failed to fetch ELA balance",
-      message: "ELA balance is needed to assess your voting rights",
+      header: this.translate.instant("get-ela-failed-header"),
+      message: this.translate.instant("get-ela-failed-message"),
       duration: 2000,
-    }).then(toast => toast.present())
-
+    });
+    toast.present();
   }
 
+  // TODO remove it, should not use intent
   async walletAlert() {
     const alert = await this.alertCtrl.create({
       mode: "ios",
-      header: "Wallet Access Request",
-      message:
-        "Wallet will fetch your ELA balance to estimate your voting power",
+      header: this.translate.instant("wallet-access-request"),
+      message: this.translate.instant("wallet-access-request-message"),
       buttons: [
         {
-          text: "Deny",
+          text: this.translate.instant('cancel'),
           role: "cancel",
           cssClass: "secondary",
           handler: () => {
@@ -152,7 +152,7 @@ export class CandidatesPage implements OnInit {
           }
         },
         {
-          text: "Continue",
+          text: this.translate.instant("continue"),
           handler: () => {
             this.addCandidates();
             /* this.addingCandidates = true;
@@ -166,6 +166,7 @@ export class CandidatesPage implements OnInit {
     alert.present();
   }
 
+  // TODO remove it?
   async registerAppAlert() {
     const alert = await this.alertCtrl.create({
       mode: "ios",
@@ -174,7 +175,7 @@ export class CandidatesPage implements OnInit {
         "Registering a capsule will allow your followers via Contacts to effortlessly browse your favorite capsules!",
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.instant('cancel'),
           role: "cancel",
           cssClass: "secondary",
           handler: () => {
@@ -182,10 +183,10 @@ export class CandidatesPage implements OnInit {
           }
         },
         {
-          text: "Yes",
+          text: this.translate.instant('cancel'),
           handler: () => {
             this.globalIntentService.sendIntent(
-              "registerapplicationprofile",
+              "https://wallet.elastos.net/registerapplicationprofile",
               {
                 identifier: "CRC Election",
                 connectactiontitle: "Take part in the new Smart Web democracy!"

@@ -36,7 +36,7 @@ export const fr = {
     'please-wait': "Veuillez patienter...",
     "sorry": "Désolé",
     'name-is-missing': "Veuillez saisir un nom",
-    'sentry-error': 'Error',
+    'error': 'Error',
     'sentry-message': 'Sorry, the application encountered an error. This has been reported to the team.',
 
     // Related to DID

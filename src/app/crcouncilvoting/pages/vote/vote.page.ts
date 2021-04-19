@@ -60,7 +60,7 @@ export class VotePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.castingVote = false;
     this.votesCasted = false;
-    this.candidatesService.candidates = [];
+    // this.candidatesService.candidates = [];
   }
 
   distribute() {
@@ -97,7 +97,7 @@ export class VotePage implements OnInit, OnDestroy {
       setTimeout(async () => {
         try {
           let res = await this.globalIntentService.sendIntent(
-            'crmembervote',
+            'https://wallet.elastos.net/crmembervote',
             { votes: votedCandidates });
 
           if(res.result.txid === null ) {
@@ -150,7 +150,7 @@ export class VotePage implements OnInit, OnDestroy {
     const toast = await this.toastCtrl.create({
       mode: 'ios',
       position: 'middle',
-      header: 'Voted successfully casted!',
+      header: this.translate.instant('vote-success'),
       message: 'txid:' + txid.slice(0,30) + '...',
       color: 'tertiary',
       cssClass: 'customToast',
@@ -172,13 +172,13 @@ export class VotePage implements OnInit, OnDestroy {
     const toast = await this.toastCtrl.create({
       mode: 'ios',
       position: 'middle',
-      header: 'There was an error with casting votes..',
+      header: this.translate.instant('vote-failed'),
       message: err,
       color: 'tertiary',
       cssClass: 'customToast',
       buttons: [
         {
-          text: 'Okay',
+          text: this.translate.instant('ok'),
           handler: () => {
             toast.dismiss();
             // appManager.close();

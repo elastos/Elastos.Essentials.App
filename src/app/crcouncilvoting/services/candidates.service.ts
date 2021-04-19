@@ -11,6 +11,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { NetworkType } from 'src/app/model/networktype';
 import { Subscription } from 'rxjs';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class CandidatesService {
     private toastCtrl: ToastController,
     private storage: GlobalStorageService,
     private globalPreferences: GlobalPreferencesService,
+    public translate: TranslateService
   ) { }
 
 
@@ -114,7 +116,7 @@ export class CandidatesService {
       }
     }, (err) => {
       Logger.error('crcouncil', err);
-      this.alertErr('The CRC Council is not available at this time, please try again later');
+      this.alertErr('cr-council-no-available');
     });
   }
 
@@ -128,7 +130,6 @@ export class CandidatesService {
       this.http.get<any>(this.cr_council_term).subscribe((res) => {
         Logger.log('crcouncil', 'Council terms fetched', res);
         this.councilTerm = res.data[0].startDate;
-        Logger.log('crcouncil', 'Council term added', this.councilTerm);
         resolve();
       }, (err) => {
         Logger.error('crcouncil', err);
@@ -139,12 +140,11 @@ export class CandidatesService {
 
   fetchCouncil() {
     this.http.get<any>(this.cr_council_list).subscribe((res) => {
-      Logger.log('crcouncil', 'Counsil fetched', res);
+      Logger.log('crcouncil', 'Council fetched', res);
       this.council = res.data.council;
-      Logger.log('crcouncil', 'Council added', this.council);
       this.getLogos();
     }, (err) => {
-      this.alertErr('The CRC Council is not available at this time, please try again later');
+      this.alertErr('cr-council-no-available');
       Logger.error('crcouncil', err);
     });
   }
@@ -313,11 +313,11 @@ export class CandidatesService {
   async alertErr(err: string) {
     const alert = await this.alertCtrl.create({
       mode: 'ios',
-      header: 'Error',
-      message: err,
+      header: this.translate.instant('error'),
+      message: this.translate.instant(err),
       buttons: [
        {
-          text: 'Okay',
+          text: this.translate.instant('ok'),
           handler: () => {
             this.globalNav.navigateHome();
           }
@@ -333,8 +333,8 @@ export class CandidatesService {
       mode: 'ios',
       position: 'bottom',
       color: 'primary',
-      header: 'The CRC Election has ended',
-      message: 'There won\'t be any voting here until the next election cycle',
+      header: this.translate.instant('cr-voting-ended'),
+      message: this.translate.instant('cr-voting-ended-message'),
       duration: 6000
     });
 

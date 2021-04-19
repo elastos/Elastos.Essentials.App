@@ -36,7 +36,7 @@ export const zh = {
     'please-wait': "请稍候...",
     "sorry": "抱歉",
     'name-is-missing': "请输入名称",
-    'sentry-error': '错误',
+    'error': '错误',
     'sentry-message': '抱歉，程序出错了，已向开发团队报告。',
 
 

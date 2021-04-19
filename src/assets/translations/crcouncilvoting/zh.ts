@@ -13,5 +13,17 @@ export const zh = {
     'votes-casted': '已投票',
     'current-rank': '当前排名',
     'current-votes': '当前投票',
-    'percent-votes': '投票百分百',
+    'percent-votes': '投票百分比',
+    'walletaccess-reason': 'CR委员投票',
+
+    /********** Toast **********/
+    'wallet-access-request': '获取钱包信息',
+    'wallet-access-request-message': '将通过钱包获取您的ELA余额，以计算您的投票权',
+    'get-ela-failed-header': '无法获取 ELA 金额',
+    'get-ela-failed-message': '钱包中有ELA 才能进行 CR 委员投票',
+    'vote-success': '投票成功!',
+    'vote-failed': '投票失败',
+    'cr-voting-ended': 'CR委员选举已经结束',
+    'cr-voting-ended-message': '在下一轮选举之前不会有任何投票',
+    'cr-council-no-available' : 'CR委员投票暂时不可用, 请稍后再试'
 };
