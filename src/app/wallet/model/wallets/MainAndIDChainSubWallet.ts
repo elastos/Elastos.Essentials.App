@@ -53,7 +53,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             // Balance in SELA
             this.balance = new BigNumber(balanceStr, 10);
         } else {
-            Logger.log("wallet", 'Do not get Balance from spvsdk.');
+            Logger.log("wallet", 'Do not get Balance from spvsdk. ', this.id);
             // TODO: update balance by rpc?
         }
     }
