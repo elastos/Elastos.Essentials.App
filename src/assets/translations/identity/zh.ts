@@ -98,15 +98,15 @@ export const zh = {
 
     // page: publishing
     "publishing": {
-        "create-did": "Create Identity",
-        "create-did-msg": "Add a new Identity locally on your device",
-        "publish-did": "Publish Identity",
-        "publish-did-msg": "Record identity to the public repository. This step takes between 10 and 15 minutes.",
-        "config-storage": "Configure Storage",
-        "config-storage-msg": "Setup a personal storage for your Identity\'s data.",
-        "progress-msg": "Please don\'t hesitate to leave at any time. Your Identity will continue to publish while you are away.",
-        "done-msg": "All done, you now have a decentralized identity and storage space! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.",
-        "takes-long-time": "(this takes several minutes)",
+        "create-did": "创建身份",
+        "create-did-msg": "在本地设备上添加新身份",
+        "publish-did": "发布身份",
+        "publish-did-msg": "将身份记录到公共仓库。 此步骤需要10到15分钟。",
+        "config-storage": "配置存储",
+        "config-storage-msg": "为您的身份数据设置个人存储。",
+        "progress-msg": "请随时离开。您的身份将在您离开时继续发布。",
+        "done-msg": "完成所有操作后，您现在拥有了去中心的身份和存储空间！ 当您以后更好地了解DID的优点时，可以将其导出并在其他应用程序中重复使用。",
+        "takes-long-time": "（这需要几分钟）",
     },
 
     // page: settings & advanced-settings
