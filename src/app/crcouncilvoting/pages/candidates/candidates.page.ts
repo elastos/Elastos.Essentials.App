@@ -41,7 +41,6 @@ export class CandidatesPage implements OnInit {
 
   ngOnInit() {
     this.showCandidate = false;
-    this.candidatesService.init();
   }
 
   ionViewWillEnter() {
@@ -51,16 +50,6 @@ export class CandidatesPage implements OnInit {
       this.titleBar.setTitle(this.translate.instant('council-members'));
     } else {
       this.titleBar.setTitle(this.translate.instant('app-cr-council'));
-    }
-  }
-
-  getTitle() {
-    if(this.candidatesService.candidates.length) {
-      return 'council-candidates';
-    } else if(this.candidatesService.council.length){
-      return 'council-members';
-    } else {
-      return 'council-voting';
     }
   }
 
@@ -81,9 +70,7 @@ export class CandidatesPage implements OnInit {
         _candidate => _candidate.cid !== candidate.cid
       );
     }
-    Logger.log('crcouncil',
-      "Selected candidates",
-      this.candidatesService.selectedCandidates
+    Logger.log('crcouncil', "addCandidate: Selected candidates", this.candidatesService.selectedCandidates
     );
   }
 
@@ -91,16 +78,17 @@ export class CandidatesPage implements OnInit {
   async addCandidates() {
     try {
       let res = await this.globalIntentService.sendIntent(
-        "walletaccess",
+        "https://wallet.elastos.net/walletaccess",
         { elaamount: { reason: "For CRC voting rights" } });
-
-      let props: NavigationExtras = {
-        queryParams: {
-          elaamount: res.result.walletinfo[0].elaamount
-        }
-      };
-      Logger.log('crcouncil', "Candidates", this.candidatesService.selectedCandidates);
-      this.globalNav.navigateTo("crcouncilvoting", "/crcouncilvoting/vote", props);
+      if (res.result.walletinfo) {
+        let props: NavigationExtras = {
+          queryParams: {
+            elaamount: res.result.walletinfo[0].elaamount
+          }
+        };
+        Logger.log('crcouncil', "addCandidates: Selected Candidates", this.candidatesService.selectedCandidates);
+        this.globalNav.navigateTo("crcouncilvoting", "/crcouncilvoting/vote", props);
+      }
     }
     catch (err) {
       Logger.log('crcouncil', err);
@@ -137,14 +125,15 @@ export class CandidatesPage implements OnInit {
 
   /****************** Toasts/Alerts *******************/
   async toastWalletErr() {
-    const toast = await this.toastCtrl.create({
+    this.toastCtrl.create({
       mode: "ios",
       position: "top",
       color: "primary",
       header: "Failed to fetch ELA balance",
-      message: "ELA balance is needed to assess your voting rights"
-    });
-    toast.present();
+      message: "ELA balance is needed to assess your voting rights",
+      duration: 2000,
+    }).then(toast => toast.present())
+
   }
 
   async walletAlert() {

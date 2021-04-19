@@ -11,6 +11,7 @@ import { WalletInitService } from '../wallet/services/init.service';
 import { DPoSVotingInitService } from '../dposvoting/services/init.service';
 import { CRProposalVotingInitService } from '../crproposalvoting/services/init.service';
 import { DeveloperToolsInitService } from '../developertools/services/init.service';
+import { CRCouncilVotingInitService } from '../crcouncilvoting/services/init.service';
 
 
 @Injectable({
@@ -28,7 +29,7 @@ export class GlobalAppBackgroundService {
       private identityInitService: IdentityInitService,
       private walletInitService: WalletInitService,
       private dposVotingInitService: DPoSVotingInitService,
-      // private crCouncilVotingInitService: CRCouncilVotingInitService,
+      private crCouncilVotingInitService: CRCouncilVotingInitService,
       private crProposalVotingInitService: CRProposalVotingInitService,
       private developerToolsInitService: DeveloperToolsInitService
       ) {}
@@ -47,7 +48,7 @@ export class GlobalAppBackgroundService {
       await this.identityInitService.init();
       await this.walletInitService.init();
       await this.dposVotingInitService.init();
-      // await this.crCouncilVotingInitService.init();
+      await this.crCouncilVotingInitService.init();
       await this.crProposalVotingInitService.init();
       await this.developerToolsInitService.init();
       Logger.log('AppBackgroundService', 'init finished')

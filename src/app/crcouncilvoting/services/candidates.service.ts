@@ -8,6 +8,9 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { NetworkType } from 'src/app/model/networktype';
+import { Subscription } from 'rxjs';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +22,8 @@ export class CandidatesService {
     private globalNav: GlobalNavService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private storage: GlobalStorageService
+    private storage: GlobalStorageService,
+    private globalPreferences: GlobalPreferencesService,
   ) { }
 
 
@@ -32,6 +36,19 @@ export class CandidatesService {
   public councilTerm: number;
   public council: CouncilMember[] = [];
 
+  public activeNetwork: NetworkType;
+  private subscription: Subscription = null;
+
+  /** Http Url */
+  private ela_rpc_api = 'https://api.elastos.io/ela';
+  private cr_rpc_api = 'https://api.cyberrepublic.org';
+  private cr_council_term = 'https://api.cyberrepublic.org/api/council/term';
+  private cr_council_list = 'https://api.cyberrepublic.org/api/council/list/1';
+
+  // cors-anywhere: CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
+  private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
+  // private proxyurl = "";
+
   public httpOptions = {
     headers: new HttpHeaders({
       'Content-Type':  'application/json',
@@ -43,9 +60,35 @@ export class CandidatesService {
     "params": {"state": "active"}
   };
 
-  init() {
+  async init() {
+    this.activeNetwork = await this.globalPreferences.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+    this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference)=>{
+      if (preference.key === "chain.network.type") {
+        this.activeNetwork = preference.value;
+        await this.setupUrl();
+        this.fetchCandidates();
+        this.getSelectedCandidates();
+      }
+    });
+
+    await this.setupUrl();
     this.fetchCandidates();
     this.getSelectedCandidates();
+  }
+
+  public stop() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
+  }
+
+  async setupUrl() {
+    this.ela_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'mainchain.rpcapi');
+    this.cr_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
+    this.cr_council_term = this.cr_rpc_api + '/council/term';
+    this.cr_council_list = this.cr_rpc_api + '/council/list/1';
+    Logger.log('crcouncil', 'setupUrl:', this);
   }
 
   getSelectedCandidates() {
@@ -59,7 +102,7 @@ export class CandidatesService {
 
   fetchCandidates() {
     Logger.log('crcouncil', 'Fetching Candidates..');
-    this.http.post<any>('https://api.elastos.io/ela/', this.params, this.httpOptions).subscribe((res) => {
+    this.http.post<any>(this.proxyurl + this.ela_rpc_api, this.params, this.httpOptions).subscribe((res) => {
       Logger.log('crcouncil', 'Candidates fetched', res);
       if(res.result.crcandidatesinfo) {
         this.candidates = res.result.crcandidatesinfo;
@@ -82,7 +125,7 @@ export class CandidatesService {
 
   fetchCouncilTerm() {
     return new Promise<void>((resolve, reject) => {
-      this.http.get<any>('https://api.cyberrepublic.org/api/council/term').subscribe((res) => {
+      this.http.get<any>(this.cr_council_term).subscribe((res) => {
         Logger.log('crcouncil', 'Council terms fetched', res);
         this.councilTerm = res.data[0].startDate;
         Logger.log('crcouncil', 'Council term added', this.councilTerm);
@@ -95,7 +138,7 @@ export class CandidatesService {
   }
 
   fetchCouncil() {
-    this.http.get<any>('https://api.cyberrepublic.org/api/council/list/1').subscribe((res) => {
+    this.http.get<any>(this.cr_council_list).subscribe((res) => {
       Logger.log('crcouncil', 'Counsil fetched', res);
       this.council = res.data.council;
       Logger.log('crcouncil', 'Council added', this.council);

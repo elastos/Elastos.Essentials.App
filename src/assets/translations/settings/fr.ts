@@ -53,6 +53,7 @@ export const fr = {
     'main-net': 'Réseau principal',
     'reg-net': 'Réseau de régression',
     'priv-net': 'Réseau privé',
+    'lrw-net': 'Lrw Net',
 
     /********** App-Info Page **********/
     'app-details': "Détails de l'application",

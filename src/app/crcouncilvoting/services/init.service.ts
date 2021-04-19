@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { CandidatesService } from './candidates.service';
 
@@ -15,6 +16,8 @@ export class CRCouncilVotingInitService {
     this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
       if (signedInIdentity) {
         this.candidatesService.init();
+      } else {
+        this.candidatesService.stop();
       }
     });
   }

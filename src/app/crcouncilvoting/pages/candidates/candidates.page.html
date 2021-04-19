@@ -80,7 +80,7 @@
     </div>
   </ion-grid>
 
-  <div *ngIf="candidatesService.candidates.length > 0" class="footer" (click)="walletAlert()">
+  <div *ngIf="candidatesService.candidates.length > 0" class="footer">
     <ion-button [disabled]="!candidatesService.selectedCandidates.length" (click)="walletAlert()">
       {{ 'dist-votes' | translate }}
     </ion-button>

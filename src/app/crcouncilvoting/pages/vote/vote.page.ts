@@ -61,7 +61,6 @@ export class VotePage implements OnInit, OnDestroy {
     this.castingVote = false;
     this.votesCasted = false;
     this.candidatesService.candidates = [];
-    this.candidatesService.init();
   }
 
   distribute() {
