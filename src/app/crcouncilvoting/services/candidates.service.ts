@@ -67,12 +67,16 @@ export class CandidatesService {
     this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference)=>{
       if (preference.key === "chain.network.type") {
         this.activeNetwork = preference.value;
-        await this.setupUrl();
-        this.fetchCandidates();
-        this.getSelectedCandidates();
+        await this.ininData();
       }
     });
+    await this.ininData();
+  }
 
+  async ininData() {
+    this.candidates = [];
+    this.council = [];
+    this.selectedCandidates = [];
     await this.setupUrl();
     this.fetchCandidates();
     this.getSelectedCandidates();
@@ -86,10 +90,15 @@ export class CandidatesService {
   }
 
   async setupUrl() {
+    // if (this.activeNetwork === NetworkType.LrwNet) {
+      // this.proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
+    // } else {
+      // this.proxyurl = '';
+    // }
     this.ela_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'mainchain.rpcapi');
     this.cr_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
-    this.cr_council_term = this.cr_rpc_api + '/council/term';
-    this.cr_council_list = this.cr_rpc_api + '/council/list/1';
+    this.cr_council_term = this.cr_rpc_api + '/api/council/term';
+    this.cr_council_list = this.cr_rpc_api + '/api/council/list/1';
     Logger.log('crcouncil', 'setupUrl:', this);
   }
 

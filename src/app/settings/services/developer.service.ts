@@ -119,13 +119,13 @@ export class DeveloperService {
   ) {
     Logger.log('settings', 'Dev preference set to ' + networkCode);
     this.selectedNet = networkCode;
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "cr.rpcapi", crRPCApi);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
   }
 
   getIndexByNetCode(netCode: string) {
