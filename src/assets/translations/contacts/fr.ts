@@ -8,6 +8,7 @@ export const fr = {
   'no-contacts-with-cred-alert': 'Vous n\'avez aucun contact avec le crédentiel nécessaire.',
   'please-dont-add-self': 'Please add an Identity other than your own',
   'restoring-contacts-backup': 'Restoring Contacts',
+  'contact-copied-to-clipboard': 'Contact Identity Copied',
 
   /********** Buttons **********/
   'add-contact': 'Ajouter le contact',

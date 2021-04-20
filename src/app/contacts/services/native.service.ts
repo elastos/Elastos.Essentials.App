@@ -24,7 +24,7 @@ export class NativeService {
   }
 
   async shareToast() {
-    this.globalNative.genericToast(this.translate.instant('contact-copied'), 3000, "success");
+    this.globalNative.genericToast(this.translate.instant('contact-copied-to-clipboard'), 3000, "success");
   }
 
   async didResolveErr(err: string) {

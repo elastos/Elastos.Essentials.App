@@ -8,6 +8,7 @@ export const en = {
   'no-contacts-with-cred-alert': 'You don\'t have any contacts with the required credential',
   'please-dont-add-self': 'Please add an Identity other than your own',
   'restoring-contacts-backup': 'Restoring Contacts',
+  'contact-copied-to-clipboard': 'Contact Identity Copied',
 
   /********** Buttons **********/
   'add-contact': 'Add Contact',

@@ -8,6 +8,7 @@ export const zh = {
   'no-contacts-with-cred-alert': '没有联系人持有所需信息',
   'please-dont-add-self': '请添加其他人的身份ID(不能添加自己)',
   'restoring-contacts-backup': '恢复联系人',
+  'contact-copied-to-clipboard': 'Contact Identity Copied',
 
   /********** Buttons **********/
   'add-contact': '添加联系人',
