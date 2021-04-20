@@ -10,7 +10,8 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-
+import { App } from 'src/app/model/app.enum'
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Component({
   selector: 'app-vote',
@@ -25,6 +26,7 @@ export class VotePage implements OnInit, OnDestroy {
     private storage: GlobalStorageService,
     private toastCtrl: ToastController,
     private globalNav: GlobalNavService,
+    private globalNative: GlobalNativeService,
     private globalIntentService: GlobalIntentService,
     public theme: GlobalThemeService,
     private route: ActivatedRoute,
@@ -35,6 +37,7 @@ export class VotePage implements OnInit, OnDestroy {
   public votesCasted = false;
   public totalEla: number = 0;
   private votedEla: number = 0;
+  private toast: any;
 
   ngOnInit() {
     Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
@@ -60,7 +63,10 @@ export class VotePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.castingVote = false;
     this.votesCasted = false;
-    // this.candidatesService.candidates = [];
+    
+    if(this.toast) {
+      this.toast.dismiss();
+    }
   }
 
   distribute() {
@@ -135,58 +141,71 @@ export class VotePage implements OnInit, OnDestroy {
 
   /****************** Toasts/Alerts *******************/
   async toastErr(msg: string) {
-    const toast = await this.toastCtrl.create({
+    this.toast = await this.toastCtrl.create({
       header: msg,
-      position: 'middle',
+      position: 'bottom',
+      color: 'primary',
       mode: 'ios',
-      color: 'tertiary',
-      cssClass: 'customToast',
       duration: 2000
     });
-    toast.present();
+    this.toast.onWillDismiss(() => {
+      this.toast = null;
+    }) 
+    this.toast.present();
   }
 
-  async voteSuccessToast(txid: string) {
-    const toast = await this.toastCtrl.create({
+  async voteSuccessToast(txid: string = 'adwfw3r3wdwagyfgw3dfwdg83addwefwsfssg5g4fwdwsdqdgyywqdqw') {
+    this.toast = await this.toastCtrl.create({
       mode: 'ios',
-      position: 'middle',
+      position: 'bottom',
+      color: 'primary',
       header: this.translate.instant('vote-success'),
-      message: 'txid:' + txid.slice(0,30) + '...',
-      color: 'tertiary',
-      cssClass: 'customToast',
+      message: `${txid.slice(0,16) + '<br>' + txid.slice(16,32) + '<br>' + txid.slice(32,48)}`,
       buttons: [
         {
-          text: 'Okay',
+          text: 'Copy',
           handler: () => {
-            toast.dismiss();
-            // appManager.close();
-            this.globalNav.navigateTo("crcouncilvoting", '/crcouncilvoting/candidates');
+            this.toast.dismiss();
+            this.globalNative.genericToast('tx-copied-to-clipboard');
+            this.globalNative.copyClipboard(txid);
+            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+          }
+        },
+        {
+          text: 'Dismiss',
+          handler: () => {
+            this.toast.dismiss();
+            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           }
         }
       ]
     });
-    toast.present();
+    this.toast.onWillDismiss(() => {
+      this.toast = null;
+    }) 
+    this.toast.present();
   }
 
   async voteFailedToast(err: string) {
-    const toast = await this.toastCtrl.create({
+    this.toast = await this.toastCtrl.create({
       mode: 'ios',
-      position: 'middle',
+      position: 'bottom',
+      color: 'primary',
       header: this.translate.instant('vote-failed'),
       message: err,
-      color: 'tertiary',
-      cssClass: 'customToast',
       buttons: [
         {
           text: this.translate.instant('ok'),
           handler: () => {
-            toast.dismiss();
-            // appManager.close();
-            this.globalNav.navigateTo('crcouncilvoting', '/crcouncilvoting/candidates');
+            this.toast.dismiss();
+            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           }
         }
       ]
     });
-    toast.present();
+    this.toast.onWillDismiss(() => {
+      this.toast = null;
+    }) 
+    this.toast.present();
   }
 }

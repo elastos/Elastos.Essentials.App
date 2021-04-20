@@ -24,6 +24,7 @@ export const en = {
     'vote-success': 'Voted successfully casted!',
     'vote-failed': 'There was an error with casting votes..',
     'vote-incomplete': 'Vote processing was incomplete',
+    'tx-copied-to-clipboard': 'Transaction ID copied',
     'cr-voting-ended': 'The CRC Election has ended',
     'cr-voting-ended-message': 'There won\'t be any voting here until the next election cycle',
     'cr-council-no-available' : 'The CRC Council is not available at this time, please try again later',
