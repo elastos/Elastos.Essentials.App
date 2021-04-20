@@ -53,5 +53,5 @@ export const zh = {
      'main-net': 'Main Net',
      'reg-net': 'Regression net',
      'priv-net': 'Private Net',
-     'lrw-net': 'Lrw Net',
+     'lrw-net': 'LongRunWeather Net',
 };

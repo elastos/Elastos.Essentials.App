@@ -1,8 +1,8 @@
 export const fr = {
 
     /********** Generic **********/
-    'change-pw-success': 'Password reset was successful',
-    'change-pw-fail': 'Password reset failed. Please try again later',
+    'change-pw-success': 'Mot de passe modifié!',
+    'change-pw-fail': 'Erreur lors de la modification du mot de passe, veuillez réessayer plus tard',
 
     /********** Menu Page **********/
     // Titles
@@ -53,7 +53,7 @@ export const fr = {
     'main-net': 'Réseau principal',
     'reg-net': 'Réseau de régression',
     'priv-net': 'Réseau privé',
-    'lrw-net': 'Lrw Net',
+    'lrw-net': 'Réseau LongRunWeather',
 
     /********** App-Info Page **********/
     'app-details': "Détails de l'application",
