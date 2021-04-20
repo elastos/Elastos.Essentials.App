@@ -15,6 +15,7 @@ import { InternalElastosConnector } from './model/internalelastosconnector';
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
 import { GlobalNotificationsService } from './services/global.notifications.service';
+import { GlobalPublicationService } from './services/global.publication.service';
 
 @Component({
     selector: 'app-root',
@@ -38,7 +39,8 @@ export class AppComponent {
         private language: GlobalLanguageService,
         private intentService: GlobalIntentService,
         private screenOrientation: ScreenOrientation,
-        private notificationsService: GlobalNotificationsService
+        private notificationsService: GlobalNotificationsService,
+        private publicationService: GlobalPublicationService
     ) {
     }
 
@@ -72,6 +74,7 @@ export class AppComponent {
             await this.notificationsService.init();
             await this.intentService.init();
             await this.didSessions.init();
+            // await this.publicationService.init();
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();

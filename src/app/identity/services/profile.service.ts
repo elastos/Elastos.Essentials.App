@@ -296,6 +296,7 @@ export class ProfileService {
         if(params.data.action === 'confirmDeleteCredentials') {
           this.confirmDeleteCredentials();
         } else if(params.data.action === 'publishDIDDocumentReal') {
+          // this.native.go("/identity/publishing")
           this.publishDIDDocumentReal();
         }
       }

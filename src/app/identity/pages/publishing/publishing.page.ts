@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { GlobalPublicationService, DIDPublicationStatus } from 'src/app/services/global.publication.service';
 import { ProfileService } from '../../services/profile.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Native } from '../../services/native';
 import * as moment from 'moment';
 
@@ -17,6 +15,7 @@ import * as moment from 'moment';
 export class PublishingPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+  public startFlow = false;
   public progress = 0;
   public showSpinner = false;
   public suggestRestartingFromScratch = false;
@@ -24,7 +23,6 @@ export class PublishingPage implements OnInit {
   constructor(
     public theme: GlobalThemeService,
     public profileService: ProfileService,
-    private storage: GlobalStorageService,
     private publicationService: GlobalPublicationService,
     private zone: NgZone,
     private native: Native
@@ -34,7 +32,13 @@ export class PublishingPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle('Publish Progress')
+    this.init();
+  }
+
+  async init() {
+    await this.publicationService.init();
+    this.startFlow = true;
+    this.titleBar.setTitle('Publish Progress');
     this.resumeIdentitySetupFlow();
   }
 
@@ -45,9 +49,24 @@ export class PublishingPage implements OnInit {
     await new Promise((resolve)=>{
       setTimeout(async ()=>{
         try {
-          if (!this.didIsPublished()) {
-            const progressDate = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'identity', 'progressDate', new Date());
-            const progress = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'identity', 'progress', this.progress);
+          if (!this.isDIDBeingPublished() && !this.isDIDOnChain()) {
+            this.progress = 0.01;
+            let interval = setInterval(() => {
+              if(this.progress >= 0.99) {
+                clearInterval(interval);
+              } else {
+                this.progress += 0.01;
+                this.publicationService.persistentInfo.did.progressDate = new Date();
+                this.publicationService.persistentInfo.did.progress = this.progress;
+                this.publicationService.savePersistentInfo(this.publicationService.persistentInfo);
+              }
+            }, 10000);
+            await this.publicationService.publishIdentity();
+          }
+
+          if (this.isDIDBeingPublished() && !this.isDIDOnChain()) {
+            const progressDate = this.publicationService.persistentInfo.did.progressDate;
+            const progress = this.publicationService.persistentInfo.did.progress;
             let newProgress: number = null;
 
             // If progress was previously initiated before starting app
@@ -69,40 +88,29 @@ export class PublishingPage implements OnInit {
               newProgress = additionalProgress + progress;
             }
 
-            if(newProgress && newProgress <= 0.9) {
+            if(newProgress && newProgress <= 0.99) {
               this.progress = newProgress
-            } else if(this.progress >= 0.9) {
-              this.progress = 0.9;
+            } else if(this.progress >= 0.99) {
+              this.progress = 0.99;
             } else {
               this.progress = 0.01;
             }
 
             console.log('Progress', this.progress);
             let interval = setInterval(() => {
-              if(this.progress >= 0.90) {
+              if(this.progress >= 0.99) {
                 clearInterval(interval);
               } else {
                 this.progress += 0.01;
-                this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'identity', 'progressDate', new Date());
-                this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'identity', 'progress', this.progress);
+                this.publicationService.persistentInfo.did.progressDate = new Date();
+                this.publicationService.persistentInfo.did.progress = this.progress;
+                this.publicationService.savePersistentInfo(this.publicationService.persistentInfo);
               }
             }, 10000);
             await this.repeatinglyCheckAssistPublicationStatus();
           } else if(this.didIsPublished()) {
             this.progress = 1;
           }
-
-     /*      if (!this.isHiveVaultReady()) {
-            this.progress = 0.90;
-            let interval = setInterval(() => {
-              if(this.progress >= 0.99) {
-                clearInterval(interval);
-              } else {
-                this.progress += 0.01;
-              }
-            }, 10000);
-            await this.prepareHiveVault();
-          } */
         }
         catch (e) {
           console.warn("Handled global exception:", e);
@@ -113,29 +121,13 @@ export class PublishingPage implements OnInit {
     });
   }
 
-/*   public isHiveVaultReady(): boolean {
-    return true;
+  public isDIDBeingPublished(): boolean {
+    return this.publicationService.persistentInfo.did.publicationStatus === DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
   }
 
-  public isHiveBeingConfigured(): boolean {
-    return true;
+  public isDIDOnChain(): boolean {
+    return this.publicationService.persistentInfo.did.publicationStatus === DIDPublicationStatus.PUBLISHED_AND_CONFIRMED;
   }
-
-  public isEverythingReady(): boolean {
-    return this.isHiveVaultReady();
-  }
-
-  private async prepareHiveVault() {
-    this.hiveIsBeingConfigured = true;
-    try {
-      await this.hiveService.prepareHiveVault();
-    }
-    catch (e) {
-      throw e;
-    } finally {
-      this.hiveIsBeingConfigured = false;
-    }
-  } */
 
   public didIsPublished() {
     if(this.profileService.isPublishStatusFetched()) {
@@ -153,6 +145,19 @@ export class PublishingPage implements OnInit {
    * Checks assist publication status in a loop until we know the transaction is successful or failing.
    */
   private async repeatinglyCheckAssistPublicationStatus(): Promise<void> {
+    let firstAttempt = true;
+
+    do {
+      if (!firstAttempt) {
+        console.log("Waiting a few seconds before checking again");
+        setTimeout(()=> {}, 15000);
+      }
+
+      await this.publicationService.checkPublicationStatusAndUpdate();
+
+      firstAttempt = false;
+    }
+    while (this.publicationService.persistentInfo.did.publicationStatus == DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION);
   }
 
   /**
@@ -160,8 +165,7 @@ export class PublishingPage implements OnInit {
    */
   public async restartProcessFromScratch() {
     this.suggestRestartingFromScratch = false;
-    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'identity', 'progressDate', null);
-    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'identity', 'progress', null);
+    this.publicationService.savePersistentInfo(this.publicationService.createNewPersistentInfo());
     this.resumeIdentitySetupFlow();
   }
 
