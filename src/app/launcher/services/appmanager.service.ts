@@ -188,7 +188,7 @@ export class AppmanagerService {
                         routerContext: App.DPOS_VOTING,
                          name: this.translate.instant('app-dpos-voting'),
                          description: this.translate.instant('app-dpos-description'),
-                         icon: '/assets/launcher/apps/app-icons/scanner.svg',
+                         icon: '/assets/launcher/apps/app-icons/dpos.svg',
                          startCall: () => this.dposVotingInitService.start()
                     },
                     {
@@ -196,7 +196,7 @@ export class AppmanagerService {
                         routerContext: App.CRCOUNCIL_VOTING,
                         name: this.translate.instant('app-cr-council'),
                         description: this.translate.instant('app-crcouncil-description'),
-                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
+                        icon: '/assets/launcher/apps/app-icons/council.svg',
                         routerPath: '/crcouncilvoting/candidates'
                         // routerPath: '/crcouncilvoting/vote'
                     },
@@ -205,7 +205,7 @@ export class AppmanagerService {
                         routerContext: App.CRPROPOSAL_VOTING,
                         name: this.translate.instant('app-cr-proposal'),
                         description: this.translate.instant('app-crproposal-description'),
-                        icon: '/assets/launcher/apps/app-icons/scanner.svg',
+                        icon: '/assets/launcher/apps/app-icons/proposal.svg',
                         routerPath: '/crproposalvoting/proposals/ALL'
                     },
                 ]
