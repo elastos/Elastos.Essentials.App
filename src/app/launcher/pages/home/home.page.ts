@@ -62,7 +62,7 @@ export class HomePage implements OnInit {
       this.globalNotifications.sendNotification(notification);
     }, 2000); */
 
-    this.titleBar.setTitle('elastos-essentials');
+    this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "notifications",
@@ -88,6 +88,9 @@ export class HomePage implements OnInit {
           break;
           case 'PrvNet':
             this.titleBar.setTitle('Private Net Active');
+            break;
+          case 'LrwNet':
+            this.titleBar.setTitle('CR Private Net Active');
           break;
         }
       });

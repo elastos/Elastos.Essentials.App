@@ -67,17 +67,19 @@ export class CandidatesService {
     this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference)=>{
       if (preference.key === "chain.network.type") {
         this.activeNetwork = preference.value;
-        await this.ininData();
+        await this.setupUrl();
+        this.ininData();
       }
     });
-    await this.ininData();
+    await this.setupUrl();
+    this.ininData();
   }
 
   async ininData() {
     this.candidates = [];
     this.council = [];
     this.selectedCandidates = [];
-    await this.setupUrl();
+
     this.fetchCandidates();
     this.getSelectedCandidates();
   }

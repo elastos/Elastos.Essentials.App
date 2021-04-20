@@ -1,6 +1,10 @@
 <ion-content>
   <app-titlebar></app-titlebar>
 
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content refreshingSpinner="null"></ion-refresher-content>
+  </ion-refresher>
+
   <ion-grid *ngIf="candidatesService.candidates.length > 0" id="add-padding-bottom" class="container ion-no-padding" [class.dark-container]="theme.darkMode">
     <app-candidate-slider
       *ngIf="showCandidate"

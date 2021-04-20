@@ -134,10 +134,21 @@ export class CRmembervotePage implements OnInit {
 
     async createVoteCRTransaction() {
         Logger.log('wallet', 'Creating vote CR transaction');
-        this.transfer.rawTransaction =  await this.walletManager.spvBridge.createVoteCRTransaction(this.masterWalletId, this.chainId,
-                '', this.transfer.votes, this.transfer.memo, '[]');
-        // TODO need to check DropVotes
-        this.walletManager.openPayModal(this.transfer);
+        const rawTx = await this.walletManager.spvBridge.createVoteCRTransaction(this.masterWalletId, this.chainId,
+          '', this.transfer.votes, this.transfer.memo, '[]');
+
+        const transfer = new Transfer();
+        Object.assign(transfer, {
+            masterWalletId: this.masterWalletId,
+            chainId: this.chainId,
+            rawTransaction: rawTx,
+            payPassword: '',
+            action: this.intentTransfer.action,
+            intentId: this.intentTransfer.intentId,
+        });
+
+        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

@@ -53,6 +53,13 @@ export class CandidatesPage implements OnInit {
     }
   }
 
+  async doRefresh(event) {
+    await this.candidatesService.ininData()
+    setTimeout(() => {
+        event.target.complete();
+    }, 1000);
+}
+
   /****************** Select Candidate *******************/
   addCandidate(candidate: Candidate) {
     let targetCandidate = this.candidatesService.selectedCandidates.find(
