@@ -1,44 +1,31 @@
 @import "src/app/identity/root.scss";
 
-.darkContainer {
-  .container {
-    .title {
-      border-top: none;
-      span {
-        color: #ffffff;
-      }
-    }
-    ion-row {
-      border-top: 1px solid #2f305a;
-
-      .label-container {
-        ion-label {
-          color: #ffffff;
-        }
-      }
-    }
-  }
-}
-
 .container {
   min-height: 100%;
+  padding: 0;
 
-  .title {
-    padding: 10px 10px 20px;
-    border-top: none;
+  ion-row {
+    border-bottom: 1px solid #dfdff4;
+  }
 
-    h1 {
-      margin: 0;
-      font-size: 30px;
-      font-weight: 600;
-      line-height: 0.93;
-      text-align: left;
-      color: #372153;
+  .header {
+    padding: 13px 15px;
+
+    ion-col {
+        padding-left: 0;
+        padding-right: 0;
+
+        ion-label {
+            font-size: 30px;
+            font-weight: 600;
+            line-height: 0.93;
+            text-align: left;
+            color: #372153;
+        }
     }
   }
 
-  ion-row {
-    border-top: 1px solid #dfdff4;
+  .item {
     padding: 5px 0;
 
     .icon-container {
@@ -67,6 +54,28 @@
         letter-spacing: normal;
         text-align: left;
         color: #372153;
+      }
+    }
+  }
+}
+
+.darkContainer {
+  ion-row {
+    border-bottom: 1px solid #2f305a;
+  }
+
+  .header {
+    ion-col {
+        ion-label {
+            color: #ffffff;
+        }
+    }
+  }
+
+  .item {
+    .label-container {
+      ion-label {
+        color: #ffffff;
       }
     }
   }
