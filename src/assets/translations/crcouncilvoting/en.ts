@@ -27,4 +27,6 @@ export const en = {
     'cr-voting-ended': 'The CRC Election has ended',
     'cr-voting-ended-message': 'There won\'t be any voting here until the next election cycle',
     'cr-council-no-available' : 'The CRC Council is not available at this time, please try again later',
+    'pledge-some-ELA-to-candidates': 'Please pledge some ELA to your candidates',
+    'not-allow-pledge-more-than-own': 'You are not allowed to pledge more ELA than you own',
 };

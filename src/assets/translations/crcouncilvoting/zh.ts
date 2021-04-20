@@ -26,5 +26,7 @@ export const zh = {
     'vote-incomplete': '投票失败',
     'cr-voting-ended': 'CR委员选举已经结束',
     'cr-voting-ended-message': '在下一轮选举之前不会有任何投票',
-    'cr-council-no-available' : 'CR委员投票暂时不可用, 请稍后再试'
+    'cr-council-no-available' : 'CR委员投票暂时不可用, 请稍后再试',
+    'pledge-some-ELA-to-candidates': '请给您的候选人分配一些ELA',
+    'not-allow-pledge-more-than-own': '您分配的ELA不能超过您拥有的ELA',
 };

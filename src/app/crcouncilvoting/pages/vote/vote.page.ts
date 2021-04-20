@@ -85,9 +85,9 @@ export class VotePage implements OnInit, OnDestroy {
     });
 
     if(Object.keys(votedCandidates).length === 0) {
-     this.toastErr('Please pledge some ELA to your candidates')
+      this.toastErr(this.translate.instant('pledge-some-ELA-to-candidates'));
     } else if (this.votedEla > this.totalEla) {
-      this.toastErr('You are not allowed to pledge more ELA than you own');
+      this.toastErr(this.translate.instant('not-allow-pledge-more-than-own'));
     } else {
       Logger.log('crcouncil', votedCandidates);
       this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.candidatesService.selectedCandidates);
@@ -102,7 +102,7 @@ export class VotePage implements OnInit, OnDestroy {
 
           if(res.result.txid === null ) {
             this.castingVote = false;
-            this.voteFailedToast('vote-incomplete');
+            this.voteFailedToast(this.translate.instant('vote-incomplete'));
           } else {
             Logger.log('crcouncil', 'Intent sent sucessfully', res);
             this.castingVote = false;
