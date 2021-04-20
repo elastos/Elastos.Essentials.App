@@ -71,7 +71,11 @@ export class NodesService {
   private nodeApi: string = 'https://node1.elaphant.app/api/';
   private apiRPC: string = 'https://api.elastos.io/ela';
   private elaNodeUrl: string = 'https://elanodes.com/wp-content/uploads/custom/images/';
-  private proxyurl = "https://cors-anywhere.herokuapp.com/";
+  // private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
+
+  // This is too slow, so call once.
+  private isFetchingRewardOrDone = false;
+  private rewardResult: any = null; //TODO Do not use any.
 
   constructor(
     private http: HttpClient,
@@ -102,6 +106,11 @@ export class NodesService {
     // await this.getStoredVotes();
     await this.fetchStats();
     await this.fetchNodes();
+    if (!this.isFetchingRewardOrDone) {
+      this.isFetchingRewardOrDone = true
+      // Too slow, don't await
+      this.fetchReward();
+    }
   }
 
   // Titlebar
@@ -170,7 +179,7 @@ export class NodesService {
   }
 
   fetchNodes() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Logger.log('dposvoting', 'Fetching Nodes..');
       const param = {
           method: 'listproducers',
@@ -197,12 +206,11 @@ export class NodesService {
               this.getNodeIcon();
               this.getStoredNodes();
               this.totalVotes = res.result.totalvotes;
+              this.setupRewardInfo();
 
               Logger.log('dposvoting', 'Nodes Added..', this._nodes);
               Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
 
-              // to show the Daily Rewards, but it is too slow.
-              // this.fetchReward();
               resolve();
             }
           }, (err) => {
@@ -213,18 +221,33 @@ export class NodesService {
           Logger.error('dposvoting', ' error:', e)
         }
     });
-    
+
   }
 
   async fetchReward() {
+    Logger.log('dposvoting', 'start fetchReward');
     const height: number = await this.fetchCurrentHeight();
     // this api is too slow.
     this.http.get<any>(this.nodeApi + 'v1/dpos/rank/height/' + height +'?state=active').subscribe((res) => {
-      res.result.forEach(element => {
-          let index = this.activeNodes.findIndex(e => e.ownerpublickey === element.Ownerpublickey);
-          this.activeNodes[index].Reward = element.Reward;
-          this.activeNodes[index].EstRewardPerYear = element.EstRewardPerYear;
-      });
+      if (res.result) {
+        this.rewardResult = res.result;
+        this.setupRewardInfo();
+      } else {
+        this.isFetchingRewardOrDone = false;
+        Logger.log('dposvoting', 'fetchReward can not get the reward info.');
+      }
+
+      Logger.log('dposvoting', 'fetchReward end');
+    });
+  }
+
+  setupRewardInfo() {
+    if (this.rewardResult === null || this.activeNodes === null) return;
+
+    this.rewardResult.forEach(element => {
+      let index = this.activeNodes.findIndex(e => e.ownerpublickey === element.Ownerpublickey);
+      this.activeNodes[index].Reward = element.Reward;
+      this.activeNodes[index].EstRewardPerYear = element.EstRewardPerYear;
     });
   }
 
