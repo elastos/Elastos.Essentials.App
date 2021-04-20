@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -29,6 +29,9 @@ import { CoinTransferService, Transfer, IntentTransfer } from '../../../services
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -37,6 +40,8 @@ import { Logger } from 'src/app/logger';
   styleUrls: ['./crmembervote.page.scss'],
 })
 export class CRmembervotePage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
     masterWalletId: string;
     sourceSubwallet: MainchainSubWallet = null;
     chainId: string; // ELA
@@ -50,6 +55,8 @@ export class CRmembervotePage implements OnInit {
     constructor(public walletManager: WalletManager,
                 private coinTransferService: CoinTransferService,
                 private globalIntentService: GlobalIntentService,
+                private translate: TranslateService,
+                public theme: GlobalThemeService,
                 public native: Native,
                 public zone: NgZone,
                 public popupProvider: PopupProvider) {
@@ -57,6 +64,10 @@ export class CRmembervotePage implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    ionViewWillEnter() {
+      this.titleBar.setTitle(this.translate.instant('crcouncilvote-title'));
     }
 
     ionViewDidEnter() {

@@ -309,14 +309,24 @@ export const en = {
     "didtransaction-intro": "You are publishing your latest identity changes to the public DID Sidechain.",
 
     /*******************
+    * Voting Common *
+    ********************/
+    "vote-you-are-voting": "You are Voting!",
+    "vote-transaction-fees": "0.0001 ELA transfaction fee will be charged",
+    "vote-revote": "Don't forget to re-vote when you spend any ELA from your main ELA wallet",
+
+    /*******************
     * DPoS Voting Page *
     ********************/
     "dposvote-title": "Vote for Supernodes",
-    "dposvote-you-are-voting": "You are Voting!",
-    "dposvote-transaction-fees": "0.0001 ELA transfaction fee will be charged",
     "dposvote-voting-for": "You are voting for:",
     "dposvote-with": "With:",
-    "dposvote-revote": "Don't forget to re-vote when you spend any ELA from your main ELA wallet",
+
+    /***********************
+    * CRCrouncil Voting Transaction Page *
+    ************************/
+    "crcouncilvote-title": "Vote for CR Council",
+    "crcouncilvote-voting-with": "You are voting with:",
 
     /***********************
     * ESC Transaction Page *

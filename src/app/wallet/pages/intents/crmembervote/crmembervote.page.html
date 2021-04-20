@@ -1,33 +1,23 @@
 <ion-content class="ion-padding">
-    <app-titlebar title="text-vote-crcouncil"></app-titlebar>
-    <div 
-        class="intro ion-text-center"
-        [innerHtml]="'text-you-are-going-to-vote-cr-intro' | translate:{votecount:votecount}"
-    >
-    </div>
-
-    <div class="number-of-votes ion-text-center">
-        Number of votes:
-
-        <div class="number-of-votes-value">
-            {{voteBalanceELA | number:'1.0-3'}}
-        </div>
-    </div>
-
-    <div class="notes">
-        <div class="note">
-            {{ 'text-note' | translate }}
-        </div>
-
-        <div class="note-entry">
-            {{ 'text-vote-note-1' | translate }}
-        </div>
-        <div class="note-entry">
-            {{ 'text-vote-note-2' | translate }}
-        </div>
-    </div>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+      <ion-card>
+          <img [src]="!theme.darkMode ? 'assets/wallet/intents/dpos.svg' : 'assets/wallet/intents/darkmode/dpos.svg'">
+          <ion-card-title>{{ 'vote-you-are-voting' | translate }}</ion-card-title>
+          <ion-card-subtitle>{{ 'vote-transaction-fees' | translate }}</ion-card-subtitle>
+      </ion-card>
+      <div class="msg-container">
+          <p>{{ 'crcouncilvote-voting-with' | translate }}</p>
+          <h1 id="amount">{{ voteBalanceELA | number:'1.0-3' }} <span>ELA</span></h1>
+          <h2>{{ 'vote-revote' | translate }}</h2>
+      </div>
+      <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
+          <ion-label>{{ 'cancel' | translate}}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </div>
+      <div class="btn confirm ion-activatable ripple" (click)="goTransaction()">
+          <ion-label>{{ 'confirm' | translate}}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </div>
+  </ion-grid>
 </ion-content>
-<ion-footer>
-    <ion-button class="ion-no-margin" style="width:50%" fill="clear" color="medium" size="large" (click)="cancelOperation()">{{ 'cancel' | translate }}</ion-button>
-    <ion-button class="ion-no-margin" style="width:50%" fill="clear" color="primary" size="large" (click)="goTransaction()">{{ 'text-vote' | translate }}</ion-button>
-</ion-footer>

@@ -308,14 +308,25 @@ export const zh = {
     "didtransaction-intro": "您正在将最新的身份更改发布到DID侧链",
 
     /*******************
+    * Voting Common *
+    ********************/
+    "vote-you-are-voting": "正在投票!",
+    "vote-transaction-fees": "大约需要0.0001 ELA的交易费",
+    "vote-revote": "当您从ELA钱包中消费任意ELA后，请记得重新投票",
+
+    /*******************
     * DPoS Voting Page *
     ********************/
     "dposvote-title": "超级节点投票",
-    "dposvote-you-are-voting": "正在投票!",
-    "dposvote-transaction-fees": "大约需要0.0001 ELA的交易费",
+
     "dposvote-voting-for": "您正在投票给:",
     "dposvote-with": "使用:",
-    "dposvote-revote": "当您从ELA钱包中消费任意ELA后，请记得重新投票",
+
+    /***********************
+    * CRCrouncil Voting Transaction Page *
+    ************************/
+     "crcouncilvote-title": "CR委员投票",
+     "crcouncilvote-voting-with": "用于投票的 ELA 金额:",
 
     /***********************
     * ESC Transaction Page *

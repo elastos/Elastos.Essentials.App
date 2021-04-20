@@ -1,17 +1,17 @@
 <ion-content>
-    <app-titlebar title="text-vote-crcouncil"></app-titlebar>
+    <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
             <img [src]="!theme.darkMode ? 'assets/wallet/intents/dpos.svg' : 'assets/wallet/intents/darkmode/dpos.svg'">
-            <ion-card-title>{{ 'dposvote-you-are-voting' | translate }}</ion-card-title>
-            <ion-card-subtitle>{{ 'dposvote-transaction-fees' | translate }}</ion-card-subtitle>
+            <ion-card-title>{{ 'vote-you-are-voting' | translate }}</ion-card-title>
+            <ion-card-subtitle>{{ 'vote-transaction-fees' | translate }}</ion-card-subtitle>
         </ion-card>
         <div class="msg-container">
             <p>{{ 'dposvote-voting-for' | translate }}</p>
             <h1 id="count">{{ coinTransferService.publickeys.length }}/36</h1>
             <p id="with">{{ 'dposvote-with' | translate }}</p>
             <h1 id="amount">{{ voteAmount | number:'1.0-3' }} <span>ELA</span></h1>
-            <h2>{{ 'dposvote-revote' | translate }}</h2>
+            <h2>{{ 'vote-revote' | translate }}</h2>
         </div>
         <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
             <ion-label>{{ 'cancel' | translate}}</ion-label>

@@ -308,14 +308,24 @@ export const fr = {
     "didtransaction-intro": "Vous vous apprêtez à publier votre identité sur la châine publique.",
 
     /*******************
+    * Voting Common *
+    ********************/
+    "vote-you-are-voting": "Vous votez!",
+    "vote-transaction-fees": "Des frais de transaction de 0.0001 ELA seront prélevés",
+    "vote-revote": "Pensez à voter à nouveau après avoir utilisé des ELA de votre portefeuille principal.",
+
+    /*******************
     * DPoS Voting Page *
     ********************/
     "dposvote-title": "Vote pour les Supernodes",
-    "dposvote-you-are-voting": "Vous votez!",
-    "dposvote-transaction-fees": "Des frais de transaction de 0.0001 ELA seront prélevés",
     "dposvote-voting-for": "Vous allez voter pour:",
     "dposvote-with": "Avec:",
-    "dposvote-revote": "Pensez à voter à nouveau après avoir utilisé des ELA de votre portefeuille principal.",
+
+    /***********************
+    * CRCrouncil Voting Transaction Page *
+    ************************/
+    "crcouncilvote-title": "Vote for CR Council",
+    "crcouncilvote-voting-with": "You are voting with:",
 
     /***********************
     * ESC Transaction Page *
