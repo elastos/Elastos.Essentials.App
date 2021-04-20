@@ -77,18 +77,20 @@
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.1",
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.3",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.2",
+    "cordova-ios": "^6.2.0",
+    "cordova-plugin-add-swift-support": "^2.0.2",
     "@ionic/angular-toolkit": "3.1.0",
     "@types/node": "14.14.21",
     "cordova-android": "9.0.0",
     "cordova-clipboard": "1.3.0",
     "cordova-plugin-app-version": "^0.1.12",
     "cordova-plugin-camera": "5.0.1",
-    "cordova-plugin-ionic-keyboard": "2.2.0",
-    "cordova-plugin-ionic-webview": "5.0.0",
+    "cordova-plugin-ionic-keyboard": "^2.2.0",
+    "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-printer": "0.8.0",
-    "cordova-plugin-qrscanner": "3.0.1",
+    "cordova-plugin-qrscanner": "^3.0.1",
     "cordova-plugin-screen-orientation": "3.0.2",
-    "cordova-plugin-splashscreen": "5.0.2",
+    "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-whitelist": "1.3.4",
     "cordova-sqlite-storage": "5.1.0",
     "elastos-essentials-plugin-fingerprint": "file:../Plugins/Fingerprint",
@@ -109,6 +111,7 @@
   "description": "An Ionic project",
   "cordova": {
     "plugins": {
+      "cordova-plugin-add-swift-support": {},
       "@elastosfoundation/elastos-cordova-plugin-carrier": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
       "@elastosfoundation/elastos-cordova-plugin-hive": {},
@@ -126,14 +129,17 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-whitelist": {},
       "cordova-sqlite-storage": {},
-      "elastos-essentials-plugin-fingerprint": {},
-      "elastos-essentials-plugin-intent": {},
+      "elastos-essentials-plugin-fingerprint": {
+        "FACEID_USAGE_DESCRIPTION": " "
+      },
       "elastos-essentials-plugin-passwordmanager": {},
       "elastos-essentials-plugin-wallet": {},
-      "cordova-plugin-app-version": {}
+      "cordova-plugin-app-version": {},
+      "elastos-essentials-plugin-intent": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
