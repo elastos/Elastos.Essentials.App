@@ -12,46 +12,70 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum'
+import { Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ProposalService {
-    private latestSearchResults: ProposalSearchResult[] = [];
+    public allSearchResults: ProposalSearchResult[] = [];
+    private pageNumbersLoaded = 0;
+    private cr_rpc_api = 'https://api.cyberrepublic.org';
+    private subscription: Subscription = null;
 
     constructor(
         private http: HttpClient,
         private prefs: GlobalPreferencesService,
-        private nav: GlobalNavService
+        private nav: GlobalNavService,
+        private globalPreferences: GlobalPreferencesService,
     ) {}
 
+    async init() {
+      this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference)=>{
+        if (preference.key === "chain.network.type") {
+          this.cr_rpc_api = await this.getCRProposalAPI();
+        }
+      });
+      this.cr_rpc_api = await this.getCRProposalAPI();
+    }
+
+    public stop() {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
+      this.allSearchResults = [];
+      this.pageNumbersLoaded = 0;
+    }
+
     private getCRProposalAPI(): Promise<string> {
-        return this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
+      return this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
 	  }
 
-    public async fetchProposals(status: ProposalStatus, page: number): Promise<ProposalsSearchResponse> {
-        let apiUrl = await this.getCRProposalAPI();
-
-        return new Promise((resolve, reject)=>{
-            Logger.log('crproposal', 'Fetching proposals...');
-            this.http.get<any>(apiUrl+'/api/cvote/all_search?status='+status+'&page='+page+'&results=10').subscribe((res: ProposalsSearchResponse) => {
+    public async fetchProposals(status: ProposalStatus, page: number): Promise<ProposalSearchResult[]> {
+      if (this.pageNumbersLoaded >= page) {
+        return this.allSearchResults;
+      }
+      return new Promise((resolve, reject)=>{
+            Logger.log('crproposal', 'Fetching proposals... page:', page);
+            this.http.get<any>(this.cr_rpc_api+'/api/cvote/all_search?status='+status+'&page='+page+'&results=10').subscribe((res: ProposalsSearchResponse) => {
                 Logger.log('crproposal', res);
-                this.latestSearchResults = res.data.list;
-                resolve(res);
+                if (this.pageNumbersLoaded < page) {
+                  this.allSearchResults = this.allSearchResults.concat(res.data.list);
+                  this.pageNumbersLoaded = page;
+                }
+                resolve(this.allSearchResults);
             }, (err) => {
                 Logger.error('crproposal', err);
-                this.latestSearchResults = [];
                 reject(err);
             });
         });
     }
 
     public async fetchProposalDetails(proposalId: number): Promise<ProposalDetails> {
-        let apiUrl = await this.getCRProposalAPI();
-
         return new Promise((resolve, reject)=>{
             Logger.log('crproposal', 'Fetching proposal details for proposal '+proposalId+'...');
-            this.http.get<any>(apiUrl+'/api/cvote/get_proposal/'+proposalId).subscribe((res: ProposalsDetailsResponse) => {
+            this.http.get<any>(this.cr_rpc_api+'/api/cvote/get_proposal/'+proposalId).subscribe((res: ProposalsDetailsResponse) => {
                 Logger.log('crproposal', res);
                 resolve(res.data);
             }, (err) => {
@@ -61,14 +85,12 @@ export class ProposalService {
         });
     }
 
-    public async fetchSearchedProposal(page: number = 1, status: ProposalStatus, search?: string): Promise<ProposalsSearchResponse> {
-        let apiUrl = await this.getCRProposalAPI();
-
+    public async fetchSearchedProposal(page: number = 1, status: ProposalStatus, search?: string): Promise<ProposalSearchResult[]> {
         return new Promise((resolve, reject)=>{
             Logger.log('crproposal', 'Fetching searched proposal for status: ' + status, + 'with search: ' + search);
-            this.http.get<any>(apiUrl+'/api/cvote/all_search?page='+page+'&results=10&status='+status+'&search='+search).subscribe((res: ProposalsSearchResponse) => {
+            this.http.get<any>(this.cr_rpc_api+'/api/cvote/all_search?page='+page+'&results=10&status='+status+'&search='+search).subscribe((res: ProposalsSearchResponse) => {
                 Logger.log('crproposal', res);
-                resolve(res);
+                resolve(res.data.list);
             }, (err) => {
                 Logger.error('crproposal', err);
                 reject(err);
@@ -77,11 +99,9 @@ export class ProposalService {
     }
 
     public async fetchSuggestionDetails(suggestionId: string): Promise<SuggestionDetails> {
-        let apiUrl = await this.getCRProposalAPI();
-
         return new Promise((resolve, reject)=>{
             Logger.log('crproposal', 'Fetching suggestion details for suggestion '+suggestionId+'...');
-            this.http.get<any>(apiUrl+'/api/suggestion/get_suggestion/'+suggestionId).subscribe((res: SuggestionDetailsResponse) => {
+            this.http.get<any>(this.cr_rpc_api+'/api/suggestion/get_suggestion/'+suggestionId).subscribe((res: SuggestionDetailsResponse) => {
                 Logger.log('crproposal', res);
                 resolve(res.data);
             }, (err) => {
@@ -130,7 +150,7 @@ export class ProposalService {
     }
 
     public getFetchedProposalById(proposalId: number): ProposalSearchResult {
-        return this.latestSearchResults.find((proposal)=>{
+        return this.allSearchResults.find((proposal)=>{
             return proposal.id == proposalId;
         })
     }

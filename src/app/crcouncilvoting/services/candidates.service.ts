@@ -38,7 +38,7 @@ export class CandidatesService {
   public councilTerm: number;
   public council: CouncilMember[] = [];
 
-  public activeNetwork: NetworkType;
+  // public activeNetwork: NetworkType;
   private subscription: Subscription = null;
 
   /** Http Url */
@@ -63,10 +63,10 @@ export class CandidatesService {
   };
 
   async init() {
-    this.activeNetwork = await this.globalPreferences.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+    // this.activeNetwork = await this.globalPreferences.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
     this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference)=>{
       if (preference.key === "chain.network.type") {
-        this.activeNetwork = preference.value;
+        // this.activeNetwork = preference.value;
         await this.setupUrl();
         this.ininData();
       }

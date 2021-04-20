@@ -38,8 +38,7 @@ export class AppService {
   }
 
   async checkForNewProposals(today: Date) {
-    const proposalRes = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
-    const proposals = proposalRes.data.list;
+    const proposals = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
     Logger.log('crproposal', 'Background service: Proposals fetched', proposals);
 
     // Send notification if there are any new proposals only for today

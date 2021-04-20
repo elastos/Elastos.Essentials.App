@@ -10,7 +10,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
-import { init } from 'svelte-i18n';
 
 @Component({
   selector: 'page-proposal-listing',
@@ -28,7 +27,6 @@ export class ProposalListingPage implements OnInit {
 
   public showSearch = false;
   public searchInput = '';
-  private proposalsSearchResponse: ProposalsSearchResponse;
 
   public allProposalsLoaded = false;
 
@@ -66,8 +64,7 @@ export class ProposalListingPage implements OnInit {
   }
 
   async fetchProposals() {
-    this.proposalsSearchResponse = await this.proposalService.fetchProposals(this.proposalType, 1);
-    this.proposals = this.proposalsSearchResponse.data.list;
+    this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1);
     this.proposalsFetched = true;
     this.showSearch = true;
     this.titleBar.setTitle(this.translate.instant('proposals'));
@@ -78,8 +75,7 @@ export class ProposalListingPage implements OnInit {
     if(this.searchInput) {
       this.proposalsFetched = false;
       this.titleBar.setTitle(this.translate.instant('searching-proposals'));
-      this.proposalsSearchResponse = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
-      this.proposals = this.proposalsSearchResponse.data.list;
+      this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
       this.proposalsFetched = true;
       this.titleBar.setTitle(this.translate.instant('proposals'));
     } else {
@@ -103,18 +99,22 @@ export class ProposalListingPage implements OnInit {
       Logger.log('crproposal', 'Loading more proposals', this.fetchPage);
       this.content.scrollToBottom(300);
 
-      if(this.searchInput) {
+      let proposalsLength = this.proposals.length;
+
+      if (this.searchInput) {
         this.searchPage++;
-        this.proposalsSearchResponse = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
+        this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
       } else {
         this.fetchPage++;
-        this.proposalsSearchResponse = await this.proposalService.fetchProposals(this.proposalType, this.fetchPage);
+        this.proposals = await this.proposalService.fetchProposals(this.proposalType, this.fetchPage);
       }
 
-      let proposalsLength = this.proposals.length;
-      this.proposals = this.proposals.concat(this.proposalsSearchResponse.data.list);
-
       if(this.proposals.length === proposalsLength) {
+        if (this.searchInput) {
+          this.searchPage--;
+        } else {
+          this.fetchPage--;
+        }
         this.allProposalsLoaded = true;
         this.uxService.genericToast('All proposals are loaded');
         // this.content.scrollToTop(300);
