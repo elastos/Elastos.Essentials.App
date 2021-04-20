@@ -109,17 +109,11 @@ export class IdentityService {
         // Security check: ask user to enter the master password for the target did.
         // Allow signing in only if the password database could be opened.
 
-        // Set virtual did context
-        await passwordManager.setVirtualDIDContext(identityEntry.didString);
-
         // Try to retrieve the did store password. If we can retrieve it, this means the master password database
         // could be successfully unlocked
         try {
             let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId);
             if (passwordInfo) {
-                Logger.log('didsessions', "Password manager could unlock database for DID "+identityEntry.didString+". Signing in");
-                await passwordManager.setVirtualDIDContext(null);
-
                 // Force signing out, in case we were not already (but we should be)
                 await this.didSessions.signOut()
 
@@ -209,9 +203,6 @@ export class IdentityService {
     }
 
     private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string): Promise<boolean> {
-        // Set a virtual did context to the password manager, so we can save the generated did store password
-        await passwordManager.setVirtualDIDContext(createdDID.getDIDString());
-
         try {
             // Save the did store password with a master password
             let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
@@ -227,12 +218,10 @@ export class IdentityService {
                 // Save the identity entry in the did session plugin
                 let avatar = createdDID.getAvatarCredentialValue();
                 await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
-                await passwordManager.setVirtualDIDContext(null);
             }
             else {
                 // Go back to the default screen, creating the new DID is cancelled.
                 Logger.log('didsessions', "Master password input failed. Aborting identity creation.");
-                await passwordManager.setVirtualDIDContext(null);
             }
         }
         catch (e) {
@@ -397,9 +386,6 @@ export class IdentityService {
      */
     async deleteIdentity(identity: IdentityEntry): Promise<boolean> {
         Logger.log('didsessions', "Deleting identity", identity);
-
-        // Set a virtual did context to the password manager, so we can get the did store password
-        await passwordManager.setVirtualDIDContext(identity.didString);
 
         // Get did store password from the password manager
         try {

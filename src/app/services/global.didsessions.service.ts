@@ -54,7 +54,6 @@ export class GlobalDIDSessionsService {
     this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
     if (this.signedInIdentity) {
       GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
-      passwordManager.setCurrentDID(this.signedInIdentity.didString);
     }
 
     this.signedInIdentityListener.next(this.signedInIdentity);
@@ -125,7 +124,6 @@ export class GlobalDIDSessionsService {
 
     this.signedInIdentity = entry;
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
-    passwordManager.setCurrentDID(this.signedInIdentity.didString);
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
@@ -148,7 +146,6 @@ export class GlobalDIDSessionsService {
     await this.signedInIdentityListener.next(null);
 
     // TODO: Stop all background services, destroy plugins.
-    passwordManager.setCurrentDID(null);
     await this.destroyWallet();
 
     this.globalNavService.navigateDIDSessionHome();
