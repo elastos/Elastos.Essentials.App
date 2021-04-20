@@ -75,7 +75,7 @@ export class UXService {
     public async getAppDid(appId: string): Promise<string> {
         /* TODO
         return new Promise((resolve, reject) => {
-            essentialsIntent.getAppInfo(appId,
+            essentialsIntentManager.getAppInfo(appId,
                 (appInfo) => {
                     resolve(appInfo.did || '');
                 },
