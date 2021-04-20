@@ -23,6 +23,9 @@ export const fr = {
     'done': 'Terminer',
     'mnemonic': 'Mnémonique',
     'description': 'Description',
+    'tx-copied-to-clipboard': 'Transaction ID copied',
+    'copy': 'Copy',
+    'dismiss': 'Dismiss',
 
     // Navigation
     'settings': 'Paramètres',

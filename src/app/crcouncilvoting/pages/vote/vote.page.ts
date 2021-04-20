@@ -163,7 +163,7 @@ export class VotePage implements OnInit, OnDestroy {
       message: `${txid.slice(0,16) + '<br>' + txid.slice(16,32) + '<br>' + txid.slice(32,48)}`,
       buttons: [
         {
-          text: 'Copy',
+          text: this.translate.instant('copy'),
           handler: () => {
             this.toast.dismiss();
             this.globalNative.genericToast('tx-copied-to-clipboard');
@@ -172,7 +172,7 @@ export class VotePage implements OnInit, OnDestroy {
           }
         },
         {
-          text: 'Dismiss',
+          text: this.translate.instant('dismiss'),
           handler: () => {
             this.toast.dismiss();
             this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');

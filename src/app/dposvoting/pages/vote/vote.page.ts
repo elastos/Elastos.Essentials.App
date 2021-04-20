@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ToastController, AlertController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 import { NodesService } from '../../services/nodes.service';
 import { Node } from '../../model/nodes.model';
@@ -11,6 +11,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 
 @Component({
@@ -39,8 +40,8 @@ export class VotePage implements OnInit {
     public nodesService: NodesService,
     private storage: GlobalStorageService,
     private toastController: ToastController,
-    private alertController: AlertController,
     private translate: TranslateService,
+    private globalNative: GlobalNativeService,
     private globalIntentService: GlobalIntentService,
     public theme: GlobalThemeService
   ) {
@@ -56,6 +57,9 @@ export class VotePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    if(this.toast) {
+      this.toast.dismiss();
+    }
   }
 
   //// Vote intent ////
@@ -144,51 +148,33 @@ export class VotePage implements OnInit {
     this.showNode = false;
   }
 
-  //// Alerts ////
-  async registerAppAlert() {
-    const alert = await this.alertController.create({
-      mode: 'ios',
-      header: 'Would you like to add DPoS Voting to your profile?',
-      message: 'Registering a capsule will allow your followers via Contacts to effortlessly browse your favorite capsules!',
-      buttons: [
-        {
-          text: this.translate.instant('cancel'),
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            Logger.log('dposvoting', 'No thanks');
-          }
-        },
-        {
-          text: this.translate.instant('confirm'),
-          handler: () => {
-            this.globalIntentService.sendIntent("https://did.elastos.net/registerapplicationprofile", {
-              identifier: "DPoS Voting",
-              connectactiontitle: "Vote for your favorite Supernodes and earn ELA along the way"
-            });
-          }
-        },
-      ]
-    });
-    alert.present();
-  }
-
-  async voteSuccess(res: string) {
+  async voteSuccess(txid: string) {
     this.closeToast();
     this.toast = await this.toastController.create({
       position: 'bottom',
       header: this.translate.instant('vote-success'),
-      message: 'txid:' + res.slice(0,30) + '...',
+      message: `${txid.slice(0,16) + '<br>' + txid.slice(16,32) + '<br>' + txid.slice(32,48)}`,
       color: "primary",
       buttons: [
         {
-          text: this.translate.instant('ok'),
+          text: this.translate.instant('copy'),
+          handler: () => {
+            this.toast.dismiss();
+            this.globalNative.genericToast('tx-copied-to-clipboard');
+            this.globalNative.copyClipboard(txid);
+          }
+        },
+        {
+          text: this.translate.instant('dismiss'),
           handler: () => {
             this.toast.dismiss();
           }
-        }
+        },
       ],
     });
+    this.toast.onWillDismiss(() => {
+      this.toast = null;
+    }) 
     this.toast.present();
   }
 
@@ -199,7 +185,6 @@ export class VotePage implements OnInit {
       header: this.translate.instant('vote-fail'),
       message: this.translate.instant(res),
       color: "primary",
-      cssClass: 'toaster',
       buttons: [
         {
           text: this.translate.instant('ok'),
@@ -209,6 +194,9 @@ export class VotePage implements OnInit {
         }
       ]
     });
+    this.toast.onWillDismiss(() => {
+      this.toast = null;
+    }) 
     this.toast.present();
   }
 
