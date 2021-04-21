@@ -7,7 +7,7 @@ export const zh = {
      /********** Language Page **********/
      // Titles
      'capsule-setting': '胶囊管理',
-     'about-setting': '关于亦来云',
+     'about-setting': '关于Essentials',
      'developer-setting': '开发者选项',
      'passwordmanager-setting':'密码管理器',
      'wallet-setting': '我的钱包',
