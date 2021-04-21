@@ -81,6 +81,10 @@ export class GlobalPublicationService {
     }
 
     public async init() {
+        // TMP BPI 20210421 - This creates a JS crash in case no user signed in / no persistent info,
+        // because the did store is never set. Feature disabled for the upcoming release for now
+        return;
+
         let persistentInfoJsonStr = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'identity', "persistentInfo", null) as string;
         this.persistentInfo = (persistentInfoJsonStr ? JSON.parse(persistentInfoJsonStr) : this.createNewPersistentInfo());
         console.log("Persistent info:", this.persistentInfo);
@@ -156,7 +160,7 @@ export class GlobalPublicationService {
 
     // DOC FOR ASSIST API: https://github.com/tuum-tech/assist-restapi-backend#verify
     private publishDIDOnAssist(didString: string, payloadObject: any, memo: string) {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             console.log("Requesting identity publication to Assist");
 
             const assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";

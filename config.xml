@@ -111,16 +111,14 @@
         <config-file parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
             <false />
         </config-file>
-
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
-
         <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
             <array>
                 <string>applinks:essentials.elastos.net</string>
                 <string>applinks:launcher.elastos.net</string>
                 <string>applinks:did.elastos.net</string>
-		        <string>applinks:wallet.elastos.net</string>
+                <string>applinks:wallet.elastos.net</string>
                 <string>applinks:hive.elastos.net</string>
                 <string>applinks:contact.elastos.net</string>
                 <string>applinks:scanner.elastos.net</string>
@@ -131,13 +129,12 @@
                 <string>applinks:essentials.elastos.net</string>
                 <string>applinks:launcher.elastos.net</string>
                 <string>applinks:did.elastos.net</string>
-		        <string>applinks:wallet.elastos.net</string>
+                <string>applinks:wallet.elastos.net</string>
                 <string>applinks:hive.elastos.net</string>
                 <string>applinks:contact.elastos.net</string>
                 <string>applinks:scanner.elastos.net</string>
             </array>
         </config-file>
-
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="29" src="resources/ios/icon/icon-small.png" width="29" />
