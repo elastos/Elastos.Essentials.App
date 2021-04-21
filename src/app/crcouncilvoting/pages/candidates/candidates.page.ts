@@ -44,7 +44,7 @@ export class CandidatesPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    if(this.candidatesService.candidates.length) {
+    if (this.candidatesService.candidates.length) {
       this.titleBar.setTitle(this.translate.instant('council-candidates'));
     } else if(this.candidatesService.council.length){
       this.titleBar.setTitle(this.translate.instant('council-members'));
@@ -63,21 +63,21 @@ export class CandidatesPage implements OnInit {
   /****************** Select Candidate *******************/
   addCandidate(candidate: Candidate) {
     let targetCandidate = this.candidatesService.selectedCandidates.find(
-      _candidate => _candidate.cid === candidate.cid
-    );
-    if (!targetCandidate) {
-      this.candidatesService.selectedCandidates.push({
-        cid: candidate.cid,
-        nickname: candidate.nickname,
-        imageUrl: candidate.imageUrl,
-        userVotes: 0
-      });
-    } else {
-      this.candidatesService.selectedCandidates = this.candidatesService.selectedCandidates.filter(
-        _candidate => _candidate.cid !== candidate.cid
+        _candidate => _candidate.cid === candidate.cid
       );
-    }
-    Logger.log('crcouncil', "addCandidate: Selected candidates", this.candidatesService.selectedCandidates
+      if (!targetCandidate) {
+        this.candidatesService.selectedCandidates.push({
+          cid: candidate.cid,
+          nickname: candidate.nickname,
+          imageUrl: candidate.imageUrl,
+          userVotes: 0
+        });
+      } else {
+        this.candidatesService.selectedCandidates = this.candidatesService.selectedCandidates.filter(
+          _candidate => _candidate.cid !== candidate.cid
+        );
+      }
+      Logger.log('crcouncil', "addCandidate: Selected candidates", this.candidatesService.selectedCandidates
     );
   }
 

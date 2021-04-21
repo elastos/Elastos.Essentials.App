@@ -63,7 +63,7 @@ export class VotePage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.castingVote = false;
     this.votesCasted = false;
-    
+
     if(this.toast) {
       this.toast.dismiss();
     }
@@ -150,7 +150,7 @@ export class VotePage implements OnInit, OnDestroy {
     });
     this.toast.onWillDismiss(() => {
       this.toast = null;
-    }) 
+    })
     this.toast.present();
   }
 
@@ -168,21 +168,21 @@ export class VotePage implements OnInit, OnDestroy {
             this.toast.dismiss();
             this.globalNative.genericToast('tx-copied-to-clipboard');
             this.globalNative.copyClipboard(txid);
-            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+            this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           }
         },
         {
           text: this.translate.instant('dismiss'),
           handler: () => {
             this.toast.dismiss();
-            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+            this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           }
         }
       ]
     });
     this.toast.onWillDismiss(() => {
       this.toast = null;
-    }) 
+    })
     this.toast.present();
   }
 
@@ -191,21 +191,21 @@ export class VotePage implements OnInit, OnDestroy {
       mode: 'ios',
       position: 'bottom',
       color: 'primary',
-      header: this.translate.instant('vote-failed'),
+      // header: this.translate.instant('vote-failed'),
       message: err,
       buttons: [
         {
           text: this.translate.instant('ok'),
           handler: () => {
             this.toast.dismiss();
-            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+            this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           }
         }
       ]
     });
     this.toast.onWillDismiss(() => {
       this.toast = null;
-    }) 
+    })
     this.toast.present();
   }
 }

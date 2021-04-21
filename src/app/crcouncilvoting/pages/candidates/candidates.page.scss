@@ -29,6 +29,7 @@
 
   .candidate-list {
     padding: 0px 0px 1px;
+    height: 100%;
 
     ion-item {
       margin: 2px 0;
@@ -73,12 +74,12 @@
           h4, p {
             font-weight: 600;
           }
-  
+
           h4 {
             font-size: 14px;
             font-weight: 600;
           }
-  
+
           p {
             font-size: 10px !important;
             color: #353650;
@@ -86,7 +87,7 @@
             ion-icon {
               color: #732dcf;
             }
-  
+
             .votes {
               font-size: 12px;
             }
