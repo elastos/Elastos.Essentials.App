@@ -23,9 +23,9 @@ export const zh = {
     'done': '完成',
     'mnemonic': '助记词',
     'description': '描述',
-    'tx-copied-to-clipboard': 'Transaction ID copied',
-    'copy': 'Copy',
-    'dismiss': 'Dismiss',
+    'tx-copied-to-clipboard': '交易ID已拷贝',
+    'copy': '拷贝',
+    'dismiss': '忽略',
 
     // Navigation
     'settings': '设置',
