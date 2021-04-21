@@ -26,6 +26,6 @@ export const fr = {
     'cr-voting-ended': 'Aucune élection de membres de la Cyber Republic n\'est actuellement en cours',
     'cr-voting-ended-message': 'Il n\'y aura plus d\'élection jusqu\'au prochain cycle',
     'cr-council-no-available' : 'La liste des membres du conseil n\'est actuellement pas disponible, veuillez ré-essayer plus tard',
-    'pledge-some-ELA-to-candidates': 'Please pledge some ELA to your candidates',
-    'not-allow-pledge-more-than-own': 'You are not allowed to pledge more ELA than you own',
+    'pledge-some-ELA-to-candidates': 'Veuillez distribuer vos votes-ELA à des candidats',
+    'not-allow-pledge-more-than-own': 'Vous ne pouvez pas distribuer plus de votes-ELA que le nombre d\'ELA en votre possession',
 };

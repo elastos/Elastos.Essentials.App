@@ -46,7 +46,7 @@ export class PublishingPage implements OnInit {
    * Continues the identity creation process where it was stopped.
    */
   private async resumeIdentitySetupFlow() {
-    await new Promise((resolve)=>{
+    await new Promise<void>((resolve)=>{
       setTimeout(async ()=>{
         try {
           if (!this.isDIDBeingPublished() && !this.isDIDOnChain()) {

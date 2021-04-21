@@ -141,7 +141,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * Get balance by RPC if the last block time of spvsdk is one day ago.
      */
     async getBalanceByRPC(jsonRPCService: JsonRPCService) {
-        Logger.log("wallet", 'TIMETEST getBalanceByRPC start:', this.id);
+        //Logger.log("wallet", 'TIMETEST getBalanceByRPC start:', this.id);
         const currentTimestamp = moment().valueOf();
         const onedayago = moment().add(-1, 'days').valueOf();
         const oneHourago = moment().add(-10, 'minutes').valueOf();
@@ -172,7 +172,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.balance = totalBalance;
         this.timestampRPC = currentTimestamp;
 
-        Logger.log("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
+        //Logger.log("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
         Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
         Logger.log("wallet", this.masterWallet.id, ' ', this.id, ' timestampRPC:', this.timestampRPC);
         return true;
