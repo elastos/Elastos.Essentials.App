@@ -58,7 +58,7 @@ export class CandidatesPage implements OnInit {
     setTimeout(() => {
         event.target.complete();
     }, 1000);
-}
+  }
 
   /****************** Select Candidate *******************/
   addCandidate(candidate: Candidate) {
