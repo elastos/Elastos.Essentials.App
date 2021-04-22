@@ -53,11 +53,16 @@ export class CreateSuggestionPage {
     // Update system status bar every time we re-enter this screen.
     this.titleBar.setTitle("Create a suggestion");
 
-    // Fetch more details about this suggestion, to display to the user
-    this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
-    Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
-    this.suggestionDetailsFetched = true;
-    this.createSuggestionCommand = this.crOperations.getOnGoingCreateSuggestionCommand();
+    try {
+      // Fetch more details about this suggestion, to display to the user
+      this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
+      Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
+      this.suggestionDetailsFetched = true;
+      this.createSuggestionCommand = this.crOperations.getOnGoingCreateSuggestionCommand();
+    }
+    catch (err) {
+      Logger.error('crproposal', 'CreateSuggestionPage ionViewDidEnter error:', err);
+    }
   }
 
   async signAndCreateSuggestion() {

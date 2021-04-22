@@ -61,12 +61,16 @@ export class ProposalService {
             this.http.get<any>(this.cr_rpc_api+'/api/cvote/all_search?status='+status+'&page='+page+'&results=10').subscribe((res: ProposalsSearchResponse) => {
                 Logger.log('crproposal', res);
                 if (this.pageNumbersLoaded < page) {
-                  this.allSearchResults = this.allSearchResults.concat(res.data.list);
-                  this.pageNumbersLoaded = page;
+                  if (res && res.data && res.data.list) {
+                    this.allSearchResults = this.allSearchResults.concat(res.data.list);
+                    this.pageNumbersLoaded = page;
+                  } else {
+                    Logger.error('crproposal', 'can not get vote data!');
+                  }
                 }
                 resolve(this.allSearchResults);
             }, (err) => {
-                Logger.error('crproposal', err);
+                Logger.error('crproposal', 'fetchProposals error:', err);
                 reject(err);
             });
         });
@@ -77,9 +81,14 @@ export class ProposalService {
             Logger.log('crproposal', 'Fetching proposal details for proposal '+proposalId+'...');
             this.http.get<any>(this.cr_rpc_api+'/api/cvote/get_proposal/'+proposalId).subscribe((res: ProposalsDetailsResponse) => {
                 Logger.log('crproposal', res);
-                resolve(res.data);
+                if (res && res.data) {
+                  resolve(res.data);
+                } else {
+                  Logger.error('crproposal', 'cat not get data');
+                  reject(null);
+                }
             }, (err) => {
-                Logger.error('crproposal', err);
+                Logger.error('crproposal', 'fetchProposalDetails error:', err);
                 reject(err);
             });
         });
@@ -90,9 +99,13 @@ export class ProposalService {
             Logger.log('crproposal', 'Fetching searched proposal for status: ' + status, + 'with search: ' + search);
             this.http.get<any>(this.cr_rpc_api+'/api/cvote/all_search?page='+page+'&results=10&status='+status+'&search='+search).subscribe((res: ProposalsSearchResponse) => {
                 Logger.log('crproposal', res);
-                resolve(res.data.list);
+                if (res && res.data) {
+                  resolve(res.data.list);
+                } else {
+                  reject(null);
+                }
             }, (err) => {
-                Logger.error('crproposal', err);
+                Logger.error('crproposal', 'fetchSearchedProposal error:', err);
                 reject(err);
             });
         });
@@ -103,9 +116,14 @@ export class ProposalService {
             Logger.log('crproposal', 'Fetching suggestion details for suggestion '+suggestionId+'...');
             this.http.get<any>(this.cr_rpc_api+'/api/suggestion/get_suggestion/'+suggestionId).subscribe((res: SuggestionDetailsResponse) => {
                 Logger.log('crproposal', res);
-                resolve(res.data);
+                if (res && res.data) {
+                  resolve(res.data);
+                } else {
+                  Logger.error('crproposal', 'get_suggestion: can not get data!');
+                  reject(null);
+                }
             }, (err) => {
-                Logger.error('crproposal', err);
+                Logger.error('crproposal', 'fetchSuggestionDetails error:', err);
                 reject(err);
             });
         });

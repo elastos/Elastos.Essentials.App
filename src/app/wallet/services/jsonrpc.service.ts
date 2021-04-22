@@ -138,13 +138,17 @@ export class JsonRPCService {
             };
             this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
                 .subscribe((res: any) => {
-                    if (res instanceof Array) {
-                        resolve(res);
-                    } else {
-                        resolve(res.result || '');
-                    }
+                  if (res) {
+                      if (res instanceof Array) {
+                          resolve(res);
+                      } else {
+                          resolve(res.result || '');
+                      }
+                  } else {
+                    Logger.error("wallet", 'httpRequest get nothing!');
+                  }
                 }, (err) => {
-                    Logger.log("wallet", 'JsonRPCService httpRequest error:', JSON.stringify(err));
+                    Logger.error("wallet", 'JsonRPCService httpRequest error:', JSON.stringify(err));
                     reject(err);
                 });
         });

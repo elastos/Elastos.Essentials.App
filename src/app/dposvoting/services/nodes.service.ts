@@ -154,11 +154,13 @@ export class NodesService {
     return new Promise<void>((resolve, reject) => {
       this.http.get<any>('https://elanodes.com/api/widgets').subscribe((res) => {
         Logger.log('dposvoting', res);
-        this.statsFetched = true;
-        this.mainchain = res.mainchain;
-        this.voters = res.voters;
-        this.price = res.price;
-        this.block = res.block;
+        if (res) {
+          this.statsFetched = true;
+          this.mainchain = res.mainchain;
+          this.voters = res.voters;
+          this.price = res.price;
+          this.block = res.block;
+        }
         resolve();
       });
     });
@@ -168,11 +170,16 @@ export class NodesService {
     Logger.log('dposvoting', 'Fetching height');
     return new Promise((resolve, reject) => {
       this.http.get<any>(this.nodeApi + '1/currHeight').subscribe((res) => {
-        Logger.log('dposvoting', 'Current height fetched' + res.result);
-        this.currentHeight = res.result;
-        resolve(res.result);
+        if (res && res.result) {
+          Logger.log('dposvoting', 'Current height fetched' + res.result);
+          this.currentHeight = res.result;
+          resolve(res.result);
+        } else {
+          Logger.error('dposvoting', 'can not get curr height!');
+          reject(null);
+        }
       }, (err) => {
-        Logger.log('dposvoting', err);
+        Logger.log('dposvoting', 'fetchCurrentHeight error:', err);
         reject(err);
       });
     });
@@ -218,7 +225,7 @@ export class NodesService {
             reject(err);
           });
         } catch (e) {
-          Logger.error('dposvoting', ' error:', e)
+          Logger.error('dposvoting', 'fetchNodes error:', e)
         }
     });
 
@@ -226,19 +233,24 @@ export class NodesService {
 
   async fetchReward() {
     Logger.log('dposvoting', 'start fetchReward');
-    const height: number = await this.fetchCurrentHeight();
-    // this api is too slow.
-    this.http.get<any>(this.nodeApi + 'v1/dpos/rank/height/' + height +'?state=active').subscribe((res) => {
-      if (res.result) {
-        this.rewardResult = res.result;
-        this.setupRewardInfo();
-      } else {
-        this.isFetchingRewardOrDone = false;
-        Logger.log('dposvoting', 'fetchReward can not get the reward info.');
-      }
+    try {
+      const height: number = await this.fetchCurrentHeight();
+      // this api is too slow.
+      this.http.get<any>(this.nodeApi + 'v1/dpos/rank/height/' + height +'?state=active').subscribe((res) => {
+        if (res && res.result) {
+          this.rewardResult = res.result;
+          this.setupRewardInfo();
+        } else {
+          this.isFetchingRewardOrDone = false;
+          Logger.log('dposvoting', 'fetchReward can not get the reward info.');
+        }
 
-      Logger.log('dposvoting', 'fetchReward end');
-    });
+        Logger.log('dposvoting', 'fetchReward end');
+      });
+    }
+    catch (err) {
+      Logger.error('dposvoting', 'fetchReward error:', err);
+    }
   }
 
   setupRewardInfo() {

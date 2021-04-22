@@ -1,7 +1,6 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { IonContent, IonInput } from '@ionic/angular';
 import { ProposalService } from '../../../services/proposal.service';
-import { ProposalsSearchResponse } from '../../../model/proposal-search-response';
 import { ProposalSearchResult } from '../../../model/proposal-search-result';
 import { ProposalStatus } from '../../../model/proposal-status';
 import { UXService } from '../../../services/ux.service';
@@ -64,24 +63,34 @@ export class ProposalListingPage implements OnInit {
   }
 
   async fetchProposals() {
-    this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1);
-    this.proposalsFetched = true;
-    this.showSearch = true;
-    this.titleBar.setTitle(this.translate.instant('proposals'));
+    try {
+      this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1);
+      this.proposalsFetched = true;
+      this.showSearch = true;
+      this.titleBar.setTitle(this.translate.instant('proposals'));
+    }
+    catch (err) {
+      Logger.error('crproposal', 'fetchProposals error:', err)
+    }
   }
 
   async searchProposal(event) {
     Logger.log('crproposal', 'Search input changed', event);
-    if(this.searchInput) {
+    if (this.searchInput) {
       this.proposalsFetched = false;
       this.titleBar.setTitle(this.translate.instant('searching-proposals'));
-      this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
-      this.proposalsFetched = true;
-      this.titleBar.setTitle(this.translate.instant('proposals'));
+      try {
+        this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
+        this.proposalsFetched = true;
+        this.titleBar.setTitle(this.translate.instant('proposals'));
+      }
+      catch (err) {
+        Logger.error('crproposal', 'searchProposal error:', err);
+      }
     } else {
       // Reset Search Page #
       this.searchPage = 1;
-      this.fetchProposals();
+      await this.fetchProposals();
     }
   }
 
@@ -95,21 +104,26 @@ export class ProposalListingPage implements OnInit {
   }
 
   public async loadMoreProposals(event) {
-    if(!this.allProposalsLoaded) {
+    if (!this.allProposalsLoaded) {
       Logger.log('crproposal', 'Loading more proposals', this.fetchPage);
       this.content.scrollToBottom(300);
 
       let proposalsLength = this.proposals.length;
 
-      if (this.searchInput) {
-        this.searchPage++;
-        this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
-      } else {
-        this.fetchPage++;
-        this.proposals = await this.proposalService.fetchProposals(this.proposalType, this.fetchPage);
+      try {
+        if (this.searchInput) {
+          this.searchPage++;
+          this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
+        } else {
+          this.fetchPage++;
+          this.proposals = await this.proposalService.fetchProposals(this.proposalType, this.fetchPage);
+        }
+      }
+      catch (err) {
+        Logger.error('crproposal', 'loadMoreProposals error:', err);
       }
 
-      if(this.proposals.length === proposalsLength) {
+      if (this.proposals.length === proposalsLength) {
         if (this.searchInput) {
           this.searchPage--;
         } else {

@@ -119,10 +119,12 @@ export class CurrencyService {
     // TODO: Get price by token name.
     this.http.get<any>(this.proxyurl + 'https://api-price.elaphant.app/api/1/cmc?limit=500').subscribe((res) => {
       Logger.log('wallet', 'Got CMC response', res);
-      this.elaStats = res.find((coin) => coin.symbol === 'ELA');
-      if (this.elaStats) {
-        Logger.log('wallet', 'CMC ELA stats', this.elaStats);
-        this.addPriceToCurrency();
+      if (res) {
+        this.elaStats = res.find((coin) => coin.symbol === 'ELA');
+        if (this.elaStats) {
+          Logger.log('wallet', 'CMC ELA stats', this.elaStats);
+          this.addPriceToCurrency();
+        }
       }
     }, (err) => {
       Logger.error('wallet', 'Fetch CMC Stats err', err);

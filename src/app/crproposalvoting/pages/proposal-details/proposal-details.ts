@@ -47,13 +47,18 @@ export class ProposalDetailsPage {
 
   async init(proposalId) {
     this.proposal = null;
-    let proposalSearchResult = this.proposalService.getFetchedProposalById(proposalId);
-    let proposalDetails = await this.proposalService.fetchProposalDetails(proposalId);
+    try {
+      let proposalSearchResult = this.proposalService.getFetchedProposalById(proposalId);
+      let proposalDetails = await this.proposalService.fetchProposalDetails(proposalId);
 
-    this.proposal = Object.assign(proposalSearchResult, proposalDetails);
-    this.addProposalDetails();
-    this.titleBar.setTitle(this.translate.instant('proposal-details'));
-    Logger.log('CRProposal', "Merged proposal info:", this.proposal)
+      this.proposal = Object.assign(proposalSearchResult, proposalDetails);
+      this.addProposalDetails();
+      this.titleBar.setTitle(this.translate.instant('proposal-details'));
+      Logger.log('CRProposal', "Merged proposal info:", this.proposal)
+    }
+    catch (err) {
+      Logger.error('CRProposal', 'fetchProposalDetails error:', err);
+    }
   }
 
   ionViewDidEnter() {

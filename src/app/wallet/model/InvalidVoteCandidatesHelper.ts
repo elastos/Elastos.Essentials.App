@@ -42,7 +42,10 @@ export type InvalidCandidateForVote = {
  * vote with previous vote types. Otherwise, the published transaction will be invalid, if we pass invalid candidates.
  */
 export class InvalidVoteCandidatesHelper {
-    constructor(private http: HttpClient, private walletManager: WalletManager, private masterWalletId: string, private prefs: GlobalPreferencesService) {}
+    constructor(private http: HttpClient,
+                private walletManager: WalletManager,
+                private masterWalletId: string,
+                private globalPreferences: GlobalPreferencesService) {}
 
     public async computeInvalidCandidates(): Promise<InvalidCandidateForVote[]> {
         let invalidCandidatesList: InvalidCandidateForVote[] = [];
@@ -218,26 +221,9 @@ export class InvalidVoteCandidatesHelper {
     }
 
     private async fetchProposals(status: CRProposalStatus): Promise<CRProposalsSearchResponse> {
-        // Check which network we are currently configured for.
-        let networkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
-        let crApiUrl: string = "";
-        switch (networkType) {
-            case NetworkType.MainNet:
-                crApiUrl = "https://api.cyberrepublic.org";
-                break;
-            case NetworkType.TestNet:
-                crApiUrl = null; // TODO
-                break;
-            case NetworkType.RegNet:
-                crApiUrl = null; // TODO
-                break;
-            case NetworkType.PrvNet:
-                crApiUrl = "http://crapi.longrunweather.com:18080";
-                break;
-        }
-
+        let crApiUrl: string = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
         if (!crApiUrl) {
-            Logger.error('wallet', "No CR API defined for network type "+networkType+"!");
+            Logger.error('wallet', "No CR API defined !");
             return null;
         }
 

@@ -38,20 +38,27 @@ export class AppService {
   }
 
   async checkForNewProposals(today: Date) {
-    const proposals = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
-    Logger.log('crproposal', 'Background service: Proposals fetched', proposals);
-
     // Send notification if there are any new proposals only for today
     let newProposalsCount: number = 0;
-    proposals.forEach((proposal) => {
-      if(moment(proposal.createdAt * 1000).isSame(today, 'd')) {
-        newProposalsCount++;
-      }
-    });
+    let proposals = null;
+    try {
+      proposals = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
+      Logger.log('crproposal', 'Background service: Proposals fetched', proposals);
 
-    if(newProposalsCount > 0) {
+      proposals.forEach((proposal) => {
+        if(moment(proposal.createdAt * 1000).isSame(today, 'd')) {
+          newProposalsCount++;
+        }
+      });
+    }
+    catch (err) {
+      Logger.error('crproposal', 'checkForNewProposals error:', err)
+      return;
+    }
+
+    if (newProposalsCount > 0) {
       let message = "";
-      if(newProposalsCount === 1) {
+      if (newProposalsCount === 1) {
         message = "There's a new CRC proposal today, click to check it out";
       } else {
         message = "You have " + newProposalsCount + ' new proposals today, click to check them out';
@@ -71,13 +78,13 @@ export class AppService {
     Logger.log('crproposal', 'Background service: Last proposal checked by id', lastCheckedProposal);
 
     // Send notification new proposals since user last visited Elastos Essentials
-    if(lastCheckedProposal) {
+    if (lastCheckedProposal) {
       const targetProposal = proposals.find(proposal => proposal.id === lastCheckedProposal);
       const targetProposalIndex = proposals.indexOf(targetProposal);
 
-      if(targetProposalIndex > 0) {
+      if (targetProposalIndex > 0) {
         let message = "";
-        if(targetProposalIndex === 1) {
+        if (targetProposalIndex === 1) {
           message = "There is a new proposal since you last visited, click to check it out";
         } else {
           message = "You have " + targetProposalIndex + ' new proposals since you last visited, click to check them out';
