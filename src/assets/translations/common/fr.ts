@@ -26,6 +26,7 @@ export const fr = {
     'tx-copied-to-clipboard': 'Transaction ID copied',
     'copy': 'Copy',
     'dismiss': 'Dismiss',
+    'vote-success': 'Votes sauvegardés!',
 
     // Navigation
     'settings': 'Paramètres',
@@ -39,7 +40,7 @@ export const fr = {
     'please-wait': "Veuillez patienter...",
     "sorry": "Désolé",
     'name-is-missing': "Veuillez saisir un nom",
-    'error': 'Error',
+    'error': 'Erreur',
     'sentry-message': 'Sorry, the application encountered an error. This has been reported to the team.',
 
     // Related to DID

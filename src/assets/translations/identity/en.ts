@@ -34,7 +34,7 @@ export const en = {
     'no-capsules-title': 'No Capsules found',
     'no-capsules-text': 'You can find capsules from the Elastos community. Depending on the capsule, you will be able to register it to your Capsule Profile for you to share and everybody else to see.',
     'not-set': 'Not set',
-    'credentials': 'Credentials', 
+    'credentials': 'Credentials',
     'male': 'Male',
     'female': 'Female',
     'published': 'Published',
@@ -242,7 +242,6 @@ export const en = {
 
     /******************** Messages ********************/
     // errors
-    'error': 'Error',
     'text-request-fail': 'request fail',
     'text-request-no-credential': 'no credential',
 

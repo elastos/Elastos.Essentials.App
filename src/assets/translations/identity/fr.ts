@@ -243,7 +243,6 @@ export const fr = {
 
     /******************** Messages ********************/
     // errors
-    'error': 'Erreur',
     'text-request-fail': 'Erreur lors de la requête',
     'text-request-no-credential': 'Aucun crédentiel',
 

@@ -50,7 +50,6 @@ export const zh = {
     'vote-voted': '投票',
     'vote-not-voted': '投票',
     'vote-selected': '已选中节点',
-    'vote-success': '投票成功',
     'vote-fail': '投票失败',
     'vote-cancelled': '投票被取消',
     'vote-timeout': '投票超时',

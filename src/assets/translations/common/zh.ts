@@ -26,6 +26,7 @@ export const zh = {
     'tx-copied-to-clipboard': '交易ID已拷贝',
     'copy': '拷贝',
     'dismiss': '忽略',
+    'vote-success': '投票成功!',
 
     // Navigation
     'settings': '设置',

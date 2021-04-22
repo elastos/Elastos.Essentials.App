@@ -20,7 +20,6 @@ export const fr = {
     'wallet-access-request-message': 'Le solde actuel de vos ELA permettra de déterminer votre pouvoir de vote',
     'get-ela-failed-header': 'Erreur lors de la récupération de votre solde',
     'get-ela-failed-message': 'Le solde de vos ELA est nécessaire pour déterminer votre pouvoir de vote',
-    'vote-success': 'Votes sauvegardés!',
     'vote-failed': 'Il y a eu une erreur lors du vote..',
     'vote-incomplete': 'Le traitement du vote n\'a pas pu aboutir',
     'cr-voting-ended': 'Aucune élection de membres de la Cyber Republic n\'est actuellement en cours',

@@ -21,7 +21,6 @@ export const en = {
     'wallet-access-request-message': 'Wallet will fetch your ELA balance to estimate your voting power',
     'get-ela-failed-header': 'Failed to fetch ELA balance',
     'get-ela-failed-message': 'ELA balance is needed to assess your voting rights',
-    'vote-success': 'Voted successfully casted!',
     'vote-failed': 'There was an error with casting votes..',
     'vote-incomplete': 'Vote processing was incomplete',
     'cr-voting-ended': 'The CRC Election has ended',

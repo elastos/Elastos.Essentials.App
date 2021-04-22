@@ -26,6 +26,7 @@ export const en = {
     'tx-copied-to-clipboard': 'Transaction ID copied',
     'copy': 'Copy',
     'dismiss': 'Dismiss',
+    'vote-success': 'Voted successfully casted!',
 
     // Navigation
     'settings': 'Settings',

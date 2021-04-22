@@ -244,7 +244,6 @@ export const zh = {
     // errors
     'text-request-fail': '授权失败',
     'text-request-no-credential': '没有凭证',
-    'error': '错误',
 
     // loading
     'loading-msg': '加载中，请稍候',

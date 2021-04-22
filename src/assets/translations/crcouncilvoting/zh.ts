@@ -21,7 +21,6 @@ export const zh = {
     'wallet-access-request-message': '将通过钱包获取您的ELA余额，以计算您的投票权',
     'get-ela-failed-header': '无法获取 ELA 金额',
     'get-ela-failed-message': '钱包中有ELA 才能进行 CR 委员投票',
-    'vote-success': '投票成功!',
     'vote-failed': '投票失败',
     'vote-incomplete': '投票失败',
     'cr-voting-ended': 'CR委员选举已经结束',

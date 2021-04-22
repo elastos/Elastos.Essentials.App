@@ -50,7 +50,6 @@ export const en = {
     'vote-voted': 'VOTES CASTED',
     'vote-not-voted': 'CAST VOTE',
     'vote-selected': ' selected nodes',
-    'vote-success': 'Votes successfully sent',
     'vote-fail': 'There was an error with sending votes...',
     'vote-cancelled': 'Votes were cancelled',
     'vote-timeout': 'No response from wallet',

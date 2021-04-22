@@ -117,7 +117,7 @@ export class CandidatesService {
     Logger.log('crcouncil', 'Fetching Candidates..');
     this.http.post<any>(this.proxyurl + this.ela_rpc_api, this.params, this.httpOptions).subscribe((res) => {
       Logger.log('crcouncil', 'Candidates fetched', res);
-      if(res.result.crcandidatesinfo) {
+      if(res && res.result && res.result.crcandidatesinfo) {
         this.candidates = res.result.crcandidatesinfo;
         Logger.log('crcouncil', 'Candidates added', this.candidates);
         this.totalVotes = parseFloat(res.result.totalvotes);
@@ -126,7 +126,7 @@ export class CandidatesService {
         this.fetchElectionResults();
       }
     }, (err) => {
-      Logger.error('crcouncil', err);
+      Logger.error('crcouncil', 'fetchCandidates error', err);
       this.alertErr('cr-council-no-available');
     });
   }
@@ -140,10 +140,14 @@ export class CandidatesService {
     return new Promise<void>((resolve, reject) => {
       this.http.get<any>(this.cr_council_term).subscribe((res) => {
         Logger.log('crcouncil', 'Council terms fetched', res);
-        this.councilTerm = res.data[0].startDate;
+        if (res && res.data && res.data[0]) {
+          this.councilTerm = res.data[0].startDate;
+        } else {
+          Logger.error('crcouncil', 'can not get council term data!');
+        }
         resolve();
       }, (err) => {
-        Logger.error('crcouncil', err);
+        Logger.error('crcouncil', 'fetchCouncilTerm error:', err);
         resolve();
       });
     });
@@ -152,11 +156,15 @@ export class CandidatesService {
   fetchCouncil() {
     this.http.get<any>(this.cr_council_list).subscribe((res) => {
       Logger.log('crcouncil', 'Council fetched', res);
-      this.council = res.data.council;
-      this.getLogos();
+      if (res && res.data) {
+        this.council = res.data.council;
+        this.getLogos();
+      } else {
+        Logger.error('crcouncil', 'can not get council data!');
+      }
     }, (err) => {
       this.alertErr('cr-council-no-available');
-      Logger.error('crcouncil', err);
+      Logger.error('crcouncil', 'fetchCouncil error:', err);
     });
   }
 
