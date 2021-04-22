@@ -16,6 +16,7 @@ import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordov
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
 import { GlobalNotificationsService } from './services/global.notifications.service';
 import { GlobalPublicationService } from './services/global.publication.service';
+import { GlobalWalletConnectService } from './services/global.walletconnect.service';
 
 @Component({
     selector: 'app-root',
@@ -40,7 +41,8 @@ export class AppComponent {
         private intentService: GlobalIntentService,
         private screenOrientation: ScreenOrientation,
         private notificationsService: GlobalNotificationsService,
-        private publicationService: GlobalPublicationService
+        private publicationService: GlobalPublicationService,
+        private walletConnect: GlobalWalletConnectService
     ) {
     }
 
@@ -75,6 +77,7 @@ export class AppComponent {
             await this.intentService.init();
             await this.didSessions.init();
             // await this.publicationService.init();
+            await this.walletConnect.init();
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();

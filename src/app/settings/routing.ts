@@ -6,6 +6,8 @@ import { AboutPage } from './pages/about/about.page';
 import { DeveloperPage } from './pages/developer/developer.page';
 import { SelectNetPage } from './pages/select-net/select-net.page';
 import { DevTestsPage } from './pages/devtests/devtests.page';
+import { WalletConnectConnectPage } from './pages/walletconnect/connect/connect.page';
+import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessions.page';
 
 const routes: Routes = [
   { path: 'menu', component: MenuPage },
@@ -13,7 +15,9 @@ const routes: Routes = [
   { path: 'about', component: AboutPage },
   { path: 'developer', component: DeveloperPage },
   { path: 'select-net', component: SelectNetPage },
-  { path: 'devtests', component: DevTestsPage }
+  { path: 'devtests', component: DevTestsPage },
+  { path: 'walletconnect/sessions', component: WalletConnectSessionsPage },
+  { path: 'walletconnect/connect', component: WalletConnectConnectPage }
 ];
 
 @NgModule({

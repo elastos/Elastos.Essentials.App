@@ -13,6 +13,8 @@ export const en = {
     'dev-mode': 'Developer Mode',
     'passwordmanager-setting':'Password Manager',
     'wallet-setting': 'My Wallet',
+    'wallet-connect-sessions-setting': 'Wallet Connect Sessions',
+
     // Subtitles
     'your-app-details': 'DETAILS ABOUT YOUR CAPSULES',
     'advanced-setting': 'ADVANCED SETTINGS',
@@ -20,6 +22,8 @@ export const en = {
     'manage-pw': 'MANAGE PASSWORD',
     'change-pw': 'CHANGE PASSWORD',
     'about-elastos': 'DETAILS ABOUT ELASTOS ESSENTIALS',
+    'wallet-connect-sessions-intro-setting': 'Manage active sessions',
+
     // Other
     'light-mode-on': 'LIGHT MODE ON',
     'dark-mode-on': 'DARK MODE ON',
@@ -54,6 +58,9 @@ export const en = {
     'reg-net': 'Regression net',
     'priv-net': 'Private Net',
     'lrw-net': 'LongRunWeather Net',
+
+    /********** Wallet Connect Page **********/
+    'wallet-connect-sessions': 'Wallet Connect Sessions'
 };
 
 

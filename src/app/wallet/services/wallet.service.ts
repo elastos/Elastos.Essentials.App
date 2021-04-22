@@ -65,14 +65,6 @@ type TransactionMap = {
     [k: string]: TransactionMapEntry;
 };
 
-// TODO: Replace all the Promise<any> with real data structures
-// TODO: Use real types everywhere, no "any" any more.
-
-/***
- * wallet jni 交互
- *
- * WalletManager.ts -> Wallet.js -> wallet.java -> WalletManager.java
- */
 @Injectable({
     providedIn: 'root'
 })

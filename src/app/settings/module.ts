@@ -15,6 +15,8 @@ import { SelectNetPage } from './pages/select-net/select-net.page';
 import { LanguagePage } from './pages/language/language.page';
 import { DeveloperPage } from './pages/developer/developer.page';
 import { DevTestsPage } from './pages/devtests/devtests.page';
+import { WalletConnectConnectPage } from './pages/walletconnect/connect/connect.page';
+import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessions.page';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { DevTestsPage } from './pages/devtests/devtests.page';
     SelectNetPage,
     LanguagePage,
     DeveloperPage,
-    DevTestsPage
+    DevTestsPage,
+    WalletConnectConnectPage,
+    WalletConnectSessionsPage
   ],
   imports: [
     CommonModule,

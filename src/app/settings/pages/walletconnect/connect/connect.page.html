@@ -1,0 +1,23 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <div *ngIf="sessionRequest && sessionRequest.request">
+    <h1>Wallet Connect Request</h1>
+    <h3>Would you like to open a session with the following external app?</h3>
+    <p>
+      <b>Name:</b> {{ sessionRequest.request.peerMeta.name }}
+    </p>
+    <p>
+      <b>Description:</b> {{ sessionRequest.request.peerMeta.description }}
+    </p>
+    <p>
+      <b>URL:</b> {{ sessionRequest.request.peerMeta.url }}
+    </p>
+    <div>
+      <h2>Wallet accounts</h2>
+      <div *ngFor="let address of ethAccounts">
+        {{address}}
+      </div>
+    </div>
+    <ion-button color="primary" (click)="openSession()">Connect</ion-button>
+  </div>
+</ion-content>

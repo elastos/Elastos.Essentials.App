@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { Logger } from '../logger';
 import { App } from "src/app/model/app.enum"
+import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 
 export enum Direction {
     NONE = "none",
@@ -111,7 +112,7 @@ export class GlobalNavService {
             this.navCtrl.navigateRoot(launcherHome.route);
     }
 
-    public navigateTo(context: string, route: string, routerOptions?: any) {
+    public navigateTo(context: string, route: string, routerOptions?: NavigationOptions) {
         Logger.log("Nav", "Navigating to", route);
 
         this.navigationHistory.push({context, route, routerOptions});

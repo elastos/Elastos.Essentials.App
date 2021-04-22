@@ -182,8 +182,8 @@ export class EscTransactionPage implements OnInit {
         let sourceSubwallet = this.walletManager.getMasterWallet(this.masterWallet.id).getSubWallet(this.chainId);
         const result = await sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
         if (transfer.intentId) {
-          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            Logger.log('wallet', 'Sending esctransaction intent response');
+            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         }
     }
 }
-

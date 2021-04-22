@@ -13,6 +13,8 @@ export const zh = {
      'wallet-setting': '我的钱包',
      'display-setting': '主题',
      'dev-mode': '开发者模式',
+     'wallet-connect-sessions-setting': 'Wallet Connect Sessions',
+
      // Subtitles
      'your-app-details': '查看胶囊详情',
      'advanced-setting': '高级设置',
@@ -20,6 +22,8 @@ export const zh = {
      'change-pw': '更改密码',
      'manage-pw': '管理您的密码',
      'about-elastos': 'Elastos Essentials 详情',
+     'wallet-connect-sessions-intro-setting': 'Manage active sessions',
+
      // Other
      'light-mode-on': '浅色主题',
      'dark-mode-on': '深色主题',
@@ -54,4 +58,7 @@ export const zh = {
      'reg-net': 'Regression net',
      'priv-net': 'Private Net',
      'lrw-net': 'LongRunWeather Net',
+
+     /********** Wallet Connect Page **********/
+     'wallet-connect-sessions': 'Wallet Connect Sessions'
 };

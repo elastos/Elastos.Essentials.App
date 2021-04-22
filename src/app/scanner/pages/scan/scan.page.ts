@@ -15,8 +15,9 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { ESSENTIALS_CONNECT_URL_PREFIX, GlobalConnectService } from 'src/app/services/global.connect.service';
 import { isObject } from 'lodash-es';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 
-// The worker JS file from qr-scanner must be copied manually from 
+// The worker JS file from qr-scanner must be copied manually from
 // the qr-scanner node_modules sources and copied to our assets/folder
 QrScanner.WORKER_PATH = "./assets/scanner/qr-scanner-worker.min.js"
 
@@ -55,6 +56,7 @@ export class ScanPage {
         public theme: GlobalThemeService,
         private globalIntentService: GlobalIntentService,
         private globalConnectService: GlobalConnectService,
+        private globalWalletConnectService: GlobalWalletConnectService,
         private globalNav: GlobalNavService,
         private translate: TranslateService,
     ) {
@@ -281,27 +283,29 @@ export class ScanPage {
      * Otherwise, we send a "handlescannedcontent" intent so that user can pick an app to use this content
      * (ex: scanned content is a ELA address, so user may choose to open the wallet app to send ELA to this address)
      */
-    runScannedContent(scannedContent: string) {
+    async runScannedContent(scannedContent: string) {
         // pop scanner from navigation history, so the nav will not navigate to scanner.
         this.globalNav.exitCurrentContext(false);
 
-        try {
-            new URL(scannedContent);
-
-            // Special case - DID FORMAT CHECK - DIDs are considered as URLs by the URL class
-            if (this.contentIsElastosDID(scannedContent)) {
-                this.sendIntentAsRaw(scannedContent)
-            }
-            // Special case: essentials connect qr codes
-            else if (scannedContent.startsWith(ESSENTIALS_CONNECT_URL_PREFIX)) {
-                this.globalConnectService.processEssentialsConnectUrl(scannedContent);
-            }
-            else {
-                this.sendIntentAsUrl(scannedContent)
-            }
-        } catch (_) {
-            // Content can't be parsed as a URL: fallback solution is to use it as raw content
+        // Special case - DID FORMAT CHECK - DIDs are considered as URLs by the URL class
+        if (this.contentIsElastosDID(scannedContent)) {
             this.sendIntentAsRaw(scannedContent)
+        }
+        // Special case: essentials connect qr codes
+        else if (scannedContent.startsWith(ESSENTIALS_CONNECT_URL_PREFIX)) {
+            this.globalConnectService.processEssentialsConnectUrl(scannedContent);
+        }
+        else if (this.globalWalletConnectService.canHandleUri(scannedContent)) {
+            await this.globalWalletConnectService.handleWCURIRequest(scannedContent);
+        }
+        else {
+            try {
+                new URL(scannedContent);
+                this.sendIntentAsUrl(scannedContent);
+            } catch (_) {
+                // Content can't be parsed as a URL: fallback solution is to use it as raw content
+                this.sendIntentAsRaw(scannedContent);
+            }
         }
     }
 
