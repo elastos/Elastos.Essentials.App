@@ -30,6 +30,7 @@
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="InternalIntentFilter" value="https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
+    <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />at
     <preference name="AndroidXEnabled" value="true" />
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
@@ -76,6 +77,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:host="scanner.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="wc" />
             </intent-filter>
         </config-file>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
@@ -191,5 +198,4 @@
     <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <allow-navigation href="http://0.0.0.0:8100" sessionid="0a4ae993" />
-    <allow-navigation href="http://192.168.1.3:8100" sessionid="f29f19a5" />
 </widget>
