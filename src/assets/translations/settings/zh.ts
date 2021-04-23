@@ -60,5 +60,6 @@ export const zh = {
      'lrw-net': 'LongRunWeather Net',
 
      /********** Wallet Connect Page **********/
+     'wallet-connect-request': 'App Link Request',
      'wallet-connect-sessions': 'Wallet Connect Sessions'
 };

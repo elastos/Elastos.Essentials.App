@@ -59,7 +59,8 @@ export const en = {
     'priv-net': 'Private Net',
     'lrw-net': 'LongRunWeather Net',
 
-    /********** Wallet Connect Page **********/
+    /********** Wallet Connect / Sessions Page **********/
+    'wallet-connect-request': 'App Link Request',
     'wallet-connect-sessions': 'Wallet Connect Sessions'
 };
 

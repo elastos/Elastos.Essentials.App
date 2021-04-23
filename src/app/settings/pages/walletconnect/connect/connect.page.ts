@@ -49,8 +49,6 @@ export class WalletConnectConnectPage implements OnInit {
         let subwallet = wallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
         this.ethAccounts.push(await subwallet.createAddress());
       }
-
-      Logger.log("walletconnect", "got session request ", this.sessionRequest);
     });
   }
 

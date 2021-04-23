@@ -60,6 +60,7 @@ export const fr = {
     'lrw-net': 'Réseau LongRunWeather',
 
     /********** Wallet Connect Page **********/
+    'wallet-connect-request': 'Lien avec une application',
     'wallet-connect-sessions': 'Sessions Wallet Connect',
 
     /********** App-Info Page **********/
