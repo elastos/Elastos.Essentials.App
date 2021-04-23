@@ -140,11 +140,6 @@ export class WalletSettingsPage implements OnInit {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
                this.showDeletePrompt();
-
-        /*         const confirmToDelete = await this.popupProvider.ionicConfirm('delete-wallet-confirm-title', 'delete-wallet-confirm-subtitle');
-                if (confirmToDelete) {
-                    await this.destroyWallet(this.masterWalletId);
-                } */
             }
         } catch (e) {
             Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
@@ -162,7 +157,7 @@ export class WalletSettingsPage implements OnInit {
         this.popover.onWillDismiss().then(async (params) => {
             this.popover = null;
 
-            if(params.data.delete) {
+            if (params && params.data && params.data.delete) {
                 await this.destroyWallet(this.masterWalletId);
             }
         });
@@ -179,7 +174,6 @@ export class WalletSettingsPage implements OnInit {
     }
 
     private async getMasterWalletBasicInfo() {
-        Logger.log('wallet', "2", this.masterWalletId);
         let ret = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.masterWalletId);
 
         this.masterWalletType = ret["Type"];
