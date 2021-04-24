@@ -45,6 +45,7 @@ export class ImportDIDPage {
     private sentenceInput: any;
     private showHandle: any;
     private hideHandle: any;
+    private contentHight = 0;
     private scrollHeight: Number = -1;
     public hideButton = false;
 
@@ -109,14 +110,16 @@ export class ImportDIDPage {
                 }
             });
             window.addEventListener('native.keyboardhide', this.hideHandle = () =>{
-                this.rootContent.style.top = '0px';
+              this.rootContent.style.top = '0px';
             });
         }
     }
 
     ionViewWillLeave() {
-        window.removeEventListener('native.keyboardshow', this.showHandle);
-        window.removeEventListener('native.keyboardhide', this.hideHandle);
+        if (this.platform.platforms().indexOf('android') < 0) {
+          window.removeEventListener('native.keyboardshow', this.showHandle);
+          window.removeEventListener('native.keyboardhide', this.hideHandle);
+        }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         this.loadingIdentity = false;
     }
@@ -132,10 +135,11 @@ export class ImportDIDPage {
     getElements() {
         this.rootContent = document.getElementById('rootcontent')
         this.sentenceInput = document.getElementById('sentenceInput')
+        this.contentHight = this.rootContent.clientHeight;
     }
 
     calcScrollHeight(keyboardHeight) {
-        let scrollHeight = this.rootContent.clientHeight - this.sentenceInput.offsetTop - this.sentenceInput.clientHeight - keyboardHeight;
+        let scrollHeight = this.contentHight - this.sentenceInput.offsetTop - this.sentenceInput.clientHeight - keyboardHeight;
         return scrollHeight > 0 ? 0 : scrollHeight;
     }
 
