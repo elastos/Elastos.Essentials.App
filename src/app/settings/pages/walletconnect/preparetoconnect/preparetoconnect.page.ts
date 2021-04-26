@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { DeveloperService } from '../../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../../services/settings.service';
@@ -23,7 +23,10 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 export class WalletConnectPrepareToConnectPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
+  public suggestToResetSession = false;
+
   constructor(
+    private zone: NgZone,
     public settings: SettingsService,
     public theme: GlobalThemeService,
     public developer: DeveloperService,
@@ -40,11 +43,24 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
     this.titleBar.setTitle(this.translate.instant('wallet-connect-prepare-to-connect'));
+
+    // Suggest user to delete a potential wallet connect session after a while in case he doesn't
+    // receive any "session_request" event.
+    this.suggestToResetSession = false;
+    setTimeout(() => {
+      this.zone.run(()=>{
+        this.suggestToResetSession = true;
+      });
+    }, 5000);
   }
 
   ionViewDidEnter() {
   }
 
   ionViewWillLeave() {
+  }
+
+  viewSessions() {
+    this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/sessions");
   }
 }

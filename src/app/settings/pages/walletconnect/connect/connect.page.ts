@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { DeveloperService } from '../../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../../services/settings.service';
@@ -27,7 +27,7 @@ export class WalletConnectConnectPage implements OnInit {
     connectorKey: string,
     request: SessionRequestParams
   };
-  public ethAccounts: string[] = []
+  public ethAccounts: string[] = [];
 
   constructor(
     public settings: SettingsService,
@@ -56,6 +56,7 @@ export class WalletConnectConnectPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet-connect-request'));
+
   }
 
   ionViewWillLeave() {
