@@ -13,6 +13,7 @@ import { GlobalWalletConnectService } from 'src/app/services/global.walletconnec
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
 import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Component({
   selector: 'app-connect',
@@ -36,7 +37,8 @@ export class WalletConnectConnectPage implements OnInit {
     private route: ActivatedRoute,
     private walletConnect: GlobalWalletConnectService,
     private walletManager: WalletManager,
-    private nav: GlobalNavService
+    private nav: GlobalNavService,
+    private native: GlobalNativeService
   ) { }
 
   ngOnInit() {
@@ -62,5 +64,9 @@ export class WalletConnectConnectPage implements OnInit {
   async openSession() {
     await this.walletConnect.acceptSessionRequest(this.sessionRequest.connectorKey, this.ethAccounts);
     this.nav.exitCurrentContext();
+
+    // Because for now we don't close Essentials after handling wallet connect requests, we simply
+    // inform users to manually "alt tab" to return to the app they are coming from.
+    this.native.genericToast("Operation completed, please return to the original app.", 4000);
   }
 }

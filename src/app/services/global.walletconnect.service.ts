@@ -9,6 +9,7 @@ import { NetworkType } from '../model/networktype';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalStorageService } from './global.storage.service';
+import { GlobalNativeService } from './global.native.service';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 
@@ -25,7 +26,8 @@ export class GlobalWalletConnectService {
     private prefs: GlobalPreferencesService,
     private intent: GlobalIntentService,
     private didSessions: GlobalDIDSessionsService,
-    private intents: GlobalIntentService
+    private intents: GlobalIntentService,
+    private native: GlobalNativeService
   ) {}
 
   init() {
@@ -208,7 +210,7 @@ export class GlobalWalletConnectService {
   private async handleCallRequest(connector: WalletConnect, request: JsonRpcRequest) {
     if (request.method === "essentials_url_intent") {
       // Custom essentials request (not ethereum) over wallet connect protocol
-      this.handleEssentialsCustomRequest(connector, request);
+      await this.handleEssentialsCustomRequest(connector, request);
     }
     else {
       try {
@@ -254,6 +256,10 @@ export class GlobalWalletConnectService {
         });
       }
     }
+
+    // Because for now we don't close Essentials after handling wallet connect requests, we simply
+    // inform users to manually "alt tab" to return to the app they are coming from.
+    this.native.genericToast("Operation completed, please return to the original app.", 4000);
   }
 
   /**
