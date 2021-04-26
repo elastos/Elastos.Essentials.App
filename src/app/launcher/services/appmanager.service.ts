@@ -87,6 +87,9 @@ export class AppmanagerService {
         });
 
         this.intentSubscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+            if (!receivedIntent)
+                return;
+                
             this.onIntentReceived(receivedIntent);
         });
 

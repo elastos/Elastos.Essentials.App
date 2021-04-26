@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalConnectService } from './global.connect.service';
 import { GlobalNavService } from './global.nav.service';
@@ -11,7 +11,7 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 })
 export class GlobalIntentService {
   // Emits received intents from the app manager.
-  public intentListener = new Subject<EssentialsIntentPlugin.ReceivedIntent>();
+  public intentListener = new BehaviorSubject<EssentialsIntentPlugin.ReceivedIntent>(null);
 
   constructor(
     private globalNav: GlobalNavService

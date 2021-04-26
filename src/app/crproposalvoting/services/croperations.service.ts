@@ -54,7 +54,8 @@ export class CROperationsService {
     async init() {
         Logger.log("crproposal", "CROperationsService is initializing");
         this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
-            this.handledReceivedIntent(receivedIntent);
+            if (receivedIntent)
+                this.handledReceivedIntent(receivedIntent);
         });
     }
 
@@ -96,8 +97,6 @@ export class CROperationsService {
     }
 
     private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
-        Logger.log("crproposal", "RECEIVED INTENT:", receivedIntent);
-
         if (receivedIntent.action == "crproposal")
             this.handleCRProposalIntentRequest(receivedIntent);
     }

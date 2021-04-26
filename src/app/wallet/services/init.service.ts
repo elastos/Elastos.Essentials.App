@@ -53,8 +53,7 @@ export class WalletInitService {
         await this.contactsService.init();
         await this.uiService.init();
 
-        // Wait until the wallet manager is ready before showing the first screen.
-        // TODO: rework
+        // TODO: dirty, rework this
         this.subscription = this.events.subscribe("walletmanager:initialized", () => {
             Logger.log("wallet", "walletmanager:initialized event received");
             this.walletServiceInitialized = true;

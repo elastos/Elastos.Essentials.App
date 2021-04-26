@@ -42,12 +42,15 @@ export class IntentService {
 
 
         // Listen to incoming intent events.
-        this.globalIntentService.intentListener.subscribe((intent)=>{
-            if (intent.action == "https://scanner.elastos.net/scanqrcode") {
-                Logger.log('Scanner', "Received intent for scanner:", intent);
+        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+            if (!receivedIntent)
+                return;
+
+            if (receivedIntent.action == "https://scanner.elastos.net/scanqrcode") {
+                Logger.log('Scanner', "Received intent for scanner:", receivedIntent);
 
                 // Remember the received intent for later use
-                this.intentRequest = intent;
+                this.intentRequest = receivedIntent;
 
                 // Show the scan screen
                 this.showScanScreen(true);

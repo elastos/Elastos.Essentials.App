@@ -167,7 +167,8 @@ export class WaitForSyncPage implements OnInit {
 
     doAction() {
         if (!this.cancelByUser) {
-          this.native.go(this.nextScreen);
+            Logger.log("wallet", "Wait for sync is completed, navigating to next screen", this.nextScreen);
+            this.native.go(this.nextScreen);
         }
     }
 

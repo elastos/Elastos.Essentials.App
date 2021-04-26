@@ -156,7 +156,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
         this.web3 = new Web3(trinityWeb3Provider);
     }
 
-    private async getBalanceByWeb3() {
+    private async getBalanceByWeb3(): Promise<BigNumber> {
         const address = await this.getTokenAddress();
         try {
           const balanceString = await this.web3.eth.getBalance(address);
@@ -232,5 +232,12 @@ export class ETHChainSubWallet extends StandardSubWallet {
             gasLimit.toString(),
             data,
         );
+    }
+
+    /**
+     * Returns the current gas price on chain.
+     */
+    public getGasPrice(): Promise<BigNumber> {
+        return this.web3.eth.getGasPrice();
     }
 }

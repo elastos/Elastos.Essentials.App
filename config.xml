@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://0.0.0.0:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -79,7 +79,6 @@
                 <data android:host="scanner.elastos.net" android:pathPattern="/.*" android:scheme="https" />
             </intent-filter>
             <intent-filter>
-                <!-- Wallet connect deep linking -->
                 <data android:scheme="wc" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

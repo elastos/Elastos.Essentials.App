@@ -18,7 +18,8 @@ export class IntentService {
 
   init() {
     this.intentService.intentListener.subscribe((receivedIntent)=>{
-      this.onReceiveIntent(receivedIntent);
+      if(receivedIntent)
+        this.onReceiveIntent(receivedIntent);
     })
   }
 

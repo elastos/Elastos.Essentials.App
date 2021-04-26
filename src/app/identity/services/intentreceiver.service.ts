@@ -30,8 +30,11 @@ export class IntentReceiverService {
     }
 
     async init() {
-        this.globalIntentService.intentListener.subscribe((intent)=>{
-            this.onReceiveIntent(intent);
+        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+            if (!receivedIntent)
+                return;
+
+            this.onReceiveIntent(receivedIntent);
         });
     }
 

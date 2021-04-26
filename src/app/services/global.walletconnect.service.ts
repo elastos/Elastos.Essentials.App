@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Logger } from '../logger';
 import WalletConnect from "@walletconnect/client";
@@ -19,11 +19,13 @@ export class GlobalWalletConnectService {
   private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
 
   constructor(
+    private zone: NgZone,
     private nav: GlobalNavService,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
     private intent: GlobalIntentService,
-    private didSessions: GlobalDIDSessionsService
+    private didSessions: GlobalDIDSessionsService,
+    private intents: GlobalIntentService
   ) {}
 
   init() {
@@ -31,6 +33,23 @@ export class GlobalWalletConnectService {
       if (signedInIdentity) {
         // Re-activate existing sessions to reconnect to their wallet connect bridges.
         this.restoreSessions();
+      }
+    });
+
+    this.intents.intentListener.subscribe((receivedIntent)=>{
+      if (!receivedIntent)
+        return;
+
+      if (receivedIntent.action === "rawurl") {
+        if (receivedIntent.params && receivedIntent.params.url) {
+          // Make sure this raw url coming from outside is for us
+          let rawUrl: string = receivedIntent.params.url;
+          if (this.canHandleUri(rawUrl)) {
+            this.zone.run(()=>{
+              this.handleWCURIRequest(rawUrl);
+            });
+          }
+        }
       }
     });
   }
@@ -41,9 +60,14 @@ export class GlobalWalletConnectService {
 
   public canHandleUri(uri: string): boolean {
     if (!uri || !uri.startsWith("wc:")) {
-      Logger.log("walletconnect", "DEBUG CANNOT HANDLE URI", uri);
+      //Logger.log("walletconnect", "DEBUG CANNOT HANDLE URI", uri);
       return false;
     }
+
+    // We should ignore urls even if starting with "wc:", if they don't contain params, according to wallet connect documentation
+    // https://docs.walletconnect.org/mobile-linking
+    if (uri.indexOf("?") < 0)
+      return false;
 
     return true;
   }
@@ -57,6 +81,12 @@ export class GlobalWalletConnectService {
       throw new Error("Invalid WalletConnect URL: "+uri);
 
     Logger.log("walletconnect", "Handling uri request", uri);
+
+    // While we are waiting to receive the "session_request" command, which could possibly take
+    // between a few ms and a few seconds depending on the network, we want to show a temporary screen
+    // to let the user wait.
+    // TODO: PROBABLY REPLACE THIS WITH A CANCELLABLE DIALOG, FULL SCREEN IS UGLY
+    await this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/preparetoconnect", {});
 
     // Create connector
     let connector = new WalletConnect(
@@ -80,7 +110,7 @@ export class GlobalWalletConnectService {
     );
 
     // TODO: wallet connect automatically reuses the persisted session from storage, if one waas
-    // established earlier. for dbeug purpose, we just always disconnect before reconnecting.
+    // established earlier. for debug purpose, we just always disconnect before reconnecting.
     /* if (this.connector.connected) {
       Logger.log("walletconnect", "DEBUG - Already connected, KILLING the session");
       await this.connector.killSession();
@@ -155,7 +185,7 @@ export class GlobalWalletConnectService {
   */
   private handleSessionRequest(connector: WalletConnect, request: SessionRequestParams) {
       // User UI prompt
-      this.nav.navigateTo("settings", "/settings/walletconnect/connect", {
+      this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/connect", {
         //connectorKey: connector.key,
         queryParams: {
           connectorKey: connector.key,
@@ -176,43 +206,79 @@ export class GlobalWalletConnectService {
   }
   */
   private async handleCallRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    // TODO: for now we consider all call requests are eth transactions - to be much refined
-    try {
-      Logger.log("walletconnect", "Sending esctransaction intent", request);
-      let response: {
-        action: string,
-        result: {
-            txid: string,
-            status: "published" | "cancelled"
-        }
-      } = await this.intent.sendIntent("https://wallet.elastos.net/esctransaction", {
-        payload: request
-      });
-      Logger.log("walletconnect", "Got esctransaction intent response", response);
-
-      if (response && response.result.status === "published") {
-        // Approve Call Request
-        connector.approveRequest({
-          id: request.id,
-          result: "0x41791102999c339c844880b23950704cc43aa840f3739e365323cda4dfa89e7a"
+    if (request.method === "essentials_url_intent") {
+      // Custom essentials request (not ethereum) over wallet connect protocol
+      this.handleEssentialsCustomRequest(connector, request);
+    }
+    else {
+      try {
+        Logger.log("walletconnect", "Sending esctransaction intent", request);
+        let response: {
+          action: string,
+          result: {
+              txid: string,
+              status: "published" | "cancelled"
+          }
+        } = await this.intent.sendIntent("https://wallet.elastos.net/esctransaction", {
+          payload: request
         });
+        Logger.log("walletconnect", "Got esctransaction intent response", response);
+
+        if (response && response.result.status === "published") {
+          // Approve Call Request
+          connector.approveRequest({
+            id: request.id,
+            result: "0x41791102999c339c844880b23950704cc43aa840f3739e365323cda4dfa89e7a"
+          });
+        }
+        else {
+          // Approve Call Request
+          connector.rejectRequest({
+            id: request.id,
+            error: {
+              code: 12345,
+              message: "Errored or cancelled - TODO: improve this error handler"
+            }
+          });
+        }
       }
-      else {
-        // Approve Call Request
+      catch (e) {
+        Logger.error("walletconnect", "Send intent error", e);
+        // Reject Call Request
         connector.rejectRequest({
           id: request.id,
           error: {
             code: 12345,
-            message: "Errored or cancelled - TODO: improve this error handler"
+            message: e
           }
         });
       }
+    }
+  }
+
+  /**
+   * Handles custom essentials request coming from the wallet connect protocol.
+   * method: "essentials_url_intent"
+   * params: {url: "the essentials intent url" }
+   */
+  private async handleEssentialsCustomRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    try {
+      let intentUrl = request.params[0]["url"] as string;
+      Logger.log("walletconnect", "Sending custom essentials intent request", intentUrl);
+      let response = await this.intent.sendUrlIntent(intentUrl);
+      Logger.log("walletconnect", "Got custom request intent response", response);
+
+      // Approve Call Request
+      connector.approveRequest({
+        id: request.id,
+        result: response
+      });
     }
     catch (e) {
       Logger.error("walletconnect", "Send intent error", e);
       // Reject Call Request
       connector.rejectRequest({
-        id: 1,  // required
+        id: request.id,
         error: {
           code: 12345,
           message: e

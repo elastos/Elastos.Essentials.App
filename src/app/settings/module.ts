@@ -17,6 +17,7 @@ import { DeveloperPage } from './pages/developer/developer.page';
 import { DevTestsPage } from './pages/devtests/devtests.page';
 import { WalletConnectConnectPage } from './pages/walletconnect/connect/connect.page';
 import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessions.page';
+import { WalletConnectPrepareToConnectPage } from './pages/walletconnect/prepatetoconnect/preparetoconnect.page';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessio
     LanguagePage,
     DeveloperPage,
     DevTestsPage,
+    WalletConnectPrepareToConnectPage,
     WalletConnectConnectPage,
     WalletConnectSessionsPage
   ],

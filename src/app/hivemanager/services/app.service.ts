@@ -20,6 +20,9 @@ export class AppService {
 
     init() {
         this.intents.intentListener.subscribe((receivedIntent)=>{
+            if (!receivedIntent)
+                return;
+
             switch (receivedIntent.action) {
                 // User is being asked to setup his vault storage.
                 case "https://hive.elastos.net/setupvaultprompt":

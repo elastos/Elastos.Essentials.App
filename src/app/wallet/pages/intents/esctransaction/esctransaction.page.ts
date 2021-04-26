@@ -35,6 +35,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
 
 
 @Component({
@@ -46,10 +47,11 @@ export class EscTransactionPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private masterWallet: MasterWallet = null;
-    private ethSidechainSubWallet: SubWallet = null;
+    private ethSidechainSubWallet: ETHChainSubWallet = null;
     private intentTransfer: IntentTransfer;
     private walletInfo = {};
     public balance: BigNumber; // ELA
+    public gasPrice: BigNumber;
     public chainId: string; // ETHSC
     public hasOpenETHSCChain = false;
 
@@ -64,7 +66,6 @@ export class EscTransactionPage implements OnInit {
         public theme: GlobalThemeService,
         public uiService: UiService
     ) {
-        this.init();
     }
 
     ngOnInit() {
@@ -72,6 +73,8 @@ export class EscTransactionPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('esctransaction-title'));
+
+        this.init();
     }
 
     ionViewDidEnter() {
@@ -93,8 +96,11 @@ export class EscTransactionPage implements OnInit {
             return;
         }
 
-        this.ethSidechainSubWallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC);
+        this.ethSidechainSubWallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
         this.balance = await this.ethSidechainSubWallet.getDisplayBalance();
+        this.gasPrice = await this.ethSidechainSubWallet.getGasPrice();
+
+        Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
     }
 
     /**
@@ -134,13 +140,17 @@ export class EscTransactionPage implements OnInit {
     public getTotalTransactionCostInELA(): {totalAsBigNumber: BigNumber, total: string, valueAsBigNumber: BigNumber, value: string, feesAsBigNumber: BigNumber, fees: string } {
         let weiElaRatio = new BigNumber("1000000000000000000");
 
+        let gas = new BigNumber(this.coinTransferService.payloadParam.gas);
+        let gasPrice = new BigNumber(this.coinTransferService.payloadParam.gasPrice || this.gasPrice);
         let elaEthValue = new BigNumber(this.coinTransferService.payloadParam.value).dividedBy(weiElaRatio);
-        let fees = new BigNumber(this.coinTransferService.payloadParam.gas).multipliedBy(new BigNumber(this.coinTransferService.payloadParam.gasPrice)).dividedBy(weiElaRatio);
+        let fees = gas.multipliedBy(gasPrice).dividedBy(weiElaRatio);
         let total = elaEthValue.plus(fees);
 
-        //Logger.log('wallet', "elaEthValue", elaEthValue.toString())
-        //Logger.log('wallet', "fees/gas", fees.toString());
-        //Logger.log('wallet', "total", total.toString());
+        /* Logger.log('wallet', "gasPrice", gasPrice.toString())
+        Logger.log('wallet', "gas", gas.toString())
+        Logger.log('wallet', "elaEthValue", elaEthValue.toString())
+        Logger.log('wallet', "fees/gas", fees.toString());
+        Logger.log('wallet', "total", total.toString()); */
 
         return {
             totalAsBigNumber: total,
@@ -161,7 +171,7 @@ export class EscTransactionPage implements OnInit {
             this.coinTransferService.payloadParam.to,
             this.coinTransferService.payloadParam.value,
             0, // WEI
-            this.coinTransferService.payloadParam.gasPrice,
+            this.coinTransferService.payloadParam.gasPrice || this.gasPrice.toString(16),
             0, // WEI
             this.coinTransferService.payloadParam.gas, // TODO: gasLimit
             this.coinTransferService.payloadParam.data

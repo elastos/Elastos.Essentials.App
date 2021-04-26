@@ -39,7 +39,10 @@ export class WalletConnectSessionsPage implements OnInit {
   }
 
   getSessionName(session: WalletConnect): string {
-    return session.peerMeta.name;
+    if (session.peerMeta)
+      return session.peerMeta.name;
+    else
+      return "Unknown session";
   }
 
   getSessionID(session: WalletConnect): string {
@@ -47,7 +50,12 @@ export class WalletConnectSessionsPage implements OnInit {
   }
 
   async killSession(session: WalletConnect) {
-    await this.walletConnect.killSession(session); // TODO
+    try {
+      await this.walletConnect.killSession(session);
+    }
+    catch (e) {
+      console.warn("Kill session exception: ", e)
+    }
 
     // TODO! : subscribe to a "disconnected" event and refresh at that time
     setTimeout(() => {

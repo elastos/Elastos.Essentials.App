@@ -53,8 +53,11 @@ export class IntentService {
     }
 
     addIntentListener() {
-        this.subscription = this.globalIntentService.intentListener.subscribe((intent: EssentialsIntentPlugin.ReceivedIntent) => {
-            this.onReceiveIntent(intent);
+        this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent) => {
+            if (!receivedIntent)
+                return;
+
+            this.onReceiveIntent(receivedIntent);
         });
     }
 

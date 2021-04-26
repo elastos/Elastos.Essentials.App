@@ -62,6 +62,7 @@ export const fr = {
     /********** Wallet Connect Page **********/
     'wallet-connect-request': 'Lien avec une application',
     'wallet-connect-sessions': 'Sessions Wallet Connect',
+    'wallet-connect-prepare-to-connect': 'Préparation de Wallet Connect',
 
     /********** App-Info Page **********/
     'app-details': "Détails de l'application",

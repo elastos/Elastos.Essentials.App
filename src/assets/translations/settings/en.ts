@@ -61,7 +61,8 @@ export const en = {
 
     /********** Wallet Connect / Sessions Page **********/
     'wallet-connect-request': 'App Link Request',
-    'wallet-connect-sessions': 'Wallet Connect Sessions'
+    'wallet-connect-sessions': 'Wallet Connect Sessions',
+    'wallet-connect-prepare-to-connect': 'Initiating Wallet Connect'
 };
 
 

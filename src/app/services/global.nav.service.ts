@@ -112,11 +112,11 @@ export class GlobalNavService {
             this.navCtrl.navigateRoot(launcherHome.route);
     }
 
-    public navigateTo(context: string, route: string, routerOptions?: NavigationOptions) {
+    public navigateTo(context: string, route: string, routerOptions?: NavigationOptions): Promise<boolean> {
         Logger.log("Nav", "Navigating to", route);
 
         this.navigationHistory.push({context, route, routerOptions});
-        this.navCtrl.navigateForward(route, routerOptions);
+        return this.navCtrl.navigateForward(route, routerOptions);
     }
 
     /**
