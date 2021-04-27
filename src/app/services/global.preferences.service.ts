@@ -109,4 +109,19 @@ export class GlobalPreferencesService {
   public getETHSidechainRPCApiEndpoint(did: string): Promise<string> {
     return this.getPreference<string>(did, "sidechain.eth.rpcapi");
   }
+
+  public developerModeEnabled(did: string): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      try {
+        let devMode = await this.getPreference(did, "developer.mode");
+        if (devMode)
+          resolve(true);
+        else
+          resolve(false);
+      }
+      catch (err) {
+        resolve(false);
+      }
+    });
+  }
 }

@@ -268,8 +268,8 @@ export class GlobalWalletConnectService {
    * params: {url: "the essentials intent url" }
    */
   private async handleEssentialsCustomRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    let intentUrl = request.params[0]["url"] as string;
     try {
-      let intentUrl = request.params[0]["url"] as string;
       Logger.log("walletconnect", "Sending custom essentials intent request", intentUrl);
       let response = await this.intent.sendUrlIntent(intentUrl);
       Logger.log("walletconnect", "Got custom request intent response", response);
@@ -290,6 +290,12 @@ export class GlobalWalletConnectService {
           message: e
         }
       });
+
+      // Let the user know that the request was received but could not be handled
+      this.native.genericToast("An external application just tried to send a request that cannot be understood by Elastos Essentials.", 2000);
+
+      if (await this.prefs.developerModeEnabled(GlobalDIDSessionsService.signedInDIDString))
+        this.native.genericToast("Raw request: "+intentUrl, 2000);
     }
   }
 

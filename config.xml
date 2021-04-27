@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content original-src="index.html" src="http://0.0.0.0:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -111,7 +111,6 @@
         <allow-intent href="itms-apps:*" />
         <preference name="deployment-target" value="11.0" />
         <preference name="WKWebViewOnly" value="true" />
-        <!-- The splash screen can't hide if set AutoHideSplashScreen to true in ios. -->
         <preference name="AutoHideSplashScreen" value="true" />
         <feature name="CDVWKWebViewEngine">
             <param name="ios-package" value="CDVWKWebViewEngine" />

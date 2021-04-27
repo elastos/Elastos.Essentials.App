@@ -63,7 +63,8 @@
               "hash.js",
               "bignumber.js",
               "bn.js",
-              "web3"
+              "web3",
+              "@walletconnect/client"
             ]
           },
           "configurations": {
