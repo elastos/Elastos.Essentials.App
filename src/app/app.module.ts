@@ -9,6 +9,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
 
@@ -204,6 +205,7 @@ export function TranslateLoaderFactory() {
     Keyboard,
     ScreenOrientation,
     SplashScreen,
+    StatusBar,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
    // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
     { provide: ErrorHandler, useClass: SentryErrorHandler },

@@ -17,6 +17,7 @@ import { GlobalAppBackgroundService } from './services/global.appbackground.serv
 import { GlobalNotificationsService } from './services/global.notifications.service';
 import { GlobalPublicationService } from './services/global.publication.service';
 import { GlobalWalletConnectService } from './services/global.walletconnect.service';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 @Component({
     selector: 'app-root',
@@ -32,6 +33,7 @@ export class AppComponent {
     constructor(
         private platform: Platform,
         public splashScreen: SplashScreen,
+        private statusBar: StatusBar,
         public storage: GlobalStorageService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
@@ -56,6 +58,10 @@ export class AppComponent {
 
             // Force Essentials orientation to portrait only
             this.screenOrientation.lock("portrait");
+
+            // Must do it in ios, otherwise the titlebar and status bar will overlap.
+            this.statusBar.overlaysWebView(false);
+            this.statusBar.backgroundColorByHexString("#ff000000");
 
             // Initialize our connectivity SDK helper (customize the connectivity SDK logger, storage layers)
             ElastosSDKHelper.init();
