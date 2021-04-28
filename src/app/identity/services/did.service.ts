@@ -199,9 +199,6 @@ export class DIDService {
     let storeId = this.getActiveDidStore().getId();
     await this.getActiveDidStore().deleteDid(did);
 
-    // Cleanup the password manager content
-    await passwordManager.deleteAll();
-
     // Sign out and go back to the DID session app
     await this.didSessions.signOut();
   }

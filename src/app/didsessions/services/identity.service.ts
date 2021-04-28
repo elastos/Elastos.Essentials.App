@@ -403,9 +403,6 @@ export class IdentityService {
             // Delete entry from the did session plugin
             await this.didSessions.deleteIdentityEntry(identity.didString);
 
-            // Cleanup the password manager content
-            await passwordManager.deleteAll();
-
             // Notify listeners of this deletion
             this.zone.run(() => {
                 this.events.publish("identityremoved", identity);
