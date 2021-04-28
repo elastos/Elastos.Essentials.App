@@ -21,7 +21,7 @@
 +
 +        targetSdkVersion 29
 +        versionCode 10000
-+        versionName "2.0.0"
++        versionName "2.0.1"
      }
 
      lintOptions {
