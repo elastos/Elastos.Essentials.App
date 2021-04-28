@@ -49,14 +49,22 @@ Sentry.init({
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
+  private version = ''
   constructor(
     public native: GlobalNativeService,
+    private appVersion: AppVersion,
   ) {
+    this.appVersion.getVersionNumber().then(res => {
+      this.version = res;
+    }).catch(error => {
+      alert(error);
+    });
   }
 
   handleError(error) {
     Logger.error("Sentry", "Globally catched exception:", error);
     Logger.error("Sentry", document.URL);
+    Logger.error("Sentry", 'version:', this.version);
 
     // Only send reports to sentry if we are not debugging.
     if (document.URL.includes('localhost')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
