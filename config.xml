@@ -28,7 +28,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="SplashMaintainAspectRatio" value="true" />
-    <preference name="InternalIntentFilter" value="https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net" />
+    <preference name="InternalIntentFilters" value="https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
     <preference name="AndroidXEnabled" value="true" />
