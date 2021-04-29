@@ -107,12 +107,12 @@ export class IdentityService {
 
     public async signIn(identityEntry: IdentityEntry) {
         // Security check: ask user to enter the master password for the target did.
-        // Allow signing in only if the password database could be opened.
-
-        // Try to retrieve the did store password. If we can retrieve it, this means the master password database
-        // could be successfully unlocked
         try {
-            let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId);
+            let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
+                promptPasswordIfLocked: true,
+                forceMasterPasswordPrompt: true
+            };
+            let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId, options);
             if (passwordInfo) {
                 // Force signing out, in case we were not already (but we should be)
                 await this.didSessions.signOut()

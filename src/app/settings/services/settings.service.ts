@@ -47,7 +47,7 @@ export class SettingsService {
     this.appVersion.getVersionNumber().then(res => {
       this.version = res;
     }).catch(error => {
-      alert(error);
+      Logger.error('Settings', 'getVersionNumber error:', error);
     });
   }
 }
