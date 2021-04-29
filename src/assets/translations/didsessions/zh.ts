@@ -56,7 +56,7 @@ export const zh = {
   'import-prompt': '请输入您的12个安全字（助记词）以导入您的身份',
 
   // Multiple DIDs to import screen
-  'more-than-one-import-did-pick-one': '发现多个身份，请选择一个进行导入：',
+  'more-than-one-import-did-pick-one': '有多个身份，请选择一个进行导入',
 
   // Pick Identity
   'create-new-identity': '创建新的身份',

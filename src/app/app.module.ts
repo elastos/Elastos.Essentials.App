@@ -57,7 +57,7 @@ export class SentryErrorHandler implements ErrorHandler {
     this.appVersion.getVersionNumber().then(res => {
       this.version = res;
     }).catch(error => {
-      alert(error);
+      Logger.error('Sentry', 'getVersionNumber error:', error);
     });
   }
 

@@ -54,7 +54,7 @@ export const fr = {
   'import-prompt': 'Veuillez saisir vos 12 mots secrets pour importer votre identité',
 
   // Multiple DIDs to import screen
-  'more-than-one-import-did-pick-one': 'Plus d\'une identité a été trouvée. Veuillez choisir celle que vous souhaitez importer:',
+  'more-than-one-import-did-pick-one': 'Plus d\'une identité a été trouvée. Veuillez choisir celle que vous souhaitez importer',
 
   // Pick Identity
   'create-new-identity': 'Création d\'identité',

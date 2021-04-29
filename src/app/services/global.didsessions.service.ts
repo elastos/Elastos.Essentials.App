@@ -4,7 +4,6 @@ import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalNavService } from './global.nav.service';
 
-declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 declare let walletManager: WalletPlugin.WalletManager;
 
 export type IdentityAvatar = {

@@ -57,7 +57,7 @@ export const en = {
   'import-prompt': 'Please enter your 12 mnemonic words or scan your QR Code above to import your identity',
 
   // Multiple DIDs to import screen
-  'more-than-one-import-did-pick-one': 'More than one identity was found. Please pick the one you would like to import:',
+  'more-than-one-import-did-pick-one': 'More than one identity was found. Please pick the one you would like to import',
 
   // Pick Identity
   'create-new-identity': 'New Identity',
