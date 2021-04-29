@@ -14,11 +14,11 @@
     <ion-row class="data-container">
       <p><span>{{ 'visible' | translate }}</span>{{ 'registerapp-msg' | translate }}</p>
       <p><span>{{ 'private' | translate }}</span>{{ 'registerapp-msg2' | translate }}</p>
-      <div><p>{{ 'publish' | translate }}</p> <ion-toggle color="success" [(ngModel)]="shouldPublishOnSidechain"></ion-toggle></div>
+      <div><p>{{ 'publish' | translate }}</p> <ion-toggle color="tertiary" [(ngModel)]="shouldPublishOnSidechain"></ion-toggle></div>
     </ion-row>
 
     <ion-row class="btn-container" (click)="acceptRequest()">
-      <ion-button color="success">
+      <ion-button color="tertiary">
         <ion-label>{{ 'accept' | translate }}</ion-label>
       </ion-button>
     </ion-row>
