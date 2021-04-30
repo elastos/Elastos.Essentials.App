@@ -4,19 +4,20 @@ import { Logger } from '../logger';
 import WalletConnect from "@walletconnect/client";
 import { GlobalNavService } from './global.nav.service';
 import { GlobalPreferencesService } from './global.preferences.service';
-import { GlobalDIDSessionsService } from './global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { NetworkType } from '../model/networktype';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalNativeService } from './global.native.service';
+import { GlobalService } from './global.service.manager';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalWalletConnectService {
+export class GlobalWalletConnectService extends GlobalService {
   private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
 
   constructor(
@@ -28,16 +29,11 @@ export class GlobalWalletConnectService {
     private didSessions: GlobalDIDSessionsService,
     private intents: GlobalIntentService,
     private native: GlobalNativeService
-  ) {}
+  ) {
+    super();
+  }
 
   init() {
-    this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
-      if (signedInIdentity) {
-        // Re-activate existing sessions to reconnect to their wallet connect bridges.
-        this.restoreSessions();
-      }
-    });
-
     this.intents.intentListener.subscribe((receivedIntent)=>{
       if (!receivedIntent)
         return;
@@ -54,6 +50,15 @@ export class GlobalWalletConnectService {
         }
       }
     });
+  }
+
+  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    // Re-activate existing sessions to reconnect to their wallet connect bridges.
+    this.restoreSessions();
+  }
+
+  public async onUserSignOut(): Promise<void> {
+
   }
 
   /* public async init(): Promise<void> {

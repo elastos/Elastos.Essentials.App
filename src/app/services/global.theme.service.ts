@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AppmanagerService } from '../launcher/services/appmanager.service';
-import { GlobalDIDSessionsService } from './global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { Event } from '@angular/router';
 import { TitleBarForegroundMode } from '../components/titlebar/titlebar.types';
+import { GlobalService } from './global.service.manager';
 
 export enum AppTheme {
   LIGHT,
@@ -17,7 +18,7 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalThemeService {
+export class GlobalThemeService extends GlobalService {
   public activeTheme = new BehaviorSubject<AppTheme>(AppTheme.LIGHT);
 
   constructor(
@@ -25,16 +26,7 @@ export class GlobalThemeService {
     private prefs: GlobalPreferencesService,
     private didSessions: GlobalDIDSessionsService,
   ) {
-    this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
-      if (signedInIdentity) {
-        // Re-apply the theme for the active user.
-        this.fetchThemeFromPreferences();
-      }
-      else {
-        // Default mode for password popups: light
-        passwordManager.setDarkMode(false);
-      }
-    })
+    super();
 
     this.prefs.preferenceListener.subscribe((prefChanged)=>{
       if (prefChanged.key == "ui.darkmode") {
@@ -48,6 +40,16 @@ export class GlobalThemeService {
           this.activeTheme.next(AppTheme.LIGHT);
       }
     });
+  }
+
+  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    // Re-apply the theme for the active user.
+    this.fetchThemeFromPreferences();
+  }
+
+  public async onUserSignOut(): Promise<void> {
+    // Default mode for password popups: light
+    passwordManager.setDarkMode(false);
   }
 
   public async fetchThemeFromPreferences() {

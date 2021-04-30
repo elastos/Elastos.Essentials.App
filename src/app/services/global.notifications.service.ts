@@ -3,7 +3,8 @@ import { Injectable } from "@angular/core";
 import { App } from "src/app/model/app.enum"
 import { Logger } from "../logger";
 import { GlobalStorageService } from "../services/global.storage.service";
-import { GlobalDIDSessionsService } from "./global.didsessions.service";
+import { GlobalDIDSessionsService, IdentityEntry } from "./global.didsessions.service";
+import { GlobalService } from "./global.service.manager";
 
 /**
  * Object used to generate a notification.
@@ -38,7 +39,7 @@ export type Notification = NotificationRequest & {
 @Injectable({
     providedIn: 'root'
 })
-export class GlobalNotificationsService {
+export class GlobalNotificationsService extends GlobalService {
     public newNotifications = 0;
     public notifications: Notification[] = [];
     private notificationsListener: Subject<Notification> = new Subject();
@@ -46,15 +47,21 @@ export class GlobalNotificationsService {
     constructor(
         private globalStorageService: GlobalStorageService,
         private didSessions: GlobalDIDSessionsService
-    ) {}
+    ) {
+        super();
+    }
 
     public async init() {
-        this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
-            if (signedInIdentity) {
-                this.notifications = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "notifications", "notifications", []);
-                Logger.log("notifications", "Loaded existed notifications", this.notifications);
-            }
-        });
+
+    }
+
+    public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+        this.notifications = await this.globalStorageService.getSetting(GlobalDIDSessionsService.signedInDIDString, "notifications", "notifications", []);
+        Logger.log("notifications", "Loaded existed notifications", this.notifications);
+    }
+
+    public async onUserSignOut(): Promise<void> {
+
     }
 
     /**

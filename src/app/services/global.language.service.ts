@@ -3,15 +3,16 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
-import { GlobalDIDSessionsService } from './global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
+import { GlobalService } from './global.service.manager';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalLanguageService {
+export class GlobalLanguageService extends GlobalService {
   public languages = [
     {
       name: 'System Language',
@@ -49,15 +50,11 @@ export class GlobalLanguageService {
   constructor(
     private translate: TranslateService,
     private prefs: GlobalPreferencesService, private didSessions: GlobalDIDSessionsService) {
+      super();
   }
 
   public async init() {
     this.setupAvailableLanguages();
-
-    this.didSessions.signedInIdentityListener.subscribe((signedInIdentity)=>{
-      // Re-apply the theme for the active user.
-      this.fetchLanguageInfo();
-    })
 
     this.prefs.preferenceListener.subscribe((prefChanged)=>{
       if (prefChanged.key == "locale.language") {
@@ -67,6 +64,14 @@ export class GlobalLanguageService {
     });
 
     // await this.fetchLanguageInfo();
+  }
+
+  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    this.fetchLanguageInfo();
+  }
+
+  public async onUserSignOut(): Promise<void> {
+
   }
 
   /**

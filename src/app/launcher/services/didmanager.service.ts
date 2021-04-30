@@ -6,12 +6,13 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalService } from 'src/app/services/global.service.manager';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class DIDManagerService {
+export class DIDManagerService extends GlobalService {
   public signedIdentity: IdentityEntry;
 
   constructor(
@@ -21,13 +22,20 @@ export class DIDManagerService {
     private didSessions: GlobalDIDSessionsService,
     private globalIntentService: GlobalIntentService,
     private contactNotifier: ContactNotifierService,
-  ) { }
+  ) {
+    super();
+  }
 
   init() {
-    this.didSessions.signedInIdentityListener.subscribe((id: IdentityEntry) => {
-      Logger.log("Launcher", "Signed in identity changed", id);
-      this.signedIdentity = id;
-    });
+  }
+
+  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    Logger.log("Launcher", "Signed in identity changed", signedInIdentity);
+    this.signedIdentity = signedInIdentity;
+  }
+
+  public async onUserSignOut(): Promise<void> {
+
   }
 
   async shareIdentity() {

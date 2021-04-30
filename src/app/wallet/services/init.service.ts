@@ -11,15 +11,16 @@ import { NavService } from './nav.service';
 import { WalletManager } from './wallet.service';
 import { LocalStorage } from './storage.service';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { WalletPrefsService } from './pref.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
+import { GlobalService } from 'src/app/services/global.service.manager';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WalletInitService {
+export class WalletInitService extends GlobalService {
   private walletServiceInitialized = false;
   private waitforServiceInitialized = false;
   private subscription: Subscription = null;
@@ -40,29 +41,35 @@ export class WalletInitService {
     private prefs: WalletPrefsService,
     private uiService: UiService,
     private didSessions: GlobalDIDSessionsService
-  ) {}
+  ) {
+    super();
+  }
 
   public async init(): Promise<void> {
-    this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
-      if (signedInIdentity) {
-        Logger.log("Wallet", "Wallet service is initializing");
 
-        await this.prefs.init();
-        await this.coinService.init();
-        await this.currencyService.init();
-        await this.contactsService.init();
-        await this.uiService.init();
+  }
 
-        // TODO: dirty, rework this
-        this.subscription = this.events.subscribe("walletmanager:initialized", () => {
-            Logger.log("wallet", "walletmanager:initialized event received");
-            this.walletServiceInitialized = true;
-        });
+  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    Logger.log("Wallet", "Wallet service is initializing");
 
-        await this.walletManager.init();
-        await this.intentService.init();
-      }
+    await this.prefs.init();
+    await this.coinService.init();
+    await this.currencyService.init();
+    await this.contactsService.init();
+    await this.uiService.init();
+
+    // TODO: dirty, rework this
+    this.subscription = this.events.subscribe("walletmanager:initialized", () => {
+        Logger.log("wallet", "walletmanager:initialized event received");
+        this.walletServiceInitialized = true;
     });
+
+    await this.walletManager.init();
+    await this.intentService.init();
+  }
+
+  public async onUserSignOut(): Promise<void> {
+
   }
 
   public async stop(): Promise<void> {

@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalNavService } from './global.nav.service';
+import { GlobalServiceManager } from './global.service.manager';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -36,8 +37,6 @@ export type SignInOptions = {
   providedIn: 'root'
 })
 export class GlobalDIDSessionsService {
-  public signedInIdentityListener = new BehaviorSubject<IdentityEntry | null>(null);
-
   private identities: IdentityEntry[] = null;
   private signedInIdentity: IdentityEntry | null = null;
 
@@ -53,9 +52,8 @@ export class GlobalDIDSessionsService {
     this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
     if (this.signedInIdentity) {
       GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
+      await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
     }
-
-    this.signedInIdentityListener.next(this.signedInIdentity);
   }
 
   private getIdentityIndex(didString: string): number {
@@ -127,7 +125,7 @@ export class GlobalDIDSessionsService {
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
 
-    this.signedInIdentityListener.next(this.signedInIdentity);
+    await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
   }
 
   /**
@@ -142,7 +140,7 @@ export class GlobalDIDSessionsService {
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
 
-    await this.signedInIdentityListener.next(null);
+    await GlobalServiceManager.getInstance().emitUserSignOut();
 
     // TODO: Stop all background services, destroy plugins.
     await this.destroyWallet();

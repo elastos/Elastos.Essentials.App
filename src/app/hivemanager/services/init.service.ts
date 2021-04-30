@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalService } from 'src/app/services/global.service.manager';
 import { AppService } from './app.service';
 import { BackgroundService } from './background.service';
 import { HiveService } from './hive.service';
@@ -7,26 +8,27 @@ import { HiveService } from './hive.service';
 @Injectable({
   providedIn: 'root'
 })
-export class HiveManagerInitService {
+export class HiveManagerInitService extends GlobalService {
   constructor(
     private hiveService: HiveService,
     private backgroundService: BackgroundService,
     private appService: AppService,
     private didSessions: GlobalDIDSessionsService
-  ) {}
+  ) {
+    super();
+  }
 
   public async init(): Promise<void> {
-    await this.appService.init();
+    this.appService.init();
+  }
 
-    this.didSessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
-      if (signedInIdentity) {
-        await this.hiveService.init();
+  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    await this.hiveService.init();
+    this.backgroundService.init();
+  }
 
-        this.backgroundService.init();
-      } else {
-        this.hiveService.stop();
-      }
-    });
+  public async onUserSignOut(): Promise<void> {
+    this.hiveService.stop();
   }
 
   /**

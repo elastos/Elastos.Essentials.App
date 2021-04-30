@@ -10,9 +10,10 @@ import { ExpirationService } from './expiration.service';
 import { isNil } from 'lodash-es';
 
 import * as moment from 'moment';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalService } from 'src/app/services/global.service.manager';
 
 
 export interface LastExpirationNotification {
@@ -22,7 +23,7 @@ export interface LastExpirationNotification {
 @Injectable({
     providedIn: 'root'
 })
-export class BackgroundService {
+export class BackgroundService extends GlobalService {
     private EXPIRATION_STORAGE_KEY : string = "LastExpirationVerification";
     private synchronizeTimeout: NodeJS.Timeout = null;
     private notifyTimeout: NodeJS.Timeout = null;
@@ -38,31 +39,33 @@ export class BackgroundService {
         private notifications: GlobalNotificationsService,
         private didsessions: GlobalDIDSessionsService,
         public native: Native) {
+          super();
     }
 
     public async init() {
-      this.didsessions.signedInIdentityListener.subscribe(async (signedInIdentity)=>{
-        if (signedInIdentity) {
-          Logger.log("Identity", "Identity background service is initializing for",signedInIdentity.didString);
+    }
 
-          // Initialize the active DID
-          await this.didService.loadGlobalIdentity();
+    public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+      Logger.log("Identity", "Identity background service is initializing for",signedInIdentity.didString);
 
-          // Wait a moment when Elastos Essentials starts, before starting a background sync.
-          this.synchronizeTimeout = setTimeout(() => {
-            this.synchronizeActiveDIDAndRepeat();
-          }, 30*1000); // 30 seconds
+      // Initialize the active DID
+      await this.didService.loadGlobalIdentity();
 
-          //Notify expired DID and credentials
-          this.notifyTimeout = setTimeout(async () => {
-            await this.notifyExpiredCredentials();
-          }, 5 * 1000); // 5 seconds
-        } else {
-          // Sign out
-          clearTimeout(this.synchronizeTimeout);
-          clearTimeout(this.notifyTimeout);
-        }
-      });
+      // Wait a moment when Elastos Essentials starts, before starting a background sync.
+      this.synchronizeTimeout = setTimeout(() => {
+        this.synchronizeActiveDIDAndRepeat();
+      }, 30*1000); // 30 seconds
+
+      //Notify expired DID and credentials
+      this.notifyTimeout = setTimeout(async () => {
+        await this.notifyExpiredCredentials();
+      }, 5 * 1000); // 5 seconds
+    }
+
+    public async onUserSignOut(): Promise<void> {
+      // Sign out
+      clearTimeout(this.synchronizeTimeout);
+      clearTimeout(this.notifyTimeout);
     }
 
     // Synchronizes the active DID with the ID chain, to make sure we always have up to date information.
