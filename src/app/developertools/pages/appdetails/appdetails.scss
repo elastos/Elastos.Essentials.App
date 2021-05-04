@@ -15,6 +15,11 @@
   }
 
   ion-row {
+    .empty-app {
+      display: flex;
+      justify-content: center;
+    }
+    
     ion-col {
       display: flex;
       justify-content: space-between;
