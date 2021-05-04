@@ -19,6 +19,15 @@
                 <img src="assets/settings/default/right-arrow.svg">
             </ion-col>
         </ion-row>
+        <ion-row class="section" (click)="open('/settings/walletconnect/sessions')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'wallet-connect-sessions-setting' | translate }}</h1>
+                <h2>{{ 'wallet-connect-sessions-intro-setting' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img src="assets/settings/default/right-arrow.svg">
+            </ion-col>
+        </ion-row>
         <ion-row class="section" *ngIf="prefs.developerMode" (click)="open('/settings/developer')">
             <ion-col size="11" class="title-col">
                 <h1>{{ 'developer-setting' | translate }}</h1>
@@ -43,15 +52,6 @@
                     <div class="dark-mode"><p>{{ 'dark' | translate }}</p></div>
                     <div class="light-mode" (click)="theme.toggleTheme()"><p>{{ 'light' | translate }}</p></div>
                 </div>
-            </ion-col>
-        </ion-row>
-        <ion-row class="section" (click)="open('/settings/walletconnect/sessions')">
-            <ion-col size="11" class="title-col">
-                <h1>{{ 'wallet-connect-sessions-setting' | translate }}</h1>
-                <h2>{{ 'wallet-connect-sessions-intro-setting' | translate }}</h2>
-            </ion-col>
-            <ion-col size="1" class="arrow-col">
-                <img src="assets/settings/default/right-arrow.svg">
             </ion-col>
         </ion-row>
         <ion-row class="section dev-mode">
