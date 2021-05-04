@@ -2,7 +2,7 @@
   <app-titlebar></app-titlebar>
 
   <!-- Login Screen -->
-  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!didStorePasswordIsValid">
+  <ion-grid class="container" *ngIf="!didStorePasswordIsValid">
     <ion-row>
       <ion-col size="12">
         <h1>{{ app.name }}</h1>
@@ -11,7 +11,7 @@
   </ion-grid>
 
    <!-- Manage Screen -->
-  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="didStorePasswordIsValid">
+  <ion-grid class="container" *ngIf="didStorePasswordIsValid">
 
     <div class="section-container">
       <ion-row class="section-title-row">
