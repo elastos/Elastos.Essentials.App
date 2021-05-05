@@ -45,6 +45,10 @@ export const zh = {
         'nativecallbackurl-placeholder': 'Set your intents callback url here if any',
         
         // Components
+        'appIdentityHelpMessage': 'Your application identifier on the Elastos DID chain is independant from any publication or platform such as Elastos Essentials or native Android/iOS. It is only a way to proove ownerships, but this is a mandatory step to start with.',
+        'nativeRedirectUrlHelpMessage': 'Native applications need to save their intent scheme base url in their public DID document, in order to secure inter application communications. Ex: https://elastosapp.mysite.org. Redirect URLs send native intent on mobile devices. Used by native mobile apps.',
+        'nativeCustomSchemeHelpMessage': 'Native applications (android) should provide a short custom scheme (ex: myapp) that are used for example by trinity native to send intent responses. For trinity native, this custom name must match the one configured in trinitynative.json.',
+        'nativeCallbackUrlHelpMessage': 'Native applications need to save their intent scheme base url in their public DID document, in order to secure inter application communications. Ex: https://elastosapp.mysite.org. Callback URLs send HTTP POST requests to a remote HTTP server. Used by websites.',
         'help-message': '应用程序 DID 存储密码是用于访问创建的应用程序配置文件的普通密码。确保安全保存此密码',
         'help-message2': '如果您已经创建了一个应用程序，则可以使用其现有的 DID 助记词来创建另一个应用程序配置文件',
         'help-message3': '仅用于高级用途，仅当您要使用钱包的密码短语以增强安全性时才需要此助记词',
