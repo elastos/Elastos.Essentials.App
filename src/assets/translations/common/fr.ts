@@ -38,6 +38,7 @@ export const fr = {
         'favorite': 'Favori',
 
         // Popups, error messages
+        'something-went-wrong': 'Something went wrong, please try again later',
         'please-wait': "Veuillez patienter...",
         "sorry": "Désolé",
         'name-is-missing': "Veuillez saisir un nom",

@@ -37,7 +37,13 @@ export const zh = {
         'publish-app-did': '发布应用的 DID',
         'up-to-date': '已更新到最新, 无需发布',
         'different-did': '与当前登录的用户不同-请发布以进行更新',
+        'uploading-icon': 'Uploading app icon to developer\'s hive vault, please wait...',
 
+        // Placeholders
+        'redirecturl-placeholder': 'Set your intents redirect url here if any',
+        'nativecustomscheme-placeholder': 'Set your custom scheme here if any',
+        'nativecallbackurl-placeholder': 'Set your intents callback url here if any',
+        
         // Components
         'help-message': '应用程序 DID 存储密码是用于访问创建的应用程序配置文件的普通密码。确保安全保存此密码',
         'help-message2': '如果您已经创建了一个应用程序，则可以使用其现有的 DID 助记词来创建另一个应用程序配置文件',

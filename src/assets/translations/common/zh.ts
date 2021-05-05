@@ -39,12 +39,12 @@ export const zh = {
         'favorite': '收藏',
 
         // Popups, error messages
+        'something-went-wrong': 'Something went wrong, please try again later',
         'please-wait': "请稍候...",
         "sorry": "抱歉",
         'name-is-missing': "请输入名称",
         'error': '错误',
         'sentry-message': '抱歉，程序出错了，已向开发团队报告。',
-
 
         // Related to DID
         'sign-in': '登录',

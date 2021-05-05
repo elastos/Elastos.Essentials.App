@@ -1,31 +1,19 @@
 import { Injectable } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class PopupService {
-  private loader;
 
-  constructor(private loadingController: LoadingController) {}
+  constructor(private native: GlobalNativeService) {}
 
   public async showLoading(message: string): Promise<void> {
-    this.loader = await this.loadingController.create({
-      mode: 'ios',
-      cssClass: 'custom-loader-wrapper',
-      spinner: null,
-      message: '<div class="custom-loader"><div class="lds-dual-ring"><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + message +' </ion-label></div>'
-    });
-    this.loader.onWillDismiss().then(() => {
-      this.loader = null;
-    })
-    await this.loader.present();
-    return this.loader;
+    await this.native.showLoading(message);
   }
 
-  public hideLoading(): void {
-    if(this.loader) {
-      this.loader.dismiss();
-    }
+  public async hideLoading() {
+    await this.native.hideLoading();
   }
 }

@@ -167,12 +167,16 @@ export class CoinAddERC20Page implements OnInit {
                     Logger.log('wallet', "Found contract at address " + address);
                     const coinInfo = await this.erc20CoinService.getCoinInfo(address, ethAccountAddress);
 
-                    this.coinName = coinInfo.coinName;
-                    Logger.log('wallet', "Coin name", this.coinName);
-
-                    this.coinSymbol = coinInfo.coinSymbol;
-                    Logger.log('wallet', "Coin symbol", this.coinSymbol);
-
+                    if(coinInfo) {
+                        this.coinName = coinInfo.coinName;
+                        Logger.log('wallet', "Coin name", this.coinName);
+    
+                        this.coinSymbol = coinInfo.coinSymbol;
+                        Logger.log('wallet', "Coin symbol", this.coinSymbol);
+                    } else {
+                        this.popup.ionicAlert('common.sorry', 'common.something-went-wrong', 'common.ok');
+                    }
+                 
                     this.coinInfoFetched = true;
                     this.fetchingCoinInfo = false;
                 }

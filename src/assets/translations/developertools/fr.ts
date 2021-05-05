@@ -37,6 +37,12 @@ export const fr = {
         'publish-app-did': 'Publish App DID',
         'up-to-date': 'Everything is up to date, nothing to publish',
         'different-did': 'Different from currently signed in user - please publish to update',
+        'uploading-icon': 'Uploading app icon to developer\'s hive vault, please wait...',
+
+        // Placeholders
+        'redirecturl-placeholder': 'Set your intents redirect url here if any',
+        'nativecustomscheme-placeholder': 'Set your custom scheme here if any',
+        'nativecallbackurl-placeholder': 'Set your intents callback url here if any',
 
         // Components
         'help-message': 'An app DID store password is an ordinary password used to access the created app\'s profile. Make sure to keep this password stored safely',

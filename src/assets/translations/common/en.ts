@@ -38,6 +38,7 @@ export const en = {
         'favorite': 'Favorite',
     
         // Popups, error messages
+        'something-went-wrong': 'Something went wrong, please try again later',
         'please-wait': "Please wait...",
         'sorry': 'Sorry',
         'name-is-missing': "Please enter a name",
