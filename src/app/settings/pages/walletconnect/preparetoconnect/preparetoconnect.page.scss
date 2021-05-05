@@ -1,1 +1,48 @@
 @import "src/app/settings/root.scss";
+
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+
+    ion-spinner {
+        margin-bottom: 10px;
+        zoom: 1.5;
+    }
+
+    p {
+        margin: 10px 0;
+        padding: 0 50px;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        text-align: center;
+    }
+}
+
+ion-footer {
+    p {
+        margin: 10px 0;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        text-align: center;
+    }
+}
+
+.lightmode {
+    p {
+        color: black;
+    }
+}
+
+.darkmode {
+    p {
+        color: white;
+    }
+}

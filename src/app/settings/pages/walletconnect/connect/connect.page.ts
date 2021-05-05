@@ -14,6 +14,7 @@ import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
 import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-connect',
@@ -28,6 +29,8 @@ export class WalletConnectConnectPage implements OnInit {
     request: SessionRequestParams
   };
   public ethAccounts: string[] = [];
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     public settings: SettingsService,
@@ -56,7 +59,11 @@ export class WalletConnectConnectPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-request'));
-
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      this.titleBar.globalNav.exitCurrentContext();
+    });
   }
 
   ionViewWillLeave() {

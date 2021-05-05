@@ -1,1 +1,22 @@
 @import "src/app/settings/root.scss";
+
+.subsetting-grid {
+    .section-row {
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            p {
+                margin: 5px 0 0;
+            }
+        }
+
+        .right-col {
+            img {
+                height: 20px;
+                width: 20px;
+            }
+        }
+    }
+}

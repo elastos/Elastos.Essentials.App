@@ -13,7 +13,7 @@ import { GlobalWalletConnectService } from 'src/app/services/global.walletconnec
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
 import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
-import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-preparetoconnect',
@@ -24,6 +24,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public suggestToResetSession = false;
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private zone: NgZone,
@@ -41,8 +42,12 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-prepare-to-connect'));
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      this.titleBar.globalNav.exitCurrentContext();
+    });
 
     // Suggest user to delete a potential wallet connect session after a while in case he doesn't
     // receive any "session_request" event.

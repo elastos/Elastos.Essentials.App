@@ -1,16 +1,15 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <div class="ion-text-center">
-    <p>Getting ready to connect to an external app with Wallet Connect, please wait</p>
-    <ion-spinner></ion-spinner>
-    <div *ngIf="suggestToResetSession">
-      <h3>Taking too long?</h3>
-      <p>
-        It seems like the link with the application cannot be established. You could try to manually
-        delete any existing session and try again.
-      </p>
-      <ion-button color="primary" (click)="viewSessions()">View active sessions</ion-button>
-    </div>
+  <div class="container ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p style="margin-bottom: 50px;">Getting ready to connect to an external app with Wallet Connect</p>
   </div>
-  <!-- <ion-button color="primary" (click)="cancel()">Connect</ion-button> -->
 </ion-content>
+
+<ion-footer *ngIf="suggestToResetSession" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
+  <p>
+    It seems like the link with the application cannot be established. You could try to manually
+    delete any existing session and try again.
+  </p>
+  <ion-button color="primary" (click)="viewSessions()">View Active Sessions</ion-button>
+</ion-footer>

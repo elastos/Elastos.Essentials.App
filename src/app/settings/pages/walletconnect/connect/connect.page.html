@@ -1,5 +1,62 @@
 <ion-content>
   <app-titlebar></app-titlebar>
+  <ion-grid *ngIf="sessionRequest && sessionRequest.request" class="container" [class.dark-container]="theme.darkMode">
+
+    <ion-card>
+      <img src="assets/settings/icon/walletconnect.svg">
+      <ion-card-title>Wallet Connect Request</ion-card-title>
+      <ion-card-subtitle>Would you like to open a session with the following external app?</ion-card-subtitle>
+    </ion-card>
+
+    <div class="section">
+      <ion-row class="section-title-row">
+        <ion-col size="12">
+          <p>App Info</p>
+        </ion-col>
+      </ion-row>
+      <ion-row class="section-item-row">
+        <ion-col size="12">
+          <h1>Name</h1>
+          <p>{{ sessionRequest.request.peerMeta.name }}</p>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="sessionRequest.request.peerMeta.description" class="section-item-row">
+        <ion-col size="12">
+          <h1>Description</h1>
+          <p>{{ sessionRequest.request.peerMeta.description }}</p>
+        </ion-col>
+      </ion-row>
+      <ion-row class="section-item-row">
+        <ion-col size="12">
+          <h1>URL</h1>
+          <p>{{ sessionRequest.request.peerMeta.url }}</p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div class="section">
+      <ion-row class="section-title-row">
+        <ion-col size="12">
+          <p>Wallet accounts</p>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let address of ethAccounts" class="section-item-row address-row">
+        <ion-col size="12">
+          <p>{{ address }}</p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div class="btn ion-activatable ripple" (click)="openSession()">
+      <ion-label>Connect</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+  </ion-grid>
+</ion-content>
+
+<!-- 
+<ion-content>
+  <app-titlebar></app-titlebar>
   <div *ngIf="sessionRequest && sessionRequest.request">
     <h1>Wallet Connect Request</h1>
     <h3>Would you like to open a session with the following external app?</h3>
@@ -20,4 +77,4 @@
     </div>
     <ion-button color="primary" (click)="openSession()">Connect</ion-button>
   </div>
-</ion-content>
+</ion-content> -->
