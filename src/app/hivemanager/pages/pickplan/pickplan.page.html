@@ -2,22 +2,22 @@
     <app-titlebar></app-titlebar>
     <div *ngIf="fetchingPlans" class="container center ion-text-center">
         <ion-spinner name="crescent"></ion-spinner>
-        <h4>{{ 'pickplan.please-wait' | translate }}</h4>
+        <h4>{{ 'hivemanager.pickplan.please-wait' | translate }}</h4>
     </div>
 
     <div *ngIf="!fetchingPlans" class="container" [class.darkContainer]="theme.darkMode">
-        <h1>{{ 'pickplan.choose-plan' | translate }}</h1>
+        <h1>{{ 'hivemanager.pickplan.choose-plan' | translate }}</h1>
         <div class="bubble">
-            <p>{{ 'pickplan.choose-plan-msg' | translate }}</p>
+            <p>{{ 'hivemanager.pickplan.choose-plan-msg' | translate }}</p>
             <div class="bubble-tail"></div>
         </div>
 
-        <h2>{{ 'pickplan.plans' | translate }}</h2>
+        <h2>{{ 'hivemanager.pickplan.plans' | translate }}</h2>
         <div *ngIf="pricingInfo" style="width:100%">
             <div *ngFor="let plan of pricingInfo.getPricingPlans()" (click)="pickPlan(plan)">
                 <payment-plan [purchaseablePlan]="plan"></payment-plan>
             </div>
         </div>
-        <div *ngIf="!pricingInfo">{{ 'pickplan.no-storage-found' | translate }}</div>
+        <div *ngIf="!pricingInfo">{{ 'hivemanager.pickplan.no-storage-found' | translate }}</div>
     </div>
 </ion-content>

@@ -28,10 +28,10 @@ export class SettingsService {
     try {
       const result = await passwordManager.changeMasterPassword();
       Logger.log('Settings', 'changePassword result', result);
-      result ? this.native.genericToast('change-pw-success') : this.native.genericToast('change-pw-fail');
+      result ? this.native.genericToast('settings.change-pw-success') : this.native.genericToast('settings.change-pw-fail');
     } catch(err) {
       Logger.log('Settings', 'changePassword err', err);
-      this.native.genericToast('change-pw-fail');
+      this.native.genericToast('settings.change-pw-fail');
     }
   }
 

@@ -62,7 +62,7 @@ export class CreateIdentityPage {
   }
 
   async ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant("create-identity"));
+    this.titleBar.setTitle(this.translate.instant("didsessions.create-identity"));
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'backToRoot', iconPath: BuiltInIcon.BACK });
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });

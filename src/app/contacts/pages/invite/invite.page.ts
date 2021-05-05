@@ -46,9 +46,9 @@ export class InvitePage implements OnInit {
 
       if (params.singleInvite === "true") {
         this.isSingleInvite = true;
-        this.buttonLabel = this.translate.instant('invite-contact');
+        this.buttonLabel = this.translate.instant('contacts.invite-contact');
       } else {
-        this.buttonLabel = this.translate.instant('invite-contacts');
+        this.buttonLabel = this.translate.instant('contacts.invite-contacts');
       }
 
       if (params.friendsFiltered) {
@@ -69,7 +69,7 @@ export class InvitePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('contacts'));
+    this.titleBar.setTitle(this.translate.instant('common.contacts'));
     this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {

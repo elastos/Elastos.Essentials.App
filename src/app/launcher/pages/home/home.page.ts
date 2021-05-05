@@ -62,7 +62,7 @@ export class HomePage implements OnInit {
       this.globalNotifications.sendNotification(notification);
     }, 2000); */
 
-    this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
+    this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "notifications",
@@ -78,7 +78,7 @@ export class HomePage implements OnInit {
       this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
         switch (networkCode) {
           case 'MainNet':
-            this.titleBar.setTitle(this.translate.instant('elastos-essentials'));
+            this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
           break;
           case 'TestNet':
             this.titleBar.setTitle('Test Net Active');

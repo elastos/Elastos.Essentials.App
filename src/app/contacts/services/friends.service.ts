@@ -245,7 +245,7 @@ export class FriendsService {
     }
 
     if (!scannedContentHandled) {
-      this.native.genericToast(this.translate.instant('failed-read-scan'));
+      this.native.genericToast(this.translate.instant('contacts.failed-read-scan'));
     }
   }
 
@@ -256,7 +256,7 @@ export class FriendsService {
     Logger.log('contacts', 'Received contact by intent', did, carrierAddress);
 
     if(await this.didService.getUserDID() === did) {
-      this.native.genericToast('please-dont-add-self');
+      this.native.genericToast('contacts.please-dont-add-self');
       this.globalNav.navigateRoot('contacts', '/contacts/friends');
     } else {
       const targetContact: Contact = this.contacts.find(contact => contact.id === did);
@@ -270,12 +270,12 @@ export class FriendsService {
           this.native.genericToast(promptName + this.translate.instant('did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
         } else {
-          this.native.genericToast(promptName + this.translate.instant('is-already-added'));
+          this.native.genericToast(promptName + this.translate.instant('contacts.is-already-added'));
           this.globalNav.navigateTo('contacts', '/contacts/friends/'+targetContact.id);
           Logger.log('contacts', 'Contact is already added');
         }
       } else {
-        this.native.showLoading(this.translate.instant('please-wait'));
+        this.native.showLoading(this.translate.instant('common.please-wait'));
         this.resolveDIDDocument(did, false, carrierAddress);
       }
     }
@@ -312,7 +312,7 @@ export class FriendsService {
         } else if (!didDocument && updatingFriends) {
           return;
         } else {
-          this.native.genericToast(this.translate.instant('contact-is-unpublished'));
+          this.native.genericToast(this.translate.instant('contacts.contact-is-unpublished'));
           this.buildUnpublishedContact(didString, carrierAddress, requiresConfirmation);
         }
 
@@ -647,10 +647,10 @@ export class FriendsService {
           // Modify contact in backup
           this.events.publish("backup:contact", this.contacts[this.contacts.indexOf(targetContact)]);
 
-          this.native.genericToast(promptName + this.translate.instant('did-carrier-added'));
+          this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated');
         } else {
-          this.native.genericToast(promptName + this.translate.instant('is-already-added'));
+          this.native.genericToast(promptName + this.translate.instant('contacts.is-already-added'));
           Logger.log('contacts', 'Contact is already added');
         }
         resolve(true);
@@ -682,7 +682,7 @@ export class FriendsService {
         // Add contact in backup
         this.events.publish("backup:contact", this.pendingContact);
 
-        this.native.genericToast(promptName + this.translate.instant('was-added'));
+        this.native.genericToast(promptName + this.translate.instant('contacts.was-added'));
         resolve(false);
       }
 
@@ -747,7 +747,7 @@ export class FriendsService {
     // Delete contact in backup
     this.events.publish("backup:deleteContact", contact);
 
-    this.native.genericToast(promptName + this.translate.instant('was-deleted'));
+    this.native.genericToast(promptName + this.translate.instant('contacts.was-deleted'));
     this.globalNav.navigateRoot('contacts', '/contacts/friends');
   }
 
@@ -794,7 +794,7 @@ export class FriendsService {
       if(targetContact) {
         this.globalNav.navigateTo('contacts', '/contacts/friends/'+didString);
       } else {
-        this.native.showLoading(this.translate.instant('please-wait'));
+        this.native.showLoading(this.translate.instant('common.please-wait'));
         await this.resolveDIDDocument(didString, false);
         this.native.hideLoading();
       }
@@ -823,7 +823,7 @@ export class FriendsService {
         this.native.alertNoContacts(
           intent,
           this.managerService.handledIntentId,
-          this.translate.instant('no-contacts-alert')
+          this.translate.instant('contacts.no-contacts-alert')
         );
       }
     });
@@ -869,7 +869,7 @@ export class FriendsService {
           this.native.alertNoContacts(
             'pickfriend',
             this.managerService.handledIntentId,
-            this.translate.instant('no-contacts-with-cred-alert')
+            this.translate.instant('contacts.no-contacts-with-cred-alert')
           );
         }
       } else {
@@ -877,7 +877,7 @@ export class FriendsService {
         this.native.alertNoContacts(
           'pickfriend',
           this.managerService.handledIntentId,
-          this.translate.instant('no-contacts-alert')
+          this.translate.instant('contacts.no-contacts-alert')
         );
         return;
       }

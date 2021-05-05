@@ -20,16 +20,18 @@ export class HistoryPage implements OnInit {
 
   public _votes: Vote[] = [];
 
-  constructor(public nodesService: NodesService,
-              public translate: TranslateService,
-              private globalNav: GlobalNavService,
-              public theme: GlobalThemeService) { }
+  constructor(
+    public nodesService: NodesService,
+    public translate: TranslateService,
+    private globalNav: GlobalNavService,
+    public theme: GlobalThemeService
+  ) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('app-dpos-voting'));
+    this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
     this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
   }

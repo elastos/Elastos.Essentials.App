@@ -33,91 +33,91 @@
     <ion-list *ngIf="detailsActive">
       <ion-row class="profile-data" *ngIf="contact.credentials.name">
         <ion-col>
-          <h5>{{ 'name' | translate }}</h5>
+          <h5>{{ 'contacts.name' | translate }}</h5>
           <h4>{{ contact.credentials.name }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.nickname">
         <ion-col>
-          <h5>{{ 'nickname' | translate }}</h5>
+          <h5>{{ 'common.nickname' | translate }}</h5>
           <h4>{{ contact.credentials.nickname }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.description">
         <ion-col>
-          <h5>{{ 'bio' | translate }}</h5>
+          <h5>{{ 'common.bio' | translate }}</h5>
           <h4>{{ contact.credentials.description }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.gender">
         <ion-col>
-          <h5>{{ 'gender' | translate }}</h5>
+          <h5>{{ 'common.gender' | translate }}</h5>
           <h4>{{ contact.credentials.gender }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.nation">
         <ion-col>
-          <h5>{{ 'country' | translate }}</h5>
+          <h5>{{ 'common.country' | translate }}</h5>
           <h4>{{ contact.credentials.nation }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.birthDate">
         <ion-col>
-          <h5>{{ 'birth' | translate }}</h5>
+          <h5>{{ 'common.birth' | translate }}</h5>
           <h4>{{ fixBirthDate(contact.credentials.birthDate) }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.birthPlace">
         <ion-col>
-          <h5>{{ 'birth-place' | translate }}</h5>
+          <h5>{{ 'common.birth-place' | translate }}</h5>
           <h4>{{ contact.credentials.birthPlace }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.occupation">
         <ion-col>
-          <h5>{{ 'occupation' | translate }}</h5>
+          <h5>{{ 'common.occupation' | translate }}</h5>
           <h4>{{ contact.credentials.occupation }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.education">
         <ion-col>
-          <h5>{{ 'education' | translate }}</h5>
+          <h5>{{ 'common.education' | translate }}</h5>
           <h4>{{ contact.credentials.education }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.interests">
         <ion-col>
-          <h5>{{ 'interests' | translate }}</h5>
+          <h5>{{ 'common.interests' | translate }}</h5>
           <h4>{{ contact.credentials.interests  }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.telephone">
         <ion-col>
-          <h5>{{ 'telephone' | translate }}</h5>
+          <h5>{{ 'common.telephone' | translate }}</h5>
           <h4>{{ contact.credentials.telephone }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.email">
         <ion-col>
-          <h5>{{ 'email' | translate }}</h5>
+          <h5>{{ 'common.email' | translate }}</h5>
           <h4>{{ contact.credentials.email }}</h4>
         </ion-col>
       </ion-row>
 
       <ion-row class="profile-data" *ngIf="contact.credentials.url">
         <ion-col>
-          <h5>{{ 'website' | translate }}</h5>
+          <h5>{{ 'common.website' | translate }}</h5>
           <h4>{{ contact.credentials.url }}</h4>
         </ion-col>
       </ion-row>
@@ -180,7 +180,7 @@
 
       <ion-row class="profile-data" *ngIf="contact.credentials.elaAddress">
         <ion-col size="11">
-          <h5>{{ 'elaWallet' | translate }}</h5>
+          <h5>{{ 'contacts.elaWallet' | translate }}</h5>
           <h4>
             {{ contact.credentials.elaAddress.slice(0,25) }} <br>
             {{ contact.credentials.elaAddress.slice(25,50) }}
@@ -197,7 +197,7 @@
         [class.remove-border]="!contact.carrierAddress && !contact.notificationsCarrierAddress"
         >
         <ion-col size="11">
-          <h5>{{ 'did' | translate }}</h5>
+          <h5>{{ 'contacts.did' | translate }}</h5>
           <h4>
             {{ contact.id.slice(0,25) }} <br>
             {{ contact.id.slice(25,50) }}
@@ -214,7 +214,7 @@
         [class.remove-border]="!contact.notificationsCarrierAddress"
       >
         <ion-col size="11">
-          <h5>{{ 'carrier' | translate }}</h5>
+          <h5>{{ 'contacts.carrier' | translate }}</h5>
           <h4>
             {{ contact.carrierAddress.slice(0,25) }} <br>
             {{ contact.carrierAddress.slice(25,50) }}
@@ -227,7 +227,7 @@
 
       <ion-row *ngIf="contact.notificationsCarrierAddress" class="profile-data remove-border">
         <ion-col size="11">
-          <h5>{{ 'elastos-notifications-carrier-address' | translate }}</h5>
+          <h5>{{ 'contacts.elastos-notifications-carrier-address' | translate }}</h5>
           <h4>
             {{ contact.notificationsCarrierAddress.slice(0,25) }} <br>
             {{ contact.notificationsCarrierAddress.slice(25,50) }}

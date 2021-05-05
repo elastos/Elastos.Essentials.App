@@ -17,7 +17,7 @@
       </ion-col>
     </ion-row>
 
-    <p>{{ 'import-prompt' | translate }}</p>
+    <p>{{ 'didsessions.import-prompt' | translate }}</p>
 
     <ion-row class="input-row">
       <ion-textarea
@@ -25,7 +25,7 @@
         id='sentenceInput'
         autoGrow
         #addMnemonicWordInput
-        [placeholder]="'enter-mnemonic'|translate"
+        [placeholder]="'didsessions.enter-mnemonic'|translate"
         [(ngModel)]="mnemonicSentence"
         (ionChange)="onMnemonicSentenceChanged()"
         (ionFocus)="onInputFocus()"
@@ -37,7 +37,7 @@
 
     <ion-row *ngIf="inputMnemonicCompleted()" class="btn-row">
       <ion-button (click)="promptStorePassword()">
-        {{ 'continue' | translate }}
+        {{ 'common.continue' | translate }}
       </ion-button>
     </ion-row>
 

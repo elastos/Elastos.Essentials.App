@@ -90,7 +90,7 @@ export class GlobalNativeService {
         }
     }
 
-    public async showLoading(message: string = 'please-wait') {
+    public async showLoading(message: string = 'common.please-wait') {
         let isDarkMode = this.theme.activeTheme.value == AppTheme.DARK;
         if (this.loadingCtrlCreating) { // Just in case.
             return;
@@ -102,7 +102,7 @@ export class GlobalNativeService {
             translucent: false,
             spinner: 'crescent',
             cssClass: !isDarkMode ? 'custom-loader' : 'dark-custom-loader',
-            message: message
+            message: this.translate.instant(message)
             // cssClass: !isDarkMode ? 'custom-loader-wrapper' : 'dark-custom-loader-wrapper',
             // message: !isDarkMode ? '<div class="custom-loader"><div class="lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>' : '<div class="dark-custom-loader"><div class="dark-lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>',
         });

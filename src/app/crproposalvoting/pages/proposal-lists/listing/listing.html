@@ -10,7 +10,7 @@
         <ion-input
             #input
             autosize
-            placeholder="{{ 'search-proposal' | translate }}"
+            placeholder="{{ 'crproposalvoting.search-proposal' | translate }}"
             [(ngModel)]="searchInput"
             name="searchInput" ngDefaultControl
             (ngModelChange)="searchProposal($event)"
@@ -46,7 +46,7 @@
             </ion-row>
         </div>
         <div *ngIf="proposals.length == 0" class="more">
-            {{ 'no-proposals' | translate }}
+            {{ 'crproposalvoting.no-proposals' | translate }}
         </div>
     </ion-grid>
 

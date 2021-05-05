@@ -24,7 +24,7 @@ export class HomePage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('dev-toolbox'));
+    this.titleBar.setTitle(this.translate.instant('developertools.dev-toolbox'));
     this.titleBar.setBackgroundColor("#181d20");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);

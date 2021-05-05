@@ -4,10 +4,10 @@
   <ion-grid *ngIf="!avatar || !avatar.data">
     <ion-row class="btn-row">
       <ion-button color="success" (click)="takePicture(1)">
-        {{ 'take-pictures' | translate }}
+        {{ 'common.take-pictures' | translate }}
       </ion-button>
       <ion-button color="success" (click)="takePicture(0)">
-        {{ 'photo-library' | translate }}
+        {{ 'common.photo-library' | translate }}
       </ion-button>
     </ion-row>
   </ion-grid>
@@ -16,10 +16,10 @@
     <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
     <ion-row class="btn-row submit">
       <ion-button color="success" (click)="submit(true)">
-        {{ 'use' | translate }}
+        {{ 'common.use' | translate }}
       </ion-button>
       <ion-button color="success" (click)="avatar.data = null">
-        {{ 'change' | translate }}
+        {{ 'common.change' | translate }}
       </ion-button>
     </ion-row>
   </ion-grid>
@@ -28,13 +28,13 @@
     <img [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
     <ion-row class="btn-row submit">
       <ion-button color="success" (click)="submit(true)">
-        <ion-label>{{ 'use' | translate }}</ion-label>
+        <ion-label>{{ 'common.use' | translate }}</ion-label>
       </ion-button>
       <ion-button color="success" (click)="avatar.data = null">
-        <ion-label>{{ 'change' | translate }}</ion-label>
+        <ion-label>{{ 'common.change' | translate }}</ion-label>
       </ion-button>
       <ion-button color="success" (click)="submit(false)">
-        <ion-label>{{ 'delete' | translate }}</ion-label>
+        <ion-label>{{ 'common.delete' | translate }}</ion-label>
       </ion-button>
     </ion-row>
   </ion-grid>

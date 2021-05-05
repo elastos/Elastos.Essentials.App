@@ -6,18 +6,18 @@
 
     <ion-row>
       <ion-col size="12" class="ion-text-center">
-        <h1>{{ 'create-new-app' | translate }}</h1>
+        <h1>{{ 'developertools.create-new-app' | translate }}</h1>
       </ion-col>
     </ion-row>
    
     <ion-card class="ion-text-center">
-      <h5>{{ 'create-app-message' | translate }}</h5>
+      <h5>{{ 'developertools.create-app-message' | translate }}</h5>
     </ion-card>
 
     <ion-list>
       <ion-row class="input-row">
         <ion-col size="12">
-          <p>{{ 'app-name' | translate }}</p>
+          <p>{{ 'developertools.app-name' | translate }}</p>
         </ion-col>
         <ion-col size="12">
           <ion-input title="App name" [(ngModel)]="appName" type="text"></ion-input>
@@ -26,15 +26,15 @@
    
       <ion-row class="toggle-row">
         <ion-col size="12">
-          <p *ngIf="!importDID">{{ 'create-did' | translate }}</p>
-          <p *ngIf="importDID">{{ 'import-did' | translate }}</p>
+          <p *ngIf="!importDID">{{ 'developertools.create-did' | translate }}</p>
+          <p *ngIf="importDID">{{ 'developertools.import-did' | translate }}</p>
           <ion-toggle [(ngModel)]="importDID" color="dark"></ion-toggle>
         </ion-col>
       </ion-row>
 
       <ion-row *ngIf="importDID" class="input-row">
         <ion-col size="12">
-          <p>{{ 'existing-app-did-mnemonic' | translate }}</p>
+          <p>{{ 'developertools.existing-app-did-mnemonic' | translate }}</p>
           <ion-icon name="help-circle" (click)='dAppService.showHelp($event, helpMessage2)'></ion-icon>
         </ion-col>
         <ion-col size="12">
@@ -44,7 +44,7 @@
 
       <ion-row *ngIf="importDID" class="input-row">
         <ion-col size="12">
-          <p>{{ 'mnemonic-passphrase' | translate }} <span>{{ 'if-any' | translate }} </span></p>
+          <p>{{ 'developertools.mnemonic-passphrase' | translate }} <span>{{ 'developertools.if-any' | translate }} </span></p>
           <ion-icon name="help-circle" (click)='dAppService.showHelp($event, helpMessage3)'></ion-icon>
         </ion-col>
         <ion-col size=12>
@@ -54,7 +54,7 @@
     </ion-list>
 
     <ion-button  color="dark" (click)="createApp()">
-      <ion-label>{{ 'create-app' | translate }}</ion-label>
+      <ion-label>{{ 'developertools.create-app' | translate }}</ion-label>
     </ion-button>
   </ion-grid>
 
@@ -62,19 +62,19 @@
   <ion-grid class="container" *ngIf="createdDApp">
     <ion-row>
       <ion-col size="12">
-        <h1>{{ 'app-created' | translate }}</h1>
+        <h1>{{ 'developertools.app-created' | translate }}</h1>
       </ion-col>
     </ion-row>
 
     <ion-card class="ion-text-center">
-      <h5>{{ 'save-mnemonic' | translate }}</h5> <br>
+      <h5>{{ 'developertools.save-mnemonic' | translate }}</h5> <br>
       <p>
         {{ createdDApp.mnemonic }}
       </p>
     </ion-card>
 
     <ion-button color="dark" (click)="endAppCreation()">
-      <ion-label>{{ 'done' | translate }}</ion-label>
+      <ion-label>{{ 'common.done' | translate }}</ion-label>
     </ion-button>
   </ion-grid>
 

@@ -2,12 +2,12 @@
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-row>
-      <ion-label>{{ 'your-name' | translate }}</ion-label>
+      <ion-label>{{ 'didsessions.your-name' | translate }}</ion-label>
     </ion-row>
-    <ion-input [placeholder]="'enter-name-here'|translate" #input [(ngModel)]="name" name="name" ngDefaultControl></ion-input>
+    <ion-input [placeholder]="'didsessions.enter-name-here'|translate" #input [(ngModel)]="name" name="name" ngDefaultControl></ion-input>
     <div class="footer">
       <ion-button (click)="next()">
-        {{ 'continue' | translate }}
+        {{ 'common.continue' | translate }}
       </ion-button>
     </div>
   </ion-grid>

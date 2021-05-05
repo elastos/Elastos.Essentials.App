@@ -4,7 +4,7 @@
   <ion-grid class="container ion-no-padding" [class.dark-container]="theme.darkMode">
 
     <div class="votes-header">
-      <ion-label><span>{{ getElaRemainder() }}</span>/{{ totalEla }} {{ 'votes-remaining' | translate }}</ion-label>
+      <ion-label><span>{{ getElaRemainder() }}</span>/{{ totalEla }} {{ 'crcouncilvoting.votes-remaining' | translate }}</ion-label>
     </div>
 
     <ion-list lines="none" class="candidate-list" [class.blur]="castingVote">
@@ -27,7 +27,7 @@
                 [(ngModel)]="candidate.userVotes"
               >
               </ion-input>
-              <ion-label>{{ 'pledge-ela' | translate }}</ion-label>
+              <ion-label>{{ 'crcouncilvoting.pledge-ela' | translate }}</ion-label>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -39,12 +39,12 @@
     </div>
 
     <div class="btn cancel ion-activatable ripple" (click)="distribute()">
-      <ion-label>{{ 'dist-equally' | translate }}</ion-label>
+      <ion-label>{{ 'crcouncilvoting.dist-equally' | translate }}</ion-label>
       <ion-ripple-effect></ion-ripple-effect>
     </div>
     <div class="btn confirm ion-activatable ripple" (click)="cast()">
-      <ion-label *ngIf="!votesCasted">{{ 'cast-votes' | translate }}</ion-label>
-      <ion-label *ngIf="votesCasted">{{ 'votes-casted' | translate }}</ion-label>
+      <ion-label *ngIf="!votesCasted">{{ 'crcouncilvoting.cast-votes' | translate }}</ion-label>
+      <ion-label *ngIf="votesCasted">{{ 'crcouncilvoting.votes-casted' | translate }}</ion-label>
       <ion-ripple-effect></ion-ripple-effect>
     </div>
   </ion-grid>

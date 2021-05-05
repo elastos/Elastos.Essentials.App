@@ -8,11 +8,11 @@
   >
     <ion-slide class="ion-text-center first-slide">
       <div class="qr-container">
-        <h1>{{ 'decentralized-id' | translate }}</h1>
+        <h1>{{ 'didsessions.decentralized-id' | translate }}</h1>
         <div #qrcode style="width:100%;"></div>
         <p>{{ mnemonic }}</p>
       </div>
-      <h2>{{ 'did-warning-info' | translate }}</h2>
+      <h2>{{ 'didsessions.did-warning-info' | translate }}</h2>
     </ion-slide>
     <ion-slide class="ion-text-center second-slide">
       <ion-row class="mnemonic-row">
@@ -22,18 +22,18 @@
         </ion-col>
       </ion-row>
       <p>
-        {{ 'your-mnemonic-prompt1' | translate }}<b>{{ 'your-mnemonic-prompt2' | translate }}</b>{{ 'your-mnemonic-prompt3' | translate }}
+        {{ 'common.your-mnemonic-prompt1' | translate }}<b>{{ 'common.your-mnemonic-prompt2' | translate }}</b>{{ 'common.your-mnemonic-prompt3' | translate }}
       </p>
     </ion-slide>
   </ion-slides>
 
   <div class="footer" *ngIf="slideIndex < 1">
-    <ion-button (click)="showPrintOptions()">{{ 'print-qrcode' | translate }}</ion-button>
-    <ion-button (click)="nextSlide()">{{ 'manual-verify' | translate }}</ion-button>
+    <ion-button (click)="showPrintOptions()">{{ 'didsessions.print-qrcode' | translate }}</ion-button>
+    <ion-button (click)="nextSlide()">{{ 'didsessions.manual-verify' | translate }}</ion-button>
   </div>
   <div class="footer" *ngIf="slideIndex === 1">
-    <ion-button (click)="prevSlide()">{{ 'back' | translate }}</ion-button>
-    <ion-button (click)="nextClicked()">{{ 'verify-did' | translate }}</ion-button>
+    <ion-button (click)="prevSlide()">{{ 'common.back' | translate }}</ion-button>
+    <ion-button (click)="nextClicked()">{{ 'didsessions.verify-did' | translate }}</ion-button>
   </div>
 </ion-content>
 

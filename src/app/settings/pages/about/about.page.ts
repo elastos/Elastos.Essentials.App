@@ -16,20 +16,20 @@ export class AboutPage implements OnInit {
   public version: string = "";
   public sections = [
     {
-      type: 'developer',
+      type: 'settings.developer',
       links: [
         {   title: 'Trinity Tech Co. Ltd', link: null },
-        {   title: 'website', link: 'https://www.trinity-tech.io' },
-        {   title: 'email', link: 'contact@trinity-tech.io' },
+        {   title: 'common.website', link: 'https://www.trinity-tech.io' },
+        {   title: 'common.email', link: 'contact@trinity-tech.io' },
       ]
     },
     {
-      type: 'see-also',
+      type: 'settings.see-also',
       links: [
-        { title: 'visit', link: 'https://www.elastos.org' },
-        { title: 'join', link: 'https://www.cyberrepublic.org' },
-        { title: 'build', link: 'https://developer.elastos.org' },
-        { title: 'contact', link: 'https://t.me/elastosbrowser' },
+        { title: 'settings.visit', link: 'https://www.elastos.org' },
+        { title: 'settings.join', link: 'https://www.cyberrepublic.org' },
+        { title: 'settings.build', link: 'https://developer.elastos.org' },
+        { title: 'settings.contact', link: 'https://t.me/elastosbrowser' },
       ],
     },
   ]
@@ -47,14 +47,14 @@ export class AboutPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('about-setting'));
+    this.titleBar.setTitle(this.translate.instant('settings.about-setting'));
   }
 
   ionViewWillLeave() {
   }
 
   openLink(item) {
-    if(item.title === 'email') {
+    if(item.title === 'common.email') {
       return;
     } else {
       this.globalIntentService.sendIntent('openurl', { url: item.link });

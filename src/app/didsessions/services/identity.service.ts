@@ -297,7 +297,7 @@ export class IdentityService {
 
         // Synchronize the store with chain
         Logger.log('didsessions', "Synchronizing identities");
-        await this.uxService.showLoading(this.translate.instant('retrieve-prompt'));
+        await this.uxService.showLoading(this.translate.instant('didsessions.retrieve-prompt'));
 
         try {
             await didStore.synchronize(storePassword);
@@ -601,15 +601,15 @@ export class IdentityService {
     public async alertDuplicateImport() {
       const alert = await this.alertCtrl.create({
         mode: 'ios',
-        header: this.translate.instant('id-already-added'),
-        message: this.translate.instant('import-again'),
+        header: this.translate.instant('didsessions.id-already-added'),
+        message: this.translate.instant('didsessions.import-again'),
         buttons: [
           {
-            text: this.translate.instant('import-again-cancel'),
+            text: this.translate.instant('didsessions.import-again-cancel'),
             role: 'cancel',
             cssClass: 'secondary',
           }, {
-            text: this.translate.instant('import-again-yes'),
+            text: this.translate.instant('didsessions.import-again-yes'),
             handler: () => {
               this.startImportingMnemonic(null);
             }

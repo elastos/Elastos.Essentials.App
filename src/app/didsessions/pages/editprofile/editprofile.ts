@@ -46,7 +46,7 @@ export class EditProfilePage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('identity-name'));
+    this.titleBar.setTitle(this.translate.instant('didsessions.identity-name'));
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });

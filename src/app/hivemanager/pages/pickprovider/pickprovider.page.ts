@@ -100,7 +100,7 @@ export class PickProviderPage implements OnInit {
 
     const menuItems: TitleBarMenuItem[] = [
       {
-        title: this.translate.instant('hive-menu.vault-providers-administration'),
+        title: this.translate.instant('hivemanager.hive-menu.vault-providers-administration'),
         key: "pickprovider-adminproviders",
         iconPath: BuiltInIcon.SETTINGS
       }
@@ -111,7 +111,7 @@ export class PickProviderPage implements OnInit {
     if (this.developerMode) {
       // Add a special menu item to be able to switch to another vault without transfer
       menuItems.push({
-        title: this.translate.instant('hive-menu.force-provider-change'),
+        title: this.translate.instant('hivemanager.hive-menu.force-provider-change'),
         key: "pickprovider-forceproviderchange",
         iconPath: BuiltInIcon.EDIT
       });
@@ -134,7 +134,7 @@ export class PickProviderPage implements OnInit {
       }
     });
 
-    this.titleBar.setTitle(this.translate.instant('pickprovider.title'));
+    this.titleBar.setTitle(this.translate.instant('hivemanager.pickprovider.title'));
   }
 
 
@@ -216,7 +216,7 @@ export class PickProviderPage implements OnInit {
     let diddocment = await this.profileService.fetchPublishedDIDDocument();
     if (diddocment === null) {
       Logger.log('HiveManager', 'DID is not published!')
-      let confirmed = await this.popup.ionicConfirm("alert.didpublish-title", "alert.didpublish-msg");
+      let confirmed = await this.popup.ionicConfirm("hivemanager.alert.didpublish-title", "hivemanager.alert.didpublish-msg");
       if (confirmed) {
         this.globalIntentService.sendIntent("https://did.elastos.net/promptpublishdid", null);
       }
@@ -287,6 +287,6 @@ export class PickProviderPage implements OnInit {
   }
 
   public transferVault() {
-    this.popup.ionicAlert("alert.not-available", "alert.not-available-msg");
+    this.popup.ionicAlert("hivemanager.alert.not-available", "hivemanager.alert.not-available-msg");
   }
 }

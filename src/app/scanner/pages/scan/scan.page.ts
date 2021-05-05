@@ -16,6 +16,7 @@ import { ESSENTIALS_CONNECT_URL_PREFIX, GlobalConnectService } from 'src/app/ser
 import { isObject } from 'lodash-es';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 // The worker JS file from qr-scanner must be copied manually from
 // the qr-scanner node_modules sources and copied to our assets/folder
@@ -52,8 +53,8 @@ export class ScanPage {
         private intentService: IntentService,
         private zone: NgZone,
         private alertController: AlertController,
-        private loadingController: LoadingController,
         public theme: GlobalThemeService,
+        private native: GlobalNativeService,
         private globalIntentService: GlobalIntentService,
         private globalConnectService: GlobalConnectService,
         private globalWalletConnectService: GlobalWalletConnectService,
@@ -67,7 +68,7 @@ export class ScanPage {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('app-scanner'));
+        this.titleBar.setTitle(this.translate.instant('launcher.app-scanner'));
         this.titleBar.setNavigationMode(null);
         this.showGalleryTitlebarKey(true);
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem)=>{
@@ -194,7 +195,7 @@ export class ScanPage {
         }
 
         Logger.log("Scanner", "Stopping camera, getting ready to pick a picture from the gallery.");
-        this.showLoading();
+        this.native.showLoading();
         await this.hideCamera();
         this.stopScanning();
         this.showGalleryTitlebarKey(false);
@@ -227,7 +228,7 @@ export class ScanPage {
                                 Logger.log("Scanner", "Read qr code:", code);
 
                                 if (code != null) {
-                                    this.hideLoading();
+                                    this.native.hideLoading();
                                     this.showGalleryTitlebarKey(true);
                                     // A QR code could be found in the picture
                                     this.scannedText = code as string;
@@ -236,7 +237,7 @@ export class ScanPage {
                                     else
                                         this.returnScannedContentToIntentRequester(this.scannedText);
                                 } else {
-                                    this.alertNoScannedContent('sorry', 'no-qr-err');
+                                    this.alertNoScannedContent('common.sorry', 'scanner.no-qr-err');
                                 }
                             }
 
@@ -246,7 +247,7 @@ export class ScanPage {
                             navigator.camera.cleanup(()=>{}, (err)=>{});
                         }
                         catch (e) {
-                            this.alertNoScannedContent('sorry', 'scan-err');
+                            this.alertNoScannedContent('common.sorry', 'scanner.scan-err');
                             Logger.warn("Scanner", "Error while loading the picture as PNG:", e);
                         }
                     });
@@ -255,14 +256,14 @@ export class ScanPage {
             , (err)=>{
                 // 'No Image Selected': User canceled.
                 if (err === 'No Image Selected') {
-                    this.hideLoading();
+                    this.native.hideLoading();
                     this.showGalleryTitlebarKey(true);
                     this.zone.run(() => {
                         this.startScanningProcess();
                     });
                 } else {
                     Logger.error("Scanner", err);
-                    this.alertNoScannedContent('sorry', 'gallery-err');
+                    this.alertNoScannedContent('sorry', 'scanner.gallery-err');
                 }
             }, {
                 targetWidth: 1200, // Reduce picture size to avoid memory problems - keep it large enough for QR code readabilitiy
@@ -365,11 +366,11 @@ export class ScanPage {
     async showNooneToHandleIntent() {
         this.alert = await this.alertController.create({
             mode: 'ios',
-            message: this.translate.instant('no-app-err'),
+            message: this.translate.instant('scanner.no-app-err'),
             backdropDismiss: false,
             buttons: [
             {
-                text: this.translate.instant('ok'),
+                text: this.translate.instant('common.ok'),
                 handler: () => {
                   this.startScanningProcess();
                 }
@@ -383,7 +384,7 @@ export class ScanPage {
     }
 
     async alertNoScannedContent(title: string, msg: string, btnText: string = 'ok') {
-        this.hideLoading();
+        this.native.hideLoading();
         this.showGalleryTitlebarKey(true);
 
         this.alert = await this.alertController.create({
@@ -412,23 +413,4 @@ export class ScanPage {
         this.stopScanning();
         await this.hideCamera();
     }
-
-    public async showLoading() {
-      this.loader = await this.loadingController.create({
-        mode: 'ios',
-        cssClass: !this.theme.darkMode ? 'custom-loader-wrapper' : 'dark-custom-loader-wrapper',
-        spinner: null,
-        message: !this.theme.darkMode ? '<div class="custom-loader"><div class="lds-dual-ring"><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant('please-wait') +' </ion-label></div>' : '<div class="dark-custom-loader"><div class="dark-lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant('please-wait') + '</ion-label></div>',
-      });
-      this.loader.onWillDismiss().then(() => {
-        this.loader = null;
-      })
-      return await this.loader.present();
-    };
-
-    public hideLoading(): void {
-      if(this.loader) {
-        this.loader.dismiss();
-      }
-    };
 }

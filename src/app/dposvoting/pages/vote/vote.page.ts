@@ -51,7 +51,7 @@ export class VotePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('app-dpos-voting'));
+    this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
     this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     this.titleBar.setNavigationMode(null);
   }
@@ -85,7 +85,7 @@ export class VotePage implements OnInit {
 
         if(res.result.txid === null ) {
           votesSent = true;
-          this.voteFailed('vote-cancelled');
+          this.voteFailed('dposvoting.vote-cancelled');
         } else {
           votesSent = true;
           this.voted = true;
@@ -107,7 +107,7 @@ export class VotePage implements OnInit {
       // If no response is sent from wallet, show vote transaction has failed
       setTimeout(() => {
         if(votesSent === false) {
-          this.voteFailed('vote-timeout');
+          this.voteFailed('dposvoting.vote-timeout');
         }
       }, 10000)
 
@@ -152,20 +152,20 @@ export class VotePage implements OnInit {
     this.closeToast();
     this.toast = await this.toastController.create({
       position: 'bottom',
-      header: this.translate.instant('vote-success'),
+      header: this.translate.instant('dposvoting.vote-success'),
       message: `${txid.slice(0,16) + '<br>' + txid.slice(16,32) + '<br>' + txid.slice(32,48)}`,
       color: "primary",
       buttons: [
         {
-          text: this.translate.instant('copy'),
+          text: this.translate.instant('common.copy'),
           handler: () => {
             this.toast.dismiss();
-            this.globalNative.genericToast('tx-copied-to-clipboard');
+            this.globalNative.genericToast('dposvoting.tx-copied-to-clipboard');
             this.globalNative.copyClipboard(txid);
           }
         },
         {
-          text: this.translate.instant('dismiss'),
+          text: this.translate.instant('dposvoting.dismiss'),
           handler: () => {
             this.toast.dismiss();
           }
@@ -182,12 +182,12 @@ export class VotePage implements OnInit {
     this.closeToast();
     this.toast = await this.toastController.create({
       position: 'bottom',
-      header: this.translate.instant('vote-fail'),
+      header: this.translate.instant('dposvoting.vote-fail'),
       message: this.translate.instant(res),
       color: "primary",
       buttons: [
         {
-          text: this.translate.instant('ok'),
+          text: this.translate.instant('common.ok'),
           handler: () => {
             this.toast.dismiss();
           }
@@ -211,7 +211,7 @@ export class VotePage implements OnInit {
   async noNodesChecked() {
     const toast = await this.toastController.create({
       position: 'bottom',
-      header: this.translate.instant('vote-no-nodes-checked'),
+      header: this.translate.instant('dposvoting.vote-no-nodes-checked'),
       color: "primary",
       duration: 2000
     });

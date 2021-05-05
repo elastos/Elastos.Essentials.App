@@ -14,23 +14,23 @@
         </ion-row>
         <ion-card-content>
           <ion-row class="detail-container">
-            <p>{{ 'slider-rank' | translate }}</p>
+            <p>{{ 'dposvoting.slider-rank' | translate }}</p>
             <h3>#{{ node.index }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>{{ 'slider-votes' | translate }}</p>
+            <p>{{ 'dposvoting.slider-votes' | translate }}</p>
             <h3>{{ getVotes(node.votes) }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>{{ 'slider-rewards' | translate }}</p>
+            <p>{{ 'dposvoting.slider-rewards' | translate }}</p>
             <h3>{{ getRewards(node.EstRewardPerYear) }}</h3>
           </ion-row>
           <ion-row class="detail-container">
-            <p>{{ 'slider-percentage' | translate }}</p>
+            <p>{{ 'dposvoting.slider-percentage' | translate }}</p>
             <h3>{{ getVotePercent(node.votes) }}%</h3>
           </ion-row>
           <ion-row class="website">
-            <p>{{ 'website' | translate }}</p>
+            <p>{{ 'common.website' | translate }}</p>
             <h3 (click)="nodesService.openLink(node.url)">{{ node.url }}</h3>
           </ion-row>
         </ion-card-content>

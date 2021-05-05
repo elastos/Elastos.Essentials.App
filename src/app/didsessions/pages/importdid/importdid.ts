@@ -86,7 +86,7 @@ export class ImportDIDPage {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('import-my-did'));
+        this.titleBar.setTitle(this.translate.instant('didsessions.import-my-did'));
         this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
@@ -191,7 +191,7 @@ export class ImportDIDPage {
         this.mnemonicForImport = this.mnemonicWords.join(' ').toLowerCase();;
         let mnemonicValid = await this.identityService.isMnemonicValid(this.mnemonicLanguage, this.mnemonicForImport);
         if (!mnemonicValid) {
-            this.popup.ionicAlert('mnemonic-invalid', 'mnemonic-invalid-prompt');
+            this.popup.ionicAlert('didsessions.mnemonic-invalid', 'didsessions.mnemonic-invalid-prompt');
             return;
         }
 

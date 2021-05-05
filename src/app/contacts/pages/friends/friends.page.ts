@@ -66,7 +66,7 @@ export class FriendsPage implements OnInit {
     });
 
     this.titleBar.setNavigationMode(null);
-    this.titleBar.setTitle(this.translate.instant('contacts'));
+    this.titleBar.setTitle(this.translate.instant('common.contacts'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "add",
       iconPath:  BuiltInIcon.ADD

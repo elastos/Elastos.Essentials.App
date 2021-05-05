@@ -41,7 +41,7 @@ export class DeveloperService {
   public networks = [
       // TODO: ethscRPCApi need to update when it is ready.
     {
-      type: 'main-net',
+      type: 'settings.main-net',
       code: 'MainNet',
       mainChainRPCApi: 'https://api.elastos.io/ela',
       idChainRPCApi: 'https://api.elastos.io/did',
@@ -52,7 +52,7 @@ export class DeveloperService {
       icon: '/assets/icon/main.svg'
     },
     {
-      type: 'test-net',
+      type: 'settings.test-net',
       code: 'TestNet',
       mainChainRPCApi: 'https://api-testnet.elastos.io/ela',
       idChainRPCApi: 'https://api-testnet.elastos.io/did',
@@ -63,7 +63,7 @@ export class DeveloperService {
       icon: '/assets/icon/test.svg'
     },
     {
-      type: 'reg-net',
+      type: 'settings.reg-net',
       code: 'RegTest',
       mainChainRPCApi: 'http://api.elastos.io:22336',
       idChainRPCApi: 'http://api.elastos.io:22606',
@@ -74,7 +74,7 @@ export class DeveloperService {
       icon: '/assets/icon/reg.svg'
     },
     {
-      type: 'lrw-net',
+      type: 'settings.lrw-net',
       code: 'LrwNet',
       mainChainRPCApi: 'http://crc1rpc.longrunweather.com:18080',
       idChainRPCApi: 'http://did1rpc.longrunweather.com:18080',
@@ -85,7 +85,7 @@ export class DeveloperService {
       icon: '/assets/icon/priv.svg'
     },
     {
-      type: 'priv-net',
+      type: 'settings.priv-net',
       code: 'PrvNet',
       mainChainRPCApi: 'http://api.elastos.io:22336',
       idChainRPCApi: 'http://api.elastos.io:22606',
@@ -152,7 +152,7 @@ export class DeveloperService {
   async toggleBackgroundServices() {
     this.backgroundServicesEnabled = !this.backgroundServicesEnabled;
     await this.setPreference("developer.backgroundservices.startonboot", this.backgroundServicesEnabled);
-    this.showToast(this.translate.instant('please-restart'));
+    this.showToast(this.translate.instant('settings.please-restart'));
   }
 
   async configCliAddress() {

@@ -4,95 +4,95 @@
     <!-- Loaders -->
     <div *ngIf="checkingInitialStatus" class="container center ion-text-center">
         <ion-spinner name="crescent"></ion-spinner>
-        <h4>{{ 'pickprovider.please-wait'  | translate }} <br> {{ 'pickprovider.checking-status'  | translate }}</h4>
+        <h4>{{ 'hivemanager.pickprovider.please-wait'  | translate }} <br> {{ 'hivemanager.pickprovider.checking-status'  | translate }}</h4>
     </div>
     <div *ngIf="publishingProvider" class="container center ion-text-center">
         <ion-spinner name="crescent"></ion-spinner>
-        <h4>{{ 'pickprovider.activating-provider'  | translate }}</h4>
+        <h4>{{ 'hivemanager.pickprovider.activating-provider'  | translate }}</h4>
     </div>
-    <div *ngIf="vaultProviderCouldBeContacted && !checkingInitialStatus && publishInProgress()"  class="container center ion-text-center">
+    <div *ngIf="vaultProviderCouldBeContacted && !checkingInitialStatus && publishInProgress()" class="container center ion-text-center">
         <ion-spinner name="crescent"></ion-spinner>
-        <h4 class="ion-padding">{{ 'pickprovider.hivevault-publishing' | translate }}</h4>
+        <h4 class="ion-padding">{{ 'hivemanager.pickprovider.hivevault-publishing' | translate }}</h4>
     </div>
 
     <!-- No Vault -->
     <div *ngIf="!publishingProvider && !checkingInitialStatus && vaultProviderCouldBeContacted && !hasVaultProvider() && !publishInProgress()" class="container" [class.darkContainer]="theme.darkMode">
-        <h1>{{ 'pickprovider.elastos' | translate }} <br> {{ 'pickprovider.hivestorage' | translate }}</h1>
+        <h1>{{ 'hivemanager.pickprovider.elastos' | translate }} <br> {{ 'hivemanager.pickprovider.hivestorage' | translate }}</h1>
         <div class="bubble">
-            <p>{{ 'pickprovider.no-storage-intro' | translate }}</p> <br>
+            <p>{{ 'hivemanager.pickprovider.no-storage-intro' | translate }}</p> <br>
             <p>
-                <strong>{{ 'pickprovider.please-note' | translate }}</strong> {{ 'pickprovider.no-storage-intro2' | translate }}
+                <strong>{{ 'hivemanager.pickprovider.please-note' | translate }}</strong> {{ 'hivemanager.pickprovider.no-storage-intro2' | translate }}
             </p>
             <div class="bubble-tail"></div>
         </div>
-        <h2>{{ 'pickprovider.select-provider' | translate }}</h2>
+        <h2>{{ 'hivemanager.pickprovider.select-provider' | translate }}</h2>
         <ion-button *ngFor="let provider of storageProviders" (click)="pickProvider(provider)">
             {{ provider.name }}
         </ion-button>
 
         <h2>{{ 'pickprovider.input-provider' | translate }}</h2>
         <ion-input name="manualProviderInput" ngDefaultControl [(ngModel)]="manualProviderAddress" placeholder="Ex: http://localip:5000" clearInput name="manualProvider" ngDefaultControl></ion-input>
-        <ion-button (click)="manuallySetProvider()">{{ 'pickprovider.use-address' | translate }}</ion-button>
+        <ion-button (click)="manuallySetProvider()">{{ 'hivemanager.pickprovider.use-address' | translate }}</ion-button>
     </div>
 
     <!-- Can't Fetch Vault -->
     <div *ngIf="!checkingInitialStatus && !vaultProviderCouldBeContacted && !publishInProgress()" class="container" [class.darkContainer]="theme.darkMode">
-        <h3>{{ 'pickprovider.provider-offline' | translate }}</h3>
+        <h3>{{ 'hivemanager.pickprovider.provider-offline' | translate }}</h3>
         <div class="bubble">
-            <p>{{ 'pickprovider.provider-offline-msg' | translate }}</p>
+            <p>{{ 'hivemanager.pickprovider.provider-offline-msg' | translate }}</p>
         </div>
     </div>
 
     <!-- Has Vault -->
     <div *ngIf="!checkingInitialStatus && vaultProviderCouldBeContacted && hasVaultProvider() && !publishInProgress()" class="container" [class.darkContainer]="theme.darkMode">
-        <h3>{{ 'pickprovider.vault-active' | translate }}</h3>
+        <h3>{{ 'hivemanager.pickprovider.vault-active' | translate }}</h3>
         <div class="bubble">
-            <p>{{ 'pickprovider.vault-msg' | translate }}</p> <br>
-            <p><strong>{{ 'pickprovider.address' | translate }}</strong> {{ vaultLinkStatus.publishedInfo.vaultAddress }}</p>
-            <p><strong>{{ 'pickprovider.version' | translate }}</strong> {{ vaultLinkStatus.publishedInfo.vaultVersion }}</p>
+            <p>{{ 'hivemanager.pickprovider.vault-msg' | translate }}</p> <br>
+            <p><strong>{{ 'hivemanager.pickprovider.address' | translate }}</strong> {{ vaultLinkStatus.publishedInfo.vaultAddress }}</p>
+            <p><strong>{{ 'hivemanager.pickprovider.version' | translate }}</strong> {{ vaultLinkStatus.publishedInfo.vaultVersion }}</p>
         </div>
-        <ion-button (click)="transferVault()" style="margin-top: 12.5px;">{{ 'pickprovider.transfer-vault' | translate }}</ion-button>
+        <ion-button (click)="transferVault()" style="margin-top: 12.5px;">{{ 'hivemanager.pickprovider.transfer-vault' | translate }}</ion-button>
 
         <br/>
 
-        <h3>{{ 'pickprovider.primary-plan'  | translate }}</h3>
+        <h3>{{ 'hivemanager.pickprovider.primary-plan'  | translate }}</h3>
         <div *ngIf="fetchingActivePaymentPlan" style="width:100%">
             <div class="bubble ion-text-center ion-padding">
                 <ion-spinner name="crescent"></ion-spinner> <br><br>
-                <p>{{ 'pickprovider.please-wait'  | translate }} <br> {{ 'pickprovider.retrieving-plan'  | translate }}</p>
+                <p>{{ 'hivemanager.pickprovider.please-wait'  | translate }} <br> {{ 'hivemanager.pickprovider.retrieving-plan'  | translate }}</p>
             </div>
         </div>
         <div *ngIf="!fetchingActivePaymentPlan" style="width:100%">
             <payment-plan [activePlan]="activePaymentPlan"></payment-plan>
         </div>
         <ion-button (click)="changePlan()" *ngIf="!fetchingActivePaymentPlan && (incompleteOrders == null || incompleteOrders.length == 0)">
-            {{ 'pickprovider.choose-another-plan'  | translate }}
+            {{ 'hivemanager.pickprovider.choose-another-plan' | translate }}
         </ion-button>
-        <div *ngIf="incompleteOrders != null && incompleteOrders.length > 0">{{ 'pickprovider.payment-processing' | translate }}</div>
+        <div *ngIf="incompleteOrders != null && incompleteOrders.length > 0">{{ 'hivemanager.pickprovider.payment-processing' | translate }}</div>
 
         <br/>
 
-        <h3>{{ 'pickprovider.backup-provider'  | translate }}</h3>
+        <h3>{{ 'hivemanager.pickprovider.backup-provider'  | translate }}</h3>
         <div class="bubble">
-            <p>{{ 'pickprovider.backup-provider-msg'  | translate }}</p> <br>
-            <p><strong>{{ 'pickprovider.address' | translate }}</strong> {{ 'pickprovider.not-available-yet' | translate }}</p>
-            <p><strong>{{ 'pickprovider.version' | translate }}</strong> {{ 'pickprovider.not-available-yet' | translate }}</p>
+            <p>{{ 'hivemanager.pickprovider.backup-provider-msg'  | translate }}</p> <br>
+            <p><strong>{{ 'hivemanager.pickprovider.address' | translate }}</strong> {{ 'hivemanager.pickprovider.not-available-yet' | translate }}</p>
+            <p><strong>{{ 'hivemanager.pickprovider.version' | translate }}</strong> {{ 'hivemanager.pickprovider.not-available-yet' | translate }}</p>
         </div>
 
         <br/>
 
-        <h3>{{ 'pickprovider.backup-plan' | translate }}</h3>
+        <h3>{{ 'hivemanager.pickprovider.backup-plan' | translate }}</h3>
         <div class="bubble">
-            <p>{{ 'pickprovider.backup-plan-msg' | translate }}</p>
+            <p>{{ 'hivemanager.pickprovider.backup-plan-msg' | translate }}</p>
         </div>
 
         <br/>
 
-        <h3>{{ 'pickprovider.pending-orders' | translate }}</h3>
+        <h3>{{ 'hivemanager.pickprovider.pending-orders' | translate }}</h3>
         <div *ngIf="fetchingOrdersAwaitingTxConfirmation" style="width:100%">
             <div class="bubble ion-text-center ion-padding">
                 <ion-spinner name="crescent"></ion-spinner>
-                <p>{{ 'pickprovider.please-wait'  | translate }} <br> {{ 'pickprovider.retrieving-orders'  | translate }}</p>
+                <p>{{ 'hivemanager.pickprovider.please-wait'  | translate }} <br> {{ 'hivemanager.pickprovider.retrieving-orders'  | translate }}</p>
             </div>
         </div>
         <div *ngIf="!fetchingOrdersAwaitingTxConfirmation" style="width:100%">
@@ -101,7 +101,7 @@
             </div>
 
             <div *ngIf="ordersAwaitingTxConfirmation.length == 0" class="bubble">
-                <p>{{ 'pickprovider.no-pending-order'  | translate }}</p>
+                <p>{{ 'hivemanager.pickprovider.no-pending-order'  | translate }}</p>
             </div>
         </div>
     </div>

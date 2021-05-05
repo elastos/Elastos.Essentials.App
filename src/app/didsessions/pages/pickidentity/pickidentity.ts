@@ -48,7 +48,7 @@ export class PickIdentityPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant("pick-identity"));
+    this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);

@@ -77,7 +77,7 @@ export class AppDetailsPage {
 
   async ionViewWillEnter() {
     // Update system status bar every time we re-enter this screen.
-    this.titleBar.setTitle(this.translate.instant('manage-app'));
+    this.titleBar.setTitle(this.translate.instant('developertools.manage-app'));
     this.titleBar.setBackgroundColor("#181d20");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
@@ -260,7 +260,7 @@ export class AppDetailsPage {
 
   public async copyAppDIDToClipboard() {
     this.native.copyClipboard(this.app.didString);
-    this.native.genericToast('app-did-copied');
+    this.native.genericToast('developertools.app-did-copied');
   }
 
   public async downloadAppIconFromDeveloperHive() {

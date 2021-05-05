@@ -55,7 +55,7 @@ export class ProposalListingPage implements OnInit {
   }
 
   async init() {
-    this.titleBar.setTitle(this.translate.instant('app-cr-proposal'));
+    this.titleBar.setTitle(this.translate.instant('launcher.app-cr-proposal'));
 
     if (!this.proposalsFetched) {
       await this.fetchProposals();
@@ -67,7 +67,7 @@ export class ProposalListingPage implements OnInit {
       this.proposals = await this.proposalService.fetchProposals(this.proposalType, 1);
       this.proposalsFetched = true;
       this.showSearch = true;
-      this.titleBar.setTitle(this.translate.instant('proposals'));
+      this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposals'));
     }
     catch (err) {
       Logger.error('crproposal', 'fetchProposals error:', err)
@@ -78,11 +78,11 @@ export class ProposalListingPage implements OnInit {
     Logger.log('crproposal', 'Search input changed', event);
     if (this.searchInput) {
       this.proposalsFetched = false;
-      this.titleBar.setTitle(this.translate.instant('searching-proposals'));
+      this.titleBar.setTitle(this.translate.instant('crproposalvoting.searching-proposals'));
       try {
         this.proposals = await this.proposalService.fetchSearchedProposal(this.searchPage, this.proposalType, this.searchInput);
         this.proposalsFetched = true;
-        this.titleBar.setTitle(this.translate.instant('proposals'));
+        this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposals'));
       }
       catch (err) {
         Logger.error('crproposal', 'searchProposal error:', err);

@@ -12,8 +12,8 @@
         </ion-row>
         <ion-row class="section" (click)="onChangePassword()">
             <ion-col size="11" class="title-col">
-                <h1>{{ 'passwordmanager-setting' | translate }}</h1>
-                <h2>{{ 'change-pw' | translate }}</h2>
+                <h1>{{ 'settings.passwordmanager-setting' | translate }}</h1>
+                <h2>{{ 'settings.change-pw' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
                 <img src="assets/settings/default/right-arrow.svg">
@@ -21,8 +21,8 @@
         </ion-row>
         <ion-row class="section" (click)="open('/settings/walletconnect/sessions')">
             <ion-col size="11" class="title-col">
-                <h1>{{ 'wallet-connect-sessions-setting' | translate }}</h1>
-                <h2>{{ 'wallet-connect-sessions-intro-setting' | translate }}</h2>
+                <h1>{{ 'settings.wallet-connect-sessions-setting' | translate }}</h1>
+                <h2>{{ 'settings.wallet-connect-sessions-intro-setting' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
                 <img src="assets/settings/default/right-arrow.svg">
@@ -30,8 +30,8 @@
         </ion-row>
         <ion-row class="section" *ngIf="prefs.developerMode" (click)="open('/settings/developer')">
             <ion-col size="11" class="title-col">
-                <h1>{{ 'developer-setting' | translate }}</h1>
-                <h2>{{ 'advanced-setting' | translate }}</h2>
+                <h1>{{ 'settings.developer-setting' | translate }}</h1>
+                <h2>{{ 'settings.advanced-setting' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
                 <img src="assets/settings/default/right-arrow.svg">
@@ -39,26 +39,26 @@
         </ion-row>
         <ion-row class="section dev-mode">
             <ion-col size="8" class="title-col">
-                <h1>{{ 'display-setting' | translate }}</h1>
-                <h2 *ngIf="!theme.darkMode">{{ 'light-mode-on' | translate }}</h2>
-                <h2 *ngIf="theme.darkMode">{{ 'dark-mode-on' | translate }}</h2>
+                <h1>{{ 'settings.display-setting' | translate }}</h1>
+                <h2 *ngIf="!theme.darkMode">{{ 'settings.light-mode-on' | translate }}</h2>
+                <h2 *ngIf="theme.darkMode">{{ 'settings.dark-mode-on' | translate }}</h2>
             </ion-col>
             <ion-col size="4" class="arrow-col">
                 <div *ngIf="!theme.darkMode" class="theme-toggle light-toggled">
-                    <div class="dark-mode" (click)="theme.toggleTheme()"><p>{{ 'dark' | translate }}</p></div>
-                    <div class="light-mode"><p>{{ 'light' | translate }}</p></div>
+                    <div class="dark-mode" (click)="theme.toggleTheme()"><p>{{ 'settings.dark' | translate }}</p></div>
+                    <div class="light-mode"><p>{{ 'settings.light' | translate }}</p></div>
                 </div>
                 <div *ngIf="theme.darkMode" class="theme-toggle dark-toggled">
-                    <div class="dark-mode"><p>{{ 'dark' | translate }}</p></div>
-                    <div class="light-mode" (click)="theme.toggleTheme()"><p>{{ 'light' | translate }}</p></div>
+                    <div class="dark-mode"><p>{{ 'settings.dark' | translate }}</p></div>
+                    <div class="light-mode" (click)="theme.toggleTheme()"><p>{{ 'settings.light' | translate }}</p></div>
                 </div>
             </ion-col>
         </ion-row>
         <ion-row class="section dev-mode">
             <ion-col size="9" class="title-col">
-                <h1>{{ 'dev-mode' | translate }}</h1>
-                <h2 *ngIf="prefs.developerMode">{{ 'on' | translate }}</h2>
-                <h2 *ngIf="!prefs.developerMode">{{ 'off' | translate }}</h2>
+                <h1>{{ 'settings.dev-mode' | translate }}</h1>
+                <h2 *ngIf="prefs.developerMode">{{ 'settings.on' | translate }}</h2>
+                <h2 *ngIf="!prefs.developerMode">{{ 'settings.off' | translate }}</h2>
             </ion-col>
             <ion-col size="3" class="arrow-col">
                 <ion-toggle mode="ios" [(ngModel)]="prefs.developerMode" (ngModelChange)="toggleDeveloperMode()" ngDefaultControl></ion-toggle>

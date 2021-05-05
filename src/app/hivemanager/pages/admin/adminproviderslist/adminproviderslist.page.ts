@@ -37,7 +37,7 @@ export class AdminProvidersListPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('adminproviderlist.title'));
+    this.titleBar.setTitle(this.translate.instant('hivemanager.adminproviderlist.title'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "adminproviderslist-addprovider",
       iconPath: BuiltInIcon.ADD

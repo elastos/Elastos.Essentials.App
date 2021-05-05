@@ -1,14 +1,14 @@
 <ion-content>
     <app-titlebar></app-titlebar>
     <div *ngIf="planToPurchase" class="container" [class.darkContainer]="theme.darkMode">
-        <h1>{{ 'pickplanpurchase.confirm-plan' | translate }}</h1>
+        <h1>{{ 'hivemanager.pickplanpurchase.confirm-plan' | translate }}</h1>
         <div class="bubble" style="margin-bottom: 30px;">
-            <p>{{ 'pickplanpurchase.purchase-msg' | translate }}</p>
+            <p>{{ 'hivemanager.pickplanpurchase.purchase-msg' | translate }}</p>
             <div class="bubble-tail"></div>
         </div>
     
         <payment-plan [purchaseablePlan]="planToPurchase"></payment-plan>
 
-        <ion-button (click)="purchasePlan()">{{ 'pickplanpurchase.purchase-now' | translate }}</ion-button>
+        <ion-button (click)="purchasePlan()">{{ 'hivemanager.pickplanpurchase.purchase-now' | translate }}</ion-button>
     </div>
 </ion-content>

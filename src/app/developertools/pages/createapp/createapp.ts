@@ -25,9 +25,9 @@ export class CreateAppPage {
   passwordToggle: string = 'eye';
   showPassword = false;
 
-  helpMessage: string = this.translate.instant('help-message');
-  helpMessage2: string = this.translate.instant('help-message2');
-  helpMessage3: string = this.translate.instant('help-message3');
+  helpMessage: string = this.translate.instant('developertools.help-message');
+  helpMessage2: string = this.translate.instant('developertools.help-message2');
+  helpMessage3: string = this.translate.instant('developertools.help-message3');
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem)=>void;
 
@@ -40,7 +40,7 @@ export class CreateAppPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('new-app'));
+    this.titleBar.setTitle(this.translate.instant('developertools.new-app'));
     this.titleBar.setBackgroundColor("#181d20");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
@@ -75,11 +75,11 @@ export class CreateAppPage {
             this.mnemonicToImportPassphrase
           );
         } else {
-          this.native.genericToast(this.translate.instant('provide-mnemonic'), 4000, 'dark');
+          this.native.genericToast(this.translate.instant('developertools.provide-mnemonic'), 4000, 'dark');
         }
       }
     } else {
-      this.native.genericToast(this.translate.instant('provide-name'), 2000, 'dark');
+      this.native.genericToast(this.translate.instant('developertools.provide-name'), 2000, 'dark');
     }
 
   }

@@ -45,11 +45,11 @@ export class CandidatesPage implements OnInit {
 
   ionViewWillEnter() {
     if (this.candidatesService.candidates.length) {
-      this.titleBar.setTitle(this.translate.instant('council-candidates'));
+      this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
     } else if(this.candidatesService.council.length){
-      this.titleBar.setTitle(this.translate.instant('council-members'));
+      this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
     } else {
-      this.titleBar.setTitle(this.translate.instant('app-cr-council'));
+      this.titleBar.setTitle(this.translate.instant('launcher.app-cr-council'));
     }
   }
 
@@ -86,7 +86,7 @@ export class CandidatesPage implements OnInit {
     try {
       let res = await this.globalIntentService.sendIntent(
         "https://wallet.elastos.net/walletaccess",
-        { elaamount: { reason: this.translate.instant("walletaccess-reason") } });
+        { elaamount: { reason: this.translate.instant("crcouncilvoting.walletaccess-reason") } });
       if (res.result.walletinfo) {
         let props: NavigationExtras = {
           queryParams: {
@@ -136,74 +136,11 @@ export class CandidatesPage implements OnInit {
       mode: "ios",
       position: "top",
       color: "primary",
-      header: this.translate.instant("get-ela-failed-header"),
-      message: this.translate.instant("get-ela-failed-message"),
+      header: this.translate.instant("crcouncilvoting.get-ela-failed-header"),
+      message: this.translate.instant("crcouncilvoting.get-ela-failed-message"),
       duration: 2000,
     });
     toast.present();
-  }
-
-  // TODO remove it, should not use intent
-  async walletAlert() {
-    const alert = await this.alertCtrl.create({
-      mode: "ios",
-      header: this.translate.instant("wallet-access-request"),
-      message: this.translate.instant("wallet-access-request-message"),
-      buttons: [
-        {
-          text: this.translate.instant('cancel'),
-          role: "cancel",
-          cssClass: "secondary",
-          handler: () => {
-            Logger.log('crcouncil', "No thanks");
-          }
-        },
-        {
-          text: this.translate.instant("continue"),
-          handler: () => {
-            this.addCandidates();
-            /* this.addingCandidates = true;
-            setTimeout(() => {
-              this.addCandidates();
-            }, 1000); */
-          }
-        }
-      ]
-    });
-    alert.present();
-  }
-
-  // TODO remove it?
-  async registerAppAlert() {
-    const alert = await this.alertCtrl.create({
-      mode: "ios",
-      header: "Would you like to add CRC Voting to your profile?",
-      message:
-        "Registering a capsule will allow your followers via Contacts to effortlessly browse your favorite capsules!",
-      buttons: [
-        {
-          text: this.translate.instant('cancel'),
-          role: "cancel",
-          cssClass: "secondary",
-          handler: () => {
-            Logger.log('crcouncil', "No thanks");
-          }
-        },
-        {
-          text: this.translate.instant('cancel'),
-          handler: () => {
-            this.globalIntentService.sendIntent(
-              "https://wallet.elastos.net/registerapplicationprofile",
-              {
-                identifier: "CRC Election",
-                connectactiontitle: "Take part in the new Smart Web democracy!"
-              }
-            );
-          }
-        }
-      ]
-    });
-    alert.present();
   }
 
   deleteStorage() {

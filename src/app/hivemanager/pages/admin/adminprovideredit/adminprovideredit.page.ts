@@ -69,19 +69,10 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   ngOnInit() {
-/*     this.route.queryParams.subscribe(async (data: {providerId: string}) => {
-      if(data) {
-        this.managedProvider = await this.adminService.getManagedProviderById(data.providerId);
-        this.adminDIDMnemonic = await this.adminService.getAdminDIDMnemonic(this.managedProvider);
-
-        this.retrieveAdminDIDPublicationStatus();
-        Logger.log('HiveManager', "Editing provider:", this.managedProvider);
-      }
-    }); */
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('adminprovideredit.title'));
+    this.titleBar.setTitle(this.translate.instant('hivemanager.adminprovideredit.title'));
   }
 
   ionViewWillLeave() {
@@ -105,16 +96,16 @@ export class AdminProviderEditPage implements OnInit {
       this.managedProvider = newProvider;
       Logger.log('HiveManager', "createdDIDInfo", createdDIDInfo);
     } else {
-      this.popup.toast('toast.provide-name');
+      this.popup.toast('hivemanager.toast.provide-name');
     }
   }
 
   async updateName() {
     if(this.managedProvider.name) {
       await this.adminService.updateAndSaveProvider(this.managedProvider);
-      this.native.genericToast('toast.provide-name-update', 2000);
+      this.native.genericToast('hivemanager.toast.provide-name-update', 2000);
     } else {
-      this.native.genericToast('toast.provide-name2', 2000);
+      this.native.genericToast('hivemanager.toast.provide-name2', 2000);
       this.managedProvider.name = this.oldName;
     }
   }
@@ -124,7 +115,7 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   async deleteVaultProvider() {
-    let confirmed = await this.popup.ionicConfirm("alert.delete-title", "alert.delete-msg", "alert.delete", "alert.cancel");
+    let confirmed = await this.popup.ionicConfirm("hivemanager.alert.delete-title", "hivemanager.alert.delete-msg", "hivemanager.alert.delete", "hivemanager.alert.cancel");
     if (confirmed) {
       await this.adminService.deleteProvider(this.managedProvider);
       this.globalNav.navigateBack();
@@ -142,7 +133,7 @@ export class AdminProviderEditPage implements OnInit {
 
   async copy(item: string) {
     await this.native.copyClipboard(item);
-    this.native.genericToast("toast.copied");
+    this.native.genericToast("hivemanager.toast.copied");
   }
 
   getMnemonic(): string {

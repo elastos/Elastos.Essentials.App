@@ -10,32 +10,31 @@
   >
     <ion-slide id="slide1">
       <img src="assets/didsessions/onboard/elalogo.svg">
-      <h1>{{ 'elastos-essentials' | translate }}</h1>
-<!--       <ion-label>Welcome to the modern internet, where you can browse the new web securely while maintaining control of your own digital identity, data and other forms of digital assets.</ion-label> -->
-      <ion-label>{{ 'welcome-message1' | translate }}</ion-label>
+      <h1>{{ 'common.elastos-essentials' | translate }}</h1>
+      <ion-label>{{ 'didsessions.welcome-message1' | translate }}</ion-label>
     </ion-slide>
 
     <ion-slide id="slide2">
       <img src="assets/didsessions/icon/ela.svg">
 <!--       <lottie-player src="/assets/animations/device.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player> -->
-      <ion-label>{{ 'welcome-message2' | translate }}</ion-label>
+      <ion-label>{{ 'didsessions.welcome-message2' | translate }}</ion-label>
     </ion-slide>
 
     <ion-slide id="slide2">
       <img src="assets/didsessions/onboard/did.svg">
-      <ion-label>{{ 'welcome-message3' | translate }} <br>{{ 'welcome-message3.1' | translate }} <br>{{ 'welcome-message3.2' | translate }}</ion-label>
+      <ion-label>{{ 'didsessions.welcome-message3' | translate }} <br>{{ 'didsessions.welcome-message3.1' | translate }} <br>{{ 'didsessions.welcome-message3.2' | translate }}</ion-label>
     </ion-slide>
 
   </ion-slides>
   <div class="footer">
-    <ion-button *ngIf="slideIndex === 0" (click)="nextSlide()">{{ 'begin' | translate }}</ion-button>
-    <ion-button *ngIf="slideIndex === 1" (click)="nextSlide()">{{ 'continue' | translate }}</ion-button>
+    <ion-button *ngIf="slideIndex === 0" (click)="nextSlide()">{{ 'common.begin' | translate }}</ion-button>
+    <ion-button *ngIf="slideIndex === 1" (click)="nextSlide()">{{ 'common.continue' | translate }}</ion-button>
     <div *ngIf="slideIndex >= 2">
       <ion-button (click)="createNewIdentity()">
-        {{ 'new' | translate }}
+        {{ 'didsessions.new' | translate }}
       </ion-button>
       <ion-button (click)="importIdentity()">
-        {{ 'import' | translate }}
+        {{ 'didsessions.import' | translate }}
       </ion-button>
     </div>
   </div>

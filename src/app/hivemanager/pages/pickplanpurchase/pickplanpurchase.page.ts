@@ -33,7 +33,7 @@ export class PickPlanPurchasePage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('pickplanpurchase.title'));
+    this.titleBar.setTitle(this.translate.instant('hivemanager.pickplanpurchase.title'));
   }
 
   public async purchasePlan() {

@@ -57,7 +57,7 @@ export class ConfirmPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('confirm-contact'));
+    this.titleBar.setTitle(this.translate.instant('contacts.confirm-contact'));
     this.native.hideLoading();
   }
 

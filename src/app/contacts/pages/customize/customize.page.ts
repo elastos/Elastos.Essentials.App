@@ -89,7 +89,7 @@ export class CustomizePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('customize-contact'));
+    this.titleBar.setTitle(this.translate.instant('contacts.customize-contact'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
   }
 

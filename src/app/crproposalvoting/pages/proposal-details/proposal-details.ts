@@ -53,7 +53,7 @@ export class ProposalDetailsPage {
 
       this.proposal = Object.assign(proposalSearchResult, proposalDetails);
       this.addProposalDetails();
-      this.titleBar.setTitle(this.translate.instant('proposal-details'));
+      this.titleBar.setTitle(this.translate.instant('crproposalvoting.proposal-details'));
       Logger.log('CRProposal', "Merged proposal info:", this.proposal)
     }
     catch (err) {
@@ -65,7 +65,7 @@ export class ProposalDetailsPage {
   }
 
   async ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('loading-proposal'));
+    this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-proposal'));
     this.changeDetector.detectChanges(); // Force angular to catch changes in complex objects
   }
 
@@ -77,25 +77,25 @@ export class ProposalDetailsPage {
     this.proposalDetails = [];
     this.proposalDetails.push(
       {
-        title: this.translate.instant('proposal'),
+        title: this.translate.instant('crproposalvoting.proposal'),
         type: 'title',
         description: this.proposal.title,
         active: true
       },
       {
-        title: this.translate.instant('abstract'),
+        title: this.translate.instant('crproposalvoting.abstract'),
         type: 'abstract',
         description: this.proposal.abs,
         active: true
       },
       {
-        title: this.translate.instant('proposal-hash'),
+        title: this.translate.instant('crproposalvoting.proposal-hash'),
         type: 'hash',
         description: this.proposal.proposalHash,
         active: false
       },
       {
-        title: this.translate.instant('url'),
+        title: this.translate.instant('crproposalvoting.url'),
         type: 'url',
         description: this.proposal.address,
         active: false

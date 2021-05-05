@@ -172,8 +172,8 @@ export class BackupDIDPage {
     }
 
     if(qrCode) {
-      let title = this.translate.instant('print-title');
-      let subtitle = this.translate.instant('decentralized-id')
+      let title = this.translate.instant('didsessions.print-title');
+      let subtitle = this.translate.instant('didsessions.decentralized-id')
       if(mnemonicWords) {
         try {
           (window.cordova.plugins as CordovaPlugins).printer.print(

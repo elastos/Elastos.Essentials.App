@@ -30,12 +30,12 @@
                 </ion-item-options>
             </ion-item-sliding>
             <ion-row *ngIf="notificationService.notifications.length > 1" class="close-all-row ion-margin-top" (click)="closeAllNotifications()">
-                {{ 'close-notifs' | translate }}
+                {{ 'launcher.close-notifs' | translate }}
             </ion-row>
         </div>
         <div *ngIf="notificationService.notifications.length === 0" class="empty-container">
-            <h1>{{ 'no-empty' | translate }}</h1>
-            <p>{{ 'no-notif' | translate }}</p>
+            <h1>{{ 'launcher.no-empty' | translate }}</h1>
+            <p>{{ 'launcher.no-notif' | translate }}</p>
         </div>
     </ion-grid>
 </ion-content>

@@ -82,7 +82,7 @@ export class FriendDetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('contact-profile'));
+    this.titleBar.setTitle(this.translate.instant('contacts.contact-profile'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM, { key: 'backToHome', iconPath: BuiltInIcon.BACK } );
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {

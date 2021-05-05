@@ -45,7 +45,7 @@ export class VerifyMnemonicsPage {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setTitle(this.translate.instant('verify-mnemonic'));
+      this.titleBar.setTitle(this.translate.instant('didsessions.verify-mnemonic'));
       this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
@@ -138,9 +138,9 @@ export class VerifyMnemonicsPage {
 
     async returnToBackup() {
       const alert = await this.alertCtrl.create({
-        header: this.translate.instant('mnemonics-incorrect'),
+        header: this.translate.instant('didsessions.mnemonics-incorrect'),
         mode: 'ios',
-        message: this.translate.instant('check-mnemonics'),
+        message: this.translate.instant('didsessions.check-mnemonics'),
         buttons: [
           {
             text: this.translate.instant('Okay'),

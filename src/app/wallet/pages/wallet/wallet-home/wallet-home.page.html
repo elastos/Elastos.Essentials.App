@@ -10,7 +10,7 @@
             <ion-icon name="arrow-down"></ion-icon>
         </ion-col>
         <ion-col class="mid-col" size="9.4">
-            <h1>{{ 'pull-down-to-refresh' | translate }}</h1>
+            <h1>{{ 'wallet.pull-down-to-refresh' | translate }}</h1>
         </ion-col>
         <ion-col class="right-col" size="1.3" (click)="closeRefreshBox()">
             <ion-icon name="close"></ion-icon>
@@ -18,15 +18,15 @@
     </ion-row>
 
     <ion-button *ngIf="shouldPromptToEnableHiveVaultForBackup()" class="sticky-btn" (click)="enableHiveBackup()">
-        <ion-label>{{ 'activate-hive-vault' | translate }}</ion-label>
+        <ion-label>{{ 'wallet.activate-hive-vault' | translate }}</ion-label>
     </ion-button>
 
     <ion-slides *ngIf="!isSingleWallet" [class.dark-slides]="theme.darkMode" [class.blur]="native.popup" [options]="slideOpts" #slider pager>
         <ion-slide *ngFor="let masterWallet of masterWalletList">
             <ion-row class="main-title-row">
                 <ion-col size="12">
-                    <h1>{{ 'wallet-overview' | translate }}</h1>
-                    <p>{{ 'you-have-n-wallets' | translate: {walletsCount: masterWallet.getSubWallets().length} }}</p>
+                    <h1>{{ 'wallet.wallet-overview' | translate }}</h1>
+                    <p>{{ 'wallet.you-have-n-wallets' | translate: {walletsCount: masterWallet.getSubWallets().length} }}</p>
                 </ion-col>
             </ion-row>
             <ion-row
@@ -48,7 +48,7 @@
                         </ion-col>
                     </ion-row>
                     <h2></h2>
-                    <h3>{{ 'total-amount' | translate }}</h3>
+                    <h3>{{ 'wallet.total-amount' | translate }}</h3>
                     <div (click)="currencyService.toggleCurrencyDisplay()">
                         <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(masterWallet.getDisplayBalance())">.</span>
                             <span class="decimals">{{ Util.getDecimalBalance(masterWallet.getDisplayBalance()) }}</span>
@@ -71,7 +71,7 @@
             </ion-row>
             <ion-row class="list-title-row">
                 <ion-col size="12">
-                    <h1>{{ 'coin-list' | translate }}</h1>
+                    <h1>{{ 'wallet.coin-list' | translate }}</h1>
                 </ion-col>
             </ion-row>
             <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let subWallet of masterWallet.getSubWallets()" (click)="goCoinHome(masterWallet.id, subWallet.id)">
@@ -95,9 +95,9 @@
                     </p>
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
-                    <span *ngIf="subWallet.progress === 100 && subWallet.type !== CoinType.ERC20" class="synced">{{ 'synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
-                    <span *ngIf="subWallet.progress !== 100 && subWallet.type !== CoinType.ERC20" class="syncing">{{ 'syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
-                    <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{ 'ela-erc20' | translate }}</span>
+                    <span *ngIf="subWallet.progress === 100 && subWallet.type !== CoinType.ERC20" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
+                    <span *ngIf="subWallet.progress !== 100 && subWallet.type !== CoinType.ERC20" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
+                    <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
@@ -107,8 +107,8 @@
     <ion-grid class="single-slide" [class.dark-slide]="theme.darkMode" [class.blur]="native.popup" *ngIf="isSingleWallet">
         <ion-row class="main-title-row">
             <ion-col size="12">
-                <h1>{{ 'wallet-overview' | translate }}</h1>
-                <p>{{ 'you-have-n-wallets' | translate: {walletsCount: masterWallet.getSubWallets().length} }}</p>
+                <h1>{{ 'wallet.wallet-overview' | translate }}</h1>
+                <p>{{ 'wallet.you-have-n-wallets' | translate: {walletsCount: masterWallet.getSubWallets().length} }}</p>
             </ion-col>
         </ion-row>
         <ion-row
@@ -130,7 +130,7 @@
                     </ion-col>
                 </ion-row>
                 <h2></h2>
-                <h3>{{ 'total-amount' | translate }}</h3>
+                <h3>{{ 'wallet.total-amount' | translate }}</h3>
                 <div (click)="currencyService.toggleCurrencyDisplay()">
                     <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(masterWallet.getDisplayBalance())">.</span>
                         <span class="decimals">{{ Util.getDecimalBalance(masterWallet.getDisplayBalance()) }}</span>
@@ -153,7 +153,7 @@
         </ion-row>
         <ion-row class="list-title-row">
             <ion-col size="12">
-                <h1>{{ 'coin-list' | translate }}</h1>
+                <h1>{{ 'wallet.wallet.coin-list' | translate }}</h1>
             </ion-col>
         </ion-row>
         <ion-row
@@ -182,9 +182,9 @@
                 </p>
             </ion-col>
             <ion-col offset="2" size="10" class="bottom-col">
-                <span *ngIf="subWallet.progress === 100 && subWallet.type !== CoinType.ERC20" class="synced">{{ 'synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
-                <span *ngIf="subWallet.progress !== 100 && subWallet.type !== CoinType.ERC20" class="syncing">{{ 'syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
-                <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{ 'ela-erc20' | translate }}</span>
+                <span *ngIf="subWallet.progress === 100 && subWallet.type !== CoinType.ERC20" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
+                <span *ngIf="subWallet.progress !== 100 && subWallet.type !== CoinType.ERC20" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
+                <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>

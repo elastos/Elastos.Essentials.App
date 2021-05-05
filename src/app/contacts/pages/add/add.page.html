@@ -6,7 +6,7 @@
         #input
         autosize
         clearInput
-        placeholder="{{'enter-identity-placeholder'|translate}}"
+        placeholder="{{ 'contacts.enter-identity-placeholder' | translate }}"
         [(ngModel)]="didInput"
         mode="ios"
         name="didInput" ngDefaultControl
@@ -14,11 +14,11 @@
     </ion-row>
     <ion-row class="btn-container">
       <ion-button color="success" (click)="addContact()">
-        {{ 'add-contact' | translate }}
+        {{ 'contacts.add-contact' | translate }}
       </ion-button>
     </ion-row>
     <ion-row class="msg-container">
-      <p class="ion-text-center">{{ 'add-contact-prompt' | translate }}</p>
+      <p class="ion-text-center">{{ 'contacts.add-contact-prompt' | translate }}</p>
     </ion-row>
   </ion-grid>
 </ion-content>

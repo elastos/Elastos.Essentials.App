@@ -3,16 +3,16 @@
         <h1>{{ purchaseablePlan.getName() }}</h1>
     </ion-col>
     <ion-col size="12">
-        <h2>{{ 'payment-plan.max-storage' | translate }}</h2>
+        <h2>{{ 'hivemanager.payment-plan.max-storage' | translate }}</h2>
         <p>{{ purchaseablePlan.getMaxStorage() }} MB</p>
     </ion-col>
     <ion-col *ngIf="purchaseablePlan.getCost() != 0" size="12" class="removeBorder">
-        <h2>{{ 'payment-plan.cost' | translate }}</h2>
-        <p>{{ purchaseablePlan.getCost() }} {{ purchaseablePlan.getCurrency() }} / {{ purchaseablePlan.getDuration() }} {{ 'payment-plan.days' | translate }}</p>
+        <h2>{{ 'hivemanager.payment-plan.cost' | translate }}</h2>
+        <p>{{ purchaseablePlan.getCost() }} {{ purchaseablePlan.getCurrency() }} / {{ purchaseablePlan.getDuration() }} {{ 'hivemanager.payment-plan.days' | translate }}</p>
     </ion-col>
     <ion-col *ngIf="purchaseablePlan.getCost() == 0" size="12" class="removeBorder">
-        <h2>{{ 'payment-plan.cost' | translate }}</h2>
-        <p>{{ 'payment-plan.free' | translate }}</p>
+        <h2>{{ 'hivemanager.payment-plan.cost' | translate }}</h2>
+        <p>{{ 'hivemanager.payment-plan.free' | translate }}</p>
     </ion-col>
     <ion-ripple-effect></ion-ripple-effect>
 </ion-row>

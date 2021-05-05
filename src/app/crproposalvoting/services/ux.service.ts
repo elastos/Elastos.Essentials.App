@@ -41,15 +41,15 @@ export class UXService {
     getDisplayableStatus(status: ProposalStatus) {
         switch (status) {
           case 'VOTING':
-              return this.translate.instant('status-voting');
+              return this.translate.instant('crproposalvoting.status-voting');
           case 'NOTIFICATION':
-              return this.translate.instant('status-notification');
+              return this.translate.instant('crproposalvoting.status-notification');
           case 'ACTIVE':
-              return this.translate.instant('status-active');
+              return this.translate.instant('crproposalvoting.status-active');
           case 'FINAL':
-              return this.translate.instant('status-final');
+              return this.translate.instant('crproposalvoting.status-final');
           case 'REJECTED':
-              return this.translate.instant('status-rejected');
+              return this.translate.instant('crproposalvoting.status-rejected');
         }
     }
 

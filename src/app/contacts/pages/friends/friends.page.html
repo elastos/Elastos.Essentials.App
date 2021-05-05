@@ -6,8 +6,8 @@
       <!-- Empty Contacts -->
       <div *ngIf="friendsService.contacts.length === 0" class="no-contacts">
         <img class="profile-img" src="/assets/contacts/images/default-contact.svg">
-        <h1>{{ 'no-contacts' | translate }}</h1>
-        <p>{{ 'add-a-contact' | translate }}</p>
+        <h1>{{ 'contacts.no-contacts' | translate }}</h1>
+        <p>{{ 'contacts.add-a-contact' | translate }}</p>
         <ion-row class="btn-row disabled-btn-row">
           <img [src]="!theme.darkMode ? '/assets/contacts/buttons/disable/scan.svg' : '/assets/contacts/buttons/darkmode/disable/scan.svg'">
           <img [src]="!theme.darkMode ? '/assets/contacts/buttons/disable/edit.svg' : '/assets/contacts/buttons/darkmode/disable/edit.svg'">
@@ -93,10 +93,10 @@
     <!-- Contacts List Tabs -->
     <ion-segment mode="ios">
       <ion-segment-button [class.active]="!favActive" (click)="changeList(false)">
-        <ion-label>{{ 'all-contacts' | translate }}</ion-label>
+        <ion-label>{{ 'contacts.all-contacts' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button [class.active]="favActive" (click)="changeList(true)">
-        <ion-label>{{ 'favorites' | translate }}</ion-label>
+        <ion-label>{{ 'common.favorites' | translate }}</ion-label>
       </ion-segment-button>
     </ion-segment>
 
@@ -156,7 +156,7 @@
               </ion-col>
               <ion-col offset="0.125" size="9.125">
                 <ion-label>
-                  {{ 'anonymous-contact' | translate }}
+                  {{ 'contacts.anonymous-contact' | translate }}
                 </ion-label>
               </ion-col>
             </ion-row>
@@ -222,8 +222,8 @@
 
     <!-- Empty Contacts -->
     <div *ngIf="firstContact()" class="onboard-msg">
-      <h1>{{ 'no-contacts' | translate }}</h1>
-      <p>{{ 'starter-contact' | translate }}</p>
+      <h1>{{ 'contacts.no-contacts' | translate }}</h1>
+      <p>{{ 'contacts.starter-contact' | translate }}</p>
     </div>
 
   </ion-grid>

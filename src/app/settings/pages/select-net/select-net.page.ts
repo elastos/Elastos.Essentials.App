@@ -22,7 +22,7 @@ export class SelectNetPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('choose-network'));
+    this.titleBar.setTitle(this.translate.instant('settings.choose-network'));
   }
 
   ionViewWillLeave() {

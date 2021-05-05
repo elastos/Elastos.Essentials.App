@@ -7,7 +7,7 @@ import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
 import { ProfileService } from '../../../services/profile.service';
 import { DIDSyncService } from '../../../services/didsync.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
@@ -27,6 +27,8 @@ export class SetHiveProviderRequestPage {
 
   public receivedIntent: SetHiveProviderIdentityIntent = null;
   private publishresultSubscription: Subscription = null;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private didService: DIDService,
@@ -64,7 +66,11 @@ export class SetHiveProviderRequestPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('sethiveprovider-title'));
-    this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      this.titleBar.globalNav.exitCurrentContext();
+    });
     this.receivedIntent = this.intentService.getReceivedIntent();
   }
 

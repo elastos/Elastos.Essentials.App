@@ -36,7 +36,7 @@ export class PickPlanPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('pickplan.title'));
+    this.titleBar.setTitle(this.translate.instant('hivemanager.pickplan.title'));
 
     await this.tryToFinalizePreviousOrders();
     await this.fetchPlans();

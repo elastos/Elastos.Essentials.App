@@ -1,7 +1,7 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <div class="ion-text-center header">
-    <ion-label>{{ 'history-votes-overview' | translate }}</ion-label>
+    <ion-label>{{ 'dposvoting.history-votes-overview' | translate }}</ion-label>
   </div>
 
   <ion-grid *ngIf="nodesService._nodes.length && nodesService._votes.length" class="container" [class.dark-container]="theme.darkMode">
@@ -23,7 +23,7 @@
     <ion-row class="noHistory">
       <ion-col size="12">
         <ion-label class="ion-text-center">
-            {{ 'history-no-records' | translate }}
+            {{ 'dposvoting.history-no-records' | translate }}
         </ion-label>
       </ion-col>
     </ion-row>

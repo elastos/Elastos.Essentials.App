@@ -27,22 +27,15 @@ export class MenuPage implements OnInit {
 
   public sections = [
     {
-      name: 'language-setting',
-      subtitle: 'change-lang',
+      name: 'common.language-setting',
+      subtitle: 'settings.change-lang',
       router: '/settings/language',
       iconDir: '/assets/icon/light_mode/earth.svg',
       iconDir2: '/assets/icon/dark_mode/earth.svg',
     },
-/*     {
-      name:"passwordmanager-setting",
-      subtitle: 'manage-pw',
-      router:'org.elastos.trinity.dapp.passwordmanager',
-      iconDir: '/assets/icon/light_mode/password.svg',
-      iconDir2: '/assets/icon/dark_mode/password.svg',
-    }, */
     {
-      name: 'about-setting',
-      subtitle: 'about-elastos',
+      name: 'settings.about-setting',
+      subtitle: 'settings.about-elastos',
       router: '/settings/about',
       iconDir: '/assets/icon/light_mode/ela.svg',
       iconDir2: '/assets/icon/dark_mode/ela.svg',
@@ -74,7 +67,7 @@ export class MenuPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('settings'));
+    this.titleBar.setTitle(this.translate.instant('launcher.app-settings'));
     this.titleBar.setNavigationMode(null);
   }
 

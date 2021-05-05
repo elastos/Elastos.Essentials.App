@@ -54,7 +54,7 @@ export class NotificationsPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(null);
-    this.titleBar.setTitle(this.translate.instant('notifications'));
+    this.titleBar.setTitle(this.translate.instant('launcher.notifications'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.NOTIFICATIONS });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
@@ -157,16 +157,16 @@ export class NotificationsPage implements OnInit {
       if (notification.contactName)
         return notification.contactName;
       else
-        return this.translate.instant('from-unknown-contact');
+        return this.translate.instant('launcher.from-unknown-contact');
     }
     else if (notification.app) {
       return this.notificationService.getAppTitle(notification.app);
     }
     else if (notification.type == LauncherNotificationType.TIP) {
-      return this.translate.instant('tip-of-the-day');
+      return this.translate.instant('launcher.tip-of-the-day');
     }
     else {
-      return this.translate.instant('system-notification'); // Default if no title or if system
+      return this.translate.instant('launcher.system-notification'); // Default if no title or if system
     }
   }
 

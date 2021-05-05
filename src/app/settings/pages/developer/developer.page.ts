@@ -28,7 +28,7 @@ export class DeveloperPage implements OnInit {
   ngOnInit() {}
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('developer-options'));
+    this.titleBar.setTitle(this.translate.instant('settings.developer-options'));
   }
 
   ionViewWillLeave() {
@@ -36,9 +36,9 @@ export class DeveloperPage implements OnInit {
 
   getBackgroundServicesTitle() {
     if(!this.developer.backgroundServicesEnabled) {
-      return this.translate.instant('background-services-disabled');
+      return this.translate.instant('settings.background-services-disabled');
     } else {
-      return this.translate.instant('background-services-enabled');
+      return this.translate.instant('settings.background-services-enabled');
     }
   }
 

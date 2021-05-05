@@ -46,9 +46,9 @@ export class TipsPage implements OnInit {
 
   public getTipAudience(tip: Tip) {
     if (tip.audience == TipAudience.FOR_ELASTOS_TRINITY_GENERIC)
-      return this.translate.instant("tip-audience-generic");
+      return this.translate.instant("launcher.tip-audience-generic");
     else if (tip.audience == TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS)
-      return this.translate.instant("tip-audience-developers");
+      return this.translate.instant("launcher.tip-audience-developers");
   }
 
   public showPreviousTip() {

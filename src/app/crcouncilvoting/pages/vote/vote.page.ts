@@ -54,7 +54,7 @@ export class VotePage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('my-candidates'));
+    this.titleBar.setTitle(this.translate.instant('crcouncilvoting.my-candidates'));
   }
 
   ionViewDidEnter() {
@@ -91,9 +91,9 @@ export class VotePage implements OnInit, OnDestroy {
     });
 
     if(Object.keys(votedCandidates).length === 0) {
-      this.toastErr(this.translate.instant('pledge-some-ELA-to-candidates'));
+      this.toastErr(this.translate.instant('crcouncilvoting.pledge-some-ELA-to-candidates'));
     } else if (this.votedEla > this.totalEla) {
-      this.toastErr(this.translate.instant('not-allow-pledge-more-than-own'));
+      this.toastErr(this.translate.instant('crcouncilvoting.not-allow-pledge-more-than-own'));
     } else {
       Logger.log('crcouncil', votedCandidates);
       this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.candidatesService.selectedCandidates);
@@ -108,7 +108,7 @@ export class VotePage implements OnInit, OnDestroy {
 
           if(res.result.txid === null ) {
             this.castingVote = false;
-            this.voteFailedToast(this.translate.instant('vote-incomplete'));
+            this.voteFailedToast(this.translate.instant('crcouncilvoting.vote-incomplete'));
           } else {
             Logger.log('crcouncil', 'Intent sent sucessfully', res);
             this.castingVote = false;
@@ -159,20 +159,20 @@ export class VotePage implements OnInit, OnDestroy {
       mode: 'ios',
       position: 'bottom',
       color: 'primary',
-      header: this.translate.instant('vote-success'),
+      header: this.translate.instant('crcouncilvoting.vote-success'),
       message: `${txid.slice(0,16) + '<br>' + txid.slice(16,32) + '<br>' + txid.slice(32,48)}`,
       buttons: [
         {
-          text: this.translate.instant('copy'),
+          text: this.translate.instant('common.copy'),
           handler: () => {
             this.toast.dismiss();
-            this.globalNative.genericToast('tx-copied-to-clipboard');
+            this.globalNative.genericToast('crcouncilvoting.tx-copied-to-clipboard');
             this.globalNative.copyClipboard(txid);
             this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           }
         },
         {
-          text: this.translate.instant('dismiss'),
+          text: this.translate.instant('common.dismiss'),
           handler: () => {
             this.toast.dismiss();
             this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');

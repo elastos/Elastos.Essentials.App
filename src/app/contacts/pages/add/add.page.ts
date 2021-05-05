@@ -38,7 +38,7 @@ export class AddPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('add-contact'));
+    this.titleBar.setTitle(this.translate.instant('contacts.add-contact'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "scan",
       iconPath: BuiltInIcon.SCAN
