@@ -47,24 +47,24 @@ export class SettingsPage implements OnInit {
     public settings = [
         {
             route: "/wallet/launcher",
-            title: this.translate.instant("settings-add-wallet"),
-            subtitle: this.translate.instant("settings-add-wallet-subtitle"),
+            title: this.translate.instant("wallet.settings-add-wallet"),
+            subtitle: this.translate.instant("wallet.settings-add-wallet-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/wallet.svg',
             type: 'launcher'
         },
         {
             route: "/wallet/wallet-manager",
-            title: this.translate.instant("settings-my-wallets"),
-            subtitle: this.translate.instant("settings-my-wallets-subtitle"),
+            title: this.translate.instant("wallet.settings-my-wallets"),
+            subtitle: this.translate.instant("wallet.settings-my-wallets-subtitle"),
             icon: '/assets/wallet/settings/wallet.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/wallet.svg',
             type: 'wallet-manager'
         },
         {
             route: "/wallet/settings/currency-select",
-            title: this.translate.instant("settings-currency"),
-            subtitle: this.translate.instant("settings-currency-subtitle"),
+            title: this.translate.instant("wallet.settings-currency"),
+            subtitle: this.translate.instant("wallet.settings-currency-subtitle"),
             icon: '/assets/wallet/settings/dollar.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg',
             type: 'currency-select'
@@ -84,7 +84,7 @@ export class SettingsPage implements OnInit {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setTitle(this.translate.instant("settings-title"));
+      this.titleBar.setTitle(this.translate.instant("wallet.settings-title"));
     }
 
     go(item) {

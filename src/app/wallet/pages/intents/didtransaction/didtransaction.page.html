@@ -3,18 +3,18 @@
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
             <img [src]="!theme.darkMode ? 'assets/wallet/intents/did.svg' : 'assets/wallet/intents/darkmode/did.svg'">
-            <ion-card-title>{{ 'didtransaction-publish-identity' | translate }}</ion-card-title>
-            <ion-card-subtitle>{{ 'didtransaction-transaction-fee' | translate }}</ion-card-subtitle>
+            <ion-card-title>{{ 'wallet.didtransaction-publish-identity' | translate }}</ion-card-title>
+            <ion-card-subtitle>{{ 'wallet.didtransaction-transaction-fee' | translate }}</ion-card-subtitle>
         </ion-card>
         <div class="msg-container">
-            <p>{{ 'didtransaction-intro' | translate }}</p>
+            <p>{{ 'wallet.didtransaction-intro' | translate }}</p>
         </div>
         <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
-            <ion-label>{{ 'cancel' | translate}}</ion-label>
+            <ion-label>{{ 'common.cancel' | translate}}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
         <div class="btn confirm ion-activatable ripple" (click)="goTransaction()">
-            <ion-label>{{ 'confirm' | translate}}</ion-label>
+            <ion-label>{{ 'common.confirm' | translate}}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
     </ion-grid>

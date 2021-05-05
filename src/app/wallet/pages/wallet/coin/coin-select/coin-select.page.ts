@@ -49,7 +49,7 @@ export class CoinSelectPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("coin-select-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.coin-select-title"));
     }
 
     init() {

@@ -345,7 +345,7 @@ export class CredentialAccessRequestPage {
     if (typeof credentialValue === "string")
       return credentialValue as string;
     else
-      return this.translate.instant("cant-be-displayed");
+      return this.translate.instant("identity.cant-be-displayed");
   }
 
   addDIDToMandatoryItems() {
@@ -376,12 +376,12 @@ export class CredentialAccessRequestPage {
   async alertDidNeedsPublishing() {
     const alert = await this.alertCtrl.create({
       mode: 'ios',
-      header: this.translate.instant('credaccess-alert-publish-required-title'),
-      message: this.translate.instant('credaccess-alert-publish-required-msg'),
+      header: this.translate.instant('identity.credaccess-alert-publish-required-title'),
+      message: this.translate.instant('identity.credaccess-alert-publish-required-msg'),
       backdropDismiss: false,
       buttons: [
        {
-          text: this.translate.instant('credaccess-alert-publish-required-btn'),
+          text: this.translate.instant('identity.credaccess-alert-publish-required-btn'),
           handler: () => {
             this.zone.run(() => {
               this.globalIntentService.sendIntentResponse(
@@ -595,18 +595,18 @@ export class CredentialAccessRequestPage {
 
   getIntro() {
     if(!this.canDeliver) {
-      return this.translate.instant('credaccess-missing');
+      return this.translate.instant('identity.credaccess-missing');
     } else if (this.publishingDidRequired) {
-      return this.translate.instant('credaccess-publish-required');
+      return this.translate.instant('identity.credaccess-publish-required');
     } else {
-      return this.translate.instant('credaccess-intro');
+      return this.translate.instant('identity.credaccess-intro');
     }
   }
 
   getCredIcon(item: ClaimRequest): any {
     if(item.name === 'avatar') {
       if(!item.credential || !item.credential.getSubject() || !item.credential.getSubject()["avatar"]){
-        return this.translate.instant('missing');
+        return this.translate.instant('identity.missing');
       }
 
       const subject = item.credential.getSubject();
@@ -621,7 +621,7 @@ export class CredentialAccessRequestPage {
 
   getItemValueDisplay(item: ClaimRequest) {
     if(!item.canBeDelivered) {
-      return this.translate.instant('missing');
+      return this.translate.instant('identity.missing');
     } else if (item.canBeDelivered && !item.issuer.canBeDelivered) {
       return this.translate.instant(item.issuer.errorMessage)
     } else {

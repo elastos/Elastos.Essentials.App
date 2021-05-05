@@ -95,45 +95,45 @@ export abstract class StandardSubWallet extends SubWallet {
 
         switch (transaction.Direction) {
             case TransactionDirection.RECEIVED:
-                transactionName = translate.instant('coin-op-received-token');
+                transactionName = translate.instant('wallet.coin-op-received-token');
                 // TODO: upgrade spvsdk, check the ETHSC
                 switch (transaction.Type) {
                     case RawTransactionType.RechargeToSideChain:
-                        transactionName = translate.instant("coin-dir-from-mainchain");
+                        transactionName = translate.instant("wallet.coin-dir-from-mainchain");
                         break;
                     case RawTransactionType.WithdrawFromSideChain:
                         switch (transaction.TopUpSidechain) {
                             case StandardCoinName.IDChain:
-                                transactionName = translate.instant("coin-dir-from-idchain");
+                                transactionName = translate.instant("wallet.coin-dir-from-idchain");
                                 break;
                             case StandardCoinName.ETHSC:
-                                transactionName = translate.instant("coin-dir-from-ethsc");
+                                transactionName = translate.instant("wallet.coin-dir-from-ethsc");
                                 break;
                             default:
-                                transactionName = translate.instant('coin-op-received-token');
+                                transactionName = translate.instant('wallet.coin-op-received-token');
                         }
                         break;
                 }
                 break;
             case TransactionDirection.SENT:
-                transactionName = translate.instant("coin-op-sent-token");
+                transactionName = translate.instant("wallet.coin-op-sent-token");
 
                 if (transaction.Type === RawTransactionType.TransferCrossChainAsset) {
                     switch (transaction.TopUpSidechain) {
                         case StandardCoinName.IDChain:
-                            transactionName = translate.instant("coin-dir-to-idchain");
+                            transactionName = translate.instant("wallet.coin-dir-to-idchain");
                             break;
                         case StandardCoinName.ETHSC:
-                            transactionName = translate.instant("coin-dir-to-ethsc");
+                            transactionName = translate.instant("wallet.coin-dir-to-ethsc");
                             break;
                         default:
-                            transactionName = translate.instant("coin-dir-to-mainchain");
+                            transactionName = translate.instant("wallet.coin-dir-to-mainchain");
                             break;
                     }
                 }
                 break;
             case TransactionDirection.MOVED:
-                transactionName = translate.instant("coin-op-transfered-token");
+                transactionName = translate.instant("wallet.coin-op-transfered-token");
                 break;
         }
         return transactionName;

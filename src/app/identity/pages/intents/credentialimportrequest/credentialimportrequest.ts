@@ -81,7 +81,7 @@ export class CredentialImportRequestPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('credential-import'));
+    this.titleBar.setTitle(this.translate.instant('identity.credential-import'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
     this.zone.run(async () => {
@@ -187,7 +187,7 @@ export class CredentialImportRequestPage {
         importedCredentialsResult.push(displayableCredential.credential.pluginVerifiableCredential.getId())
       }
 
-      this.popup.ionicAlert(this.translate.instant('credimport-success-title'), this.translate.instant('credimport-success'), this.translate.instant('credimport-success-done')).then(async ()=>{
+      this.popup.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async ()=>{
         Logger.log('Identity', "Sending credimport intent response for intent id "+this.receivedIntent.intentId)
         await this.appServices.sendIntentResponse("credimport", {
           importedcredentials: importedCredentialsResult

@@ -51,7 +51,7 @@ export class MnemonicExportPage implements OnInit {
     }
 
     ngOnInit() {
-        this.titleBar.setTitle(this.translate.instant('wallet-settings-backup-wallet'));
+        this.titleBar.setTitle(this.translate.instant('wallet.wallet-settings-backup-wallet'));
     }
 
     ionViewWillEnter() {
@@ -71,10 +71,10 @@ export class MnemonicExportPage implements OnInit {
                     this.isFromIntent = true;
                     this.intentTransfer = this.walletAccessService.intentTransfer;
                     this.masterWalletId = this.walletAccessService.masterWalletId;
-                    this.title = 'access-mnemonic';
+                    this.title = 'wallet.access-mnemonic';
                 }
             } else {
-                this.title = 'text-export-mnemonic';
+                this.title = 'wallet.text-export-mnemonic';
                 this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
             }
 
@@ -115,7 +115,7 @@ export class MnemonicExportPage implements OnInit {
         const ret = await this.walletManager.spvBridge.exportWalletWithMnemonic(this.masterWalletId, this.payPassword);
         this.titleBar.setBackgroundColor('#6B26C6');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        this.titleBar.setTitle(this.translate.instant('mnemonic'));
+        this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
 
         this.mnemonicStr = ret.toString();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/).filter(str => str.trim().length > 0);

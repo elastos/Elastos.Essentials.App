@@ -11,9 +11,9 @@
 
         <div *ngIf="!exportMnemonic">
             <div class="msg-container">
-                <p *ngIf="showReason">{{ 'access-reason' | translate }}: {{ requestItems[0].reason }}</p>
-                <p *ngIf="!showReason">{{ 'access-request-for-info' | translate }}</p>
-                <p class="second-msg">{{ 'access-data-access' | translate }}</p>
+                <p *ngIf="showReason">{{ 'wallet.access-reason' | translate }}: {{ requestItems[0].reason }}</p>
+                <p *ngIf="!showReason">{{ 'wallet.access-request-for-info' | translate }}</p>
+                <p class="second-msg">{{ 'wallet.access-data-access' | translate }}</p>
             </div>
             <ion-row class="data-row" *ngFor="let item of requestItems">
                 <p>{{ item.name | translate }}</p>
@@ -24,17 +24,17 @@
 
         <div *ngIf="exportMnemonic">
             <div class="msg-container">
-                <p>{{ 'text-share-mnemonic-warning' | translate }}</p>
-                <p *ngIf="showReason">{{ 'access-reason' | translate }}: {{ requestItems[0].reason }}</p>
+                <p>{{ 'wallet.text-share-mnemonic-warning' | translate }}</p>
+                <p *ngIf="showReason">{{ 'wallet.access-reason' | translate }}: {{ requestItems[0].reason }}</p>
             </div>
         </div>
 
         <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
-            <ion-label>{{ 'cancel' | translate }}</ion-label>
+            <ion-label>{{ 'common.cancel' | translate }}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
         <div class="btn confirm ion-activatable ripple" (click)="onShare()">
-            <ion-label>{{ 'confirm' | translate }}</ion-label>
+            <ion-label>{{ 'common.confirm' | translate }}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
         

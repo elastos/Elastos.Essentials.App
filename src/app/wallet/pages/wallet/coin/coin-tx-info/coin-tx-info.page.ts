@@ -87,7 +87,7 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("tx-info-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.tx-info-title"));
     }
 
     ionViewDidLeave() {
@@ -182,7 +182,7 @@ export class CoinTxInfoPage implements OnInit {
         this.txDetails.push(
             {
                 type: 'time',
-                title: 'tx-info-transaction-time',
+                title: 'wallet.tx-info-transaction-time',
                 value:
                     this.transactionInfo.timestamp === 0 ?
                         this.translate.instant('coin-transaction-status-pending') :
@@ -191,19 +191,19 @@ export class CoinTxInfoPage implements OnInit {
             },
             {
                 type: 'memo',
-                title: 'tx-info-memo',
+                title: 'wallet.tx-info-memo',
                 value: transaction.Memo,
                 show: true,
             },
             {
                 type: 'confirmations',
-                title: 'tx-info-confirmations',
+                title: 'wallet.tx-info-confirmations',
                 value: this.transactionInfo.confirmStatus,
                 show: false,
             },
             {
                 type: 'blockId',
-                title: 'tx-info-block-id',
+                title: 'wallet.tx-info-block-id',
                 value:
                     this.transactionInfo.confirmStatus === 0 ?
                         0 : transaction.Height, // the Height is 2147483647(-1) when the transaction is not confirmed.
@@ -211,7 +211,7 @@ export class CoinTxInfoPage implements OnInit {
             },
             {
                 type: 'txid',
-                title: 'tx-info-transaction-id',
+                title: 'wallet.tx-info-transaction-id',
                 value: this.transactionInfo.txid,
                 show: false,
             },
@@ -224,19 +224,19 @@ export class CoinTxInfoPage implements OnInit {
                 this.txDetails.unshift(
                     {
                         type: 'contractAddress',
-                        title: 'tx-info-token-address',
+                        title: 'wallet.tx-info-token-address',
                         value: this.tokenName ? 0 : this.contractAddress,
                         show: true,
                     },
                     {
                         type: 'tokenSymbol',
-                        title: 'erc-20-token',
+                        title: 'wallet.erc-20-token',
                         value: this.tokenName,
                         show: true,
                     },
                     {
                         type: 'tokenAmount',
-                        title: 'tx-info-erc20-amount',
+                        title: 'wallet.tx-info-erc20-amount',
                         value: this.tokenAmount,
                         show: true,
                     },
@@ -246,19 +246,19 @@ export class CoinTxInfoPage implements OnInit {
             this.txDetails.unshift(
                 {
                     type: 'address',
-                    title: 'tx-info-receiver-address',
+                    title: 'wallet.tx-info-receiver-address',
                     value: this.targetAddress,
                     show: true,
                 },
                 {
                     type: 'fees',
-                    title: 'tx-info-transaction-fees',
+                    title: 'wallet.tx-info-transaction-fees',
                     value: this.payFee,
                     show: true,
                 },
                 {
                     type: 'cost',
-                    title: 'tx-info-cost',
+                    title: 'wallet.tx-info-cost',
                     value: this.totalCost,
                     show: true,
                 },
@@ -372,7 +372,7 @@ export class CoinTxInfoPage implements OnInit {
 
     copy(value) {
         this.native.copyClipboard(value);
-        this.native.toast_trans('copied');
+        this.native.toast_trans('wallet.copied');
     }
 }
 

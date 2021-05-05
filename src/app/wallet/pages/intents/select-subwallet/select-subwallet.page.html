@@ -29,14 +29,14 @@
                 <ion-col offset="2" size="10" class="bottom-col">
                     <span *ngIf="masterWallet.getSubWallet(chainId).progress === 100 && masterWallet.getSubWallet(chainId).type !== CoinType.ERC20" class="synced">{{ 'synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(masterWallet.getSubWallet(chainId).syncTimestamp) }}</span>
                     <span *ngIf="masterWallet.getSubWallet(chainId).progress !== 100 && masterWallet.getSubWallet(chainId).type !== CoinType.ERC20" class="syncing">{{ 'syncing' | translate }} <span *ngIf="masterWallet.getSubWallet(chainId).syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(masterWallet.getSubWallet(chainId).syncTimestamp) }}</span></span>
-                    <span *ngIf="masterWallet.getSubWallet(chainId).type === CoinType.ERC20" class="synced">{{ 'ela-erc20' | translate }}</span>
+                    <span *ngIf="masterWallet.getSubWallet(chainId).type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
         </div>
 
         <div class="btn ion-activatable ripple" (click)="cancelOperation()">
-            <ion-label>{{ 'cancel' | translate }}</ion-label>
+            <ion-label>{{ 'common.cancel' | translate }}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
     </ion-grid>

@@ -47,7 +47,7 @@ export class EditProfilePage {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   option: any = {
-    header: this.translate.instant("select-gender"),
+    header: this.translate.instant("identity.select-gender"),
     cssClass: this.theme.darkMode ? "darkSelect" : "select",
   };
 
@@ -89,7 +89,7 @@ export class EditProfilePage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant("edit-profile"));
+    this.titleBar.setTitle(this.translate.instant("identity.edit-profile"));
     this.showMenu();
     Logger.log('Identity', this.profile);
   }
@@ -270,7 +270,7 @@ export class EditProfilePage {
         Logger.log('Identity', "Password provided and valid. Now saving profile");
         // We are editing an existing DID: just ask the DID to save its profile.
         // DID being created are NOT saved here.
-        await this.native.showLoading(this.translate.instant('loading-msg'));
+        await this.native.showLoading(this.translate.instant('identity.loading-msg'));
 
         Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
         await this.didService
@@ -301,7 +301,7 @@ export class EditProfilePage {
           Logger.log('Identity', "Password provided and valid. Now saving profile");
           // We are editing an existing DID: just ask the DID to save its profile.
           // DID being created are NOT saved here.
-          await this.native.showLoading(this.translate.instant('loading-msg'));
+          await this.native.showLoading(this.translate.instant('identity.loading-msg'));
 
           Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
           await this.didService
@@ -329,7 +329,7 @@ export class EditProfilePage {
     // Get the form input data by field key
     let nameEntry = this.profile.getEntryByKey("name");
     if (!nameEntry || nameEntry.value === "") {
-      this.native.toast_trans("name-is-missing");
+      this.native.toast_trans("identity.name-is-missing");
       return false;
     }
 
@@ -460,15 +460,15 @@ export class EditProfilePage {
   public async alertAvatarPublish() {
     const alert = await this.alertCtrl.create({
       mode: "ios",
-      header: this.translate.instant("avatar-publish"),
+      header: this.translate.instant("identity.avatar-publish"),
       buttons: [
         {
-          text: this.translate.instant("avatar-publish-cancel"),
+          text: this.translate.instant("identity.avatar-publish-cancel"),
           role: "cancel",
           cssClass: "secondary",
         },
         {
-          text: this.translate.instant("avatar-publish-yes"),
+          text: this.translate.instant("identity.avatar-publish-yes"),
           handler: () => {
             this.next(true);
           },

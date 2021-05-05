@@ -166,7 +166,7 @@ export class CredentialDetailsPage {
   ionViewWillEnter() {
     this.getIssuer();
     this.displayableProperties = this.getDisplayableProperties();
-    this.titleBar.setTitle(this.translate.instant('credentialdetails-title'));
+    this.titleBar.setTitle(this.translate.instant('identity.credentialdetails-title'));
   }
 
   ionViewWillLeave() {
@@ -249,7 +249,7 @@ export class CredentialDetailsPage {
           value:
             subject[prop] != ""
               ? subject[prop]
-              : this.translate.instant("not-set"),
+              : this.translate.instant("identity.not-set"),
         };
       });
   }

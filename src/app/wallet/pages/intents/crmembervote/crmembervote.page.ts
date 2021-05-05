@@ -52,14 +52,16 @@ export class CRmembervotePage implements OnInit {
     balance: string; // Balance in SELA
     voteBalanceELA = 0; // ELA
 
-    constructor(public walletManager: WalletManager,
-                private coinTransferService: CoinTransferService,
-                private globalIntentService: GlobalIntentService,
-                private translate: TranslateService,
-                public theme: GlobalThemeService,
-                public native: Native,
-                public zone: NgZone,
-                public popupProvider: PopupProvider) {
+    constructor(
+        public walletManager: WalletManager,
+        private coinTransferService: CoinTransferService,
+        private globalIntentService: GlobalIntentService,
+        private translate: TranslateService,
+        public theme: GlobalThemeService,
+        public native: Native,
+        public zone: NgZone,
+        public popupProvider: PopupProvider
+    ) {
         this.init();
     }
 
@@ -67,7 +69,7 @@ export class CRmembervotePage implements OnInit {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setTitle(this.translate.instant('crcouncilvote-title'));
+      this.titleBar.setTitle(this.translate.instant('wallet.crcouncilvote-title'));
     }
 
     ionViewDidEnter() {
@@ -92,7 +94,7 @@ export class CRmembervotePage implements OnInit {
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('confirmTitle', 'transaction-pending');
+            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
             this.cancelOperation();
         }
     }

@@ -16,7 +16,7 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
         if (transaction.Direction === TransactionDirection.MOVED) {
             const isVote = await this.isVoteTransaction(transaction.TxHash);
             if (isVote) {
-                return translate.instant("coin-op-vote");
+                return translate.instant("wallet.coin-op-vote");
             }
         }
 

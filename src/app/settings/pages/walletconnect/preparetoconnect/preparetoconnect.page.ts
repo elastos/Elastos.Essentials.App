@@ -42,7 +42,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
-    this.titleBar.setTitle(this.translate.instant('wallet-connect-prepare-to-connect'));
+    this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-prepare-to-connect'));
 
     // Suggest user to delete a potential wallet connect session after a while in case he doesn't
     // receive any "session_request" event.

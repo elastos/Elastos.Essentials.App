@@ -5,38 +5,38 @@
         <!-- CARD HEADER -->
         <ion-card>
             <img [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
-            <ion-card-title>{{ 'esctransaction-smart-contract' | translate }}</ion-card-title>
+            <ion-card-title>{{ 'wallet.esctransaction-smart-contract' | translate }}</ion-card-title>
             <ion-card-subtitle>
-                {{ 'esctransaction-intro' | translate }}
+                {{ 'wallet.esctransaction-intro' | translate }}
             </ion-card-subtitle>
         </ion-card>
 
          <!-- TX INFO -->
         <div class="msg-container">
-            <p>{{ 'esctransaction-you-are-using' | translate }}</p>
+            <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
             <h1><span>{{ uiService.getFixedBalance(getTotalTransactionCostInELA().totalAsBigNumber) }}</span> ELA</h1>
             <h2>
-                <b>{{ 'esctransaction-value' | translate }}</b>
+                <b>{{ 'wallet.esctransaction-value' | translate }}</b>
                 <span> {{ uiService.getFixedBalance(getTotalTransactionCostInELA().valueAsBigNumber) }}</span> ELA
             </h2>
             <h2>
-                <b>{{ 'esctransaction-fees' | translate }}</b>
+                <b>{{ 'wallet.esctransaction-fees' | translate }}</b>
                 <span> {{ uiService.getFixedBalance(getTotalTransactionCostInELA().feesAsBigNumber) }}</span> ELA
             </h2>
             <h2>
-                <b>{{ 'coin-balance' | translate }}</b>
+                <b>{{ 'wallet.coin-balance' | translate }}</b>
                 <span> {{ uiService.getFixedBalance(balance) }}</span> ELA
             </h2>
         </div>
 
         <!-- BUTTONS FOOTER -->
         <div class="btn cancel ion-activatable ripple" [class.expand]="!balanceIsEnough()" (click)="cancelOperation()">
-            <h3 *ngIf="!balanceIsEnough()">{{ 'insuff-balance' | translate }}</h3>
-            <ion-label>{{ 'cancel' | translate}}</ion-label>
+            <h3 *ngIf="!balanceIsEnough()">{{ 'wallet.insuff-balance' | translate }}</h3>
+            <ion-label>{{ 'common.cancel' | translate}}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
         <div *ngIf="balanceIsEnough()" class="btn confirm ion-activatable ripple" (click)="goTransaction()">
-            <ion-label>{{ 'confirm' | translate}}</ion-label>
+            <ion-label>{{ 'common.confirm' | translate}}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
 

@@ -3,14 +3,14 @@
     <ion-grid *ngIf="hideMnemonic" class="verify-container ion-no-padding ion-no-margin" [class.verify-dark-container]="theme.darkMode">
         <ion-row class="btn-container">
             <ion-button color="secondary" (click)="onExport()">
-                <ion-label>{{ 'text-export-mnemonic' | translate }}</ion-label>
+                <ion-label>{{ 'wallet.text-export-mnemonic' | translate }}</ion-label>
             </ion-button>
         </ion-row>
     </ion-grid>
 
     <ion-grid *ngIf="!hideMnemonic" class="ion-text-center verified-container">
         <p>
-            {{ 'mnemonic-prompt1' | translate }}<b>{{ 'mnemonic-prompt2' | translate }}</b>{{ 'mnemonic-prompt3' | translate }}<br><br>
+            {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{ 'wallet.mnemonic-prompt3' | translate }}<br><br>
         </p>
         <ion-row class="mnemonic-row">
             <ion-col size="3.6" *ngFor="let item of mnemonicList; let i=index">
@@ -20,12 +20,12 @@
         </ion-row>
         <ion-row *ngIf="!hideMnemonic && !isFromIntent" class="btn-container">
             <ion-button color="secondary" (click)="return()">
-                <ion-label> {{ 'back-to-setting' | translate }}</ion-label>
+                <ion-label> {{ 'wallet.back-to-setting' | translate }}</ion-label>
             </ion-button>
         </ion-row>
         <ion-row *ngIf="!hideMnemonic && isFromIntent" class="btn-container">
             <ion-button color="secondary" (click)="onShare()">
-                <ion-label>{{ 'text-allow' | translate }}</ion-label>
+                <ion-label>{{ 'wallet.text-allow' | translate }}</ion-label>
             </ion-button>
         </ion-row>
     </ion-grid>

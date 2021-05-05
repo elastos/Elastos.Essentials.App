@@ -3,7 +3,7 @@
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-row class="main-title-row">
             <ion-col size="12">
-                <p>{{ 'settings-general' | translate }}</p>
+                <p>{{ 'wallet.settings-general' | translate }}</p>
             </ion-col>
         </ion-row>
         <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode" *ngFor="let item of settings" detail (click)="go(item)">

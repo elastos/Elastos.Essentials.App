@@ -46,7 +46,7 @@ export class CoinAddressPage {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("select-address"));
+        this.titleBar.setTitle(this.translate.instant("wallet.select-address"));
     }
 
     async getAddressList(infiniteScroll: any) {
@@ -72,7 +72,7 @@ export class CoinAddressPage {
             infiniteScroll.disabled = disabled;
         }
         if (disabled) {
-            this.native.toast_trans('coin-address-load-finish');
+            this.native.toast_trans('wallet.coin-address-load-finish');
         }
     }
 

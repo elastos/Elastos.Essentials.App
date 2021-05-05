@@ -5,12 +5,12 @@
         <ion-row class="header">
             <ion-col size="12">
                 <ion-label>
-                    {{ 'mycredentials-header' |  translate }}
+                    {{ 'identity.mycredentials-header' |  translate }}
                 </ion-label>
             </ion-col>
             <ion-col size="12">
-                <span>- {{ 'showing-all-visible-credentials' | translate }}</span>
-                <span style="margin-top: 10px;">- {{ 'toggle-credentials-to-publish'| translate }}</span>
+                <span>- {{ 'identity.showing-all-visible-credentials' | translate }}</span>
+                <span style="margin-top: 10px;">- {{ 'identity.toggle-credentials-to-publish'| translate }}</span>
             </ion-col>
         </ion-row>
          
@@ -25,7 +25,7 @@
                 <ion-col size="10.5">
                     <ion-label>
                         {{ unchangedPublishedCredentials.length }}/{{ profileService.allCreds.length }}
-                        {{ 'credentials-published-on-blockchain' | translate }}
+                        {{ 'identity.credentials-published-on-blockchain' | translate }}
                     </ion-label>
                 </ion-col>
             </ion-row>
@@ -60,7 +60,7 @@
         </div>
         <ion-row class="btn-row">
             <ion-button color="tertiary" (click)="profileService.showWarning('publishIdentity', '')">
-                {{ 'confirm' | translate }}
+                {{ 'common.confirm' | translate }}
             </ion-button>
         </ion-row>
     </div>

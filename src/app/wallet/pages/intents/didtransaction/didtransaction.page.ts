@@ -68,7 +68,7 @@ export class DidTransactionPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("didtransaction-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.didtransaction-title"));
     }
 
     ionViewDidEnter() {
@@ -109,17 +109,17 @@ export class DidTransactionPage implements OnInit {
     }
 
     notifyNoIDChain() {
-        return this.popupProvider.ionicAlert('confirmTitle', 'no-open-side-chain');
+        return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
     }
 
     async checkValue() {
         if (this.balance < 0.0002) {
-            this.popupProvider.ionicAlert('confirmTitle', 'text-did-balance-not-enough');
+            this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             return;
         }
         const isAvailableBalanceEnough = await this.sourceSubwallet.isAvailableBalanceEnough(new BigNumber(20000));
         if (!isAvailableBalanceEnough) {
-            await this.popupProvider.ionicAlert('confirmTitle', 'text-did-balance-not-enough');
+            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             this.cancelOperation();
             return;
         }

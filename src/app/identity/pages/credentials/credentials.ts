@@ -175,7 +175,7 @@ export class CredentialsPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant("my-identity"));
+    this.titleBar.setTitle(this.translate.instant("identity.my-identity"));
     this.titleBar.setNavigationMode(null);
   }
 
@@ -225,7 +225,7 @@ export class CredentialsPage {
    * Convenience conversion to display profile data on UI.
    */
   buildDetailEntries() {
-    let notSetTranslated = this.translate.instant("not-set");
+    let notSetTranslated = this.translate.instant("identity.not-set");
 
     // Initialize
     this.profileService.visibleData = [];
@@ -527,7 +527,7 @@ export class CredentialsPage {
           value:
             subject[prop] != ""
               ? subject[prop]
-              : this.translate.instant("not-set"),
+              : this.translate.instant("identity.not-set"),
         };
       });
   }

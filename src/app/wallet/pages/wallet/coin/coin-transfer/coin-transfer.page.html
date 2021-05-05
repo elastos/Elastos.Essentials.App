@@ -8,7 +8,7 @@
         <ion-grid *ngIf="transferType === 1 || transferType === 4" class="recharge-container" [class.recharge-dark-container]="theme.darkMode" [class.blur]="native.popup">
             <ion-row class="main-title-row">
                 <ion-col size="12">
-                    <p>{{ 'transfer-from' | translate }}</p>
+                    <p>{{ 'wallet.transfer-from' | translate }}</p>
                 </ion-col>
             </ion-row>
             <ion-row class="item-row">
@@ -30,7 +30,7 @@
             </ion-row>
             <ion-row class="main-title-row">
                 <ion-col size="12">
-                    <p>{{ 'transfer-to' | translate }}</p>
+                    <p>{{ 'wallet.transfer-to' | translate }}</p>
                 </ion-col>
             </ion-row>
             <ion-row class="item-row">
@@ -52,7 +52,7 @@
             </ion-row>
             <ion-row class="main-title-row">
                 <ion-col size="12">
-                    <p>{{ 'transfer-amount' | translate }}</p>
+                    <p>{{ 'wallet.transfer-amount' | translate }}</p>
                 </ion-col>
             </ion-row>
             <ion-row class="input-row">
@@ -62,7 +62,7 @@
                         type="number"
                         name="amount"
                         ngDefaultControl
-                        placeholder="{{ 'amount' | translate }}"
+                        placeholder="{{ 'wallet.amount' | translate }}"
                         [(ngModel)]="amount"
                     ></ion-input>
                     <ion-input
@@ -70,7 +70,7 @@
                         [value]="masterWallet.subWallets[chainId].getDisplayBalance().toFixed(6)"
                         (ionChange)="resetAmountInput()"
                     ></ion-input>
-                    <p *ngIf="supportsMaxTransfer()" (click)="setMaxTransfer()">{{ 'max' | translate }}</p>
+                    <p *ngIf="supportsMaxTransfer()" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
                 </ion-col>
             </ion-row>
         </ion-grid>
@@ -80,7 +80,7 @@
         <ion-grid *ngIf="transferType === 2" class="send-container" [class.send-dark-container]="theme.darkMode" [class.blur]="native.popup">
             <img class="header-img" [src]="!theme.darkMode ? 'assets/wallet/coins/ela-black.svg' : 'assets/wallet/coins/ela-white.svg'"/>
     
-            <h1>{{ 'enter-amount' | translate }}</h1>
+            <h1>{{ 'wallet.enter-amount' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="6" class="left-col">
                     <h2>{{ chainId }}</h2>
@@ -93,7 +93,7 @@
                         type="number"
                         name="amount"
                         ngDefaultControl
-                        placeholder="{{ 'amount' | translate }}"
+                        placeholder="{{ 'wallet.amount' | translate }}"
                         [(ngModel)]="amount"
                     ></ion-input>
                     <ion-input
@@ -112,17 +112,17 @@
             </ion-row>
     
             <ion-row class="balance-row">
-                <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'max' | translate }}</p>
-                <p [class.align-right]="!supportsMaxTransfer()">{{ 'balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
+                <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
+                <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
             </ion-row>
     
-            <h1>{{ 'send-to' | translate }}</h1>
+            <h1>{{ 'wallet.send-to' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="12">
                     <ion-input
                         type="text"
                         clearInput
-                        placeholder="{{ 'transfer-receiver-address' | translate}}"
+                        placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
                         [(ngModel)]="toAddress"
                         name="toAddress"
                         ngDefaultControl
@@ -148,7 +148,7 @@
             </ion-row>
     
             <h1 *ngIf="suggestedAddresses.length === 0" (click)="hideMemo = !hideMemo">
-                {{ 'advanced-options' | translate }}
+                {{ 'wallet.advanced-options' | translate }}
                 <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'" [class.rotate]="!hideMemo">
             </h1>
             <ion-row *ngIf="!hideMemo && suggestedAddresses.length === 0" class="item-row memo-row">
@@ -158,7 +158,7 @@
                         clearInput
                         name="memo"
                         ngDefaultControl
-                        placeholder="{{ 'tx-info-memo' | translate }}"
+                        placeholder="{{ 'wallet.tx-info-memo' | translate }}"
                         [(ngModel)]="memo"
                         (ionFocus)="showKeyboard()"
                         (ionBlur)="hideKeyboard()"
@@ -180,11 +180,11 @@
                 </ion-button>
             </ion-row>
             <ion-row *ngIf="waitingForSyncCompletion" class="syncing-container">
-                <ion-card-title>{{ 'waitforsync-loading' | translate }}</ion-card-title>
+                <ion-card-title>{{ 'wallet.waitforsync-loading' | translate }}</ion-card-title>
                 <ion-card-subtitle>
-                    {{ 'waitforsync-intro' | translate }}
+                    {{ 'wallet.waitforsync-intro' | translate }}
                 </ion-card-subtitle>
-                <span>&#8226; {{ 'sync-progress' | translate: { progress: fromSubWallet.progress } }}</span>
+                <span>&#8226; {{ 'wallet.sync-progress' | translate: { progress: fromSubWallet.progress } }}</span>
             </ion-row>
         </div>
     </div>
@@ -194,22 +194,22 @@
 
     <div *ngIf="transferType === 3" class="pay-container" [class.dark-pay-container]="theme.darkMode">
         <img class="header-img" src="./assets/wallet/tx/send.svg">
-        <h1>{{ 'coin-transfer-send-title' | translate: { coinName: fromSubWallet.getDisplayTokenName() } }}</h1>
-        <h2>{{ 'confirm-transaction-title' | translate }}</h2>
+        <h1>{{ 'wallet.coin-transfer-send-title' | translate: { coinName: fromSubWallet.getDisplayTokenName() } }}</h1>
+        <h2>{{ 'wallet.confirm-transaction-title' | translate }}</h2>
         <div>
-            <h3>{{ 'from' | translate }}:</h3>
+            <h3>{{ 'wallet.from' | translate }}:</h3>
             <h4>{{ chainId }}</h4>
         </div>
         <div>
-            <h3>{{ 'to' | translate }}:</h3>
+            <h3>{{ 'wallet.to' | translate }}:</h3>
             <h4>{{ toAddress }}</h4>
         </div>
         <div *ngIf="memo">
-            <h3>{{ 'tx-info-memo' | translate }}:</h3>
+            <h3>{{ 'wallet.tx-info-memo' | translate }}:</h3>
             <h4>{{ memo }}</h4>
         </div>
         <div>
-            <h3>{{ 'amount' | translate }}:</h3>
+            <h3>{{ 'wallet.amount' | translate }}:</h3>
         </div>
         <div class="amount-container">
             <ion-row class="item-row">
@@ -233,18 +233,18 @@
             </ion-row>
         </div>
         <div>
-            <p>{{ 'balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
+            <p>{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
         </div>
 
         <div class="btn-containner">
-            <p *ngIf="valuesReady()">{{ 'insufficient-balance' | translate }}</p>
+            <p *ngIf="valuesReady()">{{ 'wallet.insufficient-balance' | translate }}</p>
             <ion-row class="btn-row">
                 <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
-                    <ion-label>{{ 'cancel' | translate }}</ion-label>
+                    <ion-label>{{ 'common.cancel' | translate }}</ion-label>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
                 <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="goTransaction()">
-                    <ion-label>{{ 'confirm' | translate }}</ion-label>
+                    <ion-label>{{ 'common.confirm' | translate }}</ion-label>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
             </ion-row>

@@ -27,7 +27,7 @@ export class UxService {
     } else if(contact.credentials.name && !contact.customName) {
       return contact.credentials.name;
     } else {
-      return this.translate.instant('anonymous-contact');
+      return this.translate.instant('contacts.anonymous-contact');
     }
   }
 

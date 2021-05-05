@@ -89,7 +89,7 @@ export class RegisterApplicationProfileRequestPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('app-profile'));
+    this.titleBar.setTitle(this.translate.instant('identity.app-profile'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
     this.receivedIntent = this.intentService.getReceivedIntent();

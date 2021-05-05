@@ -88,13 +88,13 @@ export abstract class SubWallet {
         let statusName = null;
         switch (status) {
             case TransactionStatus.CONFIRMED:
-                statusName = translate.instant("coin-transaction-status-confirmed");
+                statusName = translate.instant("wallet.coin-transaction-status-confirmed");
                 break;
             case TransactionStatus.PENDING:
-                statusName = translate.instant("coin-transaction-status-pending");
+                statusName = translate.instant("wallet.coin-transaction-status-pending");
                 break;
             case TransactionStatus.UNCONFIRMED:
-                statusName = translate.instant("coin-transaction-status-unconfirmed");
+                statusName = translate.instant("wallet.coin-transaction-status-unconfirmed");
                 break;
         }
         return statusName;
@@ -184,7 +184,7 @@ export abstract class SubWallet {
      */
     public async getTransactionInfo(transaction: Transaction, translate: TranslateService): Promise<TransactionInfo> {
         const timestamp = transaction.Timestamp * 1000; // Convert seconds to use milliseconds
-        const datetime = timestamp === 0 ? translate.instant('coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
+        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
         const transactionInfo: TransactionInfo = {
             amount: new BigNumber(-1), // Defined by inherited classes

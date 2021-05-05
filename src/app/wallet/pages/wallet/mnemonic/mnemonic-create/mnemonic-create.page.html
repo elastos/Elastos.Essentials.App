@@ -3,20 +3,20 @@
     <ion-slides #slide [options]="slideOpts">
         <ion-slide class="message-container">
             <h1>
-                {{ 'mnemonic-warning1' | translate }} <br>{{ 'mnemonic-warning2' | translate }}
+                {{ 'wallet.mnemonic-warning1' | translate }} <br>{{ 'wallet.mnemonic-warning2' | translate }}
             </h1>
             <p>
-                {{ 'mnemonic-warning3' | translate }}
+                {{ 'wallet.mnemonic-warning3' | translate }}
             </p>
             <ion-row class="btn-container">
                 <ion-button color="secondary" (click)="nextSlide(slide)">
-                    <ion-label> {{ 'view-mnemonic' | translate }}</ion-label>
+                    <ion-label> {{ 'wallet.view-mnemonic' | translate }}</ion-label>
                 </ion-button>
             </ion-row>
         </ion-slide>
         <ion-slide class="ion-text-center mnemonic-container">
             <p>
-                {{ 'mnemonic-prompt1' | translate }}<b>{{ 'mnemonic-prompt2' | translate }}</b>{{ 'mnemonic-prompt3' | translate }}<br><br>
+                {{ 'wallet.mnemonic-prompt1' | translate }}<b>{{ 'wallet.mnemonic-prompt2' | translate }}</b>{{ 'wallet.mnemonic-prompt3' | translate }}<br><br>
             </p>
             <ion-row class="mnemonic-row">
                 <ion-col size="3.6" *ngFor="let item of mnemonicList; let i = index">
@@ -26,7 +26,7 @@
             </ion-row>
             <ion-row class="btn-container">
                 <ion-button color="secondary" (click)="goToMnemonicWrite()">
-                    <ion-label>{{ 'memory-written-down' | translate }}</ion-label>
+                    <ion-label>{{ 'wallet.memory-written-down' | translate }}</ion-label>
                 </ion-button>
             </ion-row>
         </ion-slide>

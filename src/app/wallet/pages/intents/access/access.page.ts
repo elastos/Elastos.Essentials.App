@@ -63,7 +63,7 @@ export class AccessPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('access-title'));
+        this.titleBar.setTitle(this.translate.instant('wallet.access-title'));
     }
 
     ionViewWillLeave() {
@@ -74,10 +74,10 @@ export class AccessPage implements OnInit {
         this.masterWallet = this.walletManager.getMasterWallet(this.walletAccessService.masterWalletId);
         if (this.intentTransfer.action === 'walletaccess') {
             this.organizeRequestedFields();
-            this.title = this.translate.instant("access-subtitle-wallet-access-from");
+            this.title = this.translate.instant("wallet.access-subtitle-wallet-access-from");
         } else {
             this.exportMnemonic = true;
-            this.title = this.translate.instant("access-subtitle-access-mnemonic-from");
+            this.title = this.translate.instant("wallet.access-subtitle-access-mnemonic-from");
         }
     }
 

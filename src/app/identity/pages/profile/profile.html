@@ -60,9 +60,9 @@
             <img class="icon" src="/assets/identity/svg/hive.svg" />
           </div>
           <div class="hive-foreground">
-            <div class="hive-title">{{ 'hive-storage-vault' | translate }}</div>
+            <div class="hive-title">{{ 'identity.hive-storage-vault' | translate }}</div>
             <div *ngIf="!profileService.publishedDIDDocument || hiveIsloaded" class="hive-address">
-              {{ hiveVault ? hiveVault.getEndpoint() : 'not-set' | translate }}</div>
+              {{ hiveVault ? hiveVault.getEndpoint() : 'identity.not-set' | translate }}</div>
             <div class="hive-loading" *ngIf="profileService.publishedDIDDocument && !hiveIsloaded"><img src="/assets/identity/svg/loader.gif"></div>
           </div>
         </div>
@@ -71,10 +71,10 @@
 
     <ion-row class="profile-row">
       <ion-col size="9.5" class="title-col">
-        <span>{{ 'about-me' | translate }}</span>
+        <span>{{ 'identity.about-me' | translate }}</span>
       </ion-col>
       <ion-col size="2.5" class="edit-col">
-        <span (click)="profileService.editProfile();">{{ 'edit' | translate }}
+        <span (click)="profileService.editProfile();">{{ 'identity.edit' | translate }}
         <img src="{{ this.theme.darkMode ? '../../../assets/identity/svg/chevron-thin-right-dark.svg' : '../../../assets/identity/svg/chevron-thin-right.svg' }}"></span>
       </ion-col>
       <div class="cred-container" *ngIf="this.profileService.profileEntries.length > 0">

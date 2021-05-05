@@ -2,8 +2,8 @@
     <app-titlebar title="text-observe-wallet"></app-titlebar>
     <ion-list>
         <ion-item lines="none">
-            <ion-label stacked>{{ 'addwallet-walletname-title' | translate }}</ion-label>
-            <ion-input type="text" placeholder="{{ 'addwallet-walletname-placeholder' | translate }}"
+            <ion-label stacked>{{ 'wallet.addwallet-walletname-title' | translate }}</ion-label>
+            <ion-input type="text" placeholder="{{ 'wallet.addwallet-walletname-placeholder' | translate }}"
             name="name" ngDefaultControl
                 [(ngModel)]="name"></ion-input>
         </ion-item>
@@ -11,5 +11,5 @@
 </ion-content>
 
 <ion-footer>
-    <ion-button class="confirm" color="secondary" (click)="import()">{{ 'text-next-step' | translate }}</ion-button>
+    <ion-button class="confirm" color="secondary" (click)="import()">{{ 'wallet.text-next-step' | translate }}</ion-button>
 </ion-footer>

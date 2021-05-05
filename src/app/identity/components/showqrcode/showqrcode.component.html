@@ -1,6 +1,6 @@
 <ion-grid [class.darkContainer]="theme.darkMode">
 
-  <h1>{{ "my-identity-qr-code" | translate }}</h1>
+  <h1>{{ "identity.my-identity-qr-code" | translate }}</h1>
   <div>
     <qrcode [qrdata]="qrCodeString" [size]="150"></qrcode>
   </div>
@@ -8,10 +8,10 @@
 
   <ion-row class="footer">
     <ion-button color="tertiary"  (click)="copyDIDToClipboard()">
-      <ion-label>{{ 'copy-to-clipboard' | translate }}</ion-label>
+      <ion-label>{{ 'common.copy-to-clipboard' | translate }}</ion-label>
     </ion-button>
     <ion-button color="tertiary" (click)="hideModal()">
-      <ion-label>{{ "back" | translate }}</ion-label>
+      <ion-label>{{ "common.back" | translate }}</ion-label>
     </ion-button>
   </ion-row>
 

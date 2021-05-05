@@ -50,9 +50,9 @@ export class WalletCreatePage implements OnInit {
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         if (this.walletCreationService.type === NewWallet.CREATE) {
-            this.titleBar.setTitle(this.translate.instant('launcher-create-wallet'));
+            this.titleBar.setTitle(this.translate.instant('wallet.launcher-create-wallet'));
         } else {
-            this.titleBar.setTitle(this.translate.instant('launcher-backup-import'));
+            this.titleBar.setTitle(this.translate.instant('wallet.launcher-backup-import'));
         }
     }
 
@@ -69,24 +69,24 @@ export class WalletCreatePage implements OnInit {
 
     onCreate() {
         if (Util.isNull(this.wallet.name)) {
-            this.native.toast_trans("text-wallet-name-validator-enter-name");
+            this.native.toast_trans("wallet.text-wallet-name-validator-enter-name");
             return;
         }
         if (Util.isWalletName(this.wallet.name)) {
-            this.native.toast_trans("text-wallet-name-validator-not-valid-name");
+            this.native.toast_trans("wallet.text-wallet-name-validator-not-valid-name");
             return;
         }
         if (this.walletManager.walletNameExists(this.wallet.name)) {
-            this.native.toast_trans("text-wallet-name-validator-already-exists");
+            this.native.toast_trans("wallet.text-wallet-name-validator-already-exists");
             return;
         }
         if (this.useMenmonicPassphrase) {
             if (this.wallet.mnemonicPassword.length < Config.MIN_PASSWORD_LENGTH) {
-                this.native.toast_trans("text-wallet-passphrase-validator-min-length");
+                this.native.toast_trans("wallet.text-wallet-passphrase-validator-min-length");
                 return;
             }
             if (this.walletCreationService.type === NewWallet.CREATE && this.wallet.mnemonicPassword !== this.repeatMnemonicPassword) {
-                this.native.toast_trans("text-wallet-passphrase-validator-repeat");
+                this.native.toast_trans("wallet.text-wallet-passphrase-validator-repeat");
                 return;
             }
         }
@@ -117,7 +117,7 @@ export class WalletCreatePage implements OnInit {
         }
 
         if (this.wallet.mnemonicPassword.length < Config.MIN_PASSWORD_LENGTH) {
-            this.native.toast_trans("text-wallet-passphrase-validator-min-length");
+            this.native.toast_trans("wallet.text-wallet-passphrase-validator-min-length");
             return;
         }
         nextInput.setFocus();

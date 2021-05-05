@@ -24,11 +24,11 @@ export class NativeService {
   }
 
   async shareToast() {
-    this.globalNative.genericToast(this.translate.instant('contact-copied-to-clipboard'), 3000, "success");
+    this.globalNative.genericToast(this.translate.instant('contacts.contact-copied-to-clipboard'), 3000, "success");
   }
 
   async didResolveErr(err: string) {
-    this.globalNative.errToast(this.translate.instant('resolve-error-header'), 6000);
+    this.globalNative.errToast(this.translate.instant('contacts.resolve-error-header'), 6000);
   }
 
   /********* Loader *********/
@@ -48,7 +48,7 @@ export class NativeService {
       header: msg,
       buttons: [
         {
-          text: this.translate.instant('ok'),
+          text: this.translate.instant('common.ok'),
           handler: () => {
             this.zone.run(() => {
                 this.globalIntentService.sendIntentResponse({}, intentId);

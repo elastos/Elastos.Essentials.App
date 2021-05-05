@@ -77,11 +77,11 @@ export class CoinErc20DetailsPage implements OnInit {
 
   copy() {
     this.native.copyClipboard(this.contractAddress);
-    this.native.toast(this.translate.instant("copied"));
+    this.native.toast(this.translate.instant("wallet.copied"));
   }
 
   async delete() {
-    this.popupProvider.ionicConfirm('delete-coin-confirm-title', 'delete-coin-confirm-subtitle')
+    this.popupProvider.ionicConfirm('wallet.delete-coin-confirm-title', 'wallet.delete-coin-confirm-subtitle')
       .then(async (data) => {
         if (data) {
           await this.coinService.deleteERC20Coin(this.coin);
@@ -98,7 +98,7 @@ export class CoinErc20DetailsPage implements OnInit {
       encodeURIComponent(this.contractAddress);
 
     this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("share-erc20-token"),
+      title: this.translate.instant("wallet.share-erc20-token"),
       url: addCoinUrl,
     });
   }

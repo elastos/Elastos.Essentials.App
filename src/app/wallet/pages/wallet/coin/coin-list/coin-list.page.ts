@@ -94,7 +94,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("coin-list-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.coin-list-title"));
 
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
             key: "add-erc20-coin",
@@ -180,7 +180,7 @@ export class CoinListPage implements OnInit, OnDestroy {
         if (item.isOpen) {
             this.switchCoin(item, true);
         } else {
-            this.popupProvider.ionicConfirm('confirmTitle', 'text-coin-close-warning').then((data) => {
+            this.popupProvider.ionicConfirm('wallet.confirmTitle', 'wallet.text-coin-close-warning').then((data) => {
                 if (data) {
                     this.switchCoin(item, false);
                 } else {

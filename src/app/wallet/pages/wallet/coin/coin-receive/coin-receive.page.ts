@@ -44,7 +44,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("coin-receive-title", { coinName: this.chainId}));
+        this.titleBar.setTitle(this.translate.instant("wallet.coin-receive-title", { coinName: this.chainId}));
     }
 
     ngOnDestroy() {
@@ -72,7 +72,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     copyAddress() {
         this.native.copyClipboard(this.qrcode);
-        this.native.toast(this.translate.instant("coin-address-copied", { coinName: this.chainId}));
+        this.native.toast(this.translate.instant("wallet.coin-address-copied", { coinName: this.chainId }));
     }
 
     async getAddress() {

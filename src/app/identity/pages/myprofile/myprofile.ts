@@ -216,7 +216,7 @@ export class MyProfilePage {
         }
       });
 
-    this.titleBar.setTitle(this.translate.instant("my-identity"));
+    this.titleBar.setTitle(this.translate.instant("identity.my-identity"));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "settings",
@@ -254,7 +254,7 @@ export class MyProfilePage {
    * Convenience conversion to display profile data on UI.
    */
   buildDetailEntries() {
-    let notSetTranslated = this.translate.instant("not-set");
+    let notSetTranslated = this.translate.instant("identity.not-set");
 
     // Initialize
     this.profileService.visibleData = [];
@@ -264,7 +264,7 @@ export class MyProfilePage {
     for (let entry of profileEntries) {
       this.pushDisplayEntry(entry.key, {
         credentialId: entry.key,
-        label: this.translate.instant("credential-info-type-" + entry.key),
+        label: this.translate.instant("identity.credential-info-type-" + entry.key),
         value: entry.toDisplayString() || notSetTranslated,
       });
     }
@@ -615,7 +615,7 @@ export class MyProfilePage {
           value:
             subject[prop] != ""
               ? subject[prop]
-              : this.translate.instant("not-set"),
+              : this.translate.instant("identity.not-set"),
         };
       });
   }

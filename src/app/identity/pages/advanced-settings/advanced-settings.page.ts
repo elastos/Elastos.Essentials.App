@@ -30,7 +30,7 @@ export class AdvancedSettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('advanced-settings'));
+    this.titleBar.setTitle(this.translate.instant('identity.advanced-settings'));
   }
 
   public async startSync() {
@@ -44,7 +44,7 @@ export class AdvancedSettingsPage implements OnInit {
         this.events.publish('did:didchanged');
         this.native.go("/identity/myprofile");
         this.native.hideLoading();
-        this.native.toast_trans('did-sync-success');
+        this.native.toast_trans('identity.did-sync-success');
       }, () => {
         Logger.log('Identity', "Password operation cancelled");
       },

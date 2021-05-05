@@ -2,8 +2,8 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.darkContainer]="theme.darkMode">
         <p>
-            {{ 'coin-adderc20-intro' | translate }} <br> 
-            {{ 'coin-adderc20-intro2' | translate }}
+            {{ 'wallet.coin-adderc20-intro' | translate }} <br> 
+            {{ 'wallet.coin-adderc20-intro2' | translate }}
         </p>
         <ion-row class="scan-row">
             <ion-col size="12">
@@ -11,7 +11,7 @@
                     #input
                     autosize
                     name="coinAddress" ngDefaultControl
-                    [placeholder]="'coin-adderc20-enteraddress' | translate"
+                    [placeholder]="'wallet.coin-adderc20-enteraddress' | translate"
                     [(ngModel)]="coinAddress"
                     (input)='onInputAddress($event.target.value)'
                 >
@@ -31,9 +31,9 @@
         <!-- Coin Fetched -->
         <div *ngIf="coinInfoFetched && !fetchingCoinInfo">
             <ion-row class="coin-row">
-                <h2>{{ 'coin-adderc20-name' | translate }}</h2>
+                <h2>{{ 'wallet.coin-adderc20-name' | translate }}</h2>
                 <h3>{{ coinName }}</h3>
-                <h2>{{ 'coin-adderc20-symbol' | translate }}</h2>
+                <h2>{{ 'wallet.coin-adderc20-symbol' | translate }}</h2>
                 <h3 id="symbol">{{ coinSymbol }}</h3>
             </ion-row>
         </div>
@@ -43,10 +43,10 @@
 
 <ion-footer class="ion-no-border" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
     <ion-button *ngIf="coinInfoFetched && !fetchingCoinInfo" color="primary" (click)="addCoin()">
-        <ion-label>{{ 'coin-adderc20-add' | translate }}</ion-label>
+        <ion-label>{{ 'wallet.coin-adderc20-add' | translate }}</ion-label>
     </ion-button>
     <ion-button  *ngIf="!coinInfoFetched && !fetchingCoinInfo" color="primary" [disabled]="!coinAddress" (click)="checkCoinAddress()">
-        <ion-label>{{ 'coin-adderc20-search' | translate }}</ion-label>
+        <ion-label>{{ 'wallet.coin-adderc20-search' | translate }}</ion-label>
     </ion-button>
 </ion-footer>
 

@@ -72,7 +72,7 @@ export class EscTransactionPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('esctransaction-title'));
+        this.titleBar.setTitle(this.translate.instant('wallet.esctransaction-title'));
 
         this.init();
     }
@@ -119,7 +119,7 @@ export class EscTransactionPage implements OnInit {
     }
 
     notifyNoETHSCChain() {
-        return this.popupProvider.ionicAlert('confirmTitle', 'no-open-side-chain');
+        return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
     }
 
     checkValue() {

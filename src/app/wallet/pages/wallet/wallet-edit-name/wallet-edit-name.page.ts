@@ -41,22 +41,22 @@ export class WalletEditNamePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("wallet-edit-name-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.wallet-edit-name-title"));
     }
 
     modify() {
         if (Util.isNull(this.walletname)) {
-            this.native.toast_trans("text-wallet-name-validator-enter-name");
+            this.native.toast_trans("wallet.text-wallet-name-validator-enter-name");
             return;
         }
 
         if (Util.isWalletName(this.walletname)) {
-            this.native.toast_trans("text-wallet-name-validator-not-valid-name");
+            this.native.toast_trans("wallet.text-wallet-name-validator-not-valid-name");
             return;
         }
 
         if (this.walletManager.walletNameExists(this.walletname)) {
-            this.native.toast_trans("text-wallet-name-validator-already-exists");
+            this.native.toast_trans("wallet.text-wallet-name-validator-already-exists");
             return;
         }
 

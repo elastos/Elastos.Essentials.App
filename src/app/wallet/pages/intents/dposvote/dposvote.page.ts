@@ -68,7 +68,7 @@ export class DPoSVotePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('dposvote-title'));
+        this.titleBar.setTitle(this.translate.instant('wallet.dposvote-title'));
     }
 
     ionViewDidEnter() {
@@ -92,7 +92,7 @@ export class DPoSVotePage implements OnInit {
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('confirmTitle', 'transaction-pending');
+            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
             this.cancelOperation();
         }
     }

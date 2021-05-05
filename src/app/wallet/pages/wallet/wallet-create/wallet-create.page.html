@@ -3,12 +3,12 @@
     <ion-grid class="ion-text-center container">
 
         <!-- Name -->
-        <p>{{ 'enter-wallet-name' | translate }}</p>
+        <p>{{ 'wallet.enter-wallet-name' | translate }}</p>
         <ion-row>
             <ion-input
                 type="text"
                 name="name" ngDefaultControl
-                [placeholder]="'enter-name' | translate"
+                [placeholder]="'wallet.enter-name' | translate"
                 [(ngModel)]="wallet.name">
             </ion-input>
         </ion-row>
@@ -16,15 +16,15 @@
         <!-- Toggles -->
         <ion-row class="toggle-row">
             <ion-col class="left-col" size="10">
-                <h1 *ngIf="wallet.singleAddress">{{ 'single-address' | translate }}</h1>
-                <h1 *ngIf="!wallet.singleAddress">{{ 'multiple-address' | translate }}</h1>
+                <h1 *ngIf="wallet.singleAddress">{{ 'wallet.single-address' | translate }}</h1>
+                <h1 *ngIf="!wallet.singleAddress">{{ 'wallet.multiple-address' | translate }}</h1>
             </ion-col>
             <ion-col class="right-col" size="2">
                 <ion-toggle  mode="ios" color="tertiary" [(ngModel)]="wallet.singleAddress" (ionChange)="updateSingleAddress($event)"></ion-toggle>
             </ion-col>
             <ion-col class="left-col" size="10">
-                <h1 *ngIf="useMenmonicPassphrase">{{ 'use-passphrase' | translate }}</h1>
-                <h1 *ngIf="!useMenmonicPassphrase">{{ 'not-use-passphrase' | translate }}</h1>
+                <h1 *ngIf="useMenmonicPassphrase">{{ 'wallet.use-passphrase' | translate }}</h1>
+                <h1 *ngIf="!useMenmonicPassphrase">{{ 'wallet.not-use-passphrase' | translate }}</h1>
             </ion-col>
             <ion-col class="right-col" size="2">
                 <ion-toggle mode="ios" color="tertiary" [(ngModel)]="useMenmonicPassphrase"></ion-toggle>
@@ -37,7 +37,7 @@
                 <ion-input
                     type="text"
                     name="mnemonicPassword" ngDefaultControl
-                    placeholder="{{ 'mnemonic-input-passphrase' | translate }}"
+                    placeholder="{{ 'wallet.mnemonic-input-passphrase' | translate }}"
                     [(ngModel)]="wallet.mnemonicPassword"
                     (keypress)="goToNextInput($event.keyCode, input)">
                 </ion-input>
@@ -51,7 +51,7 @@
                 #input
                 type="text"
                 name="mnemonicPasswordRepeat" ngDefaultControl
-                placeholder="{{ 'mnemonic-reinput-passphrase' | translate }}"
+                placeholder="{{ 'wallet.mnemonic-reinput-passphrase' | translate }}"
                 [(ngModel)]="repeatMnemonicPassword">
             </ion-input>
         </ion-row>
@@ -59,7 +59,7 @@
         <!-- Button -->
         <ion-row class="btn-row">
             <ion-button color="secondary" [disabled]='!wallet.name' (click)="onCreate()">
-                <ion-label>{{ 'continue' | translate }}</ion-label>
+                <ion-label>{{ 'common.continue' | translate }}</ion-label>
             </ion-button>
         </ion-row>
 

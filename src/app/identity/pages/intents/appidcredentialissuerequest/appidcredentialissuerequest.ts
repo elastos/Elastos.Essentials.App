@@ -52,7 +52,7 @@ export class AppIdCredentialIssueRequestPage {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('appidcredential-issue'));
+        this.titleBar.setTitle(this.translate.instant('identity.appidcredential-issue'));
         this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
         this.zone.run(async () => {

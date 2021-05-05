@@ -30,19 +30,19 @@ export class CurrencyService {
   public currencies: Currency[] = [
     {
       symbol: 'USD',
-      name: 'united-states-dollar',
+      name: 'wallet.united-states-dollar',
       price: 0,
       icon: '/assets/wallet/currencies/usd.png'
     },
     {
       symbol: 'CNY',
-      name: 'chinese-yuan',
+      name: 'wallet.chinese-yuan',
       price: 0,
       icon: '/assets/wallet/currencies/cny.png'
     },
     {
       symbol: 'BTC',
-      name: 'bitcoin',
+      name: 'wallet.bitcoin',
       price: 0,
       icon: '/assets/wallet/currencies/btc.png'
     }

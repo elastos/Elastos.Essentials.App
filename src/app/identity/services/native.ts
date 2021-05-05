@@ -95,7 +95,7 @@ export class Native {
   }
 
 
-  public async showLoading(content: string = 'please-wait') {
+  public async showLoading(content: string = 'common.please-wait') {
     await this.native.showLoading(content);
   };
 

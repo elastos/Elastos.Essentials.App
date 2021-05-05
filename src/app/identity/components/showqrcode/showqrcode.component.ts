@@ -37,12 +37,12 @@ export class ShowQRCodeComponent implements OnInit {
 
   copyDIDToClipboard() {
     this.native.copyClipboard(this.didString);
-    this.native.toast_trans('copied-to-clipboard');
+    this.native.toast_trans('common.copied-to-clipboard');
   }
 
   shareInvitationLink() {
     this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("share-add-me-as-friend"),
+      title: this.translate.instant("identity.share-add-me-as-friend"),
       url: this.qrCodeString
     });
   }

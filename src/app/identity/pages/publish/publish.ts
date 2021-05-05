@@ -77,7 +77,7 @@ export class PublishPage {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setTitle(this.translate.instant('publish'));
+      this.titleBar.setTitle(this.translate.instant('identity.publish'));
       this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
     }
 
@@ -109,7 +109,7 @@ export class PublishPage {
                     value:
                         subject[prop] != ""
                             ? subject[prop]
-                            : this.translate.instant("not-set"),
+                            : this.translate.instant("identity.not-set"),
                 };
             });
     }

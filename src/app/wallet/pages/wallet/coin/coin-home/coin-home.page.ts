@@ -291,7 +291,7 @@ export class CoinHomePage implements OnInit {
 
         Logger.log('wallet', 'Fail txid:', this.walletManager.transactionMap);
         for (const txid in this.walletManager.transactionMap) {
-            this.popupProvider.ionicAlert_PublishedTx_fail('confirmTitle', txid, txid);
+            this.popupProvider.ionicAlert_PublishedTx_fail('wallet.confirmTitle', txid, txid);
         }
 
         this.walletManager.cleanTransactionMap();
@@ -307,9 +307,9 @@ export class CoinHomePage implements OnInit {
             if (this.walletManager.needToCheckUTXOCountForConsolidation) {
                 let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.chainId, 0, 1, '');
                 Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
-                const UTXOsCount = this.translate.instant('text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
+                const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
                 if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-                    let ret = await this.popupProvider.ionicConfirmWithSubTitle('text-consolidate-prompt', UTXOsCount, 'text-consolidate-note')
+                    let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'text-consolidate-note')
                     if (ret) {
                         await this.createConsolidateTransaction();
                     }

@@ -60,14 +60,16 @@ export class CRMemberRegisterPage implements OnInit {
 
     private depositAmount = new BigNumber(500000000000); // 5000 ELA
 
-    constructor(public walletManager: WalletManager,
-                private globalIntentService: GlobalIntentService,
-                public popupProvider: PopupProvider,
-                private coinTransferService: CoinTransferService,
-                private authService: AuthService,
-                public translate: TranslateService,
-                public native: Native,
-                public zone: NgZone) {
+    constructor(
+        public walletManager: WalletManager,
+        private globalIntentService: GlobalIntentService,
+        public popupProvider: PopupProvider,
+        private coinTransferService: CoinTransferService,
+        private authService: AuthService,
+        public translate: TranslateService,
+        public native: Native,
+        public zone: NgZone
+    ) {
         this.init();
     }
 
@@ -93,23 +95,23 @@ export class CRMemberRegisterPage implements OnInit {
         switch (this.transfer.action) {
             case 'crmemberregister':
                 this.transFunction = this.createRegisterCRTransaction;
-                this.title = 'text-crmember-register';
-                this.info = 'text-you-are-going-to-register-crmember';
+                this.title = 'wallet.text-crmember-register';
+                this.info = 'wallet.text-you-are-going-to-register-crmember';
                 break;
             case 'crmemberupdate':
                 this.transFunction = this.createUpdateCRTransaction;
-                this.title = 'text-crmember-update';
-                this.info = 'text-you-are-going-to-update-crmember';
+                this.title = 'wallet.text-crmember-update';
+                this.info = 'wallet.text-you-are-going-to-update-crmember';
                 break;
             case 'crmemberunregister':
                 this.transFunction = this.createUnregisterCRTransaction;
-                this.title = 'text-crmember-unregister';
-                this.info = 'text-you-are-going-to-unregister-crmember';
+                this.title = 'wallet.text-crmember-unregister';
+                this.info = 'wallet.text-you-are-going-to-unregister-crmember';
                 break;
             case 'crmemberretrieve':
                 this.transFunction = this.createRegisterCRTransaction;
-                this.title = 'text-crmember-retrieve';
-                this.info = 'text-you-are-going-to-uretrive-deposit';
+                this.title = 'wallet.text-crmember-retrieve';
+                this.info = 'wallet.text-you-are-going-to-uretrive-deposit';
                 break;
             default:
                 break;
@@ -141,12 +143,12 @@ export class CRMemberRegisterPage implements OnInit {
     }
 
     notifyNoIDChain() {
-        return this.popupProvider.ionicAlert('confirmTitle', 'no-open-side-chain');
+        return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
     }
 
     checkValue() {
         if (this.balance.lt(0.0002)) {
-            this.popupProvider.ionicAlert('confirmTitle', 'text-did-balance-not-enough');
+            this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             return;
         }
 

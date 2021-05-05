@@ -78,7 +78,7 @@ export class CredentialIssueRequestPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('credential-issue'));
+    this.titleBar.setTitle(this.translate.instant('identity.credential-issue'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
     this.zone.run(async () => {
@@ -159,7 +159,7 @@ export class CredentialIssueRequestPage {
         this.receivedIntent.params.properties,
         this.authService.getCurrentUserPassword(),
         (issuedCredential)=>{
-          this.popup.ionicAlert(this.translate.instant('credential-issued'), this.translate.instant('credential-issued-success'),this.translate.instant('done')).then(async ()=>{
+          this.popup.ionicAlert(this.translate.instant('identity.credential-issued'), this.translate.instant('identity.credential-issued-success'),this.translate.instant('common.done')).then(async ()=>{
             Logger.log('Identity', "Sending credissue intent response for intent id "+this.receivedIntent.intentId)
             let credentialAsString = await issuedCredential.toString();
             await this.appServices.sendIntentResponse("credissue", {
@@ -167,7 +167,7 @@ export class CredentialIssueRequestPage {
             }, this.receivedIntent.intentId);
           })
         }, async (err)=>{
-          await this.popup.ionicAlert(this.translate.instant('error'), this.translate.instant('credential-issued-error')+JSON.stringify(err), this.translate.instant('close'));
+          await this.popup.ionicAlert(this.translate.instant('error'), this.translate.instant('identity.credential-issued-error')+JSON.stringify(err), this.translate.instant('close'));
           this.rejectRequest();
         });
     }, ()=>{

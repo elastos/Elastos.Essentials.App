@@ -2,7 +2,7 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container">
         <p *ngIf="!forIntent">
-            {{ 'wallet-manager-intro' | translate }}
+            {{ 'wallet.wallet-manager-intro' | translate }}
         </p>
         <ion-row
             *ngFor="let masterWallet of walletManager.getWalletsList()"
@@ -25,7 +25,7 @@
                     </ion-col>
                 </ion-row>
                 <h2></h2>
-                <h3>{{ 'total-amount' | translate }}</h3>
+                <h3>{{ 'wallet.total-amount' | translate }}</h3>
                 <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(masterWallet.getDisplayBalance())">.</span>
                     <span class="decimals">{{ Util.getDecimalBalance(masterWallet.getDisplayBalance()) }}</span>
                     <span class="ela">  ELA</span>

@@ -55,7 +55,7 @@ export class WalletConnectConnectPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('wallet-connect-request'));
+    this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-request'));
 
   }
 

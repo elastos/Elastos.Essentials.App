@@ -3,23 +3,23 @@
     <ion-grid *ngIf="receivedIntent" class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
             <img src="assets/identity/images/fingerprint.svg">
-            <ion-card-title>{{ 'sethiveprovider-app-id' | translate }}</ion-card-title>
+            <ion-card-title>{{ 'identity.sethiveprovider-app-id' | translate }}</ion-card-title>
             <ion-card-subtitle *ngIf="receivedIntent.params">{{ receivedIntent.params.from }}</ion-card-subtitle>
         </ion-card>
 
         <div class="msg-container">
-            <p class="first-msg">{{ 'sethiveprovider-intro' | translate }}</p>
+            <p class="first-msg">{{ 'identity.sethiveprovider-intro' | translate }}</p>
         </div>
 
         <ion-row class="data-row" *ngIf="receivedIntent.params.name">
-            <p>{{ 'sethiveprovider-name' | translate }}</p>
+            <p>{{ 'identity.sethiveprovider-name' | translate }}</p>
             <h5>
                 {{ receivedIntent.params.name }}
             </h5>
         </ion-row>
 
         <ion-row class="data-row">
-            <p>{{ 'sethiveprovider-address' | translate }}</p>
+            <p>{{ 'identity.sethiveprovider-address' | translate }}</p>
             <h5>
                 {{ receivedIntent.params.address }}
             </h5>
@@ -27,7 +27,7 @@
 
         <ion-row class="btn-container" (click)="acceptRequest()">
             <ion-button color="tertiary">
-                <ion-label>{{ 'accept' | translate }}</ion-label>
+                <ion-label>{{ 'identity.accept' | translate }}</ion-label>
             </ion-button>
         </ion-row>
 

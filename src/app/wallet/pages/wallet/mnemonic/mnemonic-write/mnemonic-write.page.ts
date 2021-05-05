@@ -63,7 +63,7 @@ export class MnemonicWritePage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        this.titleBar.setTitle(this.translate.instant('mnemonic-check-title'));
+        this.titleBar.setTitle(this.translate.instant('wallet.mnemonic-check-title'));
     }
 
     ionViewDidEnter() {
@@ -127,12 +127,12 @@ export class MnemonicWritePage implements OnInit {
                 if (this.walletCreationService.isMulti) {
                     this.native.go("/wallet/mpublickey");
                 } else {
-                    this.native.toast_trans('mnemonic-verify-sucess');
+                    this.native.toast_trans('wallet.mnemonic-verify-sucess');
 
                     const payPassword = await this.authService.createAndSaveWalletPassword(this.walletCreationService.masterId);
                     if (payPassword) {
                         try {
-                            await this.native.showLoading(this.translate.instant('please-wait'));
+                            await this.native.showLoading(this.translate.instant('common.please-wait'));
                             await this.walletManager.createNewMasterWallet(
                                 this.walletCreationService.masterId,
                                 this.walletCreationService.name,
@@ -156,11 +156,11 @@ export class MnemonicWritePage implements OnInit {
 
             } else {
                 this.inputStr = "";
-                this.native.toast_trans('mnemonic-verify-fail');
+                this.native.toast_trans('wallet.mnemonic-verify-fail');
             }
         } else {
             this.inputStr = "";
-            this.native.toast(this.translate.instant("mnemonic-import-missing-words"));
+            this.native.toast(this.translate.instant("wallet.mnemonic-import-missing-words"));
         }
     }
 }

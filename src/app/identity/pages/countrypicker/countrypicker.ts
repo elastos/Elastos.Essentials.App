@@ -29,7 +29,7 @@ export class CountryPickerPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('country'));
+    this.titleBar.setTitle(this.translate.instant('identity.country'));
   }
 
   ionViewWillLeave() {

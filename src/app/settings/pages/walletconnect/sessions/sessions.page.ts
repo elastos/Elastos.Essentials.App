@@ -30,7 +30,7 @@ export class WalletConnectSessionsPage implements OnInit {
   ngOnInit() {}
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('wallet-connect-sessions'));
+    this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-sessions'));
 
     this.activeSessions = this.walletConnect.getActiveSessions();
   }

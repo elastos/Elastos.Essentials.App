@@ -39,7 +39,7 @@ export class WalletAdvancedImportPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setBackgroundColor('#732cd0');
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-    this.titleBar.setTitle(this.translate.instant('import-wallet'));
+    this.titleBar.setTitle(this.translate.instant('wallet.import-wallet'));
   }
 
   onMnemonicSentenceChanged() {
@@ -58,7 +58,7 @@ export class WalletAdvancedImportPage implements OnInit {
         const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
         if (payPassword) {
           try {
-            await this.native.showLoading(this.translate.instant('please-wait'));
+            await this.native.showLoading(this.translate.instant('common.please-wait'));
             await this.importWalletWithMnemonic(payPassword);
             await this.native.hideLoading();
           } catch (err) {
@@ -67,7 +67,7 @@ export class WalletAdvancedImportPage implements OnInit {
           }
         }
     } else {
-        this.native.toast(this.translate.instant("mnemonic-import-missing-words"));
+        this.native.toast(this.translate.instant("wallet.mnemonic-import-missing-words"));
     }
   }
 
@@ -87,7 +87,7 @@ export class WalletAdvancedImportPage implements OnInit {
         walletId: this.masterWalletId
     });
 
-    this.native.toast_trans('import-text-word-sucess');
+    this.native.toast_trans('wallet.import-text-word-sucess');
   }
 
 }

@@ -4,8 +4,8 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>{{ 'publishing.create-did' | translate }}</h1>
-          <h2>{{ 'publishing.create-did-msg' | translate }}</h2>
+          <h1>{{ 'identity.publishing.create-did' | translate }}</h1>
+          <h2>{{ 'identity.publishing.create-did-msg' | translate }}</h2>
         </ion-label>
         <ion-icon class="done" name="checkmark-circle-outline"></ion-icon>
       </ion-col>
@@ -14,8 +14,8 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>{{ 'publishing.publish-did' | translate }}</h1>
-          <h2>{{ 'publishing.publish-did-msg' | translate }}</h2>
+          <h1>{{ 'identity.publishing.publish-did' | translate }}</h1>
+          <h2>{{ 'identity.publishing.publish-did-msg' | translate }}</h2>
         </ion-label>
         <ion-icon *ngIf="isDIDOnChain()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-icon *ngIf="!isDIDOnChain() && !isDIDBeingPublished()" class="pending" name="timer-outline"></ion-icon>
@@ -24,23 +24,23 @@
     </ion-row>
 
     <div *ngIf="!isDIDOnChain()" class="progress-msg">
-      <p>{{ 'publishing.progress-msg' | translate }}</p>
+      <p>{{ 'identity.publishing.progress-msg' | translate }}</p>
     </div>
 
     <div *ngIf="isDIDOnChain()" class="done-msg">
       <lottie-player src="/assets/wallet/animations/success.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay></lottie-player>
-      <p>{{ 'publishing.done-msg' | translate }}</p>
+      <p>{{ 'identity.publishing.done-msg' | translate }}</p>
     </div>
 
   </ion-grid>
 
   <div class="footer">
     <div *ngIf="isDIDOnChain()" class="ion-margin-bottom">
-      <p><strong>{{ getProgress() }}</strong><span>% {{ 'publishing.takes-long-time' | translate }}</span></p>
+      <p><strong>{{ getProgress() }}</strong><span>% {{ 'identity.publishing.takes-long-time' | translate }}</span></p>
       <ion-progress-bar mode="ios" color="tertiary" type="determinate" [value]="progress"></ion-progress-bar>
     </div>
     <ion-button color="tertiary" (click)="returnHome()">
-      {{ 'back' | translate }}
+      {{ 'common.back' | translate }}
     </ion-button>
   </div>
 </ion-content>

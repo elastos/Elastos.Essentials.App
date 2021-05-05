@@ -65,7 +65,7 @@ export class SetHiveProviderRequestPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('sethiveprovider-title'));
+    this.titleBar.setTitle(this.translate.instant('identity.sethiveprovider-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {

@@ -43,7 +43,7 @@ export class SignRequestPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('sign-data'));
+    this.titleBar.setTitle(this.translate.instant('identity.sign-data'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
     this.receivedIntent = this.intentService.getReceivedIntent();

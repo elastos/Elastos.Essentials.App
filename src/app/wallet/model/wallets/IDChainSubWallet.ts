@@ -35,7 +35,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
             case TransactionDirection.MOVED:
                 switch (transaction.Type) {
                     case RawTransactionType.CancelProducer: // This transaction type value means "DID published" for ID chain...
-                        return translate.instant('coin-op-identity');
+                        return translate.instant('wallet.coin-op-identity');
                 }
         }
 

@@ -17,7 +17,7 @@
                     </ion-col>
                 </ion-row>
                 <h2></h2>
-                <h3>{{ 'total-amount' | translate }}</h3>
+                <h3>{{ 'wallet.total-amount' | translate }}</h3>
                 <div (click)="currencyService.toggleCurrencyDisplay()">
                     <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(masterWallet.getDisplayBalance())">.</span>
                         <span class="decimals">{{ Util.getDecimalBalance(masterWallet.getDisplayBalance()) }}</span>
@@ -40,8 +40,8 @@
         </ion-row>
         <ion-row class="list-title-row">
             <ion-col size="12">
-                <h1>{{ 'coin-list-enable-disable-coins' | translate }}</h1>
-                <p>{{ 'coin-list-enable-disable-coins-intro' | translate }}</p>
+                <h1>{{ 'wallet.coin-list-enable-disable-coins' | translate }}</h1>
+                <p>{{ 'wallet.coin-list-enable-disable-coins-intro' | translate }}</p>
             </ion-col>
         </ion-row>
         <ion-row
@@ -65,7 +65,6 @@
             <ion-col size="2" class="right-col">
                 <ion-toggle
                     mode="ios"
-                    color="tertiary" 
                     *ngIf="item.coin.canBeRemoved()"
                     [(ngModel)]="item.isOpen"
                     (ngModelChange)="onSelect(item)"

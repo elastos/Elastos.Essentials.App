@@ -31,17 +31,17 @@ export class WarningComponent implements OnInit {
 
   getDisplayableHeader() {
     if(this.warning === 'publishIdentity') {
-      return this.translate.instant('publish-identity');
+      return this.translate.instant('identity.publish-identity');
     } else {
-      return this.translate.instant('publish-visibility');
+      return this.translate.instant('identity.publish-visibility');
     }
   }
 
   getDisplayableMessage() {
     if(this.warning === 'publishIdentity') {
-      return this.translate.instant('publish-identity-prompt');
+      return this.translate.instant('identity.publish-identity-prompt');
     } else {
-      return this.translate.instant('publish-visibility-prompt');
+      return this.translate.instant('identity.publish-visibility-prompt');
     }
   }
 

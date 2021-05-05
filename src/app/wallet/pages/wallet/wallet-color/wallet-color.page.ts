@@ -68,7 +68,7 @@ export class WalletColorPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant("change-wallet-theme-title"));
+    this.titleBar.setTitle(this.translate.instant("wallet.change-wallet-theme-title"));
   }
 
   getTheme() {

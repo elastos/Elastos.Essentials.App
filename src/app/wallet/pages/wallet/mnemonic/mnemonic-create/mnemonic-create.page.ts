@@ -55,7 +55,7 @@ export class MnemonicCreatePage implements OnInit {
         // titleBarManager.setBackgroundColor('#732cd0');
         this.titleBar.setBackgroundColor('#6B26C6');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        this.titleBar.setTitle(this.translate.instant('mnemonic'));
+        this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
     }
 
     async init() {

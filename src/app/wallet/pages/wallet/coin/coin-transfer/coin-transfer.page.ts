@@ -200,7 +200,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             // For Recharge Transfer
             case TransferType.RECHARGE:
                 // Setup page display
-                this.titleBar.setTitle(this.translate.instant("coin-transfer-recharge-title", {coinName: this.coinTransferService.subchainId}));
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", {coinName: this.coinTransferService.subchainId}));
                 this.toSubWallet = this.masterWallet.getSubWallet(this.coinTransferService.subchainId);
 
                 // Setup params for recharge transaction
@@ -218,7 +218,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             case TransferType.WITHDRAW:
                 // Setup page display
-                this.titleBar.setTitle(this.translate.instant("coin-transfer-withdraw-title", {coinName: this.chainId}));
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", {coinName: this.chainId}));
                 this.toSubWallet = this.masterWallet.getSubWallet(StandardCoinName.ELA);
 
                 // Setup params for withdraw transaction
@@ -231,7 +231,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             // For Send Transfer
             case TransferType.SEND:
-                this.titleBar.setTitle(this.translate.instant("coin-transfer-send-title", {coinName: this.chainId}));
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-send-title", {coinName: this.chainId}));
                 this.transaction = this.createSendTransaction;
 
                 if (this.chainId === StandardCoinName.ELA) {
@@ -247,7 +247,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             // For Pay Intent
             case TransferType.PAY:
-                this.titleBar.setTitle(this.translate.instant("payment-title"));
+                this.titleBar.setTitle(this.translate.instant("wallet.payment-title"));
                 this.transaction = this.createSendTransaction;
 
                 Logger.log('wallet', 'Pay intent params', this.coinTransferService.payTransfer);
@@ -437,19 +437,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     valuesReady(): boolean {
         let valuesValid = false;
         if (Util.isNull(this.amount)) {
-            this.native.toast_trans('amount-null');
+            this.native.toast_trans('wallet.amount-null');
         } else if (!Util.number(this.amount)) {
-            this.native.toast_trans('amount-invalid');
+            this.native.toast_trans('wallet.amount-invalid');
         } else if (this.amount <= 0) {
-            this.native.toast_trans('amount-invalid');
+            this.native.toast_trans('wallet.amount-invalid');
         } else if (!this.masterWallet.subWallets[this.chainId].isBalanceEnough(new BigNumber(this.amount))) {
-            this.native.toast_trans('insuff-balance');
+            this.native.toast_trans('wallet.insuff-balance');
         } else if (this.amount.toString().indexOf('.') > -1 && this.amount.toString().split(".")[1].length > 8) {
-            this.native.toast_trans('amount-invalid');
+            this.native.toast_trans('wallet.amount-invalid');
         } else {
             if (this.fromSubWallet.type === CoinType.ERC20) {
                 if (this.masterWallet.getSubWallet(StandardCoinName.ETHSC).balance.isLessThan(0.001)) {
-                    this.native.toast_trans('eth-insuff-balance', 4000);
+                    this.native.toast_trans('wallet.eth-insuff-balance', 4000);
                 } else {
                     valuesValid = true;
                 }
@@ -468,7 +468,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 await mainAndIDChainSubWallet.isAvailableBalanceEnough(new BigNumber(this.amount).multipliedBy(Config.SELAAsBigNumber));
 
             if (!isAvailableBalanceEnough) {
-                await this.native.toast_trans('transaction-pending');
+                await this.native.toast_trans('wallet.transaction-pending');
                 return;
             }
         }
@@ -482,7 +482,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             const toChainId = this.toSubWallet ? this.toSubWallet.id : this.chainId;
             const isAddressValid = await this.isSubWalletAddressValid(this.masterWallet.id, toChainId, this.toAddress);
             if (!isAddressValid) {
-                this.native.toast_trans('not-a-valid-address');
+                this.native.toast_trans('wallet.not-a-valid-address');
                 return;
             }
 
@@ -492,7 +492,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.showConfirm();
             }
         } catch (error) {
-            this.native.toast_trans('not-a-valid-address');
+            this.native.toast_trans('wallet.not-a-valid-address');
         }
     }
 
@@ -695,15 +695,15 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     getButtonLabel(): string {
         switch (this.transferType) {
             case TransferType.RECHARGE:
-                return 'recharge';
+                return 'wallet.recharge';
             case TransferType.SEND:
-                return 'send';
+                return 'wallet.send';
             case TransferType.PAY:
-                return 'pay';
+                return 'wallet.pay';
             case TransferType.WITHDRAW:
-                return 'withdraw';
+                return 'wallet.withdraw';
             default:
-                return 'send';
+                return 'wallet.send';
         }
     }
 

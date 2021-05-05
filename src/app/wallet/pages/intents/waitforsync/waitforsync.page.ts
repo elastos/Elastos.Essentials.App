@@ -77,7 +77,7 @@ export class WaitForSyncPage implements OnInit {
 
     ionViewWillEnter() {
         this.cancelByUser = false;
-        this.titleBar.setTitle(this.translate.instant('waitforsync-syncing'));
+        this.titleBar.setTitle(this.translate.instant('wallet.waitforsync-syncing'));
         if (!this.rootPage) {
             // TODO @chad this.appService.setBackKeyVisibility(true);
         }
@@ -94,39 +94,39 @@ export class WaitForSyncPage implements OnInit {
 
         switch (this.coinTransferService.intentTransfer.action) {
             case 'crmembervote':
-                this.action = 'text-vote-crcouncil';
+                this.action = 'wallet.text-vote-crcouncil';
                 this.nextScreen = '/wallet/intents/crmembervote';
                 break;
             case 'crmemberregister':
-                this.action = 'text-crmember-register';
+                this.action = 'wallet.text-crmember-register';
                 this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'crmemberunregister':
-                this.action = 'text-crmember-unregister';
+                this.action = 'wallet.text-crmember-unregister';
                 this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'crmemberupdate':
-                this.action = 'text-crmember-update';
+                this.action = 'wallet.text-crmember-update';
                 this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'crmemberretrieve':
-                this.action = 'text-crmember-retrieve';
+                this.action = 'wallet.text-crmember-retrieve';
                 this.nextScreen = '/wallet/intents/crmemberregister';
                 break;
             case 'didtransaction':
-                this.action = 'text-did';
+                this.action = 'wallet.text-did';
                 this.nextScreen = '/wallet/intents/didtransaction';
                 break;
             case 'esctransaction':
-                this.action = 'text-esc';
+                this.action = 'wallet.text-esc';
                 this.nextScreen = '/wallet/intents/esctransaction';
                 break;
             case 'dposvotetransaction':
-                this.action = 'text-dposvote';
+                this.action = 'wallet.text-dposvote';
                 this.nextScreen = '/wallet/intents/dposvote';
                 break;
             case 'pay':
-                this.action = 'text-transfer';
+                this.action = 'wallet.text-transfer';
                 this.nextScreen = '/wallet/intents/coin-transfer';
                 break;
             case 'crproposalvoteagainst':
@@ -162,7 +162,7 @@ export class WaitForSyncPage implements OnInit {
     }
 
     notifyNoIDChain() {
-        return this.popupProvider.ionicAlert('confirmTitle', 'no-open-side-chain');
+        return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
     }
 
     doAction() {

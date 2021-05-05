@@ -46,40 +46,40 @@ export class WalletSettingsPage implements OnInit {
         {
             type: 'wallet-export',
             route: null,
-            title: this.translate.instant("wallet-settings-backup-wallet"),
-            subtitle: this.translate.instant("wallet-settings-backup-wallet-subtitle"),
+            title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
+            subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
             icon: '/assets/wallet/settings/key.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/key.svg'
         },
         {
             type: 'wallet-name',
             route: "/wallet/wallet-edit-name",
-            title: this.translate.instant("wallet-settings-change-name"),
-            subtitle: this.translate.instant("wallet-settings-change-name-subtitle"),
+            title: this.translate.instant("wallet.wallet-settings-change-name"),
+            subtitle: this.translate.instant("wallet.wallet-settings-change-name-subtitle"),
             icon: '/assets/wallet/settings/pen.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/pen.svg'
         },
         {
             type: 'wallet-color',
             route: "/wallet/wallet-color",
-            title: this.translate.instant("wallet-settings-change-theme"),
-            subtitle: this.translate.instant("wallet-settings-change-theme-subtitle"),
+            title: this.translate.instant("wallet.wallet-settings-change-theme"),
+            subtitle: this.translate.instant("wallet.wallet-settings-change-theme-subtitle"),
             icon: '/assets/wallet/settings/picture.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
         },
         {
             type: 'coin-list',
             route: "/wallet/coin-list",
-            title: this.translate.instant("wallet-settings-manage-coin-list"),
-            subtitle: this.translate.instant("wallet-settings-manage-coin-list-subtitle"),
+            title: this.translate.instant("wallet.wallet-settings-manage-coin-list"),
+            subtitle: this.translate.instant("wallet.wallet-settings-manage-coin-list-subtitle"),
             icon: '/assets/wallet/settings/coins.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/coins.svg'
         },
         {
             type: 'wallet-delete',
             route: null,
-            title: this.translate.instant("wallet-settings-delete-wallet"),
-            subtitle: this.translate.instant("wallet-settings-delete-wallet-subtitle"),
+            title: this.translate.instant("wallet.wallet-settings-delete-wallet"),
+            subtitle: this.translate.instant("wallet.wallet-settings-delete-wallet-subtitle"),
             icon: '/assets/wallet/settings/trash.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
         },
@@ -121,7 +121,7 @@ export class WalletSettingsPage implements OnInit {
         // Update walletName when modify name
         this.walletName = this.walletManager.masterWallets[this.masterWalletId].name;
 
-        this.titleBar.setTitle(this.translate.instant("wallet-settings-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.wallet-settings-title"));
     }
 
     async getPassword() {

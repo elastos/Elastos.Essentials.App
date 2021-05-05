@@ -202,10 +202,10 @@ export class ERC20SubWallet extends SubWallet {
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
-            transactionInfo.statusName = translate.instant("coin-transaction-status-confirmed");
+            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
         } else {
             transactionInfo.status = 'Pending';
-            transactionInfo.statusName = translate.instant("coin-transaction-status-pending");
+            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
         }
 
         // MESSY again - No "Direction" field in ETH transactions (contrary to other chains). Calling a private method to determine this.
@@ -228,9 +228,9 @@ export class ERC20SubWallet extends SubWallet {
         const direction = await this.getERC20TransactionDirection(transaction.TargetAddress);
         switch (direction) {
             case TransactionDirection.RECEIVED:
-                return translate.instant("coin-action-receive");
+                return translate.instant("wallet.coin-action-receive");
             case TransactionDirection.SENT:
-                return translate.instant("coin-action-send");
+                return translate.instant("wallet.coin-action-send");
             default:
                 return "Invalid";
         }

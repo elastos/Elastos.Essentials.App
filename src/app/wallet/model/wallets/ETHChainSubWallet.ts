@@ -2,12 +2,10 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { ContractType, EthTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
+import { EthTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
@@ -79,10 +77,10 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
-            transactionInfo.statusName = translate.instant("coin-transaction-status-confirmed");
+            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
         } else {
             transactionInfo.status = 'Pending';
-            transactionInfo.statusName = translate.instant("coin-transaction-status-pending");
+            transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
         }
 
         // MESSY again - No "Direction" field in ETH transactions (contrary to other chains). Calling a private method to determine this.
@@ -104,10 +102,10 @@ export class ETHChainSubWallet extends StandardSubWallet {
         const direction = await this.getETHSCTransactionDirection(transaction.TargetAddress);
         switch (direction) {
             case TransactionDirection.RECEIVED:
-                return translate.instant("coin-op-received-token");
+                return translate.instant("wallet.coin-op-received-token");
             case TransactionDirection.SENT:
                 if (transaction.Amount !== '0') {
-                    return translate.instant("coin-op-sent-token");
+                    return translate.instant("wallet.coin-op-sent-token");
                 } else {
                     // Contract
                     return this.getETHSCTransactionContractType(transaction, translate);
@@ -137,17 +135,17 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     private getETHSCTransactionContractType(transaction: EthTransaction, translate: TranslateService): string {
         if ('ERC20Transfer' === transaction.TokenFunction) {
-            return translate.instant("coin-op-contract-token-transfer");
+            return translate.instant("wallet.coin-op-contract-token-transfer");
         } else if (transaction.TargetAddress === '') {
-            return translate.instant("coin-op-contract-create");
+            return translate.instant("wallet.coin-op-contract-create");
         } else if (transaction.TargetAddress === '0x0000000000000000000000000000000000000000') {
             return translate.instant("coin-op-contract-destroy");
         } else if (transaction.TargetAddress === this.withdrawContractAddress) {
             // withdraw to MainChain
             // no TokenFunction
-            return translate.instant("coin-dir-to-mainchain");
+            return translate.instant("wallet.coin-dir-to-mainchain");
         } else {
-            return translate.instant("coin-op-contract-call");
+            return translate.instant("wallet.coin-op-contract-call");
         }
     }
 

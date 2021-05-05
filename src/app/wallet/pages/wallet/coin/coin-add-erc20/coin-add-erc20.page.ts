@@ -81,7 +81,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("coin-adderc20-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.coin-adderc20-title"));
         if (this.rootPage) {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
                 key: "backToHome",
@@ -117,7 +117,7 @@ export class CoinAddERC20Page implements OnInit {
         this.zone.run(() => {
             // Check if this looks like a valid address. If not, give feedback to user.
             if (!this.erc20CoinService.isAddress(this.coinAddress)) {
-                this.popup.ionicAlert("not-a-valid-address", "coin-adderc20-not-a-erc20-contract", "Ok");
+                this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "Ok");
                 this.coinAddress = '';
             } else {
               /*   if (this.coinAlreadyAdded(this.coinAddress)) {
@@ -150,7 +150,7 @@ export class CoinAddERC20Page implements OnInit {
 
             // Make sure user has the ETH sidechain enabled
             if (!this.masterWallet.hasSubWallet(StandardCoinName.ETHSC)) {
-                this.popup.ionicAlert("no-ethereum-token", "please-add-ethereum-first", "Ok");
+                this.popup.ionicAlert("wallet.no-ethereum-token", "wallet.please-add-ethereum-first", "Ok");
                 this.fetchingCoinInfo = false;
                 return;
             }
@@ -162,7 +162,7 @@ export class CoinAddERC20Page implements OnInit {
                 if (!contractCode) {
                     Logger.log('wallet', "Contract at "+address+" does not exist");
                     this.fetchingCoinInfo = false;
-                    this.native.toast_trans('coin-adderc20-not-found');
+                    this.native.toast_trans('wallet.coin-adderc20-not-found');
                 } else {
                     Logger.log('wallet', "Found contract at address " + address);
                     const coinInfo = await this.erc20CoinService.getCoinInfo(address, ethAccountAddress);
@@ -179,7 +179,7 @@ export class CoinAddERC20Page implements OnInit {
             } catch (e) {
                 this.fetchingCoinInfo = false;
                 Logger.log('wallet', "Contract call exception - invalid contract? Not ERC20?");
-                this.popup.ionicAlert("error", "coin-adderc20-invalid-contract-or-network-error", "Ok");
+                this.popup.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "Ok");
             }
         }
     }
@@ -194,7 +194,7 @@ export class CoinAddERC20Page implements OnInit {
 
     async addCoin() {
         if (this.coinAlreadyAdded(this.coinAddress)) {
-            this.native.toast_trans('coin-adderc20-alreadyadded');
+            this.native.toast_trans('wallet.coin-adderc20-alreadyadded');
         }  else {
             const activeNetwork = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
             const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetwork, true);

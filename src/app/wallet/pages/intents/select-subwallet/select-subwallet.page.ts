@@ -40,7 +40,7 @@ export class SelectSubwalletPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('select-subwallet'));
+    this.titleBar.setTitle(this.translate.instant('wallet.select-subwallet'));
     // TODO @chad this.appService.setBackKeyVisibility(false);
   }
 

@@ -55,8 +55,8 @@ export class WalletManagerPage implements OnInit {
 
     ionViewWillEnter() {
         this.forIntent ?
-            this.titleBar.setTitle(this.translate.instant('intent-select-wallet')) :
-            this.titleBar.setTitle(this.translate.instant('settings-my-wallets'));
+            this.titleBar.setTitle(this.translate.instant('wallet.intent-select-wallet')) :
+            this.titleBar.setTitle(this.translate.instant('wallet.settings-my-wallets'));
     }
 
     walletSelected(masterWallet: MasterWallet) {

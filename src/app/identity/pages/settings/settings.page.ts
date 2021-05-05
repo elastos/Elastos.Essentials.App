@@ -24,7 +24,7 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('settings'));
+    this.titleBar.setTitle(this.translate.instant('common.settings'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
   }
