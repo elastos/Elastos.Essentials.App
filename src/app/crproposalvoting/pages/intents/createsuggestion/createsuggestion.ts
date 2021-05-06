@@ -43,7 +43,7 @@ export class CreateSuggestionPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('create-suggestion'));
+    this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
   }
 
   ionViewWillLeave() {

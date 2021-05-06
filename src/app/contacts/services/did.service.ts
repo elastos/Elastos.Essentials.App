@@ -32,7 +32,7 @@ export class DidService {
 
   async shareIdentity(contact: Contact) {
     this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("share-add-me-as-friend"),
+      title: this.translate.instant("common.share-add-me-as-friend"),
       url: await this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
     });
   }

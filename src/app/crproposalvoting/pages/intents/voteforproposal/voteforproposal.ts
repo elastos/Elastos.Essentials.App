@@ -35,7 +35,7 @@ export class VoteForProposalPage {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('vote-proposal'));
+    this.titleBar.setTitle(this.translate.instant('crproposalvoting.vote-proposal'));
   }
 
   ionViewWillLeave() {

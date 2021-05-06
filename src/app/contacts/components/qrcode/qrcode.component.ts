@@ -49,7 +49,7 @@ export class QRCodeComponent implements OnInit {
 
   async shareInvitationLink() {
     await this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("share-friend"),
+      title: this.translate.instant("common.share-friend"),
       url: this.qrCodeString
     });
     this.modalCtrl.dismiss();

@@ -15,7 +15,7 @@ export class PopupProvider {
                 subHeader: subTitle ? this.translate.instant(subTitle) : '',
                 backdropDismiss: false,
                 buttons: [{
-                    text: okText ? okText : this.translate.instant('confirm'),
+                    text: okText ? okText : this.translate.instant('common.confirm'),
                     handler: () => {
                         Logger.log('Identity', 'ionicAlert Ok clicked');
                         resolve();
@@ -32,14 +32,14 @@ export class PopupProvider {
                 header: this.translate.instant(title),
                 message  : this.translate.instant(message),
                 buttons: [{
-                    text: cancelText ? cancelText : this.translate.instant('cancel'),
+                    text: cancelText ? cancelText : this.translate.instant('common.cancel'),
                     handler: () => {
                         Logger.log('Identity', 'ionicConfirm Disagree clicked');
                         resolve(false);
                     }
                 },
                 {
-                    text: okText ? okText : this.translate.instant('confirm'),
+                    text: okText ? okText : this.translate.instant('common.confirm'),
                     handler: () => {
                         Logger.log('Identity', 'Agree clicked');
                         resolve(true);
@@ -68,14 +68,14 @@ export class PopupProvider {
                 type: inputType
             }],
             buttons: [{
-                text: cancelText ? cancelText : this.translate.instant('Cancel'),
+                text: cancelText ? cancelText : this.translate.instant('common.cancel'),
                 handler: data => {
                     Logger.log('Identity', 'Cancel clicked');
                     resolve(null);
                 }
             },
             {
-                text: okText ? okText : this.translate.instant('Ok'),
+                text: okText ? okText : this.translate.instant('common.ok'),
                 handler: data => {
                     Logger.log('Identity', 'Saved clicked');
                     resolve(data[0]);

@@ -114,7 +114,7 @@ export class BackupRestoreService {
     if (!vaultAddress) {
       this.logWarn("No hive vault provider for for current DID. Asking to configure.");
       // PROBLEM HERE? On IOS, ionicPrompt() call seems to print error: {} and block the whole app...
-      let shouldConfigure = await this.popup.ionicPrompt(this.translate.instant('hive-not-configured-title'), this.translate.instant('hive-not-configured-text'), null, this.translate.instant('hive-not-configured-configure'), this.translate.instant('hive-not-configured-not-now'));
+      let shouldConfigure = await this.popup.ionicPrompt(this.translate.instant('wallet.hive-not-configured-title'), this.translate.instant('wallet.hive-not-configured-text'), null, this.translate.instant('wallet.hive-not-configured-configure'), this.translate.instant('wallet.hive-not-configured-not-now'));
       if (shouldConfigure) {
         this.logDebug("User wants to configure his vault");
         // User wants to configure his hive vault, redirect him

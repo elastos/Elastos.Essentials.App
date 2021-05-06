@@ -332,11 +332,11 @@ export class CandidatesService {
   async alertErr(err: string) {
     const alert = await this.alertCtrl.create({
       mode: 'ios',
-      header: this.translate.instant('error'),
+      header: this.translate.instant('common.error'),
       message: this.translate.instant(err),
       buttons: [
        {
-          text: this.translate.instant('ok'),
+          text: this.translate.instant('common.ok'),
           handler: () => {
             this.globalNav.navigateHome();
           }
@@ -352,8 +352,8 @@ export class CandidatesService {
       mode: 'ios',
       position: 'bottom',
       color: 'primary',
-      header: this.translate.instant('cr-voting-ended'),
-      message: this.translate.instant('cr-voting-ended-message'),
+      header: this.translate.instant('crcouncilvoting.cr-voting-ended'),
+      message: this.translate.instant('crcouncilvoting.cr-voting-ended-message'),
       duration: 6000
     });
 

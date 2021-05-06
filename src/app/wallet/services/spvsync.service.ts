@@ -232,7 +232,7 @@ export class SPVSyncService {
         const request: NotificationRequest = {
             message: '',
             key: chainId + '-syncCompleted',
-            title: chainId + ': ' + this.translate.instant('sync-completed'),
+            title: chainId + ': ' + this.translate.instant('wallet.sync-completed'),
         };
         this.notifications.sendNotification(request);
 

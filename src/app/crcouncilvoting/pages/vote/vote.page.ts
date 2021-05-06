@@ -191,11 +191,10 @@ export class VotePage implements OnInit, OnDestroy {
       mode: 'ios',
       position: 'bottom',
       color: 'primary',
-      // header: this.translate.instant('vote-failed'),
       message: err,
       buttons: [
         {
-          text: this.translate.instant('ok'),
+          text: this.translate.instant('common.ok'),
           handler: () => {
             this.toast.dismiss();
             this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');

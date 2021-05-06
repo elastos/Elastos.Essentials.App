@@ -235,7 +235,7 @@ export class CredentialsPage {
     for (let entry of profileEntries) {
       this.pushDisplayEntry(entry.key, {
         credentialId: entry.key,
-        label: this.translate.instant("credential-info-type-" + entry.key),
+        label: this.translate.instant("identity.credential-info-type-" + entry.key),
         value: entry.toDisplayString() || notSetTranslated,
       });
     }
@@ -504,7 +504,7 @@ export class CredentialsPage {
 
   getDisplayableCredentialTitle(entry: CredentialDisplayEntry): string {
     let fragment = entry.credential.getFragment();
-    let translationKey = "credential-info-type-" + fragment;
+    let translationKey = "identity.credential-info-type-" + fragment;
     let translated = this.translate.instant(translationKey);
 
     if (!translated || translated == "" || translated == translationKey)

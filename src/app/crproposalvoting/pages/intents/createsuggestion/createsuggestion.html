@@ -4,22 +4,22 @@
         <ion-spinner></ion-spinner>
     </div>
     <div *ngIf="suggestionDetailsFetched">
-        <p>{{ 'create-suggestion-msg' | translate }}</p>
+        <p>{{ 'crproposalvoting.create-suggestion-msg' | translate }}</p>
         <div>
-            <ion-row class="header">{{ 'title' | translate }}</ion-row>
+            <ion-row class="header">{{ 'common.title' | translate }}</ion-row>
             <ion-row>{{ suggestionDetails.title }}</ion-row>
 
-            <ion-row class="header">{{ 'creation-date' | translate }}</ion-row>
+            <ion-row class="header">{{ 'crproposalvoting.creation-date' | translate }}</ion-row>
             <ion-row>{{ suggestionDetails.createdAt }}</ion-row>
 
-            <ion-row class="header">{{ 'created-by' | translate }}</ion-row>
+            <ion-row class="header">{{ 'crproposalvoting.created-by' | translate }}</ion-row>
             <ion-row>{{ suggestionDetails.didName }}</ion-row>
             <ion-row>{{ suggestionDetails.did }}</ion-row>
 
-            <ion-row class="header">{{ 'description' | translate }}</ion-row>
+            <ion-row class="header">{{ 'common.description' | translate }}</ion-row>
             <ion-row>{{ suggestionDetails.abs }}</ion-row>
         </div>
-        <ion-button (click)="signAndCreateSuggestion()" *ngIf="!signingAndSendingSuggestionResponse">{{ 'sign-create-suggestion' | translate }}</ion-button>
+        <ion-button (click)="signAndCreateSuggestion()" *ngIf="!signingAndSendingSuggestionResponse">{{ 'crproposalvoting.sign-create-suggestion' | translate }}</ion-button>
         <div *ngIf="signingAndSendingSuggestionResponse">
             <ion-spinner></ion-spinner>
         </div>

@@ -75,7 +75,7 @@ export class IntentService {
         this.walletList = this.walletManager.getWalletsList();
         if (this.walletList.length === 0) {
             this.native.setRootRouter('/wallet/launcher');
-            const toCreateWallet = await this.popupProvider.ionicConfirm('intent-no-wallet-title', 'intent-no-wallet-msg', 'ok', 'exit');
+            const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'wallet.ok', 'wallet.exit');
             if (toCreateWallet) {
                 // TODO
                 // Should call sendIntentResponse?

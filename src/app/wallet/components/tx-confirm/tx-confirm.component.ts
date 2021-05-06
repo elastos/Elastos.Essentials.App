@@ -29,10 +29,10 @@ export class TxConfirmComponent implements OnInit {
     Logger.log('wallet', 'Confirm tx', this.txInfo);
 
     if (this.txInfo.type === 1) {
-      this.txHeader = this.translate.instant('transfer-transaction-type');
+      this.txHeader = this.translate.instant('wallet.transfer-transaction-type');
       this.txIcon = './assets/wallet/tx/transfer.svg';
     } else {
-      this.txHeader = this.translate.instant('send-transaction-type');
+      this.txHeader = this.translate.instant('wallet.send-transaction-type');
       this.txIcon = './assets/wallet/tx/send.svg';
     }
   }

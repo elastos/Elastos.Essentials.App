@@ -1,9 +1,9 @@
 <ion-content>
     <app-titlebar></app-titlebar>
     <div>
-        <p>{{ 'vote-proposal-msg' | translate }}</p>
+        <p>{{ 'crproposalvoting.vote-proposal-msg' | translate }}</p>
         <div>TODO: fetch and display proposal details when the API is ready for this (see clickup).</div>
-        <ion-button (click)="voteAgainstProposal()" *ngIf="!sendingResponse">{{ 'vote-against-proposal' | translate }}</ion-button> 
+        <ion-button (click)="voteAgainstProposal()" *ngIf="!sendingResponse">{{ 'crproposalvoting.vote-against-proposal' | translate }}</ion-button>
         <ion-spinner *ngIf="sendingResponse"></ion-spinner>
     </div>
 </ion-content>

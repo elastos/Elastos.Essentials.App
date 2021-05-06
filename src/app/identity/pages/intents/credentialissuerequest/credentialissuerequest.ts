@@ -167,7 +167,7 @@ export class CredentialIssueRequestPage {
             }, this.receivedIntent.intentId);
           })
         }, async (err)=>{
-          await this.popup.ionicAlert(this.translate.instant('error'), this.translate.instant('identity.credential-issued-error')+JSON.stringify(err), this.translate.instant('close'));
+          await this.popup.ionicAlert(this.translate.instant('common.error'), this.translate.instant('identity.credential-issued-error')+JSON.stringify(err), this.translate.instant('common.close'));
           this.rejectRequest();
         });
     }, ()=>{

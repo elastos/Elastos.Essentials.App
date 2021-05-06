@@ -185,7 +185,7 @@ export class CoinTxInfoPage implements OnInit {
                 title: 'wallet.tx-info-transaction-time',
                 value:
                     this.transactionInfo.timestamp === 0 ?
-                        this.translate.instant('coin-transaction-status-pending') :
+                        this.translate.instant('wallet.coin-transaction-status-pending') :
                         Util.dateFormat(new Date(this.transactionInfo.timestamp), 'YYYY-MM-DD HH:mm:ss'),
                 show: true,
             },

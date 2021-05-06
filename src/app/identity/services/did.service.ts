@@ -243,7 +243,7 @@ export class DIDService {
    * always displaying credential keys to user, and instead, show him something nicer.
    */
   getUserFriendlyBasicProfileKeyName(key: string): string {
-    let translationKey = "credential-info-type-" + key;
+    let translationKey = "identity.credential-info-type-" + key;
     let translated = this.translate.instant(translationKey);
     if (!translated || translated == "" || translated == translationKey)
       return key;

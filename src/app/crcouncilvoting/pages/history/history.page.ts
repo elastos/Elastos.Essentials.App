@@ -18,7 +18,7 @@ export class HistoryPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('vote-history'));
+    this.titleBar.setTitle(this.translate.instant('crcouncilvoting.vote-history'));
   }
 
 }

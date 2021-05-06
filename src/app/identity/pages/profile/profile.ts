@@ -605,7 +605,7 @@ export class ProfilePage {
 
   getDisplayableCredentialTitle(entry: CredentialDisplayEntry): string {
     let fragment = entry.credential.getFragment();
-    let translationKey = "credential-info-type-" + fragment;
+    let translationKey = "identity.credential-info-type-" + fragment;
     let translated = this.translate.instant(translationKey);
 
     if (!translated || translated == "" || translated == translationKey)

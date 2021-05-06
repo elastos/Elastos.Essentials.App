@@ -79,8 +79,8 @@ export class BackupDIDPage {
     async getActiveSlide() {
       this.slideIndex = await this.slide.getActiveIndex();
       this.slideIndex === 0 ?
-        this.titleBar.setTitle(this.translate.instant('your-private-qr-code')) :
-        this.titleBar.setTitle(this.translate.instant('your-private-key'));
+        this.titleBar.setTitle(this.translate.instant('didsessions.your-private-qr-code')) :
+        this.titleBar.setTitle(this.translate.instant('didsessions.your-private-key'));
     }
 
     nextSlide() {

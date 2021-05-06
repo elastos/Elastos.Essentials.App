@@ -309,7 +309,7 @@ export class CoinHomePage implements OnInit {
                 Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
                 const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
                 if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-                    let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'text-consolidate-note')
+                    let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'wallet.text-consolidate-note')
                     if (ret) {
                         await this.createConsolidateTransaction();
                     }

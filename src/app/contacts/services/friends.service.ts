@@ -267,7 +267,7 @@ export class FriendsService {
           this.contacts[this.contacts.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
           await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", this.contacts);
           this.globalNav.navigateTo('contacts', '/contacts/friends/'+targetContact.id);
-          this.native.genericToast(promptName + this.translate.instant('did-carrier-added'));
+          this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
         } else {
           this.native.genericToast(promptName + this.translate.instant('contacts.is-already-added'));
@@ -950,7 +950,7 @@ export class FriendsService {
         this.managerService.handledIntentId
       );
     } else {
-      this.native.genericToast(this.translate.instant('select-before-invite'));
+      this.native.genericToast(this.translate.instant('contacts.select-before-invite'));
     }
   }
 
@@ -1026,7 +1026,7 @@ export class FriendsService {
     } else if(contact.credentials.name) {
       return contact.credentials.name;
     } else {
-      return this.translate.instant('anonymous-contact');
+      return this.translate.instant('contacts.anonymous-contact');
     }
   }
 

@@ -22,19 +22,19 @@
         <h1>{{ activePlan.getName() }}</h1>
     </ion-col>
     <ion-col size="12">
-        <h2>{{ 'payment-plan.max-storage' | translate }}</h2>
+        <h2>{{ 'hivemanager.payment-plan.max-storage' | translate }}</h2>
         <p>{{ activePlan.getMaxStorage() }} MB</p>
     </ion-col>
     <ion-col size="12">
-        <h2>{{ 'payment-plan.file-storage' | translate }}</h2>
+        <h2>{{ 'hivemanager.payment-plan.file-storage' | translate }}</h2>
         <p>{{ UI.getFriendlyStorageSize(activePlan.getCurrentFileStorageUsed()) }} MB</p>
     </ion-col>
     <ion-col size="12">
-        <h2>{{ 'payment-plan.data-storage' | translate }}</h2>
+        <h2>{{ 'hivemanager.payment-plan.data-storage' | translate }}</h2>
         <p>{{ UI.getFriendlyStorageSize(activePlan.getCurrentDatabaseStorageUsed()) }} MB</p>
     </ion-col>
     <ion-col size="12" class="removeBorder">
-        <h2>{{ 'payment-plan.start-time' | translate }}</h2>
+        <h2>{{ 'hivemanager.payment-plan.start-time' | translate }}</h2>
         <p>{{ UI.getFriendlyDate(activePlan.getStartTime()) }}</p>
     </ion-col>
     <ion-ripple-effect></ion-ripple-effect>

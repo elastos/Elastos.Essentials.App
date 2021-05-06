@@ -23,7 +23,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: okText ? okText : this.translate.instant('confirm'),
+            text: okText ? okText : this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert Ok clicked');
               this.alertPopup = null;
@@ -41,7 +41,7 @@ export class PopupProvider {
     amount?: any,
     okText?: string
   ): Promise<any> {
-    const suggestAmount = this.translate.instant('suggest-amount');
+    const suggestAmount = this.translate.instant('wallet.suggest-amount');
     return new Promise<void>((resolve, reject) => {
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
@@ -51,7 +51,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: okText ? okText : this.translate.instant('confirm'),
+            text: okText ? okText : this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert_data Ok clicked');
               this.alertPopup = null;
@@ -69,7 +69,7 @@ export class PopupProvider {
     hash?: any,
     okText?: string
   ): Promise<any> {
-    const transactionDeleted = this.translate.instant('transaction-deleted');
+    const transactionDeleted = this.translate.instant('wallet.transaction-deleted');
     return new Promise<void>((resolve, reject) => {
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
@@ -79,7 +79,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: okText ? okText : this.translate.instant('confirm'),
+            text: okText ? okText : this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert_delTx Ok clicked');
               this.alertPopup = null;
@@ -99,7 +99,7 @@ export class PopupProvider {
     okText?: string
   ): Promise<any> {
     const sub = this.translate.instant(subTitle);
-    const reason = this.translate.instant('reasons-failure');
+    const reason = this.translate.instant('wallet.reasons-failure');
     return new Promise<void>((resolve, reject) => {
       this.alertPopup = this.alertCtrl.create({
         header: this.translate.instant(title),
@@ -109,7 +109,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: okText ? okText : this.translate.instant('confirm'),
+            text: okText ? okText : this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert_PublishedTx_fail Ok clicked');
               this.alertPopup = null;
@@ -137,7 +137,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: okText ? okText : this.translate.instant('confirm'),
+            text: okText ? okText : this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert_PublishedTx_sucess Ok clicked');
               this.alertPopup = null;
@@ -153,8 +153,8 @@ export class PopupProvider {
   public ionicConfirm(
     title: string,
     message: string,
-    okText: string = "confirm",
-    cancelText: string = "cancel"
+    okText: string = "common.confirm",
+    cancelText: string = "common.cancel"
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       this.alertPopup = null;
@@ -197,7 +197,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: this.translate.instant('cancel'),
+            text: this.translate.instant('common.cancel'),
             handler: () => {
               Logger.log('wallet', 'ionicConfirm Disagree clicked');
               this.alertPopup = null;
@@ -205,7 +205,7 @@ export class PopupProvider {
             }
           },
           {
-            text: this.translate.instant('confirm'),
+            text: this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'Agree clicked');
               this.alertPopup = null;
@@ -249,7 +249,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: cancelText ? cancelText : this.translate.instant('Cancel'),
+            text: cancelText ? cancelText : this.translate.instant('common.cancel'),
             handler: data => {
               Logger.log('wallet', 'Cancel clicked');
               this.alertPopup = null;
@@ -257,7 +257,7 @@ export class PopupProvider {
             }
           },
           {
-            text: okText ? okText : this.translate.instant('Ok'),
+            text: okText ? okText : this.translate.instant('common.ok'),
             handler: data => {
               Logger.log('wallet', 'Ok clicked');
               this.alertPopup = null;

@@ -283,7 +283,7 @@ export class HiveService {
       }
       catch(err) {
         Logger.error("HiveManager", "Error while trying to call the sethiveprovider intent: ", err);
-          this.popup.ionicAlert(this.translate.instant('alert.error'), this.translate.instant('alert.sorry-provider-not-save') + err, this.translate.instant('alert.ok'));
+          this.popup.ionicAlert(this.translate.instant('hivemanager.alert.error'), this.translate.instant('hivemanager.alert.sorry-provider-not-save') + err, this.translate.instant('hivemanager.alert.ok'));
         resolve(false);
       }
     });
@@ -303,7 +303,7 @@ export class HiveService {
    */
   public async purchasePlan(paymentSettings: HivePlugin.Payment.PaymentSettings, plan: HivePlugin.Payment.PricingPlan): Promise<void> {
     if (plan.getCurrency() != "ELA") {
-      await this.popup.ionicAlert(this.translate.instant('alert.unavailable'), this.translate.instant('alert.only-payments-in-ELA'));
+      await this.popup.ionicAlert(this.translate.instant('hivemanager.alert.unavailable'), this.translate.instant('hivemanager.alert.only-payments-in-ELA'));
       return;
     }
 
@@ -341,10 +341,10 @@ export class HiveService {
     }
 
     if (operationSuccessful) {
-      await this.popup.ionicAlert(this.translate.instant('alert.completed'), this.translate.instant('alert.plan-has-been-configured'));
+      await this.popup.ionicAlert(this.translate.instant('hivemanager.alert.completed'), this.translate.instant('hivemanager.alert.plan-has-been-configured'));
     }
     else {
-      await this.popup.ionicAlert(this.translate.instant('alert.operation-not-completed-title'), this.translate.instant('alert.operation-not-completed-text'));
+      await this.popup.ionicAlert(this.translate.instant('hivemanager.alert.operation-not-completed-title'), this.translate.instant('hivemanager.alert.operation-not-completed-text'));
     }
   }
 

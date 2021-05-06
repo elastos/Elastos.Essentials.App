@@ -136,7 +136,7 @@ export class CustomizePage implements OnInit {
 
   customizeContact() {
     if(!this.realName && !this.customName ) {
-      this.customName = this.translate.instant('anonymous-contact');
+      this.customName = this.translate.instant('contacts.anonymous-contact');
     }
 
     this.friendsService.customizeContact(this.id, this.customName, this.customNote, this.avatar);
