@@ -43,8 +43,18 @@ export class WalletAdvancedImportPage implements OnInit {
   }
 
   onMnemonicSentenceChanged() {
-    this.mnemonicWords = this.mnemonicSentence.trim().replace(/[\r\n]/g,"").split(" ");
-    this.mnemonicWords = this.mnemonicWords.filter(item => item !== '');
+    let standardMnemonicSentence = this.mnemonicSentence.trim().replace(/[\r\n]/g,"");
+    let chineseMnemonic = Util.chinese(this.mnemonicSentence[0]);
+    if (chineseMnemonic) {
+      // You can input chinese mnemonics without space.
+      this.mnemonicWords = [];
+      standardMnemonicSentence = standardMnemonicSentence.replace(/ /g, '');
+      for (let i = 0; i < standardMnemonicSentence.length; i++) {
+        this.mnemonicWords.push(standardMnemonicSentence[i]);
+      }
+    } else {
+      this.mnemonicWords = standardMnemonicSentence.split(" ").filter(item => item !== '');
+    }
   }
 
   inputMnemonicCompleted() {

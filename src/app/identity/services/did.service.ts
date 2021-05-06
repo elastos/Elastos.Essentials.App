@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { Platform, ToastController } from "@ionic/angular";
+import { ToastController } from "@ionic/angular";
 
 import { TranslateService } from "@ngx-translate/core";
 import { LocalStorage } from "./localstorage";
@@ -14,7 +14,6 @@ import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
 @Injectable({
   providedIn: "root",
