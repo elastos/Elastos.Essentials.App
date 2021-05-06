@@ -63,7 +63,8 @@ export class GlobalLanguageService extends GlobalService {
       }
     });
 
-    // await this.fetchLanguageInfo();
+    // We must get the default language when user does not sign in.
+    await this.fetchLanguageInfo();
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
