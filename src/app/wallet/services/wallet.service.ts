@@ -163,6 +163,7 @@ export class WalletManager {
     async stop() {
       this.removeSubWalletListener();
       await this.stopSyncAllWallet();
+      await this.spvBridge.destroy();
       // TODO: stop backup service?
     }
 

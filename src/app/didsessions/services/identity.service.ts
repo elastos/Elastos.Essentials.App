@@ -113,9 +113,6 @@ export class IdentityService {
             };
             let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId, options);
             if (passwordInfo) {
-                // Force signing out, in case we were not already (but we should be)
-                await this.didSessions.signOut()
-
                 let signInOptions: SignInOptions = null;
                 // TODO: while the code below is commented out, if a user change the language in did sessions, this will also
                 // change any other signing in user's language. (BUG)

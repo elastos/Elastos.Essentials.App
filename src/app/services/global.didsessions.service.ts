@@ -142,18 +142,6 @@ export class GlobalDIDSessionsService {
 
     await GlobalServiceManager.getInstance().emitUserSignOut();
 
-    // TODO: Stop all background services, destroy plugins.
-    await this.destroyWallet();
-
     this.globalNavService.navigateDIDSessionHome();
-  }
-
-  // Temp solution, should stop all background services, destroy plugins.
-  public destroyWallet(): Promise<void> {
-    return new Promise((resolve, reject)=>{
-         walletManager.destroy([],
-            (ret) => { resolve(ret); },
-            (err) => { Logger.log('DIDSessionsService', "Error to destroy wallet manager."); });
-    });
   }
 }

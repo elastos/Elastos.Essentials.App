@@ -69,7 +69,7 @@ export class WalletInitService extends GlobalService {
   }
 
   public async onUserSignOut(): Promise<void> {
-
+    await this.stop();
   }
 
   public async stop(): Promise<void> {
@@ -83,6 +83,7 @@ export class WalletInitService extends GlobalService {
       this.subscription.unsubscribe();
       this.subscription = null;
     }
+    this.walletServiceInitialized = true;
     Logger.log('wallet', 'init service stopped')
   }
 

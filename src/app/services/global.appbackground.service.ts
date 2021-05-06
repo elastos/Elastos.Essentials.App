@@ -57,8 +57,5 @@ export class GlobalAppBackgroundService {
   public async stop(): Promise<void> {
       // We should add service.stop here if we need to wait for the serivce.stop.
       // Otherwise we can stop the service in itself onUserSignOut.
-      Logger.log('AppBackgroundService', 'stopping')
-      await this.walletInitService.stop();
-      Logger.log('AppBackgroundService', 'stopped')
   }
 }
