@@ -19,8 +19,8 @@ import { UXService } from './ux.service';
 import { GlobalDIDSessionsService, IdentityEntry, SignInOptions } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { Logger } from 'src/app/logger';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
+import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -63,7 +63,6 @@ export class IdentityService {
         private translate: TranslateService,
         private alertCtrl: AlertController,
         private uxService: UXService,
-        private globalIntentService: GlobalIntentService,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -289,8 +288,11 @@ export class IdentityService {
 
         // Generate a random password
         let storePassword = await passwordManager.generateRandomPassword();
-        let mnemonicLanguage = this.getMnemonicLang();
         let mnemonic = this.identityBeingCreated.mnemonic;
+        let mnemonicLanguage = this.identityBeingCreated.mnemonicLanguage;
+        if (!mnemonicLanguage) {
+          mnemonicLanguage = await DIDMnemonicHelper.getMnemonicLanguage(mnemonic);
+        }
 
         // Initialize the new DID store with a mnemonic and store password
         await didStore.createPrivateIdentity(this.identityBeingCreated.mnemonicPassphrase, storePassword, mnemonicLanguage, mnemonic);

@@ -13,6 +13,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { DIDMnemonicHelper } from '../../helpers/didmnemonic.helper';
 
 /**
  * Import algorithm:
@@ -144,23 +145,17 @@ export class ImportDIDPage {
     }
 
     onMnemonicSentenceChanged() {
-        this.mnemonicLanguage = this.getMnemonicLang();
-
-        // Rebuild words based on typed sentence
-        if (this.mnemonicLanguage === "CHINESE_SIMPLIFIED") {
-            this.getMnemonicWordsFromChinese();
-        }
-        else {
-            this.mnemonicWords = this.mnemonicSentence.trim().replace(/[\r\n]/g,"").split(" ");
-            this.mnemonicWords = this.mnemonicWords.filter(item => item !== '');
-        }
-    }
-
-    getMnemonicWordsFromChinese() {
-        this.mnemonicWords = [];
-        this.mnemonicSentence = this.mnemonicSentence.trim().replace(/ /g, '');
-        for (let i = 0; i < this.mnemonicSentence.length; i++) {
-            this.mnemonicWords.push(this.mnemonicSentence[i]);
+        let standardMnemonicSentence = this.mnemonicSentence.trim().replace(/[\r\n]/g,"");
+        let chineseMnemonic = Util.chinese(this.mnemonicSentence[0]);
+        if (chineseMnemonic) {
+          // You can input chinese mnemonics without space.
+          this.mnemonicWords = [];
+          standardMnemonicSentence = standardMnemonicSentence.replace(/ /g, '');
+          for (let i = 0; i < standardMnemonicSentence.length; i++) {
+            this.mnemonicWords.push(standardMnemonicSentence[i]);
+          }
+        } else {
+          this.mnemonicWords = standardMnemonicSentence.split(" ").filter(item => item !== '');
         }
     }
 
@@ -178,6 +173,7 @@ export class ImportDIDPage {
                 Logger.log('didsessions', "Import screen: import process is continuing");
 
                 this.loadingIdentity = true;
+                this.identityService.identityBeingCreated.mnemonicLanguage = this.mnemonicLanguage;
                 this.identityService.identityBeingCreated.mnemonicPassphrase = params.data.password;
                 this.doImport();
             }
@@ -186,11 +182,9 @@ export class ImportDIDPage {
     }
 
     async promptStorePassword() {
-        // First make sure that the provided mnemonic format is valid locally.
-        this.mnemonicLanguage = this.getMnemonicLang();
-        this.mnemonicForImport = this.mnemonicWords.join(' ').toLowerCase();;
-        let mnemonicValid = await this.identityService.isMnemonicValid(this.mnemonicLanguage, this.mnemonicForImport);
-        if (!mnemonicValid) {
+        this.mnemonicForImport = this.mnemonicWords.join(' ').toLowerCase();
+        this.mnemonicLanguage = await DIDMnemonicHelper.getMnemonicLanguage(this.mnemonicForImport);
+        if (!this.mnemonicLanguage) {
             this.popup.ionicAlert('didsessions.mnemonic-invalid', 'didsessions.mnemonic-invalid-prompt');
             return;
         }
@@ -200,12 +194,6 @@ export class ImportDIDPage {
 
     private async doImport() {
         this.identityService.runNextStep(this.nextStepId, this.mnemonicForImport);
-    }
-
-    getMnemonicLang(): DIDPlugin.MnemonicLanguage {
-        // TODO: Let user choose the right language on UI. For now, just using the system language,
-        // this is a limitation.
-        return this.identityService.getMnemonicLang();
     }
 
     inputMnemonicCompleted() {

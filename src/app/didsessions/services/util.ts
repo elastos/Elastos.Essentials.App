@@ -31,7 +31,23 @@ export class Util {
 
         return uuid.join('');
     }
-    
+
+    // TODO: not enough for other western languages like french.
+    static english(text): boolean {
+        var pattern = new RegExp("[A-Za-z]+");
+        return pattern.test(text);
+    };
+
+    static chinese(text): boolean {
+        var pattern = new RegExp("[\u4E00-\u9FA5]+");
+        return pattern.test(text);
+    };
+
+    static japanese(text): boolean {
+        var pattern = new RegExp("[\u0800-\u4e00]+");
+        return pattern.test(text);
+    };
+
     public static isEmptyObject(obj): boolean {
         for (let key in obj) {
             if (obj.hasOwnProperty(key)) {
@@ -48,18 +64,18 @@ export class Util {
     public static clone(Obj) {
         if (typeof (Obj) != 'object') return Obj;
         if (Obj == null) return Obj;
-  
+
         let newObj;
-  
+
         if (Obj instanceof (Array)) {
             newObj = new Array();
         } else {
             newObj = new Object();
         }
-  
+
         for (let i in Obj)
             newObj[i] = this.clone(Obj[i]);
-  
+
         return newObj;
     }
 }
