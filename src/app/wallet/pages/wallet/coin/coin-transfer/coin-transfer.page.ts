@@ -665,10 +665,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
               }
         });
         Logger.log('wallet', 'pickfriend intent res', res);
-        this.zone.run(() => {
-            this.toAddress = res.result.friends[0].credentials.elaAddress;
-            this.addressName = res.result.friends[0].credentials.name;
-        });
+        if (res.result.friends && res.result.friends[0]) {
+          this.zone.run(() => {
+              this.toAddress = res.result.friends[0].credentials.elaAddress;
+              this.addressName = res.result.friends[0].credentials.name;
+          });
+        }
     }
 
     getResidual(balance: BigNumber) {
