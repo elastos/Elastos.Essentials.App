@@ -83,7 +83,7 @@ export class VotePage implements OnInit {
 
         Logger.log('dposvoting', 'Insent sent sucessfully', res);
 
-        if(res.result.txid === null ) {
+        if(!res.result.txid) {
           votesSent = true;
           this.voteFailed('dposvoting.vote-cancelled');
         } else {
@@ -174,7 +174,7 @@ export class VotePage implements OnInit {
     });
     this.toast.onWillDismiss(() => {
       this.toast = null;
-    }) 
+    })
     this.toast.present();
   }
 
@@ -196,7 +196,7 @@ export class VotePage implements OnInit {
     });
     this.toast.onWillDismiss(() => {
       this.toast = null;
-    }) 
+    })
     this.toast.present();
   }
 
