@@ -152,7 +152,7 @@ export class VotePage implements OnInit {
     this.closeToast();
     this.toast = await this.toastController.create({
       position: 'bottom',
-      header: this.translate.instant('dposvoting.vote-success'),
+      header: this.translate.instant('common.vote-success'),
       message: `${txid.slice(0,16) + '<br>' + txid.slice(16,32) + '<br>' + txid.slice(32,48)}`,
       color: "primary",
       buttons: [
@@ -165,7 +165,7 @@ export class VotePage implements OnInit {
           }
         },
         {
-          text: this.translate.instant('dposvoting.dismiss'),
+          text: this.translate.instant('common.dismiss'),
           handler: () => {
             this.toast.dismiss();
           }

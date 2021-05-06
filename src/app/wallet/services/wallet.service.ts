@@ -714,7 +714,7 @@ export class WalletManager {
 
         if (code !== 0) {
             Logger.log('wallet', 'OnTxPublished fail:', JSON.stringify(data));
-            this.popupProvider.ionicAlert_PublishedTx_fail('transaction-fail', tx + code, hash, reason);
+            this.popupProvider.ionicAlert_PublishedTx_fail('wallet.transaction-fail', tx + code, hash, reason);
             if (this.transactionMap[hash].lock !== true) {
                 delete this.transactionMap[hash];
                 this.localStorage.savePublishTxList(this.transactionMap);
