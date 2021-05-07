@@ -288,7 +288,11 @@
 
   .popover-wrapper{
     .popover-content {
-      width: 85vw;
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
     }
   }
 }
