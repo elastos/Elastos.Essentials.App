@@ -5,6 +5,7 @@ import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, BuiltInIcon, TitleBarForegroundMode } from './titlebar.types';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { Logger } from 'src/app/logger';
 
 @Component({
   selector: 'app-titlebar',
@@ -249,7 +250,7 @@ export class TitleBarComponent {
       this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
     else if (navigationMode == TitleBarNavigationMode.CLOSE)
       this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
-    else if(navigationMode == TitleBarNavigationMode.CUSTOM && customIcon) 
+    else if(navigationMode == TitleBarNavigationMode.CUSTOM && customIcon)
       this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: customIcon.key, iconPath: customIcon.iconPath });
     else
       this.setIcon(TitleBarIconSlot.INNER_LEFT, null);
@@ -263,7 +264,7 @@ export class TitleBarComponent {
   }
 
   outerLeftIconClicked() {
-    this.icons[TitleBarIconSlot.OUTER_LEFT].iconPath === BuiltInIcon.ELASTOS ? 
+    this.icons[TitleBarIconSlot.OUTER_LEFT].iconPath === BuiltInIcon.ELASTOS ?
       this.globalNav.navigateHome() :
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
   }
@@ -281,7 +282,7 @@ export class TitleBarComponent {
   }
 
   outerRightIconClicked(ev) {
-    this.menuVisible ? 
+    this.menuVisible ?
       this.openMenu(ev) :
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
   }
@@ -318,5 +319,10 @@ export class TitleBarComponent {
       this.theme.color = '#ffffff';
       this.foregroundMode = TitleBarForegroundMode.LIGHT;
     }
+  }
+
+  needToShowRedDot() {
+    return (this.icons[3].iconPath === BuiltInIcon.NOTIFICATIONS)
+        && (this.globalNotifications.notifications.length > 0);
   }
 }

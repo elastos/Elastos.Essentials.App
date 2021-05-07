@@ -13,8 +13,8 @@
       <img *ngIf="icons[2].visible" [src]="getIconPath(2)" (click)="innerRightIconClicked()">
     </ion-col>
     <ion-col size="1.25">
-      <img *ngIf="!menuVisible && icons[3].visible && !globalNotifications.newNotifications" [src]="getIconPath(3)" (click)="outerRightIconClicked($event)">
-      <div *ngIf="!menuVisible && icons[3].visible && globalNotifications.newNotifications" class="badge">
+      <img *ngIf="!menuVisible && icons[3].visible && !needToShowRedDot()" [src]="getIconPath(3)" (click)="outerRightIconClicked($event)">
+      <div *ngIf="!menuVisible && icons[3].visible && needToShowRedDot()" class="badge">
         <img  [src]="getIconPath(3)" (click)="outerRightIconClicked($event)">
         <div class="red-dot"></div>
       </div>

@@ -49,7 +49,7 @@ export class NotificationsPage implements OnInit {
 
   ngOnInit() {
     this.notificationService.init();
-    this.notificationService.resetNewNotifications();
+    // this.notificationService.resetNewNotifications();
   }
 
   ionViewWillEnter() {
@@ -160,7 +160,7 @@ export class NotificationsPage implements OnInit {
         return this.translate.instant('launcher.from-unknown-contact');
     }
     else if (notification.app) {
-      return this.notificationService.getAppTitle(notification.app);
+      return this.translate.instant(this.notificationService.getAppTitle(notification.app));
     }
     else if (notification.type == LauncherNotificationType.TIP) {
       return this.translate.instant('launcher.tip-of-the-day');

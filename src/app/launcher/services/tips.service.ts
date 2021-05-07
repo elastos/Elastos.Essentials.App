@@ -9,6 +9,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { App } from 'src/app/model/app.enum';
 
 const DURATION_MIN_BETWEEN_2_TIPS_MS = 12 * 60 * 60 * 1000; // 12 hours
 const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
@@ -145,6 +146,7 @@ export class TipsService {
       }
 
       this.notifications.sendNotification({
+        app: App.LAUNCHER,
         key: "launcher_tip_of_the_day", // Always overwrite previous tip notifications, if any
         title: this.translate.instant(tipToNotify.title),
         message: JSON.stringify(jsonMessage)

@@ -32,6 +32,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { GlobalNotificationsService, NotificationRequest } from 'src/app/services/global.notifications.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { App } from 'src/app/model/app.enum';
 
 export type InAppRPCMessage = {
     method: RPCMethod;
@@ -230,6 +231,7 @@ export class SPVSyncService {
         Logger.log("wallet", 'Sending sync completed notification for subwallet '+chainId);
 
         const request: NotificationRequest = {
+            app: App.WALLET,
             message: '',
             key: chainId + '-syncCompleted',
             title: chainId + ': ' + this.translate.instant('wallet.sync-completed'),

@@ -7,6 +7,7 @@ import { GlobalNotificationsService } from 'src/app/services/global.notification
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { App } from 'src/app/model/app.enum';
 
 
 @Injectable({
@@ -65,6 +66,7 @@ export class AppService {
       }
 
       const notification = {
+        app: App.CRPROPOSAL_VOTING,
         key: 'proposalsToday',
         title: 'CRC Proposals Today',
         message: message,
@@ -90,6 +92,7 @@ export class AppService {
           message = "You have " + targetProposalIndex + ' new proposals since you last visited, click to check them out';
         }
         const notification = {
+          app: App.CRPROPOSAL_VOTING,
           key: 'newProposals',
           title: 'New CRC Proposals',
           message: message,

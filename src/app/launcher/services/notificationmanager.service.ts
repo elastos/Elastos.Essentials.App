@@ -136,27 +136,27 @@ export class NotificationManagerService {
   getAppTitle(app: App) {
     switch (app) {
       case App.CONTACTS:
-        return 'app-contacts';
+        return 'launcher.app-contacts';
       case App.CRCOUNCIL_VOTING:
-        return 'app-cr-council';
+        return 'launcher.app-cr-council';
       case App.CRPROPOSAL_VOTING:
-        return 'app-cr-proposal';
+        return 'launcher.app-cr-proposal';
       case App.SCANNER:
-        return 'app-scanner';
+        return 'launcher.app-scanner';
       case App.DPOS_VOTING:
-        return 'app-dpos-voting';
+        return 'launcher.app-dpos-voting';
       case App.HIVE_MANAGER:
-        return 'app-hive';
+        return 'launcher.app-hive';
       case App.IDENTITY:
-        return 'app-identity';
+        return 'launcher.app-identity';
       case App.SETTINGS:
-        return 'app-settings';
+        return 'launcher.app-settings';
       case App.WALLET:
-        return 'app-wallet';
+        return 'launcher.app-wallet';
       case App.DEVELOPER_TOOLS:
-        return 'app-dev-tools';
+        return 'launcher.app-dev-tools';
       default:
-        return 'system-notification';
+        return 'launcher.system-notification';
     }
   }
 

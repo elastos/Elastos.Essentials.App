@@ -14,6 +14,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalService } from 'src/app/services/global.service.manager';
+import { App } from 'src/app/model/app.enum';
 
 
 export interface LastExpirationNotification {
@@ -108,6 +109,7 @@ export class BackgroundService extends GlobalService {
             Logger.log("Identity", "Sending expirations notifications");
             expirations.forEach(expiration =>{
               this.notifications.sendNotification({
+                app: App.IDENTITY,
                 key: expiration.id,
                 title: "Expiration",
                 message: expiration.message
