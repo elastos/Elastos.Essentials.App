@@ -64,7 +64,7 @@ export class AddPage implements OnInit {
       this.didInput = "";
       this.native.genericToast(this.translate.instant('contacts.please-add-a-valid-identity'));
     } else if(await this.didService.getUserDID() === this.didInput) {
-      this.native.genericToast('please-dont-add-self');
+      this.native.genericToast('contacts.please-dont-add-self');
     } else {
       this.native.showLoading(this.translate.instant('common.please-wait'));
       Logger.log('contacts', "Resolving DID Document");

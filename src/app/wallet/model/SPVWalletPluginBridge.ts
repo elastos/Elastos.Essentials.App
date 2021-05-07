@@ -1023,9 +1023,9 @@ export class SPVWalletPluginBridge {
         // Show an error popup
         if (err["code"] === 20013) {
             let amount = err["Data"] / Config.SELA;
-            this.popupProvider.ionicAlert_data('transaction-fail', error, amount);
+            this.popupProvider.ionicAlert_data('wallet.transaction-fail', error, amount);
         } else {
-            this.popupProvider.ionicAlert('error', 'Error-' + err["code"]);
+            this.popupProvider.ionicAlert('common.error', 'wallet.Error-' + err["code"]);
         }
 
         // Send a special error event

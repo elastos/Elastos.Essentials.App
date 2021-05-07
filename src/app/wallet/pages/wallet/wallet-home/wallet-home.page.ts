@@ -219,7 +219,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     promptTransfer2IDChain() {
         if (this.walletManager.needToPromptTransferToIDChain) {
-            this.popupProvider.ionicAlert('text-did-balance-not-enough');
+            this.popupProvider.ionicAlert('wallet.text-did-balance-not-enough');
             this.walletManager.setHasPromptTransfer2IDChain();
         }
     }

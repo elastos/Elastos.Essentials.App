@@ -226,7 +226,7 @@ export class CredentialDetailsPage {
 
   getDisplayableCredentialTitle(): string {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
-    let translationKey = "credential-info-type-" + fragment;
+    let translationKey = "identity.credential-info-type-" + fragment;
     let translated = this.translate.instant(translationKey);
 
     if (!translated || translated == "" || translated == translationKey)

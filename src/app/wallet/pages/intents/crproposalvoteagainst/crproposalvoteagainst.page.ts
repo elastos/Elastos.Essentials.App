@@ -90,7 +90,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('confirmTitle', 'transaction-pending');
+            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
             this.cancelOperation();
         }
     }
@@ -110,7 +110,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
         const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
         if (stakeAmount.isNegative()) {
             Logger.log('wallet', 'CRProposalVoteAgainstPage: Not enough balance:', stakeAmount.toString());
-            this.native.toast_trans('amount-null');
+            this.native.toast_trans('wallet.amount-null');
             return false;
         }
 

@@ -254,36 +254,7 @@ export const en = {
         'publish-error': 'Sorry, your public identity information could not be published for now. Please retry after a while.',
         'publish-error-title': "Publish error",
         'publish-wait': 'Please wait a few minutes before publishing again',
-    },
-
-    /******************** Profile Entries ********************/
-    'credential-info-type-did': 'Identity',
-    'credential-info-type-avatar': 'Avatar',
-    'credential-info-type-name': 'Name',
-    'credential-info-type-description': 'Bio',
-    'credential-info-type-email': 'Email',
-    'credential-info-type-birthDate': 'Birth date',
-    'credential-info-type-education': 'Education',
-    'credential-info-type-gender': 'Gender',
-    'credential-info-type-nation': 'Country',
-    'credential-info-type-telephone': 'Telephone',
-    'credential-info-type-nickname': 'Nickname',
-    'credential-info-type-birthPlace': 'Place of birth',
-    'credential-info-type-occupation': 'Occupation',
-    'credential-info-type-interests': 'Interests',
-    'credential-info-type-url': 'Website',
-    'credential-info-type-facebook': 'Facebook',
-    'credential-info-type-instagram': 'Instagram',
-    'credential-info-type-twitter': 'Twitter',
-    'credential-info-type-snapchat': 'Snapchat',
-    'credential-info-type-telegram': 'Telegram',
-    'credential-info-type-wechat': 'Wechat',
-    'credential-info-type-weibo': 'Weibo',
-    'credential-info-type-elaAddress': 'ELA Address',
-    'credential-info-type-twitch': 'Twitch',
-    'credential-info-type-tiktok': 'TikTok',
-    'credential-info-type-paypal': 'Paypal',
-    'credential-info-type-venmo': 'Venmo',
+    }
 };
 
 

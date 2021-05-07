@@ -85,21 +85,21 @@ export class DIDSyncService {
     } catch (err) {
       await this.native.hideLoading();
       Logger.log("identity", JSON.stringify(err));
-      await this.popupProvider.ionicAlert("publish-error-title", err.message);
+      await this.popupProvider.ionicAlert("identity.publish-error-title", err.message);
     }
   }
 
   private onDIDDocumentPublishResponse(result: DIDDocumentPublishEvent) {
     if (result.published) {
       Logger.log("identity", "PUBLISHED !");
-      this.popupProvider.ionicAlert("publish-success").then(() => {
+      this.popupProvider.ionicAlert("identity.publish-success").then(() => {
         this.events.publish("diddocument:publishresultpopupclosed", result);
       });
     } else if (result.cancelled) {
       Logger.log("identity", "CANCELLED");
     } else if (result.error) {
       Logger.error('identity', "ERROR");
-      this.popupProvider.ionicAlert("publish-error").then(() => {
+      this.popupProvider.ionicAlert("identity.publish-error").then(() => {
         this.events.publish("diddocument:publishresultpopupclosed", result);
       });
     }

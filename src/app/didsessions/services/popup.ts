@@ -21,7 +21,7 @@ export class PopupProvider {
                 backdropDismiss: false,
                 cssClass: 'my-custom-alert',
                 buttons: [{
-                    text: okText ? okText : this.translate.instant('confirm'),
+                    text: okText ? okText : this.translate.instant('common.confirm'),
                     handler: () => {
                         Logger.log('didsessions', 'ionicAlert Ok clicked');
                         resolve();

@@ -346,7 +346,7 @@ export class IdentityService {
             this.uxService.hideLoading();
             e = e ? e : "Not specific information";
             Logger.error('didsessions', 'createStoreAfterImport error', e);
-            await this.popupProvider.ionicAlert("Synchronization error", e, "Close");
+            await this.popupProvider.ionicAlert("Synchronization error", e, "common.close");
 
         }
     }
