@@ -260,7 +260,7 @@ export class AppDetailsPage {
 
   public async copyAppDIDToClipboard() {
     this.native.copyClipboard(this.app.didString);
-    this.native.genericToast('developertools.app-did-copied');
+    this.native.genericToast('developertools.app-did-copied', 2000, 'dark');
   }
 
   public async downloadAppIconFromDeveloperHive() {
