@@ -40,7 +40,7 @@ Request example:
   appPackageId: "org.mycompany.myapp",
   identifier: "customcredentialkey", // unique identifier for this credential
   types: [], // Additional credential types (strings) such as BasicProfileCredential.
-  subjectDID: "did:elastos:abc", // DID targeted by the created credential. Only that did will be able to import the credential.
+  subjectdid: "did:elastos:abc", // DID targeted by the created credential. Only that did will be able to import the credential.
   properties: [{
       someCustomData: "Here is a test data that will appear in someone else's DID document after he imports it."
   }],
@@ -83,9 +83,8 @@ export class CredentialIssueRequestPage {
 
     this.zone.run(async () => {
       this.receivedIntent = this.intentService.getReceivedIntent();
-
-      this.runPreliminaryChecks();
       this.organizeDisplayableInformation();
+      this.runPreliminaryChecks();
 
       Logger.log('Identity', "Displayable credential:", this.displayableCredential)
     });
@@ -121,7 +120,7 @@ export class CredentialIssueRequestPage {
     this.displayableCredential = {
       // The received identitier should NOT start with #, but DID SDK credentials start with #.
       identifier: new DIDURL("#"+this.receivedIntent.params.identifier).getFragment(),
-      receiver: this.receivedIntent.params.subjectDID,
+      receiver: this.receivedIntent.params.subjectdid,
       expirationDate: null,
       values: displayableEntries,
     };

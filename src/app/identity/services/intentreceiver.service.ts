@@ -230,6 +230,8 @@ export class IntentReceiverService {
             return false;
         }
 
+        this.receivedIntent = intent;
+
         return true;
     }
 
@@ -296,6 +298,8 @@ export class IntentReceiverService {
             return false;
         }
 
+        this.receivedIntent = intent;
+
         return true;
     }
 
@@ -310,6 +314,8 @@ export class IntentReceiverService {
             Logger.error('identity', "Missing 'data'.");
             return false;
         }
+
+        this.receivedIntent = intent;
 
         return true;
     }
@@ -337,6 +343,8 @@ export class IntentReceiverService {
 
         // Nothing specific to do yet
 
+        this.receivedIntent = intent;
+
         return true;
     }
 
@@ -348,6 +356,8 @@ export class IntentReceiverService {
 
         // Nothing specific to do yet
 
+        this.receivedIntent = intent;
+
         return true;
     }
 
@@ -358,6 +368,8 @@ export class IntentReceiverService {
             return false;
 
         // Nothing specific to do yet
+
+        this.receivedIntent = intent;
 
         return true;
     }

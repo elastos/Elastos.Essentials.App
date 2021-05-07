@@ -78,7 +78,7 @@ export type CredImportIdentityIntent = IdentityIntent<CredImportIdentityIntentPa
 export type CredIssueIdentityIntentParams = IdentityIntentParams & {
     identifier: string,
     types: string[],
-    subjectDID: string,
+    subjectdid: string,
     properties: any,
     expirationDate?: string,
 }
