@@ -24,12 +24,12 @@ export class LauncherInitService extends GlobalService {
 
   public async init(): Promise<void> {
     this.didManager.init();
+    this.tipsService.init();
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // No blocking services start
     this.appManagerService.init();
-    this.tipsService.init();
   }
 
   public async onUserSignOut(): Promise<void> {
