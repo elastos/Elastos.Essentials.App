@@ -11,7 +11,7 @@ import { GlobalNotificationsService } from 'src/app/services/global.notification
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { App } from 'src/app/model/app.enum';
 
-const DURATION_MIN_BETWEEN_2_TIPS_MS = 12 * 60 * 60 * 1000; // 12 hours
+const DURATION_MIN_BETWEEN_2_TIPS_HOURS = 12; // 12 hours
 const DURATION_BETWEEN_2_CHECKS_MS = 5 * 60 * 1000; // 5 minutes
 
 /**
@@ -25,69 +25,67 @@ export class TipsService {
   // NOTE: The following tips are displayed in the same order they are in the list below:
   private tips: Tip[] = [
     {
-      title: "tip-title-welcome",
-      message: "tip-message-welcome",
+      title: "launcher.tip-title-welcome",
+      message: "launcher.tip-message-welcome",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "tip-title-dev-getting-support",
-      message: "tip-message-dev-getting-support",
+      title: "launcher.tip-title-dev-getting-support",
+      message: "launcher.tip-message-dev-getting-support",
       audience: TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS
     },
     {
-      title: "tip-title-what-is-did",
-      message: "tip-message-what-is-did",
+      title: "launcher.tip-title-what-is-did",
+      message: "launcher.tip-message-what-is-did",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "tip-title-what-is-hive",
-      message: "tip-message-what-is-hive",
+      title: "launcher.tip-title-what-is-hive",
+      message: "launcher.tip-message-what-is-hive",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "tip-title-dev-wipe-data",
-      message: "tip-message-dev-wipe-data",
+      title: "launcher.tip-title-dev-wipe-data",
+      message: "launcher.tip-message-dev-wipe-data",
       audience: TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS
     },
     {
-      title: "tip-title-toolbox",
-      message: "tip-message-toolbox",
+      title: "launcher.tip-title-toolbox",
+      message: "launcher.tip-message-toolbox",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "tip-title-not-only-for-crypto-players",
-      message: "tip-message-not-only-for-crypto-players",
+      title: "launcher.tip-title-not-only-for-crypto-players",
+      message: "launcher.tip-message-not-only-for-crypto-players",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "tip-title-dev-trinity-native",
-      message: "tip-message-dev-trinity-native",
+      title: "launcher.tip-title-dev-trinity-native",
+      message: "launcher.tip-message-dev-trinity-native",
       audience: TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS
     },
     {
-      title: "tip-title-capsule-marketplace",
-      message: "tip-message-capsule-marketplace",
+      title: "launcher.tip-title-capsule-marketplace",
+      message: "launcher.tip-message-capsule-marketplace",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "tip-title-bring-friends",
-      message: "tip-message-bring-friends",
+      title: "launcher.tip-title-bring-friends",
+      message: "launcher.tip-message-bring-friends",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
   ]
 
   constructor(
     private translate: TranslateService,
-    private globalIntentService: GlobalIntentService,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
-    private notifications: GlobalNotificationsService,
-    private didSessions: GlobalDIDSessionsService) { }
+    private notifications: GlobalNotificationsService) { }
 
   public async init() {
     Logger.log("Launcher", "Tips service is initializing");
 
-    //await this.resetAllTipsAsNotViewed(); // DEBUG ONLY
+    // await this.resetAllTipsAsNotViewed(); // DEBUG ONLY
 
     // Wait a moment while the launcher starts, then start showing tips if needed.
     setTimeout(() => {
@@ -100,8 +98,10 @@ export class TipsService {
 
     if (!await this.userWantsToSeeTips()) {
       Logger.log('Launcher', "User doesn't want to see tips. Skipping.");
+      return;
     }
-    else if (await this.rightTimeToShowATip()) {
+
+    if (await this.rightTimeToShowATip()) {
       this.showNextTip();
     }
 
@@ -162,12 +162,11 @@ export class TipsService {
         // value must be a ISO string
         let latestSentTipTime = moment(value);
 
-        //Only for debug?
-        //console.error(latestSentTipTime, moment())
+        Logger.log('Launcher', latestSentTipTime, moment())
 
         // Right time to show if last time we have shown a tip was more than X hours ago.
-        resolve(latestSentTipTime.add(DURATION_MIN_BETWEEN_2_TIPS_MS, "hours").isBefore(moment()));
-        //resolve(true);
+        resolve(latestSentTipTime.add(DURATION_MIN_BETWEEN_2_TIPS_HOURS, "hours").isBefore(moment()));
+        // resolve(true);
       }
       catch (err) {
         Logger.error('Launcher', "rightTimeToShowATip() error:", err);
