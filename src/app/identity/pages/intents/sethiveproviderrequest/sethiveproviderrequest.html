@@ -3,8 +3,8 @@
     <ion-grid *ngIf="receivedIntent" class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
             <img src="assets/identity/images/fingerprint.svg">
-            <ion-card-title>{{ 'identity.sethiveprovider-app-id' | translate }}</ion-card-title>
-            <ion-card-subtitle *ngIf="receivedIntent.params">{{ receivedIntent.params.from }}</ion-card-subtitle>
+            <ion-card-title *ngIf="receivedIntent.params.from">{{ 'identity.sethiveprovider-app-id' | translate }}</ion-card-title>
+            <ion-card-subtitle *ngIf="receivedIntent.params.from">{{ receivedIntent.params.from }}</ion-card-subtitle>
         </ion-card>
 
         <div class="msg-container">
