@@ -69,7 +69,7 @@ export class SetHiveProviderRequestPage {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.titleBar.globalNav.exitCurrentContext();
+      this.rejectRequest();
     });
     this.receivedIntent = this.intentService.getReceivedIntent();
   }
