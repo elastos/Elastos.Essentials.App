@@ -330,20 +330,20 @@
         .btn-container {
             padding: 20px 10px;
         }
-    
+
         .syncing-container {
             padding: 20px;
-    
+
             ion-card-title {
                 font-weight: 700;
                 font-size: 22px;
             }
-    
+
             ion-card-subtitle {
                 font-weight: 600;
                 font-size: 13px;
             }
-    
+
             span {
                 font-size: 13px;
                 font-weight: 600;
@@ -546,6 +546,7 @@
 
         p {
             margin-top: 0;
+            margin-bottom: 10px;
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.7px;
@@ -619,12 +620,12 @@
             .cancel {
                 box-shadow: 0 3px 6px 0 #151626;
                 background-color: #202039;
-    
+
                 ion-label {
                     color: #ffffff;
                 }
             }
-    
+
             .confirm {
                 box-shadow: 0 3px 15px 0 #151626;
             }

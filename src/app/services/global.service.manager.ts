@@ -25,7 +25,6 @@ export class GlobalServiceManager {
     }
 
     async emitUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        console.log("---emitUserSignIn");
         for (let service of this.services) {
             await service.onUserSignIn(signedInIdentity);
         }

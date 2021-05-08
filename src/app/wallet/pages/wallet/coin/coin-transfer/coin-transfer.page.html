@@ -74,12 +74,12 @@
                 </ion-col>
             </ion-row>
         </ion-grid>
-    
+
         <!------------------ SEND ------------------>
-    
+
         <ion-grid *ngIf="transferType === 2" class="send-container" [class.send-dark-container]="theme.darkMode" [class.blur]="native.popup">
             <img class="header-img" [src]="!theme.darkMode ? 'assets/wallet/coins/ela-black.svg' : 'assets/wallet/coins/ela-white.svg'"/>
-    
+
             <h1>{{ 'wallet.enter-amount' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="6" class="left-col">
@@ -110,12 +110,12 @@
                     </p>
                 </ion-col>
             </ion-row>
-    
+
             <ion-row class="balance-row">
                 <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
                 <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
             </ion-row>
-    
+
             <h1>{{ 'wallet.send-to' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="12">
@@ -135,18 +135,18 @@
                     </div>
                 </ion-col>
             </ion-row>
-    
+
             <ion-row class="contact-row" [class.invisible]="!addressName">
                 <p>{{ addressName }}</p>
             </ion-row>
-    
+
             <ion-row *ngIf="suggestedAddresses.length > 0" class="cryptoname-row">
                 <ion-col size="12" *ngFor="let suggestedAddress of suggestedAddresses" (click)="selectSuggestedAddress(suggestedAddress)">
                     <span>{{ suggestedAddress.getDisplayName() }}</span>
                     <ion-icon mode="ios" name="add"></ion-icon>
                 </ion-col>
             </ion-row>
-    
+
             <h1 *ngIf="suggestedAddresses.length === 0" (click)="hideMemo = !hideMemo">
                 {{ 'wallet.advanced-options' | translate }}
                 <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'" [class.rotate]="!hideMemo">
@@ -188,7 +188,7 @@
             </ion-row>
         </div>
     </div>
- 
+
 
     <!------------------ PAY INTENT ------------------>
 
@@ -236,7 +236,7 @@
             <p>{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
         </div>
 
-        <div class="btn-containner">
+        <div class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode">
             <p *ngIf="valuesReady()">{{ 'wallet.insufficient-balance' | translate }}</p>
             <ion-row class="btn-row">
                 <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
@@ -250,7 +250,7 @@
             </ion-row>
         </div>
     </div>
-    
+
 </ion-content>
 
 <!------------------ RECHARGE AND SEND FOOTER ------------------>

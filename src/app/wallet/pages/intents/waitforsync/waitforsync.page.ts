@@ -127,7 +127,7 @@ export class WaitForSyncPage implements OnInit {
                 break;
             case 'pay':
                 this.action = 'wallet.text-transfer';
-                this.nextScreen = '/wallet/intents/coin-transfer';
+                this.nextScreen = '/wallet/coin-transfer';
                 break;
             case 'crproposalvoteagainst':
                 this.action = 'Vote against proposal';
