@@ -16,7 +16,7 @@
                 <p class="second-msg">{{ 'wallet.access-data-access' | translate }}</p>
             </div>
             <ion-row class="data-row" *ngFor="let item of requestItems">
-                <p>{{ item.name | translate }}</p>
+                <p>{{ getClaimTitle(item.name) | translate }}</p>
                 <h5 *ngIf="item.name === 'elaamount'">{{ item.value/Config.SELA }}</h5>
                 <h5 *ngIf="item.name !== 'elaamount'">{{ item.value }}</h5>
             </ion-row>
@@ -37,7 +37,7 @@
             <ion-label>{{ 'common.confirm' | translate }}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
-        
+
     </ion-grid>
 </ion-content>
 

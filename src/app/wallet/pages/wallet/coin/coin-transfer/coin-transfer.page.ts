@@ -607,7 +607,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      */
     selectSuggestedAddress(suggestedAddress: CryptoAddressResolvers.CryptoNameAddress) {
         this.toAddress = suggestedAddress.address;
-        this.addressName = suggestedAddress.getDisplayName();
+        // this.addressName = suggestedAddress.getDisplayName();
+        this.addressName = suggestedAddress.name;
 
         // Hide/reset suggestions
         this.suggestedAddresses = [];

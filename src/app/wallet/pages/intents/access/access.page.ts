@@ -125,6 +125,25 @@ export class AccessPage implements OnInit {
         return value;
     }
 
+    getClaimTitle(key) {
+      let value = '';
+      switch (key) {
+        case 'elaaddress':
+            value = 'wallet.elaaddress';
+            break;
+        case 'elaamount':
+            value = 'wallet.elaamount';
+            break;
+        case 'ethaddress':
+            value = 'wallet.ethaddress';
+            break;
+        default:
+            Logger.log('wallet', 'Not support ', key);
+            break;
+      }
+      return value;
+    }
+
     async createAddress(chainId: string) {
         return this.masterWallet.getSubWallet(chainId).createAddress();
     }

@@ -35,21 +35,29 @@ export class ContactsService {
     return new Promise<void>((resolve, reject) => {
       this.storage.getContacts().then((contacts) => {
         Logger.log('wallet', "Fetched stored contacts", contacts);
+        this.contacts = contacts;
         if (contacts) {
           let contactsChecked = 0;
-          this.contacts.forEach(async (contact) => {
-            const cryptoNameResolver = new CryptoAddressResolvers.CryptoNameResolver(this.http);
+          let needUpdate = false;
+          const cryptoNameResolver = new CryptoAddressResolvers.CryptoNameResolver(this.http);
+          contacts.forEach(async (contact, index) => {
+            if (contact.cryptoname.startsWith('CryptoName: ')) {
+              contact.cryptoname = contact.cryptoname.replace('CryptoName: ', '')
+              needUpdate = true;
+            }
             const results: CryptoAddressResolvers.Address[] = await cryptoNameResolver.resolve(contact.cryptoname, StandardCoinName.ELA);
             contactsChecked++;
-
-            if (results) {
+            if (results && results[0]) {
               contact.address = results[0].address;
+              needUpdate = true;
             }
-            if (contactsChecked === contacts.length) {
+            else {
+              this.contacts.splice(index, 1);
+            }
+            if ((contactsChecked === contacts.length) && needUpdate) {
               this.storage.setContacts(this.contacts);
             }
           });
-          this.contacts = contacts;
         }
         resolve();
       });
