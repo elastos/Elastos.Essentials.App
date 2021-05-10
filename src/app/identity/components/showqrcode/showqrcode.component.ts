@@ -37,7 +37,7 @@ export class ShowQRCodeComponent implements OnInit {
 
   copyDIDToClipboard() {
     this.native.copyClipboard(this.didString);
-    this.native.toast_trans('common.copied-to-clipboard');
+    this.native.toast_trans('identity.copied-to-clipboard');
   }
 
   shareInvitationLink() {

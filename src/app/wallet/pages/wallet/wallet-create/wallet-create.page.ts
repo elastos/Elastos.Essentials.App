@@ -125,7 +125,7 @@ export class WalletCreatePage implements OnInit {
 
     showHelp(event) {
         this.walletCreationService.type === 1 ?
-            this.native.showHelp(event, 'help:create-password') :
-            this.native.showHelp(event, 'help:import-password');
+            this.native.showHelp(event, 'wallet.help:create-password') :
+            this.native.showHelp(event, 'wallet.help:import-password');
     }
 }
