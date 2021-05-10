@@ -269,7 +269,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.syncSubscription = this.events.subscribe(syncCompletionEventName, (coin) => {
                 this.zone.run(() => {
                     this.waitingForSyncCompletion = false;
-                    this.amount = 0.1;
                 });
                 this.syncSubscription.unsubscribe();
                 this.syncSubscription = null;
@@ -434,22 +433,22 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     // For starting tx
-    valuesReady(): boolean {
+    valuesReady(showToast = true): boolean {
         let valuesValid = false;
         if (Util.isNull(this.amount)) {
-            this.native.toast_trans('wallet.amount-null');
+            if (showToast) this.native.toast_trans('wallet.amount-null');
         } else if (!Util.number(this.amount)) {
-            this.native.toast_trans('wallet.amount-invalid');
+            if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else if (this.amount <= 0) {
-            this.native.toast_trans('wallet.amount-invalid');
+            if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else if (!this.masterWallet.subWallets[this.chainId].isBalanceEnough(new BigNumber(this.amount))) {
-            this.native.toast_trans('wallet.insuff-balance');
+            if (showToast) this.native.toast_trans('wallet.insuff-balance');
         } else if (this.amount.toString().indexOf('.') > -1 && this.amount.toString().split(".")[1].length > 8) {
-            this.native.toast_trans('wallet.amount-invalid');
+            if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else {
             if (this.fromSubWallet.type === CoinType.ERC20) {
                 if (this.masterWallet.getSubWallet(StandardCoinName.ETHSC).balance.isLessThan(0.001)) {
-                    this.native.toast_trans('wallet.eth-insuff-balance', 4000);
+                    if (showToast) this.native.toast_trans('wallet.eth-insuff-balance', 4000);
                 } else {
                     valuesValid = true;
                 }
@@ -457,7 +456,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 valuesValid = true;
             }
         }
-
         return valuesValid;
     }
 

@@ -215,7 +215,7 @@ export class MasterWallet {
                     }
                 }
             } else {
-                Logger.error('wallet', 'Token has no name or symbol:', token);
+                Logger.warn('wallet', 'Token has no name or symbol:', token);
             }
         });
     }
