@@ -193,7 +193,7 @@ export class ProfileService {
     // }
 
     this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("identity.share-add-me-as-friend"),
+      title: this.translate.instant("common.share-add-me-as-friend"),
       url: await this.getAddFriendShareableUrl(),
     });
   }

@@ -24,7 +24,7 @@ export class LanguagePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('language-setting'));
+    this.titleBar.setTitle(this.translate.instant('common.language-setting'));
   }
 
   ionViewWillLeave() {

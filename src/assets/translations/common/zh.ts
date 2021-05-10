@@ -39,7 +39,7 @@ export const zh = {
         'favorite': '收藏',
 
         // Popups, error messages
-        'something-went-wrong': 'Something went wrong, please try again later',
+        'something-went-wrong': '出错啦，请稍后再试',
         'please-wait': "请稍候...",
         "sorry": "抱歉",
         'name-is-missing': "请输入名称",

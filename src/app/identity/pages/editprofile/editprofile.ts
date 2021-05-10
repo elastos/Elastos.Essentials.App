@@ -329,7 +329,7 @@ export class EditProfilePage {
     // Get the form input data by field key
     let nameEntry = this.profile.getEntryByKey("name");
     if (!nameEntry || nameEntry.value === "") {
-      this.native.toast_trans("identity.name-is-missing");
+      this.native.toast_trans("common.name-is-missing");
       return false;
     }
 

@@ -74,7 +74,7 @@ export class EditProfilePage {
 
   checkParams(){
     if(!this.name || this.name == ""){
-      this.uxService.toast_trans('name-is-missing');
+      this.uxService.toast_trans('common.name-is-missing');
       return false;
     }
     return true;
