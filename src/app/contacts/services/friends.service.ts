@@ -15,6 +15,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { App } from "src/app/model/app.enum"
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -782,7 +783,7 @@ export class FriendsService {
       }
     });
 
-    this.globalNav.navigateBack();
+    this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends/' + id);
   }
 
   /********************************************************

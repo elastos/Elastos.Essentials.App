@@ -49,7 +49,35 @@ export class GlobalNavService {
      * Deletes all recent steps as long as they belong to the given context.
      * This basically comes back to the root of a "dApp".
      */
-    public navigateRoot(context: string, route: string, routerOptions?: any) {
+    public navigateRoot(context: string, customRoute?: string, routerOptions?: any) {
+        let route: string = '';
+
+        // Add a default route for apps by simply giving the context 
+        if(!customRoute) {
+            switch(context) {
+                case App.CONTACTS:
+                    route = '/contacts/friends';
+                    break;
+                case App.IDENTITY:
+                    route = '/identity/myprofile/home';
+                    break;
+                case App.SCANNER:
+                    route = '/scanner/scan';
+                    break;
+                case App.SETTINGS:
+                    route = '/settings/menu';
+                    break;
+                case App.CRCOUNCIL_VOTING:
+                    route = '/crcouncilvoting/candidates';
+                    break;
+                case App.CRPROPOSAL_VOTING:
+                    route = '/crproposalvoting/proposals/ALL';
+                    break;
+            }
+        } else {
+            route = customRoute;
+        }
+
         Logger.log("Nav", "Setting "+context+" navigation context root to: "+route);
 
         while (this.canGoBack()) {
