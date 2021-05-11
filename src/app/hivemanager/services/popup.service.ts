@@ -23,7 +23,7 @@ export class PopupService {
     public ionicAlert(
         title: string,
         subTitle?: string,
-        okText: string = 'alert.confirm'
+        okText: string = 'hivemanager.alert.confirm'
     ): Promise<void> {
         return new Promise((resolve, reject) => {
             this.alert = null;
@@ -48,8 +48,8 @@ export class PopupService {
     public ionicConfirm(
         title: string,
         message: string,
-        okText: string = "alert.confirm",
-        cancelText: string = "alert.cancel"
+        okText: string = 'hivemanager.alert.confirm',
+        cancelText: string = 'hivemanager.alert.cancel'
     ): Promise<boolean> {
         return new Promise((resolve, reject) => {
             this.alert = null;
@@ -81,8 +81,8 @@ export class PopupService {
         title: string,
         message: string,
         opts?: any,
-        okText: string = 'alert.okay',
-        cancelText: string = 'alert.cancel'
+        okText: string = 'hivemanager.alert.okay',
+        cancelText: string = 'hivemanager.alert.cancel'
     ): Promise<any> {
         return new Promise((resolve, reject) => {
         let defaultText = opts && opts.defaultText ? opts.defaultText : null;
