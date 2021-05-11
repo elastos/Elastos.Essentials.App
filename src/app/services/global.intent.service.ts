@@ -21,6 +21,11 @@ export class GlobalIntentService {
     Logger.log("Intents", "Global intent service is initializing");
   }
 
+  // Clear the intent when signout.
+  public clear() {
+    this.intentListener.next(null);
+  }
+
   public async listen() {
     Logger.log("Intents", "Listening to external incoming intents");
     essentialsIntentManager.addIntentListener((receivedIntent)=>{

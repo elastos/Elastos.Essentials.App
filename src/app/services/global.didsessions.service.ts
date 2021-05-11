@@ -4,6 +4,7 @@ import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalNavService } from './global.nav.service';
 import { GlobalServiceManager } from './global.service.manager';
+import { GlobalIntentService } from './global.intent.service';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -42,7 +43,7 @@ export class GlobalDIDSessionsService {
 
   public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
-  constructor(private storage: GlobalStorageService, private globalNavService: GlobalNavService) {
+  constructor(private storage: GlobalStorageService, private globalNavService: GlobalNavService, private globalIntentService: GlobalIntentService,) {
   }
 
   public async init(): Promise<void> {
@@ -140,8 +141,10 @@ export class GlobalDIDSessionsService {
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
 
-    await GlobalServiceManager.getInstance().emitUserSignOut();
+    // clear the last intent
+    this.globalIntentService.clear();
 
+    await GlobalServiceManager.getInstance().emitUserSignOut();
     this.globalNavService.navigateDIDSessionHome();
   }
 }

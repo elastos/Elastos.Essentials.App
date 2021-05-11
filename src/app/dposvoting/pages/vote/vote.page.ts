@@ -72,7 +72,7 @@ export class VotePage implements OnInit {
     });
 
     if (castedNodeKeys.length > 0) {
-      Logger.log('dposvoting', castedNodeKeys);
+      Logger.log('dposvoting', 'castedNodeKeys:', castedNodeKeys);
       this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "nodes", castedNodeKeys);
       let votesSent: boolean = false;
 
