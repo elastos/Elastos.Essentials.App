@@ -21,6 +21,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -63,6 +64,7 @@ export class IdentityService {
         private translate: TranslateService,
         private alertCtrl: AlertController,
         private uxService: UXService,
+        private nativeService: GlobalNativeService,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -210,10 +212,17 @@ export class IdentityService {
             }
             let result = await passwordManager.setPasswordInfo(passwordInfo);
             if (result.value) {
+                await this.nativeService.showLoading(this.translate.instant('common.please-wait'));
                 // Master password was created and did store password could be saved
                 // Save the identity entry in the did session plugin
                 let avatar = createdDID.getAvatarCredentialValue();
-                await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
+                let newIdentity = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
+                // Sigin, for direct start wallet service to automatically create a new wallet by the mnemonics
+                // After addIdentity for don't save mnemonicInfo in storage
+                newIdentity.mnemonicInfo = this.identityBeingCreated;
+                await this.signIn(newIdentity);
+                await this.nativeService.hideLoading();
+                return;
             }
             else {
                 // Go back to the default screen, creating the new DID is cancelled.
@@ -433,7 +442,7 @@ export class IdentityService {
         });
     }
 
-    private async addIdentity(didStoreId: string, didString: string, name: string, avatar: CredentialAvatar) {
+    private async addIdentity(didStoreId: string, didString: string, name: string, avatar: CredentialAvatar) : Promise<IdentityEntry> {
         /*
          // Special handler for the special "avatar" field
                     if (entry.key == "avatar") {
@@ -483,6 +492,8 @@ export class IdentityService {
         this.zone.run(() => {
             this.events.publish("identityadded", newIdentity);
         })
+
+        return newIdentity;
     }
 
     async loadGroupedIdentities(): Promise<IdentityGroup[]> {

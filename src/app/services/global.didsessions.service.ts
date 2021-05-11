@@ -5,6 +5,7 @@ import { GlobalStorageService } from './global.storage.service';
 import { GlobalNavService } from './global.nav.service';
 import { GlobalServiceManager } from './global.service.manager';
 import { GlobalIntentService } from './global.intent.service';
+import { NewIdentity } from '../didsessions/model/newidentity';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -24,6 +25,8 @@ export type IdentityEntry = {
   name: string;
   /** Optional profile picture for this identity */
   avatar?: IdentityAvatar;
+  /** Keep the mnemonic info for after did creeated or import */
+  mnemonicInfo?: NewIdentity;
 }
 
 /**

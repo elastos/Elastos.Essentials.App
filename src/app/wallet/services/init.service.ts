@@ -16,6 +16,9 @@ import { WalletPrefsService } from './pref.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
 import { GlobalService } from 'src/app/services/global.service.manager';
+import { AuthService } from './auth.service';
+import { Util } from 'src/app/didsessions/services/util';
+import { NewIdentity } from 'src/app/didsessions/model/newidentity';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +43,7 @@ export class WalletInitService extends GlobalService {
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
+    private authService: AuthService,
     private didSessions: GlobalDIDSessionsService
   ) {
     super();
@@ -60,12 +64,18 @@ export class WalletInitService extends GlobalService {
 
     // TODO: dirty, rework this
     this.subscription = this.events.subscribe("walletmanager:initialized", () => {
-        Logger.log("wallet", "walletmanager:initialized event received");
-        this.walletServiceInitialized = true;
+      Logger.log("wallet", "walletmanager:initialized event received");
+      this.walletServiceInitialized = true;
     });
 
     await this.walletManager.init();
     await this.intentService.init();
+
+    //After created or imported did, automatically import the did for the wallet.
+    if (signedInIdentity.mnemonicInfo != null) {
+      await this.importWalletWithMnemonicInfo(signedInIdentity.mnemonicInfo);
+      signedInIdentity.mnemonicInfo = null;
+    }
   }
 
   public async onUserSignOut(): Promise<void> {
@@ -102,6 +112,27 @@ export class WalletInitService extends GlobalService {
         });
       } else {
         Logger.log("wallet", "Wallet service is initializing, The Wallet will be displayed when the service is initialized.");
+      }
+    }
+  }
+
+  public async importWalletWithMnemonicInfo(mnemonicInfo: NewIdentity): Promise<void> {
+    Logger.error("wallet", "importWallet");
+    let masterWalletId = Util.uuid(6, 16);
+    const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
+    if (payPassword) {
+      try {
+        await this.walletManager.importWalletWithMnemonic(
+          masterWalletId,
+          mnemonicInfo.name,
+          mnemonicInfo.mnemonic,
+          mnemonicInfo.mnemonicPassphrase || "",
+          payPassword,
+          false
+        );
+      }
+      catch (err) {
+        Logger.error('wallet', 'Wallet import error:', err);
       }
     }
   }

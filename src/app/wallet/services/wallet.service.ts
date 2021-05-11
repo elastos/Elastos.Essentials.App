@@ -348,9 +348,27 @@ export class WalletManager {
     }
 
     /**
+     * After creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
+     * Go to wallet home page
+     */
+     public async importMasterWalletWithMnemonic(
+        masterId: WalletID,
+        walletName: string,
+        mnemonicStr: string,
+        mnemonicPassword: string,
+        payPassword: string,
+        singleAddress: boolean
+    ) {
+        await this.importWalletWithMnemonic(masterId, walletName, mnemonicStr, mnemonicPassword, payPassword, singleAddress);
+
+        // Go to wallet's home page.
+        this.native.setRootRouter("/wallet/wallet-home");
+    }
+
+    /**
      * Creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
      */
-    public async importMasterWalletWithMnemonic(
+    public async importWalletWithMnemonic(
         masterId: WalletID,
         walletName: string,
         mnemonicStr: string,
@@ -408,9 +426,6 @@ export class WalletManager {
         await this.backupService.checkSync(this.getWalletsList());
 
         this.startWalletSync(id);
-
-        // Go to wallet's home page.
-        this.native.setRootRouter("/wallet/wallet-home");
 
         // Get balance by rpc
         this.getAllSubwalletsBalanceByRPC(id);
