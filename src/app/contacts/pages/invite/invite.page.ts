@@ -44,7 +44,7 @@ export class InvitePage implements OnInit {
     this.route.queryParams.subscribe(params => {
       Logger.log('contacts', 'pickfriend', params);
 
-      if (params.singleInvite === "true") {
+      if (params.singleInvite === true) {
         this.isSingleInvite = true;
         this.buttonLabel = this.translate.instant('contacts.invite-contact');
       } else {
