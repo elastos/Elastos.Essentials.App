@@ -35,8 +35,8 @@ export class ContactsService {
     return new Promise<void>((resolve, reject) => {
       this.storage.getContacts().then((contacts) => {
         Logger.log('wallet', "Fetched stored contacts", contacts);
-        this.contacts = contacts;
         if (contacts) {
+          this.contacts = contacts;
           let contactsChecked = 0;
           let needUpdate = false;
           const cryptoNameResolver = new CryptoAddressResolvers.CryptoNameResolver(this.http);
