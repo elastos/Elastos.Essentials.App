@@ -136,21 +136,22 @@ export class CRmembervotePage implements OnInit {
 
     async createVoteCRTransaction() {
         Logger.log('wallet', 'Creating vote CR transaction');
-        const rawTx = await this.walletManager.spvBridge.createVoteCRTransaction(this.masterWalletId, this.chainId,
-          '', this.transfer.votes, this.transfer.memo, '[]');
+        //  TODO
+        // const rawTx = await this.walletManager.spvBridge.createVoteTransaction(this.masterWalletId, this.chainId,
+        //   '', this.transfer.votes, this.transfer.memo, '[]');
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWalletId,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: this.intentTransfer.action,
-            intentId: this.intentTransfer.intentId,
-        });
+        // const transfer = new Transfer();
+        // Object.assign(transfer, {
+        //     masterWalletId: this.masterWalletId,
+        //     chainId: this.chainId,
+        //     rawTransaction: rawTx,
+        //     payPassword: '',
+        //     action: this.intentTransfer.action,
+        //     intentId: this.intentTransfer.intentId,
+        // });
 
-        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+        // const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        // await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

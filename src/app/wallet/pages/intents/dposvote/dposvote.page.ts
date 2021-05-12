@@ -138,27 +138,28 @@ export class DPoSVotePage implements OnInit {
     async createVoteProducerTransaction(stakeAmount: string) {
         Logger.log('wallet', 'Creating vote transaction with amount', stakeAmount);
 
-        const rawTx =
-            await this.walletManager.spvBridge.createVoteProducerTransaction(
-                this.masterWalletId, this.chainId,
-                '', // To address, not necessary
-                stakeAmount,
-                JSON.stringify(this.coinTransferService.publickeys),
-                '', // Memo, not necessary
-            );
+        // TODO
+        // const rawTx =
+        //     await this.walletManager.spvBridge.createVoteProducerTransaction(
+        //         this.masterWalletId, this.chainId,
+        //         '', // To address, not necessary
+        //         stakeAmount,
+        //         JSON.stringify(this.coinTransferService.publickeys),
+        //         '', // Memo, not necessary
+        //     );
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWalletId,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: this.intentTransfer.action,
-            intentId: this.intentTransfer.intentId,
-        });
+        // const transfer = new Transfer();
+        // Object.assign(transfer, {
+        //     masterWalletId: this.masterWalletId,
+        //     chainId: this.chainId,
+        //     rawTransaction: rawTx,
+        //     payPassword: '',
+        //     action: this.intentTransfer.action,
+        //     intentId: this.intentTransfer.intentId,
+        // });
 
-        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+        // const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        // await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

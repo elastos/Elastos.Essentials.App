@@ -400,54 +400,6 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    syncStart(masterWalletId: string, chainId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-            walletManager.syncStart([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    syncStop(masterWalletId: string, chainId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-            walletManager.syncStop([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    reSync(masterWalletId: string, chainId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-            walletManager.reSync([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getBalanceInfo(masterWalletId: string, chainId: string): Promise<string> {
-        return new Promise((resolve, reject)=>{
-            walletManager.getBalanceInfo([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getBalance(masterWalletId: string, chainId: string): Promise<ELAAmountString> {
-        return new Promise((resolve, reject)=>{
-            walletManager.getBalance([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getBalanceWithAddress(masterWalletId: string, chainId: string, address: string, balanceType): Promise<ELAAmountString> {
-        return new Promise((resolve, reject)=>{
-            walletManager.getBalanceWithAddress([masterWalletId, chainId, address, balanceType],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
     createAddress(masterWalletId: string, chainId: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             walletManager.createAddress([masterWalletId, chainId],
@@ -464,25 +416,25 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    getLastAddresses(masterWalletId: string, chainId: string, internal: boolean): Promise<string[]> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.getLastAddresses([masterWalletId, chainId, internal],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    updateUsedAddress(masterWalletId: string, chainId: string, usedAddress: string[]): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.updateUsedAddress([masterWalletId, chainId, usedAddress],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
     getAllPublicKeys(masterWalletId: string, chainId: string, start: number, count: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             walletManager.getAllPublicKeys([masterWalletId, chainId, start, count],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getAllUTXOs(masterWalletId: string, chainId: string, start: number, count: number, address: string): Promise<AllUTXOs> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getAllUTXOs([masterWalletId, chainId, start, count, address],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    createConsolidateTransaction(masterWalletId: string, chainId: string, memo: string): Promise<TransactionID> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.createConsolidateTransaction([masterWalletId, chainId, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -507,23 +459,6 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    publishTransaction(masterWalletId: string, chainId: string, rawTransaction: string): Promise<PublishedTransaction> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.publishTransaction([masterWalletId, chainId, rawTransaction],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getAllTransactions(masterWalletId: string, chainId: string, start, addressOrTxId): Promise<AllTransactions> {
-        return new Promise(async (resolve, reject) => {
-            const maxNumberOfTransactionsToReturn = 20;
-            walletManager.getAllTransaction([masterWalletId, chainId, start, maxNumberOfTransactionsToReturn, addressOrTxId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
     // TODO: Types for listener data
     registerWalletListener(listener: (ret: SPVWalletMessage)=>void) {
         walletManager.registerWalletListener([],
@@ -537,26 +472,10 @@ export class SPVWalletPluginBridge {
             (err) => { this.handleError(err, null); });
     }
 
-    getLastBlockInfo(masterWalletId: string, chainId: string): Promise<BlockInfo> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getLastBlockInfo([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
     createWithdrawTransaction(masterWalletId: string, chainId: string, fromAddress: string, amount: string
         , mainchainAccounts: string, memo: string): Promise<string> {
             return new Promise(async (resolve, reject) => {
             walletManager.createWithdrawTransaction([masterWalletId, chainId, fromAddress, amount, mainchainAccounts, memo],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getGenesisAddress(masterWalletId: string, chainId: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getGenesisAddress([masterWalletId, chainId],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -726,30 +645,6 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createVoteProducerTransaction(masterWalletId: string, chainId: string, fromAddress: string, stake: string, publicKey: string, memo: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.createVoteProducerTransaction([masterWalletId, chainId, fromAddress, stake, publicKey, memo],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getVotedProducerList(masterWalletId: string, chainId: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getVotedProducerList([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getRegisteredProducerInfo(masterWalletId: string, chainId: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getRegisteredProducerInfo([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
     createRegisterProducerTransaction(masterWalletId: string, chainId: string, fromAddress: string, payloadJson: string, amount: number, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             walletManager.createRegisterProducerTransaction([masterWalletId, chainId, fromAddress, payloadJson, amount, memo],
@@ -848,53 +743,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createVoteCRTransaction(masterWalletId: string, chainId: string, fromAddress: string, votes: string, memo: string, invalidCandidates: string): Promise<string> {
+    createVoteTransaction(masterWalletId: string, chainId: string, fromAddress: string, votes: string, memo: string, invalidCandidates: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createVoteCRTransaction([masterWalletId, chainId, fromAddress, votes, memo, invalidCandidates],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getVotedCRList(masterWalletId: string, chainId: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getVotedCRList([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getRegisteredCRInfo(masterWalletId: string, chainId: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getRegisteredCRInfo([masterWalletId, chainId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getVoteInfo(masterWalletId: string, chainId: string, type: string): Promise<VoteInfo[]> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.getVoteInfo([masterWalletId, chainId, type],
-                (ret) => {
-                    resolve(JSON.parse(ret) as VoteInfo[]);
-                },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    createVoteCRCProposalTransaction(masterWalletId: string, chainId: string, fromAddress: string, votes: string, memo: string,
-        invalidCandidates: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.createVoteCRCProposalTransaction([masterWalletId, chainId, fromAddress, votes, memo, invalidCandidates],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    createImpeachmentCRCTransaction(masterWalletId: string, chainId: string, fromAddress: string, votes: string, memo: string,
-        invalidCandidates: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.createImpeachmentCRCTransaction([masterWalletId, chainId, fromAddress, votes, memo, invalidCandidates],
+            walletManager.createVoteTransaction([masterWalletId, chainId, fromAddress, votes, memo, invalidCandidates],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });

@@ -170,7 +170,8 @@ export class InvalidVoteCandidatesHelper {
         let invalidProposals: InvalidCRCProposalCandidate[] = [];
 
         // Retrieve previous vote info
-        let previousVoteInfo = await this.walletManager.spvBridge.getVoteInfo(this.masterWalletId, StandardCoinName.ELA, VoteType.CRCProposal) as CRProposalVoteInfo[];
+        // TODO
+        let previousVoteInfo// = await this.walletManager.spvBridge.getVoteInfo(this.masterWalletId, StandardCoinName.ELA, VoteType.CRCProposal) as CRProposalVoteInfo[];
         Logger.log('wallet', "previousVoteInfo", previousVoteInfo);
 
         // Fetch all proposals currently in NOTIFICATION state.
