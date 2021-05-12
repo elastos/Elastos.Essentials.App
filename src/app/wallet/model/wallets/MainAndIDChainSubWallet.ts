@@ -47,15 +47,15 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         //             ' this.progress:', this.progress);
 
         // if the balance form spvsdk is newer, then use it.
-        if ((this.progress === 100) || (this.syncTimestamp > this.timestampRPC)) {
-            // Get the current balance from the wallet plugin.
-            const balanceStr = await this.masterWallet.walletManager.spvBridge.getBalance(this.masterWallet.id, this.id);
-            // Balance in SELA
-            this.balance = new BigNumber(balanceStr, 10);
-        } else {
-            Logger.log("wallet", 'Do not get Balance from spvsdk. ', this.id);
-            // TODO: update balance by rpc?
-        }
+        // if ((this.progress === 100) || (this.syncTimestamp > this.timestampRPC)) {
+        //     // Get the current balance from the wallet plugin.
+        //     const balanceStr = await this.masterWallet.walletManager.spvBridge.getBalance(this.masterWallet.id, this.id);
+        //     // Balance in SELA
+        //     this.balance = new BigNumber(balanceStr, 10);
+        // } else {
+        //     Logger.log("wallet", 'Do not get Balance from spvsdk. ', this.id);
+        //     // TODO: update balance by rpc?
+        // }
     }
 
     /**
@@ -63,14 +63,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * For dpos vote transaction
      */
     public async hasPendingBalance() {
-        const jsonInfo = await this.masterWallet.walletManager.spvBridge.getBalanceInfo(this.masterWallet.id, this.id);
-        const balanceInfoArray = JSON.parse(jsonInfo);
-        for (const balanceInfo of balanceInfoArray) {
-            if ((balanceInfo.Summary.SpendingBalance !== '0') ||
-                (balanceInfo.Summary.PendingBalance !== '0')) {
-                return true;
-            }
-        }
+        // const jsonInfo = await this.masterWallet.walletManager.spvBridge.getBalanceInfo(this.masterWallet.id, this.id);
+        // const balanceInfoArray = JSON.parse(jsonInfo);
+        // for (const balanceInfo of balanceInfoArray) {
+        //     if ((balanceInfo.Summary.SpendingBalance !== '0') ||
+        //         (balanceInfo.Summary.PendingBalance !== '0')) {
+        //         return true;
+        //     }
+        // }
         return false;
     }
 
@@ -79,40 +79,41 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * @param amount unit is SELA
      */
     public async isAvailableBalanceEnough(amount: BigNumber) {
-        const jsonInfo = await this.masterWallet.walletManager.spvBridge.getBalanceInfo(this.masterWallet.id, this.id);
-        const balanceInfoArray = JSON.parse(jsonInfo);
-        let availableBalance = new BigNumber(0);
-        let hadPengdingTX = false;
-        // Send Max balance if amount < 0.
-        let sengMax = amount.isNegative() ? true : false;
+      return true;
+        // const jsonInfo = await this.masterWallet.walletManager.spvBridge.getBalanceInfo(this.masterWallet.id, this.id);
+        // const balanceInfoArray = JSON.parse(jsonInfo);
+        // let availableBalance = new BigNumber(0);
+        // let hadPengdingTX = false;
+        // // Send Max balance if amount < 0.
+        // let sengMax = amount.isNegative() ? true : false;
 
-        for (const balanceInfo of balanceInfoArray) {
-            if (balanceInfo.Summary.Balance !== '0') {
-                let balanceOfasset = new BigNumber(balanceInfo.Summary.Balance);
-                if (balanceInfo.Summary.SpendingBalance !== '0') {
-                    hadPengdingTX = true;
-                    balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.SpendingBalance));
-                }
-                if (balanceInfo.Summary.PendingBalance !== '0') {
-                    hadPengdingTX = true;
-                    balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.PendingBalance));
-                }
-                if (balanceInfo.Summary.LockedBalance !== '0') {
-                    hadPengdingTX = true;
-                    balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.LockedBalance));
-                }
-                // DepositBalance
+        // for (const balanceInfo of balanceInfoArray) {
+        //     if (balanceInfo.Summary.Balance !== '0') {
+        //         let balanceOfasset = new BigNumber(balanceInfo.Summary.Balance);
+        //         if (balanceInfo.Summary.SpendingBalance !== '0') {
+        //             hadPengdingTX = true;
+        //             balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.SpendingBalance));
+        //         }
+        //         if (balanceInfo.Summary.PendingBalance !== '0') {
+        //             hadPengdingTX = true;
+        //             balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.PendingBalance));
+        //         }
+        //         if (balanceInfo.Summary.LockedBalance !== '0') {
+        //             hadPengdingTX = true;
+        //             balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.LockedBalance));
+        //         }
+        //         // DepositBalance
 
-                if (hadPengdingTX && sengMax) {
-                    return false;
-                }
-                availableBalance = availableBalance.plus(balanceOfasset);
-                if (availableBalance.gt(amount)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        //         if (hadPengdingTX && sengMax) {
+        //             return false;
+        //         }
+        //         availableBalance = availableBalance.plus(balanceOfasset);
+        //         if (availableBalance.gt(amount)) {
+        //             return true;
+        //         }
+        //     }
+        // }
+        // return false;
     }
 
     public async createPaymentTransaction(toAddress: string, amount: string, memo: string = ""): Promise<string> {
@@ -145,6 +146,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         const currentTimestamp = moment().valueOf();
         const onedayago = moment().add(-1, 'days').valueOf();
         const oneHourago = moment().add(-10, 'minutes').valueOf();
+
+        // Test
+        // let address : string[] = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, false);
+        // Logger.log("wallet", 'ChainID:', this.id, ' external address:', address)
+
+        // let address2 : string[] = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, true);
+        // Logger.log("wallet", 'ChainID:', this.id, ' internal address:', address2)
 
         if (this.lastBlockTime
                 && ((this.syncTimestamp > onedayago)

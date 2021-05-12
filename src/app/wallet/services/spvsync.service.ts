@@ -133,9 +133,9 @@ export class SPVSyncService {
     public async syncStartSubWallets(masterId: WalletID, chainIds: StandardCoinName[]): Promise<void> {
         Logger.log("wallet", "SubWallets sync is starting:", masterId);
 
-        for (const chainId of chainIds) {
-            await this.spvBridge.syncStart(masterId, chainId);
-        }
+        // for (const chainId of chainIds) {
+        //     await this.spvBridge.syncStart(masterId, chainId);
+        // }
 
         Logger.log("wallet", "SubWallet sync start is completed");
     }
@@ -143,15 +143,15 @@ export class SPVSyncService {
     public async syncStopSubWallets(masterId: WalletID, chainIds: StandardCoinName[]): Promise<boolean> {
         Logger.log("wallet", "SubWallets sync is stopping:", masterId);
 
-        for (const chainId of chainIds) {
-            try {
-                await this.spvBridge.syncStop(masterId, chainId);
-            }
-            catch (e) {
-                Logger.error('wallet', "Failed to stop subwallet "+chainId+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
-                return false;
-            }
-        }
+        // for (const chainId of chainIds) {
+        //     try {
+        //         await this.spvBridge.syncStop(masterId, chainId);
+        //     }
+        //     catch (e) {
+        //         Logger.error('wallet', "Failed to stop subwallet "+chainId+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
+        //         return false;
+        //     }
+        // }
 
         Logger.log("wallet", "SubWallet sync stop is completed");
         return true;

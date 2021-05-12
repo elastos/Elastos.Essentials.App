@@ -169,7 +169,12 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
+        // TODO get transactions by rpc
         let allTransactions = await this.subWallet.getTransactions(this.start);
+        if (!allTransactions) {
+          Logger.log('wallet', "Can not get transaction");
+          return;
+        }
         Logger.log('wallet', "Got all transactions: ", JSON.parse(JSON.stringify(allTransactions)));
 
         const transactions = allTransactions.Transactions;
@@ -304,36 +309,38 @@ export class CoinHomePage implements OnInit {
     async checkUTXOCount() {
         // Check UTXOs only for SPV based coins.
         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
-            if (this.walletManager.needToCheckUTXOCountForConsolidation) {
-                let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.chainId, 0, 1, '');
-                Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
-                const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
-                if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-                    let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'wallet.text-consolidate-note')
-                    if (ret) {
-                        await this.createConsolidateTransaction();
-                    }
-                }
+          // TODO
+            // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
+            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.chainId, 0, 1, '');
+            //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
+            //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
+            //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
+            //         let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'wallet.text-consolidate-note')
+            //         if (ret) {
+            //             await this.createConsolidateTransaction();
+            //         }
+            //     }
 
-                this.walletManager.needToCheckUTXOCountForConsolidation = false;
-            }
+            //     this.walletManager.needToCheckUTXOCountForConsolidation = false;
+            // }
         }
     }
 
     async createConsolidateTransaction() {
-        let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.chainId, '');
-        Logger.log('wallet', 'coin-home.page createConsolidateTransaction');
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: null,
-            intentId: null,
-        });
+      // TODO
+        // let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.chainId, '');
+        // Logger.log('wallet', 'coin-home.page createConsolidateTransaction');
+        // const transfer = new Transfer();
+        // Object.assign(transfer, {
+        //     masterWalletId: this.masterWallet.id,
+        //     chainId: this.chainId,
+        //     rawTransaction: rawTx,
+        //     payPassword: '',
+        //     action: null,
+        //     intentId: null,
+        // });
 
-        await this.subWallet.signAndSendRawTransaction(rawTx, transfer);
+        // await this.subWallet.signAndSendRawTransaction(rawTx, transfer);
     }
 
     countAsDailyTransactionIfNeeded(timestamp: number) {

@@ -323,46 +323,47 @@ export class ERC20SubWallet extends SubWallet {
 
             Logger.log('wallet', "Transaction signed. Now publishing.");
 
-            const publishedTransaction =
-            await this.masterWallet.walletManager.spvBridge.publishTransaction(
-                this.masterWallet.id,
-                StandardCoinName.ETHSC,
-                signedTx
-            );
+            // TODO
+            // const publishedTransaction =
+            // await this.masterWallet.walletManager.spvBridge.publishTransaction(
+            //     this.masterWallet.id,
+            //     StandardCoinName.ETHSC,
+            //     signedTx
+            // );
 
-            this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
+            // this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
 
-            if (!Util.isEmptyObject(transfer.action)) {
-                Logger.log('wallet', "Mode: transfer with intent action");
-                this.masterWallet.walletManager.lockTx(publishedTransaction.TxHash);
+            // if (!Util.isEmptyObject(transfer.action)) {
+            //     Logger.log('wallet', "Mode: transfer with intent action");
+            //     this.masterWallet.walletManager.lockTx(publishedTransaction.TxHash);
 
-                setTimeout(async () => {
-                    let status = 'published';
-                    let txid = publishedTransaction.TxHash;
-                    const code = this.masterWallet.walletManager.getTxCode(txid);
-                    if (code !== 0) {
-                        txid = null;
-                        status = 'error';
-                    }
-                    this.masterWallet.walletManager.native.hideLoading();
-                    resolve({
-                        published: true,
-                        txid: txid,
-                        status
-                    });
-                }, 5000); // wait for 5s for txPublished
-            } else {
-                Logger.log('wallet', "Published transaction id:", publishedTransaction.TxHash);
+            //     setTimeout(async () => {
+            //         let status = 'published';
+            //         let txid = publishedTransaction.TxHash;
+            //         const code = this.masterWallet.walletManager.getTxCode(txid);
+            //         if (code !== 0) {
+            //             txid = null;
+            //             status = 'error';
+            //         }
+            //         this.masterWallet.walletManager.native.hideLoading();
+            //         resolve({
+            //             published: true,
+            //             txid: txid,
+            //             status
+            //         });
+            //     }, 5000); // wait for 5s for txPublished
+            // } else {
+            //     Logger.log('wallet', "Published transaction id:", publishedTransaction.TxHash);
 
-                await this.masterWallet.walletManager.native.hideLoading();
-                await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+            //     await this.masterWallet.walletManager.native.hideLoading();
+            //     await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
 
-                resolve({
-                    published: true,
-                    status: 'published',
-                    txid: publishedTransaction.TxHash
-                });
-            }
+            //     resolve({
+            //         published: true,
+            //         status: 'published',
+            //         txid: publishedTransaction.TxHash
+            //     });
+            // }
         });
     }
 }

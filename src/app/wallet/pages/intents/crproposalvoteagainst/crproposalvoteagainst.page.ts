@@ -72,9 +72,9 @@ export class CRProposalVoteAgainstPage implements OnInit {
             this.cancelOperation();
         }
 
-        // TMP BPI TEST
-        let previousVoteInfo = await this.walletManager.spvBridge.getVoteInfo(this.masterWalletId, StandardCoinName.ELA, VoteType.CRCProposal) as CRProposalVoteInfo[];
-        Logger.log('wallet', "previousVoteInfo", previousVoteInfo);
+        // TODO TMP BPI TEST
+        // let previousVoteInfo = await this.walletManager.spvBridge.getVoteInfo(this.masterWalletId, StandardCoinName.ELA, VoteType.CRCProposal) as CRProposalVoteInfo[];
+        // Logger.log('wallet', "previousVoteInfo", previousVoteInfo);
     }
 
     init() {
@@ -136,15 +136,16 @@ export class CRProposalVoteAgainstPage implements OnInit {
         votes[this.transfer.votes[0]] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
 
-        this.transfer.rawTransaction =  await this.walletManager.spvBridge.createVoteCRCProposalTransaction(
-            this.masterWalletId,
-            this.chainId,
-            '',
-            JSON.stringify(votes),
-            this.transfer.memo,
-            JSON.stringify(invalidCandidates));
+        // TODO
+        // this.transfer.rawTransaction =  await this.walletManager.spvBridge.createVoteCRCProposalTransaction(
+        //     this.masterWalletId,
+        //     this.chainId,
+        //     '',
+        //     JSON.stringify(votes),
+        //     this.transfer.memo,
+        //     JSON.stringify(invalidCandidates));
 
-        this.walletManager.openPayModal(this.transfer);
+        // this.walletManager.openPayModal(this.transfer);
     }
 }
 

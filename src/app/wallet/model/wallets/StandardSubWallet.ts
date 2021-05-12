@@ -36,9 +36,10 @@ export abstract class StandardSubWallet extends SubWallet {
      */
     public async initLastBlockInfo() {
         // Get the last block info from the wallet plugin.
-        const blockInfo = await this.masterWallet.walletManager.spvBridge.getLastBlockInfo(this.masterWallet.id, this.id);
+        // TODO
+        // const blockInfo = await this.masterWallet.walletManager.spvBridge.getLastBlockInfo(this.masterWallet.id, this.id);
 
-        if (blockInfo) this.updateSyncProgress(0, blockInfo.Timestamp);
+        // if (blockInfo) this.updateSyncProgress(0, blockInfo.Timestamp);
     }
 
     public async createAddress(): Promise<string> {
@@ -84,7 +85,8 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactions> {
-        let allTransactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, startIndex, '');
+      // TODO
+        let allTransactions:AllTransactions//await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, startIndex, '');
         Logger.log("wallet", "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
         return allTransactions;
     }
@@ -140,7 +142,8 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     public async getTransactionDetails(txid: string): Promise<AllTransactions> {
-        const transactionDetails = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
+      // TODO
+        let transactionDetails:AllTransactions// = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
         return transactionDetails;
     }
 
@@ -178,13 +181,14 @@ export abstract class StandardSubWallet extends SubWallet {
 
     protected isVoteTransaction(txid: string): Promise<any> {
         return new Promise(async (resolve) => {
-            const transactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
-            const transaction = transactions.Transactions[0];
-            if (!Util.isNull(transaction.OutputPayload) && (transaction.OutputPayload.length > 0)) {
-                resolve(true);
-            } else {
+          // TODO
+            // const transactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
+            // const transaction = transactions.Transactions[0];
+            // if (!Util.isNull(transaction.OutputPayload) && (transaction.OutputPayload.length > 0)) {
+            //     resolve(true);
+            // } else {
                 resolve(false);
-            }
+            // }
         });
     }
 
@@ -255,49 +259,50 @@ export abstract class StandardSubWallet extends SubWallet {
 
             Logger.log("wallet", "Transaction signed. Now publishing.");
 
-            const publishedTransaction =
-            await this.masterWallet.walletManager.spvBridge.publishTransaction(
-                this.masterWallet.id,
-                this.id,
-                signedTx
-            );
+            // TODO
+            // const publishedTransaction =
+            // await this.masterWallet.walletManager.spvBridge.publishTransaction(
+            //     this.masterWallet.id,
+            //     this.id,
+            //     signedTx
+            // );
 
-            this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
+            // this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
 
-            if (!Util.isEmptyObject(transfer.action)) {
-                Logger.log("wallet", "Mode: transfer with intent action");
-                this.masterWallet.walletManager.lockTx(publishedTransaction.TxHash);
+            // if (!Util.isEmptyObject(transfer.action)) {
+            //     Logger.log("wallet", "Mode: transfer with intent action");
+            //     this.masterWallet.walletManager.lockTx(publishedTransaction.TxHash);
 
-                setTimeout(async () => {
-                    let status = 'published';
-                    let txid = publishedTransaction.TxHash;
-                    const code = this.masterWallet.walletManager.getTxCode(txid);
-                    if (code !== 0) {
-                        txid = null;
-                        status = 'error';
-                    }
-                    this.masterWallet.walletManager.native.hideLoading();
+            //     setTimeout(async () => {
+            //         let status = 'published';
+            //         let txid = publishedTransaction.TxHash;
+            //         const code = this.masterWallet.walletManager.getTxCode(txid);
+            //         if (code !== 0) {
+            //             txid = null;
+            //             status = 'error';
+            //         }
+            //         this.masterWallet.walletManager.native.hideLoading();
 
-                    resolve({
-                      published: true,
-                      txid: txid,
-                      status,
-                    });
-                }, 5000); // wait for 5s for txPublished
-            } else {
-                Logger.log("wallet", "Published transaction id:", publishedTransaction.TxHash);
+            //         resolve({
+            //           published: true,
+            //           txid: txid,
+            //           status,
+            //         });
+            //     }, 5000); // wait for 5s for txPublished
+            // } else {
+            //     Logger.log("wallet", "Published transaction id:", publishedTransaction.TxHash);
 
-                await this.masterWallet.walletManager.native.hideLoading();
+            //     await this.masterWallet.walletManager.native.hideLoading();
 
-                if (navigateHomeAfterCompletion)
-                    await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+            //     if (navigateHomeAfterCompletion)
+            //         await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
 
-                resolve({
-                    published: true,
-                    status: 'published',
-                    txid: publishedTransaction.TxHash
-                });
-            }
+            //     resolve({
+            //         published: true,
+            //         status: 'published',
+            //         txid: publishedTransaction.TxHash
+            //     });
+            // }
         });
     }
 }
