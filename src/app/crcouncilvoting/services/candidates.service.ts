@@ -127,7 +127,7 @@ export class CandidatesService {
       }
     }, (err) => {
       Logger.error('crcouncil', 'fetchCandidates error', err);
-      this.alertErr('cr-council-no-available');
+      this.alertErr('crcouncilvoting.cr-council-no-available');
     });
   }
 
@@ -163,7 +163,7 @@ export class CandidatesService {
         Logger.error('crcouncil', 'can not get council data!');
       }
     }, (err) => {
-      this.alertErr('cr-council-no-available');
+      this.alertErr('crcouncilvoting.cr-council-no-available');
       Logger.error('crcouncil', 'fetchCouncil error:', err);
     });
   }
