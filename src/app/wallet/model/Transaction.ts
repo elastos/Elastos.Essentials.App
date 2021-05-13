@@ -27,6 +27,12 @@ export enum ContractType {
     NotContract = 5
 }
 
+export enum UtxoType {
+    Normal = 'normal',
+    Vote = 'vote',
+    Mixed = 'mixed',
+}
+
 export type TransactionInfo = {
     amount: BigNumber,
     confirmStatus: number,
@@ -135,3 +141,37 @@ export type AllTransactions = {
     MaxCount: number,
     Transactions: Transaction[]
 };
+
+// ****************************************
+
+// Transactions from rpc
+export type TransactionHistory = {
+    address: string;
+    txid: string;
+    type: string;
+    time: number;
+    height: number;
+    fee: string;
+    inputs: string[];
+    outputs: string[];
+    txtype: string;
+    memo: string;
+    Status: string;
+}
+
+// Raw list of transactions as received from the rpc.
+export type AllTransactionsHistroy = {
+    totalcount: number,
+    txhistroy: TransactionHistory[]
+};
+
+export type Utxo = {
+    address: string;
+    amount: string;
+    assetid: string;
+    confirmations: number;
+    outputlock: number;
+    txid: string;
+    txtype: number;
+    vout: number;
+}

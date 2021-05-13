@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
+import { UtxoType } from '../model/Transaction';
 
 
 type JSONRPCResponse = {
@@ -71,7 +72,143 @@ export class JsonRPCService {
         return balanceOfSELA;
     }
 
-    async getBlockHeight(chainID: StandardCoinName) {
+    // return transactions by address
+    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number): Promise<any> {
+        const paramArray = [];
+        let index = 0;
+
+        for (const address of addressArray) {
+            const param = {
+                method: 'gethistory',
+                params: {
+                    address,
+                    limit
+                },
+                id: index.toString()
+            };
+            index++;
+            paramArray.push(param);
+        }
+
+        const rpcApiUrl = this.getRPCApiUrl(chainID);
+        if (rpcApiUrl.length === 0) {
+            return [];
+        }
+
+        let totalTransactions = 0;
+        let transactionsArray = null;
+        // httpRequest fail sometimes, retry 5 times.
+        let retryTimes = 0;
+        do {
+            try {
+                transactionsArray = await this.httpRequest(rpcApiUrl, paramArray);
+                for (const result of transactionsArray) {
+                    totalTransactions += result.result.totalcount;
+                    if (result.result.totalcount > 0) {
+                        Logger.log('wallet', 'history:', result.result)
+                    }
+                }
+                break;
+            } catch (e) {
+                // wait 100ms?
+            }
+        } while (++retryTimes < 5);
+
+        Logger.log('wallet', 'totalTransactions:', totalTransactions)
+        return transactionsArray;
+    }
+
+    async getrawtransaction(chainID: StandardCoinName, txid: string): Promise<string> {
+        const param = {
+            method: 'getrawtransaction',
+            params: {
+              txid,
+              verbose : true
+            },
+        };
+
+        const rpcApiUrl = this.getRPCApiUrl(chainID);
+        if (rpcApiUrl.length === 0) {
+            return '';
+        }
+
+        let result = ''
+        // httpRequest fail sometimes, retry 5 times.
+        let retryTimes = 0;
+        do {
+            try {
+                result = await this.httpRequest(rpcApiUrl, param);
+                break;
+            } catch (e) {
+                // wait 100ms?
+            }
+        } while (++retryTimes < 5);
+
+        Logger.log('wallet', 'getrawtransaction:', result)
+        return result;
+    }
+
+    // return all utxo by address
+    async getAllUtxoByAddress(chainID: StandardCoinName, addresses: string[], utxotype: UtxoType = UtxoType.Mixed): Promise<any> {
+        const param = {
+            method: 'listunspent',
+            params: {
+                addresses,
+                utxotype
+            },
+        };
+
+        const rpcApiUrl = this.getRPCApiUrl(chainID);
+        if (rpcApiUrl.length === 0) {
+            return [];
+        }
+
+        let utxoArray = null;
+        // httpRequest fail sometimes, retry 5 times.
+        let retryTimes = 0;
+        do {
+            try {
+                utxoArray = await this.httpRequest(rpcApiUrl, param);
+                break;
+            } catch (e) {
+                // wait 100ms?
+            }
+        } while (++retryTimes < 5);
+
+        Logger.log('wallet', 'getAllUtxoByAddress:', utxoArray)
+        return utxoArray;
+    }
+
+    async sendrawtransaction(chainID: StandardCoinName, payload: string): Promise<string> {
+        const param = {
+            method: 'sendrawtransaction',
+            params: [
+              payload
+            ],
+        };
+
+        const rpcApiUrl = this.getRPCApiUrl(chainID);
+        if (rpcApiUrl.length === 0) {
+            return '';
+        }
+
+        let txid = '';
+        // httpRequest fail sometimes, retry 5 times.
+        let retryTimes = 0;
+        do {
+            try {
+                txid = await this.httpRequest(rpcApiUrl, param);
+                break;
+            } catch (e) {
+                // wait 100ms?
+            }
+        } while (++retryTimes < 5);
+
+        Logger.log('wallet', 'sendrawtransaction:', txid)
+        return txid;
+    }
+
+    async getBlockCount(chainID: StandardCoinName) {
         const param = {
             method: 'getblockcount',
         };
