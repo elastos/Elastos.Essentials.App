@@ -71,11 +71,12 @@ export class WalletInitService extends GlobalService {
     await this.walletManager.init();
     await this.intentService.init();
 
+    // TODO let user choose
     //After created or imported did, automatically import the did for the wallet.
-    if (signedInIdentity.mnemonicInfo != null) {
-      await this.importWalletWithMnemonicInfo(signedInIdentity.mnemonicInfo);
-      signedInIdentity.mnemonicInfo = null;
-    }
+    // if (signedInIdentity.mnemonicInfo != null) {
+    //   await this.importWalletWithMnemonicInfo(signedInIdentity.mnemonicInfo);
+    //   signedInIdentity.mnemonicInfo = null;
+    // }
   }
 
   public async onUserSignOut(): Promise<void> {
