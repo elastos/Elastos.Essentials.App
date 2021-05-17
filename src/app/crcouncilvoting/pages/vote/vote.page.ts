@@ -159,14 +159,14 @@ export class VotePage implements OnInit, OnDestroy {
       mode: 'ios',
       position: 'bottom',
       color: 'primary',
-      header: this.translate.instant('crcouncilvoting.vote-success'),
+      header: this.translate.instant('common.vote-success'),
       message: `${txid.slice(0,16) + '<br>' + txid.slice(16,32) + '<br>' + txid.slice(32,48)}`,
       buttons: [
         {
           text: this.translate.instant('common.copy'),
           handler: () => {
             this.toast.dismiss();
-            this.globalNative.genericToast('crcouncilvoting.tx-copied-to-clipboard');
+            this.globalNative.genericToast('common.tx-copied-to-clipboard');
             this.globalNative.copyClipboard(txid);
             this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           }

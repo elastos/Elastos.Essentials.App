@@ -160,7 +160,7 @@ export class VotePage implements OnInit {
           text: this.translate.instant('common.copy'),
           handler: () => {
             this.toast.dismiss();
-            this.globalNative.genericToast('dposvoting.tx-copied-to-clipboard');
+            this.globalNative.genericToast('common.tx-copied-to-clipboard');
             this.globalNative.copyClipboard(txid);
           }
         },
