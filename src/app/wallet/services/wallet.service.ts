@@ -345,6 +345,9 @@ export class WalletManager {
         };
 
         await this.addMasterWalletToLocalModel(masterId, walletName, account);
+
+        // Go to wallet's home page.
+        this.native.setRootRouter("/wallet/wallet-home");
     }
 
     /**
