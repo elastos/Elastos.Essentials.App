@@ -110,7 +110,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
                     const index = this.masterWalletList.findIndex(e => e.id === result.walletId);
                     if (index) {
                         setTimeout(async () => {
-                            this.slider.slideTo(index);
+                            if (this.slider) this.slider.slideTo(index);
                         }, 1000);
                     }
                 }
