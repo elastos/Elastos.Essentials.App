@@ -64,7 +64,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWallet: MasterWallet;
-    public waitingForSyncCompletion = false;
 
     // Define transfer type
     public transferType: TransferType;
@@ -190,7 +189,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
         this.transferType = this.coinTransferService.transferType;
         this.chainId = this.coinTransferService.chainId;
-        this.waitingForSyncCompletion = false;
 
         this.fromSubWallet = this.masterWallet.getSubWallet(this.chainId);
 
@@ -259,21 +257,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 }
                 break;
         }
-
-        // In case the subwallet is not fully synced we wait for the sync completion
-        // Before allowing to transfer, to make sure the transfer will not be lost, as even if this is queued
-        // by the SPVSDK, it's not persistant in case of restart.
-        if (this.masterWallet.subWallets[this.fromSubWallet.id].progress !== 100) {
-            this.waitingForSyncCompletion = true;
-            const syncCompletionEventName = this.masterWallet.id + ':' + this.fromSubWallet.id + ':synccompleted';
-            this.syncSubscription = this.events.subscribe(syncCompletionEventName, (coin) => {
-                this.zone.run(() => {
-                    this.waitingForSyncCompletion = false;
-                });
-                this.syncSubscription.unsubscribe();
-                this.syncSubscription = null;
-            });
-        }
     }
 
     /**
@@ -292,7 +275,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // the spv sdk doesn't support ERC20 yet).
         const rawTx = await this.fromSubWallet.createPaymentTransaction(
             this.toAddress, // User input address
-            toAmount.toString(), // User input amount
+            toAmount, // User input amount
             this.memo // User input memo
         );
 

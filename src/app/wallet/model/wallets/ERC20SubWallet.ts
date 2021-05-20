@@ -7,7 +7,7 @@ import { Util } from '../Util';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactions, EthTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactions, AllTransactionsHistory, EthTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 
@@ -173,9 +173,10 @@ export class ERC20SubWallet extends SubWallet {
         this.progress = progress;
     }
 
-    public async getTransactions(startIndex: number): Promise<AllTransactions> {
-        const allTransactions = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, startIndex, '', this.id);
-        Logger.log('wallet', "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
+    public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
+        // TODO
+        let allTransactions;// = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, startIndex, '', this.id);
+        // Logger.log('wallet', "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
         return allTransactions;
     }
 
@@ -184,21 +185,21 @@ export class ERC20SubWallet extends SubWallet {
         return transactionDetails;
     }
 
-    public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
+    public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
         const transactionInfo = await super.getTransactionInfo(transaction, translate);
-        const direction = await this.getERC20TransactionDirection(transaction.TargetAddress);
+        const direction = await this.getERC20TransactionDirection(transaction.address);
 
         // TODO: Why BlockNumber is 0 sometimes? Need to check.
         // if (transaction.IsErrored || (transaction.BlockNumber === 0)) {
-        if (transaction.IsErrored) {
-            return null;
-        }
-
-        transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.Amount).dividedBy(this.tokenDecimals) : new BigNumber(transaction.Amount);
-        transactionInfo.fee = this.tokenDecimals > 0 ? transaction.Fee / this.tokenDecimals : transaction.Fee;
-        transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
-        // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
-        transactionInfo.confirmStatus = transaction.Confirmations;
+        // if (transaction.IsErrored) {
+        //     return null;
+        // }
+        // TODO
+        // transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.Amount).dividedBy(this.tokenDecimals) : new BigNumber(transaction.Amount);
+        // transactionInfo.fee = this.tokenDecimals > 0 ? transaction.Fee / this.tokenDecimals : transaction.Fee;
+        // transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
+        // // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
+        // transactionInfo.confirmStatus = transaction.Confirmations;
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
@@ -224,21 +225,21 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     // TODO: Refine / translate with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
-    protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
-        const direction = await this.getERC20TransactionDirection(transaction.TargetAddress);
+    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
+        const direction = await this.getERC20TransactionDirection(transaction.address);
         switch (direction) {
             case TransactionDirection.RECEIVED:
-                return translate.instant("wallet.coin-action-receive");
+                return "wallet.coin-action-receive";
             case TransactionDirection.SENT:
-                return translate.instant("wallet.coin-action-send");
+                return "wallet.coin-action-send";
             default:
                 return "Invalid";
         }
     }
 
     // TODO: Refine with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
-    protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
-        const direction = await this.getERC20TransactionDirection(transaction.TargetAddress);
+    protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
+        const direction = await this.getERC20TransactionDirection(transaction.address);
         if (direction === TransactionDirection.RECEIVED) {
             return './assets/wallet/buttons/receive.png';
         } else if (direction === TransactionDirection.SENT) {
@@ -254,7 +255,7 @@ export class ERC20SubWallet extends SubWallet {
         return Promise.resolve([]);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: string, memo: string): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });

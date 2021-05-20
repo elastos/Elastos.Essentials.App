@@ -157,6 +157,14 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    public setLogLevel(loglevel: string): Promise<void> {
+      return new Promise((resolve, reject)=>{
+           walletManager.setLogLevel([loglevel],
+              (ret) => { resolve(ret); },
+              (err) => { this.handleError(err, reject);  });
+      });
+  }
+
     public init(rootPath: string): Promise<void> {
         return new Promise((resolve, reject)=>{
              walletManager.init([rootPath],
@@ -408,9 +416,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    getAllAddresses(masterWalletId: string, chainId: string, start: number, internal: boolean): Promise<AllAddresses> {
+    getAllAddresses(masterWalletId: string, chainId: string, start: number, count: number, internal: boolean): Promise<AllAddresses> {
         return new Promise(async (resolve, reject) => {
-            walletManager.getAllAddress([masterWalletId, chainId, start, 20, internal],
+            walletManager.getAllAddress([masterWalletId, chainId, start, count, internal],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -453,6 +461,40 @@ export class SPVWalletPluginBridge {
                     chainId,
                     rawTransaction,
                     payPassword
+                ],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    getTransactionSignedInfo(
+        masterWalletId: string,
+        chainId: string,
+        tx: string,
+    ): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.getTransactionSignedInfo(
+                [
+                    masterWalletId,
+                    chainId,
+                    tx,
+                ],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    convertToRawTransaction(
+        masterWalletId: string,
+        chainId: string,
+        tx: string,
+    ): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.convertToRawTransaction(
+                [
+                    masterWalletId,
+                    chainId,
+                    tx,
                 ],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
@@ -510,9 +552,9 @@ export class SPVWalletPluginBridge {
     createTransaction(
         masterWalletId: string,
         chainId: string,
-        fromAddress: string,
-        toAddress: string,
-        amount: string,
+        inputs: string,
+        outputs: string,
+        fee: string,
         memo: string
     ): Promise<any> {
         return new Promise(async (resolve, reject) => {
@@ -520,9 +562,9 @@ export class SPVWalletPluginBridge {
                 [
                     masterWalletId,
                     chainId,
-                    fromAddress,
-                    toAddress,
-                    amount,
+                    inputs,
+                    outputs,
+                    fee,
                     memo
                 ],
                 (ret) => { resolve(ret); },
@@ -869,6 +911,10 @@ export class SPVWalletPluginBridge {
             else if (err["message"]) {
                 error = error + ": " + err["message"];
             }
+        }
+        if (err["code"] === 10003) {
+            Logger.warn('wallet', 'Can\'t get the subwallt :', err);
+            return;
         }
 
         // Show an error popup

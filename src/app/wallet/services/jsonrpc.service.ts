@@ -72,8 +72,7 @@ export class JsonRPCService {
         return balanceOfSELA;
     }
 
-    // return transactions by address
-    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number): Promise<any> {
+    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, timestamp: number = 0): Promise<any> {
         const paramArray = [];
         let index = 0;
 
@@ -82,7 +81,8 @@ export class JsonRPCService {
                 method: 'gethistory',
                 params: {
                     address,
-                    limit
+                    limit,
+                    timestamp
                 },
                 id: index.toString()
             };
@@ -95,27 +95,21 @@ export class JsonRPCService {
             return [];
         }
 
-        let totalTransactions = 0;
         let transactionsArray = null;
         // httpRequest fail sometimes, retry 5 times.
         let retryTimes = 0;
         do {
             try {
                 transactionsArray = await this.httpRequest(rpcApiUrl, paramArray);
-                for (const result of transactionsArray) {
-                    totalTransactions += result.result.totalcount;
-                    if (result.result.totalcount > 0) {
-                        Logger.log('wallet', 'history:', result.result)
-                    }
-                }
                 break;
             } catch (e) {
                 // wait 100ms?
             }
         } while (++retryTimes < 5);
-
-        Logger.log('wallet', 'totalTransactions:', totalTransactions)
-        return transactionsArray;
+        // Logger.warn('wallet', 'transactionsArray:',transactionsArray)
+        return transactionsArray.filter(c => {
+          return c.result.totalcount > 0;
+        });
     }
 
     async getrawtransaction(chainID: StandardCoinName, txid: string): Promise<string> {
@@ -144,7 +138,7 @@ export class JsonRPCService {
             }
         } while (++retryTimes < 5);
 
-        Logger.log('wallet', 'getrawtransaction:', result)
+        // Logger.log('wallet', 'getrawtransaction:', result)
         return result;
     }
 
@@ -175,7 +169,7 @@ export class JsonRPCService {
             }
         } while (++retryTimes < 5);
 
-        Logger.log('wallet', 'getAllUtxoByAddress:', utxoArray)
+        // Logger.log('wallet', 'getAllUtxoByAddress:', utxoArray)
         return utxoArray;
     }
 
@@ -273,13 +267,19 @@ export class JsonRPCService {
                     'Content-Type': 'application/json',
                 })
             };
+            // Logger.warn("wallet", 'httpRequest rpcApiUrl:', rpcApiUrl);
             this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
                 .subscribe((res: any) => {
                   if (res) {
+                      // Logger.warn("wallet", 'httpRequest response:', res);
                       if (res instanceof Array) {
                           resolve(res);
                       } else {
-                          resolve(res.result || '');
+                          if (res.error) {
+                            reject(res.error);
+                          } else {
+                            resolve(res.result || '');
+                          }
                       }
                   } else {
                     Logger.error("wallet", 'httpRequest get nothing!');

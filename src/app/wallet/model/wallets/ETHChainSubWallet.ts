@@ -2,7 +2,7 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { EthTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, EthTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,6 +36,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
         return this.ethscAddress;
     }
 
+    public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
+      // TODO
+      return null;
+    }
+
     /**
      * Use smartcontract to Send ELA from ETHSC to mainchain.
      */
@@ -58,22 +63,22 @@ export class ETHChainSubWallet extends StandardSubWallet {
         });
     }
 
-    public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
+    public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
         const transactionInfo = await super.getTransactionInfo(transaction, translate);
-        const direction = await this.getETHSCTransactionDirection(transaction.TargetAddress);
+        const direction = await this.getETHSCTransactionDirection(transaction.address);
 
         // TODO: Why BlockNumber is 0 sometimes? Need to check.
         // if (transaction.IsErrored || (transaction.BlockNumber === 0)) {
-        if (transaction.IsErrored) {
-            return null;
-        }
+        // if (transaction.IsErrored) {
+        //     return null;
+        // }
+        // TODO
+        // transactionInfo.amount = new BigNumber(transaction.Amount).dividedBy(Config.WEI);
+        // transactionInfo.fee = transaction.Fee / Config.WEI;
+        // transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
 
-        transactionInfo.amount = new BigNumber(transaction.Amount).dividedBy(Config.WEI);
-        transactionInfo.fee = transaction.Fee / Config.WEI;
-        transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
-
-        // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
-        transactionInfo.confirmStatus = transaction.Confirmations;
+        // // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
+        // transactionInfo.confirmStatus = transaction.Confirmations;
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
@@ -98,24 +103,25 @@ export class ETHChainSubWallet extends StandardSubWallet {
         return transactionInfo;
     }
 
-    protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
-        const direction = await this.getETHSCTransactionDirection(transaction.TargetAddress);
-        switch (direction) {
-            case TransactionDirection.RECEIVED:
-                return translate.instant("wallet.coin-op-received-token");
-            case TransactionDirection.SENT:
-                if (transaction.Amount !== '0') {
-                    return translate.instant("wallet.coin-op-sent-token");
-                } else {
-                    // Contract
-                    return this.getETHSCTransactionContractType(transaction, translate);
-                }
-        }
+    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
+        const direction = await this.getETHSCTransactionDirection(transaction.address);
+        // TODO
+        // switch (direction) {
+        //     case TransactionDirection.RECEIVED:
+        //         return "wallet.coin-op-received-token";
+        //     case TransactionDirection.SENT:
+        //         if (transaction.Amount !== '0') {
+        //             return "wallet.coin-op-sent-token";
+        //         } else {
+        //             // Contract
+        //             return this.getETHSCTransactionContractType(transaction, translate);
+        //         }
+        // }
         return null;
     }
 
-    protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
-        const direction = await this.getETHSCTransactionDirection(transaction.TargetAddress);
+    protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
+        const direction = await this.getETHSCTransactionDirection(transaction.address);
         switch (direction) {
             case TransactionDirection.RECEIVED:
                 return './assets/wallet/buttons/receive.png';
@@ -188,11 +194,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
         return tokenlist;
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: string, memo: string): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
         return this.masterWallet.walletManager.spvBridge.createTransfer(
             this.masterWallet.id,
             toAddress,
-            amount,
+            amount.toString(),
             6 // ETHER_ETHER
         );
     }

@@ -125,7 +125,9 @@ export class CoinTxInfoPage implements OnInit {
         const transaction = allTransactions.Transactions[0];
         Logger.log('wallet', 'More tx info', transaction);
 
-        const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
+        // TODO
+        // const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
+        let transactionInfo;
 
         // Tx is NOT ETH - Define total cost and address
         if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {

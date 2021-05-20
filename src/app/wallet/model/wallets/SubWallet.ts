@@ -1,11 +1,12 @@
 import { MasterWallet } from './MasterWallet';
 import { CoinType, CoinID, StandardCoinName } from '../Coin';
-import { AllTransactions, Transaction, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
+import { AllTransactions, AllTransactionsHistory, Transaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Events } from 'src/app/services/events.service';
+import { JsonRPCService } from '../../services/jsonrpc.service';
 
 /**
  * Result of calls to signAndSendRawTransaction().
@@ -57,11 +58,13 @@ export abstract class SubWallet {
     public timestampRPC: number = 0; // Time at which the "get balance" RPC API was last called
 
     private events: Events;
+    public jsonRPCService: JsonRPCService = null;
 
     constructor(protected masterWallet: MasterWallet, id: CoinID, public type: CoinType) {
         this.id = id;
         this.type = type;
         this.events = this.masterWallet.walletManager.events;
+        this.jsonRPCService = this.masterWallet.walletManager.jsonRPCService;
     }
 
     public toSerializedSubWallet(): SerializedSubWallet {
@@ -103,12 +106,12 @@ export abstract class SubWallet {
     /**
      * From a given transaction return a UI displayable transaction title.
      */
-    protected abstract getTransactionName(transaction: Transaction, translate: TranslateService): Promise<string>;
+    protected abstract getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string>;
 
     /**
      * From a given transaction return a UI displayable transaction icon that illustrates the transaction operation.
      */
-    protected abstract getTransactionIconPath(transaction: Transaction): Promise<string>;
+    protected abstract getTransactionIconPath(transaction: TransactionHistory): Promise<string>;
 
     /**
      * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
@@ -174,7 +177,7 @@ export abstract class SubWallet {
      * TODO: The "AllTransactions" type is very specific to SPVSDK. We will maybe have to change this type to a common type
      * with ERC20 "transaction" type when we have more info about it.
      */
-    public abstract getTransactions(startIndex: number): Promise<AllTransactions>;
+    public abstract getTransactions(startIndex: number): Promise<AllTransactionsHistory>;
 
     /**
      * Based on a raw transaction object (from the SPV SDK or API), returns a higher level
@@ -182,17 +185,17 @@ export abstract class SubWallet {
      *
      * Can be overriden to customize some fields.
      */
-    public async getTransactionInfo(transaction: Transaction, translate: TranslateService): Promise<TransactionInfo> {
-        const timestamp = transaction.Timestamp * 1000; // Convert seconds to use milliseconds
+    public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
+        const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
         const transactionInfo: TransactionInfo = {
             amount: new BigNumber(-1), // Defined by inherited classes
             confirmStatus: -1, // Defined by inherited classes
             datetime,
-            direction: transaction.Direction,
-            fee: transaction.Fee,
-            memo: transaction.Memo,
+            direction: transaction.type,
+            fee: parseInt(transaction.fee),
+            memo: transaction.memo,
             name: await this.getTransactionName(transaction, translate),
             payStatusIcon: await this.getTransactionIconPath(transaction),
             status: transaction.Status,
@@ -207,7 +210,7 @@ export abstract class SubWallet {
 
     public abstract getTransactionDetails(txid: string): Promise<AllTransactions>;
 
-    public abstract createPaymentTransaction(toAddress: string, amount: string, memo: string): Promise<string>;
+    public abstract createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string>;
     public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string>;
     public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
 }

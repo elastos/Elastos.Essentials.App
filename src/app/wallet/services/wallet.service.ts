@@ -110,11 +110,11 @@ export class WalletManager {
         // TODO: reset masterWallets, because this servcie is not destroyed when signout.
         this.masterWallets = {};
 
+        this.jsonRPCService.init();
+
         this.spvBridge = new SPVWalletPluginBridge(this.native, this.events, this.popupProvider);
 
         const hasWallet = await this.initWallets();
-
-        this.jsonRPCService.init();
 
         // Start the sync service
         await this.spvService.init(this);
@@ -181,6 +181,7 @@ export class WalletManager {
 
             }
             await this.spvBridge.setNetwork(networkType, networkConfig, jsonrpcUrl, apimiscUrl );
+            // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
             let rootPath = signedInEntry.didStoragePath;
@@ -854,10 +855,17 @@ export class WalletManager {
 
     async getAllSubwalletsBalanceByRPC(masterWalletId) {
         const masterWallet = this.getMasterWallet(masterWalletId);
+
+        // TODO: to improve, in init and when needed?
+        const mainChainSubwallet:MainAndIDChainSubWallet = masterWallet.getSubWallet(StandardCoinName.ELA) as MainAndIDChainSubWallet;
+        mainChainSubwallet.getTransactionByRPC();
+        // should update utxo when send transactions
+        mainChainSubwallet.getAllUtxoByRPC();
+
         const subwallets = masterWallet.subWalletsWithExcludedCoin(StandardCoinName.ETHSC, CoinType.STANDARD);
         let updatedByRPC = false;
         for (const subWallet of subwallets) {
-            const updated = await (subWallet as MainAndIDChainSubWallet).getBalanceByRPC(this.jsonRPCService);
+            const updated = await (subWallet as MainAndIDChainSubWallet).getBalanceByRPC();
             if (updated) {
                 updatedByRPC = true;
             }
