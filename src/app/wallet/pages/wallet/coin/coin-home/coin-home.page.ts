@@ -177,8 +177,8 @@ export class CoinHomePage implements OnInit {
         }
         Logger.log('wallet', "Got all transactions: ", JSON.parse(JSON.stringify(allTransactions)));
 
-        const transactions = allTransactions.Transactions;
-        this.MaxCount = allTransactions.MaxCount;
+        const transactions = allTransactions.txhistory;
+        this.MaxCount = allTransactions.totalcount;
 
         if (this.start >= this.MaxCount) {
             this.isShowMore = false;
@@ -203,15 +203,18 @@ export class CoinHomePage implements OnInit {
                 continue;
             }
 
-            if (this.chainIsETHSC() || this.chainIsERC20()) {
-                transactionInfo.amount = transactionInfo.amount.isInteger() ? transactionInfo.amount.integerValue() : transactionInfo.amount;
-            }
+            // TODO
+            // if (this.chainIsETHSC() || this.chainIsERC20()) {
+            //     transactionInfo.amount = transactionInfo.amount.isInteger() ? transactionInfo.amount.integerValue() : transactionInfo.amount;
+            // }
 
             // Check if transaction was made today and increment our counter if so.
             this.countAsDailyTransactionIfNeeded(transactionInfo.timestamp);
 
             this.transferList.push(transactionInfo);
         }
+
+        Logger.warn('wallet', 'coin-home transferList:', this.transferList)
     }
 
     async deleteTransaction(tx) {

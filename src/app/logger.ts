@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export class Logger {
     private static originalConsole = null;
     private static originalDebugLog: (...args)=>void;
@@ -39,5 +41,11 @@ export class Logger {
         this.originalDebugErr.apply(this.originalConsole, [
             "%c"+module.toUpperCase()+"* ERROR", 'background: #b30202; color: #FFF; font-weight:bold; padding:5px;',
             ...args]);
+    }
+
+    public static test(module: string, ...args: any) {
+      this.originalDebugLog.apply(this.originalConsole, [
+          "%c"+module.toUpperCase()+"* TEST", 'background: #7B68EE; color: #FFF; font-weight:bold; padding:5px;',
+          ...args, ' Time:',moment(new Date().getTime()).format('HH:mm:ss.SSS')]);
     }
 }

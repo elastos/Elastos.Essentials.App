@@ -1,4 +1,4 @@
-import {  Transaction, TransactionDirection } from '../Transaction';
+import {  Transaction, TransactionDirection, TransactionHistory } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
@@ -12,12 +12,13 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
         super(masterWallet, StandardCoinName.ELA);
     }
 
-    protected async getTransactionName(transaction: Transaction, translate: TranslateService): Promise<string> {
-        if (transaction.Direction === TransactionDirection.MOVED) {
-            const isVote = await this.isVoteTransaction(transaction.TxHash);
-            if (isVote) {
-                return translate.instant("wallet.coin-op-vote");
-            }
+    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
+        if (transaction.type === TransactionDirection.MOVED) {
+            // TODO
+            // const isVote = await this.isVoteTransaction(transaction.TxHash);
+            // if (isVote) {
+            //     return "wallet.coin-op-vote";
+            // }
         }
 
         return super.getTransactionName(transaction, translate);
@@ -28,7 +29,7 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
      * for a given mnemonic.
      */
     public async getRootPaymentAddress(): Promise<string> {
-        let allAddresses = await this.masterWallet.walletManager.spvBridge.getAllAddresses(this.masterWallet.id, this.id, 0, false);
+        let allAddresses = await this.masterWallet.walletManager.spvBridge.getAllAddresses(this.masterWallet.id, this.id, 0, 1, false);
         if (!allAddresses || !allAddresses.Addresses || allAddresses.Addresses.length == 0)
             return null;
 

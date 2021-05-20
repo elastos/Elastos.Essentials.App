@@ -2,11 +2,10 @@ import { MasterWallet } from './MasterWallet';
 import { SubWallet, SerializedSubWallet, RawTransactionPublishResult } from './SubWallet';
 import { CoinType, Coin, StandardCoinName, ERC20Coin } from '../Coin';
 import { Util } from '../Util';
-import { AllTransactions, RawTransactionType, Transaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactions, RawTransactionType, Transaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
 import { Config } from '../../config/Config';
 import BigNumber from 'bignumber.js';
-import moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
 import { Logger } from 'src/app/logger';
@@ -84,89 +83,91 @@ export abstract class StandardSubWallet extends SubWallet {
         return this.balance.gt(amount.multipliedBy(Config.SELAAsBigNumber));
     }
 
-    public async getTransactions(startIndex: number): Promise<AllTransactions> {
-      // TODO
-        let allTransactions:AllTransactions//await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, startIndex, '');
-        Logger.log("wallet", "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
-        return allTransactions;
-    }
+    // public async getTransactions(startIndex: number): Promise<AllTransactions> {
+    //   // TODO
+    //     let allTransactions:AllTransactions//await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, startIndex, '');
+    //     Logger.log("wallet", "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
+    //     return allTransactions;
+    // }
 
-    protected async getTransactionName(transaction: Transaction, translate: TranslateService): Promise<string> {
+    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
         let transactionName: string = '';
         // Logger.log("wallet", "getTransactionName std subwallet", transaction);
 
-        switch (transaction.Direction) {
+        switch (transaction.type) {
             case TransactionDirection.RECEIVED:
-                transactionName = translate.instant('wallet.coin-op-received-token');
+                transactionName = 'wallet.coin-op-received-token';
                 // TODO: upgrade spvsdk, check the ETHSC
-                switch (transaction.Type) {
-                    case RawTransactionType.RechargeToSideChain:
-                        transactionName = translate.instant("wallet.coin-dir-from-mainchain");
-                        break;
-                    case RawTransactionType.WithdrawFromSideChain:
-                        switch (transaction.TopUpSidechain) {
-                            case StandardCoinName.IDChain:
-                                transactionName = translate.instant("wallet.coin-dir-from-idchain");
-                                break;
-                            case StandardCoinName.ETHSC:
-                                transactionName = translate.instant("wallet.coin-dir-from-ethsc");
-                                break;
-                            default:
-                                transactionName = translate.instant('wallet.coin-op-received-token');
-                        }
-                        break;
-                }
+                // switch (transaction.Type) {
+                //     case RawTransactionType.RechargeToSideChain:
+                //         transactionName = "wallet.coin-dir-from-mainchain";
+                //         break;
+                //     case RawTransactionType.WithdrawFromSideChain:
+                //         switch (transaction.TopUpSidechain) {
+                //             case StandardCoinName.IDChain:
+                //                 transactionName = "wallet.coin-dir-from-idchain";
+                //                 break;
+                //             case StandardCoinName.ETHSC:
+                //                 transactionName = "wallet.coin-dir-from-ethsc";
+                //                 break;
+                //             default:
+                //                 transactionName = 'wallet.coin-op-received-token';
+                //         }
+                //         break;
+                // }
                 break;
             case TransactionDirection.SENT:
-                transactionName = translate.instant("wallet.coin-op-sent-token");
+                transactionName = "wallet.coin-op-sent-token";
 
-                if (transaction.Type === RawTransactionType.TransferCrossChainAsset) {
-                    switch (transaction.TopUpSidechain) {
-                        case StandardCoinName.IDChain:
-                            transactionName = translate.instant("wallet.coin-dir-to-idchain");
-                            break;
-                        case StandardCoinName.ETHSC:
-                            transactionName = translate.instant("wallet.coin-dir-to-ethsc");
-                            break;
-                        default:
-                            transactionName = translate.instant("wallet.coin-dir-to-mainchain");
-                            break;
-                    }
-                }
+                // if (transaction.Type === RawTransactionType.TransferCrossChainAsset) {
+                //     switch (transaction.TopUpSidechain) {
+                //         case StandardCoinName.IDChain:
+                //             transactionName = "wallet.coin-dir-to-idchain";
+                //             break;
+                //         case StandardCoinName.ETHSC:
+                //             transactionName = "wallet.coin-dir-to-ethsc";
+                //             break;
+                //         default:
+                //             transactionName = "wallet.coin-dir-to-mainchain";
+                //             break;
+                //     }
+                // }
                 break;
             case TransactionDirection.MOVED:
-                transactionName = translate.instant("wallet.coin-op-transfered-token");
+                transactionName = "wallet.coin-op-transfered-token";
                 break;
         }
         return transactionName;
     }
 
     public async getTransactionDetails(txid: string): Promise<AllTransactions> {
-      // TODO
+        // TODO
         let transactionDetails:AllTransactions// = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
         return transactionDetails;
     }
 
-    protected async getTransactionIconPath(transaction: Transaction): Promise<string> {
-        if (transaction.Direction === TransactionDirection.RECEIVED) {
-            switch (transaction.Type) {
-                case RawTransactionType.RechargeToSideChain:
-                case RawTransactionType.WithdrawFromSideChain:
-                case RawTransactionType.TransferCrossChainAsset:
-                    return './assets/wallet/buttons/transfer.png';
-                default:
+    protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
+        if (transaction.type === TransactionDirection.RECEIVED) {
+            // TODO
+            // switch (transaction.Type) {
+            //     case RawTransactionType.RechargeToSideChain:
+            //     case RawTransactionType.WithdrawFromSideChain:
+            //     case RawTransactionType.TransferCrossChainAsset:
+            //         return './assets/wallet/buttons/transfer.png';
+            //     default:
                     return './assets/wallet/buttons/receive.png';
-            }
-        } else if (transaction.Direction === TransactionDirection.SENT) {
-            switch (transaction.Type) {
-                case RawTransactionType.RechargeToSideChain:
-                case RawTransactionType.WithdrawFromSideChain:
-                case RawTransactionType.TransferCrossChainAsset:
-                    return './assets/wallet/buttons/transfer.png';
-                default:
+            // }
+        } else if (transaction.type === TransactionDirection.SENT) {
+            // TODO
+            // switch (transaction.Type) {
+            //     case RawTransactionType.RechargeToSideChain:
+            //     case RawTransactionType.WithdrawFromSideChain:
+            //     case RawTransactionType.TransferCrossChainAsset:
+            //         return './assets/wallet/buttons/transfer.png';
+            //     default:
                     return './assets/wallet/buttons/send.png';
-            }
-        } else if (transaction.Direction === TransactionDirection.MOVED) {
+            // }
+        } else if (transaction.type === TransactionDirection.MOVED) {
             return './assets/wallet/buttons/transfer.png';
         }
 
@@ -259,50 +260,26 @@ export abstract class StandardSubWallet extends SubWallet {
 
             Logger.log("wallet", "Transaction signed. Now publishing.");
 
-            // TODO
-            // const publishedTransaction =
-            // await this.masterWallet.walletManager.spvBridge.publishTransaction(
-            //     this.masterWallet.id,
-            //     this.id,
-            //     signedTx
-            // );
+            let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
+                this.masterWallet.id,
+                this.id,
+                signedTx,
+            )
 
-            // this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
+            let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
+            Logger.log("wallet", "sendrawtransaction txid:", txid);
 
-            // if (!Util.isEmptyObject(transfer.action)) {
-            //     Logger.log("wallet", "Mode: transfer with intent action");
-            //     this.masterWallet.walletManager.lockTx(publishedTransaction.TxHash);
+            await this.masterWallet.walletManager.native.hideLoading();
+            this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
 
-            //     setTimeout(async () => {
-            //         let status = 'published';
-            //         let txid = publishedTransaction.TxHash;
-            //         const code = this.masterWallet.walletManager.getTxCode(txid);
-            //         if (code !== 0) {
-            //             txid = null;
-            //             status = 'error';
-            //         }
-            //         this.masterWallet.walletManager.native.hideLoading();
+            if (navigateHomeAfterCompletion)
+                await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
 
-            //         resolve({
-            //           published: true,
-            //           txid: txid,
-            //           status,
-            //         });
-            //     }, 5000); // wait for 5s for txPublished
-            // } else {
-            //     Logger.log("wallet", "Published transaction id:", publishedTransaction.TxHash);
-
-            //     await this.masterWallet.walletManager.native.hideLoading();
-
-            //     if (navigateHomeAfterCompletion)
-            //         await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
-
-            //     resolve({
-            //         published: true,
-            //         status: 'published',
-            //         txid: publishedTransaction.TxHash
-            //     });
-            // }
+            resolve({
+                published: true,
+                status: 'published',
+                txid: txid
+            });
         });
     }
 }

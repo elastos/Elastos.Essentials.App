@@ -1,16 +1,16 @@
 import BigNumber from 'bignumber.js';
 
 export enum TransactionStatus {
-    CONFIRMED = 'Confirmed',
-    PENDING = 'Pending',
-    UNCONFIRMED = 'Unconfirmed'
+    CONFIRMED = 'confirmed',
+    PENDING = 'pending',
+    UNCONFIRMED = 'unconfirmed'
 }
 
 export enum TransactionDirection {
-    RECEIVED = "Received",
-    SENT = "Sent",
-    MOVED = "Moved",
-    DEPOSIT = "Deposit"
+    RECEIVED = "received",
+    SENT = "sent",
+    MOVED = "moved",
+    DEPOSIT = "deposit"
 }
 
 export enum TransactionType {
@@ -76,6 +76,8 @@ export enum RawTransactionType {
     IllegalSidechainEvidence = 0x11,
     InactiveArbitrators      = 0x12,
     UpdateVersion            = 0x13,
+    NextTurnDPOSInfo         = 0x14,
+    CustomIDResult           = 0x15,
 
     RegisterCR               = 0x21,
     UnregisterCR             = 0x22,
@@ -88,8 +90,11 @@ export enum RawTransactionType {
     CrcAppropriation         = 0x28,
     CrcProposalWithdraw      = 0x29,
     CrcProposalRealWithdraw  = 0x2a,
+    CRAssetsRectify          = 0x2b,
+    CrCouncilMemberClaimNode = 0x31,
 
-    CrCouncilMemberClaimNode = 0x31
+    RevertToPOW              = 0x41,
+    RevertToDPOS             = 0x42
 }
 
 /**
@@ -147,22 +152,23 @@ export type AllTransactions = {
 // Transactions from rpc
 export type TransactionHistory = {
     address: string;
-    txid: string;
-    type: string;
-    time: number;
-    height: number;
     fee: string;
+    height: number;
     inputs: string[];
     outputs: string[];
-    txtype: string;
     memo: string;
-    Status: string;
+    Status: TransactionStatus;
+    time: number;
+    txid: string;
+    txtype: string;
+    type: TransactionDirection;
+    value: string;
 }
 
 // Raw list of transactions as received from the rpc.
-export type AllTransactionsHistroy = {
+export type AllTransactionsHistory = {
     totalcount: number,
-    txhistroy: TransactionHistory[]
+    txhistory: TransactionHistory[]
 };
 
 export type Utxo = {
@@ -172,6 +178,13 @@ export type Utxo = {
     confirmations: number;
     outputlock: number;
     txid: string;
-    txtype: number;
+    txtype: RawTransactionType;
     vout: number;
+}
+
+export type UtxoForSDK = {
+  Address: string;
+  Amount: string; //sela
+  Index: number;
+  TxHash: string;
 }

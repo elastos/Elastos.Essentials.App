@@ -9,6 +9,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Events } from 'src/app/services/events.service';
 
+const AddressCount = 20;
+
 @Component({
     selector: 'app-coin-address',
     templateUrl: './coin-address.page.html',
@@ -50,7 +52,7 @@ export class CoinAddressPage {
     }
 
     async getAddressList(infiniteScroll: any) {
-        const allAddresses = await this.walletManager.spvBridge.getAllAddresses(this.masterWalletId, this.chainId, this.curCount, false);
+        const allAddresses = await this.walletManager.spvBridge.getAllAddresses(this.masterWalletId, this.chainId, this.curCount, AddressCount, false);
         const addresses = allAddresses['Addresses'];
         const maxCount = allAddresses['MaxCount'];
         let disabled = true;
@@ -61,7 +63,7 @@ export class CoinAddressPage {
                 this.addressList = addresses;
             }
 
-            this.curCount = this.curCount + 20;
+            this.curCount = this.curCount + AddressCount;
             if (this.curCount < maxCount) {
                 disabled = false;
             }
