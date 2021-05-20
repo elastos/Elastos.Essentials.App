@@ -20,8 +20,8 @@
          }
 +
 +        targetSdkVersion 29
-+        versionCode 10001
-+        versionName "2.0.1.d"
++        versionCode 10002
++        versionName "2.0.2.d"
      }
 
      lintOptions {
