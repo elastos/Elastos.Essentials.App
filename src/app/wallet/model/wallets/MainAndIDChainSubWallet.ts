@@ -258,7 +258,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
   /**
    *
-   * @param jsonRPCService
    * @param timestamp get the transactions after the timestamp
    * @returns
    */
@@ -445,9 +444,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       let updateInfo = this.mergeTransactionsWithSameTxid(txWithSameTxId);
 
       let updateArray = false;
+      // update the first sent transaction and remove the others.
       for (let j = this.txArray.txhistory.length - 1; j >= 0; j--) {
         if ((this.txArray.txhistory[j].height == sendtxidArray[i].height)
-          && (this.txArray.txhistory[j].txid == sendtxidArray[i].txid)) {
+          && (this.txArray.txhistory[j].txid == sendtxidArray[i].txid)
+          && (this.txArray.txhistory[j].type === 'sent')) {
           if (!updateArray) {
             this.txArray.txhistory[j].value = updateInfo.value;
             this.txArray.txhistory[j].type = updateInfo.type as TransactionDirection;
@@ -506,11 +507,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     }
 
+    // TODO: Need to update sent outputs, remove the received address.
+
     let value, type ='sent';
     if (isMoveTransaction) {
       value = '0', type = 'moved';
     } else {
-      value = (sentValue - recvValue).toString();
+      value = (sentValue - recvValue).toFixed(8).toString();
     }
 
     return {value, type, inputs:sentInputs}
