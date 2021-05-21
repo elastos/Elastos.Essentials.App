@@ -1,6 +1,6 @@
 import { MasterWallet } from './MasterWallet';
 import { CoinType, CoinID, StandardCoinName } from '../Coin';
-import { AllTransactions, AllTransactionsHistory, Transaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
+import { AllTransactions, AllTransactionsHistory, Transaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
@@ -194,7 +194,8 @@ export abstract class SubWallet {
             confirmStatus: -1, // Defined by inherited classes
             datetime,
             direction: transaction.type,
-            fee: parseInt(transaction.fee),
+            fee: transaction.fee,
+            height: transaction.height,
             memo: transaction.memo,
             name: await this.getTransactionName(transaction, translate),
             payStatusIcon: await this.getTransactionIconPath(transaction),
@@ -208,7 +209,7 @@ export abstract class SubWallet {
         return transactionInfo;
     }
 
-    public abstract getTransactionDetails(txid: string): Promise<AllTransactions>;
+    public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
 
     public abstract createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string>;
     public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string>;

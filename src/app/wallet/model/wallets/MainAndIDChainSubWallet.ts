@@ -25,11 +25,10 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
   public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
     // For performance
-    let newTxList:AllTransactionsHistory =
-        {
-          totalcount: this.txArray.totalcount,
-          txhistory :this.txArray.txhistory.slice(startIndex, startIndex + 20),
-        }
+    let newTxList:AllTransactionsHistory = {
+        totalcount: this.txArray.totalcount,
+        txhistory :this.txArray.txhistory.slice(startIndex, startIndex + 20),
+    }
     return newTxList;
     // return this.txArray; // It is slow to return all.
   }
@@ -314,7 +313,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
       try {
         const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray.Addresses, 50, timestamp);
-        Logger.log("wallet", 'jsonRPCService.getTransactionsByAddress :', txRawList);
         if (txRawList && txRawList.length > 0) {
           for (const result of txRawList) {
             txListTotal.totalcount += result.result.totalcount;
@@ -327,12 +325,15 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     } while (!this.masterWallet.account.SingleAddress);
 
-    Logger.log('Wallet', 'TX:', this.masterWallet.id, ' ChainID:', this.id, ' ', txListTotal)
+    // Logger.log('Wallet', 'TX:', this.masterWallet.id, ' ChainID:', this.id, ' ', txListTotal)
     return txListTotal;
   }
 
-  async getTransactionById(jsonRPCService: JsonRPCService) {
-    jsonRPCService.getrawtransaction(this.id as StandardCoinName, "3a9aff92bf1a1ef67c249b3763d72ea6c70cac1fc781acffebd03f55d0c8318a");
+  async getTransactionDetails(txid:string) {
+    // let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, "3a9aff92bf1a1ef67c249b3763d72ea6c70cac1fc781acffebd03f55d0c8318a");
+    let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, txid);
+    Logger.warn('wallet', 'test detail:', details)
+    return details;
   }
 
   /**

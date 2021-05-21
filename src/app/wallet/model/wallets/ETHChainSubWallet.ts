@@ -2,7 +2,7 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, EthTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, EthTransaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,6 +39,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
       // TODO
       return null;
+    }
+
+    public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
+      let transactionDetails// = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
+      return transactionDetails;
     }
 
     /**

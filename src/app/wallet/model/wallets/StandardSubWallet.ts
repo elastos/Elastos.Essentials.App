@@ -67,6 +67,7 @@ export abstract class StandardSubWallet extends SubWallet {
         return this.getDisplayAmount(this.balance);
     }
 
+    // TODO remove it?
     public getDisplayAmount(amount: BigNumber): BigNumber {
         return amount.dividedBy(Config.SELAAsBigNumber);
     }
@@ -138,12 +139,6 @@ export abstract class StandardSubWallet extends SubWallet {
                 break;
         }
         return transactionName;
-    }
-
-    public async getTransactionDetails(txid: string): Promise<AllTransactions> {
-        // TODO
-        let transactionDetails:AllTransactions// = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
-        return transactionDetails;
     }
 
     protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {

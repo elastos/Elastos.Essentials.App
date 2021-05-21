@@ -51,6 +51,8 @@ export class CoinTxInfoPage implements OnInit {
     public amount: BigNumber;
     public status: string = '';
     public statusName: string = '';
+    public memo: string = '';
+    public height: number = 0;
 
     // Other Values
     public payFee: number = null;
@@ -114,51 +116,51 @@ export class CoinTxInfoPage implements OnInit {
             this.statusName = this.transactionInfo.statusName;
             this.payStatusIcon = this.transactionInfo.payStatusIcon;
             this.direction = this.transactionInfo.direction;
+            this.memo = this.transactionInfo.memo;
+            this.height = this.transactionInfo.height;
 
             this.getTransactionDetails();
         }
     }
 
     async getTransactionDetails() {
-        const allTransactions = await this.subWallet.getTransactionDetails(this.transactionInfo.txid);
-
-        const transaction = allTransactions.Transactions[0];
+        const transaction = await this.subWallet.getTransactionDetails(this.transactionInfo.txid);
         Logger.log('wallet', 'More tx info', transaction);
 
         // TODO
         // const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
-        let transactionInfo;
 
         // Tx is NOT ETH - Define total cost and address
         if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
             // Pay Fee
-            this.payFee = this.subWallet.getDisplayAmount(new BigNumber(transactionInfo.fee)).toNumber();
+            // this.payFee = this.subWallet.getDisplayAmount(new BigNumber(this.transactionInfo.fee)).toNumber();
+            this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
             // Total Cost
             this.totalCost = this.payFee ? this.transactionInfo.amount.plus(this.payFee) : null;
             // Address
-            this.targetAddress = this.getTargetAddressFromTransaction(transaction);
+            // this.targetAddress = this.getTargetAddressFromTransaction(transaction);
 
             // If the fee is too small, then amount doesn't subtract fee
-            if (transaction.Fee > 10000000000) {
-              this.amount = this.amount.minus(this.payFee);
-            }
+            // if (transaction.Fee > 10000000000) {
+            //   this.amount = this.amount.minus(this.payFee);
+            // }
 
         // Tx is ETH - Define amount, fee, total cost and address
         } else {
             // Amount
-            this.amount = transactionInfo.amount.isInteger() ? transactionInfo.amount.integerValue() : transactionInfo.amount.decimalPlaces(6);
+            this.amount = this.transactionInfo.amount.isInteger() ? this.transactionInfo.amount.integerValue() : this.transactionInfo.amount.decimalPlaces(6);
             // Pay Fee
-            const newPayFee = new BigNumber(transactionInfo.fee);
+            const newPayFee = new BigNumber(this.transactionInfo.fee);
             this.payFee = newPayFee.toNumber();
             // Total Cost
-            this.totalCost = newPayFee ? transactionInfo.amount.plus(newPayFee) : null;
+            this.totalCost = newPayFee ? this.transactionInfo.amount.plus(newPayFee) : null;
             // Address
-            if (this.chainId === StandardCoinName.ETHSC) {
-                this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction as EthTransaction);
-                await this.getERC20TokenTransactionInfo(transaction as EthTransaction);
-            } else {
-                this.targetAddress = (transaction as EthTransaction).TargetAddress;
-            }
+            // if (this.chainId === StandardCoinName.ETHSC) {
+            //     this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction as EthTransaction);
+            //     await this.getERC20TokenTransactionInfo(transaction as EthTransaction);
+            // } else {
+            //     this.targetAddress = (transaction as EthTransaction).TargetAddress;
+            // }
         }
 
         this.payType = "transaction-type-13";
@@ -174,10 +176,10 @@ export class CoinTxInfoPage implements OnInit {
             }
         }
 
-        // For vote transaction
-        if (!Util.isNull(transaction.OutputPayload) && (transaction.OutputPayload.length > 0)) {
-            this.payType = "transaction-type-vote";
-        }
+        // // For vote transaction
+        // if (!Util.isNull(transaction.OutputPayload) && (transaction.OutputPayload.length > 0)) {
+        //     this.payType = "transaction-type-vote";
+        // }
 
         // Create array of displayable details for txs
         this.txDetails = [];
@@ -194,21 +196,21 @@ export class CoinTxInfoPage implements OnInit {
             {
                 type: 'memo',
                 title: 'wallet.tx-info-memo',
-                value: transaction.Memo,
+                value: this.memo,
                 show: true,
             },
             {
                 type: 'confirmations',
                 title: 'wallet.tx-info-confirmations',
-                value: this.transactionInfo.confirmStatus,
+                value: transaction.confirmations,
                 show: false,
             },
             {
                 type: 'blockId',
                 title: 'wallet.tx-info-block-id',
                 value:
-                    this.transactionInfo.confirmStatus === 0 ?
-                        0 : transaction.Height, // the Height is 2147483647(-1) when the transaction is not confirmed.
+                    transaction.confirmations === 0 ?
+                        0 : this.height, // the Height is 2147483647(-1) when the transaction is not confirmed.
                 show: false,
             },
             {
@@ -222,28 +224,29 @@ export class CoinTxInfoPage implements OnInit {
         // Only show receiving address, total cost and fees if tx was not received
         if (this.direction !== TransactionDirection.RECEIVED) {
             // For ERC20 Token Transfer
-            if ((this.chainId === StandardCoinName.ETHSC) && ('ERC20Transfer' === (transaction as EthTransaction).TokenFunction)) {
-                this.txDetails.unshift(
-                    {
-                        type: 'contractAddress',
-                        title: 'wallet.tx-info-token-address',
-                        value: this.tokenName ? 0 : this.contractAddress,
-                        show: true,
-                    },
-                    {
-                        type: 'tokenSymbol',
-                        title: 'wallet.erc-20-token',
-                        value: this.tokenName,
-                        show: true,
-                    },
-                    {
-                        type: 'tokenAmount',
-                        title: 'wallet.tx-info-erc20-amount',
-                        value: this.tokenAmount,
-                        show: true,
-                    },
-                );
-            }
+            // TODO
+            // if ((this.chainId === StandardCoinName.ETHSC) && ('ERC20Transfer' === (transaction as EthTransaction).TokenFunction)) {
+            //     this.txDetails.unshift(
+            //         {
+            //             type: 'contractAddress',
+            //             title: 'wallet.tx-info-token-address',
+            //             value: this.tokenName ? 0 : this.contractAddress,
+            //             show: true,
+            //         },
+            //         {
+            //             type: 'tokenSymbol',
+            //             title: 'wallet.erc-20-token',
+            //             value: this.tokenName,
+            //             show: true,
+            //         },
+            //         {
+            //             type: 'tokenAmount',
+            //             title: 'wallet.tx-info-erc20-amount',
+            //             value: this.tokenAmount,
+            //             show: true,
+            //         },
+            //     );
+            // }
 
             this.txDetails.unshift(
                 {

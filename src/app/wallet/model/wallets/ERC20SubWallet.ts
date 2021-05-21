@@ -7,7 +7,7 @@ import { Util } from '../Util';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactions, AllTransactionsHistory, EthTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactions, AllTransactionsHistory, EthTransaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 
@@ -180,8 +180,8 @@ export class ERC20SubWallet extends SubWallet {
         return allTransactions;
     }
 
-    public async getTransactionDetails(txid: string): Promise<AllTransactions> {
-        const transactionDetails = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
+    public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
+        let transactionDetails// = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
         return transactionDetails;
     }
 
@@ -236,6 +236,7 @@ export class ERC20SubWallet extends SubWallet {
                 return "Invalid";
         }
     }
+
 
     // TODO: Refine with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
     protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
