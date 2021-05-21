@@ -38,7 +38,8 @@ export type TransactionInfo = {
     confirmStatus: number,
     datetime: any,
     direction: TransactionDirection,
-    fee: number,
+    fee: string,
+    height: number,
     memo: string;
     name: string,
     payStatusIcon: string,
@@ -170,6 +171,49 @@ export type AllTransactionsHistory = {
     totalcount: number,
     txhistory: TransactionHistory[]
 };
+
+export type attribute = {
+  usage: number;
+  data: string;
+}
+
+export type inobj = {
+  sequence: number;
+  txid: string;
+  vout: number;
+}
+
+export type outobj = {
+  address: string;
+  assetid: string;
+  n: number;
+  outputlock: string;
+  payload: any;
+  type: RawTransactionType;
+  value: string;
+}
+
+// Return by getrawtransaction api
+export type TransactionDetail = {
+  txid: string;
+  hash: string;
+  size: number;
+  vsize: number;
+  version: number;
+  type: RawTransactionType;
+  payloadversion: number;
+  payload: string;
+  attributes: attribute[];
+  vin: inobj[];
+  vout : outobj[];
+  locktime: number;
+  programs: any;
+  blockhash: string;
+  confirmations: number;
+  time: number;
+  blocktime: number;
+}
+
 
 export type Utxo = {
     address: string;

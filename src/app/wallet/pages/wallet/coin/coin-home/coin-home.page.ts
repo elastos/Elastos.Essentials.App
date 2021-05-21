@@ -175,7 +175,7 @@ export class CoinHomePage implements OnInit {
           Logger.log('wallet', "Can not get transaction");
           return;
         }
-        Logger.log('wallet', "Got all transactions: ", JSON.parse(JSON.stringify(allTransactions)));
+        Logger.log('wallet', "Got all transactions: ", allTransactions);
 
         const transactions = allTransactions.txhistory;
         this.MaxCount = allTransactions.totalcount;

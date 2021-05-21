@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
-import { UtxoType } from '../model/Transaction';
+import { TransactionDetail, UtxoType } from '../model/Transaction';
 
 
 type JSONRPCResponse = {
@@ -112,7 +112,7 @@ export class JsonRPCService {
         });
     }
 
-    async getrawtransaction(chainID: StandardCoinName, txid: string): Promise<string> {
+    async getrawtransaction(chainID: StandardCoinName, txid: string): Promise<TransactionDetail> {
         const param = {
             method: 'getrawtransaction',
             params: {
@@ -123,10 +123,10 @@ export class JsonRPCService {
 
         const rpcApiUrl = this.getRPCApiUrl(chainID);
         if (rpcApiUrl.length === 0) {
-            return '';
+            return null;
         }
 
-        let result = ''
+        let result: TransactionDetail = null;
         // httpRequest fail sometimes, retry 5 times.
         let retryTimes = 0;
         do {
