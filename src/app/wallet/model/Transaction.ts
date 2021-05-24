@@ -161,7 +161,7 @@ export type TransactionHistory = {
     Status: TransactionStatus;
     time: number;
     txid: string;
-    txtype: string;
+    txtype: RawTransactionType;
     type: TransactionDirection;
     value: string;
 }

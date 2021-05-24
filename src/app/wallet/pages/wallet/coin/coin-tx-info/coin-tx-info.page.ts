@@ -138,7 +138,10 @@ export class CoinTxInfoPage implements OnInit {
             // Total Cost
             this.totalCost = this.payFee ? this.transactionInfo.amount.plus(this.payFee) : null;
             // Address
-            // this.targetAddress = this.getTargetAddressFromTransaction(transaction);
+            // TODO: 1.vout is a array. 2. show the right address for the cross chain transaction
+            if (transaction.vout && transaction.vout[0]) {
+              this.targetAddress = transaction.vout[0].address;
+            }
 
             // If the fee is too small, then amount doesn't subtract fee
             // if (transaction.Fee > 10000000000) {

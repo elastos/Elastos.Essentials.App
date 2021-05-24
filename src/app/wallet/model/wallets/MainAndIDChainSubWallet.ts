@@ -5,7 +5,6 @@ import { AllTransactionsHistory, Transaction, TransactionDirection, TransactionH
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
-import { JsonRPCService } from '../../services/jsonrpc.service';
 import { Logger } from 'src/app/logger';
 import { Config } from '../../config/Config';
 
@@ -447,9 +446,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       // update the first sent transaction and remove the others.
       for (let j = this.txArray.txhistory.length - 1; j >= 0; j--) {
         if ((this.txArray.txhistory[j].height == sendtxidArray[i].height)
-          && (this.txArray.txhistory[j].txid == sendtxidArray[i].txid)
-          && (this.txArray.txhistory[j].type === 'sent')) {
-          if (!updateArray) {
+          && (this.txArray.txhistory[j].txid == sendtxidArray[i].txid)) {
+          if (!updateArray && (this.txArray.txhistory[j].type === 'sent')) {
             this.txArray.txhistory[j].value = updateInfo.value;
             this.txArray.txhistory[j].type = updateInfo.type as TransactionDirection;
             this.txArray.txhistory[j].inputs = updateInfo.inputs;
