@@ -44,6 +44,9 @@ export class Config {
     // public static BLOCKCHAIN_URL: String = 'https://blockchain-beta.elastos.org/';
     //public static BLOCKCHAIN_URL: String = 'https://blockchain-regtest.elastos.org/';
 
+    public static IDCHAIN_ADDRESS = "XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ";
+    public static ETHSC_ADDRESS = "XWCiyXM1bQyGTawoaYKx9PjRkMUGGocWub";
+
     // Send ELA from ETHSC to mainchain by smartcontract
     public static CONTRACT_ADDRESS_MAINNET = "0xC445f9487bF570fF508eA9Ac320b59730e81e503";
     public static CONTRACT_ADDRESS_TESTNET = "0x491bC043672B9286fA02FA7e0d6A3E5A0384A31A";

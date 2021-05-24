@@ -99,40 +99,40 @@ export abstract class StandardSubWallet extends SubWallet {
             case TransactionDirection.RECEIVED:
                 transactionName = 'wallet.coin-op-received-token';
                 // TODO: upgrade spvsdk, check the ETHSC
-                // switch (transaction.Type) {
-                //     case RawTransactionType.RechargeToSideChain:
-                //         transactionName = "wallet.coin-dir-from-mainchain";
-                //         break;
-                //     case RawTransactionType.WithdrawFromSideChain:
-                //         switch (transaction.TopUpSidechain) {
-                //             case StandardCoinName.IDChain:
-                //                 transactionName = "wallet.coin-dir-from-idchain";
-                //                 break;
-                //             case StandardCoinName.ETHSC:
-                //                 transactionName = "wallet.coin-dir-from-ethsc";
-                //                 break;
-                //             default:
-                //                 transactionName = 'wallet.coin-op-received-token';
-                //         }
-                //         break;
-                // }
+                switch (transaction.txtype) {
+                    case RawTransactionType.RechargeToSideChain:
+                        transactionName = "wallet.coin-dir-from-mainchain";
+                        break;
+                    case RawTransactionType.WithdrawFromSideChain:
+                        switch (transaction.inputs[0]) {
+                            case Config.IDCHAIN_ADDRESS:
+                                transactionName = "wallet.coin-dir-from-idchain";
+                                break;
+                            case Config.ETHSC_ADDRESS:
+                                transactionName = "wallet.coin-dir-from-ethsc";
+                                break;
+                            default:
+                                transactionName = 'wallet.coin-op-received-token';
+                        }
+                        break;
+                }
                 break;
             case TransactionDirection.SENT:
                 transactionName = "wallet.coin-op-sent-token";
 
-                // if (transaction.Type === RawTransactionType.TransferCrossChainAsset) {
-                //     switch (transaction.TopUpSidechain) {
-                //         case StandardCoinName.IDChain:
-                //             transactionName = "wallet.coin-dir-to-idchain";
-                //             break;
-                //         case StandardCoinName.ETHSC:
-                //             transactionName = "wallet.coin-dir-to-ethsc";
-                //             break;
-                //         default:
-                //             transactionName = "wallet.coin-dir-to-mainchain";
-                //             break;
-                //     }
-                // }
+                if (transaction.txtype === RawTransactionType.TransferCrossChainAsset) {
+                    switch (transaction.outputs[0]) {
+                        case Config.IDCHAIN_ADDRESS:
+                            transactionName = "wallet.coin-dir-to-idchain";
+                            break;
+                        case Config.ETHSC_ADDRESS:
+                            transactionName = "wallet.coin-dir-to-ethsc";
+                            break;
+                        default:
+                            transactionName = "wallet.coin-dir-to-mainchain";
+                            break;
+                    }
+                }
                 break;
             case TransactionDirection.MOVED:
                 transactionName = "wallet.coin-op-transfered-token";
@@ -143,25 +143,23 @@ export abstract class StandardSubWallet extends SubWallet {
 
     protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
         if (transaction.type === TransactionDirection.RECEIVED) {
-            // TODO
-            // switch (transaction.Type) {
-            //     case RawTransactionType.RechargeToSideChain:
-            //     case RawTransactionType.WithdrawFromSideChain:
-            //     case RawTransactionType.TransferCrossChainAsset:
-            //         return './assets/wallet/buttons/transfer.png';
-            //     default:
+            switch (transaction.txtype) {
+                case RawTransactionType.RechargeToSideChain:
+                case RawTransactionType.WithdrawFromSideChain:
+                case RawTransactionType.TransferCrossChainAsset:
+                    return './assets/wallet/buttons/transfer.png';
+                default:
                     return './assets/wallet/buttons/receive.png';
-            // }
+            }
         } else if (transaction.type === TransactionDirection.SENT) {
-            // TODO
-            // switch (transaction.Type) {
-            //     case RawTransactionType.RechargeToSideChain:
-            //     case RawTransactionType.WithdrawFromSideChain:
-            //     case RawTransactionType.TransferCrossChainAsset:
-            //         return './assets/wallet/buttons/transfer.png';
-            //     default:
+            switch (transaction.txtype) {
+                case RawTransactionType.RechargeToSideChain:
+                case RawTransactionType.WithdrawFromSideChain:
+                case RawTransactionType.TransferCrossChainAsset:
+                    return './assets/wallet/buttons/transfer.png';
+                default:
                     return './assets/wallet/buttons/send.png';
-            // }
+            }
         } else if (transaction.type === TransactionDirection.MOVED) {
             return './assets/wallet/buttons/transfer.png';
         }
