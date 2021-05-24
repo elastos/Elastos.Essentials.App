@@ -8,6 +8,7 @@ import { MasterWallet } from './MasterWallet';
 import { Logger } from 'src/app/logger';
 import { Config } from '../../config/Config';
 
+
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
  * Most code between these 2 chains is common, while ETH is quite different. This is the reason why this
@@ -16,20 +17,31 @@ import { Config } from '../../config/Config';
 export class MainAndIDChainSubWallet extends StandardSubWallet {
   private utxoArray: Utxo[] = null;
   private utxoArrayForSDK: UtxoForSDK[] = [];
-  private txArray: AllTransactionsHistory = {totalcount:0, txhistory:[]};
+  private rawTxArray: AllTransactionsHistory[] = [];
+  private txArrayToDisplay: AllTransactionsHistory = {totalcount:0, txhistory:[]};
+  private needtoLoadMoreAddresses: string[] = [];
+  private TRANSACTION_LIMIT = 3;// for rpc
+  // Maybe there are lots of transactions and we need to merge the transactions for multi address wallet,
+  // for performance we only merge the transactions from timestampStart to timestampEnd.
+  private timestampStart = 0;
+  private timestampEnd = 0;
+  private loadMoreTimes = 0;
 
   constructor(masterWallet: MasterWallet, id: StandardCoinName) {
     super(masterWallet, id);
   }
 
   public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-    // For performance
+    if ((startIndex + 20 > this.txArrayToDisplay.txhistory.length) && (this.needtoLoadMoreAddresses.length > 0)) {
+      await this.getMoreTransactionByRPC(++this.loadMoreTimes);
+    }
+
+    // For performance, only return 20 transactions.
     let newTxList:AllTransactionsHistory = {
-        totalcount: this.txArray.totalcount,
-        txhistory :this.txArray.txhistory.slice(startIndex, startIndex + 20),
+        totalcount: this.txArrayToDisplay.totalcount,
+        txhistory :this.txArrayToDisplay.txhistory.slice(startIndex, startIndex + 20),
     }
     return newTxList;
-    // return this.txArray; // It is slow to return all.
   }
 
   private getUtxo(amount: number) {
@@ -168,9 +180,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
    * Get balance by RPC if the last block time of spvsdk is one day ago.
    */
   async getBalanceByRPC() {
-    const currentTimestamp = moment().valueOf();
-    const onedayago = moment().add(-1, 'days').valueOf();
-    const oneHourago = moment().add(-10, 'minutes').valueOf();
+    // const currentTimestamp = moment().valueOf();
+    // const onedayago = moment().add(-1, 'days').valueOf();
+    // const oneHourago = moment().add(-10, 'minutes').valueOf();
     Logger.test("wallet", 'TIMETEST getBalanceByRPC start:', this.id);
 
     // if (this.lastBlockTime
@@ -197,18 +209,15 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     this.balanceByRPC = totalBalance;
     this.balance = totalBalance;
-    this.timestampRPC = currentTimestamp;
+    // this.timestampRPC = currentTimestamp;
 
     Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
     Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
-    Logger.log("wallet", this.masterWallet.id, ' ', this.id, ' timestampRPC:', this.timestampRPC);
+    // Logger.log("wallet", this.masterWallet.id, ' ', this.id, ' timestampRPC:', this.timestampRPC);
     return true;
   }
 
   async getBalanceByAddress(internalAddress: boolean) {
-    // If the balance of 5 consecutive request is 0, then stop the query.(100 addresses)
-    const maxRequestTimesOfGetEmptyBalance = 5;
-    let requestTimesOfGetEmptyBalance = 0;
     let requestAddressCount = 1;
 
     let startIndex = 0;
@@ -233,16 +242,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       try {
         const balance = await this.jsonRPCService.getBalanceByAddress(this.id as StandardCoinName, addressArray.Addresses);
         totalBalance = totalBalance.plus(balance);
-
-        if (balance.lte(0)) {
-          requestTimesOfGetEmptyBalance++;
-          if (requestTimesOfGetEmptyBalance >= maxRequestTimesOfGetEmptyBalance) {
-            requestAddressCount = startIndex;
-            break;
-          }
-        } else {
-          requestTimesOfGetEmptyBalance = 0;
-        }
       } catch (e) {
         Logger.log("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
         throw e;
@@ -256,42 +255,96 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   }
 
   /**
-   *
+   * Call this when import a new wallet or get the latest transactions.
    * @param timestamp get the transactions after the timestamp
    * @returns
    */
   async getTransactionByRPC(timestamp: number = 0) {
     Logger.test("wallet", 'TIMETEST getTransactionByRPC start:', this.id);
     const currentTimestamp = moment().valueOf();
+    this.timestampEnd = Math.round(currentTimestamp / 1000);
 
     const externalTxList = await this.getTransactionByAddress(false, timestamp);
 
-    this.txArray.totalcount = externalTxList.totalcount;
-    this.txArray.txhistory = externalTxList.txhistory;
-
+    if (timestamp === 0) {
+      this.rawTxArray = externalTxList;
+    } else {
+      this.rawTxArray.push.apply(this.rawTxArray, externalTxList);
+    }
 
     // The Single Address Wallet should use the external address.
     if (!this.masterWallet.account.SingleAddress) {
       let txListInterna = await this.getTransactionByAddress(true, timestamp);
-      if (txListInterna && txListInterna.txhistory.length > 0) {
-        this.txArray.totalcount += txListInterna.totalcount;
-        this.txArray.txhistory.push.apply(this.txArray.txhistory, txListInterna.txhistory);
+      if (txListInterna && txListInterna.length > 0) {
+        this.rawTxArray.push.apply(this.rawTxArray, txListInterna);
       }
+    }
+
+    // TODO: get the addreses that need to load more transactions.
+    if (timestamp === 0) {
+      this.needtoLoadMoreAddresses = []
+      for (let i = 0, len = this.rawTxArray.length ; i < len; i++) {
+        if (this.rawTxArray[i].totalcount > this.TRANSACTION_LIMIT) {
+          let len = this.rawTxArray[i].txhistory.length;
+          let timestamp = this.rawTxArray[i].txhistory[len - 1].time;
+          if (this.timestampStart <= timestamp) {
+            this.timestampStart = timestamp;
+          }
+          // There are lot of transactions in this address.
+          this.needtoLoadMoreAddresses.push(this.rawTxArray[i].txhistory[0].address)
+        }
+      }
+      Logger.warn("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
     }
 
     this.mergeTransactionListAndSort();
 
-    // this.timestampRPC = currentTimestamp;
     Logger.test("wallet", 'TIMETEST getTransactionByRPC ', this.id, ' end');
-    Logger.log("wallet", 'getTransactionByRPC end, total tx:', this.txArray);
-    Logger.log("wallet", this.masterWallet.id, ' ', this.id, ' timestampRPC:', currentTimestamp);
     return true;
   }
 
+  // Call this when load more transactions.
+  //
+  async getMoreTransactionByRPC(times: number) {
+    if (this.needtoLoadMoreAddresses.length === 0) {
+      Logger.warn('wallet', 'All Transactions are loaded...')
+      return;
+    }
+
+    let skipTxCount = times * this.TRANSACTION_LIMIT;
+    let nextLimit = skipTxCount + this.TRANSACTION_LIMIT;
+    try {
+      const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, this.needtoLoadMoreAddresses,
+            this.TRANSACTION_LIMIT, skipTxCount, 0);
+
+      this.needtoLoadMoreAddresses = [];
+      this.timestampEnd = this.timestampStart;
+      this.timestampStart = 0;
+      if (txRawList && txRawList.length > 0) {
+        for (let i = 0, len = txRawList.length ; i < len; i++) {
+          this.rawTxArray.push(txRawList[i].result);
+          if (txRawList[i].result.totalcount > nextLimit) {
+            let len = this.rawTxArray[i].txhistory.length;
+            let timestamp = this.rawTxArray[i].txhistory[len - 1].time;
+            if (this.timestampStart <= timestamp) {
+              this.timestampStart = timestamp;
+            }
+            this.needtoLoadMoreAddresses.push(txRawList[i].result.txhistory[0].address)
+          }
+        }
+        Logger.warn("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
+      }
+    } catch (e) {
+      Logger.log("wallet", 'getTransactionByAddress exception:', e);
+      throw e;
+    }
+
+    this.mergeTransactionListAndSort();
+  }
+
   async getTransactionByAddress(internalAddress: boolean, timestamp: number = 0) {
-    let requestAddressCount = 1;
     let startIndex = 0;
-    let txListTotal:AllTransactionsHistory = {totalcount:0, txhistory:[]};
+    let txListTotal:AllTransactionsHistory[] = [];
 
     if (internalAddress) {
       Logger.log("wallet", 'get Transaction for internal Address');
@@ -304,17 +357,16 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       addressArray = await this.masterWallet.walletManager.spvBridge.getAllAddresses(
         this.masterWallet.id, this.id, startIndex, 150, internalAddress);
       if (addressArray.Addresses.length === 0) {
-        requestAddressCount = startIndex;
         break;
       }
       startIndex += addressArray.Addresses.length;
 
       try {
-        const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray.Addresses, 50, timestamp);
+        const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray.Addresses, this.TRANSACTION_LIMIT, timestamp);
+        Logger.warn('wallet', 'rawList form rpc:', txRawList)
         if (txRawList && txRawList.length > 0) {
-          for (const result of txRawList) {
-            txListTotal.totalcount += result.result.totalcount;
-            txListTotal.txhistory.push.apply(txListTotal.txhistory, result.result.txhistory);
+          for (let i = 0, len = txRawList.length ; i < len; i++) {
+            txListTotal.push(txRawList[i].result);
           }
         }
       } catch (e) {
@@ -323,14 +375,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     } while (!this.masterWallet.account.SingleAddress);
 
-    // Logger.log('Wallet', 'TX:', this.masterWallet.id, ' ChainID:', this.id, ' ', txListTotal)
+    Logger.log('Wallet', 'TX:', this.masterWallet.id, ' ChainID:', this.id, ' ', txListTotal)
     return txListTotal;
   }
 
   async getTransactionDetails(txid:string) {
-    // let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, "3a9aff92bf1a1ef67c249b3763d72ea6c70cac1fc781acffebd03f55d0c8318a");
     let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, txid);
-    Logger.warn('wallet', 'test detail:', details)
     return details;
   }
 
@@ -340,7 +390,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   async getAllUtxoByRPC() {
     Logger.test("wallet", 'TIMETEST getAllUtxoByRPC start:', this.id);
     this.utxoArray = null;
-
     this.utxoArray = await this.getAllUtxoByAddress(false);
 
     // The Single Address Wallet should use the external address.
@@ -353,12 +402,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     // temp for test
     this.utxoArrayForSDK = [];
-    for (const result of this.utxoArray) {
+    for (let i = 0, len = this.utxoArray.length ; i < len; i++) {
       let utxoForSDK: UtxoForSDK = {
-          Address: result.address,
-          Amount: (Math.round(parseFloat(result.amount) * Config.SELA)).toString(),
-          Index: result.vout,
-          TxHash: result.txid
+          Address: this.utxoArray[i].address,
+          Amount: (Math.round(parseFloat(this.utxoArray[i].amount) * Config.SELA)).toString(),
+          Index: this.utxoArray[i].vout,
+          TxHash: this.utxoArray[i].txid
       }
       this.utxoArrayForSDK.push(utxoForSDK);
     }
@@ -414,13 +463,28 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     this.mergeTransactionList();
 
     // sort by block height
-    this.txArray.txhistory.sort(function (A, B) {
+    this.txArrayToDisplay.txhistory.sort(function (A, B) {
       return B.height - A.height;
     });
   }
 
+
   mergeTransactionList() {
-    let allSentTx = this.txArray.txhistory.filter((tx)=> {
+    Logger.warn('wallet', 'mergeTransactionList timestamp:[', this.timestampStart, ', ', this.timestampEnd, ']');
+    // Get the txhistory between the timestampStart and timestampEnd.
+    for (let i = 0, len = this.rawTxArray.length ; i < len; i++) {
+      for (const txhistory of this.rawTxArray[i].txhistory) {
+        if ((txhistory.time >= this.timestampStart) && (txhistory.time <= this.timestampEnd)) {
+          this.txArrayToDisplay.txhistory.push(txhistory);
+        }
+      }
+    }
+
+    // TODO to improve : "+ 100": just mean we don't load all the transactions.
+    this.needtoLoadMoreAddresses.length === 0 ? this.txArrayToDisplay.totalcount = this.txArrayToDisplay.txhistory.length :
+    this.txArrayToDisplay.totalcount = this.txArrayToDisplay.txhistory.length + 100;
+
+    let allSentTx = this.txArrayToDisplay.txhistory.filter((tx)=> {
       return tx.type === 'sent'
     })
 
@@ -436,7 +500,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     //merge and update
     let totalMergeTxCount = 0;
     for (let i = 0, len2 = sendtxidArray.length; i < len2; i++) {
-      let txWithSameTxId = this.txArray.txhistory.filter((tx) => {
+      let txWithSameTxId = this.txArrayToDisplay.txhistory.filter((tx) => {
         return tx.txid === sendtxidArray[i].txid;
       })
 
@@ -444,22 +508,22 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
       let updateArray = false;
       // update the first sent transaction and remove the others.
-      for (let j = this.txArray.txhistory.length - 1; j >= 0; j--) {
-        if ((this.txArray.txhistory[j].height == sendtxidArray[i].height)
-          && (this.txArray.txhistory[j].txid == sendtxidArray[i].txid)) {
-          if (!updateArray && (this.txArray.txhistory[j].type === 'sent')) {
-            this.txArray.txhistory[j].value = updateInfo.value;
-            this.txArray.txhistory[j].type = updateInfo.type as TransactionDirection;
-            this.txArray.txhistory[j].inputs = updateInfo.inputs;
+      for (let j = this.txArrayToDisplay.txhistory.length - 1; j >= 0; j--) {
+        if ((this.txArrayToDisplay.txhistory[j].height == sendtxidArray[i].height)
+          && (this.txArrayToDisplay.txhistory[j].txid == sendtxidArray[i].txid)) {
+          if (!updateArray && (this.txArrayToDisplay.txhistory[j].type === 'sent')) {
+            this.txArrayToDisplay.txhistory[j].value = updateInfo.value;
+            this.txArrayToDisplay.txhistory[j].type = updateInfo.type as TransactionDirection;
+            this.txArrayToDisplay.txhistory[j].inputs = updateInfo.inputs;
             updateArray = true;
           } else {
-            this.txArray.txhistory.splice(j, 1);
+            this.txArrayToDisplay.txhistory.splice(j, 1);
             totalMergeTxCount++;
           }
         }
       }
     }
-    this.txArray.totalcount -= totalMergeTxCount;
+    this.txArrayToDisplay.totalcount -= totalMergeTxCount;
   }
 
   /**
