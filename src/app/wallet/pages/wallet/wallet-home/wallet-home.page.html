@@ -1,7 +1,7 @@
 <ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    
-    <ion-refresher *ngIf="!hideRefresher" slot="fixed" (ionRefresh)="doRefresh($event)">
+
+    <ion-refresher *ngIf="!hideRefresher" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="crescent"></ion-refresher-content>
     </ion-refresher>
 
