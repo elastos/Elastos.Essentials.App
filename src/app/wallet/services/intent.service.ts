@@ -27,6 +27,7 @@ export enum ScanType {
 export class IntentService {
     private walletList: MasterWallet [] = null;
     private subscription: Subscription = null;
+    private nextScreen = '';
 
     constructor(
         public events: Events,
@@ -140,11 +141,13 @@ export class IntentService {
         switch (this.getShortAction(intent.action)) {
             case 'crmembervote':
                 Logger.log("wallet", 'CR member vote Transaction intent content:', intent.params);
+                this.nextScreen = '/wallet/intents/crmembervote';
                 this.coinTransferService.transfer.votes = intent.params.votes;
                 break;
 
             case 'crmemberregister':
                 Logger.log("wallet", 'CR member register Transaction intent content:', intent.params);
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 this.coinTransferService.transfer.did = intent.params.did;
                 this.coinTransferService.transfer.nickname = intent.params.nickname;
                 this.coinTransferService.transfer.url = intent.params.url;
@@ -153,6 +156,7 @@ export class IntentService {
 
             case 'crmemberupdate':
                 Logger.log("wallet", 'CR member update Transaction intent content:', intent.params);
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 this.coinTransferService.transfer.nickname = intent.params.nickname;
                 this.coinTransferService.transfer.url = intent.params.url;
                 this.coinTransferService.transfer.location = intent.params.location;
@@ -160,11 +164,13 @@ export class IntentService {
 
             case 'crmemberunregister':
                 Logger.log("wallet", 'CR member unregister Transaction intent content:', intent.params);
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 this.coinTransferService.transfer.crDID = intent.params.crDID;
                 break;
 
             case 'crmemberretrieve':
                 Logger.log("wallet", 'CR member retrieve Transaction intent content:', intent.params);
+                this.nextScreen = '/wallet/intents/crmemberregister';
                 this.coinTransferService.chainId = StandardCoinName.IDChain;
                 this.coinTransferService.transfer.amount = this.getNumberFromParam(intent.params.amount);
                 this.coinTransferService.transfer.publickey = intent.params.publickey;
@@ -172,21 +178,25 @@ export class IntentService {
 
             case 'dposvotetransaction':
                 Logger.log("wallet", 'DPOS Transaction intent content:', intent.params);
+                this.nextScreen = '/wallet/intents/dposvote';
                 this.coinTransferService.publickeys = intent.params.publickeys;
                 break;
 
             case 'didtransaction':
+                this.nextScreen = '/wallet/intents/didtransaction';
                 this.coinTransferService.chainId = StandardCoinName.IDChain;
                 this.coinTransferService.didrequest = intent.params.didrequest;
                 break;
 
             case 'esctransaction':
+                this.nextScreen = '/wallet/intents/esctransaction';
                 this.coinTransferService.chainId = StandardCoinName.ETHSC;
                 this.coinTransferService.payloadParam = intent.params.payload.params[0];
                 // this.coinTransferService.amount = intent.params.amount;
                 break;
 
             case 'pay':
+                this.nextScreen = '/wallet/coin-transfer';
                 const intentChainId = this.getChainIDByCurrency(intent.params.currency || 'ELA');
                 if (intentChainId) {
                     this.coinTransferService.chainId = intentChainId;
@@ -209,9 +219,12 @@ export class IntentService {
 
             case 'crproposalcreatedigest':
                 this.handleCreateProposalDigestIntent(intent);
+                // TODO
+                Logger.error('wallet', 'crproposalcreatedigest Not implemented');
                 break;
 
             case 'crproposalvoteagainst':
+                this.nextScreen = '/wallet/intents/crproposalvoteagainst';
                 this.handleVoteAgainstProposalIntent(intent);
                 break;
 
@@ -223,9 +236,9 @@ export class IntentService {
             const masterWallet = this.walletList[0];
             this.coinTransferService.masterWalletId = masterWallet.id;
             this.coinTransferService.walletInfo = masterWallet.account;
-            this.native.setRootRouter('/wallet/intents/waitforsync', {rootPage: true});
+            this.native.setRootRouter(this.nextScreen);
         } else {
-            this.native.setRootRouter('/wallet/intents/select-subwallet');
+            this.native.setRootRouter('/wallet/intents/select-subwallet', {nextScreen: this.nextScreen});
         }
     }
 
