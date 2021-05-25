@@ -18,13 +18,12 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     protected async initialize() {
-        // this.masterWallet.walletManager.registerSubWalletListener();
         await this.initLastBlockInfo();
         this.updateBalance();
     }
 
     public async destroy() {
-        await this.masterWallet.walletManager.stopSubWalletSync(this.masterWallet.id, this.id as StandardCoinName);
+        await this.masterWallet.walletManager.stopSubWalletSync(this.masterWallet.id);
         await this.masterWallet.walletManager.spvBridge.destroySubWallet(this.masterWallet.id, this.id);
 
         super.destroy();

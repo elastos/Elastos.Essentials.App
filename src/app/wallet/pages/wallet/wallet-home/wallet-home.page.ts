@@ -35,7 +35,6 @@ import { CurrencyService } from '../../../services/currency.service';
 import { UiService } from '../../../services/ui.service';
 import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
 import { IonSlides } from '@ionic/angular';
-import { BackupRestoreService } from '../../../services/backuprestore.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { Subscription } from 'rxjs';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
@@ -65,7 +64,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public masterWallet: MasterWallet = null;
     public masterWalletList: MasterWallet[] = [];
     public isSingleWallet = false;
-    public resolvingBackupService = false;
 
     private walletChangedSubscription: Subscription = null;
 
@@ -91,7 +89,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
         public theme: GlobalThemeService,
         public uiService: UiService,
         private zone: NgZone,
-        private backupService: BackupRestoreService,
         private storage: LocalStorage,
     ) {
     }
@@ -104,7 +101,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
             Logger.log("wallet", "masterwalletcount:changed event received result:", result);
             this.zone.run(() => {
                 this.updateWallet();
-                this.backupService.init();
 
                 if (result.action === 'add') {
                     const index = this.masterWalletList.findIndex(e => e.id === result.walletId);
@@ -229,21 +225,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     isStandardSubwallet(subWallet: SubWallet) {
         return subWallet instanceof StandardSubWallet;
-    }
-
-    async enableHiveBackup() {
-        this.resolvingBackupService = await this.backupService.activateVaultAccess();
-    }
-
-    shouldPromptToEnableHiveVaultForBackup(): boolean {
-        /*Logger.log("wallet",
-            'shouldPromptToEnableHiveVaultForBackup',
-            this.resolvingBackupService,
-            this.backupService.initialized(),
-            this.backupService.vaultIsConfigured()
-        );*/
-        // Note: Task #4zv1e5 - Issue leads to setupBackupHelper in backupService
-        return !this.resolvingBackupService && this.backupService.initialized() && !this.backupService.vaultIsConfigured();
     }
 
     closeRefreshBox() {

@@ -72,7 +72,7 @@ export class JsonRPCService {
         return balanceOfSELA;
     }
 
-    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, timestamp: number = 0): Promise<any> {
+    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, skip: number = 0, timestamp: number = 0): Promise<any> {
         const paramArray = [];
         let index = 0;
 
@@ -82,6 +82,7 @@ export class JsonRPCService {
                 params: {
                     address,
                     limit,
+                    skip,
                     timestamp
                 },
                 id: index.toString()

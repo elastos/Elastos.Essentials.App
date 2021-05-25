@@ -117,10 +117,10 @@ export class SPVSyncService {
         // Logger.log("wallet", event.Action, event.result);
 
         switch (event.Action) {
-            case 'OnBlockSyncProgress':
-                Logger.log("wallet", "SubWallet message: ", masterId, chainId, event);
-                this.handleBlockSyncProgressEvent(masterId, chainId, event);
-                break;
+            // case 'OnBlockSyncProgress':
+            //     Logger.log("wallet", "SubWallet message: ", masterId, chainId, event);
+            //     this.handleBlockSyncProgressEvent(masterId, chainId, event);
+            //     break;
             // case 'OnBalanceChanged':
             //     // Nothing to do for now
             //     break;
@@ -130,28 +130,24 @@ export class SPVSyncService {
         }
     }
 
-    public async syncStartSubWallets(masterId: WalletID, chainIds: StandardCoinName[]): Promise<void> {
+    public async syncStartSubWallets(masterId: WalletID): Promise<void> {
         Logger.log("wallet", "SubWallets sync is starting:", masterId);
 
-        // for (const chainId of chainIds) {
-        //     await this.spvBridge.syncStart(masterId, chainId);
-        // }
+        await this.spvBridge.syncStart(masterId);
 
         Logger.log("wallet", "SubWallet sync start is completed");
     }
 
-    public async syncStopSubWallets(masterId: WalletID, chainIds: StandardCoinName[]): Promise<boolean> {
+    public async syncStopSubWallets(masterId: WalletID): Promise<boolean> {
         Logger.log("wallet", "SubWallets sync is stopping:", masterId);
 
-        // for (const chainId of chainIds) {
-        //     try {
-        //         await this.spvBridge.syncStop(masterId, chainId);
-        //     }
-        //     catch (e) {
-        //         Logger.error('wallet', "Failed to stop subwallet "+chainId+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
-        //         return false;
-        //     }
-        // }
+        try {
+            await this.spvBridge.syncStop(masterId);
+        }
+        catch (e) {
+            Logger.error('wallet', "Failed to stop subwallet "+StandardCoinName.ETHSC+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
+            return false;
+        }
 
         Logger.log("wallet", "SubWallet sync stop is completed");
         return true;
