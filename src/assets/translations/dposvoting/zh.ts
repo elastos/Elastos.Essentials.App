@@ -51,10 +51,10 @@ export const zh = {
         'vote-voted': '投票',
         'vote-not-voted': '投票',
         'vote-selected': '已选中节点',
-        'vote-fail': '投票失败',
-        'vote-cancelled': '投票被取消',
+        'vote-fail': '未投票',
+        'vote-cancelled': '您取消了投票',
         'vote-timeout': '投票超时',
         'vote-no-nodes-checked': '请最多选择36个节点进行投票',
     }
-    
+
 };

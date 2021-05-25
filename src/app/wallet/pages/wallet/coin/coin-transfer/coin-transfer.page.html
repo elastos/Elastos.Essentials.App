@@ -252,18 +252,7 @@
     *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3"
     class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
 >
-    <ion-row *ngIf="!waitingForSyncCompletion" class="btn-container">
-        <ion-button color="primary" [disabled]="!valuesValid()" (click)="goTransaction()">
-            <ion-label>{{ getButtonLabel() | translate }}</ion-label>
-        </ion-button>
-    </ion-row>
-    <ion-row *ngIf="waitingForSyncCompletion" class="syncing-container">
-        <ion-card-title>{{ 'waitforsync-loading' | translate }}</ion-card-title>
-        <ion-card-subtitle>
-            {{ 'waitforsync-intro' | translate }}
-        </ion-card-subtitle>
-        <span>&#8226; {{ 'sync-progress' | translate: { progress: fromSubWallet.progress } }}</span>
-    </ion-row>
+
 </ion-footer>
  -->
 <!------------------ PAY INTENT FOOTER ------------------>

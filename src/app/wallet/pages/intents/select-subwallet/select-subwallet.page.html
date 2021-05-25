@@ -1,5 +1,5 @@
 <ion-content>
-    <app-titlebar title="text-vote-crcouncil"></app-titlebar>
+    <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <div *ngFor="let masterWallet of walletManager.getWalletsList()">
             <ion-row class="main-title-row">
@@ -27,8 +27,8 @@
                     </p>
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
-                    <span *ngIf="masterWallet.getSubWallet(chainId).progress === 100 && masterWallet.getSubWallet(chainId).type !== CoinType.ERC20" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(masterWallet.getSubWallet(chainId).syncTimestamp) }}</span>
-                    <span *ngIf="masterWallet.getSubWallet(chainId).progress !== 100 && masterWallet.getSubWallet(chainId).type !== CoinType.ERC20" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="masterWallet.getSubWallet(chainId).syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(masterWallet.getSubWallet(chainId).syncTimestamp) }}</span></span>
+                    <span *ngIf="chainId === 'ETHSC' && masterWallet.getSubWallet(chainId).progress === 100" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(masterWallet.getSubWallet(chainId).syncTimestamp) }}</span>
+                    <span *ngIf="chainId === 'ETHSC' && masterWallet.getSubWallet(chainId).progress !== 100" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="masterWallet.getSubWallet(chainId).syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(masterWallet.getSubWallet(chainId).syncTimestamp) }}</span></span>
                     <span *ngIf="masterWallet.getSubWallet(chainId).type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>

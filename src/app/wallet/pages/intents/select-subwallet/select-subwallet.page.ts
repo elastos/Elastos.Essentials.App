@@ -10,6 +10,8 @@ import { Native } from '../../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Router } from '@angular/router';
+import { Util } from 'src/app/wallet/model/Util';
 
 
 @Component({
@@ -23,6 +25,8 @@ export class SelectSubwalletPage implements OnInit {
   public CoinType = CoinType;
   public chainId: StandardCoinName;
 
+  private nextScreen = '';
+
   constructor(
     public walletManager: WalletManager,
     public coinTransferService: CoinTransferService,
@@ -31,8 +35,14 @@ export class SelectSubwalletPage implements OnInit {
     public theme: GlobalThemeService,
     public currencyService: CurrencyService,
     private globalIntentService: GlobalIntentService,
+    private router: Router,
     private native: Native
-  ) { }
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (!Util.isEmptyObject(navigation.extras.state)) {
+        this.nextScreen = navigation.extras.state.nextScreen;
+    }
+  }
 
   ngOnInit() {
     this.chainId = this.coinTransferService.chainId;
@@ -47,7 +57,7 @@ export class SelectSubwalletPage implements OnInit {
   walletSelected(masterWallet: MasterWallet) {
     this.coinTransferService.masterWalletId = masterWallet.id;
     this.coinTransferService.walletInfo = masterWallet.account;
-    this.native.go("/wallet/intents/waitforsync");
+    this.native.go(this.nextScreen);
   }
 
   async cancelOperation() {
