@@ -91,8 +91,8 @@
                     </p>
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
-                    <span *ngIf="subWallet.progress === 100 && subWallet.type !== CoinType.ERC20" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
-                    <span *ngIf="subWallet.progress !== 100 && subWallet.type !== CoinType.ERC20" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
+                    <span *ngIf="subWallet.id === 'ETHSC' && subWallet.progress === 100" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
+                    <span *ngIf="subWallet.id === 'ETHSC' && subWallet.progress !== 100" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
                     <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
@@ -178,8 +178,8 @@
                 </p>
             </ion-col>
             <ion-col offset="2" size="10" class="bottom-col">
-                <span *ngIf="subWallet.progress === 100 && subWallet.type !== CoinType.ERC20" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
-                <span *ngIf="subWallet.progress !== 100 && subWallet.type !== CoinType.ERC20" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
+                <span *ngIf="subWallet.id === 'ETHSC' && subWallet.progress === 100" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span>
+                <span *ngIf="subWallet.id === 'ETHSC' && subWallet.progress !== 100" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></span>
                 <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
