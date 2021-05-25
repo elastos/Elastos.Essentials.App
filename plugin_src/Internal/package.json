@@ -1,0 +1,24 @@
+{
+  "name": "elastos-essentials-plugin-internal",
+  "version": "1.0.0",
+  "description": "Elastos Essentials Interanl Plugin",
+  "cordova": {
+    "id": "elastos-essentials-plugin-internal",
+    "platforms": [
+      "android",
+      "ios",
+      "android",
+      "ios"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "author": "elastos team",
+  "license": "MIT",
+  "types": "./www/types.d.ts"
+}
