@@ -13,7 +13,6 @@ import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
 import { EscTransactionPage } from './esctransaction/esctransaction.page';
 import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
-import { WaitForSyncPage } from './waitforsync/waitforsync.page';
 
 @NgModule({
     declarations: [
@@ -25,7 +24,6 @@ import { WaitForSyncPage } from './waitforsync/waitforsync.page';
         DPoSVotePage,
         EscTransactionPage,
         SelectSubwalletPage,
-        WaitForSyncPage
     ],
     imports: [
         SharedComponentsModule,
@@ -43,7 +41,6 @@ import { WaitForSyncPage } from './waitforsync/waitforsync.page';
             { path: 'crproposalvoteagainst', component: CRProposalVoteAgainstPage },
             { path: 'access', component: AccessPage },
             { path: 'select-subwallet', component: SelectSubwalletPage },
-            { path: 'waitforsync', component: WaitForSyncPage },
         ])
     ],
     exports: [RouterModule],
