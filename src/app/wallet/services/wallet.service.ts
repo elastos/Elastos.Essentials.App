@@ -41,7 +41,6 @@ import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
 import { IDChainSubWallet } from '../model/wallets/IDChainSubWallet';
 import { MainchainSubWallet } from '../model/wallets/MainchainSubWallet';
-import { BackupRestoreService } from './backuprestore.service';
 import { StandardSubWallet } from '../model/wallets/StandardSubWallet';
 import { MainAndIDChainSubWallet } from '../model/wallets/MainAndIDChainSubWallet';
 import { ETHChainSubWallet } from '../model/wallets/ETHChainSubWallet';
@@ -99,7 +98,6 @@ export class WalletManager {
         public jsonRPCService: JsonRPCService,
         private prefs: GlobalPreferencesService,
         private didSessions: GlobalDIDSessionsService,
-        private backupService: BackupRestoreService,
         private spvService:SPVSyncService
     ) {
         WalletManager.instance = this;
@@ -119,13 +117,13 @@ export class WalletManager {
         // Start the sync service
         await this.spvService.init(this);
 
+        this.registerSubWalletListener();
+
         if (!hasWallet) {
             //this.goToLauncherScreen();
             this.events.publish("walletmanager:initialized");
             return;
         }
-
-        this.registerSubWalletListener();
 
         await this.startSyncAllWallet();
 
@@ -156,16 +154,12 @@ export class WalletManager {
         Logger.log('wallet', "Wallet manager initialization complete");
 
         this.events.publish("walletmanager:initialized");
-
-        // The base init is completed. Now let's start the backup service in background (not a blocking await)
-        this.initBackupService();
     }
 
     async stop() {
       this.removeSubWalletListener();
       await this.stopSyncAllWallet();
       await this.spvBridge.destroy();
-      // TODO: stop backup service?
     }
 
     private async initWallets(): Promise<boolean> {
@@ -267,23 +261,6 @@ export class WalletManager {
 
     private sendUpdateWalletInfo2Service(masterId: string, action: string) {
         this.spvService.updateMasterWallets(masterId, action);
-    }
-
-    // Backup service runs only in the UI because it requires user interaction sometimes, and we don't
-    // wan't data model overlaps/conflicts with the background service or with intents.
-    private async initBackupService() {
-        // Give some fresh air to the wallet while starting, to show the UI first without overloading the CPU.
-        // There is no hurry to start the backup service.
-        setTimeout(async () => {
-            await this.backupService.init();
-
-            for (const wallet of this.getWalletsList()) {
-                await this.backupService.setupBackupForWallet(wallet);
-            }
-
-            await this.backupService.checkSync(Object.values(this.masterWallets));
-            //await this.backupService.testInstantELAStateDownload(Object.values(this.masterWallets));
-        }, 5000);
     }
 
     // TODO: delete it, we do not use active wallet
@@ -417,7 +394,7 @@ export class WalletManager {
         // Get all tokens and create subwallet
         await this.masterWallets[id].updateERC20TokenList(this.prefs);
 
-        this.registerSubWalletListener();
+        // this.registerSubWalletListener();
 
         // Save state to local storage
         await this.saveMasterWallet(this.masterWallets[id]);
@@ -426,12 +403,6 @@ export class WalletManager {
         this.sendUpdateWalletInfo2Service(id, 'add');
 
         this.setRecentWalletId(id);
-
-        // Add this new wallet to the backup service
-        await this.backupService.setupBackupForWallet(this.getMasterWallet(id));
-
-        // Sync with remote
-        await this.backupService.checkSync(this.getWalletsList());
 
         this.startWalletSync(id);
 
@@ -443,9 +414,6 @@ export class WalletManager {
      * Destroy a master wallet, active or not, base on its id
      */
     async destroyMasterWallet(id: string) {
-        // Stop dealing with this wallet in the backup service
-        await this.backupService.removeBackupTrackingForWallet(id);
-
         // Destroy the wallet in the wallet plugin
         await this.spvBridge.destroyWallet(id);
 
@@ -498,53 +466,40 @@ export class WalletManager {
      */
     public async startWalletSync(masterId: WalletID): Promise<void> {
         Logger.log('wallet', "Requesting sync service to start syncing wallet " + masterId);
-
         if (!this.getMasterWallet(masterId)) {
             // The master wallet is destroyed.
-            Logger.log('wallet', 'startWalletSync error, the master wallet does not exist!');
+            Logger.warn('wallet', 'startWalletSync error, the master wallet does not exist!');
             return;
         }
 
-        // Add only standard subwallets to SPV sync request
-        const chainIds: StandardCoinName[] = [];
-        for (const subWallet of Object.values(this.getMasterWallet(masterId).subWallets)) {
-            if (subWallet.type === CoinType.STANDARD) {
-                chainIds.push(subWallet.id as StandardCoinName);
-            }
-        }
-
-        await this.startSubWalletsSync(masterId, chainIds);
+        await this.startSubWalletsSync(masterId);
     }
 
     // TODO: When wallet is destroyed
     public async stopWalletSync(masterId: WalletID): Promise<boolean> {
         Logger.log('wallet', "Requesting sync service to stop syncing wallet " + masterId);
-
-        // Add only standard subwallets to SPV stop sync request
-        const chainIds: StandardCoinName[] = [];
-        for (const subWallet of Object.values(this.getMasterWallet(masterId).subWallets)) {
-            if (subWallet.type === CoinType.STANDARD) {
-                chainIds.push(subWallet.id as StandardCoinName);
-            }
+        if (!this.getMasterWallet(masterId)) {
+            // The master wallet is destroyed.
+            Logger.warn('wallet', 'stopWalletSync error, the master wallet does not exist!');
+            return;
         }
-
-        return await this.stopSubWalletsSync(masterId, chainIds);
+        return await this.stopSubWalletsSync(masterId);
     }
 
-    private startSubWalletsSync(masterId: WalletID, subWalletIds: StandardCoinName[]): Promise<void> {
-        return this.spvService.syncStartSubWallets(masterId, subWalletIds);
+    private startSubWalletsSync(masterId: WalletID): Promise<void> {
+        return this.spvService.syncStartSubWallets(masterId);
     }
 
-    private async stopSubWalletsSync(masterId: WalletID, subWalletIds: StandardCoinName[]): Promise<boolean> {
-        return this.spvService.syncStopSubWallets(masterId, subWalletIds);
+    private async stopSubWalletsSync(masterId: WalletID): Promise<boolean> {
+        return this.spvService.syncStopSubWallets(masterId);
     }
 
-    public async startSubWalletSync(masterId: WalletID, subWalletId: StandardCoinName): Promise<void> {
-        await this.startSubWalletsSync(masterId, [subWalletId]);
+    public async startSubWalletSync(masterId: WalletID): Promise<void> {
+        await this.startSubWalletsSync(masterId);
     }
 
-    public async stopSubWalletSync(masterId: WalletID, subWalletId: StandardCoinName): Promise<void> {
-        await this.stopSubWalletsSync(masterId, [subWalletId]);
+    public async stopSubWalletSync(masterId: WalletID): Promise<void> {
+        await this.stopSubWalletsSync(masterId);
     }
 
     /**
@@ -575,36 +530,11 @@ export class WalletManager {
         const masterId = event.MasterWalletID;
         const chainId = event.ChainID;
 
-        if (event.Action != "OnETHSCEventHandled") {
-          // Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
-          // Logger.log('wallet', event.Action, event.result);
-        }
+        // Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
+        // Logger.log('wallet', event.Action, event.result);
 
-        switch (event.Action) {
-            case "OnTransactionStatusChanged":
-                if (this.transactionMap[event.txid]) {
-                    this.transactionMap[event.txid].Status = event.status;
-                }
-                break;
-            case "OnBlockSyncProgress":
-                this.updateSyncProgressFromCallback(masterId, chainId, event);
-                break;
-            case "OnBalanceChanged":
-                this.getMasterWallet(masterId).getSubWallet(chainId).updateBalance();
-                break;
-            case "OnTxPublished":
-                this.handleTransactionPublishedEvent(event);
-                break;
-
-            case "OnBlockSyncStopped":
-            case "OnAssetRegistered":
-            case "OnBlockSyncStarted":
-            case "OnConnectStatusChanged":
-                // Nothing
-                break;
-            case "OnETHSCEventHandled":
-                this.updateETHSCEventFromCallback(masterId, chainId, event);
-                break;
+        if (event.Action === "OnETHSCEventHandled") {
+            this.updateETHSCEventFromCallback(masterId, chainId, event);
         }
     }
 
@@ -632,8 +562,6 @@ export class WalletManager {
             Logger.warn('wallet', "updateSyncProgress() called but subwallet with ID", chainId, "does not exist in wallet!", masterWallet);
             return;
         }
-
-        await this.backupService.onSyncProgress(masterWallet, subWallet);
 
         if (!this.hasPromptTransfer2IDChain && (chainId === StandardCoinName.IDChain)) {
             const elaProgress = this.masterWallets[masterId].subWallets[StandardCoinName.ELA].progress;
@@ -860,19 +788,19 @@ export class WalletManager {
         const mainChainSubwallet:MainAndIDChainSubWallet = masterWallet.getSubWallet(StandardCoinName.ELA) as MainAndIDChainSubWallet;
         mainChainSubwallet.getTransactionByRPC();
         // should update utxo when send transactions
-        mainChainSubwallet.getAllUtxoByRPC();
+        // mainChainSubwallet.getAllUtxoByRPC();
 
-        const subwallets = masterWallet.subWalletsWithExcludedCoin(StandardCoinName.ETHSC, CoinType.STANDARD);
-        let updatedByRPC = false;
-        for (const subWallet of subwallets) {
-            const updated = await (subWallet as MainAndIDChainSubWallet).getBalanceByRPC();
-            if (updated) {
-                updatedByRPC = true;
-            }
-        }
+        // const subwallets = masterWallet.subWalletsWithExcludedCoin(StandardCoinName.ETHSC, CoinType.STANDARD);
+        // let updatedByRPC = false;
+        // for (const subWallet of subwallets) {
+        //     const updated = await (subWallet as MainAndIDChainSubWallet).getBalanceByRPC();
+        //     if (updated) {
+        //         updatedByRPC = true;
+        //     }
+        // }
 
-        if (updatedByRPC) {
-            await this.saveMasterWallet(masterWallet);
-        }
+        // if (updatedByRPC) {
+        //     await this.saveMasterWallet(masterWallet);
+        // }
     }
 }

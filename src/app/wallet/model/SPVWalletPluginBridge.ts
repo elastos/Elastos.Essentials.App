@@ -408,6 +408,22 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    syncStart(masterWalletId: string): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            walletManager.syncStart([masterWalletId],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    syncStop(masterWalletId: string): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            walletManager.syncStop([masterWalletId],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
     createAddress(masterWalletId: string, chainId: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             walletManager.createAddress([masterWalletId, chainId],

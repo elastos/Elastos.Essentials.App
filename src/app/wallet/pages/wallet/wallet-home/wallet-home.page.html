@@ -17,10 +17,6 @@
         </ion-col>
     </ion-row>
 
-    <ion-button *ngIf="shouldPromptToEnableHiveVaultForBackup()" class="sticky-btn" (click)="enableHiveBackup()">
-        <ion-label>{{ 'wallet.activate-hive-vault' | translate }}</ion-label>
-    </ion-button>
-
     <ion-slides *ngIf="!isSingleWallet" [class.dark-slides]="theme.darkMode" [class.blur]="native.popup" [options]="slideOpts" #slider pager>
         <ion-slide *ngFor="let masterWallet of masterWalletList">
             <ion-row class="main-title-row">
