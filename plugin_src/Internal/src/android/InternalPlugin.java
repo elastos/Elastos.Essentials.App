@@ -51,7 +51,7 @@ public class InternalPlugin extends CordovaPlugin {
         callbackContext.success(getStoreDataDir(didStoreId));
     }
 
-    public static String getDIDDir(String did) {
+    public String getDIDDir(String did) {
         if (did != null) {
             did = did.replace(":", "_");
         }
@@ -60,7 +60,7 @@ public class InternalPlugin extends CordovaPlugin {
     }
 
     public String getDidStorageDir(String didStoreId, String didString) {
-        return getStoreDataDir(didStoreId) + "/" + getDIDDir(didString);
+        return getStoreDataDir(didStoreId) + "/dids/" + getDIDDir(didString);
     }
 
     private void getDidStoragePath(JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -79,9 +79,10 @@ public class InternalPlugin extends CordovaPlugin {
         if (to.isFile()) {
             to.delete();
         }
-        if (!to.exists()) {
-            to.mkdirs();
+        if (to.exists()) {
+            return;
         }
+        to.mkdirs();
 
         File[] files = from.listFiles();
         for(int i = 0; i < files.length; i++) {

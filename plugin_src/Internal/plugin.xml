@@ -16,15 +16,15 @@
         <config-file parent="/*" target="AndroidManifest.xml" />
         <source-file src="src/android/InternalPlugin.java" target-dir="src/org/elastos/essentials/plugins/internal" />
     </platform>
-    <!-- <platform name="ios">
+    <platform name="ios">
         <config-file parent="/*" target="config.xml">
             <feature name="InternalManager">
                 <param name="ios-package" value="InternalPlugin" />
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-        <source-file src="src/ios/InternalPlugin.m" />
-    </platform> -->
+        <source-file src="src/ios/InternalPlugin.swift" />
+    </platform>
 
     <hook src="hooks/before_plugin_install/build_ts.js" type="before_plugin_install" />
 </plugin>

@@ -98,6 +98,7 @@
     "cordova-sqlite-storage": "5.1.0",
     "elastos-essentials-plugin-fingerprint": "file:../Plugins/Fingerprint",
     "elastos-essentials-plugin-intent": "file:../Plugins/EssentialsIntent",
+    "elastos-essentials-plugin-internal": "file:plugin_src/Internal",
     "elastos-essentials-plugin-passwordmanager": "file:../Plugins/PasswordManager",
     "elastos-essentials-plugin-wallet": "file:../Plugins/Wallet",
     "es6-promise-plugin": "4.2.2",
@@ -139,7 +140,8 @@
       "elastos-essentials-plugin-wallet": {},
       "cordova-plugin-app-version": {},
       "elastos-essentials-plugin-intent": {},
-      "cordova-plugin-statusbar": {}
+      "cordova-plugin-statusbar": {},
+      "elastos-essentials-plugin-internal": {}
     },
     "platforms": [
       "android",

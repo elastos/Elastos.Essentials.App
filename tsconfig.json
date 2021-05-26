@@ -34,6 +34,7 @@
       "elastos-essentials-plugin-intent",
       "elastos-essentials-plugin-passwordmanager",
       "elastos-essentials-plugin-wallet",
+      "elastos-essentials-plugin-internal",
       "cordova-plugin-camera"
     ],
     "lib": [
