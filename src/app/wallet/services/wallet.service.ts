@@ -98,6 +98,7 @@ export class WalletManager {
         private http: HttpClient,
         public jsonRPCService: JsonRPCService,
         private prefs: GlobalPreferencesService,
+        private didSessions: GlobalDIDSessionsService,
         private backupService: BackupRestoreService,
         private spvService:SPVSyncService
     ) {
@@ -180,7 +181,10 @@ export class WalletManager {
 
             }
             await this.spvBridge.setNetwork(networkType, networkConfig, jsonrpcUrl, apimiscUrl );
-            await this.spvBridge.init(GlobalDIDSessionsService.signedInDIDString);
+
+            let signedInEntry = await this.didSessions.getSignedInIdentity();
+            let rootPath = signedInEntry.didStoragePath;
+            await this.spvBridge.init(rootPath);
 
             Logger.log('wallet', "Getting all master wallets from the SPV SDK");
             const idList = await this.spvBridge.getAllMasterWallets();

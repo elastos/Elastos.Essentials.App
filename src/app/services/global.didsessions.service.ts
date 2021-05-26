@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
-import { GlobalNavService } from './global.nav.service';
+import { Direction, GlobalNavService } from './global.nav.service';
 import { GlobalServiceManager } from './global.service.manager';
 import { GlobalIntentService } from './global.intent.service';
 import { NewIdentity } from '../didsessions/model/newidentity';
 
-declare let walletManager: WalletPlugin.WalletManager;
-
+declare let internalManager: InternalPlugin.InternalManager;
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
   contentType: string;
@@ -27,6 +26,8 @@ export type IdentityEntry = {
   avatar?: IdentityAvatar;
   /** Keep the mnemonic info for after did creeated or import */
   mnemonicInfo?: NewIdentity;
+  /** DID data storage path, for save did data and the other module data, such as spv */
+  didStoragePath: string;
 }
 
 /**
@@ -46,22 +47,26 @@ export class GlobalDIDSessionsService {
 
   public static signedInDIDString: string | null = null; // Convenient way to get the signed in user's DID, used in many places
 
-  constructor(private storage: GlobalStorageService, private globalNavService: GlobalNavService, private globalIntentService: GlobalIntentService,) {
+  constructor(private storage: GlobalStorageService,
+    private globalNavService: GlobalNavService,
+    private globalIntentService: GlobalIntentService) {
   }
 
   public async init(): Promise<void> {
     Logger.log("DIDSessionsService", "Initializating the DID Sessions service");
 
     this.identities = await this.storage.getSetting<IdentityEntry[]>(null, "didsessions", "identities", []);
-    this.signedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
-    if (this.signedInIdentity) {
-      GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
-      await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
+    let lastSignedInIdentity = await this.storage.getSetting<IdentityEntry>(null, "didsessions", "signedinidentity", null);
+    if (lastSignedInIdentity) {
+      let identity = this.identities.find(entry => lastSignedInIdentity.didString == entry.didString);
+      if (identity) {
+        this.signIn(identity);
+      }
     }
   }
 
   private getIdentityIndex(didString: string): number {
-    return this.identities.findIndex((i)=>didString === i.didString);
+    return this.identities.findIndex((i) => didString === i.didString);
   }
 
   private deleteIdentityEntryIfExists(didString: string) {
@@ -123,13 +128,23 @@ export class GlobalDIDSessionsService {
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
     Logger.log('DIDSessionsService', "Signing in with DID", entry.didString, entry.name);
 
+    if (entry.didStoragePath == null) {
+      await internalManager.changeOldPath(entry.didStoreId, entry.didString);
+      entry.didStoragePath = await internalManager.getDidStoragePath(entry.didStoreId, entry.didString);
+      await this.storage.setSetting(null, "didsessions", "identities", this.identities);
+    }
+
     this.signedInIdentity = entry;
+
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
     // Save to disk
     await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
 
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
+
+    //Go to launcher
+    this.globalNavService.navigateHome(Direction.FORWARD);
   }
 
   /**

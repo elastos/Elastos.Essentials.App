@@ -23,6 +23,7 @@ import { Events } from 'src/app/services/events.service';
 import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
+declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -126,7 +127,7 @@ export class IdentityService {
                 //}
 
                 await this.didSessions.signIn(identityEntry, signInOptions);
-                this.uxService.goToLauncer();
+                // this.uxService.goToLauncer();
             }
             else {
                 Logger.warn('didsessions', "Failed to authentify using master password. Sign in not permitted.");
@@ -465,10 +466,13 @@ export class IdentityService {
                     }
                     */
 
+        let didStoragePath = await internalManager.getDidStoragePath(didStoreId, didString);
+
         let newIdentity: IdentityEntry = {
             didStoreId: didStoreId,
             didString: didString,
-            name: name
+            name: name,
+            didStoragePath: didStoragePath
         };
 
         // Restore the avatar profile picture on the DID session manager, if any
