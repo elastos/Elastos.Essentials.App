@@ -24,7 +24,6 @@
 
  @objc(InternalPlugin)
  class InternalPlugin : CDVPlugin {
-
     func success(_ command: CDVInvokedUrlCommand) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK)
 
@@ -95,6 +94,7 @@
             for file in files! {
                 let from = fromPath + "/" + file;
                 let to = toPath + "/" + file;
+                //If toPath is subdir, don't move it
                 if (from != toPath) {
                     try fileManager.moveItem(atPath: from, toPath: to);
                 }
@@ -107,9 +107,6 @@
         let didString = command.arguments[1] as? String ?? "";
 
         do {
-            //move did store dir
-            try moveFolder(getStoreDataDir(didStoreId), getStoreDataDir(didStoreId) + "/didstore");
-
             //move wallet dir
             let oldPath = NSHomeDirectory() + "/Documents/spv/" + didString;
             let newPath = getDidStorageDir(didStoreId, didString);

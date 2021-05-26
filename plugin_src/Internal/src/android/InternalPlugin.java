@@ -86,6 +86,7 @@ public class InternalPlugin extends CordovaPlugin {
 
         File[] files = from.listFiles();
         for(int i = 0; i < files.length; i++) {
+            //If toPath is subdir, don't move it
             if (!files[i].getAbsolutePath().equals(to.getAbsolutePath()) ) {
                 File file = new File(toPath, files[i].getName());
                 files[i].renameTo(file);
@@ -96,9 +97,6 @@ public class InternalPlugin extends CordovaPlugin {
     private void changeOldPath(JSONArray args, CallbackContext callbackContext) throws Exception {
         String didStoreId = args.getString(0);
         String didString = args.getString(1);
-
-        //move did store dir
-        moveFolder(getStoreDataDir(didStoreId), getStoreDataDir(didStoreId) + "/didstore");
 
         //move wallet dir
         String oldPath = cordova.getActivity().getFilesDir() + "/" + didString;
