@@ -1,6 +1,6 @@
 <ion-content [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
-    <ion-refresher class="ion-margin-top" slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher class="ion-margin-top" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="crescent">
         </ion-refresher-content>
     </ion-refresher>
@@ -30,7 +30,7 @@
                 <ion-col size="8.5" class="middle-col">
                     <h1>{{ proposal.title }}</h1>
                     <p class="date">{{ uxService.formatDate(proposal.createdAt) }} &#8226; {{ proposal.proposedBy }}</p>
-                    <p 
+                    <p
                         class="status"
                         [class.final]="proposal.status === 'FINAL'"
                         [class.active]="proposal.status === 'ACTIVE'"
