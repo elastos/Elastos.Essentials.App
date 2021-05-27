@@ -119,7 +119,6 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.chainId = this.chainId;
             this.coinTransferService.walletInfo = this.native.clone(this.masterWallet.account);
-
             this.initData();
 
             if (this.masterWallet.subWallets[this.chainId].progress !== 100) {
@@ -203,18 +202,15 @@ export class CoinHomePage implements OnInit {
                 continue;
             }
 
-            // TODO
-            // if (this.chainIsETHSC() || this.chainIsERC20()) {
-            //     transactionInfo.amount = transactionInfo.amount.isInteger() ? transactionInfo.amount.integerValue() : transactionInfo.amount;
-            // }
+            if (this.chainIsETHSC() || this.chainIsERC20()) {
+                transactionInfo.amount = transactionInfo.amount.isInteger() ? transactionInfo.amount.integerValue() : transactionInfo.amount;
+            }
 
             // Check if transaction was made today and increment our counter if so.
             this.countAsDailyTransactionIfNeeded(transactionInfo.timestamp);
 
             this.transferList.push(transactionInfo);
         }
-
-        Logger.warn('wallet', 'coin-home transferList:', this.transferList)
     }
 
     async deleteTransaction(tx) {

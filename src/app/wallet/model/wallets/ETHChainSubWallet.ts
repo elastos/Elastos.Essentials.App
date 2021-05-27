@@ -10,6 +10,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
+import moment from 'moment';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -37,12 +38,13 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-      // TODO
-      return null;
+      let allTransactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, startIndex, '');
+      Logger.log('wallet', 'ETHSC allTransactions:', allTransactions)
+      return {totalcount: allTransactions.MaxCount, txhistory:allTransactions.Transactions};
     }
 
     public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
-      let transactionDetails// = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
+      let transactionDetails = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
       return transactionDetails;
     }
 
@@ -68,22 +70,42 @@ export class ETHChainSubWallet extends StandardSubWallet {
         });
     }
 
-    public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
-        const transactionInfo = await super.getTransactionInfo(transaction, translate);
+    public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
+        const timestamp = transaction.Timestamp * 1000; // Convert seconds to use milliseconds
+        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
+
+        const transactionInfo: TransactionInfo = {
+            amount: new BigNumber(-1), // Defined by inherited classes
+            confirmStatus: -1, // Defined by inherited classes
+            datetime,
+            direction: null,
+            fee: transaction.Fee.toString(),
+            height: transaction.BlockNumber,
+            memo: '',
+            name: await this.getTransactionName(transaction, translate),
+            payStatusIcon: await this.getTransactionIconPath(transaction),
+            status: transaction.Status,
+            statusName: this.getTransactionStatusName(transaction.Status, translate),
+            symbol: '', // Defined by inherited classes
+            timestamp,
+            txid: null, // Defined by inherited classes
+            type: null, // Defined by inherited classes
+        };
+
         const direction = await this.getETHSCTransactionDirection(transaction.address);
 
         // TODO: Why BlockNumber is 0 sometimes? Need to check.
         // if (transaction.IsErrored || (transaction.BlockNumber === 0)) {
-        // if (transaction.IsErrored) {
-        //     return null;
-        // }
-        // TODO
-        // transactionInfo.amount = new BigNumber(transaction.Amount).dividedBy(Config.WEI);
-        // transactionInfo.fee = transaction.Fee / Config.WEI;
-        // transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
+        if (transaction.IsErrored) {
+            return null;
+        }
 
-        // // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
-        // transactionInfo.confirmStatus = transaction.Confirmations;
+        transactionInfo.amount = new BigNumber(transaction.Amount).dividedBy(Config.WEI);
+        transactionInfo.fee = (transaction.Fee / Config.WEI).toString();
+        transactionInfo.txid = transaction.Hash;
+
+        // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
+        transactionInfo.confirmStatus = transaction.Confirmations;
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
@@ -108,20 +130,19 @@ export class ETHChainSubWallet extends StandardSubWallet {
         return transactionInfo;
     }
 
-    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
-        const direction = await this.getETHSCTransactionDirection(transaction.address);
-        // TODO
-        // switch (direction) {
-        //     case TransactionDirection.RECEIVED:
-        //         return "wallet.coin-op-received-token";
-        //     case TransactionDirection.SENT:
-        //         if (transaction.Amount !== '0') {
-        //             return "wallet.coin-op-sent-token";
-        //         } else {
-        //             // Contract
-        //             return this.getETHSCTransactionContractType(transaction, translate);
-        //         }
-        // }
+    protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
+        const direction = await this.getETHSCTransactionDirection(transaction.TargetAddress);
+        switch (direction) {
+            case TransactionDirection.RECEIVED:
+                return "wallet.coin-op-received-token";
+            case TransactionDirection.SENT:
+                if (transaction.Amount !== '0') {
+                    return "wallet.coin-op-sent-token";
+                } else {
+                    // Contract
+                    return this.getETHSCTransactionContractType(transaction, translate);
+                }
+        }
         return null;
     }
 
