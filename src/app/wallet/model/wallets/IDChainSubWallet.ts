@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { RawTransactionType, Transaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { TransactionHistory, TransactionInfo } from '../Transaction';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { MainAndIDChainSubWallet } from './MainAndIDChainSubWallet';

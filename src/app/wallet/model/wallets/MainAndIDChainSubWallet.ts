@@ -1,7 +1,7 @@
 import { StandardSubWallet } from './StandardSubWallet';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
-import { AllTransactionsHistory, Transaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
+import { AllTransactionsHistory, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
@@ -55,7 +55,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     transactionInfo.amount = new BigNumber(transaction.value, 10);//.dividedBy(Config.SELAAsBigNumber);
     transactionInfo.txid = transaction.txid;
-    // transactionInfo.confirmStatus = transaction.ConfirmStatus;
 
     if (transaction.type === TransactionDirection.RECEIVED) {
       transactionInfo.type = TransactionType.RECEIVED;
@@ -384,6 +383,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return details;
   }
 
+
+  async getRealAddressInCrosschainTx(txDetail: TransactionDetail) {
+
+    // if ()
+  }
+
   /**
    *
    */
@@ -400,7 +405,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     }
 
-    // temp for test
+    // TODO: remove it, temp for test
     this.utxoArrayForSDK = [];
     for (let i = 0, len = this.utxoArray.length ; i < len; i++) {
       let utxoForSDK: UtxoForSDK = {
@@ -515,6 +520,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             this.txArrayToDisplay.txhistory[j].value = updateInfo.value;
             this.txArrayToDisplay.txhistory[j].type = updateInfo.type as TransactionDirection;
             this.txArrayToDisplay.txhistory[j].inputs = updateInfo.inputs;
+            this.txArrayToDisplay.txhistory[j].outputs = updateInfo.outputs;
             updateArray = true;
           } else {
             this.txArrayToDisplay.txhistory.splice(j, 1);
@@ -562,14 +568,19 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     }
 
-    for (let i = 0, len = sentOutputs.length ; i < len; i++) {
+    // If all the outputs address belong to this wallet, then this transactions is move transaction.
+    for (let i = sentOutputs.length - 1; i >= 0; i--) {
       if (recvAddress.indexOf(sentOutputs[i]) < 0) {
         isMoveTransaction = false;
-        break;
+        // break;
+      } else {
+        // This address belongs to this wallet, so remove it.
+        sentOutputs.splice(i);
       }
     }
 
     // TODO: Need to update sent outputs, remove the received address.
+
 
     let value, type ='sent';
     if (isMoveTransaction) {
@@ -578,6 +589,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       value = (sentValue - recvValue).toFixed(8).toString();
     }
 
-    return {value, type, inputs:sentInputs}
+    return {value, type, inputs:sentInputs, outputs:sentOutputs}
   }
 }

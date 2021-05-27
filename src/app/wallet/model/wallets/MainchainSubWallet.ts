@@ -1,4 +1,4 @@
-import {  Transaction, TransactionDirection, TransactionHistory } from '../Transaction';
+import {  TransactionDirection, TransactionHistory } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';

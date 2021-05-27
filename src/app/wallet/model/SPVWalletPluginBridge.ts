@@ -3,7 +3,7 @@ import { Native } from '../services/native.service';
 import { PopupProvider } from '../services/popup.service';
 import { Config } from '../config/Config';
 import { StandardCoinName } from './Coin';
-import { AllTransactions } from './Transaction';
+import { AllTransactions, AllTransactionsHistory } from './Transaction';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Events } from 'src/app/services/events.service';
@@ -408,22 +408,6 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    syncStart(masterWalletId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-            walletManager.syncStart([masterWalletId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    syncStop(masterWalletId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-            walletManager.syncStop([masterWalletId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
     createAddress(masterWalletId: string, chainId: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             walletManager.createAddress([masterWalletId, chainId],
@@ -585,6 +569,48 @@ export class SPVWalletPluginBridge {
                 ],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    // ETHSC
+    getBalance(masterWalletId: string): Promise<ELAAmountString> {
+        return new Promise((resolve, reject)=>{
+            walletManager.getBalance([masterWalletId],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    publishTransaction(masterWalletId: string, rawTransaction: string): Promise<PublishedTransaction> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.publishTransaction([masterWalletId, rawTransaction],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    getAllTransactions(masterWalletId: string, start, addressOrTxId): Promise<AllTransactions> {
+        return new Promise(async (resolve, reject) => {
+            const maxNumberOfTransactionsToReturn = 20;
+            walletManager.getAllTransaction([masterWalletId, start, maxNumberOfTransactionsToReturn, addressOrTxId],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    syncStart(masterWalletId: string): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            walletManager.syncStart([masterWalletId],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    syncStop(masterWalletId: string): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            walletManager.syncStop([masterWalletId],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
         });
     }
 

@@ -7,9 +7,10 @@ import { Util } from '../Util';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactions, AllTransactionsHistory, EthTransaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, EthTransaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
+import moment from 'moment';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -174,10 +175,8 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-        // TODO
-        let allTransactions;// = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, startIndex, '', this.id);
-        // Logger.log('wallet', "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
-        return allTransactions;
+      let allTransactions = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, startIndex, '', this.id);
+      return {totalcount: allTransactions.MaxCount, txhistory:allTransactions.Transactions};
     }
 
     public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
@@ -185,21 +184,41 @@ export class ERC20SubWallet extends SubWallet {
         return transactionDetails;
     }
 
-    public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
-        const transactionInfo = await super.getTransactionInfo(transaction, translate);
+    public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
+        const timestamp = transaction.Timestamp * 1000; // Convert seconds to use milliseconds
+        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
+
+        const transactionInfo: TransactionInfo = {
+            amount: new BigNumber(-1), // Defined by inherited classes
+            confirmStatus: -1, // Defined by inherited classes
+            datetime,
+            direction: null,
+            fee: transaction.Fee.toString(),
+            height: transaction.BlockNumber,
+            memo: '',
+            name: await this.getTransactionName(transaction, translate),
+            payStatusIcon: await this.getTransactionIconPath(transaction),
+            status: transaction.Status,
+            statusName: this.getTransactionStatusName(transaction.Status, translate),
+            symbol: '', // Defined by inherited classes
+            timestamp,
+            txid: null, // Defined by inherited classes
+            type: null, // Defined by inherited classes
+        };
+
         const direction = await this.getERC20TransactionDirection(transaction.address);
 
         // TODO: Why BlockNumber is 0 sometimes? Need to check.
         // if (transaction.IsErrored || (transaction.BlockNumber === 0)) {
-        // if (transaction.IsErrored) {
-        //     return null;
-        // }
-        // TODO
-        // transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.Amount).dividedBy(this.tokenDecimals) : new BigNumber(transaction.Amount);
-        // transactionInfo.fee = this.tokenDecimals > 0 ? transaction.Fee / this.tokenDecimals : transaction.Fee;
-        // transactionInfo.txid = transaction.TxHash || transaction.Hash; // ETHSC use TD or Hash
-        // // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
-        // transactionInfo.confirmStatus = transaction.Confirmations;
+        if (transaction.IsErrored) {
+            return null;
+        }
+
+        transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.Amount).dividedBy(this.tokenDecimals) : new BigNumber(transaction.Amount);
+        transactionInfo.fee = (this.tokenDecimals > 0 ? transaction.Fee / this.tokenDecimals : transaction.Fee).toString();
+        transactionInfo.txid = transaction.Hash;
+        // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
+        transactionInfo.confirmStatus = transaction.Confirmations;
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';

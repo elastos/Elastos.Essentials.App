@@ -7,7 +7,7 @@ import { Util } from '../../../../model/Util';
 import { WalletManager } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
 import { StandardCoinName } from '../../../../model/Coin';
-import { TransactionDirection, TransactionType, TransactionInfo, Transaction, EthTransaction } from '../../../../model/Transaction';
+import { TransactionDirection, TransactionType, TransactionInfo, EthTransaction } from '../../../../model/Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { SubWallet } from '../../../../model/wallets/SubWallet';
@@ -133,7 +133,6 @@ export class CoinTxInfoPage implements OnInit {
         // Tx is NOT ETH - Define total cost and address
         if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
             // Pay Fee
-            // this.payFee = this.subWallet.getDisplayAmount(new BigNumber(this.transactionInfo.fee)).toNumber();
             this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
             // Total Cost
             this.totalCost = this.payFee ? this.transactionInfo.amount.plus(this.payFee) : null;
@@ -304,21 +303,21 @@ export class CoinTxInfoPage implements OnInit {
         }, 1000);
     }
 
-    /**
-     * Get target address
-     */
-    getTargetAddressFromTransaction(transaction: Transaction): string {
-        let targetAddress = '';
-        if (transaction.Outputs) {
-            for (const key in transaction.Outputs) {
-                if (transaction.Amount === transaction.Outputs[key]) {
-                    targetAddress = key;
-                    break;
-                }
-            }
-        }
-        return targetAddress;
-    }
+    // /**
+    //  * Get target address
+    //  */
+    // getTargetAddressFromTransaction(transaction: Transaction): string {
+    //     let targetAddress = '';
+    //     if (transaction.Outputs) {
+    //         for (const key in transaction.Outputs) {
+    //             if (transaction.Amount === transaction.Outputs[key]) {
+    //                 targetAddress = key;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     return targetAddress;
+    // }
 
     /**
      * Get the real targeAddress by rpc

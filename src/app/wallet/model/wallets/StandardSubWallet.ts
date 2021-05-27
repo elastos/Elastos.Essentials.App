@@ -1,8 +1,8 @@
 import { MasterWallet } from './MasterWallet';
-import { SubWallet, SerializedSubWallet, RawTransactionPublishResult } from './SubWallet';
-import { CoinType, Coin, StandardCoinName, ERC20Coin } from '../Coin';
+import { SubWallet, RawTransactionPublishResult } from './SubWallet';
+import { CoinType, StandardCoinName } from '../Coin';
 import { Util } from '../Util';
-import { AllTransactions, RawTransactionType, Transaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { RawTransactionType, TransactionDirection, TransactionHistory } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
 import { Config } from '../../config/Config';
 import BigNumber from 'bignumber.js';
@@ -82,13 +82,6 @@ export abstract class StandardSubWallet extends SubWallet {
     public isBalanceEnough(amount: BigNumber) {
         return this.balance.gt(amount.multipliedBy(Config.SELAAsBigNumber));
     }
-
-    // public async getTransactions(startIndex: number): Promise<AllTransactions> {
-    //   // TODO
-    //     let allTransactions:AllTransactions//await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, startIndex, '');
-    //     Logger.log("wallet", "Get all transaction count for coin "+this.id+": ", allTransactions && allTransactions.Transactions ? allTransactions.Transactions.length : -1, "startIndex: ", startIndex);
-    //     return allTransactions;
-    // }
 
     protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
         let transactionName: string = '';

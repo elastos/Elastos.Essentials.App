@@ -250,4 +250,16 @@ export class Util {
             return numberString;
         }
     }
+
+    /**
+     * Reverse txid, eg. '65c1af8a' => '8aafc165'.
+     * For get address in cross chain transaction.
+     */
+    public static reversetxid(txid) {
+      let newtxid = ''
+      for (let i = txid.length - 2; i >= 0; i -= 2) {
+        newtxid += txid.substring(i, i + 2);
+      }
+      return newtxid
+    }
 }

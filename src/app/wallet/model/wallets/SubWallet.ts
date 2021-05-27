@@ -1,6 +1,6 @@
 import { MasterWallet } from './MasterWallet';
 import { CoinType, CoinID, StandardCoinName } from '../Coin';
-import { AllTransactions, AllTransactionsHistory, Transaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, TransactionDetail, TransactionHistory, TransactionInfo, TransactionStatus } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
