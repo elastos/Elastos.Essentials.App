@@ -315,6 +315,15 @@ export class ERC20SubWallet extends SubWallet {
         return rawTx;
     }
 
+    public async publishTransaction(transaction: string): Promise<string> {
+      const publishedTransaction =
+            await this.masterWallet.walletManager.spvBridge.publishTransaction(
+                this.masterWallet.id,
+                transaction
+            );
+      return publishedTransaction.TxHash;
+    }
+
     public async signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
         Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
 
