@@ -699,10 +699,12 @@ export class SPVWalletPluginBridge {
     createDepositTransaction(
         masterWalletId: string,
         chainId: string,
-        fromAddress: string,
+        inputs: string,
         sideChainID: string,
         amount: string,
         sideChainAddress: string,
+        lockAddress: string,
+        fee: string,
         memo: string = ''
     ): Promise<string> {
         return new Promise(async (resolve, reject) => {
@@ -710,10 +712,12 @@ export class SPVWalletPluginBridge {
                 [
                     masterWalletId,
                     chainId,
-                    fromAddress,
+                    inputs,
                     sideChainID,
                     amount,
                     sideChainAddress,
+                    lockAddress,
+                    fee,
                     memo
                 ],
                 (ret) => { resolve(ret); },

@@ -303,13 +303,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         const toAmount = this.accMul(this.amount, Config.SELA);
 
         const rawTx =
-            await this.walletManager.spvBridge.createDepositTransaction(
-                this.masterWallet.id,
-                this.chainId, // From subwallet id
-                '', // From address, not necessary
-                this.coinTransferService.subchainId, // To subwallet id
-                toAmount.toString(), // User input amount
-                this.toAddress, // Generated address
+            await (this.fromSubWallet as MainAndIDChainSubWallet).createDepositTransaction(
+                this.coinTransferService.subchainId as StandardCoinName, // To subwallet id
+                this.toAddress, // to address
+                toAmount, // User input amount
                 this.memo // Memo, not necessary
             );
 

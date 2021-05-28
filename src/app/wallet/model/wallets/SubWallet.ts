@@ -213,5 +213,6 @@ export abstract class SubWallet {
 
     public abstract createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string>;
     public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string>;
+    public abstract publishTransaction(transaction: string): Promise<string>;
     public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
 }

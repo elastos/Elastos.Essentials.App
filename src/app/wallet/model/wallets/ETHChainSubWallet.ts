@@ -39,7 +39,6 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
       let allTransactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, startIndex, '');
-      Logger.log('wallet', 'ETHSC allTransactions:', allTransactions)
       return {totalcount: allTransactions.MaxCount, txhistory:allTransactions.Transactions};
     }
 
@@ -262,6 +261,15 @@ export class ETHChainSubWallet extends StandardSubWallet {
             gasLimit.toString(),
             data,
         );
+    }
+
+    public async publishTransaction(transaction: string): Promise<string> {
+      const publishedTransaction =
+            await this.masterWallet.walletManager.spvBridge.publishTransaction(
+                this.masterWallet.id,
+                transaction
+            );
+      return publishedTransaction.TxHash;
     }
 
     /**

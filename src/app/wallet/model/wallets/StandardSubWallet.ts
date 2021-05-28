@@ -245,14 +245,8 @@ export abstract class StandardSubWallet extends SubWallet {
 
             Logger.log("wallet", "Transaction signed. Now publishing.");
 
-            let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
-                this.masterWallet.id,
-                this.id,
-                signedTx,
-            )
-
-            let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
-            Logger.log("wallet", "sendrawtransaction txid:", txid);
+            let txid = await this.publishTransaction(signedTx);
+            Logger.log("wallet", "pubishTransaction txid:", txid);
 
             await this.masterWallet.walletManager.native.hideLoading();
             this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);

@@ -164,6 +164,32 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     );
   }
 
+  public async createDepositTransaction(sideChainID: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
+    // TODO: select utxo
+    let utxo = this.getUtxo(amount);
+
+    let lockAddres = '';
+    if (sideChainID === StandardCoinName.IDChain) {
+      lockAddres = Config.IDCHAIN_ADDRESS;
+    } else if (sideChainID === StandardCoinName.ETHSC) {
+      lockAddres = Config.ETHSC_ADDRESS;
+    } else {
+      Logger.error('wallet', 'createDepositTransaction not support ', sideChainID);
+    }
+
+    return this.masterWallet.walletManager.spvBridge.createDepositTransaction(
+      this.masterWallet.id,
+      this.id,
+      JSON.stringify(utxo),
+      sideChainID,
+      amount.toString(),
+      toAddress,
+      lockAddres,
+      '10000',
+      memo // User input memo
+    );
+  }
+
   public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
     return this.masterWallet.walletManager.spvBridge.createWithdrawTransaction(
       this.masterWallet.id,
@@ -173,6 +199,19 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       toAddress,
       memo
     );
+  }
+
+
+  public async publishTransaction(transaction: string): Promise<string>{
+    let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
+      this.masterWallet.id,
+      this.id,
+      transaction,
+    )
+
+    let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
+    Logger.log("wallet", "sendrawtransaction txid:", txid);
+    return txid;
   }
 
   /**
