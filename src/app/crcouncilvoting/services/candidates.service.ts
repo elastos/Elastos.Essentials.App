@@ -121,7 +121,7 @@ export class CandidatesService {
         this.candidates = res.result.crcandidatesinfo;
         Logger.log('crcouncil', 'Candidates added', this.candidates);
         this.totalVotes = parseFloat(res.result.totalvotes);
-        this.getLogos();
+        // this.getLogos();
       } else {
         this.fetchElectionResults();
       }
@@ -158,7 +158,7 @@ export class CandidatesService {
       Logger.log('crcouncil', 'Council fetched', res);
       if (res && res.data) {
         this.council = res.data.council;
-        this.getLogos();
+        // this.getLogos();
       } else {
         Logger.error('crcouncil', 'can not get council data!');
       }
