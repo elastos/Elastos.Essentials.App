@@ -19,14 +19,12 @@ declare let walletManager: WalletPlugin.WalletManager;
  */
 export class ETHChainSubWallet extends StandardSubWallet {
     private ethscAddress: string = null;
-    private withdrawContractAddress: string = null;
     private web3 = null;
     private timestampGetBalance = 0;
 
     constructor(masterWallet: MasterWallet) {
         super(masterWallet, StandardCoinName.ETHSC);
 
-        this.getWithdrawContractAddress();
         this.initWeb3();
     }
 
@@ -50,23 +48,8 @@ export class ETHChainSubWallet extends StandardSubWallet {
     /**
      * Use smartcontract to Send ELA from ETHSC to mainchain.
      */
-    public getWithdrawContractAddress(): Promise<string> {
-        return new Promise(async (resolve) => {
-            if (this.withdrawContractAddress) {
-                resolve(this.withdrawContractAddress);
-            } else {
-                let value = await GlobalPreferencesService.instance.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.type');
-                if (value === 'MainNet') {
-                    this.withdrawContractAddress = Config.CONTRACT_ADDRESS_MAINNET;
-                    resolve(this.withdrawContractAddress);
-                } else if (value === 'TestNet') {
-                    this.withdrawContractAddress = Config.CONTRACT_ADDRESS_TESTNET;
-                    resolve(this.withdrawContractAddress);
-                } else {
-                    resolve(null);
-                }
-            }
-        });
+    public getWithdrawContractAddress() {
+        return Config.ETHSC_CONTRACT_ADDRESS;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
@@ -171,7 +154,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
             return translate.instant("wallet.coin-op-contract-create");
         } else if (transaction.TargetAddress === '0x0000000000000000000000000000000000000000') {
             return translate.instant("coin-op-contract-destroy");
-        } else if (transaction.TargetAddress === this.withdrawContractAddress) {
+        } else if (transaction.TargetAddress === Config.ETHSC_CONTRACT_ADDRESS) {
             // withdraw to MainChain
             // no TokenFunction
             return translate.instant("wallet.coin-dir-to-mainchain");
@@ -233,7 +216,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
         const web3 = new Web3(provider);
 
         const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
-        const contractAddress = await this.getWithdrawContractAddress();
+        const contractAddress = Config.ETHSC_CONTRACT_ADDRESS;
         const ethscWithdrawContract = new web3.eth.Contract(contractAbi, contractAddress);
         const gasPrice = await web3.eth.getGasPrice();
         const toAmountSend = web3.utils.toWei(toAmount.toString());

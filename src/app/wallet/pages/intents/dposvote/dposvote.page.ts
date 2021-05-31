@@ -33,6 +33,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
 
 
 @Component({
@@ -45,6 +46,7 @@ export class DPoSVotePage implements OnInit {
 
     private masterWalletId: string;
     private sourceSubwallet: MainchainSubWallet = null;
+    public voteAmountELA: string;
     public voteAmount: string; // Estimate amount, Balance in SELA
     public chainId: string;
     private walletInfo = {};
@@ -85,8 +87,10 @@ export class DPoSVotePage implements OnInit {
         this.masterWalletId = this.coinTransferService.masterWalletId;
 
         this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(this.chainId) as MainchainSubWallet;
-
-        this.voteAmount = this.sourceSubwallet.balance.minus(this.votingFees()).dividedBy(Config.SELAAsBigNumber).toString();
+        // All balance can be used for voting?
+        let voteInEla = this.sourceSubwallet.balance.minus(this.votingFees());
+        this.voteAmountELA = voteInEla.toString()
+        this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
         this.hasPendingVoteTransaction();
     }
 
@@ -137,29 +141,37 @@ export class DPoSVotePage implements OnInit {
      */
     async createVoteProducerTransaction(stakeAmount: string) {
         Logger.log('wallet', 'Creating vote transaction with amount', stakeAmount);
+        let candidates: Candidates = {};
 
-        // TODO
-        // const rawTx =
-        //     await this.walletManager.spvBridge.createVoteProducerTransaction(
-        //         this.masterWalletId, this.chainId,
-        //         '', // To address, not necessary
-        //         stakeAmount,
-        //         JSON.stringify(this.coinTransferService.publickeys),
-        //         '', // Memo, not necessary
-        //     );
+        // TODO: We should include others voting?
+        for (let i = 0, len = this.coinTransferService.publickeys.length; i < len; i++) {
+          candidates[this.coinTransferService.publickeys[i]] = this.voteAmountELA;
+        }
 
-        // const transfer = new Transfer();
-        // Object.assign(transfer, {
-        //     masterWalletId: this.masterWalletId,
-        //     chainId: this.chainId,
-        //     rawTransaction: rawTx,
-        //     payPassword: '',
-        //     action: this.intentTransfer.action,
-        //     intentId: this.intentTransfer.intentId,
-        // });
+        let dposVoteContent: VoteContent = {
+          Type: VoteType.Delegate,
+          Candidates: candidates
+        }
 
-        // const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        // await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+        const voeteContent = [dposVoteContent];
+
+        const rawTx = await this.sourceSubwallet.createVoteTransaction(
+                JSON.stringify(voeteContent),
+                '', // Memo, not necessary
+            );
+
+        const transfer = new Transfer();
+        Object.assign(transfer, {
+            masterWalletId: this.masterWalletId,
+            chainId: this.chainId,
+            rawTransaction: rawTx,
+            payPassword: '',
+            action: this.intentTransfer.action,
+            intentId: this.intentTransfer.intentId,
+        });
+
+        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { Config } from '../config/Config';
 
 @Injectable({
   providedIn: 'root'
@@ -25,13 +26,30 @@ export class WalletPrefsService {
     this.subscription = this.globalPreferences.preferenceListener.subscribe((preference)=>{
       if (preference.key === "chain.network.type")
         this.activeNetwork = preference.value;
+        this.updateConfig(this.activeNetwork);
     });
+
+    this.updateConfig(this.activeNetwork);
 
     this.setMnemonicLangByLanguage(this.translate.currentLang);
     this.languageSubscription = this.translate.onLangChange.subscribe(data => {
       this.setMnemonicLangByLanguage(data.lang);
     });
 
+  }
+
+  private updateConfig(netWork: NetworkType) {
+    if (netWork === NetworkType.MainNet) {
+      Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_MAINNET;
+      Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_MAINNET;
+    } else if (netWork === NetworkType.TestNet) {
+      Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_TESTNET;
+      Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_TESTNET;
+    } else {
+      // Use MainNet config for others.
+      Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_MAINNET;
+      Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_MAINNET;
+    }
   }
 
   private setMnemonicLangByLanguage(lang) {

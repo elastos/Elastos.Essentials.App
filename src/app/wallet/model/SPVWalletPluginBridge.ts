@@ -135,6 +135,15 @@ export type CRProposalVoteInfo = VoteInfo & {
     }
 };
 
+export type Candidates = {
+  [k: string]: string // "iYMVuGs1FscpgmghSzg243R6PzPiszrgj7": "100000000",
+};
+
+export type VoteContent = {
+  Type: VoteType,
+  Candidates: Candidates,
+};
+
 export type AllAddresses = {
     Addresses: string[];
     MaxCount: number;
@@ -514,10 +523,10 @@ export class SPVWalletPluginBridge {
             (err) => { this.handleError(err, null); });
     }
 
-    createWithdrawTransaction(masterWalletId: string, chainId: string, fromAddress: string, amount: string
-        , mainchainAccounts: string, memo: string): Promise<string> {
+    createWithdrawTransaction(masterWalletId: string, chainId: string, inputs: string, amount: string
+        , mainchainAddress: string, fee: string, memo: string): Promise<string> {
             return new Promise(async (resolve, reject) => {
-            walletManager.createWithdrawTransaction([masterWalletId, chainId, fromAddress, amount, mainchainAccounts, memo],
+            walletManager.createWithdrawTransaction([masterWalletId, chainId, inputs, amount, mainchainAddress, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -571,6 +580,7 @@ export class SPVWalletPluginBridge {
                 (err) => { this.handleError(err, reject); });
         });
     }
+
 
     // ETHSC
     getBalance(masterWalletId: string): Promise<ELAAmountString> {
@@ -831,9 +841,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createVoteTransaction(masterWalletId: string, chainId: string, fromAddress: string, votes: string, memo: string, invalidCandidates: string): Promise<string> {
+    createVoteTransaction(masterWalletId: string, chainId: string, inputs: string, voteContents: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createVoteTransaction([masterWalletId, chainId, fromAddress, votes, memo, invalidCandidates],
+            walletManager.createVoteTransaction([masterWalletId, chainId, inputs, voteContents, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });

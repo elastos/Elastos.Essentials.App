@@ -90,7 +90,7 @@ export abstract class StandardSubWallet extends SubWallet {
         switch (transaction.type) {
             case TransactionDirection.RECEIVED:
                 transactionName = 'wallet.coin-op-received-token';
-                // TODO: upgrade spvsdk, check the ETHSC
+                // TODO: Show right info for others txtype.
                 switch (transaction.txtype) {
                     case RawTransactionType.RechargeToSideChain:
                         transactionName = "wallet.coin-dir-from-mainchain";
@@ -163,19 +163,6 @@ export abstract class StandardSubWallet extends SubWallet {
         }*/
 
         return null;
-    }
-
-    protected isVoteTransaction(txid: string): Promise<any> {
-        return new Promise(async (resolve) => {
-          // TODO
-            // const transactions = await this.masterWallet.walletManager.spvBridge.getAllTransactions(this.masterWallet.id, this.id, 0, txid);
-            // const transaction = transactions.Transactions[0];
-            // if (!Util.isNull(transaction.OutputPayload) && (transaction.OutputPayload.length > 0)) {
-            //     resolve(true);
-            // } else {
-                resolve(false);
-            // }
-        });
     }
 
    /*
