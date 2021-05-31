@@ -787,20 +787,18 @@ export class WalletManager {
         // TODO: to improve, in init and when needed?
         const mainChainSubwallet:MainAndIDChainSubWallet = masterWallet.getSubWallet(StandardCoinName.ELA) as MainAndIDChainSubWallet;
         mainChainSubwallet.getTransactionByRPC();
-        // should update utxo when send transactions
-        // mainChainSubwallet.getAllUtxoByRPC();
 
-        // const subwallets = masterWallet.subWalletsWithExcludedCoin(StandardCoinName.ETHSC, CoinType.STANDARD);
-        // let updatedByRPC = false;
-        // for (const subWallet of subwallets) {
-        //     const updated = await (subWallet as MainAndIDChainSubWallet).getBalanceByRPC();
-        //     if (updated) {
-        //         updatedByRPC = true;
-        //     }
-        // }
+        const subwallets = masterWallet.subWalletsWithExcludedCoin(StandardCoinName.ETHSC, CoinType.STANDARD);
+        let updatedByRPC = false;
+        for (const subWallet of subwallets) {
+            const updated = await (subWallet as MainAndIDChainSubWallet).getBalanceByRPC();
+            if (updated) {
+                updatedByRPC = true;
+            }
+        }
 
-        // if (updatedByRPC) {
-        //     await this.saveMasterWallet(masterWallet);
-        // }
+        if (updatedByRPC) {
+            await this.saveMasterWallet(masterWallet);
+        }
     }
 }

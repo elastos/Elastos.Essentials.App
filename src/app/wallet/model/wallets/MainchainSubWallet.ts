@@ -1,4 +1,4 @@
-import {  TransactionDirection, TransactionHistory } from '../Transaction';
+import {  TransactionDetail, TransactionDirection, TransactionHistory } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
@@ -14,11 +14,12 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
 
     protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
         if (transaction.type === TransactionDirection.MOVED) {
-            // TODO
-            // const isVote = await this.isVoteTransaction(transaction.TxHash);
-            // if (isVote) {
-            //     return "wallet.coin-op-vote";
-            // }
+            const transactionDetails: TransactionDetail = await this.getTransactionDetails(transaction.txid);
+            // Check if it's a voting transaction.
+            if (transactionDetails.vout && transactionDetails.vout[0].payload
+                    && transactionDetails.vout[0].payload.contents) {
+                return "wallet.coin-op-vote";
+            }
         }
 
         return super.getTransactionName(transaction, translate);

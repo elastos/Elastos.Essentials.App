@@ -20,7 +20,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   private rawTxArray: AllTransactionsHistory[] = [];
   private txArrayToDisplay: AllTransactionsHistory = {totalcount:0, txhistory:[]};
   private needtoLoadMoreAddresses: string[] = [];
-  private TRANSACTION_LIMIT = 3;// for rpc
+  private TRANSACTION_LIMIT = 50;// for rpc
   // Maybe there are lots of transactions and we need to merge the transactions for multi address wallet,
   // for performance we only merge the transactions from timestampStart to timestampEnd.
   private timestampStart = 0;
@@ -47,6 +47,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   private getUtxo(amount: number) {
     // TODO: select the utxo
     // For now just return all.
+    Logger.log('wallet', 'UTXOS:', this.utxoArrayForSDK);
     return this.utxoArrayForSDK;
   }
 
@@ -152,6 +153,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       "Amount": amount.toString()
     }]
 
+    await this.getAllUtxoByRPC();
     let utxo = this.getUtxo(amount);
 
     return this.masterWallet.walletManager.spvBridge.createTransaction(
@@ -164,7 +166,24 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     );
   }
 
+  public async createVoteTransaction(voteContents: string, memo: string = ""): Promise<string> {
+    Logger.log('wallet', 'createVoteTransaction:', voteContents);
+
+    await this.getAllUtxoByRPC();
+    let utxo = this.getUtxo(0);
+
+    return this.masterWallet.walletManager.spvBridge.createVoteTransaction(
+      this.masterWallet.id,
+      this.id, // From subwallet id
+      JSON.stringify(utxo),
+      voteContents,
+      '10000',
+      memo // User input memo
+    );
+  }
+
   public async createDepositTransaction(sideChainID: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
+    await this.getAllUtxoByRPC();
     // TODO: select utxo
     let utxo = this.getUtxo(amount);
 
@@ -190,13 +209,18 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     );
   }
 
-  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
+  public async createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
+    await this.getAllUtxoByRPC();
+    // TODO: select utxo
+    let utxo = this.getUtxo(amount);
+
     return this.masterWallet.walletManager.spvBridge.createWithdrawTransaction(
       this.masterWallet.id,
       this.id, // From subwallet id
-      '',
-      toAmount.toString(),
+      JSON.stringify(utxo),
+      amount.toString(),
       toAddress,
+      '10000',
       memo
     );
   }
@@ -332,7 +356,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           this.needtoLoadMoreAddresses.push(this.rawTxArray[i].txhistory[0].address)
         }
       }
-      Logger.warn("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
+      // Logger.warn("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
     }
 
     this.mergeTransactionListAndSort();
@@ -345,7 +369,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   //
   async getMoreTransactionByRPC(times: number) {
     if (this.needtoLoadMoreAddresses.length === 0) {
-      Logger.warn('wallet', 'All Transactions are loaded...')
+      Logger.log('wallet', 'All Transactions are loaded...')
       return;
     }
 
@@ -370,7 +394,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             this.needtoLoadMoreAddresses.push(txRawList[i].result.txhistory[0].address)
           }
         }
-        Logger.warn("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
+        // Logger.log("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
       }
     } catch (e) {
       Logger.log("wallet", 'getTransactionByAddress exception:', e);
@@ -401,7 +425,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
       try {
         const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray.Addresses, this.TRANSACTION_LIMIT, timestamp);
-        Logger.warn('wallet', 'rawList form rpc:', txRawList)
+        // Logger.warn('wallet', 'rawList form rpc:', txRawList)
         if (txRawList && txRawList.length > 0) {
           for (let i = 0, len = txRawList.length ; i < len; i++) {
             txListTotal.push(txRawList[i].result);
@@ -413,7 +437,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     } while (!this.masterWallet.account.SingleAddress);
 
-    Logger.log('Wallet', 'TX:', this.masterWallet.id, ' ChainID:', this.id, ' ', txListTotal)
+    // Logger.log('Wallet', 'TX:', this.masterWallet.id, ' ChainID:', this.id, ' ', txListTotal)
     return txListTotal;
   }
 
@@ -422,7 +446,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return details;
   }
 
-
+  // TODO
   async getRealAddressInCrosschainTx(txDetail: TransactionDetail) {
 
     // if ()
@@ -444,7 +468,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     }
 
-    // TODO: remove it, temp for test
     this.utxoArrayForSDK = [];
     for (let i = 0, len = this.utxoArray.length ; i < len; i++) {
       let utxoForSDK: UtxoForSDK = {
@@ -514,7 +537,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
 
   mergeTransactionList() {
-    Logger.warn('wallet', 'mergeTransactionList timestamp:[', this.timestampStart, ', ', this.timestampEnd, ']');
+    Logger.log('wallet', 'mergeTransactionList timestamp:[', this.timestampStart, ', ', this.timestampEnd, ']');
     // Get the txhistory between the timestampStart and timestampEnd.
     for (let i = 0, len = this.rawTxArray.length ; i < len; i++) {
       for (const txhistory of this.rawTxArray[i].txhistory) {
@@ -580,6 +603,26 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     let sendTx = [], recvTx = [], sentInputs = [], sentOutputs = [], recvAddress = [];
     let isMoveTransaction = true;
     let sentValue : number = 0, recvValue : number = 0;
+
+    if (transactionsArray.length == 1) {
+      isMoveTransaction = true;
+      // If all the outputs address belong to this wallet, then this transactions is move transaction.
+      for (let i = 0; i < transactionsArray[0].outputs.length; i++) {
+        if (transactionsArray[0].inputs.indexOf(transactionsArray[0].outputs[i]) < 0) {
+            isMoveTransaction = false;
+            break;
+        }
+      }
+
+      let value, type ='sent';
+      if (isMoveTransaction) {
+        value = '0', type = 'moved';
+      } else {
+        value = transactionsArray[0].value;
+      }
+
+      return {value, type, inputs:transactionsArray[0].inputs, outputs:transactionsArray[0].outputs}
+    }
 
     for (let i = 0, len = transactionsArray.length ; i < len; i++) {
       if (transactionsArray[i].type === 'sent') {

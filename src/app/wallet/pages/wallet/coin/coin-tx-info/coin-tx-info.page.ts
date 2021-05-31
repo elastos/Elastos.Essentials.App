@@ -324,7 +324,7 @@ export class CoinTxInfoPage implements OnInit {
      */
     async getETHSCTransactionTargetAddres(transaction: EthTransaction) {
         let targetAddress = transaction.TargetAddress;
-        const withdrawContractAddress = await (this.subWallet as ETHChainSubWallet).getWithdrawContractAddress();
+        const withdrawContractAddress = (this.subWallet as ETHChainSubWallet).getWithdrawContractAddress();
         if (transaction.TargetAddress === withdrawContractAddress) {
             targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(transaction.BlockNumber + 6, transaction.Hash);
             // If the targetAddress is empty, then this transaction is error.

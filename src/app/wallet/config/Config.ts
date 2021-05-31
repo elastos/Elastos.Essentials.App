@@ -45,11 +45,14 @@ export class Config {
     //public static BLOCKCHAIN_URL: String = 'https://blockchain-regtest.elastos.org/';
 
     public static IDCHAIN_ADDRESS = "XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ";
-    public static ETHSC_ADDRESS = "XWCiyXM1bQyGTawoaYKx9PjRkMUGGocWub";
+    public static ETHSC_ADDRESS = "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf";
+    public static ETHSC_ADDRESS_MAINNET = "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf";
+    public static ETHSC_ADDRESS_TESTNET = "XWCiyXM1bQyGTawoaYKx9PjRkMUGGocWub";
 
     // Send ELA from ETHSC to mainchain by smartcontract
-    public static CONTRACT_ADDRESS_MAINNET = "0xC445f9487bF570fF508eA9Ac320b59730e81e503";
-    public static CONTRACT_ADDRESS_TESTNET = "0x491bC043672B9286fA02FA7e0d6A3E5A0384A31A";
+    public static ETHSC_CONTRACT_ADDRESS = "0xC445f9487bF570fF508eA9Ac320b59730e81e503";
+    public static ETHSC_CONTRACT_ADDRESS_MAINNET = "0xC445f9487bF570fF508eA9Ac320b59730e81e503";
+    public static ETHSC_CONTRACT_ADDRESS_TESTNET = "0x491bC043672B9286fA02FA7e0d6A3E5A0384A31A";
     public static ETHSC_WITHDRAW_GASPRICE = 100000000000000; // >= 10^14 and must be an integer multiple of 10^10
 
     // define in spvsdk
