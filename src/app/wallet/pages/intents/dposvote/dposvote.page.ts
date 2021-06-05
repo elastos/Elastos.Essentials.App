@@ -116,19 +116,6 @@ export class DPoSVotePage implements OnInit {
         }
     }
 
-    goTransaction() {
-        this.checkValue();
-    }
-
-    async checkValue() {
-        try {
-            // -1 mean max.
-            this.createVoteProducerTransaction('-1');
-        } catch (error) {
-            Logger.log('wallet', 'dposvote createVoteProducerTransaction error:', error);
-        }
-    }
-
     /**
      * Fees needed to pay for the vote transaction (Estimate). The more utxo, the more fees.
      */
@@ -137,10 +124,10 @@ export class DPoSVotePage implements OnInit {
     }
 
     /**
-     * stakeAmount: SELA
+     *
      */
-    async createVoteProducerTransaction(stakeAmount: string) {
-        Logger.log('wallet', 'Creating vote transaction with amount', stakeAmount);
+    async goTransaction() {
+        Logger.log('wallet', 'Creating vote transaction.');
         let candidates: Candidates = {};
 
         // TODO: We should include others voting?
@@ -153,10 +140,10 @@ export class DPoSVotePage implements OnInit {
           Candidates: candidates
         }
 
-        const voeteContent = [dposVoteContent];
+        const voteContent = [dposVoteContent];
 
         const rawTx = await this.sourceSubwallet.createVoteTransaction(
-                JSON.stringify(voeteContent),
+                JSON.stringify(voteContent),
                 '', // Memo, not necessary
             );
 

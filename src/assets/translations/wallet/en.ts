@@ -188,6 +188,7 @@ export const en = {
         "tx-info-transaction-time": "Transaction time",
         "tx-info-memo": "Memo",
         "tx-info-receiver-address": "Receiver address",
+        "tx-info-sender-address": "Sender address",
         "tx-info-transaction-fees": "Transaction fees",
         "tx-info-cost": "Total Cost",
         "tx-info-transaction-id": "Transaction ID",

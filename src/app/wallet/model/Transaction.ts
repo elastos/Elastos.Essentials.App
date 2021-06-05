@@ -33,6 +33,14 @@ export enum UtxoType {
     Mixed = 'mixed',
 }
 
+export enum VoteType {
+    No_Vote = 0,
+    DPOS_Vote = 1,
+    CRC_Vote = 2,
+    CRProposal_Against = 4,
+    CRC_Impeachment = 8,
+}
+
 export type TransactionInfo = {
     amount: BigNumber,
     confirmStatus: number,
@@ -164,6 +172,7 @@ export type TransactionHistory = {
     txtype: RawTransactionType;
     type: TransactionDirection;
     value: string;
+    votetype: VoteType;
 }
 
 //
@@ -185,6 +194,7 @@ export type EthTransaction = TransactionHistory & {
   SourceAddress: string;
   TargetAddress: string;
   Timestamp: number;
+  Direction: TransactionDirection;
 
   Token: string;
   TokenAddress: string;
@@ -220,6 +230,18 @@ export type outobj = {
   value: string;
 }
 
+export type payload = {
+  // ELA main chain to side chian
+  crosschainaddresses: string[];
+  crosschainamounts: number[];
+  outputindexes: number[];
+  // Side chain to ELA main chain
+  blockheight: number;
+  genesisblockaddress: string;
+  sidechaintransactionhashes: string[];
+}
+
+
 // Return by getrawtransaction api
 export type TransactionDetail = {
   txid: string;
@@ -229,7 +251,7 @@ export type TransactionDetail = {
   version: number;
   type: RawTransactionType;
   payloadversion: number;
-  payload: string;
+  payload: payload;
   attributes: attribute[];
   vin: inobj[];
   vout : outobj[];

@@ -77,6 +77,8 @@ export class CoinHomePage implements OnInit {
     private syncSubscription: Subscription = null;
     private syncCompletedSubscription: Subscription = null;
 
+    private updateInterval = null;
+
     constructor(
         public router: Router,
         public walletManager: WalletManager,
@@ -94,15 +96,17 @@ export class CoinHomePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.syncSubscription = this.events.subscribe(this.masterWallet.id + ':' + this.chainId + ':syncprogress', (coin) => {
-            this.initData();
-        });
+        this.startUpdateInterval();
 
         this.coinTransferService.chainId = this.chainId;
         this.titleBar.setTitle(this.chainId);
     }
 
     ionViewDidLeave() {
+        if (this.updateInterval) {
+          clearInterval(this.updateInterval);
+          this.updateInterval = null;
+        }
         if (this.syncSubscription) this.syncSubscription.unsubscribe();
         if (this.syncCompletedSubscription) this.syncCompletedSubscription.unsubscribe();
     }
@@ -120,19 +124,6 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.chainId = this.chainId;
             this.coinTransferService.walletInfo = this.native.clone(this.masterWallet.account);
             this.initData();
-
-            if (this.masterWallet.subWallets[this.chainId].progress !== 100) {
-                this.eventId = this.masterWallet.id + ':' + this.chainId + ':synccompleted';
-                this.syncCompletedSubscription = this.events.subscribe(this.eventId, (coin) => {
-                    this.syncCompletedSubscription.unsubscribe();
-                    this.syncCompletedSubscription = null;
-                    this.CheckPublishTx();
-                    this.checkUTXOCount();
-                });
-            } else {
-                this.CheckPublishTx();
-                this.checkUTXOCount();
-            }
         }
     }
 
@@ -149,6 +140,19 @@ export class CoinHomePage implements OnInit {
         this.transferList = [];
         this.todaysTransactions = 0;
         this.getAllTx();
+    }
+
+    startUpdateInterval() {
+      if (this.updateInterval === null) {
+        this.updateInterval = setInterval(() => {
+          this.initData();
+        }, 30000);// 30s
+      }
+    }
+
+    restartUpdateInterval() {
+      clearInterval(this.updateInterval);
+      this.startUpdateInterval();
     }
 
     chainIsELA(): boolean {
@@ -263,6 +267,7 @@ export class CoinHomePage implements OnInit {
     }
 
     clickMore() {
+        this.restartUpdateInterval();
         this.pageNo++;
         this.start = this.pageNo * 20;
         if (this.start >= this.MaxCount) {

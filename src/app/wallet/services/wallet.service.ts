@@ -29,13 +29,13 @@ import { SPVWalletPluginBridge, SPVWalletMessage, TxPublishedResult, ETHSCEventT
 import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
 import { StandardCoinName, CoinType } from '../model/Coin';
 import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
-import { SubWallet, SerializedSubWallet } from '../model/wallets/SubWallet';
+import { SerializedSubWallet } from '../model/wallets/SubWallet';
 import { InvalidVoteCandidatesHelper, InvalidCandidateForVote } from '../model/InvalidVoteCandidatesHelper';
 import { CoinService } from './coin.service';
 import { JsonRPCService } from './jsonrpc.service';
 import { PopupProvider } from './popup.service';
 import { Native } from './native.service';
-import { InAppRPCMessage, RPCMethod, RPCStartWalletSyncParams, RPCStopWalletSyncParams, RPCStopWalletSyncResponseParams, SPVSyncService } from './spvsync.service';
+import { SPVSyncService } from './spvsync.service';
 import { LocalStorage } from './storage.service';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
@@ -583,12 +583,10 @@ export class WalletManager {
 
     // ETHSC has different event
     private updateETHSCEventFromCallback(masterId: WalletID, chainId: StandardCoinName, result: SPVWalletMessage) {
-        // Logger.log('wallet', '----updateETHSCEventFromCallback chainId:', chainId, ' result:', result);
         switch (result.event.Type) {
             case ETHSCEventType.EWMEvent: // update progress
                 switch (result.event.Event) {
                     case ETHSCEventAction.PROGRESS:
-                        // Logger.log('wallet', '----updateETHSCEventFromCallback masterId:', masterId, ' result.event:', result.event);
                         result.Progress =  Math.round(result.event.PercentComplete);
                         result.LastBlockTime = result.event.Timestamp;
                         break;
@@ -597,7 +595,6 @@ export class WalletManager {
                         if ('CONNECTED' === result.event.NewState) {
                             result.Progress =  100;
                             result.LastBlockTime = new Date().getTime() / 1000;
-                            // Logger.log('wallet', '----updateETHSCEventFromCallback set 100 masterId:', masterId, ' result.event:', result.event);
                         } else if ('DISCONNECTED' === result.event.NewState) {
                             result.Progress =  0;
                         } else {
@@ -617,17 +614,14 @@ export class WalletManager {
                 break;
             case ETHSCEventType.WalletEvent: // update balance
                 if (result.event.Event === ETHSCEventAction.BALANCE_UPDATED) {
-                    // Logger.log('wallet', '----updateETHSCEventFromCallback BALANCE_UPDATED:', result, ' masterId:', masterId, ' chainId:', chainId);
                     this.getMasterWallet(masterId).getSubWallet(chainId).updateBalance();
                 }
                 break;
             case ETHSCEventType.TransferEvent:
-                // Logger.log('wallet', '----updateETHSCEventFromCallback TransferEvent:', result, ' masterId:', masterId, ' chainId:', chainId);
                 // ERC20 Token transfer
                 // TODO: update the balance
                 break;
             case ETHSCEventType.TokenEvent:
-                // Logger.log('wallet', '----updateETHSCEventFromCallback TokenEvent:', result, ' masterId:', masterId, ' chainId:', chainId);
                 // TODO
                 break;
             default:
