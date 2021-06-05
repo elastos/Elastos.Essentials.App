@@ -74,6 +74,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public hideRefresher = true;
 
+    private updateInterval = null;
+
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -155,9 +157,15 @@ export class WalletHomePage implements OnInit, OnDestroy {
         if (this.walletManager.getWalletsCount() > 0) {
             this.promptTransfer2IDChain();
         }
+
+        this.startUpdateInterval();
     }
 
     ionViewWillLeave() {
+        if (this.updateInterval) {
+          clearInterval(this.updateInterval);
+          this.updateInterval = null;
+        }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         if (this.native.popup) {
             this.native.popup.dismiss();
@@ -189,12 +197,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.native.go("/wallet/coin", { masterWalletId, chainId });
     }
 
-    async doRefresh(event) {
-        if (!this.uiService.returnedUser) {
-            this.uiService.returnedUser = true;
-            this.storage.setVisit(true);
-        }
-
+    async updateCurrentWalletInfo() {
         let curMasterWallet: MasterWallet = null;
         if (this.isSingleWallet) {
             curMasterWallet = this.masterWallet;
@@ -207,6 +210,28 @@ export class WalletHomePage implements OnInit, OnDestroy {
         await curMasterWallet.updateERC20TokenList(this.prefs);
         curMasterWallet.getSubWalletBalance(StandardCoinName.ELA);
         this.currencyService.fetch();
+    }
+
+    startUpdateInterval() {
+      if (this.updateInterval === null) {
+        this.updateInterval = setInterval(() => {
+          this.updateCurrentWalletInfo();
+        }, 30000);// 30s
+      }
+    }
+
+    restartUpdateInterval() {
+      clearInterval(this.updateInterval);
+      this.startUpdateInterval();
+    }
+
+    async doRefresh(event) {
+        if (!this.uiService.returnedUser) {
+            this.uiService.returnedUser = true;
+            this.storage.setVisit(true);
+        }
+        this.restartUpdateInterval();
+        this.updateCurrentWalletInfo();
         setTimeout(() => {
             event.target.complete();
         }, 1000);

@@ -27,7 +27,7 @@ import { WalletManager } from '../../../services/wallet.service';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
 import { WalletAccountType } from '../../../model/WalletAccount';
 import { StandardCoinName } from '../../../model/Coin';
-import { VoteType, CRProposalVoteInfo } from '../../../model/SPVWalletPluginBridge';
+import { VoteType, CRProposalVoteInfo, VoteContent } from '../../../model/SPVWalletPluginBridge';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
@@ -125,6 +125,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
         return 100000; // SELA: 0.001ELA
     }
 
+    // TODO: Test it.
     async createVoteCRProposalTransaction(voteAmount) {
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount, ' this.transfer:', this.transfer);
 
@@ -136,16 +137,30 @@ export class CRProposalVoteAgainstPage implements OnInit {
         votes[this.transfer.votes[0]] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
 
-        // TODO
-        // this.transfer.rawTransaction =  await this.walletManager.spvBridge.createVoteCRCProposalTransaction(
-        //     this.masterWalletId,
-        //     this.chainId,
-        //     '',
-        //     JSON.stringify(votes),
-        //     this.transfer.memo,
-        //     JSON.stringify(invalidCandidates));
+        let crVoteContent: VoteContent = {
+          Type: VoteType.CRCProposal,
+          Candidates: votes
+        }
 
-        // this.walletManager.openPayModal(this.transfer);
+        const voteContent = [crVoteContent];
+
+        const rawTx = await this.sourceSubwallet.createVoteTransaction(
+            JSON.stringify(voteContent),
+            '', // Memo, not necessary
+        );
+
+        const transfer = new Transfer();
+        Object.assign(transfer, {
+            masterWalletId: this.masterWalletId,
+            chainId: this.chainId,
+            rawTransaction: rawTx,
+            payPassword: '',
+            action: this.intentTransfer.action,
+            intentId: this.intentTransfer.intentId,
+        });
+
+        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

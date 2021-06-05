@@ -169,6 +169,7 @@ export abstract class StandardSubWallet extends SubWallet {
     * Updates current SPV synchonization progress information for this coin.
     */
    public updateSyncProgress(progress: number, lastBlockTime: number) {
+        // TODO: only ethsc use it
         this.syncTimestamp = lastBlockTime * 1000;
 
         if (lastBlockTime) {
@@ -178,28 +179,6 @@ export abstract class StandardSubWallet extends SubWallet {
             this.lastBlockTime = '';
         }
         this.progress = progress;
-
-        if (this.id != StandardCoinName.ETHSC ) {
-            // Logger.log("wallet", "Standard subwallet "+this.id+" got update sync progress request. Progress = "+progress);
-        }
-
-        const curTimestampMs = (new Date()).getTime();
-        const timeInverval = curTimestampMs - this.timestamp;
-        if (timeInverval > 5000) { // 5s
-            this.masterWallet.walletManager.events.publish(this.masterWallet.id + ':' + this.id + ':syncprogress', this.id);
-            this.timestamp = curTimestampMs;
-        }
-
-        // Save wallet info every 30 minutes
-        // TODO: if spvsdk can get progress by api, then we can delete it
-        if (timeInverval > 1800000) { // 30 minutes
-            this.masterWallet.walletManager.saveMasterWallet(this.masterWallet);
-        }
-
-        if (progress === 100) {
-            const eventId = this.masterWallet.id + ':' + this.id + ':synccompleted';
-            this.masterWallet.walletManager.events.publish(eventId, this.id);
-        }
     }
 
     /**

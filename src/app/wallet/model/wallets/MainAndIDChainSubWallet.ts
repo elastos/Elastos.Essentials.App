@@ -7,6 +7,7 @@ import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { Logger } from 'src/app/logger';
 import { Config } from '../../config/Config';
+import { Util } from '../Util';
 
 
 /**
@@ -53,7 +54,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
   public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
     const transactionInfo = await super.getTransactionInfo(transaction, translate);
-
     transactionInfo.amount = new BigNumber(transaction.value, 10);//.dividedBy(Config.SELAAsBigNumber);
     transactionInfo.txid = transaction.txid;
 
@@ -72,21 +72,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   }
 
   public async updateBalance() {
-    // Logger.log("wallet", 'MainAndIDChainSubWallet updateBalance ', this.id,
-    //             ' syncTimestamp:', this.syncTimestamp,
-    //             ' timestampRPC:', this.timestampRPC,
-    //             ' this.progress:', this.progress);
-
-    // if the balance form spvsdk is newer, then use it.
-    // if ((this.progress === 100) || (this.syncTimestamp > this.timestampRPC)) {
-    //     // Get the current balance from the wallet plugin.
-    //     const balanceStr = await this.masterWallet.walletManager.spvBridge.getBalance(this.masterWallet.id, this.id);
-    //     // Balance in SELA
-    //     this.balance = new BigNumber(balanceStr, 10);
-    // } else {
-    //     Logger.log("wallet", 'Do not get Balance from spvsdk. ', this.id);
-    //     // TODO: update balance by rpc?
-    // }
+    this.getBalanceByRPC();
   }
 
   /**
@@ -441,15 +427,47 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return txListTotal;
   }
 
-  async getTransactionDetails(txid:string) {
+  async getTransactionDetails(txid:string): Promise<TransactionDetail> {
     let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, txid);
     return details;
   }
 
-  // TODO
   async getRealAddressInCrosschainTx(txDetail: TransactionDetail) {
+    let targetAddress = '';
+    // TODO: 1.vout is a array. 2. show the right address for the cross chain transaction
+    if (txDetail.vout && txDetail.vout[0]) {
+      // Cross chain transfer: ELA main chain to side chain.
+      if (txDetail.payload) {
+        // ELA main chain to side chain.
+        if (txDetail.payload.crosschainaddresses) {
+          // Receiving address
+          targetAddress = txDetail.payload.crosschainaddresses[0];
+        } else if (txDetail.payload.genesisblockaddress) {
+          // Sending address
+          Logger.warn('wallet', 'txDetail:', txDetail);
+          let crossChain = StandardCoinName.IDChain;
+          if (txDetail.payload.genesisblockaddress === Config.ETHSC_ADDRESS) {
+            crossChain = StandardCoinName.ETHSC;
+          } else if (txDetail.payload.genesisblockaddress === Config.IDCHAIN_ADDRESS) {
+            crossChain = StandardCoinName.IDChain;
+          } else {
+            Logger.error('wallet', 'Can not find the chain for genesis block address:', txDetail.payload.genesisblockaddress);
+            return '';
+          }
 
-    // if ()
+          let realtxid = Util.reversetxid(txDetail.payload.sidechaintransactionhashes[0]);
+          Logger.warn('wallet', 'realtxid:', realtxid);
+          let result = await this.jsonRPCService.getETHSCTransactionByHash(realtxid);
+          if (result && result.from) {
+            targetAddress = result.from;
+          }
+        }
+      } else {
+        targetAddress = txDetail.vout[0].address;
+      }
+    }
+
+    return targetAddress;
   }
 
   /**

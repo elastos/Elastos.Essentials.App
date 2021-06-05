@@ -1,4 +1,4 @@
-import {  TransactionDetail, TransactionDirection, TransactionHistory } from '../Transaction';
+import {  TransactionDirection, TransactionHistory } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
@@ -14,10 +14,8 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
 
     protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
         if (transaction.type === TransactionDirection.MOVED) {
-            const transactionDetails: TransactionDetail = await this.getTransactionDetails(transaction.txid);
-            // Check if it's a voting transaction.
-            if (transactionDetails.vout && transactionDetails.vout[0].payload
-                    && transactionDetails.vout[0].payload.contents) {
+            // TODO: show different icon for different vote?
+            if (transaction.votetype !== 0) {
                 return "wallet.coin-op-vote";
             }
         }

@@ -32,6 +32,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
+import { VoteContent, VoteType } from '../../../model/SPVWalletPluginBridge';
 
 
 @Component({
@@ -136,22 +137,31 @@ export class CRmembervotePage implements OnInit {
 
     async createVoteCRTransaction() {
         Logger.log('wallet', 'Creating vote CR transaction');
-        //  TODO
-        // const rawTx = await this.walletManager.spvBridge.createVoteTransaction(this.masterWalletId, this.chainId,
-        //   '', this.transfer.votes, this.transfer.memo, '[]');
 
-        // const transfer = new Transfer();
-        // Object.assign(transfer, {
-        //     masterWalletId: this.masterWalletId,
-        //     chainId: this.chainId,
-        //     rawTransaction: rawTx,
-        //     payPassword: '',
-        //     action: this.intentTransfer.action,
-        //     intentId: this.intentTransfer.intentId,
-        // });
+        let crVoteContent: VoteContent = {
+          Type: VoteType.CRC,
+          Candidates: this.transfer.votes
+        }
 
-        // const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        // await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+        const voteContent = [crVoteContent];
+
+        const rawTx = await this.sourceSubwallet.createVoteTransaction(
+            JSON.stringify(voteContent),
+            '', // Memo, not necessary
+        );
+
+        const transfer = new Transfer();
+        Object.assign(transfer, {
+            masterWalletId: this.masterWalletId,
+            chainId: this.chainId,
+            rawTransaction: rawTx,
+            payPassword: '',
+            action: this.intentTransfer.action,
+            intentId: this.intentTransfer.intentId,
+        });
+
+        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
     }
 }
 

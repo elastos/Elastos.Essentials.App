@@ -22,6 +22,7 @@ type JSONRPCResponse = {
 export class JsonRPCService {
     private mainchainRPCApiUrl = 'https://api.elastos.io/ela';
     private IDChainRPCApiUrl = 'https://api.elastos.io/did';
+    private ethscRPCApiUrl = 'https://api.elastos.io/eth';
     private ethscOracleRPCApiUrl = 'https://api.elastos.io/oracle';
 
     constructor(private http: HttpClient, private prefs: GlobalPreferencesService) {
@@ -30,6 +31,7 @@ export class JsonRPCService {
     async init() {
         this.mainchainRPCApiUrl = await this.prefs.getMainchainRPCApiEndpoint(GlobalDIDSessionsService.signedInDIDString);
         this.IDChainRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.id.rpcapi');
+        this.ethscRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
         this.ethscOracleRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.oracle');
     }
 
@@ -222,7 +224,7 @@ export class JsonRPCService {
         return blockHeight;
     }
 
-    // Get the real target address for the send transaction from ethsc to mainchain.
+    // ETHSC:Get the real target address for the send transaction from ethsc to mainchain.
     async getETHSCWithdrawTargetAddress(blockHeight: number, txHash: string) {
         const param = {
             method: 'getwithdrawtransactionsbyheight',
@@ -244,6 +246,26 @@ export class JsonRPCService {
         }
         return '';
     }
+
+    // ELA main chain: Get the real send address for the send transaction from ethsc to mainchain.
+    async getETHSCTransactionByHash(txHash: string) {
+      if (!txHash.startsWith('0x')) {
+        txHash = '0x' + txHash;
+      }
+      const param = {
+          method: 'eth_getTransactionByHash',
+          params: [
+            txHash
+          ],
+          id:'1'
+      };
+
+      try {
+          return this.httpRequest(this.ethscRPCApiUrl, param);
+      } catch (e) {
+      }
+      return '';
+  }
 
     getRPCApiUrl(chainID: string) {
         let rpcApiUrl = this.mainchainRPCApiUrl;

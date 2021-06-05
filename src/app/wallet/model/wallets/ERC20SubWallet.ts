@@ -158,9 +158,6 @@ export class ERC20SubWallet extends SubWallet {
             // The returned balance is an int. Need to devide by the number of decimals used by the token.
             this.balance = new BigNumber(balanceEla).dividedBy(new BigNumber(10).pow(this.tokenDecimals));
             Logger.log('wallet', this.id+": raw balance:", balanceEla, " Converted balance: ", this.balance);
-
-            const eventId = this.masterWallet.id + ':' + this.id + ':synccompleted';
-            this.masterWallet.walletManager.events.publish(eventId, this.id);
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
         }
@@ -180,19 +177,25 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
-        let transactionDetails// = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
-        return transactionDetails;
+        let transactions = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
+        if (transactions.Transactions) {
+          return transactions.Transactions[0];
+        }
+        return null;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
         const timestamp = transaction.Timestamp * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
+        const direction = await this.getERC20TransactionDirection(transaction.TargetAddress);
+        transaction.Direction = direction;
+
         const transactionInfo: TransactionInfo = {
             amount: new BigNumber(-1), // Defined by inherited classes
-            confirmStatus: -1, // Defined by inherited classes
+            confirmStatus: transaction.Confirmations, // Defined by inherited classes
             datetime,
-            direction: null,
+            direction: direction,
             fee: transaction.Fee.toString(),
             height: transaction.BlockNumber,
             memo: '',
@@ -202,11 +205,11 @@ export class ERC20SubWallet extends SubWallet {
             statusName: this.getTransactionStatusName(transaction.Status, translate),
             symbol: '', // Defined by inherited classes
             timestamp,
-            txid: null, // Defined by inherited classes
+            txid: transaction.Hash, // Defined by inherited classes
             type: null, // Defined by inherited classes
         };
 
-        const direction = await this.getERC20TransactionDirection(transaction.address);
+
 
         // TODO: Why BlockNumber is 0 sometimes? Need to check.
         // if (transaction.IsErrored || (transaction.BlockNumber === 0)) {
@@ -216,9 +219,7 @@ export class ERC20SubWallet extends SubWallet {
 
         transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.Amount).dividedBy(this.tokenDecimals) : new BigNumber(transaction.Amount);
         transactionInfo.fee = (this.tokenDecimals > 0 ? transaction.Fee / this.tokenDecimals : transaction.Fee).toString();
-        transactionInfo.txid = transaction.Hash;
-        // ETHSC use Confirmations - TODO: FIX THIS - SHOULD BE EITHER CONFIRMSTATUS (mainchain) or CONFIRMATIONS BUT NOT BOTH
-        transactionInfo.confirmStatus = transaction.Confirmations;
+
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
@@ -244,8 +245,8 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     // TODO: Refine / translate with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
-    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
-        const direction = await this.getERC20TransactionDirection(transaction.address);
+    protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
+        const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.TargetAddress);
         switch (direction) {
             case TransactionDirection.RECEIVED:
                 return "wallet.coin-action-receive";
@@ -258,8 +259,8 @@ export class ERC20SubWallet extends SubWallet {
 
 
     // TODO: Refine with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
-    protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
-        const direction = await this.getERC20TransactionDirection(transaction.address);
+    protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
+        const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.TargetAddress);
         if (direction === TransactionDirection.RECEIVED) {
             return './assets/wallet/buttons/receive.png';
         } else if (direction === TransactionDirection.SENT) {
@@ -354,46 +355,26 @@ export class ERC20SubWallet extends SubWallet {
             Logger.log('wallet', "Transaction signed. Now publishing.");
 
             // TODO
-            // const publishedTransaction =
-            // await this.masterWallet.walletManager.spvBridge.publishTransaction(
-            //     this.masterWallet.id,
-            //     StandardCoinName.ETHSC,
-            //     signedTx
-            // );
+            const publishedTransaction =
+            await this.masterWallet.walletManager.spvBridge.publishTransaction(
+                this.masterWallet.id,
+                signedTx
+            );
+            Logger.log('wallet', "Published transaction id:", publishedTransaction.TxHash);
 
-            // this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
+            this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
 
-            // if (!Util.isEmptyObject(transfer.action)) {
-            //     Logger.log('wallet', "Mode: transfer with intent action");
-            //     this.masterWallet.walletManager.lockTx(publishedTransaction.TxHash);
+            await this.masterWallet.walletManager.native.hideLoading();
 
-            //     setTimeout(async () => {
-            //         let status = 'published';
-            //         let txid = publishedTransaction.TxHash;
-            //         const code = this.masterWallet.walletManager.getTxCode(txid);
-            //         if (code !== 0) {
-            //             txid = null;
-            //             status = 'error';
-            //         }
-            //         this.masterWallet.walletManager.native.hideLoading();
-            //         resolve({
-            //             published: true,
-            //             txid: txid,
-            //             status
-            //         });
-            //     }, 5000); // wait for 5s for txPublished
-            // } else {
-            //     Logger.log('wallet', "Published transaction id:", publishedTransaction.TxHash);
+            if (Util.isEmptyObject(transfer.action)) {
+                await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+            }
 
-            //     await this.masterWallet.walletManager.native.hideLoading();
-            //     await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
-
-            //     resolve({
-            //         published: true,
-            //         status: 'published',
-            //         txid: publishedTransaction.TxHash
-            //     });
-            // }
+            resolve({
+              published: true,
+              status: 'published',
+              txid: publishedTransaction.TxHash
+          });
         });
     }
 }

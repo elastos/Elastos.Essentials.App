@@ -188,6 +188,7 @@ export const zh = {
         "tx-info-transaction-time": "交易时间",
         "tx-info-memo": "备注",
         "tx-info-receiver-address": "接收地址",
+        "tx-info-sender-address": "发送地址",
         "tx-info-transaction-fees": "交易手续费",
         "tx-info-cost": "总花费",
         "tx-info-transaction-id": "交易ID",
