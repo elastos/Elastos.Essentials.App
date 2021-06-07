@@ -107,6 +107,8 @@ export class CredentialImportRequestPage {
     // Check credentials content
     // TODO
 
+    Logger.log('Identity', 'Received credentials to be imported:', this.receivedIntent.params.credentials);
+
     // Auto-select the targeted DID. Show an error if user doesn't have a DID targeted by this issuance.
     let targetDIDString = this.receivedIntent.params.credentials[0].credentialSubject.id;
     let activeDIDString = this.didService.getActiveDid().getDIDString();
