@@ -1,0 +1,36 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-slides
+    #slide
+    [options]="slideOpts"
+    [class.hidden]="hidden"
+    (ionSlideWillChange)="getActiveSlide()"
+    class="ion-text-center">
+    <ion-slide class="ion-text-center">
+      <h2>Publishing your identity to the public ledger</h2>
+      <p>This step is mandatory and takes a few seconds, please hold on.</p>
+      <ion-spinner name="crescent"></ion-spinner>
+    </ion-slide>
+    <ion-slide class="ion-text-center">
+      <h2>Making some storage space for apps</h2>
+      <p>A storage space is being created on a random Elastos Hive storage provider.
+        You can move your data somewhere else later.</p>
+      <ion-spinner name="crescent"></ion-spinner>
+    </ion-slide>
+    <ion-slide class="ion-text-center">
+      <h2>Creating a default wallet</h2>
+      <p>A default wallet is created with the same paper key as your DID.
+        You can choose to use it or to delete it.</p>
+      <ion-spinner name="crescent"></ion-spinner>
+    </ion-slide>
+    <ion-slide class="ion-text-center">
+      <h2>All done!</h2>
+      <p>Your identity is now fully ready. You can now start using Elastos Essentials.</p>
+    </ion-slide>
+  </ion-slides>
+
+  <div class="footer" *ngIf="slideIndex === LAST_SLIDE_INDEX">
+    <ion-button (click)="finalizePreparation()">{{ 'continue' | translate }}</ion-button>
+  </div>
+</ion-content>
+

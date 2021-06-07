@@ -23,6 +23,7 @@ import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimportedd
 import { ScanPage } from './pages/scan/scan.page';
 import { PrintoptionsComponent } from './components/printoptions/printoptions.component';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { PrepareDIDPage } from './pages/preparedid/preparedid';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
     VerifyMnemonicsPage,
     ImportDIDPage,
     ChooseImportedDIDPage,
+    PrepareDIDPage,
     ScanPage,
     OptionsComponent,
     WarningComponent,
@@ -57,6 +59,7 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
     VerifyMnemonicsPage,
     ImportDIDPage,
     ChooseImportedDIDPage,
+    PrepareDIDPage,
     ScanPage,
     OptionsComponent,
     WarningComponent,

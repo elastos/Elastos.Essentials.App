@@ -100,10 +100,6 @@ export class UXService {
         });
     }
 
-    public goToLauncer() {
-      this.nav.navigateHome(Direction.FORWARD);
-    }
-
     public translateInstant(key: string): string {
         return this.translate.instant(key);
     }

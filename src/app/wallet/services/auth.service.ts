@@ -17,7 +17,6 @@ export class AuthService {
     }
 
     public async createAndSaveWalletPassword(walletId: string): Promise<string> {
-
         const passwordKey = "wallet-"+walletId;
         let oldPassword = await passwordManager.getPasswordInfo(passwordKey) as PasswordManagerPlugin.GenericPasswordInfo;
         if (oldPassword) { // In case of user click 'createMasterwallet' too quickly.

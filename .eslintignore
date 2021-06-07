@@ -1,0 +1,7 @@
+.eslintrc.js
+rollup.*
+jest.*.config.js
+tests/
+dist/
+node_modules/
+*.json

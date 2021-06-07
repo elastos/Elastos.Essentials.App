@@ -159,6 +159,8 @@ export class IdentityService {
 
     /**
      * Flow:
+     * - TODO: BELOW FLOW IS OUTDATED
+     *
      * - User sets a profile name
      * - Generate a mnemonic (backupdid screen) + display to user (backupdid screen)  + verify it (verifymnemonic screen)
      * - Create a new DID store (shared with did app) + automatic did store password
@@ -176,12 +178,16 @@ export class IdentityService {
         Logger.log('didsessions', "Navigating to profile edition");
         this.navigateWithCompletion("/didsessions/editprofile", (name)=>{
             this.identityBeingCreated.name = name;
-            this.uxService.go('/didsessions/backupdid', { state: { create: true } });
+            //this.uxService.go('/didsessions/backupdid', { state: { create: true } });
+            //this.uxService.go('/didsessions/preparedid');
+            this.createNewDIDWithNewMnemonic();
         });
     }
 
     async createNewDIDWithNewMnemonic() {
         Logger.log('didsessions', "Creating new did with new mnemonic");
+
+        this.identityBeingCreated.mnemonic = await this.generateMnemonic();
 
         let didStore = await DIDStore.create();
 
@@ -221,8 +227,13 @@ export class IdentityService {
                 // Sigin, for direct start wallet service to automatically create a new wallet by the mnemonics
                 // After addIdentity for don't save mnemonicInfo in storage
                 newIdentity.mnemonicInfo = this.identityBeingCreated;
-                await this.signIn(newIdentity);
+
                 await this.nativeService.hideLoading();
+
+                await this.signIn(newIdentity);
+                this.navigateWithCompletion('/didsessions/preparedid', () => {
+                    this.didSessions.navigateHome();
+                });
                 return;
             }
             else {
@@ -388,6 +399,16 @@ export class IdentityService {
           this.uxService.go("/didsessions/pickidentity");
           this.alertDuplicateImport();
         }
+    }
+
+    /**
+     * Cancels an on going DID creation or import and goes back to the root screen.
+     */
+    public cancelIdentiyCreation() {
+        // TODO: Delete the "identityBeingCreated" first
+
+        // Go back to DID sessions identity list or welcome screen
+        this.uxService.navigateRoot();
     }
 
     /**
@@ -602,6 +623,9 @@ export class IdentityService {
         if (nextStep) {
             Logger.log("didsessions", "Running next step, route:", nextStep.route);
             nextStep.completionCb(data);
+        }
+        else {
+            Logger.log("didsessions", "Can't run next step "+nextStepId+", there is nothing after...");
         }
     }
 

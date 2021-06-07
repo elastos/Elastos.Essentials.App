@@ -57,7 +57,7 @@ export class BackupDIDPage {
 
             // Creation
             this.isCreation = true;
-            this.generateMnemonic();
+            //this.generateMnemonic();
         }
     }
 
@@ -91,7 +91,7 @@ export class BackupDIDPage {
       this.slide.slidePrev();
     }
 
-    async generateMnemonic() {
+    /* async generateMnemonic() {
         this.mnemonic = await this.identityService.generateMnemonic();
         this.identityService.identityBeingCreated.mnemonic = this.mnemonic;
 
@@ -100,7 +100,7 @@ export class BackupDIDPage {
         });
 
         this.createQrCode();
-    }
+    } */
 
     nextClicked() {
         if (this.isCreation) {

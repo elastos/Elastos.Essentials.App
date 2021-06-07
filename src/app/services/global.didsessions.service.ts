@@ -60,7 +60,8 @@ export class GlobalDIDSessionsService {
     if (lastSignedInIdentity) {
       let identity = this.identities.find(entry => lastSignedInIdentity.didString == entry.didString);
       if (identity) {
-        this.signIn(identity);
+        await this.signIn(identity);
+        this.navigateHome();
       }
     }
   }
@@ -150,8 +151,15 @@ export class GlobalDIDSessionsService {
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
 
     await this.saveSignedInIdentityToDisk();
+  }
 
-    //Go to launcher
+  /**
+   * Goes to launcher. A user must be signed in prior to this call.
+   */
+  public navigateHome() {
+    if (!this.signedInIdentity)
+      throw new Error("DID Sessions cannot navigate to essentials home screen as there is no user signed in yet");
+
     this.globalNavService.navigateHome(Direction.FORWARD);
   }
 

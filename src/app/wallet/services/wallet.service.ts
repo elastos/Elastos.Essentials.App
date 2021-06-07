@@ -50,6 +50,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 import { Events } from 'src/app/services/events.service';
+import { Util } from '../model/Util';
 
 
 class TransactionMapEntry {
@@ -867,4 +868,30 @@ export class WalletManager {
             await this.saveMasterWallet(masterWallet);
         }
     }
+
+    /**
+     * Creates a wallet that uses the same mnemonic as the DID. 
+     * Usually this method should be called only once per new DID created, so the newly created
+     * user also has a default wallet.
+     */
+    public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
+        Logger.error("wallet", "Creating wallet from new identity");
+        let masterWalletId = Util.uuid(6, 16);
+        const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
+        if (payPassword) {
+          try {
+            await this.importWalletWithMnemonic(
+              masterWalletId,
+              walletName,
+              mnemonic,
+              mnemonicPassphrase || "",
+              payPassword,
+              false
+            );
+          }
+          catch (err) {
+            Logger.error('wallet', 'Wallet import error:', err);
+          }
+        }
+      }
 }

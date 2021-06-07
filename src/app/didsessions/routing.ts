@@ -9,6 +9,7 @@ import { EditProfilePage } from './pages/editprofile/editprofile';
 import { LanguagePage } from './pages/language/language.page';
 import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimporteddid.page';
 import { ScanPage } from './pages/scan/scan.page';
+import { PrepareDIDPage } from './pages/preparedid/preparedid';
 
 const routes: Routes = [
   { path: 'language', component: LanguagePage },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'backupdid', component: BackupDIDPage },
   { path: 'editprofile', component: EditProfilePage },
   { path: 'chooseimporteddid', component: ChooseImportedDIDPage },
+  { path: 'preparedid', component: PrepareDIDPage },
   { path: 'scan', component: ScanPage }
 ];
 
