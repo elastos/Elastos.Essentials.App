@@ -16,8 +16,10 @@ import { Util } from '../Util';
  * specialized class exists.
  */
 export class MainAndIDChainSubWallet extends StandardSubWallet {
-  private utxoArray: Utxo[] = null;
-  private utxoArrayForSDK: UtxoForSDK[] = [];
+  // voting
+  private votingAmountSELA = 0; // ELA
+  private votingUtxoArray: Utxo[] = null;
+
   private rawTxArray: AllTransactionsHistory[] = [];
   private txArrayToDisplay: AllTransactionsHistory = {totalcount:0, txhistory:[]};
   private needtoLoadMoreAddresses: string[] = [];
@@ -30,6 +32,40 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
   constructor(masterWallet: MasterWallet, id: StandardCoinName) {
     super(masterWallet, id);
+
+    setTimeout(async () => {
+      await this.checkAddresses();
+      if (id === StandardCoinName.ELA) {
+        await this.getVotingUtxoByRPC();
+      }
+    }, 5000);
+  }
+
+  /**
+   * If the last address is used, then the spvsdk will create new addresses.
+   */
+  private async checkAddresses() {
+    let addressArray  = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, true);
+    let addressArrayExternal = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, false);
+    addressArray.push.apply(addressArray, addressArrayExternal);
+
+    let addressArrayUsed = []
+    try {
+      const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
+      if (txRawList && txRawList.length > 0) {
+        for (let i = 0, len = txRawList.length ; i < len; i++) {
+          addressArrayUsed.push(txRawList[i].result);
+        }
+      }
+    } catch (e) {
+      Logger.log("wallet", 'getTransactionByAddress exception:', e);
+      throw e;
+    }
+
+    if (addressArrayUsed.length > 0) {
+      Logger.warn('wallet',  'checkAddresses addressArrayUsed:', addressArrayUsed)
+      this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
+    }
   }
 
   public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
@@ -45,11 +81,45 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return newTxList;
   }
 
-  private getUtxo(amount: number) {
-    // TODO: select the utxo
-    // For now just return all.
-    Logger.log('wallet', 'UTXOS:', this.utxoArrayForSDK);
-    return this.utxoArrayForSDK;
+  /**
+   *
+   * @param amountSELA SELA
+   */
+  private async getUtxo(amountSELA: number) {
+    let utxoArray:Utxo[] = null;
+    if (this.id === StandardCoinName.ELA) {
+      if ((amountSELA === -1) || (!this.balance.gt(amountSELA + this.votingAmountSELA))) {
+        utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
+        // TODO: Notify user to vote?
+      } else {
+        utxoArray = await this.getAllUtxoByType(UtxoType.Normal);
+      }
+    } else {
+      utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
+    }
+
+    let utxoArrayForSDK = [];
+    if (utxoArray) {
+      let totalAmount = 0;
+      for (let i = 0, len = utxoArray.length ; i < len; i++) {
+        let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
+        let utxoForSDK: UtxoForSDK = {
+            Address: utxoArray[i].address,
+            Amount: utxoAmountSELA.toString(),
+            Index: utxoArray[i].vout,
+            TxHash: utxoArray[i].txid
+        }
+        utxoArrayForSDK.push(utxoForSDK);
+        totalAmount += utxoAmountSELA;
+        if ((amountSELA != -1) && (totalAmount > amountSELA)) {
+          Logger.log('wallet', 'Get enought utxo for !', amountSELA);
+          break;
+        }
+      }
+    }
+
+    Logger.log('wallet', 'UTXO for transfer:', utxoArrayForSDK);
+    return utxoArrayForSDK;
   }
 
   public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
@@ -134,13 +204,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   }
 
   public async createPaymentTransaction(toAddress: string, amount: number, memo: string = ""): Promise<string> {
+    let toAmount = this.accMul(amount, Config.SELA);
     let outputs = [{
       "Address": toAddress,
-      "Amount": amount.toString()
+      "Amount": toAmount.toString()
     }]
 
-    await this.getAllUtxoByRPC();
-    let utxo = this.getUtxo(amount);
+    let utxo = this.getUtxo(toAmount + 10000);// 10000: fee
 
     return this.masterWallet.walletManager.spvBridge.createTransaction(
       this.masterWallet.id,
@@ -155,8 +225,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   public async createVoteTransaction(voteContents: string, memo: string = ""): Promise<string> {
     Logger.log('wallet', 'createVoteTransaction:', voteContents);
 
-    await this.getAllUtxoByRPC();
-    let utxo = this.getUtxo(0);
+    let utxo = this.getUtxo(-1);
 
     return this.masterWallet.walletManager.spvBridge.createVoteTransaction(
       this.masterWallet.id,
@@ -169,9 +238,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   }
 
   public async createDepositTransaction(sideChainID: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
-    await this.getAllUtxoByRPC();
-    // TODO: select utxo
-    let utxo = this.getUtxo(amount);
+    let toAmount = this.accMul(amount, Config.SELA);
+    let utxo = this.getUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
 
     let lockAddres = '';
     if (sideChainID === StandardCoinName.IDChain) {
@@ -187,7 +255,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       this.id,
       JSON.stringify(utxo),
       sideChainID,
-      amount.toString(),
+      toAmount.toString(),
       toAddress,
       lockAddres,
       '10000',
@@ -196,15 +264,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   }
 
   public async createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
-    await this.getAllUtxoByRPC();
-    // TODO: select utxo
-    let utxo = this.getUtxo(amount);
+    let toAmount = this.accMul(amount, Config.SELA);
+    let utxo = this.getUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
 
     return this.masterWallet.walletManager.spvBridge.createWithdrawTransaction(
       this.masterWallet.id,
       this.id, // From subwallet id
       JSON.stringify(utxo),
-      amount.toString(),
+      toAmount.toString(),
       toAddress,
       '10000',
       memo
@@ -445,21 +512,19 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         } else if (txDetail.payload.genesisblockaddress) {
           // Sending address
           Logger.warn('wallet', 'txDetail:', txDetail);
-          let crossChain = StandardCoinName.IDChain;
+          let realtxid = Util.reversetxid(txDetail.payload.sidechaintransactionhashes[0]);
+          Logger.warn('wallet', 'realtxid:', realtxid);
+
           if (txDetail.payload.genesisblockaddress === Config.ETHSC_ADDRESS) {
-            crossChain = StandardCoinName.ETHSC;
+            let result = await this.jsonRPCService.getETHSCTransactionByHash(realtxid);
+            if (result && result.from) {
+              targetAddress = result.from;
+            }
           } else if (txDetail.payload.genesisblockaddress === Config.IDCHAIN_ADDRESS) {
-            crossChain = StandardCoinName.IDChain;
+            // TODO: get the real address.
           } else {
             Logger.error('wallet', 'Can not find the chain for genesis block address:', txDetail.payload.genesisblockaddress);
             return '';
-          }
-
-          let realtxid = Util.reversetxid(txDetail.payload.sidechaintransactionhashes[0]);
-          Logger.warn('wallet', 'realtxid:', realtxid);
-          let result = await this.jsonRPCService.getETHSCTransactionByHash(realtxid);
-          if (result && result.from) {
-            targetAddress = result.from;
           }
         }
       } else {
@@ -470,39 +535,34 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return targetAddress;
   }
 
-  /**
-   *
-   */
-  async getAllUtxoByRPC() {
-    Logger.test("wallet", 'TIMETEST getAllUtxoByRPC start:', this.id);
-    this.utxoArray = null;
-    this.utxoArray = await this.getAllUtxoByAddress(false);
+  async getAllUtxoByType(type: UtxoType) {
+    let utxoArray = await this.getAllUtxoByAddress(false, type);
 
-    // The Single Address Wallet should use the external address.
     if (!this.masterWallet.account.SingleAddress) {
-      let utxos = await this.getAllUtxoByAddress(true);
+      let utxos = await this.getAllUtxoByAddress(true, type);
       if (utxos && utxos.length > 0) {
-        this.utxoArray ? this.utxoArray.push.apply(this.utxoArray, utxos) : this.utxoArray = utxos;
+        utxoArray ? utxoArray.push.apply(utxoArray, utxos) : utxoArray = utxos;
       }
     }
-
-    this.utxoArrayForSDK = [];
-    for (let i = 0, len = this.utxoArray.length ; i < len; i++) {
-      let utxoForSDK: UtxoForSDK = {
-          Address: this.utxoArray[i].address,
-          Amount: (Math.round(parseFloat(this.utxoArray[i].amount) * Config.SELA)).toString(),
-          Index: this.utxoArray[i].vout,
-          TxHash: this.utxoArray[i].txid
-      }
-      this.utxoArrayForSDK.push(utxoForSDK);
-    }
-
-    Logger.log('Wallet', 'Utxo:', this.masterWallet.id, ' ChainID:', this.id, ' ', this.utxoArray)
-    Logger.test("wallet", 'TIMETEST getAllUtxoByRPC ', this.id, ' end');
-    return true;
+    return utxoArray;
   }
 
-  async getAllUtxoByAddress(internalAddress: boolean): Promise<Utxo[]> {
+  async getVotingUtxoByRPC() {
+    this.votingUtxoArray = await this.getAllUtxoByType(UtxoType.Vote);
+    let votingAmountEla = 0;
+    if (this.votingUtxoArray) {
+      for (let i = 0, len = this.votingUtxoArray.length ; i < len; i++) {
+        let amount = parseFloat(this.votingUtxoArray[i].amount);
+        votingAmountEla += amount;
+      }
+      this.votingAmountSELA = this.accMul(votingAmountEla, Config.SELA);
+    } else {
+      this.votingAmountSELA = 0;
+    }
+
+  }
+
+  async getAllUtxoByAddress(internalAddress: boolean, type:UtxoType): Promise<Utxo[]> {
     let requestAddressCount = 1;
 
     let startIndex = 0;
@@ -525,7 +585,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       startIndex += addressArray.Addresses.length;
 
       try {
-        let utxos = await this.jsonRPCService.getAllUtxoByAddress(this.id as StandardCoinName, addressArray.Addresses, UtxoType.Mixed);
+        let utxos = await this.jsonRPCService.getAllUtxoByAddress(this.id as StandardCoinName, addressArray.Addresses, type);
         if (utxos && utxos.length > 0) {
           utxoArray ? utxoArray.push.apply(utxoArray, utxos) : utxoArray = utxos;
         }
@@ -690,5 +750,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     return {value, type, inputs:sentInputs, outputs:sentOutputs}
+  }
+
+  accMul(arg1, arg2) {
+    let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+    try { m += s1.split(".")[1].length } catch (e) { }
+    try { m += s2.split(".")[1].length } catch (e) { }
+    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
   }
 }

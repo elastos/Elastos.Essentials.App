@@ -25,6 +25,8 @@ export class JsonRPCService {
     private ethscRPCApiUrl = 'https://api.elastos.io/eth';
     private ethscOracleRPCApiUrl = 'https://api.elastos.io/oracle';
 
+    static RETRY_TIMES = 3;
+
     constructor(private http: HttpClient, private prefs: GlobalPreferencesService) {
     }
 
@@ -70,7 +72,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < 5);
+        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
         return balanceOfSELA;
     }
 
@@ -108,10 +110,10 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < 5);
+        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
         // Logger.warn('wallet', 'transactionsArray:',transactionsArray)
         return transactionsArray.filter(c => {
-          return c.result.totalcount > 0;
+          return c.result && (c.result.totalcount > 0);
         });
     }
 
@@ -139,7 +141,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < 5);
+        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
 
         // Logger.log('wallet', 'getrawtransaction:', result)
         return result;
@@ -170,7 +172,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < 5);
+        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
 
         // Logger.log('wallet', 'getAllUtxoByAddress:', utxoArray)
         return utxoArray;
@@ -199,7 +201,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < 5);
+        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
 
         Logger.log('wallet', 'sendrawtransaction:', txid)
         return txid;

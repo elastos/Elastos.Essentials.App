@@ -263,19 +263,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * Same chain, different "users"
      */
     async createSendTransaction() {
-        let toAmount: number;
-        if (!this.sendMax && (this.chainId === StandardCoinName.ELA || this.chainId === StandardCoinName.IDChain)) {
-            toAmount = this.accMul(this.amount, Config.SELA);
-        } else {
-            toAmount = this.amount;
-        }
+        // let toAmount: number;
+        // if (!this.sendMax && (this.chainId === StandardCoinName.ELA || this.chainId === StandardCoinName.IDChain)) {
+        //     toAmount = this.accMul(this.amount, Config.SELA);
+        // } else {
+        //     toAmount = this.amount;
+        // }
 
         // Call dedicated api to the source subwallet to generate the appropriate transaction type.
         // For example, ERC20 token transactions are different from standard coin transactions (for now - as
         // the spv sdk doesn't support ERC20 yet).
         const rawTx = await this.fromSubWallet.createPaymentTransaction(
             this.toAddress, // User input address
-            toAmount, // User input amount
+            this.amount, // User input amount
             this.memo // User input memo
         );
 
@@ -300,13 +300,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * From mainchain to sidechains (ID, ETH)
      */
     async createRechargeTransaction() {
-        const toAmount = this.accMul(this.amount, Config.SELA);
+        // const toAmount = this.accMul(this.amount, Config.SELA);
 
         const rawTx =
             await (this.fromSubWallet as MainAndIDChainSubWallet).createDepositTransaction(
                 this.coinTransferService.subchainId as StandardCoinName, // To subwallet id
                 this.toAddress, // to address
-                toAmount, // User input amount
+                this.amount, // User input amount
                 this.memo // Memo, not necessary
             );
 
@@ -329,16 +329,16 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * From sidechain (ID, ETH) to mainchain
      */
     async createWithdrawTransaction() {
-        let toAmount: number;
-        if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
-            toAmount = this.accMul(this.amount, Config.SELA);
-        } else {
-            toAmount = this.amount;
-        }
+        // let toAmount: number;
+        // if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
+        //     toAmount = this.accMul(this.amount, Config.SELA);
+        // } else {
+        //     toAmount = this.amount;
+        // }
 
         const rawTx = await this.fromSubWallet.createWithdrawTransaction(
             this.toAddress,
-            toAmount,
+            this.amount,
             this.memo
         );
 
