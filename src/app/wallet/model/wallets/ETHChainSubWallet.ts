@@ -18,7 +18,6 @@ declare let walletManager: WalletPlugin.WalletManager;
 export class ETHChainSubWallet extends StandardSubWallet {
     private ethscAddress: string = null;
     private web3 = null;
-    private timestampGetBalance = 0;
 
     constructor(masterWallet: MasterWallet) {
         super(masterWallet, StandardCoinName.ETHSC);
