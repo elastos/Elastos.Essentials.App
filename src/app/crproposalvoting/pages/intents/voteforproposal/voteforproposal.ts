@@ -53,7 +53,7 @@ export class VoteForProposalPage {
 
     // Request the wallet to publish our vote.
     try {
-      let ret = await this.globalIntentService.sendIntent("crproposalvoteagainst", {
+        let ret = await this.globalIntentService.sendIntent("https://wallet.elastos.net/crproposalvoteagainst", {
         proposalHash: this.voteForProposalCommand.data.proposalHash
       });
       Logger.log('crproposal', "Vote for proposal intent has returned", ret);

@@ -52,7 +52,7 @@ export class GlobalNavService {
     public navigateRoot(context: string, customRoute?: string, routerOptions?: any) {
         let route: string = '';
 
-        // Add a default route for apps by simply giving the context 
+        // Add a default route for apps by simply giving the context
         if(!customRoute) {
             switch(context) {
                 case App.CONTACTS:
@@ -196,5 +196,9 @@ export class GlobalNavService {
 
     public canGoBack(): boolean {
         return (this.navigationHistory.length > 1);
+    }
+
+    public goToLauncer() {
+        this.navigateHome(Direction.FORWARD);
     }
 }

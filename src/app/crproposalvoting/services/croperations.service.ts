@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { PopupService } from './popup.service';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -48,6 +50,7 @@ export class CROperationsService {
     constructor(
         private router: Router,
         private popup: PopupService,
+        private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
     ) {}
 
@@ -87,8 +90,8 @@ export class CROperationsService {
     }
 
     private async handleScannedContent(scannedContent: string) {
-        if (scannedContent.startsWith("elastos://crproposal")) {
-            let jwt = scannedContent.replace("elastos://crproposal/", "");
+        if (scannedContent.startsWith("https://did.elastos.net/crproposal/")) {
+            let jwt = scannedContent.replace("https://did.elastos.net/crproposal/", "");
             this.handleCRProposalJWTCommand(jwt);
         }
         else {
@@ -97,7 +100,7 @@ export class CROperationsService {
     }
 
     private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
-        if (receivedIntent.action == "crproposal")
+        if (receivedIntent.action == "https://did.elastos.net/crproposal")
             this.handleCRProposalIntentRequest(receivedIntent);
     }
 
@@ -145,7 +148,7 @@ export class CROperationsService {
         this.onGoingVoteForProposalcommand = command;
 
         // Show the create suggestion intent screen
-        this.router.navigate(["/vote-for-proposal-intent"], {
+        this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/vote-for-proposal-intent", {
             queryParams: {
                 jwt: jwt,
                 proposalHash: command.data.proposalHash
@@ -159,7 +162,7 @@ export class CROperationsService {
         this.onGoingCreateSuggestionCommand = command;
 
         // Show the create suggestion intent screen
-        this.router.navigate(["/create-suggestion-intent"], {
+        this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/create-suggestion-intent", {
             queryParams: {
                 jwt: jwt,
                 suggestionID: command.sid

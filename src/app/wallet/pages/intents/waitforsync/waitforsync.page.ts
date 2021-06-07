@@ -133,6 +133,10 @@ export class WaitForSyncPage implements OnInit {
                 this.action = 'Vote against proposal';
                 this.nextScreen = '/wallet/intents/crproposalvoteagainst';
                 break;
+            case 'crproposalcreatedigest':
+                this.action = 'cr proposal create digest';
+                this.nextScreen = '/wallet/intents/crproposalcreatedigest';
+                break;
             default:
                 Logger.log('wallet', 'Please check the action - ' + this.action + ' is not supported.');
                 break;
