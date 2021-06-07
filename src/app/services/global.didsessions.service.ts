@@ -65,6 +65,17 @@ export class GlobalDIDSessionsService {
     }
   }
 
+  public async saveDidSessionsToDisk(): Promise<void> {
+    return this.storage.setSetting(null, "didsessions", "identities", this.identities);
+  }
+
+  public async saveSignedInIdentityToDisk(): Promise<void> {
+    if (this.signedInIdentity != null && this.signedInIdentity.mnemonicInfo != null) {
+      this.signedInIdentity.mnemonicInfo = null;
+    }
+    return this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
+  }
+
   private getIdentityIndex(didString: string): number {
     return this.identities.findIndex((i) => didString === i.didString);
   }
@@ -88,8 +99,7 @@ export class GlobalDIDSessionsService {
     // Add again
     this.identities.push(entry);
 
-    // Save to disk
-    await this.storage.setSetting(null, "didsessions", "identities", this.identities);
+    await this.saveDidSessionsToDisk();
   }
 
   /**
@@ -98,8 +108,7 @@ export class GlobalDIDSessionsService {
   public async deleteIdentityEntry(didString: string): Promise<void> {
     this.deleteIdentityEntryIfExists(didString);
 
-    // Save to disk
-    await this.storage.setSetting(null, "didsessions", "identities", this.identities);
+    await this.saveDidSessionsToDisk();
   }
 
   /**
@@ -131,17 +140,16 @@ export class GlobalDIDSessionsService {
     if (entry.didStoragePath == null) {
       await internalManager.changeOldPath(entry.didStoreId, entry.didString);
       entry.didStoragePath = await internalManager.getDidStoragePath(entry.didStoreId, entry.didString);
-      await this.storage.setSetting(null, "didsessions", "identities", this.identities);
+      await this.saveDidSessionsToDisk();
     }
 
     this.signedInIdentity = entry;
 
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
-    // Save to disk
-    await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
-
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
+
+    await this.saveSignedInIdentityToDisk();
 
     //Go to launcher
     this.globalNavService.navigateHome(Direction.FORWARD);
@@ -156,8 +164,7 @@ export class GlobalDIDSessionsService {
     this.signedInIdentity = null;
     GlobalDIDSessionsService.signedInDIDString = null;
 
-    // Save to disk
-    await this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
+    await this.saveSignedInIdentityToDisk();
 
     // clear the last intent
     this.globalIntentService.clear();
