@@ -28,7 +28,7 @@ export class GlobalStorageService {
     return fullKey;
   }
 
-  public async setSetting<T>(did: string | null, context: string, key: string, value: T): Promise<void> {
+  public setSetting<T>(did: string | null, context: string, key: string, value: T): Promise<void> {
     let fullKey = this.getFullStorageKey(did, context, key);
     return this.storage.set(fullKey, JSON.stringify(value)).then((res) => {
     }, (err) => {
@@ -52,7 +52,7 @@ export class GlobalStorageService {
     });
   }
 
-  public async deleteSetting(did: string | null, context: string, key: string): Promise<void> {
+  public deleteSetting(did: string | null, context: string, key: string): Promise<void> {
     let fullKey = this.getFullStorageKey(did, context, key);
     return this.storage.remove(fullKey);
   }

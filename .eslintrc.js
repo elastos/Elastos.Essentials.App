@@ -2,27 +2,26 @@ module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
     parserOptions: {
-        project: "./tsconfig.json"
+        project: "./App/tsconfig.json"
     },
     plugins: [
       '@typescript-eslint'
     ],
     extends: [
       'eslint:recommended',
-      'plugin:node/recommended',
       'plugin:@typescript-eslint/recommended',
     ],
     rules: {
         // Generic JS
         "space-before-function-paren": "off",
         "no-tabs": "off",
+        "no-case-declarations": "off",
         "indent": "off",
         "quotes": "off",
         "semi": "off",
         "spaced-comment": "off",
         "brace-style": "off",
         "lines-between-class-members": "off", // Jump lines between class properties - useless
-        "node/no-deprecated-api": "warn",
         "eol-last": "off",
         "curly": "off",
         "prefer-const": "off",
@@ -35,10 +34,6 @@ module.exports = {
         "no-async-promise-executor": "error",
         "no-promise-executor-return": "error",
         "no-non-null-assertion": "off",
-
-        // Node
-        "node/no-unsupported-features/es-syntax": "off",
-        "node/no-missing-import": "off",
 
         // TS specific
         "@typescript-eslint/no-misused-promises": "error",

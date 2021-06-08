@@ -17,7 +17,7 @@ export class GlobalIntentService {
     private globalNav: GlobalNavService
   ) {}
 
-  public async init(): Promise<void> {
+  public init() {
     Logger.log("Intents", "Global intent service is initializing");
   }
 
@@ -26,7 +26,7 @@ export class GlobalIntentService {
     this.intentListener.next(null);
   }
 
-  public async listen() {
+  public listen() {
     Logger.log("Intents", "Listening to external incoming intents");
     essentialsIntentManager.addIntentListener((receivedIntent)=>{
       Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);

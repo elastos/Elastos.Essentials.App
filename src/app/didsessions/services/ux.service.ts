@@ -40,7 +40,7 @@ export class UXService {
 
         this.events.subscribe('showDeleteIdentityPrompt', (identity) => {
           this.zone.run(() => {
-            this.showDeletePrompt(identity);
+            void this.showDeletePrompt(identity);
           });
         });
     }
@@ -64,7 +64,7 @@ export class UXService {
       switch (icon.key) {
         // When in create-identity pg
         case 'backToRoot':
-          this.navigateRoot();
+          void this.navigateRoot();
           break;
         // For all other pages that need back navigation
         case 'back':
@@ -95,8 +95,8 @@ export class UXService {
     // Sensitive data should not be passed through queryParams
     public go(page: any, options: any = {}) {
         this.zone.run(() => {
-            this.native.hideLoading();
-            this.nav.navigateTo(App.DID_SESSIONS, page, { state: options });
+            void this.native.hideLoading();
+            void this.nav.navigateTo(App.DID_SESSIONS, page, { state: options });
         });
     }
 
@@ -104,11 +104,11 @@ export class UXService {
         return this.translate.instant(key);
     }
 
-    public toast(message: string = '操作完成', duration: number = 2000): void {
+    public toast(message = '操作完成', duration = 2000): void {
       this.native.genericToast(message, duration);
     }
 
-    public toast_trans(message: string = '', duration: number = 2000): void {
+    public toast_trans(message = '', duration = 2000): void {
       this.native.genericToast(message, duration);
     }
 

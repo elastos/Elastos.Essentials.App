@@ -13,6 +13,12 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { sleep } from 'src/app/helpers/sleep.helper';
+import { GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
+
+// Minimal duration during which a slide remains shown before going to the next one.
+const MIN_SLIDE_SHOW_DURATION_MS = 2000;
 
 @Component({
     selector: 'page-preparedid',
@@ -49,7 +55,9 @@ export class PrepareDIDPage {
     private modalCtrl: ModalController,
     private zone: NgZone,
     private platform: Platform,
-    private walletService: WalletManager
+    private walletService: WalletManager,
+    private globalHiveService: GlobalHiveService,
+    private globalPublicationService: GlobalPublicationService
   ) {
       Logger.log('didsessions', "Entering PrepareDID page");
       const navigation = this.router.getCurrentNavigation();
@@ -60,7 +68,8 @@ export class PrepareDIDPage {
   }
 
   async ionViewWillEnter() {
-    this.getActiveSlide();
+    await this.onSlideChanged();
+
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
@@ -80,28 +89,14 @@ export class PrepareDIDPage {
       this.showSlider();
     }
 
-    // TMP DEBUG
-    setTimeout(() => {
-      this.zone.run(()=>{
-        this.nextSlide();
-        setTimeout(() => {
-          this.zone.run(async ()=>{
-            this.nextSlide();
-
-            await this.walletService.createWalletFromNewIdentity(
-              "test name", this.identityService.identityBeingCreated.mnemonic,
-              this.identityService.identityBeingCreated.mnemonicPassphrase
-            );
-
-            setTimeout(() => {
-              this.zone.run(()=>{
-                this.nextSlide();
-              });
-            }, 2000);
-          });
-        }, 2000);
-      });
-    }, 2000);
+    // Automated slides transitions upon operations completions.
+    let vaultAddress = await this.appendHiveInfoToDID(); // Add a random hive vault provider to the DID Document before publishing it (to avoid publishing again right after)
+    await this.publishIdentity();
+    this.nextSlide();
+    await this.setupHiveStorage(vaultAddress);
+    this.nextSlide();
+    await this.createWalletFromIdentity();
+    this.nextSlide();
   }
 
   ionViewWillLeave() {
@@ -111,13 +106,13 @@ export class PrepareDIDPage {
   showSlider() {
     Logger.log('didsessions', "Showing slider");
     this.hidden = false
-    this.slide.getSwiper().then((swiper) => {
+    void this.slide.getSwiper().then((swiper) => {
       swiper.init();
-      this.slide.slideTo(0);
+      void this.slide.slideTo(0);
     });
   }
 
-  async getActiveSlide() {
+  public async onSlideChanged() {
     this.slideIndex = await this.slide.getActiveIndex();
     this.slideIndex !== this.LAST_SLIDE_INDEX ?
       this.titleBar.setTitle(this.translate.instant('didsessions.getting-ready')) :
@@ -125,19 +120,49 @@ export class PrepareDIDPage {
   }
 
   nextSlide() {
-    this.slide.slideNext();
+    void this.slide.slideNext();
   }
 
   prevSlide() {
-    this.slide.slidePrev();
+    void this.slide.slidePrev();
+  }
+
+  private async appendHiveInfoToDID(): Promise<string> {
+    let didDocument = await this.identityService.getCreatedDIDDocument();
+    let vaultAddress = await this.globalHiveService.addRandomHiveToDIDDocument(didDocument, this.identityService.identityBeingCreated.storePass);
+    return vaultAddress;
+  }
+
+  private async publishIdentity(): Promise<void> {
+    await Promise.all([
+      sleep(MIN_SLIDE_SHOW_DURATION_MS),
+      // TMP NOT USED WAITING FOR DID 2.0 - this.globalPublicationService.publishIdentity()
+    ]);
+  }
+
+  private async setupHiveStorage(vaultAddress: string): Promise<void> {
+    await Promise.all([
+      sleep(MIN_SLIDE_SHOW_DURATION_MS),
+      this.globalHiveService.prepareHiveVault(vaultAddress)
+    ]);
+  }
+
+  private async createWalletFromIdentity(): Promise<void> {
+    await Promise.all([
+      sleep(MIN_SLIDE_SHOW_DURATION_MS),
+      this.walletService.createWalletFromNewIdentity(
+        "test name", this.identityService.identityBeingCreated.mnemonic,
+        this.identityService.identityBeingCreated.mnemonicPassphrase
+      )
+    ]);
   }
 
   finalizePreparation() {
     Logger.log('didsessions', "Exiting the DID preparation screen, next step:", this.nextStepId);
-    this.identityService.runNextStep(this.nextStepId);
+    void this.identityService.runNextStep(this.nextStepId);
   }
 
   cancelPreparation() {
-    this.identityService.cancelIdentiyCreation();
+    void this.identityService.cancelIdentiyCreation();
   }
 }

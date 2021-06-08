@@ -66,11 +66,11 @@ export class GlobalDIDSessionsService {
     }
   }
 
-  public async saveDidSessionsToDisk(): Promise<void> {
+  public saveDidSessionsToDisk(): Promise<void> {
     return this.storage.setSetting(null, "didsessions", "identities", this.identities);
   }
 
-  public async saveSignedInIdentityToDisk(): Promise<void> {
+  public saveSignedInIdentityToDisk(): Promise<void> {
     if (this.signedInIdentity != null && this.signedInIdentity.mnemonicInfo != null) {
       this.signedInIdentity.mnemonicInfo = null;
     }
@@ -115,7 +115,7 @@ export class GlobalDIDSessionsService {
   /**
    * Gets the list of all identity entries previously created.
    */
-  public async getIdentityEntries(): Promise<IdentityEntry[]> {
+  public getIdentityEntries(): IdentityEntry[] {
     return this.identities;
   }
 
@@ -124,7 +124,7 @@ export class GlobalDIDSessionsService {
    *
    * @returns The signed in identity if any, null otherwise.
    */
-  public async getSignedInIdentity(): Promise<IdentityEntry | null> {
+  public getSignedInIdentity(): IdentityEntry | null {
     return this.signedInIdentity;
   }
 

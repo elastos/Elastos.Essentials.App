@@ -13,7 +13,7 @@
     "bundle-size-verifier-webpack-json": "ng build --prod --stats-json && webpack-bundle-analyzer www/stats.json",
     "lint": "npm run eslint && npm run prettier -- --check",
     "prettier": "prettier \"**/*.ts\"",
-    "eslint": "eslint . --ext .ts"
+    "eslint": "eslint src/app/wallet --ext .ts"
   },
   "private": true,
   "dependencies": {

@@ -59,7 +59,7 @@ class TransactionMapEntry {
     WalletID: string = null;
     ChainID: string = null;
     Status: string = null;
-    lock: boolean = false;
+    lock = false;
 }
 
 type TransactionMap = {
@@ -115,7 +115,7 @@ export class WalletManager {
 
         const hasWallet = await this.initWallets();
 
-        this.jsonRPCService.init();
+        await this.jsonRPCService.init();
 
         // Start the sync service
         await this.spvService.init(this);
@@ -130,9 +130,8 @@ export class WalletManager {
 
         await this.startSyncAllWallet();
 
-        this.localStorage.get('hasPrompt').then((val) => {
-            this.hasPromptTransfer2IDChain = val ? val : false;
-        });
+        let val = await this.localStorage.get('hasPrompt');
+        this.hasPromptTransfer2IDChain = val ? val : false;
 
         const publishTxList = await this.localStorage.getPublishTxList();
         if (publishTxList) {
@@ -142,24 +141,22 @@ export class WalletManager {
         // TODO: spvsdk can't get progress by api
         // Get last block time, progress from walletservice
         let syncProgress = this.spvService.getWalletSyncProgress();
-        // tslint:disable-next-line:forin
         for (const masterId in syncProgress) {
-            // tslint:disable-next-line:forin
             for (const chainIdKey in syncProgress[masterId]) {
                 const chainId = chainIdKey as StandardCoinName;
                 const progress = syncProgress[masterId][chainId].progress || 0;
                 const lastBlockTime = syncProgress[masterId][chainId].lastBlockTime || 0;
-                this.updateSyncProgress(masterId, chainId, progress, lastBlockTime);
+                void this.updateSyncProgress(masterId, chainId, progress, lastBlockTime);
             }
         }
-        this.getAllMasterWalletBalanceByRPC();
+        void this.getAllMasterWalletBalanceByRPC();
 
         Logger.log('wallet', "Wallet manager initialization complete");
 
         this.events.publish("walletmanager:initialized");
 
         // The base init is completed. Now let's start the backup service in background (not a blocking await)
-        this.initBackupService();
+        void this.initBackupService();
     }
 
     async stop() {
@@ -271,7 +268,7 @@ export class WalletManager {
 
     // Backup service runs only in the UI because it requires user interaction sometimes, and we don't
     // wan't data model overlaps/conflicts with the background service or with intents.
-    private async initBackupService() {
+    private initBackupService() {
         // Give some fresh air to the wallet while starting, to show the UI first without overloading the CPU.
         // There is no hurry to start the backup service.
         setTimeout(async () => {
@@ -287,8 +284,8 @@ export class WalletManager {
     }
 
     // TODO: delete it, we do not use active wallet
-    public setRecentWalletId(id) {
-        this.localStorage.saveCurMasterId({ masterId: id });
+    public async setRecentWalletId(id): Promise<void> {
+        await this.localStorage.saveCurMasterId({ masterId: id });
     }
 
     public getMasterWallet(masterId: WalletID): MasterWallet {
@@ -425,7 +422,7 @@ export class WalletManager {
         // To service
         this.sendUpdateWalletInfo2Service(id, 'add');
 
-        this.setRecentWalletId(id);
+        await this.setRecentWalletId(id);
 
         // Add this new wallet to the backup service
         await this.backupService.setupBackupForWallet(this.getMasterWallet(id));
@@ -433,10 +430,10 @@ export class WalletManager {
         // Sync with remote
         await this.backupService.checkSync(this.getWalletsList());
 
-        this.startWalletSync(id);
+        void this.startWalletSync(id);
 
         // Get balance by rpc
-        this.getAllSubwalletsBalanceByRPC(id);
+        void this.getAllSubwalletsBalanceByRPC(id);
     }
 
     /**
@@ -482,7 +479,7 @@ export class WalletManager {
 
     public async startSyncAllWallet() {
         for (const masterWallet of Object.values(this.masterWallets)) {
-            this.startWalletSync(masterWallet.id);
+            await this.startWalletSync(masterWallet.id);
         }
     }
 
@@ -535,7 +532,7 @@ export class WalletManager {
         return this.spvService.syncStartSubWallets(masterId, subWalletIds);
     }
 
-    private async stopSubWalletsSync(masterId: WalletID, subWalletIds: StandardCoinName[]): Promise<boolean> {
+    private stopSubWalletsSync(masterId: WalletID, subWalletIds: StandardCoinName[]): Promise<boolean> {
         return this.spvService.syncStopSubWallets(masterId, subWalletIds);
     }
 
@@ -587,7 +584,7 @@ export class WalletManager {
                 }
                 break;
             case "OnBlockSyncProgress":
-                this.updateSyncProgressFromCallback(masterId, chainId, event);
+                void this.updateSyncProgressFromCallback(masterId, chainId, event);
                 break;
             case "OnBalanceChanged":
                 this.getMasterWallet(masterId).getSubWallet(chainId).updateBalance();
@@ -612,8 +609,8 @@ export class WalletManager {
      * Updates the progress value of current wallet synchronization. This progress change
      * is saved into the model and triggers events so that the UI can update itself.
      */
-    private updateSyncProgressFromCallback(masterId: WalletID, chainId: StandardCoinName, result: SPVWalletMessage) {
-        this.updateSyncProgress(masterId, chainId, result.Progress, result.LastBlockTime);
+    private updateSyncProgressFromCallback(masterId: WalletID, chainId: StandardCoinName, result: SPVWalletMessage): Promise<void> {
+        return this.updateSyncProgress(masterId, chainId, result.Progress, result.LastBlockTime);
     }
 
     private async updateSyncProgress(masterId: WalletID, chainId: StandardCoinName, progress: number, lastBlockTime: number) {
@@ -681,7 +678,7 @@ export class WalletManager {
                         // Do nothing
                         break;
                 }
-                this.updateSyncProgress(masterId, chainId, result.Progress, result.LastBlockTime);
+                void this.updateSyncProgress(masterId, chainId, result.Progress, result.LastBlockTime);
                 const erc20SubWallets = this.getMasterWallet(masterId).getSubWalletsByType(CoinType.ERC20);
                 for (const subWallet of erc20SubWallets) {
                     subWallet.updateSyncProgress(result.Progress, result.LastBlockTime);
@@ -737,7 +734,7 @@ export class WalletManager {
 
         if (code !== 0) {
             Logger.log('wallet', 'OnTxPublished fail:', JSON.stringify(data));
-            this.popupProvider.ionicAlert_PublishedTx_fail('wallet.transaction-fail', tx + code, hash, reason);
+            void this.popupProvider.ionicAlert_PublishedTx_fail('wallet.transaction-fail', tx + code, hash, reason);
             if (this.transactionMap[hash].lock !== true) {
                 delete this.transactionMap[hash];
                 this.localStorage.savePublishTxList(this.transactionMap);
@@ -745,10 +742,10 @@ export class WalletManager {
         }
     }
 
-    public setHasPromptTransfer2IDChain() {
+    public setHasPromptTransfer2IDChain(): Promise<void> {
         this.hasPromptTransfer2IDChain = true;
         this.needToPromptTransferToIDChain = false;
-        this.localStorage.set('hasPrompt', true); // TODO: rename to something better than "hasPrompt"
+        return this.localStorage.set('hasPrompt', true); // TODO: rename to something better than "hasPrompt"
     }
 
     // TODO: make a more generic flow to not do this only for the ID chain but also for the ETH chain.
@@ -870,7 +867,7 @@ export class WalletManager {
     }
 
     /**
-     * Creates a wallet that uses the same mnemonic as the DID. 
+     * Creates a wallet that uses the same mnemonic as the DID.
      * Usually this method should be called only once per new DID created, so the newly created
      * user also has a default wallet.
      */

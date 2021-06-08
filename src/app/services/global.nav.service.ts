@@ -49,8 +49,8 @@ export class GlobalNavService {
      * Deletes all recent steps as long as they belong to the given context.
      * This basically comes back to the root of a "dApp".
      */
-    public navigateRoot(context: string, customRoute?: string, routerOptions?: any) {
-        let route: string = '';
+    public navigateRoot(context: string, customRoute?: string, routerOptions?: any): Promise<boolean> {
+        let route = '';
 
         // Add a default route for apps by simply giving the context
         if(!customRoute) {
@@ -101,14 +101,14 @@ export class GlobalNavService {
         // as it is not possible to use a custom RouterReuseStrategy with ionic (which could or could not have helped
         // to solve this 'sendIntent' problem).
         //this.navCtrl.navigateRoot(route, routerOptions);
-        this.navCtrl.navigateForward(route, routerOptions);
+        return this.navCtrl.navigateForward(route, routerOptions);
     }
 
     /**
      * Navigates back to the didSession home and clears the whole navigation history for all
      * contexts. Fresh restart.
      */
-    public navigateDIDSessionHome() {
+    public navigateDIDSessionHome(): Promise<boolean> {
         Logger.log("Nav", "Navigating to DIDSession home");
 
         let didSessionHome = {
@@ -117,14 +117,14 @@ export class GlobalNavService {
         };
         this.navigationHistory = [];
         this.navigationHistory.push(didSessionHome);
-        this.navCtrl.navigateRoot(didSessionHome.route, {animationDirection: 'back'});
+        return this.navCtrl.navigateRoot(didSessionHome.route, {animationDirection: 'back'});
     }
 
     /**
      * Navigates back to the launcher home and clears the whole navigation history for all
      * contexts. Fresh restart.
      */
-    public navigateHome(direction = Direction.BACK) {
+    public navigateHome(direction = Direction.BACK): Promise<boolean> {
         Logger.log("Nav", "Navigating to launcher home");
 
         let launcherHome = {
@@ -135,9 +135,9 @@ export class GlobalNavService {
         this.navigationHistory.push(launcherHome);
 
         if (direction != Direction.NONE) // No animation - ex for the first arrival on the launcher home
-            this.navCtrl.navigateRoot(launcherHome.route, {animationDirection: direction});
+            return this.navCtrl.navigateRoot(launcherHome.route, {animationDirection: direction});
         else
-            this.navCtrl.navigateRoot(launcherHome.route);
+            return this.navCtrl.navigateRoot(launcherHome.route);
     }
 
     public navigateTo(context: string, route: string, routerOptions?: NavigationOptions): Promise<boolean> {
@@ -151,7 +151,7 @@ export class GlobalNavService {
      * Navigates back in stack, coming back in the steps history. This is cross context and
      * can go back to the previous context.
      */
-    public navigateBack() {
+    public navigateBack(): Promise<boolean> {
         if (!this.canGoBack())
             throw new Error("Unable to navigate back. No more known route in stack");
 
@@ -159,14 +159,14 @@ export class GlobalNavService {
         let previousStep = this.navigationHistory[this.navigationHistory.length-1];
 
         Logger.log("Nav", "Navigating back to", previousStep.route);
-        this.navCtrl.navigateBack(previousStep.route, previousStep.routerOptions);
+        return this.navCtrl.navigateBack(previousStep.route, previousStep.routerOptions);
     }
 
     /**
      * Navigates out of current context to the first screen that belongs to another context
      * If navigate is false, exitCurrentContext will not navigate to new route.
      */
-    public exitCurrentContext(navigate = true) {
+    public async exitCurrentContext(navigate = true): Promise<void> {
         Logger.log("Nav", "Navigating out of current context");
 
         let currentStep = this.navigationHistory[this.navigationHistory.length-1];
@@ -183,14 +183,14 @@ export class GlobalNavService {
             else {
                 if (navigate) {
                     // Found the previous context, back to there.
-                    this.navCtrl.navigateBack(currentStep.route, currentStep.routerOptions);
+                    await this.navCtrl.navigateBack(currentStep.route, currentStep.routerOptions);
                 }
                 return;
             }
         }
         if (navigate) {
             // Go to home if this.navigationHistory.length == 1
-            this.navigateHome();
+            await this.navigateHome();
         }
     }
 
@@ -198,7 +198,7 @@ export class GlobalNavService {
         return (this.navigationHistory.length > 1);
     }
 
-    public goToLauncer() {
-        this.navigateHome(Direction.FORWARD);
+    public goToLauncher(): Promise<boolean> {
+        return this.navigateHome(Direction.FORWARD);
     }
 }

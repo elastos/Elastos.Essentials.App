@@ -173,14 +173,22 @@ export class DIDStore {
         });
     }
 
+    public loadDIDDocument(didString: string): Promise<DIDPlugin.DIDDocument> {
+        return new Promise((resolve, reject)=>{
+            this.pluginDidStore.loadDidDocument(
+                didString,
+                (ret) => {resolve(ret)}, (err) => {reject(err)},
+            );
+        });
+    }
+
     synchronize(storepass): Promise<void> {
         return new Promise((resolve, reject)=>{
             this.pluginDidStore.synchronize(
                 storepass,
-                async () => {
+                () => {
                     // After a sync, reload all dids
-                    await this.loadAll();
-                    resolve()
+                    void this.loadAll().then(()=>resolve());
                 }, (err) => {
                     reject(DIDHelper.reworkedPluginException(err))
                 },

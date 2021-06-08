@@ -101,7 +101,7 @@ export class CreateSuggestionPage {
                 try {
                     await this.proposalService.sendProposalCommandResponseToCallbackURL(this.createSuggestionCommand.callbackurl, signedJWT);
                     //Go to launcher
-                    this.globalNav.goToLauncer();
+                    this.globalNav.goToLauncher();
                 }
                 catch (e) {
                     // Something wrong happened while calling the response callback. Just tell the end user that we can't complete the operation for now.

@@ -13,6 +13,6 @@ export class DIDSessionsInitService {
 
   public async init(): Promise<void> {
     this.identityService.init();
-    this.uxService.init();
+    await this.uxService.init();
   }
 }

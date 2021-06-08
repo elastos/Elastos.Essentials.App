@@ -109,7 +109,6 @@ export class GlobalPublicationService {
 
         return new Promise(async (resolve, reject) => {
             try {
-
                 const didStore = await this.openDidStore(this.persistentInfo.did.storeId, async (payload: string, memo: string) => {
                     // Callback called by the DID SDK when trying to publish a DID.
                     console.log("Create ID transaction callback is being called", payload, memo);
@@ -205,7 +204,7 @@ export class GlobalPublicationService {
      /**
      * Checks the publication status on the assist API, for a previously saved ID.
      */
-    public async checkPublicationStatusAndUpdate(): Promise<void> {
+    public checkPublicationStatusAndUpdate(): Promise<void> {
         return new Promise((resolve, reject) => {
             console.log("Requesting identity publication status to Assist for confirmation ID " + this.persistentInfo.did.assistPublicationID);
 

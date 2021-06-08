@@ -266,7 +266,7 @@ export class PopupProvider {
           }
         ]
       }).then(prompt => {
-        prompt.present();
+        void prompt.present();
       });
     });
   }
