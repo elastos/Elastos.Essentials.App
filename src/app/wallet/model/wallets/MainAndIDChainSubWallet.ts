@@ -1,14 +1,17 @@
 import { StandardSubWallet } from './StandardSubWallet';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
-import { AllTransactionsHistory, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
+import { AllTransactionsHistory, RawVoteContent, RawVoteType, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { Logger } from 'src/app/logger';
 import { Config } from '../../config/Config';
 import { Util } from '../Util';
+import { Candidates, VoteContent, VoteTypeString } from '../SPVWalletPluginBridge';
 
+
+const voteTypeMap = [VoteTypeString.Delegate, VoteTypeString.CRC, VoteTypeString.CRCProposal, VoteTypeString.CRCImpeachment]
 
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
@@ -41,33 +44,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }, 5000);
   }
 
-  /**
-   * If the last address is used, then the spvsdk will create new addresses.
-   */
-  private async checkAddresses() {
-    let addressArray  = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, true);
-    let addressArrayExternal = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, false);
-    addressArray.push.apply(addressArray, addressArrayExternal);
-
-    let addressArrayUsed = []
-    try {
-      const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
-      if (txRawList && txRawList.length > 0) {
-        for (let i = 0, len = txRawList.length ; i < len; i++) {
-          addressArrayUsed.push(txRawList[i].result);
-        }
-      }
-    } catch (e) {
-      Logger.log("wallet", 'getTransactionByAddress exception:', e);
-      throw e;
-    }
-
-    if (addressArrayUsed.length > 0) {
-      Logger.warn('wallet',  'checkAddresses addressArrayUsed:', addressArrayUsed)
-      this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
-    }
-  }
-
   public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
     if ((startIndex + 20 > this.txArrayToDisplay.txhistory.length) && (this.needtoLoadMoreAddresses.length > 0)) {
       await this.getMoreTransactionByRPC(++this.loadMoreTimes);
@@ -79,47 +55,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         txhistory :this.txArrayToDisplay.txhistory.slice(startIndex, startIndex + 20),
     }
     return newTxList;
-  }
-
-  /**
-   *
-   * @param amountSELA SELA
-   */
-  private async getUtxo(amountSELA: number) {
-    let utxoArray:Utxo[] = null;
-    if (this.id === StandardCoinName.ELA) {
-      if ((amountSELA === -1) || (!this.balance.gt(amountSELA + this.votingAmountSELA))) {
-        utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
-        // TODO: Notify user to vote?
-      } else {
-        utxoArray = await this.getAllUtxoByType(UtxoType.Normal);
-      }
-    } else {
-      utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
-    }
-
-    let utxoArrayForSDK = [];
-    if (utxoArray) {
-      let totalAmount = 0;
-      for (let i = 0, len = utxoArray.length ; i < len; i++) {
-        let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
-        let utxoForSDK: UtxoForSDK = {
-            Address: utxoArray[i].address,
-            Amount: utxoAmountSELA.toString(),
-            Index: utxoArray[i].vout,
-            TxHash: utxoArray[i].txid
-        }
-        utxoArrayForSDK.push(utxoForSDK);
-        totalAmount += utxoAmountSELA;
-        if ((amountSELA != -1) && (totalAmount > amountSELA)) {
-          Logger.log('wallet', 'Get enought utxo for !', amountSELA);
-          break;
-        }
-      }
-    }
-
-    Logger.log('wallet', 'UTXO for transfer:', utxoArrayForSDK);
-    return utxoArrayForSDK;
   }
 
   public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
@@ -210,7 +145,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       "Amount": toAmount.toString()
     }]
 
-    let utxo = this.getUtxo(toAmount + 10000);// 10000: fee
+    let utxo = await this.getUtxo(toAmount + 10000);// 10000: fee
 
     return this.masterWallet.walletManager.spvBridge.createTransaction(
       this.masterWallet.id,
@@ -222,16 +157,16 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     );
   }
 
-  public async createVoteTransaction(voteContents: string, memo: string = ""): Promise<string> {
-    Logger.log('wallet', 'createVoteTransaction:', voteContents);
-
-    let utxo = this.getUtxo(-1);
+  public async createVoteTransaction(voteContents: VoteContent[], memo: string = ""): Promise<string> {
+    let utxo = await this.getUtxo(-1);
+    let newVoteContents = await this.mergeVoteContents(voteContents);
+    Logger.log('wallet', 'createVoteTransaction:', JSON.stringify(newVoteContents));
 
     return this.masterWallet.walletManager.spvBridge.createVoteTransaction(
       this.masterWallet.id,
       this.id, // From subwallet id
       JSON.stringify(utxo),
-      voteContents,
+      JSON.stringify(newVoteContents),
       '10000',
       memo // User input memo
     );
@@ -239,7 +174,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
   public async createDepositTransaction(sideChainID: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
     let toAmount = this.accMul(amount, Config.SELA);
-    let utxo = this.getUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
+    let utxo = await this.getUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
 
     let lockAddres = '';
     if (sideChainID === StandardCoinName.IDChain) {
@@ -265,7 +200,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
   public async createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
     let toAmount = this.accMul(amount, Config.SELA);
-    let utxo = this.getUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
+    let utxo = await this.getUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
 
     return this.masterWallet.walletManager.spvBridge.createWithdrawTransaction(
       this.masterWallet.id,
@@ -277,7 +212,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       memo
     );
   }
-
 
   public async publishTransaction(transaction: string): Promise<string>{
     let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
@@ -291,24 +225,151 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return txid;
   }
 
+  // ********************************
+  // Private
+  // ********************************
+
   /**
-   * Get balance by RPC if the last block time of spvsdk is one day ago.
+   * If the last address is used, then the spvsdk will create new addresses.
+   */
+   private async checkAddresses() {
+    let addressArray  = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, true);
+    let addressArrayExternal = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, false);
+    addressArray.push.apply(addressArray, addressArrayExternal);
+
+    let addressArrayUsed = []
+    try {
+      const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
+      if (txRawList && txRawList.length > 0) {
+        for (let i = 0, len = txRawList.length ; i < len; i++) {
+          addressArrayUsed.push(txRawList[i].result);
+        }
+      }
+    } catch (e) {
+      Logger.log("wallet", 'getTransactionByAddress exception:', e);
+      throw e;
+    }
+
+    if (addressArrayUsed.length > 0) {
+      Logger.warn('wallet',  'checkAddresses addressArrayUsed:', addressArrayUsed)
+      this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
+    }
+  }
+
+  /**
+   *
+   * @param amountSELA SELA
+   */
+   private async getUtxo(amountSELA: number) {
+    let utxoArray:Utxo[] = null;
+    if (this.id === StandardCoinName.ELA) {
+      if ((amountSELA === -1) || (!this.balance.gt(amountSELA + this.votingAmountSELA))) {
+        utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
+        // TODO: Notify user to vote?
+      } else {
+        utxoArray = await this.getAllUtxoByType(UtxoType.Normal);
+      }
+    } else {
+      utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
+    }
+
+    let utxoArrayForSDK = [];
+    if (utxoArray) {
+      let totalAmount = 0;
+      for (let i = 0, len = utxoArray.length ; i < len; i++) {
+        let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
+        let utxoForSDK: UtxoForSDK = {
+            Address: utxoArray[i].address,
+            Amount: utxoAmountSELA.toString(),
+            Index: utxoArray[i].vout,
+            TxHash: utxoArray[i].txid
+        }
+        utxoArrayForSDK.push(utxoForSDK);
+        totalAmount += utxoAmountSELA;
+        if ((amountSELA != -1) && (totalAmount > amountSELA)) {
+          Logger.log('wallet', 'Get enought utxo for :', amountSELA);
+          break;
+        }
+      }
+    }
+
+    Logger.log('wallet', 'UTXO for transfer:', utxoArrayForSDK);
+    return utxoArrayForSDK;
+  }
+
+  private async getVotedContent(): Promise<RawVoteContent[]> {
+    if (this.votingUtxoArray && (this.votingUtxoArray.length == 0)) {
+      await this.getVotingUtxoByRPC(); //Try again.
+    }
+
+    // We only consider the case of one utxo for voting.
+    if (this.votingUtxoArray && (this.votingUtxoArray.length > 0)) {
+      let detail = await this.getTransactionDetails(this.votingUtxoArray[0].txid);
+      return detail.vout[0].payload.contents;
+    } else {
+      return null;
+    }
+  }
+
+  private isSameVoteType(voteTypeString: VoteTypeString, voteType: RawVoteType) {
+    return voteTypeString === voteTypeMap[voteType];
+  }
+
+  // Transform vote contents from raw rpc to the format required by the SDK
+  private transformVoteContentForSDK(voteContent:RawVoteContent) {
+    let voteType:VoteTypeString = voteTypeMap[voteContent.votetype];
+
+    let candidates: Candidates = {};
+
+    for (let i = 0, len = voteContent.candidates.length; i < len; i++) {
+      let amountSELA = this.accMul(voteContent.candidates[i].votes, Config.SELA)
+      candidates[voteContent.candidates[i].candidate] = amountSELA.toString();
+    }
+
+    let newVoteContent: VoteContent = { Type: voteType, Candidates:candidates}
+    return newVoteContent;
+  }
+
+  private async mergeVoteContents(userVoteContents: VoteContent[]) {
+    let votedContents = await this.getVotedContent();
+    if (!votedContents) return userVoteContents;
+
+    let crrelatedStage = await this.jsonRPCService.getCRrelatedStage();
+    let crinvoting = crrelatedStage.invoting;
+    // Merge
+    let newVoteContents = [];
+    for (let i = 0, len = votedContents.length; i < len; i++) {
+      let validContent = true;
+      for (let j = 0, lenUserContents = userVoteContents.length; j < lenUserContents; j++) {
+        if (this.isSameVoteType(userVoteContents[j].Type, votedContents[i].votetype)) {
+          validContent = false;
+        }
+      }
+
+      if ((votedContents[i].votetype === RawVoteType.CRC) && !crinvoting) {
+        // remove crc vote if we are outside of the council voting period.
+        validContent = false;
+      }
+
+      if (validContent) {
+        let newVoteContent = this.transformVoteContentForSDK(votedContents[i]);
+        newVoteContents.push(newVoteContent);
+      }
+    }
+
+    newVoteContents.push.apply(newVoteContents, userVoteContents);
+
+    // TODO: computeInvalidCandidates
+
+    Logger.log('wallet', 'newVoteContents :', newVoteContents);
+    return newVoteContents;
+  }
+
+  /**
+   * Get balance by RPC
    */
   async getBalanceByRPC() {
-    // const currentTimestamp = moment().valueOf();
-    // const onedayago = moment().add(-1, 'days').valueOf();
-    // const oneHourago = moment().add(-10, 'minutes').valueOf();
     Logger.test("wallet", 'TIMETEST getBalanceByRPC start:', this.id);
-
-    // if (this.lastBlockTime
-    //         && ((this.syncTimestamp > onedayago)
-    //         || (this.timestampRPC > oneHourago))) {
-    //     Logger.log("wallet", 'Do not need to get balance by rpc.',
-    //         ' this.lastBlockTime:', this.lastBlockTime,
-    //         ' this.syncTimestamp:', this.syncTimestamp,
-    //         ' this.timestampRPC:', this.timestampRPC);
-    //     return false;
-    // }
 
     let totalBalance = new BigNumber(0);
 
@@ -324,7 +385,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     this.balanceByRPC = totalBalance;
     this.balance = totalBalance;
-    // this.timestampRPC = currentTimestamp;
 
     Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
     Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
@@ -363,7 +423,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     } while (!this.masterWallet.account.SingleAddress);
 
-    Logger.log("wallet", 'request Address count:', requestAddressCount);
+    // Logger.log("wallet", 'request Address count:', requestAddressCount);
     Logger.log("wallet", 'balance:', totalBalance.toString());
 
     return totalBalance;
@@ -511,9 +571,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           targetAddress = txDetail.payload.crosschainaddresses[0];
         } else if (txDetail.payload.genesisblockaddress) {
           // Sending address
-          Logger.warn('wallet', 'txDetail:', txDetail);
+          // Logger.warn('wallet', 'txDetail:', txDetail);
           let realtxid = Util.reversetxid(txDetail.payload.sidechaintransactionhashes[0]);
-          Logger.warn('wallet', 'realtxid:', realtxid);
+          // Logger.warn('wallet', 'realtxid:', realtxid);
 
           if (txDetail.payload.genesisblockaddress === Config.ETHSC_ADDRESS) {
             let result = await this.jsonRPCService.getETHSCTransactionByHash(realtxid);
@@ -551,6 +611,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     this.votingUtxoArray = await this.getAllUtxoByType(UtxoType.Vote);
     let votingAmountEla = 0;
     if (this.votingUtxoArray) {
+      Logger.warn('wallet', 'getVotingUtxoByRPC:', this.votingUtxoArray)
       for (let i = 0, len = this.votingUtxoArray.length ; i < len; i++) {
         let amount = parseFloat(this.votingUtxoArray[i].amount);
         votingAmountEla += amount;
@@ -559,7 +620,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     } else {
       this.votingAmountSELA = 0;
     }
-
   }
 
   async getAllUtxoByAddress(internalAddress: boolean, type:UtxoType): Promise<Utxo[]> {
@@ -599,7 +659,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return utxoArray;
   }
 
-
   private mergeTransactionListAndSort() {
     // When you send transaction, one of the output is the address of this wallet,
     // So we must merge these transactions.
@@ -612,7 +671,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       return B.height - A.height;
     });
   }
-
 
   mergeTransactionList() {
     Logger.log('wallet', 'mergeTransactionList timestamp:[', this.timestampStart, ', ', this.timestampEnd, ']');

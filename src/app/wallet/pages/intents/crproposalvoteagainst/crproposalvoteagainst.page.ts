@@ -27,7 +27,7 @@ import { WalletManager } from '../../../services/wallet.service';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
 import { WalletAccountType } from '../../../model/WalletAccount';
 import { StandardCoinName } from '../../../model/Coin';
-import { VoteType, CRProposalVoteInfo, VoteContent } from '../../../model/SPVWalletPluginBridge';
+import { VoteTypeString, CRProposalVoteInfo, VoteContent } from '../../../model/SPVWalletPluginBridge';
 import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
@@ -138,14 +138,14 @@ export class CRProposalVoteAgainstPage implements OnInit {
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
-          Type: VoteType.CRCProposal,
+          Type: VoteTypeString.CRCProposal,
           Candidates: votes
         }
 
         const voteContent = [crVoteContent];
 
         const rawTx = await this.sourceSubwallet.createVoteTransaction(
-            JSON.stringify(voteContent),
+            voteContent,
             '', // Memo, not necessary
         );
 

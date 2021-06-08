@@ -226,6 +226,25 @@ export class JsonRPCService {
         return blockHeight;
     }
 
+    //crc
+    async getCRrelatedStage() {
+      const param = {
+          method: 'getcrrelatedstage',
+      };
+
+      const rpcApiUrl = this.getRPCApiUrl(StandardCoinName.ELA);
+      if (rpcApiUrl.length === 0) {
+          return 0;
+      }
+
+      let result = null;
+      try {
+          result = await this.httpRequest(rpcApiUrl, param);
+      } catch (e) {
+      }
+      return result;
+    }
+
     // ETHSC:Get the real target address for the send transaction from ethsc to mainchain.
     async getETHSCWithdrawTargetAddress(blockHeight: number, txHash: string) {
         const param = {

@@ -33,7 +33,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { Candidates, VoteContent, VoteTypeString } from 'src/app/wallet/model/SPVWalletPluginBridge';
 
 
 @Component({
@@ -136,14 +136,14 @@ export class DPoSVotePage implements OnInit {
         }
 
         let dposVoteContent: VoteContent = {
-          Type: VoteType.Delegate,
+          Type: VoteTypeString.Delegate,
           Candidates: candidates
         }
 
         const voteContent = [dposVoteContent];
 
         const rawTx = await this.sourceSubwallet.createVoteTransaction(
-                JSON.stringify(voteContent),
+                voteContent,
                 '', // Memo, not necessary
             );
 

@@ -33,12 +33,35 @@ export enum UtxoType {
     Mixed = 'mixed',
 }
 
+// Returned by gethistory
 export enum VoteType {
     No_Vote = 0,
     DPOS_Vote = 1,
     CRC_Vote = 2,
     CRProposal_Against = 4,
     CRC_Impeachment = 8,
+}
+
+// Returned by getrawtransaction
+export enum RawVoteType {
+  //Delegate indicates the vote content is for producer.
+  Delegate  = 0,
+  // CRC indicates the vote content is for CRC.
+  CRC = 1,
+  // Proposal indicates the vote content is for reject proposal.
+  CRCProposal  = 2,
+  // Reject indicates the vote content is for impeachment.
+  CRCImpeachment  = 3,
+}
+
+// Returned from rpc
+export type RawCandidates = {
+  candidate: string,
+  votes: string, //ela
+}
+export type RawVoteContent = {
+  votetype: RawVoteType,
+  candidates: RawCandidates[],
 }
 
 export type TransactionInfo = {
