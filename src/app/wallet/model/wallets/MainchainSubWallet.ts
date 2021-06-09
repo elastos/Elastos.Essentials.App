@@ -15,7 +15,7 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
     protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
         if (transaction.type === TransactionDirection.MOVED) {
             // TODO: show different icon for different vote?
-            if (transaction.votetype !== 0) {
+            if (transaction.votecategory !== 0) {
                 return "wallet.coin-op-vote";
             }
         }

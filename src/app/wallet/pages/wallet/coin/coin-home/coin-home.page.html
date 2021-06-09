@@ -31,8 +31,6 @@
                     <span>{{ getSubwalletTitle() }}</span>
                     {{ 'wallet.coin-balance' | translate }}
                 </h1>
-                <h2 *ngIf="chainIsETHSC() && subWallet.progress === 100" class="synced">{{ 'wallet.synced' | translate }} &#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</h2>
-                <h2 *ngIf="chainIsETHSC() && subWallet.progress !== 100" class="syncing">{{ 'wallet.syncing' | translate }} <span *ngIf="subWallet.syncTimestamp>0">&#8226; {{ uiService.getSyncTimeFromNow(subWallet.syncTimestamp) }}</span></h2>
                 <h3>{{ 'wallet.total-amount' | translate }}</h3>
                 <div (click)="!chainIsERC20() ? currencyService.toggleCurrencyDisplay() : null">
                     <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()">{{ Util.getWholeBalance(masterWallet.subWallets[chainId].getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.subWallets[chainId].getDisplayBalance().isZero() && !masterWallet.subWallets[chainId].getDisplayBalance().isNaN() && Util.getDecimalBalance(masterWallet.subWallets[chainId].getDisplayBalance())">.</span>

@@ -32,7 +32,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
-import { VoteContent, VoteTypeString } from '../../../model/SPVWalletPluginBridge';
+import { VoteContent, VoteType } from '../../../model/SPVWalletPluginBridge';
 
 
 @Component({
@@ -139,7 +139,7 @@ export class CRmembervotePage implements OnInit {
         Logger.log('wallet', 'Creating vote CR transaction');
 
         let crVoteContent: VoteContent = {
-          Type: VoteTypeString.CRC,
+          Type: VoteType.CRC,
           Candidates: this.transfer.votes
         }
 

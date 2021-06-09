@@ -94,7 +94,7 @@ export type BlockInfo = {
     Timestamp: number,
 };
 
-export enum VoteTypeString {
+export enum VoteType {
     CRC = "CRC",
     Delegate = "Delegate",
     CRCImpeachment = "CRCImpeachment",
@@ -123,7 +123,7 @@ export enum VoteTypeString {
 *  {*/
 
 export type VoteInfo = {
-    Type: VoteTypeString,
+    Type: VoteType,
     Amount: string, // Amount in sELA
     Timestamp: number, // Unix timestamp (secs)
     Expiry: number, // Unix timestamp (secs). Can be null.
@@ -140,7 +140,7 @@ export type Candidates = {
 };
 
 export type VoteContent = {
-  Type: VoteTypeString,
+  Type: VoteType,
   Candidates: Candidates,
 };
 
@@ -510,19 +510,6 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    // TODO: Types for listener data
-    registerWalletListener(listener: (ret: SPVWalletMessage)=>void) {
-        walletManager.registerWalletListener([],
-            (ret) => { listener(ret); },
-            (err) => { this.handleError(err, null);  });
-    }
-
-    removeWalletListener() {
-        walletManager.removeWalletListener([],
-            (ret) => { },
-            (err) => { this.handleError(err, null); });
-    }
-
     createWithdrawTransaction(masterWalletId: string, chainId: string, inputs: string, amount: string
         , mainchainAddress: string, fee: string, memo: string): Promise<string> {
             return new Promise(async (resolve, reject) => {
@@ -581,54 +568,13 @@ export class SPVWalletPluginBridge {
         });
     }
 
-
     // ETHSC
-    getBalance(masterWalletId: string): Promise<ELAAmountString> {
-        return new Promise((resolve, reject)=>{
-            walletManager.getBalance([masterWalletId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    publishTransaction(masterWalletId: string, rawTransaction: string): Promise<PublishedTransaction> {
-        return new Promise(async (resolve, reject) => {
-            walletManager.publishTransaction([masterWalletId, rawTransaction],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    getAllTransactions(masterWalletId: string, start, addressOrTxId): Promise<AllTransactions> {
-        return new Promise(async (resolve, reject) => {
-            const maxNumberOfTransactionsToReturn = 20;
-            walletManager.getAllTransaction([masterWalletId, start, maxNumberOfTransactionsToReturn, addressOrTxId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    syncStart(masterWalletId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-            walletManager.syncStart([masterWalletId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
-    syncStop(masterWalletId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-            walletManager.syncStop([masterWalletId],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject);  });
-        });
-    }
-
     createTransfer(
         masterWalletId: string,
         toAddress: string,
         amount: string,
-        amountUnit: number
+        amountUnit: number,
+        nonce: number
     ): Promise<any> {
         return new Promise(async (resolve, reject) => {
              walletManager.createTransfer(
@@ -636,7 +582,8 @@ export class SPVWalletPluginBridge {
                     masterWalletId,
                     toAddress,
                     amount,
-                    amountUnit
+                    amountUnit,
+                    nonce
                 ],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });
@@ -651,7 +598,8 @@ export class SPVWalletPluginBridge {
         gasPrice: string,
         gasPriceUnit: number,
         gasLimit: string,
-        data: string
+        data: string,
+        nonce: number
     ): Promise<any> {
         return new Promise(async (resolve, reject) => {
              walletManager.createTransferGeneric(
@@ -663,43 +611,8 @@ export class SPVWalletPluginBridge {
                     Util.getDecimalString(gasPrice),
                     gasPriceUnit,
                     Util.getDecimalString(gasLimit),
-                    data
-                ],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject); });
-        });
-    }
-
-    deleteTransfer(
-        masterWalletId: string,
-        tx: string
-    ): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-             walletManager.deleteTransfer(
-                [
-                    masterWalletId,
-                    tx
-                ],
-                (ret) => { resolve(ret); },
-                (err) => { this.handleError(err, reject); });
-        });
-    }
-
-    getTokenTransactions(
-        masterWalletId: string,
-        start: number,
-        txid: string,
-        tokenSymbol: string
-    ): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            const maxNumberOfTransactionsToReturn = 20;
-            walletManager.getTokenTransactions(
-                [
-                    masterWalletId,
-                    start,
-                    maxNumberOfTransactionsToReturn,
-                    txid,
-                    tokenSymbol
+                    data,
+                    nonce
                 ],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });

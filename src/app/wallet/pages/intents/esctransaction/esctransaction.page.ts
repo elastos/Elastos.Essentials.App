@@ -165,6 +165,7 @@ export class EscTransactionPage implements OnInit {
     async createEscTransaction() {
         Logger.log('wallet', "Calling createEscTransaction(): ", this.coinTransferService.payloadParam);
 
+        let nonce = await this.ethSidechainSubWallet.getNonce();
         const rawTx =
         await this.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
@@ -174,7 +175,8 @@ export class EscTransactionPage implements OnInit {
             this.coinTransferService.payloadParam.gasPrice || this.gasPrice.toString(16),
             0, // WEI
             this.coinTransferService.payloadParam.gas, // TODO: gasLimit
-            this.coinTransferService.payloadParam.data
+            this.coinTransferService.payloadParam.data,
+            nonce
         );
 
         Logger.log('wallet', 'Created raw ESC transaction:', rawTx);

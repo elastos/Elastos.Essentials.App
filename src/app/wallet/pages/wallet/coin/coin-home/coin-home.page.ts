@@ -201,8 +201,6 @@ export class CoinHomePage implements OnInit {
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
             if (!transactionInfo) {
-                // remove the wrong transaction
-                await this.deleteTransaction(transaction);
                 continue;
             }
 
@@ -214,15 +212,6 @@ export class CoinHomePage implements OnInit {
             this.countAsDailyTransactionIfNeeded(transactionInfo.timestamp);
 
             this.transferList.push(transactionInfo);
-        }
-    }
-
-    async deleteTransaction(tx) {
-        if (this.chainIsETHSC()) {
-            await this.masterWallet.walletManager.spvBridge.deleteTransfer(
-                this.masterWallet.id,
-                tx
-            );
         }
     }
 

@@ -7,10 +7,11 @@ import { Util } from '../Util';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactionsHistory, EthTransaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
+import { ETHChainSubWallet } from './ETHChainSubWallet';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -76,7 +77,7 @@ export class ERC20SubWallet extends SubWallet {
 
     private async getTokenAccountAddress(): Promise<string> {
         if (!this.tokenAddress) {
-            this.tokenAddress = await this.createAddress();
+            this.tokenAddress = (await this.createAddress()).toLowerCase();
         }
         return this.tokenAddress;
     }
@@ -135,11 +136,15 @@ export class ERC20SubWallet extends SubWallet {
 
     private async getERC20TransactionDirection(targetAddress: string): Promise<TransactionDirection> {
         const address = await this.getTokenAccountAddress();
-        if (address === targetAddress) {
+        if (address === targetAddress.toLowerCase()) {
             return TransactionDirection.RECEIVED;
         } else {
             return TransactionDirection.SENT;
         }
+    }
+
+    public async update() {
+      await this.updateBalance();
     }
 
     public async updateBalance() {
@@ -172,32 +177,37 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-      let allTransactions = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, startIndex, '', this.id);
-      return {totalcount: allTransactions.MaxCount, txhistory:allTransactions.Transactions};
+      // TODO: show the right info.
+      // const contractAddress = this.coin.getContractAddress();
+      // let ethscSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
+      // return ethscSubwallet.getTokenTransactions(contractAddress);
+      return null
     }
 
     public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
-        let transactions = await this.masterWallet.walletManager.spvBridge.getTokenTransactions(this.masterWallet.id, 0, txid, this.id);
-        if (transactions.Transactions) {
-          return transactions.Transactions[0];
-        }
-        return null;
+      let result = await this.jsonRPCService.eth_getTransactionByHash(txid);
+      Logger.warn('wallet', 'ERC20 getTransactionDetails:', result);
+      return result;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
-        const timestamp = transaction.Timestamp * 1000; // Convert seconds to use milliseconds
+        if (transaction.isError != '0') {
+          return null;
+        }
+
+        const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
-        const direction = await this.getERC20TransactionDirection(transaction.TargetAddress);
+        const direction = await this.getERC20TransactionDirection(transaction.to);
         transaction.Direction = direction;
 
         const transactionInfo: TransactionInfo = {
             amount: new BigNumber(-1), // Defined by inherited classes
-            confirmStatus: transaction.Confirmations, // Defined by inherited classes
+            confirmStatus: parseInt(transaction.confirmations), // Defined by inherited classes
             datetime,
             direction: direction,
-            fee: transaction.Fee.toString(),
-            height: transaction.BlockNumber,
+            fee: transaction.gas,
+            height: parseInt(transaction.blockNumber),
             memo: '',
             name: await this.getTransactionName(transaction, translate),
             payStatusIcon: await this.getTransactionIconPath(transaction),
@@ -205,21 +215,12 @@ export class ERC20SubWallet extends SubWallet {
             statusName: this.getTransactionStatusName(transaction.Status, translate),
             symbol: '', // Defined by inherited classes
             timestamp,
-            txid: transaction.Hash, // Defined by inherited classes
+            txid: transaction.hash, // Defined by inherited classes
             type: null, // Defined by inherited classes
         };
 
-
-
-        // TODO: Why BlockNumber is 0 sometimes? Need to check.
-        // if (transaction.IsErrored || (transaction.BlockNumber === 0)) {
-        if (transaction.IsErrored) {
-            return null;
-        }
-
-        transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.Amount).dividedBy(this.tokenDecimals) : new BigNumber(transaction.Amount);
-        transactionInfo.fee = (this.tokenDecimals > 0 ? transaction.Fee / this.tokenDecimals : transaction.Fee).toString();
-
+        transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.value).dividedBy(this.tokenDecimals) : new BigNumber(transaction.value);
+        transactionInfo.fee = (this.tokenDecimals > 0 ? new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(this.tokenDecimals) : transaction.gas).toString();
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
@@ -246,7 +247,7 @@ export class ERC20SubWallet extends SubWallet {
 
     // TODO: Refine / translate with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
     protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
-        const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.TargetAddress);
+        const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
                 return "wallet.coin-action-receive";
@@ -260,7 +261,7 @@ export class ERC20SubWallet extends SubWallet {
 
     // TODO: Refine with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
     protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
-        const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.TargetAddress);
+        const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
         if (direction === TransactionDirection.RECEIVED) {
             return './assets/wallet/buttons/receive.png';
         } else if (direction === TransactionDirection.SENT) {
@@ -299,6 +300,7 @@ export class ERC20SubWallet extends SubWallet {
             Logger.log('wallet', 'estimateGas error:', error);
         }
 
+        let nonce = await this.getNonce();
         const rawTx =
         await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
@@ -309,6 +311,7 @@ export class ERC20SubWallet extends SubWallet {
             0, // WEI
             gasLimit.toString(),
             method.encodeABI(),
+            nonce
         );
 
         Logger.log('wallet', 'Created raw ESC transaction:', rawTx);
@@ -317,12 +320,9 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async publishTransaction(transaction: string): Promise<string> {
-      const publishedTransaction =
-            await this.masterWallet.walletManager.spvBridge.publishTransaction(
-                this.masterWallet.id,
-                transaction
-            );
-      return publishedTransaction.TxHash;
+      let obj = JSON.parse(transaction) as SignedETHSCTransaction;
+      let txid = await this.jsonRPCService.eth_sendRawTransaction(obj.TxSigned);
+      return txid;
     }
 
     public async signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
@@ -354,13 +354,8 @@ export class ERC20SubWallet extends SubWallet {
 
             Logger.log('wallet', "Transaction signed. Now publishing.");
 
-            // TODO
-            const publishedTransaction =
-            await this.masterWallet.walletManager.spvBridge.publishTransaction(
-                this.masterWallet.id,
-                signedTx
-            );
-            Logger.log('wallet', "Published transaction id:", publishedTransaction.TxHash);
+            const txid = await this.publishTransaction(signedTx);
+            Logger.log('wallet', "Published transaction id:", txid);
 
             this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
 
@@ -373,8 +368,19 @@ export class ERC20SubWallet extends SubWallet {
             resolve({
               published: true,
               status: 'published',
-              txid: publishedTransaction.TxHash
+              txid: txid
           });
         });
+    }
+
+    private async getNonce() {
+      const address = await this.getTokenAccountAddress();
+      try {
+        return this.jsonRPCService.getETHSCNonce(address);
+      }
+      catch (err) {
+        Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
+      }
+      return -1;
     }
 }
