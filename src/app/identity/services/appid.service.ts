@@ -77,13 +77,14 @@ export class AppIDService {
     await AuthService.instance.checkPasswordThenExecute(async () => {
       Logger.log('identity', "AppIdCredIssueRequest - issuing credential");
 
-      this.didService.getActiveDid().pluginDid.issueCredential(
+      await this.didService.getActiveDid().pluginDid.issueCredential(
         this.appInstanceDID,
         "#app-id-credential",
         ['AppIdCredential'],
         30, // one month - after that, we'll need to generate this credential again.
         properties,
         this.authService.getCurrentUserPassword(),
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         async (issuedCredential) => {
           Logger.log('identity', "Sending appidcredissue intent response for intent id " + this.intentId)
           let credentialAsString = await issuedCredential.toString();

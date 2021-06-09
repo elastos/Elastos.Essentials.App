@@ -23,6 +23,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "s
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
+import { GlobalNavService } from "src/app/services/global.nav.service";
 
 
 type ProfileDisplayEntry = {
@@ -91,7 +92,8 @@ export class MyProfilePage {
     public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
-    private globalIntentService: GlobalIntentService
+    private globalIntentService: GlobalIntentService,
+    private globalNav: GlobalNavService
   ) {
     this.init();
   }
@@ -733,24 +735,11 @@ export class MyProfilePage {
     return issuer.did;
   }
 
-  async exportMnemonic() {
-    await this.authService.checkPasswordThenExecute(
-      async () => {
-        let mnemonics = await this.didService.activeDidStore.exportMnemonic(
-          AuthService.instance.getCurrentUserPassword()
-        );
-        this.native.go("/identity/exportmnemonic", { mnemonics: mnemonics });
-      },
-      () => {
-        // Operation cancelled
-        Logger.log("identity", "Password operation cancelled");
-      },
-      true,
-      true
-    );
+  exportMnemonic() {
+    return this.globalNav.navigateTo("identitybackup", "/identity/backupdid");
   }
 
   testPage() {
-    this.native.go("/identity/publishing")
+    return this.native.go("/identity/publishing")
   }
 }

@@ -143,7 +143,7 @@ export class HomePage implements OnInit {
   }
 
   backupIdentity() {
-    void this.nav.navigateTo("identity", "/identity/backupdid");
+    void this.nav.navigateTo("identitybackup", "/identity/backupdid");
   }
 
   showMyIdentity() {

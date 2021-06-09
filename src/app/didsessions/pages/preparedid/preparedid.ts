@@ -17,7 +17,7 @@ import { GlobalPublicationService } from 'src/app/services/global.publication.se
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 
 // Minimal duration during which a slide remains shown before going to the next one.
-const MIN_SLIDE_SHOW_DURATION_MS = 3000;
+const MIN_SLIDE_SHOW_DURATION_MS = 1000;
 
 @Component({
     selector: 'page-preparedid',
