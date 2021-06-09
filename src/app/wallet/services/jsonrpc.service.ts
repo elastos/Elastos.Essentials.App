@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
-import { TransactionDetail, UtxoType } from '../model/Transaction';
+import { EthTransaction, TransactionDetail, UtxoType } from '../model/Transaction';
 
 
 type JSONRPCResponse = {
@@ -24,6 +24,9 @@ export class JsonRPCService {
     private IDChainRPCApiUrl = 'https://api.elastos.io/did';
     private ethscRPCApiUrl = 'https://api.elastos.io/eth';
     private ethscOracleRPCApiUrl = 'https://api.elastos.io/oracle';
+    private ethscMiscApiUrl = 'https://api.elastos.io/misc';
+    private EIDChainRPCApiUrl = 'https://api-testnet.elastos.io/newid';
+
 
     static RETRY_TIMES = 3;
 
@@ -35,6 +38,7 @@ export class JsonRPCService {
         this.IDChainRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.id.rpcapi');
         this.ethscRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
         this.ethscOracleRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.oracle');
+        this.ethscMiscApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
     }
 
     // return balance in SELA
@@ -268,6 +272,10 @@ export class JsonRPCService {
         return '';
     }
 
+    // ****************************************
+    // ETHSC
+    // ****************************************
+
     // ELA main chain: Get the real send address for the send transaction from ethsc to mainchain.
     async getETHSCTransactionByHash(txHash: string) {
       if (!txHash.startsWith('0x')) {
@@ -286,7 +294,91 @@ export class JsonRPCService {
       } catch (e) {
       }
       return '';
-  }
+    }
+
+    async eth_blockNumber(address: string): Promise<number> {
+      const param = {
+          method: 'eth_blockNumber',
+          id:'1'
+      };
+
+      try {
+          let result = await this.httpRequest(this.ethscRPCApiUrl, param);
+          return parseInt(result);
+      } catch (e) {
+      }
+      return -1;
+    }
+
+    async getETHSCNonce(address: string): Promise<number> {
+      const param = {
+          method: 'eth_getTransactionCount',
+          params: [
+            address,
+            'latest'
+          ],
+          id:'1'
+      };
+
+      try {
+          let result = await this.httpRequest(this.ethscRPCApiUrl, param);
+          return parseInt(result);
+      } catch (e) {
+      }
+      return -1;
+    }
+
+    async getETHSCTransactions(address: string, begBlockNumber: number = 0, endBlockNumber: number = 0): Promise<EthTransaction[]> {
+      // TODO: Don't support 'endBlockNumber', 'begBlockNumber', 'sort'
+      // const ethscgethistoryurl = this.ethscMiscApiUrl + '/api/1/eth/history?address=' + address + '&begBlockNumber=' + begBlockNumber
+      // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
+      const ethscgethistoryurl = this.ethscMiscApiUrl + '/api/1/eth/history?address=' + address;
+      Logger.warn('wallet', 'getETHSCTransactions:', ethscgethistoryurl)
+      try {
+          let result = await this.httpget(ethscgethistoryurl);
+          return result.result as EthTransaction[];
+      } catch (e) {
+        Logger.error('wallet', 'getETHSCTransactions error:', e)
+      }
+      return null;
+    }
+
+    async eth_getTransactionByHash(txHash: string) {
+      const param = {
+        method: 'eth_getTransactionByHash',
+        params: [
+          txHash
+        ],
+        id: '1'
+    };
+
+    try {
+        return this.httpRequest(this.ethscRPCApiUrl, param);
+    } catch (e) {
+      Logger.error('wallet', 'eth_getTransactionByHash error:', e)
+    }
+    return '';
+    }
+
+    async eth_sendRawTransaction(txHash: string) {
+      if (!txHash.startsWith('0x')) {
+        txHash = '0x' + txHash;
+      }
+      const param = {
+          method: 'eth_sendRawTransaction',
+          params: [
+            txHash
+          ],
+          id: '1'
+      };
+
+      try {
+          return this.httpRequest(this.ethscRPCApiUrl, param);
+      } catch (e) {
+        Logger.error('wallet', 'eth_sendRawTransaction error:', e)
+      }
+      return '';
+    }
 
     getRPCApiUrl(chainID: string) {
         let rpcApiUrl = this.mainchainRPCApiUrl;
@@ -333,5 +425,17 @@ export class JsonRPCService {
                     reject(err);
                 });
         });
+    }
+
+    httpget(url): Promise<any> {
+      return new Promise((resolve, reject)=>{
+        this.http.get<any>(url).subscribe((res) => {
+            Logger.log('wallet', res);
+            resolve(res);
+        }, (err) => {
+            Logger.error('wallet', 'http get error:', err);
+            reject(err);
+        });
+      });
     }
 }

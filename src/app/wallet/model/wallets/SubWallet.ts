@@ -145,6 +145,11 @@ export abstract class SubWallet {
     public abstract getAmountInExternalCurrency(value: BigNumber): BigNumber;
 
     /**
+     * Requests a wallet to update its balance and transactions.
+     */
+    public abstract update();
+
+    /**
      * Requests a wallet to update its balance. Usually called when we receive an event from the SPV SDK,
      * saying that a new balance amount is available.
      */

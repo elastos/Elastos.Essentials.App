@@ -36,6 +36,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
 
         Logger.log('wallet', "InternalWeb3Provider - Send transaction request with payload:", payload);
 
+        let nonce = await this.elaEthSubwallet.getNonce();
         const rawTx =
             await this.walletManager.spvBridge.createTransferGeneric(
                 this.masterWallet.id,
@@ -45,7 +46,8 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
                 payload.params[0].gasPrice,
                 0, // WEI
                 payload.params[0].gas, // TODO: gasLimit
-                payload.params[0].data
+                payload.params[0].data,
+                nonce
             );
 
         Logger.log('wallet', 'Created raw ESC transaction:', rawTx);

@@ -5,7 +5,7 @@ import { WalletManager } from '../services/wallet.service';
 import { StandardCoinName } from './Coin';
 import { CRProposalStatus } from './cyber-republic/CRProposalStatus';
 import { CRProposalsSearchResponse } from './cyber-republic/CRProposalsSearchResponse';
-import { VoteTypeString, CRProposalVoteInfo } from './SPVWalletPluginBridge';
+import { VoteType, CRProposalVoteInfo } from './SPVWalletPluginBridge';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { NetworkType } from 'src/app/model/networktype';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -32,7 +32,7 @@ type InvalidCRCProposalCandidate = string;
     }
  */
 export type InvalidCandidateForVote = {
-    Type: VoteTypeString,
+    Type: VoteType,
     Candidates: InvalidCRCCandidate[] | InvalidDelegateCandidate[] | InvalidCRCImpeachmentCandidate[] | InvalidCRCProposalCandidate[]
 }
 
@@ -188,7 +188,7 @@ export class InvalidVoteCandidatesHelper {
                 Logger.log('wallet', "Checking vote for CR proposal invalidity:", previousVote);
 
                 // Try to find this vote in the proposals currently in notificaion state on the CR website
-                if (previousVote.Type == VoteTypeString.CRCProposal) {
+                if (previousVote.Type == VoteType.CRCProposal) {
                     // Should have exactly one vote entry.
                     if (Object.keys(previousVote.Votes).length == 1) {
                         let votedProposalHash = Object.keys(previousVote.Votes)[0];
@@ -211,7 +211,7 @@ export class InvalidVoteCandidatesHelper {
             }
 
             return {
-                Type: VoteTypeString.CRCProposal,
+                Type: VoteType.CRCProposal,
                 Candidates: invalidProposals
             }
         }

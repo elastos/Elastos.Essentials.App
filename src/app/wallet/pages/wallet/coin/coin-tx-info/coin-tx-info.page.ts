@@ -153,7 +153,7 @@ export class CoinTxInfoPage implements OnInit {
                 this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
                 await this.getERC20TokenTransactionInfo(transaction);
             } else {
-                this.targetAddress = transaction.TargetAddress;
+                this.targetAddress = transaction.to;
             }
         }
 
@@ -311,31 +311,33 @@ export class CoinTxInfoPage implements OnInit {
      * Get the real targeAddress by rpc
      */
     async getETHSCTransactionTargetAddres(transaction: EthTransaction) {
-        let targetAddress = transaction.TargetAddress;
+        let targetAddress = transaction.to;
         const withdrawContractAddress = (this.subWallet as ETHChainSubWallet).getWithdrawContractAddress();
-        if (transaction.TargetAddress === withdrawContractAddress) {
-            targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(transaction.BlockNumber + 6, transaction.Hash);
-            // If the targetAddress is empty, then this transaction is error.
-            // TODO: But now, the spvsdk does not set any flag to this transaction. 2020.9.29
-        } else if ('ERC20Transfer' === transaction.TokenFunction) {
-            // ERC20 Token transfer
-            targetAddress = transaction.TokenAddress;
-        }
+        // TODO
+        // if (transaction.to === withdrawContractAddress) {
+        //     targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(transaction.BlockNumber + 6, transaction.hash);
+        //     // If the targetAddress is empty, then this transaction is error.
+        //     // TODO: But now, the spvsdk does not set any flag to this transaction. 2020.9.29
+        // } else if ('ERC20Transfer' === transaction.TokenFunction) {
+        //     // ERC20 Token transfer
+        //     targetAddress = transaction.TokenAddress;
+        // }
         return targetAddress;
     }
 
     private async getERC20TokenTransactionInfo(transaction: EthTransaction) {
-        if ('ERC20Transfer' === transaction.TokenFunction) {
-            this.isERC20TokenTransactionInETHSC = true;
-            this.contractAddress = transaction.Token;
-            const ethAccountAddress = await (this.subWallet as ETHChainSubWallet).getTokenAddress();
-            const erc20Coin = this.coinService.getERC20CoinByContracAddress(this.contractAddress);
-            if (erc20Coin) {// erc20Coin is true normally.
-                this.tokenName = erc20Coin.getName();
-                const coinDecimals = await this.erc20CoinService.getCoinDecimals(this.contractAddress, ethAccountAddress);
-                this.tokenAmount = (new BigNumber(transaction.TokenAmount).dividedBy(new BigNumber(10).pow(coinDecimals))).toString();
-            }
-        }
+        // TODO
+        // if ('ERC20Transfer' === transaction.TokenFunction) {
+        //     this.isERC20TokenTransactionInETHSC = true;
+        //     this.contractAddress = transaction.Token;
+        //     const ethAccountAddress = await (this.subWallet as ETHChainSubWallet).getTokenAddress();
+        //     const erc20Coin = this.coinService.getERC20CoinByContracAddress(this.contractAddress);
+        //     if (erc20Coin) {// erc20Coin is true normally.
+        //         this.tokenName = erc20Coin.getName();
+        //         const coinDecimals = await this.erc20CoinService.getCoinDecimals(this.contractAddress, ethAccountAddress);
+        //         this.tokenAmount = (new BigNumber(transaction.value).dividedBy(new BigNumber(10).pow(coinDecimals))).toString();
+        //     }
+        // }
     }
 
     getDisplayableName(): string {

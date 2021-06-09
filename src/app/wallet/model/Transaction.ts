@@ -34,7 +34,7 @@ export enum UtxoType {
 }
 
 // Returned by gethistory
-export enum VoteType {
+export enum VoteCategory {
     No_Vote = 0,
     DPOS_Vote = 1,
     CRC_Vote = 2,
@@ -129,6 +129,16 @@ export enum RawTransactionType {
     RevertToDPOS             = 0x42
 }
 
+/**
+ * Signed ETHSC transaction
+ */
+ export type SignedETHSCTransaction = {
+  Fee: string,
+  Hash: string,
+  TxSigned: string,
+  Unit: number
+};
+
 // /**
 //  * Raw transaction as received from the SPVSDK.
 //  */
@@ -195,35 +205,58 @@ export type TransactionHistory = {
     txtype: RawTransactionType;
     type: TransactionDirection;
     value: string;
-    votetype: VoteType;
+    votecategory: VoteCategory;
 }
 
-//
+// Returned from rpc
 export type EthTransaction = TransactionHistory & {
-  Amount: string;
-  BlockNumber: number;
-  Confirmations: number;
-  ErrorDesc: string;
-  Fee: number;
-  GasLimit: number;
-  GasPrice: string;
-  GasUsed: number;
-  Hash: string;
-  ID: string;
-  IsConfirmed: boolean;
-  IsErrored: boolean;
-  IsSubmitted: boolean;
-  OriginTxHash: string;
-  SourceAddress: string;
-  TargetAddress: string;
-  Timestamp: number;
-  Direction: TransactionDirection;
+  blockHash: string;
+  blockNumber: string;
+  confirmations: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  from: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  hash: string;
+  input: string;
+  isError: string;
+  nonce: string;
+  timeStamp: string;
+  to: string;
+  transactionIndex: string;
+  transferType: string;
 
-  Token: string;
-  TokenAddress: string;
-  TokenAmount: string;
-  TokenFunction: string;
+  Direction: TransactionDirection;
 };
+
+// Returned from spvsdk
+// export type EthTransaction = TransactionHistory & {
+//   Amount: string;
+//   BlockNumber: number;
+//   Confirmations: number;
+//   ErrorDesc: string;
+//   Fee: number;
+//   GasLimit: number;
+//   GasPrice: string;
+//   GasUsed: number;
+//   Hash: string;
+//   ID: string;
+//   IsConfirmed: boolean;
+//   IsErrored: boolean;
+//   IsSubmitted: boolean;
+//   OriginTxHash: string;
+//   SourceAddress: string;
+//   TargetAddress: string;
+//   Timestamp: number;
+//   Direction: TransactionDirection;
+
+//   Token: string;
+//   TokenAddress: string;
+//   TokenAmount: string;
+//   TokenFunction: string;
+// };
 
 // Raw list of transactions as received from the rpc.
 export type AllTransactionsHistory = {
@@ -303,4 +336,16 @@ export type UtxoForSDK = {
   Amount: string; //sela
   Index: number;
   TxHash: string;
+}
+
+/**
+ * Information about ERC20 Token
+ */
+ export type ERC20TokenInfo = {
+  type: string;
+  symbol: string;
+  name: string;
+  decimals: string;
+  contractAddress: string;
+  balance: string;
 }

@@ -8,10 +8,10 @@ import { MasterWallet } from './MasterWallet';
 import { Logger } from 'src/app/logger';
 import { Config } from '../../config/Config';
 import { Util } from '../Util';
-import { Candidates, VoteContent, VoteTypeString } from '../SPVWalletPluginBridge';
+import { Candidates, VoteContent, VoteType } from '../SPVWalletPluginBridge';
 
 
-const voteTypeMap = [VoteTypeString.Delegate, VoteTypeString.CRC, VoteTypeString.CRCProposal, VoteTypeString.CRCImpeachment]
+const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
 
 /**
  * Specialized standard sub wallet that shares Mainchain (ELA) and ID chain code.
@@ -76,8 +76,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return transactionInfo;
   }
 
+  public async update() {
+    await this.getBalanceByRPC();
+    await this.getTransactionByRPC(this.timestampEnd);
+  }
+
   public async updateBalance() {
-    this.getBalanceByRPC();
+    await this.getBalanceByRPC();
   }
 
   /**
@@ -102,40 +107,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
    */
   public async isAvailableBalanceEnough(amount: BigNumber) {
     return true;
-    // const jsonInfo = await this.masterWallet.walletManager.spvBridge.getBalanceInfo(this.masterWallet.id, this.id);
-    // const balanceInfoArray = JSON.parse(jsonInfo);
-    // let availableBalance = new BigNumber(0);
-    // let hadPengdingTX = false;
-    // // Send Max balance if amount < 0.
-    // let sengMax = amount.isNegative() ? true : false;
-
-    // for (const balanceInfo of balanceInfoArray) {
-    //     if (balanceInfo.Summary.Balance !== '0') {
-    //         let balanceOfasset = new BigNumber(balanceInfo.Summary.Balance);
-    //         if (balanceInfo.Summary.SpendingBalance !== '0') {
-    //             hadPengdingTX = true;
-    //             balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.SpendingBalance));
-    //         }
-    //         if (balanceInfo.Summary.PendingBalance !== '0') {
-    //             hadPengdingTX = true;
-    //             balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.PendingBalance));
-    //         }
-    //         if (balanceInfo.Summary.LockedBalance !== '0') {
-    //             hadPengdingTX = true;
-    //             balanceOfasset = balanceOfasset.minus(new BigNumber(balanceInfo.Summary.LockedBalance));
-    //         }
-    //         // DepositBalance
-
-    //         if (hadPengdingTX && sengMax) {
-    //             return false;
-    //         }
-    //         availableBalance = availableBalance.plus(balanceOfasset);
-    //         if (availableBalance.gt(amount)) {
-    //             return true;
-    //         }
-    //     }
-    // }
-    // return false;
   }
 
   public async createPaymentTransaction(toAddress: string, amount: number, memo: string = ""): Promise<string> {
@@ -221,7 +192,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     )
 
     let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
-    Logger.log("wallet", "sendrawtransaction txid:", txid);
     return txid;
   }
 
@@ -311,13 +281,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
   }
 
-  private isSameVoteType(voteTypeString: VoteTypeString, voteType: RawVoteType) {
-    return voteTypeString === voteTypeMap[voteType];
+  private isSameVoteType(voteTypeString: VoteType, rawVoteType: RawVoteType) {
+    return voteTypeString === voteTypeMap[rawVoteType];
   }
 
   // Transform vote contents from raw rpc to the format required by the SDK
   private transformVoteContentForSDK(voteContent:RawVoteContent) {
-    let voteType:VoteTypeString = voteTypeMap[voteContent.votetype];
+    let voteType:VoteType = voteTypeMap[voteContent.votetype];
 
     let candidates: Candidates = {};
 
@@ -368,7 +338,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   /**
    * Get balance by RPC
    */
-  async getBalanceByRPC() {
+  public async getBalanceByRPC() {
     Logger.test("wallet", 'TIMETEST getBalanceByRPC start:', this.id);
 
     let totalBalance = new BigNumber(0);
@@ -392,7 +362,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     return true;
   }
 
-  async getBalanceByAddress(internalAddress: boolean) {
+  private async getBalanceByAddress(internalAddress: boolean) {
     let requestAddressCount = 1;
 
     let startIndex = 0;

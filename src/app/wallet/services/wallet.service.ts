@@ -114,18 +114,15 @@ export class WalletManager {
 
         const hasWallet = await this.initWallets();
 
+        // TODO remove it
         // Start the sync service
-        await this.spvService.init(this);
-
-        this.registerSubWalletListener();
+        // await this.spvService.init(this);
 
         if (!hasWallet) {
             //this.goToLauncherScreen();
             this.events.publish("walletmanager:initialized");
             return;
         }
-
-        await this.startSyncAllWallet();
 
         this.localStorage.get('hasPrompt').then((val) => {
             this.hasPromptTransfer2IDChain = val ? val : false;
@@ -136,19 +133,6 @@ export class WalletManager {
             this.transactionMap = publishTxList;
         }
 
-        // TODO: spvsdk can't get progress by api
-        // Get last block time, progress from walletservice
-        let syncProgress = this.spvService.getWalletSyncProgress();
-        // tslint:disable-next-line:forin
-        for (const masterId in syncProgress) {
-            // tslint:disable-next-line:forin
-            for (const chainIdKey in syncProgress[masterId]) {
-                const chainId = chainIdKey as StandardCoinName;
-                const progress = syncProgress[masterId][chainId].progress || 0;
-                const lastBlockTime = syncProgress[masterId][chainId].lastBlockTime || 0;
-                this.updateSyncProgress(masterId, chainId, progress, lastBlockTime);
-            }
-        }
         this.getAllMasterWalletBalanceByRPC();
 
         Logger.log('wallet', "Wallet manager initialization complete");
@@ -157,8 +141,6 @@ export class WalletManager {
     }
 
     async stop() {
-      this.removeSubWalletListener();
-      await this.stopSyncAllWallet();
       await this.spvBridge.destroy();
     }
 
@@ -404,8 +386,6 @@ export class WalletManager {
 
         this.setRecentWalletId(id);
 
-        this.startWalletSync(id);
-
         // Get balance by rpc
         this.getAllSubwalletsBalanceByRPC(id);
     }
@@ -446,225 +426,6 @@ export class WalletManager {
         Logger.log('wallet', "Saving wallet extended info", masterWallet.id, extendedInfo);
 
         await this.localStorage.setExtendedMasterWalletInfo(masterWallet.id, extendedInfo);
-    }
-
-    public async startSyncAllWallet() {
-        for (const masterWallet of Object.values(this.masterWallets)) {
-            this.startWalletSync(masterWallet.id);
-        }
-    }
-
-    public async stopSyncAllWallet() {
-      for (const masterWallet of Object.values(this.masterWallets)) {
-          await this.stopWalletSync(masterWallet.id);
-      }
-  }
-
-    /**
-     * Inform the background service (via RPC) that we want to start syncing a wallet.
-     * If there is another wallet syncing, its on going sync will be stopped first.
-     */
-    public async startWalletSync(masterId: WalletID): Promise<void> {
-        Logger.log('wallet', "Requesting sync service to start syncing wallet " + masterId);
-        if (!this.getMasterWallet(masterId)) {
-            // The master wallet is destroyed.
-            Logger.warn('wallet', 'startWalletSync error, the master wallet does not exist!');
-            return;
-        }
-
-        await this.startSubWalletsSync(masterId);
-    }
-
-    // TODO: When wallet is destroyed
-    public async stopWalletSync(masterId: WalletID): Promise<boolean> {
-        Logger.log('wallet', "Requesting sync service to stop syncing wallet " + masterId);
-        if (!this.getMasterWallet(masterId)) {
-            // The master wallet is destroyed.
-            Logger.warn('wallet', 'stopWalletSync error, the master wallet does not exist!');
-            return;
-        }
-        return await this.stopSubWalletsSync(masterId);
-    }
-
-    private startSubWalletsSync(masterId: WalletID): Promise<void> {
-        return this.spvService.syncStartSubWallets(masterId);
-    }
-
-    private async stopSubWalletsSync(masterId: WalletID): Promise<boolean> {
-        return this.spvService.syncStopSubWallets(masterId);
-    }
-
-    public async startSubWalletSync(masterId: WalletID): Promise<void> {
-        await this.startSubWalletsSync(masterId);
-    }
-
-    public async stopSubWalletSync(masterId: WalletID): Promise<void> {
-        await this.stopSubWalletsSync(masterId);
-    }
-
-    /**
-     * Start listening to all events from the SPV SDK.
-     */
-    public registerSubWalletListener() {
-        Logger.log('wallet', "Register wallet listener");
-
-        this.spvBridge.registerWalletListener((event: SPVWalletMessage) => {
-            this.zone.run(() => {
-                this.handleSubWalletEvent(event);
-            });
-        });
-    }
-
-    /**
-     * Remove listening to all events from the SPV SDK.
-     */
-     public removeSubWalletListener() {
-        Logger.log('wallet', "Remove wallet listener");
-        this.spvBridge.removeWalletListener();
-    }
-
-    /**
-     * Handler for all SPV wallet events.
-     */
-    public handleSubWalletEvent(event: SPVWalletMessage) {
-        const masterId = event.MasterWalletID;
-        const chainId = event.ChainID;
-
-        // Logger.log('wallet', "SubWallet message: ", masterId, chainId, event);
-        // Logger.log('wallet', event.Action, event.result);
-
-        if (event.Action === "OnETHSCEventHandled") {
-            this.updateETHSCEventFromCallback(masterId, chainId, event);
-        }
-    }
-
-    /**
-     * Updates the progress value of current wallet synchronization. This progress change
-     * is saved into the model and triggers events so that the UI can update itself.
-     */
-    private updateSyncProgressFromCallback(masterId: WalletID, chainId: StandardCoinName, result: SPVWalletMessage) {
-        this.updateSyncProgress(masterId, chainId, result.Progress, result.LastBlockTime);
-    }
-
-    private async updateSyncProgress(masterId: WalletID, chainId: StandardCoinName, progress: number, lastBlockTime: number) {
-        const masterWallet = this.getMasterWallet(masterId);
-        if (!masterWallet) {
-            Logger.warn('wallet', "updateSyncProgress() called but wallet with ID", masterId, "does not exist!");
-            return;
-        }
-
-        masterWallet.updateSyncProgress(chainId, progress, lastBlockTime);
-
-        const subWallet = masterWallet.getSubWallet(chainId) as StandardSubWallet;
-        // Logger.log('wallet', "DEBUG updateSyncProgress", masterId, chainId, masterWallet.getSubWallets())
-        // Seems like we can sometimes receive an update progress about a subwallet not yet added. Reason unknown for now.
-        if (!subWallet) {
-            Logger.warn('wallet', "updateSyncProgress() called but subwallet with ID", chainId, "does not exist in wallet!", masterWallet);
-            return;
-        }
-
-        if (!this.hasPromptTransfer2IDChain && (chainId === StandardCoinName.IDChain)) {
-            const elaProgress = this.masterWallets[masterId].subWallets[StandardCoinName.ELA].progress;
-            const idChainProgress = this.masterWallets[masterId].subWallets[StandardCoinName.IDChain].progress;
-
-            // Check if it's a right time to prompt user for ID chain transfers, but only if we are fully synced.
-            if (elaProgress === 100 && idChainProgress === 100) {
-                this.checkIDChainBalance(masterId);
-            }
-        }
-
-        if (progress === 100) {
-            // ETHSC send event too often.
-            if (chainId !== StandardCoinName.ETHSC) {
-                await this.saveMasterWallet(masterWallet);
-            }
-        }
-    }
-
-    // ETHSC has different event
-    private updateETHSCEventFromCallback(masterId: WalletID, chainId: StandardCoinName, result: SPVWalletMessage) {
-        switch (result.event.Type) {
-            case ETHSCEventType.EWMEvent: // update progress
-                switch (result.event.Event) {
-                    case ETHSCEventAction.PROGRESS:
-                        result.Progress =  Math.round(result.event.PercentComplete);
-                        result.LastBlockTime = result.event.Timestamp;
-                        break;
-                    case ETHSCEventAction.CHANGED:
-                        // if (('CONNECTED' === result.event.NewState) && ('CONNECTED' === result.event.OldState)) {
-                        if ('CONNECTED' === result.event.NewState) {
-                            result.Progress =  100;
-                            result.LastBlockTime = new Date().getTime() / 1000;
-                        } else if ('DISCONNECTED' === result.event.NewState) {
-                            result.Progress =  0;
-                        } else {
-                            // TODO
-                            result.Progress =  0;
-                        }
-                        break;
-                    default:
-                        // Do nothing
-                        break;
-                }
-                this.updateSyncProgress(masterId, chainId, result.Progress, result.LastBlockTime);
-                const erc20SubWallets = this.getMasterWallet(masterId).getSubWalletsByType(CoinType.ERC20);
-                for (const subWallet of erc20SubWallets) {
-                    subWallet.updateSyncProgress(result.Progress, result.LastBlockTime);
-                }
-                break;
-            case ETHSCEventType.WalletEvent: // update balance
-                if (result.event.Event === ETHSCEventAction.BALANCE_UPDATED) {
-                    this.getMasterWallet(masterId).getSubWallet(chainId).updateBalance();
-                }
-                break;
-            case ETHSCEventType.TransferEvent:
-                // ERC20 Token transfer
-                // TODO: update the balance
-                break;
-            case ETHSCEventType.TokenEvent:
-                // TODO
-                break;
-            default:
-                // TODO: check other event
-                break;
-        }
-    }
-
-    private handleTransactionPublishedEvent(data: SPVWalletMessage) {
-        let MasterWalletID = data.MasterWalletID;
-        let chainId = data.ChainID;
-        let hash = data.hash;
-
-        let result = JSON.parse(data["result"]) as TxPublishedResult;
-        let code = result.Code;
-        let reason = result.Reason;
-
-        let tx = "txPublished-";
-
-        // TODO: messy again - what is the transaction map type? Mix of TxPublishedResult and SPVWalletMessage ?
-        if (this.transactionMap[hash]) {
-            this.transactionMap[hash].Code = code;
-            this.transactionMap[hash].Reason = reason;
-            this.transactionMap[hash].WalletID = MasterWalletID;
-            this.transactionMap[hash].ChainID = chainId;
-        } else {
-            this.transactionMap[hash] = new TransactionMapEntry();
-            this.transactionMap[hash].WalletID = MasterWalletID;
-            this.transactionMap[hash].ChainID = chainId;
-            this.transactionMap[hash].Code = code;
-            this.transactionMap[hash].Reason = reason;
-
-            this.localStorage.savePublishTxList(this.transactionMap);
-        }
-
-        if (code !== 0) {
-            Logger.log('wallet', 'OnTxPublished fail:', JSON.stringify(data));
-            this.popupProvider.ionicAlert_PublishedTx_fail('wallet.transaction-fail', tx + code, hash, reason);
-            if (this.transactionMap[hash].lock !== true) {
-                delete this.transactionMap[hash];
-                this.localStorage.savePublishTxList(this.transactionMap);
-            }
-        }
     }
 
     public setHasPromptTransfer2IDChain() {

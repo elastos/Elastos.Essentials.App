@@ -80,6 +80,7 @@ export interface RPCUpdateWalletInfoParams {
  * background service context or directly from the application, depending on users preferences.
  * By default, it runs in the background service.
  */
+// TODO remove it
 export class SPVSyncService {
     private spvBridge: SPVWalletPluginBridge;
     private walletManager: WalletManager;
@@ -99,11 +100,11 @@ export class SPVSyncService {
 
         this.walletManager = walletManager;
 
-        this.spvBridge.registerWalletListener((event)=>{
-            this.handleSubWalletEvent(event);
-        });
+        // this.spvBridge.registerWalletListener((event)=>{
+        //     this.handleSubWalletEvent(event);
+        // });
 
-        await this.walletManager.startSyncAllWallet();
+        // await this.walletManager.startSyncAllWallet();
     }
 
     /**
@@ -130,28 +131,28 @@ export class SPVSyncService {
         }
     }
 
-    public async syncStartSubWallets(masterId: WalletID): Promise<void> {
-        Logger.log("wallet", "SubWallets sync is starting:", masterId);
+    // public async syncStartSubWallets(masterId: WalletID): Promise<void> {
+    //     Logger.log("wallet", "SubWallets sync is starting:", masterId);
 
-        await this.spvBridge.syncStart(masterId);
+    //     await this.spvBridge.syncStart(masterId);
 
-        Logger.log("wallet", "SubWallet sync start is completed");
-    }
+    //     Logger.log("wallet", "SubWallet sync start is completed");
+    // }
 
-    public async syncStopSubWallets(masterId: WalletID): Promise<boolean> {
-        Logger.log("wallet", "SubWallets sync is stopping:", masterId);
+    // public async syncStopSubWallets(masterId: WalletID): Promise<boolean> {
+    //     Logger.log("wallet", "SubWallets sync is stopping:", masterId);
 
-        try {
-            await this.spvBridge.syncStop(masterId);
-        }
-        catch (e) {
-            Logger.error('wallet', "Failed to stop subwallet "+StandardCoinName.ETHSC+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
-            return false;
-        }
+    //     try {
+    //         await this.spvBridge.syncStop(masterId);
+    //     }
+    //     catch (e) {
+    //         Logger.error('wallet', "Failed to stop subwallet "+StandardCoinName.ETHSC+" of master wallet "+masterId+"! Reason:", e, JSON.stringify(e));
+    //         return false;
+    //     }
 
-        Logger.log("wallet", "SubWallet sync stop is completed");
-        return true;
-    }
+    //     Logger.log("wallet", "SubWallet sync stop is completed");
+    //     return true;
+    // }
 
     public getWalletSyncProgress(): {[index: string]: WalletSyncProgress} {
         return this.walletsSyncProgress;
