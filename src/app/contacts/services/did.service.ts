@@ -20,28 +20,25 @@ export class DidService {
     private globalIntentService: GlobalIntentService,
   ) { }
 
-  getSignedIdentity(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.didSessions.getSignedInIdentity().then((entry: IdentityEntry) => {
-        Logger.log("contacts", 'Signed Identity', entry);
-        this.signedIdentity = entry;
-        resolve(entry.didString);
-      });
-    });
+  getSignedIdentity(): string {
+    let entry = this.didSessions.getSignedInIdentity();
+    Logger.log("contacts", 'Signed Identity', entry);
+    this.signedIdentity = entry;
+    return entry.didString;
   }
 
   async shareIdentity(contact: Contact) {
-    this.globalIntentService.sendIntent("share", {
+    void this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("common.share-add-me-as-friend"),
       url: await this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
     });
   }
 
-  async getUserDID(): Promise<string> {
+  getUserDID(): string {
     if (this.signedIdentity) {
       return this.signedIdentity.didString;
     } else {
-      return await this.getSignedIdentity();
+      return this.getSignedIdentity();
     }
   }
 }

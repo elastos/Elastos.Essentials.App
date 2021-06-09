@@ -100,7 +100,7 @@ export class FriendsService {
     let visit = await this.storage.getSetting<boolean>(GlobalDIDSessionsService.signedInDIDString, "contacts", 'visited', false);
     if (!visit) {
       await this.resolveDIDDocument('did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2', false, null, false);
-      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'contacts', 'visited', true)
+      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'contacts', 'visited', true)
     }
   }
 
@@ -256,7 +256,7 @@ export class FriendsService {
   async addContactByIntent(did: string, carrierAddress?: string) {
     Logger.log('contacts', 'Received contact by intent', did, carrierAddress);
 
-    if(await this.didService.getUserDID() === did) {
+    if(this.didService.getUserDID() === did) {
       this.native.genericToast('contacts.please-dont-add-self');
       this.globalNav.navigateRoot('contacts', '/contacts/friends');
     } else {

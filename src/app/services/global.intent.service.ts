@@ -44,9 +44,11 @@ export class GlobalIntentService {
     return essentialsIntentManager.sendUrlIntent(url)
   }
 
-  sendIntentResponse(result: any, intentId: number): Promise<void> {
-    Logger.log("Intents", "Sending intent response ", result, intentId);
-    this.globalNav.exitCurrentContext();
+  async sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
+    Logger.log("Intents", "Sending intent response ", result, intentId, navigateBack);
+
+    if (navigateBack)
+      await this.globalNav.exitCurrentContext();
 
     // Make sure that the result is JSON data. This is the only format we want to support.
     try {

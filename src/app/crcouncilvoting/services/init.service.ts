@@ -19,11 +19,13 @@ export class CRCouncilVotingInitService extends GlobalService {
 
   }
 
-  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    this.candidatesService.init();
+  public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    void this.candidatesService.init();
+    return;
   }
 
-  public async onUserSignOut(): Promise<void> {
+  public onUserSignOut(): Promise<void> {
     this.candidatesService.stop();
+    return;
   }
 }

@@ -10,6 +10,11 @@ ion-slides {
     align-items: center;
     padding: 0 25px;
     height: 100%;
+
+    .error {
+      font-size: 12px;
+      display: block;
+    }
   }
 
   .first-slide {

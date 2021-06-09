@@ -111,7 +111,7 @@ export class IdentityService {
         try {
             let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
                 promptPasswordIfLocked: true,
-                forceMasterPasswordPrompt: true
+                forceMasterPasswordPrompt: false
             };
             let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId, options);
             if (passwordInfo) {
@@ -228,16 +228,16 @@ export class IdentityService {
                 // Master password was created and did store password could be saved
                 // Save the identity entry in the did session plugin
                 let avatar = createdDID.getAvatarCredentialValue();
-                let newIdentity = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
+                this.identityBeingCreated.didSessionsEntry = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
                 // Sigin, for direct start wallet service to automatically create a new wallet by the mnemonics
                 // After addIdentity for don't save mnemonicInfo in storage
-                newIdentity.mnemonicInfo = this.identityBeingCreated;
+                this.identityBeingCreated.didSessionsEntry.mnemonicInfo = this.identityBeingCreated;
 
                 await this.nativeService.hideLoading();
 
-                await this.signIn(newIdentity);
                 this.navigateWithCompletion('/didsessions/preparedid', () => {
-                    this.didSessions.navigateHome();
+                    Logger.log("didsessions", "DID preparation is complete, now navigating to home screen");
+                    void this.didSessions.navigateHome();
                 });
                 return;
             }

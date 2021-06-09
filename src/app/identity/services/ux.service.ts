@@ -45,9 +45,9 @@ export class UXService {
      *
      * This method must be called only during the initial app start.
      */
-    computeAndShowEntryScreen() {
+    async computeAndShowEntryScreen() {
         Logger.log('identity', "Checking if there are pending intents");
-        this.loadIdentityAndShow();
+        await this.loadIdentityAndShow();
     }
 
     public async loadIdentityAndShow(showEntryScreenAfterLoading = true) {
@@ -59,13 +59,13 @@ export class UXService {
         else {
             if (showEntryScreenAfterLoading) {
                 // No intent was received at boot. So we go through the regular screens.
-                this.showEntryScreen();
+                await this.showEntryScreen();
             }
         }
     }
 
-    showEntryScreen() {
-        this.didService.displayDefaultScreen();
+    async showEntryScreen() {
+        await this.didService.displayDefaultScreen();
     }
 
     public translateInstant(key: string): string {
@@ -95,17 +95,20 @@ export class UXService {
      * has to be received in the intent request at first.
      */
     public async isIntentResponseGoingOutsideElastos(intentParams: any): Promise<boolean> {
-        Logger.log('identity', "isIntentResponseGoingOutsideElastos? Params:", intentParams)
         if (!intentParams)
             return false; // Should not happen
 
-        if (intentParams.callbackurl || intentParams.redirecturl)
+        if (intentParams.callbackurl || intentParams.redirecturl) {
+            Logger.log('identity', "isIntentResponseGoingOutsideElastos? YES - Params:", intentParams);
             return true;
-        else
+        }
+        else {
+            Logger.log('identity', "isIntentResponseGoingOutsideElastos? NO - Params:", intentParams)
             return false;
+        }
     }
 
-    public sendIntentResponse(action, result, intentId): Promise<void> {
-        return this.globalIntentService.sendIntentResponse(result, intentId);
+    public sendIntentResponse(action, result, intentId, navigateBack = true): Promise<void> {
+        return this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     }
 }

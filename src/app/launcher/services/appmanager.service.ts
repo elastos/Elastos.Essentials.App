@@ -22,7 +22,8 @@ import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
-import { App } from "src/app/model/app.enum"
+import { App } from "src/app/model/app.enum";
+import { ContactsInitService } from 'src/app/contacts/services/init.service';
 
 type RunnableApp = {
     cssId:string;
@@ -77,6 +78,7 @@ export class AppmanagerService {
         private hiveManagerInitService: HiveManagerInitService,
         private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
+        private contactsInitService: ContactsInitService
     ) {}
 
     public async init() {
@@ -89,7 +91,7 @@ export class AppmanagerService {
         this.intentSubscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             if (!receivedIntent)
                 return;
-                
+
             this.onIntentReceived(receivedIntent);
         });
 
@@ -150,7 +152,7 @@ export class AppmanagerService {
                         name: this.translate.instant('launcher.app-contacts'),
                         description: this.translate.instant('launcher.app-contacts-description'),
                         icon: '/assets/launcher/apps/app-icons/contacts.svg',
-                        routerPath: '/contacts/friends'
+                        startCall: () => this.contactsInitService.start()
                     },
                 ]
             },

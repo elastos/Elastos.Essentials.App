@@ -61,7 +61,7 @@ export class GlobalDIDSessionsService {
       let identity = this.identities.find(entry => lastSignedInIdentity.didString == entry.didString);
       if (identity) {
         await this.signIn(identity);
-        this.navigateHome();
+        await this.navigateHome();
       }
     }
   }
@@ -132,8 +132,6 @@ export class GlobalDIDSessionsService {
    * Signs a given identity entry in.
    *
    * This identity becomes the new global identity for the "DID Session".
-   * All dApps get sandboxed in this DID context and don't see any information about the other available
-   * identities.
    */
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
     Logger.log('DIDSessionsService', "Signing in with DID", entry.didString, entry.name);
@@ -151,16 +149,18 @@ export class GlobalDIDSessionsService {
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
 
     await this.saveSignedInIdentityToDisk();
+
+    Logger.log('DIDSessionsService', "Sign in completed");
   }
 
   /**
    * Goes to launcher. A user must be signed in prior to this call.
    */
-  public navigateHome() {
+  public navigateHome(): Promise<boolean> {
     if (!this.signedInIdentity)
       throw new Error("DID Sessions cannot navigate to essentials home screen as there is no user signed in yet");
 
-    this.globalNavService.navigateHome(Direction.FORWARD);
+    return this.globalNavService.navigateHome(Direction.FORWARD);
   }
 
   /**
@@ -178,6 +178,6 @@ export class GlobalDIDSessionsService {
     this.globalIntentService.clear();
 
     await GlobalServiceManager.getInstance().emitUserSignOut();
-    this.globalNavService.navigateDIDSessionHome();
+    await this.globalNavService.navigateDIDSessionHome();
   }
 }

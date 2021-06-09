@@ -73,6 +73,8 @@ export class GlobalPublicationService {
     public persistentInfo: PersistentInfo = null;
     public activeDidStore: DIDStore;
 
+    //TODO: modify to publish any identity based on a store id and did string, not only the main identity
+
     constructor(
         private storage: GlobalStorageService,
         private http: HttpClient
@@ -107,33 +109,26 @@ export class GlobalPublicationService {
     public async publishIdentity(): Promise<void> {
         console.log("Starting the DID publication process");
 
-        return new Promise(async (resolve, reject) => {
+        const didStore = await this.openDidStore(this.persistentInfo.did.storeId, async (payload: string, memo: string) => {
+            // Callback called by the DID SDK when trying to publish a DID.
+            console.log("Create ID transaction callback is being called", payload, memo);
+            const payloadAsJson = JSON.parse(payload);
             try {
-                const didStore = await this.openDidStore(this.persistentInfo.did.storeId, async (payload: string, memo: string) => {
-                    // Callback called by the DID SDK when trying to publish a DID.
-                    console.log("Create ID transaction callback is being called", payload, memo);
-                    const payloadAsJson = JSON.parse(payload);
-                    try {
-                        await this.publishDIDOnAssist(this.persistentInfo.did.didString, payloadAsJson, memo);
-                        resolve();
-                    }
-                    catch (err) {
-                        reject(err);
-                    }
-                });
-
-                const localDIDDocument = await this.loadLocalDIDDocument(didStore, this.persistentInfo.did.didString);
-
-                // Start the publication flow
-                localDIDDocument.publish(this.persistentInfo.did.storePassword, () => { }, (err) => {
-                    // Local "publish" process errored
-                    console.log("Local DID Document publish(): error", err);
-                    reject(err);
-                });
+                await this.publishDIDOnAssist(this.persistentInfo.did.didString, payloadAsJson, memo);
+                return;
             }
-            catch (e) {
-                reject(e);
+            catch (err) {
+                throw err;
             }
+        });
+
+        const localDIDDocument = await this.loadLocalDIDDocument(didStore, this.persistentInfo.did.didString);
+
+        // Start the publication flow
+        localDIDDocument.publish(this.persistentInfo.did.storePassword, () => { }, (err) => {
+            // Local "publish" process errored
+            console.log("Local DID Document publish(): error", err);
+            throw err;
         });
     }
 
