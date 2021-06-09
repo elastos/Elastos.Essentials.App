@@ -5,13 +5,12 @@ import { Logger } from 'src/app/logger';
 
 @Injectable()
 export class PopupProvider {
-    constructor(public alertCtrl: AlertController, public translate: TranslateService)
-    {}
+    constructor(public alertCtrl: AlertController, public translate: TranslateService) { }
 
     public ionicAlert(title: string, subTitle?: string, okText?: string): Promise<any> {
-        return new Promise<void>((resolve, reject) => {
-            this.alertCtrl.create({
-                header : this.translate.instant(title),
+        return new Promise<void>((resolve) => {
+            void this.alertCtrl.create({
+                header: this.translate.instant(title),
                 subHeader: subTitle ? this.translate.instant(subTitle) : '',
                 backdropDismiss: false,
                 buttons: [{
@@ -27,10 +26,10 @@ export class PopupProvider {
 
 
     public ionicConfirm(title: string, message: string, okText?: string, cancelText?: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.alertCtrl.create({
+        return new Promise((resolve) => {
+            void this.alertCtrl.create({
                 header: this.translate.instant(title),
-                message  : this.translate.instant(message),
+                message: this.translate.instant(message),
                 buttons: [{
                     text: cancelText ? cancelText : this.translate.instant('common.cancel'),
                     handler: () => {
@@ -50,37 +49,37 @@ export class PopupProvider {
     };
 
     public ionicPrompt(title: string, message: string, opts?: any, okText?: string, cancelText?: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-        let defaultText = opts && opts.defaultText ? opts.defaultText : null;
-        let placeholder = opts && opts.placeholder ? opts.placeholder : null;
-        let inputType = opts && opts.type ? opts.type : 'text';
-        let cssClass = opts.useDanger ? "alertDanger" : null;
-        let backdropDismiss = !!opts.backdropDismiss;
+        return new Promise((resolve) => {
+            let defaultText = opts && opts.defaultText ? opts.defaultText : "";
+            let placeholder = opts && opts.placeholder ? opts.placeholder : "";
+            let inputType = opts && opts.type ? opts.type : 'text';
+            let cssClass = opts && opts.useDanger ? "alertDanger" : "";
+            let backdropDismiss = !opts || !!opts.backdropDismiss;
 
-        this.alertCtrl.create({
-            header:title,
-            message,
-            cssClass,
-            backdropDismiss,
-            inputs: [{
-                value: defaultText,
-                placeholder,
-                type: inputType
-            }],
-            buttons: [{
-                text: cancelText ? cancelText : this.translate.instant('common.cancel'),
-                handler: data => {
-                    Logger.log('Identity', 'Cancel clicked');
-                    resolve(null);
-                }
-            },
-            {
-                text: okText ? okText : this.translate.instant('common.ok'),
-                handler: data => {
-                    Logger.log('Identity', 'Saved clicked');
-                    resolve(data[0]);
-                }
-            }]
+            void this.alertCtrl.create({
+                header: title,
+                message,
+                cssClass,
+                backdropDismiss,
+                inputs: [{
+                    value: defaultText,
+                    placeholder,
+                    type: inputType
+                }],
+                buttons: [{
+                    text: cancelText ? cancelText : this.translate.instant('common.cancel'),
+                    handler: data => {
+                        Logger.log('Identity', 'Cancel clicked');
+                        resolve(null);
+                    }
+                },
+                {
+                    text: okText ? okText : this.translate.instant('common.ok'),
+                    handler: data => {
+                        Logger.log('Identity', 'Saved clicked');
+                        resolve(data[0]);
+                    }
+                }]
             }).then(prompt => prompt.present());
         });
     }

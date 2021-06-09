@@ -8,7 +8,6 @@ import { UXService } from '../../services/ux.service';
 import { IdentityService } from '../../services/identity.service';
 import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { ModalController, IonSlides, Platform } from '@ionic/angular';
-import { PrintoptionsComponent } from '../../components/printoptions/printoptions.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -18,7 +17,7 @@ import { GlobalPublicationService } from 'src/app/services/global.publication.se
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 
 // Minimal duration during which a slide remains shown before going to the next one.
-const MIN_SLIDE_SHOW_DURATION_MS = 1000;
+const MIN_SLIDE_SHOW_DURATION_MS = 3000;
 
 @Component({
     selector: 'page-preparedid',
@@ -76,12 +75,7 @@ export class PrepareDIDPage {
     await this.onSlideChanged();
 
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
     this.titleBar.setNavigationMode(null);
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.uxService.onTitleBarItemClicked(icon);
-    });
 
     // Dirty hack because on iOS we are currently unable to understand why the
     // ion-slides width is sometimes wrong when an app starts. Waiting a few

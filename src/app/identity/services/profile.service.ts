@@ -37,7 +37,6 @@ type CredentialDisplayEntry = {
   willingToBePubliclyVisible: boolean;
   willingToDelete: boolean;
   canDelete: boolean;
-
 };
 
 type AppCredentialDisplayEntry = {
@@ -56,7 +55,7 @@ type AppCredentialDisplayEntry = {
   providedIn: "root",
 })
 export class ProfileService {
-  public didString: string = "";
+  public didString = "";
 
   // Profile Data
   public visibleData: ProfileDisplayEntry[];
@@ -130,6 +129,7 @@ export class ProfileService {
   init() {
     this.fetchPublishedDIDDocument();
   }
+
   setPublishStatus(isPublishStatusFetched: boolean) {
     Logger.log("identity", "isPublishStatusFetched: " + isPublishStatusFetched);
     this.publishStatusFetched = isPublishStatusFetched;
@@ -192,7 +192,7 @@ export class ProfileService {
     //   this.options.dismiss();
     // }
 
-    this.globalIntentService.sendIntent("share", {
+    await this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("common.share-add-me-as-friend"),
       url: await this.getAddFriendShareableUrl(),
     });
@@ -259,7 +259,7 @@ export class ProfileService {
     this.editingVisibility = false;
     this.deleteMode = false;
     //this.options.dismiss();
-    this.native.go("/identity/editprofile", { create: false });
+    void this.native.go("/identity/editprofile", { create: false });
   }
 
   editVisibility() {
@@ -364,7 +364,7 @@ export class ProfileService {
   }
 
   publish() {
-    this.native.go("/identity/publish");
+    void this.native.go("/identity/publish");
   }
 
   public async fetchPublishedDIDDocument(): Promise<DIDDocument> {
@@ -419,7 +419,7 @@ export class ProfileService {
       // Not fetched yet?
       if (!this.fetchingPublishedDIDDocument) {
         // Not fetching, start fetching
-        this.fetchPublishedDIDDocument();
+        void this.fetchPublishedDIDDocument();
         return [];
       }
       else {

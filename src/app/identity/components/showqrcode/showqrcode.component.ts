@@ -13,8 +13,8 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
   styleUrls: ['./showqrcode.component.scss'],
 })
 export class ShowQRCodeComponent implements OnInit {
-  public didString: string = "";
-  public qrCodeString: string = "";
+  public didString = "";
+  public qrCodeString = "";
 
   constructor(
     public modalCtrl: ModalController,
@@ -32,16 +32,16 @@ export class ShowQRCodeComponent implements OnInit {
   }
 
   hideModal() {
-    this.modalCtrl.dismiss(null);
+    return this.modalCtrl.dismiss(null);
   }
 
   copyDIDToClipboard() {
-    this.native.copyClipboard(this.didString);
+    void this.native.copyClipboard(this.didString);
     this.native.toast_trans('identity.copied-to-clipboard');
   }
 
   shareInvitationLink() {
-    this.globalIntentService.sendIntent("share", {
+    void this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("common.share-add-me-as-friend"),
       url: this.qrCodeString
     });

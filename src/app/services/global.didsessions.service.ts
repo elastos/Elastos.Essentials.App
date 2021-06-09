@@ -180,4 +180,15 @@ export class GlobalDIDSessionsService {
     await GlobalServiceManager.getInstance().emitUserSignOut();
     await this.globalNavService.navigateDIDSessionHome();
   }
+
+  /**
+   * Tells whether the user has backed up his identity or not.
+   */
+  public activeIdentityWasBackedUp(): Promise<boolean> {
+    return this.storage.getSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", false);
+  }
+
+  public async markActiveIdentityBackedUp(): Promise<void> {
+    await this.storage.setSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", true);
+  }
 }

@@ -26,6 +26,8 @@ export class UXService {
 
     public static instance: UXService = null;
 
+    public modal: any = null;
+
     constructor(
         public translate: TranslateService,
         public events: Events,

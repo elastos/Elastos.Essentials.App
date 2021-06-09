@@ -132,7 +132,6 @@ export class DID {
         return profile;
     }
 
-
     /**
      * Overwrites profile info using a new profile. Each field info is updated
      * into its respective credential.
@@ -146,7 +145,6 @@ export class DID {
             let localDidDocumentHasChanged = false;
 
             // Delete all entries that were here before, and not any more in the new profile
-            let currentProfile = this.getBasicProfile();
             for (let basicProfileKey of BasicCredentialsService.instance.getBasicCredentialkeys()) {
                 let entryExistingInNewProfile = newProfile.getEntryByKey(basicProfileKey);
                 if (!entryExistingInNewProfile) {

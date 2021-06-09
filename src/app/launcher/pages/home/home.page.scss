@@ -15,6 +15,22 @@ ion-content {
   min-height: 100%;
   padding: 0;
 
+  .backup-row {
+    padding: 10px 10px 10px 10px;
+    border-top: 4px solid #444;
+    border-bottom: 4px solid #444;
+    background: #b60000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+
+    .title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
+
   .id-row {
     padding: 10px 10px 20px 20px;
     border-bottom: 1px solid #dfdff4;

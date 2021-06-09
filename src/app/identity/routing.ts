@@ -19,6 +19,8 @@ const routes: Routes = [
   { path: "exportmnemonic", loadChildren: ()=>import('./pages/exportmnemonic/module').then(m => m.ExportMnemonicModule) },
   { path: "intents", loadChildren: ()=>import('./pages/intents/module').then(m => m.IntentsModule) },
   { path: "publishing", loadChildren: ()=>import('./pages/publishing/module').then(m => m.PublishingModule) },
+  { path: "backupdid", loadChildren: ()=>import('./pages/backupdid/module').then(m => m.BackupDIDModule) },
+  { path: "verifymnemonics", loadChildren: ()=>import('./pages/verifymnemonics/module').then(m => m.VerifyMnemonicsModule) },
 ];
 
 @NgModule({

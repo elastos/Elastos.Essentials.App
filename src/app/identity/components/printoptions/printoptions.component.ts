@@ -8,7 +8,6 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./printoptions.component.scss'],
 })
 export class PrintoptionsComponent implements OnInit {
-
   constructor(
     public theme: GlobalThemeService,
     private modalCtrl: ModalController

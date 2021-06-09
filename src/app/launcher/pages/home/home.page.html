@@ -3,7 +3,7 @@
 
   <!-- <lottie-player src="/assets/wallet/animations/success.json" background="transparent" speed="1.5" style="width: 100px; height: 100px;" autoplay></lottie-player> -->
  <!-- <lottie-player src="https://assets5.lottiefiles.com/temp/lf20_MqU2rh.json" background="transparent" speed="1.5" style="width: 100px; height: 100px;" autoplay></lottie-player> -->
-  
+
   <ion-grid class="container" [class.dark-container]="theme.darkMode">
     <!--------- Identity ---------->
     <ion-row *ngIf="didService.signedIdentity" class="id-row ion-activatable ripple">
@@ -25,6 +25,30 @@
       </ion-col>
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
+
+    <!-------- Reminder to backup -------->
+    <ion-row class="backup-row ion-activatable ripple" *ngIf="identityNeedsBackup">
+      <ion-col size="12" (click)="backupIdentity()">
+        <ion-row>
+          <ion-col size="2">
+            <img src="/assets/launcher/apps/app-icons/identity.svg">
+          </ion-col>
+          <ion-col size="8">
+            <ion-row class="title">
+              IDENTITY NOT BACKED UP
+            </ion-row>
+            <ion-row>
+              Saving your identity's paper key is a very important step as this is the only way to recover
+              it later. Touch here to back it up right now.
+            </ion-row>
+          </ion-col>
+          <ion-col class="right-col" size="2">
+            <img src="assets/launcher/icons/arrow.svg">
+        </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
     <!--------- Apps ---------->
     <ion-row *ngFor="let category of appService.runnableApps" class="apps-row">
       <ion-col size="12" class="title-col">

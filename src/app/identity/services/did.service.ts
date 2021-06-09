@@ -37,11 +37,11 @@ export class DIDService {
   }
 
   handleNull() {
-    this.native.setRootRouter("/notsignedin");
+    return this.native.setRootRouter("/notsignedin");
   }
 
-  public async displayDefaultScreen() {
-    this.native.setRootRouter("/identity/myprofile/home");
+  public displayDefaultScreen() {
+    return this.native.setRootRouter("/identity/myprofile/home");
   }
 
   /**
@@ -49,13 +49,12 @@ export class DIDService {
    *
    * @param noRouting Don't navigate to screens from this method. Used when initializing identity from the background service.
    */
-  public async loadGlobalIdentity(
-    noRouting: boolean = false
-  ): Promise<boolean> {
+  public async loadGlobalIdentity(noRouting = false): Promise<boolean> {
     Logger.log("Identity", "Loading global identity");
     let signedInIdentity = await this.didSessions.getSignedInIdentity();
     if (!signedInIdentity) {
-      if (!noRouting) this.native.setRootRouter("/identity/notsignedin");
+      if (!noRouting) 
+        await this.native.setRootRouter("/identity/notsignedin");
       return false;
     } else {
       // Activate the DID store, and the DID
@@ -64,7 +63,8 @@ export class DIDService {
         signedInIdentity.didString
       );
       if (!couldActivate) {
-        if (!noRouting) this.handleNull();
+        if (!noRouting) 
+          await this.handleNull();
         return false;
       }
     }

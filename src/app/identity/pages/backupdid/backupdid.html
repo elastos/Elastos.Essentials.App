@@ -7,7 +7,7 @@
     class="ion-text-center"
   >
     <ion-slide class="ion-text-center first-slide">
-      <div class="qr-container">
+      <div class="qr-container" *ngIf="dataIsReady">
         <h1>{{ 'didsessions.decentralized-id' | translate }}</h1>
         <div #qrcode style="width:100%;"></div>
         <p>{{ mnemonic }}</p>

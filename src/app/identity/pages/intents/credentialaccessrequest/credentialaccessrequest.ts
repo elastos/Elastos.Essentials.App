@@ -410,7 +410,7 @@ export class CredentialAccessRequestPage {
 
   /**
    * NOTE: For now we assume that the credential name (fragment) is the same as the requested claim value.
-   * But this may not be tue in the future: we would have to search inside credential properties one by one.
+   * But this may not be true in the future: we would have to search inside credential properties one by one.
    */
   getBasicProfileCredentialValue(credential: DIDPlugin.VerifiableCredential): any {
     return credential.getSubject()[credential.getFragment()];
@@ -433,7 +433,7 @@ export class CredentialAccessRequestPage {
    * Check if self proclaimed credentials are accepted
    */
   acceptsSelfProclaimedCredentials(iss: any): boolean {
-    let response: boolean = true
+    let response = true
     if (!isNil(iss) && iss instanceof Object){
       response =  iss["selfproclaimed"];
     }

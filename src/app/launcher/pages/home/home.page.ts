@@ -18,6 +18,7 @@ import { Logger } from 'src/app/logger';
 import { NotificationsPage } from '../notifications/notifications.page';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { App } from "src/app/model/app.enum"
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,7 @@ export class HomePage implements OnInit {
 
   private popover: any = null;
   private modal: any = null;
+  private identityNeedsBackup = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
@@ -44,14 +46,15 @@ export class HomePage implements OnInit {
     public didService: DIDManagerService,
     private nav: GlobalNavService,
     private pref: GlobalPreferencesService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private didSessions: GlobalDIDSessionsService
   ) {
   }
 
   ngOnInit() {
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     /* setTimeout(()=>{
       const notification = {
         key: 'storagePlanExpiring',
@@ -70,30 +73,31 @@ export class HomePage implements OnInit {
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if(icon.key === 'notifications') {
-        this.showNotifications();
+        void this.showNotifications();
       }
     });
 
+    this.identityNeedsBackup = !await this.didSessions.activeIdentityWasBackedUp();
+
     if (this.didService.signedIdentity) { // Should not happend, just in case - for ionic hot reload
-      this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
-        switch (networkCode) {
-          case 'MainNet':
-            this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
+      let networkCode = await this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type");
+      switch (networkCode) {
+        case 'MainNet':
+          this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
+        break;
+        case 'TestNet':
+          this.titleBar.setTitle('Test Net Active');
+        break;
+        case 'RegTest':
+          this.titleBar.setTitle('Regression Net Active');
+        break;
+        case 'PrvNet':
+          this.titleBar.setTitle('Private Net Active');
           break;
-          case 'TestNet':
-            this.titleBar.setTitle('Test Net Active');
-          break;
-          case 'RegTest':
-            this.titleBar.setTitle('Regression Net Active');
-          break;
-          case 'PrvNet':
-            this.titleBar.setTitle('Private Net Active');
-            break;
-          case 'LrwNet':
-            this.titleBar.setTitle('CR Private Net Active');
-          break;
-        }
-      });
+        case 'LrwNet':
+          this.titleBar.setTitle('CR Private Net Active');
+        break;
+      }
     }
   }
 
@@ -138,8 +142,12 @@ export class HomePage implements OnInit {
     return await this.popover.present();
   }
 
+  backupIdentity() {
+    void this.nav.navigateTo("identity", "/identity/backupdid");
+  }
+
   showMyIdentity() {
-    this.nav.navigateTo("identity", '/identity/myprofile/home');
+    void this.nav.navigateTo("identity", '/identity/myprofile/home');
   }
 
   getDateFromNow() {
