@@ -24,8 +24,6 @@ export type IdentityEntry = {
   name: string;
   /** Optional profile picture for this identity */
   avatar?: IdentityAvatar;
-  /** Keep the mnemonic info for after did creeated or import */
-  mnemonicInfo?: NewIdentity;
   /** DID data storage path, for save did data and the other module data, such as spv */
   didStoragePath: string;
 }
@@ -71,9 +69,6 @@ export class GlobalDIDSessionsService {
   }
 
   public saveSignedInIdentityToDisk(): Promise<void> {
-    if (this.signedInIdentity != null && this.signedInIdentity.mnemonicInfo != null) {
-      this.signedInIdentity.mnemonicInfo = null;
-    }
     return this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
   }
 

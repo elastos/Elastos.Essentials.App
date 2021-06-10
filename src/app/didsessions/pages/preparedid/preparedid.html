@@ -46,7 +46,7 @@
     </ion-slide>
   </ion-slides>
 
-  <div class="footer" *ngIf="slideIndex === LAST_SLIDE_INDEX">
+  <div class="footer" *ngIf="slideIndex === ALL_DONE_SLIDE_INDEX">
     <ion-button (click)="finalizePreparation()">{{ 'continue' | translate }}</ion-button>
   </div>
 </ion-content>

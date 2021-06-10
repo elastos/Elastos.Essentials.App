@@ -194,7 +194,7 @@ export class IdentityService {
 
         this.identityBeingCreated.mnemonic = await this.generateMnemonic();
 
-        this.identityBeingCreated.didStore = await DIDStore.create();
+        let didStore = await DIDStore.create();
 
         // Generate a random password
         this.identityBeingCreated.storePass = await passwordManager.generateRandomPassword();
@@ -203,13 +203,13 @@ export class IdentityService {
 
         // Initialize the new DID store with a mnemonic and store password
         // TODO: ASK USER IF HE WANTS A MNEMONIC PASSWORD ?
-        await this.identityBeingCreated.didStore.createPrivateIdentity(null, this.identityBeingCreated.storePass, mnemonicLanguage, mnemonic);
+        await didStore.createPrivateIdentity(null, this.identityBeingCreated.storePass, mnemonicLanguage, mnemonic);
 
         // Add a first (and only) identity to the store.
         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
-        this.identityBeingCreated.did = await this.identityBeingCreated.didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
+        let createdDID = await didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
 
-        await this.finalizeIdentityCreation(this.identityBeingCreated.didStore, this.identityBeingCreated.storePass, this.identityBeingCreated.did, this.identityBeingCreated.name);
+        await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name);
     }
 
     private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string): Promise<boolean> {
@@ -228,13 +228,13 @@ export class IdentityService {
                 // Master password was created and did store password could be saved
                 // Save the identity entry in the did session plugin
                 let avatar = createdDID.getAvatarCredentialValue();
+                this.identityBeingCreated.didStore = didStore;
+                this.identityBeingCreated.did = createdDID;
                 this.identityBeingCreated.didSessionsEntry = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
-                // Sigin, for direct start wallet service to automatically create a new wallet by the mnemonics
-                // After addIdentity for don't save mnemonicInfo in storage
-                this.identityBeingCreated.didSessionsEntry.mnemonicInfo = this.identityBeingCreated;
 
                 await this.nativeService.hideLoading();
 
+                //await this.signIn(this.identityBeingCreated.didSessionsEntry);
                 this.navigateWithCompletion('/didsessions/preparedid', () => {
                     Logger.log("didsessions", "DID preparation is complete, now navigating to home screen");
                     void this.didSessions.navigateHome();
@@ -311,6 +311,8 @@ export class IdentityService {
 
         // Generate a random password
         let storePassword = await passwordManager.generateRandomPassword();
+        this.identityBeingCreated.storePass = storePassword;
+
         let mnemonic = this.identityBeingCreated.mnemonic;
         let mnemonicLanguage = this.identityBeingCreated.mnemonicLanguage;
         if (!mnemonicLanguage) {

@@ -59,14 +59,14 @@ export class GlobalHiveService {
   async init() {
     /* let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
     this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
-      Logger.error("HiveManager", "Authentication error:", err);
+      Logger.error("GlobalHiveService", "Authentication error:", err);
     });
 
     if (!this.client) {
-      Logger.error("HiveManager", "Fatal error in hive manager: Unable to get a hive client instance in init().");
+      Logger.error("GlobalHiveService", "Fatal error in hive manager: Unable to get a hive client instance in init().");
     }
     else {
-      Logger.log("HiveManager", "Hive client instance was created");
+      Logger.log("GlobalHiveService", "Hive client instance was created");
     } */
   }
 
@@ -128,6 +128,14 @@ export class GlobalHiveService {
   }
 
   /**
+   * Tells if a given DIDDocument already contains a hive vault or not.
+   */
+  public documentHasVault(doc: DIDPlugin.DIDDocument): boolean {
+    let hiveService = doc.getService("#hivevault");
+    return hiveService != null;
+  }
+
+  /**
    * Makes hive vault ready for the current user.
    */
   public async prepareHiveVault(vaultProviderAddress: string): Promise<boolean> {
@@ -179,18 +187,18 @@ export class GlobalHiveService {
    *    - If not created, call createVault()
    */
   async retrieveVaultLinkStatus(): Promise<VaultLinkStatus> {
-    Logger.log("HiveManager", "Looking for vault link status");
+    Logger.log("GlobalHiveService", "Looking for vault link status");
 
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
     if (!this.client) {
       // Should not happen, but just in case.
-      Logger.error("HiveManager", "Fatal error in hive manager: Hive client not initialized.");
+      Logger.error("GlobalHiveService", "Fatal error in hive manager: Hive client not initialized.");
       return null;
     }
 
     if (this.vaultLinkStatus) {
-      Logger.log("HiveManager", "Reusing existing status:", this.vaultLinkStatus);
+      Logger.log("GlobalHiveService", "Reusing existing status:", this.vaultLinkStatus);
       return Promise.resolve(this.vaultLinkStatus);
     }
 
@@ -220,7 +228,7 @@ export class GlobalHiveService {
     }
 
     // Check if we can find an existing vault provider address on DID chain for this user.
-    Logger.log("HiveManager", "Asking hive manager to give us the vault address for current user's DID " + signedInDID);
+    Logger.log("GlobalHiveService", "Asking hive manager to give us the vault address for current user's DID " + signedInDID);
     try {
       this.activeVault = await this.client.getVault(signedInDID);
     }
@@ -228,17 +236,17 @@ export class GlobalHiveService {
       if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
         // Vault not created on this hive provider yet (old DIDs?) - force user to pick a provider, that will
         // create the vault at the same time.
-        Logger.log("HiveManager", "Vault does not exist on this provider. It has to be created again.");
+        Logger.log("GlobalHiveService", "Vault does not exist on this provider. It has to be created again.");
         return null;
       }
       else {
-        Logger.error("HiveManager", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
+        Logger.error("GlobalHiveService", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
         throw e;
       }
     }
 
     if (this.activeVault === null) {
-      Logger.log("HiveManager", "No vault for for this DID");
+      Logger.log("GlobalHiveService", "No vault found for this DID");
       // Null vault returned, so this either means we are not on ID chain yet,c or we didn't
       // call create vault. So the user will have to do it.
       return status;
@@ -249,24 +257,24 @@ export class GlobalHiveService {
     try {
       let activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
       if (!activePricingPlan) {
-        Logger.log("HiveManager", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
+        Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
         return null;
       }
-      Logger.log("HiveManager", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
+      Logger.log("GlobalHiveService", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
     }
     catch (e) {
       if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
-        Logger.log("HiveManager", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
+        Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
         return null;
       }
       else {
-        Logger.error("HiveManager", "Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
+        Logger.error("GlobalHiveService", "Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
         throw e;
       }
     }
 
     let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
-    Logger.log("HiveManager", "Currently published vault address: ", currentlyPublishedVaultAddress);
+    Logger.log("GlobalHiveService", "Currently published vault address: ", currentlyPublishedVaultAddress);
 
     if (currentlyPublishedVaultAddress) {
       status.publishedInfo = {
@@ -276,7 +284,7 @@ export class GlobalHiveService {
       };
     }
 
-    Logger.log("HiveManager", "Link status retrieval completed");
+    Logger.log("GlobalHiveService", "Link status retrieval completed");
 
     this.vaultLinkStatus = status;
 
@@ -327,14 +335,14 @@ export class GlobalHiveService {
     try {
       let createdVault = await this.client.createVault(signedInDID, vaultAddress);
       if (createdVault) {
-        Logger.log("HiveManager", "Vault was newly created on the provider. Now updating vault address on user's DID");
+        Logger.log("GlobalHiveService", "Vault was newly created on the provider. Now updating vault address on user's DID");
 
         // Vault creation succeeded, we can now save the provider address on ID chain.
         this.activeVault = createdVault;
       }
       else {
         // Vault already exists on this provider. Nothing to do
-        Logger.log("HiveManager", "The vault already exists on the vault provider.");
+        Logger.log("GlobalHiveService", "The vault already exists on the vault provider.");
       }
 
       let publicationStarted = await this.publishVaultProviderToIDChain(providerName, vaultAddress);
@@ -348,7 +356,7 @@ export class GlobalHiveService {
 
   private async publishVaultProviderToIDChain(providerName: string, vaultAddress: string): Promise<boolean> {
     return new Promise(async (resolve) => {
-      Logger.log("HiveManager", "Requesting identity app to update the hive provider");
+      Logger.log("GlobalHiveService", "Requesting identity app to update the hive provider");
 
       try {
         let result: { result: { status: string } } = await this.globalIntentService.sendIntent("https://did.elastos.net/sethiveprovider", {
@@ -356,7 +364,7 @@ export class GlobalHiveService {
           address: vaultAddress
         });
 
-        Logger.log("HiveManager", "Got sethiveprovider intent result:", result);
+        Logger.log("GlobalHiveService", "Got sethiveprovider intent result:", result);
 
         if (result && result.result && result.result.status && result.result.status == "published") {
           // Save local timestamp - We will not allow to pick another provider before a few minutes
@@ -368,12 +376,12 @@ export class GlobalHiveService {
         }
         else {
           // Publication was cancelled or errored. Do nothing more. Maybe user will retry.
-          Logger.log("HiveManager", "Publication cancelled or errored");
+          Logger.log("GlobalHiveService", "Publication cancelled or errored");
           resolve(false);
         }
       }
       catch (err) {
-        Logger.error("HiveManager", "Error while trying to call the sethiveprovider intent: ", err);
+        Logger.error("GlobalHiveService", "Error while trying to call the sethiveprovider intent: ", err);
         resolve(false);
       }
     });

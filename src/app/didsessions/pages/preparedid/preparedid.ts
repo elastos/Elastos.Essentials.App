@@ -1,23 +1,23 @@
-import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, ViewChild, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import QRCode from 'easyqrcodejs';
 
-import { Util } from '../../services/util';
 import { TranslateService } from '@ngx-translate/core';
 import { UXService } from '../../services/ux.service';
 import { IdentityService } from '../../services/identity.service';
-import { ThemeService } from 'src/app/didsessions/services/theme.service';
 import { ModalController, IonSlides, Platform } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { sleep } from 'src/app/helpers/sleep.helper';
 import { GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+
+declare let didManager: DIDPlugin.DIDManager;
 
 // Minimal duration during which a slide remains shown before going to the next one.
-const MIN_SLIDE_SHOW_DURATION_MS = 1000;
+const MIN_SLIDE_SHOW_DURATION_MS = 2000;
 
 @Component({
     selector: 'page-preparedid',
@@ -28,13 +28,23 @@ export class PrepareDIDPage {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonSlides, { static: false }) slide: IonSlides;
 
-  public LAST_SLIDE_INDEX = 4;
+  private PUBLISH_DID_SLIDE_INDEX = 0;
+  private SIGN_IN_SLIDE_INDEX = 1;
+  private HIVE_SETUP_SLIDE_INDEX = 2;
+  private DEFAULT_WALLET_SLIDE_INDEX = 3;
+  public ALL_DONE_SLIDE_INDEX = 4;
 
   private nextStepId: number;
+
+  // PROCESS
   public mnemonic: string;
   public mnemonicList: string[] = [];
-  public isCreation = false;
+  // User's published DID Document extracted during the preparation process, if any
+  private publishedDID: DIDPlugin.DIDDocument = null;
+  // Vault address extracted during the preparation process, if any
+  private vaultAddress: string = null;
 
+  // UI
   public slideIndex = 0;
   public slideOpts = {
     initialSlide: 0,
@@ -90,35 +100,38 @@ export class PrepareDIDPage {
 
     this.resetErrors();
 
-    // Automated slides transitions upon operations completions.
-    let vaultAddress = await this.appendHiveInfoToDID(); // Add a random hive vault provider to the DID Document before publishing it (to avoid publishing again right after)
-    if (await this.publishIdentity()) {
-      this.nextSlide();
+    let nextSlideIndex = -1;
+    let operationSuccessful = false;
+    do {
+      nextSlideIndex = await this.computeNextSlideIndex(nextSlideIndex);
+      Logger.log("didsessions", "Next slide index will be:", nextSlideIndex);
+      await this.slide.slideTo(nextSlideIndex);
 
-      // Enter the real user context (sign in) to make sure following operations such as creating
-      // a wallet run in the user context.
-      if (await this.signIn()) {
-        this.nextSlide();
-
-        if (await this.setupHiveStorage(vaultAddress)) {
-          Logger.log('didsessions', "Hive storage setup successful");
-          this.nextSlide();
-
+      switch (nextSlideIndex) {
+        case this.PUBLISH_DID_SLIDE_INDEX:
+          operationSuccessful = await this.publishIdentity();
+          break;
+        case this.SIGN_IN_SLIDE_INDEX:
+          // Enter the real user context (sign in) to make sure following operations such as creating
+          // a wallet run in the user context.
+          operationSuccessful = await this.signIn();
+          Logger.log("didsessions", "Sign in completed", GlobalDIDSessionsService.signedInDIDString);
+          break;
+        case this.HIVE_SETUP_SLIDE_INDEX:
+          operationSuccessful = await this.setupHiveStorage(this.vaultAddress);
+          break;
+        case this.DEFAULT_WALLET_SLIDE_INDEX:
           // Note: we don't check if there is an error during wallet creation. This is not a blocking error,
           // we can continue.
           await this.createWalletFromIdentity();
-          this.nextSlide();
-        } else {
-          Logger.log('didsessions', "Hive storage setup failed");
-        }
-      }
-      else {
-        Logger.log('didsessions', "Sign in failed");
+          break;
+        default:
+          // Do nothing.
       }
     }
-    else {
-      Logger.log('didsessions', "Publish identity failed");
-    }
+    while (nextSlideIndex !== this.ALL_DONE_SLIDE_INDEX && operationSuccessful);
+
+    Logger.log("didsessions", "Slide computation loop ended", nextSlideIndex, operationSuccessful);
   }
 
   ionViewWillLeave() {
@@ -136,7 +149,7 @@ export class PrepareDIDPage {
 
   public async onSlideChanged() {
     this.slideIndex = await this.slide.getActiveIndex();
-    this.slideIndex !== this.LAST_SLIDE_INDEX ?
+    this.slideIndex !== this.ALL_DONE_SLIDE_INDEX ?
       this.titleBar.setTitle(this.translate.instant('didsessions.getting-ready')) :
       this.titleBar.setTitle(this.translate.instant('didsessions.ready'));
   }
@@ -150,29 +163,101 @@ export class PrepareDIDPage {
   }
 
   private resetErrors() {
+    this.publishError = null;
     this.signInError = null;
     this.hiveError = null;
+  }
+
+  /**
+   * Depending on things that need to be done for this DID, the next slide to show is computed here.
+   */
+  private async computeNextSlideIndex(currentSlideIndex: number): Promise<number> {
+    if (currentSlideIndex <= this.PUBLISH_DID_SLIDE_INDEX && await this.needToPublishIdentity()) {
+      return this.PUBLISH_DID_SLIDE_INDEX;
+    }
+    else if (currentSlideIndex <= this.SIGN_IN_SLIDE_INDEX && GlobalDIDSessionsService.signedInDIDString === null) {
+      return this.SIGN_IN_SLIDE_INDEX;
+    }
+    else if (currentSlideIndex <= this.HIVE_SETUP_SLIDE_INDEX && !await this.isHiveVaultReady()) {
+      return this.HIVE_SETUP_SLIDE_INDEX;
+    }
+    /* TODO else if (currentSlideIndex < this.DEFAULT_WALLET_SLIDE_INDEX &&  wallet not exists) {
+      return this.DEFAULT_WALLET_SLIDE_INDEX;
+    } */
+    else {
+      return this.ALL_DONE_SLIDE_INDEX;
+    }
+  }
+
+  private async needToPublishIdentity(): Promise<boolean> {
+    this.publishedDID = await this.fetchPublishedDID();
+    return (this.publishedDID == null || !this.publishedIdentityHasHiveVault(this.publishedDID));
+  }
+
+  private fetchPublishedDID(): Promise<DIDPlugin.DIDDocument> {
+    Logger.log("didsessions", "Checking if identity is published");
+    return new Promise<DIDPlugin.DIDDocument>((resolve, reject) =>{
+      didManager.resolveDidDocument(this.identityService.identityBeingCreated.did.getDIDString(), true, (doc) => {
+        Logger.log("didsessions", "Resolved identity:", doc);
+        resolve(doc);
+      }, (err) => reject(err));
+    });
+  }
+
+  /**
+   * Check if user's published DID already contains a hive vault or not. If not, we'll have to add one and
+   * publish the did again.
+   */
+  private publishedIdentityHasHiveVault(doc: DIDPlugin.DIDDocument | null): boolean {
+    if (!doc)
+      return false;
+
+    return this.globalHiveService.documentHasVault(doc);
+  }
+
+  private async isHiveVaultReady(): Promise<boolean> {
+    Logger.log("didsessions", "Checking if hive vault is ready");
+    // To know if the vault is ready we need a hive client instance and then check what getvault() returns.
+    // retrieveVaultLinkStatus() does that for us.
+    let vaultStatus = await this.globalHiveService.retrieveVaultLinkStatus();
+    Logger.log("didsessions", "Hive vault status:", vaultStatus);
+    return (vaultStatus && vaultStatus.publishedInfo !== null && vaultStatus.publishedInfo.vaultAddress != null);
   }
 
   private async appendHiveInfoToDID(): Promise<string> {
     Logger.log("didsessions", "Adding hive vault information to local DID");
     let didDocument = await this.identityService.getCreatedDIDDocument();
-    let vaultAddress = await this.globalHiveService.addRandomHiveToDIDDocument(didDocument, this.identityService.identityBeingCreated.storePass);
-    return vaultAddress;
+    this.vaultAddress = await this.globalHiveService.addRandomHiveToDIDDocument(didDocument, this.identityService.identityBeingCreated.storePass);
+    return this.vaultAddress;
   }
 
   private async publishIdentity(): Promise<boolean> {
     Logger.log("didsessions", "Publishing identity");
+
+    // Add a random hive vault provider to the DID Document before publishing it (to avoid
+    // publishing again right after), only if there is no vault configured yet.
+    if (!this.publishedIdentityHasHiveVault(this.publishedDID)) {
+      this.vaultAddress = await this.appendHiveInfoToDID();
+    }
+
     try {
       await Promise.all([
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
         // TMP NOT USED WAITING FOR DID 2.0 - this.globalPublicationService.publishIdentity()
       ]);
+
+      // Resolve the published DID to make sure everything is all right
+      if (await this.needToPublishIdentity()) {
+        Logger.warn("didsessions", "Identity is supposed to be published and ready but cannot be resolved");
+        this.publishError = "Sorry, your identity could not be published for now";
+        return false;
+      }
+
       return true;
     }
     catch(e) {
-      console.warn("Publish identity error in prepare did:", e);
-      this.signInError = "Failed to publis identity: " + e;
+      Logger.warn("didsessions", "Publish identity error in prepare did:", e);
+      this.publishError = "Failed to publish identity: " + e;
       return false;
     }
   }
@@ -187,7 +272,7 @@ export class PrepareDIDPage {
       return true;
     }
     catch(e) {
-      console.warn("Sign in error in prepare did:", e);
+      Logger.warn("didsessions", "Sign in error in prepare did:", e);
       this.signInError = "Failed to sign in: " + e;
       return false;
     }
@@ -200,10 +285,10 @@ export class PrepareDIDPage {
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
         // TMP CANT USE IF DID NOT PUBLISHED FOR NOW this.globalHiveService.prepareHiveVault(vaultAddress)
       ]);
-      return true;
+      return false; // TMP
     }
     catch(e) {
-      console.warn("Hive storage error in prepare did:", e);
+      Logger.warn("didsessions", "Hive storage error in prepare did:", e);
       this.hiveError = "Failed to setup the hive storage: " + e;
       return false;
     }
