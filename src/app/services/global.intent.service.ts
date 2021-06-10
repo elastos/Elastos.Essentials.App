@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Logger } from '../logger';
-import { GlobalConnectService } from './global.connect.service';
 import { GlobalNavService } from './global.nav.service';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
