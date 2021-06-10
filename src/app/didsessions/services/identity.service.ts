@@ -209,10 +209,10 @@ export class IdentityService {
         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
         let createdDID = await didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
 
-        await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name);
+        await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name, false);
     }
 
-    private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string): Promise<boolean> {
+    private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string, isImportOperation: boolean): Promise<boolean> {
         try {
             // Save the did store password with a master password
             let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
@@ -235,8 +235,13 @@ export class IdentityService {
                 await this.nativeService.hideLoading();
 
                 //await this.signIn(this.identityBeingCreated.didSessionsEntry);
-                this.navigateWithCompletion('/didsessions/preparedid', () => {
+                this.navigateWithCompletion('/didsessions/preparedid', async () => {
                     Logger.log("didsessions", "DID preparation is complete, now navigating to home screen");
+
+                    // Imported DIDs are automatically marked as backed up, no need to remind users about this.
+                    if (isImportOperation)
+                        await this.didSessions.markActiveIdentityBackedUp();
+
                     void this.didSessions.navigateHome();
                 });
                 return;
@@ -365,7 +370,7 @@ export class IdentityService {
                     if (this.identityBeingCreated.name) {
                         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
                         let createdDID = await didStore.addDID(this.identityBeingCreated, storePassword);
-                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name);
+                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name, true);
                     }
                 });
             }
@@ -388,7 +393,7 @@ export class IdentityService {
           let profileName = createdDID.getNameCredentialValue();
           if (profileName) {
             Logger.log('didsessions', "Name credential found in the DID. Using it.");
-            await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName);
+            await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true);
           }
           else {
               // No existing name credential found in the DID, so we need to ask user to give us one
@@ -398,7 +403,7 @@ export class IdentityService {
                 await createdDID.addNameCredential(profileName, storePassword);
 
                 // Finalize
-                await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName);
+                await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true);
               });
           }
         } else {
