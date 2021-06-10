@@ -80,8 +80,23 @@ export const en = {
     'qrcode-and-mnemonic-words': 'QR Code and Mnemonic words',
     'verify-did': 'Verify',
     'print-title': 'KEEP THIS PRIVATE!',
-  },
-  
+
+    // Prepare DID
+    'getting-ready': 'Getting ready',
+    'ready': 'Ready!',
+    prepare: {
+      'publish-title': 'Publishing your identity to the public ledger',
+      'publish-intro': 'This step is mandatory and takes a few seconds, please hold on.',
+      'sign-in-title': 'Signing in',
+      'sign-in-intro': 'Entering Elastos Essentials',
+      'hive-title': 'Making some storage space for apps',
+      'hive-intro': 'A storage space is being created on a random Elastos Hive storage provider. You can move your data somewhere else later.',
+      'wallet-title': 'Creating a default wallet',
+      'wallet-intro': 'A default wallet is created with the same paper key as your DID. You can choose to use it or to delete it.',
+      'done-title': 'All done!',
+      'done-intro': 'Your identity is now fully ready. You can start to use Elastos Essentials.'
+    }
+  }
  };
 
 

@@ -99,18 +99,4 @@ ion-slides {
       text-align: center;
     }
   }
-
-  .footer {
-  }
-}
-
-@media screen and (min-height: 670px) {
-  ion-slides {
-    .first-slide {
-      .qr-container {
-        #qrcode {
-        }
-      }
-    }
-  }
 }

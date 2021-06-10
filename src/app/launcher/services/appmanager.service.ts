@@ -81,7 +81,7 @@ export class AppmanagerService {
         private contactsInitService: ContactsInitService
     ) {}
 
-    public async init() {
+    public init() {
         Logger.log("Launcher", 'App manager service is initializing');
 
         this.languageSubscription = this.language.activeLanguage.subscribe((lang)=>{
@@ -100,7 +100,7 @@ export class AppmanagerService {
         });
 
         this.tipSubscription = this.events.subscribe("notifications.tip", (notification) => {
-            this.presentTip(notification);
+            void this.presentTip(notification);
         });
     }
 
@@ -223,7 +223,7 @@ export class AppmanagerService {
         if (visit || visit === true) {
             this.firstVisit = false;
         } else {
-            this.globalNav.navigateRoot(App.LAUNCHER, 'launcher/onboard');
+            await this.globalNav.navigateRoot(App.LAUNCHER, 'launcher/onboard');
         }
     }
 
@@ -245,7 +245,7 @@ export class AppmanagerService {
     }
 
     async returnHome() {
-        this.native.hideLoading();
+        void this.native.hideLoading();
         if (await this.modalController.getTop()) {
             await this.modalController.dismiss();
         } else {
@@ -258,9 +258,9 @@ export class AppmanagerService {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
-    startApp(app: RunnableApp) {
+    async startApp(app: RunnableApp): Promise<void> {
         if (app.routerPath)
-            this.globalNav.navigateTo(app.routerContext, app.routerPath);
+            await this.globalNav.navigateTo(app.routerContext, app.routerPath);
         else if (app.startCall)
             app.startCall();
         else
@@ -295,7 +295,7 @@ export class AppmanagerService {
             cssClass: 'running-modal',
             mode: 'ios',
         });
-        modal.onDidDismiss().then(() => { this.notificationsShown = false; });
+        void modal.onDidDismiss().then(() => { this.notificationsShown = false; });
         await modal.present();
 
         this.notificationsShown = true;
@@ -311,19 +311,19 @@ export class AppmanagerService {
                 tipToShow: tip
             },
         });
-        modal.onDidDismiss().then(() => { this.tipsShown = false; });
+        void modal.onDidDismiss().then(() => { this.tipsShown = false; });
         await modal.present();
 
         this.tipsShown = true;
     }
 
-    public async popTips() {
-        this.modalController.dismiss();
+    public popTips() {
+        void this.modalController.dismiss();
     }
 
     private async dismissAllModals() {
         let modalElement = null;
-        while (modalElement = await this.modalController.getTop()) {
+        while ((modalElement = await this.modalController.getTop())) {
             await this.modalController.dismiss();
             let newModalElement = await this.modalController.getTop();
             if (newModalElement && (newModalElement === modalElement)) { // just in case
