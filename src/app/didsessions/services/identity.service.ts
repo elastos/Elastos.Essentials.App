@@ -106,7 +106,7 @@ export class IdentityService {
         });
     }
 
-    public async signIn(identityEntry: IdentityEntry) {
+    public async signIn(identityEntry: IdentityEntry, goToLauncher = false) {
         // Security check: ask user to enter the master password for the target did.
         try {
             let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
@@ -126,7 +126,9 @@ export class IdentityService {
                 //}
 
                 await this.didSessions.signIn(identityEntry, signInOptions);
-                // this.uxService.goToLauncer();
+
+                if (goToLauncher)
+                    await this.didSessions.navigateHome();
             }
             else {
                 Logger.warn('didsessions', "Failed to authentify using master password. Sign in not permitted.");
