@@ -6,7 +6,7 @@ import { UXService } from '../../services/ux.service';
 import { IdentityService } from '../../services/identity.service';
 import { ModalController, IonSlides, Platform } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { sleep } from 'src/app/helpers/sleep.helper';
@@ -86,6 +86,8 @@ export class PrepareDIDPage {
 
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setNavigationMode(null);
+    // Disable the Elastos icon
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
 
     // Dirty hack because on iOS we are currently unable to understand why the
     // ion-slides width is sometimes wrong when an app starts. Waiting a few
