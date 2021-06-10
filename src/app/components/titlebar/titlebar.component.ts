@@ -21,10 +21,10 @@ export class TitleBarComponent {
       this._title = title;
   }
 
-  public _title: string = "";
+  public _title = "";
 
-  public visibile: boolean = true;
-  public menuVisible: boolean = false;
+  public visibile = true;
+  public menuVisible = false;
   private navigationMode: TitleBarNavigationMode;
 
   public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
@@ -265,13 +265,13 @@ export class TitleBarComponent {
 
   outerLeftIconClicked() {
     this.icons[TitleBarIconSlot.OUTER_LEFT].iconPath === BuiltInIcon.ELASTOS ?
-      this.globalNav.navigateHome() :
+      void this.globalNav.navigateHome() :
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_LEFT]);
   }
 
   innerLeftIconClicked() {
     if (this.navigationMode == TitleBarNavigationMode.BACK || this.navigationMode == TitleBarNavigationMode.CLOSE)
-      this.globalNav.navigateBack();
+      void this.globalNav.navigateBack();
     else {
       this.listenableIconClicked(this.icons[TitleBarIconSlot.INNER_LEFT]);
     }
@@ -283,7 +283,7 @@ export class TitleBarComponent {
 
   outerRightIconClicked(ev) {
     this.menuVisible ?
-      this.openMenu(ev) :
+      void this.openMenu(ev) :
       this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
   }
 

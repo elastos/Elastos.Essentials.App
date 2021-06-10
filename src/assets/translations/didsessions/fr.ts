@@ -77,6 +77,21 @@ export const fr = {
     'qrcode-and-mnemonic-words': 'QR Code et Clé Papier',
     'verify-did': 'Vérifier',
     'print-title': 'GARDEZ CECI SECRET!',
+
+    // Prepare DID
+    'getting-ready': 'Finalisation en cours',
+    'ready': 'Prêt!',
+    prepare: {
+      'publish-title': 'Publication de votre identité dans le registre public',
+      'publish-intro': 'Cette étape est indispensable et prend quelques secondes, veuillez patienter.',
+      'sign-in-title': 'Connexion',
+      'sign-in-intro': 'Entrée en cours dans Elastos Essentials',
+      'hive-title': 'Espace de stockage pour les applis',
+      'hive-intro': 'Un espace de stockage est créé sur un fournisseur de stockage Elastos Hive choisi au hasard. Vous pourrez déplacer vos données ailleurs à tout moment plus tard.',
+      'wallet-title': 'Création d\'un portefeuille par défaut',
+      'wallet-intro': 'Un portefeuille par défaut est créé en utilisant la même clé papier que votre identité. Vous pourrez choisir de l\'utiliser ou de le supprimer plus tard.',
+      'done-title': 'C\'est terminé!',
+      'done-intro': 'Votre identité est maintenant prête. Vous pouvez commencer à utiliser Elastos Essentials.'
+    }
   }
-  
 };
