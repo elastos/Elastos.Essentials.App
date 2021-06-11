@@ -139,7 +139,7 @@ export class MyProfilePage {
 
     this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
       this.zone.run(() => {
-        this.profileService.showWarning("publishIdentity", null);
+        void this.profileService.showWarning("publishIdentity", null);
       });
     });
 
@@ -191,7 +191,7 @@ export class MyProfilePage {
         else return -1;
       });
 
-      this.checkDidForPublish(identity);
+      void this.checkDidForPublish(identity);
       this.buildDetailEntries();
       this.buildCredentialEntries(publishAvatar);
     }
@@ -204,10 +204,8 @@ export class MyProfilePage {
     this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
     this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
 
-    this.profileService.didString = this.didService
-      .getActiveDid()
-      .getDIDString();
-    this.didSyncService
+    this.profileService.didString = this.didService.getActiveDid().getDIDString();
+    void this.didSyncService
       .getDIDDocumentFromDID(this.profileService.didString)
       .then((didDoc) => {
         this.currentOnChainDIDDocument = didDoc;
@@ -227,7 +225,7 @@ export class MyProfilePage {
 
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if (icon.key == "settings") {
-        this.native.go('/identity/settings');
+        void this.native.go('/identity/settings');
       }
     });
   }
@@ -237,8 +235,7 @@ export class MyProfilePage {
     this.profileService.didString = identity.getDIDString();
 
     // TMP DEBUG
-    console.log("PUBLISHREAL")
-    this.profileService.publishDIDDocumentReal();
+    //this.profileService.publishDIDDocumentReal();
   }
 
   ionViewWillLeave() {
