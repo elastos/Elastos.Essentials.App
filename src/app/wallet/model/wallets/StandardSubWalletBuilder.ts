@@ -18,7 +18,9 @@ export class StandardSubWalletBuilder {
             case StandardCoinName.IDChain:
                 return new IDChainSubWallet(masterWallet);
             case StandardCoinName.ETHSC:
-                return new ETHChainSubWallet(masterWallet);
+            case StandardCoinName.ETHDID:
+            // case StandardCoinName.ETHHECO:
+                return new ETHChainSubWallet(masterWallet, coinName);
             default:
                 return null;
         }

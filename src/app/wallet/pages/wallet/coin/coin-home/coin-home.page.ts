@@ -29,7 +29,7 @@ import { Util } from '../../../../model/Util';
 import { WalletManager } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
-import { CoinTransferService, TransferType, Transfer } from '../../../../services/cointransfer.service';
+import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { SubWallet } from '../../../../model/wallets/SubWallet';
 import { TransactionInfo } from '../../../../model/Transaction';
@@ -58,6 +58,7 @@ export class CoinHomePage implements OnInit {
     public subWallet: SubWallet = null;
     public chainId: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
+    public transactionsLoaded = false;
 
     // Total transactions today
     public todaysTransactions: number = 0;
@@ -69,8 +70,6 @@ export class CoinHomePage implements OnInit {
     public Util = Util;
     public SELA = Config.SELA;
     public CoinType = CoinType;
-
-    private eventId = '';
 
     public isShowMore = false;
 
@@ -172,12 +171,12 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
-        // TODO get transactions by rpc
         let allTransactions = await this.subWallet.getTransactions(this.start);
         if (!allTransactions) {
           Logger.log('wallet', "Can not get transaction");
           return;
         }
+        this.transactionsLoaded = true;
         Logger.log('wallet', "Got all transactions: ", allTransactions);
 
         const transactions = allTransactions.txhistory;
@@ -278,21 +277,6 @@ export class CoinHomePage implements OnInit {
         setTimeout(() => {
             event.target.complete();
         }, 1000);
-    }
-
-    CheckPublishTx() {
-        for (const txid in this.walletManager.transactionMap) {
-            if (this.getIndexByTxId(txid)) {
-                delete this.walletManager.transactionMap[txid];
-            }
-        }
-
-        Logger.log('wallet', 'Fail txid:', this.walletManager.transactionMap);
-        for (const txid in this.walletManager.transactionMap) {
-            this.popupProvider.ionicAlert_PublishedTx_fail('wallet.confirmTitle', txid, txid);
-        }
-
-        this.walletManager.cleanTransactionMap();
     }
 
     getIndexByTxId(txid: string) {

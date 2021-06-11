@@ -105,7 +105,7 @@
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
         </div>
-        <div class="empty-list" *ngIf="transferList.length === 0">
+        <div class="empty-list" *ngIf="transactionsLoaded && (transferList.length === 0)">
             <img src="assets/wallet/icons/warning.svg"/>
             <h1 *ngIf="!chainIsERC20()">{{ 'wallet.coin-no-transactions' | translate }}</h1>
             <h2 *ngIf="chainIsERC20()">{{ 'wallet.erc20-transactions' | translate }} <br> {{ 'wallet.cannot-display' | translate }}</h2>

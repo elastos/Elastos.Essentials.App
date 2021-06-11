@@ -25,7 +25,12 @@ export class JsonRPCService {
     private ethscRPCApiUrl = 'https://api.elastos.io/eth';
     private ethscOracleRPCApiUrl = 'https://api.elastos.io/oracle';
     private ethscMiscApiUrl = 'https://api.elastos.io/misc';
+    // TODO use mainnet url, and add to settings.
     private EIDChainRPCApiUrl = 'https://api-testnet.elastos.io/newid';
+    private EIDMiscApiUrl = 'https://api-testnet.elastos.io/newid-misc';
+
+    private hecoChainRPCApiUrl = 'https://http-mainnet.hecochain.com';
+
 
 
     static RETRY_TIMES = 3;
@@ -277,7 +282,7 @@ export class JsonRPCService {
     // ****************************************
 
     // ELA main chain: Get the real send address for the send transaction from ethsc to mainchain.
-    async getETHSCTransactionByHash(txHash: string) {
+    async getETHSCTransactionByHash(chainID: StandardCoinName, txHash: string) {
       if (!txHash.startsWith('0x')) {
         txHash = '0x' + txHash;
       }
@@ -289,28 +294,61 @@ export class JsonRPCService {
           id:'1'
       };
 
+      const rpcApiUrl = this.getRPCApiUrl(chainID);
+      if (rpcApiUrl.length === 0) {
+          '';
+      }
+
       try {
-          return this.httpRequest(this.ethscRPCApiUrl, param);
+          return this.httpRequest(rpcApiUrl, param);
       } catch (e) {
       }
       return '';
     }
 
-    async eth_blockNumber(address: string): Promise<number> {
+    async eth_blockNumber(chainID: StandardCoinName): Promise<number> {
       const param = {
           method: 'eth_blockNumber',
           id:'1'
       };
 
+      const rpcApiUrl = this.getRPCApiUrl(chainID);
+      if (rpcApiUrl.length === 0) {
+          -1;
+      }
+
       try {
-          let result = await this.httpRequest(this.ethscRPCApiUrl, param);
+          let result = await this.httpRequest(rpcApiUrl, param);
           return parseInt(result);
       } catch (e) {
       }
       return -1;
     }
 
-    async getETHSCNonce(address: string): Promise<number> {
+    async eth_getBalance(chainID: StandardCoinName, address: string): Promise<BigNumber> {
+      const param = {
+          method: 'eth_getBalance',
+          params: [
+            address,
+            'latest'
+          ],
+          id:'1'
+      };
+
+      const rpcApiUrl = this.getRPCApiUrl(chainID);
+      if (rpcApiUrl.length === 0) {
+          return new BigNumber(NaN);;
+      }
+
+      try {
+          let balanceString = await this.httpRequest(rpcApiUrl, param);
+          return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
+      } catch (e) {
+      }
+      return new BigNumber(NaN);;
+    }
+
+    async getETHSCNonce(chainID: StandardCoinName, address: string): Promise<number> {
       const param = {
           method: 'eth_getTransactionCount',
           params: [
@@ -320,19 +358,29 @@ export class JsonRPCService {
           id:'1'
       };
 
+      const rpcApiUrl = this.getRPCApiUrl(chainID);
+      if (rpcApiUrl.length === 0) {
+          -1;
+      }
+
       try {
-          let result = await this.httpRequest(this.ethscRPCApiUrl, param);
+          let result = await this.httpRequest(rpcApiUrl, param);
           return parseInt(result);
       } catch (e) {
       }
       return -1;
     }
 
-    async getETHSCTransactions(address: string, begBlockNumber: number = 0, endBlockNumber: number = 0): Promise<EthTransaction[]> {
+    async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber: number = 0, endBlockNumber: number = 0): Promise<EthTransaction[]> {
+      const miscApiUrl = this.getMiscApiUrl(chainID);
+      if (miscApiUrl.length === 0) {
+          null;
+      }
+
       // TODO: Don't support 'endBlockNumber', 'begBlockNumber', 'sort'
-      // const ethscgethistoryurl = this.ethscMiscApiUrl + '/api/1/eth/history?address=' + address + '&begBlockNumber=' + begBlockNumber
+      // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address + '&begBlockNumber=' + begBlockNumber
       // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
-      const ethscgethistoryurl = this.ethscMiscApiUrl + '/api/1/eth/history?address=' + address;
+      const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address;
       Logger.warn('wallet', 'getETHSCTransactions:', ethscgethistoryurl)
       try {
           let result = await this.httpget(ethscgethistoryurl);
@@ -343,24 +391,29 @@ export class JsonRPCService {
       return null;
     }
 
-    async eth_getTransactionByHash(txHash: string) {
+    async eth_getTransactionByHash(chainID: StandardCoinName, txHash: string) {
       const param = {
         method: 'eth_getTransactionByHash',
         params: [
           txHash
         ],
         id: '1'
-    };
+      };
 
-    try {
-        return this.httpRequest(this.ethscRPCApiUrl, param);
-    } catch (e) {
-      Logger.error('wallet', 'eth_getTransactionByHash error:', e)
-    }
-    return '';
+      const rpcApiUrl = this.getRPCApiUrl(chainID);
+      if (rpcApiUrl.length === 0) {
+          '';
+      }
+
+      try {
+          return this.httpRequest(rpcApiUrl, param);
+      } catch (e) {
+        Logger.error('wallet', 'eth_getTransactionByHash error:', e)
+      }
+      return '';
     }
 
-    async eth_sendRawTransaction(txHash: string) {
+    async eth_sendRawTransaction(chainID: StandardCoinName, txHash: string) {
       if (!txHash.startsWith('0x')) {
         txHash = '0x' + txHash;
       }
@@ -372,10 +425,42 @@ export class JsonRPCService {
           id: '1'
       };
 
+      const rpcApiUrl = this.getRPCApiUrl(chainID);
+      if (rpcApiUrl.length === 0) {
+          '';
+      }
+
       try {
-          return this.httpRequest(this.ethscRPCApiUrl, param);
+          return this.httpRequest(rpcApiUrl, param);
       } catch (e) {
         Logger.error('wallet', 'eth_sendRawTransaction error:', e)
+      }
+      return '';
+    }
+
+
+    // ERC20 Token
+    async eth_getTransactionReceipt(chainID: StandardCoinName, txHash: string) {
+      if (!txHash.startsWith('0x')) {
+        txHash = '0x' + txHash;
+      }
+      const param = {
+          method: 'eth_getTransactionReceipt',
+          params: [
+            txHash
+          ],
+          id: '1'
+      };
+
+      const rpcApiUrl = this.getRPCApiUrl(chainID);
+      if (rpcApiUrl.length === 0) {
+          '';
+      }
+
+      try {
+          return this.httpRequest(rpcApiUrl, param);
+      } catch (e) {
+        Logger.error('wallet', 'eth_getTransactionReceipt error:', e)
       }
       return '';
     }
@@ -388,9 +473,38 @@ export class JsonRPCService {
             case StandardCoinName.IDChain:
                 rpcApiUrl = this.IDChainRPCApiUrl;
                 break;
+            case StandardCoinName.ETHSC:
+                rpcApiUrl = this.ethscRPCApiUrl;
+                break;
+            case StandardCoinName.ETHDID:
+                rpcApiUrl = this.EIDChainRPCApiUrl;
+                break;
+            // case StandardCoinName.ETHHECO:
+            //     rpcApiUrl = this.hecoChainRPCApiUrl;
+            //     break;
             default:
                 rpcApiUrl = '';
                 Logger.log("wallet", 'JsonRPCService: Can not support ' + chainID);
+                break;
+        }
+        return rpcApiUrl;
+    }
+
+    getMiscApiUrl(chainID: string) {
+        let rpcApiUrl = this.mainchainRPCApiUrl;
+        switch (chainID) {
+            case StandardCoinName.ETHSC:
+                rpcApiUrl = this.ethscMiscApiUrl;
+                break;
+            case StandardCoinName.ETHDID:
+                rpcApiUrl = this.EIDMiscApiUrl;
+                break;
+            // case StandardCoinName.ETHHECO:
+            //     rpcApiUrl = this.hecoChainRPCApiUrl;
+            //     break;
+            default:
+                rpcApiUrl = '';
+                Logger.log("wallet", 'JsonRPCService: Misc can not support ' + chainID);
                 break;
         }
         return rpcApiUrl;

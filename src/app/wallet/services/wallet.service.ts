@@ -25,9 +25,9 @@ import { HttpClient } from '@angular/common/http';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
-import { SPVWalletPluginBridge, SPVWalletMessage, TxPublishedResult, ETHSCEventType, ETHSCEvent, ETHSCEventAction } from '../model/SPVWalletPluginBridge';
+import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
 import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
-import { StandardCoinName, CoinType } from '../model/Coin';
+import { StandardCoinName } from '../model/Coin';
 import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
 import { SerializedSubWallet } from '../model/wallets/SubWallet';
 import { InvalidVoteCandidatesHelper, InvalidCandidateForVote } from '../model/InvalidVoteCandidatesHelper';
@@ -35,34 +35,19 @@ import { CoinService } from './coin.service';
 import { JsonRPCService } from './jsonrpc.service';
 import { PopupProvider } from './popup.service';
 import { Native } from './native.service';
-import { SPVSyncService } from './spvsync.service';
 import { LocalStorage } from './storage.service';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
 import { IDChainSubWallet } from '../model/wallets/IDChainSubWallet';
 import { MainchainSubWallet } from '../model/wallets/MainchainSubWallet';
-import { StandardSubWallet } from '../model/wallets/StandardSubWallet';
-import { MainAndIDChainSubWallet } from '../model/wallets/MainAndIDChainSubWallet';
 import { ETHChainSubWallet } from '../model/wallets/ETHChainSubWallet';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 import { Events } from 'src/app/services/events.service';
+import { StandardSubWalletBuilder } from '../model/wallets/StandardSubWalletBuilder';
 
-
-class TransactionMapEntry {
-    Code: number = null;
-    Reason: string = null;
-    WalletID: string = null;
-    ChainID: string = null;
-    Status: string = null;
-    lock: boolean = false;
-}
-
-type TransactionMap = {
-    [k: string]: TransactionMapEntry;
-};
 
 @Injectable({
     providedIn: 'root'
@@ -73,9 +58,6 @@ export class WalletManager {
     public masterWallets: {
         [index: string]: MasterWallet
     } = {};
-
-    // TODO: what is this map for? Can we rename it ?
-    public transactionMap: TransactionMap = {}; // when sync over, need to cleanup transactionMap
 
     public hasPromptTransfer2IDChain = true;
 
@@ -98,7 +80,6 @@ export class WalletManager {
         public jsonRPCService: JsonRPCService,
         private prefs: GlobalPreferencesService,
         private didSessions: GlobalDIDSessionsService,
-        private spvService:SPVSyncService
     ) {
         WalletManager.instance = this;
     }
@@ -114,10 +95,6 @@ export class WalletManager {
 
         const hasWallet = await this.initWallets();
 
-        // TODO remove it
-        // Start the sync service
-        // await this.spvService.init(this);
-
         if (!hasWallet) {
             //this.goToLauncherScreen();
             this.events.publish("walletmanager:initialized");
@@ -127,13 +104,6 @@ export class WalletManager {
         this.localStorage.get('hasPrompt').then((val) => {
             this.hasPromptTransfer2IDChain = val ? val : false;
         });
-
-        const publishTxList = await this.localStorage.getPublishTxList();
-        if (publishTxList) {
-            this.transactionMap = publishTxList;
-        }
-
-        this.getAllMasterWalletBalanceByRPC();
 
         Logger.log('wallet', "Wallet manager initialization complete");
 
@@ -149,18 +119,17 @@ export class WalletManager {
             // NetWork Type
             let networkType: NetworkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
             let networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
-            let jsonrpcUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
-            let apimiscUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
             if (networkType === NetworkType.LrwNet) { // For crcouncil voting test
               networkType = NetworkType.PrvNet;
               networkConfig = "{\"ELA\":{\"ChainParameters\":{\"MagicNumber\":20200501,\"StandardPort\":40008,\"DNSSeeds\":[\"longrunweather.com\"],\"CheckPoints\":[[0,\"d8d33c8a0a632ecc418bd7f09cd315dfc46a7e3e98e48c50c70a253e6062c257\",1513936800,486801407]]}},\"IDChain\":{\"ChainParameters\":{\"MagicNumber\":20200503,\"StandardPort\":41008,\"DNSSeeds\":[\"longrunweather.com\"],\"CheckPoints\":[[0,\"56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3\",1530360000,486801407]]}}}"
 
             }
-            await this.spvBridge.setNetwork(networkType, networkConfig, jsonrpcUrl, apimiscUrl );
+            await this.spvBridge.setNetwork(networkType, networkConfig);
             // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
             let rootPath = signedInEntry.didStoragePath;
+            Logger.warn('wallet', "rootPath:", rootPath);
             await this.spvBridge.init(rootPath);
 
             Logger.log('wallet', "Getting all master wallets from the SPV SDK");
@@ -210,9 +179,26 @@ export class WalletManager {
                     subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHSC);
                     if (!subwallet) {
                         Logger.log('wallet', '(Re)Opening ETHSC');
-                        const subWallet = new ETHChainSubWallet(this.masterWallets[masterId]);
+                        const subWallet = new ETHChainSubWallet(this.masterWallets[masterId], StandardCoinName.ETHSC);
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
+
+                    subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHDID);
+                    if (!subwallet) {
+                        Logger.log('wallet', '(Re)Opening ETHDID');
+                        // const subWallet = new ETHChainSubWallet(this.masterWallets[masterId], StandardCoinName.ETHDID);
+                        // await this.masterWallets[masterId].walletManager.spvBridge.createSubWallet(masterId, StandardCoinName.ETHDID);
+                        const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHDID));
+                        extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
+                    }
+
+                    // subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHHECO);
+                    // if (!subwallet) {
+                    //     Logger.log('wallet', '(Re)Opening ETHHECO');
+                    //     // const subWallet = new ETHChainSubWallet(this.masterWallets[masterId], StandardCoinName.ETHHECO);
+                    //     const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHHECO));
+                    //     extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
+                    // }
                 }
 
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
@@ -239,10 +225,6 @@ export class WalletManager {
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
             }
         }
-    }
-
-    private sendUpdateWalletInfo2Service(masterId: string, action: string) {
-        this.spvService.updateMasterWallets(masterId, action);
     }
 
     // TODO: delete it, we do not use active wallet
@@ -372,22 +354,16 @@ export class WalletManager {
         // Even if not mandatory to have, we open the main sub wallets for convenience as well.
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.IDChain));
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHSC));
+        await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHDID));
+        // await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
 
         // Get all tokens and create subwallet
         await this.masterWallets[id].updateERC20TokenList(this.prefs);
 
-        // this.registerSubWalletListener();
-
         // Save state to local storage
         await this.saveMasterWallet(this.masterWallets[id]);
 
-        // To service
-        this.sendUpdateWalletInfo2Service(id, 'add');
-
         this.setRecentWalletId(id);
-
-        // Get balance by rpc
-        this.getAllSubwalletsBalanceByRPC(id);
     }
 
     /**
@@ -408,8 +384,6 @@ export class WalletManager {
 
         // Notify some listeners
         this.events.publish("masterwallet:destroyed", id);
-
-        this.sendUpdateWalletInfo2Service(id, 'remove');
 
         if (Object.values(this.masterWallets).length > 0) {
 
@@ -458,40 +432,6 @@ export class WalletManager {
         this.needToPromptTransferToIDChain = true;
     }
 
-    // for intent
-    // TODO: What's this? lock what for what?
-    lockTx(hash) {
-        if (this.transactionMap[hash]) {
-            this.transactionMap[hash].lock = true;
-        } else {
-            this.transactionMap[hash] = new TransactionMapEntry();
-            this.transactionMap[hash].lock = true;
-
-            this.localStorage.savePublishTxList(this.transactionMap);
-        }
-    }
-
-    public getTxCode(hash) {
-        let code = 0;
-        if (this.transactionMap[hash].Code) {
-            code = this.transactionMap[hash].Code;
-        }
-
-        if (this.transactionMap[hash].Status === 'Deleted') { // success also need delete
-            delete this.transactionMap[hash];
-            this.localStorage.savePublishTxList(this.transactionMap);
-        } else {
-            this.transactionMap[hash].lock = false;
-        }
-
-        return code;
-    }
-
-    cleanTransactionMap() {
-        this.transactionMap = {};
-        this.localStorage.savePublishTxList(this.transactionMap);
-    }
-
     /**
      * Retrieves the wallet store password from the password manager.
      * This method is here since the beginning and seems useless. Could probably be replaced by
@@ -528,32 +468,5 @@ export class WalletManager {
     public async computeVoteInvalidCandidates(masterWalletId: string): Promise<InvalidCandidateForVote[]> {
         const helper = new InvalidVoteCandidatesHelper(this.http, this, masterWalletId, this.prefs);
         return await helper.computeInvalidCandidates();
-    }
-
-    async getAllMasterWalletBalanceByRPC() {
-        for (const masterWallet of Object.values(this.masterWallets)) {
-            await this.getAllSubwalletsBalanceByRPC(masterWallet.id);
-        }
-    }
-
-    async getAllSubwalletsBalanceByRPC(masterWalletId) {
-        const masterWallet = this.getMasterWallet(masterWalletId);
-
-        // TODO: to improve, in init and when needed?
-        const mainChainSubwallet:MainAndIDChainSubWallet = masterWallet.getSubWallet(StandardCoinName.ELA) as MainAndIDChainSubWallet;
-        mainChainSubwallet.getTransactionByRPC();
-
-        const subwallets = masterWallet.subWalletsWithExcludedCoin(StandardCoinName.ETHSC, CoinType.STANDARD);
-        let updatedByRPC = false;
-        for (const subWallet of subwallets) {
-            const updated = await (subWallet as MainAndIDChainSubWallet).getBalanceByRPC();
-            if (updated) {
-                updatedByRPC = true;
-            }
-        }
-
-        if (updatedByRPC) {
-            await this.saveMasterWallet(masterWallet);
-        }
     }
 }
