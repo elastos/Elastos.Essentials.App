@@ -5,9 +5,6 @@ import { DIDHelper } from '../helpers/did.helper';
 import { Logger } from 'src/app/logger';
 
 export class DIDDocument {
-
-    public timer: number = 0;
-
     constructor(
         public pluginDidDocument: DIDPlugin.DIDDocument,
     ) {
@@ -24,9 +21,8 @@ export class DIDDocument {
             this.pluginDidDocument.addCredential(
                 credential,
                 storePass,
-                async () => {
-                    await this.markUpdated();
-                    resolve()
+                () => {
+                    void this.markUpdated().then(() => resolve());
                 }, (err) => {
                     Logger.error('identity', "Add credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
@@ -41,9 +37,8 @@ export class DIDDocument {
             this.pluginDidDocument.deleteCredential(
                 credential,
                 storePass,
-                async () => {
-                    await this.markUpdated();
-                    resolve()
+                () => {
+                    void this.markUpdated().then(() => resolve());
                 }, (err) => {
                     Logger.error('identity', "Delete credential exception", err);
                     reject(DIDHelper.reworkedPluginException(err));
@@ -54,7 +49,7 @@ export class DIDDocument {
 
     public createJWT(properties: any, validityDays: number, storePass: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.pluginDidDocument.createJWT(properties, validityDays, storePass, async (jwtToken) => {
+            this.pluginDidDocument.createJWT(properties, validityDays, storePass, (jwtToken) => {
                 resolve(jwtToken);
             }, (err) => {
                 Logger.error('identity', "Delete credential exception", err);
@@ -92,16 +87,6 @@ export class DIDDocument {
         await LocalStorage.instance.set(this.updatedFieldStorageKey(), (new Date()).toISOString());
     }
 
-    setCounter() {
-        this.timer = 300; // 5 minutes/300 seconds
-        let countdownTimer = setInterval(() => {
-            this.timer--;
-            if (this.timer <= 0) {
-                clearInterval(countdownTimer);
-            }
-        }, 1000);
-    }
-
     /**
      * Retrieve a credential from the given credential id.
      */
@@ -126,26 +111,20 @@ export class DIDDocument {
      */
     publish(storepass: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            if (this.timer <= 0) {
-                this.pluginDidDocument.publish(
-                    storepass,
-                    () => {
-                        // Set timer so user can't publish more than once in 5 minutes
-                        this.setCounter()
-                        resolve()
-                    },
-                    (err) => {
-                        //
-                        if (typeof (err) === "string" && err.includes("have not run authority")) {
-                            reject(new ApiNoAuthorityException(err));
-                        } else {
-                            reject(DIDHelper.reworkedPluginException(err))
-                        }
-                    },
-                );
-            } else {
-                reject(new Error('publish-wait'));
-            }
+            this.pluginDidDocument.publish(
+                storepass,
+                () => {
+                    resolve();
+                },
+                (err) => {
+                    //
+                    if (typeof (err) === "string" && err.includes("have not run authority")) {
+                        reject(new ApiNoAuthorityException(err));
+                    } else {
+                        reject(DIDHelper.reworkedPluginException(err))
+                    }
+                },
+            );
         });
     }
 
@@ -163,7 +142,7 @@ export class DIDDocument {
 
     public addService(service: DIDPlugin.Service, storePass: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.pluginDidDocument.addService(service, storePass, async () => {
+            this.pluginDidDocument.addService(service, storePass, () => {
                 resolve();
             }, (err) => {
                 Logger.error('identity', "AddService exception", err);
@@ -182,7 +161,7 @@ export class DIDDocument {
 
     public removeService(didUrl: DIDPlugin.DIDURL, storePass: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.pluginDidDocument.removeService(didUrl, storePass, async () => {
+            this.pluginDidDocument.removeService(didUrl, storePass, () => {
                 resolve();
             }, (err) => {
                 Logger.error('identity', "RemoveService exception", err);

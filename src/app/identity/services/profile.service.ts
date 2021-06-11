@@ -363,20 +363,21 @@ export class ProfileService {
     return false;
   }
 
-  publish() {
+  public publish() {
     void this.native.go("/identity/publish");
   }
 
-  public async fetchPublishedDIDDocument(): Promise<DIDDocument> {
-    if (this.publishedDIDDocument != null) {
-      return this.publishedDIDDocument;
-    }
-
+  public fetchPublishedDIDDocument(): Promise<DIDDocument> {
     Logger.log("identity", "profile getDIDDocumentFromDID")
 
     this.fetchingPublishedDIDDocument = true;
     this.fetchedPublishedDIDDocument = false;
     return new Promise((resolve) => {
+      if (this.publishedDIDDocument != null) {
+        resolve(this.publishedDIDDocument);
+        return;
+      }
+
       let didString = this.didService.getActiveDid().getDIDString();
       this.didSyncService
         .getDIDDocumentFromDID(didString)
@@ -472,7 +473,7 @@ export class ProfileService {
     If confirmed by user under edit-visibility mode, start publishing data/credentials
   ************************************************************************************/
   public publishDIDDocumentReal() {
-    AuthService.instance.checkPasswordThenExecute(
+    void AuthService.instance.checkPasswordThenExecute(
       async () => {
         let password = AuthService.instance.getCurrentUserPassword();
 

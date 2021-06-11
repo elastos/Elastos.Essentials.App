@@ -7,12 +7,13 @@ import { ShowQRCodeComponent } from "./showqrcode/showqrcode.component";
 import { QRCodeModule } from "angularx-qrcode";
 import { PrintoptionsComponent } from "./printoptions/printoptions.component";
 import { SuccessComponent } from "./success/success.component";
-
+import { PublishModeComponent } from "./publishmode/publishmode.component";
 
 @NgModule({
   declarations: [
     ShowQRCodeComponent,
-    PrintoptionsComponent
+    PrintoptionsComponent,
+    PublishModeComponent
   ],
   imports: [
     CommonModule,
@@ -23,12 +24,9 @@ import { SuccessComponent } from "./success/success.component";
   ],
   exports: [
     ShowQRCodeComponent,
-    PrintoptionsComponent
+    PrintoptionsComponent,
+    PublishModeComponent
   ],
-  providers: [
-  ],
-  entryComponents: [
-    PrintoptionsComponent
-  ],
+  providers: []
 })
 export class ComponentsModule {}

@@ -235,6 +235,10 @@ export class MyProfilePage {
   ionViewDidEnter() {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
+
+    // TMP DEBUG
+    console.log("PUBLISHREAL")
+    this.profileService.publishDIDDocumentReal();
   }
 
   ionViewWillLeave() {
@@ -372,7 +376,7 @@ export class MyProfilePage {
   /***** Find and build app and avatar creds *****/
   buildAppAndAvatarCreds(publishAvatar?: boolean) {
     this.profileService.appCreds = [];
-    let hasAvatar: boolean = false;
+    let hasAvatar = false;
 
     this.profileService.visibleCredentials.map((cred) => {
       // Find App Credentials
@@ -737,9 +741,5 @@ export class MyProfilePage {
 
   exportMnemonic() {
     return this.globalNav.navigateTo("identitybackup", "/identity/backupdid");
-  }
-
-  testPage() {
-    return this.native.go("/identity/publishing")
   }
 }

@@ -1,46 +1,28 @@
-<ion-content *ngIf="startFlow">
+<ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="ion-text-center" [class.dark-process-container]="theme.darkMode">
-    <ion-row class="steps-row">
-      <ion-col size="12">
-        <ion-label>
-          <h1>{{ 'identity.publishing.create-did' | translate }}</h1>
-          <h2>{{ 'identity.publishing.create-did-msg' | translate }}</h2>
-        </ion-label>
-        <ion-icon class="done" name="checkmark-circle-outline"></ion-icon>
-      </ion-col>
-    </ion-row>
-    <ion-icon name="arrow-down-circle-outline"></ion-icon>
-    <ion-row class="steps-row">
+    <ion-row>
       <ion-col size="12">
         <ion-label>
           <h1>{{ 'identity.publishing.publish-did' | translate }}</h1>
-          <h2>{{ 'identity.publishing.publish-did-msg' | translate }}</h2>
+          <h2>Your identity is being published online, please wait a few seconds.</h2>
         </ion-label>
-        <ion-icon *ngIf="isDIDOnChain()" class="done" name="checkmark-circle-outline"></ion-icon>
-        <ion-icon *ngIf="!isDIDOnChain() && !isDIDBeingPublished()" class="pending" name="timer-outline"></ion-icon>
-        <ion-spinner *ngIf="!isDIDOnChain() && isDIDBeingPublished()" name="crescent"></ion-spinner>
+        <ion-spinner *ngIf="publishing"></ion-spinner>
+
+        <div class="success-row" [class.darkContainer]="theme.darkMode" *ngIf="publicationSuccessful">
+          <lottie-player src="../../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 100px; height: 100px;" autoplay></lottie-player>
+        </div>
+
+        <div *ngIf="publicationFailed">
+          <h2>Publication error</h2>
+        </div>
       </ion-col>
     </ion-row>
-
-    <div *ngIf="!isDIDOnChain()" class="progress-msg">
-      <p>{{ 'identity.publishing.progress-msg' | translate }}</p>
-    </div>
-
-    <div *ngIf="isDIDOnChain()" class="done-msg">
-      <lottie-player src="/assets/wallet/animations/success.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay></lottie-player>
-      <p>{{ 'identity.publishing.done-msg' | translate }}</p>
-    </div>
-
   </ion-grid>
 
   <div class="footer">
-    <div *ngIf="isDIDOnChain()" class="ion-margin-bottom">
-      <p><strong>{{ getProgress() }}</strong><span>% {{ 'identity.publishing.takes-long-time' | translate }}</span></p>
-      <ion-progress-bar mode="ios" color="tertiary" type="determinate" [value]="progress"></ion-progress-bar>
-    </div>
-    <ion-button color="tertiary" (click)="returnHome()">
-      {{ 'common.back' | translate }}
+    <ion-button color="tertiary" (click)="returnHome()" *ngIf="publicationFailed">
+      {{ 'common.close' | translate }}
     </ion-button>
   </div>
 </ion-content>

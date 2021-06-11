@@ -10,7 +10,7 @@ import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuIte
 import { Logger } from 'src/app/logger';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { sleep } from 'src/app/helpers/sleep.helper';
-import { GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
@@ -245,7 +245,7 @@ export class PrepareDIDPage {
     try {
       await Promise.all([
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
-        // TMP NOT USED WAITING FOR DID 2.0 - this.globalPublicationService.publishIdentity()
+        this.publishIdentityReal()
       ]);
 
       // Resolve the published DID to make sure everything is all right
@@ -262,6 +262,30 @@ export class PrepareDIDPage {
       this.publishError = "Failed to publish identity: " + e;
       return false;
     }
+  }
+
+  private publishIdentityReal(): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    return new Promise<boolean>((resolve) => {
+      void this.globalPublicationService.resetStatus();
+      let publicationStatusSub = this.globalPublicationService.publicationStatus.subscribe((status)=>{
+        if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+          Logger.log("didsessions", "Identity publication success");
+          publicationStatusSub.unsubscribe();
+          resolve(true);
+        }
+        else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+          Logger.log("didsessions", "Identity publication failure");
+          publicationStatusSub.unsubscribe();
+          resolve(false);
+        }
+      });
+
+      void this.globalPublicationService.publishDIDFromStore(
+        this.identityService.identityBeingCreated.didStore.getId(),
+        this.identityService.identityBeingCreated.storePass,
+        this.identityService.identityBeingCreated.did.getDIDString());
+    });
   }
 
   private async signIn(): Promise<boolean> {

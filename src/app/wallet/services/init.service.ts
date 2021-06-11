@@ -24,7 +24,7 @@ import { Util } from 'src/app/didsessions/services/util';
 })
 export class WalletInitService extends GlobalService {
   private walletServiceInitialized = false;
-  private waitforServiceInitialized = false;
+  private waitForServiceInitialized = false;
   private subscription: Subscription = null;
 
   constructor(
@@ -101,13 +101,13 @@ export class WalletInitService extends GlobalService {
     if (this.walletServiceInitialized) {
       this.navService.showStartupScreen();
     } else {
-      if (!this.waitforServiceInitialized) {
-        this.waitforServiceInitialized = true;
+      if (!this.waitForServiceInitialized) {
+        this.waitForServiceInitialized = true;
         // Wait until the wallet manager is ready before showing the first screen.
         let subscription = this.events.subscribe("walletmanager:initialized", () => {
           Logger.log("wallet", "walletmanager:initialized event received, showStartupScreen");
           this.navService.showStartupScreen();
-          this.waitforServiceInitialized = false;
+          this.waitForServiceInitialized = false;
           subscription.unsubscribe();
         });
       } else {
