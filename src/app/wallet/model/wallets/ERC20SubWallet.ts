@@ -177,17 +177,16 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-      // TODO: show the right info.
-      // const contractAddress = this.coin.getContractAddress();
-      // let ethscSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
-      // return ethscSubwallet.getTokenTransactions(contractAddress);
-      return null
+        // TODO: show the right info.
+        const contractAddress = this.coin.getContractAddress();
+        let ethscSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
+        return ethscSubwallet.getTokenTransactions(contractAddress);
     }
 
     public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
-      let result = await this.jsonRPCService.eth_getTransactionByHash(txid);
-      Logger.warn('wallet', 'ERC20 getTransactionDetails:', result);
-      return result;
+        let result = await this.jsonRPCService.eth_getTransactionReceipt(StandardCoinName.ETHSC, txid);
+        Logger.warn('wallet', 'ERC20 getTransactionDetails:', result);
+        return result;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
@@ -321,7 +320,7 @@ export class ERC20SubWallet extends SubWallet {
 
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
-      let txid = await this.jsonRPCService.eth_sendRawTransaction(obj.TxSigned);
+      let txid = await this.jsonRPCService.eth_sendRawTransaction(StandardCoinName.ETHSC, obj.TxSigned);
       return txid;
     }
 
@@ -376,7 +375,7 @@ export class ERC20SubWallet extends SubWallet {
     private async getNonce() {
       const address = await this.getTokenAccountAddress();
       try {
-        return this.jsonRPCService.getETHSCNonce(address);
+        return this.jsonRPCService.getETHSCNonce(StandardCoinName.ETHSC, address);
       }
       catch (err) {
         Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);

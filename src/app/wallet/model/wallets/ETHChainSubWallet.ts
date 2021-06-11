@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
 import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
-import { StandardCoinName } from '../Coin';
+import { CoinID, StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
@@ -22,10 +22,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
     private txArrayToDisplay: AllTransactionsHistory = null;
     private tokenList: WalletPlugin.ERC20TokenInfo[] = null;
 
-    constructor(masterWallet: MasterWallet) {
-        super(masterWallet, StandardCoinName.ETHSC);
+    constructor(masterWallet: MasterWallet, id: StandardCoinName) {
+        super(masterWallet, id);
 
         this.initWeb3();
+        this.updateBalance();
     }
 
     public async getTokenAddress(): Promise<string> {
@@ -64,7 +65,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     public async getTransactionsByRpc() {
       const address = await this.getTokenAddress();
-      let result = await this.jsonRPCService.getETHSCTransactions(address);
+      let result = await this.jsonRPCService.getETHSCTransactions(this.id as StandardCoinName, address);
       if (result) {
         Logger.warn('wallet', 'ETHSC getTransactions:', result);
         if (this.txArrayToDisplay == null) {
@@ -81,7 +82,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-      let result = await this.jsonRPCService.eth_getTransactionByHash(txid);
+      let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
       Logger.warn('wallet', 'ETHSC getTransactionDetails:', result);
       return result;
     }
@@ -228,7 +229,9 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     public async updateBalance(): Promise<void> {
-        this.balance = await this.getBalanceByWeb3();
+        // this.balance = await this.getBalanceByWeb3();
+        const address = await this.getTokenAddress();
+        this.balance = await this.jsonRPCService.eth_getBalance(this.id as StandardCoinName, address);
     }
 
     public async getERC20TokenList(): Promise<WalletPlugin.ERC20TokenInfo[]> {
@@ -288,7 +291,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
-      let txid = await this.jsonRPCService.eth_sendRawTransaction(obj.TxSigned);
+      let txid = await this.jsonRPCService.eth_sendRawTransaction(this.id as StandardCoinName, obj.TxSigned);
       return txid;
     }
 
@@ -302,7 +305,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
     public async getNonce() {
       const address = await this.getTokenAddress();
       try {
-        return this.jsonRPCService.getETHSCNonce(address);
+        return this.jsonRPCService.getETHSCNonce(this.id as StandardCoinName, address);
       }
       catch (err) {
         Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);

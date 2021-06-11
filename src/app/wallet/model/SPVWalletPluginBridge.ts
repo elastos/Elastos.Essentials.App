@@ -158,9 +158,9 @@ export class SPVWalletPluginBridge {
     ) {
     }
 
-    public setNetwork(netType: string, config: string, jsonrpcUrl: string, apimiscUrl: string): Promise<void> {
+    public setNetwork(netType: string, config: string): Promise<void> {
         return new Promise((resolve, reject)=>{
-             walletManager.setNetwork([netType, config, jsonrpcUrl, apimiscUrl],
+             walletManager.setNetwork([netType, config],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });

@@ -23,7 +23,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   private votingAmountSELA = 0; // ELA
   private votingUtxoArray: Utxo[] = null;
 
-  private rawTxArray: AllTransactionsHistory[] = [];
+  private rawTxArray: AllTransactionsHistory[] = null;
   private txArrayToDisplay: AllTransactionsHistory = {totalcount:0, txhistory:[]};
   private needtoLoadMoreAddresses: string[] = [];
   private TRANSACTION_LIMIT = 50;// for rpc
@@ -38,13 +38,18 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     setTimeout(async () => {
       await this.checkAddresses();
+      await this.updateBalance();
+      // await this.getTransactionByRPC();
       if (id === StandardCoinName.ELA) {
         await this.getVotingUtxoByRPC();
       }
-    }, 5000);
+    }, 3000);
   }
 
   public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
+    if (null == this.rawTxArray) {
+      await this.getTransactionByRPC();
+    }
     if ((startIndex + 20 > this.txArrayToDisplay.txhistory.length) && (this.needtoLoadMoreAddresses.length > 0)) {
       await this.getMoreTransactionByRPC(++this.loadMoreTimes);
     }
@@ -546,11 +551,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           // Logger.warn('wallet', 'realtxid:', realtxid);
 
           if (txDetail.payload.genesisblockaddress === Config.ETHSC_ADDRESS) {
-            let result = await this.jsonRPCService.getETHSCTransactionByHash(realtxid);
+            let result = await this.jsonRPCService.getETHSCTransactionByHash(this.id as StandardCoinName, realtxid);
             if (result && result.from) {
               targetAddress = result.from;
             }
           } else if (txDetail.payload.genesisblockaddress === Config.IDCHAIN_ADDRESS) {
+            // TODO: get the real address.
+          } else if (txDetail.payload.genesisblockaddress === Config.ETHDID_ADDRESS) {
             // TODO: get the real address.
           } else {
             Logger.error('wallet', 'Can not find the chain for genesis block address:', txDetail.payload.genesisblockaddress);
