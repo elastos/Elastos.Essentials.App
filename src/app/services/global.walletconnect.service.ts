@@ -12,13 +12,12 @@ import { GlobalStorageService } from './global.storage.service';
 import { GlobalNativeService } from './global.native.service';
 import { GlobalService } from './global.service.manager';
 
-declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
-
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalWalletConnectService extends GlobalService {
   private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
+  private initiatingConnector: WalletConnect = null;
 
   constructor(
     private zone: NgZone,
@@ -93,7 +92,9 @@ export class GlobalWalletConnectService extends GlobalService {
     // between a few ms and a few seconds depending on the network, we want to show a temporary screen
     // to let the user wait.
     // TODO: PROBABLY REPLACE THIS WITH A CANCELLABLE DIALOG, FULL SCREEN IS UGLY
-    await this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/preparetoconnect", {});
+    this.zone.run(() => {
+      void this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/preparetoconnect", {});
+    });
 
     // Create connector
     let connector = new WalletConnect(
@@ -116,6 +117,9 @@ export class GlobalWalletConnectService extends GlobalService {
       } */
     );
 
+    // Remember this connector for a while, for example to be able to reject the session request
+    this.initiatingConnector = connector;
+
     // TODO: wallet connect automatically reuses the persisted session from storage, if one waas
     // established earlier. for debug purpose, we just always disconnect before reconnecting.
     /* if (this.connector.connected) {
@@ -130,6 +134,7 @@ export class GlobalWalletConnectService extends GlobalService {
     Logger.log("walletconnect", "CONNECTOR", connector);
 
     this.prepareConnectorForEvents(connector);
+    //this.startConnectionFailureWatchdog(uri, connector);
   }
 
   private prepareConnectorForEvents(connector: WalletConnect) {
@@ -143,6 +148,7 @@ export class GlobalWalletConnectService extends GlobalService {
         throw error;
       }
 
+      this.initiatingConnector = null;
       this.handleSessionRequest(connector, payload.params[0]);
     });
 
@@ -164,9 +170,45 @@ export class GlobalWalletConnectService extends GlobalService {
         throw error;
       }
 
+      this.initiatingConnector = null;
       this.connectors.delete(connector.key);
       this.deleteSession(connector.session);
     });
+  }
+
+  /**
+   * Starts a timer that checks if a connection cannot be established.
+   * In such case, we try to automatically kill and delete all existing sessions, and we restart
+   * a connection attempt.
+   */
+  /* private startConnectionFailureWatchdog(uri: string, connector: WalletConnect) {
+    let connectionWatchdogTimer = setTimeout(async () => {
+      if (!connector.connected) {
+        Logger.log("walletconnect", "Watchdog - killing all stored sessions to see if this cleanup can help...");
+        await this.killAllSessions();
+      }
+    }, 5000);
+  } */
+
+  public async killAllSessions(): Promise<void> {
+    let sessions = await this.loadSessions();
+
+    Logger.log("walletconnect", "Killing "+sessions.length+" sessions from persistent storage", sessions);
+    // Kill stored connections
+    for (let session of sessions) {
+      let connector = new WalletConnect({
+        session: session
+      });
+      try {
+        await connector.killSession();
+      }
+      catch (e) {
+        Logger.warn("walletconnect", "Error while killing WC session", connector, e);
+      }
+      await this.deleteSession(session);
+    }
+
+    Logger.log("walletconnect", "Killed all sessions");
   }
 
   /* payload sample:
@@ -190,15 +232,19 @@ export class GlobalWalletConnectService extends GlobalService {
     ]
   }
   */
-  private handleSessionRequest(connector: WalletConnect, request: SessionRequestParams) {
+  private async handleSessionRequest(connector: WalletConnect, request: SessionRequestParams): Promise<void> {
+    this.zone.run(async ()=>{
+      // Hide "prepare to connect" first
+      await this.nav.exitCurrentContext(false);
       // User UI prompt
-      this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/connect", {
+      await this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/connect", {
         //connectorKey: connector.key,
         queryParams: {
           connectorKey: connector.key,
           request
         }
       });
+    });
   }
 
   /* payload:
@@ -264,7 +310,7 @@ export class GlobalWalletConnectService extends GlobalService {
 
     // Because for now we don't close Essentials after handling wallet connect requests, we simply
     // inform users to manually "alt tab" to return to the app they are coming from.
-    this.native.genericToast("Operation completed, please return to the original app.", 4000);
+    this.native.genericToast("Operation completed, please return to the original app.", 2000);
   }
 
   /**
@@ -330,11 +376,21 @@ export class GlobalWalletConnectService extends GlobalService {
     await this.saveSession(connector.session);
   }
 
-  public rejectSession() {
+  public rejectSession(reason: string) {
+    Logger.log("walletconnect", "Rejecting session request");
+
     // Reject Session
-    /* TODO connector.rejectSession({
-      message: 'OPTIONAL_ERROR_MESSAGE'       // optional
-    }) */
+    if (this.initiatingConnector) {
+      try {
+        this.initiatingConnector.rejectSession({
+          message: reason   // optional
+        });
+      }
+      catch (e) {
+        Logger.warn("walletconnect", "Reject session error:", e);
+      }
+      this.initiatingConnector = null;
+    }
   }
 
   public async killSession(connector: WalletConnect) {

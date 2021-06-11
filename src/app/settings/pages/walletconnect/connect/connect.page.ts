@@ -15,6 +15,8 @@ import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
 import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Platform } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-connect',
@@ -29,6 +31,7 @@ export class WalletConnectConnectPage implements OnInit {
     request: SessionRequestParams
   };
   public ethAccounts: string[] = [];
+  private backSubscription: Subscription = null;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -41,6 +44,7 @@ export class WalletConnectConnectPage implements OnInit {
     private walletConnect: GlobalWalletConnectService,
     private walletManager: WalletManager,
     private nav: GlobalNavService,
+    private platform: Platform,
     private native: GlobalNativeService
   ) { }
 
@@ -61,12 +65,21 @@ export class WalletConnectConnectPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-request'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+      // Close
+      await this.walletConnect.rejectSession("Scanning again");
       this.titleBar.globalNav.exitCurrentContext();
+    });
+
+    // Catch android back key to reject the session
+    this.backSubscription = this.platform.backButton.subscribeWithPriority(0, (processNext) => {
+      this.walletConnect.rejectSession("Scanning again");
+      processNext();
     });
   }
 
   ionViewWillLeave() {
+    this.backSubscription.unsubscribe();
   }
 
   async openSession() {
@@ -75,6 +88,6 @@ export class WalletConnectConnectPage implements OnInit {
 
     // Because for now we don't close Essentials after handling wallet connect requests, we simply
     // inform users to manually "alt tab" to return to the app they are coming from.
-    this.native.genericToast("Operation completed, please return to the original app.", 4000);
+    this.native.genericToast("Operation completed, please return to the original app.", 2000);
   }
 }

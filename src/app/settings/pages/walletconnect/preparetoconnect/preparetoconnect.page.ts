@@ -14,6 +14,7 @@ import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
 import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-preparetoconnect',
@@ -25,6 +26,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
 
   public suggestToResetSession = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+  private watchdogTimer: any; // Timeout by setTimeout()
 
   constructor(
     private zone: NgZone,
@@ -34,8 +36,10 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
     public translate: TranslateService,
     private route: ActivatedRoute,
     private walletConnect: GlobalWalletConnectService,
+    private globalNav: GlobalNavService,
     private walletManager: WalletManager,
-    private nav: GlobalNavService
+    private nav: GlobalNavService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -46,26 +50,36 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.titleBar.globalNav.exitCurrentContext();
+      // Close
+      this.walletConnect.rejectSession("Cancelled by user");
+      void this.titleBar.globalNav.exitCurrentContext();
     });
 
     // Suggest user to delete a potential wallet connect session after a while in case he doesn't
     // receive any "session_request" event.
     this.suggestToResetSession = false;
-    setTimeout(() => {
+    this.watchdogTimer = setTimeout(() => {
       this.zone.run(()=>{
         this.suggestToResetSession = true;
+        this.walletConnect.killAllSessions();
       });
-    }, 5000);
+    }, 15000);
   }
 
   ionViewDidEnter() {
   }
 
   ionViewWillLeave() {
+    // Important: stop the watchdog timer to not get sessions killed after a successful connection
+    clearTimeout(this.watchdogTimer);
+  }
+
+  public async scanAgain() {
+    await this.walletConnect.rejectSession("Scanning again");
+    await this.globalNav.navigateTo("scanner", '/scanner/scan');
   }
 
   viewSessions() {
-    this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/sessions");
+    void this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/sessions");
   }
 }

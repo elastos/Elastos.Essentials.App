@@ -116,7 +116,7 @@ export class AppComponent {
         });
     }
 
-    /**
+  /**
    * Listen to back key events. If the default router can go back, just go back.
    * Otherwise, exit the application.
    */
