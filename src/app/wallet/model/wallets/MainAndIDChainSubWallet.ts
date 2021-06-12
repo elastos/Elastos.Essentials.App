@@ -189,6 +189,19 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     );
   }
 
+  public async createIDTransaction(payload: string, memo: string = ""): Promise<string> {
+    let utxo = await this.getUtxo(20000);
+
+    return this.masterWallet.walletManager.spvBridge.createIdTransaction(
+      this.masterWallet.id,
+      this.id,
+      JSON.stringify(utxo),
+      payload,
+      memo, // User input memo
+      '10000',
+    );
+  }
+
   public async publishTransaction(transaction: string): Promise<string>{
     let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
       this.masterWallet.id,
@@ -651,6 +664,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
   mergeTransactionList() {
     Logger.log('wallet', 'mergeTransactionList timestamp:[', this.timestampStart, ', ', this.timestampEnd, ']');
+
     // Get the txhistory between the timestampStart and timestampEnd.
     for (let i = 0, len = this.rawTxArray.length ; i < len; i++) {
       for (const txhistory of this.rawTxArray[i].txhistory) {

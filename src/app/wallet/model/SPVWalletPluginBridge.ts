@@ -521,9 +521,9 @@ export class SPVWalletPluginBridge {
 
     // IDChainSubWallet
 
-    createIdTransaction(masterWalletId: string, chainId: string, payloadJson: string, memo: string): Promise<string> {
+    createIdTransaction(masterWalletId: string, chainId: string, inputs: string, payloadJson: string, memo: string, fee: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createIdTransaction([masterWalletId, chainId, payloadJson, memo],
+            walletManager.createIdTransaction([masterWalletId, chainId, inputs, payloadJson, memo, fee],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });

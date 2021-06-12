@@ -120,10 +120,15 @@ export class JsonRPCService {
                 // wait 100ms?
             }
         } while (++retryTimes < JsonRPCService.RETRY_TIMES);
-        // Logger.warn('wallet', 'transactionsArray:',transactionsArray)
-        return transactionsArray.filter(c => {
-          return c.result && (c.result.totalcount > 0);
-        });
+
+        if (transactionsArray === null) {
+          return [];
+        } else {
+          // Logger.warn('wallet', 'transactionsArray:',transactionsArray)
+          return transactionsArray.filter(c => {
+            return c.result && (c.result.totalcount > 0);
+          });
+        }
     }
 
     async getrawtransaction(chainID: StandardCoinName, txid: string): Promise<TransactionDetail> {
@@ -296,7 +301,7 @@ export class JsonRPCService {
 
       const rpcApiUrl = this.getRPCApiUrl(chainID);
       if (rpcApiUrl.length === 0) {
-          '';
+          return '';
       }
 
       try {
@@ -314,7 +319,7 @@ export class JsonRPCService {
 
       const rpcApiUrl = this.getRPCApiUrl(chainID);
       if (rpcApiUrl.length === 0) {
-          -1;
+          return -1;
       }
 
       try {
@@ -360,7 +365,7 @@ export class JsonRPCService {
 
       const rpcApiUrl = this.getRPCApiUrl(chainID);
       if (rpcApiUrl.length === 0) {
-          -1;
+          return -1;
       }
 
       try {
@@ -402,7 +407,7 @@ export class JsonRPCService {
 
       const rpcApiUrl = this.getRPCApiUrl(chainID);
       if (rpcApiUrl.length === 0) {
-          '';
+          return '';
       }
 
       try {
@@ -427,7 +432,7 @@ export class JsonRPCService {
 
       const rpcApiUrl = this.getRPCApiUrl(chainID);
       if (rpcApiUrl.length === 0) {
-          '';
+          return '';
       }
 
       try {
@@ -440,29 +445,31 @@ export class JsonRPCService {
 
 
     // ERC20 Token
-    async eth_getTransactionReceipt(chainID: StandardCoinName, txHash: string) {
-      if (!txHash.startsWith('0x')) {
-        txHash = '0x' + txHash;
+    async eth_getTransactionReceipt(chainID: StandardCoinName, txidArray: string[]): Promise<any> {
+      const paramArray = [];
+      for (let i = 0, len = txidArray.length; i < len; i++) {
+        const txid = txidArray[i];
+        const param = {
+            method: 'eth_getTransactionReceipt',
+            params: [
+              txid
+            ],
+            id: i.toString()
+        };
+        paramArray.push(param);
       }
-      const param = {
-          method: 'eth_getTransactionReceipt',
-          params: [
-            txHash
-          ],
-          id: '1'
-      };
 
       const rpcApiUrl = this.getRPCApiUrl(chainID);
       if (rpcApiUrl.length === 0) {
-          '';
+          return null;
       }
 
       try {
-          return this.httpRequest(rpcApiUrl, param);
+          return this.httpRequest(rpcApiUrl, paramArray);
       } catch (e) {
         Logger.error('wallet', 'eth_getTransactionReceipt error:', e)
       }
-      return '';
+      return null;
     }
 
     getRPCApiUrl(chainID: string) {

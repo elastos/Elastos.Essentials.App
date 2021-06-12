@@ -129,13 +129,10 @@ export class DidTransactionPage implements OnInit {
     async createIDTransaction() {
         Logger.log('wallet', 'Calling createIdTransaction(): ', this.coinTransferService.didrequest);
 
-        const rawTx =
-            await this.walletManager.spvBridge.createIdTransaction(
-                this.masterWallet.id,
-                this.chainId,
-                this.coinTransferService.didrequest,
-                '' // Memo not necessary
-            );
+        const rawTx = await (this.sourceSubwallet as MainAndIDChainSubWallet).createIDTransaction(
+              this.coinTransferService.didrequest,
+              '', // Memo, not necessary
+          );
 
         Logger.log('wallet', 'Created raw DID transaction:', rawTx);
 

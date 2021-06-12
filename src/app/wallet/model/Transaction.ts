@@ -231,33 +231,6 @@ export type EthTransaction = TransactionHistory & {
   Direction: TransactionDirection;
 };
 
-// Returned from spvsdk
-// export type EthTransaction = TransactionHistory & {
-//   Amount: string;
-//   BlockNumber: number;
-//   Confirmations: number;
-//   ErrorDesc: string;
-//   Fee: number;
-//   GasLimit: number;
-//   GasPrice: string;
-//   GasUsed: number;
-//   Hash: string;
-//   ID: string;
-//   IsConfirmed: boolean;
-//   IsErrored: boolean;
-//   IsSubmitted: boolean;
-//   OriginTxHash: string;
-//   SourceAddress: string;
-//   TargetAddress: string;
-//   Timestamp: number;
-//   Direction: TransactionDirection;
-
-//   Token: string;
-//   TokenAddress: string;
-//   TokenAmount: string;
-//   TokenFunction: string;
-// };
-
 // Raw list of transactions as received from the rpc.
 export type AllTransactionsHistory = {
     totalcount?: number,
@@ -318,7 +291,6 @@ export type TransactionDetail = {
   time: number;
   blocktime: number;
 }
-
 
 export type Utxo = {
     address: string;

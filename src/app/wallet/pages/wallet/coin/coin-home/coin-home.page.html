@@ -71,9 +71,8 @@
             <div class="arrow-down"></div>
         </ion-row>
         <ion-row class="list-title-row">
-            <ion-col size="12">
                 <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
-            </ion-col>
+                <h2 *ngIf="chainIsERC20()">{{ 'wallet.erc20-diaplay-sending' | translate }}</h2>
         </ion-row>
         <div *ngIf="transferList.length > 0">
             <ion-row

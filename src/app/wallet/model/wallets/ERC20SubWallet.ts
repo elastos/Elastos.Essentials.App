@@ -12,6 +12,8 @@ import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { ETHChainSubWallet } from './ETHChainSubWallet';
+import { Config } from '../../config/Config';
+import { TransactionReceipt } from 'web3-core';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -177,16 +179,39 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-        // TODO: show the right info.
+        // TODO: cache transactions.
         const contractAddress = this.coin.getContractAddress();
         let ethscSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
-        return ethscSubwallet.getTokenTransactions(contractAddress);
+        let result = await ethscSubwallet.getTokenTransactions(contractAddress);
+
+        let txidArray = [];
+        for (let i = 0, len = result.txhistory.length; i < len; i++) {
+          txidArray.push((result.txhistory[i] as EthTransaction).hash)
+        }
+
+        let amountArray = await this.getTransactionAmount(txidArray);
+        for (let i = 0, len = result.txhistory.length; i < len; i++) {
+          (result.txhistory[i] as EthTransaction).value = amountArray[(result.txhistory[i] as EthTransaction).hash];
+        }
+        return result;
     }
 
-    public async getTransactionDetails(txid: string): Promise<TransactionDetail> {
-        let result = await this.jsonRPCService.eth_getTransactionReceipt(StandardCoinName.ETHSC, txid);
-        Logger.warn('wallet', 'ERC20 getTransactionDetails:', result);
-        return result;
+    public async getTransactionAmount(txidArray: string[]) {
+        let resultArray = await this.jsonRPCService.eth_getTransactionReceipt(StandardCoinName.ETHSC, txidArray);
+        let amountArray = {};
+        for (let i = 0, len = resultArray.length; i < len; i++) {
+          let result = resultArray[i].result as TransactionReceipt;
+          let amount : BigNumber;
+          if (result && result.logs && result.logs[0] && result.logs[0].data) {
+            const data = result.logs[0].data;
+            amount = this.tokenDecimals > 0 ? new BigNumber(data).dividedBy(this.tokenDecimals) : new BigNumber(data);
+          } else {
+            amount = new BigNumber(NaN);
+          }
+          // Use BigNumber?
+          amountArray[result.transactionHash] = amount.toString();
+        }
+        return amountArray;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
@@ -201,7 +226,7 @@ export class ERC20SubWallet extends SubWallet {
         transaction.Direction = direction;
 
         const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(-1), // Defined by inherited classes
+            amount: new BigNumber(transaction.value), // Defined by inherited classes
             confirmStatus: parseInt(transaction.confirmations), // Defined by inherited classes
             datetime,
             direction: direction,
@@ -218,8 +243,9 @@ export class ERC20SubWallet extends SubWallet {
             type: null, // Defined by inherited classes
         };
 
-        transactionInfo.amount = this.tokenDecimals > 0 ? new BigNumber(transaction.value).dividedBy(this.tokenDecimals) : new BigNumber(transaction.value);
-        transactionInfo.fee = (this.tokenDecimals > 0 ? new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(this.tokenDecimals) : transaction.gas).toString();
+        // Use Config.WEI: because the gas is ETHSC.
+        // transactionInfo.fee = (this.tokenDecimals > 0 ? new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI) : transaction.gas).toString();
+        transactionInfo.fee = (new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toString();
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = 'Confirmed';
