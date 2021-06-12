@@ -67,7 +67,6 @@ export class ETHChainSubWallet extends StandardSubWallet {
       const address = await this.getTokenAddress();
       let result = await this.jsonRPCService.getETHSCTransactions(this.id as StandardCoinName, address);
       if (result) {
-        Logger.warn('wallet', 'ETHSC getTransactions:', result);
         if (this.txArrayToDisplay == null) {
           // init
           this.txArrayToDisplay = {totalcount:0, txhistory:[]};
@@ -75,15 +74,12 @@ export class ETHChainSubWallet extends StandardSubWallet {
         if (result.length > 0) {
           this.txArrayToDisplay.totalcount = result.length;
           this.txArrayToDisplay.txhistory = result.reverse();
-
-          Logger.warn('wallet', 'ETHSC this.txArrayToDisplay:', this.txArrayToDisplay);
         }
       }
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
       let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
-      Logger.warn('wallet', 'ETHSC getTransactionDetails:', result);
       return result;
     }
 

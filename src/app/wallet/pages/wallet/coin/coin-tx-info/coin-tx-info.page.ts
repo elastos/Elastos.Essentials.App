@@ -57,7 +57,6 @@ export class CoinTxInfoPage implements OnInit {
 
     // Other Values
     public payFee: number = null;
-    public totalCost: BigNumber = null;
     // public payType: string = '';
     public targetAddress = '';
 
@@ -123,8 +122,6 @@ export class CoinTxInfoPage implements OnInit {
         if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
             // Pay Fee
             this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
-            // Total Cost
-            this.totalCost = this.payFee ? this.transactionInfo.amount.plus(this.payFee) : null;
 
             const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             // Address: sender address or receiver address
@@ -144,8 +141,6 @@ export class CoinTxInfoPage implements OnInit {
             // Pay Fee
             const newPayFee = new BigNumber(this.transactionInfo.fee);
             this.payFee = newPayFee.toNumber();
-            // Total Cost
-            this.totalCost = newPayFee ? this.transactionInfo.amount.plus(newPayFee) : null;
 
             const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             // Address
@@ -253,12 +248,6 @@ export class CoinTxInfoPage implements OnInit {
                     type: 'fees',
                     title: 'wallet.tx-info-transaction-fees',
                     value: this.payFee,
-                    show: true,
-                },
-                {
-                    type: 'cost',
-                    title: 'wallet.tx-info-cost',
-                    value: this.totalCost,
                     show: true,
                 },
             );
