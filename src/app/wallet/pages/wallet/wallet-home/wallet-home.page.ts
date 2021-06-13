@@ -206,7 +206,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             curMasterWallet = this.masterWalletList[index];
         }
 
-        await curMasterWallet.updateBalance();
+        await curMasterWallet.update();
         await curMasterWallet.updateERC20TokenList(this.prefs);
         curMasterWallet.getSubWalletBalance(StandardCoinName.ELA);
         this.currencyService.fetch();
