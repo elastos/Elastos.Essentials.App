@@ -131,7 +131,7 @@ export class CoinHomePage implements OnInit {
 
     async initData() {
         this.subWallet = this.masterWallet.getSubWallet(this.chainId);
-        this.subWallet.updateBalance();
+        await this.subWallet.update();
 
         this.pageNo = 0;
         this.start = 0;

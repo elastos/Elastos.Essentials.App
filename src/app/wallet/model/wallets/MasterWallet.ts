@@ -104,16 +104,22 @@ export class MasterWallet {
         // and canno't be stacked on top of ELA as we don't have a exchange rate for now.
         let balance = new BigNumber(0);
         for (let subWallet of Object.values(this.subWallets)) {
-            if (subWallet instanceof StandardSubWallet)
+            if (subWallet instanceof StandardSubWallet) {
+              if (!subWallet.balance.isNaN()) {
                 balance = balance.plus(subWallet.balance);
+              }
+            }
         }
 
         return balance.dividedBy(Config.SELAAsBigNumber);
     }
 
-    public async updateBalance() {
+    /**
+     * Update balance and transaction list.
+     */
+    public async update() {
         for (let subWallet of Object.values(this.subWallets)) {
-            await subWallet.updateBalance();
+            await subWallet.update();
         }
     }
 
