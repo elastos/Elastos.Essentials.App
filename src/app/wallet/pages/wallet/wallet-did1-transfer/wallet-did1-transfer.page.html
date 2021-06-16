@@ -1,0 +1,102 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div *ngIf="masterWallet" class="container" [class.dark-container]="theme.darkMode">
+        <!------------------ RECHARGE ------------------>
+        <ion-grid class="recharge-container" [class.recharge-dark-container]="theme.darkMode" [class.blur]="native.popup">
+            <ion-row class="main-title-row">
+                <ion-col size="12">
+                    <p>
+                        {{ 'wallet.wallet-settings-migrate-did1-intro' | translate }}
+                    </p>
+                </ion-col>
+            </ion-row>
+            <br/><br/>
+            <ion-row class="main-title-row">
+                <ion-col size="12">
+                    <p>{{ 'wallet.transfer-from' | translate }}</p>
+                </ion-col>
+            </ion-row>
+            <ion-row class="item-row">
+                <ion-col size="2.3" class="left-col">
+                    <img [src]="uiService.getSubWalletIcon(fromSubWallet)">
+                </ion-col>
+                <ion-col size="5.5" class="middle-col">
+                    <h1>{{ uiService.getSubwalletTitle(fromSubWallet) }}</h1>
+                    <p>{{ uiService.getSubwalletSubtitle(fromSubWallet) }}</p>
+                </ion-col>
+                <ion-col size="4.2" class="right-col">
+                    <h1>{{ uiService.getFixedBalance(fromSubWallet.getDisplayBalance()) }}</h1>
+                    <p *ngIf="fromSubWallet.getAmountInExternalCurrency(fromSubWallet.getDisplayBalance())">
+                        {{ fromSubWallet.getAmountInExternalCurrency(fromSubWallet.getDisplayBalance()) }}
+                        {{ currencyService.selectedCurrency.symbol }}
+                    </p>
+                </ion-col>
+                <div class="arrow-down"></div>
+            </ion-row>
+            <ion-row class="main-title-row">
+                <ion-col size="12">
+                    <p>{{ 'wallet.transfer-to' | translate }}</p>
+                </ion-col>
+            </ion-row>
+            <ion-row class="item-row">
+                <ion-col size="2.3" class="left-col">
+                    <img [src]="uiService.getSubWalletIcon(toSubWallet)">
+                </ion-col>
+                <ion-col size="5.5" class="middle-col">
+                    <h1>{{ uiService.getSubwalletTitle(toSubWallet) }}</h1>
+                    <p>{{ uiService.getSubwalletSubtitle(toSubWallet) }}</p>
+                </ion-col>
+                <ion-col size="4.2" class="right-col">
+                    <h1>{{ uiService.getFixedBalance(toSubWallet.getDisplayBalance()) }}</h1>
+                    <p *ngIf="toSubWallet.getAmountInExternalCurrency(toSubWallet.getDisplayBalance())">
+                        {{ toSubWallet.getAmountInExternalCurrency(toSubWallet.getDisplayBalance()) }}
+                        {{ currencyService.selectedCurrency.symbol }}
+                    </p>
+                </ion-col>
+                <div class="arrow-down"></div>
+            </ion-row>
+        </ion-grid>
+
+        <!------------------ SEND AND RECHARGE BUTTON ------------------>
+
+        <div
+            *ngIf="!native.popup && !keyboardIsVisible()"
+            class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode"
+        >
+            <ion-row class="btn-container">
+                <ion-button color="primary" [disabled]="!valuesValid()" (click)="goTransaction()">
+                    <ion-label>{{ 'wallet.withdraw' | translate }}</ion-label>
+                </ion-button>
+            </ion-row>
+        </div>
+    </div>
+
+</ion-content>
+
+<!------------------ RECHARGE AND SEND FOOTER ------------------>
+
+<!-- <ion-footer
+    *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3"
+    class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
+>
+
+</ion-footer>
+ -->
+<!------------------ PAY INTENT FOOTER ------------------>
+
+<!-- <ion-footer
+    class="pay-footer ion-no-border" [class.dark-pay-footer]="theme.darkMode"
+    *ngIf="transferType === 3"
+>
+    <p *ngIf="valuesReady()">{{ 'insufficient-balance' | translate }}</p>
+    <ion-row class="btn-row">
+        <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
+            <ion-label>{{ 'cancel' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-col>
+        <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="goTransaction()">
+            <ion-label>{{ 'confirm' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-col>
+    </ion-row>
+</ion-footer> -->

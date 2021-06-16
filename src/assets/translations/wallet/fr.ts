@@ -216,6 +216,9 @@ export const fr = {
         "wallet-settings-manage-coin-list-subtitle": "Sélectionnez les jetons à gérer dans votre portefeuille.",
         "wallet-settings-delete-wallet": "Supprimer le Portefeuille",
         "wallet-settings-delete-wallet-subtitle": "Votre argent ne sera pas supprimé. Vous pourrez réimporter votre portefeuille plus tard.",
+        "wallet-settings-migrate-did1": "Transfert des fonds DID 1.0",
+        "wallet-settings-migrate-did1-subtitle": "Transfert des ELA restants de la châine DID 1.0 obsolète vers la chaîne principale",
+        "wallet-settings-migrate-did1-intro": "Ceci est une opération unique. Vos fonds restants sur la chaîne DID 1.0 seront transférés vers la chaîne principale. Après cela, la chaîne DID 1.0 disparaîtra de votre portefeuille.",
         "delete-wallet-confirm-title": "Supprimer le Portefeuille",
         "delete-wallet-confirm-subtitle": "Votre portefeuille sera supprimé de cet appareil. Vous pourrez le réimporter plus tard mais veillez à enregistrer votre mnémonique avant la suppression.",
 
