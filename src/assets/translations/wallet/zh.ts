@@ -121,7 +121,6 @@ export const zh = {
         "coin-transaction-status-unconfirmed": "未确认",
         "text-coin-close-warning": "此币种将从列表中删除",
         "erc20-transactions": "ERC20币种交易",
-        "erc20-diaplay-sending":"只显示发送交易",
         "cannot-display": "目前无法显示",
 
         /*******************

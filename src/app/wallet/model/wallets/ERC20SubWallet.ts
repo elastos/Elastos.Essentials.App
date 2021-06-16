@@ -11,9 +11,7 @@ import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, Transac
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
-import { ETHChainSubWallet } from './ETHChainSubWallet';
 import { Config } from '../../config/Config';
-import { TransactionReceipt } from 'web3-core';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -182,38 +180,16 @@ export class ERC20SubWallet extends SubWallet {
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
         // TODO: cache transactions.
-        const contractAddress = this.coin.getContractAddress();
-        let ethscSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
-        let result = await ethscSubwallet.getTokenTransactions(contractAddress);
-
-        let txidArray = [];
-        for (let i = 0, len = result.txhistory.length; i < len; i++) {
-          txidArray.push((result.txhistory[i] as EthTransaction).hash)
+        const contractAddress = this.coin.getContractAddress().toLowerCase();
+        const tokenAccountAddress = await this.getTokenAccountAddress();
+        let result = await this.jsonRPCService.getERC20TokenTransactions(StandardCoinName.ETHSC, tokenAccountAddress);
+        if (result) {
+          let allTx = result.filter((tx)=> {
+            return tx.contractAddress === contractAddress
+          })
+          return {totalcount:allTx.length, txhistory:allTx};
         }
-
-        let amountArray = await this.getTransactionAmount(txidArray);
-        for (let i = 0, len = result.txhistory.length; i < len; i++) {
-          (result.txhistory[i] as EthTransaction).value = amountArray[(result.txhistory[i] as EthTransaction).hash];
-        }
-        return result;
-    }
-
-    public async getTransactionAmount(txidArray: string[]) {
-        let resultArray = await this.jsonRPCService.eth_getTransactionReceipt(StandardCoinName.ETHSC, txidArray);
-        let amountArray = {};
-        for (let i = 0, len = resultArray.length; i < len; i++) {
-          let result = resultArray[i].result as TransactionReceipt;
-          let amount : BigNumber;
-          if (result && result.logs && result.logs[0] && result.logs[0].data) {
-            const data = result.logs[0].data;
-            amount = this.tokenDecimals > 0 ? new BigNumber(data).dividedBy(this.tokenAmountMulipleTimes) : new BigNumber(data);
-          } else {
-            amount = new BigNumber(NaN);
-          }
-          // Use BigNumber?
-          amountArray[result.transactionHash] = amount.toString();
-        }
-        return amountArray;
+        return null;
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
@@ -222,10 +198,6 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
-        if (transaction.isError != '0') {
-          return null;
-        }
-
         const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 

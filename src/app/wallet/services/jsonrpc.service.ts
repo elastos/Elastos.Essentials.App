@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
-import { EthTransaction, TransactionDetail, UtxoType } from '../model/Transaction';
+import { EthTokenTransaction, EthTransaction, TransactionDetail, UtxoType } from '../model/Transaction';
 
 
 type JSONRPCResponse = {
@@ -30,8 +30,8 @@ export class JsonRPCService {
     private EIDMiscApiUrl = 'https://api-testnet.elastos.io/newid-misc';
 
     private hecoChainRPCApiUrl = 'https://http-mainnet.hecochain.com';
-
-
+    // Get ERC20 Token transactions from browser api.
+    private ethbrowserapiUrl = 'https://eth.elastos.io';
 
     static RETRY_TIMES = 3;
 
@@ -44,6 +44,7 @@ export class JsonRPCService {
         this.ethscRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
         this.ethscOracleRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.oracle');
         this.ethscMiscApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
+        this.ethbrowserapiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.browserapi');
     }
 
     // return balance in SELA
@@ -418,6 +419,17 @@ export class JsonRPCService {
       return '';
     }
 
+    async getERC20TokenTransactions(chainID: StandardCoinName, address: string): Promise<EthTokenTransaction[]> {
+      const ethscgetTokenTxsUrl = this.ethbrowserapiUrl + '/api/?module=account&action=tokentx&address=' + address;
+      try {
+          let result = await this.httpget(ethscgetTokenTxsUrl);
+          return result.result as EthTokenTransaction[];
+      } catch (e) {
+        Logger.error('wallet', 'getERC20TokenTransactions error:', e)
+      }
+      return null;
+    }
+
     async eth_sendRawTransaction(chainID: StandardCoinName, txHash: string) {
       if (!txHash.startsWith('0x')) {
         txHash = '0x' + txHash;
@@ -551,7 +563,7 @@ export class JsonRPCService {
     httpget(url): Promise<any> {
       return new Promise((resolve, reject)=>{
         this.http.get<any>(url).subscribe((res) => {
-            Logger.log('wallet', res);
+            // Logger.log('wallet', res);
             resolve(res);
         }, (err) => {
             Logger.error('wallet', 'http get error:', err);
