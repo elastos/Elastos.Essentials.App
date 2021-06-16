@@ -22,17 +22,13 @@
 
 import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
-import { Util } from '../../../model/Util';
 import { WalletManager } from '../../../services/wallet.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
-import { CoinTransferService, TransferType, Transfer } from '../../../services/cointransfer.service';
+import { TransferType, Transfer } from '../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../model/Coin';
 import { SubWallet } from '../../../model/wallets/SubWallet';
-import * as CryptoAddressResolvers from '../../../model/address-resolvers';
-import { HttpClient } from '@angular/common/http';
 import { TxConfirmComponent } from '../../../components/tx-confirm/tx-confirm.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
@@ -41,18 +37,14 @@ import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { TxSuccessComponent } from '../../../components/tx-success/tx-success.component';
-import { ContactsService } from '../../../services/contacts.service';
-import { ContactsComponent } from '../../../components/contacts/contacts.component';
 import { MainAndIDChainSubWallet } from '../../../model/wallets/MainAndIDChainSubWallet';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { WalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/wallet-chooser/wallet-chooser.component';
 
 /**
  * This screen is a legacy support to let users who have funds on DID 1 migrate them back to mainchain.
@@ -154,7 +146,8 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         // Setup params for withdraw transaction
         this.transaction = this.createWithdrawTransaction;
         this.toAddress = await this.toSubWallet.createAddress();
-        this.amount = this.fromSubWallet.balance.toNumber();
+        // Cross chain need 20000 SELA.
+        this.amount = this.fromSubWallet.getDisplayAmount(this.fromSubWallet.balance.minus(20000)).toNumber();
 
         Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
         Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -167,7 +160,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
     async createWithdrawTransaction() {
         const rawTx = await this.fromSubWallet.createWithdrawTransaction(
             this.toAddress,
-            -1, // -1 means send max in spvsdk.
+            this.amount,
             "Funds migration from DID 1.0 chain"
         );
 
@@ -191,31 +184,11 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
     }
 
     async goTransaction() {
-        if (this.valuesReady()) {
-            await this.startTransaction();
-        }
-    }
-
-    // For revealing button
-    valuesValid(): boolean {
-        return true;
-    }
-
-    // For starting tx
-    valuesReady(showToast = true): boolean {
-        return true;
+        await this.startTransaction();
     }
 
     async startTransaction() {
         const mainAndIDChainSubWallet = this.masterWallet.subWallets[this.chainId] as MainAndIDChainSubWallet;
-        const isAvailableBalanceEnough =
-            await mainAndIDChainSubWallet.isAvailableBalanceEnough(new BigNumber(this.amount).multipliedBy(Config.SELAAsBigNumber));
-
-        if (!isAvailableBalanceEnough) {
-            await this.native.toast_trans('wallet.transaction-pending');
-            return;
-        }
-
         try {
             const index = this.toAddress.indexOf(':');
             if (index !== -1) {
