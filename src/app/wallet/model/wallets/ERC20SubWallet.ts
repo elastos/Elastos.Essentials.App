@@ -22,6 +22,7 @@ export class ERC20SubWallet extends SubWallet {
     private web3: Web3;
     private erc20ABI: any;
     private tokenDecimals: number;
+    private tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
 
     private tokenAddress = '';
 
@@ -106,6 +107,7 @@ export class ERC20SubWallet extends SubWallet {
             const contractAddress = this.coin.getContractAddress();
             const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
             this.tokenDecimals = await erc20Contract.methods.decimals().call();
+            this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
 
             Logger.log('wallet', this.id+" decimals: ", this.tokenDecimals);
         } catch (error) {
@@ -163,7 +165,7 @@ export class ERC20SubWallet extends SubWallet {
             // TODO: what's the integer type returned by web3? Are we sure we can directly convert it to BigNumber like this? To be tested
             const balanceEla = await erc20Contract.methods.balanceOf(tokenAccountAddress).call();
             // The returned balance is an int. Need to devide by the number of decimals used by the token.
-            this.balance = new BigNumber(balanceEla).dividedBy(new BigNumber(10).pow(this.tokenDecimals));
+            this.balance = new BigNumber(balanceEla).dividedBy(this.tokenAmountMulipleTimes);
             Logger.log('wallet', this.id+": raw balance:", balanceEla, " Converted balance: ", this.balance);
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
@@ -204,7 +206,7 @@ export class ERC20SubWallet extends SubWallet {
           let amount : BigNumber;
           if (result && result.logs && result.logs[0] && result.logs[0].data) {
             const data = result.logs[0].data;
-            amount = this.tokenDecimals > 0 ? new BigNumber(data).dividedBy(this.tokenDecimals) : new BigNumber(data);
+            amount = this.tokenDecimals > 0 ? new BigNumber(data).dividedBy(this.tokenAmountMulipleTimes) : new BigNumber(data);
           } else {
             amount = new BigNumber(NaN);
           }
@@ -316,7 +318,7 @@ export class ERC20SubWallet extends SubWallet {
         Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
 
         // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
-        const amountWithDecimals = new BigNumber(amount).multipliedBy(new BigNumber(10).pow(this.tokenDecimals));
+        const amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
 
         // Incompatibility between our bignumber lib and web3's BN lib. So we must convert by using intermediate strings
         const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
