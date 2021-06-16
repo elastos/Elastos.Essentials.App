@@ -145,6 +145,7 @@ export const zh = {
         "insufficient-balance": "余额不足",
         "transfer-all": "全部",
         "max": "全部",
+        "touch-to-select-a-personal-wallet": "轻触选择个人钱包",
 
         /********************
         * Coin Receive Page *

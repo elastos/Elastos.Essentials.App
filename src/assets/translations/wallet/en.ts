@@ -145,6 +145,7 @@ export const en = {
         "insufficient-balance": "Insufficient Balance",
         "transfer-all": "All",
         "max": "MAX",
+        "touch-to-select-a-personal-wallet": "Touch to select a personal wallet",
 
         /********************
         * Coin Receive Page *
