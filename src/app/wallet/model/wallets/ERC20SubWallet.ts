@@ -205,7 +205,7 @@ export class ERC20SubWallet extends SubWallet {
         transaction.Direction = direction;
 
         const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(transaction.value), // Defined by inherited classes
+            amount: new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes), // Defined by inherited classes
             confirmStatus: parseInt(transaction.confirmations), // Defined by inherited classes
             datetime,
             direction: direction,
