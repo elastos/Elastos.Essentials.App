@@ -52,6 +52,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { WalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/wallet-chooser/wallet-chooser.component';
 
 
 @Component({
@@ -704,5 +705,40 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 return false;
             }
         })
+    }
+
+    /**
+     * Tells whether the transfer can be sent to another of user's existing wallets.
+     * Typically, this returns true if there are more than one wallet created in the app.
+     */
+    canSendToPersonalWallet(): boolean {
+        return (this.walletManager.getWalletsCount() > 1);
+    }
+
+    /**
+     * Opens a wallet chooser, optionally with excluding the current wallet.
+     */
+    async choosePersonalWallet(excludeCurrentWallet = false) {
+        let options: WalletChooserComponentOptions = {
+            chainId: this.chainId as StandardCoinName
+        };
+
+        if (excludeCurrentWallet) {
+            options.excludeWalletId = this.masterWallet.id;
+        }
+
+        this.modal = await this.modalCtrl.create({
+            component: WalletChooserComponent,
+            componentProps: options,
+        });
+        this.modal.onWillDismiss().then(async (params) => {
+            Logger.log('wallet', 'Personal wallet selected:', params);
+            if (params.data && params.data.selectedWalletId) {
+                this.toAddress = await this.walletManager.getMasterWallet(params.data.selectedWalletId).getSubWallet(this.chainId).createAddress();
+            }
+
+            this.modal = null;
+        });
+        this.modal.present();
     }
 }

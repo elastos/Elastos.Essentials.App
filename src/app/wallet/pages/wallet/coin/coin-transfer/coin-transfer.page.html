@@ -136,6 +136,10 @@
                 </ion-col>
             </ion-row>
 
+            <p *ngIf="canSendToPersonalWallet()" (click)="choosePersonalWallet(true)">
+                Touch to select a personal wallet
+            </p>
+
             <ion-row class="contact-row" [class.invisible]="!addressName">
                 <p>{{ addressName }}</p>
             </ion-row>
