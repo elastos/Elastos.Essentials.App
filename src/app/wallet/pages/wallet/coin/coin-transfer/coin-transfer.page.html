@@ -137,7 +137,7 @@
             </ion-row>
 
             <p *ngIf="canSendToPersonalWallet()" (click)="choosePersonalWallet(true)">
-                Touch to select a personal wallet
+                {{ 'wallet.touch-to-select-a-personal-wallet' | translate }}
             </p>
 
             <ion-row class="contact-row" [class.invisible]="!addressName">

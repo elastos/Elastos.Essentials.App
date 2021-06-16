@@ -145,6 +145,7 @@ export const fr = {
         "insufficient-balance": "Solde insuffisant",
         "transfer-all": "Tous",
         "max": "MAX",
+        "touch-to-select-a-personal-wallet": "Touch to select a personal wallet",
 
         /********************
         * Coin Receive Page *
