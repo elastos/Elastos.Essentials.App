@@ -194,7 +194,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
         } else if (toAddressLowerCase === '') {
             return "wallet.coin-op-contract-create";
         } else if (toAddressLowerCase === '0x0000000000000000000000000000000000000000') {
-            return "coin-op-contract-destroy";
+          return "wallet.coin-op-contract-destroy";
         } else if (transaction.value !== '0') {
             return "wallet.coin-op-sent-token";
         } else {
