@@ -121,7 +121,6 @@ export const en = {
         "coin-transaction-status-unconfirmed": "Unconfirmed",
         "text-coin-close-warning": "Token will be removed from the list.",
         "erc20-transactions": "ERC20 token transactions",
-        "erc20-diaplay-sending": "Show only send transactions",
         "cannot-display": "cannot be displayed at this time",
 
         /*******************

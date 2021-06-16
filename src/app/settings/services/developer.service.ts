@@ -48,6 +48,7 @@ export class DeveloperService {
       ethscRPCApi: 'https://api.elastos.io/eth',
       ethscApiMisc: 'https://api.elastos.io/misc',
       ethscOracle: 'https://api.elastos.io/oracle',
+      ethscBrowserApiUrl: 'https://eth.elastos.io',
       crRPCApi: 'https://api.cyberrepublic.org',
       icon: '/assets/icon/main.svg'
     },
@@ -59,6 +60,7 @@ export class DeveloperService {
       ethscRPCApi: 'https://api-testnet.elastos.io/eth',
       ethscApiMisc: 'https://api-testnet.elastos.io/misc',
       ethscOracle: 'https://api-testnet.elastos.io/oracle',
+      ethscBrowserApiUrl: 'https://eth-testnet.elastos.io',
       crRPCApi: 'https://api.cyberrepublic.org',
       icon: '/assets/icon/test.svg'
     },
@@ -70,6 +72,7 @@ export class DeveloperService {
       ethscRPCApi: 'http://api.elastos.io:22636',
       ethscApiMisc: 'http://api.elastos.io:22634',
       ethscOracle: 'http://api.elastos.io:22632',
+      ethscBrowserApiUrl: 'https://eth.elastos.io',
       crRPCApi: 'https://api.cyberrepublic.org',
       icon: '/assets/icon/reg.svg'
     },
@@ -81,6 +84,7 @@ export class DeveloperService {
       ethscRPCApi: '',
       ethscApiMisc: '',
       ethscOracle: '',
+      ethscBrowserApiUrl: '',
       crRPCApi: 'http://crapi.longrunweather.com:18080',
       icon: '/assets/icon/priv.svg'
     },
@@ -92,6 +96,7 @@ export class DeveloperService {
       ethscRPCApi: 'http://api.elastos.io:22636',
       ethscApiMisc: 'http://api.elastos.io:22634',
       ethscOracle: 'http://api.elastos.io:22632',
+      ethscBrowserApiUrl: 'https://eth.elastos.io',
       crRPCApi: 'https://api.cyberrepublic.org',
       icon: '/assets/icon/priv.svg'
     }
@@ -115,6 +120,7 @@ export class DeveloperService {
     ethscRPCApi: string,
     ethscApiMisc: string,
     ethscOracle: string,
+    ethscBrowserApi: string,
     crRPCApi: string
   ) {
     Logger.log('settings', 'Dev preference set to ' + networkCode);
@@ -124,6 +130,7 @@ export class DeveloperService {
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.browserapi", ethscBrowserApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "cr.rpcapi", crRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
   }
@@ -143,6 +150,7 @@ export class DeveloperService {
             this.networks[index].ethscRPCApi,
             this.networks[index].ethscApiMisc,
             this.networks[index].ethscOracle,
+            this.networks[index].ethscBrowserApiUrl,
             this.networks[index].crRPCApi
           );
           this.showToast('Network type has been set to main net');

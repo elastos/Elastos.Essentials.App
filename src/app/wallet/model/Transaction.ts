@@ -231,6 +231,13 @@ export type EthTransaction = TransactionHistory & {
   Direction: TransactionDirection;
 };
 
+// Returned by rpc,
+export type EthTokenTransaction = EthTransaction & {
+  tokenSymbol: string;
+  tokenName: string;
+  tokenDecimal: string;
+}
+
 // Raw list of transactions as received from the rpc.
 export type AllTransactionsHistory = {
     totalcount?: number,
