@@ -17,6 +17,7 @@ import { Logger } from 'src/app/logger';
 import { PopoverController } from '@ionic/angular';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { Events } from 'src/app/services/events.service';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
 
 @Component({
     selector: 'app-wallet-settings',
@@ -115,6 +116,21 @@ export class WalletSettingsPage implements OnInit {
         this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         Logger.log('wallet', 'Settings for master wallet - ' + this.masterWallet);
         this.getMasterWalletBasicInfo();
+
+        // Legacy support: ability to migrate remaining balances from DID 1 to DID 2 chains
+        // Show this menu entry only if the DID 1.0 subwallet balance is non 0 to not pollute all users
+        // with this later on.
+        let did1SubWallet = this.masterWallet.getSubWallet(StandardCoinName.IDChain);
+        if (did1SubWallet && did1SubWallet.balance.gt(0)) {
+            this.settings.push({
+                type: 'wallet-did1-transfer',
+                route: null,
+                title: this.translate.instant("wallet.wallet-settings-migrate-did1"),
+                subtitle: this.translate.instant("wallet.wallet-settings-migrate-did1-subtitle"),
+                icon: '/assets/wallet/settings/dollar.svg',
+                iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg'
+            });
+        }
     }
 
     ionViewWillEnter() {
@@ -144,6 +160,12 @@ export class WalletSettingsPage implements OnInit {
         } catch (e) {
             Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
         }
+    }
+
+    private goToDID1Transfer() {
+        this.native.go('/wallet/wallet-did1-transfer', {
+            masterWalletId: this.masterWallet.id
+        });
     }
 
     async showDeletePrompt() {
@@ -190,6 +212,9 @@ export class WalletSettingsPage implements OnInit {
             this.getPassword();
         } else if (item.type === 'wallet-delete') {
             this.onDelete();
+        }
+        else if (item.type === 'wallet-did1-transfer') {
+            this.goToDID1Transfer();
         } else {
             this.native.go(item.route);
         }

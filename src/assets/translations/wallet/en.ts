@@ -216,6 +216,9 @@ export const en = {
         "wallet-settings-manage-coin-list-subtitle": "Check which coins to display",
         "wallet-settings-delete-wallet": "Delete Wallet",
         "wallet-settings-delete-wallet-subtitle": "This will not delete your assets, you can always import this wallet again",
+        "wallet-settings-migrate-did1": "Transfer DID 1.0 funds",
+        "wallet-settings-migrate-did1-subtitle": "Transfer remaining ELA from the deprecated 1.0 DID sidechain back to the main chain",
+        "wallet-settings-migrate-did1-intro": "This is a one time operation. This transfer will migrate all your remaining funds from the now deprecated DID 1.0 Elastos sidechain to the Elastos mainchain. After that, the DID 1.0 subwallet will disappear from your wallet.",
         "delete-wallet-confirm-title": "Delete Wallet",
         "delete-wallet-confirm-subtitle": "Your wallet will be deleted from this device. You can re-import it later but make sure to backup your mnemonics first.",
 

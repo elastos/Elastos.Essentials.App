@@ -1,0 +1,743 @@
+@import 'src/app/wallet/root.scss';
+
+/********************** Container **********************/
+.container {
+    /********************** Recharge Container **********************/
+    .recharge-container {
+        min-height: 100%;
+        padding: 20px;
+
+        .main-title-row {
+            margin-left: 10px;
+
+            p {
+                margin: 0;
+                font-size: 13px;
+                font-weight: 400;
+                letter-spacing: 0.7px;
+                text-align: left;
+            }
+        }
+
+        .item-row {
+            position: relative;
+            border-radius: 17px;
+            padding: 7.5px 10px 7.5px 0;
+            margin-bottom: 32px;
+            box-shadow: 0 3px 15px 0 #ededf0;
+            background-color: #ffffff;
+
+            .left-col {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding-left: 10px;
+
+                ion-img, img {
+                    position: relative;
+                    z-index: 10;
+                    width: 50px;
+                    height: 50px;
+                    object-fit: contain;
+                }
+            }
+
+            .middle-col, .right-col {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                overflow: hidden;
+
+                h1, p {
+                    margin: 0;
+                }
+
+                h1 {
+                    font-size: 17px;
+                    font-weight: 600;
+                    line-height: 1.29;
+                    letter-spacing: 0.7px;
+                    text-align: left;
+                }
+
+                p {
+                    font-size: 13px;
+                    font-weight: 400;
+                    padding-top: 6px;
+                    text-align: left;
+                }
+            }
+
+            .right-col {
+                align-items: flex-end;
+
+                h1 {
+                    font-weight: 700;
+                    text-align: right;
+                }
+
+                p {
+                    color: #8888b0;
+                    text-align: right;
+                }
+            }
+
+            .arrow-down {
+                position: absolute;
+                z-index: 0;
+                bottom: -15px;
+                left: 6%;
+                height: 30px;
+                width: 30px;
+                transform: translate(2px, -2px) rotate(-45deg);
+                -webkit-transform: translate(2px, -2px) rotate(-45deg);
+                border-right: 2px solid transparent;
+                border-top: 2px solid transparent;
+                display: inline-block;
+                -moz-transform: translate(2px, -2px) rotate(-45deg);
+                -ms-transform: translate(2px, -2px) rotate(-45deg);
+                -o-transform: translate(2px, -2px) rotate(-45deg);
+                background-color: #ffffff;
+            }
+        }
+
+        .input-row {
+            ion-col {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: #ffffff;
+                border-radius: 16px;
+                padding-right: 20px;
+            }
+
+            ion-input {
+                background-color: #ffffff;
+                height: 50px;
+                font-size: 19px;
+                font-weight: 600;
+                letter-spacing: 0.95px;
+                --padding-start: 16px;
+            }
+
+            p {
+                color: #732dcf;
+                font-size: 13px;
+                font-weight: 700;
+            }
+        }
+    }
+
+    /********************** Send Container **********************/
+    .send-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 100%;
+        margin: 0;
+        padding: 30px;
+
+        .header-img {
+            width: 75px;
+            height: 75px;
+            padding: 5px;
+        }
+
+        h1 {
+            margin: 30px 0 10px;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.7px;
+
+            img {
+                margin-left: 4px;
+            }
+
+            .rotate {
+                transform: rotate(-180deg);
+            }
+        }
+
+        p {
+            margin: 7.5px 10px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.7px;
+            text-align: right;
+        }
+
+        .invisible {
+            visibility: hidden;
+        }
+
+        .item-row {
+            border-radius: 16px;
+            padding: 10px 10px 10px 15px;
+            box-shadow: 0 3px 15px 0 #ededf0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            ion-col {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                ion-input {
+                    background-color: #ffffff;
+                    font-size: 14px;
+                    font-weight: 400;
+                    letter-spacing: -0.34px;
+                    text-align: left;
+                }
+
+                .scan-btn {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 100%;
+                    width: 45px;
+                    height: 45px;
+
+                    img {
+                        width: 60%;
+                        height: 60%;
+                        object-fit: contain;
+                    }
+                }
+
+                h2, .amount-input {
+                    width: 100%;
+                    margin: 0;
+                    font-size: 19px;
+                    font-weight: 600;
+                    letter-spacing: 0.95px;
+                }
+
+                p {
+                    margin: 0;
+                    padding-top: 4px;
+                    font-size: 12px;
+                    font-weight: 400;
+                    color: #8888b0;
+                }
+            }
+
+            .left-col {
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                overflow: hidden;
+
+                h2 {
+                    padding-bottom: 4px;
+                }
+
+                p {
+                    text-align: left;
+                }
+            }
+
+            .right-col {
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-end;
+                overflow: hidden;
+
+                .amount-input, p {
+                    text-align: right;
+                }
+
+                .amount-input {
+                    --padding-end: 0;
+                    --padding-top: 0;
+                    --padding-bottom: 4px;
+                    font-weight: 700;
+                }
+
+                .negativeBalance {
+                    color: red;
+                }
+            }
+        }
+
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            #max-btn {
+                color: #732dcf;
+                font-size: 11px;
+                font-weight: 700;
+            }
+
+            .align-right {
+                width: 100%;
+                text-align: right;
+            }
+        }
+
+        .contact-row {
+            p {
+                width: 100%;
+                text-align: right;
+            }
+        }
+
+        .cryptoname-row {
+            margin-top: 10px;
+
+            h1 {
+                width: 100%;
+                margin-bottom: 10px;
+                font-weight: 500;
+                font-size: 11px;
+            }
+
+            ion-col {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 5px;
+
+                span, ion-icon {
+                    color: #3880ff;
+                }
+
+                span {
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+
+                ion-icon {
+                    font-size: 20px;
+                }
+            }
+        }
+
+        .memo-row {
+        }
+    }
+
+    .footer-container {
+        margin-top: 30px;
+        padding: 0 10px;
+
+        .btn-container {
+            padding: 20px 10px;
+        }
+
+        .syncing-container {
+            padding: 20px;
+
+            ion-card-title {
+                font-weight: 700;
+                font-size: 22px;
+            }
+
+            ion-card-subtitle {
+                font-weight: 600;
+                font-size: 13px;
+            }
+
+            span {
+                font-size: 13px;
+                font-weight: 600;
+                color: #20e3d2;
+            }
+        }
+    }
+}
+
+/********************** Dark Container **********************/
+.dark-container {
+    // Recharge Container
+    .recharge-container {
+        .item-row {
+            box-shadow: 0 3px 15px 0 #151626;
+            background-color: #2b2c49;
+
+            .arrow-down {
+                background-color: #2b2c49;
+            }
+        }
+
+        .input-row {
+            ion-col {
+                background-color: #2b2c49;
+
+                ion-input {
+                    background-color: #2b2c49;
+                }
+            }
+        }
+    }
+    // Send Container
+    .send-container {
+        .item-row {
+            box-shadow: 0 3px 15px 0 #151626;
+            background-color: #2b2c49;
+
+            ion-col {
+                ion-input {
+                    background-color: #2b2c49;
+                }
+            }
+        }
+    }
+    // Footer
+    .footer-container {
+        .syncing-container {
+            ion-card-title {
+                color: white;
+            }
+        }
+    }
+}
+
+/********************** Pay Intent Container **********************/
+.pay-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 40px 0px;
+
+    .header-img {
+      width: 67.2px;
+      height: 67.2px;
+      object-fit: contain;
+    }
+
+    div {
+      text-align: left;
+      padding: 0 30px;
+      width: 100%;
+    }
+
+    .amount-container {
+        padding: 0 20px;
+    }
+
+    h1, h2, h3, h4, p{
+      margin: 0;
+      width: 100%;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    h3, h4 {
+      text-align: left;
+      font-size: 14px;
+    }
+
+    // Screen title
+    h1 {
+      padding-top: 10px;
+      padding-bottom: 5px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    // Screen subtitle
+    h2 {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    // Item type
+    h3 {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      font-weight: 700;
+    }
+
+    // Item value
+    h4 {
+      padding-top: 0;
+      padding-bottom: 15px;
+      font-weight: 400;
+    }
+
+    // Balance
+    p {
+        padding-top: 7.5px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.7px;
+        text-align: right;
+    }
+
+    .item-row {
+        border-radius: 16px;
+        padding: 10px;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        background-color: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h2, h5, .amount-input {
+            width: 100%;
+            margin: 0;
+            font-size: 19px;
+            font-weight: 600;
+            letter-spacing: 0.95px;
+        }
+
+        p {
+            margin: 0;
+            padding-top: 4px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #8888b0;
+        }
+
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: hidden;
+
+            h4 {
+                text-align: left;
+                padding-left: 0px;
+                padding-bottom: 0px;
+            }
+
+            p {
+                padding-top: 10px;
+                text-align: left;
+            }
+        }
+
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            overflow: hidden;
+
+            .amount-input, p, h5 {
+                text-align: right;
+            }
+
+            .amount-input {
+                --padding-end: 0;
+                --padding-top: 0;
+                --padding-bottom: 4px;
+                font-weight: 700;
+            }
+        }
+    }
+
+    .footer-container {
+        padding: 20px 10px;
+
+        p {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.7px;
+            color: red;
+            text-align: center;
+        }
+
+        .btn-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
+            .btn {
+                height: 47px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 8px;
+
+                    ion-label {
+                        font-size: 17px;
+                        font-weight: 500;
+                    }
+                }
+
+                .cancel {
+                    box-shadow: 0 3px 15px 0 #ededf0;
+                    background-color: #ffffff;
+
+                    ion-label {
+                        color: #000000;
+                    }
+                }
+
+                .confirm {
+                    box-shadow: 0 3px 15px 0 #ededf0;
+                    background-color: #6e23d0;
+
+                    ion-label {
+                        color: #ffffff;
+                }
+            }
+        }
+    }
+}
+
+/********************** Pay Intent Dark Container **********************/
+.dark-pay-container {
+    h4 {
+        color: #8888b0;
+    }
+
+    .item-row {
+        box-shadow: 0 3px 15px 0 #151626;
+        background-color: #2b2c49;
+
+        .amount-input {
+            color: #ffffff;
+        }
+
+        .left-col {
+            ion-input {
+                background-color: #2b2c49;
+            }
+        }
+    }
+
+    .footer-container {
+        .btn-row {
+            .cancel {
+                box-shadow: 0 3px 6px 0 #151626;
+                background-color: #202039;
+
+                ion-label {
+                    color: #ffffff;
+                }
+            }
+
+            .confirm {
+                box-shadow: 0 3px 15px 0 #151626;
+            }
+        }
+    }
+}
+
+/********************** Send and Recharge Footer **********************/
+.footer {
+    background: transparent;
+
+    .btn-container {
+        padding: 20px 10px;
+    }
+
+    .syncing-container {
+        padding: 20px 30px;
+
+        ion-card-title {
+            font-weight: 700;
+            font-size: 22px;
+        }
+
+        ion-card-subtitle {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #20e3d2;
+        }
+    }
+}
+
+/********************** Send and Recharge Dark Footer **********************/
+.dark-footer {
+    .syncing-container {
+        ion-card-title {
+            color: white;
+        }
+    }
+}
+
+/********************** Pay Intent Footer **********************/
+.pay-footer {
+    padding: 20px 10px;
+
+    p {
+        margin-top: 0;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.7px;
+        color: red;
+        text-align: center;
+    }
+
+    .btn-row {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        .btn {
+            height: 47px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+
+                ion-label {
+                    font-size: 17px;
+                    font-weight: 500;
+                }
+            }
+
+            .cancel {
+                box-shadow: 0 3px 15px 0 #ededf0;
+                background-color: #ffffff;
+
+                ion-label {
+                    color: #000000;
+                }
+            }
+
+            .confirm {
+                box-shadow: 0 3px 15px 0 #ededf0;
+                background-color: #6e23d0;
+
+                ion-label {
+                    color: #ffffff;
+            }
+        }
+    }
+}
+
+/********************** Pay Intent Dark Footer **********************/
+.dark-pay-footer {
+    .btn-row {
+        .cancel {
+            box-shadow: 0 3px 6px 0 #151626;
+            background-color: #202039;
+
+            ion-label {
+                color: #ffffff;
+            }
+        }
+
+        .confirm {
+            box-shadow: 0 3px 15px 0 #151626;
+        }
+    }
+}
+

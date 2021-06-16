@@ -66,7 +66,7 @@ export class PayTransfer {
 }
 
 export enum TransferType {
-    RECHARGE = 1, // Tranfer between subwallets
+    RECHARGE = 1, // Transfer between subwallets
     SEND = 2, // Sending
     PAY = 3, // Pay intent
     WITHDRAW = 4
