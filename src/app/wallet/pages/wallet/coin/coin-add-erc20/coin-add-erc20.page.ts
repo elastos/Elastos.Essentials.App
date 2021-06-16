@@ -19,6 +19,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
 
 
 @Component({
@@ -29,8 +30,8 @@ import { Events } from 'src/app/services/events.service';
 export class CoinAddERC20Page implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public walletname: string = "";
-    public masterWallet: MasterWallet = null;
+    //public walletname: string = "";
+    //public masterWallet: MasterWallet = null;
     public allCustomERC20Coins: ERC20Coin[] = [];
 
     // public coinAddress: string = "0xa4e4a46b228f3658e96bf782741c67db9e1ef91c"; // TEST - TTECH ERC20 on mainnet
@@ -63,15 +64,18 @@ export class CoinAddERC20Page implements OnInit {
         private router: Router,
         private globalIntentService: GlobalIntentService,
     ) {
-        this.masterWallet = this.walletManager.getMasterWallet(this.walletEditionService.modifiedMasterWalletId);
-        this.walletname = this.walletManager.masterWallets[this.masterWallet.id].name;
+        //this.masterWallet = this.walletManager.getMasterWallet(this.walletEditionService.modifiedMasterWalletId);
+        //this.walletname = this.walletManager.masterWallets[this.masterWallet.id].name;
         this.getAllCustomERC20Coins();
 
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
+            let params = navigation.extras.state as AddERCTokenRequestParams;
+            Logger.log('wallet', "Showing add ERC token screen from intent with params:", params);
+
             this.intentMode = true;
-            this.rootPage = navigation.extras.state.rootPage;
-            this.coinAddress = navigation.extras.state.contract;
+            this.rootPage = true;
+            this.coinAddress = params.options.address;
             this.checkCoinAddress();
             Logger.log('wallet', 'Received intent - checking coin address', this.coinAddress);
         }
@@ -148,14 +152,7 @@ export class CoinAddERC20Page implements OnInit {
             this.fetchingCoinInfo = true;
             this.coinInfoFetched = false;
 
-            // Make sure user has the ETH sidechain enabled
-            if (!this.masterWallet.hasSubWallet(StandardCoinName.ETHSC)) {
-                this.popup.ionicAlert("wallet.no-ethereum-token", "wallet.please-add-ethereum-first", "Ok");
-                this.fetchingCoinInfo = false;
-                return;
-            }
-
-            const ethAccountAddress = await this.getEthAccountAddress();
+            //const ethAccountAddress = await this.getEthAccountAddress();
 
             try {
                 const contractCode = await this.erc20CoinService.isContractAddress(address);
@@ -165,18 +162,18 @@ export class CoinAddERC20Page implements OnInit {
                     this.native.toast_trans('wallet.coin-adderc20-not-found');
                 } else {
                     Logger.log('wallet', "Found contract at address " + address);
-                    const coinInfo = await this.erc20CoinService.getCoinInfo(address, ethAccountAddress);
+                    const coinInfo = await this.erc20CoinService.getCoinInfo(address, null /* ethAccountAddress */);
 
                     if(coinInfo) {
                         this.coinName = coinInfo.coinName;
                         Logger.log('wallet', "Coin name", this.coinName);
-    
+
                         this.coinSymbol = coinInfo.coinSymbol;
                         Logger.log('wallet', "Coin symbol", this.coinSymbol);
                     } else {
                         this.popup.ionicAlert('common.sorry', 'common.something-went-wrong', 'common.ok');
                     }
-                 
+
                     this.coinInfoFetched = true;
                     this.fetchingCoinInfo = false;
                 }
@@ -192,9 +189,9 @@ export class CoinAddERC20Page implements OnInit {
         this.coinInfoFetched = false;
     }
 
-    private async getEthAccountAddress(): Promise<string> {
+    /* private async getEthAccountAddress(): Promise<string> {
         return this.masterWallet.getSubWallet(StandardCoinName.ETHSC).createAddress();
-    }
+    } */
 
     async addCoin() {
         if (this.coinAlreadyAdded(this.coinAddress)) {
@@ -202,7 +199,7 @@ export class CoinAddERC20Page implements OnInit {
         }  else {
             const activeNetwork = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
             const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetwork, true);
-            await this.coinService.addCustomERC20Coin(newCoin, this.masterWallet);
+            await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
 
              // Coin added - go back to the previous screen
             if (this.intentMode) {

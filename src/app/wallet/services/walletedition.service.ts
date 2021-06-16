@@ -31,13 +31,10 @@ export type SelectableMnemonic = {
 @Injectable({
     providedIn: 'root'
 })
-
 export class WalletEditionService {
     // Below fields are shared by several screens while editing a master wallet.
     // Consider this service as a singleton shared class.
     public modifiedMasterWalletId: string = null;
-
-    // Intent - 'addcoin'
     public intentTransfer: IntentTransfer;
 
     constructor() {
