@@ -64,7 +64,7 @@
             class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode"
         >
             <ion-row class="btn-container">
-                <ion-button color="primary" [disabled]="!valuesValid()" (click)="goTransaction()">
+                <ion-button color="primary" (click)="goTransaction()">
                     <ion-label>{{ 'wallet.withdraw' | translate }}</ion-label>
                 </ion-button>
             </ion-row>
@@ -72,31 +72,3 @@
     </div>
 
 </ion-content>
-
-<!------------------ RECHARGE AND SEND FOOTER ------------------>
-
-<!-- <ion-footer
-    *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3"
-    class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
->
-
-</ion-footer>
- -->
-<!------------------ PAY INTENT FOOTER ------------------>
-
-<!-- <ion-footer
-    class="pay-footer ion-no-border" [class.dark-pay-footer]="theme.darkMode"
-    *ngIf="transferType === 3"
->
-    <p *ngIf="valuesReady()">{{ 'insufficient-balance' | translate }}</p>
-    <ion-row class="btn-row">
-        <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
-            <ion-label>{{ 'cancel' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-        <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="goTransaction()">
-            <ion-label>{{ 'confirm' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-    </ion-row>
-</ion-footer> -->
