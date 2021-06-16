@@ -13,10 +13,13 @@ import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NotificationsPage } from '../notifications/notifications.page';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
+import { AuthService } from "src/app/identity/services/auth.service";
+import { DIDService } from "src/app/identity/services/did.service";
 import { App } from "src/app/model/app.enum"
 
 @Component({
@@ -39,12 +42,15 @@ export class HomePage implements OnInit {
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
     public splashScreen: SplashScreen,
-    private globalNotifications: GlobalNotificationsService,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
+    private identityService: DIDService,
     private nav: GlobalNavService,
     private pref: GlobalPreferencesService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private appBackGroundService: GlobalAppBackgroundService,
+    private authService: AuthService,
+    private globalNotifications: GlobalNotificationsService,
   ) {
   }
 
@@ -52,7 +58,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    /* setTimeout(()=>{
+   /*  setTimeout(()=>{
       const notification = {
         key: 'storagePlanExpiring',
         title: 'Storage Plan Expiring',
@@ -73,6 +79,12 @@ export class HomePage implements OnInit {
         this.showNotifications();
       }
     });
+
+    if(this.theme.darkMode) {
+      this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
+    } else {
+      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+    }
 
     if (this.didService.signedIdentity) { // Should not happend, just in case - for ionic hot reload
       this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
@@ -128,7 +140,7 @@ export class HomePage implements OnInit {
       component: OptionsComponent,
       componentProps: {
       },
-      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'dark-options-component',
+      cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'launcher-options-component' : 'launcher-options-component-dark',
       event: ev,
       translucent: false
     });
@@ -142,8 +154,30 @@ export class HomePage implements OnInit {
     this.nav.navigateTo("identity", '/identity/myprofile/home');
   }
 
+  async signOut() {
+    await this.appBackGroundService.stop();
+    this.didService.signOut();
+  }
+
   getDateFromNow() {
     // return moment().format('dddd MMM Do') + ', ' + moment().format('LT');
     return moment().format('dddd, MMM Do');
+  }
+
+  async backupIdentity() {
+    await this.authService.checkPasswordThenExecute(
+      async () => {
+        let mnemonics = await this.identityService.activeDidStore.exportMnemonic(
+          AuthService.instance.getCurrentUserPassword()
+        );
+        this.nav.navigateTo(App.IDENTITY, "/identity/exportmnemonic", { state: { mnemonics: mnemonics } });
+      },
+      () => {
+        // Operation cancelled
+        Logger.log("identity", "Password operation cancelled");
+      },
+      true,
+      true
+    );
   }
 }

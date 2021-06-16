@@ -13,7 +13,7 @@ import {
 import { TipsService } from '../../services/tips.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Events } from 'src/app/services/events.service';
 import { App } from "src/app/model/app.enum"
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -60,6 +60,12 @@ export class NotificationsPage implements OnInit {
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       this.modalController.dismiss();
     });
+
+    if(this.theme.darkMode) {
+      this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
+    } else {
+      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+    }
   }
 
   ionViewWillLeave() {

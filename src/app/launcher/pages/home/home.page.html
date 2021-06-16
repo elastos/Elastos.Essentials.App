@@ -1,11 +1,97 @@
 <ion-content [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
   <app-titlebar></app-titlebar>
 
-  <!-- <lottie-player src="/assets/wallet/animations/success.json" background="transparent" speed="1.5" style="width: 100px; height: 100px;" autoplay></lottie-player> -->
- <!-- <lottie-player src="https://assets5.lottiefiles.com/temp/lf20_MqU2rh.json" background="transparent" speed="1.5" style="width: 100px; height: 100px;" autoplay></lottie-player> -->
+  <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
+    <ion-row *ngIf="didService.signedIdentity" class="id-row">
+      <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
+        <ion-avatar *ngIf="!didService.signedIdentity.avatar" class="noAvatar">
+          <img src="assets/launcher/default/default-contact.svg">
+        </ion-avatar>
+        <ion-avatar *ngIf="didService.signedIdentity.avatar" class="hasAvatar">
+          <img [src]="'data:'+didService.signedIdentity.avatar.contentType+';base64,'+didService.signedIdentity.avatar.base64ImageData">
+        </ion-avatar>
+      </ion-col>
+
+      <ion-col size="7.25" class="mid-col" (click)="showMyIdentity()">
+        <h1>{{ getDateFromNow().toUpperCase() }}</h1>
+        <h2>{{ didService.signedIdentity.name }}</h2>
+      </ion-col>
+      <ion-col offset="0.75" size="1.25" class="right-col" (click)="showOptions($event)">
+        <img [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="backup-row">
+      <ion-col class="left-col" size="1.75">
+        <img src="/assets/launcher/icons/finger-print.svg">
+      </ion-col>
+      <ion-col class="mid-col" size="6.25">
+        <ion-label>
+          <h1>{{ 'launcher.backup-title' | translate }}</h1>
+          <p>{{ 'launcher.backup-message' | translate }}</p>
+        </ion-label>
+      </ion-col>
+      <ion-col class="right-col" size="4">
+        <div class="ion-activatable ripple" (click)="backupIdentity()">
+          <h1>{{ 'launcher.backup-button' | translate }}</h1>
+          <ion-ripple-effect></ion-ripple-effect>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngFor="let category of appService.runnableApps" class="category-row">
+      <ion-col size="12" class="title-col">
+        <ion-label>{{ category.type | translate }}</ion-label>
+      </ion-col>
+      <ion-col
+        *ngFor="let app of category.apps"
+        class="app-col"
+        size="12"
+        (click)="appService.startApp(app)"
+      >
+        <ion-row class="app-row" [class.add-border]="app !== category.apps[category.apps.length -1]">
+          <ion-col class="left-col" size="2">
+            <div class="icon-container" [id]="app.cssId">
+              <img [src]="app.icon">
+            </div>
+          </ion-col>
+          <ion-col class="mid-col" offset="0.2" size="8">
+            <ion-label>
+              <h1>{{ app.name }}</h1>
+              <p>{{ app.description }}</p>
+            </ion-label>
+          </ion-col>
+          <ion-col class="right-col" size="1.8">
+            <img [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="didService.signedIdentity" class="category-row logout-row ion-activatable ripple" (click)="signOut()">
+      <ion-col class="app-col" size="12">
+        <ion-row class="app-row logout-row">
+          <ion-col class="left-col" size="2">
+            <div class="icon-container">
+              <img src="/assets/launcher/apps/app-icons/logout.svg">
+            </div>
+          </ion-col>
+          <ion-col class="mid-col" offset="0.2" size="8">
+            <ion-label>
+              <h1>{{ 'common.sign-out' | translate }}</h1>
+            </ion-label>
+          </ion-col>
+          <ion-col class="right-col" size="1.8">
+            <img [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+  </ion-grid> 
   
-  <ion-grid class="container" [class.dark-container]="theme.darkMode">
-    <!--------- Identity ---------->
+<!--   <ion-grid class="container" [class.dark-container]="theme.darkMode">
+    ------- Identity --------
     <ion-row *ngIf="didService.signedIdentity" class="id-row ion-activatable ripple">
       <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
         <ion-avatar *ngIf="!didService.signedIdentity.avatar" class="noAvatar">
@@ -25,7 +111,7 @@
       </ion-col>
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
-    <!--------- Apps ---------->
+    ------- Apps --------
     <ion-row *ngFor="let category of appService.runnableApps" class="apps-row">
       <ion-col size="12" class="title-col">
         <ion-label>{{ category.type | translate }}</ion-label>
@@ -55,5 +141,5 @@
         <ion-ripple-effect></ion-ripple-effect>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
 </ion-content>

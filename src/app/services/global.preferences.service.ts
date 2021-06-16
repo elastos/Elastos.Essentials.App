@@ -29,7 +29,7 @@ export class GlobalPreferencesService {
       "developer.mode": false,
       "developer.install.verifyDigest": false,
       "developer.backgroundservices.startonboot": true,
-      "ui.darkmode": false,
+      "ui.darkmode": true,
       "chain.network.type": "MainNet",
       "chain.network.config": "",
       "chain.network.configurl": "",

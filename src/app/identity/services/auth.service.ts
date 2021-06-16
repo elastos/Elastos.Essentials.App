@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { DIDService } from './did.service';
-import { LocalStorage } from './localstorage';
-import { Native } from './native';
 import { DIDHelper } from '../helpers/did.helper';
 import { PasswordManagerCancelallationException } from '../model/exceptions/passwordmanagercancellationexception';
 import { PopupProvider } from './popup';

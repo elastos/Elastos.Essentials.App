@@ -19,7 +19,7 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
   providedIn: 'root'
 })
 export class GlobalThemeService extends GlobalService {
-  public activeTheme = new BehaviorSubject<AppTheme>(AppTheme.LIGHT);
+  public activeTheme = new BehaviorSubject<AppTheme>(AppTheme.DARK);
 
   constructor(
     private platform: Platform,

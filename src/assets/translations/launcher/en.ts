@@ -31,6 +31,9 @@ export const en = {
         'utilities': 'Utilities',
         'voting': 'Voting',
         'other': 'Other',
+        'backup-title': 'IDENTITY NOT BACKED UP',
+        'backup-message': 'Saving your identity’s paper key is a very important step as this the only way to recover it later.',
+        'backup-button': 'Backup Now',
 
         /********** Onboard Page **********/
 

@@ -35,6 +35,17 @@
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
+/********************** LAUNCHER **********************/
+.launcher-options-component {
+  --background: #ffffff;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.launcher-options-component-dark {
+  --background: #212021;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
 /********************** DIDSESSSIONS **********************/
 .didsessions-printoptions-component {
     --height: 300px;
