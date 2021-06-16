@@ -214,7 +214,7 @@ export class MasterWallet {
                             await this.createSubWallet(erc20Coin);
                         } else {
                             const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetwork, true);
-                            await this.coinService.addCustomERC20Coin(newCoin, this);
+                            await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
                         }
                     } catch (e) {
                         Logger.log("wallet", 'updateERC20TokenList exception:', e);

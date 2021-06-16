@@ -13,6 +13,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
+import { AddERCTokenRequestParams } from '../model/adderctokenrequest';
 
 export enum ScanType {
   Address     = 1,
@@ -88,7 +89,7 @@ export class IntentService {
         }
 
         switch (this.getShortAction(intent.action)) {
-            case 'addcoin':
+            case 'adderctoken':
                 this.handleAddCoinIntent(intent);
                 break;
             case 'elawalletmnemonicaccess':
@@ -138,6 +139,8 @@ export class IntentService {
             };
         }
 
+        let intentRequiresWalletSelection = true; // User must select a walelt first before doing the real action
+        let navigationState = {};
         switch (this.getShortAction(intent.action)) {
             case 'crmembervote':
                 Logger.log("wallet", 'CR member vote Transaction intent content:', intent.params);
@@ -232,37 +235,32 @@ export class IntentService {
                 Logger.log("wallet", 'IntentService unknown intent:', intent);
                 return;
         }
-        if (this.walletList.length === 1) {
-            const masterWallet = this.walletList[0];
-            this.coinTransferService.masterWalletId = masterWallet.id;
-            this.coinTransferService.walletInfo = masterWallet.account;
-            this.native.setRootRouter(this.nextScreen);
-        } else {
-            this.native.setRootRouter('/wallet/intents/select-subwallet', {nextScreen: this.nextScreen});
+
+        if (intentRequiresWalletSelection) {
+            if (this.walletList.length === 1) {
+                const masterWallet = this.walletList[0];
+                this.coinTransferService.masterWalletId = masterWallet.id;
+                this.coinTransferService.walletInfo = masterWallet.account;
+                this.native.setRootRouter(this.nextScreen, navigationState);
+            } else {
+                this.native.setRootRouter('/wallet/intents/select-subwallet', {...navigationState, nextScreen: this.nextScreen});
+            }
+        }
+        else {
+            this.native.setRootRouter(this.nextScreen, navigationState);
         }
     }
 
     handleAddCoinIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        let params: AddERCTokenRequestParams = intent.params;
+
         this.walletEditionService.reset();
         this.walletEditionService.intentTransfer = {
             action: this.getShortAction(intent.action),
             intentId: intent.intentId
         };
 
-        if (this.walletList.length === 1) {
-            const masterWallet = this.walletList[0];
-            this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
-            this.native.setRootRouter("/wallet/coin-add-erc20", { contract: intent.params.contract, rootPage: true });
-        } else {
-            this.native.setRootRouter(
-                '/wallet/wallet-manager',
-                {
-                    forIntent: true,
-                    intent: 'addcoin',
-                    intentParams: intent.params
-                }
-            );
-        }
+        this.native.setRootRouter("/wallet/coin-add-erc20", { ...params, forIntent: true });
     }
 
     handleAccessIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {

@@ -78,7 +78,7 @@ export class ERC20CoinService {
 
     public async getCoinInfo(address: string, ethAccountAddress: string) {
         try {
-            const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
+            const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc20ABI, address, /* { from: ethAccountAddress } */);
             Logger.log('wallet', 'erc20Contract', erc20Contract);
     
             const coinName = await erc20Contract.methods.name().call();

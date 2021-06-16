@@ -102,9 +102,9 @@ export class GlobalWalletConnectService extends GlobalService {
         uri: uri,
         clientMeta: {
           description: "Elastos Essentials",
-          url: "https://test.org",
-          icons: ["https://test.org/walletconnect-logo.png"],
-          name: "WalletConnectTest",
+          url: "https://www.elastos.org",
+          icons: ["https://www.elastos.org/assets/img/elastos_logo_white_2x.png"],
+          name: "Elastos Essentials",
         },
       },
       /* {
@@ -263,6 +263,9 @@ export class GlobalWalletConnectService extends GlobalService {
       // Custom essentials request (not ethereum) over wallet connect protocol
       await this.handleEssentialsCustomRequest(connector, request);
     }
+    else if (request.method === "wallet_watchAsset") {
+      await this.handleAddERCTokenRequest(connector, request);
+    }
     else {
       try {
         Logger.log("walletconnect", "Sending esctransaction intent", request);
@@ -281,15 +284,15 @@ export class GlobalWalletConnectService extends GlobalService {
           // Approve Call Request
           connector.approveRequest({
             id: request.id,
-            result: "0x41791102999c339c844880b23950704cc43aa840f3739e365323cda4dfa89e7a"
+            result: response.result.txid
           });
         }
         else {
-          // Approve Call Request
+          // Reject Call Request
           connector.rejectRequest({
             id: request.id,
             error: {
-              code: 12345,
+              code: -1,
               message: "Errored or cancelled - TODO: improve this error handler"
             }
           });
@@ -301,7 +304,7 @@ export class GlobalWalletConnectService extends GlobalService {
         connector.rejectRequest({
           id: request.id,
           error: {
-            code: 12345,
+            code: -1,
             message: e
           }
         });
@@ -311,6 +314,34 @@ export class GlobalWalletConnectService extends GlobalService {
     // Because for now we don't close Essentials after handling wallet connect requests, we simply
     // inform users to manually "alt tab" to return to the app they are coming from.
     this.native.genericToast("Operation completed, please return to the original app.", 2000);
+  }
+
+  private async handleAddERCTokenRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    // Special EIP method used to add ERC20 tokens addresses to the wallet
+
+    let params = request.params[0] instanceof Array ? request.params[0] : request.params;
+    let response: {
+      action: string,
+      result: {
+          added: boolean
+      }
+    } = await this.intent.sendIntent("https://wallet.elastos.net/adderctoken", params);
+
+    if (response && response.result) {
+      connector.approveRequest({
+        id: request.id,
+        result: response.result.added
+      });
+    }
+    else {
+      connector.rejectRequest({
+        id: request.id,
+        error: {
+          code: -1,
+          message: "Errored or cancelled"
+        }
+      });
+    }
   }
 
   /**
@@ -337,7 +368,7 @@ export class GlobalWalletConnectService extends GlobalService {
       connector.rejectRequest({
         id: request.id,
         error: {
-          code: 12345,
+          code: -1,
           message: e
         }
       });
