@@ -216,9 +216,9 @@ export const zh = {
         "wallet-settings-manage-coin-list-subtitle": "设置要显示的币种",
         "wallet-settings-delete-wallet": "删除钱包",
         "wallet-settings-delete-wallet-subtitle": "此操作不会删除您的资产，您可以随时再次导入此钱包",
-        "wallet-settings-migrate-did1": "Transfer DID 1.0 funds",
-        "wallet-settings-migrate-did1-subtitle": "Transfer remaining ELA from the deprecated 1.0 DID sidechain back to the main chain",
-        "wallet-settings-migrate-did1-intro": "This is a one time operation. This transfer will migrate all your remaining funds from the now deprecated DID 1.0 Elastos sidechain to the Elastos mainchain. After that, the DID 1.0 subwallet will disappear from your wallet.",
+        "wallet-settings-migrate-did1": "转移 DID 1.0 资金",
+        "wallet-settings-migrate-did1-subtitle": "将剩余的 ELA 从已弃用的 1.0 DID 侧链转移回主链",
+        "wallet-settings-migrate-did1-intro": "这是一次性操作。 此次转账会将您所有剩余的资金从现已弃用的 DID 1.0 亦来云侧链迁移到亦来云主链。 之后，DID 1.0 子钱包将从您的钱包中消失。",
         "delete-wallet-confirm-title": "删除钱包",
         "delete-wallet-confirm-subtitle": "您的钱包将从此设备上删除。 您可以重新导入此钱包，请确保已经备份好钱包助记词。",
 
