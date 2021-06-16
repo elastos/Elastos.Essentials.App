@@ -23,7 +23,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: okText ? okText : this.translate.instant('common.confirm'),
+            text: okText ? this.translate.instant(okText) : this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert Ok clicked');
               this.alertPopup = null;
