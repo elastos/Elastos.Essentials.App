@@ -330,13 +330,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * From sidechain (ID, ETH) to mainchain
      */
     async createWithdrawTransaction() {
-        // let toAmount: number;
-        // if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
-        //     toAmount = this.accMul(this.amount, Config.SELA);
-        // } else {
-        //     toAmount = this.amount;
-        // }
-
         const rawTx = await this.fromSubWallet.createWithdrawTransaction(
             this.toAddress,
             this.amount,
