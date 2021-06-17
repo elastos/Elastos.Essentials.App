@@ -24,6 +24,9 @@ export class ERC20SubWallet extends SubWallet {
 
     private tokenAddress = '';
 
+    private transactions: AllTransactionsHistory = null;
+    private loadTxDataFromCache = false;
+
     public static newFromCoin(masterWallet: MasterWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = new ERC20SubWallet(masterWallet, coin.getID());
         return Promise.resolve(subWallet);
@@ -147,6 +150,7 @@ export class ERC20SubWallet extends SubWallet {
 
     public async update() {
       await this.updateBalance();
+      await this.getTransactionByRPC();
     }
 
     public async updateBalance() {
@@ -179,7 +183,27 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-        // TODO: cache transactions.
+        if (this.transactions == null) {
+          await this.getTransactionByRPC();
+          this.loadTxDataFromCache = false;
+        } else {
+          this.loadTxDataFromCache = true;
+        }
+
+        // For performance, only return 20 transactions.
+        let newTxList:AllTransactionsHistory = {
+          totalcount: this.transactions.totalcount,
+          txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
+        }
+        return newTxList;
+    }
+
+    public isLoadTxDataFromCache() {
+      return this.loadTxDataFromCache;
+    }
+
+    async getTransactionByRPC() {
+        Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
         const contractAddress = this.coin.getContractAddress().toLowerCase();
         const tokenAccountAddress = await this.getTokenAccountAddress();
         let result = await this.jsonRPCService.getERC20TokenTransactions(StandardCoinName.ETHSC, tokenAccountAddress);
@@ -187,9 +211,8 @@ export class ERC20SubWallet extends SubWallet {
           let allTx = result.filter((tx)=> {
             return tx.contractAddress === contractAddress
           })
-          return {totalcount:allTx.length, txhistory:allTx};
+          this.transactions = {totalcount:allTx.length, txhistory:allTx};
         }
-        return null;
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {

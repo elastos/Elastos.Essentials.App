@@ -24,6 +24,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   private votingUtxoArray: Utxo[] = null;
 
   private loadedTransactions = false;
+  private loadTxDataFromCache = false;
   private txArrayToDisplay: AllTransactionsHistory = {totalcount:0, txhistory:[]};
   private needtoLoadMoreAddresses: string[] = [];
   private TRANSACTION_LIMIT = 50;// for rpc
@@ -49,6 +50,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
     if (!this.loadedTransactions) {
       await this.getTransactionByRPC();
+      this.loadTxDataFromCache = false;
+    } else {
+      this.loadTxDataFromCache = true;
     }
     if ((startIndex + 20 > this.txArrayToDisplay.txhistory.length) && (this.needtoLoadMoreAddresses.length > 0)) {
       await this.getMoreTransactionByRPC(++this.loadMoreTimes);
@@ -60,6 +64,10 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         txhistory :this.txArrayToDisplay.txhistory.slice(startIndex, startIndex + 20),
     }
     return newTxList;
+  }
+
+  public isLoadTxDataFromCache() {
+    return this.loadTxDataFromCache;
   }
 
   public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {

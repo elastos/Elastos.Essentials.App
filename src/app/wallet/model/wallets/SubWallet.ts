@@ -185,6 +185,11 @@ export abstract class SubWallet {
     public abstract getTransactions(startIndex: number): Promise<AllTransactionsHistory>;
 
     /**
+     * If we get the transactions from cache, then we need update the transactions in 3s.
+     */
+    public abstract isLoadTxDataFromCache(): boolean;
+
+    /**
      * Based on a raw transaction object (from the SPV SDK or API), returns a higher level
      * transaction info object ready to use on UI.
      *
