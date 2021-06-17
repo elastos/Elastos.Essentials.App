@@ -7,6 +7,7 @@ export const fr = {
         'cancel': 'Annuler',
         'begin': 'Commencer',
         'continue': 'Continuer',
+        'go-back': 'Go Back',
         'ok': 'D\'accord',
         'confirm': 'Confirmer',
         'share': 'Partager',

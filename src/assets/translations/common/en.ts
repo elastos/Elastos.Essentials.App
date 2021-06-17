@@ -7,6 +7,7 @@ export const en = {
         'cancel': 'Cancel',
         'begin': 'Begin',
         'continue': 'Continue',
+        'go-back': 'Go Back',
         'ok': 'Okay',
         'confirm': 'Confirm',
         'share': 'Share',
