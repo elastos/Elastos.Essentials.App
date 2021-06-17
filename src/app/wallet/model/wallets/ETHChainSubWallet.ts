@@ -22,6 +22,8 @@ export class ETHChainSubWallet extends StandardSubWallet {
     private txArrayToDisplay: AllTransactionsHistory = null;
     private tokenList: WalletPlugin.ERC20TokenInfo[] = null;
 
+    private loadTxDataFromCache = false;
+
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
 
@@ -39,6 +41,9 @@ export class ETHChainSubWallet extends StandardSubWallet {
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
       if (this.txArrayToDisplay == null) {
         await this.getTransactionsByRpc();
+        this.loadTxDataFromCache = false;
+      } else {
+        this.loadTxDataFromCache = true;
       }
 
       // For performance, only return 20 transactions.
@@ -49,21 +54,12 @@ export class ETHChainSubWallet extends StandardSubWallet {
       return newTxList;
     }
 
-    public async getTokenTransactions(address: string): Promise<AllTransactionsHistory> {
-      address = address.toLowerCase()
-
-      if (this.txArrayToDisplay == null) {
-        await this.getTransactionsByRpc();
-      }
-
-      let tokenTx = this.txArrayToDisplay.txhistory.filter( (tx)=> {
-        return (tx as EthTransaction).to.toLowerCase() === address;
-      })
-      Logger.warn('wallet', 'tokenTx:', tokenTx)
-      return {totalcount: tokenTx.length, txhistory: tokenTx};
+    public isLoadTxDataFromCache() {
+      return this.loadTxDataFromCache;
     }
 
     public async getTransactionsByRpc() {
+      Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
       const address = await this.getTokenAddress();
       let result = await this.jsonRPCService.getETHSCTransactions(this.id as StandardCoinName, address);
       if (result) {

@@ -95,8 +95,6 @@ export class CoinHomePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.startUpdateInterval();
-
         this.coinTransferService.chainId = this.chainId;
         this.titleBar.setTitle(this.chainId);
     }
@@ -122,6 +120,8 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.chainId = this.chainId;
             this.coinTransferService.walletInfo = this.native.clone(this.masterWallet.account);
+
+            this.subWallet = this.masterWallet.getSubWallet(this.chainId);
             this.initData();
         }
     }
@@ -130,9 +130,20 @@ export class CoinHomePage implements OnInit {
     }
 
     async initData() {
-        this.subWallet = this.masterWallet.getSubWallet(this.chainId);
-        await this.subWallet.update();
+        // Only update balance, It will save some time for the second time you enter this page.
+        await this.subWallet.updateBalance();
 
+        this.updateTransactions();
+
+        setTimeout(async () => {
+          if (this.subWallet.isLoadTxDataFromCache()) {
+            await this.updateWalletInfo();
+          }
+          this.startUpdateInterval();
+        }, 3000);
+    }
+
+    updateTransactions() {
         this.pageNo = 0;
         this.start = 0;
         this.MaxCount = 0;
@@ -141,10 +152,17 @@ export class CoinHomePage implements OnInit {
         this.getAllTx();
     }
 
+    async updateWalletInfo() {
+      // Update balance and get the latest transactions.
+      await this.subWallet.update();
+      this.updateTransactions();
+    }
+
     startUpdateInterval() {
       if (this.updateInterval === null) {
         this.updateInterval = setInterval(() => {
-          this.initData();
+          // TODO: Do not update Wallet info, if there is no new transaction.
+          this.updateWalletInfo();
         }, 30000);// 30s
       }
     }
