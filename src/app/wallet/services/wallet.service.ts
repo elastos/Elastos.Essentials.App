@@ -47,6 +47,7 @@ import { Logger } from 'src/app/logger';
 import { NetworkType } from 'src/app/model/networktype';
 import { Events } from 'src/app/services/events.service';
 import { StandardSubWalletBuilder } from '../model/wallets/StandardSubWalletBuilder';
+import { ERC721Service } from './erc721.service';
 
 
 @Injectable({
@@ -74,6 +75,7 @@ export class WalletManager {
         public translate: TranslateService,
         public localStorage: LocalStorage,
         private coinService: CoinService,
+        private erc721Service: ERC721Service,
         private authService: AuthService,
         public popupProvider: PopupProvider,
         private http: HttpClient,
@@ -159,7 +161,7 @@ export class WalletManager {
                     Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId, extendedInfo);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
-                    this.masterWallets[masterId] = new MasterWallet(this, this.coinService, masterId);
+                    this.masterWallets[masterId] = new MasterWallet(this, this.coinService, this.erc721Service, masterId);
 
                     // reopen ELA, IDChain and ETHSC automatically
                     // Don't need to createSubwallet, MasterWallets::populateWithExtendedInfo will create Subwallet with name.
@@ -202,7 +204,7 @@ export class WalletManager {
                 }
 
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
-                await this.masterWallets[masterId].updateERC20TokenList(this.prefs);
+                await this.masterWallets[masterId].updateERCTokenList(this.prefs);
             }
         } catch (error) {
             Logger.error('wallet', 'initWallets error:', error);
@@ -221,7 +223,7 @@ export class WalletManager {
             const extendedInfo = await this.localStorage.getExtendedMasterWalletInfos(masterId);
             if (extendedInfo) {
                 // Create a model instance for each master wallet returned by the SPV SDK.
-                this.masterWallets[masterId] = new MasterWallet(this, this.coinService, masterId);
+                this.masterWallets[masterId] = new MasterWallet(this, this.coinService, this.erc721Service, masterId);
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
             }
         }
@@ -340,7 +342,7 @@ export class WalletManager {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
 
         // Add a new wallet to our local model
-        this.masterWallets[id] = new MasterWallet(this, this.coinService, id, name);
+        this.masterWallets[id] = new MasterWallet(this, this.coinService, this.erc721Service, id, name);
 
         // Set some wallet account info
         this.masterWallets[id].account = walletAccount;
@@ -358,7 +360,7 @@ export class WalletManager {
         // await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
 
         // Get all tokens and create subwallet
-        await this.masterWallets[id].updateERC20TokenList(this.prefs);
+        await this.masterWallets[id].updateERCTokenList(this.prefs);
 
         // Save state to local storage
         await this.saveMasterWallet(this.masterWallets[id]);
@@ -397,7 +399,7 @@ export class WalletManager {
      */
     public async saveMasterWallet(masterWallet: MasterWallet) {
         const extendedInfo = masterWallet.getExtendedWalletInfo();
-        Logger.log('wallet', "Saving wallet extended info", masterWallet.id, extendedInfo);
+        Logger.log('wallet', "Saving wallet extended info", masterWallet, extendedInfo);
 
         await this.localStorage.setExtendedMasterWalletInfo(masterWallet.id, extendedInfo);
     }

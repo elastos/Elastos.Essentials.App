@@ -95,6 +95,30 @@
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
+
+            <ion-row class="list-title-row">
+                <ion-col size="12">
+                    <h1>Collectibles</h1>
+                </ion-col>
+            </ion-row>
+            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let nft of masterWallet.getNFTs()" (click)="goNFTHome(nft)">
+                <ion-col size="2" class="left-col">
+                    <div class="icon-container">
+                        <img src="assets/wallet/coins/eth-purple.svg">
+                        <div class="ela-icon">
+                            <img src="assets/wallet/coins/ela-black.svg"/>
+                        </div>
+                    </div>
+                </ion-col>
+                <ion-col size="8" class="middle-col">
+                    <h1>{{nft.name}}</h1>
+                    <div class="bottom-col"><span class="synced">Elastos NFT - {{nft.type}}</span></div>
+                </ion-col>
+                <ion-col size="2" class="right-col">
+                    <h1>{{nft.balance}}</h1>
+                </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
         </ion-slide>
     </ion-slides>
 

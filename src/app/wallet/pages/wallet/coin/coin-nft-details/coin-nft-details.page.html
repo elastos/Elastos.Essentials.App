@@ -1,0 +1,40 @@
+<ion-content class="lightmode" [class.darkmode]="theme.darkMode">
+    <app-titlebar></app-titlebar>
+
+    <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="asset">
+        <ion-row class="main-title-row">
+            <ion-col size="12">
+                <h1>{{ nft.name }} asset</h1>
+                <p>{{ nft.type }} NFT asset</p>
+            </ion-col>
+        </ion-row>
+        <ion-row class="gray-card card-row">
+            <ion-row class="card-label-row">
+                <div class="asset-icon">
+                    <img [src]="getAssetIcon()">
+                </div>
+                <div class="asset-name">{{ getDisplayableAssetName() }}</div>
+                <p><b>Token ID</b>: {{ getDisplayableAssetID() }}</p>
+                <div size="12" *ngIf="asset.description" class="asset-description">
+                    <p>{{ asset.description }}</p>
+                </div>
+            </ion-row>
+            <!-- <ion-row class="card-btn-row">
+                <ion-col offset="0.25" size="3">
+                    <div class="ion-activatable btn-box" (click)="receiveFunds()">
+                        <img class="receive" src="assets/wallet/buttons/receive.png">
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                    <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
+                </ion-col>
+            </ion-row> -->
+            <div class="arrow-down"></div>
+        </ion-row>
+        <ion-row class="list-title-row">
+            <h1>Properties</h1>
+        </ion-row>
+        <div>
+            <p>Properties display is not available yet. Coming soon.</p>
+        </div>
+    </ion-grid>
+</ion-content>
