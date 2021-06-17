@@ -43,6 +43,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { NFT } from 'src/app/wallet/model/nft';
 
 
 @Component({
@@ -207,7 +208,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
 
         await curMasterWallet.update();
-        await curMasterWallet.updateERC20TokenList(this.prefs);
+        await curMasterWallet.updateERCTokenList(this.prefs);
         curMasterWallet.getSubWalletBalance(StandardCoinName.ELA);
         this.currencyService.fetch();
     }
@@ -255,5 +256,12 @@ export class WalletHomePage implements OnInit, OnDestroy {
     closeRefreshBox() {
         this.uiService.returnedUser = true;
         this.storage.setVisit(true);
+    }
+
+    public goNFTHome(nft: NFT) {
+        this.native.go("/wallet/coin-nft-home", {
+            masterWalletId: this.masterWallet.id,
+            contractAddress: nft.contractAddress
+        });
     }
 }

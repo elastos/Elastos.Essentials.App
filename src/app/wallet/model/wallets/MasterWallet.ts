@@ -12,6 +12,8 @@ import { ETHChainSubWallet } from './ETHChainSubWallet';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { NFT, NFTType, SerializedNFT } from '../nft';
+import { ERC721Service } from '../../services/erc721.service';
 
 export type WalletID = string;
 
@@ -25,12 +27,13 @@ export class ExtendedWalletInfo {
     name: string;
     /** List of serialized subwallets added earlier to this master wallet */
     subWallets: SerializedSubWallet[] = [];
+    /** List of serialized NFTs added earlier to this master wallet */
+    nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
     /* Wallet theme */
     theme: Theme;
 }
 
 export class MasterWallet {
-
     public id: string = null;
     public name: string = null;
     public theme: Theme = null;
@@ -38,6 +41,8 @@ export class MasterWallet {
     public subWallets: {
         [k: string]: SubWallet
     } = {};
+
+    public nfts: NFT[] = [];
 
     public account: WalletAccount = {
         Type: WalletAccountType.STANDARD,
@@ -47,6 +52,7 @@ export class MasterWallet {
     constructor(
         public walletManager: WalletManager,
         public coinService: CoinService,
+        public erc721Service: ERC721Service,
         id: string,
         name?: string,
         theme?: Theme
@@ -68,6 +74,11 @@ export class MasterWallet {
         for (let subWallet of Object.values(this.subWallets)) {
             extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
         }
+
+        for (let nft of this.nfts) {
+            extendedInfo.nfts.push(nft.toSerializedNFT());
+        }
+
         return extendedInfo;
     }
 
@@ -77,12 +88,12 @@ export class MasterWallet {
      * storage instead.
      */
     public async populateWithExtendedInfo(extendedInfo: ExtendedWalletInfo) {
-        Logger.log("wallet", "Populating master wallet with extended info", this.id);
+        Logger.log("wallet", "Populating master wallet with extended info", this.id, extendedInfo);
 
         // Retrieve wallet account type
         this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
 
-        // In case of newly created wallet we don't have extended info from local storag yet,
+        // In case of newly created wallet we don't have extended info from local storagd yet,
         // which is normal.
         if (extendedInfo) {
             this.name = extendedInfo.name;
@@ -93,6 +104,16 @@ export class MasterWallet {
                 let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
                 if (subWallet) {
                     this.subWallets[serializedSubWallet.id] = subWallet;
+                }
+            }
+
+            this.nfts = [];
+            if (extendedInfo.nfts) {
+                for (let serializedNFT of extendedInfo.nfts) {
+                    let nft: NFT = NFT.parse(serializedNFT);
+                    if (nft) {
+                        this.nfts.push(nft);
+                    }
                 }
             }
         }
@@ -195,35 +216,92 @@ export class MasterWallet {
     }
 
     /**
-     * Get all the tokens, and create the subwallet.
+     * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
      */
-    public async updateERC20TokenList(prefs: GlobalPreferencesService) {
+    public async updateERCTokenList(prefs: GlobalPreferencesService) {
         if (!this.subWallets[StandardCoinName.ETHSC]) {
             Logger.log("wallet", 'updateERC20TokenList no ETHSC');
             return;
         }
 
         const activeNetwork = await prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
-        const erc20TokenList = await (this.subWallets[StandardCoinName.ETHSC] as ETHChainSubWallet).getERC20TokenList();
-        erc20TokenList.forEach( async (token: WalletPlugin.ERC20TokenInfo) => {
-            if (token.symbol && token.name) {
-                if (!this.subWallets[token.symbol] && !this.coinService.isCoinDeleted(token.contractAddress)) {
-                    try {
-                        const erc20Coin = this.coinService.getERC20CoinByContracAddress(token.contractAddress);
-                        if (erc20Coin) {
-                            await this.createSubWallet(erc20Coin);
-                        } else {
-                            const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetwork, true);
-                            await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
+        const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ETHChainSubWallet).getERC20TokenList();
+
+        // For each ERC token discovered by the wallet SDK, we check its type and handle it.
+        ercTokenList.forEach( async (token: WalletPlugin.ERC20TokenInfo) => {
+            if (token.type === "ERC-20") {
+                if (token.symbol && token.name) {
+                    if (!this.subWallets[token.symbol] && !this.coinService.isCoinDeleted(token.contractAddress)) {
+                        try {
+                            // Check if we already know this token globally. If so, we add it as a new subwallet
+                            // to this master wallet. Otherwise we add the new token to the global list first then
+                            // add a subwallet as well.
+                            const erc20Coin = this.coinService.getERC20CoinByContracAddress(token.contractAddress);
+                            if (erc20Coin) {
+                                await this.createSubWallet(erc20Coin);
+                            } else {
+                                const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetwork, true);
+                                await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
+                            }
+                        } catch (e) {
+                            Logger.log("wallet", 'updateERC20TokenList exception:', e);
                         }
-                    } catch (e) {
-                        Logger.log("wallet", 'updateERC20TokenList exception:', e);
                     }
+                } else {
+                    Logger.warn('wallet', 'Token has no name or symbol:', token);
                 }
-            } else {
-                Logger.warn('wallet', 'Token has no name or symbol:', token);
+            }
+            else if (token.type === "ERC-721") {
+                if (!this.containsNFT(token.contractAddress)) {
+                    await this.createNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance));
+                }
+            }
+            else if (token.type === "ERC-1155") {
+                Logger.warn('wallet', 'ERC1155 NFTs not yet implemented', token);
+            }
+            else {
+                Logger.warn('wallet', 'Unhandled token type:', token);
             }
         });
+    }
+
+    /**
+     * Tells if this master wallet contains a NFT information, based on the NFT's contract address.
+     */
+    public containsNFT(contractAddress: string): boolean {
+        return this.nfts.findIndex(nft => nft.contractAddress === contractAddress) !== -1;
+    }
+
+    public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
+        let resolvedInfo = await this.erc721Service.getCoinInfo(contractAddress);
+
+        let nft = new NFT(nftType, contractAddress, balance);
+        nft.setResolvedInfo(resolvedInfo);
+        this.nfts.push(nft);
+
+        await this.walletManager.saveMasterWallet(this);
+    }
+
+    public getNFTs(): NFT[] {
+        return this.nfts;
+    }
+
+    public getNFTByAddress(contractAddress: string): NFT {
+        return this.nfts.find(n => n.contractAddress === contractAddress);
+    }
+
+    /**
+     * Retrieves latest information about assets on chain and update the local cache and model.
+     */
+    public async refreshNFTAssets(nft: NFT): Promise<void> {
+        let accountAddress = await this.getSubWallet(StandardCoinName.ETHSC).createAddress();
+        if (nft.type == NFTType.ERC721) {
+            let assets = await this.erc721Service.fetchAllAssets(accountAddress, nft.contractAddress);
+            console.log("ASSETS", assets);
+
+            // TMP
+            nft.assets = assets;
+        }
     }
 }
 
@@ -249,6 +327,9 @@ class SubWalletBuilder {
      * Restored wallet from local storage info.
      */
     static newFromSerializedSubWallet(masterWallet: MasterWallet, serializedSubWallet: SerializedSubWallet): SubWallet {
+        if (!serializedSubWallet)
+            return null; // Should never happen, but happened because of some other bugs.
+
         switch (serializedSubWallet.type) {
             case CoinType.STANDARD:
                 return StandardSubWalletBuilder.newFromSerializedSubWallet(masterWallet, serializedSubWallet);
