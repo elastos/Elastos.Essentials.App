@@ -23,7 +23,7 @@ export type RawTransactionPublishResult = {
 export class SerializedSubWallet {
     public type: CoinType = null;
     public id: StandardCoinName = null;
-    public balance: string = null;
+    public balance: string = null; // SELA or wei
     public lastBlockTime: string = null;
     public timestamp: number = -1;
     public progress: number = 0;
