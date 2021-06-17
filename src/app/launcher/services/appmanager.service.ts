@@ -25,11 +25,12 @@ import { Events } from 'src/app/services/events.service';
 import { App } from "src/app/model/app.enum"
 
 type RunnableApp = {
-    cssId:string;
+    id:string;
     name: string;
     routerContext: string; // Ex: "wallet"
     description: string;
     icon: string;
+    hasWidget: boolean;
     routerPath?: string;
     startCall?: () => void;
 }
@@ -127,29 +128,32 @@ export class AppmanagerService {
                 type: 'launcher.main',
                 apps: [
                     {
-                        cssId: 'Wallet',
+                        id: 'wallet',
                         name: this.translate.instant('launcher.app-wallet'),
                         routerContext: App.WALLET,
                         description: this.translate.instant('launcher.app-wallet-description'),
                         icon: '/assets/launcher/apps/app-icons/wallet.svg',
+                        hasWidget: true,
                         // routerPath: '/wallet/wallet-home'
                         startCall: () => this.walletInitService.start()
                     },
                     {
-                        cssId: 'Identity',
+                        id: 'identity',
                         routerContext: App.IDENTITY,
                         name: this.translate.instant('launcher.app-identity'),
                         description: this.translate.instant('launcher.app-identity-description'),
                         icon: '/assets/launcher/apps/app-icons/identity.svg',
-                        routerPath: '/identity/myprofile/home'
+                        routerPath: '/identity/myprofile/home',
+                        hasWidget: false,
                         // routerPath: '/identity/credaccessrequest'
                     },
                     {
-                        cssId: 'Contacts',
+                        id: 'contacts',
                         routerContext: App.CONTACTS,
                         name: this.translate.instant('launcher.app-contacts'),
                         description: this.translate.instant('launcher.app-contacts-description'),
                         icon: '/assets/launcher/apps/app-icons/contacts.svg',
+                        hasWidget: false,
                         routerPath: '/contacts/friends'
                     },
                 ]
@@ -158,27 +162,30 @@ export class AppmanagerService {
                 type: 'launcher.utilities',
                 apps: [
                     {
-                        cssId: 'Hive',
+                        id: 'hive',
                         routerContext: App.HIVE_MANAGER,
                         name: this.translate.instant('launcher.app-hive'),
                         description: this.translate.instant('launcher.app-hive-description'),
                         icon: '/assets/launcher/apps/app-icons/hive.svg',
+                        hasWidget: true,
                         startCall: () => this.hiveManagerInitService.start()
                     },
                     {
-                        cssId: 'Scanner',
+                        id: 'scanner',
                         routerContext: App.SCANNER,
                         name: this.translate.instant('launcher.app-scanner'),
                         description: this.translate.instant('launcher.app-scanner-description'),
                         icon: '/assets/launcher/apps/app-icons/scanner.svg',
+                        hasWidget: false,
                         routerPath: '/scanner/scan'
                     },
                     {
-                        cssId: 'Settings',
+                        id: 'settings',
                         routerContext: App.SETTINGS,
                         name: this.translate.instant('launcher.app-settings'),
                         description: this.translate.instant('launcher.app-settings-description'),
                         icon: '/assets/launcher/apps/app-icons/settings.svg',
+                        hasWidget: false,
                         routerPath: '/settings/menu'
                     },
                 ]
@@ -187,28 +194,31 @@ export class AppmanagerService {
                  type: 'launcher.voting',
                  apps: [
                     {
-                        cssId: 'DPoS',
+                        id: 'dpos',
                         routerContext: App.DPOS_VOTING,
                          name: this.translate.instant('launcher.app-dpos-voting'),
                          description: this.translate.instant('launcher.app-dpos-description'),
                          icon: '/assets/launcher/apps/app-icons/dpos.svg',
+                         hasWidget: false,
                          startCall: () => this.dposVotingInitService.start()
                     },
                     {
-                        cssId: 'CRCouncil',
+                        id: 'crcouncil',
                         routerContext: App.CRCOUNCIL_VOTING,
                         name: this.translate.instant('launcher.app-cr-council'),
                         description: this.translate.instant('launcher.app-crcouncil-description'),
                         icon: '/assets/launcher/apps/app-icons/council.svg',
+                        hasWidget: false,
                         routerPath: '/crcouncilvoting/candidates'
                         // routerPath: '/crcouncilvoting/vote'
                     },
                     {
-                        cssId: 'CRProposal',
+                        id: 'crproposal',
                         routerContext: App.CRPROPOSAL_VOTING,
                         name: this.translate.instant('launcher.app-cr-proposal'),
                         description: this.translate.instant('launcher.app-crproposal-description'),
                         icon: '/assets/launcher/apps/app-icons/proposal.svg',
+                        hasWidget: false,
                         routerPath: '/crproposalvoting/proposals/ALL'
                     },
                 ]
