@@ -147,7 +147,8 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         this.transaction = this.createWithdrawTransaction;
         this.toAddress = await this.toSubWallet.createAddress();
         // Cross chain need 20000 SELA.
-        this.amount = this.fromSubWallet.getDisplayAmount(this.fromSubWallet.balance.minus(20000)).toNumber();
+        // this.amount = this.fromSubWallet.getDisplayAmount(this.fromSubWallet.balance.minus(20000)).toNumber();
+        this.amount = this.fromSubWallet.getDisplayAmount(this.fromSubWallet.balance).toNumber();
 
         Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
         Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -160,7 +161,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
     async createWithdrawTransaction() {
         const rawTx = await this.fromSubWallet.createWithdrawTransaction(
             this.toAddress,
-            this.amount,
+            -1,//this.amount,
             "Funds migration from DID 1.0 chain"
         );
 

@@ -121,7 +121,8 @@ export class WalletSettingsPage implements OnInit {
         // Show this menu entry only if the DID 1.0 subwallet balance is non 0 to not pollute all users
         // with this later on.
         let did1SubWallet = this.masterWallet.getSubWallet(StandardCoinName.IDChain);
-        if (did1SubWallet && did1SubWallet.balance.gt(0)) {
+        // Cross chain transaction need 20000 for fee.
+        if (did1SubWallet && did1SubWallet.balance.gt(20000)) {
             this.settings.push({
                 type: 'wallet-did1-transfer',
                 route: null,

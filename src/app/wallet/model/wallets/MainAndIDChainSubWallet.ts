@@ -123,7 +123,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   }
 
   public async createPaymentTransaction(toAddress: string, amount: number, memo: string = ""): Promise<string> {
-    let toAmount = this.accMul(amount, Config.SELA);
+    let toAmount = 0;
+    if (amount == -1) {
+      toAmount = Math.floor(this.balance.minus(10000).toNumber());
+    } else {
+      toAmount = this.accMul(amount, Config.SELA);
+    }
+    Logger.log('wallet', 'createPaymentTransaction toAmount:', toAmount);
+
     let outputs = [{
       "Address": toAddress,
       "Amount": toAmount.toString()
@@ -159,6 +166,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   public async createDepositTransaction(sideChainID: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
     let toAmount = this.accMul(amount, Config.SELA);
     let utxo = await this.getUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
+    Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
 
     let lockAddres = '';
     if (sideChainID === StandardCoinName.IDChain) {
@@ -183,8 +191,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
   }
 
   public async createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
-    let toAmount = this.accMul(amount, Config.SELA);
+    let toAmount = 0;
+    if (amount == -1) {
+      toAmount = Math.floor(this.balance.minus(20000).toNumber());
+    } else {
+      toAmount = this.accMul(amount, Config.SELA);
+    }
     let utxo = await this.getUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
+    Logger.log('wallet', 'createWithdrawTransaction toAmount:', toAmount);
 
     return this.masterWallet.walletManager.spvBridge.createWithdrawTransaction(
       this.masterWallet.id,
@@ -384,7 +398,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
     Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
-    // Logger.log("wallet", this.masterWallet.id, ' ', this.id, ' timestampRPC:', this.timestampRPC);
     return true;
   }
 
@@ -800,6 +813,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
     try { m += s1.split(".")[1].length } catch (e) { }
     try { m += s2.split(".")[1].length } catch (e) { }
-    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
+
+    return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
   }
 }
