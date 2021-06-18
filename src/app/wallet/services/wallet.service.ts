@@ -101,7 +101,7 @@ export class WalletManager {
         const hasWallet = await this.initWallets();
 
         if (!hasWallet) {
-            //this.goToLauncherScreen();
+            this.walletServiceStatus.next(true);
             this.events.publish("walletmanager:initialized");
             return;
         }
@@ -208,7 +208,7 @@ export class WalletManager {
                 }
 
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
-                await this.masterWallets[masterId].updateERCTokenList(this.prefs);
+                /* await  */this.masterWallets[masterId].updateERCTokenList(this.prefs);
             }
         } catch (error) {
             Logger.error('wallet', 'initWallets error:', error);

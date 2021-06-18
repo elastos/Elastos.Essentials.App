@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { GlobalService } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { DAppService } from './dapp.service';
 
 @Injectable({
@@ -16,7 +16,7 @@ export class DeveloperToolsInitService extends GlobalService {
   }
 
   public async init(): Promise<void> {
-
+    GlobalServiceManager.getInstance().registerService(this);
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

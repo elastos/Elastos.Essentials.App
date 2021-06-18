@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { GlobalService } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppService } from './app.service';
 import { BackgroundService } from './background.service';
 import { HiveService } from './hive.service';
@@ -19,6 +19,8 @@ export class HiveManagerInitService extends GlobalService {
   }
 
   public async init(): Promise<void> {
+    GlobalServiceManager.getInstance().registerService(this);
+
     this.appService.init();
   }
 

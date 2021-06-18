@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { GlobalService } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppService } from './app.service';
 import { CROperationsService } from './croperations.service';
 import { ProposalService } from './proposal.service';
@@ -21,7 +21,7 @@ export class CRProposalVotingInitService extends GlobalService {
   }
 
   public async init(): Promise<void> {
-    // TODO if user don't start this app, we should not do these.
+    GlobalServiceManager.getInstance().registerService(this);
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

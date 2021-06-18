@@ -39,6 +39,7 @@ export class HomePage implements OnInit {
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
 
   // Widget data
+  public mainWalletName: string = "";
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
 
   constructor(
@@ -123,6 +124,7 @@ export class HomePage implements OnInit {
         // We need to have at least one existing wallet to display something.
         if (wallets && wallets.length > 0) {
           // Simple widget for now: display the main balance of the first wallet we find.
+          this.mainWalletName = wallets[0].name;
           this.mainWalletELABalance = wallets[0].getDisplayBalance().toFixed(2);
         }
       }

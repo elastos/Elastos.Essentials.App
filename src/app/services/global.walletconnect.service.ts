@@ -10,7 +10,7 @@ import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../m
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalNativeService } from './global.native.service';
-import { GlobalService } from './global.service.manager';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +33,8 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   init() {
+    GlobalServiceManager.getInstance().registerService(this);
+
     this.intents.intentListener.subscribe((receivedIntent)=>{
       if (!receivedIntent)
         return;

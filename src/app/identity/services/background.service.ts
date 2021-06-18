@@ -13,7 +13,7 @@ import * as moment from 'moment';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { GlobalService } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { App } from 'src/app/model/app.enum';
 
 
@@ -44,6 +44,7 @@ export class BackgroundService extends GlobalService {
     }
 
     public async init() {
+      GlobalServiceManager.getInstance().registerService(this);
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

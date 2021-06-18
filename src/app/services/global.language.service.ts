@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
-import { GlobalService } from './global.service.manager';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -54,6 +54,8 @@ export class GlobalLanguageService extends GlobalService {
   }
 
   public async init() {
+    GlobalServiceManager.getInstance().registerService(this);
+
     this.setupAvailableLanguages();
 
     this.prefs.preferenceListener.subscribe((prefChanged)=>{

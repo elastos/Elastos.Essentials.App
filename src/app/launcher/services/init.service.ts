@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { GlobalService } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppmanagerService } from './appmanager.service';
 import { DIDManagerService } from './didmanager.service';
 import { TipsService } from './tips.service';
@@ -23,6 +23,8 @@ export class LauncherInitService extends GlobalService {
   }
 
   public async init(): Promise<void> {
+    GlobalServiceManager.getInstance().registerService(this);
+    
     this.didManager.init();
     this.tipsService.init();
   }

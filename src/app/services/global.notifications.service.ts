@@ -4,7 +4,7 @@ import { App } from "src/app/model/app.enum"
 import { Logger } from "../logger";
 import { GlobalStorageService } from "../services/global.storage.service";
 import { GlobalDIDSessionsService, IdentityEntry } from "./global.didsessions.service";
-import { GlobalService } from "./global.service.manager";
+import { GlobalService, GlobalServiceManager } from "./global.service.manager";
 
 /**
  * Object used to generate a notification.
@@ -52,7 +52,7 @@ export class GlobalNotificationsService extends GlobalService {
     }
 
     public async init() {
-
+        GlobalServiceManager.getInstance().registerService(this);
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

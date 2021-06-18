@@ -66,7 +66,7 @@
           </ion-col>
           <ion-col *ngIf="app.hasWidget" class="widget-col" offset="2.2" size="9.8">
             <div *ngIf="app.id === 'wallet' && mainWalletELABalance" class="wallet-widget">
-              <span>{{ 'wallet.amount' | translate }}:  {{ mainWalletELABalance }} ELA</span>
+              <span>{{ mainWalletName }}:  {{ mainWalletELABalance }} ELA</span>
             </div>
             <div *ngIf="app.id === 'hive'" class="hive-widget">
               <ion-progress-bar color="warning" value="0.5"></ion-progress-bar>

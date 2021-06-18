@@ -15,7 +15,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { WalletPrefsService } from './pref.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
-import { GlobalService } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AuthService } from './auth.service';
 import { Util } from 'src/app/didsessions/services/util';
 import { NewIdentity } from 'src/app/didsessions/model/newidentity';
@@ -30,15 +30,15 @@ export class WalletInitService extends GlobalService {
 
   constructor(
     private intentService: IntentService,
-    public localStorage: LocalStorage,
-    public walletManager: WalletManager,
-    public events: Events,
-    public zone: NgZone,
-    public translate: TranslateService,
+    private localStorage: LocalStorage,
+    private walletManager: WalletManager,
+    private events: Events,
+    private zone: NgZone,
+    private translate: TranslateService,
     private navService: NavService,
     private currencyService: CurrencyService,
-    public popupProvider: PopupProvider,
-    public modalCtrl: ModalController,
+    private popupProvider: PopupProvider,
+    private modalCtrl: ModalController,
     private coinService: CoinService,
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
@@ -50,7 +50,7 @@ export class WalletInitService extends GlobalService {
   }
 
   public async init(): Promise<void> {
-
+    GlobalServiceManager.getInstance().registerService(this);
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
@@ -70,13 +70,6 @@ export class WalletInitService extends GlobalService {
 
     await this.walletManager.init();
     await this.intentService.init();
-
-    // TODO: Need to improve.
-    //After created or imported did, automatically import the did for the wallet.
-    // if (signedInIdentity.mnemonicInfo != null) {
-    //   await this.importWalletWithMnemonicInfo(signedInIdentity.mnemonicInfo);
-    //   signedInIdentity.mnemonicInfo = null;
-    // }
   }
 
   public async onUserSignOut(): Promise<void> {

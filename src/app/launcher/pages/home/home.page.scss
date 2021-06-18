@@ -89,7 +89,7 @@ ion-content {
     ion-col {
       display: flex;
     }
-    
+
     .left-col {
       justify-content: center;
       align-items: flex-start;
@@ -147,7 +147,7 @@ ion-content {
           color: #791BF5;
           text-transform: uppercase;
         }
-        
+
       }
     }
   }
@@ -231,9 +231,9 @@ ion-content {
             justify-content: center;
             align-items: center;
             padding: 8px;
-        
+
             span {
-              font-size: 9px;
+              font-size: 11px;
               font-weight: 500;
               letter-spacing: 0.5px;
             }
@@ -422,7 +422,7 @@ ion-content {
 
         .widget-col {
           .wallet-widget {
-            background: #363636;
+            background: #742fcf/* #363636 */;
 
             span {
               color: #FFFFFF;

@@ -6,7 +6,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalService } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 
 
 @Injectable({
@@ -27,6 +27,7 @@ export class DIDManagerService extends GlobalService {
   }
 
   init() {
+    GlobalServiceManager.getInstance().registerService(this);
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

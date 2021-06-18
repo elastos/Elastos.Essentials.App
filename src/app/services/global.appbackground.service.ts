@@ -36,7 +36,7 @@ export class GlobalAppBackgroundService {
    *
    */
   public async init(): Promise<void> {
-      Logger.log('AppBackgroundService', 'init')
+      Logger.log('AppBackgroundService', 'init');
       await this.didSessionsInitService.init();
       await this.launcherInitService.init();
       await this.scannerInitService.init();

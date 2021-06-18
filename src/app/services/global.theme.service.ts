@@ -6,7 +6,7 @@ import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.se
 import { GlobalPreferencesService } from './global.preferences.service';
 import { Event } from '@angular/router';
 import { TitleBarForegroundMode } from '../components/titlebar/titlebar.types';
-import { GlobalService } from './global.service.manager';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 export enum AppTheme {
   LIGHT,
@@ -40,6 +40,10 @@ export class GlobalThemeService extends GlobalService {
           this.activeTheme.next(AppTheme.LIGHT);
       }
     });
+  }
+
+  public init() {
+    GlobalServiceManager.getInstance().registerService(this);
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

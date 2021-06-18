@@ -78,6 +78,7 @@ export class AppComponent {
             this.setupBackKeyNavigation();
 
             // TODO screen.orientation.lock('portrait');
+            this.theme.init();
             await this.language.init();
             await this.notificationsService.init();
             await this.intentService.init();
