@@ -8,7 +8,8 @@ import { BehaviorSubject, Subject } from 'rxjs';
 
 declare let didManager: DIDPlugin.DIDManager;
 
-const assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod";
+const assistAPIEndpoint = "https://assist-restapi.tuum.tech/v2"; // Assist DID 2.0
+//const assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod/v1"; // Assist V1 DID 1.0
 const assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
 
 export const enum DIDPublicationStatus {
@@ -88,10 +89,7 @@ export class GlobalPublicationService {
 
     public async init(): Promise<void> {
         this.persistentInfo = await this.loadPersistentInfo();
-        this.publicationStatus = new BehaviorSubject<PublicationStatus>({
-            didString: this.persistentInfo.did.didString,
-            status: this.persistentInfo.did.publicationStatus
-        });
+        this.publicationStatus = new Subject<PublicationStatus>();
     }
 
     private createNewPersistentInfo(): PersistentInfo {
@@ -137,7 +135,7 @@ export class GlobalPublicationService {
         });
 
         try {
-            let response: AssistCreateTxResponse = await this.http.post(assistAPIEndpoint + "/v1/didtx/create", requestBody, {
+            let response: AssistCreateTxResponse = await this.http.post(assistAPIEndpoint + "/didtx/create", requestBody, {
                 headers: headers
             }).toPromise() as AssistCreateTxResponse;
 
@@ -182,7 +180,7 @@ export class GlobalPublicationService {
                 "Authorization": assistAPIKey
             });
 
-            this.http.get(assistAPIEndpoint + "/v1/didtx/confirmation_id/" + this.persistentInfo.did.assistPublicationID, {
+            this.http.get(assistAPIEndpoint + "/didtx/confirmation_id/" + this.persistentInfo.did.assistPublicationID, {
                 headers: headers
             }).toPromise().then(async (response: AssistTransactionStatusResponse) => {
                 Logger.log("publicationservice", "Assist successful response:", response);
@@ -263,7 +261,9 @@ export class GlobalPublicationService {
     }
 
     public async resetStatus() {
-        await this.savePersistentInfo(this.createNewPersistentInfo());
+        this.persistentInfo = this.createNewPersistentInfo();
+        await this.savePersistentInfo(this.persistentInfo);
+        this.emitPublicationStatusChangeFromPersistentInfo();
     }
 
     public async publishDIDFromStore(storeId: string, storePass: string, didString: string): Promise<void> {

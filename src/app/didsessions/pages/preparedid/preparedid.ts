@@ -266,8 +266,8 @@ export class PrepareDIDPage {
 
   private publishIdentityReal(): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    return new Promise<boolean>((resolve) => {
-      void this.globalPublicationService.resetStatus();
+    return new Promise<boolean>(async (resolve) => {
+      await void this.globalPublicationService.resetStatus();
       let publicationStatusSub = this.globalPublicationService.publicationStatus.subscribe((status)=>{
         if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
           Logger.log("didsessions", "Identity publication success");
