@@ -65,6 +65,13 @@ export class CredentialImportRequestPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public receivedIntent: CredImportIdentityIntent = null;
+  public requestDappIcon: string = null;
+  public requestDappName: string = null;
+  public requestDappColor: string = '#565bdb';
+
+  public showSpinner = false;
+  public popup: HTMLIonPopoverElement = null;
+
   private credentials: VerifiableCredential[] = []; // Raw material
   displayableCredentials: ImportedCredential[] = []; // Displayable reworked matarial
   preliminaryChecksCompleted: boolean = false;
@@ -72,7 +79,7 @@ export class CredentialImportRequestPage {
   constructor(
     private zone: NgZone,
     public didService: DIDService,
-    private popup: PopupProvider,
+    private popupProvider: PopupProvider,
     private appServices: UXService,
     private translate: TranslateService,
     public theme: GlobalThemeService,
@@ -100,7 +107,7 @@ export class CredentialImportRequestPage {
   async runPreliminaryChecks() {
     // Make sure that we received at least one credential in the list
     if (!this.receivedIntent.params.credentials || this.receivedIntent.params.credentials.length == 0) {
-      await this.popup.ionicAlert("Error", "Sorry, there is actually no credential provided in the given information", "Close");
+      await this.popupProvider.ionicAlert("Error", "Sorry, there is actually no credential provided in the given information", "Close");
       return;
     }
 
@@ -113,7 +120,7 @@ export class CredentialImportRequestPage {
     let targetDIDString = this.receivedIntent.params.credentials[0].credentialSubject.id;
     let activeDIDString = this.didService.getActiveDid().getDIDString();
     if (targetDIDString != activeDIDString) {
-      await this.popup.ionicAlert("Error", "Sorry, the credential you are trying to import does not belong to this identity.", "Close");
+      await this.popupProvider.ionicAlert("Error", "Sorry, the credential you are trying to import does not belong to this identity.", "Close");
       return;
     }
 
@@ -189,7 +196,7 @@ export class CredentialImportRequestPage {
         importedCredentialsResult.push(displayableCredential.credential.pluginVerifiableCredential.getId())
       }
 
-      this.popup.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async ()=>{
+      this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async ()=>{
         Logger.log('Identity', "Sending credimport intent response for intent id "+this.receivedIntent.intentId)
         await this.appServices.sendIntentResponse("credimport", {
           importedcredentials: importedCredentialsResult
@@ -202,5 +209,9 @@ export class CredentialImportRequestPage {
 
   async rejectRequest() {
     await this.appServices.sendIntentResponse("credimport", {}, this.receivedIntent.intentId);
+  }
+
+  getDappIcon() {
+    return 'assets/identity/icon/elastos-icon.svg';
   }
 }

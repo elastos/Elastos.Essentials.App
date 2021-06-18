@@ -199,8 +199,8 @@ export const en = {
         // page: credimport
         'credential-import': 'Import Credential',
         'credential-import-from': 'Delivered By:',
-        'credimport-intro': 'You are going to issue some information to a third party and sign it with your identity.',
-        'credimport-intro2': 'Please review the following data.',
+        'credimport-intro': 'You are going to attach some information provided by a third party to your identity.',
+        'credimport-intro2': 'Please review the following data:',
         'credimport-success-title': 'Credential imported',
         'credimport-success': 'Great, the credential has been added to your DID profile.',
         'credimport-success-done': 'Done',

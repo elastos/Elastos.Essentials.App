@@ -198,12 +198,12 @@ export const fr = {
         'credential-issued-error': 'Oops, le crédentiel n\'a pas pu être créé pour l\'instant.',
 
         // page: credimport
-        'credential-import': 'Import de Crédentiel',
-        'credential-import-from': 'Délivré Par:',
-        'credimport-intro': 'Vous allez ajouter un crédentiel fourni par un tier, à votre profil. Veuillez vérifier son contenu.',
-        'credimport-intro2': 'Veuillez consulter les données suivantes',
-        'credimport-success-title': 'Credentiél importé',
-        'credimport-success': 'Parfait, le crédential a été ajouté à votre profil.',
+        'credential-import': 'Import d\'informations',
+        'credential-import-from': 'Délivré par:',
+        'credimport-intro': 'Vous allez ajouter des informations fournies par un tiers à votre profil.',
+        'credimport-intro2': 'Veuillez vérifier le contenu suivant:',
+        'credimport-success-title': 'Informations importées',
+        'credimport-success': 'Les informations ont été ajoutées à votre profil DID.',
         'credimport-success-done': 'Terminer',
 
         // page: sethiveprovider
