@@ -31,9 +31,9 @@ export const zh = {
         'utilities': '通用',
         'voting': '投票',
         'other': '其它',
-        'backup-title': 'IDENTITY NOT BACKED UP',
-        'backup-message': 'Saving your identity’s paper key is a very important step as this the only way to recover it later.',
-        'backup-button': 'Backup Now',
+        'backup-title': '身份未备份',
+        'backup-message': '保存您身份的纸质密钥是非常重要的一步，因为这是以后恢复它的唯一方法。',
+        'backup-button': '立即备份',
 
         /********** Onboard Page **********/
 
