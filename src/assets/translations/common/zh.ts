@@ -8,7 +8,7 @@ export const zh = {
         'cancel': '取消',
         'begin': '开始',
         'continue': '继续',
-        'go-back': 'Go Back',
+        'go-back': '返回',
         'ok': '好的',
         'confirm': '确定',
         'share': '分享',

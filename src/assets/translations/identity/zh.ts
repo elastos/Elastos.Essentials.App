@@ -199,7 +199,7 @@ export const zh = {
         // page: credimport
         'credential-import': '导入凭证',
         'credential-import-from': '来自 ',
-        'credimport-intro': 'You are going to attach some information provided by a third party to your identity.',
+        'credimport-intro': '您将把第三方提供的一些信息附加到您的身份中。',
         'credimport-intro2': '请检查以下数据：',
         'credimport-success-title': '凭证已导入',
         'credimport-success': '太好了，该凭证已添加到您的DID个人资料中。',
