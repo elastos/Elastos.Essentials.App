@@ -77,6 +77,7 @@ export class CoinHomePage implements OnInit {
     private syncCompletedSubscription: Subscription = null;
 
     private updateInterval = null;
+    private updateTmeout = null;
 
     constructor(
         public router: Router,
@@ -103,6 +104,10 @@ export class CoinHomePage implements OnInit {
         if (this.updateInterval) {
           clearInterval(this.updateInterval);
           this.updateInterval = null;
+        }
+        if (this.updateTmeout) {
+          clearTimeout(this.updateTmeout);
+          this.updateTmeout = null;
         }
         if (this.syncSubscription) this.syncSubscription.unsubscribe();
         if (this.syncCompletedSubscription) this.syncCompletedSubscription.unsubscribe();
@@ -135,7 +140,7 @@ export class CoinHomePage implements OnInit {
 
         this.updateTransactions();
 
-        setTimeout(async () => {
+        this.updateTmeout = setTimeout(async () => {
           if (this.subWallet.isLoadTxDataFromCache()) {
             await this.updateWalletInfo();
           }
