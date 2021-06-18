@@ -157,6 +157,10 @@ export class CurrencyService {
       return null;
     }
 
+    if (cryptoBalance.isNaN()) {
+      return null;
+    }
+
     const currencyPrice = new BigNumber(this.selectedCurrency.price);
     const currencyBalance = currencyPrice.multipliedBy(cryptoBalance);
     if (cryptoBalance.isZero()) {
