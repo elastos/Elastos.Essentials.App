@@ -177,7 +177,7 @@ export class DIDDocument {
                     },
                 );
             } else {
-                reject(new Error('publish-wait'));
+                reject(new Error('identity.publish-wait'));
             }
         });
     }
