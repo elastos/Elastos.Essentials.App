@@ -21,6 +21,8 @@ import { GlobalAppBackgroundService } from 'src/app/services/global.appbackgroun
 import { AuthService } from "src/app/identity/services/auth.service";
 import { DIDService } from "src/app/identity/services/did.service";
 import { App } from "src/app/model/app.enum"
+import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +36,10 @@ export class HomePage implements OnInit {
   private popover: any = null;
   private modal: any = null;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+  private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
+
+  // Widget data
+  public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
 
   constructor(
     public toastCtrl: ToastController,
@@ -50,6 +56,7 @@ export class HomePage implements OnInit {
     private modalCtrl: ModalController,
     private appBackGroundService: GlobalAppBackgroundService,
     private authService: AuthService,
+    private walletService: WalletManager,
     private globalNotifications: GlobalNotificationsService,
   ) {
   }
@@ -107,6 +114,19 @@ export class HomePage implements OnInit {
         }
       });
     }
+
+    // Wait for wallet service to be initialized (existing wallets loaded) so we can display some balance
+    // on the wallet widget.
+    this.walletServiceSub = this.walletService.walletServiceStatus.subscribe((initializationComplete) => {
+      if (initializationComplete) {
+        let wallets = this.walletService.getWalletsList();
+        // We need to have at least one existing wallet to display something.
+        if (wallets && wallets.length > 0) {
+          // Simple widget for now: display the main balance of the first wallet we find.
+          this.mainWalletELABalance = wallets[0].getDisplayBalance().toFixed(2);
+        }
+      }
+    });
   }
 
   ionViewDidEnter() {
@@ -115,6 +135,8 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.walletServiceSub.unsubscribe();
+
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.popover) {
       this.popover.dimiss();

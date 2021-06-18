@@ -144,8 +144,7 @@
       "elastos-essentials-plugin-internal": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "android"
     ]
   }
 }

@@ -48,6 +48,7 @@ import { NetworkType } from 'src/app/model/networktype';
 import { Events } from 'src/app/services/events.service';
 import { StandardSubWalletBuilder } from '../model/wallets/StandardSubWalletBuilder';
 import { ERC721Service } from './erc721.service';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Injectable({
@@ -66,6 +67,8 @@ export class WalletManager {
     public needToPromptTransferToIDChain = false; // Whether it's time to ask user to transfer some funds to the ID chain for better user experience or not.
 
     public spvBridge: SPVWalletPluginBridge = null;
+
+    public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
 
     constructor(
         public events: Events,
@@ -110,6 +113,7 @@ export class WalletManager {
         Logger.log('wallet', "Wallet manager initialization complete");
 
         this.events.publish("walletmanager:initialized");
+        this.walletServiceStatus.next(true);
     }
 
     async stop() {

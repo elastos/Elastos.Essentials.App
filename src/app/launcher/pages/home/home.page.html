@@ -65,8 +65,8 @@
             <img [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
           </ion-col>
           <ion-col *ngIf="app.hasWidget" class="widget-col" offset="2.2" size="9.8">
-            <div *ngIf="app.id === 'wallet'" class="wallet-widget">
-              <span>Amount:  3000 ELA</span>
+            <div *ngIf="app.id === 'wallet' && mainWalletELABalance" class="wallet-widget">
+              <span>Amount:  {{ mainWalletELABalance }} ELA</span>
             </div>
             <div *ngIf="app.id === 'hive'" class="hive-widget">
               <ion-progress-bar color="warning" value="0.5"></ion-progress-bar>
