@@ -110,16 +110,16 @@ export class CreateProposalPage {
         }
     }
 
-    private async creatTransactionFunction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    private async creatTransactionFunction(payload: string, memo: string): Promise<string> {
         switch(this.createProposalCommand.data.proposaltype) {
             case "normal":
-                return await this.walletManager.spvBridge.createProposalTransaction(masterWalletId, chainId, payload, memo);
+                return await this.voteService.sourceSubwallet.createProposalTransaction(payload, memo);
             case "changeproposalowner":
-                return await this.walletManager.spvBridge.createProposalChangeOwnerTransaction(masterWalletId, chainId, payload, memo);
+                return await this.voteService.sourceSubwallet.createProposalChangeOwnerTransaction(payload, memo);
             case "closeproposal":
-                return await this.walletManager.spvBridge.createTerminateProposalTransaction(masterWalletId, chainId, payload, memo);
+                return await this.voteService.sourceSubwallet.createTerminateProposalTransaction(payload, memo);
             case "secretarygeneral":
-                return await this.walletManager.spvBridge.createSecretaryGeneralElectionTransaction(masterWalletId, chainId, payload, memo);
+                return await this.voteService.sourceSubwallet.createSecretaryGeneralElectionTransaction(payload, memo);
             default:
                 throw new Error("Don't support this proposaltype: " + this.createProposalCommand.data.proposaltype);
         }
@@ -131,6 +131,7 @@ export class CreateProposalPage {
         try {
             //Get payload
             var payload = this.getPayload();
+            Logger.log('crproposal', 'get payload', payload);
 
             //Get digest
             var digest = await this.digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
@@ -140,13 +141,14 @@ export class CreateProposalPage {
             payload.CRCouncilMemberSignature = await this.signDigest(digest);
 
             //Create transaction
-            let rawTx = await this.creatTransactionFunction(this.voteService.masterWalletId, StandardCoinName.ELA, payload, '');
+            let rawTx = await this.creatTransactionFunction(payload, '');
             await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
             await this.popup.alert("Error", "Sorry, unable to sign your crproposal. Your crproposal can't be created for now. " + e, "Ok");
+            Logger.error('crproposal', 'signAndCreateProposal error:', e);
             return;
         }
     }

@@ -72,7 +72,7 @@ export class WithdrawPage {
 
             //Create transaction and send
             payload.Signature = ret.result.signature;
-            const rawTx = await this.walletManager.spvBridge.createProposalWithdrawTransaction(this.voteService.masterWalletId, StandardCoinName.ELA, payload, '');
+            const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(payload, '');
             await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {

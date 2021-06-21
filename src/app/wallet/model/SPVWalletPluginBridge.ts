@@ -796,9 +796,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createProposalTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    createProposalTransaction(masterWalletId: string, chainId: string, input:string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createProposalTransaction([masterWalletId, chainId, payload, memo],
+            walletManager.createProposalTransaction([masterWalletId, chainId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -812,9 +812,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createProposalReviewTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    createProposalReviewTransaction(masterWalletId: string, chainId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createProposalReviewTransaction([masterWalletId, chainId, payload, memo],
+            walletManager.createProposalReviewTransaction([masterWalletId, chainId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -844,9 +844,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createProposalTrackingTransaction(masterWalletId: string, chainId: string, SecretaryGeneralSignedPayload: string, memo: string): Promise<string> {
+    createProposalTrackingTransaction(masterWalletId: string, chainId: string, input: string, SecretaryGeneralSignedPayload: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createProposalTrackingTransaction([masterWalletId, chainId, SecretaryGeneralSignedPayload, memo],
+            walletManager.createProposalTrackingTransaction([masterWalletId, chainId, input, SecretaryGeneralSignedPayload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -869,9 +869,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createSecretaryGeneralElectionTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    createSecretaryGeneralElectionTransaction(masterWalletId: string, chainId: string, input: string, payload: string, fee, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createSecretaryGeneralElectionTransaction([masterWalletId, chainId, payload, memo],
+            walletManager.createSecretaryGeneralElectionTransaction([masterWalletId, chainId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });
         });
@@ -894,9 +894,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createProposalChangeOwnerTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    createProposalChangeOwnerTransaction(masterWalletId: string, chainId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createProposalChangeOwnerTransaction([masterWalletId, chainId, payload, memo],
+            walletManager.createProposalChangeOwnerTransaction([masterWalletId, chainId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });
         });
@@ -919,9 +919,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createTerminateProposalTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    createTerminateProposalTransaction(masterWalletId: string, chainId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createTerminateProposalTransaction([masterWalletId, chainId, payload, memo],
+            walletManager.createTerminateProposalTransaction([masterWalletId, chainId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });
         });
@@ -935,9 +935,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createProposalWithdrawTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    createProposalWithdrawTransaction(masterWalletId: string, chainId: string, input: string, payload: string, fee: string,memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createProposalWithdrawTransaction([masterWalletId, chainId, payload, memo],
+            walletManager.createProposalWithdrawTransaction([masterWalletId, chainId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });
         });

@@ -80,7 +80,7 @@ export class ReviewMilestonePage {
 
             //Create transaction and send
             payload.SecretaryGeneralSignature = ret.result.signature;
-            const rawTx = await this.walletManager.spvBridge.createProposalTrackingTransaction(this.voteService.masterWalletId, StandardCoinName.ELA, payload, '');
+            const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
             await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {

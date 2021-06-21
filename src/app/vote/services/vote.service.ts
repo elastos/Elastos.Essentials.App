@@ -8,10 +8,7 @@ import { Logger } from 'src/app/logger';
 import { WalletAccount } from '../../wallet/model/WalletAccount';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { AuthService } from 'src/app/identity/services/auth.service';
 import { DIDService } from 'src/app/identity/services/did.service';
-import { RawTransactionPublishResult } from 'src/app/wallet/model/wallets/SubWallet';
-import { BASE64 } from 'src/app/model/base64';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/MainchainSubWallet';
@@ -24,7 +21,7 @@ export class VoteService {
 
     public masterWallet: MasterWallet = null;
     public masterWalletId: string;
-    public chainId: StandardCoinName;
+    public chainId: StandardCoinName = StandardCoinName.ELA;;
     public walletInfo: WalletAccount;
     public sourceSubwallet: MainchainSubWallet;
 
@@ -43,6 +40,7 @@ export class VoteService {
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService
     ) {
+        this.chainId = StandardCoinName.ELA;
     }
 
     public async init() {

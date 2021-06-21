@@ -1,9 +1,9 @@
 <ion-content>
     <app-titlebar></app-titlebar>
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
-        <ion-row  *ngIf="state == 'ReturnDeposit'"  class="label-container">
-            <ion-label>Status: {{ state }}</ion-label>
-        </ion-row>
+        <!-- <ion-row  class="label-container">
+            <ion-label>Status: {{ dposInfo.state }}</ion-label>
+        </ion-row> -->
 
         <div *ngIf="state != 'ReturnDeposit'">
             <!-- Name -->
@@ -61,16 +61,16 @@
         </div>
 
         <ion-row>
-            <ion-button  *ngIf="state == 'Unregistered'" color="success" (click)="register()">
+            <ion-button  *ngIf="dposInfo.state == 'Unregistered'" color="success" (click)="register()">
                 {{ 'dposregistration.register' | translate }}
             </ion-button>
-            <ion-button  *ngIf="state == 'Active'" color="success" (click)="unregister()">
+            <ion-button  *ngIf="dposInfo.state == 'Active'" color="success" (click)="unregister()">
                 {{ 'dposregistration.unregister' | translate }}
             </ion-button>
-            <ion-button  *ngIf="state == 'Active'" color="success" (click)="update()">
+            <ion-button  *ngIf="dposInfo.state == 'Active'" color="success" (click)="update()">
                 {{ 'dposregistration.update' | translate }}
             </ion-button>
-            <ion-button  *ngIf="state == 'Canceled'" color="success" (click)="retrieve()">
+            <ion-button  *ngIf="dposInfo.state == 'Canceled'" color="success" (click)="retrieve()">
                 {{ 'dposregistration.retrieve' | translate }}
             </ion-button>
             <!-- <ion-button  *ngIf="state == 'ReturnDeposit'" color="success" (click)="">

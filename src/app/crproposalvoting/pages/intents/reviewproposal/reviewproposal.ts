@@ -73,7 +73,7 @@ export class ReviewProposalPage {
 
             //Create transaction and send
             proposalPayload.Signature = ret.result.signature;
-            const rawTx = await this.walletManager.spvBridge.createProposalReviewTransaction(this.voteService.masterWalletId, StandardCoinName.ELA, proposalPayload, '');
+            const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(proposalPayload, '');
             await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {

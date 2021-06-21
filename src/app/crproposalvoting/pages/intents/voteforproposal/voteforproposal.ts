@@ -89,21 +89,18 @@ export class VoteForProposalPage {
     async createVoteCRProposalTransaction(voteAmount) {
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
-        let invalidCandidates = await this.walletManager.computeVoteInvalidCandidates(this.voteService.masterWalletId);
+        // let invalidCandidates = await this.walletManager.computeVoteInvalidCandidates(this.voteService.masterWalletId);
 
         // The transfer "votes" array must contain exactly ONE entry: the voted proposal
         // TODO: don't use a votes array in a global transfer object. Use a custom object for CR proposal voting.
-        let votes = {};
+        let votes = [];
         votes[this.voteForProposalCommand.data.proposalHash] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
 
-        const rawTx = await this.walletManager.spvBridge.createVoteTransaction(
-            this.voteService.masterWalletId,
-            this.voteService.chainId,
-            '',
-            JSON.stringify(votes),
+        const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
+            votes,
             '', //memo
-            JSON.stringify(invalidCandidates));
+            );
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }
