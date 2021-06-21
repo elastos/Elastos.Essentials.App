@@ -37,6 +37,8 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import * as Sentry from '@sentry/browser';
 import { RewriteFrames } from '@sentry/integrations';
 import { GlobalNativeService } from './services/global.native.service';
+import { DPoSRegistrationInitModule } from './dposregistration/init.module';
+import { CRCouncilManagerInitModule } from './crcouncilmanager/init.module';
 
 
 Sentry.init({
@@ -175,9 +177,11 @@ export function TranslateLoaderFactory() {
     DIDSessionsInitModule,
     ScannerInitModule,
     CRCouncilVotingInitModule,
+    CRCouncilManagerInitModule,
     CRProposalVotingInitModule,
     SettingsInitModule,
     DPoSVotingInitModule,
+    DPoSRegistrationInitModule,
     DeveloperToolsInitModule,
 
     /*

@@ -175,6 +175,10 @@ export class CandidatesService {
 
     public async getAvatar(didString: string): Promise<string> {
         let doc = await DIDDocument.getDIDDocumentFromDIDString(didString);
+        if (doc == null) {
+            return null;
+        }
+
         return doc.getAvatar();
     }
 

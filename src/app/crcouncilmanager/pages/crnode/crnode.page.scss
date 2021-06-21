@@ -1,0 +1,63 @@
+@import 'src/app/contacts/root.scss';
+
+.container {
+  min-height: 100%;
+  padding: 10px 35px;
+
+  .label-container {
+    height: 50px;
+  }
+
+  .input-container {
+    height: 50px;
+
+    .input-title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      ion-label {
+        font-size: 15px;
+        font-weight: 600;
+      }
+    }
+
+    .input {
+      padding-right: 0;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      ion-input {
+        font-size: 13px;
+        text-align: right;
+      }
+    }
+  }
+
+  .btn-container {
+    padding-top: 30px;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+  }
+
+  .msg-container {
+    padding-top: 20px;
+
+    p {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 600;
+    };
+  }
+}
+
+.darkContainer {
+}

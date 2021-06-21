@@ -120,6 +120,19 @@ export class IntentReceiverService {
                     this.showErrorAndExitFromIntent(intent);
                 }
                 break;
+            case "signdigest":
+                    Logger.log('identity', "Received didsign intent request");
+                    if (this.checkSignIntentParams(intent)) {
+                        await this.uxService.loadIdentityAndShow(false);
+                        this.native.setRootRouter("/identity/intents/signdigest");
+                    }
+                    else {
+                        Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
+
+                        // Something wrong happened while trying to handle the intent: send intent response with error
+                        this.showErrorAndExitFromIntent(intent);
+                    }
+                    break;
             case 'promptpublishdid':
                 // param is not required
                 await this.uxService.loadIdentityAndShow(false);

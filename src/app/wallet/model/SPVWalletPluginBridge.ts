@@ -762,6 +762,22 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    CRCouncilMemberClaimNodeDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.CRCouncilMemberClaimNodeDigest([masterWalletId, chainId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
+    createCRCouncilMemberClaimNodeTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.createCRCouncilMemberClaimNodeTransaction([masterWalletId, chainId, payload, memo],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject);  });
+        });
+    }
+
     // CR proposal
 
     proposalOwnerDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
@@ -836,6 +852,81 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    // -- Proposal Secretary General Election
+    proposalSecretaryGeneralElectionDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.proposalSecretaryGeneralElectionDigest([masterWalletId, chainId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.proposalSecretaryGeneralElectionCRCouncilMemberDigest([masterWalletId, chainId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    createSecretaryGeneralElectionTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.createSecretaryGeneralElectionTransaction([masterWalletId, chainId, payload, memo],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    // -- Proposal Change Owner
+    proposalChangeOwnerDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.proposalChangeOwnerDigest([masterWalletId, chainId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    proposalChangeOwnerCRCouncilMemberDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.proposalChangeOwnerCRCouncilMemberDigest([masterWalletId, chainId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    createProposalChangeOwnerTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.createProposalChangeOwnerTransaction([masterWalletId, chainId, payload, memo],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    // -- Proposal Terminate Proposal
+    terminateProposalOwnerDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.terminateProposalOwnerDigest([masterWalletId, chainId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    terminateProposalCRCouncilMemberDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.terminateProposalCRCouncilMemberDigest([masterWalletId, chainId, payload],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
+    createTerminateProposalTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            walletManager.createTerminateProposalTransaction([masterWalletId, chainId, payload, memo],
+                (ret) => { resolve(ret); },
+                (err) => { this.handleError(err, reject); });
+        });
+    }
+
     proposalWithdrawDigest(masterWalletId: string, chainId: string, payload: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             walletManager.proposalWithdrawDigest([masterWalletId, chainId, payload],
@@ -844,9 +935,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createProposalWithdrawTransaction(masterWalletId: string, chainId: string, recipient: string, amount: string, utxo: string, payload: string): Promise<string> {
+    createProposalWithdrawTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createProposalWithdrawTransaction([masterWalletId, chainId, recipient, amount, utxo, payload],
+            walletManager.createProposalWithdrawTransaction([masterWalletId, chainId, payload, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject); });
         });

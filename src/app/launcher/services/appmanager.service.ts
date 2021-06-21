@@ -23,9 +23,11 @@ import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service'
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
 import { App } from "src/app/model/app.enum"
+import { DPoSRegistrationInitService } from 'src/app/dposregistration/services/init.service';
+import { CRCouncilManagerInitService } from 'src/app/crcouncilmanager/services/init.service';
 
 type RunnableApp = {
-    id:string;
+    id: string;
     name: string;
     routerContext: string; // Ex: "wallet"
     description: string;
@@ -78,19 +80,21 @@ export class AppmanagerService {
         private hiveManagerInitService: HiveManagerInitService,
         private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
-    ) {}
+        private dposRegistrationInitService: DPoSRegistrationInitService,
+        private crcouncilManagerInitService: CRCouncilManagerInitService,
+    ) { }
 
     public async init() {
         Logger.log("Launcher", 'App manager service is initializing');
 
-        this.languageSubscription = this.language.activeLanguage.subscribe((lang)=>{
+        this.languageSubscription = this.language.activeLanguage.subscribe((lang) => {
             this.initAppsList();
         });
 
-        this.intentSubscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+        this.intentSubscription = this.globalIntentService.intentListener.subscribe((receivedIntent) => {
             if (!receivedIntent)
                 return;
-                
+
             this.onIntentReceived(receivedIntent);
         });
 
@@ -104,22 +108,22 @@ export class AppmanagerService {
     }
 
     public stop() {
-      if (this.intentSubscription) {
-        this.intentSubscription.unsubscribe();
-        this.intentSubscription = null;
-      }
-      if (this.updateSubscription) {
-        this.updateSubscription.unsubscribe();
-        this.updateSubscription = null;
-      }
-      if (this.tipSubscription) {
-        this.tipSubscription.unsubscribe();
-        this.tipSubscription = null;
-      }
-      if (this.languageSubscription) {
-        this.languageSubscription.unsubscribe();
-        this.languageSubscription = null;
-      }
+        if (this.intentSubscription) {
+            this.intentSubscription.unsubscribe();
+            this.intentSubscription = null;
+        }
+        if (this.updateSubscription) {
+            this.updateSubscription.unsubscribe();
+            this.updateSubscription = null;
+        }
+        if (this.tipSubscription) {
+            this.tipSubscription.unsubscribe();
+            this.tipSubscription = null;
+        }
+        if (this.languageSubscription) {
+            this.languageSubscription.unsubscribe();
+            this.languageSubscription = null;
+        }
     }
 
     private initAppsList() {
@@ -191,16 +195,16 @@ export class AppmanagerService {
                 ]
             },
             {
-                 type: 'launcher.voting',
-                 apps: [
+                type: 'launcher.voting',
+                apps: [
                     {
                         id: 'dpos',
                         routerContext: App.DPOS_VOTING,
-                         name: this.translate.instant('launcher.app-dpos-voting'),
-                         description: this.translate.instant('launcher.app-dpos-description'),
-                         icon: '/assets/launcher/apps/app-icons/dpos.svg',
-                         hasWidget: false,
-                         startCall: () => this.dposVotingInitService.start()
+                        name: this.translate.instant('launcher.app-dpos-voting'),
+                        description: this.translate.instant('launcher.app-dpos-description'),
+                        icon: '/assets/launcher/apps/app-icons/dpos.svg',
+                        hasWidget: false,
+                        startCall: () => this.dposVotingInitService.start()
                     },
                     {
                         id: 'crcouncil',
@@ -220,6 +224,24 @@ export class AppmanagerService {
                         icon: '/assets/launcher/apps/app-icons/proposal.svg',
                         hasWidget: false,
                         routerPath: '/crproposalvoting/proposals/ALL'
+                    },
+                    {
+                        id: 'dposregistration',
+                        routerContext: App.DPOS_REGISTRATION,
+                        name: this.translate.instant('launcher.app-dpos-registration'),
+                        description: this.translate.instant('launcher.app-dpos-registration-description'),
+                        icon: '/assets/launcher/apps/app-icons/dpos.svg',
+                        hasWidget: false,
+                        startCall: () => this.dposRegistrationInitService.start()
+                    },
+                    {
+                        id: 'crcouncilmanager',
+                        routerContext: App.CRCOUNCIL_MANAGER,
+                        name: this.translate.instant('launcher.app-crcouncil-registration'),
+                        description: this.translate.instant('launcher.app-crcouncil-registration-description'),
+                        icon: '/assets/launcher/apps/app-icons/council.svg',
+                        hasWidget: false,
+                        startCall: () => this.crcouncilManagerInitService.start()
                     },
                 ]
             }

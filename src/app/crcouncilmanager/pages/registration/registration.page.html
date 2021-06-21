@@ -1,0 +1,76 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+        <!-- <ion-row class="label-container">
+            <ion-label>Status: {{ status }}</ion-label>
+        </ion-row> -->
+
+         <!-- Name -->
+         <p>{{ 'crcouncilmanager.node-name' | translate }}</p>
+         <ion-row>
+             <ion-input
+                 type="text"
+                 name="name" ngDefaultControl
+                 [placeholder]="'crcouncilmanager.node-name' | translate"
+                 [(ngModel)]="crInfo.NickName">
+             </ion-input>
+         </ion-row>
+
+         <!-- <p>{{ 'crcouncilmanager.node-publickey' | translate }}</p>
+         <ion-row>
+             <ion-input
+                 type="text"
+                 name="publickey" ngDefaultControl
+                 [placeholder]="'crcouncilmanager.node-publickey' | translate"
+                 [(ngModel)]="crInfo.NodePublicKey">
+             </ion-input>
+         </ion-row> -->
+
+
+        <ion-row class="input-container">
+            <ion-col class="input-title" size="5.5">
+                <ion-label>{{ 'crcouncilmanager.node-area' | translate }}</ion-label>
+            </ion-col>
+            <ion-col class="input" size="5.5">
+                <ion-select [(ngModel)]="crInfo.Location">
+                    <ion-select-option *ngFor="let code of areaList" [value]="code">{{ 'crcouncilvoting.' + code | translate }}</ion-select-option>
+                </ion-select>
+            </ion-col>
+        </ion-row>
+        <!-- <ion-row class="label-container">
+            <ion-label>{{ 'crcouncilmanager.inputurl' | translate }}</ion-label>
+        </ion-row>
+        <ion-row class="input-container">
+            <ion-col class="input" size="9.5">
+                <ion-input placeholder="{{ 'crcouncilmanager.inputurl' | translate }}" [(ngModel)]="nodeUrl"
+                    name="nodeUrl">
+                </ion-input>
+            </ion-col>
+        </ion-row> -->
+
+        <p>{{ 'crcouncilmanager.node-url' | translate }}</p>
+         <ion-row>
+             <ion-input
+                 type="text"
+                 name="url" ngDefaultControl
+                 [placeholder]="'crcouncilmanager.node-url' | translate"
+                 [(ngModel)]="crInfo.URL">
+             </ion-input>
+         </ion-row>
+
+        <ion-row>
+            <ion-button  *ngIf="status == 'Unregistered'" color="success" (click)="register()">
+                {{ 'crcouncilmanager.register' | translate }}
+            </ion-button>
+            <ion-button *ngIf="status == 'Registered'" color="success" (click)="unregister()">
+                {{ 'crcouncilmanager.unregister' | translate }}
+            </ion-button>
+            <ion-button  *ngIf="status == 'Registered'" color="success" (click)="update()">
+                {{ 'crcouncilmanager.update' | translate }}
+            </ion-button>
+            <ion-button  *ngIf="status == 'Canceled'" color="success" (click)="retrieve()">
+                {{ 'crcouncilmanager.retrieve' | translate }}
+            </ion-button>
+        </ion-row>
+    </ion-grid>
+</ion-content>

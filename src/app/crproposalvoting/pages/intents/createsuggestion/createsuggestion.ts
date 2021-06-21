@@ -2,15 +2,36 @@ import { Component, NgZone, ViewChild } from '@angular/core';
 import { ProposalService } from '../../../services/proposal.service';
 import { ActivatedRoute } from '@angular/router';
 import { SuggestionDetails } from '../../../model/suggestion-details';
-import { CreateSuggestionCommand, CROperationsService } from '../../../services/croperations.service';
+import { CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { Util } from 'src/app/model/util';
 
 
+export type CreateSuggestionCommand = CRWebsiteCommand & {
+    data: {
+        budgets: CreateSuggestionBudget[],
+        categorydata: string, // This is empty string
+        drafthash: string,      // SHA256D of the suggestion's JSON-string
+        ownerpublickey: string,     // Public key of proposal owner
+        proposaltype: string, // Ex: "normal",
+        recipient: string, // Ex: ELA address
+        newownerpublickey: string,
+        newrecipient: string,
+        targetproposalhash: string,
+        secretarygeneraldid: string,
+        secretarygeneralpublickey: string,
+        usedid: string
+    },
+    sid: string     // The suggestion ID to use to get more details. Ex: "5f17e4f9320ba70078a78f09"
+}
 @Component({
     selector: 'page-create-suggestion',
     templateUrl: 'createsuggestion.html',
@@ -25,42 +46,31 @@ export class CreateSuggestionPage {
     public suggestionDetails: SuggestionDetails;
     private createSuggestionCommand: CreateSuggestionCommand;
     public signingAndSendingSuggestionResponse = false;
+    public creationDate: string = "";
 
     constructor(
         private proposalService: ProposalService,
         private crOperations: CROperationsService,
-        private route: ActivatedRoute,
-        private zone: NgZone,
         private popup: PopupService,
         public translate: TranslateService,
         private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
+        private walletManager: WalletManager,
+        private voteService: VoteService,
     ) {
-        this.route.queryParams.subscribe(async (data: { jwt: string, suggestionID: string }) => {
-            this.zone.run(async () => {
-                this.originalRequestJWT = data.jwt;
-                this.suggestionID = data.suggestionID;
-            });
-        });
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
-    }
-
-    ionViewWillLeave() {
-    }
-
-    async ionViewDidEnter() {
-        // Update system status bar every time we re-enter this screen.
-        this.titleBar.setTitle("Create a suggestion");
-
         try {
+            this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
+            this.originalRequestJWT = this.crOperations.originalRequestJWT;
+            this.suggestionID = this.createSuggestionCommand.sid;
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
             Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
+            this.creationDate = (new Date(this.suggestionDetails.createdAt * 1000)).toLocaleString();
             this.suggestionDetailsFetched = true;
-            this.createSuggestionCommand = this.crOperations.getOnGoingCreateSuggestionCommand();
         }
         catch (err) {
             Logger.error('crproposal', 'CreateSuggestionPage ionViewDidEnter error:', err);
@@ -70,23 +80,16 @@ export class CreateSuggestionPage {
     async signAndCreateSuggestion() {
         this.signingAndSendingSuggestionResponse = true;
 
-        // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
-        let proposalDigest = await this.getSuggestionDigest();
-
         // Sign the digest with user's DID, and get a JWT ready to be sent back to the CR website
-        /* EXPECTED JWT PAYLOAD:
-        {
-          "type":"signature",
-          "iss":"The wallet's did",
-          "iat": "Time to generate QR code",
-          "exp": "QR code expiration date",
-          "aud":"website's did",
-          "req": "the content in the website's QR code.",
-          "command":"createsuggestion",
-          "data":"the signature string"
-        }*/
         try {
-            let signedJWT = await this.signSuggestionDigestAsJWT(proposalDigest);
+            // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
+
+            //Get digest
+            let digest = await this.getDigest();
+            Logger.log('crproposal', "Got proposal digest.", digest);
+
+            //Sign Suggestion Digest As JWT
+            let signedJWT = await this.signSuggestionDigestAsJWT(digest);
             Logger.log('crproposal', "signedJWT", signedJWT);
 
             if (!signedJWT) {
@@ -94,23 +97,15 @@ export class CreateSuggestionPage {
                 this.signingAndSendingSuggestionResponse = false;
                 return;
             }
-            else {
-                // JWT retrieved, we can continue.
-                // Call CR website's callback url with relevant data.
-                // NOTE: Callback url data format is in jwt-scheme_0.13.md
-                try {
-                    await this.proposalService.sendProposalCommandResponseToCallbackURL(this.createSuggestionCommand.callbackurl, signedJWT);
-                    //Go to launcher
-                    this.globalNav.goToLauncer();
-                }
-                catch (e) {
-                    // Something wrong happened while calling the response callback. Just tell the end user that we can't complete the operation for now.
-                    await this.popup.alert("Error", "Sorry, unable to send finalize this operation with the CR website. Your suggestion can't be created for now. " + JSON.stringify(e), "Ok");
-                    this.exitIntentWithError();
-                }
-            }
+
+            //Send response to callback url
+            await this.proposalService.sendProposalCommandResponseToCallbackURL(this.createSuggestionCommand.callbackurl, signedJWT);
+            //Go to launcher
+            this.globalNav.goToLauncer();
+
         }
         catch (e) {
+            this.signingAndSendingSuggestionResponse = false;
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
             await this.popup.alert("Error", "Sorry, unable to sign your suggestion. Your suggestion can't be created for now. " + e, "Ok");
             this.exitIntentWithError();
@@ -121,67 +116,43 @@ export class CreateSuggestionPage {
         this.exitIntentWithSuccess();
     }
 
-    private async getSuggestionDigest(): Promise<string> {
-        // Send a silent intent to the wallet app to create a digest for the proposal
-        // Convert the suggestion to the format expected by the wallet intent / SPV SDK
-        let walletProposal = this.suggestionCommandToWalletProposal(this.createSuggestionCommand);
-
-        Logger.log('crproposal', "Sending intent to create suggestion digest", walletProposal);
-        try {
-            let response: { result: { digest: string } } = await this.globalIntentService.sendIntent("https://wallet.elastos.net/crproposalcreatedigest", {
-                proposal: JSON.stringify(walletProposal)
-            });
-
-            Logger.log('crproposal', "Got proposal digest.", response.result.digest);
-            return response.result.digest;
-        }
-        catch (err) {
-            Logger.error('crproposal', "createproposaldigest send intent error", err);
-            throw err;
-        }
-    }
-
     private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {
         Logger.log('crproposal', "Sending intent to sign the suggestion digest", suggestionDigest);
-        try {
-            let result = await this.globalIntentService.sendIntent("https://did.elastos.net/didsign", {
-                data: suggestionDigest,
-                signatureFieldName: "data",
-                jwtExtra: {
-                    type: "signature",
-                    aud: this.createSuggestionCommand.iss, // ? Need to get from the initially scanned JWT?
-                    command: "createsuggestion",
-                    req: "https://did.elastos.net/crproposal/" + this.originalRequestJWT
-                }
-            });
-            Logger.log('crproposal', "Got signed digest.", result);
 
-            if (!result.result) {
-                // Operation cancelled by user
-                return null;
+        let result = await this.globalIntentService.sendIntent("https://did.elastos.net/signdigest", {
+            data: suggestionDigest,
+            signatureFieldName: "data",
+            jwtExtra: {
+                type: "signature",
+                aud: this.createSuggestionCommand.iss, // ? Need to get from the initially scanned JWT?
+                command: "createsuggestion",
+                req: "elastos://crproposal/" + this.originalRequestJWT
             }
+        });
+        Logger.log('crproposal', "Got signed digest.", result);
 
-            // The signed JWT is normally in "responseJWT", forwarded directly from the DID app by the runtime
-            if (!result.responseJWT) {
-                throw "Missing JWT in the intent response";
-            }
+        if (!result.result) {
+            // Operation cancelled by user
+            return null;
+        }
 
-            return result.responseJWT;
+        // The signed JWT is normally in "responseJWT", forwarded directly from the DID app by the runtime
+        if (!result.responseJWT) {
+            throw "Missing JWT in the intent response";
         }
-        catch (err) {
-            Logger.error('crproposal', "didsign send intent error", err);
-            throw err;
-        }
+
+        return result.responseJWT;
     }
 
-    private suggestionCommandToWalletProposal(suggestionCommand: CreateSuggestionCommand): any {
-        let walletProposal = {
+    private async getNormalDigest(): Promise<any> {
+        let data = this.createSuggestionCommand.data;
+        let payload = {
             Type: 0,
-            CategoryData: suggestionCommand.data.categorydata,
-            OwnerPublicKey: suggestionCommand.data.ownerpublickey,
-            DraftHash: suggestionCommand.data.drafthash,
+            CategoryData: data.categorydata,
+            OwnerPublicKey: data.ownerpublickey,
+            DraftHash: data.drafthash,
             Budgets: [],
-            Recipient: suggestionCommand.data.recipient
+            Recipient: data.recipient
         };
 
         // Need to convert from the API "string" type to SPV SDK "int"...
@@ -191,15 +162,74 @@ export class CreateSuggestionPage {
             finalpayment: 2
         }
 
-        for (let suggestionBudget of suggestionCommand.data.budgets) {
-            walletProposal.Budgets.push({
+        for (let suggestionBudget of data.budgets) {
+            payload.Budgets.push({
                 Type: budgetTypes[suggestionBudget.type.toLowerCase()],
                 Stage: suggestionBudget.stage,
                 Amount: suggestionBudget.amount
             });
         }
 
-        return walletProposal;
+        let digest = await this.walletManager.spvBridge.proposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+        return Util.reverseHexToBE(digest);
+    }
+
+    private async getChangeOwnerDigest(): Promise<any> {
+        let data = this.createSuggestionCommand.data;
+        let payload = {
+            CategoryData: data.categorydata,
+            OwnerPublicKey: data.ownerpublickey,
+            DraftHash: data.drafthash,
+            // DraftData: "",
+            TargetProposalHash: data.targetproposalhash,
+            NewRecipient: data.newrecipient,
+            NewOwnerPublicKey: data.newownerpublickey,
+        };
+
+        let digest = await this.walletManager.spvBridge.proposalChangeOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+        return Util.reverseHexToBE(digest);
+    }
+
+    private async getTerminateDigest(): Promise<any> {
+        let data = this.createSuggestionCommand.data;
+        let payload = {
+            CategoryData: data.categorydata,
+            OwnerPublicKey: data.ownerpublickey,
+            DraftHash: data.drafthash,
+            // DraftData: "",
+            TargetProposalHash: data.targetproposalhash,
+        };
+
+        let digest = await this.walletManager.spvBridge.terminateProposalOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+        return Util.reverseHexToBE(digest);
+    }
+
+    private async getSecretaryGeneralDigest(): Promise<any> {
+        let data = this.createSuggestionCommand.data;
+        let payload = {
+            CategoryData: data.categorydata,
+            OwnerPublicKey: data.ownerpublickey,
+            DraftHash: data.drafthash,
+            // DraftData: "",
+            SecretaryGeneralPublicKey: data.secretarygeneralpublickey,
+            SecretaryGeneralDID: data.secretarygeneraldid.replace("did:elastos:", ""),
+        };
+
+        let digest = await this.walletManager.spvBridge.proposalSecretaryGeneralElectionDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
+        return Util.reverseHexToBE(digest);
+    }
+
+    private async getDigest(): Promise<any> {
+        switch(this.createSuggestionCommand.data.proposaltype) {
+            case "normal":
+                return this.getNormalDigest();
+            case "changeproposalowner":
+                return this.getChangeOwnerDigest();
+            case "closeproposal":
+                return this.getTerminateDigest();
+            case "secretarygeneral":
+                return this.getSecretaryGeneralDigest();
+        }
     }
 
     private async exitIntentWithSuccess() {

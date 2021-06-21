@@ -139,12 +139,16 @@ export class NotificationManagerService {
         return 'launcher.app-contacts';
       case App.CRCOUNCIL_VOTING:
         return 'launcher.app-cr-council';
+      case App.CRCOUNCIL_MANAGER:
+        return 'launcher.app-cr-registration';
       case App.CRPROPOSAL_VOTING:
         return 'launcher.app-cr-proposal';
       case App.SCANNER:
         return 'launcher.app-scanner';
       case App.DPOS_VOTING:
         return 'launcher.app-dpos-voting';
+      case App.DPOS_REGISTRATION:
+        return 'launcher.app-dpos-registration';
       case App.HIVE_MANAGER:
         return 'launcher.app-hive';
       case App.IDENTITY:
@@ -166,6 +170,8 @@ export class NotificationManagerService {
         return 'assets/contacts/images/logo.png';
       case App.CRCOUNCIL_VOTING:
         return 'assets/crcouncilvoting/images/logo.png';
+      case App.CRCOUNCIL_MANAGER:
+        return 'assets/crcouncilmanager/images/logo.png';
       case App.CRPROPOSAL_VOTING:
         return 'assets/crproposalvoting/images/logo.png';
       case App.SCANNER:
@@ -174,6 +180,8 @@ export class NotificationManagerService {
         return 'assets/developertools/images/logo.png';
       case App.DPOS_VOTING:
         return 'assets/dposvoting/images/logo.png';
+      case App.DPOS_REGISTRATION:
+        return 'assets/dposregistration/images/logo.png';
       case App.HIVE_MANAGER:
         return 'assets/hivemanager/images/logo.png';
       case App.IDENTITY:

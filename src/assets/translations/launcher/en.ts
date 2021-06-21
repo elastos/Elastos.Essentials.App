@@ -60,6 +60,11 @@ export const en = {
         'app-crproposal-description': 'Cyber Republic proposals',
         'app-dev-tools': 'Developer Tools',
 
+        'app-dpos-registration': 'DPoS Registration',
+        'app-dpos-registration-description': 'DPoS registration manager',
+        'app-crcouncil-registration': 'CR Registration',
+        'app-crcouncil-registration-description': 'CR  registration manager',
+
         /*********** Tips generic ************/
         'tip-of-the-day': 'Tip of the day',
         'previous-tip': 'Previous',

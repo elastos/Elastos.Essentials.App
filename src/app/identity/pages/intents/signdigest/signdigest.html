@@ -1,0 +1,26 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="receivedIntent">
+    <ion-card>
+      <img src="assets/identity/default/securityWarning.svg">
+      <ion-card-title>{{ 'identity.sign-data' | translate }}</ion-card-title>
+      <ion-card-subtitle *ngIf="receivedIntent">{{ receivedIntent.params.appPackageId }}</ion-card-subtitle>
+    </ion-card>
+
+    <div class="msg-container">
+      <p class="first-msg">{{ 'identity.credimport-intro' | translate }}</p>
+      <p>{{ 'identity.credimport-intro2' | translate }}</p>
+    </div>
+
+    <ion-row class="data-container">
+      <p *ngIf="receivedIntent">{{ receivedIntent.params.data }}</p>
+    </ion-row>
+
+    <ion-row class="btn-container" (click)="acceptRequest()">
+      <ion-button color="tertiary">
+        <ion-label>{{ 'identity.accept' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>

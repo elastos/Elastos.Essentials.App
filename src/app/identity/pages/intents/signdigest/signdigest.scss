@@ -1,0 +1,127 @@
+@import "src/app/identity/root.scss";
+
+.container {
+  background: #f8f8ff;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 20px;
+
+  ion-card {
+    margin: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    border-radius: 15px;
+    padding: 15px;
+
+    img {
+      margin-top: 2.5px;
+      width: 56px;
+      height: 56px;
+    }
+
+    ion-card-title {
+      font-size: 21px;
+      font-weight: 600;
+      line-height: 1.29;
+      color: #2e2f4e;
+      margin: 15px 15px 10px;
+    }
+
+    ion-card-subtitle {
+      text-transform: none;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.46;
+      color: #161740;
+      margin: 0 15px 15px;
+    }
+  }
+
+  .msg-container {
+    padding: 20px 20px 5px;
+
+    p {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.25;
+      text-align: center;
+      color: #2e2f4e;
+    }
+
+    .first-msg {
+      margin-bottom: 20px;
+    }
+  }
+
+  .data-container {
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 0px 20px;
+    margin-bottom: 7.5px;
+
+    p {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.46;
+      text-align: left;
+      color: #2e2f4e;
+    }
+  }
+
+  .btn-container {
+    padding: 32.5px 0;
+
+    ion-button {
+      height: 44.7px;
+      width: 100%;
+      --border-radius: 20px;
+
+      ion-label {
+        text-transform: none;
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: -0.43px;
+      }
+    }
+  }
+}
+
+.dark-container {
+  background: #191a2f;
+
+  ion-card {
+    margin: 0;
+    background: #2e2f4e;
+    box-shadow: 0 3px 15px 0 #151626;
+
+    ion-card-title {
+      color: #ffffff;
+    }
+
+    ion-card-subtitle {
+      color: #cfd1f7;
+    }
+  }
+
+  .msg-container {
+    p {
+      color: #ffffff;
+    }
+
+  }
+
+  .data-container {
+    background: #2e2f4e;
+    box-shadow: 0 3px 15px 0 #151626;
+
+    p {
+      color: #ffffff;
+    }
+  }
+}

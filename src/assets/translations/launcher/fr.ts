@@ -60,6 +60,11 @@ export const fr = {
         'app-crproposal-description': 'Cyber Republic proposals',
         'app-dev-tools': 'Developer Tools',
 
+        'app-dpos-registration': 'DPoS Registration',
+        'app-dpos-registration-description': 'DPoS registration manager',
+        'app-crcouncil-registration': 'CR Registration',
+        'app-crcouncil-registration-description': 'CR  registration manager',
+
         /*********** Tips generic ************/
         'tip-of-the-day': 'Astuce du jour',
         'previous-tip': 'Préc.',
@@ -92,5 +97,5 @@ export const fr = {
         'tip-title-dev-trinity-native': 'Trinity Native',
         'tip-message-dev-trinity-native': 'La saviez-vous? Après avoir terminé le développement de votre application Essentials, vous pouvez <b>utiliser trinity native pour l\'empaqueter dans une appli native android ou iOS</b>, sans changer une seule ligne de code.'
     }
-    
+
 };

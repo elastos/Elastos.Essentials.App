@@ -190,4 +190,16 @@ export class DIDDocument {
             });
         });
     }
+
+    public signDigest(digest: string, storePass: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            this.pluginDidDocument.signDigest(storePass, digest,
+                (ret) => {
+                    resolve(ret)
+                }, (err) => {
+                    reject(DIDHelper.reworkedPluginException(err));
+                },
+            );
+        });
+    }
 }

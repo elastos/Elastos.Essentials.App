@@ -23,7 +23,7 @@ export class DIDDocument {
                     resolve(doc);
                 }
                 else {
-                    reject("document is null!");
+                    resolve(null);
                 }
             }, (err)=>{
                 reject(err);

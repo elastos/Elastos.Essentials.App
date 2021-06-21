@@ -60,6 +60,11 @@ export const zh = {
         'app-crproposal-description': '参与社区运营共治',
         'app-dev-tools': '开发者工具',
 
+        'app-dpos-registration': 'DPoS 参选',
+        'app-dpos-registration-description': 'DPoS 参选管理',
+        'app-crcouncil-registration': 'CR 委员参选',
+        'app-crcouncil-registration-description': 'CR 委员参选管理',
+
         /*********** Tips generic ************/
         'tip-of-the-day': '每日提示',
         'previous-tip': '上一步',

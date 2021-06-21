@@ -3,55 +3,41 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
 import { PopupService } from './popup.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
-type CRWebsiteCommand = {
+export type CRWebsiteCommand = {
     command: string; // Ex: "voteforproposal"
     callbackurl: string;
     iss: string; // JWT issuer (Normally, the CR website)
+    data: any;
 }
 
-export type VoteForProposalCommand = CRWebsiteCommand & {
-    data: {
-        proposalHash: string;
-    }
-}
-
-type CreateSuggestionBudget = {
+export type CreateSuggestionBudget = {
     amount: string, // SELA amount
     stage: number, // Ex: 1 // ?
     type: string    // Ex: "FinalPayment"
 }
-
-export type CreateSuggestionCommand = CRWebsiteCommand & {
-    data: {
-        budgets: CreateSuggestionBudget[],
-        categorydata: string, // This is empty string
-        drafthash: string,      // SHA256D of the suggestion's JSON-string
-        ownerpublickey: string,     // Public key of proposal owner
-        proposaltype: string // Ex: "normal",
-        recipient: string // Ex: ELA address
-    },
-    sid: string     // The suggestion ID to use to get more details. Ex: "5f17e4f9320ba70078a78f09"
-}
-
 @Injectable({
     providedIn: 'root'
 })
 export class CROperationsService {
-    private onGoingCreateSuggestionCommand: CreateSuggestionCommand;
-    private onGoingVoteForProposalcommand: VoteForProposalCommand;
     private subscription: Subscription = null;
 
+    public originalRequestJWT: string;
+    public onGoingCommand: any;
+
     constructor(
-        private router: Router,
         private popup: PopupService,
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
+        private voteService: VoteService,
     ) {}
 
     async init() {
@@ -109,6 +95,8 @@ export class CROperationsService {
             Logger.error('crproposal', "Received a crproposal intent request that is not encoded as JWT, which is not allowed. Skipping the request");
         }
         else {
+            this.voteService.intentAction = receivedIntent.action;
+            this.voteService.intentId = receivedIntent.intentId;
             this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest);
         }
     }
@@ -129,53 +117,32 @@ export class CROperationsService {
             return;
         }
 
+        this.originalRequestJWT = crProposalJwtRequest;
+        this.onGoingCommand = jwtPayload;
+
+        if (!Util.isEmptyObject(jwtPayload.data.userdid)) {
+            if (jwtPayload.data.userdid.toLocaleLowerCase() != GlobalDIDSessionsService.signedInDIDString.toLocaleLowerCase()) {
+                Logger.warn('crproposal', "The did isn't match");
+                this.popup.alert("DID isn't match", "The DID isn't match", "Ok");
+                return;
+            }
+        }
+
         switch (jwtPayload.command) {
-            case "createsuggestion": // For any member to post (with signature) a new suggestion on the CR website
-                this.handleCreateSuggestionCommand(jwtPayload as CreateSuggestionCommand, crProposalJwtRequest);
+            case "createsuggestion":
+            case "createproposal":
+            case "reviewproposal":
+            case "voteforproposal":
+            case "updatemilestone":
+            case "reviewmilestone":
+            case "withdraw":
+                this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + jwtPayload.command);
                 break;
-            case "voteforproposal": // Community impeachment vote after a proposal is agreed by council members
-                this.handleVoteForProposalCommand(jwtPayload as VoteForProposalCommand, crProposalJwtRequest);
-                break;
+
             default:
                 Logger.warn('crproposal', "Unhandled CR command: ", jwtPayload.command);
                 this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
         }
-    }
-
-    private async handleVoteForProposalCommand(command: VoteForProposalCommand, jwt: string) {
-        Logger.log("crproposal", "Handling vote for proposal command "+command);
-
-        this.onGoingVoteForProposalcommand = command;
-
-        // Show the create suggestion intent screen
-        this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/vote-for-proposal-intent", {
-            queryParams: {
-                jwt: jwt,
-                proposalHash: command.data.proposalHash
-            }
-        });
-    }
-
-    private async handleCreateSuggestionCommand(command: CreateSuggestionCommand, jwt: string) {
-        Logger.log("crproposal", "Handling Create Suggestion command ", command);
-
-        this.onGoingCreateSuggestionCommand = command;
-
-        // Show the create suggestion intent screen
-        this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/create-suggestion-intent", {
-            queryParams: {
-                jwt: jwt,
-                suggestionID: command.sid
-            }
-        });
-    }
-
-    public getOnGoingCreateSuggestionCommand(): CreateSuggestionCommand {
-        return this.onGoingCreateSuggestionCommand;
-    }
-
-    public getOnGoingVoteForProposalCommand(): VoteForProposalCommand {
-        return this.onGoingVoteForProposalcommand;
     }
 
     public sendIntentResponse(result?: any): Promise<void> {

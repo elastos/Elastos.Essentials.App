@@ -1,0 +1,13 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <p>{{ 'crproposalvoting.review-proposal-msg' | translate }}</p>
+    <div>
+        <ion-row class="header">{{ 'crproposalvoting.vote-result' | translate }}</ion-row>
+        <ion-row>{{ 'crproposalvoting.' + voteResult  | translate }}</ion-row>
+    </div>
+    <ion-button (click)="signAndCreateProposal()" *ngIf="!signingAndSendingProposalResponse">{{ 'crproposalvoting.sign-review-proposal' | translate }}</ion-button>
+    <div *ngIf="signingAndSendingProposalResponse">
+        <ion-spinner></ion-spinner>
+    </div>
+</ion-content>
+

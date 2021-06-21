@@ -6,12 +6,15 @@ import { Node } from '../../model/nodes.model';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from 'src/app/model/app.enum';
+import { VoteService } from 'src/app/vote/services/vote.service';
 
 
 @Component({
@@ -42,8 +45,9 @@ export class VotePage implements OnInit {
     private toastController: ToastController,
     private translate: TranslateService,
     private globalNative: GlobalNativeService,
+    private nav: GlobalNavService,
     private globalIntentService: GlobalIntentService,
-    public theme: GlobalThemeService
+    public theme: GlobalThemeService,
   ) {
   }
 

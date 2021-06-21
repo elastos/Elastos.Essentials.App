@@ -1,0 +1,13 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <p>{{ 'crproposalvoting.update-milestone-msg' | translate }}</p>
+    <div>
+        <!-- <ion-row class="header">{{ 'common.title' | translate }}</ion-row>
+        <ion-row>{{ suggestionDetails.title }}</ion-row> -->
+    </div>
+    <ion-button (click)="signAndUpdateMilestone()" *ngIf="!signingAndSendingSuggestionResponse">{{ 'crproposalvoting.sign-update-milestone' | translate }}</ion-button>
+    <div *ngIf="signingAndSendingSuggestionResponse">
+        <ion-spinner></ion-spinner>
+    </div>
+</ion-content>
+

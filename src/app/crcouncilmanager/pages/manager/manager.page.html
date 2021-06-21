@@ -1,0 +1,16 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+
+        <ion-row>
+            <ion-button color="success" expand="block"(click)="registration()">
+                {{ 'crcouncilmanager.registration-manager' | translate }}
+            </ion-button>
+        </ion-row>
+        <ion-row>
+            <ion-button color="success" *ngIf="state == 'Elected'"  (click)="crnodeManager()">
+                {{ 'crcouncilmanager.crnode-manager' | translate }}
+            </ion-button>
+        </ion-row>
+    </ion-grid>
+</ion-content>

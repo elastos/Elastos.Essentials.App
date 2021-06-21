@@ -14,9 +14,12 @@ const routes: Routes = [
   { path: 'identity', loadChildren: './identity/module#IdentityModule' },
   { path: 'wallet', loadChildren: './wallet/module#WalletModule' },
   { path: 'dposvoting', loadChildren: './dposvoting/module#DPoSVotingModule' },
+  { path: 'dposregistration', loadChildren: './dposregistration/module#DPoSRegistrationModule' },
   { path: 'crcouncilvoting', loadChildren: './crcouncilvoting/module#CRCouncilVotingModule' },
+  { path: 'crcouncilmanager', loadChildren: './crcouncilmanager/module#CRCouncilManagerModule' },
   { path: 'crproposalvoting', loadChildren: './crproposalvoting/module#CRProposalVotingModule' },
   { path: 'developertools', loadChildren: './developertools/module#DeveloperToolsModule' },
+  { path: 'vote', loadChildren: './vote/module#VoteModule' },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet

@@ -16,6 +16,11 @@ import { VoteForProposalPage } from './pages/intents/voteforproposal/voteforprop
 import { FormsModule } from '@angular/forms';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { CreateProposalPage } from './pages/intents/createproposal/createproposal';
+import { ReviewProposalPage } from './pages/intents/reviewproposal/reviewproposal';
+import { UpdatMilestonePage } from './pages/intents/updatemilestone/updatemilestone';
+import { ReviewMilestonePage } from './pages/intents/reviewmilestone/reviewmilestone';
+import { WithdrawPage } from './pages/intents/withdraw/withdraw';
 
 @NgModule({
   declarations: [
@@ -26,7 +31,12 @@ import { TranslateModule } from '@ngx-translate/core';
 
     // Intents,
     CreateSuggestionPage,
+    CreateProposalPage,
+    ReviewProposalPage,
     VoteForProposalPage,
+    UpdatMilestonePage,
+    ReviewMilestonePage,
+    WithdrawPage,
 
     // Components
     ProposalSearchResultComponent,
@@ -51,7 +61,12 @@ import { TranslateModule } from '@ngx-translate/core';
 
     // Intents
     CreateSuggestionPage,
+    CreateProposalPage,
+    ReviewProposalPage,
     VoteForProposalPage,
+    UpdatMilestonePage,
+    ReviewMilestonePage,
+    WithdrawPage,
 
     // Components
     ProposalSearchResultComponent,

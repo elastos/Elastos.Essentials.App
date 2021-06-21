@@ -38,9 +38,30 @@ export const zh = {
         'creation-date': '创建日期',
         'created-by': '创建者',
         'sign-create-suggestion': '签名并提交建议',
+
+        'create-proposal': '发布提案',
+        'create-proposal-msg': '您将要发布以下提案。请对其进行审核，并按照流程进行签名和发布。',
+        'sign-create-proposal': '签名并发布提案',
+
+        'review-proposal': '评议提案',
+        'review-proposal-msg': '您将要评议以下提案。请对其进行审核，并按照流程进行签名和评议。',
+        'sign-review-proposal': '签名并评议提案',
+        'vote-result': '投票结果',
+        'approve': '赞成',
+        'reject': '反对',
+        // 'abstain': '弃权',
+
         'vote-proposal': '为提案投票',
         'vote-proposal-msg': '您将投票否决此提案。如果社区成员使用足够的ELA否决了提案，则该提案将被中止。',
-        'vote-against-proposal': '反对这个提案'
+        'vote-against-proposal': '反对这个提案',
+
+        'update-milestone': '更新Milestone',
+        'update-milestone-msg': '您将要更新Milestone。请对其进行审核，并按照流程进行签名和发布。',
+        'sign-update-milestone': '签名并更新Milestone',
+
+        'review-milestone': '评议Milestone',
+        'review-milestone-msg': '您将要评议Milestone。请对其进行审核，并按照流程进行签名和发布。',
+        'sign-review-milestone': '签名并评议Milestone',
     }
-    
+
 };

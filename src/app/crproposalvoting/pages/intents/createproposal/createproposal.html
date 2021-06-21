@@ -1,0 +1,28 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div *ngIf="!suggestionDetailsFetched">
+        <ion-spinner></ion-spinner>
+    </div>
+    <div *ngIf="suggestionDetailsFetched">
+        <p>{{ 'crproposalvoting.create-proposal-msg' | translate }}</p>
+        <div>
+            <ion-row class="header">{{ 'common.title' | translate }}</ion-row>
+            <ion-row>{{ suggestionDetails.title }}</ion-row>
+
+            <ion-row class="header">{{ 'crproposalvoting.creation-date' | translate }}</ion-row>
+            <ion-row>{{ creationDate }}</ion-row>
+
+            <ion-row class="header">{{ 'crproposalvoting.created-by' | translate }}</ion-row>
+            <ion-row>{{ suggestionDetails.didName }}</ion-row>
+            <ion-row>{{ suggestionDetails.did }}</ion-row>
+
+            <ion-row class="header">{{ 'common.description' | translate }}</ion-row>
+            <ion-row>{{ suggestionDetails.abs }}</ion-row>
+        </div>
+        <ion-button (click)="signAndCreateProposal()" *ngIf="!signingAndSendingProposalResponse">{{ 'crproposalvoting.sign-create-proposal' | translate }}</ion-button>
+        <div *ngIf="signingAndSendingProposalResponse">
+            <ion-spinner></ion-spinner>
+        </div>
+    </div>
+</ion-content>
+

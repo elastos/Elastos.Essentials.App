@@ -82,7 +82,7 @@ export const en = {
         "242":"Congo",
         "682":"Cook Islands",
         "506":"Costa Rica",
-        "225":"Cote D'Ivoire","zh":"Cote D'Ivoire",
+        "225":"Cote D'Ivoire",
         "385":"Croatia",
         "53":"Cuba",
         "357":"Cyprus",
