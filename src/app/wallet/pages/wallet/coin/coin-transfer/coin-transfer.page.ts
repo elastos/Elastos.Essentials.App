@@ -52,7 +52,8 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { WalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/wallet-chooser/wallet-chooser.component';
+import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
+import { CoinService } from 'src/app/wallet/services/coin.service';
 
 
 @Component({
@@ -115,6 +116,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         public route: ActivatedRoute,
         public walletManager: WalletManager,
         public coinTransferService: CoinTransferService,
+        private coinService: CoinService,
         public native: Native,
         public events: Events,
         public zone: NgZone,
@@ -713,6 +715,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      */
     async choosePersonalWallet(excludeCurrentWallet = false) {
         let options: WalletChooserComponentOptions = {
+            sourceWallet: this.masterWallet,
             chainId: this.chainId as StandardCoinName
         };
 
@@ -721,13 +724,22 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
 
         this.modal = await this.modalCtrl.create({
-            component: WalletChooserComponent,
+            component: TransferWalletChooserComponent,
             componentProps: options,
         });
         this.modal.onWillDismiss().then(async (params) => {
             Logger.log('wallet', 'Personal wallet selected:', params);
             if (params.data && params.data.selectedWalletId) {
-                this.toAddress = await this.walletManager.getMasterWallet(params.data.selectedWalletId).getSubWallet(this.chainId).createAddress();
+                let selectedWallet = this.walletManager.getMasterWallet(params.data.selectedWalletId);
+                let selectedSubwallet = selectedWallet.getSubWallet(this.chainId);
+                if (!selectedSubwallet) {
+                    // Subwallet doesn't exist on target master wallet. So we activate it.
+                    let coin = this.coinService.getCoinByID(this.chainId);
+                    await selectedWallet.createSubWallet(coin);
+                    selectedSubwallet = selectedWallet.getSubWallet(this.chainId);
+                }
+
+                this.toAddress = await selectedSubwallet.createAddress();
             }
 
             this.modal = null;

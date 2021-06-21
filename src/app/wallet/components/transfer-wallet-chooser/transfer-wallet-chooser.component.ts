@@ -10,18 +10,19 @@ import { Logger } from 'src/app/logger';
 import { ModalController, NavParams } from '@ionic/angular';
 
 export type WalletChooserComponentOptions = {
+    sourceWallet: MasterWallet; // Master wallet from which funds will be transfered
     chainId: StandardCoinName; // Target chain ID, used to display available balance for each wallet
     excludeWalletId?: string; // Optional wallet to not show in the list of selectable wallets
 }
 
 @Component({
-  selector: 'app-wallet-chooser',
-  templateUrl: './wallet-chooser.component.html',
-  styleUrls: ['./wallet-chooser.component.scss'],
+  selector: 'app-transfer-wallet-chooser',
+  templateUrl: './transfer-wallet-chooser.component.html',
+  styleUrls: ['./transfer-wallet-chooser.component.scss'],
 })
-export class WalletChooserComponent implements OnInit {
+export class TransferWalletChooserComponent implements OnInit {
   public CoinType = CoinType;
-  private options: WalletChooserComponentOptions = null;
+  public options: WalletChooserComponentOptions = null;
   public walletsToShowInList: MasterWallet[];
 
   constructor(

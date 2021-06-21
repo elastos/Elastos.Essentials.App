@@ -9,7 +9,7 @@ import { HelpComponent } from './help/help.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from './tx-success/tx-success.component';
 import { WarningComponent } from './warning/warning.component';
-import { WalletChooserComponent } from './wallet-chooser/wallet-chooser.component';
+import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transfer-wallet-chooser.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,7 @@ import { WalletChooserComponent } from './wallet-chooser/wallet-chooser.componen
     HelpComponent,
     ContactsComponent,
     WarningComponent,
-    WalletChooserComponent
+    TransferWalletChooserComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +37,7 @@ import { WalletChooserComponent } from './wallet-chooser/wallet-chooser.componen
     HelpComponent,
     ContactsComponent,
     WarningComponent,
-    WalletChooserComponent
+    TransferWalletChooserComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
