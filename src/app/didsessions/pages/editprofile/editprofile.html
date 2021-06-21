@@ -5,10 +5,11 @@
       <ion-label>{{ 'didsessions.your-name' | translate }}</ion-label>
     </ion-row>
     <ion-input [placeholder]="'didsessions.enter-name-here'|translate" #input [(ngModel)]="name" name="name" ngDefaultControl></ion-input>
-    <div class="footer">
-      <ion-button (click)="next()">
-        {{ 'common.continue' | translate }}
-      </ion-button>
-    </div>
   </ion-grid>
+  <ion-footer>
+    <ion-button (click)="next()">
+      {{ 'common.continue' | translate }}
+    </ion-button>
+  </ion-footer>
 </ion-content>
+
