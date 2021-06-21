@@ -130,7 +130,7 @@ export class CandidatesService {
             }
         }, (err) => {
             Logger.error('crcouncil', 'fetchCandidates error', err);
-            this.alertErr('crcouncilvoting.cr-council-no-available');
+            // this.alertErr('crcouncilvoting.cr-council-no-available');
         });
     }
 
