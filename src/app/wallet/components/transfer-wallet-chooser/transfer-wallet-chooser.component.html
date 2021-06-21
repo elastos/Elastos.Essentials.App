@@ -1,7 +1,7 @@
 <ion-grid class="container" [class.dark-container]="theme.darkMode">
     <ion-row class="main-title-row">
         <ion-col size="12">
-            <p>Personal wallets with {{ chainId }}</p>
+            <p>Personal wallets with {{ options.chainId }}</p>
         </ion-col>
     </ion-row>
     <div *ngFor="let masterWallet of walletsToShowInList">
@@ -11,7 +11,7 @@
             (click)="walletSelected(masterWallet)"
         >
             <ion-col size="2" class="left-col">
-                <img [src]="uiService.getSubWalletIcon(options.sourceWallet.getSubWallet(chainId))">
+                <img [src]="uiService.getSubWalletIcon(options.sourceWallet.getSubWallet(options.chainId))">
             </ion-col>
             <ion-col size="5" class="middle-col">
                 <h1>{{ masterWallet.name }}</h1>
