@@ -18,14 +18,13 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AuthService } from './auth.service';
 import { Util } from 'src/app/didsessions/services/util';
-import { NewIdentity } from 'src/app/didsessions/model/newidentity';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WalletInitService extends GlobalService {
   private walletServiceInitialized = false;
-  private waitforServiceInitialized = false;
+  private waitForServiceInitialized = false;
   private subscription: Subscription = null;
 
   constructor(
@@ -95,38 +94,17 @@ export class WalletInitService extends GlobalService {
     if (this.walletServiceInitialized) {
       this.navService.showStartupScreen();
     } else {
-      if (!this.waitforServiceInitialized) {
-        this.waitforServiceInitialized = true;
+      if (!this.waitForServiceInitialized) {
+        this.waitForServiceInitialized = true;
         // Wait until the wallet manager is ready before showing the first screen.
         let subscription = this.events.subscribe("walletmanager:initialized", () => {
           Logger.log("wallet", "walletmanager:initialized event received, showStartupScreen");
           this.navService.showStartupScreen();
-          this.waitforServiceInitialized = false;
+          this.waitForServiceInitialized = false;
           subscription.unsubscribe();
         });
       } else {
         Logger.log("wallet", "Wallet service is initializing, The Wallet will be displayed when the service is initialized.");
-      }
-    }
-  }
-
-  public async importWalletWithMnemonicInfo(mnemonicInfo: NewIdentity): Promise<void> {
-    Logger.error("wallet", "importWallet");
-    let masterWalletId = Util.uuid(6, 16);
-    const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
-    if (payPassword) {
-      try {
-        await this.walletManager.importWalletWithMnemonic(
-          masterWalletId,
-          mnemonicInfo.name,
-          mnemonicInfo.mnemonic,
-          mnemonicInfo.mnemonicPassphrase || "",
-          payPassword,
-          false
-        );
-      }
-      catch (err) {
-        Logger.error('wallet', 'Wallet import error:', err);
       }
     }
   }

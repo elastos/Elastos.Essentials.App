@@ -23,6 +23,7 @@ import { DIDService } from "src/app/identity/services/did.service";
 import { App } from "src/app/model/app.enum"
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Subscription } from 'rxjs';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 @Component({
   selector: 'app-home',
@@ -35,6 +36,7 @@ export class HomePage implements OnInit {
 
   private popover: any = null;
   private modal: any = null;
+  private identityNeedsBackup = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
 
@@ -59,13 +61,13 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private walletService: WalletManager,
     private globalNotifications: GlobalNotificationsService,
-  ) {
+    private didSessions: GlobalDIDSessionsService) {
   }
 
   ngOnInit() {
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
    /*  setTimeout(()=>{
       const notification = {
         key: 'storagePlanExpiring',
@@ -84,7 +86,7 @@ export class HomePage implements OnInit {
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if(icon.key === 'notifications') {
-        this.showNotifications();
+        void this.showNotifications();
       }
     });
 
@@ -94,26 +96,27 @@ export class HomePage implements OnInit {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
     }
 
+    this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
+
     if (this.didService.signedIdentity) { // Should not happend, just in case - for ionic hot reload
-      this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type",).then((networkCode) => {
-        switch (networkCode) {
-          case 'MainNet':
-            this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
+      let networkCode = await this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type");
+      switch (networkCode) {
+        case 'MainNet':
+          this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
+        break;
+        case 'TestNet':
+          this.titleBar.setTitle('Test Net Active');
+        break;
+        case 'RegTest':
+          this.titleBar.setTitle('Regression Net Active');
+        break;
+        case 'PrvNet':
+          this.titleBar.setTitle('Private Net Active');
           break;
-          case 'TestNet':
-            this.titleBar.setTitle('Test Net Active');
-          break;
-          case 'RegTest':
-            this.titleBar.setTitle('Regression Net Active');
-          break;
-          case 'PrvNet':
-            this.titleBar.setTitle('Private Net Active');
-            break;
-          case 'LrwNet':
-            this.titleBar.setTitle('CR Private Net Active');
-          break;
-        }
-      });
+        case 'LrwNet':
+          this.titleBar.setTitle('CR Private Net Active');
+        break;
+      }
     }
 
     // Wait for wallet service to be initialized (existing wallets loaded) so we can display some balance
@@ -174,8 +177,12 @@ export class HomePage implements OnInit {
     return await this.popover.present();
   }
 
+  backupIdentity() {
+    void this.nav.navigateTo("identitybackup", "/identity/backupdid");
+  }
+
   showMyIdentity() {
-    this.nav.navigateTo("identity", '/identity/myprofile/home');
+    void this.nav.navigateTo("identity", '/identity/myprofile/home');
   }
 
   async signOut() {
@@ -186,22 +193,5 @@ export class HomePage implements OnInit {
   getDateFromNow() {
     // return moment().format('dddd MMM Do') + ', ' + moment().format('LT');
     return moment().format('dddd, MMM Do');
-  }
-
-  async backupIdentity() {
-    await this.authService.checkPasswordThenExecute(
-      async () => {
-        let mnemonics = await this.identityService.activeDidStore.exportMnemonic(
-          AuthService.instance.getCurrentUserPassword()
-        );
-        this.nav.navigateTo(App.IDENTITY, "/identity/exportmnemonic", { state: { mnemonics: mnemonics } });
-      },
-      () => {
-        // Operation cancelled
-        Logger.log("identity", "Password operation cancelled");
-      },
-      true,
-      true
-    );
   }
 }

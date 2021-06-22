@@ -38,12 +38,12 @@ export class PickIdentityPage {
   ) {
       this.events.subscribe("identityadded", newIdentity => {
         Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
-        this.loadIdentities();
+        void this.loadIdentities();
       });
 
       this.events.subscribe("identityremoved", newIdentity => {
         Logger.log('didsessions', "PickIdentiy - Identity deleted, reloading content");
-        this.loadIdentities();
+        void this.loadIdentities();
       });
   }
 
@@ -57,9 +57,9 @@ export class PickIdentityPage {
       this.uxService.onTitleBarItemClicked(icon);
     });
 
-    this.loadIdentities();
+    void this.loadIdentities();
 
-    this.identityService.getSignedIdentity();
+    void this.identityService.getSignedIdentity();
   }
 
   ionViewDidEnter() {
@@ -78,7 +78,7 @@ export class PickIdentityPage {
 
     if (this.availableIdentitiesCount() === 0) {
       // Maybe we've just deleted the last identity. Then go back to the identity creation screen
-      this.uxService.navigateRoot();
+      void this.uxService.navigateRoot();
     }
 
     this.addAvatars();
@@ -94,7 +94,9 @@ export class PickIdentityPage {
 
   async signIn(identityEntry: IdentityEntry) {
     Logger.log('didsessions', "Trying to sign in with DID "+identityEntry.didString);
-    await this.identityService.signIn(identityEntry);
+    void this.uxService.showLoading("Signing in");
+    await this.identityService.signIn(identityEntry, true);
+    void this.uxService.hideLoading();
   }
 
   /**
@@ -125,7 +127,7 @@ export class PickIdentityPage {
     }
   }
 
-  availableIdentitiesCount(): Number {
+  availableIdentitiesCount(): number {
     let count = 0;
     for (let group of this.groupedIdentities) {
       for (let identity of group.entries) {

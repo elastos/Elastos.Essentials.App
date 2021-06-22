@@ -40,7 +40,7 @@ export class UXService {
 
         this.events.subscribe('showDeleteIdentityPrompt', (identity) => {
           this.zone.run(() => {
-            this.showDeletePrompt(identity);
+            void this.showDeletePrompt(identity);
           });
         });
     }
@@ -64,11 +64,11 @@ export class UXService {
       switch (icon.key) {
         // When in create-identity pg
         case 'backToRoot':
-          this.navigateRoot();
+          void this.navigateRoot();
           break;
         // For all other pages that need back navigation
         case 'back':
-          this.nav.navigateBack();
+          void this.nav.navigateBack();
           break;
         case 'language':
           this.go('/didsessions/language');
@@ -84,35 +84,31 @@ export class UXService {
         let identities = await this.didSessions.getIdentityEntries();
         if (identities.length == 0) {
             Logger.log("didsessions", "No existing identity. Navigating to language chooser then createidentity");
-            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/language", { animationDirection: Direction.FORWARD });
+            await this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/language", { animationDirection: Direction.FORWARD });
         }
         else {
             Logger.log("didsessions", "Navigating to pickidentity");
-            this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity", { animationDirection: Direction.BACK });
+            await this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity", { animationDirection: Direction.BACK });
         }
     }
 
     // Sensitive data should not be passed through queryParams
     public go(page: any, options: any = {}) {
         this.zone.run(() => {
-            this.native.hideLoading();
-            this.nav.navigateTo(App.DID_SESSIONS, page, { state: options });
+            void this.native.hideLoading();
+            void this.nav.navigateTo(App.DID_SESSIONS, page, { state: options });
         });
-    }
-
-    public goToLauncer() {
-      this.nav.navigateHome(Direction.FORWARD);
     }
 
     public translateInstant(key: string): string {
         return this.translate.instant(key);
     }
 
-    public toast(message: string = '操作完成', duration: number = 2000): void {
+    public toast(message = '操作完成', duration = 2000): void {
       this.native.genericToast(message, duration);
     }
 
-    public toast_trans(message: string = '', duration: number = 2000): void {
+    public toast_trans(message = '', duration = 2000): void {
       this.native.genericToast(message, duration);
     }
 
@@ -129,7 +125,7 @@ export class UXService {
         this.loader = null;
       });
       return await this.loader.present();
-    };
+    } 
 
     public async hideLoading() {
       if (this.loader) {

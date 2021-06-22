@@ -101,7 +101,7 @@ export class CreateSuggestionPage {
             //Send response to callback url
             await this.proposalService.sendProposalCommandResponseToCallbackURL(this.createSuggestionCommand.callbackurl, signedJWT);
             //Go to launcher
-            this.globalNav.goToLauncer();
+            await this.globalNav.goToLauncher();
 
         }
         catch (e) {
@@ -219,7 +219,7 @@ export class CreateSuggestionPage {
         return Util.reverseHexToBE(digest);
     }
 
-    private async getDigest(): Promise<any> {
+    private getDigest(): Promise<any> {
         switch(this.createSuggestionCommand.data.proposaltype) {
             case "normal":
                 return this.getNormalDigest();

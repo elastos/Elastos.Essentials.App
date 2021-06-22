@@ -33,6 +33,10 @@ export class BackupService {
 
     try {
       const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
+      if (!hiveAuthHelper) {
+        Logger.log("contacts", "Failed to get hive auth helper. Backup service not starting for now");
+        return;
+      }
 
       const hiveClient = await hiveAuthHelper.getClientWithAuth((authError)=>{
         Logger.warn("contacts", "Hive authentication error callback: ", authError);

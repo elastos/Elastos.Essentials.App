@@ -23,6 +23,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "s
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
+import { GlobalNavService } from "src/app/services/global.nav.service";
 
 
 type ProfileDisplayEntry = {
@@ -91,7 +92,8 @@ export class MyProfilePage {
     public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
-    private globalIntentService: GlobalIntentService
+    private globalIntentService: GlobalIntentService,
+    private globalNav: GlobalNavService
   ) {
     this.init();
   }
@@ -137,7 +139,7 @@ export class MyProfilePage {
 
     this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
       this.zone.run(() => {
-        this.profileService.showWarning("publishIdentity", null);
+        void this.profileService.showWarning("publishIdentity", null);
       });
     });
 
@@ -189,7 +191,7 @@ export class MyProfilePage {
         else return -1;
       });
 
-      this.checkDidForPublish(identity);
+      void this.checkDidForPublish(identity);
       this.buildDetailEntries();
       this.buildCredentialEntries(publishAvatar);
     }
@@ -202,10 +204,8 @@ export class MyProfilePage {
     this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
     this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
 
-    this.profileService.didString = this.didService
-      .getActiveDid()
-      .getDIDString();
-    this.didSyncService
+    this.profileService.didString = this.didService.getActiveDid().getDIDString();
+    void this.didSyncService
       .getDIDDocumentFromDID(this.profileService.didString)
       .then((didDoc) => {
         this.currentOnChainDIDDocument = didDoc;
@@ -225,7 +225,7 @@ export class MyProfilePage {
 
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if (icon.key == "settings") {
-        this.native.go('/identity/settings');
+        void this.native.go('/identity/settings');
       }
     });
   }
@@ -233,6 +233,9 @@ export class MyProfilePage {
   ionViewDidEnter() {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
+
+    // TMP DEBUG
+    //this.profileService.publishDIDDocumentReal();
   }
 
   ionViewWillLeave() {
@@ -370,7 +373,7 @@ export class MyProfilePage {
   /***** Find and build app and avatar creds *****/
   buildAppAndAvatarCreds(publishAvatar?: boolean) {
     this.profileService.appCreds = [];
-    let hasAvatar: boolean = false;
+    let hasAvatar = false;
 
     this.profileService.visibleCredentials.map((cred) => {
       // Find App Credentials
@@ -733,24 +736,7 @@ export class MyProfilePage {
     return issuer.did;
   }
 
-  async exportMnemonic() {
-    await this.authService.checkPasswordThenExecute(
-      async () => {
-        let mnemonics = await this.didService.activeDidStore.exportMnemonic(
-          AuthService.instance.getCurrentUserPassword()
-        );
-        this.native.go("/identity/exportmnemonic", { mnemonics: mnemonics });
-      },
-      () => {
-        // Operation cancelled
-        Logger.log("identity", "Password operation cancelled");
-      },
-      true,
-      true
-    );
-  }
-
-  testPage() {
-    this.native.go("/identity/publishing")
+  exportMnemonic() {
+    return this.globalNav.navigateTo("identitybackup", "/identity/backupdid");
   }
 }

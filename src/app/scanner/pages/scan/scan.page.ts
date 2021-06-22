@@ -12,7 +12,6 @@ import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { ESSENTIALS_CONNECT_URL_PREFIX, GlobalConnectService } from 'src/app/services/global.connect.service';
 import { isObject } from 'lodash-es';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
@@ -35,11 +34,11 @@ export class ScanPage {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     torchLightOn: boolean;
-    isCameraShown: boolean = false;
-    contentWasScanned: boolean = false;
-    scannedText: string = "";
+    isCameraShown = false;
+    contentWasScanned = false;
+    scannedText = "";
     scanSub: Subscription = null;
-    fromIntentRequest: boolean = false;
+    fromIntentRequest = false;
     loader: any = null;
     alert: any = null;
 
@@ -56,7 +55,6 @@ export class ScanPage {
         public theme: GlobalThemeService,
         private native: GlobalNativeService,
         private globalIntentService: GlobalIntentService,
-        private globalConnectService: GlobalConnectService,
         private globalWalletConnectService: GlobalWalletConnectService,
         private globalNav: GlobalNavService,
         private translate: TranslateService,
@@ -73,7 +71,7 @@ export class ScanPage {
         this.showGalleryTitlebarKey(true);
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem)=>{
             if (clickedItem.key == "gallery") {
-                this.scanFromLibrary();
+                void this.scanFromLibrary();
             }
         });
     }
@@ -86,13 +84,14 @@ export class ScanPage {
     /**
      * Leaving the page, do some cleanup.
      */
-    async ionViewWillLeave() {
+    ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-        this.zone.run(async () => {
+        this.zone.run(() => {
             Logger.log("Scanner", "Scan view is leaving")
             this.stopScanning();
-            await this.hideCamera();
-            document.body.classList.remove("transparentBody");
+            void this.hideCamera().then(() => {
+                document.body.classList.remove("transparentBody");
+            })
         });
     }
 
@@ -103,15 +102,15 @@ export class ScanPage {
         this.torchLightOn = !this.torchLightOn;
 
         if (!this.torchLightOn)
-            this.qrScanner.disableLight();
+            return this.qrScanner.disableLight();
         else
-            this.qrScanner.enableLight();
+            return this.qrScanner.enableLight();
     }
 
-    showCamera() {
+    async showCamera() {
         // Make sure to make ion-app and ion-content transparent to see the camera preview
         document.body.classList.add("transparentBody");
-        this.qrScanner.show();
+        await this.qrScanner.show();
         this.isCameraShown = true; // Will display controls
     }
 
@@ -126,8 +125,7 @@ export class ScanPage {
     }
 
     startScanningProcess() {
-        this.qrScanner.prepare().then((status: QRScannerStatus) => {
-
+        this.qrScanner.prepare().then(async (status: QRScannerStatus) => {
             Logger.log("Scanner", "Scanner prepared")
             if (status.authorized) {
                 // Camera permission was granted. Start scanning
@@ -135,9 +133,10 @@ export class ScanPage {
 
                 // Show camera preview
                 Logger.log("Scanner", "Showing camera preview")
-                this.showCamera()
+                await this.showCamera()
 
                 // Start scanning and listening to scan results
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
                     Logger.log("Scanner", "Scanned data: ", text)
                     this.scannedText = text;
@@ -152,9 +151,9 @@ export class ScanPage {
                     // Either emit a new intent if the scanner app was opened manually, or
                     // send a intent resposne if this app was opened by a "scanqrcode" intent request.
                     if (!this.fromIntentRequest)
-                        this.runScannedContent(this.scannedText)
+                        await this.runScannedContent(this.scannedText)
                     else
-                        this.returnScannedContentToIntentRequester(this.scannedText);
+                        await this.returnScannedContentToIntentRequester(this.scannedText);
                 });
                 // Wait for user to scan something, then the observable callback will be called
             } else if (status.denied) {
@@ -190,17 +189,17 @@ export class ScanPage {
      */
     async scanFromLibrary() {
         if (this.alert) {
-          this.alertController.dismiss();
+          await this.alertController.dismiss();
           this.alert = null;
         }
 
         Logger.log("Scanner", "Stopping camera, getting ready to pick a picture from the gallery.");
-        this.native.showLoading();
+        void this.native.showLoading();
         await this.hideCamera();
         this.stopScanning();
         this.showGalleryTitlebarKey(false);
 
-        setTimeout(async () => {
+        setTimeout(() => {
             Logger.log("Scanner", "Opening gallery to pick a picture");
             // Ask user to pick a picture from the library
             navigator.camera.getPicture((data)=>{
@@ -228,16 +227,16 @@ export class ScanPage {
                                 Logger.log("Scanner", "Read qr code:", code);
 
                                 if (code != null) {
-                                    this.native.hideLoading();
+                                    void this.native.hideLoading();
                                     this.showGalleryTitlebarKey(true);
                                     // A QR code could be found in the picture
                                     this.scannedText = code as string;
                                     if (!this.fromIntentRequest)
-                                        this.runScannedContent(this.scannedText)
+                                        await this.runScannedContent(this.scannedText)
                                     else
-                                        this.returnScannedContentToIntentRequester(this.scannedText);
+                                        await this.returnScannedContentToIntentRequester(this.scannedText);
                                 } else {
-                                    this.alertNoScannedContent('common.sorry', 'scanner.no-qr-err');
+                                    void this.alertNoScannedContent('common.sorry', 'scanner.no-qr-err');
                                 }
                             }
 
@@ -247,7 +246,7 @@ export class ScanPage {
                             navigator.camera.cleanup(()=>{}, (err)=>{});
                         }
                         catch (e) {
-                            this.alertNoScannedContent('common.sorry', 'scanner.scan-err');
+                            void this.alertNoScannedContent('common.sorry', 'scanner.scan-err');
                             Logger.warn("Scanner", "Error while loading the picture as PNG:", e);
                         }
                     });
@@ -256,14 +255,14 @@ export class ScanPage {
             , (err)=>{
                 // 'No Image Selected': User canceled.
                 if (err === 'No Image Selected') {
-                    this.native.hideLoading();
+                    void this.native.hideLoading();
                     this.showGalleryTitlebarKey(true);
                     this.zone.run(() => {
                         this.startScanningProcess();
                     });
                 } else {
                     Logger.error("Scanner", err);
-                    this.alertNoScannedContent('sorry', 'scanner.gallery-err');
+                    void this.alertNoScannedContent('sorry', 'scanner.gallery-err');
                 }
             }, {
                 targetWidth: 1200, // Reduce picture size to avoid memory problems - keep it large enough for QR code readabilitiy
@@ -286,15 +285,11 @@ export class ScanPage {
      */
     async runScannedContent(scannedContent: string) {
         // pop scanner from navigation history, so the nav will not navigate to scanner.
-        this.globalNav.exitCurrentContext(false);
+        await this.globalNav.exitCurrentContext(false);
 
         // Special case - DID FORMAT CHECK - DIDs are considered as URLs by the URL class
         if (this.contentIsElastosDID(scannedContent)) {
-            this.sendIntentAsRaw(scannedContent)
-        }
-        // Special case: essentials connect qr codes
-        else if (scannedContent.startsWith(ESSENTIALS_CONNECT_URL_PREFIX)) {
-            this.globalConnectService.processEssentialsConnectUrl(scannedContent);
+            await this.sendIntentAsRaw(scannedContent)
         }
         else if (this.globalWalletConnectService.canHandleUri(scannedContent)) {
             await this.globalWalletConnectService.handleWCURIRequest(scannedContent);
@@ -302,10 +297,10 @@ export class ScanPage {
         else {
             try {
                 new URL(scannedContent);
-                this.sendIntentAsUrl(scannedContent);
+                await this.sendIntentAsUrl(scannedContent);
             } catch (_) {
                 // Content can't be parsed as a URL: fallback solution is to use it as raw content
-                this.sendIntentAsRaw(scannedContent);
+                await this.sendIntentAsRaw(scannedContent);
             }
         }
     }
@@ -325,13 +320,13 @@ export class ScanPage {
         catch (err) {
             Logger.error("Scanner", "sendUrlIntent failed", err)
             this.ngZone.run(() => {
-                this.showNooneToHandleIntent()
+                void this.showNooneToHandleIntent()
             })
         }
     }
 
     async sendIntentAsRaw(scannedContent: string) {
-        let scanIntentAction: string = "";
+        let scanIntentAction = "";
 
         // Handle specific content types to redirect to a more appropriate action.
         // DID FORMAT CHECK
@@ -354,7 +349,7 @@ export class ScanPage {
         catch (err) {
             Logger.error("Scanner", "Intent sending failed", err)
             this.ngZone.run(() => {
-                this.showNooneToHandleIntent()
+                void this.showNooneToHandleIntent()
             })
         }
     }
@@ -383,8 +378,8 @@ export class ScanPage {
         this.alert.present()
     }
 
-    async alertNoScannedContent(title: string, msg: string, btnText: string = 'ok') {
-        this.native.hideLoading();
+    async alertNoScannedContent(title: string, msg: string, btnText = 'ok') {
+        void this.native.hideLoading();
         this.showGalleryTitlebarKey(true);
 
         this.alert = await this.alertController.create({

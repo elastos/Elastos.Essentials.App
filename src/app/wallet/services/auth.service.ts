@@ -17,7 +17,6 @@ export class AuthService {
     }
 
     public async createAndSaveWalletPassword(walletId: string): Promise<string> {
-
         const passwordKey = "wallet-"+walletId;
         let oldPassword = await passwordManager.getPasswordInfo(passwordKey) as PasswordManagerPlugin.GenericPasswordInfo;
         if (oldPassword) { // In case of user click 'createMasterwallet' too quickly.
@@ -45,7 +44,7 @@ export class AuthService {
         }
     }
 
-    public async getWalletPassword(walletId: string, showMasterPromptIfDatabaseLocked: boolean = true, forceShowMasterPrompt: boolean = false): Promise<string> {
+    public async getWalletPassword(walletId: string, showMasterPromptIfDatabaseLocked = true, forceShowMasterPrompt = false): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
                 let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
@@ -72,8 +71,8 @@ export class AuthService {
         });
     }
 
-    public async deleteWalletPassword(walletId: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
+    public deleteWalletPassword(walletId: string): Promise<string> {
+        return new Promise<string>(async (resolve, reject) => {
             try {
                 const resultInfo = await passwordManager.deletePasswordInfo("wallet-"+walletId) as PasswordManagerPlugin.BooleanWithReason;
                 if (resultInfo) {

@@ -110,6 +110,6 @@ export class VoteService {
         if (this.intentAction != null) {
             await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         }
-        this.nav.goToLauncer();
+        this.nav.goToLauncher();
     }
 }

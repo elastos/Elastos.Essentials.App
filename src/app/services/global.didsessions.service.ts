@@ -24,8 +24,6 @@ export type IdentityEntry = {
   name: string;
   /** Optional profile picture for this identity */
   avatar?: IdentityAvatar;
-  /** Keep the mnemonic info for after did creeated or import */
-  mnemonicInfo?: NewIdentity;
   /** DID data storage path, for save did data and the other module data, such as spv */
   didStoragePath: string;
 }
@@ -60,19 +58,17 @@ export class GlobalDIDSessionsService {
     if (lastSignedInIdentity) {
       let identity = this.identities.find(entry => lastSignedInIdentity.didString == entry.didString);
       if (identity) {
-        this.signIn(identity);
+        await this.signIn(identity);
+        await this.navigateHome();
       }
     }
   }
 
-  public async saveDidSessionsToDisk(): Promise<void> {
+  public saveDidSessionsToDisk(): Promise<void> {
     return this.storage.setSetting(null, "didsessions", "identities", this.identities);
   }
 
-  public async saveSignedInIdentityToDisk(): Promise<void> {
-    if (this.signedInIdentity != null && this.signedInIdentity.mnemonicInfo != null) {
-      this.signedInIdentity.mnemonicInfo = null;
-    }
+  public saveSignedInIdentityToDisk(): Promise<void> {
     return this.storage.setSetting(null, "didsessions", "signedinidentity", this.signedInIdentity);
   }
 
@@ -114,7 +110,7 @@ export class GlobalDIDSessionsService {
   /**
    * Gets the list of all identity entries previously created.
    */
-  public async getIdentityEntries(): Promise<IdentityEntry[]> {
+  public getIdentityEntries(): IdentityEntry[] {
     return this.identities;
   }
 
@@ -123,7 +119,7 @@ export class GlobalDIDSessionsService {
    *
    * @returns The signed in identity if any, null otherwise.
    */
-  public async getSignedInIdentity(): Promise<IdentityEntry | null> {
+  public getSignedInIdentity(): IdentityEntry | null {
     return this.signedInIdentity;
   }
 
@@ -131,8 +127,6 @@ export class GlobalDIDSessionsService {
    * Signs a given identity entry in.
    *
    * This identity becomes the new global identity for the "DID Session".
-   * All dApps get sandboxed in this DID context and don't see any information about the other available
-   * identities.
    */
   public async signIn(entry: IdentityEntry, options?: SignInOptions): Promise<void> {
     Logger.log('DIDSessionsService', "Signing in with DID", entry.didString, entry.name);
@@ -151,8 +145,17 @@ export class GlobalDIDSessionsService {
 
     await this.saveSignedInIdentityToDisk();
 
-    //Go to launcher
-    this.globalNavService.navigateHome(Direction.FORWARD);
+    Logger.log('DIDSessionsService', "Sign in completed");
+  }
+
+  /**
+   * Goes to launcher. A user must be signed in prior to this call.
+   */
+  public navigateHome(): Promise<boolean> {
+    if (!this.signedInIdentity)
+      throw new Error("DID Sessions cannot navigate to essentials home screen as there is no user signed in yet");
+
+    return this.globalNavService.navigateHome(Direction.FORWARD);
   }
 
   /**
@@ -170,6 +173,17 @@ export class GlobalDIDSessionsService {
     this.globalIntentService.clear();
 
     await GlobalServiceManager.getInstance().emitUserSignOut();
-    this.globalNavService.navigateDIDSessionHome();
+    await this.globalNavService.navigateDIDSessionHome();
+  }
+
+  /**
+   * Tells whether the user has backed up his identity or not.
+   */
+  public activeIdentityWasBackedUp(): Promise<boolean> {
+    return this.storage.getSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", false);
+  }
+
+  public async markActiveIdentityBackedUp(): Promise<void> {
+    await this.storage.setSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", true);
   }
 }

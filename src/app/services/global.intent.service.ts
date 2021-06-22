@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Logger } from '../logger';
-import { GlobalConnectService } from './global.connect.service';
 import { GlobalNavService } from './global.nav.service';
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
@@ -17,7 +16,7 @@ export class GlobalIntentService {
     private globalNav: GlobalNavService
   ) {}
 
-  public async init(): Promise<void> {
+  public init() {
     Logger.log("Intents", "Global intent service is initializing");
   }
 
@@ -26,7 +25,7 @@ export class GlobalIntentService {
     this.intentListener.next(null);
   }
 
-  public async listen() {
+  public listen() {
     Logger.log("Intents", "Listening to external incoming intents");
     essentialsIntentManager.addIntentListener((receivedIntent)=>{
       Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
@@ -44,9 +43,11 @@ export class GlobalIntentService {
     return essentialsIntentManager.sendUrlIntent(url)
   }
 
-  sendIntentResponse(result: any, intentId: number): Promise<void> {
-    Logger.log("Intents", "Sending intent response ", result, intentId);
-    this.globalNav.exitCurrentContext();
+  async sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
+    Logger.log("Intents", "Sending intent response ", result, intentId, navigateBack);
+
+    if (navigateBack)
+      await this.globalNav.exitCurrentContext();
 
     // Make sure that the result is JSON data. This is the only format we want to support.
     try {

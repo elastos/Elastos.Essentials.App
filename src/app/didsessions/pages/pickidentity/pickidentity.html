@@ -5,11 +5,11 @@
     <div class="identities">
       <div *ngFor="let group of groupedIdentities">
         <ion-row class="id-row ion-activatable ripple" *ngFor="let identityEntry of group.entries">
-          <ion-col class="img-col" size="1.9" (click)="identityService.signIn(identityEntry)">
+          <ion-col class="img-col" size="1.9" (click)="signIn(identityEntry)">
             <img *ngIf="!identityEntry.avatar" src="assets/didsessions/images/default-contact.svg">
             <img *ngIf="identityEntry.avatar" [src]="'data:'+identityEntry.avatar.contentType+';base64,'+identityEntry.avatar.base64ImageData">
           </ion-col>
-          <ion-col class="info-col" size="9" (click)="identityService.signIn(identityEntry)">
+          <ion-col class="info-col" size="9" (click)="signIn(identityEntry)">
             <h1>{{ identityEntry.name }}</h1>
             <p>{{ identityEntry.didString.slice(4,16) }}...{{ identityEntry.didString.slice(40,46) }}</p>
           </ion-col>
@@ -20,7 +20,7 @@
         </ion-row>
       </div>
     </div>
-    
+
     <div *ngIf="!uxService.popover" class="footer">
       <ion-button (click)="createIdentity()">
         {{ 'didsessions.create-new-identity' | translate }}

@@ -5,6 +5,7 @@ import { HiveService } from './hive.service';
 import { IntentReceiverService } from './intentreceiver.service';
 import { TranslationService } from './translation.service';
 import { DIDEvents } from './events';
+import { ProfileService } from './profile.service';
 
 @Injectable({
   providedIn: 'root'

@@ -52,12 +52,12 @@ export class AppComponent {
         this.initializeApp();
     }
 
-    async initializeApp() {
-        this.platform.ready().then(async () => {
+    initializeApp() {
+        void this.platform.ready().then(async () => {
             Logger.log("Global", "Main app component initialization is starting");
 
             // Force Essentials orientation to portrait only
-            this.screenOrientation.lock("portrait");
+            void this.screenOrientation.lock("portrait");
 
             // Must do it in ios, otherwise the titlebar and status bar will overlap.
             this.statusBar.overlaysWebView(false);
@@ -68,8 +68,8 @@ export class AppComponent {
 
             // Use our own internal connector for the connectivity SDK
             let internalConnector = new InternalElastosConnector();
-            connectivity.registerConnector(new InternalElastosConnector());
-            connectivity.setActiveConnector(internalConnector.name);
+            await connectivity.registerConnector(new InternalElastosConnector());
+            await connectivity.setActiveConnector(internalConnector.name);
 
             // Register Essentials' App DID to the connectivity SDK - For hive authentication flows.
             connectivity.setApplicationDID("did:elastos:ig1nqyyJhwTctdLyDFbZomSbZSjyMN1uor");
@@ -82,14 +82,16 @@ export class AppComponent {
             await this.language.init();
             await this.notificationsService.init();
             await this.intentService.init();
-            await this.didSessions.init();
-            // await this.publicationService.init();
+            await this.publicationService.init();
             await this.walletConnect.init();
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();
 
             Logger.log("Global", "All awaited init services have been initialized");
+
+            // This method will sign in, so it must come last.
+            await this.didSessions.init();
 
             // Navigate to the right startup screen
             Logger.log("Global", "Navigating to start screen");
@@ -102,7 +104,7 @@ export class AppComponent {
                 await this.theme.fetchThemeFromPreferences();
 
                 // Navigate to home screen
-                this.globalNav.navigateHome(Direction.NONE);
+                await this.globalNav.navigateHome(Direction.NONE);
             } else {
                 Logger.log("Global", "No active DID, navigating to DID sessions");
 
@@ -124,7 +126,7 @@ export class AppComponent {
   setupBackKeyNavigation() {
     this.platform.backButton.subscribeWithPriority(0, () => {
       if (this.globalNav.canGoBack()) {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
       } else {
         navigator["app"].exitApp();
       }

@@ -6,10 +6,12 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { ComponentsModule } from '../../components/components.module';
-import { ExportmnemonicPage } from './exportmnemonic.page';
+import { VerifyMnemonicsPage } from './verifymnemonics';
 
 @NgModule({
-    declarations: [ExportmnemonicPage],
+    declarations: [
+        VerifyMnemonicsPage
+    ],
     imports: [
         SharedComponentsModule,
         ComponentsModule,
@@ -17,9 +19,9 @@ import { ExportmnemonicPage } from './exportmnemonic.page';
         FormsModule,
         IonicModule,
         TranslateModule,
-        RouterModule.forChild([{ path: '', component: ExportmnemonicPage }])
+        RouterModule.forChild([{ path: '', component: VerifyMnemonicsPage }])
     ],
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ExportMnemonicModule {}
+export class VerifyMnemonicsModule {}

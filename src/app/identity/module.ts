@@ -16,7 +16,6 @@ import { PopupProvider } from "./services/popup";
 import { ShowQRCodeComponent } from "./components/showqrcode/showqrcode.component";
 import { WarningComponent } from "./components/warning/warning.component";
 import { OptionsComponent } from "./components/options/options.component";
-import { PictureComponent } from "./components/picture/picture.component";
 import { SuccessComponent } from "./components/success/success.component";
 import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
 
@@ -24,7 +23,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
   declarations: [
     OptionsComponent,
     WarningComponent,
-    // PictureComponent,
     SuccessComponent
   ],
   imports: [
@@ -45,7 +43,6 @@ import { TabsnavPageModule } from "./pages/tabnav/tabnav.module";
     ShowQRCodeComponent,
     OptionsComponent,
     WarningComponent,
-    // PictureComponent,
     SuccessComponent
   ],
   providers: [

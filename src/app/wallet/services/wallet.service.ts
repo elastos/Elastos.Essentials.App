@@ -49,7 +49,21 @@ import { Events } from 'src/app/services/events.service';
 import { StandardSubWalletBuilder } from '../model/wallets/StandardSubWalletBuilder';
 import { ERC721Service } from './erc721.service';
 import { BehaviorSubject } from 'rxjs';
+import { Util } from '../model/Util';
 
+
+class TransactionMapEntry {
+    Code: number = null;
+    Reason: string = null;
+    WalletID: string = null;
+    ChainID: string = null;
+    Status: string = null;
+    lock = false;
+}
+
+type TransactionMap = {
+    [k: string]: TransactionMapEntry;
+};
 
 @Injectable({
     providedIn: 'root'
@@ -234,8 +248,8 @@ export class WalletManager {
     }
 
     // TODO: delete it, we do not use active wallet
-    public setRecentWalletId(id) {
-        this.localStorage.saveCurMasterId({ masterId: id });
+    public async setRecentWalletId(id): Promise<void> {
+        await this.localStorage.saveCurMasterId({ masterId: id });
     }
 
     public getMasterWallet(masterId: WalletID): MasterWallet {
@@ -378,7 +392,7 @@ export class WalletManager {
         // Save state to local storage
         await this.saveMasterWallet(this.masterWallets[id]);
 
-        this.setRecentWalletId(id);
+        await this.setRecentWalletId(id);
     }
 
     /**
@@ -420,7 +434,7 @@ export class WalletManager {
     public setHasPromptTransfer2IDChain() {
         this.hasPromptTransfer2IDChain = true;
         this.needToPromptTransferToIDChain = false;
-        this.localStorage.set('hasPrompt', true); // TODO: rename to something better than "hasPrompt"
+        return this.localStorage.set('hasPrompt', true); // TODO: rename to something better than "hasPrompt"
     }
 
     // TODO: make a more generic flow to not do this only for the ID chain but also for the ETH chain.
@@ -461,4 +475,30 @@ export class WalletManager {
 
         return payPassword;
     }
+
+    /**
+     * Creates a wallet that uses the same mnemonic as the DID.
+     * Usually this method should be called only once per new DID created, so the newly created
+     * user also has a default wallet.
+     */
+     public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
+        Logger.error("wallet", "Creating wallet from new identity");
+        let masterWalletId = Util.uuid(6, 16);
+        const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
+        if (payPassword) {
+          try {
+            await this.importWalletWithMnemonic(
+              masterWalletId,
+              walletName,
+              mnemonic,
+              mnemonicPassphrase || "",
+              payPassword,
+              false
+            );
+          }
+          catch (err) {
+            Logger.error('wallet', 'Wallet import error:', err);
+          }
+        }
+      }
 }

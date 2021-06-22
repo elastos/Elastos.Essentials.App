@@ -61,7 +61,7 @@ export class CreateIdentityPage {
     }
   }
 
-  async ionViewWillEnter() {
+  ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("didsessions.create-identity"));
     this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'backToRoot', iconPath: BuiltInIcon.BACK });
@@ -95,7 +95,7 @@ export class CreateIdentityPage {
   showSlider() {
     Logger.log('didsessions', "Showing created identity screen slider");
     this.hidden = false
-    this.slide.getSwiper().then((swiper) => {
+    void this.slide.getSwiper().then((swiper) => {
       swiper.init();
     });
   }
@@ -105,10 +105,10 @@ export class CreateIdentityPage {
   }
 
   nextSlide() {
-    this.slide.slideNext();
+    void this.slide.slideNext();
   }
 
-  async createNewIdentity() {
+  createNewIdentity() {
     this.identityService.startCreatingNewDIDWithNewMnemonic();
   }
 

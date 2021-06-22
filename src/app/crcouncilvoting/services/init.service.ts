@@ -16,7 +16,7 @@ export class CRCouncilVotingInitService extends GlobalService {
   }
 
   public async init(): Promise<void> {
-    GlobalServiceManager.getInstance().registerService(this);
+    await GlobalServiceManager.getInstance().registerService(this);
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {

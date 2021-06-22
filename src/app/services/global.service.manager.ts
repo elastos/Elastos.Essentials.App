@@ -48,6 +48,7 @@ export class GlobalServiceManager {
 
     async emitUserSignOut(): Promise<void> {
         for (let service of this.services) {
+            Logger.log("ServiceManager", "Emiting onUserSignOut() for service:", service);
             await service.onUserSignOut();
         }
     }

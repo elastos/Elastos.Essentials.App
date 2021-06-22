@@ -4,13 +4,15 @@ import { Router } from '@angular/router';
 import { Util } from '../../services/util';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
-import { UXService } from 'src/app/didsessions/services/ux.service';
-import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { UXService } from '../../services/ux.service';
+import { DIDService } from '../../services/did.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 type MnemonicWord = {
     text: string;
@@ -27,19 +29,21 @@ export class VerifyMnemonicsPage {
     mnemonicList: Array<MnemonicWord> = [];
     selectedList = [];
     mnemonicStr: string;
-    allWordsSelected: boolean = false;
+    allWordsSelected = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
       public router: Router,
       public zone: NgZone,
-      private identityService: IdentityService,
+      private didService: DIDService,
       private uxService: UXService,
       public theme: GlobalThemeService,
       private translate: TranslateService,
       private alertCtrl: AlertController,
       private globalNav: GlobalNavService,
+      private native: GlobalNativeService,
+      private didSessions: GlobalDIDSessionsService
     ) {
       this.init();
     }
@@ -48,10 +52,9 @@ export class VerifyMnemonicsPage {
       this.titleBar.setTitle(this.translate.instant('didsessions.verify-mnemonic'));
       this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
-      this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
       this.titleBar.setNavigationMode(null);
       this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-        this.uxService.onTitleBarItemClicked(icon);
+        void this.globalNav.navigateBack();
       });
     }
 
@@ -63,7 +66,7 @@ export class VerifyMnemonicsPage {
         this.createEmptySelectedList();
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
-            this.mnemonicStr = Util.clone(navigation.extras.state["mnemonicStr"]);
+            this.mnemonicStr = navigation.extras.state["mnemonicStr"];
             this.mnemonicList = this.mnemonicStr.split(" ").map((word)=>{
                 return {text: word, selected: false}
             });
@@ -130,10 +133,16 @@ export class VerifyMnemonicsPage {
 
     nextClicked() {
       if(this.allWordsMatch()) {
-        this.createDid();
+        void this.continueAfterSuccessfulVerification();
       } else {
-        this.returnToBackup();
+        void this.returnToBackup();
       }
+    }
+
+    private async continueAfterSuccessfulVerification() {
+      this.native.genericToast("Great, your identity is now backed up!");
+      await this.didSessions.markActiveIdentityBackedUp();
+      void this.globalNav.exitCurrentContext();
     }
 
     async returnToBackup() {
@@ -145,17 +154,13 @@ export class VerifyMnemonicsPage {
           {
             text: this.translate.instant('Okay'),
             handler: () => {
-              this.globalNav.navigateBack();
+              void this.globalNav.navigateBack();
             }
           }
         ]
       });
 
       await alert.present();
-    }
-
-    async createDid() {
-      await this.identityService.createNewDIDWithNewMnemonic();
     }
 
     allWordsMatch() {

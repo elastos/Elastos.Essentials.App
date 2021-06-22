@@ -17,10 +17,12 @@ export class HiveService {
             return this.hiveClient;
 
         let hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
-        this.hiveClient = await hiveAuthHelper.getClientWithAuth((e)=>{
-            // Auth error
-            Logger.error("developertools", "Authentication error", e); // TODO: inform user.
-        });
+        if (hiveAuthHelper) {
+            this.hiveClient = await hiveAuthHelper.getClientWithAuth((e)=>{
+                // Auth error
+                Logger.error("developertools", "Authentication error", e); // TODO: inform user.
+            });
+        }
         return this.hiveClient;
     }
 

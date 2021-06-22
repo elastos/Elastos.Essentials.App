@@ -230,7 +230,7 @@ export class DIDStore {
             didManager.initDidStore(
                 didStoreId,
                 (payload: string, memo: string) => {
-                    this.createIdTransactionCallback(payload, memo);
+                    void this.createIdTransactionCallback(payload, memo);
                 },
                 (pluginDidStore: DIDPlugin.DIDStore) => {
                     Logger.log("Identity", "Initialized DID Store is ", pluginDidStore);
@@ -249,44 +249,11 @@ export class DIDStore {
      * that we have to forward to the wallet application so it can write the did request on the did
      * sidechain for us.
      */
-    private async createIdTransactionCallback(payload: string, memo: string) {
-        let jsonPayload = JSON.parse(payload);
-        Logger.log('identity', "Received id transaction callback with payload: ", jsonPayload);
-        let params = {
-            didrequest: jsonPayload
-        }
-
-        Logger.log('identity', "Sending didtransaction intent with params:", params);
-
-        try {
-            let response = await this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", params);
-
-            Logger.log('identity', "Got didtransaction intent response.", response);
-
-            // If txid is set in the response this means a transaction has been sent on chain.
-            // If null, this means user has cancelled the operation (no ELA, etc).
-            if (response.result && response.result.txid) {
-                Logger.log('identity', 'didtransaction response.result.txid ', response.result.txid);
-                this.events.publish("diddocument:publishresult", {
-                    didStore: this,
-                    published: true
-                });
-            }
-            else {
-                Logger.log('identity', 'didtransaction response.result.txid is null');
-                this.events.publish("diddocument:publishresult", {
-                    didStore: this,
-                    cancelled: true
-                });
-            }
-        }
-        catch (err) {
-            Logger.error('identity', "Failed to send app manager didtransaction intent!", err);
-            this.events.publish("diddocument:publishresult", {
-                didStore: this,
-                error: true
-            });
-        };
+    private createIdTransactionCallback(payload: string, memo: string) {
+        this.events.publish("diddocument:onpublishpayload", {
+            payload,
+            memo
+        });
     }
 
     public async loadDidDocument(didString: string): Promise<DIDDocument> {

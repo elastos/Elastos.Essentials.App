@@ -32,7 +32,7 @@ export type IdentityGroup = {
     entries: IdentityEntry[];
 }
 
-export type stepCompletionCallback = (data: any)=>void;
+export type stepCompletionCallback = (data: any) => void | Promise<any>;
 
 export type NextStep = {
     id: number;
@@ -49,7 +49,6 @@ export type NavigateWithCompletionEnterData = {
     providedIn: 'root'
 })
 export class IdentityService {
-
     private mnemonicLang: DIDPlugin.MnemonicLanguage = "ENGLISH";
     public identityBeingCreated: NewIdentity = null;
     private nextSteps = new Array<NextStep>();
@@ -70,17 +69,17 @@ export class IdentityService {
     ) {
       this.events.subscribe('signIn', (identity) => {
         this.zone.run(() => {
-          this.signIn(identity);
+          void this.signIn(identity);
         });
       });
       this.events.subscribe('deleteIdentity', (identity) => {
         this.zone.run(() => {
-          this.deleteIdentity(identity);
+          void this.deleteIdentity(identity);
         });
       });
     }
 
-    async init() {
+    init() {
         this.setMnemonicLangByLanguage(this.translate.currentLang);
         this.translate.onLangChange.subscribe(data => {
             this.setMnemonicLangByLanguage(data.lang);
@@ -107,12 +106,12 @@ export class IdentityService {
         });
     }
 
-    public async signIn(identityEntry: IdentityEntry) {
+    public async signIn(identityEntry: IdentityEntry, goToLauncher = false) {
         // Security check: ask user to enter the master password for the target did.
         try {
             let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
                 promptPasswordIfLocked: true,
-                forceMasterPasswordPrompt: true
+                forceMasterPasswordPrompt: false
             };
             let passwordInfo = await passwordManager.getPasswordInfo("didstore-"+identityEntry.didStoreId, options);
             if (passwordInfo) {
@@ -127,7 +126,9 @@ export class IdentityService {
                 //}
 
                 await this.didSessions.signIn(identityEntry, signInOptions);
-                // this.uxService.goToLauncer();
+
+                if (goToLauncher)
+                    await this.didSessions.navigateHome();
             }
             else {
                 Logger.warn('didsessions', "Failed to authentify using master password. Sign in not permitted.");
@@ -135,9 +136,9 @@ export class IdentityService {
         }
         catch (e) {
           Logger.log('didsessions', 'passwordManager.getPasswordInfo :', e)
-            e = DIDHelper.reworkedPluginException(e);
-            if (e instanceof PasswordManagerCancellationException || e instanceof WrongPasswordException
-                  || e instanceof BiometricAuthenticationFailedException || e instanceof BiometricLockedoutException) {
+            let reworkedEx = DIDHelper.reworkedPluginException(e);
+            if (reworkedEx instanceof PasswordManagerCancellationException || reworkedEx instanceof WrongPasswordException
+                  || reworkedEx instanceof BiometricAuthenticationFailedException || reworkedEx instanceof BiometricLockedoutException) {
                 // Nothing to do, just stop the flow here.
             }
             else {
@@ -146,19 +147,27 @@ export class IdentityService {
         }
     }
 
-    signOut() {
-      this.didSessions.signOut();
+    signOut(): Promise<void> {
+      return this.didSessions.signOut();
     }
 
-    getSignedIdentity() {
-      this.didSessions.getSignedInIdentity().then((id: IdentityEntry) => {
+    async getSignedIdentity(): Promise<void> {
+        let id: IdentityEntry = await this.didSessions.getSignedInIdentity();
         Logger.log("didsessions", 'Signed in DID', id);
         this.signedIdentity = id;
-      });
+    }
+
+    /**
+     * Returns the DIDDocument of the currently being created identity.
+     */
+    public getCreatedDIDDocument(): Promise<DIDPlugin.DIDDocument> {
+        return this.identityBeingCreated.didStore.loadDIDDocument(this.identityBeingCreated.did.getDIDString());
     }
 
     /**
      * Flow:
+     * - TODO: BELOW FLOW IS OUTDATED
+     *
      * - User sets a profile name
      * - Generate a mnemonic (backupdid screen) + display to user (backupdid screen)  + verify it (verifymnemonic screen)
      * - Create a new DID store (shared with did app) + automatic did store password
@@ -170,38 +179,42 @@ export class IdentityService {
      * - If master password created, add a did session identity entry with did string, user name
      * - Sign in with the new DID in did session plugin. DID session app is closed and launcher is started.
      */
-    async startCreatingNewDIDWithNewMnemonic() {
+    startCreatingNewDIDWithNewMnemonic() {
         this.identityBeingCreated = new NewIdentity();
 
         Logger.log('didsessions', "Navigating to profile edition");
         this.navigateWithCompletion("/didsessions/editprofile", (name)=>{
             this.identityBeingCreated.name = name;
-            this.uxService.go('/didsessions/backupdid', { state: { create: true } });
+            //this.uxService.go('/didsessions/backupdid', { state: { create: true } });
+            //this.uxService.go('/didsessions/preparedid');
+            void this.createNewDIDWithNewMnemonic();
         });
     }
 
     async createNewDIDWithNewMnemonic() {
         Logger.log('didsessions', "Creating new did with new mnemonic");
 
+        this.identityBeingCreated.mnemonic = await this.generateMnemonic();
+
         let didStore = await DIDStore.create();
 
         // Generate a random password
-        let storePassword = await passwordManager.generateRandomPassword();
+        this.identityBeingCreated.storePass = await passwordManager.generateRandomPassword();
         let mnemonicLanguage = this.getMnemonicLang();
         let mnemonic = this.identityBeingCreated.mnemonic;
 
         // Initialize the new DID store with a mnemonic and store password
         // TODO: ASK USER IF HE WANTS A MNEMONIC PASSWORD ?
-        await didStore.createPrivateIdentity(null, storePassword, mnemonicLanguage, mnemonic);
+        await didStore.createPrivateIdentity(null, this.identityBeingCreated.storePass, mnemonicLanguage, mnemonic);
 
         // Add a first (and only) identity to the store.
         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
-        let createdDID = await didStore.addDID(this.identityBeingCreated, storePassword);
+        let createdDID = await didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
 
-        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name);
+        await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name, false);
     }
 
-    private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string): Promise<boolean> {
+    private async finalizeIdentityCreation(didStore: DIDStore, storePassword: string, createdDID: DID, identityName: string, isImportOperation: boolean): Promise<boolean> {
         try {
             // Save the did store password with a master password
             let passwordInfo: PasswordManagerPlugin.GenericPasswordInfo = {
@@ -217,12 +230,22 @@ export class IdentityService {
                 // Master password was created and did store password could be saved
                 // Save the identity entry in the did session plugin
                 let avatar = createdDID.getAvatarCredentialValue();
-                let newIdentity = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
-                // Sigin, for direct start wallet service to automatically create a new wallet by the mnemonics
-                // After addIdentity for don't save mnemonicInfo in storage
-                newIdentity.mnemonicInfo = this.identityBeingCreated;
-                await this.signIn(newIdentity);
+                this.identityBeingCreated.didStore = didStore;
+                this.identityBeingCreated.did = createdDID;
+                this.identityBeingCreated.didSessionsEntry = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
+
                 await this.nativeService.hideLoading();
+
+                //await this.signIn(this.identityBeingCreated.didSessionsEntry);
+                this.navigateWithCompletion('/didsessions/preparedid', async () => {
+                    Logger.log("didsessions", "DID preparation is complete, now navigating to home screen");
+
+                    // Imported DIDs are automatically marked as backed up, no need to remind users about this.
+                    if (isImportOperation)
+                        await this.didSessions.markActiveIdentityBackedUp();
+
+                    void this.didSessions.navigateHome();
+                });
                 return;
             }
             else {
@@ -231,9 +254,9 @@ export class IdentityService {
             }
         }
         catch (e) {
-            e = DIDHelper.reworkedPluginException(e);
-            if (e instanceof PasswordManagerCancellationException || e instanceof WrongPasswordException
-                || e instanceof BiometricAuthenticationFailedException || e instanceof BiometricLockedoutException) {
+            let reworkedEx = DIDHelper.reworkedPluginException(e);
+            if (reworkedEx instanceof PasswordManagerCancellationException || reworkedEx instanceof WrongPasswordException
+                || reworkedEx instanceof BiometricAuthenticationFailedException || reworkedEx instanceof BiometricLockedoutException) {
                 // Nothing to do, just stop the flow here.
                 Logger.log('didsessions', "Master password input cancelled. Stopping identity creation.");
 
@@ -246,7 +269,7 @@ export class IdentityService {
             }
         }
 
-        this.uxService.navigateRoot();
+        await this.uxService.navigateRoot();
     }
 
     /**
@@ -276,9 +299,9 @@ export class IdentityService {
         Logger.log('didsessions', "startImportingMnemonic existingMnemonic:", existingMnemonic);
         if (!existingMnemonic) {
             Logger.log('didsessions', "Navigating to import DID");
-            this.navigateWithCompletion("/didsessions/importdid", async (mnemonic)=>{
+            this.navigateWithCompletion("/didsessions/importdid", (mnemonic)=>{
                 this.identityBeingCreated.mnemonic = mnemonic;
-                await this.createStoreAfterImport();
+                void this.createStoreAfterImport();
             });
         }
         else {
@@ -295,6 +318,8 @@ export class IdentityService {
 
         // Generate a random password
         let storePassword = await passwordManager.generateRandomPassword();
+        this.identityBeingCreated.storePass = storePassword;
+
         let mnemonic = this.identityBeingCreated.mnemonic;
         let mnemonicLanguage = this.identityBeingCreated.mnemonicLanguage;
         if (!mnemonicLanguage) {
@@ -310,7 +335,7 @@ export class IdentityService {
 
         try {
             await didStore.synchronize(storePassword);
-            this.uxService.hideLoading();
+            void this.uxService.hideLoading();
 
             // Check if we could retrieve a DID or not.
             if (didStore.dids.length > 0) {
@@ -322,7 +347,7 @@ export class IdentityService {
 
                 // Exactly one DID was synced, so we directly use this one
                 let createdDID = didStore.dids[0];
-                this.continueImportAfterCreatedDID(didStore, storePassword, createdDID);
+                void this.continueImportAfterCreatedDID(didStore, storePassword, createdDID);
               }
               else {
                 Logger.log('didsessions', "More than one DID was synced, asking user to pick one");
@@ -330,7 +355,7 @@ export class IdentityService {
                 // More than one did was synced. Ask user which one he wants to keep during this import,
                 // as for now we only allow one import at a time.
                 this.navigateWithCompletion("/didsessions/chooseimporteddid", (createdDID)=>{
-                    this.continueImportAfterCreatedDID(didStore, storePassword, createdDID);
+                    void this.continueImportAfterCreatedDID(didStore, storePassword, createdDID);
                 }, {
                     dids: didStore.dids
                 });
@@ -347,16 +372,16 @@ export class IdentityService {
                     if (this.identityBeingCreated.name) {
                         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
                         let createdDID = await didStore.addDID(this.identityBeingCreated, storePassword);
-                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name);
+                        await this.finalizeIdentityCreation(didStore, storePassword, createdDID, this.identityBeingCreated.name, true);
                     }
                 });
             }
         }
         catch (e) {
-            this.uxService.hideLoading();
-            e = e ? e : "Not specific information";
-            Logger.error('didsessions', 'createStoreAfterImport error', e);
-            await this.popupProvider.ionicAlert("Synchronization error", e, "common.close");
+            void this.uxService.hideLoading();
+            let reworkedEx = e ? e : "Not specific information";
+            Logger.error('didsessions', 'createStoreAfterImport error', reworkedEx);
+            await this.popupProvider.ionicAlert("Synchronization error", reworkedEx, "common.close");
 
         }
     }
@@ -370,7 +395,7 @@ export class IdentityService {
           let profileName = createdDID.getNameCredentialValue();
           if (profileName) {
             Logger.log('didsessions', "Name credential found in the DID. Using it.");
-            await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName);
+            await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true);
           }
           else {
               // No existing name credential found in the DID, so we need to ask user to give us one
@@ -380,14 +405,24 @@ export class IdentityService {
                 await createdDID.addNameCredential(profileName, storePassword);
 
                 // Finalize
-                await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName);
+                await this.finalizeIdentityCreation(didStore, storePassword, createdDID, profileName, true);
               });
           }
         } else {
           Logger.log('didsessions', 'New DID is already added');
           this.uxService.go("/didsessions/pickidentity");
-          this.alertDuplicateImport();
+          void this.alertDuplicateImport();
         }
+    }
+
+    /**
+     * Cancels an on going DID creation or import and goes back to the root screen.
+     */
+    public async cancelIdentiyCreation(): Promise<void> {
+        // TODO: Delete the "identityBeingCreated" first
+
+        // Go back to DID sessions identity list or welcome screen
+        await this.uxService.navigateRoot();
     }
 
     /**
@@ -420,9 +455,9 @@ export class IdentityService {
             return true;
         }
         catch (e) {
-            e = DIDHelper.reworkedPluginException(e);
-            if (e instanceof PasswordManagerCancellationException || e instanceof WrongPasswordException
-                || e instanceof BiometricAuthenticationFailedException || e instanceof BiometricLockedoutException) {
+            let reworkedEx = DIDHelper.reworkedPluginException(e);
+            if (reworkedEx instanceof PasswordManagerCancellationException || reworkedEx instanceof WrongPasswordException
+                || reworkedEx instanceof BiometricAuthenticationFailedException || reworkedEx instanceof BiometricLockedoutException) {
                 // Nothing to do, just stop the flow here.
             }
             else {
@@ -446,7 +481,7 @@ export class IdentityService {
     private async addIdentity(didStoreId: string, didString: string, name: string, avatar: CredentialAvatar) : Promise<IdentityEntry> {
         /*
          // Special handler for the special "avatar" field
-                    if (entry.key == "avatar") {
+                    if (entry.key == "avatar") {
                         let avatar: Avatar = entry.value as Avatar;
                         Logger.log('didsessions', "Saving avatar info to signed in identity", avatar)
 
@@ -563,7 +598,7 @@ export class IdentityService {
         this.mnemonicLang = lang;
     }
 
-    nextStepId: number = 0;
+    nextStepId = 0;
     private navigateWithCompletion(route: string, completionCb: stepCompletionCallback, enterEventData?: any) {
         this.nextStepId++;
 
@@ -597,11 +632,14 @@ export class IdentityService {
         );
     }
 
-    public runNextStep(nextStepId: number, data?: any) {
+    public async runNextStep(nextStepId: number, data?: any) {
         let nextStep = this.nextSteps.find((step)=> step.id === nextStepId);
         if (nextStep) {
             Logger.log("didsessions", "Running next step, route:", nextStep.route);
-            nextStep.completionCb(data);
+            await nextStep.completionCb(data);
+        }
+        else {
+            Logger.log("didsessions", "Can't run next step "+nextStepId+", there is nothing after...");
         }
     }
 
@@ -625,7 +663,7 @@ export class IdentityService {
           }, {
             text: this.translate.instant('didsessions.import-again-yes'),
             handler: () => {
-              this.startImportingMnemonic(null);
+              void this.startImportingMnemonic(null);
             }
           }
         ]

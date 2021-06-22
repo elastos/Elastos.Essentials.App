@@ -60,9 +60,11 @@ export class HiveService {
 
   async init() {
     let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
-    this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
-      Logger.error("HiveManager", "Authentication error:", err);
-    });
+    if (hiveAuthHelper) {
+      this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
+        Logger.error("HiveManager", "Authentication error:", err);
+      });
+    }
 
     if (!this.client) {
       Logger.error("HiveManager", "Fatal error in hive manager: Unable to get a hive client instance in init().");

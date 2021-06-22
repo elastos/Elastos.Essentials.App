@@ -1,14 +1,6 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid [class.dark-container]="theme.darkMode">
-<!--     <ion-row class="section-row" (click)="goToSettings('/identity/publishing')">
-      <ion-col size="9" class="left-col">
-        <h1>{{ 'publication-status' | translate }}</h1>
-      </ion-col>
-      <ion-col size="3" class="right-col">
-        <ion-icon name="chevron-forward"></ion-icon>
-      </ion-col>
-    </ion-row> -->
     <ion-row class="section-row" (click)="goToSettings('/identity/advanced-settings')">
       <ion-col size="9" class="left-col">
         <h1>{{ 'identity.advanced-settings' | translate }}</h1>

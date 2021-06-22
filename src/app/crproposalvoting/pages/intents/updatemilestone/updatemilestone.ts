@@ -73,7 +73,7 @@ export class UpdatMilestonePage {
 
             await this.proposalService.sendProposalCommandResponseToCallbackURL(this.updateMilestoneCommand.callbackurl, signedJWT);
             //Go to launcher
-            this.globalNav.goToLauncer();
+            this.globalNav.goToLauncher();
 
         }
         catch (e) {

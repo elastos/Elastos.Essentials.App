@@ -2,7 +2,9 @@
     position: sticky;
     top: 0;
     z-index: 1000000;
-    display: block;
+    display: flex;
+    height: 50px;
+    align-items: center;
 
     ion-header {
         ion-row {

@@ -74,30 +74,36 @@ export class AppIDService {
       appDid: await this.getActualAppDID(intentParams),
     };
 
-    AuthService.instance.checkPasswordThenExecute(async () => {
+    await AuthService.instance.checkPasswordThenExecute(async () => {
       Logger.log('identity', "AppIdCredIssueRequest - issuing credential");
 
-      this.didService.getActiveDid().pluginDid.issueCredential(
+      await this.didService.getActiveDid().pluginDid.issueCredential(
         this.appInstanceDID,
         "#app-id-credential",
         ['AppIdCredential'],
         30, // one month - after that, we'll need to generate this credential again.
         properties,
         this.authService.getCurrentUserPassword(),
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         async (issuedCredential) => {
           Logger.log('identity', "Sending appidcredissue intent response for intent id " + this.intentId)
           let credentialAsString = await issuedCredential.toString();
+
+          // If we are doing a silent intent, we don't navigate back because we didn't navigate forward.
+          let navigateBack = await this.uxService.isIntentResponseGoingOutsideElastos(intentParams);
+          Logger.log('identity', "Navigate back? ", navigateBack);
+
           await this.uxService.sendIntentResponse("appidcredissue", {
             credential: credentialAsString
-          }, this.intentId);
-        }, async (err) => {
+          }, this.intentId, navigateBack);
+        }, (err) => {
           Logger.error('identity', "Failed to issue the app id credential...", err);
-          this.rejectExternalRequest();
+          void this.rejectExternalRequest();
         });
     }, () => {
       // Cancelled
       Logger.warn("identity", "AppID credential generation cancelled");
-      this.rejectExternalRequest();
+      void this.rejectExternalRequest();
     });
   }
 
