@@ -118,8 +118,7 @@ export class CRCouncilRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWalletId, StandardCoinName.ELA,
             this.crInfo.CROwnerPublicKey, this.crInfo.DID, this.crInfo.NickName, this.crInfo.URL, this.crInfo.Location);
 
-        const rawTx = await this.walletManager.spvBridge.createRegisterCRTransaction(this.masterWalletId, StandardCoinName.ELA,
-            '', payload, this.depositAmount.toString(), "");
+        const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }
@@ -131,8 +130,7 @@ export class CRCouncilRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateUnregisterCRPayload(this.masterWalletId, StandardCoinName.ELA,
             this.crInfo.DID);
 
-        const rawTx = await this.walletManager.spvBridge.createUnregisterCRTransaction(this.masterWalletId, StandardCoinName.ELA,
-            '', payload, "");
+        const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(payload, "");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }
@@ -148,16 +146,20 @@ export class CRCouncilRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWalletId, StandardCoinName.ELA,
             this.crInfo.CROwnerPublicKey, this.crInfo.DID, this.crInfo.NickName, this.crInfo.URL, this.crInfo.Location);
 
-        const rawTx = await this.walletManager.spvBridge.createUpdateCRTransaction(this.masterWalletId, StandardCoinName.ELA,
-            '', payload, "");
+        const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
         await this.voteService.signAndSendRawTransaction(rawTx);
     }
 
     async retrieve() {
         Logger.log('crcouncilregistration', 'Calling retrieve()', this.crInfo);
 
-        const rawTx = await this.walletManager.spvBridge.createRetrieveCRDepositTransaction(this.masterWalletId, StandardCoinName.ELA,
-            this.crInfo.CROwnerPublicKey, this.depositAmount.toString(), "");
+        const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1);
+        const crPublicKey = crPublickeys.PublicKeys[0];
+
+        // let depositAddress = await this.walletManager.spvBridge.getDepositAddress(this.ownerPublicKey);
+        //Utxo
+
+        const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction("");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }

@@ -52,6 +52,8 @@ export class DPosRegistrationPage implements OnInit {
     public state:string = "";
     public chainId = StandardCoinName.ELA;
 
+    public ownerPublicKey: string;
+
     balance: BigNumber; // ELA
 
     transFunction: any;
@@ -94,11 +96,11 @@ export class DPosRegistrationPage implements OnInit {
         let rpcApiUrl = this.jsonRPCService.getRPCApiUrl(StandardCoinName.ELA);
         Logger.log(App.DPOS_REGISTRATION, "rpcApiUrl:", rpcApiUrl);
         const result = await this.jsonRPCService.httpRequest(rpcApiUrl, param);
-        let ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
+        this.ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
         if (!Util.isEmptyObject(result.producers)) {
             Logger.log(App.DPOS_REGISTRATION, "dposlist:", result.producers);
             for (const producer of result.producers) {
-                if (producer.ownerpublickey.toLocaleLowerCase() == ownerPublicKey.toLocaleLowerCase()) {
+                if (producer.ownerpublickey.toLocaleLowerCase() == this.ownerPublicKey.toLocaleLowerCase()) {
                     this.state = producer.state;
                     this.dposInfo = producer;
                     break;
@@ -109,8 +111,8 @@ export class DPosRegistrationPage implements OnInit {
         switch (this.dposInfo.state) {
             case 'Unregistered':
                 this.titleBar.setTitle(this.translate.instant('dposregistration.registration'));
-                this.dposInfo.nodepublickey = ownerPublicKey;
-                this.dposInfo.ownerpublickey = ownerPublicKey;
+                this.dposInfo.nodepublickey = this.ownerPublicKey;
+                this.dposInfo.ownerpublickey = this.ownerPublicKey;
                 break;
             // Pending indicates the producer is just registered and didn't get 6
             // confirmations yet.
@@ -162,8 +164,7 @@ export class DPosRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
             this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
-        const rawTx = await this.walletManager.spvBridge.createRegisterProducerTransaction(this.masterWalletId, StandardCoinName.ELA,
-            '', payload, this.depositAmount, "");
+        const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.depositAmount, "");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }
@@ -179,8 +180,7 @@ export class DPosRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateCancelProducerPayload(this.masterWalletId, StandardCoinName.ELA,
                 this.dposInfo.ownerpublickey, payPassword);
 
-        const rawTx = await this.walletManager.spvBridge.createCancelProducerTransaction(this.masterWalletId, StandardCoinName.ELA,
-            '', payload, "");
+        const rawTx = await this.voteService.sourceSubwallet.createCancelProducerTransaction(payload, "");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }
@@ -196,7 +196,7 @@ export class DPosRegistrationPage implements OnInit {
         const payload = await this.walletManager.spvBridge.generateProducerPayload(this.masterWalletId, StandardCoinName.ELA,
             this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
-        const rawTx = await this.walletManager.spvBridge.createUpdateProducerTransaction(this.masterWalletId, StandardCoinName.ELA, "", payload, "");
+        const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }
@@ -204,7 +204,10 @@ export class DPosRegistrationPage implements OnInit {
     async retrieve() {
         Logger.log('wallet', 'Calling retrieve()', this.dposInfo);
 
-        const rawTx = await this.walletManager.spvBridge.createRetrieveDepositTransaction(this.masterWalletId, StandardCoinName.ELA, this.depositAmount, "");
+        // let depositAddress = await this.walletManager.spvBridge.getDepositAddress(this.ownerPublicKey);
+        //Utxo
+
+        const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction("");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }

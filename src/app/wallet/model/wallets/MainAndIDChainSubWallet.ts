@@ -229,6 +229,17 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
+    public async publishTransaction(transaction: string): Promise<string> {
+        let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
+            this.masterWallet.id,
+            this.id,
+            transaction,
+        )
+
+        let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
+        return txid;
+    }
+
     //
     //proposal transaction functions
     //
@@ -324,16 +335,116 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
-    public async publishTransaction(transaction: string): Promise<string> {
-        let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
+    //
+    //dpos registration transaction functions
+    //
+    public async createRegisterProducerTransaction(payload: string, amount: number, memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createRegisterProducerTransaction(
             this.masterWallet.id,
             this.id,
-            transaction,
-        )
-
-        let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
-        return txid;
+            JSON.stringify(utxo),
+            payload,
+            amount,
+            '10000',
+            memo
+        );
     }
+
+    public async createCancelProducerTransaction(payload: string, memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createCancelProducerTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            '10000',
+            memo
+        );
+    }
+
+    public async createUpdateProducerTransaction(payload: string, memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createUpdateProducerTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            '10000',
+            memo
+        );
+    }
+
+    public async createRetrieveDepositTransaction(memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createRetrieveDepositTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            '10000',
+            memo
+        );
+    }
+
+    //
+    //CR registration transaction functions
+    //
+    public async createRegisterCRTransaction(payload: string, amount: number, memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createRegisterCRTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            amount,
+            '10000',
+            memo
+        );
+    }
+
+    public async createUnregisterCRTransaction(payload: string, memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createUnregisterCRTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            '10000',
+            memo
+        );
+    }
+
+    public async createUpdateCRTransaction(payload: string, memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createUpdateCRTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            '10000',
+            memo
+        );
+    }
+
+    public async createRetrieveCRDepositTransaction(memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createRetrieveCRDepositTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            '10000',
+            memo
+        );
+    }
+
 
     // ********************************
     // Private
