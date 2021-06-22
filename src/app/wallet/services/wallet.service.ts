@@ -27,7 +27,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
 import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
-import { StandardCoinName } from '../model/Coin';
+import { CoinID, StandardCoinName } from '../model/Coin';
 import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
 import { SerializedSubWallet } from '../model/wallets/SubWallet';
 import { InvalidVoteCandidatesHelper, InvalidCandidateForVote } from '../model/InvalidVoteCandidatesHelper';
@@ -240,6 +240,15 @@ export class WalletManager {
 
     public getMasterWallet(masterId: WalletID): MasterWallet {
         return this.masterWallets[masterId];
+    }
+
+    public findMasterWalletBySubWalletID(subwalletId: CoinID): MasterWallet {
+        for (let w of Object.values(this.masterWallets) ){
+            let subWallet = w.getSubWallet(subwalletId);
+            if (subWallet)
+                return w;
+        }
+        return null;
     }
 
     public getWalletsList(): MasterWallet[] {

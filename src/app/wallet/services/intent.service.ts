@@ -196,6 +196,18 @@ export class IntentService {
                 this.coinTransferService.chainId = StandardCoinName.ETHSC;
                 this.coinTransferService.payloadParam = intent.params.payload.params[0];
                 // this.coinTransferService.amount = intent.params.amount;
+
+                if (this.coinTransferService.payloadParam.from) {
+                    Logger.log("wallet", "Auto-selecting wallet with ETH address "+this.coinTransferService.payloadParam.from+" as requested by the 'from' field");
+
+                    // If the "from" address is set, this means the received raw transaction is already
+                    // for a specific account. In this case we auto-select the related wallet without asking user.
+                    let escWallet: MasterWallet = this.walletManager.findMasterWalletBySubWalletID(StandardCoinName.ETHSC);
+                    this.coinTransferService.masterWalletId = escWallet.id;
+                    this.coinTransferService.walletInfo = escWallet.account;
+                    intentRequiresWalletSelection = false;
+                }
+
                 break;
 
             case 'pay':
