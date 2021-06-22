@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { Node } from '../../../model/nodes.model';
+import { DPosNode } from '../../../model/nodes.model';
 import { NodesService } from '../../../services/nodes.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
@@ -11,12 +11,12 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 })
 export class NodeSliderComponent implements OnInit {
 
-  @Input() _nodes: Node[] = [];
+  @Input() _nodes: DPosNode[] = [];
   @Input() totalVotes: number = 0;
   @Input() nodeIndex: number;
-  @Input() node: Node;
+  @Input() node: DPosNode;
 
-  public displayedArr: Node[] = [];
+  public displayedArr: DPosNode[] = [];
 
   slideOpts = {
     initialSlide: null,
@@ -38,7 +38,7 @@ export class NodeSliderComponent implements OnInit {
 
   //// Increment nodes array when sliding forward ////
   loadNext() {
-    let lastNode: Node = this.displayedArr.slice(-1)[0];
+    let lastNode: DPosNode = this.displayedArr.slice(-1)[0];
     let nextNodeIndex: number = this._nodes.indexOf(lastNode) + 1;
     if(nextNodeIndex) {
       this.displayedArr.push(this._nodes[nextNodeIndex]);

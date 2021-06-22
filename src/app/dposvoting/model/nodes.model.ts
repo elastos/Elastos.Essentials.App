@@ -1,5 +1,5 @@
 // data for https://api.elastos.io/ela
-export type Node = {
+export type DPosNode = {
     active: boolean;
     cancelheight: number;
     inactiveheight: number;
@@ -20,8 +20,14 @@ export type Node = {
     isChecked: boolean;
 }
 
+export type ProducersSearchResponse = {
+  producers: DPosNode[],
+  totalvotes: string,
+  totalcounts: number,
+}
+
 // data for https://node1.elaphant.app/api/
-// export class Node {
+// export class DPosNode {
 //   constructor(
 //     public Producer_public_key: string,
 //     public Value: string,

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInput } from '@ionic/angular';
 
 import { NodesService } from '../../services/nodes.service';
-import { Node } from '../../model/nodes.model';
+import { DPosNode } from '../../model/nodes.model';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
@@ -19,13 +19,13 @@ export class SearchPage implements OnInit {
   @ViewChild('search', {static: false}) search: IonInput;
 
   // Search values
-  public filteredNodes: Node[] = [];
+  public filteredNodes: DPosNode[] = [];
   public _node: string = '';
 
-  // Node Detail
+  // DPosNode Detail
   public showNode: boolean = false;
   public nodeIndex: number;
-  public node: Node;
+  public node: DPosNode;
 
   constructor(
     public nodesService: NodesService,
@@ -71,8 +71,8 @@ export class SearchPage implements OnInit {
     return votePercent.toFixed(2);
   }
 
-  //// Node Detail ////
-  _showNode(index: number, node: Node) {
+  //// DPosNode Detail ////
+  _showNode(index: number, node: DPosNode) {
     this.showNode = !this.showNode;
     this.nodeIndex = index;
     this.node = node;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { Node } from '../model/nodes.model';
+import { DPosNode } from '../model/nodes.model';
 import { Vote } from '../model/history.model';
 import { Mainchain, Voters, Price, Block } from '../model/stats.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -19,8 +19,8 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 export class NodesService {
 
   // Nodes
-  public _nodes: Node[] = [];
-  public activeNodes: Node[] = [];
+  public _nodes: DPosNode[] = [];
+  public activeNodes: DPosNode[] = [];
   public totalVotes: number = 0;
 
   // Stats
@@ -70,6 +70,7 @@ export class NodesService {
   // Fetch
   private nodeApi: string = 'https://node1.elaphant.app/api/';
   private apiRPC: string = 'https://api.elastos.io/ela';
+//   private apiRPC: string = 'https://api-testnet.elastos.io/ela';
   private elaNodeUrl: string = 'https://elanodes.com/wp-content/uploads/custom/images/';
   // private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
 
@@ -83,11 +84,11 @@ export class NodesService {
     private globalIntentService: GlobalIntentService,
   ) {}
 
-  get nodes(): Node[] {
+  get nodes(): DPosNode[] {
     return [...this._nodes.filter((a,b) => this._nodes.indexOf(a) === b)];
   }
 
-  getNode(id: string): Node {
+  getNode(id: string): DPosNode {
     return {...this._nodes.find(node => node.nodepublickey === id)};
   }
 
@@ -258,8 +259,10 @@ export class NodesService {
 
     this.rewardResult.forEach(element => {
       let index = this.activeNodes.findIndex(e => e.ownerpublickey === element.Ownerpublickey);
-      this.activeNodes[index].Reward = element.Reward;
-      this.activeNodes[index].EstRewardPerYear = element.EstRewardPerYear;
+      if (this.activeNodes[index]) {
+        this.activeNodes[index].Reward = element.Reward;
+        this.activeNodes[index].EstRewardPerYear = element.EstRewardPerYear;
+      }
     });
   }
 
@@ -271,7 +274,7 @@ export class NodesService {
           node.Location = responce.org.location.country;
         },
         error => {
-          Logger.log('dposvoting', 'Node does not have extra data', error);
+          Logger.log('dposvoting', 'DPosNode does not have extra data', error);
         });
       }
     });

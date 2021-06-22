@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 
 import { NodesService } from '../../services/nodes.service';
-import { Node } from '../../model/nodes.model';
+import { DPosNode } from '../../model/nodes.model';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -31,10 +31,10 @@ export class VotePage implements OnInit {
   // Intent
   public voted: boolean = false;
 
-  // Node Detail
+  // DPosNode Detail
   public showNode: boolean = false;
   public nodeIndex: number;
-  public node: Node;
+  public node: DPosNode;
 
   // Toast for voteFailed/voteSuccess
   private toast: any = null;
@@ -141,8 +141,8 @@ export class VotePage implements OnInit {
     return votePercent.toFixed(2);
   }
 
-  //// Node Detail ////
-  _showNode(index: number, node: Node) {
+  //// DPosNode Detail ////
+  _showNode(index: number, node: DPosNode) {
     this.showNode = !this.showNode;
     this.nodeIndex = index;
     this.node = node;

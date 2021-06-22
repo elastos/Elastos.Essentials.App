@@ -7,6 +7,10 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
 import { EthTokenTransaction, EthTransaction, TransactionDetail, UtxoType } from '../model/Transaction';
+import { CRProposalStatus } from '../model/cyber-republic/CRProposalStatus';
+import { CRProposalsSearchResponse } from '../model/cyber-republic/CRProposalsSearchResponse';
+import { ProducersSearchResponse } from 'src/app/dposvoting/model/nodes.model';
+import { CRCouncilSearchResponse } from '../model/cyber-republic/CRCouncilSearchResult';
 
 
 type JSONRPCResponse = {
@@ -33,6 +37,8 @@ export class JsonRPCService {
     // Get ERC20 Token transactions from browser api.
     private ethbrowserapiUrl = 'https://eth.elastos.io';
 
+    private crRpcApiUrl = 'https://api.cyberrepublic.org';
+
     static RETRY_TIMES = 3;
 
     constructor(private http: HttpClient, private prefs: GlobalPreferencesService) {
@@ -45,6 +51,7 @@ export class JsonRPCService {
         this.ethscOracleRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.oracle');
         this.ethscMiscApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
         this.ethbrowserapiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.browserapi');
+        this.crRpcApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
     }
 
     // return balance in SELA
@@ -241,6 +248,24 @@ export class JsonRPCService {
         return blockHeight;
     }
 
+    // dpos
+    public async fetchDposNodes(state): Promise<ProducersSearchResponse> {
+        Logger.log('wallet', 'Fetching Dpos Nodes..');
+        const param = {
+            method: 'listproducers',
+            params: {
+              state: state
+            },
+        };
+
+        try {
+            const dposNodes = await this.httpRequest(this.mainchainRPCApiUrl, param);
+            return dposNodes;
+        } catch (e) {
+        }
+        return null;
+    }
+
     //crc
     async getCRrelatedStage() {
       const param = {
@@ -258,6 +283,31 @@ export class JsonRPCService {
       } catch (e) {
       }
       return result;
+    }
+
+    public async fetchCRcouncil(index: number = 0): Promise<CRCouncilSearchResponse> {
+      let crfetchCRCurl = this.crRpcApiUrl + '/api/council/list/';
+      if (index > 0) {
+        crfetchCRCurl += index
+      }
+      try {
+          let result = await this.httpget(crfetchCRCurl);
+          return result;
+      } catch (e) {
+        Logger.error('wallet', 'fetchProposals error:', e)
+      }
+      return null;
+    }
+
+    public async fetchProposals(status: CRProposalStatus): Promise<CRProposalsSearchResponse> {
+      const crfetchproposalsurl = this.crRpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
+      try {
+          let result = await this.httpget(crfetchproposalsurl);
+          return result;
+      } catch (e) {
+        Logger.error('wallet', 'fetchProposals error:', e)
+      }
+      return null;
     }
 
     // ETHSC:Get the real target address for the send transaction from ethsc to mainchain.
@@ -540,11 +590,12 @@ export class JsonRPCService {
             this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
                 .subscribe((res: any) => {
                   if (res) {
-                      // Logger.warn("wallet", 'httpRequest response:', res);
+                    //   Logger.warn("wallet", 'httpRequest response:', res);
                       if (res instanceof Array) {
                           resolve(res);
                       } else {
                           if (res.error) {
+                            Logger.error("wallet", 'httpRequest error!', res.error);
                             reject(res.error);
                           } else {
                             resolve(res.result || '');

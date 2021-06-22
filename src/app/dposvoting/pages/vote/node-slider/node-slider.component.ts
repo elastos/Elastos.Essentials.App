@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { Node } from '../../../model/nodes.model';
+import { DPosNode } from '../../../model/nodes.model';
 import { IonSlides } from '@ionic/angular';
 import { NodesService } from '../../../services/nodes.service';
 import { Logger } from 'src/app/logger';
@@ -14,12 +14,12 @@ export class NodeSliderComponent implements OnInit {
 
   @ViewChild('slider', {static: false}) slider: IonSlides;
 
-  @Input() _nodes: Node[] = [];
+  @Input() _nodes: DPosNode[] = [];
   @Input() totalVotes: number = 0;
   @Input() nodeIndex: number;
-  @Input() node: Node;
+  @Input() node: DPosNode;
 
-  public displayedNodes: Node[] = [];
+  public displayedNodes: DPosNode[] = [];
 
   slideOpts = {
     initialSlide: 1,
@@ -41,7 +41,7 @@ export class NodeSliderComponent implements OnInit {
 
   //// Increment nodes array when sliding forward ////
   loadNext() {
-    let lastNode: Node = this.displayedNodes.slice(-1)[0];
+    let lastNode: DPosNode = this.displayedNodes.slice(-1)[0];
     let nextNodeIndex: number = this._nodes.indexOf(lastNode) + 1;
     if(this._nodes[nextNodeIndex]) {
       this.displayedNodes.push(this._nodes[nextNodeIndex]);

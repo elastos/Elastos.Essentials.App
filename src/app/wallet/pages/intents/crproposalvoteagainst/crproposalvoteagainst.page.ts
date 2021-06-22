@@ -129,8 +129,6 @@ export class CRProposalVoteAgainstPage implements OnInit {
     async createVoteCRProposalTransaction(voteAmount) {
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount, ' this.transfer:', this.transfer);
 
-        let invalidCandidates = await this.walletManager.computeVoteInvalidCandidates(this.masterWalletId);
-
         // The transfer "votes" array must contain exactly ONE entry: the voted proposal
         // TODO: don't use a votes array in a global transfer object. Use a custom object for CR proposal voting.
         let votes = {};

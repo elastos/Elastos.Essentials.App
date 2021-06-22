@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 import { Vote } from '../../model/history.model';
 import { NodesService } from '../../services/nodes.service';
-import { Node } from '../../model/nodes.model';
+import { DPosNode } from '../../model/nodes.model';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -21,12 +21,12 @@ export class TxPage implements OnInit {
 
   // Initial values
   public vote: Vote;
-  public _nodes: Node[] = [];
+  public _nodes: DPosNode[] = [];
 
-  // Node Detail
+  // DPosNode Detail
   public showNode: boolean = false;
   public nodeIndex: number;
-  public node: Node;
+  public node: DPosNode;
 
   constructor(
     public nodesService: NodesService,
@@ -75,8 +75,8 @@ export class TxPage implements OnInit {
     return votePercent.toFixed(2);
   }
 
-   //// Node Detail ////
-  _showNode(index: number, node: Node) {
+   //// DPosNode Detail ////
+  _showNode(index: number, node: DPosNode) {
     this.showNode = !this.showNode;
     this.nodeIndex = index;
     this.node = node;

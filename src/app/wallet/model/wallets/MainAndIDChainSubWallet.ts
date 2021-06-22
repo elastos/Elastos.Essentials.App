@@ -9,6 +9,7 @@ import { Logger } from 'src/app/logger';
 import { Config } from '../../config/Config';
 import { Util } from '../Util';
 import { Candidates, VoteContent, VoteType } from '../SPVWalletPluginBridge';
+import { InvalidVoteCandidatesHelper } from '../InvalidVoteCandidatesHelper';
 
 
 const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
@@ -34,8 +35,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     private timestampEnd = 0;
     private loadMoreTimes = 0;
 
+    private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
+
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
+
+        this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper(this.jsonRPCService);
 
         setTimeout(async () => {
             await this.checkAddresses();
@@ -224,17 +229,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
-    public async publishTransaction(transaction: string): Promise<string> {
-        let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
-            this.masterWallet.id,
-            this.id,
-            transaction,
-        )
-
-        let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
-        return txid;
-    }
-
     //
     //proposal transaction functions
     //
@@ -330,6 +324,16 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
+    public async publishTransaction(transaction: string): Promise<string> {
+        let rawTx = await this.masterWallet.walletManager.spvBridge.convertToRawTransaction(
+            this.masterWallet.id,
+            this.id,
+            transaction,
+        )
+
+        let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
+        return txid;
+    }
 
     // ********************************
     // Private
@@ -417,59 +421,39 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         }
     }
 
-    private isSameVoteType(voteTypeString: VoteType, rawVoteType: RawVoteType) {
-        return voteTypeString === voteTypeMap[rawVoteType];
-    }
-
     // Transform vote contents from raw rpc to the format required by the SDK
-    private transformVoteContentForSDK(voteContent: RawVoteContent) {
-        let voteType: VoteType = voteTypeMap[voteContent.votetype];
+    private transformVoteContentForSDK(voteContent: RawVoteContent[]) {
+        let votedContents: VoteContent[] = [];
 
-        let candidates: Candidates = {};
+        for (let i = 0, len = voteContent.length; i < len; i++) {
+            let voteType: VoteType = voteTypeMap[voteContent[i].votetype];
 
-        for (let i = 0, len = voteContent.candidates.length; i < len; i++) {
-            let amountSELA = this.accMul(voteContent.candidates[i].votes, Config.SELA)
-            candidates[voteContent.candidates[i].candidate] = amountSELA.toString();
+            let candidates: Candidates = {};
+
+            for (let j = 0, len = voteContent[i].candidates.length; j < len; j++) {
+                let amountSELA = this.accMul(voteContent[i].candidates[j].votes, Config.SELA)
+                candidates[voteContent[i].candidates[j].candidate] = amountSELA.toString();
+            }
+
+            let newVoteContent: VoteContent = { Type: voteType, Candidates: candidates }
+            votedContents.push(newVoteContent);
         }
 
-        let newVoteContent: VoteContent = { Type: voteType, Candidates: candidates }
-        return newVoteContent;
+        return votedContents;
     }
 
     private async mergeVoteContents(userVoteContents: VoteContent[]) {
-        let votedContents = await this.getVotedContent();
-        if (!votedContents) return userVoteContents;
+        let rawvotedContents = await this.getVotedContent();
+        if (!rawvotedContents) return userVoteContents;
 
-        let crrelatedStage = await this.jsonRPCService.getCRrelatedStage();
-        let crinvoting = crrelatedStage.invoting;
-        // Merge
-        let newVoteContents = [];
-        for (let i = 0, len = votedContents.length; i < len; i++) {
-            let validContent = true;
-            for (let j = 0, lenUserContents = userVoteContents.length; j < lenUserContents; j++) {
-                if (this.isSameVoteType(userVoteContents[j].Type, votedContents[i].votetype)) {
-                    validContent = false;
-                }
-            }
+        let votedContents: VoteContent[] = await this.transformVoteContentForSDK(rawvotedContents);
 
-            if ((votedContents[i].votetype === RawVoteType.CRC) && !crinvoting) {
-                // remove crc vote if we are outside of the council voting period.
-                validContent = false;
-            }
-
-            if (validContent) {
-                let newVoteContent = this.transformVoteContentForSDK(votedContents[i]);
-                newVoteContents.push(newVoteContent);
-            }
-        }
-
-        newVoteContents.push.apply(newVoteContents, userVoteContents);
-
-        // TODO: computeInvalidCandidates
-
+        let newVoteContents = await this.invalidVoteCandidatesHelper.removeInvalidCandidates(votedContents, userVoteContents);
         Logger.log('wallet', 'newVoteContents :', newVoteContents);
         return newVoteContents;
     }
+
+
 
     /**
      * Get balance by RPC
