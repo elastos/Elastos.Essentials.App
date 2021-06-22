@@ -44,6 +44,7 @@ export class CandidatesPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.candidatesService.init();
     if (this.candidatesService.candidates.length) {
       this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
     } else if(this.candidatesService.council.length){

@@ -9,7 +9,7 @@ import { CandidatesService } from './candidates.service';
 })
 export class CRCouncilVotingInitService extends GlobalService {
   constructor(
-    private candidatesService: CandidatesService,
+    // private candidatesService: CandidatesService,
     private didSessions: GlobalDIDSessionsService
   ) {
     super();
@@ -20,10 +20,10 @@ export class CRCouncilVotingInitService extends GlobalService {
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    this.candidatesService.init();
+    // this.candidatesService.init();
   }
 
   public async onUserSignOut(): Promise<void> {
-    this.candidatesService.stop();
+    // this.candidatesService.stop();
   }
 }

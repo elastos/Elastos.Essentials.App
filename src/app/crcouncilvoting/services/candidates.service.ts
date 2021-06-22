@@ -46,7 +46,7 @@ export class CandidatesService {
     private ela_rpc_api = 'https://api.elastos.io/ela';
     private cr_rpc_api = 'https://api.cyberrepublic.org';
     private cr_council_term = 'https://api.cyberrepublic.org/api/council/term';
-    private cr_council_list = 'https://api.cyberrepublic.org/api/council/list/1';
+    private cr_council_list = 'https://api.cyberrepublic.org/api/council/list';
 
     // cors-anywhere: CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
     private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
@@ -64,14 +64,13 @@ export class CandidatesService {
     };
 
     async init() {
-        // this.activeNetwork = await this.globalPreferences.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
-        this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference) => {
-            if (preference.key === "chain.network.type") {
-                // this.activeNetwork = preference.value;
-                await this.setupUrl();
-                this.ininData();
-            }
-        });
+        // this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference) => {
+        //     if (preference.key === "chain.network.type") {
+        //         // this.activeNetwork = preference.value;
+        //         await this.setupUrl();
+        //         this.ininData();
+        //     }
+        // });
         await this.setupUrl();
         this.ininData();
     }
