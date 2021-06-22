@@ -12,6 +12,7 @@ import { DIDService } from 'src/app/identity/services/did.service';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/MainchainSubWallet';
+import { PopupService } from 'src/app/crproposalvoting/services/popup.service';
 
 @Injectable({
     providedIn: 'root'
@@ -36,7 +37,7 @@ export class VoteService {
     constructor(
         public native: Native,
         private walletManager: WalletManager,
-        private didService: DIDService,
+        private popup: PopupService,
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService
     ) {
@@ -47,7 +48,7 @@ export class VoteService {
         Logger.log("wallet", "VoteService init");
     }
 
-    public selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
+    public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
         this.clear();
 
         this.context = context;
@@ -56,7 +57,11 @@ export class VoteService {
 
         this.chainId = StandardCoinName.ELA;
         this.walletList = this.walletManager.getWalletsList();
-        if (this.walletList.length === 1) {
+        if (this.walletList.length < 1) {
+            await this.popup.alert("Error", "Haven't wallet. Your should create one. ", "Ok");
+            this.native.setRootRouter('/wallet/wallet-home');
+        }
+        else if (this.walletList.length === 1) {
             this.navigateTo(this.walletList[0]);
         }
         else {

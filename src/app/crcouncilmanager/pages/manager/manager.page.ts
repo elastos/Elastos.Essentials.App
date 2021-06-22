@@ -75,11 +75,11 @@ export class CRCouncilManagerPage implements OnInit {
     }
 
     async registration() {
-        this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilmanager/registration');
+        await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilmanager/registration');
     }
 
     async crnodeManager() {
-        this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilmanager/crnode', {
+        await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilmanager/crnode', {
             queryParams: {
                 crmember: this.crmemberInfo
             }

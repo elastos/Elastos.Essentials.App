@@ -16,6 +16,6 @@ export class DPoSRegistrationInitService {
   }
 
   public async start() {
-    this.voteService.selectWalletAndNavTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
+    await this.voteService.selectWalletAndNavTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
   }
 }

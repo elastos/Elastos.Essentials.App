@@ -14,6 +14,6 @@ export class CRCouncilManagerInitService {
   }
 
   public async start() {
-    this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilmanager/manager');
+    await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilmanager/manager');
   }
 }

@@ -136,7 +136,7 @@ export class CROperationsService {
             case "updatemilestone":
             case "reviewmilestone":
             case "withdraw":
-                this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + jwtPayload.command);
+                await this.voteService.selectWalletAndNavTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/" + jwtPayload.command);
                 break;
 
             default:
