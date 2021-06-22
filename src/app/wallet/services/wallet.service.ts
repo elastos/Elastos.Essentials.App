@@ -482,7 +482,7 @@ export class WalletManager {
      * user also has a default wallet.
      */
      public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
-        Logger.error("wallet", "Creating wallet from new identity");
+        Logger.log("wallet", "Creating wallet from new identity");
         let masterWalletId = Util.uuid(6, 16);
         const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
         if (payPassword) {

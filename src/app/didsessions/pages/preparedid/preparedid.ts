@@ -17,7 +17,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 declare let didManager: DIDPlugin.DIDManager;
 
 // Minimal duration during which a slide remains shown before going to the next one.
-const MIN_SLIDE_SHOW_DURATION_MS = 2000;
+const MIN_SLIDE_SHOW_DURATION_MS = 4000;
 
 @Component({
     selector: 'page-preparedid',
@@ -43,6 +43,7 @@ export class PrepareDIDPage {
   private publishedDID: DIDPlugin.DIDDocument = null;
   // Vault address extracted during the preparation process, if any
   private vaultAddress: string = null;
+  private walletStepCompleted = false;
 
   // UI
   public slideIndex = 0;
@@ -168,6 +169,8 @@ export class PrepareDIDPage {
     this.publishError = null;
     this.signInError = null;
     this.hiveError = null;
+
+    this.walletStepCompleted = false;
   }
 
   /**
@@ -182,10 +185,10 @@ export class PrepareDIDPage {
     }
     /* TMP HIVE NOT READY FOR 2.0 else if (currentSlideIndex <= this.HIVE_SETUP_SLIDE_INDEX && !await this.isHiveVaultReady()) {
       return this.HIVE_SETUP_SLIDE_INDEX;
-    }
-    /* TODO else if (currentSlideIndex < this.DEFAULT_WALLET_SLIDE_INDEX &&  wallet not exists) {
+    }*/
+    if (currentSlideIndex < this.DEFAULT_WALLET_SLIDE_INDEX && !(await this.defaultWalletExists())) {
       return this.DEFAULT_WALLET_SLIDE_INDEX;
-    } */
+    }
     else {
       return this.ALL_DONE_SLIDE_INDEX;
     }
@@ -233,6 +236,11 @@ export class PrepareDIDPage {
     return this.vaultAddress;
   }
 
+  private defaultWalletExists(): Promise<boolean> {
+    // For now, always returns a simulated value without really checking because we don't have a API for that in the wallet sdk.
+    return Promise.resolve(this.walletStepCompleted);
+  }
+
   private async publishIdentity(): Promise<boolean> {
     Logger.log("didsessions", "Publishing identity");
 
@@ -266,25 +274,26 @@ export class PrepareDIDPage {
 
   private publishIdentityReal(): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    return new Promise<boolean>(async (resolve) => {
-      await void this.globalPublicationService.resetStatus();
-      let publicationStatusSub = this.globalPublicationService.publicationStatus.subscribe((status)=>{
-        if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
-          Logger.log("didsessions", "Identity publication success");
-          publicationStatusSub.unsubscribe();
-          resolve(true);
-        }
-        else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
-          Logger.log("didsessions", "Identity publication failure");
-          publicationStatusSub.unsubscribe();
-          resolve(false);
-        }
-      });
+    return new Promise<boolean>((resolve) => {
+      void this.globalPublicationService.resetStatus().then(() => {
+        let publicationStatusSub = this.globalPublicationService.publicationStatus.subscribe((status)=>{
+          if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+            Logger.log("didsessions", "Identity publication success");
+            publicationStatusSub.unsubscribe();
+            resolve(true);
+          }
+          else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+            Logger.log("didsessions", "Identity publication failure");
+            publicationStatusSub.unsubscribe();
+            resolve(false);
+          }
+        });
 
-      void this.globalPublicationService.publishDIDFromStore(
-        this.identityService.identityBeingCreated.didStore.getId(),
-        this.identityService.identityBeingCreated.storePass,
-        this.identityService.identityBeingCreated.did.getDIDString());
+        void this.globalPublicationService.publishDIDFromStore(
+          this.identityService.identityBeingCreated.didStore.getId(),
+          this.identityService.identityBeingCreated.storePass,
+          this.identityService.identityBeingCreated.did.getDIDString());
+      });
     });
   }
 
@@ -325,10 +334,12 @@ export class PrepareDIDPage {
     await Promise.all([
       sleep(MIN_SLIDE_SHOW_DURATION_MS),
       this.walletService.createWalletFromNewIdentity(
-        "test name", this.identityService.identityBeingCreated.mnemonic,
+        this.identityService.identityBeingCreated.name, this.identityService.identityBeingCreated.mnemonic,
         this.identityService.identityBeingCreated.mnemonicPassphrase
       )
     ]);
+
+    this.walletStepCompleted = true;
   }
 
   finalizePreparation() {
