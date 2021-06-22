@@ -20,8 +20,6 @@ export class CurrencyService {
   private stopService = false;
 
   public elaStats: any;
-  // cors-anywhere: CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
-  private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
 
   // Use currency as main wallet total amount
   public useCurrency = false;
@@ -117,7 +115,7 @@ export class CurrencyService {
 
   fetch() {
     // TODO: Get price by token name.
-    this.http.get<any>(this.proxyurl + 'https://api-price.elaphant.app/api/1/cmc?limit=500').subscribe((res) => {
+    this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=500').subscribe((res) => {
       Logger.log('wallet', 'Got CMC response', res);
       if (res) {
         this.elaStats = res.find((coin) => coin.symbol === 'ELA');
