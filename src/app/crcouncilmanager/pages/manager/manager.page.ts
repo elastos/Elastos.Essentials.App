@@ -1,19 +1,14 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { areaList } from 'src/app/model/area.list';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
-import { AuthService } from 'src/app/wallet/services/auth.service';
-import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { App } from 'src/app/model/app.enum';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Util } from 'src/app/wallet/model/Util';
 
 
@@ -32,9 +27,7 @@ export class CRCouncilManagerPage implements OnInit {
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private walletManager: WalletManager,
         public voteService: VoteService,
-        private authService: AuthService,
         public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
     ) {
@@ -57,7 +50,7 @@ export class CRCouncilManagerPage implements OnInit {
             },
         };
 
-        let rpcApiUrl = this.jsonRPCService.getRPCApiUrl(StandardCoinName.ELA);
+        let rpcApiUrl = this.jsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
         Logger.log(App.CRCOUNCIL_MANAGER, "rpcApiUrl:", rpcApiUrl);
         const result = await this.jsonRPCService.httpRequest(rpcApiUrl, param);
         let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");

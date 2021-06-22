@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 
@@ -93,7 +93,7 @@ export class DPosRegistrationPage implements OnInit {
             },
         };
 
-        let rpcApiUrl = this.jsonRPCService.getRPCApiUrl(StandardCoinName.ELA);
+        let rpcApiUrl = this.jsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
         Logger.log(App.DPOS_REGISTRATION, "rpcApiUrl:", rpcApiUrl);
         const result = await this.jsonRPCService.httpRequest(rpcApiUrl, param);
         this.ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);

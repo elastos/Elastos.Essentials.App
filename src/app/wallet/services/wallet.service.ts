@@ -21,7 +21,6 @@
  */
 
 import { Injectable, NgZone } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -30,7 +29,6 @@ import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
 import { CoinID, StandardCoinName } from '../model/Coin';
 import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
 import { SerializedSubWallet } from '../model/wallets/SubWallet';
-import { InvalidVoteCandidatesHelper, InvalidCandidateForVote } from '../model/InvalidVoteCandidatesHelper';
 import { CoinService } from './coin.service';
 import { JsonRPCService } from './jsonrpc.service';
 import { PopupProvider } from './popup.service';
@@ -95,7 +93,6 @@ export class WalletManager {
         private erc721Service: ERC721Service,
         private authService: AuthService,
         public popupProvider: PopupProvider,
-        private http: HttpClient,
         public jsonRPCService: JsonRPCService,
         private prefs: GlobalPreferencesService,
         private didSessions: GlobalDIDSessionsService,
@@ -107,8 +104,6 @@ export class WalletManager {
         Logger.log('wallet', "Master manager is initializing");
         // TODO: reset masterWallets, because this servcie is not destroyed when signout.
         this.masterWallets = {};
-
-        this.jsonRPCService.init();
 
         this.spvBridge = new SPVWalletPluginBridge(this.native, this.events, this.popupProvider);
 

@@ -5,7 +5,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { Logger } from 'src/app/logger';
 import { StandardCoinName } from '../wallet/model/Coin';
 import { Subscription } from 'rxjs';
-import { GlobalService } from './global.service.manager';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 type JSONRPCResponse = {
     error: string;
@@ -13,6 +13,18 @@ type JSONRPCResponse = {
     jsonrpc: string;
     result: string;
 };
+
+export enum ApiUrlType {
+  CR_RPC,
+  ELA_RPC,
+  ETHSC_RPC,
+  ETHSC_MISC,
+  ETHSC_ORACLE,
+  ETH_BROWSER,
+  EID_RPC, // New ID chain
+  EID_MISC,
+  DID_RPC, // Old ID Chain
+}
 
 @Injectable({
     providedIn: 'root'
@@ -31,6 +43,9 @@ export class GlobalJsonRPCService extends GlobalService {
     // Get ERC20 Token transactions from browser api.
     private ethbrowserapiUrl = 'https://eth.elastos.io';
 
+    // CR
+    private crRpcApiUrl = 'https://api.cyberrepublic.org';
+
     static RETRY_TIMES = 3;
 
     // public activeNetwork: NetworkType;
@@ -43,20 +58,20 @@ export class GlobalJsonRPCService extends GlobalService {
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        this.init();
+        this.initData();
+        this.subscription = this.prefs.preferenceListener.subscribe(async (preference) => {
+          if (preference.key === "chain.network.type") {
+              await this.initData();
+          }
+        });
     }
 
     public async onUserSignOut(): Promise<void> {
         this.stop();
     }
 
-    async init() {
-        this.subscription = this.prefs.preferenceListener.subscribe(async (preference) => {
-            if (preference.key === "chain.network.type") {
-                await this.initData();
-            }
-        });
-        await this.initData();
+    public async init(): Promise<void> {
+      GlobalServiceManager.getInstance().registerService(this);
     }
 
     async initData() {
@@ -66,6 +81,7 @@ export class GlobalJsonRPCService extends GlobalService {
         this.ethscOracleRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.oracle');
         this.ethscMiscApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
         this.ethbrowserapiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.browserapi');
+        this.crRpcApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
     }
 
     public stop() {
@@ -75,29 +91,41 @@ export class GlobalJsonRPCService extends GlobalService {
         }
     }
 
-    public getRPCApiUrl(chainID: string): string {
-        let rpcApiUrl = this.mainchainRPCApiUrl;
-        switch (chainID) {
-            case StandardCoinName.ELA:
-                break;
-            case StandardCoinName.IDChain:
-                rpcApiUrl = this.IDChainRPCApiUrl;
-                break;
-            case StandardCoinName.ETHSC:
-                rpcApiUrl = this.ethscRPCApiUrl;
-                break;
-            case StandardCoinName.ETHDID:
-                rpcApiUrl = this.EIDChainRPCApiUrl;
-                break;
-            // case StandardCoinName.ETHHECO:
-            //     rpcApiUrl = this.hecoChainRPCApiUrl;
-            //     break;
-            default:
-                rpcApiUrl = '';
-                Logger.log("wallet", 'JsonRPCService: Can not support ' + chainID);
-                break;
-        }
-        return rpcApiUrl;
+    public getApiUrl(type: ApiUrlType) {
+      let apiUrl = null;
+      switch (type) {
+        case ApiUrlType.CR_RPC:
+          apiUrl = this.crRpcApiUrl;
+          break;
+        case ApiUrlType.DID_RPC:
+          apiUrl = this.IDChainRPCApiUrl;
+          break;
+        case ApiUrlType.EID_MISC:
+          apiUrl = this.EIDMiscApiUrl;
+          break;
+        case ApiUrlType.EID_RPC:
+          apiUrl = this.EIDChainRPCApiUrl;
+          break;
+        case ApiUrlType.ELA_RPC:
+          apiUrl = this.mainchainRPCApiUrl;
+          break;
+        case ApiUrlType.ETHSC_MISC:
+          apiUrl = this.ethscMiscApiUrl;
+          break;
+        case ApiUrlType.ETHSC_ORACLE:
+          apiUrl = this.ethscOracleRPCApiUrl;
+          break;
+        case ApiUrlType.ETHSC_RPC:
+          apiUrl = this.ethscRPCApiUrl;
+          break;
+        case ApiUrlType.ETH_BROWSER:
+          apiUrl = this.ethbrowserapiUrl;
+          break;
+        default:
+          break;
+      }
+
+      return apiUrl;
     }
 
     async httpRequest(rpcApiUrl: string, param: any): Promise<any> {
@@ -107,11 +135,11 @@ export class GlobalJsonRPCService extends GlobalService {
                     'Content-Type': 'application/json',
                 })
             };
-            // Logger.warn("wallet", 'httpRequest rpcApiUrl:', rpcApiUrl);
+            // Logger.warn("JSONRPC", 'httpRequest rpcApiUrl:', rpcApiUrl);
             this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
                 .subscribe((res: any) => {
                     if (res) {
-                        // Logger.warn("wallet", 'httpRequest response:', res);
+                        // Logger.warn("JSONRPC", 'httpRequest response:', res);
                         if (res instanceof Array) {
                             resolve(res);
                         } else {
@@ -122,10 +150,10 @@ export class GlobalJsonRPCService extends GlobalService {
                             }
                         }
                     } else {
-                        Logger.error("wallet", 'httpRequest get nothing!');
+                        Logger.error("JSONRPC", 'httpRequest get nothing!');
                     }
                 }, (err) => {
-                    Logger.error("wallet", 'JsonRPCService httpRequest error:', JSON.stringify(err));
+                    Logger.error("JSONRPC", 'JsonRPCService httpRequest error:', JSON.stringify(err));
                     reject(err);
                 });
         });
@@ -134,10 +162,10 @@ export class GlobalJsonRPCService extends GlobalService {
     httpget(url): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.get<any>(url).subscribe((res) => {
-                // Logger.log('wallet', res);
+                // Logger.log('JSONRPC', res);
                 resolve(res);
             }, (err) => {
-                Logger.error('wallet', 'http get error:', err);
+                Logger.error('JSONRPC', 'http get error:', err);
                 reject(err);
             });
         });
