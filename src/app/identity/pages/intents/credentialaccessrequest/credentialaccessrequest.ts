@@ -499,15 +499,15 @@ export class CredentialAccessRequestPage {
 
       // Create and send the verifiable presentation that embeds the selected credentials
       AuthService.instance.checkPasswordThenExecute(async ()=>{
-        let presentation = null;
+        let presentation: DIDPlugin.VerifiablePresentation = null;
         let currentDidString: string = this.didService.getActiveDid().getDIDString();
         presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials, this.authService.getCurrentUserPassword(), this.receivedIntent.params.nonce, this.receivedIntent.params.realm);
         Logger.log('Identity', "Created presentation:", presentation);
 
         let payload = {
           type: "credaccess",
-          did:currentDidString,
-          presentation: presentation,
+          did: currentDidString,
+          presentation: JSON.parse(await presentation.toJson()), // Get presentation as json from the DID SDK then parse as a json object to send the response back.
         };
 
         // Return the original JWT token in case this intent was called by an external url (elastos scheme definition)
