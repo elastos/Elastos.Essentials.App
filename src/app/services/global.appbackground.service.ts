@@ -10,7 +10,7 @@ import { IdentityInitService } from '../identity/services/init.service';
 import { WalletInitService } from '../wallet/services/init.service';
 import { CRProposalVotingInitService } from '../crproposalvoting/services/init.service';
 import { DeveloperToolsInitService } from '../developertools/services/init.service';
-import { CRCouncilVotingInitService } from '../crcouncilvoting/services/init.service';
+import { GlobalJsonRPCService } from './global.jsonrpc.service';
 
 
 @Injectable({
@@ -27,7 +27,7 @@ export class GlobalAppBackgroundService {
       private contactsInitService: ContactsInitService,
       private identityInitService: IdentityInitService,
       private walletInitService: WalletInitService,
-      private crCouncilVotingInitService: CRCouncilVotingInitService,
+      private jsonRPCService: GlobalJsonRPCService,
       private crProposalVotingInitService: CRProposalVotingInitService,
       private developerToolsInitService: DeveloperToolsInitService
       ) {}
@@ -45,7 +45,7 @@ export class GlobalAppBackgroundService {
       await this.contactsInitService.init();
       await this.identityInitService.init();
       await this.walletInitService.init();
-      await this.crCouncilVotingInitService.init();
+      await this.jsonRPCService.init();
       await this.crProposalVotingInitService.init();
       await this.developerToolsInitService.init();
       Logger.log('AppBackgroundService', 'init finished')
