@@ -48,10 +48,6 @@ export class CandidatesService {
     private cr_council_term = 'https://api.cyberrepublic.org/api/council/term';
     private cr_council_list = 'https://api.cyberrepublic.org/api/council/list';
 
-    // cors-anywhere: CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
-    private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
-    // private proxyurl = "";
-
     public httpOptions = {
         headers: new HttpHeaders({
             'Content-Type': 'application/json',
@@ -92,16 +88,10 @@ export class CandidatesService {
     }
 
     async setupUrl() {
-        // if (this.activeNetwork === NetworkType.LrwNet) {
-        // this.proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
-        // } else {
-        // this.proxyurl = '';
-        // }
         this.ela_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'mainchain.rpcapi');
         this.cr_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
         this.cr_council_term = this.cr_rpc_api + '/api/council/term';
-        this.cr_council_list = this.cr_rpc_api + '/api/council/list/1';
-        Logger.log('crcouncil', 'setupUrl:', this);
+        this.cr_council_list = this.cr_rpc_api + '/api/council/list';
     }
 
     getSelectedCandidates() {
@@ -115,7 +105,7 @@ export class CandidatesService {
 
     fetchCandidates() {
         Logger.log('crcouncil', 'Fetching Candidates..');
-        this.http.post<any>(this.proxyurl + this.ela_rpc_api, this.params, this.httpOptions).subscribe(async (res) => {
+        this.http.post<any>(this.ela_rpc_api, this.params, this.httpOptions).subscribe(async (res) => {
             Logger.log('crcouncil', 'Candidates fetched', res);
             if (res && res.result && res.result.crcandidatesinfo) {
                 this.candidates = res.result.crcandidatesinfo;

@@ -72,7 +72,6 @@ export class NodesService {
   private apiRPC: string = 'https://api.elastos.io/ela';
 //   private apiRPC: string = 'https://api-testnet.elastos.io/ela';
   private elaNodeUrl: string = 'https://elanodes.com/wp-content/uploads/custom/images/';
-  // private proxyurl = "https://sheltered-wave-29419.herokuapp.com/";
 
   // This is too slow, so call once.
   private isFetchingRewardOrDone = false;
