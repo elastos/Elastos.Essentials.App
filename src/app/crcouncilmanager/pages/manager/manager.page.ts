@@ -57,7 +57,7 @@ export class CRCouncilManagerPage implements OnInit {
             },
         };
 
-        let rpcApiUrl = await this.jsonRPCService.getRPCApiUrl(StandardCoinName.ELA);
+        let rpcApiUrl = this.jsonRPCService.getRPCApiUrl(StandardCoinName.ELA);
         Logger.log(App.CRCOUNCIL_MANAGER, "rpcApiUrl:", rpcApiUrl);
         const result = await this.jsonRPCService.httpRequest(rpcApiUrl, param);
         let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");

@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
 import { StandardCoinName } from '../wallet/model/Coin';
-
+import { Subscription } from 'rxjs';
+import { GlobalService } from './global.service.manager';
 
 type JSONRPCResponse = {
     error: string;
@@ -16,7 +17,7 @@ type JSONRPCResponse = {
 @Injectable({
     providedIn: 'root'
 })
-export class GlobalJsonRPCService {
+export class GlobalJsonRPCService extends GlobalService {
     private mainchainRPCApiUrl = 'https://api.elastos.io/ela';
     private IDChainRPCApiUrl = 'https://api.elastos.io/did';
     private ethscRPCApiUrl = 'https://api.elastos.io/eth';
@@ -32,17 +33,49 @@ export class GlobalJsonRPCService {
 
     static RETRY_TIMES = 3;
 
-    constructor(private http: HttpClient, private prefs: GlobalPreferencesService) {
+    // public activeNetwork: NetworkType;
+    private subscription: Subscription = null;
+
+    constructor(private http: HttpClient,
+        private prefs: GlobalPreferencesService
+    ) {
+        super();
     }
 
-    async getRPCApiUrl(chainID: string): Promise<string> {
+    public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+        this.init();
+    }
+
+    public async onUserSignOut(): Promise<void> {
+        this.stop();
+    }
+
+    async init() {
+        this.subscription = this.prefs.preferenceListener.subscribe(async (preference) => {
+            if (preference.key === "chain.network.type") {
+                await this.initData();
+            }
+        });
+        await this.initData();
+    }
+
+    async initData() {
         this.mainchainRPCApiUrl = await this.prefs.getMainchainRPCApiEndpoint(GlobalDIDSessionsService.signedInDIDString);
         this.IDChainRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.id.rpcapi');
         this.ethscRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
         this.ethscOracleRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.oracle');
         this.ethscMiscApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
         this.ethbrowserapiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.browserapi');
+    }
 
+    public stop() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+            this.subscription = null;
+        }
+    }
+
+    public getRPCApiUrl(chainID: string): string {
         let rpcApiUrl = this.mainchainRPCApiUrl;
         switch (chainID) {
             case StandardCoinName.ELA:

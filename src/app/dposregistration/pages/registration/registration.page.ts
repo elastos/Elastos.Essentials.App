@@ -91,7 +91,7 @@ export class DPosRegistrationPage implements OnInit {
             },
         };
 
-        let rpcApiUrl = await this.jsonRPCService.getRPCApiUrl(StandardCoinName.ELA);
+        let rpcApiUrl = this.jsonRPCService.getRPCApiUrl(StandardCoinName.ELA);
         Logger.log(App.DPOS_REGISTRATION, "rpcApiUrl:", rpcApiUrl);
         const result = await this.jsonRPCService.httpRequest(rpcApiUrl, param);
         let ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
