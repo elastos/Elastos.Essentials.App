@@ -140,7 +140,10 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.walletServiceSub.unsubscribe();
+    if (this.walletServiceSub) {
+      this.walletServiceSub.unsubscribe();
+      this.walletServiceSub = null;
+    }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.popover) {

@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
 
 import { DPosNode } from '../model/nodes.model';
 import { Vote } from '../model/history.model';
@@ -11,6 +9,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 
 
 @Injectable({
@@ -69,8 +68,6 @@ export class NodesService {
 
   // Fetch
   private nodeApi: string = 'https://node1.elaphant.app/api/';
-  private apiRPC: string = 'https://api.elastos.io/ela';
-//   private apiRPC: string = 'https://api-testnet.elastos.io/ela';
   private elaNodeUrl: string = 'https://elanodes.com/wp-content/uploads/custom/images/';
 
   // This is too slow, so call once.
@@ -78,9 +75,9 @@ export class NodesService {
   private rewardResult: any = null; //TODO Do not use any.
 
   constructor(
-    private http: HttpClient,
     private storage: GlobalStorageService,
     private globalIntentService: GlobalIntentService,
+    private globalJsonRPCService: GlobalJsonRPCService
   ) {}
 
   get nodes(): DPosNode[] {
@@ -150,85 +147,67 @@ export class NodesService {
     });
   }
 
-  fetchStats() {
-    return new Promise<void>((resolve, reject) => {
-      this.http.get<any>('https://elanodes.com/api/widgets').subscribe((res) => {
-        Logger.log('dposvoting', res);
-        if (res) {
+  async fetchStats() {
+    try {
+      let result = await this.globalJsonRPCService.httpGet('https://elanodes.com/api/widgets');
+      if (result) {
           this.statsFetched = true;
-          this.mainchain = res.mainchain;
-          this.voters = res.voters;
-          this.price = res.price;
-          this.block = res.block;
-        }
-        resolve();
-      });
-    });
+          this.mainchain = result.mainchain;
+          this.voters = result.voters;
+          this.price = result.price;
+          this.block = result.block;
+      }
+    } catch (err) {
+      Logger.error('dposvoting', 'fetchStats error:', err);
+    }
   }
 
-  fetchCurrentHeight(): Promise<number> {
+  async fetchCurrentHeight(): Promise<number> {
     Logger.log('dposvoting', 'Fetching height');
-    return new Promise((resolve, reject) => {
-      this.http.get<any>(this.nodeApi + '1/currHeight').subscribe((res) => {
-        if (res && res.result) {
-          Logger.log('dposvoting', 'Current height fetched' + res.result);
-          this.currentHeight = res.result;
-          resolve(res.result);
-        } else {
-          Logger.error('dposvoting', 'can not get curr height!');
-          reject(null);
-        }
-      }, (err) => {
-        Logger.log('dposvoting', 'fetchCurrentHeight error:', err);
-        reject(err);
-      });
-    });
+    try {
+      let result = await this.globalJsonRPCService.httpGet(this.nodeApi + '1/currHeight');
+      if (result) {
+        this.currentHeight = result.result;
+      }
+    } catch (err) {
+      Logger.error('dposvoting', 'fetchStats error:', err);
+    }
+
+    return this.currentHeight;
   }
 
-  fetchNodes() {
-    return new Promise<void>((resolve, reject) => {
-      Logger.log('dposvoting', 'Fetching Nodes..');
-      const param = {
-          method: 'listproducers',
-          params: {
-              state: 'all'
-              // state: 'active'
-          },
-      };
+  async fetchNodes() {
+    Logger.log('dposvoting', 'Fetching Nodes..');
+    const param = {
+      method: 'listproducers',
+      params: {
+          state: 'all'
+          // state: 'active'
+      },
+    };
 
-      try {
-        const httpOptions = {
-          headers: new HttpHeaders({'Content-Type': 'application/json',})
-        };
+    let apiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
 
-        this.http.post(this.apiRPC, JSON.stringify(param), httpOptions)
-          .subscribe((res: any) => {
-            if (res && res.result) {
-              res.result.producers.map(node => {
-                  node.index += 1; // the index start from 0;
-              });
+    try {
+      let result = await this.globalJsonRPCService.httpPost(apiUrl, param);
+      if (result) {
+        result.producers.map(node => {
+          node.index += 1; // the index start from 0;
+      });
 
-              this._nodes = res.result.producers;
-              this.activeNodes = this._nodes.filter(node => node.state === 'Active');
-              this.getNodeIcon();
-              this.getStoredNodes();
-              this.totalVotes = res.result.totalvotes;
-              this.setupRewardInfo();
+      this._nodes = result.producers;
+      this.activeNodes = this._nodes.filter(node => node.state === 'Active');
+      this.getNodeIcon();
+      this.getStoredNodes();
+      this.totalVotes = result.totalvotes;
+      this.setupRewardInfo();
 
-              Logger.log('dposvoting', 'Nodes Added..', this._nodes);
-              Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
-
-              resolve();
-            }
-          }, (err) => {
-            Logger.log('dposvoting', 'JsonRPCService httpPost error:', JSON.stringify(err));
-            reject(err);
-          });
-        } catch (e) {
-          Logger.error('dposvoting', 'fetchNodes error:', e)
-        }
-    });
-
+      Logger.log('dposvoting', 'Nodes Added..', this._nodes);
+      Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
+      }
+    } catch (err) {
+      Logger.error('dposvoting', 'fetchNodes error:', err);
+    }
   }
 
   async fetchReward() {
@@ -236,20 +215,16 @@ export class NodesService {
     try {
       const height: number = await this.fetchCurrentHeight();
       // this api is too slow.
-      this.http.get<any>(this.nodeApi + 'v1/dpos/rank/height/' + height +'?state=active').subscribe((res) => {
-        if (res && res.result) {
-          this.rewardResult = res.result;
-          this.setupRewardInfo();
-        } else {
-          this.isFetchingRewardOrDone = false;
-          Logger.log('dposvoting', 'fetchReward can not get the reward info.');
-        }
-
-        Logger.log('dposvoting', 'fetchReward end');
-      });
-    }
-    catch (err) {
-      Logger.error('dposvoting', 'fetchReward error:', err);
+      let result = await this.globalJsonRPCService.httpGet(this.nodeApi + 'v1/dpos/rank/height/' + height +'?state=active');
+      if (result) {
+        this.rewardResult = result.result;
+        this.setupRewardInfo();
+      } else {
+        this.isFetchingRewardOrDone = false;
+      }
+    } catch (err) {
+      this.isFetchingRewardOrDone = false;
+      Logger.error('dposvoting', 'fetchStats error:', err);
     }
   }
 
