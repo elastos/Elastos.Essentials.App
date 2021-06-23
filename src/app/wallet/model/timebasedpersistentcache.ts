@@ -12,7 +12,13 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
   // List of items, sorted by time value.
   private items: CacheEntry<T>[];
 
-  constructor(private name: string) {}
+  /**
+   * Creates a new cache.
+   *
+   * @param name Name used to uniquely identify this cache on disk.
+   * @param maxItemsOnDisk Maximum number of items that are saved to disk. Older items are deleted.
+   */
+  constructor(private name: string, private maxItemsOnDisk = 100) {}
 
   /**
    * Returns a cache with data already loaded from disk if any, or an empty cache otherwise.
@@ -79,7 +85,9 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    * Saves the whole cache to disk.
    */
   public async save(): Promise<void> {
-    await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name, this.items);
+    // Keep at most maxItemsOnDisk items.
+    let itemsToSave = this.items.slice(0, Math.min(this.items.length-1, this.maxItemsOnDisk-1));
+    await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name, itemsToSave);
   }
 
   /**
