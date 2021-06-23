@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -20,17 +20,11 @@ const availableHideNodeProviders: string[] = [
 
 export type VaultLinkStatus = {
   // There is already a vault provider info on chain about a vault provider attacher to this user.
-  publishedInfo: {
+  publishedInfo?: {
     vaultName: string,
     vaultAddress: string,
-    vaultVersion: string
-  };
-  // The app locally thinks that we are waiting for a publication during a few minutes. This could be true
-  // no matter if there is already a published provider info on chain (updating provider) or not (first time
-  // selection of a provider)
-  publishingInfo: {
-    vaultName: string,
-    vaultAddress: string;
+    vaultVersion: string,
+    activePricingPlan: HivePlugin.Payment.ActivePricingPlan
   };
 }
 
@@ -41,11 +35,9 @@ export class GlobalHiveService {
   private vaultLinkStatus: VaultLinkStatus = null;
   private client: HivePlugin.Client;
   private activeVault: HivePlugin.Vault = null;
-  private activePaymentPlan: HivePlugin.Payment.ActivePricingPlan;
   private pricingInfo: HivePlugin.Payment.PricingInfo = null; // Cached pricing info for user's current vault provider after been fetched.
 
-  private publicationCheckTimer: NodeJS.Timer = null;
-  public publicationSubject: Subject<boolean> = new Subject();
+  public vaultStatus = new BehaviorSubject<VaultLinkStatus>(null); // Latest known vault status for active user
 
   constructor(
     private router: Router,
@@ -73,24 +65,22 @@ export class GlobalHiveService {
   stop() {
     this.vaultLinkStatus = null;
     this.activeVault = null;
+    this.vaultStatus.next(this.vaultLinkStatus);
     // TODO stop hive
   }
 
   private async createHiveClient(): Promise<HivePlugin.Client> {
-    return new Promise(async (resolve, reject) => {
       const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
       if (!hiveAuthHelper) {
-        reject("Hive auth helper failed to create");
-        return;
+        throw new Error("Hive auth helper failed to create");
       }
 
       let hiveClient = await hiveAuthHelper.getClientWithAuth((e) => {
         // Auth error
-        Logger.error("GlobalHiveService", "Hive authentication error");
-        reject(e);
+        Logger.error("GlobalHiveService", "Hive authentication error", e);
       });
-      resolve(hiveClient);
-    });
+
+      return hiveClient;
   }
 
   /**
@@ -103,12 +93,13 @@ export class GlobalHiveService {
   }
 
   public addRandomHiveToDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<string> {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       let randomHideNodeAddress = this.getRandomQuickStartHiveNodeAddress();
       if (randomHideNodeAddress) {
         let service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', randomHideNodeAddress);
         await this.removeHiveVaultServiceFromDIDDocument(localDIDDocument, storePassword);
-        localDIDDocument.addService(service, storePassword, async () => {
+        localDIDDocument.addService(service, storePassword, () => {
           // Success
           resolve(randomHideNodeAddress);
         }, (err) => {
@@ -204,33 +195,12 @@ export class GlobalHiveService {
 
     if (this.vaultLinkStatus) {
       Logger.log("GlobalHiveService", "Reusing existing status:", this.vaultLinkStatus);
-      return Promise.resolve(this.vaultLinkStatus);
+      return this.vaultLinkStatus;
     }
 
     let status: VaultLinkStatus = {
-      publishedInfo: null,
-      publishingInfo: null
+      publishedInfo: null
     };
-
-    // Check if any on going publication.
-    let lastPublishedTime = await this.getLastPublishedTime();
-    if (lastPublishedTime) {
-      if (moment(lastPublishedTime).add(10, "minute") > moment()) {
-        // Publication on going
-        status.publishingInfo = {
-          vaultAddress: "todo-unsaved-yet",
-          vaultName: "todo-unsaved-yet"
-        }
-
-        // Publication is on going, so we start an internal polling loop to know when this is ready, so that
-        // listeners can know when data is really ready on chain.
-        this.startAwaitingPublicationResult(signedInDID);
-      }
-      else {
-        // No publication on going
-        status.publishingInfo = null;
-      }
-    }
 
     // Check if we can find an existing vault provider address on DID chain for this user.
     Logger.log("GlobalHiveService", "Asking hive manager to give us the vault address for current user's DID " + signedInDID);
@@ -257,10 +227,11 @@ export class GlobalHiveService {
       return status;
     }
 
-    // Ensure the vault was created by claling the createVault() API. We can make sure of this by getting the active
+    // Ensure the vault was created by calling the createVault() API. We can make sure of this by getting the active
     // payment plan. If none or if a vault not found exception is returned, this means the vault was not yet created.
+    let activePricingPlan: HivePlugin.Payment.ActivePricingPlan = null;
     try {
-      let activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
+      activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
       if (!activePricingPlan) {
         Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
         return null;
@@ -285,36 +256,17 @@ export class GlobalHiveService {
       status.publishedInfo = {
         vaultAddress: currentlyPublishedVaultAddress,
         vaultName: "todo-no-way-to-get-this-yet",
-        vaultVersion: await this.activeVault.getNodeVersion()
+        vaultVersion: await this.activeVault.getNodeVersion(),
+        activePricingPlan
       };
     }
 
     Logger.log("GlobalHiveService", "Link status retrieval completed");
 
     this.vaultLinkStatus = status;
+    this.vaultStatus.next(this.vaultLinkStatus);
 
     return status;
-  }
-
-  /**
-   * Polling that tries to get the publication result for a previously published vault address.
-   */
-  private startAwaitingPublicationResult(ownerDid: string) {
-    let intervalDuration = 30 * 1000; // 30 seconds
-    this.publicationCheckTimer = setInterval(async () => {
-      /*  let currentlyPublishedVaultAddress = await hiveManager.getVaultAddress(ownerDid);
-       if (currentlyPublishedVaultAddress) {
-         // Finally we could find the vault address
-         this.vaultLinkStatus.publishingInfo = null;
-         this.vaultLinkStatus.publishedInfo = {
-           vaultAddress: currentlyPublishedVaultAddress,
-           vaultName: "todo-unsaved-yet"
-         };
-
-         // Let listeners know
-         this.publicationSubject.next(true);
-       } */
-    }, intervalDuration);
   }
 
   public getActiveVault(): HivePlugin.Vault {
@@ -360,36 +312,34 @@ export class GlobalHiveService {
   }
 
   private async publishVaultProviderToIDChain(providerName: string, vaultAddress: string): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      Logger.log("GlobalHiveService", "Requesting identity app to update the hive provider");
+    Logger.log("GlobalHiveService", "Requesting identity app to update the hive provider");
 
-      try {
-        let result: { result: { status: string } } = await this.globalIntentService.sendIntent("https://did.elastos.net/sethiveprovider", {
-          name: providerName,
-          address: vaultAddress
-        });
+    try {
+      let result: { result: { status: string } } = await this.globalIntentService.sendIntent("https://did.elastos.net/sethiveprovider", {
+        name: providerName,
+        address: vaultAddress
+      });
 
-        Logger.log("GlobalHiveService", "Got sethiveprovider intent result:", result);
+      Logger.log("GlobalHiveService", "Got sethiveprovider intent result:", result);
 
-        if (result && result.result && result.result.status && result.result.status == "published") {
-          // Save local timestamp - We will not allow to pick another provider before a few minutes
-          this.saveLastPublishedTime();
+      if (result && result.result && result.result.status && result.result.status == "published") {
+        // Save local timestamp - We will not allow to pick another provider before a few minutes
+        await this.saveLastPublishedTime();
 
-          // Vault address was added to user's DID document and publication is on going.
-          // Now wait a moment
-          resolve(true); // Publishing
-        }
-        else {
-          // Publication was cancelled or errored. Do nothing more. Maybe user will retry.
-          Logger.log("GlobalHiveService", "Publication cancelled or errored");
-          resolve(false);
-        }
+        // Vault address was added to user's DID document and publication is on going.
+        // Now wait a moment
+        return true; // Publishing
       }
-      catch (err) {
-        Logger.error("GlobalHiveService", "Error while trying to call the sethiveprovider intent: ", err);
-        resolve(false);
+      else {
+        // Publication was cancelled or errored. Do nothing more. Maybe user will retry.
+        Logger.log("GlobalHiveService", "Publication cancelled or errored");
+        return false;
       }
-    });
+    }
+    catch (err) {
+      Logger.error("GlobalHiveService", "Error while trying to call the sethiveprovider intent: ", err);
+      return false;
+    }
   }
 
   public async getPricingInfo(): Promise<HivePlugin.Payment.PricingInfo> {

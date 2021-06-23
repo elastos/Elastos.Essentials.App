@@ -27,9 +27,9 @@ export class GlobalNativeService {
         return this.clipboard.copy(text);
     }
 
-    errToast(msg: string, duration: number = 3000) {
+    errToast(msg: string, duration = 3000) {
         const msgTranslated = this.translate.instant(msg);
-        this.toastCtrl.create({
+        void this.toastCtrl.create({
             mode: 'ios',
             header: msgTranslated,
             duration: duration,
@@ -38,9 +38,9 @@ export class GlobalNativeService {
         }).then(toast => toast.present());
     }
 
-    genericToast(msg: string, duration: number = 2000, color: string = "primary") {
+    genericToast(msg: string, duration = 2000, color = "primary") {
       const translation = this.translate.instant(msg);
-      this.toastCtrl.create({
+      void this.toastCtrl.create({
           mode: 'ios',
           header: translation,
           duration: duration,
@@ -49,10 +49,10 @@ export class GlobalNativeService {
       }).then(toast => toast.present());
     }
 
-    toastWithTitle(header: string, msg: string, duration: number = 2000, color: string = "primary") {
+    toastWithTitle(header: string, msg: string, duration = 2000, color = "primary") {
         const translatedHeader = this.translate.instant(header)
         const translatedMsg = this.translate.instant(msg);
-        this.toastCtrl.create({
+        void this.toastCtrl.create({
             mode: 'ios',
             header: translatedHeader,
             message: translatedMsg,
@@ -90,7 +90,7 @@ export class GlobalNativeService {
         }
     }
 
-    public async showLoading(message: string = 'common.please-wait') {
+    public async showLoading(message = 'common.please-wait') {
         let isDarkMode = this.theme.activeTheme.value == AppTheme.DARK;
         if (this.loadingCtrlCreating) { // Just in case.
             return;
@@ -106,7 +106,7 @@ export class GlobalNativeService {
             // cssClass: !isDarkMode ? 'custom-loader-wrapper' : 'dark-custom-loader-wrapper',
             // message: !isDarkMode ? '<div class="custom-loader"><div class="lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>' : '<div class="dark-custom-loader"><div class="dark-lds-dual-ring"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><ion-label>' + this.translate.instant(message) + '</ion-label></div>',
         });
-        this.loader.onWillDismiss().then(() => {
+        void this.loader.onWillDismiss().then(() => {
             this.loader = null;
         });
         this.loadingCtrlCreating = false;

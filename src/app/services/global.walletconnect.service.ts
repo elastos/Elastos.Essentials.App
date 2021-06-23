@@ -84,7 +84,7 @@ export class GlobalWalletConnectService extends GlobalService {
    * Handles a scanned or received wc:// url in order to initiate a session with a wallet connect proxy
    * server and client.
    */
-  public async handleWCURIRequest(uri: string) {
+  public handleWCURIRequest(uri: string) {
     if (!this.canHandleUri(uri))
       throw new Error("Invalid WalletConnect URL: "+uri);
 

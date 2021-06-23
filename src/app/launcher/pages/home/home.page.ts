@@ -24,6 +24,7 @@ import { App } from "src/app/model/app.enum"
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Subscription } from 'rxjs';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 
 @Component({
   selector: 'app-home',
@@ -39,10 +40,17 @@ export class HomePage implements OnInit {
   private identityNeedsBackup = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
+  private vaultStatusSub: Subscription = null; // Subscription to vault link status event
 
   // Widget data
-  public mainWalletName: string = "";
+  public mainWalletName = "";
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
+  public hiveVaultLinked = false;
+  public hiveVaultStorageStats: {
+    usedStorage: string; // Used storage, formatted for display, in GB
+    maxStorage: string;  // Max storage, formatted for display, in GB
+    percentUsage: number; // usedStorage / maxStorage ratio, 0-1
+  } = null;
 
   constructor(
     public toastCtrl: ToastController,
@@ -61,6 +69,7 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private walletService: WalletManager,
     private globalNotifications: GlobalNotificationsService,
+    private globalHiveService: GlobalHiveService,
     private didSessions: GlobalDIDSessionsService) {
   }
 
@@ -132,6 +141,22 @@ export class HomePage implements OnInit {
         }
       }
     });
+
+    // Wait to know user's hive vault status to show the hive storage widget
+    this.vaultStatusSub = this.globalHiveService.vaultStatus.subscribe((vaultStatus) => {
+      if (vaultStatus && vaultStatus.publishedInfo && vaultStatus.publishedInfo.vaultAddress && vaultStatus.publishedInfo.activePricingPlan) {
+
+        let usedStorageGb = (vaultStatus.publishedInfo.activePricingPlan.getCurrentDatabaseStorageUsed() + vaultStatus.publishedInfo.activePricingPlan.getCurrentFileStorageUsed()) / 1000;
+        let maxStorageGb = vaultStatus.publishedInfo.activePricingPlan.getMaxStorage()/1000;
+
+        this.hiveVaultStorageStats = {
+          usedStorage: usedStorageGb.toFixed(2) + "GB",
+          maxStorage: maxStorageGb.toFixed(2) + "GB",
+          percentUsage: usedStorageGb / maxStorageGb
+        };
+        this.hiveVaultLinked = true;
+      }
+    });
   }
 
   ionViewDidEnter() {
@@ -143,6 +168,10 @@ export class HomePage implements OnInit {
     if (this.walletServiceSub) {
       this.walletServiceSub.unsubscribe();
       this.walletServiceSub = null;
+    }
+    if (this.vaultStatusSub) {
+      this.vaultStatusSub.unsubscribe();
+      this.vaultStatusSub = null;
     }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
@@ -190,7 +219,7 @@ export class HomePage implements OnInit {
 
   async signOut() {
     await this.appBackGroundService.stop();
-    this.didService.signOut();
+    await this.didService.signOut();
   }
 
   getDateFromNow() {
