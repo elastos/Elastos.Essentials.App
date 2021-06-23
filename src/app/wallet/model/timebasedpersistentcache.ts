@@ -8,6 +8,13 @@ export type CacheEntry<T> = {
   data: T;
 }
 
+/**
+ * Cache with the following features:
+ * - Persistent on disk.
+ * - Items sorted by an optional time value (ex: for transactions list).
+ * - A max number of items is kept on disk.
+ * - Adds or overwrites existing items by key.
+ */
 export class TimeBasedPersistentCache<T extends JSONObject> {
   // List of items, sorted by time value.
   private items: CacheEntry<T>[];
