@@ -79,7 +79,7 @@ export class CoinHomePage implements OnInit {
     private updateInterval = null;
     private updateTmeout = null;
 
-    private loadingTX = false;
+    public loadingTX = false;
 
     constructor(
         public router: Router,
