@@ -139,48 +139,6 @@ export enum RawTransactionType {
   Unit: number
 };
 
-// /**
-//  * Raw transaction as received from the SPVSDK.
-//  */
-// export type Transaction = {
-//     Amount: string;
-//     Fee: number;
-//     ConfirmStatus: number;
-//     Direction: TransactionDirection;
-//     Height: number;
-//     Status: TransactionStatus;
-//     Timestamp: number;
-//     TopUpSidechain: string;
-//     TxHash: string;
-//     Type: RawTransactionType;
-//     OutputPayload: string;
-//     Inputs: any; // TODO: type
-//     Outputs: any; // TODO: type
-//     Memo: string;
-// };
-
-// export type EthTransaction = Transaction & {
-//     // ETHSC
-//     BlockNumber: number;
-//     Confirmations: number;
-//     ErrorDesc: string;
-//     GasLimit: number;
-//     GasPrice: string;
-//     GasUsed: number;
-//     Hash: string;
-//     ID: string;
-//     IsConfirmed: boolean;
-//     IsErrored: boolean;
-//     IsSubmitted: boolean;
-//     OriginTxHash: string;
-//     SourceAddress: string;
-//     TargetAddress: string;
-//     Token: string;
-//     TokenAddress: string;
-//     TokenAmount: string;
-//     TokenFunction: string;
-// };
-
 /**
  * Raw list of transactions as received from the SPVSDK.
  */

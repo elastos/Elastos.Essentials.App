@@ -221,7 +221,7 @@ export class NodesService {
               resolve();
             }
           }, (err) => {
-            Logger.log('dposvoting', 'JsonRPCService httpRequest error:', JSON.stringify(err));
+            Logger.log('dposvoting', 'JsonRPCService httpPost error:', JSON.stringify(err));
             reject(err);
           });
         } catch (e) {

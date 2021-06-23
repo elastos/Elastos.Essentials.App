@@ -2,15 +2,13 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, ERC20TokenInfo, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
 import { CoinID, StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
-
-declare let walletManager: WalletPlugin.WalletManager;
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
@@ -20,7 +18,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
     private web3 = null;
 
     private txArrayToDisplay: AllTransactionsHistory = null;
-    private tokenList: WalletPlugin.ERC20TokenInfo[] = null;
+    private tokenList: ERC20TokenInfo[] = null;
 
     private loadTxDataFromCache = false;
 
@@ -226,10 +224,9 @@ export class ETHChainSubWallet extends StandardSubWallet {
         this.balance = await this.jsonRPCService.eth_getBalance(this.id as StandardCoinName, address);
     }
 
-    public async getERC20TokenList(): Promise<WalletPlugin.ERC20TokenInfo[]> {
+    public async getERC20TokenList(): Promise<ERC20TokenInfo[]> {
         const address = await this.getTokenAddress();
-        this.tokenList = await walletManager.getERC20TokenList(address);
-        Logger.log('wallet', 'getERC20TokenList:', this.tokenList);
+        this.tokenList = await this.jsonRPCService.getERC20TokenList(this.id as StandardCoinName, address);
         return this.tokenList;
     }
 

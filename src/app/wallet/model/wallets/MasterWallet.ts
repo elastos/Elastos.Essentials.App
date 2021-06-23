@@ -14,6 +14,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nft';
 import { ERC721Service } from '../../services/erc721.service';
+import { ERC20TokenInfo } from '../Transaction';
 
 export type WalletID = string;
 
@@ -228,7 +229,7 @@ export class MasterWallet {
         const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ETHChainSubWallet).getERC20TokenList();
 
         // For each ERC token discovered by the wallet SDK, we check its type and handle it.
-        ercTokenList.forEach( async (token: WalletPlugin.ERC20TokenInfo) => {
+        ercTokenList.forEach( async (token: ERC20TokenInfo) => {
             if (token.type === "ERC-20") {
                 if (token.symbol && token.name) {
                     if (!this.subWallets[token.symbol] && !this.coinService.isCoinDeleted(token.contractAddress)) {

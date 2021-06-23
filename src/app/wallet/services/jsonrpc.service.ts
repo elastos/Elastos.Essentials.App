@@ -3,7 +3,7 @@ import { StandardCoinName } from '../model/Coin';
 import { Config } from '../config/Config';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
-import { EthTokenTransaction, EthTransaction, TransactionDetail, UtxoType } from '../model/Transaction';
+import { ERC20TokenInfo, EthTokenTransaction, EthTransaction, TransactionDetail, UtxoType } from '../model/Transaction';
 import { CRProposalStatus } from '../model/cyber-republic/CRProposalStatus';
 import { CRProposalsSearchResponse } from '../model/cyber-republic/CRProposalsSearchResponse';
 import { ProducersSearchResponse } from 'src/app/dposvoting/model/nodes.model';
@@ -51,11 +51,11 @@ export class JsonRPCService {
             return balanceOfSELA;
         }
 
-        // httpRequest fail sometimes, retry 5 times.
+        // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
         do {
             try {
-                const resultArray = await this.globalJsonRPCService.httpRequest(rpcApiUrl, paramArray);
+                const resultArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
                 for (const result of resultArray) {
                     balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(Config.SELAAsBigNumber));
                 }
@@ -93,11 +93,11 @@ export class JsonRPCService {
         }
 
         let transactionsArray = null;
-        // httpRequest fail sometimes, retry 5 times.
+        // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
         do {
             try {
-                transactionsArray = await this.globalJsonRPCService.httpRequest(rpcApiUrl, paramArray);
+                transactionsArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
                 break;
             } catch (e) {
                 // wait 100ms?
@@ -130,11 +130,11 @@ export class JsonRPCService {
         }
 
         let result: TransactionDetail = null;
-        // httpRequest fail sometimes, retry 5 times.
+        // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
         do {
             try {
-                result = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+                result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
                 break;
             } catch (e) {
                 // wait 100ms?
@@ -166,7 +166,7 @@ export class JsonRPCService {
         let retryTimes = 0;
         do {
             try {
-                utxoArray = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+                utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
                 break;
             } catch (e) {
                 // wait 100ms?
@@ -192,11 +192,11 @@ export class JsonRPCService {
         }
 
         let txid = '';
-        // httpRequest fail sometimes, retry 5 times.
+        // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
         do {
             try {
-                txid = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+                txid = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
                 break;
             } catch (e) {
                 // wait 100ms?
@@ -220,7 +220,7 @@ export class JsonRPCService {
 
         let blockHeight = 0;
         try {
-            const blockHeightStr = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+            const blockHeightStr = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
             blockHeight = parseInt(blockHeightStr, 10);
         } catch (e) {
         }
@@ -240,7 +240,7 @@ export class JsonRPCService {
         const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
 
         try {
-            const dposNodes = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+            const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
             return dposNodes;
         } catch (e) {
         }
@@ -257,7 +257,7 @@ export class JsonRPCService {
 
       let result = null;
       try {
-          result = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+          result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
       } catch (e) {
       }
       return result;
@@ -271,7 +271,7 @@ export class JsonRPCService {
         crfetchCRCurl += index
       }
       try {
-          let result = await this.globalJsonRPCService.httpget(crfetchCRCurl);
+          let result = await this.globalJsonRPCService.httpGet(crfetchCRCurl);
           return result;
       } catch (e) {
         Logger.error('wallet', 'fetchProposals error:', e)
@@ -283,7 +283,7 @@ export class JsonRPCService {
       const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.CR_RPC);
       const crfetchproposalsurl = rpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
       try {
-          let result = await this.globalJsonRPCService.httpget(crfetchproposalsurl);
+          let result = await this.globalJsonRPCService.httpGet(crfetchproposalsurl);
           return result;
       } catch (e) {
         Logger.error('wallet', 'fetchProposals error:', e)
@@ -303,7 +303,7 @@ export class JsonRPCService {
         const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ETHSC_ORACLE);
 
         try {
-            const result = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
             for (var i = 0; i < result.length; i++) {
                 if ('0x' + result[i].txid === txHash) {
                     // TODO: crosschainassets has multiple value?
@@ -340,7 +340,7 @@ export class JsonRPCService {
       }
 
       try {
-          return this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+          return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
       } catch (e) {
       }
       return '';
@@ -359,7 +359,7 @@ export class JsonRPCService {
       }
 
       try {
-          let result = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+          let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
           return parseInt(result);
       } catch (e) {
       }
@@ -383,7 +383,7 @@ export class JsonRPCService {
       }
 
       try {
-          let balanceString = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+          let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
           return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
       } catch (e) {
       }
@@ -407,7 +407,7 @@ export class JsonRPCService {
       }
 
       try {
-          let result = await this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+          let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
           return parseInt(result);
       } catch (e) {
       }
@@ -427,7 +427,7 @@ export class JsonRPCService {
       const ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
       Logger.warn('wallet', 'getETHSCTransactions:', ethscgethistoryurl)
       try {
-          let result = await this.globalJsonRPCService.httpget(ethscgethistoryurl);
+          let result = await this.globalJsonRPCService.httpGet(ethscgethistoryurl);
           return result.result as EthTransaction[];
       } catch (e) {
         Logger.error('wallet', 'getETHSCTransactions error:', e)
@@ -451,7 +451,7 @@ export class JsonRPCService {
       }
 
       try {
-          return this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+          return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
       } catch (e) {
         Logger.error('wallet', 'eth_getTransactionByHash error:', e)
       }
@@ -466,10 +466,26 @@ export class JsonRPCService {
 
       const ethscgetTokenTxsUrl = rpcApiUrl + '/api/?module=account&action=tokentx&address=' + address;
       try {
-          let result = await this.globalJsonRPCService.httpget(ethscgetTokenTxsUrl);
+          let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
           return result.result as EthTokenTransaction[];
       } catch (e) {
         Logger.error('wallet', 'getERC20TokenTransactions error:', e)
+      }
+      return null;
+    }
+
+    async getERC20TokenList(chainID: StandardCoinName, address: string): Promise<ERC20TokenInfo[]> {
+      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ETH_BROWSER);
+      if (rpcApiUrl.length == 0) {
+        return null;
+      }
+
+      const ethscgetTokenListUrl = rpcApiUrl + '/api/?module=account&action=tokenlist&address=' + address;
+      try {
+          let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
+          return result.result as ERC20TokenInfo[];
+      } catch (e) {
+        Logger.error('wallet', 'getERC20TokenList error:', e)
       }
       return null;
     }
@@ -493,7 +509,7 @@ export class JsonRPCService {
       }
 
       try {
-          return this.globalJsonRPCService.httpRequest(rpcApiUrl, param);
+          return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
       } catch (e) {
         Logger.error('wallet', 'eth_sendRawTransaction error:', e)
       }
@@ -523,7 +539,7 @@ export class JsonRPCService {
       }
 
       try {
-          return this.globalJsonRPCService.httpRequest(rpcApiUrl, paramArray);
+          return this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
       } catch (e) {
         Logger.error('wallet', 'eth_getTransactionReceipt error:', e)
       }

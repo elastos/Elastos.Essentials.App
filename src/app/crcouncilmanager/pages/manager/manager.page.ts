@@ -52,7 +52,7 @@ export class CRCouncilManagerPage implements OnInit {
 
         let rpcApiUrl = this.jsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
         Logger.log(App.CRCOUNCIL_MANAGER, "rpcApiUrl:", rpcApiUrl);
-        const result = await this.jsonRPCService.httpRequest(rpcApiUrl, param);
+        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
         let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
         if (!Util.isEmptyObject(result.crmembersinfo)) {
             Logger.log(App.CRCOUNCIL_MANAGER, "crmembersinfo:", result.crmembersinfo);

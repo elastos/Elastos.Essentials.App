@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
-import { StandardCoinName } from '../wallet/model/Coin';
 import { Subscription } from 'rxjs';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
@@ -128,18 +127,18 @@ export class GlobalJsonRPCService extends GlobalService {
       return apiUrl;
     }
 
-    async httpRequest(rpcApiUrl: string, param: any): Promise<any> {
+    async httpPost(rpcApiUrl: string, param: any): Promise<any> {
         return new Promise((resolve, reject) => {
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                 })
             };
-            // Logger.warn("JSONRPC", 'httpRequest rpcApiUrl:', rpcApiUrl);
+            // Logger.warn("JSONRPC", 'httpPost rpcApiUrl:', rpcApiUrl, ' param:', param);
             this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
                 .subscribe((res: any) => {
                     if (res) {
-                        // Logger.warn("JSONRPC", 'httpRequest response:', res);
+                        // Logger.warn("JSONRPC", 'httpPost response:', res);
                         if (res instanceof Array) {
                             resolve(res);
                         } else {
@@ -150,16 +149,16 @@ export class GlobalJsonRPCService extends GlobalService {
                             }
                         }
                     } else {
-                        Logger.error("JSONRPC", 'httpRequest get nothing!');
+                        Logger.error("JSONRPC", 'httpPost get nothing!');
                     }
                 }, (err) => {
-                    Logger.error("JSONRPC", 'JsonRPCService httpRequest error:', JSON.stringify(err));
+                    Logger.error("JSONRPC", 'JsonRPCService httpPost error:', JSON.stringify(err));
                     reject(err);
                 });
         });
     }
 
-    httpget(url): Promise<any> {
+    httpGet(url): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.get<any>(url).subscribe((res) => {
                 // Logger.log('JSONRPC', res);
