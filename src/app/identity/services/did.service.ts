@@ -53,7 +53,7 @@ export class DIDService {
     Logger.log("Identity", "Loading global identity");
     let signedInIdentity = await this.didSessions.getSignedInIdentity();
     if (!signedInIdentity) {
-      if (!noRouting) 
+      if (!noRouting)
         await this.native.setRootRouter("/identity/notsignedin");
       return false;
     } else {
@@ -63,7 +63,7 @@ export class DIDService {
         signedInIdentity.didString
       );
       if (!couldActivate) {
-        if (!noRouting) 
+        if (!noRouting)
           await this.handleNull();
         return false;
       }
@@ -72,28 +72,24 @@ export class DIDService {
     return true;
   }
 
-  public activateDidStore(storeId: string): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+  public async activateDidStore(storeId: string): Promise<boolean> {
       if (storeId == null) {
         Logger.error('identity', "Impossible to activate a null store id!");
-        resolve(false);
-        return;
+        return false;
       }
 
       if (storeId == this.getCurDidStoreId()) {
         Logger.log('identity', "DID Store ID hasn't changed - not loading the DID Store");
-        resolve(true); // Nothing changed but considered as successful.
-        return;
+        return true; // Nothing changed but considered as successful.
       }
 
       let didStore = await DIDStore.loadFromDidStoreId(storeId, this.events, this.didSessions, this.globalIntentService);
       if (!didStore) {
-        this.popupProvider.ionicAlert(
+        void this.popupProvider.ionicAlert(
           "Store load error",
           "Sorry, we were unable to load your DID store..."
         );
-        resolve(false);
-        return;
+        return false;
       }
 
       Logger.log("Identity", "Setting active DID store", didStore);
@@ -101,8 +97,7 @@ export class DIDService {
 
       this.events.publish("did:didchanged");
 
-      resolve(true);
-    });
+      return true;
   }
 
   /**

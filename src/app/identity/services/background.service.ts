@@ -43,7 +43,7 @@ export class BackgroundService extends GlobalService {
           super();
     }
 
-    public async init() {
+    public init() {
       GlobalServiceManager.getInstance().registerService(this);
     }
 
@@ -59,15 +59,16 @@ export class BackgroundService extends GlobalService {
       }, 30*1000); // 30 seconds
 
       //Notify expired DID and credentials
-      this.notifyTimeout = setTimeout(async () => {
-        await this.notifyExpiredCredentials();
+      this.notifyTimeout = setTimeout(() => {
+        void this.notifyExpiredCredentials();
       }, 5 * 1000); // 5 seconds
     }
 
-    public async onUserSignOut(): Promise<void> {
+    public onUserSignOut(): Promise<void> {
       // Sign out
       clearTimeout(this.synchronizeTimeout);
       clearTimeout(this.notifyTimeout);
+      return;
     }
 
     // Synchronizes the active DID with the ID chain, to make sure we always have up to date information.

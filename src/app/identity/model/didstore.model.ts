@@ -126,7 +126,7 @@ export class DIDStore {
             // "hide" this in app, not showing deleted DID even if they are re-synchronized from chain.
             let didWasDeleted = await this.wasDIDDeleted(pluginDid.getDIDString())
             if (didWasDeleted && restoreDeletedDIDs) {
-                this.removeDIDFromDeleted(pluginDid.getDIDString());
+                await this.removeDIDFromDeleted(pluginDid.getDIDString());
                 didWasDeleted = false;
             }
 
@@ -134,8 +134,14 @@ export class DIDStore {
                 Logger.log("Identity", "Loading DID " + pluginDid.getDIDString());
 
                 let did = new DID(pluginDid, this.events, this.didSessions);
-                await did.loadAll();
-                this.dids.push(did);
+                try {
+                    await did.loadAll();
+                    this.dids.push(did);
+                }
+                catch (e) {
+                    // Failed to load the DID? Don't push it.
+                    Logger.warn("identity", "Failed to load all for DID ", did, e);
+                }
             }
             else {
                 Logger.log('identity', "DID " + pluginDid.getDIDString() + " was listed by the DID plugin but deleted locally earlier. Skipping it.");

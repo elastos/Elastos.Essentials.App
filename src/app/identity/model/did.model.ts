@@ -49,7 +49,7 @@ export class DID {
     }
 
     private loadPluginCredentials(): Promise<DIDPlugin.VerifiableCredential[]> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.pluginDid.loadCredentials(
                 (ret) => { resolve(ret) }, (err) => { reject(err) },
             );

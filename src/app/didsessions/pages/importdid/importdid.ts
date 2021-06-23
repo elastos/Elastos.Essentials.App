@@ -35,9 +35,9 @@ export class ImportDIDPage {
     private nextStepId: number;
     public loadingIdentity = false;
     public mnemonicWords = new Array<any>()
-    public mnemonicSentence: string = "";
+    public mnemonicSentence = "";
     //   public mnemonicSentence: string = "income diesel latin coffee tourist kangaroo lumber great ill amazing say left"; // TMP TESTNET
-    private mnemonicForImport: string = "";
+    private mnemonicForImport = "";
     private mnemonicLanguage: DIDPlugin.MnemonicLanguage;
     public readonly = false; // set true if import mnemonic form wallet app
 
@@ -47,7 +47,7 @@ export class ImportDIDPage {
     private showHandle: any;
     private hideHandle: any;
     private contentHight = 0;
-    private scrollHeight: Number = -1;
+    private scrollHeight = -1;
     public hideButton = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -65,16 +65,15 @@ export class ImportDIDPage {
         private events: Events,
     ) {
         const navigation = this.router.getCurrentNavigation();
-        Logger.log('didsessions', 'NAV', navigation);
         if (!Util.isEmptyObject(navigation.extras.state)) {
             this.nextStepId = navigation.extras.state.enterEvent.stepId;
-            Logger.log('didsessions', 'Importdid - nextStepId', this.nextStepId);
+            //Logger.log('didsessions', 'Importdid - nextStepId', this.nextStepId);
             if (!Util.isEmptyObject(navigation.extras.state.mnemonic)) {
               this.mnemonicSentence = navigation.extras.state.mnemonic;
               this.onMnemonicSentenceChanged();
               this.readonly = true;
             }
-            Logger.log('didsessions', 'Importdid - Mnemonic', navigation.extras.state.enterEvent.data);
+            //Logger.log('didsessions', 'Importdid - Mnemonic', navigation.extras.state.enterEvent.data);
         }
     }
 
@@ -175,7 +174,7 @@ export class ImportDIDPage {
                 this.loadingIdentity = true;
                 this.identityService.identityBeingCreated.mnemonicLanguage = this.mnemonicLanguage;
                 this.identityService.identityBeingCreated.mnemonicPassphrase = params.data.password;
-                this.doImport();
+                void this.doImport();
             }
         });
         await this.uxService.modal.present();
@@ -185,15 +184,15 @@ export class ImportDIDPage {
         this.mnemonicForImport = this.mnemonicWords.join(' ').toLowerCase();
         this.mnemonicLanguage = await DIDMnemonicHelper.getMnemonicLanguage(this.mnemonicForImport);
         if (!this.mnemonicLanguage) {
-            this.popup.ionicAlert('didsessions.mnemonic-invalid', 'didsessions.mnemonic-invalid-prompt');
+            void this.popup.ionicAlert('didsessions.mnemonic-invalid', 'didsessions.mnemonic-invalid-prompt');
             return;
         }
 
-        this.promptPassPhrase();
+        await this.promptPassPhrase();
     }
 
     private async doImport() {
-        this.identityService.runNextStep(this.nextStepId, this.mnemonicForImport);
+        await this.identityService.runNextStep(this.nextStepId, this.mnemonicForImport);
     }
 
     inputMnemonicCompleted() {
