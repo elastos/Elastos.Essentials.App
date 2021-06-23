@@ -431,3 +431,12 @@ ion-footer {
         box-shadow: 0 3px 15px 0 #151626;
     }
 }
+
+/** General Spinner **/
+.spinner {
+  margin: 30px 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

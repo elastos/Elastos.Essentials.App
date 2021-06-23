@@ -73,6 +73,9 @@
         <ion-row class="list-title-row">
                 <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
         </ion-row>
+        <div class="spinner" *ngIf="loadingTX">
+          <ion-spinner name="bubbles"></ion-spinner>
+        </div>
         <div *ngIf="transferList.length > 0">
             <ion-row
                 class="item-row ripple ion-activatable"

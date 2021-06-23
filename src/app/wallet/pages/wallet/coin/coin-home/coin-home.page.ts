@@ -79,6 +79,8 @@ export class CoinHomePage implements OnInit {
     private updateInterval = null;
     private updateTmeout = null;
 
+    private loadingTX = false;
+
     constructor(
         public router: Router,
         public walletManager: WalletManager,
@@ -194,7 +196,9 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
+        this.loadingTX = true;
         let allTransactions = await this.subWallet.getTransactions(this.start);
+        this.loadingTX = false;
         if (!allTransactions) {
           Logger.log('wallet', "Can not get transaction");
           return;
