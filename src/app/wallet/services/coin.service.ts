@@ -48,10 +48,10 @@ export class CoinService {
         this.activeNetwork = this.prefs.getNetworkType();
 
         // Standard tokens
-        this.availableCoins.push(new StandardCoin(StandardCoinName.ELA, "ELA", "Elastos ELA"));
+        this.availableCoins.push(new StandardCoin(StandardCoinName.ELA, "ELA", "Elastos Main Chain"));
         this.availableCoins.push(new StandardCoin(StandardCoinName.IDChain, "ELA/ID", "Elastos DID"));
-        this.availableCoins.push(new StandardCoin(StandardCoinName.ETHSC, "ELA/ETHSC", "Elastos ETH"));
-        this.availableCoins.push(new StandardCoin(StandardCoinName.ETHDID, "ELA/ETHDID", "NEW DID"));
+        this.availableCoins.push(new StandardCoin(StandardCoinName.ETHSC, "ELA/ESC", "Elastos ESC"));
+        this.availableCoins.push(new StandardCoin(StandardCoinName.ETHDID, "ELA/EID", "Elastos EID"));
         // this.availableCoins.push(new StandardCoin(StandardCoinName.ETHHECO, "ELA/ETHHECO", "HECO"));
 
         // ERC20 tokens

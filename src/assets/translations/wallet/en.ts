@@ -239,9 +239,6 @@ export const en = {
         "coin-list-title": "Manage Coin List",
         "coin-list-enable-disable-coins": "Enable/Disable Coins",
         "coin-list-enable-disable-coins-intro": "Toggle what coins you would like to display on your wallet home screen. ELA Mainchain and Sidechains are always shown.",
-        "ela-mainchain": "Elastos MainChain",
-        "ela-idchain": "Elastos ID SideChain",
-        "ela-ethchain": "Elastos ETH SideChain",
         "erc-20-token": "ERC20 Token",
 
         /***********************
