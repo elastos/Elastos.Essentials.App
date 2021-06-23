@@ -3,17 +3,13 @@ export const zh = {
     'launcher': {
         /********** Generic **********/
         'starting': '正在启动',
-        'downloading': '正在下载',
-        'getting-ready': '安装中',
         'added-fav': '添加到收藏',
         'removed-fav': '取消收藏',
         'contact-notification': '好友的消息',
         'from-unknown-contact': '陌生人的消息',
-        "not-available-on-ios": "功能在iOS上不可用",
         'restoring-backup': "恢复备份正在进行中",
         'installed': "已安装",
         'signing-out': '注销中...',
-        'no-app-can-handle-request': '没有应用程序可以处理此请求',
 
         /********** Notifications Page **********/
         'notifications': '消息通知',

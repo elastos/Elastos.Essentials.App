@@ -3,17 +3,13 @@ export const fr = {
     'launcher': {
         /********** Generic **********/
         'starting': 'Démarrage',
-        'Downloading': 'Téléchargement',
-        'getting-ready': 'Préparation',
         'added-fav': 'ajoutée aux favoris',
         'removed-fav': 'supprimée des favoris',
         'contact-notification': 'De l\'un de vos contacts',
         'from-unknown-contact': 'Contact inconnu',
-        "not-available-on-ios": "Fonctionnalité non disponible sur iOS",
         'restoring-backup': "Restoration de votre sauvegarde en cours",
         'installed': "installé",
         'signing-out': 'Déconnexion...',
-        'no-app-can-handle-request': "Aucune application ne peut prendre en charge cette requête",
 
         /********** Notifications Page **********/
         'notifications': 'Notifications',
@@ -31,9 +27,9 @@ export const fr = {
         'utilities': 'Utilitaires',
         'voting': 'Voting',
         'other': 'Autres',
-        'backup-title': 'IDENTITY NOT BACKED UP',
-        'backup-message': 'Saving your identity’s paper key is a very important step as this the only way to recover it later.',
-        'backup-button': 'Backup Now',
+        'backup-title': 'IDENTITE NON SAUVEGARDEE',
+        'backup-message': 'Sauvegarder la "clé papier" de votre identité est indispensable, car c\'est le seul moyen de la récupérer plus tard.',
+        'backup-button': 'Continuer',
 
         /********** Onboard Page **********/
 
@@ -54,11 +50,11 @@ export const fr = {
         'app-settings-description': 'Configurez Essentials',
         'app-dpos-voting': 'DPoS voting',
         'app-dpos-description': 'DPoS Supernodes',
-        'app-cr-council': 'CR Council',
-        'app-crcouncil-description': 'Cyber Republic council members',
-        'app-cr-proposal': 'CR Proposal',
-        'app-crproposal-description': 'Cyber Republic proposals',
-        'app-dev-tools': 'Developer Tools',
+        'app-cr-council': 'Administration CR',
+        'app-crcouncil-description': 'Membres du conseil de la Cyber Republic',
+        'app-cr-proposal': 'Propositions CR',
+        'app-crproposal-description': 'Propositions de la Cyber Republic',
+        'app-dev-tools': 'Outils Développeurs',
 
         'app-dpos-registration': 'DPoS Registration',
         'app-dpos-registration-description': 'DPoS registration manager',

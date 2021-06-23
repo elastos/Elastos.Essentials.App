@@ -3,17 +3,13 @@ export const en = {
     'launcher': {
         /********** Generic **********/
         'starting': 'Starting',
-        'downloading': 'Downloading',
-        'getting-ready': 'Getting ready',
         'added-fav': 'added to favorites',
         'removed-fav': 'removed from favorites',
         'contact-notification': 'From one of your contacts',
         'from-unknown-contact': 'From an unknown contact',
-        "not-available-on-ios": "Feature not available on iOS",
         'restoring-backup': "Restoring backup in progress",
         'installed': "installed",
         'signing-out': 'Signing out...',
-        'no-app-can-handle-request': 'No application can handle the requested action',
 
         /********** Notifications Page **********/
         'notifications': 'Notifications',

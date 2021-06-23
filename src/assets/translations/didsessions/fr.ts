@@ -70,7 +70,7 @@ export const fr = {
 
     // Backup
     'decentralized-id': 'ID décentralisé',
-    'did-warning-info': 'Ceci est la QR code qui contient la clé secrète de votre identité. Ne le partagez avec personne.',
+    'did-warning-info': 'Ceci est le QR code qui contient la clé secrète de votre identité. Ne le partagez avec personne.',
     'print-qrcode': 'Imprimer le QR Code',
     'manual-verify': 'Vérification Manuelle',
     'only-qrcode': 'QR code uniquement',
