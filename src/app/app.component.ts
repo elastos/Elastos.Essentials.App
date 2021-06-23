@@ -18,6 +18,7 @@ import { GlobalNotificationsService } from './services/global.notifications.serv
 import { GlobalPublicationService } from './services/global.publication.service';
 import { GlobalWalletConnectService } from './services/global.walletconnect.service';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { GlobalJsonRPCService } from './services/global.jsonrpc.service';
 
 @Component({
     selector: 'app-root',
@@ -41,6 +42,7 @@ export class AppComponent {
         private globalAppBackgroundService: GlobalAppBackgroundService,
         private language: GlobalLanguageService,
         private intentService: GlobalIntentService,
+        private jsonRPCService: GlobalJsonRPCService,
         private screenOrientation: ScreenOrientation,
         private notificationsService: GlobalNotificationsService,
         private publicationService: GlobalPublicationService,
@@ -84,6 +86,7 @@ export class AppComponent {
             await this.intentService.init();
             await this.publicationService.init();
             await this.walletConnect.init();
+            await this.jsonRPCService.init();
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();

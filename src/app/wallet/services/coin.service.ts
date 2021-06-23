@@ -26,10 +26,9 @@ import { StandardCoinName } from '../model/Coin';
 import { LocalStorage } from './storage.service';
 import { MasterWallet } from '../model/wallets/MasterWallet';
 import { NetworkType } from 'src/app/model/networktype';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { WalletPrefsService } from './pref.service';
 
 @Injectable({
     providedIn: 'root'
@@ -39,14 +38,14 @@ export class CoinService {
     private deletedERC20Coins: ERC20Coin[] = null;
     private activeNetwork: NetworkType;
 
-    constructor(private storage: LocalStorage, private events: Events, private prefs: GlobalPreferencesService) {
+    constructor(private storage: LocalStorage, private events: Events, private prefs: WalletPrefsService) {
     }
 
     public async init() {
         this.availableCoins = [];
         this.deletedERC20Coins = [];
 
-        this.activeNetwork = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+        this.activeNetwork = this.prefs.getNetworkType();
 
         // Standard tokens
         this.availableCoins.push(new StandardCoin(StandardCoinName.ELA, "ELA", "Elastos ELA"));

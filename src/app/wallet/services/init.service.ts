@@ -1,7 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-import { PopupProvider } from './popup.service';
+import { Injectable } from '@angular/core';
 import { UiService } from './ui.service';
 import { CoinService } from './coin.service';
 import { ContactsService } from './contacts.service';
@@ -9,15 +6,12 @@ import { CurrencyService } from './currency.service';
 import { IntentService } from './intent.service';
 import { NavService } from './nav.service';
 import { WalletManager } from './wallet.service';
-import { LocalStorage } from './storage.service';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { WalletPrefsService } from './pref.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
-import { AuthService } from './auth.service';
-import { Util } from 'src/app/didsessions/services/util';
 
 @Injectable({
   providedIn: 'root'
@@ -29,21 +23,14 @@ export class WalletInitService extends GlobalService {
 
   constructor(
     private intentService: IntentService,
-    private localStorage: LocalStorage,
     private walletManager: WalletManager,
     private events: Events,
-    private zone: NgZone,
-    private translate: TranslateService,
     private navService: NavService,
     private currencyService: CurrencyService,
-    private popupProvider: PopupProvider,
-    private modalCtrl: ModalController,
     private coinService: CoinService,
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
-    private authService: AuthService,
-    private didSessions: GlobalDIDSessionsService
   ) {
     super();
   }
@@ -57,8 +44,10 @@ export class WalletInitService extends GlobalService {
 
     await this.prefs.init();
     await this.coinService.init();
-    await this.currencyService.init();
-    await this.contactsService.init();
+    // Do not await.
+    this.currencyService.init();
+    // Do not await.
+    this.contactsService.init();
     await this.uiService.init();
 
     // TODO: dirty, rework this

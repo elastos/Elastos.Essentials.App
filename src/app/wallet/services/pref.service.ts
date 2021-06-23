@@ -35,7 +35,6 @@ export class WalletPrefsService {
     this.languageSubscription = this.translate.onLangChange.subscribe(data => {
       this.setMnemonicLangByLanguage(data.lang);
     });
-
   }
 
   private updateConfig(netWork: NetworkType) {
@@ -68,6 +67,10 @@ export class WalletPrefsService {
 
   public setMnemonicLang(lang) {
     this.mnemonicLang = lang;
+  }
+
+  public getNetworkType(): NetworkType {
+    return this.activeNetwork;
   }
 
   public stop() {

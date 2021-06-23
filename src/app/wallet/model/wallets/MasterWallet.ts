@@ -15,6 +15,7 @@ import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nft';
 import { ERC721Service } from '../../services/erc721.service';
 import { ERC20TokenInfo } from '../Transaction';
+import { NetworkType } from 'src/app/model/networktype';
 
 export type WalletID = string;
 
@@ -219,13 +220,12 @@ export class MasterWallet {
     /**
      * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
      */
-    public async updateERCTokenList(prefs: GlobalPreferencesService) {
+    public async updateERCTokenList(activeNetwork: NetworkType) {
         if (!this.subWallets[StandardCoinName.ETHSC]) {
             Logger.log("wallet", 'updateERC20TokenList no ETHSC');
             return;
         }
 
-        const activeNetwork = await prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
         const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ETHChainSubWallet).getERC20TokenList();
 
         // For each ERC token discovered by the wallet SDK, we check its type and handle it.

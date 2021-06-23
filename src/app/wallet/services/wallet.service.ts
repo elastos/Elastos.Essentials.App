@@ -81,6 +81,8 @@ export class WalletManager {
 
     public spvBridge: SPVWalletPluginBridge = null;
 
+    private networkType: NetworkType;
+
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
 
     constructor(
@@ -133,17 +135,17 @@ export class WalletManager {
     private async initWallets(): Promise<boolean> {
         try {
             // NetWork Type
-            let networkType: NetworkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+            this.networkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
             let networkConfig = null;
-            if (networkType === NetworkType.PrvNet) {
+            if (this.networkType === NetworkType.PrvNet) {
               networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
             } else {
-              networkConfig = WalletConfig.getNetConfig(networkType);
-              if (networkType === NetworkType.LrwNet) { // For crcouncil voting test
-                networkType = NetworkType.PrvNet;
+              networkConfig = WalletConfig.getNetConfig(this.networkType);
+              if (this.networkType === NetworkType.LrwNet) { // For crcouncil voting test
+                this.networkType = NetworkType.PrvNet;
               }
             }
-            await this.spvBridge.setNetwork(networkType, networkConfig);
+            await this.spvBridge.setNetwork(this.networkType, networkConfig);
             // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
@@ -220,7 +222,7 @@ export class WalletManager {
                 }
 
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
-                /* await  */this.masterWallets[masterId].updateERCTokenList(this.prefs);
+                /* await  */this.masterWallets[masterId].updateERCTokenList(this.networkType);
             }
         } catch (error) {
             Logger.error('wallet', 'initWallets error:', error);
@@ -385,7 +387,7 @@ export class WalletManager {
         // await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
 
         // Get all tokens and create subwallet
-        await this.masterWallets[id].updateERCTokenList(this.prefs);
+        await this.masterWallets[id].updateERCTokenList(this.networkType);
 
         // Save state to local storage
         await this.saveMasterWallet(this.masterWallets[id]);

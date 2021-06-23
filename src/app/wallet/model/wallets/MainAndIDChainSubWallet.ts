@@ -570,7 +570,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * Get balance by RPC
      */
     public async getBalanceByRPC() {
-        Logger.test("wallet", 'TIMETEST getBalanceByRPC start:', this.id);
+        Logger.test("wallet", 'TIMETEST getBalanceByRPC start:', this.masterWallet.id, this.id);
 
         let totalBalance = new BigNumber(0);
 

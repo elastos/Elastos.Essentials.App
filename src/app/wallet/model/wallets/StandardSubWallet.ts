@@ -18,25 +18,13 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     protected async initialize() {
-        await this.initLastBlockInfo();
-        this.updateBalance();
+        // this.updateBalance();
     }
 
     public async destroy() {
         await this.masterWallet.walletManager.spvBridge.destroySubWallet(this.masterWallet.id, this.id);
 
         super.destroy();
-    }
-
-    /**
-     * Get the last block info from the local data.
-     */
-    public async initLastBlockInfo() {
-        // Get the last block info from the wallet plugin.
-        // TODO
-        // const blockInfo = await this.masterWallet.walletManager.spvBridge.getLastBlockInfo(this.masterWallet.id, this.id);
-
-        // if (blockInfo) this.updateSyncProgress(0, blockInfo.Timestamp);
     }
 
     public async createAddress(): Promise<string> {

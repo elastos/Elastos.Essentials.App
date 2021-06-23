@@ -37,13 +37,14 @@ import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
 import { IonSlides } from '@ionic/angular';
 import { LocalStorage } from '../../../services/storage.service';
 import { Subscription } from 'rxjs';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { NFT } from 'src/app/wallet/model/nft';
+import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
+import { NetworkType } from 'src/app/model/networktype';
 
 
 @Component({
@@ -65,6 +66,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public masterWallet: MasterWallet = null;
     public masterWalletList: MasterWallet[] = [];
     public isSingleWallet = false;
+
+    private networkType: NetworkType;
 
     private walletChangedSubscription: Subscription = null;
 
@@ -88,7 +91,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public currencyService: CurrencyService,
-        private prefs: GlobalPreferencesService,
+        private prefs: WalletPrefsService,
         public theme: GlobalThemeService,
         public uiService: UiService,
         private zone: NgZone,
@@ -99,6 +102,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.updateWallet();
+        this.networkType = this.prefs.getNetworkType();
 
         this.walletChangedSubscription = this.events.subscribe("masterwalletcount:changed", (result) => {
             Logger.log("wallet", "masterwalletcount:changed event received result:", result);
@@ -208,7 +212,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
 
         await curMasterWallet.update();
-        await curMasterWallet.updateERCTokenList(this.prefs);
+        await curMasterWallet.updateERCTokenList(this.networkType);
         curMasterWallet.getSubWalletBalance(StandardCoinName.ELA);
         this.currencyService.fetch();
     }

@@ -4,15 +4,13 @@ import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WalletManager } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
-import { StandardCoinName, ERC20Coin } from '../../../../model/Coin';
+import { ERC20Coin } from '../../../../model/Coin';
 import { PopupProvider } from '../../../../services/popup.service';
 import { CoinService } from '../../../../services/coin.service';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';
 import { Util } from '../../../../model/Util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -20,6 +18,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
+import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 
 
 @Component({
@@ -59,7 +58,7 @@ export class CoinAddERC20Page implements OnInit {
         private translate: TranslateService,
         public theme: GlobalThemeService,
         private popup: PopupProvider,
-        private prefs: GlobalPreferencesService,
+        private prefs: WalletPrefsService,
         private zone: NgZone,
         private router: Router,
         private globalIntentService: GlobalIntentService,
@@ -197,7 +196,7 @@ export class CoinAddERC20Page implements OnInit {
         if (this.coinAlreadyAdded(this.coinAddress)) {
             this.native.toast_trans('wallet.coin-adderc20-alreadyadded');
         }  else {
-            const activeNetwork = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+            const activeNetwork = this.prefs.getNetworkType();
             const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetwork, true);
             await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
 

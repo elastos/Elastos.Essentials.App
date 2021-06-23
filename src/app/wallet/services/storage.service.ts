@@ -33,7 +33,7 @@ export class LocalStorage {
     }
 
     public async get(key: string): Promise<any> {
-        Logger.log('wallet', 'Fetching for ' + key + ' in app manager settings');
+        // Logger.log('wallet', 'Fetching for ' + key + ' in app manager settings');
         return new Promise(async (resolve) => {
             let val = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
             if (val === null)
@@ -101,7 +101,7 @@ export class LocalStorage {
 
     public async getCurrency(): Promise<string> {
         let rawCurrency = await this.get("currency");
-        Logger.log('wallet', 'Found currency stored', rawCurrency);
+        // Logger.log('wallet', 'Found currency stored', rawCurrency);
         return rawCurrency;
     }
 
@@ -119,13 +119,13 @@ export class LocalStorage {
 
     public setPrice(symbol: string, price: number) {
         return this.set(symbol, JSON.stringify(price)).then(() => {
-          Logger.log('wallet', 'Ela price stored');
+          // Logger.log('wallet', 'Ela price stored');
         });
     }
 
     public async getPrice(symbol: string): Promise<number> {
         let rawPrice = await this.get(symbol);
-        Logger.log('wallet', 'Found Ela price stored', rawPrice);
+        // Logger.log('wallet', 'Found Ela price stored', rawPrice);
         return rawPrice;
     }
 
@@ -137,7 +137,7 @@ export class LocalStorage {
 
     public async getVisit(): Promise<boolean> {
         let visited = await this.get("visited");
-        Logger.log('wallet', 'User already visited?', visited);
+        // Logger.log('wallet', 'User already visited?', visited);
         return visited;
     }
 
@@ -149,7 +149,7 @@ export class LocalStorage {
 
     public async getContacts(): Promise<Contact[]> {
         let contacts = await this.get("contacts");
-        Logger.log('wallet', 'Found contacts', contacts);
+        // Logger.log('wallet', 'Found contacts', contacts);
         return contacts;
     }
 }

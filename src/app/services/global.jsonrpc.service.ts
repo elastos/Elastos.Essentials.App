@@ -57,7 +57,7 @@ export class GlobalJsonRPCService extends GlobalService {
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        this.initData();
+        await this.initData();
         this.subscription = this.prefs.preferenceListener.subscribe(async (preference) => {
           if (preference.key === "chain.network.type") {
               await this.initData();
@@ -74,13 +74,14 @@ export class GlobalJsonRPCService extends GlobalService {
     }
 
     async initData() {
-        this.mainchainRPCApiUrl = await this.prefs.getMainchainRPCApiEndpoint(GlobalDIDSessionsService.signedInDIDString);
-        this.IDChainRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.id.rpcapi');
-        this.ethscRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.rpcapi');
-        this.ethscOracleRPCApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.oracle');
-        this.ethscMiscApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.apimisc');
-        this.ethbrowserapiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'sidechain.eth.browserapi');
-        this.crRpcApiUrl = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
+        let preferences = await this.prefs.getPreferences(GlobalDIDSessionsService.signedInDIDString);
+        this.mainchainRPCApiUrl = preferences['mainchain.rpcapi'];
+        this.IDChainRPCApiUrl = preferences['sidechain.id.rpcapi'];
+        this.ethscRPCApiUrl = preferences['sidechain.eth.rpcapi'];
+        this.ethscOracleRPCApiUrl = preferences['sidechain.eth.oracle'];
+        this.ethscMiscApiUrl = preferences['sidechain.eth.apimisc'];
+        this.ethbrowserapiUrl = preferences['sidechain.eth.browserapi'];
+        this.crRpcApiUrl = preferences['cr.rpcapi'];
     }
 
     public stop() {
@@ -134,7 +135,7 @@ export class GlobalJsonRPCService extends GlobalService {
                     'Content-Type': 'application/json',
                 })
             };
-            // Logger.warn("JSONRPC", 'httpPost rpcApiUrl:', rpcApiUrl, ' param:', param);
+            // Logger.warn("JSONRPC", 'httpPost rpcApiUrl:', rpcApiUrl);
             this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
                 .subscribe((res: any) => {
                     if (res) {
