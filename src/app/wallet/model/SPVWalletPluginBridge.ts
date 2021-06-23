@@ -704,7 +704,31 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    getOwnerAddress(masterWalletId: string, chainId: string): Promise<string> {
+      return new Promise(async (resolve, reject) => {
+          walletManager.getOwnerAddress([masterWalletId, chainId],
+              (ret) => { resolve(ret); },
+              (err) => { this.handleError(err, reject);  });
+      });
+    }
+
+    getOwnerDepositAddress(masterWalletId: string, chainId: string): Promise<string> {
+      return new Promise(async (resolve, reject) => {
+          walletManager.getOwnerDepositAddress([masterWalletId, chainId],
+              (ret) => { resolve(ret); },
+              (err) => { this.handleError(err, reject);  });
+      });
+    }
+
     // CR
+    getCRDepositAddress(masterWalletId: string, chainId: string): Promise<string> {
+      return new Promise(async (resolve, reject) => {
+          walletManager.getCRDepositAddress([masterWalletId, chainId],
+              (ret) => { resolve(ret); },
+              (err) => { this.handleError(err, reject);  });
+      });
+    }
+
     generateCRInfoPayload(masterWalletId: string, chainId: string, publicKey: string,
         did: string, nickname: string, url: string, location: number): Promise<any> {
         return new Promise(async (resolve, reject) => {

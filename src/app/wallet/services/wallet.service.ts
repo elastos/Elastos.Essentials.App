@@ -48,6 +48,7 @@ import { StandardSubWalletBuilder } from '../model/wallets/StandardSubWalletBuil
 import { ERC721Service } from './erc721.service';
 import { BehaviorSubject } from 'rxjs';
 import { Util } from '../model/Util';
+import { WalletConfig } from '../model/WalletConfig';
 
 
 class TransactionMapEntry {
@@ -133,18 +134,20 @@ export class WalletManager {
         try {
             // NetWork Type
             let networkType: NetworkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
-            let networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
-            if (networkType === NetworkType.LrwNet) { // For crcouncil voting test
-              networkType = NetworkType.PrvNet;
-              networkConfig = "{\"ELA\":{\"ChainParameters\":{\"MagicNumber\":20200501,\"StandardPort\":40008,\"DNSSeeds\":[\"longrunweather.com\"],\"CheckPoints\":[[0,\"d8d33c8a0a632ecc418bd7f09cd315dfc46a7e3e98e48c50c70a253e6062c257\",1513936800,486801407]]}},\"IDChain\":{\"ChainParameters\":{\"MagicNumber\":20200503,\"StandardPort\":41008,\"DNSSeeds\":[\"longrunweather.com\"],\"CheckPoints\":[[0,\"56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3\",1530360000,486801407]]}}}"
-
+            let networkConfig = null;
+            if (networkType === NetworkType.PrvNet) {
+              networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
+            } else {
+              networkConfig = WalletConfig.getNetConfig(networkType);
+              if (networkType === NetworkType.LrwNet) { // For crcouncil voting test
+                networkType = NetworkType.PrvNet;
+              }
             }
             await this.spvBridge.setNetwork(networkType, networkConfig);
             // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
             let rootPath = signedInEntry.didStoragePath;
-            Logger.warn('wallet', "rootPath:", rootPath);
             await this.spvBridge.init(rootPath);
 
             Logger.log('wallet', "Getting all master wallets from the SPV SDK");
