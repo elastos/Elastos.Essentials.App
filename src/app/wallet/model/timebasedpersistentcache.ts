@@ -2,23 +2,23 @@ import { JSONObject } from "src/app/model/json";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 
-export type CacheEntry = {
+export type CacheEntry<T> = {
   key: string;
   timeValue: number;
-  data: JSONObject;
+  data: T;
 }
 
-export class TimeBasedPersistentCache {
+export class TimeBasedPersistentCache<T extends JSONObject> {
   // List of items, sorted by time value.
-  private items: CacheEntry[];
+  private items: CacheEntry<T>[];
 
   constructor(private name: string) {}
 
   /**
    * Returns a cache with data already loaded from disk if any, or an empty cache otherwise.
    */
-  public static async loadOrCreate(name: string): Promise<TimeBasedPersistentCache> {
-    let cache = new TimeBasedPersistentCache(name);
+  public static async loadOrCreate<T extends JSONObject>(name: string): Promise<TimeBasedPersistentCache<T>> {
+    let cache = new TimeBasedPersistentCache<T>(name);
     await cache.load();
     return cache;
   }
@@ -27,7 +27,7 @@ export class TimeBasedPersistentCache {
    * Adds or updates an item to the cache. Item keys are unique.
    * If set() is called again with an existing key, the existing item is overwritten.
    */
-  public set(itemKey: string, data: JSONObject, timeValue = 0) {
+  public set(itemKey: string, data: T, timeValue = 0) {
     let existingIndex = this.items.findIndex(i => i.key == itemKey);
 
     let newEntry = {
@@ -64,7 +64,7 @@ export class TimeBasedPersistentCache {
   /**
    * Returns the cache values. Values are already sorted by time value.
    */
-  public values(): CacheEntry[] {
+  public values(): CacheEntry<T>[] {
     return this.items;
   }
 
