@@ -331,11 +331,12 @@ export class PrepareDIDPage {
 
   private async createWalletFromIdentity(): Promise<void> {
     Logger.log("didsessions", "Creating a default wallet with the same mnemonic as the identity");
+    let walletName = this.translate.instant("didsessions.prepare.wallet-name");
     await Promise.all([
       sleep(MIN_SLIDE_SHOW_DURATION_MS),
       this.walletService.createWalletFromNewIdentity(
-        this.identityService.identityBeingCreated.name, this.identityService.identityBeingCreated.mnemonic,
-        this.identityService.identityBeingCreated.mnemonicPassphrase
+        walletName, this.identityService.identityBeingCreated.mnemonic,
+        ''
       )
     ]);
 

@@ -93,6 +93,7 @@ export const en = {
       'hive-intro': 'A storage space is being created on a random Elastos Hive storage provider. You can move your data somewhere else later.',
       'wallet-title': 'Creating a default wallet',
       'wallet-intro': 'A default wallet is created with the same paper key as your DID. You can choose to use it or to delete it.',
+      'wallet-name': 'My wallet',
       'done-title': 'All done!',
       'done-intro': 'Your identity is now fully ready. You can start to use Elastos Essentials.'
     }

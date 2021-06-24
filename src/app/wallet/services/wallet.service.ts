@@ -493,7 +493,7 @@ export class WalletManager {
               mnemonic,
               mnemonicPassphrase || "",
               payPassword,
-              false
+              true
             );
           }
           catch (err) {
