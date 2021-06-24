@@ -54,8 +54,7 @@ export class ERC721Service {
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
-        this.erc721ABI = require('../../../assets/wallet/ethereum/Erc721enumerableABI.json');
-
+        this.erc721ABI = require('../../../assets/wallet/ethereum/Erc721EnumerableABI.json');
         return this.web3;
     }
 
