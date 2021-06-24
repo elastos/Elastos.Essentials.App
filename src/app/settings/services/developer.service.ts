@@ -8,6 +8,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { SettingsWarningComponent } from '../components/warning/warning.component';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { GlobalServiceManager } from 'src/app/services/global.service.manager';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -281,6 +282,7 @@ export class DeveloperService {
   async restartApp() {
       // navigator["app"].exitApp();
       this.splashScreen.show();
+      await GlobalServiceManager.getInstance().emitUserSignOut();
       await this.globalNav.navigateHome();
       window.location.reload();
   }
@@ -290,7 +292,8 @@ export class DeveloperService {
         mode: 'ios',
         cssClass: 'wallet-warning-component',
         component: SettingsWarningComponent,
-        translucent: false
+        translucent: false,
+        backdropDismiss: false,
     });
 
     this.popover.onWillDismiss().then(async (params) => {
