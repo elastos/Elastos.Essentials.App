@@ -19,6 +19,7 @@ import { GlobalPublicationService } from './services/global.publication.service'
 import { GlobalWalletConnectService } from './services/global.walletconnect.service';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { GlobalJsonRPCService } from './services/global.jsonrpc.service';
+import { GlobalHiveService } from './services/global.hive.service';
 
 @Component({
     selector: 'app-root',
@@ -46,6 +47,7 @@ export class AppComponent {
         private screenOrientation: ScreenOrientation,
         private notificationsService: GlobalNotificationsService,
         private publicationService: GlobalPublicationService,
+        private globalHiveService: GlobalHiveService,
         private walletConnect: GlobalWalletConnectService
     ) {
     }
@@ -79,7 +81,9 @@ export class AppComponent {
             // Catch android back key for navigation
             this.setupBackKeyNavigation();
 
-            // TODO screen.orientation.lock('portrait');
+            screen.orientation.lock('portrait');
+            
+            // Initialize mandatory services
             this.theme.init();
             await this.language.init();
             await this.notificationsService.init();
@@ -87,6 +91,7 @@ export class AppComponent {
             await this.publicationService.init();
             await this.walletConnect.init();
             await this.jsonRPCService.init();
+            await this.globalHiveService.init();
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();

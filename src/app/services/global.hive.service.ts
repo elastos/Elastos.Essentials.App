@@ -4,11 +4,12 @@ import * as moment from 'moment';
 import { BehaviorSubject, Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -31,7 +32,7 @@ export type VaultLinkStatus = {
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalHiveService {
+export class GlobalHiveService extends GlobalService {
   private vaultLinkStatus: VaultLinkStatus = null;
   private client: HivePlugin.Client;
   private activeVault: HivePlugin.Vault = null;
@@ -46,9 +47,12 @@ export class GlobalHiveService {
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
     private didSessions: GlobalDIDSessionsService
-  ) { }
+  ) {
+    super();
+  }
 
   async init() {
+    GlobalServiceManager.getInstance().registerService(this);
     /* let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
     this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
       Logger.error("GlobalHiveService", "Authentication error:", err);
@@ -67,6 +71,17 @@ export class GlobalHiveService {
     this.activeVault = null;
     this.vaultStatus.next(this.vaultLinkStatus);
     // TODO stop hive
+  }
+
+  async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    if (signedInIdentity) {
+      // New user is signing in: try to get his hive vault status.
+      await this.retrieveVaultLinkStatus();
+    }
+  }
+
+  onUserSignOut(): Promise<void> {
+    return;
   }
 
   private async createHiveClient(): Promise<HivePlugin.Client> {
@@ -174,13 +189,7 @@ export class GlobalHiveService {
   }
 
   /**
-   * Check vault phase:
-   * - Get address vault DID (did document)
-   *    - If no vault address -> full creation =
-   *      - Create vault api + register on DID
-   *    - If vault address:
-   *      - Check if vault is created at this address (get pricing plan?)
-   *    - If not created, call createVault()
+   *
    */
   async retrieveVaultLinkStatus(): Promise<VaultLinkStatus> {
     Logger.log("GlobalHiveService", "Looking for vault link status");
