@@ -421,8 +421,11 @@ export class JsonRPCService {
           return null;
       }
 
+      // Misc api
+      // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
+      // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
+      // const ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
       const ethscgethistoryurl = rpcApiUrl + '/api/?module=account&action=txlist&address=' + address;
-      Logger.warn('wallet', 'getETHSCTransactions:', ethscgethistoryurl)
       try {
           let result = await this.globalJsonRPCService.httpGet(ethscgethistoryurl);
           return result.result as EthTransaction[];

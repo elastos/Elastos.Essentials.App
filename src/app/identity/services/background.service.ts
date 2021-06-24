@@ -77,8 +77,13 @@ export class BackgroundService extends GlobalService {
 
       this.authService.checkPasswordThenExecute(async ()=>{
         Logger.log("Identity", "Synchronization is starting");
-        await this.didService.getActiveDidStore().synchronize(this.authService.getCurrentUserPassword());
-        Logger.log("Identity", "Synchronization ended");
+        try {
+          await this.didService.getActiveDidStore().synchronize(this.authService.getCurrentUserPassword());
+          Logger.log("Identity", "Synchronization ended");
+        }
+        catch (err) {
+          Logger.error("Identity", "Synchronization error:", err);
+        }
 
         this.synchronizeTimeout = setTimeout(() => {
           this.synchronizeActiveDIDAndRepeat();
