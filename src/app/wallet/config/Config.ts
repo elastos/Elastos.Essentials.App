@@ -48,7 +48,10 @@ export class Config {
     public static ETHSC_ADDRESS = "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf";
     public static ETHSC_ADDRESS_MAINNET = "XVbCTM7vqM1qHKsABSFH4xKN1qbp7ijpWf";
     public static ETHSC_ADDRESS_TESTNET = "XWCiyXM1bQyGTawoaYKx9PjRkMUGGocWub";
-    public static ETHDID_ADDRESS = "";
+    public static ETHDID_ADDRESS = "XUgTgCnUEqMUKLFAg3KhGv1nnt9nn8i3wi";
+    public static ETHDID_ADDRESS_MAINNET = "XUgTgCnUEqMUKLFAg3KhGv1nnt9nn8i3wi";
+    // TODO
+    public static ETHDID_ADDRESS_TESTNET = "XUgTgCnUEqMUKLFAg3KhGv1nnt9nn8i3wi";
 
     // Send ELA from ETHSC to mainchain by smartcontract
     public static ETHSC_CONTRACT_ADDRESS = "0xC445f9487bF570fF508eA9Ac320b59730e81e503";

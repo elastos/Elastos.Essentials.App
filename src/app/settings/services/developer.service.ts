@@ -1,10 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ToastController, LoadingController, Platform } from '@ionic/angular';
+import { ToastController, LoadingController, Platform, PopoverController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { SettingsWarningComponent } from '../components/warning/warning.component';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -22,14 +25,19 @@ export class DeveloperService {
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
     private platform: Platform,
+    private popoverCtrl: PopoverController,
     private zone: NgZone,
     private translate: TranslateService,
-    private prefs: GlobalPreferencesService
+    private prefs: GlobalPreferencesService,
+    private globalNav: GlobalNavService,
+    private splashScreen: SplashScreen,
   ) {
     this.platform.ready().then(() => {
         this.getCurrentConfigurations();
       });
   }
+
+  public popover: any = null;
 
   public backgroundServicesEnabled = false;
   public cliAddress: string = '';
@@ -45,6 +53,7 @@ export class DeveloperService {
       code: 'MainNet',
       mainChainRPCApi: 'https://api.elastos.io/ela',
       idChainRPCApi: 'https://api.elastos.io/did',
+      eidRPCApi: 'https://api.elastos.io/eid',
       ethscRPCApi: 'https://api.elastos.io/eth',
       ethscApiMisc: 'https://api.elastos.io/misc',
       ethscOracle: 'https://api.elastos.io/oracle',
@@ -57,6 +66,7 @@ export class DeveloperService {
       code: 'TestNet',
       mainChainRPCApi: 'https://api-testnet.elastos.io/ela',
       idChainRPCApi: 'https://api-testnet.elastos.io/did',
+      eidRPCApi: 'https://api-test.elastos.io/eid',
       ethscRPCApi: 'https://api-testnet.elastos.io/eth',
       ethscApiMisc: 'https://api-testnet.elastos.io/misc',
       ethscOracle: 'https://api-testnet.elastos.io/oracle',
@@ -69,6 +79,7 @@ export class DeveloperService {
       code: 'RegTest',
       mainChainRPCApi: 'http://api.elastos.io:22336',
       idChainRPCApi: 'http://api.elastos.io:22606',
+      eidRPCApi: 'https://api.elastos.io/eid',
       ethscRPCApi: 'http://api.elastos.io:22636',
       ethscApiMisc: 'http://api.elastos.io:22634',
       ethscOracle: 'http://api.elastos.io:22632',
@@ -81,6 +92,7 @@ export class DeveloperService {
       code: 'LrwNet',
       mainChainRPCApi: 'http://crc1rpc.longrunweather.com:18080',
       idChainRPCApi: 'http://did1rpc.longrunweather.com:18080',
+      eidRPCApi: 'https://api.elastos.io/eid',
       ethscRPCApi: '',
       ethscApiMisc: '',
       ethscOracle: '',
@@ -93,6 +105,7 @@ export class DeveloperService {
       code: 'PrvNet',
       mainChainRPCApi: 'http://api.elastos.io:22336',
       idChainRPCApi: 'http://api.elastos.io:22606',
+      eidRPCApi: 'https://api.elastos.io/eid',
       ethscRPCApi: 'http://api.elastos.io:22636',
       ethscApiMisc: 'http://api.elastos.io:22634',
       ethscOracle: 'http://api.elastos.io:22632',
@@ -117,6 +130,7 @@ export class DeveloperService {
     networkCode: string,
     mainchainRPCApi: string,
     idChainRPCApi: string,
+    eidRPCApi: string,
     ethscRPCApi: string,
     ethscApiMisc: string,
     ethscOracle: string,
@@ -127,12 +141,15 @@ export class DeveloperService {
     this.selectedNet = networkCode;
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
+    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eid.rpcapi", eidRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.browserapi", ethscBrowserApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "cr.rpcapi", crRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
+
+    this.showRestartPrompt();
   }
 
   getIndexByNetCode(netCode: string) {
@@ -147,6 +164,7 @@ export class DeveloperService {
             this.networks[index].code,
             this.networks[index].mainChainRPCApi,
             this.networks[index].idChainRPCApi,
+            this.networks[index].eidRPCApi,
             this.networks[index].ethscRPCApi,
             this.networks[index].ethscApiMisc,
             this.networks[index].ethscOracle,
@@ -258,5 +276,31 @@ export class DeveloperService {
     });
 
     return await loader.present();
+  }
+
+  async restartApp() {
+      // navigator["app"].exitApp();
+      this.splashScreen.show();
+      await this.globalNav.navigateHome();
+      window.location.reload();
+  }
+
+  async showRestartPrompt() {
+    this.popover = await this.popoverCtrl.create({
+        mode: 'ios',
+        cssClass: 'wallet-warning-component',
+        component: SettingsWarningComponent,
+        translucent: false
+    });
+
+    this.popover.onWillDismiss().then(async (params) => {
+        this.popover = null;
+
+        if (params && params.data && params.data.confirm) {
+            await this.restartApp();
+        }
+    });
+
+    return await this.popover.present();
   }
 }

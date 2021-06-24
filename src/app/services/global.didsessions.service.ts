@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalStorageService } from './global.storage.service';
 import { Direction, GlobalNavService } from './global.nav.service';
 import { GlobalServiceManager } from './global.service.manager';
 import { GlobalIntentService } from './global.intent.service';
-import { NewIdentity } from '../didsessions/model/newidentity';
+import { GlobalPreferencesService } from './global.preferences.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
+declare let didManager: DIDPlugin.DIDManager;
+
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
   contentType: string;
@@ -47,6 +48,7 @@ export class GlobalDIDSessionsService {
 
   constructor(private storage: GlobalStorageService,
     private globalNavService: GlobalNavService,
+    private prefs: GlobalPreferencesService,
     private globalIntentService: GlobalIntentService) {
   }
 
@@ -141,6 +143,9 @@ export class GlobalDIDSessionsService {
 
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
+    // Set did resolver
+    await this.initDIDResolver();
+
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
 
     await this.saveSignedInIdentityToDisk();
@@ -185,5 +190,18 @@ export class GlobalDIDSessionsService {
 
   public async markActiveIdentityBackedUp(): Promise<void> {
     await this.storage.setSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", true);
+  }
+
+  private async initDIDResolver(): Promise<boolean> {
+    const didresolver: string = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eid.rpcapi");
+    Logger.log('DIDSessionsService', 'didresolver:', didresolver);
+    return new Promise((resolve) => {
+        didManager.setResolverUrl(didresolver, () => {
+            resolve(true);
+        }, (err) => {
+            Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+            resolve(false);
+        });
+    });
   }
 }

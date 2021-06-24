@@ -20,9 +20,9 @@ export class SettingsWarningComponent implements OnInit {
     this.popoverCtrl.dismiss();
   }
 
-  deleteApp() {
+  confirm() {
     this.popoverCtrl.dismiss({
-      deleteApp: true
+      confirm: true
     });
   }
 }

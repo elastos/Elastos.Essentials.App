@@ -35,6 +35,7 @@ export class GlobalPreferencesService {
       "chain.network.configurl": "",
       "mainchain.rpcapi": "https://api.elastos.io/ela",
       "sidechain.id.rpcapi": "https://api.elastos.io/did",
+      "sidechain.eid.rpcapi": "https://api.elastos.io/eid",
       "sidechain.eth.oracle": "https://api.elastos.io/oracle",
       "sidechain.eth.apimisc": "https://api.elastos.io/misc",
       "sidechain.eth.rpcapi": "https://api.elastos.io/eth",

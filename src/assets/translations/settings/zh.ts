@@ -59,11 +59,13 @@ export const zh = {
           'reg-net': 'Regression net',
           'priv-net': 'Private Net',
           'lrw-net': 'LongRunWeather Net',
+          'switch-network-prompt' : '切换网络后需要重启应用',
+          'restart-app': '重启应用',
 
           /********** Wallet Connect Page **********/
           'wallet-connect-request': '应用链接请求',
           'wallet-connect-sessions': '钱包连接会话',
           'wallet-connect-prepare-to-connect': '启动钱包连接'
      }
-    
+
 };

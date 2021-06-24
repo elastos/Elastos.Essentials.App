@@ -116,7 +116,7 @@ export class CurrencyService {
   fetch() {
     // TODO: Get price by token name.
     this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=500').subscribe((res) => {
-      Logger.log('wallet', 'Got CMC response', res);
+      // Logger.log('wallet', 'Got CMC response', res);
       if (res) {
         this.elaStats = res.find((coin) => coin.symbol === 'ELA');
         if (this.elaStats) {

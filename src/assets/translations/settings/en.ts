@@ -59,13 +59,15 @@ export const en = {
         'reg-net': 'Regression net',
         'priv-net': 'Private Net',
         'lrw-net': 'LongRunWeather Net',
+        'switch-network-prompt' : 'Need to restart app after switching network',
+        'restart-app': 'Restart Application',
 
         /********** Wallet Connect / Sessions Page **********/
         'wallet-connect-request': 'App Link Request',
         'wallet-connect-sessions': 'Wallet Connect Sessions',
         'wallet-connect-prepare-to-connect': 'Initiating Wallet Connect'
     }
-    
+
 };
 
 

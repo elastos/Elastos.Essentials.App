@@ -59,6 +59,8 @@ export const fr = {
         'reg-net': 'Réseau de régression',
         'priv-net': 'Réseau privé',
         'lrw-net': 'Réseau LongRunWeather',
+        'switch-network-prompt' : 'Need to restart app after switching network',
+        'restart-app': 'Restart Application',
 
         /********** Wallet Connect Page **********/
         'wallet-connect-request': 'Lien avec une application',
@@ -101,7 +103,7 @@ export const fr = {
         'health': 'Santé',
         'techdemo': "Démo d'Elastos Essentials",
     }
-    
+
 };
 
 
