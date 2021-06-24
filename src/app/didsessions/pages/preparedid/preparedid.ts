@@ -12,6 +12,7 @@ import { sleep } from 'src/app/helpers/sleep.helper';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -50,7 +51,8 @@ export class PrepareDIDPage {
     initialSlide: 0,
     speed: 400,
     init: false,
-    allowTouchMove: false
+    allowTouchMove: false,
+    slidesPerView: 1
   };
   public hidden = true;
 
@@ -68,7 +70,8 @@ export class PrepareDIDPage {
     private platform: Platform,
     private walletService: WalletManager,
     private globalHiveService: GlobalHiveService,
-    private globalPublicationService: GlobalPublicationService
+    private globalPublicationService: GlobalPublicationService,
+    public theme: GlobalThemeService
   ) {
       Logger.log('didsessions', "Entering PrepareDID page");
       const navigation = this.router.getCurrentNavigation();
@@ -79,11 +82,16 @@ export class PrepareDIDPage {
   }
 
   async ionViewWillEnter() {
-    await this.onSlideChanged();
+    // await this.onSlideChanged();
 
-    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
+    if(!this.theme.darkMode) {
+      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+    } else {
+      this.titleBar.setTheme('#121212', TitleBarForegroundMode.DARK);
+    }
+
+    this.titleBar.setTitle(' ');
     this.titleBar.setNavigationMode(null);
-    // Disable the Elastos icon
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
 
     // Dirty hack because on iOS we are currently unable to understand why the
@@ -105,6 +113,7 @@ export class PrepareDIDPage {
       nextSlideIndex = await this.computeNextSlideIndex(nextSlideIndex);
       Logger.log("didsessions", "Next slide index will be:", nextSlideIndex);
       await this.slide.slideTo(nextSlideIndex);
+      this.slideIndex = nextSlideIndex;
 
       switch (nextSlideIndex) {
         case this.PUBLISH_DID_SLIDE_INDEX:
@@ -137,12 +146,23 @@ export class PrepareDIDPage {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
+/* 
+  async getSlideIndex(step: number) {
+    let slideIndex = await this.slide.getActiveIndex();
+    if(step <= slideIndex) {
+      return true;
+    } else {
+      return false;
+    }
+  } */
+
   showSlider() {
     Logger.log('didsessions', "Showing slider");
     this.hidden = false
     void this.slide.getSwiper().then((swiper) => {
       swiper.init();
       void this.slide.slideTo(0);
+      this.slideIndex = 0;
     });
   }
 
@@ -179,9 +199,9 @@ export class PrepareDIDPage {
     else if (currentSlideIndex <= this.SIGN_IN_SLIDE_INDEX && GlobalDIDSessionsService.signedInDIDString === null) {
       return this.SIGN_IN_SLIDE_INDEX;
     }
-    /* TMP HIVE NOT READY FOR 2.0 else if (currentSlideIndex <= this.HIVE_SETUP_SLIDE_INDEX && !await this.isHiveVaultReady()) {
-      return this.HIVE_SETUP_SLIDE_INDEX;
-    }*/
+    // TMP HIVE NOT READY FOR 2.0 else if (currentSlideIndex <= this.HIVE_SETUP_SLIDE_INDEX && !await this.isHiveVaultReady()) {
+    //   return this.HIVE_SETUP_SLIDE_INDEX;
+    // }
     if (currentSlideIndex < this.DEFAULT_WALLET_SLIDE_INDEX && !(await this.defaultWalletExists())) {
       return this.DEFAULT_WALLET_SLIDE_INDEX;
     }

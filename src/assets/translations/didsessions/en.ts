@@ -86,7 +86,7 @@ export const en = {
     'ready': 'Ready!',
     prepare: {
       'publish-title': 'Publishing your identity to the public ledger',
-      'publish-intro': 'This step is mandatory and takes a few seconds, please hold on.',
+      'publish-intro': 'This is mandatory but takes few seconds',
       'sign-in-title': 'Signing in',
       'sign-in-intro': 'Entering Elastos Essentials',
       'hive-title': 'Making some storage space for apps',

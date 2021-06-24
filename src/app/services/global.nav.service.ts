@@ -112,6 +112,7 @@ export class GlobalNavService {
         let didSessionHome = {
             context: App.DID_SESSIONS,
             route: "/didsessions/pickidentity"
+            // route: "/didsessions/preparedid"
         };
         this.navigationHistory = [];
         this.navigationHistory.push(didSessionHome);
