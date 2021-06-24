@@ -44,12 +44,17 @@ export class ETHChainSubWallet extends StandardSubWallet {
         this.loadTxDataFromCache = true;
       }
 
-      // For performance, only return 20 transactions.
-      let newTxList:AllTransactionsHistory = {
-          totalcount: this.txArrayToDisplay.totalcount,
-          txhistory :this.txArrayToDisplay.txhistory.slice(startIndex, startIndex + 20),
+      if (this.txArrayToDisplay) {
+        // For performance, only return 20 transactions.
+        let newTxList:AllTransactionsHistory = {
+            totalcount: this.txArrayToDisplay.totalcount,
+            txhistory :this.txArrayToDisplay.txhistory.slice(startIndex, startIndex + 20),
+        }
+        return newTxList;
       }
-      return newTxList;
+      else {
+        return null;
+      }
     }
 
     public isLoadTxDataFromCache() {

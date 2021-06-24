@@ -415,16 +415,13 @@ export class JsonRPCService {
     }
 
     async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber: number = 0, endBlockNumber: number = 0): Promise<EthTransaction[]> {
-      let apiurltype = this.getApiUrlTypeForMisc(chainID);
+      let apiurltype = this.getApiUrlTypeForBrowser(chainID);
       const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return null;
       }
 
-      // TODO: Don't support 'endBlockNumber', 'begBlockNumber', 'sort'
-      // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address + '&begBlockNumber=' + begBlockNumber
-      // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
-      const ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
+      const ethscgethistoryurl = rpcApiUrl + '/api/?module=account&action=txlist&address=' + address;
       Logger.warn('wallet', 'getETHSCTransactions:', ethscgethistoryurl)
       try {
           let result = await this.globalJsonRPCService.httpGet(ethscgethistoryurl);
@@ -568,6 +565,7 @@ export class JsonRPCService {
       return apiUrlType;
   }
 
+  // TODO: Remove it, Use browser api not misc.
   getApiUrlTypeForMisc(chainID: string) {
       let apiUrlType = ApiUrlType.ETHSC_MISC;
       switch (chainID) {
@@ -582,5 +580,18 @@ export class JsonRPCService {
               break;
       }
       return apiUrlType;
+  }
+
+  getApiUrlTypeForBrowser(chainID: string) {
+    let apiUrlType = ApiUrlType.ETH_BROWSER;
+    switch (chainID) {
+        case StandardCoinName.ETHSC:
+            apiUrlType = ApiUrlType.ETH_BROWSER;
+            break;
+        default:
+            Logger.log("wallet", 'JsonRPCService: Misc can not support ' + chainID);
+            break;
+    }
+    return apiUrlType;
   }
 }

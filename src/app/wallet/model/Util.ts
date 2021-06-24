@@ -222,14 +222,14 @@ export class Util {
     }
 
     public static getWholeBalance(balance: BigNumber): string {
-        if (balance.isNaN()) {
+        if (!balance || balance.isNaN()) {
             return '...';
         }
         return balance.dividedToIntegerBy(1).toString();
     }
 
     public static getDecimalBalance(balance: BigNumber): string {
-        if (balance.isNaN()) {
+        if (!balance || balance.isNaN()) {
             return '';
         }
 
