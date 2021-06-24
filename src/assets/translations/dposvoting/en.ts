@@ -49,7 +49,7 @@ export const en = {
 
         /********** Vote **********/
         'vote-voted': 'VOTES CASTED',
-        'vote-not-voted': 'CAST VOTE',
+        'vote-not-voted': 'CAST VOTES',
         'vote-selected': ' selected nodes',
         'vote-fail': 'There was an error with sending votes...',
         'vote-cancelled': 'Votes were cancelled',
