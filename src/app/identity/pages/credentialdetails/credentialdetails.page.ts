@@ -64,13 +64,13 @@ export class CredentialDetailsPage {
   public credential: VerifiableCredential;
   public issuer: IssuerDisplayEntry;
 
-  public segment: string = "validator";
+  public segment = "validator";
   public credentialId: string = null;
   public appIcon: string;
 
-  public isPublished: boolean = true;
-  public isVisible: boolean = false;
-  public hasCheckedCredentia: boolean = false;
+  public isPublished = true;
+  public isVisible = false;
+  public hasCheckedCredential = false;
 
   private didchangedSubscription: Subscription = null;
   private publicationstatusSubscription: Subscription = null;
@@ -211,7 +211,7 @@ export class CredentialDetailsPage {
     this.isVisible = this.credentialIsVisibleOnChain();
 
     await this.isLocalCredSyncOnChain();
-    this.hasCheckedCredentia = true;
+    this.hasCheckedCredential = true;
   }
 
   async getIssuer() {

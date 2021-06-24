@@ -114,7 +114,7 @@ export class DIDSyncService {
     const modal = await this.modalCtrl.create({
       component: PublishModeComponent,
       componentProps: {},
-      cssClass: !this.theme.darkMode ? "identity-showqrcode-component" : 'identity-showqrcode-component-dark'
+      cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
     });
     void modal.onDidDismiss().then((params: {data: {using: string}}) => {
         if (params && params.data && params.data.using) {
