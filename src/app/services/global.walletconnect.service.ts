@@ -45,7 +45,7 @@ export class GlobalWalletConnectService extends GlobalService {
           let rawUrl: string = receivedIntent.params.url;
           if (this.canHandleUri(rawUrl)) {
             this.zone.run(()=>{
-              this.handleWCURIRequest(rawUrl);
+              void this.handleWCURIRequest(rawUrl);
             });
           }
         }
@@ -55,7 +55,7 @@ export class GlobalWalletConnectService extends GlobalService {
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // Re-activate existing sessions to reconnect to their wallet connect bridges.
-    this.restoreSessions();
+    await this.restoreSessions();
   }
 
   public async onUserSignOut(): Promise<void> {
@@ -414,13 +414,25 @@ export class GlobalWalletConnectService extends GlobalService {
 
     // Reject Session
     if (this.initiatingConnector) {
-      try {
-        this.initiatingConnector.rejectSession({
-          message: reason   // optional
-        });
+      // For some reasons sometimes the website shows a QR code but wallet thinks the connector is connected.
+      // In this case we kill the session and restart.
+      if (this.initiatingConnector.connected) {
+        try {
+          this.initiatingConnector.killSession();
+        }
+        catch (e) {
+          Logger.warn("walletconnect", "Reject session exception (disconnect):", e);
+        }
       }
-      catch (e) {
-        Logger.warn("walletconnect", "Reject session error:", e);
+      else {
+        try {
+          this.initiatingConnector.rejectSession({
+            message: reason   // optional
+          });
+        }
+        catch (e) {
+          Logger.warn("walletconnect", "Reject session exception (reject):", e);
+        }
       }
       this.initiatingConnector = null;
     }

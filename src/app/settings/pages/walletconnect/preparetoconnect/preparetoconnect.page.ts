@@ -61,9 +61,9 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
     this.watchdogTimer = setTimeout(() => {
       this.zone.run(()=>{
         this.suggestToResetSession = true;
-        this.walletConnect.killAllSessions();
+        void this.walletConnect.killAllSessions();
       });
-    }, 15000);
+    }, 10000);
   }
 
   ionViewDidEnter() {

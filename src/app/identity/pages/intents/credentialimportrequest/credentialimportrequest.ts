@@ -67,14 +67,15 @@ export class CredentialImportRequestPage {
   public receivedIntent: CredImportIdentityIntent = null;
   public requestDappIcon: string = null;
   public requestDappName: string = null;
-  public requestDappColor: string = '#565bdb';
+  public requestDappColor = '#565bdb';
 
   public showSpinner = false;
   public popup: HTMLIonPopoverElement = null;
+  public wrongTargetDID = false; // Whether the credential we are trying to import is for us or not.
 
   private credentials: VerifiableCredential[] = []; // Raw material
   displayableCredentials: ImportedCredential[] = []; // Displayable reworked matarial
-  preliminaryChecksCompleted: boolean = false;
+  preliminaryChecksCompleted = false;
 
   constructor(
     private zone: NgZone,
@@ -120,7 +121,7 @@ export class CredentialImportRequestPage {
     let targetDIDString = this.receivedIntent.params.credentials[0].credentialSubject.id;
     let activeDIDString = this.didService.getActiveDid().getDIDString();
     if (targetDIDString != activeDIDString) {
-      await this.popupProvider.ionicAlert("Error", "Sorry, the credential you are trying to import does not belong to this identity.", "Close");
+      this.wrongTargetDID = true;
       return;
     }
 
