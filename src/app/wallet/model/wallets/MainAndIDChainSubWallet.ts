@@ -174,12 +174,19 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
 
         let lockAddres = '';
-        if (sideChainID === StandardCoinName.IDChain) {
+        switch (sideChainID) {
+          case StandardCoinName.IDChain:
             lockAddres = Config.IDCHAIN_ADDRESS;
-        } else if (sideChainID === StandardCoinName.ETHSC) {
+          break;
+          case StandardCoinName.ETHSC:
             lockAddres = Config.ETHSC_ADDRESS;
-        } else {
+          break;
+          case StandardCoinName.ETHDID:
+            lockAddres = Config.ETHDID_ADDRESS;
+          break;
+          default:
             Logger.error('wallet', 'createDepositTransaction not support ', sideChainID);
+            return null;
         }
 
         return this.masterWallet.walletManager.spvBridge.createDepositTransaction(

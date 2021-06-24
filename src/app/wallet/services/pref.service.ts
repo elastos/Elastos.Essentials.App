@@ -39,13 +39,16 @@ export class WalletPrefsService {
 
   private updateConfig(netWork: NetworkType) {
     if (netWork === NetworkType.MainNet) {
+      Config.ETHDID_ADDRESS = Config.ETHDID_ADDRESS_MAINNET;
       Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_MAINNET;
       Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_MAINNET;
     } else if (netWork === NetworkType.TestNet) {
+      Config.ETHDID_ADDRESS = Config.ETHDID_ADDRESS_TESTNET;
       Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_TESTNET;
       Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_TESTNET;
     } else {
       // Use MainNet config for others.
+      Config.ETHDID_ADDRESS = Config.ETHDID_ADDRESS_MAINNET;
       Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_MAINNET;
       Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_MAINNET;
     }

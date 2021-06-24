@@ -85,6 +85,7 @@ export abstract class StandardSubWallet extends SubWallet {
                     case RawTransactionType.WithdrawFromSideChain:
                         switch (transaction.inputs[0]) {
                             case Config.IDCHAIN_ADDRESS:
+                            case Config.ETHDID_ADDRESS:
                                 transactionName = "wallet.coin-dir-from-idchain";
                                 break;
                             case Config.ETHSC_ADDRESS:

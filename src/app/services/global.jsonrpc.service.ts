@@ -77,6 +77,7 @@ export class GlobalJsonRPCService extends GlobalService {
         let preferences = await this.prefs.getPreferences(GlobalDIDSessionsService.signedInDIDString);
         this.mainchainRPCApiUrl = preferences['mainchain.rpcapi'];
         this.IDChainRPCApiUrl = preferences['sidechain.id.rpcapi'];
+        this.EIDChainRPCApiUrl = preferences['sidechain.eid.rpcapi'];
         this.ethscRPCApiUrl = preferences['sidechain.eth.rpcapi'];
         this.ethscOracleRPCApiUrl = preferences['sidechain.eth.oracle'];
         this.ethscMiscApiUrl = preferences['sidechain.eth.apimisc'];
