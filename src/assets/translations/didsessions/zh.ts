@@ -81,19 +81,19 @@ export const zh = {
     'print-title': '请保存好此私钥!',
 
     // Prepare DID
-    'getting-ready': 'Getting ready',
-    'ready': 'Ready!',
+    'getting-ready': '准备',
+    'ready': '准备好啦！',
     prepare: {
-      'publish-title': 'Publishing your identity to the public ledger',
-      'publish-intro': 'This step is mandatory and takes a few seconds, please hold on.',
-      'sign-in-title': 'Signing in',
-      'sign-in-intro': 'Entering Elastos Essentials',
-      'hive-title': 'Making some storage space for apps',
-      'hive-intro': 'A storage space is being created on a random Elastos Hive storage provider. You can move your data somewhere else later.',
-      'wallet-title': 'Creating a default wallet',
-      'wallet-intro': 'A default wallet is created with the same paper key as your DID. You can choose to use it or to delete it.',
-      'done-title': 'All done!',
-      'done-intro': 'Your identity is now fully ready. You can start to use Elastos Essentials.'
+      'publish-title': '将您的身份发布到公共链',
+      'publish-intro': '这一步是强制性的，需要几秒钟，请稍等。',
+      'sign-in-title': '登录中',
+      'sign-in-intro': '进入 Elastos Essentials',
+      'hive-title': '为应用程序腾出一些存储空间',
+      'hive-intro': '正在一个随机的 Elastos Hive 存储提供商上创建存储空间。 您可以稍后将数据移动到其他地方。',
+      'wallet-title': '创建默认钱包',
+      'wallet-intro': '使用与您的 DID 相同的纸质密钥来创建默认钱包。 您可以选择使用它或删除它。',
+      'done-title': '全部完成！',
+      'done-intro': '您的身份现在已经完全准备好了。 您可以开始使用 Elastos Essentials.'
     }
   }
 };

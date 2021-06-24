@@ -94,7 +94,7 @@ export class PickIdentityPage {
 
   async signIn(identityEntry: IdentityEntry) {
     Logger.log('didsessions', "Trying to sign in with DID "+identityEntry.didString);
-    void this.uxService.showLoading("Signing in");
+    void this.uxService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
     await this.identityService.signIn(identityEntry, true);
     void this.uxService.hideLoading();
   }
