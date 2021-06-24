@@ -161,8 +161,8 @@ export class PrepareDIDPage {
     this.hidden = false
     void this.slide.getSwiper().then((swiper) => {
       swiper.init();
-      void this.slide.slideTo(0);
-      this.slideIndex = 0;
+      this.slideIndex = 4;
+      void this.slide.slideTo(this.slideIndex);
     });
   }
 

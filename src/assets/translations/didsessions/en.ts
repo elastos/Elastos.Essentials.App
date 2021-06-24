@@ -86,15 +86,15 @@ export const en = {
     'ready': 'Ready!',
     prepare: {
       'publish-title': 'Publishing your identity to the public ledger',
-      'publish-intro': 'This is mandatory but takes few seconds',
-      'sign-in-title': 'Signing in',
+      'publish-intro': 'This is mandatory but takes a few seconds',
+      'sign-in-title': 'Signing in..',
       'sign-in-intro': 'Entering Elastos Essentials',
-      'hive-title': 'Making some storage space for apps',
+      'hive-title': 'Making storage for your apps',
       'hive-intro': 'A storage space is being created on a random Elastos Hive storage provider. You can move your data somewhere else later.',
       'wallet-title': 'Creating a default wallet',
       'wallet-intro': 'A default wallet is created with the same paper key as your DID. You can choose to use it or to delete it.',
-      'done-title': 'All done!',
-      'done-intro': 'Your identity is now fully ready. You can start to use Elastos Essentials.'
+      'done-title': 'You are all set!',
+      'done-intro': 'Your identity is now fully ready. You can start using Elastos Essentials.'
     }
   }
  };

@@ -1,25 +1,8 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container ion-text-center" [class.dark-container]="theme.darkMode">
-<!--     <ion-row class="slidebar-row">
-      <ion-col size="2.2">
-        <div [class.fillBar]="getSlideIndex(0)"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="getSlideIndex(1)"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="getSlideIndex(2)"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="getSlideIndex(3)"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="getSlideIndex(4)"></div>
-      </ion-col>
-    </ion-row> -->
 
-    <ion-row class="slidebar-row">
+    <ion-row class="slide-bar-row">
       <ion-col size="2.2">
         <div [class.fillBar]="slideIndex >= 0"></div>
       </ion-col>
@@ -45,52 +28,60 @@
     >
       <ion-slide class="ion-text-center">
         <div class="slide-card">
-          <img src="assets/didsessions/onboard/slide1.svg">
+          <img [src]="!theme.darkMode ? 'assets/didsessions/onboard/slide1.svg' : 'assets/didsessions/onboard/dark_mode/slide1.svg'">
           <h1>{{ 'didsessions.prepare.publish-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.publish-intro' | translate }}</p>
         </div>
       </ion-slide>
-  
+
       <ion-slide class="ion-text-center">
-        <h2>{{ 'didsessions.prepare.sign-in-title' | translate }}</h2>
-        <p>{{ 'didsessions.prepare.sign-in-intro' | translate }}</p>
-        <ion-spinner name="crescent" *ngIf="!signInError"></ion-spinner>
-        <div *ngIf="signInError">
-          <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
-          <div class="error">{{signInError}}</div>
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide2.svg">
+          <h1>{{ 'didsessions.prepare.sign-in-title' | translate }}</h1>
+          <p>{{ 'didsessions.prepare.sign-in-intro' | translate }}</p>
+        </div>
+      </ion-slide>
+
+      <ion-slide class="ion-text-center">
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide3.svg">
+          <h1>{{ 'didsessions.prepare.hive-title' | translate }}</h1>
+          <p>{{ 'didsessions.prepare.hive-intro' | translate }}</p>
         </div>
       </ion-slide>
   
       <ion-slide class="ion-text-center">
-        <h2>{{ 'didsessions.prepare.hive-title' | translate }}</h2>
-        <p>{{ 'didsessions.prepare.hive-intro' | translate }}</p>
-        <ion-spinner name="crescent" *ngIf="!hiveError"></ion-spinner>
-        <div *ngIf="hiveError">
-          <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
-          <div class="error">{{hiveError}}</div>
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide4.svg">
+          <h1>{{ 'didsessions.prepare.wallet-title' | translate }}</h1>
+          <p>{{ 'didsessions.prepare.wallet-intro' | translate }}</p>
         </div>
       </ion-slide>
-  
+
       <ion-slide class="ion-text-center">
-        <h2>{{ 'didsessions.prepare.wallet-title' | translate }}</h2>
-        <p>{{ 'didsessions.prepare.wallet-intro' | translate }}</p>
-        <ion-spinner name="crescent"></ion-spinner>
-      </ion-slide>
-  
-      <ion-slide class="ion-text-center">
-        <h2>{{ 'didsessions.prepare.done-title' | translate }}</h2>
-        <p>{{ 'didsessions.prepare.done-intro' | translate }}</p>
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide5.svg">
+          <h1>{{ 'didsessions.prepare.done-title' | translate }}</h1>
+          <p>{{ 'didsessions.prepare.done-intro' | translate }}</p>
+          <ion-button (click)="finalizePreparation()">
+            {{ 'common.continue' | translate }} &nbsp; <ion-icon name="arrow-forward"></ion-icon>
+          </ion-button>
+        </div>
       </ion-slide>
   
     </ion-slides>
 
-    <ion-spinner name="crescent"></ion-spinner>
-  </ion-grid>
-  
+    <ion-row class="slide-circle-row">
+      <ion-col size="12">
+        <ion-spinner></ion-spinner>
+        <span>Please wait</span>
+      </ion-col>
+    </ion-row>
 
-  <div class="footer" *ngIf="slideIndex === ALL_DONE_SLIDE_INDEX">
-    <ion-button (click)="finalizePreparation()">{{ 'common.continue' | translate }}</ion-button>
-  </div>
+<!--     <div class="progress-circle progress-1"><span>1</span></div>   -->
+    
+
+  </ion-grid>
   
 </ion-content>
 
