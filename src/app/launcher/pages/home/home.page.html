@@ -21,7 +21,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="backup-row">
+    <ion-row class="backup-row" *ngIf="identityNeedsBackup">
       <ion-col class="left-col" size="1.75">
         <img src="/assets/launcher/icons/finger-print.svg">
       </ion-col>
