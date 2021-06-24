@@ -71,6 +71,7 @@ export class BackupDIDPage {
   ionViewDidEnter() {
     void this.authService.checkPasswordThenExecute(
       async () => {
+        Logger.log("identity", "Got password, now exporting mnemonic");
         this.name = this.extractName() || "";
         this.mnemonic = await this.didService.activeDidStore.exportMnemonic(
           AuthService.instance.getCurrentUserPassword()
@@ -101,6 +102,7 @@ export class BackupDIDPage {
   }
 
   private async prepareMnemonic() {
+    Logger.log("identity", "Preparing mnemonic");
     this.mnemonicList = this.mnemonic.split(/[\u3000\s]+/).map((word) => {
       return word;
     });
@@ -133,6 +135,8 @@ export class BackupDIDPage {
   }
 
   private createQrCode(): Promise<void> {
+    Logger.log("identity", "Creating QR code");
+
     const options = {
       // Basic
       text: this.mnemonic,

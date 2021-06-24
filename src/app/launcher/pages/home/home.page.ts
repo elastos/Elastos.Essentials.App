@@ -37,7 +37,7 @@ export class HomePage implements OnInit {
 
   private popover: any = null;
   private modal: any = null;
-  private identityNeedsBackup = false;
+  public identityNeedsBackup = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
   private vaultStatusSub: Subscription = null; // Subscription to vault link status event
