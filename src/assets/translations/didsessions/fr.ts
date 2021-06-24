@@ -90,7 +90,6 @@ export const fr = {
       'hive-intro': 'Un espace de stockage est créé sur un fournisseur de stockage Elastos Hive choisi au hasard. Vous pourrez déplacer vos données ailleurs à tout moment plus tard.',
       'wallet-title': 'Création d\'un portefeuille par défaut',
       'wallet-intro': 'Un portefeuille par défaut est créé en utilisant la même clé papier que votre identité. Vous pourrez choisir de l\'utiliser ou de le supprimer plus tard.',
-      'wallet-name': 'Mon portefeuille',
       'done-title': 'C\'est terminé!',
       'done-intro': 'Votre identité est maintenant prête. Vous pouvez commencer à utiliser Elastos Essentials.'
     }

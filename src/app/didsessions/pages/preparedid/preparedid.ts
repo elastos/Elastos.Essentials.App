@@ -2,9 +2,8 @@ import { Component, ViewChild, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TranslateService } from '@ngx-translate/core';
-import { UXService } from '../../services/ux.service';
 import { IdentityService } from '../../services/identity.service';
-import { ModalController, IonSlides, Platform } from '@ionic/angular';
+import { IonSlides, Platform } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -66,9 +65,6 @@ export class PrepareDIDPage {
     public router: Router,
     public translate: TranslateService,
     private identityService: IdentityService,
-    private uxService: UXService,
-    private modalCtrl: ModalController,
-    private zone: NgZone,
     private platform: Platform,
     private walletService: WalletManager,
     private globalHiveService: GlobalHiveService,
@@ -331,12 +327,11 @@ export class PrepareDIDPage {
 
   private async createWalletFromIdentity(): Promise<void> {
     Logger.log("didsessions", "Creating a default wallet with the same mnemonic as the identity");
-    let walletName = this.translate.instant("didsessions.prepare.wallet-name");
     await Promise.all([
       sleep(MIN_SLIDE_SHOW_DURATION_MS),
       this.walletService.createWalletFromNewIdentity(
-        walletName, this.identityService.identityBeingCreated.mnemonic,
-        ''
+        this.identityService.identityBeingCreated.name, this.identityService.identityBeingCreated.mnemonic,
+        this.identityService.identityBeingCreated.mnemonicPassphrase
       )
     ]);
 

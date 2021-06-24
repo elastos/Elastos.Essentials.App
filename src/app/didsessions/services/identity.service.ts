@@ -230,6 +230,7 @@ export class IdentityService {
                 // Master password was created and did store password could be saved
                 // Save the identity entry in the did session plugin
                 let avatar = createdDID.getAvatarCredentialValue();
+                this.identityBeingCreated.name = identityName;
                 this.identityBeingCreated.didStore = didStore;
                 this.identityBeingCreated.did = createdDID;
                 this.identityBeingCreated.didSessionsEntry = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
