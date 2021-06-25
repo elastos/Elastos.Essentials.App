@@ -10,6 +10,7 @@ import { GlobalNavService, Direction } from 'src/app/services/global.nav.service
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Events } from 'src/app/services/events.service';
 import { App } from "src/app/model/app.enum"
+import { GlobalThemeService, AppTheme } from 'src/app/services/global.theme.service';
 
 let selfUxService: UXService = null;
 
@@ -33,7 +34,8 @@ export class UXService {
         private popoverCtrl: PopoverController,
         private events: Events,
         private didSessions: GlobalDIDSessionsService,
-        private loadingCtrl: LoadingController
+        private loadingCtrl: LoadingController,
+        private theme: GlobalThemeService
     ) {
         selfUxService = this;
         UXService.instance = this;
@@ -140,7 +142,7 @@ export class UXService {
       this.options = await this.popoverCtrl.create({
         mode: 'ios',
         component: OptionsComponent,
-        cssClass: 'options-component',
+        cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'dark-options-component',
         componentProps: {
           identityEntry: identityEntry
         },

@@ -8,7 +8,7 @@
         <ion-label [class.selected]="languageService.selectedLanguage === language.code">{{ language.name }}</ion-label>
       </ion-col>
       <ion-col size="2" class="right-col">
-        <ion-icon [ngStyle]="{'color': languageService.selectedLanguage === language.code ? '#732dcf' : '#dddddd' }" name="checkmark"></ion-icon>
+        <ion-icon [class.selected]="languageService.selectedLanguage === language.code" name="checkmark"></ion-icon>
       </ion-col>
     </ion-row>
   </ion-grid>

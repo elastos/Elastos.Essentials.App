@@ -84,12 +84,6 @@ export class PrepareDIDPage {
   async ionViewWillEnter() {
     // await this.onSlideChanged();
 
-    if(!this.theme.darkMode) {
-      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
-    } else {
-      this.titleBar.setTheme('#121212', TitleBarForegroundMode.DARK);
-    }
-
     this.titleBar.setTitle(' ');
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
@@ -166,12 +160,12 @@ export class PrepareDIDPage {
     });
   }
 
-  public async onSlideChanged() {
+ /*  public async onSlideChanged() {
     this.slideIndex = await this.slide.getActiveIndex();
     this.slideIndex !== this.ALL_DONE_SLIDE_INDEX ?
       this.titleBar.setTitle(this.translate.instant('didsessions.getting-ready')) :
       this.titleBar.setTitle(this.translate.instant('didsessions.ready'));
-  }
+  } */
 
   nextSlide() {
     void this.slide.slideNext();

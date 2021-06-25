@@ -3,7 +3,7 @@
 .container {
   height: calc(100% - (50px));
   background: #F5F5FD;
-  padding: 20px;
+  padding: 0 20px 20px;
 
   .slide-bar-row {
     display: flex;
@@ -106,6 +106,18 @@
 
           ion-icon {
             font-size: 15px;
+          }
+        }
+
+        .error-box {
+          width: 100%;
+
+          span {
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #f04141;
+            display: block;
           }
         }
       }

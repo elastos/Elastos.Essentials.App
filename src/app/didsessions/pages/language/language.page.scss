@@ -31,11 +31,7 @@
         font-size: 14px;
         font-weight: 500;
         letter-spacing: -0.33px;
-      }
-
-      .selected {
-        color: #732dcf;
-        font-weight: 600;
+        color: #dddddd;
       }
     }
 
@@ -47,6 +43,28 @@
       ion-icon {
         height: 20px;
         width: 20px;
+        color: #dddddd;
+      }
+    }
+
+    .selected {
+      color: #732dcf;
+      font-weight: 600;
+    }
+  }
+}
+
+.dark-container {
+  .item-row {
+    .left-col {
+      .selected {
+        color: #C073FC;
+      }
+    }
+
+    .right-col {
+      .selected {
+        color: #C073FC;
       }
     }
   }

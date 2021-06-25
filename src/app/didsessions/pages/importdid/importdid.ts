@@ -87,7 +87,6 @@ export class ImportDIDPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('didsessions.import-my-did'));
-        this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
         this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });

@@ -32,7 +32,6 @@ export class LanguagePage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(' ');
-    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setNavigationMode(null);
     this.checkForIdentities();

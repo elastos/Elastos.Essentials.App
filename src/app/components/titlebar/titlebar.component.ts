@@ -310,12 +310,12 @@ export class TitleBarComponent {
   public setTitleBarTheme(theme: AppTheme) {
     if (theme === AppTheme.LIGHT) {
       document.body.classList.remove("dark");
-      this.theme.backgroundColor = '#f8f8ff';
+      this.theme.backgroundColor = '#F5F5FD';
       this.theme.color = '#000000'
       this.foregroundMode = TitleBarForegroundMode.DARK;
     } else {
       document.body.classList.add("dark");
-      this.theme.backgroundColor = '#000000';
+      this.theme.backgroundColor = '#121212';
       this.theme.color = '#ffffff';
       this.foregroundMode = TitleBarForegroundMode.LIGHT;
     }

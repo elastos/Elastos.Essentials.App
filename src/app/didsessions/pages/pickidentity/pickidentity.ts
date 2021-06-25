@@ -48,8 +48,13 @@ export class PickIdentityPage {
   }
 
   ionViewWillEnter() {
+    if(!this.theme.darkMode) {
+      this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
+    } else {
+      this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
+    }
+
     this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
-    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });

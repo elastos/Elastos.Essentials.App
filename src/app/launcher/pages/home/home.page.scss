@@ -13,18 +13,10 @@ ion-content {
 
   .backup-row {
     padding: 10px 10px 10px 10px;
-    border-top: 4px solid #444;
-    border-bottom: 4px solid #444;
-    background: #b60000;
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: white;
-
-    .title {
-      font-weight: bold;
-      font-size: 16px;
-    }
   }
 
   .id-row {

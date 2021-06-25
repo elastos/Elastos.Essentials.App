@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="prefix__HOMESCREEN_elastOS_LOGO_WHITE" width="70.095" height="68.923" data-name="HOMESCREEN elastOS LOGO WHITE" viewBox="0 0 70.095 68.923">
+    <defs>
+        <style>
+            .prefix__cls-1{fill:#ffffff}
+        </style>
+    </defs>
+    <g id="prefix__Layer_2" data-name="Layer 2">
+        <g id="prefix__Group_102" data-name="Group 102">
+            <path id="prefix__Path_638" d="M2891.631 1417.657a33.01 33.01 0 0 1-12.594-12.35 36.131 36.131 0 0 1 0-35.243 33.03 33.03 0 0 1 12.594-12.349 37.781 37.781 0 0 1 35.731 0 33.049 33.049 0 0 1 12.594 12.349 36.131 36.131 0 0 1 0 35.243 33.029 33.029 0 0 1-12.594 12.35 37.783 37.783 0 0 1-35.731 0zm34.706-1.611a31.21 31.21 0 0 0 11.91-11.715 34.06 34.06 0 0 0 0-33.29 31.21 31.21 0 0 0-11.91-11.715 35.512 35.512 0 0 0-33.68 0 31.186 31.186 0 0 0-11.91 11.715 34.057 34.057 0 0 0 0 33.29 31.186 31.186 0 0 0 11.91 11.715 35.512 35.512 0 0 0 33.68 0z" class="prefix__cls-1" data-name="Path 638" transform="translate(-2874.449 -1353.225)"/>
+        </g>
+    </g>
+    <g id="prefix__Layer_12" data-name="Layer 12" transform="translate(21.361 24.041)">
+        <g id="prefix__Group_103" data-name="Group 103">
+            <path id="prefix__Path_639" d="M3060.334 1684.626l7.155-4.131 7.155-4.156-7.155-4.131-7.155 4.131-7.155-4.131-7.155 4.131 7.155 4.156z" class="prefix__cls-1" data-name="Path 639" transform="translate(-3046.024 -1660.996)"/>
+            <path id="prefix__Path_640" d="M3060.334 1565.417l7.155-4.131 7.155-4.156-7.155-4.131-7.155 4.131-7.155-4.131-7.155 4.131 7.155 4.156z" class="prefix__cls-1" data-name="Path 640" transform="translate(-3046.024 -1553)"/>
+        </g>
+    </g>
+</svg>

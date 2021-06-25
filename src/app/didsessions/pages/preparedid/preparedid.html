@@ -24,13 +24,16 @@
       #slide
       [options]="slideOpts"
       [class.hidden]="hidden"
-      (ionSlideWillChange)="onSlideChanged()"
     >
       <ion-slide class="ion-text-center">
         <div class="slide-card">
           <img [src]="!theme.darkMode ? 'assets/didsessions/onboard/slide1.svg' : 'assets/didsessions/onboard/dark_mode/slide1.svg'">
           <h1>{{ 'didsessions.prepare.publish-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.publish-intro' | translate }}</p>
+          <div class="error-box" *ngIf="signInError">
+            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <span class="error">{{ signInError }}</span>
+          </div>
         </div>
       </ion-slide>
 
@@ -39,6 +42,10 @@
           <img src="assets/didsessions/onboard/slide2.svg">
           <h1>{{ 'didsessions.prepare.sign-in-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.sign-in-intro' | translate }}</p>
+          <div class="error-box" *ngIf="signInError">
+            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <span class="error">{{ signInError }}</span>
+          </div>
         </div>
       </ion-slide>
 
@@ -47,6 +54,10 @@
           <img src="assets/didsessions/onboard/slide3.svg">
           <h1>{{ 'didsessions.prepare.hive-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.hive-intro' | translate }}</p>
+          <div class="error-box" *ngIf="signInError">
+            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <span class="error">{{ signInError }}</span>
+          </div>
         </div>
       </ion-slide>
   
@@ -55,6 +66,10 @@
           <img src="assets/didsessions/onboard/slide4.svg">
           <h1>{{ 'didsessions.prepare.wallet-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.wallet-intro' | translate }}</p>
+          <div class="error-box" *ngIf="signInError">
+            <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
+            <span class="error">{{ signInError }}</span>
+          </div>
         </div>
       </ion-slide>
 
@@ -71,7 +86,7 @@
   
     </ion-slides>
 
-    <ion-row class="slide-circle-row">
+    <ion-row *ngIf="slideIndex < 4" class="slide-circle-row">
       <ion-col size="12">
         <ion-spinner></ion-spinner>
         <span>Please wait</span>

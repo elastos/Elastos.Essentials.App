@@ -12,7 +12,7 @@
 }
 
 .dark-options-component {
-  --background: #2e2f4e;
+  --background: #212021;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
@@ -79,7 +79,6 @@
 
 .didsessions-warning-component {
   --min-height: 302px;
-  --background: #ffffff;
 
   animation: didsessionsWarningAnimate;
   animation-duration: 300ms;
