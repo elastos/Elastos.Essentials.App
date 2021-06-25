@@ -148,6 +148,8 @@ ion-grid {
                     font-size: 13px;
                     font-weight: 500;
                     word-break: break-all;
+                    color: #000000;
+                    opacity: 0.7;
                 }
             }
         }
@@ -156,8 +158,8 @@ ion-grid {
 
 .dark-container {
     ion-card {
-        box-shadow: 0 3px 15px 0 #151626;
-        background-color: #2e2f4e;
+        background-color: #212021;
+        box-shadow: none;
 
         ion-card-title {
             color: #ffffff;
@@ -165,13 +167,14 @@ ion-grid {
     }
 
     .item-row {
-        box-shadow: 0 3px 15px 0 #151626;
-        background-color: #2e2f4e;
+        background-color: #212021;
+        box-shadow: none;
 
         .details-container {
             .details-row {
                 h2 {
-                    color: #cfd1f7;
+                    color: #ACACAC;
+                    opacity: 1;
                 }
             }
         }

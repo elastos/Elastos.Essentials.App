@@ -36,7 +36,6 @@
         font-weight: 400;
         letter-spacing: -0.34px;
         text-align: left;
-        color: #8888b0;
         --padding-end: 15px;
       }
 
@@ -75,7 +74,7 @@
       font-size: 12px;
       font-weight: 500;
       margin-bottom: 1px;
-      color: #8888b0;
+      color: #372153;
     }
 
     h3 {
@@ -92,13 +91,19 @@
 
 .darkContainer {
   .scan-row {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2b2c49;
+    background-color: #212021;
+    box-shadow: none;
 
     ion-col {
       ion-input {
-        background-color: #2b2c49;
+        background-color: #212021;
       }
+    }
+  }
+
+  .coin-row {
+    h2 {
+      color: #9D9D9D;
     }
   }
 }

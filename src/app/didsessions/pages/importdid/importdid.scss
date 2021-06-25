@@ -15,7 +15,8 @@
 
     ion-col {
       height: 40px;
-      background: #f0f1ff;
+      background: #ffffff;
+      box-shadow: 0 3px 15px 0 #ededf0;
       border-radius: 8px;
       margin-bottom: 20px;
       display: flex;
@@ -29,9 +30,9 @@
         left: -11px;
         width: 22px;
         height: 22px;
-        background: #f0f1ff;
+        background: #ffffff;
         border-radius: 100%;
-        border: 2px solid #f8f8ff;
+        border: 2px solid #F5F5FD;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -69,7 +70,8 @@
     padding: 30px 15px;
 
     ion-textarea {
-      background: #f0f1ff;
+      background: #ffffff;
+      box-shadow: 0 3px 15px 0 #ededf0;
       border-radius: 8px;
       font-size: 13px;
       text-transform: lowercase;
@@ -99,6 +101,7 @@
   .mnemonic-row {
     ion-col {
       background: #212021;
+      box-shadow: none;
 
       .mnemonic-index {
         background: #212021;
@@ -118,6 +121,7 @@
   .input-row {
     ion-textarea {
       background: #212021;
+      box-shadow: none;
     }
   }
 }

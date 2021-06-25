@@ -38,7 +38,7 @@ ion-list {
   .section-row {
     margin: 10px 0;
     padding: 10px 0 15px;
-    border-bottom: 1px solid #dfdff4;
+    border-bottom: 1px solid #EAEAEA;
 
     ion-label {
       font-size: 14px;
@@ -83,8 +83,8 @@ ion-list {
 
 .dark-container {
   ion-card {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2e2f4e;
+    background-color: #212021;
+    box-shadow: none;
 
     ion-card-title {
       color: #ffffff;
@@ -97,10 +97,10 @@ ion-list {
 
   ion-list {
     .section-row {
-      border-bottom: 1px solid #2e2f4e;
+      border-bottom: 1px solid #464646;
 
       ion-label {
-        color: #8889b1;
+        color: #9D9D9D;
       }
     }
 

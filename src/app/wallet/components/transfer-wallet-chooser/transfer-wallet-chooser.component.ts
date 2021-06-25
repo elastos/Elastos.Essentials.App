@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WalletManager } from '../../services/wallet.service';
 import { UiService } from '../../services/ui.service';
 import { StandardCoinName, CoinType } from '../../model/Coin';
@@ -8,6 +8,7 @@ import { MasterWallet } from '../../model/wallets/MasterWallet';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { ModalController, NavParams } from '@ionic/angular';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 export type WalletChooserComponentOptions = {
     sourceWallet: MasterWallet; // Master wallet from which funds will be transfered
@@ -21,6 +22,8 @@ export type WalletChooserComponentOptions = {
   styleUrls: ['./transfer-wallet-chooser.component.scss'],
 })
 export class TransferWalletChooserComponent implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
   public CoinType = CoinType;
   public options: WalletChooserComponentOptions = null;
   public walletsToShowInList: MasterWallet[];

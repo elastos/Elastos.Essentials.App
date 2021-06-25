@@ -3,9 +3,9 @@ ion-row {
 }
 
 ion-input {
-    height: 47px;
+    height: 48px;
     border-radius: 8px;
-    font-size: 15px;
+    font-size: 13px;
 }
 
 ion-button {
@@ -158,8 +158,8 @@ ion-footer {
     border-radius: 17px;
     padding: 7.5px 10px 7.5px 0;
     margin-bottom: 7.5px;
-    box-shadow: 0 3px 15px 0 #ededf0;
     background-color: #ffffff;
+    box-shadow: 0 3px 15px 0 #ededf0;
 
     .left-col {
         display: flex;
@@ -230,11 +230,12 @@ ion-footer {
     }
 
     .right-col {
-        justify-content: flex-start;
+        justify-content: center;
         align-items: flex-end;
 
         p {
-            color: #8888b0;
+            color: #000000;
+            opacity: 0.7;
         }
     }
 
@@ -258,14 +259,21 @@ ion-footer {
 }
 
 .dark-subwallet-row {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2b2c49;
+    background-color: #212021;
+    box-shadow: none;
 
     .left-col {
         .icon-container {
             .ela-icon {
-                border: 2px solid #2b2c49;
+                border: 2px solid #212021;
             }
+        }
+    }
+
+    .right-col {
+        p {
+            color: #ACACAC;
+            opacity: 1;
         }
     }
 }
@@ -278,8 +286,8 @@ ion-footer {
     border-radius: 17px;
     padding: 7.5px 5px;
     margin-bottom: 7.5px;
-    box-shadow: 0 3px 15px 0 #ededf0;
     background-color: #ffffff;
+    box-shadow: 0 3px 15px 0 #ededf0;
 
     h1, p {
         margin: 0;
@@ -327,8 +335,8 @@ ion-footer {
 }
 
 .dark-setting-row {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2b2c49;
+    background-color: #212021;
+    box-shadow: none;
 }
 
 /************************************
@@ -341,10 +349,10 @@ ion-footer {
     align-items: space-between;
 
     ion-col {
-        height: 35px;
+        height: 40px;
         background: #42117d;
         border-radius: 8px;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         display: flex;
         justify-content: center;
         align-items: center;

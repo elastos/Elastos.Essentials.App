@@ -176,35 +176,35 @@
 
 /** Simple class to apply theme background **/
 .lightmode {
-    background: #f8f8ff;
+    background: #F5F5FD;
 
   /*   ion-refresher {
-        background: #f8f8ff;
-        color: #191a2f;
+        background: #F5F5FD;
+        color: #121212;
     
         ion-refresher-content {
-            background: #f8f8ff;
-            color: #191a2f;
+            background: #F5F5FD;
+            color: #121212;
     
             .refresher-pulling {
-                background: #f8f8ff;
-                color: #191a2f;
+                background: #F5F5FD;
+                color: #121212;
     
                 .refresher-pulling-icon {
-                    background: #f8f8ff;
-                    border: #f8f8ff;
-                    color: #191a2f;
+                    background: #F5F5FD;
+                    border: #F5F5FD;
+                    color: #121212;
                 }
             }
     
             .refresher-refreshing {
-                background: #f8f8ff;
-                color: #191a2f;
+                background: #F5F5FD;
+                color: #121212;
                 
                 .refresher-refreshing-icon {
-                    background: #f8f8ff;
-                    border: #f8f8ff;
-                    color: #191a2f;
+                    background: #F5F5FD;
+                    border: #F5F5FD;
+                    color: #121212;
                 }
             }
         }
@@ -212,31 +212,31 @@
 }
 
 .darkmode {
-    background: #191a2f;
+    background: #121212;
 
    /*  ion-refresher {
-        background: #191a2f;
+        background: #121212;
         color: white;
         
         ion-refresher-content {
-            background: #191a2f;
+            background: #121212;
             color: white;
     
             .refresher-pulling {
-                background: #191a2f;
+                background: #121212;
                 color: white;
     
                 .refresher-pulling-icon {
-                    background: #191a2f;
-                    border: #191a2f;
+                    background: #121212;
+                    border: #121212;
                     color: white;
                 }
         }
     
             .refresher-refreshing {
                 .refresher-refreshing-icon {
-                    background: #191a2f;
-                    border: #191a2f;
+                    background: #121212;
+                    border: #121212;
                     color: white;
                 }
             }

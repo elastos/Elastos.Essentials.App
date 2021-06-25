@@ -7,7 +7,6 @@
   ion-input {
     background: #ffffff;
     box-shadow: 0 3px 15px 0 #ededf0;
-    font-size: 15px;
     --padding-start: 12px;
   }
 
@@ -18,7 +17,7 @@
 
 .darkContainer {
   ion-input {
-    background: #2b2c49;
-    box-shadow: 0 3px 15px 0 #151626;
+    background-color: #212021;
+    box-shadow: none;
   }
 }

@@ -95,59 +95,6 @@
 
 <!--     <div class="progress-circle progress-1"><span>1</span></div>   -->
     
-
   </ion-grid>
   
 </ion-content>
-
-<!-- <ion-content>
-  <app-titlebar></app-titlebar>
-  <ion-slides
-    #slide
-    [options]="slideOpts"
-    [class.hidden]="hidden"
-    (ionSlideWillChange)="onSlideChanged()"
-    class="ion-text-center">
-    <ion-slide class="ion-text-center">
-      <h2>{{ 'didsessions.prepare.publish-title' | translate }}</h2>
-      <p>{{ 'didsessions.prepare.publish-intro' | translate }}</p>
-      <ion-spinner name="crescent" *ngIf="!publishError"></ion-spinner>
-      <div *ngIf="publishError">
-        <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
-        <div class="error">{{publishError}}</div>
-      </div>
-    </ion-slide>
-    <ion-slide class="ion-text-center">
-      <h2>{{ 'didsessions.prepare.sign-in-title' | translate }}</h2>
-      <p>{{ 'didsessions.prepare.sign-in-intro' | translate }}</p>
-      <ion-spinner name="crescent" *ngIf="!signInError"></ion-spinner>
-      <div *ngIf="signInError">
-        <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
-        <div class="error">{{signInError}}</div>
-      </div>
-    </ion-slide>
-    <ion-slide class="ion-text-center">
-      <h2>{{ 'didsessions.prepare.hive-title' | translate }}</h2>
-      <p>{{ 'didsessions.prepare.hive-intro' | translate }}</p>
-      <ion-spinner name="crescent" *ngIf="!hiveError"></ion-spinner>
-      <div *ngIf="hiveError">
-        <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
-        <div class="error">{{hiveError}}</div>
-      </div>
-    </ion-slide>
-    <ion-slide class="ion-text-center">
-      <h2>{{ 'didsessions.prepare.wallet-title' | translate }}</h2>
-      <p>{{ 'didsessions.prepare.wallet-intro' | translate }}</p>
-      <ion-spinner name="crescent"></ion-spinner>
-    </ion-slide>
-    <ion-slide class="ion-text-center">
-      <h2>{{ 'didsessions.prepare.done-title' | translate }}</h2>
-      <p>{{ 'didsessions.prepare.done-intro' | translate }}</p>
-    </ion-slide>
-  </ion-slides>
-
-  <div class="footer" *ngIf="slideIndex === ALL_DONE_SLIDE_INDEX">
-    <ion-button (click)="finalizePreparation()">{{ 'common.continue' | translate }}</ion-button>
-  </div>
-</ion-content> -->
-

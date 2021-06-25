@@ -78,7 +78,8 @@
                 }
 
                 p {
-                    color: #8888b0;
+                    color: #000000;
+                    opacity: 0.7;
                     text-align: right;
                 }
             }
@@ -222,7 +223,8 @@
                     padding-top: 4px;
                     font-size: 12px;
                     font-weight: 400;
-                    color: #8888b0;
+                    color: #000000;
+                    opacity: 0.7;
                 }
             }
 
@@ -358,20 +360,26 @@
     // Recharge Container
     .recharge-container {
         .item-row {
-            box-shadow: 0 3px 15px 0 #151626;
-            background-color: #2b2c49;
+            background-color: #212021;
+            box-shadow: none;
 
             .arrow-down {
-                background-color: #2b2c49;
+                background-color: #212021;
+            }
+
+            .right-col {
+                p {
+                    color: #9D9D9D;
+                }
             }
         }
 
         .input-row {
             ion-col {
-                background-color: #2b2c49;
+                background-color: #212021;
 
                 ion-input {
-                    background-color: #2b2c49;
+                    background-color: #212021;
                 }
             }
         }
@@ -379,12 +387,17 @@
     // Send Container
     .send-container {
         .item-row {
-            box-shadow: 0 3px 15px 0 #151626;
-            background-color: #2b2c49;
+            background-color: #212021;
+            box-shadow: none;
 
             ion-col {
                 ion-input {
-                    background-color: #2b2c49;
+                    background-color: #212021;
+                }
+
+                p {
+                    color: #ACACAC;
+                    opacity: 1;
                 }
             }
         }
@@ -597,12 +610,12 @@
 /********************** Pay Intent Dark Container **********************/
 .dark-pay-container {
     h4 {
-        color: #8888b0;
+        color: #9D9D9D;
     }
 
     .item-row {
-        box-shadow: 0 3px 15px 0 #151626;
-        background-color: #2b2c49;
+        background-color: #212021;
+        box-shadow: none;
 
         .amount-input {
             color: #ffffff;
@@ -610,7 +623,7 @@
 
         .left-col {
             ion-input {
-                background-color: #2b2c49;
+                background-color: #212021;
             }
         }
     }

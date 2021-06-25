@@ -1,4 +1,39 @@
-<ion-grid class="container" [class.dark-container]="theme.darkMode">
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <ion-row class="main-title-row">
+            <ion-col size="12">
+                <p>Personal wallets with {{ options.chainId }}</p>
+            </ion-col>
+        </ion-row>
+        <ion-row
+            *ngFor="let masterWallet of walletsToShowInList"
+            class="subwallet-row ripple ion-activatable"
+            [class.dark-subwallet-row]="theme.darkMode"
+            (click)="walletSelected(masterWallet)"
+        >
+            <ion-col size="2" class="left-col">
+                <img [src]="uiService.getSubWalletIcon(options.sourceWallet.getSubWallet(options.chainId))">
+            </ion-col>
+            <ion-col size="5" class="middle-col">
+                <h1>{{ masterWallet.name }}</h1>
+            </ion-col>
+            <ion-col size="5" class="right-col">
+                <h1 *ngIf="masterWallet.getSubWallet(chainId)">{{ uiService.getFixedBalance(masterWallet.getSubWallet(chainId).getDisplayBalance()) }}</h1>
+                <h1 *ngIf="!masterWallet.getSubWallet(chainId)">0.000</h1>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+
+<ion-footer class="ion-no-border" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
+    <ion-button (click)="cancelOperation()">
+        <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+    </ion-button>
+</ion-footer>
+
+<!-- <ion-grid class="container" [class.dark-container]="theme.darkMode">
     <ion-row class="main-title-row">
         <ion-col size="12">
             <p>Personal wallets with {{ options.chainId }}</p>
@@ -29,3 +64,4 @@
         <ion-ripple-effect></ion-ripple-effect>
     </div>
 </ion-grid>
+ -->

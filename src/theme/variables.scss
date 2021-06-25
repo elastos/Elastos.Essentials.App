@@ -109,26 +109,26 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   --ion-text-color-rgb: 255,255,255;
 
   ion-refresher {
-    background: #f8f8ff;
+    background: #F5F5FD;
 
     ion-refresher-content {
-      background: #f8f8ff;
+      background: #F5F5FD;
 
       .refresher-pulling {
-        background: #f8f8ff;
+        background: #F5F5FD;
 
         .refresher-pulling-icon {
-          background: #f8f8ff;
-          color: #353650;
+          background: #F5F5FD;
+          color: #121212; 
         }
       }
 
       .refresher-refreshing {
-        background: #f8f8ff;
+        background: #F5F5FD;
         
         .refresher-refreshing-icon {
-          background: #f8f8ff;
-          color: #353650;
+          background: #F5F5FD;
+          color: #121212; 
         }
       }
     }
