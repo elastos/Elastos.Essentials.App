@@ -4,19 +4,19 @@ import { NodesService } from './nodes.service';
 import { App } from "src/app/model/app.enum"
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DPoSVotingInitService {
-  constructor(
-    private nodesService: NodesService,
-    private globalNav: GlobalNavService
-  ) {}
+    constructor(
+        private nodesService: NodesService,
+        private globalNav: GlobalNavService
+    ) { }
 
-  public async init(): Promise<void> {
-  }
+    public async init(): Promise<void> {
+    }
 
-  public async start() {
-    this.nodesService.init();
-    this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/vote');
-  }
+    public async start() {
+        this.nodesService.init();
+        this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/vote');
+    }
 }

@@ -690,9 +690,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createRetrieveDepositTransaction(masterWalletId: string, chainId: string, input: string, fee: string, memo: string): Promise<string> {
+    createRetrieveDepositTransaction(masterWalletId: string, chainId: string, input: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createRetrieveDepositTransaction([masterWalletId, chainId, input, fee, memo],
+            walletManager.createRetrieveDepositTransaction([masterWalletId, chainId, input, amount, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });
@@ -780,9 +780,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createRetrieveCRDepositTransaction(masterWalletId: string, chainId: string, input: string, fee: string, memo: string): Promise<string> {
+    createRetrieveCRDepositTransaction(masterWalletId: string, chainId: string, input: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createRetrieveCRDepositTransaction([masterWalletId, chainId, input, fee, memo],
+            walletManager.createRetrieveCRDepositTransaction([masterWalletId, chainId, input, amount, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });

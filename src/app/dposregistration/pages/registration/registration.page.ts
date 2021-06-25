@@ -15,6 +15,8 @@ import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
+import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
+import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
 
 
 type DPoSRegistrationInfo = {
@@ -46,13 +48,18 @@ export class DPosRegistrationPage implements OnInit {
     public dposInfo: DPoSRegistrationInfo = {
         nickname: "test",
         location: 86,
-        url:'http://test.com',
+        url: 'http://test.com',
         state: "Unregistered",
     };
-    public state:string = "";
+    public state: string = "";
     public chainId = StandardCoinName.ELA;
+    public rpcApiUrl: string;
 
     public ownerPublicKey: string;
+
+    public blockHeight = 0;
+    public cancelHeight = 0;
+    public available = 0;
 
     balance: BigNumber; // ELA
 
@@ -70,6 +77,7 @@ export class DPosRegistrationPage implements OnInit {
         private authService: AuthService,
         public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
+        public walletRPCService: WalletJsonRPCService,
     ) {
 
     }
@@ -84,7 +92,6 @@ export class DPosRegistrationPage implements OnInit {
         this.masterWalletId = this.voteService.masterWalletId;
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
 
-
         // this.crmemberInfo = null;
         const param = {
             method: 'listproducers',
@@ -93,9 +100,9 @@ export class DPosRegistrationPage implements OnInit {
             },
         };
 
-        let rpcApiUrl = this.jsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
-        Logger.log(App.DPOS_REGISTRATION, "rpcApiUrl:", rpcApiUrl);
-        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
+        this.rpcApiUrl = this.jsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
+        Logger.log(App.DPOS_REGISTRATION, "rpcApiUrl:", this.rpcApiUrl);
+        const result = await this.jsonRPCService.httpPost(this.rpcApiUrl, param);
         this.ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
         if (!Util.isEmptyObject(result.producers)) {
             Logger.log(App.DPOS_REGISTRATION, "dposlist:", result.producers);
@@ -122,24 +129,41 @@ export class DPosRegistrationPage implements OnInit {
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
             case 'Active':
-            this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
+                this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 break;
 
             // Inactive indicates the producer has been inactivated for a period which shall
             // be punished and will be activated later.
             case 'Inactive':
-            this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
+                this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 break;
             // Canceled indicates the producer was canceled.
             case 'Canceled':
                 this.titleBar.setTitle(this.translate.instant('dposregistration.retrieve'));
+
+                this.blockHeight = await this.walletRPCService.getBlockCount(StandardCoinName.ELA);
+                this.cancelHeight = this.dposInfo.cancelheight;
+                const param = {
+                    method: 'getdepositcoin',
+                    params: {
+                        ownerpublickey: this.ownerPublicKey,
+                    },
+                };
+                const result = await this.jsonRPCService.httpPost(this.rpcApiUrl, param);
+                Logger.log(App.DPOS_REGISTRATION, "getdepositcoin:", result);
+                if (!Util.isEmptyObject(result.available)) {
+                    this.available = result.available;
+                    Logger.log(App.DPOS_REGISTRATION, "available:", this.available);
+                }
+
                 break;
             // Illegal indicates the producer was found to break the consensus.
-            case 'Canceled':
-                this.titleBar.setTitle(this.translate.instant('dposregistration.retrieve'));
+            case 'Illegal':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.illegal'));
                 break;
             // Returned indicates the producer has canceled and deposit returned.
             case 'Returned':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.return'));
                 break;
         }
     }
@@ -154,7 +178,6 @@ export class DPosRegistrationPage implements OnInit {
             this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             return;
         }
-
 
         const payPassword = await this.authService.getWalletPassword(this.masterWalletId);
         if (payPassword === null) {// cancelled by user
@@ -178,7 +201,7 @@ export class DPosRegistrationPage implements OnInit {
         }
 
         const payload = await this.walletManager.spvBridge.generateCancelProducerPayload(this.masterWalletId, StandardCoinName.ELA,
-                this.dposInfo.ownerpublickey, payPassword);
+            this.dposInfo.ownerpublickey, payPassword);
 
         const rawTx = await this.voteService.sourceSubwallet.createCancelProducerTransaction(payload, "");
 
@@ -204,10 +227,13 @@ export class DPosRegistrationPage implements OnInit {
     async retrieve() {
         Logger.log('wallet', 'Calling retrieve()', this.dposInfo);
 
-        // let depositAddress = await this.walletManager.spvBridge.getDepositAddress(this.ownerPublicKey);
-        //Utxo
+        let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
+        let utxoArray = await this.walletRPCService.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
+        Logger.log(App.DPOS_REGISTRATION, "utxoArray:", utxoArray);
 
-        const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction("");
+        let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
+
+        const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
 
         await this.voteService.signAndSendRawTransaction(rawTx);
     }

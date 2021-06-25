@@ -1,29 +1,23 @@
 <ion-content>
     <app-titlebar></app-titlebar>
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
-        <!-- <ion-row  class="label-container">
-            <ion-label>Status: {{ dposInfo.state }}</ion-label>
-        </ion-row> -->
+        <ion-row class="label-container">
+            <ion-label>State: {{ state }}</ion-label>
+        </ion-row>
 
         <div *ngIf="state != 'ReturnDeposit'">
             <!-- Name -->
             <p>{{ 'dposregistration.node-name' | translate }}</p>
             <ion-row>
-                <ion-input
-                    type="text"
-                    name="name" ngDefaultControl
-                    [placeholder]="'dposregistration.node-name' | translate"
-                    [(ngModel)]="dposInfo.nickname">
+                <ion-input type="text" name="name" ngDefaultControl
+                    [placeholder]="'dposregistration.node-name' | translate" [(ngModel)]="dposInfo.nickname">
                 </ion-input>
             </ion-row>
 
             <p>{{ 'dposregistration.node-publickey' | translate }}</p>
             <ion-row>
-                <ion-input
-                    type="text"
-                    name="publickey" ngDefaultControl
-                    [placeholder]="'dposregistration.node-publickey' | translate"
-                    [(ngModel)]="dposInfo.nodepublickey">
+                <ion-input type="text" name="publickey" ngDefaultControl
+                    [placeholder]="'dposregistration.node-publickey' | translate" [(ngModel)]="dposInfo.nodepublickey">
                 </ion-input>
             </ion-row>
 
@@ -34,7 +28,8 @@
                 </ion-col>
                 <ion-col class="input" size="5.5">
                     <ion-select [(ngModel)]="dposInfo.location">
-                        <ion-select-option *ngFor="let code of areaList" [value]="code">{{ 'crcouncilvoting.' + code | translate }}</ion-select-option>
+                        <ion-select-option *ngFor="let code of areaList" [value]="code">{{ 'crcouncilvoting.' + code |
+                            translate }}</ion-select-option>
                     </ion-select>
                 </ion-col>
             </ion-row>
@@ -51,28 +46,28 @@
 
             <p>{{ 'dposregistration.node-url' | translate }}</p>
             <ion-row>
-                <ion-input
-                    type="text"
-                    name="url" ngDefaultControl
-                    [placeholder]="'dposregistration.node-url' | translate"
-                    [(ngModel)]="dposInfo.url">
+                <ion-input type="text" name="url" ngDefaultControl
+                    [placeholder]="'dposregistration.node-url' | translate" [(ngModel)]="dposInfo.url">
                 </ion-input>
             </ion-row>
         </div>
 
         <ion-row>
-            <ion-button  *ngIf="dposInfo.state == 'Unregistered'" color="success" (click)="register()">
+            <ion-button *ngIf="dposInfo.state == 'Unregistered'" color="success" (click)="register()">
                 {{ 'dposregistration.register' | translate }}
             </ion-button>
-            <ion-button  *ngIf="dposInfo.state == 'Active'" color="success" (click)="unregister()">
+            <ion-button *ngIf="dposInfo.state == 'Active'" color="success" (click)="unregister()">
                 {{ 'dposregistration.unregister' | translate }}
             </ion-button>
-            <ion-button  *ngIf="dposInfo.state == 'Active'" color="success" (click)="update()">
+            <ion-button *ngIf="dposInfo.state == 'Active'" color="success" (click)="update()">
                 {{ 'dposregistration.update' | translate }}
             </ion-button>
-            <ion-button  *ngIf="dposInfo.state == 'Canceled'" color="success" (click)="retrieve()">
-                {{ 'dposregistration.retrieve' | translate }}
-            </ion-button>
+            <ng-container *ngIf="dposInfo.state == 'Canceled'">
+                <ion-row><ion-label>BlockHeight - CancelHeight: {{ blockHeight - cancelHeight }}</ion-label></ion-row>
+                <ion-button color="success" [attr.disabled]="available == 0" (click)="retrieve()">
+                    {{ 'dposregistration.retrieve' | translate }}
+                </ion-button>
+            </ng-container>
             <!-- <ion-button  *ngIf="state == 'ReturnDeposit'" color="success" (click)="">
                 {{ 'dposregistration.back' | translate }}
             </ion-button> -->

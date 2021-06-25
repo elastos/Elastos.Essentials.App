@@ -159,9 +159,9 @@ export class CRCouncilRegistrationPage implements OnInit {
         // let depositAddress = await this.walletManager.spvBridge.getDepositAddress(this.ownerPublicKey);
         //Utxo
 
-        const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction("");
+        // const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction("");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        // await this.voteService.signAndSendRawTransaction(rawTx);
     }
 
 }
