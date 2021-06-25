@@ -99,10 +99,10 @@ export abstract class StandardSubWallet extends SubWallet {
                 break;
             case TransactionDirection.SENT:
                 transactionName = "wallet.coin-op-sent-token";
-
                 if (transaction.txtype === RawTransactionType.TransferCrossChainAsset) {
                     switch (transaction.outputs[0]) {
                         case Config.IDCHAIN_ADDRESS:
+                        case Config.ETHDID_ADDRESS:
                             transactionName = "wallet.coin-dir-to-idchain";
                             break;
                         case Config.ETHSC_ADDRESS:
