@@ -233,9 +233,6 @@ export class MyProfilePage {
   ionViewDidEnter() {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
-
-    // TMP DEBUG
-    //this.profileService.publishDIDDocumentReal();
   }
 
   ionViewWillLeave() {

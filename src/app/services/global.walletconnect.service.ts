@@ -162,7 +162,7 @@ export class GlobalWalletConnectService extends GlobalService {
         throw error;
       }
 
-      this.handleCallRequest(connector, payload);
+      void this.handleCallRequest(connector, payload);
     });
 
     connector.on("disconnect", (error, payload) => {
@@ -172,9 +172,11 @@ export class GlobalWalletConnectService extends GlobalService {
         throw error;
       }
 
+      this.native.genericToast("Wallet connect session disconnected");
+
       this.initiatingConnector = null;
       this.connectors.delete(connector.key);
-      this.deleteSession(connector.session);
+      void this.deleteSession(connector.session);
     });
   }
 

@@ -82,7 +82,7 @@ export class AppComponent {
             this.setupBackKeyNavigation();
 
             screen.orientation.lock('portrait');
-            
+
             // Initialize mandatory services
             this.theme.init();
             await this.language.init();
@@ -95,6 +95,9 @@ export class AppComponent {
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();
+
+            // TMP TEST
+            //await this.publicationService.publishDIDOnAssist("", {}, "", true);
 
             Logger.log("Global", "All awaited init services have been initialized");
 

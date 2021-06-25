@@ -1,16 +1,17 @@
 <ion-content>
-  <app-titlebar></app-titlebar>
   <ion-grid class="ion-text-center" [class.dark-process-container]="theme.darkMode">
     <ion-row>
       <ion-col size="12">
         <ion-label>
           <h1>{{ 'identity.publishing.publish-did' | translate }}</h1>
+          <br/>
           <h2>Your identity is being published online, please wait a few seconds.</h2>
         </ion-label>
+        <br/><br/>
         <ion-spinner *ngIf="publishing"></ion-spinner>
 
         <div class="success-row" [class.darkContainer]="theme.darkMode" *ngIf="publicationSuccessful">
-          <lottie-player src="../../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 100px; height: 100px;" autoplay></lottie-player>
+          <lottie-player src="../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 80px; height: 80px;" autoplay></lottie-player>
         </div>
 
         <div *ngIf="publicationFailed">
@@ -21,7 +22,7 @@
   </ion-grid>
 
   <div class="footer">
-    <ion-button color="tertiary" (click)="returnHome()" *ngIf="publicationFailed">
+    <ion-button color="tertiary" (click)="exitComponent()" *ngIf="publicationFailed">
       {{ 'common.close' | translate }}
     </ion-button>
   </div>

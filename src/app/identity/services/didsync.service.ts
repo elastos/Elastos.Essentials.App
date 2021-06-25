@@ -18,6 +18,7 @@ import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { PublishModeComponent } from "../components/publishmode/publishmode.component";
 import { AppTheme, GlobalThemeService } from "src/app/services/global.theme.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
+import { GlobalPublicationService } from "src/app/services/global.publication.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -43,6 +44,7 @@ export class DIDSyncService {
     private globalNav: GlobalNavService,
     private authService: AuthService,
     private theme: GlobalThemeService,
+    private globalPublicationService: GlobalPublicationService,
     private globalIntentService: GlobalIntentService
   ) {
     DIDSyncService.instance = this;
@@ -172,16 +174,9 @@ export class DIDSyncService {
     }
   }
 
-  private publishDIDTransactionWithAssist(payload: string, memo: string) {
+  private async publishDIDTransactionWithAssist(payload: string, memo: string) {
     // Open the "fast did publishing" screen.
-    this.zone.run(() => {
-      void this.globalNav.navigateTo("identity", "/identity/publishing", {
-        queryParams: {
-          payload: JSON.parse(payload),
-          memo
-        }
-      });
-    });
+    await this.globalPublicationService.publishDIDOnAssist(this.didService.getActiveDid().getDIDString(), JSON.parse(payload), memo, true);
   }
 
   private onDIDDocumentPublishResponse(result: DIDDocumentPublishEvent) {

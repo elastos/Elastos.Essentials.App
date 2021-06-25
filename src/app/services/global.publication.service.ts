@@ -5,6 +5,9 @@ import { GlobalStorageService } from './global.storage.service';
 import { DIDStore } from '../identity/model/didstore.model';
 import { Logger } from '../logger';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { AssistPublishingComponent } from '../components/assist-publishing/assist-publishing.component';
+import { ModalController } from '@ionic/angular';
+import { GlobalThemeService } from './global.theme.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -79,13 +82,19 @@ type AssistTransactionStatusResponse = AssistBaseResponse & {
   providedIn: 'root'
 })
 export class GlobalPublicationService {
+    public static instance: GlobalPublicationService = null;
+
     private persistentInfo: PersistentInfo = null;
     public publicationStatus: Subject<PublicationStatus> = null;
 
     constructor(
         private storage: GlobalStorageService,
-        private http: HttpClient
-    ) {}
+        private http: HttpClient,
+        private modalCtrl: ModalController,
+        private theme: GlobalThemeService
+    ) {
+        GlobalPublicationService.instance = this;
+    }
 
     public async init(): Promise<void> {
         this.persistentInfo = await this.loadPersistentInfo();
@@ -107,11 +116,15 @@ export class GlobalPublicationService {
      *
      * DOC FOR ASSIST API: https://github.com/tuum-tech/assist-restapi-backend#verify
      */
-    public async publishDIDOnAssist(didString: string, payloadObject: any, memo: string): Promise<void> {
+    public async publishDIDOnAssist(didString: string, payloadObject: any, memo: string, showBlockingLoader = false): Promise<void> {
         Logger.log("publicationservice", "Requesting identity publication to Assist");
 
         if (typeof payloadObject === "string")
             throw new Error("Payload must be a JSON object, not a stringified JSON");
+
+        if (showBlockingLoader) {
+            await this.displayAssistPublicationLoader();
+        }
 
         this.persistentInfo.did.didString = didString;
         this.persistentInfo.did.publicationStatus = DIDPublicationStatus.NO_ON_GOING_PUBLICATION;
@@ -162,6 +175,24 @@ export class GlobalPublicationService {
             await this.savePersistentInfo(this.persistentInfo);
             this.emitPublicationStatusChangeFromPersistentInfo();
         }
+    }
+
+    /**
+     * Shows a blocking modal that shows the publication progress on assist.
+     */
+    private async displayAssistPublicationLoader(): Promise<void> {
+        const modal = await this.modalCtrl.create({
+            component: AssistPublishingComponent,
+            componentProps: {},
+            backdropDismiss: false, // Not closeable
+            cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
+        });
+
+        void modal.onDidDismiss().then((params) => {
+            //
+        });
+
+        void modal.present();
     }
 
      /**
