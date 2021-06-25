@@ -83,7 +83,7 @@ export class CoinNFTDetailsPage implements OnInit {
     ionViewDidLeave() {
     }
 
-    async init() {
+    init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             console.log("NAVSTATE", navigation.extras.state)
@@ -98,6 +98,8 @@ export class CoinNFTDetailsPage implements OnInit {
             // Retrieve the NFT asset
             let assetID = navigation.extras.state.assetID;
             this.asset = this.nft.getAssetById(assetID);
+
+            Logger.log("wallet", "Initialization complete for NFT details", this.masterWallet, this.nft, this.asset);
         }
     }
 

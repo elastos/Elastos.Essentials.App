@@ -65,10 +65,10 @@ export class CoinNFTHomePage implements OnInit {
     public transactionsLoaded = false;
 
     // Total transactions today
-    public todaysTransactions: number = 0;
-    private MaxCount: number = 0;
-    private pageNo: number = 0;
-    private start: number = 0;
+    public todaysTransactions = 0;
+    private MaxCount = 0;
+    private pageNo = 0;
+    private start = 0;
 
     // Helpers
     public Util = Util;
@@ -95,12 +95,11 @@ export class CoinNFTHomePage implements OnInit {
         private storage: LocalStorage,
         private zone: NgZone
     ) {
-        this.init();
+        void this.init();
     }
 
     ionViewWillEnter() {
         //this.startUpdateInterval();
-
         this.titleBar.setTitle("NFT Overview");
     }
 
@@ -114,6 +113,8 @@ export class CoinNFTHomePage implements OnInit {
     async init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
+            Logger.log("wallet", "Initializing NFT home with navigation params:", navigation.extras.state);
+
             // Retrieve the master wallet
             let masterWalletId = navigation.extras.state.masterWalletId;
             this.masterWallet = this.walletManager.getMasterWallet(masterWalletId);
@@ -122,7 +123,7 @@ export class CoinNFTHomePage implements OnInit {
             let nftContractAddress = navigation.extras.state.contractAddress;
             this.nft = this.masterWallet.getNFTByAddress(nftContractAddress);
 
-            this.initData();
+            await this.initData();
         }
     }
 
@@ -130,6 +131,11 @@ export class CoinNFTHomePage implements OnInit {
     }
 
     async initData() {
+        if (!this.nft) {
+            Logger.warn("wallet", "No NFT. This screen was maybe open with an unknown NFT contract address / not added to the wallet");
+            return;
+        }
+
         this.pageNo = 0;
         this.start = 0;
         this.MaxCount = 0;
@@ -137,13 +143,13 @@ export class CoinNFTHomePage implements OnInit {
         this.todaysTransactions = 0;
         // TODO this.getAllTx();
 
-        this.refreshAssets();
+        await this.refreshAssets();
     }
 
     startUpdateInterval() {
       if (this.updateInterval === null) {
         this.updateInterval = setInterval(() => {
-          this.initData();
+          void this.initData();
         }, 30000);// 30s
       }
     }

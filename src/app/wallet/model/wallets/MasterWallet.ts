@@ -119,6 +119,8 @@ export class MasterWallet {
                 }
             }
         }
+
+        Logger.log("wallet", "Populated master wallet:", this);
     }
 
     public getDisplayBalance(): BigNumber {

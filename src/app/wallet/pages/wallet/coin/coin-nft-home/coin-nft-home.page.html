@@ -1,7 +1,7 @@
 <ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+    <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="nft">
         <ion-row class="main-title-row">
             <ion-col size="12">
                 <h1>NFT Overview</h1>

@@ -101,7 +101,7 @@
                     <h1>Collectibles</h1>
                 </ion-col>
             </ion-row>
-            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let nft of masterWallet.getNFTs()" (click)="goNFTHome(nft)">
+            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let nft of masterWallet.getNFTs()" (click)="goNFTHome(masterWallet, nft)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">
                         <img src="assets/wallet/coins/eth-purple.svg">
