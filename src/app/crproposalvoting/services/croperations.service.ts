@@ -35,7 +35,6 @@ export class CROperationsService {
 
     constructor(
         private popup: PopupService,
-        private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
         private voteService: VoteService,
     ) {}

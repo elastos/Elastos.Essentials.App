@@ -8,7 +8,6 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { NetworkType } from 'src/app/model/networktype';
 import { Subscription } from 'rxjs';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -60,13 +59,6 @@ export class CandidatesService {
     };
 
     async init() {
-        // this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference) => {
-        //     if (preference.key === "chain.network.type") {
-        //         // this.activeNetwork = preference.value;
-        //         await this.setupUrl();
-        //         this.ininData();
-        //     }
-        // });
         await this.setupUrl();
         this.ininData();
     }
@@ -119,7 +111,7 @@ export class CandidatesService {
             }
         }, (err) => {
             Logger.error('crcouncil', 'fetchCandidates error', err);
-            // this.alertErr('crcouncilvoting.cr-council-no-available');
+            this.alertErr('crcouncilvoting.cr-council-no-available');
         });
     }
 
