@@ -9,7 +9,6 @@ import { VoteService } from 'src/app/vote/services/vote.service';
 export class DPoSRegistrationInitService {
   constructor(
     public voteService: VoteService,
-    private globalNav: GlobalNavService
   ) {}
 
   public async init(): Promise<void> {

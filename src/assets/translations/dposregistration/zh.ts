@@ -7,6 +7,8 @@ export const zh = {
         'unregister': '注销',
         'update': '更新',
         'retrieve': '取款',
+        'illegal': 'DPoS节点非法',
+        'return': '注销成功',
         'node-name': '请输入节点名称(必填)',
         'node-publickey': '请输入节点公钥(必填)',
         'node-area': '请选择国家/地区',

@@ -346,7 +346,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     //dpos registration transaction functions
     //
     public async createRegisterProducerTransaction(payload: string, amount: number, memo: string = ""): Promise<string> {
-        let utxo = await this.getUtxo(20000);
+        let utxo = await this.getUtxo(amount);
 
         return this.masterWallet.walletManager.spvBridge.createRegisterProducerTransaction(
             this.masterWallet.id,
@@ -385,13 +385,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
-    public async createRetrieveDepositTransaction(memo: string = ""): Promise<string> {
-        let utxo = await this.getUtxo(20000);
-
+    public async createRetrieveDepositTransaction(utxo: UtxoForSDK[], amount: number, memo: string = ""): Promise<string> {
         return this.masterWallet.walletManager.spvBridge.createRetrieveDepositTransaction(
             this.masterWallet.id,
             this.id,
             JSON.stringify(utxo),
+            this.accMul(amount, Config.SELA).toString(),
             '10000',
             memo
         );
@@ -401,7 +400,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     //CR registration transaction functions
     //
     public async createRegisterCRTransaction(payload: string, amount: number, memo: string = ""): Promise<string> {
-        let utxo = await this.getUtxo(20000);
+        let utxo = await this.getUtxo(amount);
 
         return this.masterWallet.walletManager.spvBridge.createRegisterCRTransaction(
             this.masterWallet.id,
@@ -440,13 +439,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
-    public async createRetrieveCRDepositTransaction(memo: string = ""): Promise<string> {
+    public async createRetrieveCRDepositTransaction(amount: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
 
         return this.masterWallet.walletManager.spvBridge.createRetrieveCRDepositTransaction(
             this.masterWallet.id,
             this.id,
             JSON.stringify(utxo),
+            amount,
             '10000',
             memo
         );
@@ -518,6 +518,23 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                     Logger.log('wallet', 'Get enought utxo for :', amountSELA);
                     break;
                 }
+            }
+        }
+        return utxoArrayForSDK;
+    }
+
+    public async getUtxoForSDK(utxoArray: Utxo[] = null): Promise<UtxoForSDK[]> {
+        let utxoArrayForSDK = [];
+        if (utxoArray) {
+            for (let i = 0, len = utxoArray.length; i < len; i++) {
+                let utxoAmountSELA = this.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
+                let utxoForSDK: UtxoForSDK = {
+                    Address: utxoArray[i].address,
+                    Amount: utxoAmountSELA.toString(),
+                    Index: utxoArray[i].vout,
+                    TxHash: utxoArray[i].txid
+                }
+                utxoArrayForSDK.push(utxoForSDK);
             }
         }
 

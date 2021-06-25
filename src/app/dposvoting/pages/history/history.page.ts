@@ -11,36 +11,36 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { App } from 'src/app/model/app.enum';
 
 @Component({
-  selector: 'app-history',
-  templateUrl: './history.page.html',
-  styleUrls: ['./history.page.scss'],
+    selector: 'app-history',
+    templateUrl: './history.page.html',
+    styleUrls: ['./history.page.scss'],
 })
 export class HistoryPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
+    @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public _votes: Vote[] = [];
+    public _votes: Vote[] = [];
 
-  constructor(
-    public nodesService: NodesService,
-    public translate: TranslateService,
-    private globalNav: GlobalNavService,
-    public theme: GlobalThemeService
-  ) { }
+    constructor(
+        public nodesService: NodesService,
+        public translate: TranslateService,
+        private globalNav: GlobalNavService,
+        public theme: GlobalThemeService
+    ) { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
-  ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-    this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-    this.titleBar.setNavigationMode(null);
-  }
+    ionViewWillEnter() {
+        this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
+        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        this.titleBar.setNavigationMode(null);
+    }
 
-  showVoteDetail(vote:Vote) {
-    this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/history/'+ vote.tx);
-  }
+    showVoteDetail(vote: Vote) {
+        this.globalNav.navigateTo(App.DPOS_VOTING, '/dposvoting/menu/history/' + vote.tx);
+    }
 
-  modDate(date) {
-    return moment(date).format("MMM Do YYYY, h:mm:ss a");
-  }
+    modDate(date) {
+        return moment(date).format("MMM Do YYYY, h:mm:ss a");
+    }
 }
