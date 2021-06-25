@@ -216,7 +216,7 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-      let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
+      let result = await this.jsonRPCService.eth_getTransactionByHash(StandardCoinName.ETHSC, txid);
       return result;
     }
 

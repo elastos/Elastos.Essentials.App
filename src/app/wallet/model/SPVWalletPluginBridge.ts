@@ -7,6 +7,7 @@ import { AllTransactions, AllTransactionsHistory } from './Transaction';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Events } from 'src/app/services/events.service';
+import { WalletAccountType } from './WalletAccount';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -100,6 +101,15 @@ export enum VoteType {
     CRCImpeachment = "CRCImpeachment",
     CRCProposal = "CRCProposal"
 }
+
+export type MasterWalletBasicInfo = {
+    HasPassPhrase: boolean,
+    M: number,
+    N: number,
+    Readonly: boolean,
+    SingleAddress: boolean,
+    Type: WalletAccountType,
+};
 
 /** details:
 *  [{
@@ -204,7 +214,7 @@ export class SPVWalletPluginBridge {
         phrasePassword: string,
         payPassword: string,
         singleAddress: boolean
-    ): Promise<any> {
+    ): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject) => {
             walletManager.createMasterWallet(
                 [masterWalletId, mnemonic, phrasePassword, payPassword, singleAddress],
@@ -217,7 +227,7 @@ export class SPVWalletPluginBridge {
         masterWalletId: string,
         publicKeys: string,
         m: number
-    ): Promise<any> {
+    ): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject) => {
             walletManager.createMultiSignMasterWallet(
                 [masterWalletId, publicKeys, m, Util.getTimestamp()],
@@ -232,7 +242,7 @@ export class SPVWalletPluginBridge {
         payPassword: string,
         publicKeys: string,
         m: number
-    ): Promise<any> {
+    ): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject) => {
             walletManager.createMultiSignMasterWalletWithPrivKey(
                 [masterWalletId, privKey, payPassword, publicKeys, m, Util.getTimestamp()],
@@ -248,7 +258,7 @@ export class SPVWalletPluginBridge {
         payPassword: string,
         coSignersJson: string,
         requiredSignCount: string
-    ): Promise<any> {
+    ): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject) => {
             walletManager.createMultiSignMasterWalletWithMnemonic(
                 [masterWalletId, mnemonic, phrasePassword, payPassword, coSignersJson, requiredSignCount],
@@ -262,7 +272,7 @@ export class SPVWalletPluginBridge {
         keystoreContent: string,
         backupPassword: string,
         payPassword: string
-    ): Promise<any> {
+    ): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject) => {
             walletManager.importWalletWithKeystore(
                 [masterWalletId, keystoreContent, backupPassword, payPassword],
@@ -277,7 +287,7 @@ export class SPVWalletPluginBridge {
         phrasePassword: string,
         payPassword,
         singleAddress: boolean
-    ): Promise<any> {
+    ): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject) => {
             walletManager.importWalletWithMnemonic(
                 [masterWalletId, mnemonic, phrasePassword, payPassword, singleAddress],
@@ -312,7 +322,7 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    getMasterWalletBasicInfo(masterWalletId: string): Promise<any> {
+    getMasterWalletBasicInfo(masterWalletId: string): Promise<MasterWalletBasicInfo> {
         return new Promise((resolve, reject)=>{
             walletManager.getMasterWalletBasicInfo([masterWalletId],
                 (ret) => { resolve(ret); },
