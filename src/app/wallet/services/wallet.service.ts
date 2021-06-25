@@ -30,7 +30,7 @@ import { CoinID, StandardCoinName } from '../model/Coin';
 import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
 import { SerializedSubWallet } from '../model/wallets/SubWallet';
 import { CoinService } from './coin.service';
-import { JsonRPCService } from './jsonrpc.service';
+import { WalletJsonRPCService } from './jsonrpc.service';
 import { PopupProvider } from './popup.service';
 import { Native } from './native.service';
 import { LocalStorage } from './storage.service';
@@ -96,7 +96,7 @@ export class WalletManager {
         private erc721Service: ERC721Service,
         private authService: AuthService,
         public popupProvider: PopupProvider,
-        public jsonRPCService: JsonRPCService,
+        public jsonRPCService: WalletJsonRPCService,
         private prefs: GlobalPreferencesService,
         private didSessions: GlobalDIDSessionsService,
     ) {

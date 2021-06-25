@@ -2,7 +2,7 @@
 import { CRProposalStatus } from './cyber-republic/CRProposalStatus';
 import { VoteType, VoteContent, Candidates } from './SPVWalletPluginBridge';
 import { Logger } from 'src/app/logger';
-import { JsonRPCService } from '../services/jsonrpc.service';
+import { WalletJsonRPCService } from '../services/jsonrpc.service';
 
 type InvalidCRCCandidate = string;
 type InvalidDelegateCandidate = string;
@@ -35,7 +35,7 @@ export type InvalidCandidateForVote = {
  * vote with previous vote types. Otherwise, the published transaction will be invalid, if we pass invalid candidates.
  */
 export class InvalidVoteCandidatesHelper {
-    constructor(private jsonRPCService: JsonRPCService) {}
+    constructor(private jsonRPCService: WalletJsonRPCService) {}
 
     public async removeInvalidCandidates(votingContent:VoteContent[], oldVotedContent:VoteContent[]): Promise<VoteContent[]> {
         let newVoteContents: VoteContent[] = [];

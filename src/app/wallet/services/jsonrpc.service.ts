@@ -10,18 +10,10 @@ import { ProducersSearchResponse } from 'src/app/dposvoting/model/nodes.model';
 import { CRCouncilSearchResponse } from '../model/cyber-republic/CRCouncilSearchResult';
 import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 
-
-type JSONRPCResponse = {
-    error: string;
-    id: string;
-    jsonrpc: string;
-    result: string;
-};
-
 @Injectable({
     providedIn: 'root'
 })
-export class JsonRPCService {
+export class WalletJsonRPCService {
     static RETRY_TIMES = 3;
 
     constructor(private globalJsonRPCService: GlobalJsonRPCService) {
@@ -63,7 +55,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
+        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
         return balanceOfSELA;
     }
 
@@ -102,7 +94,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
+        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
 
         if (transactionsArray === null) {
           return [];
@@ -139,7 +131,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
+        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
 
         // Logger.log('wallet', 'getrawtransaction:', result)
         return result;
@@ -171,7 +163,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
+        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
 
         // Logger.log('wallet', 'getAllUtxoByAddress:', utxoArray)
         return utxoArray;
@@ -201,7 +193,7 @@ export class JsonRPCService {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < JsonRPCService.RETRY_TIMES);
+        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
 
         Logger.log('wallet', 'sendrawtransaction:', txid)
         return txid;
@@ -562,7 +554,7 @@ export class JsonRPCService {
               apiUrlType = ApiUrlType.EID_RPC;
               break;
           default:
-              Logger.log("wallet", 'JsonRPCService: RPC can not support ' + chainID);
+              Logger.log("wallet", 'WalletJsonRPCService: RPC can not support ' + chainID);
               break;
       }
       return apiUrlType;
@@ -579,7 +571,7 @@ export class JsonRPCService {
               apiUrlType = ApiUrlType.EID_MISC;
               break;
           default:
-              Logger.log("wallet", 'JsonRPCService: Misc can not support ' + chainID);
+              Logger.log("wallet", 'WalletJsonRPCService: Misc can not support ' + chainID);
               break;
       }
       return apiUrlType;
@@ -592,7 +584,7 @@ export class JsonRPCService {
             apiUrlType = ApiUrlType.ETH_BROWSER;
             break;
         default:
-            Logger.log("wallet", 'JsonRPCService: Misc can not support ' + chainID);
+            Logger.log("wallet", 'WalletJsonRPCService: Misc can not support ' + chainID);
             break;
     }
     return apiUrlType;

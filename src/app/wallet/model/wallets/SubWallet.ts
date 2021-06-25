@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Events } from 'src/app/services/events.service';
-import { JsonRPCService } from '../../services/jsonrpc.service';
+import { WalletJsonRPCService } from '../../services/jsonrpc.service';
 
 /**
  * Result of calls to signAndSendRawTransaction().
@@ -58,7 +58,7 @@ export abstract class SubWallet {
     public timestampRPC: number = 0; // Time at which the "get balance" RPC API was last called
 
     private events: Events;
-    public jsonRPCService: JsonRPCService = null;
+    public jsonRPCService: WalletJsonRPCService = null;
 
     constructor(protected masterWallet: MasterWallet, id: CoinID, public type: CoinType) {
         this.id = id;

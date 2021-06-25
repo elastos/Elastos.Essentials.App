@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Config } from '../../../../config/Config';
-import { JsonRPCService } from '../../../../services/jsonrpc.service';
+import { WalletJsonRPCService } from '../../../../services/jsonrpc.service';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
 import { WalletManager } from '../../../../services/wallet.service';
@@ -76,7 +76,7 @@ export class CoinTxInfoPage implements OnInit {
         public native: Native,
         private coinService: CoinService,
         private erc20CoinService: ERC20CoinService,
-        public jsonRPCService: JsonRPCService,
+        public jsonRPCService: WalletJsonRPCService,
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {
