@@ -54,7 +54,7 @@ export const fr = {
         "activate-hive-vault": "Activer le stockage Hive",
         "pull-down-to-refresh": "Faire glisser l'écran pour rafraîchir",
         "hive-not-configured-title": "Stockage Hiv enon configuré",
-        "hive-not-configured-text": "Votre espace de stockage Hive n\'est pas configuré. Voulez-vous le configurer maintenant?",
+        "hive-not-configured-text": "Votre espace de stockage Hive n'est pas configuré. Voulez-vous le configurer maintenant?",
         "hive-not-configured-not-now": "Pas maintenant",
         "hive-not-configured-configure": "Configurer",
 
@@ -244,7 +244,7 @@ export const fr = {
         /***********************
         * Export Mnemonic Page *
         ************************/
-    'text-export-mnemonic': 'Exporter le mnémonique',
+        'text-export-mnemonic': 'Exporter le mnémonique',
 
         /***********************
         * ERC20 Details Page *
@@ -397,7 +397,7 @@ export const fr = {
         "mnemonic-verify-fail": "Le mnémonique est incorrect, veuillez le saisir à nouveau.",
         "mnemonic-input-passphrase": "Mot de passe associé au mnémonique",
         "mnemonic-reinput-passphrase": "Saisir le mot de passe à nouveau",
-        "help:create-password": "Il s\'agit d\'un mot de passe optionnel qui augmente la sécurité du mnémonique. Considérez-le comme un 13e mot du mnémonique. Notez bien que ce mot de passe ne pas pas être retrouvé si vous l\'oubliez. Saisir un mauvais mot de passe de mnémonique dans l\'avenir lorsque vous importerez votre portefeuille ne génèrera pas d\'erreur mais créera une adresse de portefeuille différente, et vous ne verrez pas vos fonds.",
+        "help:create-password": "Il s'agit d'un mot de passe optionnel qui augmente la sécurité du mnémonique. Considérez-le comme un 13e mot du mnémonique. Notez bien que ce mot de passe ne pas pas être retrouvé si vous l\'oubliez. Saisir un mauvais mot de passe de mnémonique dans l\'avenir lorsque vous importerez votre portefeuille ne génèrera pas d\'erreur mais créera une adresse de portefeuille différente, et vous ne verrez pas vos fonds.",
         "help:import-password": "Le mot de passe du mnémonique est un mot de votre choix qui est fortement associé à votre mnémonique. Ne tenez pas compte de cette option si vous n\'avez pas utilisé de mot de passe de mnémonique lors de la création de votre portefeuille.",
 
         /********************************

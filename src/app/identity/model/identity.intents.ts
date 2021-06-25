@@ -67,6 +67,7 @@ export type RegAppProfileIdentityIntent = IdentityIntent<RegAppProfileIdentityIn
  */
 export type CredImportIdentityIntentParams = IdentityIntentParams & {
     credentials: any[], // Array of DID Verifiable Credentials as JSON objects
+    forceToPublishCredentials: boolean;
     customization: IdentityIntentCustomization;
 }
 export type CredImportIdentityIntent = IdentityIntent<CredImportIdentityIntentParams> & {

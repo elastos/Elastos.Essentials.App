@@ -100,7 +100,7 @@ class CustomTranslateLoader implements TranslateLoader {
 
 export class CustomMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
-    Logger.warn("Translations", "Missing translation:", params)
+    //Logger.warn("Translations", "Missing translation:", params)
   }
 }
 

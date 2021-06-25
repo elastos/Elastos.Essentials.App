@@ -3,6 +3,7 @@ export const en = {
     'identity': {
         /******************** Generic ********************/
         'accept': 'Accept',
+        'accept-and-publish': 'Accept and Publish',
         'share-description': 'Share your Identity with others',
         'edit': 'Edit',
         'edit-description': 'Change, add and edit Identity profile',
@@ -103,8 +104,8 @@ export const en = {
         "publish-did": "Publish Identity",
         "publish-did-msg": "Record identity to the public repository. This step takes between 10 and 15 minutes.",
         "config-storage": "Configure Storage",
-        "config-storage-msg": "Setup a personal storage for your Identity\'s data.",
-        "progress-msg": "Please don\'t hesitate to leave at any time. Your Identity will continue to publish while you are away.",
+        "config-storage-msg": "Setup a personal storage for your Identity's data.",
+        "progress-msg": "Please don't hesitate to leave at any time. Your Identity will continue to publish while you are away.",
         "done-msg": "All done, you now have a decentralized identity and storage space! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.",
         "takes-long-time": "(this takes several minutes)",
         },

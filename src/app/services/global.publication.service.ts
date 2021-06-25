@@ -127,7 +127,7 @@ export class GlobalPublicationService {
             "didRequest": payloadObject
         };
 
-        Logger.log("publicationservice", "Assist API request body:", requestBody);
+        Logger.log("publicationservice", "Assist API request body:", requestBody, JSON.stringify(requestBody));
 
         const headers = new HttpHeaders({
             "Content-Type": "application/json",

@@ -11,6 +11,7 @@ import { CredImportIdentityIntent } from 'src/app/identity/model/identity.intent
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { logger } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -69,11 +70,12 @@ export class CredentialImportRequestPage {
   public requestDappName: string = null;
   public requestDappColor = '#565bdb';
 
-  public showSpinner = false;
+  public accepting = false;
   public popup: HTMLIonPopoverElement = null;
   public wrongTargetDID = false; // Whether the credential we are trying to import is for us or not.
 
   private credentials: VerifiableCredential[] = []; // Raw material
+  public forceToPublishCredentials = false; // Whether the imported credentials should be added to the did document and published.
   displayableCredentials: ImportedCredential[] = []; // Displayable reworked matarial
   preliminaryChecksCompleted = false;
 
@@ -92,7 +94,7 @@ export class CredentialImportRequestPage {
     this.titleBar.setTitle(this.translate.instant('identity.credential-import'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
-    this.zone.run(async () => {
+    void this.zone.run(async () => {
       this.receivedIntent = this.intentService.getReceivedIntent();
 
       await this.runPreliminaryChecks();
@@ -127,6 +129,11 @@ export class CredentialImportRequestPage {
 
     await this.didService.loadGlobalIdentity();
 
+    if ("forceToPublishCredentials" in this.receivedIntent.params) {
+      this.forceToPublishCredentials = true;
+      console.log("FORCE TO PUBLISH true?", this.receivedIntent.params.forceToPublishCredentials)
+    }
+
     this.preliminaryChecksCompleted = true; // Checks completed and everything is all right.
   }
 
@@ -135,7 +142,7 @@ export class CredentialImportRequestPage {
    * ready for UI.
    * NOTE: We can have several credentials passed at the same time. Each credential can have several entries in its subject.
    */
-  async organizeImportedCredentials() {
+  organizeImportedCredentials() {
     this.displayableCredentials = [];
     for (let key of Object.keys(this.receivedIntent.params.credentials)) {
       let importedCredential: DIDPlugin.VerifiableCredential = didManager.VerifiableCredentialBuilder.fromJson(JSON.stringify(this.receivedIntent.params.credentials[key]));
@@ -184,28 +191,52 @@ export class CredentialImportRequestPage {
     return value;
   }
 
-  async acceptRequest() {
+  acceptRequest() {
+    if (this.accepting) // Prevent double action
+      return;
+
+    this.accepting = true;
+
     // Save the credentials to user's DID.
     // NOTE: For now we save all credentials, we can't select them individually.
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     AuthService.instance.checkPasswordThenExecute(async ()=>{
-      let importedCredentialsResult: String[] = [];
+      let importedCredentialsResult: string[] = [];
       for (let displayableCredential of this.displayableCredentials) {
         Logger.log('Identity', "CredImportRequest - storing credential: ", displayableCredential.credential);
         await this.didService.getActiveDid().addRawCredential(displayableCredential.credential);
         // NOTE: Currently, DID SDK's storeCredential() on a DID doesn't require a storepass, which is strange... // this.authService.getCurrentUserPassword());
 
+        // Also add the credential to the DID document if we need to publish it.
+        if (this.forceToPublishCredentials) {
+          await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(displayableCredential.credential.pluginVerifiableCredential, AuthService.instance.getCurrentUserPassword());
+        }
+
         importedCredentialsResult.push(displayableCredential.credential.pluginVerifiableCredential.getId())
       }
 
-      this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async ()=>{
-        Logger.log('Identity', "Sending credimport intent response for intent id "+this.receivedIntent.intentId)
-        await this.appServices.sendIntentResponse("credimport", {
-          importedcredentials: importedCredentialsResult
-        }, this.receivedIntent.intentId);
-      })
+      if (!this.forceToPublishCredentials) {
+        // We don't need to publish - finalize the action
+        Logger.log("identity", "Credentials don't have to be published, operation is complete");
+        this.finalizeRequest(importedCredentialsResult);
+      }
+      else {
+        Logger.log("identity", "Credentials have to be published, publishing");
+        await this.didService.getActiveDid().getDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
+      }
     }, ()=>{
       // Cancelled
+      this.accepting = false;
     });
+  }
+
+  private finalizeRequest(importedCredentials: string[]) {
+    void this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async ()=>{
+      Logger.log('Identity', "Sending credimport intent response for intent id "+this.receivedIntent.intentId)
+      await this.appServices.sendIntentResponse("credimport", {
+        importedcredentials: importedCredentials
+      }, this.receivedIntent.intentId);
+    })
   }
 
   async rejectRequest() {
