@@ -56,8 +56,22 @@ export const fr = {
         'vote-against-proposal': 'Vote against this proposal',
 
         'update-milestone': 'Update Milestone',
-        'update-milestone-msg': 'You are about to review the following milestone. Please review it, and follow the process to sign and publish it.',
+        'update-milestone-msg': 'You are about to update the following milestone. Please review it, and follow the process to sign and publish it.',
         'sign-update-milestone': 'Sign and Update Milestone',
+
+        'review-milestone': 'Review Milestone',
+        'review-milestone-msg': 'You are about to review the following milestone. Please review it, and follow the process to sign and publish it.',
+        'sign-review-milestone': 'Sign and Review Milestone',
+
+        'crc-proposals-today': 'CRC Proposals Today',
+        'crc-proposals-today-msg': 'There is a new CRC proposal today, click to check it out.',
+        'crc-proposals-today-msg1': 'You have ',
+        'crc-proposals-today-msg2': ' new proposals today, click to check them out.',
+
+        'new-crc-proposals': 'New CRC Proposals',
+        'new-crc-proposals-msg': 'There is a new proposal since you last visited, click to check it out.',
+        'new-crc-proposals-msg1': 'You have ',
+        'new-crc-proposals-msg2': ' new proposals since you last visited, click to check them out.',
     }
 
 };

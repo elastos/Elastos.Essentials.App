@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ProposalService } from './proposal.service';
 import { ProposalStatus } from '../model/proposal-status';
 
@@ -16,6 +17,7 @@ import { App } from 'src/app/model/app.enum';
 export class AppService {
   constructor(
     public proposalService: ProposalService,
+    public translate: TranslateService,
     private storage: GlobalStorageService,
     private notifications: GlobalNotificationsService,
   ) { }
@@ -25,16 +27,16 @@ export class AppService {
     Logger.log('crproposal', 'Background service: Time-checked for proposals', moment(lastCheckedTime).format('MMMM Do YYYY, h:mm'));
 
     const today = new Date();
-    if(lastCheckedTime) {
-        if(!moment(lastCheckedTime).isSame(today, 'd')) {
-            this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
-            this.checkForNewProposals(today);
-        } else {
-            Logger.log('crproposal', 'Background service: Proposals already checked today');
-        }
-    } else {
+    if (lastCheckedTime) {
+      if (!moment(lastCheckedTime).isSame(today, 'd')) {
         this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
         this.checkForNewProposals(today);
+      } else {
+        Logger.log('crproposal', 'Background service: Proposals already checked today');
+      }
+    } else {
+      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "crproposal", "timeCheckedForProposals", today);
+      this.checkForNewProposals(today);
     }
   }
 
@@ -47,7 +49,7 @@ export class AppService {
       Logger.log('crproposal', 'Background service: Proposals fetched', proposals);
 
       proposals.forEach((proposal) => {
-        if(moment(proposal.createdAt * 1000).isSame(today, 'd')) {
+        if (moment(proposal.createdAt * 1000).isSame(today, 'd')) {
           newProposalsCount++;
         }
       });
@@ -60,15 +62,15 @@ export class AppService {
     if (newProposalsCount > 0) {
       let message = "";
       if (newProposalsCount === 1) {
-        message = "There's a new CRC proposal today, click to check it out";
+        message = this.translate.instant('crproposalvoting.crc-proposals-today-msg');
       } else {
-        message = "You have " + newProposalsCount + ' new proposals today, click to check them out';
+        message = this.translate.instant('crproposalvoting.crc-proposals-today-msg1') + newProposalsCount + this.translate.instant('crproposalvoting.crp-proposals-today-msg2');
       }
 
       const notification = {
         app: App.CRPROPOSAL_VOTING,
         key: 'proposalsToday',
-        title: 'CRC Proposals Today',
+        title: this.translate.instant('crproposalvoting.crc-proposals-today'),
         message: message,
         url: 'https://launcher.elastos.net/app?id=' + 'org.elastos.trinity.dapp.crproposal'
       };
@@ -87,14 +89,14 @@ export class AppService {
       if (targetProposalIndex > 0) {
         let message = "";
         if (targetProposalIndex === 1) {
-          message = "There is a new proposal since you last visited, click to check it out";
+          message = this.translate.instant('crproposalvoting.new-crc-proposals-msg');
         } else {
-          message = "You have " + targetProposalIndex + ' new proposals since you last visited, click to check them out';
+          message = this.translate.instant('crproposalvoting.new-crc-proposals-msg1') + targetProposalIndex + this.translate.instant('crproposalvoting.new-crc-proposals-msg2');
         }
         const notification = {
           app: App.CRPROPOSAL_VOTING,
           key: 'newProposals',
-          title: 'New CRC Proposals',
+          title: this.translate.instant('crproposalvoting.new-crc-proposals'),
           message: message,
           url: 'https://launcher.elastos.net/app?id=' + 'org.elastos.trinity.dapp.crproposal'
         };

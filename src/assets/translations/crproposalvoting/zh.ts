@@ -62,6 +62,16 @@ export const zh = {
         'review-milestone': '评议Milestone',
         'review-milestone-msg': '您将要评议Milestone。请对其进行审核，并按照流程进行签名和发布。',
         'sign-review-milestone': '签名并评议Milestone',
+
+        'crc-proposals-today': '今天的CRC提案',
+        'crc-proposals-today-msg': '今天有新的CRC提案，点击查看',
+        'crc-proposals-today-msg1': '您今天有 ',
+        'crc-proposals-today-msg2': ' 个新提案，点击查看',
+
+        'new-crc-proposals': '新的 CRC 提案',
+        'new-crc-proposals-msg': '自上次访问以来，有一个新提案，点击查看',
+        'new-crc-proposals-msg1': '自上次访问以来，有 ',
+        'new-crc-proposals-msg2': ' 个新提案，点击查看',
     }
 
 };
