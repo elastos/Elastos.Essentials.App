@@ -120,7 +120,7 @@ export class UXService {
         mode: 'ios',
         translucent: false,
         spinner: 'crescent',
-        cssClass: 'custom-loader',
+        cssClass: !this.theme.darkMode ? 'custom-loader' : 'dark-custom-loader',
         message: message
       });
       this.loader.onWillDismiss().then(() => {

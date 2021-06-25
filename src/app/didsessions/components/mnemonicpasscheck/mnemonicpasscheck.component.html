@@ -1,4 +1,4 @@
-<div class="container" *ngIf="!askedIfHasPassphrase">
+<div class="container" [class.dark-container]="theme.darkMode" *ngIf="!askedIfHasPassphrase">
   <ion-row class="header-row">
     <img src="/assets/didsessions/default/securityWarning.svg">
     <h1 class="ion-text-center">{{ 'didsessions.mnemonicpasscheck-question' | translate }}</h1>
@@ -14,7 +14,7 @@
   </ion-row>
 </div>
 
-<div class="container" *ngIf="askedIfHasPassphrase">
+<div class="container" [class.dark-container]="theme.darkMode" *ngIf="askedIfHasPassphrase">
   <ion-row class="header-row">
     <img src="/assets/didsessions/default/securityWarning.svg">
     <h1 class="ion-text-center">{{ 'didsessions.mnemonicpassword-intro' | translate }}</h1>

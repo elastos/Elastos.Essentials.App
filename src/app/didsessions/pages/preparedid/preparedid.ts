@@ -82,8 +82,6 @@ export class PrepareDIDPage {
   }
 
   async ionViewWillEnter() {
-    // await this.onSlideChanged();
-
     this.titleBar.setTitle(' ');
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
@@ -140,32 +138,16 @@ export class PrepareDIDPage {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
-/* 
-  async getSlideIndex(step: number) {
-    let slideIndex = await this.slide.getActiveIndex();
-    if(step <= slideIndex) {
-      return true;
-    } else {
-      return false;
-    }
-  } */
 
   showSlider() {
     Logger.log('didsessions', "Showing slider");
     this.hidden = false
     void this.slide.getSwiper().then((swiper) => {
       swiper.init();
-      this.slideIndex = 4;
+      this.slideIndex = 0;
       void this.slide.slideTo(this.slideIndex);
     });
   }
-
- /*  public async onSlideChanged() {
-    this.slideIndex = await this.slide.getActiveIndex();
-    this.slideIndex !== this.ALL_DONE_SLIDE_INDEX ?
-      this.titleBar.setTitle(this.translate.instant('didsessions.getting-ready')) :
-      this.titleBar.setTitle(this.translate.instant('didsessions.ready'));
-  } */
 
   nextSlide() {
     void this.slide.slideNext();

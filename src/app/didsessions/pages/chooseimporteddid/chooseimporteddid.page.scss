@@ -1,21 +1,21 @@
 @import 'src/app/didsessions/root.scss';
 
 .container {
-  margin: 30px;
+  padding: 0 20px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
   h1 {
-    margin: 15px;
+    margin: 20px;
     font-size: 16px;
     font-weight: 500;
   }
 
   .item {
     width: 100%;
-    border-bottom: 2px solid rgba(34, 34, 34, 0.07);
+    border-bottom: 1px solid #EAEAEA;
 
     .id-col, .checkbox-col {
       padding: 15px 0;
@@ -27,36 +27,35 @@
       h2 {
         margin: 0;
         font-size: 17px;
-        font-weight: 700;
-        letter-spacing: 0.9px;
-        color: #353650;
+        font-weight: 600;
+        letter-spacing: -0.2px;
       }
 
       p {
         margin: 0;
         margin-top: 2.5px;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 500;
-        color: #353650;
+        opacity: 0.7;
       }
     }
 
     .checkbox-col {
       align-items: flex-end;
 
-      ion-img {
-        margin-top: 8px;
-        width: 45px;
-        height: 45px;
+      ion-checkbox {
+        --border-width: 2px;
+        --border-color: #732dcf !important;
+        --border-color-checked: #732dcf !important;
+        --background-checked: #732dcf !important;
       }
     }
   }
 }
 
-.btn-row {
-  padding: 30px 15px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+.dark-container {
+  .item {
+    border-bottom: 1px solid #464646;
+  }
 }
 

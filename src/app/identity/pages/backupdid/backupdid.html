@@ -5,6 +5,7 @@
     [options]="slideOpts"
     (ionSlideWillChange)="getActiveSlide()"
     class="ion-text-center"
+    [class.dark-slides]="theme.darkMode"
   >
     <ion-slide class="ion-text-center first-slide">
       <div class="qr-container" *ngIf="dataIsReady">

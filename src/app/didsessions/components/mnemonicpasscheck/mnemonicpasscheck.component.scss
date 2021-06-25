@@ -2,7 +2,6 @@
 
 .container {
   padding: 25px;
-  background: #ffffff;
 
   .header-row {
     display: flex;
@@ -68,9 +67,7 @@
   }
 }
 
-/* .darkContainer {
-  background: #262641;
-
+.dark-container {
   .header-row {
     h1 {
       color: #fdfeff;
@@ -79,9 +76,8 @@
 
   .input-row {
     ion-input {
-      background: #464660;
-      color: #ababb7;
+      background: #212021;
+      color: #ffffff;
     }
   }
 }
- */

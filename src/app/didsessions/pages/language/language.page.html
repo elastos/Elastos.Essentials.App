@@ -1,7 +1,7 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container ion-no-padding ion-no-margin" color="light" [class.dark-container]="theme.darkMode">
-    <img src="assets/didsessions/icon/ela.svg">
+    <img [src]="!theme.darkMode ? 'assets/didsessions/icon/ela.svg' : 'assets/didsessions/icon/dark_mode/ela.svg'">
     <ion-row class="item-row" *ngFor="let language of languageService.languages" (click)="languageService.setSelectedLanguage(language.code)">
       <ion-col size="10" class="left-col">
         <!-- <img [src]="language.icon"> -->

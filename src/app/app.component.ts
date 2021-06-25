@@ -121,7 +121,7 @@ export class AppComponent {
 
                 // Navigate to DID creation
                 await this.globalNav.navigateTo("didsessions", '/didsessions/pickidentity');
-                // await this.globalNav.navigateTo("didsessions", '/didsessions/preparedid');
+                // await this.globalNav.navigateTo("didsessions", '/didsessions/chooseimporteddid');
             }
 
             // Now that all services are initialized and the initial screen is shown,

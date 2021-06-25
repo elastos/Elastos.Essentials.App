@@ -22,17 +22,16 @@
 
 /********************** LOADER **********************/
 .custom-loader {
-  --spinner-color: #353650;
+  --spinner-color: #121212;
   --background: #ffffff;
-  color: #353650;
+  color: #121212;
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 .dark-custom-loader {
   --spinner-color: white;
-  --background: #2e2f4e;
+  --background: #121212;
   color: white;
-  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 /********************** LAUNCHER **********************/
@@ -75,6 +74,21 @@
       border-top-left-radius: 30px;
       border-top-right-radius: 30px;
     }
+}
+
+.didsessions-mnemonicpasscheck-component-dark {
+  --height: 350px;
+  --background: #121212;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
 }
 
 .didsessions-warning-component {

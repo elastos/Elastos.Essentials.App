@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
 import { PopupProvider } from '../../services/popup';
 import { DIDURL } from '../../model/didurl.model';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
   selector: 'page-backupdid',
@@ -51,7 +52,8 @@ export class BackupDIDPage {
     private authService: AuthService,
     private popup: PopupProvider,
     private zone: NgZone,
-    private didSessions: GlobalDIDSessionsService
+    private didSessions: GlobalDIDSessionsService,
+    public theme: GlobalThemeService
   ) {
     Logger.log('identity', "Entering BackupDID page");
   }
@@ -60,7 +62,6 @@ export class BackupDIDPage {
     this.dataIsReady = false;
 
     void this.getActiveSlide();
-    this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'back', iconPath: BuiltInIcon.BACK });
     this.titleBar.setNavigationMode(null);
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
