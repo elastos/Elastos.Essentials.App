@@ -283,8 +283,7 @@ export class DeveloperService {
       // navigator["app"].exitApp();
       this.splashScreen.show();
       await GlobalServiceManager.getInstance().emitUserSignOut();
-      await this.globalNav.navigateHome();
-      window.location.reload();
+      window.location.href = "/";
   }
 
   async showRestartPrompt() {
