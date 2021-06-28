@@ -130,7 +130,7 @@ export class ProposalListingPage implements OnInit {
           this.fetchPage--;
         }
         this.allProposalsLoaded = true;
-        this.uxService.genericToast('All proposals are loaded');
+        this.uxService.genericToast(this.translate.instant('crproposalvoting.all-proposals-are-loaded'));
         // this.content.scrollToTop(300);
       }
     }

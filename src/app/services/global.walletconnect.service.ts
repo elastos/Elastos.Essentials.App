@@ -172,7 +172,7 @@ export class GlobalWalletConnectService extends GlobalService {
         throw error;
       }
 
-      this.native.genericToast("Wallet connect session disconnected");
+      this.native.genericToast("settings.wallet-connect-session-disconnected");
 
       this.initiatingConnector = null;
       this.connectors.delete(connector.key);
@@ -317,7 +317,7 @@ export class GlobalWalletConnectService extends GlobalService {
 
     // Because for now we don't close Essentials after handling wallet connect requests, we simply
     // inform users to manually "alt tab" to return to the app they are coming from.
-    this.native.genericToast("Operation completed, please return to the original app.", 2000);
+    this.native.genericToast("settings.wallet-connect-popup", 2000);
   }
 
   private async handleAddERCTokenRequest(connector: WalletConnect, request: JsonRpcRequest) {
@@ -378,10 +378,10 @@ export class GlobalWalletConnectService extends GlobalService {
       });
 
       // Let the user know that the request was received but could not be handled
-      this.native.genericToast("An external application just tried to send a request that cannot be understood by Elastos Essentials.", 2000);
+      this.native.genericToast("settings.wallet-connect-error", 2000);
 
       if (await this.prefs.developerModeEnabled(GlobalDIDSessionsService.signedInDIDString))
-        this.native.genericToast("Raw request: "+intentUrl, 2000);
+        this.native.genericToast("settings.raw-request"+intentUrl, 2000);
     }
   }
 

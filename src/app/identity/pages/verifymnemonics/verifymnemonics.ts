@@ -140,7 +140,7 @@ export class VerifyMnemonicsPage {
     }
 
     private async continueAfterSuccessfulVerification() {
-      this.native.genericToast("Great, your identity is now backed up!");
+      this.native.genericToast('identity.backup-success');
       await this.didSessions.markActiveIdentityBackedUp();
       void this.globalNav.exitCurrentContext();
     }

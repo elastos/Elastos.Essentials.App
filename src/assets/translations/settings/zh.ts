@@ -67,6 +67,10 @@ export const zh = {
           'wallet-connect-request': '应用链接请求',
           'wallet-connect-sessions': '钱包连接会话',
           'wallet-connect-prepare-to-connect': '启动钱包连接',
+          'wallet-connect-popup': '操作完成，请返回原应用。',
+          'wallet-connect-session-disconnected': '钱包连接会话断开',
+          'wallet-connect-error': '一个外部应用程序试图发送一个 Elastos Essentials 无法理解的请求。',
+          'raw-request': '原始请求: ',
 
           /*********** Privacy page **********/
           'privacy': '隐私',

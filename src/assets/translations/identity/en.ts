@@ -149,6 +149,7 @@ export const en = {
         'request': 'Your Request',
         'sent': 'is on its way',
         'success-msg': 'This app will automatically close when your request is delivered.',
+        'backup-success': 'Great, your identity is now backed up!',
 
         /******************** Intent Screens  ********************/
         // page: appidcredissue

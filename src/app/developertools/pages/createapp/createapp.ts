@@ -75,11 +75,11 @@ export class CreateAppPage {
             this.mnemonicToImportPassphrase
           );
         } else {
-          this.native.genericToast(this.translate.instant('developertools.provide-mnemonic'), 4000, 'dark');
+          this.native.genericToast('developertools.provide-mnemonic', 4000, 'dark');
         }
       }
     } else {
-      this.native.genericToast(this.translate.instant('developertools.provide-name'), 2000, 'dark');
+      this.native.genericToast('developertools.provide-name', 2000, 'dark');
     }
 
   }

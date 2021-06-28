@@ -72,6 +72,8 @@ export const zh = {
         'new-crc-proposals-msg': '自上次访问以来，有一个新提案，点击查看',
         'new-crc-proposals-msg1': '自上次访问以来，有 ',
         'new-crc-proposals-msg2': ' 个新提案，点击查看',
+
+        'all-proposals-are-loaded': '所有提案都已加载',
     }
 
 };

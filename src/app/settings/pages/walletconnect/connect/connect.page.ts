@@ -88,6 +88,6 @@ export class WalletConnectConnectPage implements OnInit {
 
     // Because for now we don't close Essentials after handling wallet connect requests, we simply
     // inform users to manually "alt tab" to return to the app they are coming from.
-    this.native.genericToast("Operation completed, please return to the original app.", 2000);
+    this.native.genericToast("settings.wallet-connect-popup", 2000);
   }
 }

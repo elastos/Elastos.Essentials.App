@@ -10,6 +10,7 @@ export const zh = {
     'please-dont-add-self': '请添加其他人的身份ID(不能添加自己)',
     'restoring-contacts-backup': '恢复联系人',
     'contact-copied-to-clipboard': '联系人身份已复制',
+    'resolve-error-header': 'Resolve DID 时出现错误',
 
     /********** Buttons **********/
     'add-contact': '添加联系人',

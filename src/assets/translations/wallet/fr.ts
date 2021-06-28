@@ -57,6 +57,7 @@ export const fr = {
         "hive-not-configured-text": "Votre espace de stockage Hive n'est pas configuré. Voulez-vous le configurer maintenant?",
         "hive-not-configured-not-now": "Pas maintenant",
         "hive-not-configured-configure": "Configurer",
+        "collectibles": "Collectibles",
 
         /********************************************** General Settings Screen ***********************************************/
 

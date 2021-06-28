@@ -62,7 +62,7 @@ export class AddPage implements OnInit {
     Logger.log('contacts', this.didInput.length, 'DID INPUT LENGTH')
     if(this.didInput.length < 33 || this.didInput.slice(0,11) !== 'did:elastos') {
       this.didInput = "";
-      this.native.genericToast(this.translate.instant('contacts.please-add-a-valid-identity'));
+      this.native.genericToast('contacts.please-add-a-valid-identity');
     } else if(this.didService.getUserDID() === this.didInput) {
       this.native.genericToast('contacts.please-dont-add-self');
     } else {

@@ -72,6 +72,8 @@ export const en = {
         'new-crc-proposals-msg': 'There is a new proposal since you last visited, click to check it out.',
         'new-crc-proposals-msg1': 'You have ',
         'new-crc-proposals-msg2': ' new proposals since you last visited, click to check them out.',
+
+        'all-proposals-are-loaded': 'All proposals are loaded',
     }
 
 };

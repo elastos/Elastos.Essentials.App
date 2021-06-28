@@ -98,7 +98,7 @@
 
             <ion-row class="list-title-row collectibles-title">
                 <ion-col size="12">
-                    <h1>Collectibles</h1>
+                    <h1>{{ 'wallet.collectibles' | translate }}</h1>
                 </ion-col>
             </ion-row>
             <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let nft of masterWallet.getNFTs()" (click)="goNFTHome(masterWallet, nft)">

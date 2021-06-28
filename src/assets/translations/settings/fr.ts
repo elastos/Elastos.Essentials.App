@@ -67,6 +67,10 @@ export const fr = {
         'wallet-connect-request': 'Lien avec une application',
         'wallet-connect-sessions': 'Sessions Wallet Connect',
         'wallet-connect-prepare-to-connect': 'Préparation de Wallet Connect',
+        'wallet-connect-popup': 'Operation completed, please return to the original app.',
+        'wallet-connect-session-disconnected': 'Wallet connect session disconnected',
+        'wallet-connect-error': 'An external application just tried to send a request that cannot be understood by Elastos Essentials.',
+        'raw-request': 'Raw request: ',
 
         /*********** Privacy page **********/
         'privacy': 'Vie privée',

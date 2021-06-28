@@ -24,11 +24,11 @@ export class NativeService {
   }
 
   async shareToast() {
-    this.globalNative.genericToast(this.translate.instant('contacts.contact-copied-to-clipboard'), 3000, "success");
+    this.globalNative.genericToast('contacts.contact-copied-to-clipboard', 3000, "success");
   }
 
   async didResolveErr(err: string) {
-    this.globalNative.errToast(this.translate.instant('contacts.resolve-error-header'), 6000);
+    this.globalNative.errToast('contacts.resolve-error-header', 6000);
   }
 
   /********* Loader *********/

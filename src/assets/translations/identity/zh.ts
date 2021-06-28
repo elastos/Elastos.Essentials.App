@@ -149,6 +149,7 @@ export const zh = {
         'request': '您的申请',
         'sent': '在路上',
         'success-msg': '传递您的请求后，此应用程序将自动关闭。',
+        'backup-success': '太好了，您的身份现在已备份！',
 
         /******************** Intent Screens  ********************/
         // page: appidcredissue
