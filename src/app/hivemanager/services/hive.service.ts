@@ -10,24 +10,7 @@ import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
-
-declare let hiveManager: HivePlugin.HiveManager;
-
-export type VaultLinkStatus = {
-  // There is already a vault provider info on chain about a vault provider attacher to this user.
-  publishedInfo: {
-    vaultName: string,
-    vaultAddress: string,
-    vaultVersion: string
-  };
-  // The app locally thinks that we are waiting for a publication during a few minutes. This could be true
-  // no matter if there is already a published provider info on chain (updating provider) or not (first time
-  // selection of a provider)
-  publishingInfo: {
-    vaultName: string,
-    vaultAddress: string;
-  };
-}
+import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
 
 export type PaidIncompleteOrder = {
     transactionId: string;
@@ -39,10 +22,6 @@ export type PaidIncompleteOrder = {
   providedIn: 'root'
 })
 export class HiveService {
-  private vaultLinkStatus: VaultLinkStatus = null;
-  private client: HivePlugin.Client;
-  private activeVault: HivePlugin.Vault = null;
-  private activePaymentPlan: HivePlugin.Payment.ActivePricingPlan;
   private pricingInfo: HivePlugin.Payment.PricingInfo = null; // Cached pricing info for user's current vault provider after been fetched.
 
   private publicationCheckTimer: NodeJS.Timer = null;
@@ -55,11 +34,12 @@ export class HiveService {
     private events: Events,
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
+    private globalHiveService: GlobalHiveService,
     private didSessions: GlobalDIDSessionsService
   ) {}
 
   async init() {
-    let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
+    /* let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
     if (hiveAuthHelper) {
       this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
         Logger.error("HiveManager", "Authentication error:", err);
@@ -71,12 +51,10 @@ export class HiveService {
     }
     else {
       Logger.log("HiveManager", "Hive client instance was created");
-    }
+    } */
   }
 
   stop() {
-    this.vaultLinkStatus = null;
-    this.activeVault = null;
     // TODO stop hive
   }
 
@@ -89,7 +67,7 @@ export class HiveService {
    *      - Check if vault is created at this address (get pricing plan?)
    *    - If not created, call createVault()
    */
-  async retrieveVaultLinkStatus(): Promise<VaultLinkStatus> {
+  /* async retrieveVaultLinkStatus(): Promise<VaultLinkStatus> {
     Logger.log("HiveManager", "Looking for vault link status");
 
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
@@ -192,31 +170,10 @@ export class HiveService {
     this.vaultLinkStatus = status;
 
     return status;
-  }
-
-  /**
-   * Polling that tries to get the publication result for a previously published vault address.
-   */
-  private startAwaitingPublicationResult(ownerDid: string) {
-    let intervalDuration = 30*1000; // 30 seconds
-    this.publicationCheckTimer = setInterval(async ()=>{
-     /*  let currentlyPublishedVaultAddress = await hiveManager.getVaultAddress(ownerDid);
-      if (currentlyPublishedVaultAddress) {
-        // Finally we could find the vault address
-        this.vaultLinkStatus.publishingInfo = null;
-        this.vaultLinkStatus.publishedInfo = {
-          vaultAddress: currentlyPublishedVaultAddress,
-          vaultName: "todo-unsaved-yet"
-        };
-
-        // Let listeners know
-        this.publicationSubject.next(true);
-      } */
-    }, intervalDuration);
-  }
+  } */
 
   public getActiveVault(): HivePlugin.Vault {
-    return this.activeVault;
+    return this.globalHiveService.getActiveVault();
   }
 
   private async getLastPublishedTime(): Promise<Date> {
@@ -226,69 +183,6 @@ export class HiveService {
 
   private async saveLastPublishedTime(): Promise<void> {
     await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "publicationrequesttime", Date.now());
-  }
-
-  /**
-   * Sets and saves a NEW vault provider for the active DID, without any transfer of data.
-   */
-  public async publishVaultProvider(providerName: string, vaultAddress: string): Promise<boolean> {
-    let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
-
-    // First try to create the vault on the provider
-    try {
-      let createdVault = await this.client.createVault(signedInDID, vaultAddress);
-      if (createdVault) {
-        Logger.log("HiveManager", "Vault was newly created on the provider. Now updating vault address on user's DID");
-
-        // Vault creation succeeded, we can now save the provider address on ID chain.
-        this.activeVault = createdVault;
-      }
-      else {
-        // Vault already exists on this provider. Nothing to do
-        Logger.log("HiveManager", "The vault already exists on the vault provider.");
-      }
-
-      let publicationStarted = await this.publishVaultProviderToIDChain(providerName, vaultAddress);
-      return publicationStarted;
-    }
-    catch (err) {
-      Logger.error('HiveManager', "Failed to create vault on the vault provider for DID "+signedInDID+" at address "+vaultAddress, err);
-      return false;
-    }
-  }
-
-  private async publishVaultProviderToIDChain(providerName: string, vaultAddress: string): Promise<boolean> {
-    return new Promise(async (resolve)=>{
-      Logger.log("HiveManager", "Requesting identity app to update the hive provider");
-
-      try {
-        let result: {result: {status: string}} = await this.globalIntentService.sendIntent("https://did.elastos.net/sethiveprovider", {
-          name: providerName,
-          address: vaultAddress
-        });
-
-        Logger.log("HiveManager", "Got sethiveprovider intent result:", result);
-
-        if (result && result.result && result.result.status && result.result.status == "published") {
-          // Save local timestamp - We will not allow to pick another provider before a few minutes
-          this.saveLastPublishedTime();
-
-          // Vault address was added to user's DID document and publication is on going.
-          // Now wait a moment
-          resolve(true); // Publishing
-        }
-        else {
-          // Publication was cancelled or errored. Do nothing more. Maybe user will retry.
-          Logger.log("HiveManager", "Publication cancelled or errored");
-          resolve(false);
-        }
-      }
-      catch(err) {
-        Logger.error("HiveManager", "Error while trying to call the sethiveprovider intent: ", err);
-          this.popup.ionicAlert(this.translate.instant('hivemanager.alert.error'), this.translate.instant('hivemanager.alert.sorry-provider-not-save') + err, this.translate.instant('hivemanager.alert.ok'));
-        resolve(false);
-      }
-    });
   }
 
   public async getPricingInfo(): Promise<HivePlugin.Payment.PricingInfo> {
@@ -350,7 +244,8 @@ export class HiveService {
     }
   }
 
-  private async executePayment(cost: number, elaAddress: string): Promise<string> {
+  private executePayment(cost: number, elaAddress: string): Promise<string> {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise(async (resolve, reject)=>{
       try {
         let data: { result: { txid: string }} = await this.globalIntentService.sendIntent("https://wallet.elastos.net/pay", {
@@ -475,7 +370,7 @@ export class HiveService {
   private sortOrdersByMostRecentFirst(orders: HivePlugin.Payment.Order[]): HivePlugin.Payment.Order[] {
     // Most recent orders come first in the list.
     return orders.sort((orderA, orderB)=>{
-      if (orderA.getCreationTime() > orderB.getCreationTime())
+      if (orderA.getCreationTime() < orderB.getCreationTime())
         return -1;
       else if (orderA.getCreationTime() > orderB.getCreationTime())
         return 1;

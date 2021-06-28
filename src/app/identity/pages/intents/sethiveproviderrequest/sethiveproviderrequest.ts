@@ -14,6 +14,7 @@ import { Logger } from 'src/app/logger';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -38,23 +39,12 @@ export class SetHiveProviderRequestPage {
     public profileService: ProfileService,
     private didSyncService: DIDSyncService,
     public theme: GlobalThemeService,
-    private intentService: IntentReceiverService
+    private intentService: IntentReceiverService,
+    private globalPublicationService: GlobalPublicationService
   ) {
   }
 
   ngOnInit() {
-    // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
-    // request initiated by publish() on a did document.
-    this.publishresultSubscription = this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
-      Logger.log("identity", "diddocument:publishresultpopupclosed event received in sethiveprovider request", result);
-      let status = 'error';
-      if (result.published) {
-        status = 'published';
-      } else if (result.cancelled) {
-        status = 'cancelled';
-      }
-      await this.sendIntentResponse(status);
-    });
   }
 
   ngOnDestroy() {
@@ -69,19 +59,28 @@ export class SetHiveProviderRequestPage {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.rejectRequest();
+      void this.rejectRequest();
     });
     this.receivedIntent = this.intentService.getReceivedIntent();
   }
 
-  async acceptRequest() {
+  acceptRequest() {
     // Prompt password if needed
-    AuthService.instance.checkPasswordThenExecute(async ()=>{
+    void AuthService.instance.checkPasswordThenExecute(async ()=>{
       let password = AuthService.instance.getCurrentUserPassword();
 
       // Create the main application profile credential
       await this.addOrUpdateService(password);
 
+      let pubSubscription = this.globalPublicationService.publicationStatus.subscribe((status) => {
+        if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+          pubSubscription.unsubscribe();
+          void this.sendIntentResponse('published');
+        } else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+          pubSubscription.unsubscribe();
+          void this.sendIntentResponse('error');
+        }
+      });
       await this.didSyncService.publishActiveDIDDIDDocument(password);
     }, ()=>{
       // Cancelled
@@ -98,7 +97,7 @@ export class SetHiveProviderRequestPage {
 
     let service: DIDPlugin.Service = await this.didService.getActiveDid().getDIDDocument().getService('#hivevault');
     if (service) {
-        Logger.log("identity", 'the #hivevault service already exist, update it');
+        Logger.log("identity", 'The #hivevault service already exists, updating it');
         await this.didService.getActiveDid().getDIDDocument().removeService('#hivevault', password);
     }
 

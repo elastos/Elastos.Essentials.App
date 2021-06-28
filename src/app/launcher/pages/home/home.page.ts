@@ -150,8 +150,8 @@ export class HomePage implements OnInit {
         let maxStorageGb = vaultStatus.publishedInfo.activePricingPlan.getMaxStorage()/1000;
 
         this.hiveVaultStorageStats = {
-          usedStorage: usedStorageGb.toFixed(2) + "GB",
-          maxStorage: maxStorageGb.toFixed(2) + "GB",
+          usedStorage: usedStorageGb.toFixed(2),
+          maxStorage: maxStorageGb.toFixed(2),
           percentUsage: usedStorageGb / maxStorageGb
         };
         this.hiveVaultLinked = true;

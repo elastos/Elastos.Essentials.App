@@ -53,17 +53,6 @@ export class GlobalHiveService extends GlobalService {
 
   async init() {
     GlobalServiceManager.getInstance().registerService(this);
-    /* let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
-    this.client = await hiveAuthHelper.getClientWithAuth((err)=>{
-      Logger.error("GlobalHiveService", "Authentication error:", err);
-    });
-
-    if (!this.client) {
-      Logger.error("GlobalHiveService", "Fatal error in hive manager: Unable to get a hive client instance in init().");
-    }
-    else {
-      Logger.log("GlobalHiveService", "Hive client instance was created");
-    } */
   }
 
   stop() {
@@ -75,12 +64,31 @@ export class GlobalHiveService extends GlobalService {
 
   async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     if (signedInIdentity) {
-      // New user is signing in: try to get his hive vault status.
-      await this.retrieveVaultLinkStatus();
+      // New user is signing in: initialize a global hive client and try to get his hive vault status.
+      // Not a blocking call
+      Logger.log("GlobalHiveService", "Getting a global hive client instance");
+      let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
+      hiveAuthHelper.getClientWithAuth((err)=>{
+        Logger.error("GlobalHiveService", "Authentication error:", err);
+      }).then((client) => {
+        if (!client) {
+          Logger.error("GlobalHiveService", "Fatal error in hive manager: Unable to get a global hive client instance.");
+        }
+        else {
+          this.client = client;
+          Logger.log("GlobalHiveService", "Global hive client instance was created", client);
+
+          void this.retrieveVaultLinkStatus();
+        }
+      });
     }
   }
 
   onUserSignOut(): Promise<void> {
+    if (this.client) {
+      this.client = null;
+    }
+
     return;
   }
 
@@ -221,53 +229,58 @@ export class GlobalHiveService extends GlobalService {
         // Vault not created on this hive provider yet (old DIDs?) - force user to pick a provider, that will
         // create the vault at the same time.
         Logger.log("GlobalHiveService", "Vault does not exist on this provider. It has to be created again.");
+        this.emitNoVaultStatus();
         return null;
       }
       else {
         Logger.error("GlobalHiveService", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
-        throw e;
+        this.emitNoVaultStatus();
+        return null;
       }
     }
 
     if (this.activeVault === null) {
       Logger.log("GlobalHiveService", "No vault found for this DID");
-      // Null vault returned, so this either means we are not on ID chain yet,c or we didn't
+      // Null vault returned, so this either means we are not on ID chain yet, or we didn't
       // call create vault. So the user will have to do it.
-      return status;
     }
-
-    // Ensure the vault was created by calling the createVault() API. We can make sure of this by getting the active
-    // payment plan. If none or if a vault not found exception is returned, this means the vault was not yet created.
-    let activePricingPlan: HivePlugin.Payment.ActivePricingPlan = null;
-    try {
-      activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
-      if (!activePricingPlan) {
-        Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
-        return null;
+    else {
+      // Ensure the vault was created by calling the createVault() API. We can make sure of this by getting the active
+      // payment plan. If none or if a vault not found exception is returned, this means the vault was not yet created.
+      let activePricingPlan: HivePlugin.Payment.ActivePricingPlan = null;
+      try {
+        activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
+        if (!activePricingPlan) {
+          Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
+          this.emitNoVaultStatus();
+          return null;
+        }
+        Logger.log("GlobalHiveService", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
       }
-      Logger.log("GlobalHiveService", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
-    }
-    catch (e) {
-      if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
-        Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
-        return null;
+      catch (e) {
+        if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
+          Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
+          this.emitNoVaultStatus();
+          return null;
+        }
+        else {
+          Logger.error("GlobalHiveService", "Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
+          this.emitNoVaultStatus();
+          return null;
+        }
       }
-      else {
-        Logger.error("GlobalHiveService", "Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
-        throw e;
+
+      let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
+      Logger.log("GlobalHiveService", "Currently published vault address: ", currentlyPublishedVaultAddress);
+
+      if (currentlyPublishedVaultAddress) {
+        status.publishedInfo = {
+          vaultAddress: currentlyPublishedVaultAddress,
+          vaultName: "todo-no-way-to-get-this-yet",
+          vaultVersion: await this.activeVault.getNodeVersion(),
+          activePricingPlan
+        };
       }
-    }
-
-    let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
-    Logger.log("GlobalHiveService", "Currently published vault address: ", currentlyPublishedVaultAddress);
-
-    if (currentlyPublishedVaultAddress) {
-      status.publishedInfo = {
-        vaultAddress: currentlyPublishedVaultAddress,
-        vaultName: "todo-no-way-to-get-this-yet",
-        vaultVersion: await this.activeVault.getNodeVersion(),
-        activePricingPlan
-      };
     }
 
     Logger.log("GlobalHiveService", "Link status retrieval completed");
@@ -276,6 +289,12 @@ export class GlobalHiveService extends GlobalService {
     this.vaultStatus.next(this.vaultLinkStatus);
 
     return status;
+  }
+
+  private emitNoVaultStatus() {
+    Logger.log("GlobalHiveService", "Emiting no vault status");
+    this.vaultLinkStatus = null;
+    this.vaultStatus.next(this.vaultLinkStatus);
   }
 
   public getActiveVault(): HivePlugin.Vault {

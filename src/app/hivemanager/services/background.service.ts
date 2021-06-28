@@ -14,7 +14,6 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
     providedIn: 'root'
 })
 export class BackgroundService {
-
     public activePaymentPlan: HivePlugin.Payment.ActivePricingPlan = null;
 
     constructor(
@@ -27,12 +26,12 @@ export class BackgroundService {
     ) {
     }
 
-    public async init() {
+    public init() {
         Logger.log("HiveManager", "Background service: initializing");
-        this.getActivePaymentPlan();
+        //void this.getActivePaymentPlan();
     }
 
-    async getActivePaymentPlan() {
+    /* async getActivePaymentPlan() {
         await this.hiveService.retrieveVaultLinkStatus();
         if (await this.hiveService.getActiveVault()) {
             Logger.log("HiveManager", "Background service: Fetching active payment plan");
@@ -42,7 +41,7 @@ export class BackgroundService {
 
             this.getTimeCheck();
         }
-    }
+    } */
 
     async getTimeCheck() {
         const lastCheckedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', 'timeCheckedForExpiration', 0);

@@ -509,7 +509,7 @@ export class CredentialAccessRequestPage {
       let selectedCredentials = this.buildDeliverableCredentialsList();
 
       // Create and send the verifiable presentation that embeds the selected credentials
-      AuthService.instance.checkPasswordThenExecute(async ()=>{
+      void AuthService.instance.checkPasswordThenExecute(async ()=>{
         let presentation: DIDPlugin.VerifiablePresentation = null;
         let currentDidString: string = this.didService.getActiveDid().getDIDString();
         presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials, this.authService.getCurrentUserPassword(), this.receivedIntent.params.nonce, this.receivedIntent.params.realm);

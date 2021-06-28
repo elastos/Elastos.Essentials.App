@@ -35,8 +35,9 @@ export class WalletInitService extends GlobalService {
     super();
   }
 
-  public async init(): Promise<void> {
+  public init(): Promise<void> {
     GlobalServiceManager.getInstance().registerService(this);
+    return;
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
@@ -45,9 +46,9 @@ export class WalletInitService extends GlobalService {
     await this.prefs.init();
     await this.coinService.init();
     // Do not await.
-    this.currencyService.init();
+    void this.currencyService.init();
     // Do not await.
-    this.contactsService.init();
+    void this.contactsService.init();
     await this.uiService.init();
 
     // TODO: dirty, rework this

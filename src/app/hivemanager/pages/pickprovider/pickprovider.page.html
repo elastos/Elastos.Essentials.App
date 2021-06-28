@@ -10,13 +10,9 @@
         <ion-spinner name="crescent"></ion-spinner>
         <h4>{{ 'hivemanager.pickprovider.activating-provider'  | translate }}</h4>
     </div>
-    <div *ngIf="vaultProviderCouldBeContacted && !checkingInitialStatus && publishInProgress()" class="container center ion-text-center">
-        <ion-spinner name="crescent"></ion-spinner>
-        <h4 class="ion-padding">{{ 'hivemanager.pickprovider.hivevault-publishing' | translate }}</h4>
-    </div>
 
     <!-- No Vault -->
-    <div *ngIf="!publishingProvider && !checkingInitialStatus && vaultProviderCouldBeContacted && !hasVaultProvider() && !publishInProgress()" class="container" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="!publishingProvider && !checkingInitialStatus && vaultProviderCouldBeContacted && !hasVaultProvider()" class="container" [class.darkContainer]="theme.darkMode">
         <h1>{{ 'hivemanager.pickprovider.elastos' | translate }} <br> {{ 'hivemanager.pickprovider.hivestorage' | translate }}</h1>
         <div class="bubble">
             <p>{{ 'hivemanager.pickprovider.no-storage-intro' | translate }}</p> <br>
@@ -36,7 +32,7 @@
     </div>
 
     <!-- Can't Fetch Vault -->
-    <div *ngIf="!checkingInitialStatus && !vaultProviderCouldBeContacted && !publishInProgress()" class="container" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="!checkingInitialStatus && !vaultProviderCouldBeContacted" class="container" [class.darkContainer]="theme.darkMode">
         <h3>{{ 'hivemanager.pickprovider.provider-offline' | translate }}</h3>
         <div class="bubble">
             <p>{{ 'hivemanager.pickprovider.provider-offline-msg' | translate }}</p>
@@ -44,7 +40,7 @@
     </div>
 
     <!-- Has Vault -->
-    <div *ngIf="!checkingInitialStatus && vaultProviderCouldBeContacted && hasVaultProvider() && !publishInProgress()" class="container" [class.darkContainer]="theme.darkMode">
+    <div *ngIf="!checkingInitialStatus && vaultProviderCouldBeContacted && hasVaultProvider()" class="container" [class.darkContainer]="theme.darkMode">
         <h3>{{ 'hivemanager.pickprovider.vault-active' | translate }}</h3>
         <div class="bubble">
             <p>{{ 'hivemanager.pickprovider.vault-msg' | translate }}</p> <br>

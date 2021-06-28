@@ -55,7 +55,7 @@ export class ElastosSDKHelper {
      * @param context Isolation context to be able to handle multiple auth tokens, etc. Usually, the "app module name"
      */
     public newHiveAuthHelper(): Hive.AuthHelper {
-        return null; // TMP WHILE HIVE IS NOT UPGRADED TO DID 2.0
+        //return null; // TMP WHILE HIVE IS NOT UPGRADED TO DID 2.0
 
         let authHelper = new Hive.AuthHelper();
         return authHelper;

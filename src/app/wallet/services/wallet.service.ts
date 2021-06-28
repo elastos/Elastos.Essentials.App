@@ -133,6 +133,8 @@ export class WalletManager {
     }
 
     private async initWallets(): Promise<boolean> {
+        Logger.log('wallet', "Initializing wallets");
+
         try {
             // NetWork Type
             this.networkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
@@ -145,6 +147,7 @@ export class WalletManager {
                 this.networkType = NetworkType.PrvNet;
               }
             }
+            Logger.log('wallet', "Setting network to ", this.networkType, networkConfig);
             await this.spvBridge.setNetwork(this.networkType, networkConfig);
             // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 

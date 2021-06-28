@@ -22,7 +22,7 @@ export class GlobalServiceManager {
     private services: GlobalService[] = [];
 
     registerService(service: GlobalService) {
-        Logger.log("global", "Registering global service:", service);
+        Logger.log("servicemanager", "Registering global service:", service);
         this.services.push(service);
     }
 
@@ -30,7 +30,9 @@ export class GlobalServiceManager {
         for (let service of this.services) {
             let startTimeMs = Date.now();
 
+            Logger.log("servicemanager", "Entering onUserSignIn for service:", service);
             await service.onUserSignIn(signedInIdentity);
+            Logger.log("servicemanager", "Exiting onUserSignIn for service:", service);
 
             // Make sure to warn in logs if a service starts to take too much time and is blocking others.
             const SLOW_INIT_DELAY_MS = 200;
@@ -38,17 +40,17 @@ export class GlobalServiceManager {
             let endTimeMs = Date.now();
             let durationMs = endTimeMs - startTimeMs;
             if (durationMs > CRITICALLY_SLOW_INIT_DELAY_MS) {
-                Logger.error("global", "Call to onUserSignIn() is blocking the app! Expected less than "+SLOW_INIT_DELAY_MS+" ms, but took "+durationMs+" ms.", service);
+                Logger.error("servicemanager", "Call to onUserSignIn() is blocking the app! Expected less than "+SLOW_INIT_DELAY_MS+" ms, but took "+durationMs+" ms.", service);
             }
             else if (durationMs > SLOW_INIT_DELAY_MS) {
-                Logger.warn("global", "Call to onUserSignIn() took too much time! Expected less than "+SLOW_INIT_DELAY_MS+" ms, but took "+durationMs+" ms.", service);
+                Logger.warn("servicemanager", "Call to onUserSignIn() took too much time! Expected less than "+SLOW_INIT_DELAY_MS+" ms, but took "+durationMs+" ms.", service);
             }
         }
     }
 
     async emitUserSignOut(): Promise<void> {
         for (let service of this.services) {
-            Logger.log("ServiceManager", "Emiting onUserSignOut() for service:", service);
+            Logger.log("servicemanager", "Emiting onUserSignOut() for service:", service);
             await service.onUserSignOut();
         }
     }

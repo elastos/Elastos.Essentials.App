@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { NgZone} from '@angular/core';
-import { HiveService, PaidIncompleteOrder, VaultLinkStatus } from '../../services/hive.service';
+import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopupService } from '../../services/popup.service';
@@ -16,6 +16,7 @@ import { Events } from 'src/app/services/events.service';
 import { ProfileService } from 'src/app/identity/services/profile.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { App } from "src/app/model/app.enum"
+import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
 
 type StorageProvider = {
   name: string,
@@ -30,8 +31,8 @@ type StorageProvider = {
 export class PickProviderPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public checkingInitialStatus: boolean = true;
-  public vaultProviderCouldBeContacted: boolean = false;
+  public checkingInitialStatus = true;
+  public vaultProviderCouldBeContacted = false;
   public vaultLinkStatus: VaultLinkStatus = null;
   private forceProviderChange = false;
   private developerMode = false;
@@ -63,6 +64,7 @@ export class PickProviderPage implements OnInit {
     private prefs: PrefsService,
     private events: Events,
     public profileService: ProfileService,
+    private globalHiveService: GlobalHiveService
   ) {}
 
   async ngOnInit() {
@@ -71,7 +73,8 @@ export class PickProviderPage implements OnInit {
     if (networkType == NetworkType.MainNet) {
       this.storageProviders =  [
         { name: 'Trinity Tech Hive 1', vaultAddress: "https://hive1.trinity-tech.io" },
-        { name: 'Trinity Tech Hive 2', vaultAddress: "https://hive2.trinity-tech.io" }
+        { name: 'Trinity Tech Hive 2', vaultAddress: "https://hive2.trinity-tech.io" },
+        { name: 'Trinity Tech Hive Mainnet TEST 3', vaultAddress: "https://hive-testnet3.trinity-tech.io" } // TMP
       ];
     }
     else if (networkType == NetworkType.TestNet) {
@@ -90,7 +93,7 @@ export class PickProviderPage implements OnInit {
 
     this.events.subscribe("plan-just-purchased", ()=>{
       Logger.log("HiveManager", "Payment just purchased. Refreshing status.");
-      this.checkInitialStatus();
+      void this.checkInitialStatus();
     });
   }
 
@@ -119,7 +122,7 @@ export class PickProviderPage implements OnInit {
 
     this.titleBar.setupMenuItems(menuItems);
 
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (clickedIcon: TitleBarMenuItem) => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedIcon: TitleBarMenuItem) => {
       switch (clickedIcon.key) {
         case "pickprovider-adminproviders":
           this.goToAdminPanel();
@@ -139,24 +142,24 @@ export class PickProviderPage implements OnInit {
 
 
   ionViewDidEnter(){
-    this.checkInitialStatus(true);
+    Logger.log("hivemanager", "Pick provider: subscribing to vault status events");
+    this.globalHiveService.vaultStatus.subscribe((status) => {
+      void this.checkInitialStatus();
+    })
   }
 
   ionViewWillLeave() {
     this.titleBar.setMenuVisibility(false);
 
     if (this.popup.alert) {
-      this.popup.alertCtrl.dismiss();
+      void this.popup.alertCtrl.dismiss();
       this.popup.alert = null;
     }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
-  private async checkInitialStatus(forceCheck = false) {
-    if (this.checkingInitialStatus && !forceCheck)
-      return;
-
+  private checkInitialStatus() {
     // Reset all states
     this.vaultProviderCouldBeContacted = false;
     this.vaultLinkStatus = null;
@@ -168,19 +171,25 @@ export class PickProviderPage implements OnInit {
 
     this.checkingInitialStatus = true;
 
-    try {
-      this.vaultLinkStatus = await this.hiveService.retrieveVaultLinkStatus();
-      this.vaultProviderCouldBeContacted = true;
+    if (this.globalHiveService.vaultStatus.value) {
+      try {
+        this.vaultLinkStatus = this.globalHiveService.vaultStatus.value;
+        this.vaultProviderCouldBeContacted = true;
 
-      // Start those checks in background, not blocking.
-      Promise.race([
-        this.hiveService.tryToFinalizePreviousOrders(),
-        this.fetchActivePaymentPlan(),
-        this.fetchOrdersAwaitingTxConfirmation(),
-      ]);
+        // Start those checks in background, not blocking.
+        void Promise.race([
+          this.hiveService.tryToFinalizePreviousOrders(),
+          this.fetchActivePaymentPlan(),
+          this.fetchOrdersAwaitingTxConfirmation(),
+        ]);
+      }
+      catch (e) {
+        Logger.warn("HiveManager", "Error while trying to retrieve vault link status: ", e);
+        this.vaultProviderCouldBeContacted = false;
+      }
     }
-    catch (e) {
-      Logger.warn("HiveManager", "Error while trying to retrieve vault link status: ", e);
+    else {
+      Logger.warn("HiveManager", "Vault status could not be retrieved.");
       this.vaultProviderCouldBeContacted = false;
     }
 
@@ -193,10 +202,6 @@ export class PickProviderPage implements OnInit {
       return false;
 
     return this.vaultLinkStatus != null && this.vaultLinkStatus.publishedInfo != null;
-  }
-
-  publishInProgress(): boolean {
-    return this.vaultLinkStatus != null && this.vaultLinkStatus.publishingInfo != null;
   }
 
   async pickProvider(provider: StorageProvider) {
@@ -224,25 +229,15 @@ export class PickProviderPage implements OnInit {
     } */
 
     this.publishingProvider = true;
-    let publicationStarted = await this.hiveService.publishVaultProvider(providerName, providerAddress);
+    let publicationStarted = await this.globalHiveService.publishVaultProvider(providerName, providerAddress);
 
     this.publishingProvider = false;
 
     // Refresh the link status
-    this.vaultLinkStatus = await this.hiveService.retrieveVaultLinkStatus();
+    this.vaultLinkStatus = await this.globalHiveService.retrieveVaultLinkStatus();
     Logger.log("HiveManager", "Vault link status:", this.vaultLinkStatus)
 
     this.forceProviderChange = false;
-
-    if (publicationStarted) {
-      this.vaultLinkStatus.publishingInfo = {
-        vaultName: providerName,
-        vaultAddress: providerAddress
-      }
-    }
-    else {
-      // Cancelled by user - do nothing.
-    }
   }
 
   private async fetchActivePaymentPlan() {
@@ -279,14 +274,14 @@ export class PickProviderPage implements OnInit {
   }
 
   private goToAdminPanel() {
-    this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminproviderslist");
+    void this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/adminproviderslist");
   }
 
   public changePlan() {
-    this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/pickplan");
+    void this.nav.navigateTo(App.HIVE_MANAGER, "hivemanager/pickplan");
   }
 
   public transferVault() {
-    this.popup.ionicAlert("hivemanager.alert.not-available", "hivemanager.alert.not-available-msg");
+    void this.popup.ionicAlert("hivemanager.alert.not-available", "hivemanager.alert.not-available-msg");
   }
 }
