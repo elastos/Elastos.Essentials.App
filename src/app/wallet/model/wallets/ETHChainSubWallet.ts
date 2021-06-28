@@ -175,6 +175,8 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     private isERC20TokenTransfer(toAddress: string) {
+      if (this.tokenList == null) return false;
+
       for (let i = 0, len = this.tokenList.length; i < len; i++) {
         if (this.tokenList[i].contractAddress.toLowerCase() === toAddress) {
           return true;
