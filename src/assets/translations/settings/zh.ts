@@ -15,15 +15,16 @@ export const zh = {
           'display-setting': '主题',
           'dev-mode': '开发者模式',
           'wallet-connect-sessions-setting': '钱包连接会话',
+          'privacy-setting': 'Privacy',
 
           // Subtitles
-          'your-app-details': '查看胶囊详情',
           'advanced-setting': '高级设置',
           'change-lang': '更改全局语言',
           'change-pw': '更改密码',
           'manage-pw': '管理您的密码',
           'about-elastos': 'Elastos Essentials 详情',
           'wallet-connect-sessions-intro-setting': '管理活跃的会话',
+          'privacy-intro-setting': 'Customize your privacy level',
 
           // Other
           'light-mode-on': '浅色主题',
@@ -65,7 +66,12 @@ export const zh = {
           /********** Wallet Connect Page **********/
           'wallet-connect-request': '应用链接请求',
           'wallet-connect-sessions': '钱包连接会话',
-          'wallet-connect-prepare-to-connect': '启动钱包连接'
+          'wallet-connect-prepare-to-connect': '启动钱包连接',
+
+          /*********** Privacy page **********/
+          'privacy': 'Privacy',
+          'publish-identity-medium-assist': 'Publish identity using a fast third party service named ASSIST',
+          'publish-identity-medium-wallet': 'Publish identity by yourself using your wallet',
      }
 
 };

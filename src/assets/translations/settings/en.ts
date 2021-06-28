@@ -15,15 +15,16 @@ export const en = {
         'passwordmanager-setting':'Password Manager',
         'wallet-setting': 'My Wallet',
         'wallet-connect-sessions-setting': 'Wallet Connect Sessions',
+        'privacy-setting': 'Privacy',
 
         // Subtitles
-        'your-app-details': 'DETAILS ABOUT YOUR CAPSULES',
         'advanced-setting': 'ADVANCED SETTINGS',
         'change-lang': 'CHANGE GLOBAL LANGUAGE',
         'manage-pw': 'MANAGE PASSWORD',
         'change-pw': 'CHANGE PASSWORD',
         'about-elastos': 'DETAILS ABOUT ELASTOS ESSENTIALS',
         'wallet-connect-sessions-intro-setting': 'Manage active sessions',
+        'privacy-intro-setting': 'Customize your privacy level',
 
         // Other
         'light-mode-on': 'LIGHT MODE ON',
@@ -65,7 +66,12 @@ export const en = {
         /********** Wallet Connect / Sessions Page **********/
         'wallet-connect-request': 'App Link Request',
         'wallet-connect-sessions': 'Wallet Connect Sessions',
-        'wallet-connect-prepare-to-connect': 'Initiating Wallet Connect'
+        'wallet-connect-prepare-to-connect': 'Initiating Wallet Connect',
+
+        /*********** Privacy page **********/
+        'privacy': 'Privacy',
+        'publish-identity-medium-assist': 'Publish identity using a fast third party service named ASSIST',
+        'publish-identity-medium-wallet': 'Publish identity by yourself using your wallet',
     }
 
 };

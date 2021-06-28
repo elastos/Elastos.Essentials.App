@@ -95,10 +95,7 @@ export class AppComponent {
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();
-
-            // TMP TEST
-            //await this.publicationService.publishDIDOnAssist("", {}, "", true);
-
+            
             Logger.log("Global", "All awaited init services have been initialized");
 
             // This method will sign in, so it must come last.

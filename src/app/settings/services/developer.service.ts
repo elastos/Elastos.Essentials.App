@@ -75,19 +75,19 @@ export class DeveloperService {
       crRPCApi: 'https://api.cyberrepublic.org',
       icon: '/assets/icon/test.svg'
     },
-    {
+    /* {
       type: 'settings.reg-net',
       code: 'RegTest',
       mainChainRPCApi: 'http://api.elastos.io:22336',
       idChainRPCApi: 'http://api.elastos.io:22606',
-      eidRPCApi: 'https://api.elastos.io/eid',
+      eidRPCApi: 'https://api-testnet.elastos.io/newid', // Devnet
       ethscRPCApi: 'http://api.elastos.io:22636',
       ethscApiMisc: 'http://api.elastos.io:22634',
       ethscOracle: 'http://api.elastos.io:22632',
       ethscBrowserApiUrl: 'https://eth.elastos.io',
       crRPCApi: 'https://api.cyberrepublic.org',
       icon: '/assets/icon/reg.svg'
-    },
+    }, */
     {
       type: 'settings.lrw-net',
       code: 'LrwNet',

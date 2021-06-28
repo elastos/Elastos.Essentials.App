@@ -15,15 +15,16 @@ export const fr = {
         'passwordmanager-setting':'Gestion des mots de passe',
         'wallet-setting': 'Mon portefeuille',
         'wallet-connect-sessions-setting': 'Sessions Wallet Connect',
+        'privacy-setting': 'Vie privée',
 
         // Subtitles
-        'your-app-details': 'DETAILS SUR VOS CAPSULES',
         'advanced-setting': 'PARAMETRES AVANCES',
         'change-lang': 'MODIFIER LA LANGUE GLOBALE',
-        'change-pw': 'CHANGE PASSWORD',
+        'change-pw': 'CHANGER LE MOT DE PASSER',
         'manage-pw': 'GERER VOS MOTS DE PASSE',
-        'about-elastos': 'DETAILS SUR ELASTOS',
+        'about-elastos': 'EN SAVOIR PLUS',
         'wallet-connect-sessions-intro-setting': 'Gérer les sessions actives',
+        'privacy-intro-setting': 'Plus d\'options de vie privée',
 
         // Other
         'light-mode-on': 'MODE CLAIR ACTIF',
@@ -67,41 +68,10 @@ export const fr = {
         'wallet-connect-sessions': 'Sessions Wallet Connect',
         'wallet-connect-prepare-to-connect': 'Préparation de Wallet Connect',
 
-        /********** App-Info Page **********/
-        'app-details': "Détails de l'application",
-        'developer-details': 'Détails du développeur',
-        'install-details': 'Détails de l\'Installation',
-        'install-date': 'Date d\'installation',
-        'plugins-authority': 'Plugins autorisés',
-        'urls-authority': 'Sites Web autorisés',
-        'sign': 'Signature',
-        'category': 'Catégorie',
-        'author': 'Auteur',
-        'open-app': 'Ouvrir',
-        'clear-data': 'Effacer les données',
-        'clear-data-title': 'Effacer les données de l\'application',
-        'clear-data-prompt': 'Toutes les données de l\'application stockées sur cet appareil seront supprimées. Souhaitez-vous continuer?',
-        'clear-data-success': 'Les données de l\'application ont été supprimées',
-        'delete-app': 'Effacer l\'application',
-        'delete-app-title': 'Supprimer l\'application',
-        'delete-app-prompt': 'Cette application sera supprimée définititement, est-ce bien ce que vous souhaitez faire?',
-        'clear': 'Effacer',
-
-        /********** App Categories **********/
-        'finance': 'Finance',
-        'tools': 'Utilitaires',
-        'communication': 'Communication',
-        'social': 'Social',
-        'productivity': 'Productivité',
-        'shopping': 'Shopping',
-        'lifestyle': 'Mode de vie',
-        'games': 'Jeux',
-        'casino': 'Casino',
-        'music': 'Musique',
-        'entertainment': 'Divertissement',
-        'travel': 'Voyage',
-        'health': 'Santé',
-        'techdemo': "Démo d'Elastos Essentials",
+        /*********** Privacy page **********/
+        'privacy': 'Vie privée',
+        'publish-identity-medium-assist': 'Publier les identités rapidement via le service tiers ASSIST',
+        'publish-identity-medium-wallet': 'Publier les identités en utilisant mon portefeuille',
     }
 
 };

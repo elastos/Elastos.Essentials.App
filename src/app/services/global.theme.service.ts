@@ -28,10 +28,10 @@ export class GlobalThemeService extends GlobalService {
   ) {
     super();
 
-    this.prefs.preferenceListener.subscribe((prefChanged)=>{
+    this.prefs.preferenceListener.subscribe(async (prefChanged)=>{
       if (prefChanged.key == "ui.darkmode") {
         let darkMode = prefChanged.value as boolean;
-        passwordManager.setDarkMode(darkMode);
+        await passwordManager.setDarkMode(darkMode);
 
         if (darkMode)
           this.activeTheme.next(AppTheme.DARK);

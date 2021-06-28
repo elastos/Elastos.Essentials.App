@@ -9,6 +9,7 @@ import { DevTestsPage } from './pages/devtests/devtests.page';
 import { WalletConnectConnectPage } from './pages/walletconnect/connect/connect.page';
 import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessions.page';
 import { WalletConnectPrepareToConnectPage } from './pages/walletconnect/preparetoconnect/preparetoconnect.page';
+import { PrivacyPage } from './pages/privacy/privacy.page';
 
 const routes: Routes = [
   { path: 'menu', component: MenuPage },
@@ -19,7 +20,8 @@ const routes: Routes = [
   { path: 'devtests', component: DevTestsPage },
   { path: 'walletconnect/sessions', component: WalletConnectSessionsPage },
   { path: 'walletconnect/preparetoconnect', component: WalletConnectPrepareToConnectPage },
-  { path: 'walletconnect/connect', component: WalletConnectConnectPage }
+  { path: 'walletconnect/connect', component: WalletConnectConnectPage },
+  { path: 'privacy', component: PrivacyPage }
 ];
 
 @NgModule({

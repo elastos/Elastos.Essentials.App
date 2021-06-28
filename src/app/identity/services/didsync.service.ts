@@ -112,71 +112,12 @@ export class DIDSyncService {
    * in order to finalize the publication itself.
    */
   private onDIDDocumentPublishPayloadCreated(payload: string, memo: string) {
-    // Prompt user whether he wants to use assist or his wallet
-    /* const modal = await this.modalCtrl.create({
-      component: PublishModeComponent,
-      componentProps: {},
-      cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
-    });
-    void modal.onDidDismiss().then((params: {data: {using: string}}) => {
-        if (params && params.data && params.data.using) {
-          if (params.data.using === "assist")
-            void this.publishDIDTransactionWithAssist(payload, memo);
-          else if (params.data.using === "wallet")
-            void this.publishDIDTransactionWithWallet(payload, memo);
-        }
-    });
-    void modal.present(); */
-
-    // NOTE: directly publish using assist for now. Later we will have a preference to chosoe assist or wallet.
-    // We don't bother users with a choice here.
-    this.publishDIDTransactionWithAssist(payload, memo);
+    void this.publishDIDTransaction(payload, memo);
   }
 
-  private async publishDIDTransactionWithWallet(payload: string, memo: string) {
-    let jsonPayload = JSON.parse(payload);
-    Logger.log("identity", "Received DID transaction payload in DIDSync:", payload);
-
-    let params = {
-        didrequest: jsonPayload
-    }
-
-    Logger.log('identity', "Sending didtransaction intent with params:", params);
-
-    try {
-        let response = await this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", params);
-
-        Logger.log('identity', "Got didtransaction intent response.", response);
-
-        // If txid is set in the response this means a transaction has been sent on chain.
-        // If null, this means user has cancelled the operation (no ELA, etc).
-        if (response.result && response.result.txid) {
-            Logger.log('identity', 'didtransaction response.result.txid ', response.result.txid);
-            this.events.publish("diddocument:publishresult", {
-                didStore: this,
-                published: true
-            });
-        }
-        else {
-            Logger.log('identity', 'didtransaction response.result.txid is null');
-            this.events.publish("diddocument:publishresult", {
-                didStore: this,
-                cancelled: true
-            });
-        }
-    }
-    catch (err) {
-        Logger.error('identity', "Failed to send app manager didtransaction intent!", err);
-        this.events.publish("diddocument:publishresult", {
-            didStore: this,
-            error: true
-        });
-    }
-  }
-
-  private async publishDIDTransactionWithAssist(payload: string, memo: string) {
+  private async publishDIDTransaction(payload: string, memo: string) {
     // Open the "fast did publishing" screen.
-    await this.globalPublicationService.publishDIDOnAssist(this.didService.getActiveDid().getDIDString(), JSON.parse(payload), memo, true);
+    await this.globalPublicationService.publishDIDFromRequest(this.didService.getActiveDid().getDIDString(), JSON.parse(payload), memo, true);
   }
 
   private onDIDDocumentPublishResponse(result: DIDDocumentPublishEvent) {

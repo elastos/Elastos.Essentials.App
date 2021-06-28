@@ -18,6 +18,7 @@ import { DevTestsPage } from './pages/devtests/devtests.page';
 import { WalletConnectConnectPage } from './pages/walletconnect/connect/connect.page';
 import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessions.page';
 import { WalletConnectPrepareToConnectPage } from './pages/walletconnect/preparetoconnect/preparetoconnect.page';
+import { PrivacyPage } from './pages/privacy/privacy.page';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { WalletConnectPrepareToConnectPage } from './pages/walletconnect/prepare
     DevTestsPage,
     WalletConnectPrepareToConnectPage,
     WalletConnectConnectPage,
-    WalletConnectSessionsPage
+    WalletConnectSessionsPage,
+    PrivacyPage
   ],
   imports: [
     CommonModule,

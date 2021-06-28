@@ -1,0 +1,17 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
+    <!-- Publish identity -->
+    <ion-row class="section-row" >
+      <ion-col size="10.5" class="left-col">
+        <h1>{{ getPublishIdentityTitle() }}</h1>
+      </ion-col>
+      <ion-col size="1.5" class="right-col">
+        <div (click)="togglePublishIdentityMedium()">
+          <ion-toggle *ngIf="publishIdentityMedium == 'assist'" checked mode="ios"></ion-toggle>
+          <ion-toggle *ngIf="publishIdentityMedium == 'wallet'" mode="ios"></ion-toggle>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

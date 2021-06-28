@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { NetworkType } from '../model/networktype';
 import { GlobalStorageService } from './global.storage.service';
 
-export type AllPreferences = {[key:string]:any};
+export type AllPreferences = { [key: string]: any };
 
 export type Preference<T> = {
   key: string;
@@ -29,6 +29,7 @@ export class GlobalPreferencesService {
       "developer.mode": false,
       "developer.install.verifyDigest": false,
       "developer.backgroundservices.startonboot": true,
+      "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "ui.darkmode": true,
       "chain.network.type": "MainNet",
       "chain.network.config": "",
@@ -50,13 +51,13 @@ export class GlobalPreferencesService {
    *
    * @param key Unique key identifying the preference data.
    */
-  public async getPreference<T>(did: string, key: string, allowNullDID: boolean = false): Promise<T> {
+  public async getPreference<T>(did: string, key: string, allowNullDID = false): Promise<T> {
     if (did == null && !allowNullDID)
-      throw new Error("Getting a global preference (no DID set) without allowNullDID set to false is forbidden! key= "+key);
+      throw new Error("Getting a global preference (no DID set) without allowNullDID set to false is forbidden! key= " + key);
 
     let preferences = await this.getPreferences(did, allowNullDID);
     if (!(key in preferences))
-      throw new Error("Preference "+key+" is not a registered preference!");
+      throw new Error("Preference " + key + " is not a registered preference!");
 
     //Logger.log('PreferenceService', "GET PREF", key, preferences[key])
 
@@ -66,7 +67,7 @@ export class GlobalPreferencesService {
   /**
    * Get all system preferences.
    */
-  public async getPreferences(did: string, allowNullDID: boolean = false): Promise <AllPreferences> {
+  public async getPreferences(did: string, allowNullDID = false): Promise<AllPreferences> {
     if (did == null && !allowNullDID)
       throw new Error("Getting global preferences (no DID set) without allowNullDID set to false is forbidden!");
 
@@ -84,9 +85,9 @@ export class GlobalPreferencesService {
    * @param key   Unique key identifying the preference data.
    * @param value The data to be stored. If null is passed, the preference is restored to system default value.
    */
-  public async setPreference(did: string, key: string, value: any, allowNullDID: boolean = false): Promise<void> {
+  public async setPreference(did: string, key: string, value: any, allowNullDID = false): Promise<void> {
     if (!(key in this.getDefaultPreferences()))
-      throw new Error("Preference "+key+" is not a registered preference!");
+      throw new Error("Preference " + key + " is not a registered preference!");
 
     let preferences = await this.getPreferences(did, allowNullDID);
     preferences[key] = value;
@@ -94,7 +95,7 @@ export class GlobalPreferencesService {
     await this.storage.setSetting<AllPreferences>(did, "prefservice", "preferences", preferences);
 
     // Notify listeners about a preference change
-    this.preferenceListener.next({key, value});
+    this.preferenceListener.next({ key, value });
   }
 
   /**
@@ -112,18 +113,24 @@ export class GlobalPreferencesService {
     return this.getPreference<string>(did, "sidechain.eth.rpcapi");
   }
 
-  public developerModeEnabled(did: string): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      try {
-        let devMode = await this.getPreference(did, "developer.mode");
-        if (devMode)
-          resolve(true);
-        else
-          resolve(false);
-      }
-      catch (err) {
-        resolve(false);
-      }
-    });
+  public async developerModeEnabled(did: string): Promise<boolean> {
+    try {
+      let devMode = await this.getPreference(did, "developer.mode");
+      if (devMode)
+        return true;
+      else
+        return false;
+    }
+    catch (err) {
+      return false;
+    }
+  }
+
+  public getPublishIdentityMedium(did: string): Promise<string> {
+    return this.getPreference<string>(did, "privacy.identity.publication.medium");
+  }
+
+  public setPublishIdentityMedium(did: string, medium: 'assist' | 'wallet'): Promise<void> {
+    return this.setPreference(did, "privacy.identity.publication.medium", medium);
   }
 }
