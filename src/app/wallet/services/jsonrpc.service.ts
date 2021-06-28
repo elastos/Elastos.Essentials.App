@@ -21,10 +21,15 @@ export class WalletJsonRPCService {
 
     // return balance in SELA
     async getBalanceByAddress(chainID: StandardCoinName, addressArray: string[]): Promise<BigNumber> {
+        let apiurltype = this.getApiUrlTypeForRpc(chainID);
+        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+        if (rpcApiUrl.length === 0) {
+          return null;
+        }
+
         let balanceOfSELA = new BigNumber(0);
         const paramArray = [];
         let index = 0;
-
         for (const address of addressArray) {
             const param = {
                 method: 'getreceivedbyaddress',
@@ -37,26 +42,22 @@ export class WalletJsonRPCService {
             paramArray.push(param);
         }
 
-        let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
-        if (rpcApiUrl.length === 0) {
-            return balanceOfSELA;
-        }
-
         // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
+        let alreadyGetBalance = false;
         do {
             try {
                 const resultArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
                 for (const result of resultArray) {
                     balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(Config.SELAAsBigNumber));
                 }
+                alreadyGetBalance = true;
                 break;
             } catch (e) {
                 // wait 100ms?
             }
         } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
-        return balanceOfSELA;
+        return alreadyGetBalance ? balanceOfSELA : null;
     }
 
     async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, skip: number = 0, timestamp: number = 0): Promise<any> {
@@ -407,17 +408,25 @@ export class WalletJsonRPCService {
     }
 
     async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber: number = 0, endBlockNumber: number = 0): Promise<EthTransaction[]> {
+      let getTxByBrowser = true;
       let apiurltype = this.getApiUrlTypeForBrowser(chainID);
+      if (apiurltype == null) {
+        apiurltype = this.getApiUrlTypeForMisc(chainID);
+        getTxByBrowser = false;
+      }
       const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return null;
       }
-
-      // Misc api
-      // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
-      // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
-      // const ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
-      const ethscgethistoryurl = rpcApiUrl + '/api/?module=account&action=txlist&address=' + address;
+      let ethscgethistoryurl = null;
+      if (getTxByBrowser) {
+        ethscgethistoryurl = rpcApiUrl + '/api/?module=account&action=txlist&address=' + address;
+      } else {
+        // Misc api
+        // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
+        // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
+        ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
+      }
       try {
           let result = await this.globalJsonRPCService.httpGet(ethscgethistoryurl);
           return result.result as EthTransaction[];
@@ -562,7 +571,7 @@ export class WalletJsonRPCService {
 
   // TODO: Remove it, Use browser api not misc.
   getApiUrlTypeForMisc(chainID: string) {
-      let apiUrlType = ApiUrlType.ETHSC_MISC;
+      let apiUrlType = null;
       switch (chainID) {
           case StandardCoinName.ETHSC:
               apiUrlType = ApiUrlType.ETHSC_MISC;
@@ -578,13 +587,13 @@ export class WalletJsonRPCService {
   }
 
   getApiUrlTypeForBrowser(chainID: string) {
-    let apiUrlType = ApiUrlType.ETH_BROWSER;
+    let apiUrlType = null;
     switch (chainID) {
         case StandardCoinName.ETHSC:
             apiUrlType = ApiUrlType.ETH_BROWSER;
             break;
         default:
-            Logger.log("wallet", 'WalletJsonRPCService: Misc can not support ' + chainID);
+            Logger.log("wallet", 'WalletJsonRPCService: Browser api can not support ' + chainID);
             break;
     }
     return apiUrlType;

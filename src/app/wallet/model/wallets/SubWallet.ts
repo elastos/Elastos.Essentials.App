@@ -49,7 +49,7 @@ export class SerializedSubWallet {
 
 export abstract class SubWallet {
     public id: CoinID = null;
-    public balance: BigNumber = new BigNumber(0); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
+    public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
     public lastBlockTime: string = null;
     public syncTimestamp: number = -1; // Time (ms) at which the wallet was last synced
     public timestamp: number = -1; // Time (ms) at which the progress was last updated (CAUTION: this is NOT the block sync time)

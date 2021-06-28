@@ -65,9 +65,6 @@ export class ERC20SubWallet extends SubWallet {
         // Standard ERC20 contract ABI
         this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
 
-        // Use NaN if can't get balance from web3
-        this.balance = new BigNumber(NaN);
-
         // First retrieve the number of decimals used by this token. this is needed for a good display,
         // as we need to convert the balance integer using the number of decimals.
         await this.fetchTokenDecimals();

@@ -229,6 +229,7 @@ export class MasterWallet {
         }
 
         const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ETHChainSubWallet).getERC20TokenList();
+        if (ercTokenList == null) return;
 
         // For each ERC token discovered by the wallet SDK, we check its type and handle it.
         ercTokenList.forEach( async (token: ERC20TokenInfo) => {

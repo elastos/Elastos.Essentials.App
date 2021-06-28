@@ -614,10 +614,16 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         // The Single Address Wallet should use the external address.
         if (!this.masterWallet.account.SingleAddress) {
             balance = await this.getBalanceByAddress(true);
+            if (balance == null) {
+              return;
+            }
             totalBalance = totalBalance.plus(balance);
         }
 
         balance = await this.getBalanceByAddress(false);
+        if (balance == null) {
+          return;
+        }
         totalBalance = totalBalance.plus(balance);
 
         this.balanceByRPC = totalBalance;
@@ -625,7 +631,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
         Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
         Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
-        return true;
     }
 
     private async getBalanceByAddress(internalAddress: boolean) {
@@ -645,6 +650,10 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
             try {
                 const balance = await this.jsonRPCService.getBalanceByAddress(this.id as StandardCoinName, addressArray.Addresses);
+                if (balance === null) {
+                  Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
+                  return null
+                }
                 totalBalance = totalBalance.plus(balance);
             } catch (e) {
                 Logger.log("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
