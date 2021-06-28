@@ -256,6 +256,8 @@ export const fr = {
         'publish-error': 'Vos informations publiques n\'ont pas pu être publiées pour l\'instant. Veuillez réessayer dans un moment.',
         'publish-error-title': "Erreur de publication",
         'publish-wait': 'Veuillez attendre quelques minutes avant de publier à nouveau.',
+        'publish-error2': 'Publication error',
+        'publish-wait2': 'Your identity is being published online, please wait a few seconds.',
     },
 };
 

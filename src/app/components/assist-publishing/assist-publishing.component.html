@@ -5,7 +5,7 @@
         <ion-label>
           <h1>{{ 'identity.publishing.publish-did' | translate }}</h1>
           <br/>
-          <h2>Your identity is being published online, please wait a few seconds.</h2>
+          <h2>{{ 'identity.publish-wait2' | translate }}</h2>
         </ion-label>
         <br/><br/>
         <ion-spinner *ngIf="publishing"></ion-spinner>
@@ -15,7 +15,7 @@
         </div>
 
         <div *ngIf="publicationFailed">
-          <h2>Publication error</h2>
+          <h2>{{ 'identity.publish-error2' | translate }}</h2>
         </div>
       </ion-col>
     </ion-row>

@@ -255,6 +255,8 @@ export const en = {
         'publish-error': 'Sorry, your public identity information could not be published for now. Please retry after a while.',
         'publish-error-title': "Publish error",
         'publish-wait': 'Please wait a few minutes before publishing again',
+        'publish-error2': 'Publication error',
+        'publish-wait2': 'Your identity is being published online, please wait a few seconds.',
     }
 };
 
