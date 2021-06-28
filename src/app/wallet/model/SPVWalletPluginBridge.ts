@@ -804,9 +804,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createCRCouncilMemberClaimNodeTransaction(masterWalletId: string, chainId: string, payload: string, memo: string): Promise<string> {
+    createCRCouncilMemberClaimNodeTransaction(masterWalletId: string, chainId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            walletManager.createCRCouncilMemberClaimNodeTransaction([masterWalletId, chainId, payload, memo],
+            walletManager.createCRCouncilMemberClaimNodeTransaction([masterWalletId, chainId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { this.handleError(err, reject);  });
         });

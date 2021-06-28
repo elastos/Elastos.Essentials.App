@@ -3,16 +3,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { areaList } from 'src/app/model/area.list';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
-import { AuthService } from 'src/app/wallet/services/auth.service';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { App } from 'src/app/model/app.enum';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Util } from 'src/app/model/util';
@@ -85,7 +81,7 @@ export class CRNodePage implements OnInit {
 
             //Create transaction and send
             payload.CRCouncilMemberSignature = ret.result.signature;
-            const rawTx = await this.walletManager.spvBridge.createCRCouncilMemberClaimNodeTransaction(this.voteService.masterWalletId, StandardCoinName.ELA, payload, '');
+            const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(payload, '');
             await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {

@@ -452,6 +452,18 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
+    public async createCRCouncilMemberClaimNodeTransaction(payload: string, memo: string = ""): Promise<string> {
+        let utxo = await this.getUtxo(20000);
+
+        return this.masterWallet.walletManager.spvBridge.createCRCouncilMemberClaimNodeTransaction(
+            this.masterWallet.id,
+            this.id,
+            JSON.stringify(utxo),
+            payload,
+            '10000',
+            memo
+        );
+    }
 
     // ********************************
     // Private

@@ -5,7 +5,7 @@ import { WalletManager } from '../../wallet/services/wallet.service';
 import { MasterWallet } from '../../wallet/model/wallets/MasterWallet';
 
 import { Logger } from 'src/app/logger';
-import { WalletAccount } from '../../wallet/model/WalletAccount';
+import { WalletAccount, WalletAccountType } from '../../wallet/model/WalletAccount';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { DIDService } from 'src/app/identity/services/did.service';
@@ -84,10 +84,16 @@ export class VoteService {
     }
 
     //For select-wallet page call
-    public navigateTo(masterWallet: MasterWallet) {
+    public async navigateTo(masterWallet: MasterWallet) {
         this.masterWallet = masterWallet;
         this.masterWalletId = masterWallet.id;
         this.walletInfo = masterWallet.account;
+
+        //If multi sign will be rejected
+        if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
+            await this.popup.alert("Error", "Multi sign reject voting. ", "Ok");
+            return;
+        }
 
         this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainchainSubWallet;
         this.nav.navigateTo(this.context, this.route, this.routerOptions);

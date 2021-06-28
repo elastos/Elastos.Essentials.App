@@ -42,6 +42,7 @@ export class CRCouncilManagerPage implements OnInit {
         this.titleBar.setTitle(this.translate.instant('crcouncilmanager.manager'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
 
+        //Get cureent CRs list
         this.crmemberInfo = null;
         const param = {
             method: 'listcurrentcrs',

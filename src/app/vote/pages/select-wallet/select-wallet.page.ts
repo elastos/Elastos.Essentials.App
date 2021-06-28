@@ -11,37 +11,37 @@ import { VoteService } from '../../services/vote.service';
 
 
 @Component({
-  selector: 'app-select-wallet',
-  templateUrl: './select-wallet.page.html',
-  styleUrls: ['./select-wallet.page.scss'],
+    selector: 'app-select-wallet',
+    templateUrl: './select-wallet.page.html',
+    styleUrls: ['./select-wallet.page.scss'],
 })
 export class SelectWalletPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  public CoinType = CoinType;
-  public chainId: StandardCoinName;
+    public CoinType = CoinType;
+    public chainId: StandardCoinName;
 
-  constructor(
-    public walletManager: WalletManager,
-    public voteService: VoteService,
-    public uiService: UiService,
-    public translate: TranslateService,
-    public theme: GlobalThemeService,
-    public currencyService: CurrencyService,
-  ) {
+    constructor(
+        public walletManager: WalletManager,
+        public voteService: VoteService,
+        public uiService: UiService,
+        public translate: TranslateService,
+        public theme: GlobalThemeService,
+        public currencyService: CurrencyService,
+    ) {
 
-  }
+    }
 
-  ngOnInit() {
-    this.chainId = StandardCoinName.ELA;
-  }
+    ngOnInit() {
+        this.chainId = StandardCoinName.ELA;
+    }
 
-  ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('wallet.select-wallet'));
-    // TODO @chad this.appService.setBackKeyVisibility(false);
-  }
+    ionViewWillEnter() {
+        this.titleBar.setTitle(this.translate.instant('wallet.select-wallet'));
+        // TODO @chad this.appService.setBackKeyVisibility(false);
+    }
 
-  walletSelected(masterWallet: MasterWallet) {
-    this.voteService.navigateTo(masterWallet);
-  }
+    async walletSelected(masterWallet: MasterWallet) {
+        await this.voteService.navigateTo(masterWallet);
+    }
 }
