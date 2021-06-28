@@ -68,7 +68,7 @@ export const zh = {
         'crc-proposals-today-msg1': '您今天有 ',
         'crc-proposals-today-msg2': ' 个新提案，点击查看',
 
-        'new-crc-proposals': '新的 CRC 提案',
+        'new-crc-proposals': '新的CRC提案',
         'new-crc-proposals-msg': '自上次访问以来，有一个新提案，点击查看',
         'new-crc-proposals-msg1': '自上次访问以来，有 ',
         'new-crc-proposals-msg2': ' 个新提案，点击查看',

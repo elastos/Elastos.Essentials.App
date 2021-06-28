@@ -290,7 +290,7 @@ export const zh = {
         ***************/
         "access-title": "钱包访问请求",
         "access-subtitle-wallet-access-from": "数据请求来自于:",
-        "access-subtitle-access-mnemonic-from": "索取助记词来自于:",
+        "access-subtitle-access-mnemonic-from": "请求助记词来自于:",
         "access-request-for-info": "此请求需要从您的钱包获取如下信息",
         "access-reason": "说明",
         "access-data-access": "请求的数据",

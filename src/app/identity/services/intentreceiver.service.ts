@@ -191,7 +191,7 @@ export class IntentReceiverService {
         let errorMessage = "Sorry, there are invalid parameters in the request";
         errorMessage += "\n\n"+JSON.stringify(intent.params);
 
-        await this.popup.ionicAlert("Action error", errorMessage, "common.close");
+        await this.popup.ionicAlert("Action error", errorMessage, this.translate.instant("common.close"));
 
         Logger.error('identity', errorMessage);
 
