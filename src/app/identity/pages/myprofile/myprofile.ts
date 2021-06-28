@@ -6,7 +6,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { Profile } from "../../model/profile.model";
 import { DIDURL } from "../../model/didurl.model";
-import { DIDPublicationStatusEvent } from "../../model/eventtypes.model";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
@@ -106,15 +105,6 @@ export class MyProfilePage {
       });
     });
 
-    this.publicationstatusSubscription = this.events.subscribe(
-      "did:publicationstatus",
-      (status: DIDPublicationStatusEvent) => {
-        let activeDid = this.didService.getActiveDid();
-        if (activeDid && activeDid === status.did)
-          this.profileService.didNeedsToBePublished = status.shouldPublish;
-      }
-    );
-
     this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
       Logger.log("identity", "Publish avatar?", publishAvatar);
       // When the did document content changes, we rebuild our profile entries on screen.
@@ -122,13 +112,15 @@ export class MyProfilePage {
     });
 
     // When the personal DID document finished being fetched from chain
-    this.documentFetchedSubscription = this.events.subscribe("diddocument:fetched", () => {
-      this.zone.run(() => {
-        // Compare local credentials with the ones in the document.
-        Logger.log("identity", "DID Document fetch completed, comparing local credentials with document ones");
-        this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
-        this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
-      });
+    this.didSyncService.onlineDIDDocumentStatus.subscribe((status) => {
+      if (status.checked) {
+        this.zone.run(() => {
+          // Compare local credentials with the ones in the document.
+          Logger.log("identity", "DID Document fetch completed, comparing local credentials with document ones");
+          this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
+          this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
+        });
+      }
     });
 
     this.credentialaddedSubscription = this.events.subscribe("did:credentialadded", () => {
@@ -191,7 +183,6 @@ export class MyProfilePage {
         else return -1;
       });
 
-      void this.checkDidForPublish(identity);
       this.buildDetailEntries();
       this.buildCredentialEntries(publishAvatar);
     }
@@ -237,17 +228,6 @@ export class MyProfilePage {
 
   ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-  }
-
-  async checkDidForPublish(identity: DID) {
-    this.profileService.didNeedsToBePublished = await this.didSyncService.checkIfDIDDocumentNeedsToBePublished(
-      identity
-    );
-    this.profileService.setPublishStatus(true);
-    Logger.log("identity",
-      "DID needs publishing?",
-      this.profileService.didNeedsToBePublished
-    );
   }
 
   /**

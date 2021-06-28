@@ -6,7 +6,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { Profile } from "../../model/profile.model";
 import { DIDURL } from "../../model/didurl.model";
-import { DIDPublicationStatusEvent } from "../../model/eventtypes.model";
 import { UXService } from "../../services/ux.service";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
@@ -99,15 +98,6 @@ export class ProfilePage {
       });
     });
 
-    this.publicationstatusSubscription = this.events.subscribe(
-      "did:publicationstatus",
-      (status: DIDPublicationStatusEvent) => {
-        let activeDid = this.didService.getActiveDid();
-        if (activeDid && activeDid === status.did)
-          this.profileService.didNeedsToBePublished = status.shouldPublish;
-      }
-    );
-
     this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
       Logger.log("identity", "Publish avatar?", publishAvatar);
       // When the did document content changes, we rebuild our profile entries on screen.
@@ -188,11 +178,8 @@ export class ProfilePage {
         else return -1;
       });
 
-      this.checkDidForPublish(identity);
       this.buildDetailEntries();
       //this.buildCredentialEntries(publishAvatar);
-
-
 
       this.slideOpts = {
         slidesPerView: 4,
@@ -234,17 +221,6 @@ export class ProfilePage {
   ionViewDidEnter() {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
-  }
-
-  async checkDidForPublish(identity: DID) {
-    this.profileService.didNeedsToBePublished = await this.didSyncService.checkIfDIDDocumentNeedsToBePublished(
-      identity
-    );
-    this.profileService.setPublishStatus(true);
-    Logger.log("identity",
-      "DID needs publishing?",
-      this.profileService.didNeedsToBePublished
-    );
   }
 
   /**

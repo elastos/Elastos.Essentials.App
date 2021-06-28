@@ -75,21 +75,19 @@ export class ProfileService {
   public displayedBio: string = null;
 
   // Display checkbox
-  public editingVisibility: boolean = false;
-  public deleteMode: boolean = false;
+  public editingVisibility = false;
+  public deleteMode = false;
 
   // Display profile list
   public detailsActive = true;
   public credsActive = false;
   public capsulesActive = false;
 
-  private fetchingPublishedDIDDocument = false;
-  private fetchedPublishedDIDDocument = false; // TODO: DUPLICATE - DIDSync service also fetches the document and deals with set/isPublishStatus()
   public publishedDIDDocument: DIDDocument = null;
 
   // Publish status
-  public didNeedsToBePublished: boolean = false;
-  private publishStatusFetched: boolean = false;
+  public didNeedsToBePublished = false;
+  private publishStatusFetched = false;
 
   // Store contollers
   public popover: any = null; // Store generic popover
@@ -127,12 +125,21 @@ export class ProfileService {
   }
 
   init() {
-    this.fetchPublishedDIDDocument();
-  }
+    this.didSyncService.onlineDIDDocumentStatus.subscribe((status) => {
+      if (status.checked) {
+        this.publishStatusFetched = true;
+        this.publishedDIDDocument = status.publishedDocument;
+        this.handleFetchedOnlinedDIDDocument();
+      }
+      else {
+        this.publishStatusFetched = false;
+        this.publishedDIDDocument = null;
+      }
+    });
 
-  setPublishStatus(isPublishStatusFetched: boolean) {
-    Logger.log("identity", "isPublishStatusFetched: " + isPublishStatusFetched);
-    this.publishStatusFetched = isPublishStatusFetched;
+    this.didSyncService.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {
+      this.didNeedsToBePublished = didNeedsToBePublished;
+    })
   }
 
   isPublishStatusFetched(): boolean {
@@ -291,7 +298,7 @@ export class ProfileService {
       },
       translucent: false,
     });
-    this.popover.onWillDismiss().then((params) => {
+    void this.popover.onWillDismiss().then(async (params) => {
       if(params.data) {
         if(params.data.action === 'confirmDeleteCredentials') {
           this.confirmDeleteCredentials();
@@ -302,7 +309,7 @@ export class ProfileService {
       }
 
       this.popover = null;
-      this.native.setRootRouter("/identity/myprofile/home");
+      await this.native.setRootRouter("/identity/myprofile/home");
     });
     return await this.popover.present();
   }
@@ -311,7 +318,7 @@ export class ProfileService {
     If confirmed by user under delete mode, start deleting credentials
   *********************************************************************/
   confirmDeleteCredentials() {
-    AuthService.instance.checkPasswordThenExecute(
+    void AuthService.instance.checkPasswordThenExecute(
       async () => {
         let password = AuthService.instance.getCurrentUserPassword();
 
@@ -367,66 +374,19 @@ export class ProfileService {
     void this.native.go("/identity/publish");
   }
 
-  public fetchPublishedDIDDocument(): Promise<DIDDocument> {
-    Logger.log("identity", "profile getDIDDocumentFromDID")
-
-    this.fetchingPublishedDIDDocument = true;
-    this.fetchedPublishedDIDDocument = false;
-    return new Promise((resolve) => {
-      if (this.publishedDIDDocument != null) {
-        resolve(this.publishedDIDDocument);
-        return;
-      }
-
-      let didString = this.didService.getActiveDid().getDIDString();
-      this.didSyncService
-        .getDIDDocumentFromDID(didString)
-        .then((didDoc) => {
-          if (didDoc) {
-            this.publishedDIDDocument = didDoc;
-          }
-
-          Logger.log("identity", "Fetched DID Document:", didString, didDoc);
-
-          this.fetchingPublishedDIDDocument = false;
-          this.fetchedPublishedDIDDocument = true;
-          resolve(this.publishedDIDDocument);
-
-          this.events.publish("diddocument:fetched", this.publishedDIDDocument);
-        })
-        .catch((err) => {
-          Logger.error('identity', err);
-          this.fetchingPublishedDIDDocument = false;
-          this.fetchedPublishedDIDDocument = true;
-          resolve(null);
-        });
-    });
+  private handleFetchedOnlinedDIDDocument() {
+    // Nothing yet
   }
 
   getPublishedCredentials(): DIDPlugin.VerifiableCredential[] {
-    if (this.fetchedPublishedDIDDocument) {
-      // Document was fetched before
-      if (this.publishedDIDDocument) {
-        // We could retrieve a document
-        let creds = this.publishedDIDDocument.getCredentials();
-        return creds;
-      }
-      else {
-        // We tried to fetch before but could not retrieve a document
-        return [];
-      }
+    if (this.publishedDIDDocument) {
+      // We already have a document
+      let creds = this.publishedDIDDocument.getCredentials();
+      return creds;
     }
     else {
-      // Not fetched yet?
-      if (!this.fetchingPublishedDIDDocument) {
-        // Not fetching, start fetching
-        void this.fetchPublishedDIDDocument();
-        return [];
-      }
-      else {
-        // Already fetching, wait for fetch completion event
-        return [];
-      }
+      // We don't have the online document yet (fetch not complete?)
+      return [];
     }
   }
 
@@ -450,7 +410,7 @@ export class ProfileService {
 
   hasModifiedCredentials(): boolean {
     let publishedCredentials = this.getPublishedCredentials();
-    //Logger.log("identity", "local creds:", this.credentials, "published:", publishedCredentials);
+    Logger.log("identity", "local creds:", this.credentials, "published:", publishedCredentials);
     for (let pubCred of publishedCredentials) {
       var found = this.credentials.find(x => {
         return x.credential.getId() == pubCred.getId();
@@ -509,12 +469,12 @@ export class ProfileService {
     }
   }
 
-  public async updateDIDDocument() {
-    AuthService.instance.checkPasswordThenExecute(
+  public updateDIDDocument() {
+    void AuthService.instance.checkPasswordThenExecute(
       async () => {
         let password = AuthService.instance.getCurrentUserPassword();
         await this.updateDIDDocumentFromSelection(password);
-        this.didService.getActiveDidStore().synchronize(password);
+        await this.didService.getActiveDidStore().synchronize(password);
       },
       () => { }
     );
@@ -615,7 +575,7 @@ export class ProfileService {
             return;
           }
 
-          Logger.log("identity", "Issuer ", issuerId);
+          //Logger.log("identity", "Issuer ", issuerId);
           let response: IssuerDisplayEntry = {
             did: this.transformIssuerId(issuerId),
             name: "",
@@ -637,8 +597,7 @@ export class ProfileService {
             });
           }
 
-
-          Logger.log("identity", "Issuer response", response);
+          //Logger.log("identity", "Issuer response", response);
           resolve(response);
         })
         .catch((error) => {

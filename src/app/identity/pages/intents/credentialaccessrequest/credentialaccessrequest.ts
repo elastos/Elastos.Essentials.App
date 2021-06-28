@@ -23,6 +23,7 @@ import { isNil } from 'lodash-es';
 import { Logger } from 'src/app/logger';
 import { PopupProvider } from 'src/app/identity/services/popup';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -110,6 +111,7 @@ export class CredentialAccessRequestPage {
   public credentials: VerifiableCredential[] = [];
   public did: DID = null;
 
+  private onlineDIDDocumentStatusSub: Subscription = null;
   public publishStatusFetched = false;
   public didNeedsToBePublished = false;
   public publishedDidRequested = false;
@@ -157,12 +159,17 @@ export class CredentialAccessRequestPage {
     this.mandatoryItems = [];
     this.optionalItems = [];
 
+    this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentStatus.subscribe((status) => {
+      if (status.checked) {
+        this.publishStatusFetched = true;
+        this.didNeedsToBePublished = status.publishedDocument == null;
+      }
+    });
+
     this.zone.run(async () => {
       this.profile = this.didService.getActiveDidStore().getActiveDid().getBasicProfile();
       this.credentials = this.didService.getActiveDidStore().getActiveDid().credentials;
       this.did = this.didService.getActiveDidStore().getActiveDid();
-      this.didNeedsToBePublished = await this.didSyncService.checkIfDIDDocumentNeedsToBePublished(this.did);
-      this.publishStatusFetched = true;
       Logger.log('Identity', 'Publish status fetched?', this.publishStatusFetched);
       Logger.log('Identity', 'Did needs to be published?', this.didNeedsToBePublished);
 
@@ -179,6 +186,10 @@ export class CredentialAccessRequestPage {
   }
 
   ionViewWillLeave() {
+    if (this.onlineDIDDocumentStatusSub) {
+      this.onlineDIDDocumentStatusSub.unsubscribe();
+      this.onlineDIDDocumentStatusSub = null;
+    }
   }
 
   getRequestedTheme(): Promise<void> {

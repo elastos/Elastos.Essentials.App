@@ -6,7 +6,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { Profile } from "../../model/profile.model";
 import { DIDURL } from "../../model/didurl.model";
-import { DIDPublicationStatusEvent } from "../../model/eventtypes.model";
 import { UXService } from "../../services/ux.service";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
@@ -99,15 +98,6 @@ export class CredentialsPage {
       });
     });
 
-    this.publicationstatusSubscription = this.events.subscribe(
-      "did:publicationstatus",
-      (status: DIDPublicationStatusEvent) => {
-        let activeDid = this.didService.getActiveDid();
-        if (activeDid && activeDid === status.did)
-          this.profileService.didNeedsToBePublished = status.shouldPublish;
-      }
-    );
-
     this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
 
       // When the did document content changes, we rebuild our profile entries on screen.
@@ -168,7 +158,6 @@ export class CredentialsPage {
         else return -1;
       });
 
-      this.checkDidForPublish(identity);
       this.buildDetailEntries();
       //this.buildCredentialEntries(publishAvatar);
     }
@@ -184,13 +173,6 @@ export class CredentialsPage {
     this.profileService.didString = identity.getDIDString();
     this.init();
     // console.log('ALL CREDS', this.profileService.allCreds);
-  }
-
-  async checkDidForPublish(identity: DID) {
-    this.profileService.didNeedsToBePublished = await this.didSyncService.checkIfDIDDocumentNeedsToBePublished(
-      identity
-    );
-    this.profileService.setPublishStatus(true);
   }
 
   isPublished(credential: DIDPlugin.VerifiableCredential) {

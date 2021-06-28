@@ -213,7 +213,7 @@ export class PickProviderPage implements OnInit {
   private async publishProvider(providerName: string, providerAddress: string) {
     Logger.log("HiveManager", "Publishing vault provider", providerName, providerAddress);
 
-    let diddocment = await this.profileService.fetchPublishedDIDDocument();
+   /*  let diddocment = await this.profileService.publishedDIDDocument;
     if (diddocment === null) {
       Logger.log('HiveManager', 'DID is not published!')
       let confirmed = await this.popup.ionicConfirm("hivemanager.alert.didpublish-title", "hivemanager.alert.didpublish-msg");
@@ -221,7 +221,7 @@ export class PickProviderPage implements OnInit {
         this.globalIntentService.sendIntent("https://did.elastos.net/promptpublishdid", null);
       }
       return;
-    }
+    } */
 
     this.publishingProvider = true;
     let publicationStarted = await this.hiveService.publishVaultProvider(providerName, providerAddress);

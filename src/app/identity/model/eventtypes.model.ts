@@ -8,9 +8,3 @@ export type DIDDocumentPublishEvent = {
     cancelled?: boolean,
     error?: boolean
 }
-
-// Event name: did:publicationstatus
-export type DIDPublicationStatusEvent = {
-    did: DID,
-    shouldPublish: boolean
-}

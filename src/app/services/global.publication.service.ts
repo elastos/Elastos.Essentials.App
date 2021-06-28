@@ -40,7 +40,7 @@ export const enum DIDPublicationStatus {
     FAILED_TO_PUBLISH = 3
 }
 
-type PublicationStatus = {
+export type PublicationStatus = {
     didString: string;
     status: DIDPublicationStatus
 }
@@ -497,14 +497,14 @@ export class GlobalPublicationService {
     /**
      * Opens a DID store, generates a DID request and publish it.
      */
-    public async publishDIDFromStore(storeId: string, storePass: string, didString: string): Promise<void> {
+    public async publishDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false): Promise<void> {
         Logger.log("publicationservice", "Starting the DID publication process");
 
         const didStore = await this.openDidStore(storeId, (payload: string, memo: string) => {
             // Callback called by the DID SDK when trying to publish a DID.
             Logger.log("publicationservice", "Create ID transaction callback is being called", payload, memo);
             const payloadAsJson = JSON.parse(payload);
-            void this.publishDIDFromRequest(didString, payloadAsJson, memo);
+            void this.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader);
         });
 
         const localDIDDocument = await this.loadLocalDIDDocument(didStore, didString);

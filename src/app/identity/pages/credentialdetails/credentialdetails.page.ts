@@ -5,7 +5,6 @@ import { TranslateService } from "@ngx-translate/core";
 
 import { Profile } from "../../model/profile.model";
 import { DIDURL } from "../../model/didurl.model";
-import { DIDPublicationStatusEvent } from "../../model/eventtypes.model";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
@@ -111,15 +110,6 @@ export class CredentialDetailsPage {
         this.init();
       });
     });
-
-    this.publicationstatusSubscription = this.events.subscribe(
-      "did:publicationstatus",
-      (status: DIDPublicationStatusEvent) => {
-        let activeDid = this.didService.getActiveDid();
-        if (activeDid && activeDid === status.did)
-          this.profileService.didNeedsToBePublished = status.shouldPublish;
-      }
-    );
 
     this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
       Logger.log('Identity', "Publish avatar?", publishAvatar);
