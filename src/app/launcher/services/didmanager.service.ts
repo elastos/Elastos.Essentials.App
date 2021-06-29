@@ -30,9 +30,10 @@ export class DIDManagerService extends GlobalService {
     GlobalServiceManager.getInstance().registerService(this);
   }
 
-  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+  public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     Logger.log("Launcher", "Signed in identity changed", signedInIdentity);
     this.signedIdentity = signedInIdentity;
+    return;
   }
 
   public async onUserSignOut(): Promise<void> {
@@ -48,20 +49,16 @@ export class DIDManagerService extends GlobalService {
       encodeURIComponent(this.signedIdentity.didString) +
       '&carrier=' + carrierAddress;
 
-    this.globalIntentService.sendIntent("share", {
+    void this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("common.share-add-me-as-friend"),
       url: addFriendUrl,
     });
   }
 
-  async signOut() {
-    // TODO @chad - I don't understand why the loading popup doesn't hide automatically - this.native.showLoading('signing-out');
-
-    setTimeout(async () => {
-      await this.didSessions.signOut();
+  signOut() {
+    setTimeout(() => {
+      void this.didSessions.signOut();
     }, 10);
-
-    // TODO @chad this.native.hideLoading();
   }
 
   getUserDID(): string {

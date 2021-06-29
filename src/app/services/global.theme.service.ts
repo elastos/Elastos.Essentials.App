@@ -28,6 +28,7 @@ export class GlobalThemeService extends GlobalService {
   ) {
     super();
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.prefs.preferenceListener.subscribe(async (prefChanged)=>{
       if (prefChanged.key == "ui.darkmode") {
         let darkMode = prefChanged.value as boolean;
@@ -48,12 +49,12 @@ export class GlobalThemeService extends GlobalService {
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // Re-apply the theme for the active user.
-    this.fetchThemeFromPreferences();
+    await this.fetchThemeFromPreferences();
   }
 
   public async onUserSignOut(): Promise<void> {
     // Default mode for password popups: light
-    passwordManager.setDarkMode(false);
+    await passwordManager.setDarkMode(false);
   }
 
   public async fetchThemeFromPreferences() {
@@ -63,7 +64,7 @@ export class GlobalThemeService extends GlobalService {
     // this.backupService.init();
 
     const currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
-    passwordManager.setDarkMode(currentlyUsingDarkMode);
+    void passwordManager.setDarkMode(currentlyUsingDarkMode);
     if (currentlyUsingDarkMode)
       this.activeTheme.next(AppTheme.DARK);
     else

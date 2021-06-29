@@ -22,20 +22,25 @@ export class LauncherInitService extends GlobalService {
     super();
   }
 
-  public async init(): Promise<void> {
+  public init(): Promise<void> {
     GlobalServiceManager.getInstance().registerService(this);
-    
+
     this.didManager.init();
-    this.tipsService.init();
+    void this.tipsService.init();
+
+    return;
   }
 
-  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+  public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // No blocking services start
     this.appManagerService.init();
+
+    return;
   }
 
-  public async onUserSignOut(): Promise<void> {
+  public onUserSignOut(): Promise<void> {
     this.appManagerService.stop();
-    // TODO something else need to stop?
+
+    return;
   }
 }

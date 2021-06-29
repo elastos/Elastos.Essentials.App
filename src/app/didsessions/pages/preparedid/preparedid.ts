@@ -44,6 +44,8 @@ export class PrepareDIDPage {
   // Vault address extracted during the preparation process, if any
   private vaultAddress: string = null;
   private walletStepCompleted = false;
+  // Whether creation hive vault has already been tried once during this process or not.
+  private hiveSetupAlreadyTried = false;
 
   // UI
   public slideIndex = 0;
@@ -138,7 +140,6 @@ export class PrepareDIDPage {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
-
   showSlider() {
     Logger.log('didsessions', "Showing slider");
     this.hidden = false
@@ -175,9 +176,9 @@ export class PrepareDIDPage {
     else if (currentSlideIndex <= this.SIGN_IN_SLIDE_INDEX && GlobalDIDSessionsService.signedInDIDString === null) {
       return this.SIGN_IN_SLIDE_INDEX;
     }
-    // TMP HIVE NOT READY FOR 2.0 else if (currentSlideIndex <= this.HIVE_SETUP_SLIDE_INDEX && !await this.isHiveVaultReady()) {
-    //   return this.HIVE_SETUP_SLIDE_INDEX;
-    // }
+    else if (currentSlideIndex <= this.HIVE_SETUP_SLIDE_INDEX && !await this.isHiveVaultReady()) {
+       return this.HIVE_SETUP_SLIDE_INDEX;
+    }
     if (currentSlideIndex < this.DEFAULT_WALLET_SLIDE_INDEX && !(await this.defaultWalletExists())) {
       return this.DEFAULT_WALLET_SLIDE_INDEX;
     }
@@ -218,7 +219,17 @@ export class PrepareDIDPage {
     // retrieveVaultLinkStatus() does that for us.
     let vaultStatus = await this.globalHiveService.retrieveVaultLinkStatus();
     Logger.log("didsessions", "Hive vault status:", vaultStatus);
-    return (vaultStatus && vaultStatus.publishedInfo !== null && vaultStatus.publishedInfo.vaultAddress != null);
+
+    // Try to check hive only once. If this has failed a first time we continue to not block the user.
+    if (this.hiveSetupAlreadyTried) {
+      Logger.warn("didsessions", "Considering the hive vault as ready. Already tried to setup once");
+      return true;
+    }
+
+    return (
+      vaultStatus &&
+      vaultStatus.publishedInfo !== null &&
+      vaultStatus.publishedInfo.vaultAddress != null);
   }
 
   private async appendHiveInfoToDID(): Promise<string> {
@@ -307,12 +318,15 @@ export class PrepareDIDPage {
 
   private async setupHiveStorage(vaultAddress: string): Promise<boolean> {
     Logger.log("didsessions", "Setting up hive storage");
+
+    this.hiveSetupAlreadyTried = true;
+
     try {
       await Promise.all([
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
-        // TMP CANT USE IF DID NOT PUBLISHED FOR NOW this.globalHiveService.prepareHiveVault(vaultAddress)
+        this.globalHiveService.prepareHiveVault(vaultAddress)
       ]);
-      return false; // TMP
+      return true;
     }
     catch(e) {
       Logger.warn("didsessions", "Hive storage error in prepare did:", e);

@@ -151,7 +151,7 @@ export class GlobalWalletConnectService extends GlobalService {
       }
 
       this.initiatingConnector = null;
-      this.handleSessionRequest(connector, payload.params[0]);
+      void this.handleSessionRequest(connector, payload.params[0]);
     });
 
     // Subscribe to call requests
@@ -236,8 +236,8 @@ export class GlobalWalletConnectService extends GlobalService {
     ]
   }
   */
-  private async handleSessionRequest(connector: WalletConnect, request: SessionRequestParams): Promise<void> {
-    this.zone.run(async ()=>{
+  private handleSessionRequest(connector: WalletConnect, request: SessionRequestParams): Promise<void> {
+    void this.zone.run(async ()=>{
       // Hide "prepare to connect" first
       await this.nav.exitCurrentContext(false);
       // User UI prompt
@@ -249,6 +249,7 @@ export class GlobalWalletConnectService extends GlobalService {
         }
       });
     });
+    return;
   }
 
   /* payload:
@@ -271,7 +272,7 @@ export class GlobalWalletConnectService extends GlobalService {
       await this.handleAddERCTokenRequest(connector, request);
     }
     else {
-      try {
+      try {
         Logger.log("walletconnect", "Sending esctransaction intent", request);
         let response: {
           action: string,
@@ -355,7 +356,7 @@ export class GlobalWalletConnectService extends GlobalService {
    */
   private async handleEssentialsCustomRequest(connector: WalletConnect, request: JsonRpcRequest) {
     let intentUrl = request.params[0]["url"] as string;
-    try {
+    try {
       Logger.log("walletconnect", "Sending custom essentials intent request", intentUrl);
       let response = await this.intent.sendUrlIntent(intentUrl);
       Logger.log("walletconnect", "Got custom request intent response", response);
@@ -411,7 +412,7 @@ export class GlobalWalletConnectService extends GlobalService {
     await this.saveSession(connector.session);
   }
 
-  public rejectSession(reason: string) {
+  public async rejectSession(reason: string) {
     Logger.log("walletconnect", "Rejecting session request");
 
     // Reject Session
@@ -420,7 +421,7 @@ export class GlobalWalletConnectService extends GlobalService {
       // In this case we kill the session and restart.
       if (this.initiatingConnector.connected) {
         try {
-          this.initiatingConnector.killSession();
+          await this.initiatingConnector.killSession();
         }
         catch (e) {
           Logger.warn("walletconnect", "Reject session exception (disconnect):", e);

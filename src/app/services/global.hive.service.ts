@@ -15,11 +15,20 @@ declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
 const availableHideNodeProviders: string[] = [
-  "https://hive1.trinity-tech.io",
-  "https://hive2.trinity-tech.io"
+  /* "https://hive1.trinity-tech.io",
+  "https://hive2.trinity-tech.io", */
+  "https://hive-testnet3.trinity-tech.io ", // TMP
 ];
 
+export enum VaultLinkStatusCheckState {
+  NOT_CHECKED, // Not checked yet
+  SUCCESSFULLY_RETRIEVED, // Vault status was fetched without error
+  NETWORK_ERROR, // Network error while fetching the vault status
+  UNKNOWN_ERROR // Unknown error while fetching the vault status
+}
+
 export type VaultLinkStatus = {
+  checkState: VaultLinkStatusCheckState,
   // There is already a vault provider info on chain about a vault provider attacher to this user.
   publishedInfo?: {
     vaultName: string,
@@ -33,8 +42,8 @@ export type VaultLinkStatus = {
   providedIn: 'root'
 })
 export class GlobalHiveService extends GlobalService {
-  private vaultLinkStatus: VaultLinkStatus = null;
-  private client: HivePlugin.Client;
+  private client: HivePlugin.Client = null;
+  private vaultLinkStatus: VaultLinkStatus = null; // Current user's vault status.
   private activeVault: HivePlugin.Vault = null;
   private pricingInfo: HivePlugin.Payment.PricingInfo = null; // Cached pricing info for user's current vault provider after been fetched.
 
@@ -51,15 +60,19 @@ export class GlobalHiveService extends GlobalService {
     super();
   }
 
-  async init() {
+  init() {
     GlobalServiceManager.getInstance().registerService(this);
   }
 
   stop() {
     this.vaultLinkStatus = null;
     this.activeVault = null;
+
+    if (this.client) {
+      this.client = null;
+    }
+
     this.vaultStatus.next(this.vaultLinkStatus);
-    // TODO stop hive
   }
 
   async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
@@ -68,7 +81,7 @@ export class GlobalHiveService extends GlobalService {
       // Not a blocking call
       Logger.log("GlobalHiveService", "Getting a global hive client instance");
       let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
-      hiveAuthHelper.getClientWithAuth((err)=>{
+      void hiveAuthHelper.getClientWithAuth((err)=>{
         Logger.error("GlobalHiveService", "Authentication error:", err);
       }).then((client) => {
         if (!client) {
@@ -84,10 +97,8 @@ export class GlobalHiveService extends GlobalService {
     }
   }
 
-  onUserSignOut(): Promise<void> {
-    if (this.client) {
-      this.client = null;
-    }
+  async onUserSignOut(): Promise<void> {
+    await this.stop();
 
     return;
   }
@@ -210,12 +221,8 @@ export class GlobalHiveService extends GlobalService {
       return null;
     }
 
-    if (this.vaultLinkStatus) {
-      Logger.log("GlobalHiveService", "Reusing existing status:", this.vaultLinkStatus);
-      return this.vaultLinkStatus;
-    }
-
     let status: VaultLinkStatus = {
+      checkState: VaultLinkStatusCheckState.NOT_CHECKED,
       publishedInfo: null
     };
 
@@ -229,12 +236,12 @@ export class GlobalHiveService extends GlobalService {
         // Vault not created on this hive provider yet (old DIDs?) - force user to pick a provider, that will
         // create the vault at the same time.
         Logger.log("GlobalHiveService", "Vault does not exist on this provider. It has to be created again.");
-        this.emitNoVaultStatus();
+        this.emitUnknownErrorStatus();
         return null;
       }
       else {
         Logger.error("GlobalHiveService", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
-        this.emitNoVaultStatus();
+        this.emitUnknownErrorStatus();
         return null;
       }
     }
@@ -252,7 +259,7 @@ export class GlobalHiveService extends GlobalService {
         activePricingPlan = await this.activeVault.getPayment().getActivePricingPlan();
         if (!activePricingPlan) {
           Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned null. Vault was probably not created correctly earlier and needs to be registered again.");
-          this.emitNoVaultStatus();
+          this.emitUnknownErrorStatus();
           return null;
         }
         Logger.log("GlobalHiveService", "Got active payment plan from retrieveVaultLinkStatus():", activePricingPlan);
@@ -260,15 +267,17 @@ export class GlobalHiveService extends GlobalService {
       catch (e) {
         if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
           Logger.log("GlobalHiveService", "Call to getActivePricingPlan() returned a vault not found exception. Vault was probably not created correctly earlier and needs to be registered again.");
-          this.emitNoVaultStatus();
+          this.emitUnknownErrorStatus();
           return null;
         }
         else {
           Logger.error("GlobalHiveService", "Exception while calling getActivePricingPlan() in retrieveVaultLinkStatus():", e);
-          this.emitNoVaultStatus();
+          this.emitUnknownErrorStatus();
           return null;
         }
       }
+
+      status.checkState = VaultLinkStatusCheckState.SUCCESSFULLY_RETRIEVED;
 
       let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
       Logger.log("GlobalHiveService", "Currently published vault address: ", currentlyPublishedVaultAddress);
@@ -276,7 +285,7 @@ export class GlobalHiveService extends GlobalService {
       if (currentlyPublishedVaultAddress) {
         status.publishedInfo = {
           vaultAddress: currentlyPublishedVaultAddress,
-          vaultName: "todo-no-way-to-get-this-yet",
+          vaultName: "Unknown Vault Name",
           vaultVersion: await this.activeVault.getNodeVersion(),
           activePricingPlan
         };
@@ -291,9 +300,11 @@ export class GlobalHiveService extends GlobalService {
     return status;
   }
 
-  private emitNoVaultStatus() {
-    Logger.log("GlobalHiveService", "Emiting no vault status");
-    this.vaultLinkStatus = null;
+  private emitUnknownErrorStatus() {
+    Logger.log("GlobalHiveService", "Emiting unknown error status");
+    this.vaultLinkStatus = {
+      checkState: VaultLinkStatusCheckState.UNKNOWN_ERROR
+    };
     this.vaultStatus.next(this.vaultLinkStatus);
   }
 
