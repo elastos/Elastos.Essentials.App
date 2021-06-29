@@ -170,8 +170,9 @@ export class MasterWallet {
      * Returns the list of all subwallets except the excluded one.
      */
     public subWalletsWithExcludedCoin(excludedCoinName: StandardCoinName, type: CoinType = null): SubWallet[] {
+        // Hide the id chain, do not use the id chain any more.
         return Object.values(this.subWallets).filter((sw)=>{
-            return (sw.id !== excludedCoinName) && (type !== null ? sw.type === type : true);
+            return (sw.id !== excludedCoinName) && (sw.id !== StandardCoinName.IDChain) && (type !== null ? sw.type === type : true);
         });
     }
 

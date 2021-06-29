@@ -105,7 +105,6 @@ export class WalletManager {
 
     async init() {
         Logger.log('wallet', "Master manager is initializing");
-        // TODO: reset masterWallets, because this servcie is not destroyed when signout.
         this.masterWallets = {};
 
         this.spvBridge = new SPVWalletPluginBridge(this.native, this.events, this.popupProvider);
@@ -193,12 +192,13 @@ export class WalletManager {
                         const subWallet = new MainchainSubWallet(this.masterWallets[masterId]);
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
-                    subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.IDChain);
-                    if (!subwallet) {
-                        Logger.log('wallet', '(Re)Opening IDChain');
-                        const subWallet = new IDChainSubWallet(this.masterWallets[masterId]);
-                        extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-                    }
+                    // Do not use the id chain any more.
+                    // subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.IDChain);
+                    // if (!subwallet) {
+                    //     Logger.log('wallet', '(Re)Opening IDChain');
+                    //     const subWallet = new IDChainSubWallet(this.masterWallets[masterId]);
+                    //     extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
+                    // }
                     subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHSC);
                     if (!subwallet) {
                         Logger.log('wallet', '(Re)Opening ETHSC');
@@ -322,7 +322,7 @@ export class WalletManager {
             Type: WalletAccountType.STANDARD
         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account);
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, true);
 
         // Go to wallet's home page.
         this.native.setRootRouter("/wallet/wallet-home");
@@ -365,10 +365,10 @@ export class WalletManager {
             Type: WalletAccountType.STANDARD
         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account);
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, false);
     }
 
-    private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount) {
+    private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, newWallet: boolean) {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
 
         // Add a new wallet to our local model
@@ -384,7 +384,10 @@ export class WalletManager {
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ELA));
 
         // Even if not mandatory to have, we open the main sub wallets for convenience as well.
-        await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.IDChain));
+        if (!newWallet) {
+          // Do not use the id chian any more.
+          await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.IDChain));
+        }
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHSC));
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHDID));
         // await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));

@@ -57,7 +57,11 @@ export class Coin {
 export class StandardCoin extends Coin {
     constructor(id: CoinID, name: string, description: string) {
         // Null network means that the coin is available on all networks
-        super(CoinType.STANDARD, id, name, description, false, null);
+        let removable = false;
+        if (id === StandardCoinName.IDChain) {
+          removable = true;
+        }
+        super(CoinType.STANDARD, id, name, description, removable, null);
     }
 }
 
