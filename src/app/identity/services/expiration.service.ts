@@ -92,7 +92,6 @@ export class ExpirationService {
     }
 
     public async verifyIssuerDIDExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number) : Promise<ExpiredItem>  {
-
         let issuerDID: string = credential.getIssuer();
         if (isNil(issuerDID) || issuerDID === "" || issuerDID === did) return null
 

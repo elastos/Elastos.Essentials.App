@@ -58,9 +58,9 @@ export class MyProfilePage {
 
   public profileName: string = null;
   public credentials: VerifiableCredential[];
-  public hasCredential: boolean = false;
-  public creatingIdentity: boolean = false;
-  public hasModifiedCredentials: boolean = false;
+  public hasCredential = false;
+  public creatingIdentity = false;
+  public hasModifiedCredentials = false;
   public unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
 
   public fetchingApps = false;
@@ -112,7 +112,8 @@ export class MyProfilePage {
     });
 
     // When the personal DID document finished being fetched from chain
-    this.didSyncService.onlineDIDDocumentStatus.subscribe((status) => {
+    let didString = this.didService.getActiveDid().getDIDString();
+    this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
       if (status.checked) {
         this.zone.run(() => {
           // Compare local credentials with the ones in the document.
@@ -198,12 +199,12 @@ export class MyProfilePage {
     this.profileService.didString = this.didService.getActiveDid().getDIDString();
     void this.didSyncService
       .getDIDDocumentFromDID(this.profileService.didString)
-      .then((didDoc) => {
+      .then(async (didDoc) => {
         this.currentOnChainDIDDocument = didDoc;
         if (this.currentOnChainDIDDocument) {
-          Logger.log("identity", "diddocument" + this.currentOnChainDIDDocument.pluginDidDocument.toJson());
+          Logger.log("identity", "MyProfile: Published DID Document", await this.currentOnChainDIDDocument.pluginDidDocument.toJson());
         } else {
-          Logger.log("identity", "diddocument is not published.");
+          Logger.log("identity", "MyProfile: DIDDocument is not published.");
         }
       });
 
@@ -337,8 +338,8 @@ export class MyProfilePage {
     }
 
     if (issuersId.length > 0) {
-      this.zone.run(async () => {
-        await this.profileService.loadIssuers(issuersId);
+      this.zone.run(() => {
+        void this.profileService.loadIssuers(issuersId);
       });
     }
 
@@ -354,7 +355,7 @@ export class MyProfilePage {
 
     this.profileService.visibleCredentials.map((cred) => {
       // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("apppackage")) {
+      if ("apppackage" in cred.credential.getSubject()) {
         this.profileService.appCreds.push({
           credential: cred.credential,
           willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
@@ -368,7 +369,7 @@ export class MyProfilePage {
         });
       }
       // Find Avatar Credential
-      if (cred.credential.getSubject().hasOwnProperty("avatar")) {
+      if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
 
         // TODO: avatar is null
@@ -379,18 +380,18 @@ export class MyProfilePage {
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
-          this.profileService.showWarning("publishVisibility", null);
+          void this.profileService.showWarning("publishVisibility", null);
         }
       }
       // Find Description Credential
-      if (cred.credential.getSubject().hasOwnProperty("description")) {
+      if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
     this.profileService.invisibleCredentials.map((cred) => {
       // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("apppackage")) {
+      if ("apppackage" in cred.credential.getSubject()) {
         this.profileService.appCreds.push({
           credential: cred.credential,
           willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
@@ -404,7 +405,7 @@ export class MyProfilePage {
         });
       }
       // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("avatar")) {
+      if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
         let data = "";
         if (cred.credential.getSubject().avatar != null) {
@@ -417,11 +418,11 @@ export class MyProfilePage {
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
-          this.profileService.showWarning("publishVisibility", null);
+          void this.profileService.showWarning("publishVisibility", null);
         }
       }
       // Find Description Credentials
-      if (cred.credential.getSubject().hasOwnProperty("description")) {
+      if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
@@ -512,8 +513,8 @@ export class MyProfilePage {
       },
       cssClass: !this.theme.darkMode ? "qrcode-modal" : "dark-qrcode-modal",
     });
-    modal.onDidDismiss().then((params) => { });
-    modal.present();
+    void modal.onDidDismiss().then((params) => { });
+    await modal.present();
   }
 
   /**
@@ -521,7 +522,7 @@ export class MyProfilePage {
    * for each profile item (+ the DID itself).
    */
   publishVisibilityChanges() {
-    this.profileService.showWarning("publishVisibility", null);
+    void this.profileService.showWarning("publishVisibility", null);
   }
 
   getLastPublished() {
@@ -568,7 +569,7 @@ export class MyProfilePage {
     Logger.log("identity", "Claims object: ")
     Logger.log("identity", claimsObject)
 
-    this.globalIntentService.sendIntent("https://did.elastos.net/credverify", {
+    void this.globalIntentService.sendIntent("https://did.elastos.net/credverify", {
       claims: claimsObject
     });
   }
@@ -609,8 +610,7 @@ export class MyProfilePage {
 
   /******************** Display Data Sync Status between Local and Onchain ********************/
   getLocalCredByProperty(entry: CredentialDisplayEntry, property: string): string {
-    const credHasProp = entry.credential.getSubject().hasOwnProperty(property);
-
+    const credHasProp = (property in entry.credential.getSubject());
     if (credHasProp)
       return entry.credential.getSubject()[property];
 
@@ -619,7 +619,7 @@ export class MyProfilePage {
 
   getOnChainCredByProperty(property: string): string {
     const chainValue = this.currentOnChainDIDDocument.getCredentials().filter(c => {
-      if (c.getSubject().hasOwnProperty(property)) {
+      if (property in c.getSubject()) {
         return c;
       }
     });

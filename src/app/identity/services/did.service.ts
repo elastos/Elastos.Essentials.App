@@ -95,8 +95,6 @@ export class DIDService {
       Logger.log("Identity", "Setting active DID store", didStore);
       this.activeDidStore = didStore;
 
-      this.events.publish("did:didchanged");
-
       return true;
   }
 
@@ -104,43 +102,38 @@ export class DIDService {
    * Make the given DID store becoming the active one for all further operations.
    * Redirects to the right screen after activation, if a switch is required.
    */
-  public activateDid(storeId: string, didString: string): Promise<boolean> {
+  public async activateDid(storeId: string, didString: string): Promise<boolean> {
     Logger.log("Identity",
       "Activating DID using DID store ID " + storeId + " and DID " + didString
     );
 
-    return new Promise(async (resolve, reject) => {
-      if (didString == null) {
-        Logger.error('identity', "Impossible to activate a null did string!");
-        resolve(false);
-        return;
+    if (didString == null) {
+      Logger.error('identity', "Impossible to activate a null did string!");
+      return false;
+    }
+
+    let couldActivateStore = await this.activateDidStore(storeId);
+    if (!couldActivateStore) {
+      return false;
+    }
+
+    try {
+      let did = this.getActiveDidStore().findDidByString(didString);
+      if (!did) {
+        // Just in case, should not happen but for robustness...
+        Logger.error('identity', "No DID found! Failed to activate DID");
+        return false;
       }
+      await this.getActiveDidStore().setActiveDid(did);
 
-      let couldActivateStore = await this.activateDidStore(storeId);
-      if (!couldActivateStore) {
-        resolve(false);
-        return;
-      }
+      this.events.publish("did:didchanged");
 
-      try {
-        let did = this.getActiveDidStore().findDidByString(didString);
-        if (!did) {
-          // Just in case, should not happen but for robustness...
-          Logger.error('identity', "No DID found! Failed to activate DID");
-          resolve(false);
-          return;
-        }
-        await this.getActiveDidStore().setActiveDid(did);
-
-        this.events.publish("did:didchanged");
-
-        resolve(true);
-      } catch (e) {
-        // Failed to load this full DID content
-        Logger.error('identity', e);
-        resolve(false);
-      }
-    });
+      return true;
+    } catch (e) {
+      // Failed to load this full DID content
+      Logger.error('identity', e);
+      return false;
+    }
   }
 
   public async showDid(storeId: string, didString: string) {
@@ -148,10 +141,10 @@ export class DIDService {
     let couldEnableStore = await this.activateDid(storeId, didString);
     if (!couldEnableStore) {
       Logger.error('identity', "Unable to load the previously selected DID store");
-      this.handleNull(); // TODO: go to DID list instead
+      await this.handleNull(); // TODO: go to DID list instead
     } else {
-      if (this.getActiveDid() !== null) this.native.setRootRouter("/identity/myprofile/home");
-      // this.native.setRootRouter('/noidentity');
+      if (this.getActiveDid() !== null)
+        await this.native.setRootRouter("/identity/myprofile/home");
       else {
         // Oops, no active DID...
         Logger.warn('identity', "No active DID in this store!");

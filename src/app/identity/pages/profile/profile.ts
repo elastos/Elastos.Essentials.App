@@ -192,30 +192,6 @@ export class ProfilePage {
     this.buildAppAndAvatarCreds(false);
     this.titleBar.setTitle(this.translate.instant("identity.my-identity"));
     this.titleBar.setNavigationMode(null);
-
-    // this.profileService.didString = this.didService
-    //   .getActiveDid()
-    //   .getDIDString();
-    // this.didSyncService
-    //   .getDIDDocumentFromDID(this.profileService.didString)
-    //   .then((didDoc) => {
-    //     this.currentOnChainDIDDocument = didDoc;
-
-    //     var services = this.currentOnChainDIDDocument.getServices();
-
-    //     let hiveService: DIDPlugin.Service = {
-    //       getEndpoint: () => "diego.hive.elastos",
-    //       getId: () => "sbdjsbdvjd",
-    //       getType: () => "HiveVault"
-    //     };
-    //     services = [hiveService];
-
-    //     this.hiveVault = services.find(x => {
-    //       return x.getType() == "HiveVault"
-    //     });
-    //   });
-
-
   }
 
   ionViewDidEnter() {

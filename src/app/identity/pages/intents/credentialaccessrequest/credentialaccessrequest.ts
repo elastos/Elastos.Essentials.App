@@ -105,7 +105,7 @@ export class CredentialAccessRequestPage {
   // TODO public requestDappInfo: EssentialsIntentPlugin.AppInfo = null;
   public requestDappIcon: string = null;
   public requestDappName: string = null;
-  public requestDappColor: string = '#565bdb';
+  public requestDappColor = '#565bdb';
 
   public profile = new Profile(); // Empty profile waiting to get the real one.
   public credentials: VerifiableCredential[] = [];
@@ -120,8 +120,8 @@ export class CredentialAccessRequestPage {
   public mandatoryItems: ClaimRequest[] = [];
   public optionalItems: ClaimRequest[] = [];
 
-  public denyReason: string = '';
-  public canDeliver: boolean = true;
+  public denyReason = '';
+  public canDeliver = true;
 
   public showSpinner = false;
   public popup: HTMLIonPopoverElement = null;
@@ -153,26 +153,26 @@ export class CredentialAccessRequestPage {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.titleBar.globalNav.exitCurrentContext();
+      void this.titleBar.globalNav.exitCurrentContext();
     });
 
     this.mandatoryItems = [];
     this.optionalItems = [];
 
-    this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentStatus.subscribe((status) => {
+    this.profile = this.didService.getActiveDidStore().getActiveDid().getBasicProfile();
+    this.credentials = this.didService.getActiveDidStore().getActiveDid().credentials;
+    this.did = this.didService.getActiveDidStore().getActiveDid();
+    Logger.log('Identity', 'Publish status fetched?', this.publishStatusFetched);
+    Logger.log('Identity', 'Did needs to be published?', this.didNeedsToBePublished);
+
+    this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(this.did.getDIDString()).subscribe((status) => {
       if (status.checked) {
         this.publishStatusFetched = true;
-        this.didNeedsToBePublished = status.publishedDocument == null;
+        this.didNeedsToBePublished = status.document == null;
       }
     });
 
-    this.zone.run(async () => {
-      this.profile = this.didService.getActiveDidStore().getActiveDid().getBasicProfile();
-      this.credentials = this.didService.getActiveDidStore().getActiveDid().credentials;
-      this.did = this.didService.getActiveDidStore().getActiveDid();
-      Logger.log('Identity', 'Publish status fetched?', this.publishStatusFetched);
-      Logger.log('Identity', 'Did needs to be published?', this.didNeedsToBePublished);
-
+    void this.zone.run(async () => {
       this.receivedIntent = this.intentService.getReceivedIntent();
 
       await this.getRequestedTheme();
@@ -197,24 +197,12 @@ export class CredentialAccessRequestPage {
     return new Promise((resolve) => {
       const customization = this.receivedIntent.params.customization
       if(customization) {
-        if(
-          customization.hasOwnProperty('primarycolorlightmode') &&
-          customization.hasOwnProperty('primarycolordarkmode')
-        ) {
+        if('primarycolorlightmode' in customization && 'primarycolordarkmode' in customization) {
           !this.theme.darkMode ?
             this.requestDappColor = customization.primarycolorlightmode :
             this.requestDappColor = customization.primarycolordarkmode
         }
       }
-
-      /* TODO
-      this.globalIntentService.getAppInfo(this.requestDapp.appPackageId, (appInfo) => {
-        this.requestDappInfo = appInfo;
-        this.requestDappName = appInfo.name;
-        this.requestDappIcon = appInfo.icons[0].src;
-      });
-      */
-
       resolve();
     });
   }
@@ -229,7 +217,7 @@ export class CredentialAccessRequestPage {
         if(this.publishStatusFetched && !this.didNeedsToBePublished) {
           this.publishingDidRequired = false;
         } else {
-          this.alertDidNeedsPublishing();
+          void this.alertDidNeedsPublishing();
           this.publishingDidRequired = true;
         }
       } else {
@@ -286,7 +274,7 @@ export class CredentialAccessRequestPage {
         errorMessage: ""
       };
 
-      let isExpired: boolean = false;
+      let isExpired = false;
 
       if (hasRelatedCredential) {
         let credentialTypes: string[] = relatedCredential.pluginVerifiableCredential.getTypes();
@@ -395,7 +383,7 @@ export class CredentialAccessRequestPage {
           text: this.translate.instant('identity.credaccess-alert-publish-required-btn'),
           handler: () => {
             this.zone.run(() => {
-              this.globalIntentService.sendIntentResponse(
+              void this.globalIntentService.sendIntentResponse(
                 { jwt: null },
                 this.receivedIntent.intentId
               );
@@ -404,7 +392,7 @@ export class CredentialAccessRequestPage {
         }
       ]
     });
-    alert.present()
+    await alert.present();
   }
 
   /**
@@ -502,7 +490,7 @@ export class CredentialAccessRequestPage {
     return selectedCredentials;
   }
 
-  async acceptRequest() {
+  acceptRequest() {
     this.showSpinner = true;
 
     setTimeout(() => {
@@ -546,6 +534,7 @@ export class CredentialAccessRequestPage {
         Logger.log('Identity', "Sending credaccess intent response for intent id "+ this.receivedIntent.intentId);
         try {
           if (this.receivedIntent.originalJwtRequest) {
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             setTimeout(async () => {
               await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.receivedIntent.intentId);
               this.showSpinner = false;

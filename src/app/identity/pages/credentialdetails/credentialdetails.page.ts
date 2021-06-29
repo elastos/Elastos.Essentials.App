@@ -76,6 +76,7 @@ export class CredentialDetailsPage {
   private documentChangedSubscription: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
   private promptpublishdidSubscription: Subscription = null;
+  private onlineDIDDocumentStatusSub: Subscription = null;
 
   public displayableProperties: DisplayProperty[];
 
@@ -98,11 +99,15 @@ export class CredentialDetailsPage {
     this.init();
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
     if (navigation.extras.state.credentialId) {
       this.credentialId = navigation.extras.state.credentialId;
-      await this.selectCredential();
+
+      let didString = this.didService.getActiveDid().getDIDString();
+      this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
+        void this.selectCredential();
+      });
     }
 
     this.didchangedSubscription = this.events.subscribe("did:didchanged", () => {
@@ -125,7 +130,7 @@ export class CredentialDetailsPage {
 
     this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
       this.zone.run(() => {
-        this.profileService.showWarning("publishIdentity", null);
+        void this.profileService.showWarning("publishIdentity", null);
       });
     });
   }
@@ -133,7 +138,6 @@ export class CredentialDetailsPage {
   unsubscribe(subscription: Subscription) {
     if (subscription) {
       subscription.unsubscribe();
-      subscription = null;
     }
   }
 
@@ -143,6 +147,7 @@ export class CredentialDetailsPage {
     this.unsubscribe(this.documentChangedSubscription);
     this.unsubscribe(this.credentialaddedSubscription);
     this.unsubscribe(this.promptpublishdidSubscription);
+    this.unsubscribe(this.onlineDIDDocumentStatusSub);
   }
 
   init(publishAvatar?: boolean) {
@@ -153,8 +158,8 @@ export class CredentialDetailsPage {
     }
   }
 
-  ionViewWillEnter() {
-    this.getIssuer();
+  async ionViewWillEnter() {
+    await this.getIssuer();
     this.displayableProperties = this.getDisplayableProperties();
     this.titleBar.setTitle(this.translate.instant('identity.credentialdetails-title'));
   }
@@ -297,7 +302,7 @@ export class CredentialDetailsPage {
       .subscribe(
         (manifest: any) => {
           Logger.log('Identity', "Got app!", manifest);
-          this.zone.run(async () => {
+          void this.zone.run(() => {
             let iconUrl = "https://dapp-store.elastos.org/apps/" + manifest.id + "/icon";
             //Logger.log('Identity', iconUrl);
             this.appIcon = iconUrl;
@@ -310,9 +315,7 @@ export class CredentialDetailsPage {
   }
 
   isApp() {
-    return this.credential.pluginVerifiableCredential
-      .getSubject()
-      .hasOwnProperty("apppackage");
+    return "apppackage" in this.credential.pluginVerifiableCredential.getSubject();
   }
 
   getCredIcon(): string {
@@ -406,10 +409,7 @@ export class CredentialDetailsPage {
 
   /******************** Display Data Sync Status between Local and Onchain ********************/
   getLocalCredByProperty(property: string): string {
-    const credHasProp = this.credential.pluginVerifiableCredential
-      .getSubject()
-      .hasOwnProperty(property);
-
+    const credHasProp = (property in this.credential.pluginVerifiableCredential.getSubject());
     if (credHasProp)
       return this.credential.pluginVerifiableCredential.getSubject()[property];
 
@@ -420,7 +420,7 @@ export class CredentialDetailsPage {
     const chainValue = this.currentOnChainDIDDocument
       .getCredentials()
       .filter((c) => {
-        if (c.getSubject().hasOwnProperty(property)) {
+        if (property in c.getSubject()) {
           return c;
         }
       });
@@ -430,7 +430,7 @@ export class CredentialDetailsPage {
 
   async isLocalCredSyncOnChain() {
     let didString = this.didService.getActiveDid().getDIDString();
-    this.currentOnChainDIDDocument = await this.didSyncService.getDIDDocumentFromDID(didString);
+    this.currentOnChainDIDDocument = await this.didSyncService.onlineDIDDocumentsStatus.get(didString).value.document;
     if (this.currentOnChainDIDDocument === null) {
       this.isPublished = false;
       return false;
@@ -473,7 +473,12 @@ export class CredentialDetailsPage {
   }
 
   publishCredential() {
-    this.profileService.showWarning("publishVisibility", "");
+    // Make the credential visible in the did document
+    this.profileService.setCredentialVisibility(this.credential.pluginVerifiableCredential.getFragment(), true);
+    this.profileService.updateDIDDocument();
+
+    // Show the publish prompt
+    void this.profileService.showWarning("publishVisibility", "");
   }
 
   verifyCredential() {
@@ -488,7 +493,7 @@ export class CredentialDetailsPage {
 
     claimsObject[fragment] = localValue;
 
-    this.globalIntentService.sendIntent(
+    void this.globalIntentService.sendIntent(
       "https://did.elastos.net/credverify",
       {
         claims: claimsObject,

@@ -239,6 +239,11 @@ export class PrepareDIDPage {
     return this.vaultAddress;
   }
 
+  private async getHiveProviderUrl(): Promise<string> {
+    let didDocument = await this.identityService.getCreatedDIDDocument();
+    return this.globalHiveService.getDocumentVaultProviderUrl(didDocument);
+  }
+
   private defaultWalletExists(): Promise<boolean> {
     // For now, always returns a simulated value without really checking because we don't have a API for that in the wallet sdk.
     return Promise.resolve(this.walletStepCompleted);
@@ -320,6 +325,11 @@ export class PrepareDIDPage {
     Logger.log("didsessions", "Setting up hive storage");
 
     this.hiveSetupAlreadyTried = true;
+
+    // When importing a DID, vaultAddress was not set because we didn't have to create a new DID
+    // witha  default hive address. So we need to retrieve the existing address from the imported DID, if any.
+    if (!vaultAddress)
+      vaultAddress = await this.getHiveProviderUrl();
 
     try {
       await Promise.all([

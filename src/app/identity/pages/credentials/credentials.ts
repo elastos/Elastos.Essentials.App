@@ -257,7 +257,7 @@ export class CredentialsPage {
   /***** Find and build app and avatar creds *****/
   buildAppAndAvatarCreds(publishAvatar?: boolean) {
     this.profileService.appCreds = [];
-    let hasAvatar: boolean = false;
+    let hasAvatar = false;
 
     this.profileService.visibleCredentials.map((cred) => {
       // Find App Credentials
@@ -389,8 +389,6 @@ export class CredentialsPage {
     return "https://dapp-store.elastos.org/apps/" + appId + "/icon";
   }
 
-
-
   /**
    * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
    */
@@ -426,8 +424,6 @@ export class CredentialsPage {
     modal.onDidDismiss().then((params) => { });
     modal.present();
   }
-
-
 
   /**
    * Publish an updated DID document locally and to the DID sidechain, according to user's choices

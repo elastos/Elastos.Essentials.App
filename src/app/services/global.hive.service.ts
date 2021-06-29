@@ -165,6 +165,11 @@ export class GlobalHiveService extends GlobalService {
     return hiveService != null;
   }
 
+  public getDocumentVaultProviderUrl(doc: DIDPlugin.DIDDocument): string {
+    let hiveService = doc.getService("#hivevault");
+    return hiveService.getEndpoint();
+  }
+
   /**
    * Makes hive vault ready for the current user.
    */

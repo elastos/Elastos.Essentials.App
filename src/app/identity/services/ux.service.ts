@@ -56,7 +56,7 @@ export class UXService {
         // Load user's identity
         let couldLoad = await this.didService.loadGlobalIdentity();
         if (!couldLoad) {
-            this.didService.handleNull();
+            await this.didService.handleNull();
         }
         else {
             if (showEntryScreenAfterLoading) {

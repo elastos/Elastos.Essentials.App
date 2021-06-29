@@ -113,7 +113,7 @@ namespace AssistPublishing {
          * DOC FOR ASSIST API: https://github.com/tuum-tech/assist-restapi-backend#verify
          */
         public async publishDID(didString: string, payloadObject: any, memo: string, showBlockingLoader = false): Promise<void> {
-            Logger.log("publicationservice", "Requesting identity publication to Assist");
+            Logger.log("publicationservice", "Requesting identity publication to Assist", didString);
 
             if (typeof payloadObject === "string")
                 throw new Error("Payload must be a JSON object, not a stringified JSON");
@@ -447,7 +447,7 @@ class DIDPublishingManager {
         else
             this.activePublisher = this.walletPublisher;
 
-        this.activePublisher.publishDID(didString, payloadObject, memo, showBlockingLoader);
+        return this.activePublisher.publishDID(didString, payloadObject, memo, showBlockingLoader);
     }
 }
 
@@ -490,30 +490,35 @@ export class GlobalPublicationService {
     /**
      * Publish the given DID Request.
      */
-    public async publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false): Promise<void> {
+    public publishDIDFromRequest(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false): Promise<void> {
         return this.manager.publishDIDFromRequest(didString, payloadObject, memo, showBlockingLoader);
     }
 
     /**
      * Opens a DID store, generates a DID request and publish it.
      */
-    public async publishDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false): Promise<void> {
+    public publishDIDFromStore(storeId: string, storePass: string, didString: string, showBlockingLoader = false): Promise<void> {
         Logger.log("publicationservice", "Starting the DID publication process");
 
-        const didStore = await this.openDidStore(storeId, (payload: string, memo: string) => {
-            // Callback called by the DID SDK when trying to publish a DID.
-            Logger.log("publicationservice", "Create ID transaction callback is being called", payload, memo);
-            const payloadAsJson = JSON.parse(payload);
-            void this.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader);
-        });
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise<void>(async (resolve, reject) => {
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+            const didStore = await this.openDidStore(storeId, async (payload: string, memo: string) => {
+                // Callback called by the DID SDK when trying to publish a DID.
+                Logger.log("publicationservice", "Create ID transaction callback is being called", payload, memo);
+                const payloadAsJson = JSON.parse(payload);
+                await this.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader);
+                resolve();
+            });
 
-        const localDIDDocument = await this.loadLocalDIDDocument(didStore, didString);
+            const localDIDDocument = await this.loadLocalDIDDocument(didStore, didString);
 
-        // Start the publication flow
-        localDIDDocument.publish(storePass, () => { }, (err) => {
-            // Local "publish" process errored
-            Logger.log("publicationservice", "Local DID Document publish(): error", err);
-            throw err;
+            // Start the publication flow
+            localDIDDocument.publish(storePass, () => { }, (err) => {
+                // Local "publish" process errored
+                Logger.log("publicationservice", "Local DID Document publish(): error", err);
+                reject(err);
+            });
         });
     }
 

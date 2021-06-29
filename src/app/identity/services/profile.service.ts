@@ -15,6 +15,7 @@ import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
 
 type ProfileDisplayEntry = {
@@ -125,16 +126,20 @@ export class ProfileService {
   }
 
   init() {
-    this.didSyncService.onlineDIDDocumentStatus.subscribe((status) => {
-      if (status.checked) {
-        this.publishStatusFetched = true;
-        this.publishedDIDDocument = status.publishedDocument;
-        this.handleFetchedOnlinedDIDDocument();
-      }
-      else {
-        this.publishStatusFetched = false;
-        this.publishedDIDDocument = null;
-      }
+    // Wait for DID store to be activated ("did changed") to subscribe to more DID specific events.
+    this.events.subscribe("did:didchanged", () => {
+      let didString = this.didService.getActiveDid().getDIDString();
+      this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
+        if (status.checked) {
+          this.publishStatusFetched = true;
+          this.publishedDIDDocument = status.document;
+          this.handleFetchedOnlinedDIDDocument();
+        }
+        else {
+          this.publishStatusFetched = false;
+          this.publishedDIDDocument = null;
+        }
+      });
     });
 
     this.didSyncService.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {
@@ -528,8 +533,8 @@ export class ProfileService {
   /***
    Load allissuers infos found on  profile credentials
   ***/
-  async loadIssuers(issuersId: string[]) {
-    Promise.all(
+  loadIssuers(issuersId: string[]) {
+    void Promise.all(
       issuersId.map((issuerId) => {
         return this.getIssuerDisplayEntryFromID(issuerId);
       })

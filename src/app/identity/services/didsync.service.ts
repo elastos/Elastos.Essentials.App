@@ -23,9 +23,42 @@ import { IdentityEntry } from "src/app/services/global.didsessions.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 
+class OnlineDIDDocumentCache {
+  private publishedDocuments: Map<string, DIDDocument | null>; // Published DID documents
+
+  public get(didString: string) {
+
+  }
+
+  public set(didString: string, document: DIDDocument) {
+
+  }
+}
+
 type OnlineDIDDocumentStatus = {
-  checked: boolean; // Whether the DID Document online status was checked at least once
-  publishedDocument: DIDDocument; // Published DID document it any, or null
+  checked: boolean;
+  document: DIDDocument;
+}
+
+class OnlineDIDDocumentsStatus {
+  private documentsSubjects = new Map<string, BehaviorSubject<OnlineDIDDocumentStatus>>();
+
+  public get(didString: string): BehaviorSubject<OnlineDIDDocumentStatus> {
+    if (!this.documentsSubjects.has(didString)) {
+      // Document subject not cached yet, so we create one for it, with a null document (not yet fetched)
+      let subject = new BehaviorSubject<OnlineDIDDocumentStatus>({
+        checked: false,
+        document: null
+      });
+      this.documentsSubjects.set(didString, subject);
+    }
+    return this.documentsSubjects.get(didString);
+  }
+
+  public set(didString: string, checked: boolean, document: DIDDocument) {
+    // Create the subject if needed, and emit an update event.
+    this.documentsSubjects.get(didString).next({checked, document});
+  }
 }
 
 @Injectable({
@@ -35,12 +68,9 @@ export class DIDSyncService implements GlobalService {
   public static instance: DIDSyncService = null;
 
   /**
-   * Subject that notifies about user's online DID Document availability.
+   * Subjects that notifiy about online DID Document availabilities.
    */
-  public onlineDIDDocumentStatus = new BehaviorSubject<OnlineDIDDocumentStatus>({
-    checked: false,
-    publishedDocument: null
-  });
+  public onlineDIDDocumentsStatus = new OnlineDIDDocumentsStatus();
 
   /**
    * Whether the active DID needs to be published or not (happens when local changes are made).
@@ -72,14 +102,8 @@ export class DIDSyncService implements GlobalService {
   }
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    // Reset the status to 0 as a new user is signing in.
-    this.onlineDIDDocumentStatus.next({
-      checked: false,
-      publishedDocument: null
-    });
-
     // Fetch online DID document for this user.
-    void this.fetchOnlineDIDDocument();
+    void this.fetchActiveUserOnlineDIDDocument();
 
     return;
   }
@@ -105,10 +129,11 @@ export class DIDSyncService implements GlobalService {
     );
 
     this.globalPublicationService.publicationStatus.subscribe((status) => {
+      Logger.log("identity", "DID publication status update for DID", status);
       if (status.didString === this.didService.getActiveDid().getDIDString() && status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
         Logger.log("identity", "DID publication complete, fetching the latest document online to refresh the UI");
         // DID published ? Fetch the latest DID Document to let the UI refresh its status (published or not, modified, etc)
-        void this.fetchOnlineDIDDocument();
+        void this.fetchActiveUserOnlineDIDDocument();
       }
     });
   }
@@ -173,18 +198,16 @@ export class DIDSyncService implements GlobalService {
   /**
    * Fetches the DID Document and notifies listeners when this is ready
    */
-  private async fetchOnlineDIDDocument() {
+  private async fetchActiveUserOnlineDIDDocument(forceRemote = false) {
+    let didString = this.didService.getActiveDid().getDIDString();
     let currentOnChainDIDDocument = await this.resolveDIDWithoutDIDStore(
-      this.didService.getActiveDid().getDIDString(),
-      false
+      didString,
+      forceRemote
     );
     Logger.log("Identity", "Resolved on chain document: ", currentOnChainDIDDocument);
 
     // Tell listeners that the document has been fetched.
-    this.onlineDIDDocumentStatus.next({
-      checked: true,
-      publishedDocument: currentOnChainDIDDocument
-    });
+    this.onlineDIDDocumentsStatus.set(didString, true, currentOnChainDIDDocument);
 
     this.checkIfDIDDocumentNeedsToBePublished(currentOnChainDIDDocument);
   }
@@ -244,6 +267,7 @@ export class DIDSyncService implements GlobalService {
     didString: string,
     forceRemote: boolean
   ): Promise<DIDDocument> {
+    Logger.log("Identity", "Resolving DID without DID store", didString, forceRemote);
     return new Promise((resolve, reject) => {
       didManager.resolveDidDocument(
         didString,
@@ -260,10 +284,19 @@ export class DIDSyncService implements GlobalService {
   }
 
   /**
-   * When a change in the DID Document is done in the app, we can force-set the "needs publish" value.
+   * Gets the online DID Dociment for a given DID string.
+   * This can be active user's DID, or another one.
+   * If forceRemote is false, a cached document will be returned if there is one.
    */
-  public getDIDDocumentFromDID(did: string): Promise<DIDDocument> {
-    Logger.log("identity", "getDIDDocumentFromDID")
-    return this.resolveDIDWithoutDIDStore(did, true);
+  public async getDIDDocumentFromDID(didString: string, forceRemote = false): Promise<DIDDocument> {
+    let cachedDocument = this.onlineDIDDocumentsStatus.get(didString).value;
+    if (!cachedDocument || forceRemote) {
+      let resolvedDocument = await this.resolveDIDWithoutDIDStore(didString, forceRemote);
+      this.onlineDIDDocumentsStatus.set(didString, true, resolvedDocument);
+      return resolvedDocument;
+    }
+    else {
+      return cachedDocument.document;
+    }
   }
 }
