@@ -312,15 +312,6 @@ export class GlobalHiveService extends GlobalService {
     return this.activeVault;
   }
 
-  private async getLastPublishedTime(): Promise<Date> {
-    let lastPublishedTime = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "publicationrequesttime", 0);
-    return new Date(lastPublishedTime);
-  }
-
-  private async saveLastPublishedTime(): Promise<void> {
-    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'hivemanager', "publicationrequesttime", Date.now());
-  }
-
   /**
    * Sets and saves a NEW vault provider for the active DID, without any transfer of data.
    */
@@ -362,9 +353,6 @@ export class GlobalHiveService extends GlobalService {
       Logger.log("GlobalHiveService", "Got sethiveprovider intent result:", result);
 
       if (result && result.result && result.result.status && result.result.status == "published") {
-        // Save local timestamp - We will not allow to pick another provider before a few minutes
-        await this.saveLastPublishedTime();
-
         // Vault address was added to user's DID document and publication is on going.
         // Now wait a moment
         return true; // Publishing

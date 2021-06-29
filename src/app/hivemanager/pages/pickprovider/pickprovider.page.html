@@ -61,7 +61,7 @@
         <div *ngIf="!fetchingActivePaymentPlan" style="width:100%">
             <payment-plan [activePlan]="activePaymentPlan"></payment-plan>
         </div>
-        <ion-button (click)="changePlan()" *ngIf="!fetchingActivePaymentPlan && (incompleteOrders == null || incompleteOrders.length == 0)">
+        <ion-button disabled (click)="changePlan()" *ngIf="!fetchingActivePaymentPlan && (incompleteOrders == null || incompleteOrders.length == 0)">
             {{ 'hivemanager.pickprovider.choose-another-plan' | translate }}
         </ion-button>
         <div *ngIf="incompleteOrders != null && incompleteOrders.length > 0">{{ 'hivemanager.pickprovider.payment-processing' | translate }}</div>
