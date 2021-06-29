@@ -41,8 +41,7 @@ export class ERC20SubWallet extends SubWallet {
         const coin = masterWallet.coinService.getCoinByID(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
             const subWallet = new ERC20SubWallet(masterWallet, serializedSubWallet.id);
-            // Get info by web3, don't use the data in local storage.
-            // subWallet.initFromSerializedSubWallet(serializedSubWallet);
+            subWallet.initFromSerializedSubWallet(serializedSubWallet);
             return subWallet;
         } else {
             Logger.error('wallet', 'newFromSerializedSubWallet error, this coin is not in coinService');
@@ -169,14 +168,6 @@ export class ERC20SubWallet extends SubWallet {
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
         }
-    }
-
-    // It will be called When the ETHSC update the sync progress.
-    public updateSyncProgress(progress: number, lastBlockTime: number) {
-        this.timestamp = lastBlockTime*1000;
-        this.syncTimestamp = this.timestamp;
-        this.lastBlockTime = Util.dateFormat(new Date(this.timestamp), 'YYYY-MM-DD HH:mm:ss');
-        this.progress = progress;
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {

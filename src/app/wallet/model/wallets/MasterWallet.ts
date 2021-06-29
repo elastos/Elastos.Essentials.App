@@ -148,16 +148,6 @@ export class MasterWallet {
         }
     }
 
-    /**
-     * Requests a wallet to update its sync progress. Call this only for SPV SDK sub-wallets.
-     */
-    public updateSyncProgress(chainId: StandardCoinName, progress: number, lastBlockTime: number) {
-        const subWallet = this.subWallets[chainId] as StandardSubWallet;
-        if (subWallet) {
-            subWallet.updateSyncProgress(progress, lastBlockTime);
-        }
-    }
-
     public getSubWalletBalance(coinId: CoinID): BigNumber {
         return this.subWallets[coinId].balance;
     }

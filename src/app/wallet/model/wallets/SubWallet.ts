@@ -1,6 +1,6 @@
 import { MasterWallet } from './MasterWallet';
 import { CoinType, CoinID, StandardCoinName } from '../Coin';
-import { AllTransactionsHistory, EthTransaction, TransactionDetail, TransactionHistory, TransactionInfo, TransactionStatus } from '../Transaction';
+import { AllTransactionsHistory, TransactionHistory, TransactionInfo, TransactionStatus } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,9 +25,6 @@ export class SerializedSubWallet {
     public id: StandardCoinName = null;
     public balance: string = null; // SELA or wei
     public lastBlockTime: string = null;
-    public timestamp: number = -1;
-    public progress: number = 0;
-    public timestampRPC: number = 0;
 
     /**
      * Serialize only fields that we are willing to have in the serialized output.
@@ -40,9 +37,6 @@ export class SerializedSubWallet {
         serializedSubWallet.id = subWallet.id as StandardCoinName;
         serializedSubWallet.balance = subWallet.balance.toString();
         serializedSubWallet.lastBlockTime = subWallet.lastBlockTime;
-        serializedSubWallet.timestamp = subWallet.timestamp;
-        serializedSubWallet.progress = subWallet.progress;
-        serializedSubWallet.timestampRPC = subWallet.timestampRPC ? subWallet.timestampRPC : 0;
         return serializedSubWallet;
     }
 }
@@ -51,11 +45,6 @@ export abstract class SubWallet {
     public id: CoinID = null;
     public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
     public lastBlockTime: string = null;
-    public syncTimestamp: number = -1; // Time (ms) at which the wallet was last synced
-    public timestamp: number = -1; // Time (ms) at which the progress was last updated (CAUTION: this is NOT the block sync time)
-    public progress: number = 0;
-    public balanceByRPC: BigNumber = new BigNumber(0);
-    public timestampRPC: number = 0; // Time at which the "get balance" RPC API was last called
 
     private events: Events;
     public jsonRPCService: WalletJsonRPCService = null;
@@ -77,11 +66,6 @@ export abstract class SubWallet {
         // this.id = serializedSubWallet.id;
         this.balance = new BigNumber(serializedSubWallet.balance);
         this.lastBlockTime = serializedSubWallet.lastBlockTime;
-        this.timestamp = serializedSubWallet.timestamp;
-        this.timestampRPC = serializedSubWallet.timestampRPC;
-        // This progress does not start with Block 0, but start with last synchronized blocks
-        // So do not get progress from local storage
-        // this.progress = serializedSubWallet.progress;
     }
 
     /**
@@ -154,11 +138,6 @@ export abstract class SubWallet {
      * saying that a new balance amount is available.
      */
     public abstract updateBalance();
-
-    /**
-     * Updates current SPV synchonization progress information.
-     */
-    public abstract updateSyncProgress(progress: number, lastBlockTime: number);
 
     /**
      * Shortcut for getDisplayAmount(balance)

@@ -649,7 +649,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           totalBalance = totalBalance.plus(balance);
         }
 
-        this.balanceByRPC = totalBalance;
         this.balance = totalBalance;
 
         Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
