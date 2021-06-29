@@ -43,13 +43,29 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper(this.jsonRPCService);
 
         setTimeout(async () => {
-            await this.checkAddresses();
+            if (!this.masterWallet.account.SingleAddress) {
+              await this.checkAddresses(true);
+              await this.checkAddresses(false);
+            }
             await this.updateBalance();
             // await this.getTransactionByRPC();
             if (id === StandardCoinName.ELA) {
                 await this.getVotingUtxoByRPC();
+            } else {
+                //Do not use id chain any more.
+                this.checkIDChainToBeDestroy();
             }
         }, 3000);
+    }
+
+    checkIDChainToBeDestroy() {
+      // Do not use the id chain any more.
+      if (this.id === StandardCoinName.IDChain) {
+        // Cross chain transaction need 20000 SELA.
+        if (this.balance.lte(20000)) {
+          this.masterWallet.destroySubWallet(this.id);
+        }
+      }
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
@@ -470,29 +486,29 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     // ********************************
 
     /**
-     * If the last address is used, then the spvsdk will create new addresses.
+     * If the last address is used, the spvsdk will create new addresses.
      */
-    private async checkAddresses() {
-        let addressArray = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, true);
-        let addressArrayExternal = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, false);
-        addressArray.push.apply(addressArray, addressArrayExternal);
-
+    private async checkAddresses(internal: boolean) {
         let addressArrayUsed = []
-        try {
-            const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
-            if (txRawList && txRawList.length > 0) {
-                for (let i = 0, len = txRawList.length; i < len; i++) {
-                    addressArrayUsed.push(txRawList[i].result);
-                }
-            }
-        } catch (e) {
-            Logger.log("wallet", 'getTransactionByAddress exception:', e);
-            throw e;
-        }
 
-        if (addressArrayUsed.length > 0) {
-            Logger.warn('wallet', 'checkAddresses addressArrayUsed:', addressArrayUsed)
-            await this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
+        try {
+            do {
+              let addressArray = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, internal);
+              addressArrayUsed = []
+              const txRawList = await this.jsonRPCService.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
+              if (txRawList && txRawList.length > 0) {
+                  for (let i = 0, len = txRawList.length; i < len; i++) {
+                      addressArrayUsed.push(txRawList[i].result.txhistory[0].address);
+                  }
+              }
+
+              if (addressArrayUsed.length > 0) {
+                await this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
+              }
+            } while (addressArrayUsed.length > 0);
+        } catch (e) {
+            Logger.error("wallet", 'checkAddresses exception:', e);
+            throw e;
         }
     }
 
@@ -600,8 +616,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         return newVoteContents;
     }
 
-
-
     /**
      * Get balance by RPC
      */
@@ -626,11 +640,40 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         }
         totalBalance = totalBalance.plus(balance);
 
+        if (this.id == StandardCoinName.ELA) {
+          // Coinbase reward, eg. dpos
+          balance = await this.getBalanceByOwnerAddress();
+          if (balance == null) {
+            return;
+          }
+          totalBalance = totalBalance.plus(balance);
+        }
+
         this.balanceByRPC = totalBalance;
         this.balance = totalBalance;
 
         Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
         Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
+    }
+
+    private async getBalanceByOwnerAddress() {
+      if (this.id != StandardCoinName.ELA) return;
+
+      let address = await this.masterWallet.walletManager.spvBridge.getOwnerAddress(
+          this.masterWallet.id, this.id);
+      let addressArray = [address];
+      try {
+          const balance = await this.jsonRPCService.getBalanceByAddress(this.id as StandardCoinName, addressArray);
+          if (balance === null) {
+            Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
+            return null
+          }
+          Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
+          return balance;
+      } catch (e) {
+          Logger.log("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
+          throw e;
+      }
     }
 
     private async getBalanceByAddress(internalAddress: boolean) {
@@ -645,6 +688,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             if (addressArray.Addresses.length === 0) {
                 requestAddressCount = startIndex;
                 break;
+            }
+            if (this.id == StandardCoinName.ELA) {
+              Logger.warn('wallet', 'getAddress:', addressArray)
             }
             startIndex += addressArray.Addresses.length;
 
