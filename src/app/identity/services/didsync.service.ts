@@ -130,7 +130,7 @@ export class DIDSyncService implements GlobalService {
 
     this.globalPublicationService.publicationStatus.subscribe((status) => {
       Logger.log("identity", "DID publication status update for DID", status);
-      if (status.didString === this.didService.getActiveDid().getDIDString() && status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+      if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED && this.didService.getActiveDid() && status.didString === this.didService.getActiveDid().getDIDString()) {
         Logger.log("identity", "DID publication complete, fetching the latest document online to refresh the UI");
         // DID published ? Fetch the latest DID Document to let the UI refresh its status (published or not, modified, etc)
         void this.fetchActiveUserOnlineDIDDocument();

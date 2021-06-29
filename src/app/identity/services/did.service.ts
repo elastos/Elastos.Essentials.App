@@ -179,6 +179,8 @@ export class DIDService {
   }
 
   public getActiveDid(): DID {
+    if (!this.activeDidStore)
+      return null;
     return this.activeDidStore.getActiveDid();
   }
 

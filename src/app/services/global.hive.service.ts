@@ -48,6 +48,7 @@ export class GlobalHiveService extends GlobalService {
   private pricingInfo: HivePlugin.Payment.PricingInfo = null; // Cached pricing info for user's current vault provider after been fetched.
 
   public vaultStatus = new BehaviorSubject<VaultLinkStatus>(null); // Latest known vault status for active user
+  private clientCreationSubject: Subject<HivePlugin.Client> = null;
 
   constructor(
     private router: Router,
@@ -75,46 +76,68 @@ export class GlobalHiveService extends GlobalService {
     this.vaultStatus.next(this.vaultLinkStatus);
   }
 
-  async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    if (signedInIdentity) {
-      // New user is signing in: initialize a global hive client and try to get his hive vault status.
-      // Not a blocking call
-      Logger.log("GlobalHiveService", "Getting a global hive client instance");
-      let hiveAuthHelper = await new ElastosSDKHelper().newHiveAuthHelper();
-      void hiveAuthHelper.getClientWithAuth((err)=>{
-        Logger.error("GlobalHiveService", "Authentication error:", err);
-      }).then((client) => {
-        if (!client) {
-          Logger.error("GlobalHiveService", "Fatal error in hive manager: Unable to get a global hive client instance.");
-        }
-        else {
-          this.client = client;
-          Logger.log("GlobalHiveService", "Global hive client instance was created", client);
-
-          void this.retrieveVaultLinkStatus();
-        }
-      });
-    }
+  onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    // New user is signing in: initialize a global hive client and try to get his hive vault status.
+    // Not a blocking call
+    Logger.log("GlobalHiveService", "Getting a global hive client instance");
+    void this.getHiveClient().then((client) => {
+      if (!client) {
+        Logger.error("GlobalHiveService", "Fatal error in hive manager: Unable to get a global hive client instance.");
+      }
+      else {
+        this.client = client;
+        Logger.log("GlobalHiveService", "Global hive client instance was created", this.client);
+        void this.retrieveVaultLinkStatus();
+      }
+    });
+    return;
   }
 
   async onUserSignOut(): Promise<void> {
     await this.stop();
-
     return;
   }
 
-  private async createHiveClient(): Promise<HivePlugin.Client> {
+  private async getHiveClient(): Promise<HivePlugin.Client> {
+    Logger.log("GlobalHiveService", "Getting hive client");
+
+    // Create only one client instance overall
+    if (this.client) {
+      Logger.log("GlobalHiveService", "Existing client returned");
+      return this.client;
+    }
+
+    // Avoid double creation - use a subject to have multiple listeners waiting for this hive client creation
+    if (!this.clientCreationSubject) {
+      Logger.log("GlobalHiveService", "Creating a new subject and get a real client");
+
+      this.clientCreationSubject = new Subject();
+
+      // First call, create the subject and the client
       const hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
       if (!hiveAuthHelper) {
         throw new Error("Hive auth helper failed to create");
       }
 
-      let hiveClient = await hiveAuthHelper.getClientWithAuth((e) => {
+      // This process takes like 1-2 seconds
+      this.client = await hiveAuthHelper.getClientWithAuth((e) => {
         // Auth error
         Logger.error("GlobalHiveService", "Hive authentication error", e);
       });
 
-      return hiveClient;
+      Logger.log("GlobalHiveService", "Emitting client created");
+      this.clientCreationSubject.next(this.client);
+      this.clientCreationSubject = null;
+
+      return this.client;
+    }
+    else {
+      Logger.log("GlobalHiveService", "Waiting for another client creation request to complete");
+
+      // Not the first call, just wait for client creation completion
+      this.client = await this.clientCreationSubject.toPromise();
+      return this.client;
+    }
   }
 
   /**
@@ -178,7 +201,7 @@ export class GlobalHiveService extends GlobalService {
 
     let didString = GlobalDIDSessionsService.signedInDIDString;
 
-    let hiveClient = await this.createHiveClient();
+    let hiveClient = await this.getHiveClient();
     Logger.log("GlobalHiveService", "Got hive client", hiveClient);
 
     let vault = await hiveClient.createVault(didString, vaultProviderAddress);
@@ -220,11 +243,7 @@ export class GlobalHiveService extends GlobalService {
 
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
-    if (!this.client) {
-      // Should not happen, but just in case.
-      Logger.error("GlobalHiveService", "Fatal error in hive manager: Hive client not initialized.");
-      return null;
-    }
+    let hiveClient = await this.getHiveClient();
 
     let status: VaultLinkStatus = {
       checkState: VaultLinkStatusCheckState.NOT_CHECKED,
@@ -234,7 +253,7 @@ export class GlobalHiveService extends GlobalService {
     // Check if we can find an existing vault provider address on DID chain for this user.
     Logger.log("GlobalHiveService", "Asking hive manager to give us the vault address for current user's DID " + signedInDID);
     try {
-      this.activeVault = await this.client.getVault(signedInDID);
+      this.activeVault = await hiveClient.getVault(signedInDID);
     }
     catch (e) {
       if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
