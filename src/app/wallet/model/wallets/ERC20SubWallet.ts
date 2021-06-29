@@ -12,6 +12,7 @@ import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { Config } from '../../config/Config';
+import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -26,6 +27,9 @@ export class ERC20SubWallet extends SubWallet {
 
     private transactions: AllTransactionsHistory = null;
     private loadTxDataFromCache = false;
+
+    private timeBasedCache: TimeBasedPersistentCache<any> = null;
+    private keyInCache = '';
 
     public static newFromCoin(masterWallet: MasterWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = new ERC20SubWallet(masterWallet, coin.getID());
@@ -68,6 +72,9 @@ export class ERC20SubWallet extends SubWallet {
         // as we need to convert the balance integer using the number of decimals.
         await this.fetchTokenDecimals();
         await this.updateBalance();
+
+        this.keyInCache = this.masterWallet.id + '-' + this.id + '-tx';
+        this.loadTransactionsFromCache();
     }
 
     public async createAddress(): Promise<string> {
@@ -170,6 +177,22 @@ export class ERC20SubWallet extends SubWallet {
         }
     }
 
+    private async loadTransactionsFromCache() {
+      this.timeBasedCache = await TimeBasedPersistentCache.loadOrCreate(this.keyInCache);
+      if (this.timeBasedCache.size() !== 0) {
+        if (this.transactions == null) {
+          // init
+          this.transactions = {totalcount:0, txhistory:[]};
+        }
+
+        this.transactions.totalcount = this.timeBasedCache.size()
+        let items = this.timeBasedCache.values();
+        for (let i = 0, len = this.transactions.totalcount; i < len; i++) {
+          this.transactions.txhistory.push(items[i].data);
+        }
+      }
+    }
+
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
         if (this.transactions == null) {
           await this.getTransactionByRPC();
@@ -190,6 +213,13 @@ export class ERC20SubWallet extends SubWallet {
       return this.loadTxDataFromCache;
     }
 
+    private saveTransactions() {
+      for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
+        this.timeBasedCache.set(this.transactions.txhistory[i].txid, this.transactions.txhistory[i], this.transactions.txhistory[i].time);
+      }
+      this.timeBasedCache.save();
+    }
+
     async getTransactionByRPC() {
         Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
         const contractAddress = this.coin.getContractAddress().toLowerCase();
@@ -200,6 +230,7 @@ export class ERC20SubWallet extends SubWallet {
             return tx.contractAddress === contractAddress
           })
           this.transactions = {totalcount:allTx.length, txhistory:allTx};
+          this.saveTransactions();
         }
     }
 

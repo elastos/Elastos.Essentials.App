@@ -138,7 +138,7 @@ export class CoinHomePage implements OnInit {
 
     async initData() {
         // Only update balance, It will save some time for the second time you enter this page.
-        await this.subWallet.updateBalance();
+        this.subWallet.updateBalance();
 
         this.updateTransactions();
 

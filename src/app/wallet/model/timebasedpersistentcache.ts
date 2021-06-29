@@ -59,9 +59,9 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
     // Sort the cache by time value. TBD: inefficient: better to directly insert at the right index.
     this.items.sort((a, b) => {
       if (a.timeValue > b.timeValue)
-        return 1;
-      else if (a.timeValue < b.timeValue)
         return -1;
+      else if (a.timeValue < b.timeValue)
+        return 1;
       else
         return 0;
     });
@@ -93,7 +93,7 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    */
   public async save(): Promise<void> {
     // Keep at most maxItemsOnDisk items.
-    let itemsToSave = this.items.slice(0, Math.min(this.items.length-1, this.maxItemsOnDisk-1));
+    let itemsToSave = this.items.slice(0, Math.min(this.items.length, this.maxItemsOnDisk));
     await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name, itemsToSave);
   }
 

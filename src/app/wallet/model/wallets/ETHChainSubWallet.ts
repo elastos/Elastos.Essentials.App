@@ -2,13 +2,14 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, ERC20TokenInfo, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, ERC20TokenInfo, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
 import { CoinID, StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
+import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
@@ -22,11 +23,16 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     private loadTxDataFromCache = false;
 
+    private timeBasedCache: TimeBasedPersistentCache<any> = null;
+    private keyInCache = '';
+
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
 
+        this.keyInCache = this.masterWallet.id + '-' + this.id + '-tx';
         this.initWeb3();
         this.updateBalance();
+        this.loadTransactionsFromCache();
     }
 
     public async getTokenAddress(): Promise<string> {
@@ -34,6 +40,22 @@ export class ETHChainSubWallet extends StandardSubWallet {
             this.ethscAddress = (await this.createAddress()).toLowerCase();
         }
         return this.ethscAddress;
+    }
+
+    private async loadTransactionsFromCache() {
+      this.timeBasedCache = await TimeBasedPersistentCache.loadOrCreate(this.keyInCache);
+      if (this.timeBasedCache.size() !== 0) {
+        if (this.txArrayToDisplay == null) {
+          // init
+          this.txArrayToDisplay = {totalcount:0, txhistory:[]};
+        }
+
+        this.txArrayToDisplay.totalcount = this.timeBasedCache.size()
+        let items = this.timeBasedCache.values();
+        for (let i = 0, len = this.txArrayToDisplay.totalcount; i < len; i++) {
+          this.txArrayToDisplay.txhistory.push(items[i].data);
+        }
+      }
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
@@ -71,10 +93,21 @@ export class ETHChainSubWallet extends StandardSubWallet {
           this.txArrayToDisplay = {totalcount:0, txhistory:[]};
         }
         if (result.length > 0) {
-          this.txArrayToDisplay.totalcount = result.length;
-          this.txArrayToDisplay.txhistory = result.reverse();
+          // Has new transactions.
+          if (this.txArrayToDisplay.totalcount !== result.length) {
+            this.txArrayToDisplay.totalcount = result.length;
+            this.txArrayToDisplay.txhistory = result.reverse();
+            this.saveTransactions();
+          }
         }
       }
+    }
+
+    private saveTransactions() {
+      for (let i = 0, len = this.txArrayToDisplay.txhistory.length; i < len; i++) {
+        this.timeBasedCache.set(this.txArrayToDisplay.txhistory[i].txid, this.txArrayToDisplay.txhistory[i], this.txArrayToDisplay.txhistory[i].time);
+      }
+      this.timeBasedCache.save();
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
@@ -239,6 +272,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
       let nonce = await this.getNonce();
+      Logger.warn('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
       return this.masterWallet.walletManager.spvBridge.createTransfer(
             this.masterWallet.id,
             toAddress,
