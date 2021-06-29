@@ -7,12 +7,11 @@ import { Util } from '../Util';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { Config } from '../../config/Config';
-import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -24,12 +23,6 @@ export class ERC20SubWallet extends SubWallet {
     private tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
 
     private tokenAddress = '';
-
-    private transactions: AllTransactionsHistory = null;
-    private loadTxDataFromCache = false;
-
-    private timeBasedCache: TimeBasedPersistentCache<any> = null;
-    private keyInCache = '';
 
     public static newFromCoin(masterWallet: MasterWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = new ERC20SubWallet(masterWallet, coin.getID());
@@ -45,7 +38,7 @@ export class ERC20SubWallet extends SubWallet {
         const coin = masterWallet.coinService.getCoinByID(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
             const subWallet = new ERC20SubWallet(masterWallet, serializedSubWallet.id);
-            subWallet.initFromSerializedSubWallet(serializedSubWallet);
+            // subWallet.initFromSerializedSubWallet(serializedSubWallet);
             return subWallet;
         } else {
             Logger.error('wallet', 'newFromSerializedSubWallet error, this coin is not in coinService');
@@ -71,9 +64,8 @@ export class ERC20SubWallet extends SubWallet {
         // First retrieve the number of decimals used by this token. this is needed for a good display,
         // as we need to convert the balance integer using the number of decimals.
         await this.fetchTokenDecimals();
-        await this.updateBalance();
+        this.updateBalance();
 
-        this.keyInCache = this.masterWallet.id + '-' + this.id + '-tx';
         this.loadTransactionsFromCache();
     }
 
@@ -171,26 +163,11 @@ export class ERC20SubWallet extends SubWallet {
             const balanceEla = await erc20Contract.methods.balanceOf(tokenAccountAddress).call();
             // The returned balance is an int. Need to devide by the number of decimals used by the token.
             this.balance = new BigNumber(balanceEla).dividedBy(this.tokenAmountMulipleTimes);
+            this.saveBalanceToCache();
             Logger.log('wallet', this.id+": raw balance:", balanceEla, " Converted balance: ", this.balance);
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
         }
-    }
-
-    private async loadTransactionsFromCache() {
-      this.timeBasedCache = await TimeBasedPersistentCache.loadOrCreate(this.keyInCache);
-      if (this.timeBasedCache.size() !== 0) {
-        if (this.transactions == null) {
-          // init
-          this.transactions = {totalcount:0, txhistory:[]};
-        }
-
-        this.transactions.totalcount = this.timeBasedCache.size()
-        let items = this.timeBasedCache.values();
-        for (let i = 0, len = this.transactions.totalcount; i < len; i++) {
-          this.transactions.txhistory.push(items[i].data);
-        }
-      }
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
@@ -209,17 +186,6 @@ export class ERC20SubWallet extends SubWallet {
         return newTxList;
     }
 
-    public isLoadTxDataFromCache() {
-      return this.loadTxDataFromCache;
-    }
-
-    private saveTransactions() {
-      for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
-        this.timeBasedCache.set(this.transactions.txhistory[i].txid, this.transactions.txhistory[i], this.transactions.txhistory[i].time);
-      }
-      this.timeBasedCache.save();
-    }
-
     async getTransactionByRPC() {
         Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
         const contractAddress = this.coin.getContractAddress().toLowerCase();
@@ -230,7 +196,7 @@ export class ERC20SubWallet extends SubWallet {
             return tx.contractAddress === contractAddress
           })
           this.transactions = {totalcount:allTx.length, txhistory:allTx};
-          this.saveTransactions();
+          this.saveTransactions(this.transactions.txhistory);
         }
     }
 

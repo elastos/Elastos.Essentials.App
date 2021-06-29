@@ -372,7 +372,7 @@ export class WalletJsonRPCService {
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
       const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
-          return new BigNumber(NaN);;
+          return null;
       }
 
       try {
@@ -380,7 +380,7 @@ export class WalletJsonRPCService {
           return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
       } catch (e) {
       }
-      return new BigNumber(NaN);;
+      return null;
     }
 
     async getETHSCNonce(chainID: StandardCoinName, address: string): Promise<number> {

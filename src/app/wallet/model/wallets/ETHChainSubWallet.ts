@@ -3,13 +3,12 @@ import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
 import { AllTransactionsHistory, ERC20TokenInfo, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
-import { CoinID, StandardCoinName } from '../Coin';
+import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
-import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
@@ -18,18 +17,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
     private ethscAddress: string = null;
     private web3 = null;
 
-    private txArrayToDisplay: AllTransactionsHistory = null;
     private tokenList: ERC20TokenInfo[] = null;
-
-    private loadTxDataFromCache = false;
-
-    private timeBasedCache: TimeBasedPersistentCache<any> = null;
-    private keyInCache = '';
 
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
 
-        this.keyInCache = this.masterWallet.id + '-' + this.id + '-tx';
         this.initWeb3();
         this.updateBalance();
         this.loadTransactionsFromCache();
@@ -42,35 +34,19 @@ export class ETHChainSubWallet extends StandardSubWallet {
         return this.ethscAddress;
     }
 
-    private async loadTransactionsFromCache() {
-      this.timeBasedCache = await TimeBasedPersistentCache.loadOrCreate(this.keyInCache);
-      if (this.timeBasedCache.size() !== 0) {
-        if (this.txArrayToDisplay == null) {
-          // init
-          this.txArrayToDisplay = {totalcount:0, txhistory:[]};
-        }
-
-        this.txArrayToDisplay.totalcount = this.timeBasedCache.size()
-        let items = this.timeBasedCache.values();
-        for (let i = 0, len = this.txArrayToDisplay.totalcount; i < len; i++) {
-          this.txArrayToDisplay.txhistory.push(items[i].data);
-        }
-      }
-    }
-
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-      if (this.txArrayToDisplay == null) {
+      if (this.transactions == null) {
         await this.getTransactionsByRpc();
         this.loadTxDataFromCache = false;
       } else {
         this.loadTxDataFromCache = true;
       }
 
-      if (this.txArrayToDisplay) {
+      if (this.transactions) {
         // For performance, only return 20 transactions.
         let newTxList:AllTransactionsHistory = {
-            totalcount: this.txArrayToDisplay.totalcount,
-            txhistory :this.txArrayToDisplay.txhistory.slice(startIndex, startIndex + 20),
+            totalcount: this.transactions.totalcount,
+            txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
         }
         return newTxList;
       }
@@ -79,35 +55,24 @@ export class ETHChainSubWallet extends StandardSubWallet {
       }
     }
 
-    public isLoadTxDataFromCache() {
-      return this.loadTxDataFromCache;
-    }
-
     public async getTransactionsByRpc() {
       Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
       const address = await this.getTokenAddress();
       let result = await this.jsonRPCService.getETHSCTransactions(this.id as StandardCoinName, address);
       if (result) {
-        if (this.txArrayToDisplay == null) {
+        if (this.transactions == null) {
           // init
-          this.txArrayToDisplay = {totalcount:0, txhistory:[]};
+          this.transactions = {totalcount:0, txhistory:[]};
         }
         if (result.length > 0) {
           // Has new transactions.
-          if (this.txArrayToDisplay.totalcount !== result.length) {
-            this.txArrayToDisplay.totalcount = result.length;
-            this.txArrayToDisplay.txhistory = result.reverse();
-            this.saveTransactions();
+          if (this.transactions.totalcount !== result.length) {
+            this.transactions.totalcount = result.length;
+            this.transactions.txhistory = result.reverse();
+            this.saveTransactions(this.transactions.txhistory);
           }
         }
       }
-    }
-
-    private saveTransactions() {
-      for (let i = 0, len = this.txArrayToDisplay.txhistory.length; i < len; i++) {
-        this.timeBasedCache.set(this.txArrayToDisplay.txhistory[i].txid, this.txArrayToDisplay.txhistory[i], this.txArrayToDisplay.txhistory[i].time);
-      }
-      this.timeBasedCache.save();
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
@@ -261,7 +226,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
     public async updateBalance(): Promise<void> {
         // this.balance = await this.getBalanceByWeb3();
         const address = await this.getTokenAddress();
-        this.balance = await this.jsonRPCService.eth_getBalance(this.id as StandardCoinName, address);
+        const balance = await this.jsonRPCService.eth_getBalance(this.id as StandardCoinName, address);
+        if (balance) {
+          this.balance = balance;
+          this.saveBalanceToCache();
+        }
     }
 
     public async getERC20TokenList(): Promise<ERC20TokenInfo[]> {

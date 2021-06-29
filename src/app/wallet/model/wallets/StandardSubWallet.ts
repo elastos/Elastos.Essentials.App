@@ -18,7 +18,6 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     protected async initialize() {
-        // this.updateBalance();
     }
 
     public async destroy() {

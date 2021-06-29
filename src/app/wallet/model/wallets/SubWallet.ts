@@ -7,6 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Events } from 'src/app/services/events.service';
 import { WalletJsonRPCService } from '../../services/jsonrpc.service';
+import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
+import { Logger } from 'src/app/logger';
 
 /**
  * Result of calls to signAndSendRawTransaction().
@@ -35,8 +37,8 @@ export class SerializedSubWallet {
         const serializedSubWallet = new SerializedSubWallet();
         serializedSubWallet.type = subWallet.type;
         serializedSubWallet.id = subWallet.id as StandardCoinName;
-        serializedSubWallet.balance = subWallet.balance.toString();
-        serializedSubWallet.lastBlockTime = subWallet.lastBlockTime;
+        // serializedSubWallet.balance = subWallet.balance.toString();
+        // serializedSubWallet.lastBlockTime = subWallet.lastBlockTime;
         return serializedSubWallet;
     }
 }
@@ -46,6 +48,14 @@ export abstract class SubWallet {
     public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
     public lastBlockTime: string = null;
 
+    public balanceCache: TimeBasedPersistentCache<any> = null;
+    public balanceKeyInCache = '';
+
+    public loadTxDataFromCache = false;
+    public transactions: AllTransactionsHistory = null;
+    public transactionsCache: TimeBasedPersistentCache<any> = null;
+    public transactionKeyInCache = '';
+
     private events: Events;
     public jsonRPCService: WalletJsonRPCService = null;
 
@@ -54,18 +64,59 @@ export abstract class SubWallet {
         this.type = type;
         this.events = this.masterWallet.walletManager.events;
         this.jsonRPCService = this.masterWallet.walletManager.jsonRPCService;
+
+        this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
+        this.transactionKeyInCache = this.masterWallet.id + '-' + this.id + '-tx';
+
+        this.loadBalanceFromCache();
     }
 
     public toSerializedSubWallet(): SerializedSubWallet {
         return SerializedSubWallet.fromSubWallet(this);
     }
 
-    public initFromSerializedSubWallet(serializedSubWallet: SerializedSubWallet) {
-        // type and id are initialized in constructor
-        // this.type = serializedSubWallet.type;
-        // this.id = serializedSubWallet.id;
-        this.balance = new BigNumber(serializedSubWallet.balance);
-        this.lastBlockTime = serializedSubWallet.lastBlockTime;
+    private async loadBalanceFromCache() {
+      this.balanceCache = await TimeBasedPersistentCache.loadOrCreate(this.balanceKeyInCache);
+      if (this.balanceCache.size() !== 0) {
+          this.balance = new BigNumber(this.balanceCache.values()[0].data);
+      }
+    }
+
+    public saveBalanceToCache() {
+      const timestamp = (new Date()).valueOf();
+      this.balanceCache.set('balacne', this.balance, timestamp);
+      this.balanceCache.save();
+    }
+
+    public async loadTransactionsFromCache() {
+      this.transactionsCache = await TimeBasedPersistentCache.loadOrCreate(this.transactionKeyInCache);
+      if (this.transactionsCache.size() !== 0) {
+        if (this.transactions == null) {
+          // init
+          this.transactions = {totalcount:0, txhistory:[]};
+        }
+        this.transactions.totalcount = this.transactionsCache.size()
+        let items = this.transactionsCache.values();
+        for (let i = 0, len = this.transactions.totalcount; i < len; i++) {
+          this.transactions.txhistory.push(items[i].data);
+        }
+      }
+      return null;
+    }
+
+
+    /**
+     * If we get the transactions from cache, then we need update the transactions in 3s.
+     */
+     public isLoadTxDataFromCache() {
+        return this.loadTxDataFromCache;
+     }
+
+    public saveTransactions(transactionsList: TransactionHistory[]) {
+      for (let i = 0, len = transactionsList.length; i < len; i++) {
+        this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
+      }
+      this.transactionsCache.save();
     }
 
     /**
@@ -162,11 +213,6 @@ export abstract class SubWallet {
      * with ERC20 "transaction" type when we have more info about it.
      */
     public abstract getTransactions(startIndex: number): Promise<AllTransactionsHistory>;
-
-    /**
-     * If we get the transactions from cache, then we need update the transactions in 3s.
-     */
-    public abstract isLoadTxDataFromCache(): boolean;
 
     /**
      * Based on a raw transaction object (from the SPV SDK or API), returns a higher level

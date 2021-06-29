@@ -10,7 +10,6 @@ import { Config } from '../../config/Config';
 import { Util } from '../Util';
 import { AllAddresses, Candidates, VoteContent, VoteType } from '../SPVWalletPluginBridge';
 import { InvalidVoteCandidatesHelper } from '../InvalidVoteCandidatesHelper';
-import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 
 
 const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
@@ -25,9 +24,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     private votingAmountSELA = 0; // ELA
     private votingUtxoArray: Utxo[] = null;
 
-    private loadedTransactions = false;
-    private loadTxDataFromCache = false;
-    private txArrayToDisplay: AllTransactionsHistory = { totalcount: 0, txhistory: [] };
     private needtoLoadMoreAddresses: string[] = [];
     private TRANSACTION_LIMIT = 50;// for rpc
     // Maybe there are lots of transactions and we need to merge the transactions for multi address wallet,
@@ -38,15 +34,10 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
 
-    private timeBasedCache: TimeBasedPersistentCache<any> = null;
-    private keyInCache = '';
-
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
 
         this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper(this.jsonRPCService);
-
-        this.keyInCache = this.masterWallet.id + '-' + this.id + '-tx';
 
         this.loadTransactionsFromCache();
 
@@ -76,52 +67,29 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
     }
 
-    private async loadTransactionsFromCache() {
-      this.timeBasedCache = await TimeBasedPersistentCache.loadOrCreate(this.keyInCache);
-      if (this.timeBasedCache.size() !== 0) {
-        if (this.txArrayToDisplay == null) {
-          // init
-          this.txArrayToDisplay = {totalcount:0, txhistory:[]};
-        }
-
-        this.txArrayToDisplay.totalcount = this.timeBasedCache.size()
-        let items = this.timeBasedCache.values();
-        for (let i = 0, len = this.txArrayToDisplay.totalcount; i < len; i++) {
-          this.txArrayToDisplay.txhistory.push(items[i].data);
-        }
-
-        this.loadedTransactions = true;
-      }
-    }
-
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-        if (!this.loadedTransactions) {
+        if (this.transactions == null) {
             await this.getTransactionByRPC();
             this.loadTxDataFromCache = false;
         } else {
             this.loadTxDataFromCache = true;
         }
-        if ((startIndex + 20 > this.txArrayToDisplay.txhistory.length) && (this.needtoLoadMoreAddresses.length > 0)) {
-            await this.getMoreTransactionByRPC(++this.loadMoreTimes);
+
+        if (this.transactions) {
+          if ((startIndex + 20 > this.transactions.txhistory.length) && (this.needtoLoadMoreAddresses.length > 0)) {
+              await this.getMoreTransactionByRPC(++this.loadMoreTimes);
+          }
+
+          // For performance, only return 20 transactions.
+          let newTxList: AllTransactionsHistory = {
+              totalcount: this.transactions.totalcount,
+              txhistory: this.transactions.txhistory.slice(startIndex, startIndex + 20),
+          }
+          return newTxList;
         }
-
-        // For performance, only return 20 transactions.
-        let newTxList: AllTransactionsHistory = {
-            totalcount: this.txArrayToDisplay.totalcount,
-            txhistory: this.txArrayToDisplay.txhistory.slice(startIndex, startIndex + 20),
+        else {
+          return null;
         }
-        return newTxList;
-    }
-
-    public isLoadTxDataFromCache() {
-        return this.loadTxDataFromCache;
-    }
-
-    private saveTransactions() {
-      for (let i = 0, len = this.txArrayToDisplay.txhistory.length; i < len; i++) {
-        this.timeBasedCache.set(this.txArrayToDisplay.txhistory[i].txid, this.txArrayToDisplay.txhistory[i], this.txArrayToDisplay.txhistory[i].time);
-      }
-      this.timeBasedCache.save();
     }
 
     public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
@@ -683,6 +651,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         }
 
         this.balance = totalBalance;
+        this.saveBalanceToCache();
 
         Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
         Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
@@ -782,7 +751,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             this.mergeTransactionListAndSort(txList);
         }
 
-        this.loadedTransactions = true;
         Logger.test("wallet", 'TIMETEST getTransactionByRPC ', this.id, ' end');
         return true;
     }
@@ -882,9 +850,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                     targetAddress = txDetail.payload.crosschainaddresses[0];
                 } else if (txDetail.payload.genesisblockaddress) {
                     // Sending address
-                    // Logger.warn('wallet', 'txDetail:', txDetail);
                     let realtxid = Util.reversetxid(txDetail.payload.sidechaintransactionhashes[0]);
-                    // Logger.warn('wallet', 'realtxid:', realtxid);
 
                     if (txDetail.payload.genesisblockaddress === Config.ETHSC_ADDRESS) {
                         let result = await this.jsonRPCService.getETHSCTransactionByHash(this.id as StandardCoinName, realtxid);
@@ -924,7 +890,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.votingUtxoArray = await this.getAllUtxoByType(UtxoType.Vote);
         let votingAmountEla = 0;
         if (this.votingUtxoArray) {
-            Logger.warn('wallet', 'getVotingUtxoByRPC:', this.votingUtxoArray)
+            Logger.log('wallet', 'getVotingUtxoByRPC:', this.votingUtxoArray)
             for (let i = 0, len = this.votingUtxoArray.length; i < len; i++) {
                 let amount = parseFloat(this.votingUtxoArray[i].amount);
                 votingAmountEla += amount;
@@ -956,7 +922,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                     utxoArray ? utxoArray.push.apply(utxoArray, utxos) : utxoArray = utxos;
                 }
             } catch (e) {
-                Logger.log("wallet", 'jsonRPCService.getAllUtxoByAddress exception:', e);
+                Logger.error("wallet", 'jsonRPCService.getAllUtxoByAddress exception:', e);
                 throw e;
             }
         } while (!this.masterWallet.account.SingleAddress);
@@ -973,11 +939,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.mergeTransactionList(txList);
 
         // sort by block height
-        this.txArrayToDisplay.txhistory.sort(function (A, B) {
+        this.transactions.txhistory.sort(function (A, B) {
             return B.height - A.height;
         });
 
-        this.saveTransactions();
+        this.saveTransactions(this.transactions.txhistory);
     }
 
     mergeTransactionList(txList: AllTransactionsHistory[]) {
@@ -1034,16 +1000,21 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             }
         }
 
+        if (this.transactions == null) {
+          // init
+          this.transactions = {totalcount:0, txhistory:[]};
+        }
+
         for (let i = 0, len = transactionHistory.length; i < len; i++) {
-          let existingIndex = this.txArrayToDisplay.txhistory.findIndex(tx => tx.txid == transactionHistory[i].txid);
+          let existingIndex = this.transactions.txhistory.findIndex(tx => tx.txid == transactionHistory[i].txid);
           if (existingIndex === -1) {
-            this.txArrayToDisplay.txhistory.push(transactionHistory[i]);
+            this.transactions.txhistory.push(transactionHistory[i]);
           }
         }
 
         // TODO to improve : "+ 100": just mean we don't load all the transactions.
-        this.needtoLoadMoreAddresses.length === 0 ? this.txArrayToDisplay.totalcount = this.txArrayToDisplay.txhistory.length :
-        this.txArrayToDisplay.totalcount = this.txArrayToDisplay.txhistory.length + 100;
+        this.needtoLoadMoreAddresses.length === 0 ? this.transactions.totalcount = this.transactions.txhistory.length :
+        this.transactions.totalcount = this.transactions.txhistory.length + 100;
     }
 
     /**

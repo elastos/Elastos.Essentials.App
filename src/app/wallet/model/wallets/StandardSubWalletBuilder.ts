@@ -1,5 +1,5 @@
 import { MasterWallet } from './MasterWallet';
-import { Coin, StandardCoinName, CoinID } from '../Coin';
+import { Coin, StandardCoinName } from '../Coin';
 import { StandardSubWallet } from './StandardSubWallet';
 import { SerializedSubWallet } from './SubWallet';
 import { ETHChainSubWallet } from './ETHChainSubWallet';
@@ -39,7 +39,6 @@ export class StandardSubWalletBuilder {
     public static newFromSerializedSubWallet(masterWallet: MasterWallet, serializedSubWallet: SerializedSubWallet): StandardSubWallet {
         Logger.log("wallet", "Initializing standard subwallet from serialized sub wallet", serializedSubWallet);
         let subWallet = this.newSubWalletFromId(masterWallet, serializedSubWallet.id);
-        subWallet.initFromSerializedSubWallet(serializedSubWallet);
         return subWallet;
     }
 }
