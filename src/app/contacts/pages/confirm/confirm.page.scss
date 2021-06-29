@@ -44,6 +44,7 @@
         margin: 15px;
         font-size: 22px;
         font-weight: 600;
+        font-family: 'Inter' !important;
         text-align: center;
 
         span {
@@ -66,6 +67,7 @@
         font-weight: 500;
         text-align: center;
         color: #161740;
+        font-family: 'Inter' !important;
       }
     }
 
@@ -76,8 +78,7 @@
       align-items: center;
 
       .btn {
-        width: 167px;
-        height: 41px;
+        height: 45px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -85,9 +86,10 @@
         background-color: #f8f8ff;
 
         ion-label {
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 500;
           color: #161740;
+          font-family: 'Inter' !important;
         }
       }
     }
@@ -96,7 +98,7 @@
 
 .darkContainer {
   .profile-container {
-    background: #47495a;
+    background: #363636;
 
 
     .profile-name {
@@ -106,7 +108,7 @@
     }
 
     .message {
-      background: #393A48;
+      background: #212021;
 
       p {
         color: #fdfeff;
@@ -115,7 +117,7 @@
 
     .btn-row {
       .btn {
-        background: #393A48;
+        background: #212021;
 
         ion-label {
           color: #fdfeff;

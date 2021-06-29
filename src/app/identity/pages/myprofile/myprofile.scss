@@ -73,8 +73,8 @@
 
   .status-grid {
     padding: 10px;
-    border-top: 2px solid white;
-    border-bottom: 2px solid white;
+    border-top: 1.5px solid #EAEAEA;
+    border-bottom: 1.5px solid #EAEAEA;
     margin-top: 5px;
 
     ion-row {
@@ -217,8 +217,8 @@
 
 .darkContainer {
   .status-grid {
-    border-top: 2px solid #090910;
-    border-bottom: 2px solid #090910;
+    border-top: 1.5px solid #464646;
+    border-bottom: 1.5px solid #464646;
   }
 
   .options-grid {

@@ -206,6 +206,12 @@
 
 .darkContainer {
   ion-segment {
+    ion-segment-button {
+      ion-label {
+        color: #9D9D9D;
+      }
+    }
+
     .active {
       border-bottom: 2.7px solid #ffffff !important;
 
@@ -216,15 +222,21 @@
   }
 
   ion-list {
-    background: #191a2f;
+    background: #121212;
+
+    .first-col {
+      .letter {
+        color: #9D9D9D;
+      }
+    }
   }
 
   .activeItem {
-    --background: #262641;
+    --background: #212021;
   }
 
   .activeItemOption {
-    background: #262641;
+    background: #212021;
   }
 }
 

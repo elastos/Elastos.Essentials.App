@@ -12,7 +12,7 @@ ion-grid {
 
   h1 {
     margin: 0;
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: 0.45px;
     color: #161740;
@@ -31,113 +31,23 @@ ion-grid {
     align-items: center;
     background: #ffffff;
     padding: 5px;
-    margin: 15px 0 0;
+    margin: 0;
     border-radius: 17px;
 
     qrcode {
-      zoom: 0.75;
+      zoom: 0.8;
     }
   }
 }
 
 .darkContainer {
-  background: #262641;
+  background: #121212;
 
   div {
-    margin: 30px 0 10px;
+    margin: 10px;
   }
   
   h1, h2 {
     color: #ffffff;
   }
 }
-
-/* ion-grid {
-  width: 100%;
-  padding: 5px;
-
-  .copy {
-    height: 30px;
-  }
-
-  ion-row {
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    h1 {
-      font-family: Montserrat;
-      font-size: 21px;
-      font-weight: 600;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 0.95;
-      letter-spacing: normal;
-      text-align: left;
-      color: #372153;
-    }
-
-    qrcode {
-      background: white;
-      display: inline-block;
-    }
-
-    span {
-      font-family: Poppins;
-      font-size: 12px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.5;
-      letter-spacing: normal;
-      text-align: right;
-      color: #372153;
-      word-wrap: break-word;
-      text-align: center;
-      position: relative;
-      top: 50%;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-    }
-  }
-
-  .btn-row {
-    padding: 15px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .reducePadding {
-    padding: 0;
-  }
-}
-
-.darkContainer {
-  background: #262641;
-
-  .border {
-    padding: 5px 5px 2px 5px;
-    background-color: white;
-  }
-
-  .did,
-  .title {
-    color: #ffffff;
-  }
-
-  ion-grid {
-    ion-row {
-      h1,
-      span {
-        color: #ffffff;
-      }
-      qrcode {
-        padding: 10px 0px 5px 0px;
-      }
-    }
-  }
-}
- */

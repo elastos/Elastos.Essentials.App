@@ -4,7 +4,7 @@
             .prefix__cls-2{fill:#ffffff}
         </style>
     </defs>
-    <ellipse id="prefix__Ellipse_334" cx="23.5" cy="23" data-name="Ellipse 334" rx="23.5" ry="23" style="fill:#464660"/>
+    <ellipse id="prefix__Ellipse_334" cx="23.5" cy="23" data-name="Ellipse 334" rx="23.5" ry="23" style="fill:#212021"/>
     <g id="prefix__Component_398_1" data-name="Component 398 – 1" transform="translate(16 16)">
         <path id="prefix__Subtraction_1" d="M5.25 7h-3.5A1.752 1.752 0 0 1 0 5.25v-3.5A1.752 1.752 0 0 1 1.749 0h3.5A1.752 1.752 0 0 1 7 1.75v3.5A1.752 1.752 0 0 1 5.25 7zM2.522 1.544a.979.979 0 0 0-.978.978v1.956a.979.979 0 0 0 .978.978h1.955a.979.979 0 0 0 .978-.978V2.521a.979.979 0 0 0-.978-.978z" class="prefix__cls-2" data-name="Subtraction 1"/>
         <path id="prefix__Subtraction_2" d="M5.25 7h-3.5A1.752 1.752 0 0 1 0 5.25v-3.5A1.752 1.752 0 0 1 1.749 0h3.5A1.752 1.752 0 0 1 7 1.75v3.5A1.752 1.752 0 0 1 5.25 7zM2.522 1.544a.979.979 0 0 0-.978.978v1.956a.979.979 0 0 0 .978.978h1.955a.979.979 0 0 0 .978-.978V2.521a.979.979 0 0 0-.978-.978z" class="prefix__cls-2" data-name="Subtraction 2" transform="translate(8)"/>

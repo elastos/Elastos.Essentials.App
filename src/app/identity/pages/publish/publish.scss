@@ -20,18 +20,18 @@
             span {
                 display: block;
                 font-size: 12px;
+                font-weight: 500;
                 line-height: 1;
                 letter-spacing: 0.6px;
                 text-align: left;
-                color: #8e8fac;
             }        
         }
     }
 
     .status-grid {
         padding: 10px;
-        border-top: 2px solid white;
-        border-bottom: 2px solid white;
+        border-top: 1.5px solid #EAEAEA;
+        border-bottom: 1.5px solid #EAEAEA;
         margin: 10px 15px;
     
         ion-row {
@@ -91,7 +91,7 @@
             margin-left: 20px;
             border-radius: 18px;
             box-shadow: 0 3px 15px 0 #ededf0;
-            background-image: linear-gradient(to right, #ede6ff, #ffffff 1%, #ffffff 81%);
+            background: white;
             display: flex;
             align-items: center;
 
@@ -110,14 +110,12 @@
                         font-size: 15px;
                         font-weight: 600;
                         text-align: left;
-                        color: #191a2f;
                     }
     
                     .card-value {
                         font-size: 13px;
                         font-weight: 500;
                         text-align: left;
-                        color: #191a2f;
                         word-break: break-all;
                         margin-top: 5px;
                     }
@@ -144,28 +142,21 @@
         margin-top: 20px;
 
         ion-button {
-            height: 50px;
             width: 90%;
-            --background: linear-gradient(to bottom, #732dcf, #640fd4);
-            --border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.1px;
         }
     }
 }
 
 .darkContainer {
     .status-grid {
-        border-top: 2px solid #090910;
-        border-bottom: 2px solid #090910;
+        border-top: 1.5px solid #464646;
+        border-bottom: 1.5px solid #464646;
     }
 
     .credentials {
         .card-internal {
-            box-shadow: 0 3px 15px 0 #151515;
-            background-color: #2a2a4d;
-            background-image: none;
+            background-color: #212021;
+            box-shadow: none;
 
             .card-body {
                 .labels-col {
@@ -174,7 +165,8 @@
                     }
             
                     .card-value {
-                        color: white;
+                        color: #ACACAC;
+                        opacity: 1;
                     }
                 }
             }
