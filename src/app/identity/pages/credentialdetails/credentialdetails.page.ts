@@ -9,7 +9,6 @@ import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { HiveService } from "../../services/hive.service";
 import { HttpClient } from "@angular/common/http";
 import * as moment from "moment";
 import { DIDDocument } from "../../model/diddocument.model";
@@ -90,7 +89,6 @@ export class CredentialDetailsPage {
     private didService: DIDService,
     private didSyncService: DIDSyncService,
     public theme: GlobalThemeService,
-    public hiveService: HiveService,
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
     private basicCredentialService: BasicCredentialsService,

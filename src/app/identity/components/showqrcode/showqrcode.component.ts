@@ -19,7 +19,7 @@ export class ShowQRCodeComponent implements OnInit {
   constructor(
     public modalCtrl: ModalController,
     public native: Native,
-    private navParams: NavParams,
+    navParams: NavParams,
     public theme: GlobalThemeService,
     private translate: TranslateService,
     private globalIntentService: GlobalIntentService

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UXService } from './ux.service';
 import { BackgroundService } from './background.service';
-import { HiveService } from './hive.service';
 import { IntentReceiverService } from './intentreceiver.service';
 import { TranslationService } from './translation.service';
 import { DIDEvents } from './events';
@@ -14,7 +13,6 @@ import { DIDSyncService } from './didsync.service';
 export class IdentityInitService {
   constructor(
     private uxService: UXService,
-    private hiveService: HiveService,
     private backgroundService: BackgroundService,
     public didEvents: DIDEvents,
     private didSyncService: DIDSyncService,
@@ -29,7 +27,6 @@ export class IdentityInitService {
     await this.profileService.init();
     await this.uxService.init();
     await this.intentReceiverService.init();
-    await this.hiveService.init();
   }
 
   public start() {

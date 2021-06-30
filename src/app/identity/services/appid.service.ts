@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
+import { GlobalConfig } from "src/app/config/globalconfig";
 import { Logger } from "src/app/logger";
 import { AuthService } from "./auth.service";
 import { DIDService } from "./did.service";
@@ -35,30 +36,21 @@ export class AppIDService {
   }
 
   public async applicationIDCredentialCanBeIssuedWithoutUI(intentParams: any): Promise<boolean> {
-    if (!await this.uxService.isIntentResponseGoingOutsideElastos(intentParams)) {
-      // Get real app did from runtime
-      let appDid = await this.uxService.getAppDid(this.appPackageId);
-      if (!appDid) {
-        Logger.log('identity', "Can't issue app id credential silently: no appDID for package id "+this.appPackageId);
-        return false;
-      }
-      else {
-        Logger.log('identity', "App id credential can be issued silently");
-        return true;
-      }
+    if (!await this.uxService.isIntentResponseGoingOutsideEssentials(intentParams)) {
+      // Intent is for Essentials itself. We can issue silently.
+      return true;
     }
     else {
       // From native apps, force showing a screen
-      Logger.log('identity', "Can't issue app id credential silently: called from a native app");
+      Logger.log('identity', "Can't issue app id credential silently: called from a third party app");
       return false;
     }
   }
 
   private async getActualAppDID(intentParams: any): Promise<string> {
-    if (!await this.uxService.isIntentResponseGoingOutsideElastos(intentParams)) {
-      let appDid = await this.uxService.getAppDid(this.appPackageId);
-      // Theoretically, we have checked the app DID before, so it must always be defined here.
-      return appDid;
+    if (!await this.uxService.isIntentResponseGoingOutsideEssentials(intentParams)) {
+      // Intent response is for Essentials itself so we use Essentials app DID
+      return GlobalConfig.ESSENTIALS_APP_DID;
     }
     else {
       // We don't need to blindly trust if this DID is genuine or not. The trinity runtime wille
@@ -90,7 +82,7 @@ export class AppIDService {
           let credentialAsString = await issuedCredential.toString();
 
           // If we are doing a silent intent, we don't navigate back because we didn't navigate forward.
-          let navigateBack = await this.uxService.isIntentResponseGoingOutsideElastos(intentParams);
+          let navigateBack = await this.uxService.isIntentResponseGoingOutsideEssentials(intentParams);
           Logger.log('identity', "Navigate back? ", navigateBack);
 
           await this.uxService.sendIntentResponse("appidcredissue", {

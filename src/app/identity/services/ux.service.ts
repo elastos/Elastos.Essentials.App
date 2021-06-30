@@ -74,31 +74,17 @@ export class UXService {
         return this.translate.instant(key);
     }
 
-    public async getAppDid(appId: string): Promise<string> {
-        /* TODO
-        return new Promise((resolve, reject) => {
-            essentialsIntentManager.getAppInfo(appId,
-                (appInfo) => {
-                    resolve(appInfo.did || '');
-                },
-                (err) => {
-                    Logger.error('identity', 'getAppInfo failed: ', err);
-                    reject(err);
-                }
-            );
-        });
-        */
-       return "did:abcd";
-    }
-
     /**
      * In case the received intent contains a callback url or a redirect url, this means the response
-     * will be sent out by the runtime. In this case we can't figure out the app DID context and the app did
+     * will be sent out by the intent plugin or by wallet connect.
+     * In this case we can't figure out the app DID context and the app did
      * has to be received in the intent request at first.
      */
-    public async isIntentResponseGoingOutsideElastos(intentParams: any): Promise<boolean> {
+    public isIntentResponseGoingOutsideEssentials(intentParams: any): boolean {
         if (!intentParams)
             return false; // Should not happen
+
+        // TODO: WALLET CONNECT CHECKS !
 
         if (intentParams.callbackurl || intentParams.redirecturl) {
             Logger.log('identity', "isIntentResponseGoingOutsideElastos? YES - Params:", intentParams);

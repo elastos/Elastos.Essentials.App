@@ -14,6 +14,8 @@ import { ContactNotifierService } from "src/app/services/contactnotifier.service
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
+import { VerifiableCredential } from "../model/verifiablecredential.model";
+import { AvatarCredentialSubject } from "../model/avatarcredentialsubject";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -551,7 +553,7 @@ export class ProfileService {
   hasIssuer(issuerId: string): boolean {
     if (issuerId === null || issuerId === "") return false;
     let id = this.transformIssuerId(issuerId);
-    return this.issuers.hasOwnProperty(id);
+    return (id in this.issuers);
   }
 
   getIssuer(issuerId: string): IssuerDisplayEntry {
@@ -610,5 +612,29 @@ export class ProfileService {
           reject(error);
         });
     });
+  }
+
+  public getAvatarCredential(): DIDPlugin.VerifiableCredential {
+    let avatarEntry = this.allCreds.find(c => c.credential.getFragment() === "avatar");
+    if (avatarEntry)
+      return avatarEntry.credential;
+    else
+      return null;
+  }
+
+  buildAvatar(contentType: "image/jpeg" | "image/png", type: "base64" | "elastoshive", data: string): AvatarCredentialSubject {
+    return {
+      "content-type": contentType,
+      "type": type,
+      "data": data
+    };
+  }
+
+  public getAvatarDataUrl(): string {
+    let avatarCredential = this.getAvatarCredential();
+    if (!avatarCredential)
+      return null;
+
+    return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
   }
 }

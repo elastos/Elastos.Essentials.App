@@ -5,8 +5,9 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 declare let didManager: DIDPlugin.DIDManager;
 
 export class InternalElastosConnector implements Interfaces.Connectors.IConnector {
-    public name: string = "essentials-internal";
+    public name = "essentials-internal";
 
+    // eslint-disable-next-line require-await
     async getDisplayName(): Promise<string> {
         return "Essentials Internal connector";
     }
@@ -22,6 +23,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
     generateAppIdCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
         Logger.log("connector", "App ID Credential generation flow started");
 
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject)=>{
             try {
                 // No such credential, so we have to create one. Send an intent to get that from the did app
@@ -50,23 +52,23 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
      * Wallet API
      */
 
-    async pay(query: Wallet.PayQuery): Promise<Wallet.TransactionResult>  {
+    pay(query: Wallet.PayQuery): Promise<Wallet.TransactionResult>  {
         throw new Error("pay(): Method not implemented.");
     }
 
-    async voteForDPoS() {
+    voteForDPoS(): Promise<void> {
         throw new Error("voteForDPoS(): Method not implemented.");
     }
 
-    async voteForCRCouncil() {
+    voteForCRCouncil(): Promise<void> {
         throw new Error("voteForCRCouncil(): Method not implemented.");
     }
 
-    async voteForCRProposal() {
+    voteForCRProposal(): Promise<void> {
         throw new Error("voteForCRProposal(): Method not implemented.");
     }
 
-    async sendSmartContractTransaction(payload: any): Promise<string> {
+    sendSmartContractTransaction(payload: any): Promise<string> {
         throw new Error("sendSmartContractTransaction(): Method not implemented.");
     }
 }

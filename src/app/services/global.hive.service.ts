@@ -98,7 +98,7 @@ export class GlobalHiveService extends GlobalService {
     return;
   }
 
-  private async getHiveClient(): Promise<HivePlugin.Client> {
+  public async getHiveClient(): Promise<HivePlugin.Client> {
     Logger.log("GlobalHiveService", "Getting hive client");
 
     // Create only one client instance overall
@@ -334,6 +334,10 @@ export class GlobalHiveService extends GlobalService {
 
   public getActiveVault(): HivePlugin.Vault {
     return this.activeVault;
+  }
+
+  public hiveUserVaultCanBeUsed(): boolean {
+    return this.activeVault !== null;
   }
 
   /**

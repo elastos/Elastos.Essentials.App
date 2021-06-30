@@ -11,7 +11,6 @@ import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { HiveService } from "../../services/hive.service";
 import { HttpClient } from "@angular/common/http";
 import { Native } from "../../services/native";
 import { DID } from "../../model/did.model";
@@ -70,7 +69,7 @@ export class ProfilePage {
   private promptpublishdidSubscription: Subscription = null;
 
   private hiveVault: DIDPlugin.Service = null;
-  public hiveIsloaded: boolean = false;
+  public hiveIsloaded = false;
 
   constructor(
     private http: HttpClient,
@@ -84,7 +83,6 @@ export class ProfilePage {
     private uxService: UXService,
     public native: Native,
     public theme: GlobalThemeService,
-    public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
   ) {
@@ -139,13 +137,6 @@ export class ProfilePage {
         return;
     }
     var services = this.profileService.publishedDIDDocument.getServices();
-
-    // // let hiveService: DIDPlugin.Service = {
-    // //   getEndpoint: () => "diego.hive.elastos",
-    // //   getId: () => "sbdjsbdvjd",
-    // //   getType: () => "HiveVault"
-    // // };
-    // services = [hiveService];
 
     this.hiveVault = services.find(x => {
       return x.getType() == "HiveVault"
@@ -324,8 +315,6 @@ export class ProfilePage {
       // Find Avatar Credential
       if (cred.credential.getSubject().hasOwnProperty("avatar")) {
         hasAvatar = true;
-        this.hiveService.rawImage =
-          "data:image/png;base64," + cred.credential.getSubject().avatar.data;
       }
       // Find Description Credential
       if (cred.credential.getSubject().hasOwnProperty("description")) {
@@ -351,8 +340,6 @@ export class ProfilePage {
       // Find App Credentials
       if (cred.credential.getSubject().hasOwnProperty("avatar")) {
         hasAvatar = true;
-        this.hiveService.rawImage =
-          "data:image/png;base64," + cred.credential.getSubject().avatar.data;
       }
       // Find Description Credentials
       if (cred.credential.getSubject().hasOwnProperty("description")) {
@@ -364,10 +351,6 @@ export class ProfilePage {
     Logger.log("identity", "App creds", this.profileService.appCreds);
     if (this.profileService.appCreds.length > 0) {
       this.buildDisplayableAppsInfo();
-    }
-
-    if (!hasAvatar) {
-      this.hiveService.rawImage = null;
     }
   }
 

@@ -1,6 +1,6 @@
 <app-titlebar></app-titlebar>
 
-<ion-grid *ngIf="!hiveService.rawImage">
+<ion-grid *ngIf="!dataUrlImage">
   <ion-row class="btn-row">
     <ion-button color="tertiary" (click)="takePicture(1)">
       <ion-label>{{ 'common.take-pictures' | translate }}</ion-label>
@@ -11,13 +11,13 @@
   </ion-row>
 </ion-grid>
 
-<ion-grid *ngIf="hiveService.rawImage">
-  <img [src]="hiveService.rawImage">
+<ion-grid *ngIf="dataUrlImage">
+  <img [src]="dataUrlImage">
   <ion-row class="btn-row submit">
     <ion-button color="tertiary" (click)="submit(true)">
       {{ 'common.use' | translate }}
     </ion-button>
-    <ion-button color="tertiary" (click)="hiveService.rawImage = null">
+    <ion-button color="tertiary" (click)="dataUrlImage = null">
       {{ 'common.change' | translate }}
     </ion-button>
   </ion-row>

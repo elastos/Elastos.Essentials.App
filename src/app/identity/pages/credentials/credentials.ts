@@ -10,7 +10,6 @@ import { UXService } from "../../services/ux.service";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { HiveService } from "../../services/hive.service";
 import { HttpClient } from "@angular/common/http";
 import { Native } from "../../services/native";
 import { DID } from "../../model/did.model";
@@ -56,12 +55,12 @@ export class CredentialsPage {
 
   public credentials: VerifiableCredential[];
   private publishedCredentials: DIDPlugin.VerifiableCredential[];
-  public hasCredential: boolean = false;
-  public creatingIdentity: boolean = false;
+  public hasCredential = false;
+  public creatingIdentity = false;
 
   public fetchingApps = false;
 
-  public segment: string = "all";
+  public segment = "all";
 
   public currentOnChainDIDDocument: DIDDocument = null;
 
@@ -83,7 +82,6 @@ export class CredentialsPage {
     private uxService: UXService,
     private native: Native,
     public theme: GlobalThemeService,
-    public hiveService: HiveService,
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
     private basicCredentialService: BasicCredentialsService
@@ -112,7 +110,7 @@ export class CredentialsPage {
 
     this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
       this.zone.run(() => {
-        this.profileService.showWarning("publishIdentity", null);
+        void this.profileService.showWarning("publishIdentity", null);
       });
     });
   }
@@ -193,10 +191,7 @@ export class CredentialsPage {
   }
 
   getLocalCredByProperty(credential: DIDPlugin.VerifiableCredential, property: string): string {
-    const credHasProp = credential
-      .getSubject()
-      .hasOwnProperty(property);
-
+    const credHasProp = (property in credential.getSubject());
     if (credHasProp)
       return credential.getSubject()[property];
 
@@ -261,7 +256,7 @@ export class CredentialsPage {
 
     this.profileService.visibleCredentials.map((cred) => {
       // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("apppackage")) {
+      if ("apppackage" in cred.credential.getSubject()) {
         this.profileService.appCreds.push({
           credential: cred.credential,
           willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
@@ -275,27 +270,25 @@ export class CredentialsPage {
         });
       }
       // Find Avatar Credential
-      if (cred.credential.getSubject().hasOwnProperty("avatar")) {
+      if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
-        this.hiveService.rawImage =
-          "data:image/png;base64," + cred.credential.getSubject().avatar.data;
         Logger.log("identity", "Profile has avatar");
 
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
-          this.profileService.showWarning("publishVisibility", null);
+          void this.profileService.showWarning("publishVisibility", null);
         }
       }
       // Find Description Credential
-      if (cred.credential.getSubject().hasOwnProperty("description")) {
+      if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
     this.profileService.invisibleCredentials.map((cred) => {
       // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("apppackage")) {
+      if ("apppackage" in cred.credential.getSubject()) {
         this.profileService.appCreds.push({
           credential: cred.credential,
           willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
@@ -309,20 +302,18 @@ export class CredentialsPage {
         });
       }
       // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("avatar")) {
+      if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
-        // this.hiveService.rawImage =
-        //   "data:image/png;base64," + cred.credential.getSubject().avatar.data;
         Logger.log("identity", "Profile has avatar");
 
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");
           cred.willingToBePubliclyVisible = true;
-          this.profileService.showWarning("publishVisibility", null);
+          void this.profileService.showWarning("publishVisibility", null);
         }
       }
       // Find Description Credentials
-      if (cred.credential.getSubject().hasOwnProperty("description")) {
+      if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
@@ -332,13 +323,9 @@ export class CredentialsPage {
     if (this.profileService.appCreds.length > 0) {
       this.buildDisplayableAppsInfo();
     }
-
-    if (!hasAvatar) {
-      this.hiveService.rawImage = null;
-    }
   }
 
-  private async buildDisplayableAppsInfo() {
+  private buildDisplayableAppsInfo() {
     let fetchCount = this.profileService.appCreds.length;
     this.fetchingApps = true;
     this.profileService.appCreds.forEach((cred) => {
@@ -351,7 +338,7 @@ export class CredentialsPage {
         .subscribe(
           (manifest: any) => {
             Logger.log("identity", "Got app!", manifest);
-            this.zone.run(async () => {
+            void this.zone.run(() => {
               cred.appInfo = {
                 packageId: cred.credential.getSubject().apppackage,
                 app: manifest,
@@ -366,7 +353,7 @@ export class CredentialsPage {
           },
           (err) => {
             Logger.log("identity", "HTTP ERROR " + JSON.stringify(err));
-            this.zone.run(async () => {
+            void this.zone.run(() => {
               cred.appInfo = {
                 packageId: cred.credential.getSubject().apppackage,
                 app: null,
@@ -421,8 +408,7 @@ export class CredentialsPage {
       },
       cssClass: !this.theme.darkMode ? "qrcode-modal" : "dark-qrcode-modal",
     });
-    modal.onDidDismiss().then((params) => { });
-    modal.present();
+    await modal.present();
   }
 
   /**
@@ -430,12 +416,12 @@ export class CredentialsPage {
    * for each profile item (+ the DID itself).
    */
   publishVisibilityChanges() {
-    this.profileService.showWarning("publishVisibility", null);
+    void this.profileService.showWarning("publishVisibility", null);
   }
 
   /********** Prompt warning before deleting if creds are selected **********/
   deleteSelectedCredentials() {
-    let selectedCreds: number = 0;
+    let selectedCreds = 0;
     this.profileService.invisibleCredentials.map((cred) => {
       if (cred.willingToDelete) {
         selectedCreds++;
@@ -448,7 +434,7 @@ export class CredentialsPage {
     });
 
     if (selectedCreds > 0) {
-      this.profileService.showWarning("delete", null);
+      void this.profileService.showWarning("delete", null);
     } else {
       this.native.toast("You did not select any credentials to delete", 2000);
     }
@@ -678,7 +664,7 @@ export class CredentialsPage {
       if (this.segment == "unverified" && !isVerified) return true; */
 
       let subjects = item.credential.getSubject();
-      let isApp = subjects.hasOwnProperty("apppackage");
+      let isApp = ("apppackage" in subjects);
 
       if (this.segment == "verified" && isVerified && !isApp) return true;
       if (this.segment == "unverified" && !isVerified && !isApp) return true;
@@ -693,7 +679,7 @@ export class CredentialsPage {
   }
 
   openCredential(entry: CredentialDisplayEntry) {
-    this.native.go("/identity/credentialdetails", {
+    void this.native.go("/identity/credentialdetails", {
       credentialId: entry.credential.getId(),
     });
   }

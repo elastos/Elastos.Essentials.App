@@ -10,7 +10,6 @@ import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { HiveService } from "../../services/hive.service";
 import { Native } from "../../services/native";
 import { DID } from "../../model/did.model";
 import { DIDDocument } from "../../model/diddocument.model";
@@ -88,7 +87,6 @@ export class MyProfilePage {
     private modalCtrl: ModalController,
     private native: Native,
     public theme: GlobalThemeService,
-    public hiveService: HiveService,
     public profileService: ProfileService,
     public actionSheetController: ActionSheetController,
     private globalIntentService: GlobalIntentService,
@@ -371,10 +369,6 @@ export class MyProfilePage {
       // Find Avatar Credential
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
-
-        // TODO: avatar is null
-        this.hiveService.rawImage =
-          "data:image/png;base64," + cred.credential.getSubject().avatar.data;
         Logger.log("identity", "Profile has avatar");
 
         if (publishAvatar) {
@@ -410,10 +404,7 @@ export class MyProfilePage {
         let data = "";
         if (cred.credential.getSubject().avatar != null) {
           data = cred.credential.getSubject().avatar.data;
-          this.hiveService.rawImage =
-            "data:image/png;base64," + data;
         }
-
 
         if (publishAvatar) {
           Logger.log("identity", "Prompting avatar publish");
@@ -431,10 +422,6 @@ export class MyProfilePage {
     Logger.log("identity", "App creds", this.profileService.appCreds);
     if (this.profileService.appCreds.length > 0) {
 
-    }
-
-    if (!hasAvatar) {
-      this.hiveService.rawImage = null;
     }
   }
 

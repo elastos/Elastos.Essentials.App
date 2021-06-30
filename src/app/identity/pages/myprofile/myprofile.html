@@ -6,8 +6,8 @@
     <ion-grid class="header-grid">
       <ion-row class="avatar-row">
         <div class="icon-section">
-          <ion-icon *ngIf="!hiveService.rawImage" mode="ios" name="person"></ion-icon>
-          <img *ngIf="hiveService.rawImage" [src]="hiveService.rawImage" />
+          <ion-icon *ngIf="!profileService.getAvatarDataUrl()" mode="ios" name="person"></ion-icon>
+          <img *ngIf="profileService.getAvatarDataUrl()" [src]="profileService.getAvatarDataUrl()" />
         </div>
       </ion-row>
       <ion-row class="title-row">

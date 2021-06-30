@@ -6,10 +6,10 @@ import { DIDURL } from './didurl.model';
 import { DIDHelper } from '../helpers/did.helper';
 import { DIDEvents } from '../services/events';
 import { VerifiableCredential } from './verifiablecredential.model';
-import { Avatar } from '../services/hive.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { AvatarCredentialSubject } from './avatarcredentialsubject';
 
 export class DID {
     public credentials: VerifiableCredential[] = [];
@@ -228,7 +228,7 @@ export class DID {
 
                     // Special handler for the special "avatar" field
                     if (entry.key == "avatar") {
-                        let avatar: Avatar = entry.value as Avatar;
+                        let avatar: AvatarCredentialSubject = entry.value as AvatarCredentialSubject;
                         Logger.log('Identity', "Saving avatar info to signed in identity", avatar)
 
                         // For now we only know how to save base64 avatars. Other formats are unsupported

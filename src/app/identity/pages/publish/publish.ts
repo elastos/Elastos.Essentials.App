@@ -2,7 +2,6 @@ import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
 import { ProfileService } from "../../services/profile.service";
-import { HiveService } from "../../services/hive.service";
 import { BasicCredentialsService } from "../../services/basiccredentials.service";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
@@ -39,7 +38,6 @@ export class PublishPage {
         public zone: NgZone,
         private translate: TranslateService,
         public theme: GlobalThemeService,
-        public hiveService: HiveService,
         public profileService: ProfileService,
         private basicCredentialService: BasicCredentialsService
     ) {

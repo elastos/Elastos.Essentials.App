@@ -1,7 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 import { ProfileService } from '../../services/profile.service';
-import { HiveService } from '../../services/hive.service';
 import { LocalStorage } from '../../services/localstorage';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
@@ -17,28 +16,37 @@ import { Events } from 'src/app/services/events.service';
 export class PictureComponent implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  public newImg = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
+  /**
+   * Static object used to receive the existing picture, and return the new one if any.
+   */
+  public static shared: {
+    dataUrlImageIn?: string; // Existing picture to display as "current picture", if any. Format: data:image/xxx...
+    rawBase64ImageOut?: string; // Newly chosen picture, if different from the received one. Base64 encoded.
+    dataUrlImageOut?: string; // Same as rawImageOut but as a data url (data:image/png...)
+  } = {};
+
+  public dataUrlImage: string = null;
+
   constructor(
-    private navParams: NavParams,
     private modalCtrl: ModalController,
     private zone: NgZone,
     public profileService: ProfileService,
     public theme: GlobalThemeService,
-    public hiveService: HiveService,
     public storage: LocalStorage,
     public events: Events
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
-    this.newImg = false;
-
-    if (this.hiveService.rawImage) {
-      Logger.log('Identity', 'Avatar cred found', this.hiveService.rawImage);
+    if (PictureComponent.shared.dataUrlImageIn) {
+      Logger.log('Identity', 'Showing picture chooser with existing image');
+      PictureComponent.shared.dataUrlImageOut = PictureComponent.shared.dataUrlImageIn;
+      // TODO PictureComponent.shared.rawBase64ImageOut = PictureComponent.shared.dataUrlImageIn.substr(PictureComponent.shared.dataUrlImageIn.lastIndexOf());
     } else {
-      return;
+      Logger.log('Identity', 'Showing picture chooser with no existing image');
+      PictureComponent.shared.dataUrlImageOut = null;
+      PictureComponent.shared.rawBase64ImageOut = null;
     }
   }
 
@@ -46,8 +54,12 @@ export class PictureComponent implements OnInit {
     this.titleBar.setNavigationMode(null); // Modals are not part of page stack, therefore we dont use navigation mode
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.modalCtrl.dismiss();
+      void this.modalCtrl.dismiss();
     });
+
+    if (PictureComponent.shared.dataUrlImageIn) {
+      this.dataUrlImage = PictureComponent.shared.dataUrlImageIn;
+    }
   }
 
   ionViewWillLeave() {
@@ -59,9 +71,9 @@ export class PictureComponent implements OnInit {
     const options: CameraOptions = {
       quality: 90,
       destinationType: 0,
-      encodingType: 1,
+      encodingType: 1, // PNG
       mediaType: 0,
-      correctOrientation: true,
+      correctOrientation: false,
       sourceType: sourceType,
       targetWidth: 256,
       targetHeight: 256
@@ -69,13 +81,11 @@ export class PictureComponent implements OnInit {
 
     navigator.camera.getPicture((imageData) => {
       this.zone.run(() => {
-        Logger.log('Identity', imageData);
-        // Used for displaying
-        this.hiveService.rawImage = 'data:image/png;base64,' + imageData;
-        // Used for credential
-        this.hiveService.avatar.data = imageData;
-        // Notify avatar has changed to prompt publish
-        this.newImg = true;
+        Logger.log('Identity', "Chosen image data base64:", imageData);
+
+        PictureComponent.shared.rawBase64ImageOut = imageData;
+        PictureComponent.shared.dataUrlImageOut = 'data:image/png;base64,' + imageData;
+        this.dataUrlImage = PictureComponent.shared.dataUrlImageOut;
       });
     }, ((err) => {
       Logger.error('identity', err);
@@ -83,29 +93,8 @@ export class PictureComponent implements OnInit {
   }
 
   submit(useImg: boolean): void {
-    this.modalCtrl.dismiss({
-      useImg: useImg,
-      newImg: this.newImg
+    void this.modalCtrl.dismiss({
+      useImg: useImg
     });
   }
-
-  /*   submit(useImg: boolean):void {
-      this.savingImg = true;
-      this.hiveService.ipfsPut(this.hiveService.ipfsObj, this.rawImage).then((result) => {
-        if(result["status"] === "success") {
-          this.hiveService.imageCid = result["cid"];
-          Logger.log('Identity', 'ipfsPut', result);
-          Logger.log('Identity', 'Image cid', this.hiveService.imageCid);
-          localStorage.setItem(this.hiveService.skey, JSON.stringify(result["cid"]));
-          this.savingImg = false;
-          this.rawImage = "";
-          this.modalCtrl.dismiss({
-            useImg: useImg
-          });
-        }
-      }).catch((err) => {
-        this.savingImg = false;
-        alert(err);
-      });
-    } */
 }

@@ -8,7 +8,6 @@ import { Util } from "../../services/util";
 import { DIDService } from "../../services/did.service";
 import { AuthService } from "../../services/auth.service";
 import { ProfileService } from "../../services/profile.service";
-import { HiveService } from "../../services/hive.service";
 
 import { area } from "../../../../assets/identity/area/area";
 
@@ -27,6 +26,10 @@ import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
+import { GlobalHiveService } from "src/app/services/global.hive.service";
+import { GlobalConfig } from "src/app/config/globalconfig";
+
+declare const hiveManager: HivePlugin.HiveManager;
 
 @Component({
   selector: "page-editprofile",
@@ -36,10 +39,10 @@ import { Events } from "src/app/services/events.service";
 export class EditProfilePage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public isEdit: boolean = false;
+  public isEdit = false;
   public profile: Profile;
   public credentials: VerifiableCredential[];
-  private showSelectCountry: boolean = false;
+  private showSelectCountry = false;
 
   private selectCountrySubscription: Subscription = null;
   private showmenuSubscription: Subscription = null;
@@ -63,9 +66,9 @@ export class EditProfilePage {
     public profileService: ProfileService,
     private native: Native,
     public theme: GlobalThemeService,
-    public hiveService: HiveService,
-    private popup: PopupProvider,
-  ) {
+    private globalHiveService: GlobalHiveService,
+    private popup: PopupProvider)
+  {
     Logger.log('Identity', "Entering EditProfile page");
     const navigation = this.router.getCurrentNavigation();
     if (
@@ -116,13 +119,13 @@ export class EditProfilePage {
 
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon) => {
       if (menuIcon.key == "done") {
-        this.next(false);
+        void this.next(false);
       }
     });
   }
 
   /********** For standard texts entry **********/
-  entryIsStandardText(entry: BasicCredentialEntry): Boolean {
+  entryIsStandardText(entry: BasicCredentialEntry): boolean {
     let specialEntries = [
       "avatar",
       "nation",
@@ -144,7 +147,7 @@ export class EditProfilePage {
   }
 
   /********** For 'nation' entry **********/
-  selectCountry(countryEntry: BasicCredentialEntry) {
+  async selectCountry(countryEntry: BasicCredentialEntry) {
     Logger.log('Identity', "CountryEntry: " + countryEntry.key);
     this.selectCountrySubscription = this.events.subscribe("selectarea", (params: CountryCodeInfo) => {
       Logger.log('Identity', "Country selected: " + params.alpha3);
@@ -154,7 +157,7 @@ export class EditProfilePage {
       });
       this.selectCountrySubscription.unsubscribe();
     });
-    this.native.go("/identity/countrypicker");
+    await this.native.go("/identity/countrypicker");
     this.showSelectCountry = true;
   }
 
@@ -171,30 +174,71 @@ export class EditProfilePage {
   /********** For 'avatar' entry **********/
   async getPhoto() {
     Logger.log('Identity', "ENTRIES :", JSON.stringify(this.profile.entries));
+
+    PictureComponent.shared.dataUrlImageIn = this.profileService.getAvatarDataUrl();
     const modal = await this.modalCtrl.create({
       component: PictureComponent,
       componentProps: {},
     });
-    modal.onDidDismiss().then((params) => {
+    void modal.onDidDismiss().then(async (params) => {
       Logger.log('Identity', "getPhoto params", params);
 
       if (params.data && params.data.useImg) {
-        let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
-        if (entry == null) {
-          entry = new BasicCredentialEntry("avatar", null);
-          entry.value = this.hiveService.avatar;
-          this.profile.setValue(entry, entry.value);
-        } else {
-          entry.value = this.hiveService.avatar;
+        // Upload picture to hive
+        if((!this.globalHiveService.hiveUserVaultCanBeUsed())) {
+          console.log("TODO SHOW POPUP HIVE NOT READY");
         }
+        else {
+          try {
+            Logger.log('Identity', "Starting avatar upload to hive");
 
-        // if (params.data.newImg) {
-        //   Logger.log('Identity', "New avatar in use, prompting for publish");
-        //   this.alertAvatarPublish();
-        // }
+            // TODO: we probalby need to delete older pictures from the vault somewhere...
+            // But not that easy because we need to keep both the local and published avatars.
+
+            // Upload the whole data url to hive for convenience to save the picture type as well.
+            let randomPictureID = new Date().getTime();
+            let avatarFileName = "/identity/avatar/"+randomPictureID;
+            let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(avatarFileName);
+            // TODO: ideally we may save the raw image, not base64 encoded...
+            await uploader.write(Buffer.from(PictureComponent.shared.dataUrlImageOut));
+            await uploader.close();
+            Logger.log('identity', "Completed avatar upload to hive");
+
+            // Create a script to make this picture available to everyone
+            let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript("test", hiveManager.Scripting.Executables.newAggregatedExecutable(
+              [hiveManager.Scripting.Executables.Files.newDownloadExecutable(avatarFileName, "getMainIdentityAvatar")]
+            ), null, true, true);
+            Logger.log('identity', "Could create avatar script?", couldCreateScript);
+
+            let currentUserDID = this.didService.getActiveDid().getDIDString();
+            let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
+            let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/getMainIdentityAvatar?params=a=2"; // TODO: USELESS PARAMS TO AVOID HIVE NATIVE CRASH
+
+            // TEST
+            let hiveClient = await this.globalHiveService.getHiveClient();
+            let reader = await hiveClient.downloadFileByScriptUrl(avatarHiveURL);
+            let blob = await reader.readAll();
+            console.log("READ BLOB:", blob);
+
+            let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
+            let avatar = this.profileService.buildAvatar("image/png", "elastoshive", PictureComponent.shared.rawBase64ImageOut);
+            if (entry == null) {
+              entry = new BasicCredentialEntry("avatar", null);
+              entry.value = avatar;
+              this.profile.setValue(entry, entry.value);
+            } else {
+              entry.value = avatar;
+            }
+
+            Logger.log('identity', "New avatar entry:", entry.value);
+          }
+          catch (e) {
+            Logger.error("identity", "Error while saving the avatar", e);
+          }
+        }
       }
     });
-    modal.present();
+    await modal.present();
   }
 
   /**
@@ -204,7 +248,7 @@ export class EditProfilePage {
   maybeMoveFocus(element: IonInput, event: KeyboardEvent) {
     if (event.keyCode == 13) {
       // Return
-      element.setFocus();
+      void element.setFocus();
     }
   }
 
@@ -212,7 +256,7 @@ export class EditProfilePage {
   maybeClearFocus(element: IonInput, event: KeyboardEvent) {
     if (event.keyCode == 13) {
       // Return
-      element.getInputElement().then((el: HTMLInputElement) => {
+      void element.getInputElement().then((el: HTMLInputElement) => {
         el.blur();
       });
     }
@@ -280,15 +324,14 @@ export class EditProfilePage {
             AuthService.instance.getCurrentUserPassword()
           );
 
-        this.native.hideLoading();
+        await this.native.hideLoading();
         this.events.publish("did:didchanged");
         this.events.publish("diddocument:changed", false);
-
       },
       () => {
         // Operation cancelled
         Logger.log('Identity', "Password operation cancelled");
-        this.native.hideLoading();
+        void this.native.hideLoading();
       }
     );
   }
@@ -316,10 +359,10 @@ export class EditProfilePage {
           this.events.publish("diddocument:changed", publishAvatar);
           this.native.pop();
         },
-        async () => {
+        () => {
           // Operation cancelled
           Logger.log('Identity', "Password operation cancelled");
-          await this.native.hideLoading();
+          void this.native.hideLoading();
         }
       );
     }
@@ -434,18 +477,18 @@ export class EditProfilePage {
       },
     });
 
-    modal.onDidDismiss().then((params) => {
+    void modal.onDidDismiss().then((params) => {
       if (params && params.data && params.data.pickedItem) {
         let pickedItem: BasicCredentialEntry = params.data.pickedItem;
 
         // Add the new entry to the current profile
         // Default value is an empty string
         this.profile.setValue(pickedItem, "");
-        this.save();
+        void this.save();
       }
     });
 
-    modal.present();
+    await modal.present();
   }
 
   /****************************************************
@@ -454,7 +497,7 @@ export class EditProfilePage {
   deleteProfileEntry(entry: BasicCredentialEntry, event: MouseEvent) {
     event.stopImmediatePropagation();
     this.profile.deleteEntry(entry);
-    this.save();
+    void this.save();
   }
 
   public async alertAvatarPublish() {
@@ -470,7 +513,7 @@ export class EditProfilePage {
         {
           text: this.translate.instant("identity.avatar-publish-yes"),
           handler: () => {
-            this.next(true);
+            void this.next(true);
           },
         },
       ],
