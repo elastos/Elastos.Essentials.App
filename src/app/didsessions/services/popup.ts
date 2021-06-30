@@ -39,14 +39,14 @@ export class PopupProvider {
                 message  : this.translate.instant(message),
                 cssClass: 'my-custom-alert',
                 buttons: [{
-                    text: cancelText ? cancelText : this.translate.instant('cancel'),
+                    text: cancelText ? cancelText : this.translate.instant('common.cancel'),
                     handler: () => {
                         Logger.log('didsessions', 'ionicConfirm Disagree clicked');
                         resolve(false);
                     }
                 },
                 {
-                    text: okText ? okText : this.translate.instant('confirm'),
+                    text: okText ? okText : this.translate.instant('common.confirm'),
                     handler: () => {
                         Logger.log('didsessions', 'Agree clicked');
                         resolve(true);
@@ -76,14 +76,14 @@ export class PopupProvider {
                 type: inputType
             }],
             buttons: [{
-                text: cancelText ? cancelText : this.translate.instant('Cancel'),
+                text: cancelText ? cancelText : this.translate.instant('common.cancel'),
                 handler: data => {
                     Logger.log('didsessions', 'Cancel clicked');
                     resolve(null);
                 }
             },
             {
-                text: okText ? okText : this.translate.instant('Ok'),
+                text: okText ? okText : this.translate.instant('common.ok'),
                 handler: data => {
                     Logger.log('didsessions', 'Saved clicked');
                     resolve(data[0]);

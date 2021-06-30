@@ -16,6 +16,7 @@ export const en = {
         'registration-confirm': 'Confirm',
         'dpos-node-info': 'DPoS Node Info',
         'back': 'back',
+        'state': 'State:',
     }
 
 };

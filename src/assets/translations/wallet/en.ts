@@ -278,6 +278,7 @@ export const en = {
         * Select Subwallet Page *
         *************************/
         'select-subwallet': 'Select Subwallet',
+        'select-wallet': 'Select wallet',
 
         /*********************
         * Wait For Sync Page *

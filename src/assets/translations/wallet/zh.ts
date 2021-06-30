@@ -278,6 +278,7 @@ export const zh = {
         * Select Subwallet Page *
         *************************/
         'select-subwallet': '选择子钱包',
+        'select-wallet': '选择钱包',
 
         /*********************
         * Wait For Sync Page *

@@ -16,6 +16,7 @@ export const zh = {
         'registration-confirm': '确认参选',
         'dpos-node-info': 'DPoS节点信息',
         'back': '返回',
+        'state': '状态:',
     }
 
 };

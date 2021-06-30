@@ -93,7 +93,7 @@ export const zh = {
       'wallet-title': '创建默认钱包',
       'wallet-intro': '使用与您的 DID 相同的纸质密钥来创建默认钱包。 您可以选择使用它或删除它。',
       'done-title': '全部完成！',
-      'done-intro': '您的身份现在已经完全准备好了。 您可以开始使用 Elastos Essentials.'
+      'done-intro': '您的身份现在已经完全准备好了， 您可以开始使用 Elastos Essentials。'
     }
   }
 };

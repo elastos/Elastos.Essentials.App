@@ -2,7 +2,7 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
         <ion-row class="label-container">
-            <ion-label>State: {{ state }}</ion-label>
+            <ion-label>{{ 'dposregistration.state' | translate }} {{ state }}</ion-label>
         </ion-row>
 
         <div *ngIf="state != 'ReturnDeposit'">
