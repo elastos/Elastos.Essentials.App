@@ -74,8 +74,6 @@ export class CoinTxInfoPage implements OnInit {
         public router: Router,
         public walletManager: WalletManager,
         public native: Native,
-        private coinService: CoinService,
-        private erc20CoinService: ERC20CoinService,
         public jsonRPCService: WalletJsonRPCService,
         private translate: TranslateService,
         public theme: GlobalThemeService
@@ -144,7 +142,7 @@ export class CoinTxInfoPage implements OnInit {
 
             const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             // Address
-            if (this.chainId === StandardCoinName.ETHSC) {
+            if ((this.chainId === StandardCoinName.ETHSC) || (this.chainId === StandardCoinName.ETHDID)) {
                 this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
                 await this.getERC20TokenTransactionInfo(transaction);
             } else {

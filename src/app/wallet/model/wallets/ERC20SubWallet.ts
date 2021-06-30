@@ -64,9 +64,12 @@ export class ERC20SubWallet extends SubWallet {
         // First retrieve the number of decimals used by this token. this is needed for a good display,
         // as we need to convert the balance integer using the number of decimals.
         await this.fetchTokenDecimals();
-        this.updateBalance();
 
         this.loadTransactionsFromCache();
+
+        setTimeout(async () => {
+          this.updateBalance();
+        }, 3000);
     }
 
     public async createAddress(): Promise<string> {
@@ -196,7 +199,7 @@ export class ERC20SubWallet extends SubWallet {
             return tx.contractAddress === contractAddress
           })
           this.transactions = {totalcount:allTx.length, txhistory:allTx};
-          this.saveTransactions(this.transactions.txhistory);
+          this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
         }
     }
 
@@ -394,5 +397,12 @@ export class ERC20SubWallet extends SubWallet {
         Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
       }
       return -1;
+    }
+
+    public saveTransactions(transactionsList: EthTransaction[]) {
+      for (let i = 0, len = transactionsList.length; i < len; i++) {
+        this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
+      }
+      this.transactionsCache.save();
     }
 }

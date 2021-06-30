@@ -408,25 +408,16 @@ export class WalletJsonRPCService {
     }
 
     async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber: number = 0, endBlockNumber: number = 0): Promise<EthTransaction[]> {
-      let getTxByBrowser = true;
-      let apiurltype = this.getApiUrlTypeForBrowser(chainID);
-      if (apiurltype == null) {
-        apiurltype = this.getApiUrlTypeForMisc(chainID);
-        getTxByBrowser = false;
-      }
+      let apiurltype = this.getApiUrlTypeForMisc(chainID);
       const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return null;
       }
       let ethscgethistoryurl = null;
-      if (getTxByBrowser) {
-        ethscgethistoryurl = rpcApiUrl + '/api/?module=account&action=txlist&address=' + address;
-      } else {
-        // Misc api
-        // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
-        // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
-        ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
-      }
+      // Misc api
+      // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
+      // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
+      ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
       try {
           let result = await this.globalJsonRPCService.httpGet(ethscgethistoryurl);
           return result.result as EthTransaction[];

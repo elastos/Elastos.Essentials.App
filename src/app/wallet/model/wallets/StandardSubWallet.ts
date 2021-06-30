@@ -158,44 +158,62 @@ export abstract class StandardSubWallet extends SubWallet {
     public async signAndSendRawTransaction(transaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
         return new Promise(async (resolve) => {
             Logger.log("wallet", 'Received raw transaction', transaction);
-            const password = await this.masterWallet.walletManager.openPayModal(transfer);
-            if (!password) {
-                Logger.log("wallet", "No password received. Cancelling");
-                resolve({
-                  published: false,
-                  txid: null,
-                  status: 'cancelled'
-                });
-                return;
+            try {
+              const password = await this.masterWallet.walletManager.openPayModal(transfer);
+              if (!password) {
+                  Logger.log("wallet", "No password received. Cancelling");
+                  resolve({
+                    published: false,
+                    txid: null,
+                    status: 'cancelled'
+                  });
+                  return;
+              }
+
+              Logger.log("wallet", "Password retrieved. Now signing the transaction.");
+
+              await this.masterWallet.walletManager.native.showLoading();
+
+              const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
+                  this.masterWallet.id,
+                  this.id,
+                  transaction,
+                  password
+              );
+
+              Logger.log("wallet", "Transaction signed. Now publishing.");
+              let txid = await this.publishTransaction(signedTx);
+
+              Logger.log("wallet", "pubishTransaction txid:", txid);
+
+              await this.masterWallet.walletManager.native.hideLoading();
+              this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
+
+              if (navigateHomeAfterCompletion)
+                  await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+
+              resolve({
+                  published: true,
+                  status: 'published',
+                  txid: txid
+              });
             }
-
-            Logger.log("wallet", "Password retrieved. Now signing the transaction.");
-
-            await this.masterWallet.walletManager.native.showLoading();
-
-            const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
-                this.masterWallet.id,
-                this.id,
-                transaction,
-                password
-            );
-
-            Logger.log("wallet", "Transaction signed. Now publishing.");
-
-            let txid = await this.publishTransaction(signedTx);
-            Logger.log("wallet", "pubishTransaction txid:", txid);
-
-            await this.masterWallet.walletManager.native.hideLoading();
-            this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
-
-            if (navigateHomeAfterCompletion)
-                await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
-
-            resolve({
-                published: true,
-                status: 'published',
-                txid: txid
-            });
+            catch (err) {
+              await this.masterWallet.walletManager.native.hideLoading();
+              Logger.error("wallet", "Publish error:", err);
+              resolve({
+                published: false,
+                txid: null,
+                status: 'error'
+              });
+            }
         });
+    }
+
+    public saveTransactions(transactionsList: TransactionHistory[]) {
+      for (let i = 0, len = transactionsList.length; i < len; i++) {
+        this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
+      }
+      this.transactionsCache.save();
     }
 }

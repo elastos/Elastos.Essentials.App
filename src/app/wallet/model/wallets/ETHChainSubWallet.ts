@@ -23,8 +23,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
         super(masterWallet, id);
 
         this.initWeb3();
-        this.updateBalance();
         this.loadTransactionsFromCache();
+
+        setTimeout(async () => {
+          this.updateBalance();
+        }, 3000);
     }
 
     public async getTokenAddress(): Promise<string> {
@@ -69,7 +72,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
           if (this.transactions.totalcount !== result.length) {
             this.transactions.totalcount = result.length;
             this.transactions.txhistory = result.reverse();
-            this.saveTransactions(this.transactions.txhistory);
+            this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
           }
         }
       }
@@ -241,7 +244,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
       let nonce = await this.getNonce();
-      Logger.warn('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
+      Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
       return this.masterWallet.walletManager.spvBridge.createTransfer(
             this.masterWallet.id,
             toAddress,
@@ -310,5 +313,12 @@ export class ETHChainSubWallet extends StandardSubWallet {
         Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
       }
       return -1;
+    }
+
+    public saveTransactions(transactionsList: EthTransaction[]) {
+      for (let i = 0, len = transactionsList.length; i < len; i++) {
+        this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
+      }
+      this.transactionsCache.save();
     }
 }

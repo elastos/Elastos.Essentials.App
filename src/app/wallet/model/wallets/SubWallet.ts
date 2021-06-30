@@ -8,7 +8,6 @@ import moment from 'moment';
 import { Events } from 'src/app/services/events.service';
 import { WalletJsonRPCService } from '../../services/jsonrpc.service';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
-import { Logger } from 'src/app/logger';
 
 /**
  * Result of calls to signAndSendRawTransaction().
@@ -108,16 +107,14 @@ export abstract class SubWallet {
     /**
      * If we get the transactions from cache, then we need update the transactions in 3s.
      */
-     public isLoadTxDataFromCache() {
+    public isLoadTxDataFromCache() {
         return this.loadTxDataFromCache;
-     }
-
-    public saveTransactions(transactionsList: TransactionHistory[]) {
-      for (let i = 0, len = transactionsList.length; i < len; i++) {
-        this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
-      }
-      this.transactionsCache.save();
     }
+
+    /**
+     * Save the transctions list to cache.
+     */
+    protected abstract saveTransactions(transactionsList: TransactionHistory[]);
 
     /**
      * From a raw status, returns a UI readable string status.
@@ -231,7 +228,7 @@ export abstract class SubWallet {
             direction: transaction.type,
             fee: transaction.fee,
             height: transaction.height,
-            memo: transaction.memo,
+            memo: this.getMemoString(transaction.memo),
             name: await this.getTransactionName(transaction, translate),
             payStatusIcon: await this.getTransactionIconPath(transaction),
             status: transaction.Status,
@@ -242,6 +239,14 @@ export abstract class SubWallet {
             type: null, // Defined by inherited classes
         };
         return transactionInfo;
+    }
+
+    private getMemoString(memo: string) {
+      if (memo.startsWith('type:text,msg:')) {
+        return memo.substring(14);
+      } else {
+        return memo;
+      }
     }
 
     // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
