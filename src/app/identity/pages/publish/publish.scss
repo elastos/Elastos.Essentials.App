@@ -32,7 +32,7 @@
         padding: 10px;
         border-top: 1.5px solid #EAEAEA;
         border-bottom: 1.5px solid #EAEAEA;
-        margin: 10px 15px;
+        margin: 10px 0;
     
         ion-row {
             ion-col {
@@ -54,6 +54,8 @@
     }
 
     .credentials {
+        padding: 0 10px;
+
         .card {
             padding-top: 8px;
         }
@@ -61,7 +63,6 @@
         .card-icon {
             position: absolute;
             width: 72px;
-            margin: 3px;
             height: 72px;
             background-repeat: no-repeat;
             background-image: url("/assets/identity/svg/icondiv.svg");

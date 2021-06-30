@@ -11,7 +11,7 @@ ion-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #8889b1;
+        border-bottom: 1px solid #EAEAEA;
         padding: 7.5px 0;
 
         h1, h2, p {
@@ -41,8 +41,12 @@ ion-row {
 }
 
 .darkContainer {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2b2c49;
+    background: #212021;
+    box-shadow: none;
+
+    ion-col {
+        border-bottom: 1px solid #464646;
+    }
 }
 
 /* .order {

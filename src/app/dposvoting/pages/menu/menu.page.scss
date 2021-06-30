@@ -1,10 +1,14 @@
 @import '../../root.scss';
 
+/*** LIGHT MODE ***/
 ion-tabs {
     ion-tab-bar {
         height: 9%;
+        background-color: #f5f5fd;
     
         ion-tab-button {
+            --ripple-color: #732dcf;
+
             ion-icon {
                 color: #bebeeb;
                 font-size: 36px;
@@ -16,33 +20,38 @@ ion-tabs {
                 color: #bebeeb;
             }
         }
-    }
-}
 
-.dark-tabs {
-    ion-tab-bar {
-        ion-tab-button {
+        ion-tab-button.tab-selected {
             ion-icon, ion-label {
-                color: #464660;;
+                color: #732dcf !important;
+                --ion-color-base: #732dcf !important;
             }
         }
     }
 }
 
-ion-tab-button {
-    --ripple-color: #732dcf;
-    }
+/*** DARK MODE ***/
+.dark-tabs {
+    ion-tab-bar {
+        background: #121212;
+    
+        ion-tab-button {
+            --ripple-color: #ffffff;
 
-    ion-tab-button.tab-selected {
-        ion-icon, ion-label {
-            color: #732dcf !important;
-            --ion-color-base: #732dcf !important;
+            ion-icon {
+                color: #666666;
+            }
+        
+            ion-label {
+                color: #666666;
+            }
+        }
+
+        ion-tab-button.tab-selected {
+            ion-icon, ion-label {
+                color: #ffffff !important;
+                --ion-color-base: #ffffff !important;
+            }
         }
     }
-
-    ion-tab-button:hover {
-        ion-icon, ion-label {
-            color: #732dcf !important;
-            --ion-color-base: #732dcf !important;
-        }
 }

@@ -26,12 +26,13 @@
                 font-size: 12px;
                 white-space: pre-wrap;
                 word-wrap: break-word;
+                font-family: 'Inter' !important;
             }
         }
     }
 }
 
 .darkContainer {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2b2c49;
+    background: #212021;
+    box-shadow: none;
 }

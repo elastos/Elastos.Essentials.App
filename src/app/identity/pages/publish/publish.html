@@ -14,15 +14,15 @@
             </ion-col>
         </ion-row>
          
-        <ion-grid  class="status-grid">
-            <ion-row *ngIf="profileService.isPublishStatusFetched() && !profileService.didNeedsToBePublished">
-                <ion-col size="1.5">
+        <ion-grid *ngIf="profileService.isPublishStatusFetched() && !profileService.didNeedsToBePublished" class="status-grid">
+            <ion-row>
+                <ion-col size="1">
                     <img 
                         [src]="unchangedPublishedCredentials.length > 0 ? '/assets/identity/svg/credential-published.svg' : '/assets/identity/svg/publish-gray.svg'"
                         class="published"
                     >
                 </ion-col>
-                <ion-col size="10.5">
+                <ion-col size="11">
                     <ion-label>
                         {{ unchangedPublishedCredentials.length }}/{{ profileService.allCreds.length }}
                         {{ 'identity.credentials-published-on-blockchain' | translate }}

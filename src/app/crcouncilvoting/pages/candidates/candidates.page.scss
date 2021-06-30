@@ -113,8 +113,8 @@
 .dark-container {
   .candidate-list {
     ion-item {
-      box-shadow: 0 3px 15px 0 #151626;
-      --background:  #2b2c49;
+      --background: #212021;
+      box-shadow: none;
 
       .label-col {
         ion-label {

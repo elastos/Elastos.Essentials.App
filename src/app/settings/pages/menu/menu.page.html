@@ -7,7 +7,7 @@
                 <h2>{{ section.subtitle | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
-                <img src="assets/settings/default/right-arrow.svg">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
         <ion-row class="section" (click)="onChangePassword()">
@@ -16,7 +16,7 @@
                 <h2>{{ 'settings.change-pw' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
-                <img src="assets/settings/default/right-arrow.svg">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
         <ion-row class="section" (click)="open('/settings/walletconnect/sessions')">
@@ -25,7 +25,7 @@
                 <h2>{{ 'settings.wallet-connect-sessions-intro-setting' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
-                <img src="assets/settings/default/right-arrow.svg">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
         <ion-row class="section" (click)="open('/settings/privacy')">
@@ -34,7 +34,7 @@
                 <h2>{{ 'settings.privacy-intro-setting' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
-                <img src="assets/settings/default/right-arrow.svg">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
         <ion-row class="section" *ngIf="prefs.developerMode" (click)="open('/settings/developer')">
@@ -43,7 +43,7 @@
                 <h2>{{ 'settings.advanced-setting' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
-                <img src="assets/settings/default/right-arrow.svg">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
         <ion-row class="section dev-mode">

@@ -49,7 +49,7 @@
           <div class="tab" [class.tab-active]="activeTab === 1" (click)='activeTab = 1'>
             <p>{{ 'crproposalvoting.yes' | translate }} <span>({{ getVotesByType('support').length }})</span></p>
           </div>
-          <div class="tab" [class.tab-active]="activeTab === 2 "(click)='activeTab = 2'>
+          <div class="tab" [class.tab-active]="activeTab === 2 " (click)='activeTab = 2'>
               <p>{{ 'crproposalvoting.no' | translate }} <span>({{ getVotesByType('reject').length }})</span></p>
           </div>
           <div class="tab right-tab" [class.tab-active]="activeTab === 3 "(click)='activeTab = 3'>

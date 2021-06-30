@@ -27,7 +27,7 @@
             height: 28px;
             border-radius: 50%;
             background: #000000;
-            border: 3px solid white;
+            border: 3px solid #FAFAFA;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -103,7 +103,6 @@
     .cancel {
         left: 2%;
         box-shadow: 0 3px 15px 0 #ededf0;
-        // background-color: #ff4961;
         background-color: #ffffff;
 
         ion-label {
@@ -130,16 +129,14 @@
 }
 
 .dark-container {
-    background:#191a2f;
-
     h2 {
-        box-shadow: 0 3px 15px 0 #151626;
-        background-color: #2b2c49;
+        background: #212021;
+        box-shadow: none;
     }
 
     .icon-container {
         .ela-icon {
-            border: 3px solid #191a2f;
+            border: 3px solid #121212;
         }
     }
 

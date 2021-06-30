@@ -15,7 +15,8 @@
           line-height: 1;
           letter-spacing: -0.33px;
           text-align: left;
-          color: #372153;
+          color: #000000;
+          opacity: 0.7;
       }
     }
 }
@@ -32,6 +33,7 @@
     .main-title-row {
         p {
             color: #9D9D9D;
+            opacity: 1;
         }
     }
 }

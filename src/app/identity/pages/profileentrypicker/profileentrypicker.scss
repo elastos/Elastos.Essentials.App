@@ -5,7 +5,7 @@
   padding: 0;
 
   ion-row {
-    border-bottom: 1px solid #dfdff4;
+    border-bottom: 1px solid #EAEAEA;
   }
 
   .header {
@@ -20,7 +20,6 @@
             font-weight: 600;
             line-height: 0.93;
             text-align: left;
-            color: #372153;
         }
     }
   }
@@ -45,15 +44,10 @@
       align-items: center;
 
       ion-label {
-        font-family: Montserrat;
         font-size: 13px;
         font-weight: 600;
-        font-stretch: normal;
-        font-style: normal;
         line-height: 1.62;
-        letter-spacing: normal;
         text-align: left;
-        color: #372153;
       }
     }
   }
@@ -61,22 +55,6 @@
 
 .darkContainer {
   ion-row {
-    border-bottom: 1px solid #2f305a;
-  }
-
-  .header {
-    ion-col {
-        ion-label {
-            color: #ffffff;
-        }
-    }
-  }
-
-  .item {
-    .label-container {
-      ion-label {
-        color: #ffffff;
-      }
-    }
+    border-bottom: 1px solid #464646;
   }
 }

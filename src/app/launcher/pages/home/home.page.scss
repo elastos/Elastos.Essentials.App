@@ -292,10 +292,11 @@ ion-content {
   }
 
   .category-row {
-    background: #FFFFFF;
+    background-color: #ffffff;
+    box-shadow: 0 3px 15px 0 #ededf0;
 
     .title-col {
-      color: #372153;
+      color: #000000;
     }
 
     .app-col {
@@ -398,6 +399,7 @@ ion-content {
 
   .category-row {
     background: #212021;
+    box-shadow: none;
 
     .title-col {
       color: #9D9D9D;

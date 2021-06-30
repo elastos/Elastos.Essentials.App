@@ -12,6 +12,7 @@
 *******************************************/
 .header {
   position: fixed;
+  top: 49px;
   z-index: 10;
   width: 100%;
   height: 8%;
@@ -64,7 +65,7 @@
       .header-container {
         padding: 12px;
         margin-left: 9px;
-        border-bottom: 1.5px solid #f0f1ff;
+        border-bottom: 1.5px solid #EAEAEA;
 
         .img-container {
           display: flex;
@@ -97,22 +98,30 @@
 
         .detail-container {
           justify-content: space-between;
-          border-bottom: 1.5px solid #f0f1ff;
+          border-bottom: 1.5px solid #EAEAEA;
           margin-left: 9px;
           padding: 12px 24px;
 
           h3, p {
             font-size: 12px !important;
             font-weight: 600;
-            color: #353650;
             padding-right: 0;
             margin: 0;
+          }
+
+          h3 {
+            color: #000000;
+            opacity: 0.7;
+          }
+
+          p {
+            color: #000000;
           }
         }
 
         .website {
           justify-content: space-between;
-          border-bottom: 1.5px solid #f0f1ff;
+          border-bottom: 1.5px solid #EAEAEA;
           margin-left: 9px;
           margin-bottom: 36px;
           padding: 12px 24px;
@@ -124,13 +133,18 @@
             font-weight: 600;
           }
 
-          h3:active  {
-            color: #428cff;
+          h3 {
+            color: #000000;
+            opacity: 0.7;
           }
 
           p {
-            color: #353650;
+            color: #000000;
             padding-right: 10px;
+          }
+
+          h3:active  {
+            color: #428cff;
           }
 
           a {
@@ -144,32 +158,42 @@
 
 .dark-node-slides {
   ion-card {
-    box-shadow: 0 3px 15px 0 #151626;
-    background:  #2b2c49;
+    background: #212021;
+    box-shadow: none;
 
     ion-grid {
       .header-container {
-        border-bottom: 1.5px solid #2f305a;
+        border-bottom: 1.5px solid #464646;
       }
 
       ion-card-content {
         .detail-container {
-          border-bottom: 1.5px solid #2f305a;
+          border-bottom: 1.5px solid #464646;
 
-          p, h3 {
+          p {
             color: #ffffff !important;
+          }
+
+          h3 {
+            color: #ACACAC;
+            opacity: 1;
           }
         }
 
         .website {
-          border-bottom: 1.5px solid #2f305a;
+          border-bottom: 1.5px solid #464646;
+
+          p {
+            color: #ffffff !important;
+          }
+
+          h3 {
+            color: #ACACAC;
+            opacity: 1;
+          }
 
           h3:active  {
             color: #428cff;
-          }
-
-          p, h3 {
-            color: #ffffff !important;
           }
         }
       }
@@ -189,7 +213,7 @@
     --padding-start: 0px;
     --background: #ffffff;
     box-shadow: 0 3px 15px 0 #ededf0;
-    margin: 0 0 5px;
+    margin: 0 0 2.5px;
 
     ion-row {
       padding: 7.5px 0;
@@ -241,6 +265,7 @@
       ion-label {
         h4, p {
           font-weight: 600;
+          color: black;
         }
 
         h4 {
@@ -249,7 +274,7 @@
 
         p {
           font-size: 10px;
-          color: #353650;
+          opacity: 0.7;
 
           ion-icon {
             color: #732dcf;
@@ -262,14 +287,19 @@
 
 .dark-node-list {
   ion-item {
-    box-shadow: 0 3px 15px 0 #151626;
-    --background:  #2b2c49;
+    --background: #212021;
+    box-shadow: none;
 
     ion-row {
       ion-label {
+        h4 {
+          color: white;
+        }
+
         p {
           font-size: 10px;
-          color: #ffffff;
+          color: #ACACAC;
+          opacity: 1;
         }
       }
     }
@@ -287,24 +317,5 @@
         }
       }
     }
-  }
-}
-
-/************************************ 
-  ROOT TABS
-  pages ~ app
-************************************/
-ion-tab-bar {
-  height: 9%;
-
-  ion-icon {
-    color: #989aa2;
-    font-size: 36px;
-  }
-
-  ion-label {
-    font-size: 9px;
-    font-weight: bold;
-    color: #989aa2;
   }
 }

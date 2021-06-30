@@ -81,16 +81,16 @@
   
 .darkContainer {
     ion-input {
-        background: #464660;
-        box-shadow: 0 3px 15px 0 #151626;
+        background: #212021;
+        box-shadow: none;
     }
   
     .bubble {
-        box-shadow: 0 3px 15px 0 #151626;
-        background-color: #2b2c49;
+        background: #212021;
+        box-shadow: none;
   
         .bubble-tail {
-            border-top: 25px solid #2b2c49;
+            border-top: 25px solid #212021;
         }
     }
 }
