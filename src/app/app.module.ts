@@ -35,18 +35,19 @@ import { DeveloperToolsInitModule } from './developertools/init.module';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 import * as Sentry from '@sentry/browser';
-import { RewriteFrames } from '@sentry/integrations';
+import { Integrations }  from '@sentry/tracing';
 import { GlobalNativeService } from './services/global.native.service';
 import { DPoSRegistrationInitModule } from './dposregistration/init.module';
 import { CRCouncilManagerInitModule } from './crcouncilmanager/init.module';
 
 
 Sentry.init({
-  dsn: "https://1de99f1d75654d479051bfdce1537821@sentry.io/5722236",
+  dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
   release: "default",
   integrations: [
-    new RewriteFrames(),
-  ]
+    new Integrations.BrowserTracing(),
+  ],
+  tracesSampleRate: 1.0,
 });
 
 @Injectable()
