@@ -29,60 +29,31 @@ export enum ApiUrlType {
     providedIn: 'root'
 })
 export class GlobalJsonRPCService extends GlobalService {
-    private mainchainRPCApiUrl = 'https://api.elastos.io/ela';
-    private IDChainRPCApiUrl = 'https://api.elastos.io/did';
-    private ethscRPCApiUrl = 'https://api.elastos.io/eth';
-    private ethscOracleRPCApiUrl = 'https://api.elastos.io/oracle';
-    private ethscMiscApiUrl = 'https://api.elastos.io/misc';
-    // TODO use mainnet url, and add to settings.
-    private EIDChainRPCApiUrl = 'https://api-testnet.elastos.io/newid';
-    private EIDMiscApiUrl = 'https://api-testnet.elastos.io/newid-misc';
-
-    private hecoChainRPCApiUrl = 'https://http-mainnet.hecochain.com';
-    // Get ERC20 Token transactions from browser api.
-    private ethbrowserapiUrl = 'https://eth.elastos.io';
-
-    // CR
-    private crRpcApiUrl = 'https://api.cyberrepublic.org';
-
     static RETRY_TIMES = 3;
 
     // public activeNetwork: NetworkType;
     private subscription: Subscription = null;
 
-    constructor(private http: HttpClient,
-        private prefs: GlobalPreferencesService
-    ) {
+    constructor(private http: HttpClient) {
         super();
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        await this.initData();
-        this.subscription = this.prefs.preferenceListener.subscribe(async (preference) => {
+        /* this.subscription = this.prefs.preferenceListener.subscribe(async (preference) => {
           if (preference.key === "chain.network.type") {
               await this.initData();
           }
-        });
+        }); */
     }
 
-    public async onUserSignOut(): Promise<void> {
+    public onUserSignOut(): Promise<void> {
         this.stop();
+        return;
     }
 
-    public async init(): Promise<void> {
+    public init(): Promise<void> {
       GlobalServiceManager.getInstance().registerService(this);
-    }
-
-    async initData() {
-        let preferences = await this.prefs.getPreferences(GlobalDIDSessionsService.signedInDIDString);
-        this.mainchainRPCApiUrl = preferences['mainchain.rpcapi'];
-        this.IDChainRPCApiUrl = preferences['sidechain.id.rpcapi'];
-        this.EIDChainRPCApiUrl = preferences['sidechain.eid.rpcapi'];
-        this.ethscRPCApiUrl = preferences['sidechain.eth.rpcapi'];
-        this.ethscOracleRPCApiUrl = preferences['sidechain.eth.oracle'];
-        this.ethscMiscApiUrl = preferences['sidechain.eth.apimisc'];
-        this.ethbrowserapiUrl = preferences['sidechain.eth.browserapi'];
-        this.crRpcApiUrl = preferences['cr.rpcapi'];
+      return;
     }
 
     public stop() {
@@ -92,44 +63,7 @@ export class GlobalJsonRPCService extends GlobalService {
         }
     }
 
-    public getApiUrl(type: ApiUrlType) {
-      let apiUrl = null;
-      switch (type) {
-        case ApiUrlType.CR_RPC:
-          apiUrl = this.crRpcApiUrl;
-          break;
-        case ApiUrlType.DID_RPC:
-          apiUrl = this.IDChainRPCApiUrl;
-          break;
-        case ApiUrlType.EID_MISC:
-          apiUrl = this.EIDMiscApiUrl;
-          break;
-        case ApiUrlType.EID_RPC:
-          apiUrl = this.EIDChainRPCApiUrl;
-          break;
-        case ApiUrlType.ELA_RPC:
-          apiUrl = this.mainchainRPCApiUrl;
-          break;
-        case ApiUrlType.ETHSC_MISC:
-          apiUrl = this.ethscMiscApiUrl;
-          break;
-        case ApiUrlType.ETHSC_ORACLE:
-          apiUrl = this.ethscOracleRPCApiUrl;
-          break;
-        case ApiUrlType.ETHSC_RPC:
-          apiUrl = this.ethscRPCApiUrl;
-          break;
-        case ApiUrlType.ETH_BROWSER:
-          apiUrl = this.ethbrowserapiUrl;
-          break;
-        default:
-          break;
-      }
-
-      return apiUrl;
-    }
-
-    async httpPost(rpcApiUrl: string, param: any): Promise<any> {
+    httpPost(rpcApiUrl: string, param: any): Promise<any> {
         return new Promise((resolve, reject) => {
             const httpOptions = {
                 headers: new HttpHeaders({

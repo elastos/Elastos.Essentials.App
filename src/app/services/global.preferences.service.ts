@@ -42,7 +42,8 @@ export class GlobalPreferencesService {
       "sidechain.eth.rpcapi": "https://api.elastos.io/eth",
       "sidechain.eth.browserapi": "https://eth.elastos.io",
       "cr.rpcapi": 'https://api.cyberrepublic.org',
-      "trinitycli.runaddress": ""
+      "trinitycli.runaddress": "",
+      "elastosapi.provider": "elastosio"
     };
   }
 

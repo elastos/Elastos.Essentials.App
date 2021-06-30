@@ -1,0 +1,15 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="subsetting-grid" [class.dark-container]="theme.darkMode">
+      <ion-row *ngFor="let provider of apiProviders" class="section-row" (click)="useProvider(provider)">
+          <ion-col size="9" class="left-col">
+              <h1>{{ provider.name }}</h1>
+              <h2>{{ provider.description }}</h2>
+          </ion-col>
+          <ion-col size="3" class="right-col">
+            <ion-icon *ngIf="globalElastosApiService.activeProvider.value.name === provider.name" name="checkmark"></ion-icon>
+          </ion-col>
+      </ion-row>
+  </ion-grid>
+</ion-content>
+

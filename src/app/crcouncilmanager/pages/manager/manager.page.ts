@@ -10,6 +10,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { App } from 'src/app/model/app.enum';
 import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Util } from 'src/app/wallet/model/Util';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 
 @Component({
@@ -21,7 +22,7 @@ export class CRCouncilManagerPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public masterWalletId: string;
-    public state: string = "";
+    public state = "";
     public crmemberInfo: any;
 
     constructor(
@@ -30,6 +31,7 @@ export class CRCouncilManagerPage implements OnInit {
         public voteService: VoteService,
         public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
+        private globalElastosAPIService: GlobalElastosAPIService
     ) {
 
     }
@@ -51,7 +53,7 @@ export class CRCouncilManagerPage implements OnInit {
             },
         };
 
-        let rpcApiUrl = this.jsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         Logger.log(App.CRCOUNCIL_MANAGER, "rpcApiUrl:", rpcApiUrl);
         const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
         let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");

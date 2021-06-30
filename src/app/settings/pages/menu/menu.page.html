@@ -1,51 +1,17 @@
 <ion-content *ngIf="hasConfigSections">
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <ion-row class="section" *ngFor="let section of sections" (click)="open(section.router)">
+        <!-- Language selection -->
+        <ion-row class="section" (click)="open('/settings/language')">
             <ion-col size="11" class="title-col">
-                <h1>{{ section.name | translate }}</h1>
-                <h2>{{ section.subtitle | translate }}</h2>
+                <h1>{{ 'common.language-setting' | translate }}</h1>
+                <h2>{{ 'settings.change-lang' | translate }}</h2>
             </ion-col>
             <ion-col size="1" class="arrow-col">
                 <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
-        <ion-row class="section" (click)="onChangePassword()">
-            <ion-col size="11" class="title-col">
-                <h1>{{ 'settings.passwordmanager-setting' | translate }}</h1>
-                <h2>{{ 'settings.change-pw' | translate }}</h2>
-            </ion-col>
-            <ion-col size="1" class="arrow-col">
-                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
-            </ion-col>
-        </ion-row>
-        <ion-row class="section" (click)="open('/settings/walletconnect/sessions')">
-            <ion-col size="11" class="title-col">
-                <h1>{{ 'settings.wallet-connect-sessions-setting' | translate }}</h1>
-                <h2>{{ 'settings.wallet-connect-sessions-intro-setting' | translate }}</h2>
-            </ion-col>
-            <ion-col size="1" class="arrow-col">
-                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
-            </ion-col>
-        </ion-row>
-        <ion-row class="section" (click)="open('/settings/privacy')">
-            <ion-col size="11" class="title-col">
-                <h1>{{ 'settings.privacy-setting' | translate }}</h1>
-                <h2>{{ 'settings.privacy-intro-setting' | translate }}</h2>
-            </ion-col>
-            <ion-col size="1" class="arrow-col">
-                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
-            </ion-col>
-        </ion-row>
-        <ion-row class="section" *ngIf="prefs.developerMode" (click)="open('/settings/developer')">
-            <ion-col size="11" class="title-col">
-                <h1>{{ 'settings.developer-setting' | translate }}</h1>
-                <h2>{{ 'settings.advanced-setting' | translate }}</h2>
-            </ion-col>
-            <ion-col size="1" class="arrow-col">
-                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
-            </ion-col>
-        </ion-row>
+        <!-- Theme -->
         <ion-row class="section dev-mode">
             <ion-col size="8" class="title-col">
                 <h1>{{ 'settings.display-setting' | translate }}</h1>
@@ -63,6 +29,37 @@
                 </div>
             </ion-col>
         </ion-row>
+        <!-- Privacy -->
+        <ion-row class="section" (click)="open('/settings/privacy')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'settings.privacy-setting' | translate }}</h1>
+                <h2>{{ 'settings.privacy-intro-setting' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            </ion-col>
+        </ion-row>
+         <!-- Wallet connect -->
+         <ion-row class="section" (click)="open('/settings/walletconnect/sessions')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'settings.wallet-connect-sessions-setting' | translate }}</h1>
+                <h2>{{ 'settings.wallet-connect-sessions-intro-setting' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            </ion-col>
+        </ion-row>
+        <!-- Change password -->
+        <ion-row class="section" (click)="onChangePassword()">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'settings.passwordmanager-setting' | translate }}</h1>
+                <h2>{{ 'settings.change-pw' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            </ion-col>
+        </ion-row>
+        <!-- Developer mode -->
         <ion-row class="section dev-mode">
             <ion-col size="9" class="title-col">
                 <h1>{{ 'settings.dev-mode' | translate }}</h1>
@@ -71,6 +68,26 @@
             </ion-col>
             <ion-col size="3" class="arrow-col">
                 <ion-toggle mode="ios" [(ngModel)]="prefs.developerMode" (ngModelChange)="toggleDeveloperMode()" ngDefaultControl></ion-toggle>
+            </ion-col>
+        </ion-row>
+        <!-- Developer settings -->
+        <ion-row class="section" *ngIf="prefs.developerMode" (click)="open('/settings/developer')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'settings.developer-setting' | translate }}</h1>
+                <h2>{{ 'settings.advanced-setting' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            </ion-col>
+        </ion-row>
+        <!-- About -->
+        <ion-row class="section" (click)="open('/settings/about')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'settings.about-setting' | translate }}</h1>
+                <h2>{{ 'settings.about-elastos' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
     </ion-grid>

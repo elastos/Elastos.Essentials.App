@@ -41,14 +41,12 @@ export class DeveloperService {
   public popover: any = null;
 
   public backgroundServicesEnabled = false;
-  public cliAddress: string = '';
   public selectedNet: string = null;
   public privateNet: privateConfig = {
     configUrl: '',
     resolveUrl: ''
   }
   public networks = [
-      // TODO: ethscRPCApi need to update when it is ready.
     {
       type: 'settings.main-net',
       code: 'MainNet',
@@ -123,7 +121,6 @@ export class DeveloperService {
     this.zone.run(() => {
       this.selectedNet = networkCode;
       this.backgroundServicesEnabled = mode;
-      this.cliAddress = address;
     });
   }
 
@@ -150,7 +147,7 @@ export class DeveloperService {
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "cr.rpcapi", crRPCApi);
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
 
-    this.showRestartPrompt();
+    void this.showRestartPrompt();
   }
 
   getIndexByNetCode(netCode: string) {
@@ -180,14 +177,6 @@ export class DeveloperService {
     this.backgroundServicesEnabled = !this.backgroundServicesEnabled;
     await this.setPreference("developer.backgroundservices.startonboot", this.backgroundServicesEnabled);
     this.showToast(this.translate.instant('settings.please-restart'));
-  }
-
-  async configCliAddress() {
-    if(this.cliAddress.length) {
-      Logger.log('settings', 'Trinity-CLI run command address filled', this.cliAddress);
-      await this.setPreference("trinitycli.runaddress", this.cliAddress);
-      this.showToast('Client address set to ' + this.cliAddress, 'Your app will start installing in a few seconds', 6000);
-    }
   }
 
   async configNetwork() {

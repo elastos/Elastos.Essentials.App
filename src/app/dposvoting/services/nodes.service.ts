@@ -10,6 +10,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 
 @Injectable({
@@ -77,7 +78,8 @@ export class NodesService {
     constructor(
         private storage: GlobalStorageService,
         private globalIntentService: GlobalIntentService,
-        private globalJsonRPCService: GlobalJsonRPCService
+        private globalJsonRPCService: GlobalJsonRPCService,
+        private globalElastosAPIService: GlobalElastosAPIService
     ) { }
 
     get nodes(): DPosNode[] {
@@ -106,7 +108,7 @@ export class NodesService {
         if (!this.isFetchingRewardOrDone) {
             this.isFetchingRewardOrDone = true
             // Too slow, don't await
-            this.fetchReward();
+            void this.fetchReward();
         }
     }
 
@@ -186,7 +188,7 @@ export class NodesService {
             },
         };
 
-        let apiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
+        let apiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
         try {
             let result = await this.globalJsonRPCService.httpPost(apiUrl, param);

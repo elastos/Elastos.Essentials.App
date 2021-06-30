@@ -25,23 +25,6 @@ export class MenuPage implements OnInit {
     developerMode: false
   };
 
-  public sections = [
-    {
-      name: 'common.language-setting',
-      subtitle: 'settings.change-lang',
-      router: '/settings/language',
-      iconDir: '/assets/icon/light_mode/earth.svg',
-      iconDir2: '/assets/icon/dark_mode/earth.svg',
-    },
-    {
-      name: 'settings.about-setting',
-      subtitle: 'settings.about-elastos',
-      router: '/settings/about',
-      iconDir: '/assets/icon/light_mode/ela.svg',
-      iconDir2: '/assets/icon/dark_mode/ela.svg',
-    }
-  ];
-
   public hasConfigSections = false
 
   constructor(
@@ -52,7 +35,7 @@ export class MenuPage implements OnInit {
     private prefsService: GlobalPreferencesService,
     private settingsService: SettingsService
   ) {
-    this.init();
+    void this.init();
   }
 
   ngOnInit() {
@@ -79,13 +62,13 @@ export class MenuPage implements OnInit {
   }
 
   toggleDeveloperMode() {
-    this.prefsService.setPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode", this.prefs.developerMode);
+    void this.prefsService.setPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode", this.prefs.developerMode);
     if (!this.prefs.developerMode) {
         this.developer.resetNet();
     }
   }
 
   open(router: string){
-    this.nav.navigateTo(App.SETTINGS, router);
+    void this.nav.navigateTo(App.SETTINGS, router);
   }
 }

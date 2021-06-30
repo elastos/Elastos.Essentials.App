@@ -17,6 +17,7 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 
 type DPoSRegistrationInfo = {
@@ -78,6 +79,7 @@ export class DPosRegistrationPage implements OnInit {
         public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
         public walletRPCService: WalletJsonRPCService,
+        private globalElastosAPIService: GlobalElastosAPIService
     ) {
 
     }
@@ -100,7 +102,7 @@ export class DPosRegistrationPage implements OnInit {
             },
         };
 
-        this.rpcApiUrl = this.jsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
+        this.rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         Logger.log(App.DPOS_REGISTRATION, "rpcApiUrl:", this.rpcApiUrl);
         const result = await this.jsonRPCService.httpPost(this.rpcApiUrl, param);
         this.ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);

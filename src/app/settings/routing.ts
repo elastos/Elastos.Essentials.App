@@ -10,6 +10,7 @@ import { WalletConnectConnectPage } from './pages/walletconnect/connect/connect.
 import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessions.page';
 import { WalletConnectPrepareToConnectPage } from './pages/walletconnect/preparetoconnect/preparetoconnect.page';
 import { PrivacyPage } from './pages/privacy/privacy.page';
+import { ElastosAPIProviderPage } from './pages/elastosapiprovider/elastosapiprovider.page';
 
 const routes: Routes = [
   { path: 'menu', component: MenuPage },
@@ -21,7 +22,8 @@ const routes: Routes = [
   { path: 'walletconnect/sessions', component: WalletConnectSessionsPage },
   { path: 'walletconnect/preparetoconnect', component: WalletConnectPrepareToConnectPage },
   { path: 'walletconnect/connect', component: WalletConnectConnectPage },
-  { path: 'privacy', component: PrivacyPage }
+  { path: 'privacy', component: PrivacyPage },
+  { path: 'privacy/elastosapiprovider', component: ElastosAPIProviderPage }
 ];
 
 @NgModule({

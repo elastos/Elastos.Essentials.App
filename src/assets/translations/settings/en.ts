@@ -76,6 +76,9 @@ export const en = {
         'privacy': 'Privacy',
         'publish-identity-medium-assist': 'Publish identity using a fast third party service named ASSIST',
         'publish-identity-medium-wallet': 'Publish identity by yourself using your wallet',
+
+        /*********** Elastos API provider page ***********/
+        'elastosapiprovider': 'Elastos API'
     }
 
 };

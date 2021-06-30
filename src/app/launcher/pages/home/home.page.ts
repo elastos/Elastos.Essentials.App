@@ -152,7 +152,7 @@ export class HomePage implements OnInit {
         this.hiveVaultStorageStats = {
           usedStorage: usedStorageGb.toFixed(2),
           maxStorage: maxStorageGb.toFixed(2),
-          percentUsage: (100 * usedStorageGb / maxStorageGb).toFixed(0)
+          percentUsage: (100 * usedStorageGb / maxStorageGb).toFixed(1)
         };
         this.hiveVaultLinked = true;
       }

@@ -59,4 +59,8 @@ export class PrivacyPage implements OnInit {
     }
     await this.prefs.setPublishIdentityMedium(GlobalDIDSessionsService.signedInDIDString, this.publishIdentityMedium as any);
   }
+
+  open(router: string){
+    void this.nav.navigateTo(App.SETTINGS, router);
+  }
 }

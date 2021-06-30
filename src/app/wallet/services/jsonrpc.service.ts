@@ -9,6 +9,7 @@ import { CRProposalsSearchResponse } from '../model/cyber-republic/CRProposalsSe
 import { ProducersSearchResponse } from 'src/app/dposvoting/model/nodes.model';
 import { CRCouncilSearchResponse } from '../model/cyber-republic/CRCouncilSearchResult';
 import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 @Injectable({
     providedIn: 'root'
@@ -16,13 +17,15 @@ import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrp
 export class WalletJsonRPCService {
     static RETRY_TIMES = 3;
 
-    constructor(private globalJsonRPCService: GlobalJsonRPCService) {
+    constructor(
+      private globalJsonRPCService: GlobalJsonRPCService,
+      private globalElastosAPIService: GlobalElastosAPIService) {
     }
 
     // return balance in SELA
     async getBalanceByAddress(chainID: StandardCoinName, addressArray: string[]): Promise<BigNumber> {
         let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
         if (rpcApiUrl.length === 0) {
           return null;
         }
@@ -60,7 +63,7 @@ export class WalletJsonRPCService {
         return alreadyGetBalance ? balanceOfSELA : null;
     }
 
-    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, skip: number = 0, timestamp: number = 0): Promise<any> {
+    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<any> {
         const paramArray = [];
         let index = 0;
 
@@ -80,7 +83,7 @@ export class WalletJsonRPCService {
         }
 
         let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
         if (rpcApiUrl.length === 0) {
             return [];
         }
@@ -117,7 +120,7 @@ export class WalletJsonRPCService {
         };
 
         let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
         if (rpcApiUrl.length === 0) {
             return null;
         }
@@ -150,7 +153,7 @@ export class WalletJsonRPCService {
         };
 
         let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
         if (rpcApiUrl.length === 0) {
             return [];
         }
@@ -179,7 +182,7 @@ export class WalletJsonRPCService {
         };
 
         let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
         if (rpcApiUrl.length === 0) {
             return '';
         }
@@ -206,7 +209,7 @@ export class WalletJsonRPCService {
         };
 
         let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
         if (rpcApiUrl.length === 0) {
             return 0;
         }
@@ -230,7 +233,7 @@ export class WalletJsonRPCService {
             },
         };
 
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
         try {
             const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
@@ -246,7 +249,7 @@ export class WalletJsonRPCService {
           method: 'getcrrelatedstage',
       };
 
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ELA_RPC);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
       let result = null;
       try {
@@ -256,8 +259,8 @@ export class WalletJsonRPCService {
       return result;
     }
 
-    public async fetchCRcouncil(index: number = 0): Promise<CRCouncilSearchResponse> {
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.CR_RPC);
+    public async fetchCRcouncil(index = 0): Promise<CRCouncilSearchResponse> {
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
 
       let crfetchCRCurl = rpcApiUrl + '/api/council/list/';
       if (index > 0) {
@@ -273,7 +276,7 @@ export class WalletJsonRPCService {
     }
 
     public async fetchProposals(status: CRProposalStatus): Promise<CRProposalsSearchResponse> {
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.CR_RPC);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
       const crfetchproposalsurl = rpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
       try {
           let result = await this.globalJsonRPCService.httpGet(crfetchproposalsurl);
@@ -293,7 +296,7 @@ export class WalletJsonRPCService {
             },
         };
 
-        const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ETHSC_ORACLE);
+        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ETHSC_ORACLE);
 
         try {
             const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
@@ -314,7 +317,7 @@ export class WalletJsonRPCService {
     // ****************************************
 
     // ELA main chain: Get the real send address for the send transaction from ethsc to mainchain.
-    async getETHSCTransactionByHash(chainID: StandardCoinName, txHash: string) {
+    getETHSCTransactionByHash(chainID: StandardCoinName, txHash: string) {
       if (!txHash.startsWith('0x')) {
         txHash = '0x' + txHash;
       }
@@ -327,7 +330,7 @@ export class WalletJsonRPCService {
       };
 
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return '';
       }
@@ -346,7 +349,7 @@ export class WalletJsonRPCService {
       };
 
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return -1;
       }
@@ -370,7 +373,7 @@ export class WalletJsonRPCService {
       };
 
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return null;
       }
@@ -394,7 +397,7 @@ export class WalletJsonRPCService {
       };
 
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return -1;
       }
@@ -407,9 +410,9 @@ export class WalletJsonRPCService {
       return -1;
     }
 
-    async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber: number = 0, endBlockNumber: number = 0): Promise<EthTransaction[]> {
+    async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
       let apiurltype = this.getApiUrlTypeForMisc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return null;
       }
@@ -427,7 +430,7 @@ export class WalletJsonRPCService {
       return null;
     }
 
-    async eth_getTransactionByHash(chainID: StandardCoinName, txHash: string) {
+    eth_getTransactionByHash(chainID: StandardCoinName, txHash: string) {
       const param = {
         method: 'eth_getTransactionByHash',
         params: [
@@ -437,7 +440,7 @@ export class WalletJsonRPCService {
       };
 
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return '';
       }
@@ -451,7 +454,7 @@ export class WalletJsonRPCService {
     }
 
     async getERC20TokenTransactions(chainID: StandardCoinName, address: string): Promise<EthTokenTransaction[]> {
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ETH_BROWSER);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ETHSC_BROWSER);
       if (rpcApiUrl.length == 0) {
         return null;
       }
@@ -467,7 +470,7 @@ export class WalletJsonRPCService {
     }
 
     async getERC20TokenList(chainID: StandardCoinName, address: string): Promise<ERC20TokenInfo[]> {
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(ApiUrlType.ETH_BROWSER);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ETHSC_BROWSER);
       if (rpcApiUrl.length == 0) {
         return null;
       }
@@ -482,7 +485,7 @@ export class WalletJsonRPCService {
       return null;
     }
 
-    async eth_sendRawTransaction(chainID: StandardCoinName, txHash: string) {
+    eth_sendRawTransaction(chainID: StandardCoinName, txHash: string) {
       if (!txHash.startsWith('0x')) {
         txHash = '0x' + txHash;
       }
@@ -495,7 +498,7 @@ export class WalletJsonRPCService {
       };
 
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return '';
       }
@@ -510,7 +513,7 @@ export class WalletJsonRPCService {
 
 
     // ERC20 Token
-    async eth_getTransactionReceipt(chainID: StandardCoinName, txidArray: string[]): Promise<any> {
+    eth_getTransactionReceipt(chainID: StandardCoinName, txidArray: string[]): Promise<any> {
       const paramArray = [];
       for (let i = 0, len = txidArray.length; i < len; i++) {
         const txid = txidArray[i];
@@ -525,7 +528,7 @@ export class WalletJsonRPCService {
       }
 
       let apiurltype = this.getApiUrlTypeForRpc(chainID);
-      const rpcApiUrl = this.globalJsonRPCService.getApiUrl(apiurltype);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl.length === 0) {
           return null;
       }
@@ -538,20 +541,20 @@ export class WalletJsonRPCService {
       return null;
     }
 
-    public getApiUrlTypeForRpc(chainID: string): ApiUrlType {
-      let apiUrlType = ApiUrlType.ELA_RPC;
+    public getApiUrlTypeForRpc(chainID: string): ElastosApiUrlType {
+      let apiUrlType = ElastosApiUrlType.ELA_RPC;
       switch (chainID) {
           case StandardCoinName.ELA:
-              apiUrlType = ApiUrlType.ELA_RPC;
+              apiUrlType = ElastosApiUrlType.ELA_RPC;
               break;
           case StandardCoinName.IDChain:
-              apiUrlType = ApiUrlType.DID_RPC;
+              apiUrlType = ElastosApiUrlType.DID_RPC;
               break;
           case StandardCoinName.ETHSC:
-              apiUrlType = ApiUrlType.ETHSC_RPC;
+              apiUrlType = ElastosApiUrlType.ETHSC_RPC;
               break;
           case StandardCoinName.ETHDID:
-              apiUrlType = ApiUrlType.EID_RPC;
+              apiUrlType = ElastosApiUrlType.EID_RPC;
               break;
           default:
               Logger.log("wallet", 'WalletJsonRPCService: RPC can not support ' + chainID);

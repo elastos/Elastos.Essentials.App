@@ -76,6 +76,9 @@ export const zh = {
           'privacy': '隐私',
           'publish-identity-medium-assist': '使用名为 ASSIST 的第三方服务快速发布身份',
           'publish-identity-medium-wallet': '使用您的钱包自行发布身份',
+
+          /*********** Elastos API provider page ***********/
+          'elastosapiprovider': 'Elastos API'
      }
 
 };

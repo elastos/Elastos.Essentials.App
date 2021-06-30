@@ -20,6 +20,7 @@ import { GlobalWalletConnectService } from './services/global.walletconnect.serv
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { GlobalJsonRPCService } from './services/global.jsonrpc.service';
 import { GlobalHiveService } from './services/global.hive.service';
+import { GlobalElastosAPIService } from './services/global.elastosapi.service';
 
 @Component({
     selector: 'app-root',
@@ -48,7 +49,8 @@ export class AppComponent {
         private notificationsService: GlobalNotificationsService,
         private publicationService: GlobalPublicationService,
         private globalHiveService: GlobalHiveService,
-        private walletConnect: GlobalWalletConnectService
+        private walletConnect: GlobalWalletConnectService,
+        private globalElastosAPIService: GlobalElastosAPIService
     ) {
     }
 
@@ -81,11 +83,10 @@ export class AppComponent {
             // Catch android back key for navigation
             this.setupBackKeyNavigation();
 
-            screen.orientation.lock('portrait');
-
             // Initialize mandatory services
             this.theme.init();
             await this.language.init();
+            await this.globalElastosAPIService.init();
             await this.notificationsService.init();
             await this.intentService.init();
             await this.publicationService.init();
@@ -95,7 +96,7 @@ export class AppComponent {
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();
-            
+
             Logger.log("Global", "All awaited init services have been initialized");
 
             // This method will sign in, so it must come last.
