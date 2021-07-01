@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from '../logger';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
@@ -7,6 +7,7 @@ import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { GlobalLanguageService } from './global.language.service';
 
 export enum ElastosApiUrlType {
     // Main chain
@@ -67,13 +68,26 @@ export class GlobalElastosAPIService extends GlobalService {
     /** RxJS subject that holds the currently active api provider */
     public activeProvider: BehaviorSubject<ElastosAPIProvider> = new BehaviorSubject(null);
 
+    private languageSubscription: Subscription = null;
+
     constructor(
         public translate: TranslateService,
+        private language: GlobalLanguageService,
         private prefs: GlobalPreferencesService,
         private globalNetworksService: GlobalNetworksService,
         private globalJsonRPCService: GlobalJsonRPCService) {
         super();
+    }
 
+    /**
+     * Initializes the service, including reloading the saved provider.
+     */
+    public init(): Promise<void> {
+        GlobalServiceManager.getInstance().registerService(this);
+        return;
+    }
+
+    private initProvidersList() {
         // TODO: Move to root config/ folder
         this.availableProviders = [
             {
@@ -122,7 +136,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escRPC: 'https://api.trinity-tech.cn/eth',
                         escOracleRPC: 'https://api.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api.trinity-tech.cn/eth-misc',
-                        escBrowserRPC: '',
+                        escBrowserRPC: 'https://eth.elastos.io', // TODO
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "TestNet": {
@@ -142,15 +156,11 @@ export class GlobalElastosAPIService extends GlobalService {
         ];
     }
 
-    /**
-     * Initializes the service, including reloading the saved provider.
-     */
-    public init(): Promise<void> {
-        GlobalServiceManager.getInstance().registerService(this);
-        return;
-    }
-
     async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+        this.languageSubscription = this.language.activeLanguage.subscribe((lang) => {
+            this.initProvidersList();
+        });
+
         // Retrieve user's preferred provider from preferences
         let providerName = await this.prefs.getPreference(signedInIdentity.didString, "elastosapi.provider") as string;
         let provider = this.getProviderByName(providerName);
@@ -166,6 +176,10 @@ export class GlobalElastosAPIService extends GlobalService {
     }
 
     onUserSignOut(): Promise<void> {
+        if (this.languageSubscription) {
+            this.languageSubscription.unsubscribe();
+            this.languageSubscription = null;
+        }
         return;
     }
 
@@ -205,8 +219,6 @@ export class GlobalElastosAPIService extends GlobalService {
      * Ex: "MainNet" network template + "elastos.io" provider + "ETHSC_RPC" api type ==> https://api.elastos.io/eth
      */
     public getApiUrl(type: ElastosApiUrlType): string {
-        let apiUrl = null;
-
         let activeProvider = this.activeProvider.value;
         let activeNetworkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
 

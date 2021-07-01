@@ -49,7 +49,7 @@ export class GlobalLanguageService extends GlobalService {
 
   constructor(
     private translate: TranslateService,
-    private prefs: GlobalPreferencesService, private didSessions: GlobalDIDSessionsService) {
+    private prefs: GlobalPreferencesService) {
       super();
   }
 
