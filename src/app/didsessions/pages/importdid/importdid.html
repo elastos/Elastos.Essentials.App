@@ -8,7 +8,7 @@
       <ion-textarea
         *ngIf="!readonly"
         id='sentenceInput'
-        autoGrow
+        row=5
         #addMnemonicWordInput
         [placeholder]="'didsessions.enter-mnemonic'|translate"
         [(ngModel)]="mnemonicSentence"
