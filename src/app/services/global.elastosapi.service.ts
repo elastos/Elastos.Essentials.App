@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
+import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
@@ -63,9 +64,12 @@ export class GlobalElastosAPIService extends GlobalService {
     private availableProviders: ElastosAPIProvider[] = [];
 
     /** RxJS subject that holds the currently active api provider */
-    public activeProvider: BehaviorSubject<ElastosAPIProvider> = null;
+    public activeProvider: BehaviorSubject<ElastosAPIProvider> = new BehaviorSubject(null);
 
-    constructor(private prefs: GlobalPreferencesService, private globalNetworksService: GlobalNetworksService) {
+    constructor(
+        private prefs: GlobalPreferencesService, 
+        private globalNetworksService: GlobalNetworksService,
+        private globalJsonRPCService: GlobalJsonRPCService) {
         super();
 
         // TODO: Move to root config/ folder
@@ -149,8 +153,8 @@ export class GlobalElastosAPIService extends GlobalService {
         let providerName = await this.prefs.getPreference(signedInIdentity.didString, "elastosapi.provider") as string;
         let provider = this.getProviderByName(providerName);
         if (!provider) {
-            // This provider doesn't exist any more maybe. Use the default provider.
-            this.activeProvider = new BehaviorSubject(this.getDefaultProvider());
+            // This saved provider doesn't exist any more maybe. Use the default provider.
+            this.activeProvider = new BehaviorSubject(await this.getDefaultProvider());
         }
         else {
             this.activeProvider = new BehaviorSubject(provider);
@@ -167,8 +171,11 @@ export class GlobalElastosAPIService extends GlobalService {
         return this.availableProviders.find(p => p.name === providerName);
     }
 
-    private getDefaultProvider(): ElastosAPIProvider {
-        return this.availableProviders[0];
+    /**
+     * The default provider to use for a user is the "best" provider, that we tried to auto detect.
+     */
+    private getDefaultProvider(): Promise<ElastosAPIProvider> {
+        return this.findTheBestProvider();
     }
 
     public getAvailableProviders(): ElastosAPIProvider[] {
@@ -215,5 +222,66 @@ export class GlobalElastosAPIService extends GlobalService {
         }
 
         return endpoints[type];
-      }
+    }
+
+    /**
+     * Tries to find the best elastos API provider for the current user / device. When found, this provider 
+     * is selected and used as currently active provider for essentials.
+     * 
+     * Calling this method fires the rxjs subject event so that all listeners can adapt to this detected provider.
+     * 
+     * This method does NOT change the active provider for the current user if a user is signed in.
+     */
+    public async autoDetectTheBestProvider(): Promise<void> {
+        Logger.log("elastosapi", "Trying to auto detect the best elastos api provider");
+        let bestProvider = await this.findTheBestProvider();
+        Logger.log("elastosapi", "Best provider found:", bestProvider);
+        this.activeProvider.next(bestProvider);
+    }
+
+    /**
+     * Tries to find the best provider and returns it.
+     */
+    private _bestProvider: ElastosAPIProvider;
+    private async findTheBestProvider(): Promise<ElastosAPIProvider> {
+        // To know the best provider, we try to call an api on all of them and then select the fastest
+        // one to answer.
+        this._bestProvider = null;
+        let testPromises: Promise<void>[]= this.availableProviders.map(p => this.callTestAPIOnProvider(p));
+        await Promise.race(testPromises);
+        return this._bestProvider;
+    }
+
+    /**
+     * Call a test API on a provider to check its speed in findTheBestProvider().
+     * - All errors are catched and not forwarded because we don't want Promise.race() to throw, we
+     * want it to resolve the first successful call to answer.
+     * - API calls that return errors are resolved with a timeout, to make sure they are considered as 
+     * "slow" but on the other hand that they resolve one day (we can't stack unresolved promises forever).
+     */
+    private callTestAPIOnProvider(provider: ElastosAPIProvider): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise(async (resolve) => {
+            let testApiUrl = provider.endpoints["MainNet"].mainChainRPC;
+            
+            const param = {
+                method: 'getblockcount',
+            };
+
+            try {
+                let data = await this.globalJsonRPCService.httpPost(testApiUrl, param);
+                Logger.log("elastosapi", "Provider "+provider.name+" just answered the test api call with value", data);
+                // Set the provider as best provider if no one did that yet. We are the fastest api call to answer.
+                if (!this._bestProvider)
+                    this._bestProvider = provider;
+                resolve();
+            } catch (e) {
+                Logger.warn("elastosapi", "Auto detect api call to " + testApiUrl + " failed with error:", e);
+                // Resolve later, to let othe rproviders answer faster
+                setTimeout(() => {
+                    resolve();
+                }, 30000); // 30s
+            }
+        });
+    }
 }

@@ -202,17 +202,19 @@ export class GlobalDIDSessionsService {
    */
   private setupDIDResolver() {
     this.globalElastosAPIService.activeProvider.subscribe((provider) => {
-      let didResolverUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.EID_RPC);
+      if (provider) {
+        let didResolverUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.EID_RPC);
 
-      Logger.log('DIDSessionsService', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
-      // DID Plugin
-      didManager.setResolverUrl(didResolverUrl, () => {
-      }, (err) => {
-          Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
-      });
+        Logger.log('DIDSessionsService', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
+        // DID Plugin
+        didManager.setResolverUrl(didResolverUrl, () => {
+        }, (err) => {
+            Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+        });
 
-      // Hive plugin
-      void hiveManager.setDIDResolverUrl(didResolverUrl);
+        // Hive plugin
+        void hiveManager.setDIDResolverUrl(didResolverUrl);
+      }
     });
   }
 }

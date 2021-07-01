@@ -22,6 +22,7 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -65,6 +66,7 @@ export class IdentityService {
         private alertCtrl: AlertController,
         private uxService: UXService,
         private nativeService: GlobalNativeService,
+        private globalElastosAPIService: GlobalElastosAPIService,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -179,7 +181,7 @@ export class IdentityService {
      * - If master password created, add a did session identity entry with did string, user name
      * - Sign in with the new DID in did session plugin. DID session app is closed and launcher is started.
      */
-    startCreatingNewDIDWithNewMnemonic() {
+    public startCreatingNewDIDWithNewMnemonic() {
         this.identityBeingCreated = new NewIdentity();
 
         Logger.log('didsessions', "Navigating to profile edition");
@@ -193,6 +195,9 @@ export class IdentityService {
 
     async createNewDIDWithNewMnemonic() {
         Logger.log('didsessions', "Creating new did with new mnemonic");
+
+        // Automatically find and use the best elastos API provider
+        await this.globalElastosAPIService.autoDetectTheBestProvider();
 
         this.identityBeingCreated.mnemonic = await this.generateMnemonic();
 
@@ -313,6 +318,9 @@ export class IdentityService {
 
     private async createStoreAfterImport() {
         Logger.log('didsessions', "Create store after import");
+
+        // Automatically find and use the best elastos API provider
+        await this.globalElastosAPIService.autoDetectTheBestProvider();
 
         let didStore = await DIDStore.create();
         Logger.log('didsessions', 'Getting didStore', didStore);
