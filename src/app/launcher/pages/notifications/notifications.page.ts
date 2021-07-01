@@ -78,7 +78,6 @@ export class NotificationsPage implements OnInit {
 
   async start(notification: LauncherNotification) {
     await this.close(notification);
-
     if (notification.type == LauncherNotificationType.TIP) {
       // Special "tip" notification: handle this directly in the launcher app without starting an intent
       Logger.log('Launcher', "Opening tip from notification", notification);
@@ -89,24 +88,34 @@ export class NotificationsPage implements OnInit {
       switch (notification.app) {
         case App.CONTACTS:
           this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends');
+          break;
         case App.CRCOUNCIL_VOTING:
-        this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+          this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+          break;
         case App.CRPROPOSAL_VOTING:
           this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, '/crproposalvoting/proposals/ALL');
+          break;
         case App.SCANNER:
           this.globalNav.navigateTo(App.SCANNER, '/scanner/scan');
+          break;
         case App.DEVELOPER_TOOLS:
           this.globalNav.navigateTo(App.DEVELOPER_TOOLS, '/developertools/home');
+          break;
         case App.DPOS_VOTING:
           this.dposVotingInitService.start()
+          break;
         case App.HIVE_MANAGER:
           this.hiveManagerInitService.start();
+          break;
         case App.IDENTITY:
           this.globalNav.navigateTo(App.IDENTITY, '/identity/myprofile/home');
+          break;
         case App.SETTINGS:
           this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
+          break;
         case App.WALLET:
           this.walletInitService.start();
+          break;
         default:
           Logger.log('Launcher', "Notifications.page.start - No routing available");
       }

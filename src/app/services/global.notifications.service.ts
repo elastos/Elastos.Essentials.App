@@ -46,7 +46,6 @@ export class GlobalNotificationsService extends GlobalService {
 
     constructor(
         private globalStorageService: GlobalStorageService,
-        private didSessions: GlobalDIDSessionsService
     ) {
         super();
     }
