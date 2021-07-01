@@ -17,7 +17,7 @@ import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
 import { App } from 'src/app/model/app.enum';
 import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Util } from 'src/app/model/util';
-import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 
 type CRRegistrationInfo = {
@@ -55,11 +55,11 @@ export class CRCouncilRegistrationPage implements OnInit {
         state: "Unregistered",
         did: "",
     };
-    public status:string = "";
+    public status = "";
     public chainId = StandardCoinName.ELA;
     public did: string;
-    public state: string = "";
-    public crPublicKey: string = "";
+    public state = "";
+    public crPublicKey = "";
 
     public available = 0;
     public rpcApiUrl: string;
@@ -102,7 +102,7 @@ export class CRCouncilRegistrationPage implements OnInit {
             },
         };
 
-        this.rpcApiUrl = this.globalElastosAPIService.getApiUrl(ApiUrlType.ELA_RPC);
+        this.rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         const result = await this.jsonRPCService.httpPost(this.rpcApiUrl, param);
         if (!Util.isEmptyObject(result.crmembersinfo)) {
             Logger.log(App.CRCOUNCIL_MANAGER, "crmembers:", result.crmembersinfo);
@@ -202,7 +202,7 @@ export class CRCouncilRegistrationPage implements OnInit {
 
         //Check value
         if (this.balance.lt(0.0002)) {
-            this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
+            void this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             return;
         }
 
