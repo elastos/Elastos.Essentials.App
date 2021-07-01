@@ -57,8 +57,7 @@ export class CandidatesPage implements OnInit {
         }
     }
 
-    async doRefresh(event) {
-        await this.candidatesService.ininData()
+    doRefresh(event) {
         setTimeout(() => {
             event.target.complete();
         }, 1000);
@@ -104,12 +103,12 @@ export class CandidatesPage implements OnInit {
         }
         catch (err) {
             Logger.log('crcouncil', err);
-            this.toastWalletErr();
+            void this.toastWalletErr();
         }
     }
 
     /****************** Modify Values *******************/
-    candidateIsSelected(candidate: Candidate): Boolean {
+    candidateIsSelected(candidate: Candidate): boolean {
         let targetCandidate = this.candidatesService.selectedCandidates.find(
             _candidate => _candidate.cid === candidate.cid
         );
@@ -145,10 +144,10 @@ export class CandidatesPage implements OnInit {
             message: this.translate.instant("crcouncilvoting.get-ela-failed-message"),
             duration: 2000,
         });
-        toast.present();
+        await toast.present();
     }
 
-    deleteStorage() {
-        this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
+    async deleteStorage(): Promise<void> {
+        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
     }
 }

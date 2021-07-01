@@ -5,6 +5,7 @@ import { Direction, GlobalNavService } from './global.nav.service';
 import { GlobalServiceManager } from './global.service.manager';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalPreferencesService } from './global.preferences.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -49,6 +50,7 @@ export class GlobalDIDSessionsService {
   constructor(private storage: GlobalStorageService,
     private globalNavService: GlobalNavService,
     private prefs: GlobalPreferencesService,
+    private globalElastosAPIService: GlobalElastosAPIService,
     private globalIntentService: GlobalIntentService) {
   }
 
@@ -64,6 +66,8 @@ export class GlobalDIDSessionsService {
         await this.navigateHome();
       }
     }
+
+    this.setupDIDResolver();
   }
 
   public saveDidSessionsToDisk(): Promise<void> {
@@ -143,9 +147,6 @@ export class GlobalDIDSessionsService {
 
     GlobalDIDSessionsService.signedInDIDString = this.signedInIdentity.didString;
 
-    // Set did resolver
-    await this.initDIDResolver();
-
     await GlobalServiceManager.getInstance().emitUserSignIn(this.signedInIdentity);
 
     await this.saveSignedInIdentityToDisk();
@@ -192,16 +193,19 @@ export class GlobalDIDSessionsService {
     await this.storage.setSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", true);
   }
 
-  private async initDIDResolver(): Promise<boolean> {
-    const didresolver: string = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eid.rpcapi");
-    Logger.log('DIDSessionsService', 'didresolver:', didresolver);
-    return new Promise((resolve) => {
-        didManager.setResolverUrl(didresolver, () => {
-            resolve(true);
-        }, (err) => {
-            Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
-            resolve(false);
-        });
+  /**
+   * Globally, updates plugins to use a different DID resolver depending on which Elastos API provider is used.
+   * This can happen when a different user signs in (has a different elastos api provider in preferences) or when
+   * the same user manually changes his elastos api provider from settings.
+   */
+  private setupDIDResolver() {
+    this.globalElastosAPIService.activeProvider.subscribe((provider) => {
+      let didResolverUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.EID_RPC);
+      Logger.log('DIDSessionsService', 'Changing DID plugin resolver to :', didResolverUrl);
+      didManager.setResolverUrl(didResolverUrl, () => {
+      }, (err) => {
+          Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+      });
     });
   }
 }

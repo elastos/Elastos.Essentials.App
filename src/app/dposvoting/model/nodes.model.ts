@@ -1,4 +1,4 @@
-// data for https://api.elastos.io/ela
+// data for ELA mainchain api provider nodes
 export type DPosNode = {
     active: boolean;
     cancelheight: number;

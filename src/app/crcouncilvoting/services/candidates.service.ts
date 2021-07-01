@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 @Injectable({
     providedIn: 'root'
@@ -25,13 +26,14 @@ export class CandidatesService {
         private toastCtrl: ToastController,
         private storage: GlobalStorageService,
         private globalPreferences: GlobalPreferencesService,
-        public translate: TranslateService
+        public translate: TranslateService,
+        private globalElastosAPIService: GlobalElastosAPIService
     ) { }
 
 
     /** Election **/
     public candidates: Candidate[] = [];
-    public totalVotes: number = 0;
+    public totalVotes = 0;
     public selectedCandidates: Selected[] = [];
 
     /** Election Results **/
@@ -40,12 +42,6 @@ export class CandidatesService {
 
     // public activeNetwork: NetworkType;
     private subscription: Subscription = null;
-
-    /** Http Url */
-    private ela_rpc_api = 'https://api.elastos.io/ela';
-    private cr_rpc_api = 'https://api.cyberrepublic.org';
-    private cr_council_term = 'https://api.cyberrepublic.org/api/council/term';
-    private cr_council_list = 'https://api.cyberrepublic.org/api/council/list';
 
     public httpOptions = {
         headers: new HttpHeaders({
@@ -58,12 +54,11 @@ export class CandidatesService {
         "params": { "state": "active" }
     };
 
-    async init() {
-        await this.setupUrl();
-        this.ininData();
+    init() {
+        void this.initData();
     }
 
-    async ininData() {
+    initData() {
         this.candidates = [];
         this.council = [];
         this.selectedCandidates = [];
@@ -79,15 +74,8 @@ export class CandidatesService {
         }
     }
 
-    async setupUrl() {
-        this.ela_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'mainchain.rpcapi');
-        this.cr_rpc_api = await this.globalPreferences.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
-        this.cr_council_term = this.cr_rpc_api + '/api/council/term';
-        this.cr_council_list = this.cr_rpc_api + '/api/council/list';
-    }
-
     getSelectedCandidates() {
-        this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
+        void this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
             Logger.log('crcouncil', 'Selected Candidates', data);
             if (data) {
                 this.selectedCandidates = data;
@@ -97,7 +85,9 @@ export class CandidatesService {
 
     fetchCandidates() {
         Logger.log('crcouncil', 'Fetching Candidates..');
-        this.http.post<any>(this.ela_rpc_api, this.params, this.httpOptions).subscribe(async (res) => {
+        let elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.http.post<any>(elaRpcApi, this.params, this.httpOptions).subscribe(async (res) => {
             Logger.log('crcouncil', 'Candidates fetched', res);
             if (res && res.result && res.result.crcandidatesinfo) {
                 this.candidates = res.result.crcandidatesinfo;
@@ -107,11 +97,11 @@ export class CandidatesService {
                     candidate.imageUrl = await this.getAvatar(candidate.did);
                 }
             } else {
-                this.fetchElectionResults();
+                void this.fetchElectionResults();
             }
         }, (err) => {
             Logger.error('crcouncil', 'fetchCandidates error', err);
-            this.alertErr('crcouncilvoting.cr-council-no-available');
+            void this.alertErr('crcouncilvoting.cr-council-no-available');
         });
     }
 
@@ -120,9 +110,17 @@ export class CandidatesService {
         this.fetchCouncil();
     }
 
+    private getCRCouncilTermEndpoint(): string {
+        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC) + '/api/council/term';
+    }
+
+    private getCRCouncilListEndpoint(): string {
+        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC) + '/api/council/list';
+    }
+
     fetchCouncilTerm() {
         return new Promise<void>((resolve, reject) => {
-            this.http.get<any>(this.cr_council_term).subscribe((res) => {
+            this.http.get<any>(this.getCRCouncilTermEndpoint()).subscribe((res) => {
                 Logger.log('crcouncil', 'Council terms fetched', res);
                 if (res && res.data && res.data[0]) {
                     this.councilTerm = res.data[0].startDate;
@@ -138,7 +136,8 @@ export class CandidatesService {
     }
 
     fetchCouncil() {
-        this.http.get<any>(this.cr_council_list).subscribe(async (res) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.http.get<any>(this.getCRCouncilListEndpoint()).subscribe(async (res) => {
             Logger.log('crcouncil', 'Council fetched', res);
             if (res && res.data) {
                 this.council = res.data.council;
@@ -149,7 +148,7 @@ export class CandidatesService {
                 Logger.error('crcouncil', 'can not get council data!');
             }
         }, (err) => {
-            this.alertErr('crcouncilvoting.cr-council-no-available');
+            void this.alertErr('crcouncilvoting.cr-council-no-available');
             Logger.error('crcouncil', 'fetchCouncil error:', err);
         });
     }
@@ -172,7 +171,7 @@ export class CandidatesService {
                 {
                     text: this.translate.instant('common.ok'),
                     handler: () => {
-                        this.globalNav.navigateHome();
+                        void this.globalNav.navigateHome();
                     }
                 }
             ]
