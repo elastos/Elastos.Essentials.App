@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
+import { TranslateService } from '@ngx-translate/core';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService } from './global.networks.service';
@@ -67,7 +68,8 @@ export class GlobalElastosAPIService extends GlobalService {
     public activeProvider: BehaviorSubject<ElastosAPIProvider> = new BehaviorSubject(null);
 
     constructor(
-        private prefs: GlobalPreferencesService, 
+        public translate: TranslateService,
+        private prefs: GlobalPreferencesService,
         private globalNetworksService: GlobalNetworksService,
         private globalJsonRPCService: GlobalJsonRPCService) {
         super();
@@ -77,7 +79,7 @@ export class GlobalElastosAPIService extends GlobalService {
             {
                 key: "elastosio",
                 name: "elastos.io",
-                description: "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Elastos Fusion sub-team, also known as the product team.",
+                description: this.translate.instant('settings.elastos-io-des'),
                 endpoints: {
                     "MainNet": {
                         mainChainRPC: 'https://api.elastos.io/ela',
@@ -109,7 +111,7 @@ export class GlobalElastosAPIService extends GlobalService {
             {
                 key: "ttechcn",
                 name: "trinity-tech.cn",
-                description: "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Trinity Tech team, responsible for Elastos SDKs development.",
+                description: this.translate.instant('settings.trinity-tech-cn-des'),
                 endpoints: {
                     "MainNet": {
                         mainChainRPC: 'https://api.trinity-tech.cn/ela',
@@ -225,11 +227,11 @@ export class GlobalElastosAPIService extends GlobalService {
     }
 
     /**
-     * Tries to find the best elastos API provider for the current user / device. When found, this provider 
+     * Tries to find the best elastos API provider for the current user / device. When found, this provider
      * is selected and used as currently active provider for essentials.
-     * 
+     *
      * Calling this method fires the rxjs subject event so that all listeners can adapt to this detected provider.
-     * 
+     *
      * This method does NOT change the active provider for the current user if a user is signed in.
      */
     public async autoDetectTheBestProvider(): Promise<void> {
@@ -256,14 +258,14 @@ export class GlobalElastosAPIService extends GlobalService {
      * Call a test API on a provider to check its speed in findTheBestProvider().
      * - All errors are catched and not forwarded because we don't want Promise.race() to throw, we
      * want it to resolve the first successful call to answer.
-     * - API calls that return errors are resolved with a timeout, to make sure they are considered as 
+     * - API calls that return errors are resolved with a timeout, to make sure they are considered as
      * "slow" but on the other hand that they resolve one day (we can't stack unresolved promises forever).
      */
     private callTestAPIOnProvider(provider: ElastosAPIProvider): Promise<void> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve) => {
             let testApiUrl = provider.endpoints["MainNet"].mainChainRPC;
-            
+
             const param = {
                 method: 'getblockcount',
             };

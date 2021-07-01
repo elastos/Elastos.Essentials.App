@@ -74,8 +74,14 @@ export const fr = {
 
         /*********** Privacy page **********/
         'privacy': 'Vie privée',
+        'identity-publishing': 'Identity Publishing',
         'publish-identity-medium-assist': 'Publier les identités rapidement via le service tiers ASSIST',
         'publish-identity-medium-wallet': 'Publier les identités en utilisant mon portefeuille',
+
+        'elastos-api-provider': 'Elastos API Provider',
+        'elastos-api-provider-des': 'Select your preferred provider for all Elastos related services',
+        'elastos-io-des': 'Set of Elastos APIs deployed and maintained by the Elastos Foundation\'s Elastos Fusion sub-team, also known as the product team.',
+        'trinity-tech-cn-des': 'Set of Elastos APIs deployed and maintained by the Elastos Foundation\'s Trinity Tech team, responsible for Elastos SDKs development.',
 
         /*********** Elastos API provider page ***********/
         'elastosapiprovider': 'API Elastos'

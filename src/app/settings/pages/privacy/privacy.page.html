@@ -4,7 +4,7 @@
     <!-- Publish identity -->
     <ion-row class="section" >
       <ion-col size="10.5" class="title-col">
-        <h1>Identity Publishing</h1>
+        <h1>{{ 'settings.identity-publishing' | translate }}</h1>
         <h2>{{ getPublishIdentityTitle() }}</h2>
       </ion-col>
       <ion-col size="1.5" class="right-col">
@@ -17,8 +17,8 @@
     <!-- Main API provider -->
     <ion-row class="section" (click)="open('/settings/privacy/elastosapiprovider')">
       <ion-col size="11" class="title-col">
-          <h1>Elastos API Provider</h1>
-          <h2>Select your preferred provider for all Elastos related services</h2>
+          <h1>{{ 'settings.elastos-api-provider' | translate }}</h1>
+          <h2>{{ 'settings.elastos-api-provider-des' | translate }}</h2>
       </ion-col>
       <ion-col size="1" class="arrow-col">
           <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">

@@ -41,7 +41,7 @@ export class CRCouncilManagerPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('crcouncilmanager.manager'));
+        this.titleBar.setTitle(this.translate.instant('crcouncilmanager.registration-manager'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
 
         //Get cureent CRs list
