@@ -79,7 +79,7 @@ export class SentryErrorHandler implements ErrorHandler {
       // Do not popop error dialog, but still send to sentry for debug.
       Logger.error("Sentry", 'This exception has been handled:', error);
     } else {
-      this.native.genericAlert('common.sentry-message', 'common.error', true);
+      this.native.genericToast('common.sentry-message', 5000);
     }
   }
 }
