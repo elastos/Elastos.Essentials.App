@@ -12,18 +12,31 @@ import { AuthService } from 'src/app/wallet/services/auth.service';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
+import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
+import { App } from 'src/app/model/app.enum';
+import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { Util } from 'src/app/model/util';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 
 type CRRegistrationInfo = {
-    BondedDID?: boolean;
-    CID?: string;
-    CROwnerPublicKey?: string;
-    Confirms?: number;
-    DID?: string;
-    Location: number;
-    NickName: string;
-    URL: string;
+    cid?: string;
+    code?: string;
+    depositaddress?: string;
+    depositamout?: string;
+    did: string;
+    dpospublickey?: string;
+    impeachmentvotes?: string;
+    index?: number;
+    location: number;
+    nickname: string;
+    penalty?: string;
+    state: string;
+    url: string;
 }
+
+
 
 @Component({
     selector: 'app-registration',
@@ -36,13 +49,20 @@ export class CRCouncilRegistrationPage implements OnInit {
     public masterWalletId: string;
     public areaList = areaList;
     public crInfo: CRRegistrationInfo = {
-        NickName: "test",
-        Location: 86,
-        URL:'http://test.com',
+        nickname: "test",
+        location: 86,
+        url:'http://test.com',
+        state: "Unregistered",
+        did: "",
     };
     public status:string = "";
     public chainId = StandardCoinName.ELA;
     public did: string;
+    public state: string = "";
+    public crPublicKey: string = "";
+
+    public available = 0;
+    public rpcApiUrl: string;
 
     balance: BigNumber; // ELA
 
@@ -55,6 +75,9 @@ export class CRCouncilRegistrationPage implements OnInit {
         public voteService: VoteService,
         private authService: AuthService,
         public popupProvider: PopupProvider,
+        public jsonRPCService: GlobalJsonRPCService,
+        public walletRPCService: WalletJsonRPCService,
+        private globalElastosAPIService: GlobalElastosAPIService,
     ) {
 
     }
@@ -67,7 +90,31 @@ export class CRCouncilRegistrationPage implements OnInit {
         Logger.log("CRCouncilRegistrationPage", this.voteService.masterWalletId);
         this.did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
         this.masterWalletId = this.voteService.masterWalletId;
-        // let ret = await this.walletManager.spvBridge.getRegisteredCRInfo(this.voteService.masterWalletId, StandardCoinName.ELA);
+
+        const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1);
+        this.crPublicKey = crPublickeys.PublicKeys[0];
+
+        //Get cr ower info
+        const param = {
+            method: 'listcurrentcrs',
+            params: {
+                state: "all"
+            },
+        };
+
+        this.rpcApiUrl = this.globalElastosAPIService.getApiUrl(ApiUrlType.ELA_RPC);
+        const result = await this.jsonRPCService.httpPost(this.rpcApiUrl, param);
+        if (!Util.isEmptyObject(result.crmembersinfo)) {
+            Logger.log(App.CRCOUNCIL_MANAGER, "crmembers:", result.crmembersinfo);
+            for (const crmember of result.crmembersinfo) {
+                if (crmember.did == GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "")) {
+                    this.state = crmember.state;
+                    this.crInfo = crmember;
+                    Logger.log(App.CRCOUNCIL_MANAGER, "owner info:", this.crInfo);
+                    break;
+                }
+            }
+        }
 
         // let info = JSON.parse(ret);
         // this.status = info.Status;
@@ -88,6 +135,58 @@ export class CRCouncilRegistrationPage implements OnInit {
         //         this.crInfo = info.Info;
         //         break;
         // }
+
+        switch (this.crInfo.state) {
+            case 'Unregistered':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.registration'));
+                this.crInfo.did = this.did;
+                break;
+            // Pending indicates the producer is just registered and didn't get 6
+            // confirmations yet.
+            case 'Pending':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
+                break;
+            // Active indicates the producer is registered and confirmed by more than
+            // 6 blocks.
+            case 'Active':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
+                break;
+
+            // Inactive indicates the producer has been inactivated for a period which shall
+            // be punished and will be activated later.
+            case 'Inactive':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
+                break;
+            // Canceled indicates the producer was canceled.
+            case 'Canceled':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.retrieve'));
+
+                // this.blockHeight = await this.walletRPCService.getBlockCount(StandardCoinName.ELA);
+                // this.cancelHeight = this.dposInfo.cancelheight;
+                // const param = {
+                //     method: 'getdepositcoin',
+                //     params: {
+                //         ownerpublickey: this.ownerPublicKey,
+                //     },
+                // };
+                // const result = await this.jsonRPCService.httpPost(this.rpcApiUrl, param);
+                // Logger.log(App.DPOS_REGISTRATION, "getdepositcoin:", result);
+                // if (!Util.isEmptyObject(result.available)) {
+                //     this.available = result.available;
+                //     Logger.log(App.DPOS_REGISTRATION, "available:", this.available);
+                // }
+
+                break;
+            // Illegal indicates the producer was found to break the consensus.
+            case 'Illegal':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.illegal'));
+                break;
+            // Returned indicates the producer has canceled and deposit returned.
+            case 'Returned':
+                this.titleBar.setTitle(this.translate.instant('dposregistration.return'));
+                break;
+        }
+
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
 
     }
@@ -116,7 +215,7 @@ export class CRCouncilRegistrationPage implements OnInit {
     //         this.transfer.did, digest, payPassword);
 
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWalletId, StandardCoinName.ELA,
-            this.crInfo.CROwnerPublicKey, this.crInfo.DID, this.crInfo.NickName, this.crInfo.URL, this.crInfo.Location);
+            this.crPublicKey, this.crInfo.did, this.crInfo.nickname, this.crInfo.url, this.crInfo.location);
 
         const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
 
@@ -128,7 +227,7 @@ export class CRCouncilRegistrationPage implements OnInit {
 
 
         const payload = await this.walletManager.spvBridge.generateUnregisterCRPayload(this.masterWalletId, StandardCoinName.ELA,
-            this.crInfo.DID);
+            this.crInfo.did);
 
         const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(payload, "");
 
@@ -144,7 +243,7 @@ export class CRCouncilRegistrationPage implements OnInit {
         }
 
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWalletId, StandardCoinName.ELA,
-            this.crInfo.CROwnerPublicKey, this.crInfo.DID, this.crInfo.NickName, this.crInfo.URL, this.crInfo.Location);
+            this.crPublicKey, this.crInfo.did, this.crInfo.nickname, this.crInfo.url, this.crInfo.location);
 
         const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
         await this.voteService.signAndSendRawTransaction(rawTx);
@@ -153,15 +252,19 @@ export class CRCouncilRegistrationPage implements OnInit {
     async retrieve() {
         Logger.log('crcouncilregistration', 'Calling retrieve()', this.crInfo);
 
-        const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1);
-        const crPublicKey = crPublickeys.PublicKeys[0];
+        // const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1);
+        // const crPublicKey = crPublickeys.PublicKeys[0];
 
-        // let depositAddress = await this.walletManager.spvBridge.getDepositAddress(this.ownerPublicKey);
-        //Utxo
+        let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.masterWalletId, StandardCoinName.ELA);
 
-        // const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction("");
+        let utxoArray = await this.walletRPCService.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
+        Logger.log(App.CRCOUNCIL_MANAGER, "utxoArray:", utxoArray);
 
-        // await this.voteService.signAndSendRawTransaction(rawTx);
+        let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
+
+        const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
+
+        await this.voteService.signAndSendRawTransaction(rawTx);
     }
 
 }
