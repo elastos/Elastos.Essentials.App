@@ -74,7 +74,7 @@ export class GlobalLanguageService extends GlobalService {
   }
 
   public async onUserSignOut(): Promise<void> {
-
+    this.selectedLanguage = null;
   }
 
   /**
@@ -109,10 +109,20 @@ export class GlobalLanguageService extends GlobalService {
     Logger.log("LanguageService", "Fetching language information");
 
     this.systemLanguage = this.translate.getBrowserLang();
-    if (GlobalDIDSessionsService.signedInDIDString)
-      this.selectedLanguage = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language");
-    else
+    if (GlobalDIDSessionsService.signedInDIDString) {
+      let languageFromPref: string = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language");
+      if (!languageFromPref || languageFromPref == "native system") {
+        // Use the language that the user selected in didsession.
+        if (this.selectedLanguage) {
+          await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language", this.selectedLanguage, true);
+        }
+      } else {
+        this.selectedLanguage = languageFromPref;
+      }
+    }
+    else {
       this.selectedLanguage = 'native system';
+    }
 
     Logger.log("LanguageService", "System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
 
