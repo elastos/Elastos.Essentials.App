@@ -2,6 +2,7 @@ import { AbstractProvider, RequestArguments } from "web3-core";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
 import { Logger } from "../logger";
 import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
+import { ElastosApiUrlType, GlobalElastosAPIService } from "../services/global.elastosapi.service";
 import { GlobalPreferencesService } from "../services/global.preferences.service";
 
 export class EssentialsWeb3Provider implements AbstractProvider {
@@ -10,14 +11,15 @@ export class EssentialsWeb3Provider implements AbstractProvider {
     /**
      * Returns the previously fetched RPC API endpoint from Elastos Essentials's preferences
      */
-    private getRPCApiEndpoint(): Promise<string> {
+    private getRPCApiEndpoint(): string {
         if (this.rpcApiEndpoint != null)
-            return Promise.resolve(this.rpcApiEndpoint);
+            return this.rpcApiEndpoint;
 
-        return GlobalPreferencesService.instance.getPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi");
+        return GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.ETHSC_RPC);
     }
 
-    private async callJsonRPC(payload): Promise<any> {
+    private callJsonRPC(payload): Promise<any> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject)=>{
             var request = new XMLHttpRequest();
 

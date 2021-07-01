@@ -66,6 +66,8 @@ export type ElastosAPIProvider = {
     providedIn: 'root'
 })
 export class GlobalElastosAPIService extends GlobalService {
+    public static instance: GlobalElastosAPIService = null;
+
     private availableProviders: ElastosAPIProvider[] = [];
 
     /** RxJS subject that holds the currently active api provider */
@@ -80,6 +82,7 @@ export class GlobalElastosAPIService extends GlobalService {
         private globalNetworksService: GlobalNetworksService,
         private globalJsonRPCService: GlobalJsonRPCService) {
         super();
+        GlobalElastosAPIService.instance = this;
     }
 
     /**

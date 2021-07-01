@@ -13,6 +13,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum'
 import { Subscription } from 'rxjs';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 @Injectable({
     providedIn: 'root'
@@ -28,9 +29,11 @@ export class ProposalService {
         private prefs: GlobalPreferencesService,
         private nav: GlobalNavService,
         private globalPreferences: GlobalPreferencesService,
+        private globalElastosAPIService: GlobalElastosAPIService
     ) {}
 
     async init() {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference)=>{
         if (preference.key === "chain.network.type") {
           this.cr_rpc_api = await this.getCRProposalAPI();
@@ -48,35 +51,36 @@ export class ProposalService {
       this.pageNumbersLoaded = 0;
     }
 
-    private getCRProposalAPI(): Promise<string> {
-      return this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'cr.rpcapi');
+    private getCRProposalAPI(): string {
+      return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
 	  }
 
-    public async fetchProposals(status: ProposalStatus, page: number): Promise<ProposalSearchResult[]> {
-      if (this.pageNumbersLoaded >= page) {
-        return this.allSearchResults;
-      }
+    public fetchProposals(status: ProposalStatus, page: number): Promise<ProposalSearchResult[]> {
       return new Promise((resolve, reject)=>{
-            Logger.log('crproposal', 'Fetching proposals... page:', page);
-            this.http.get<any>(this.cr_rpc_api+'/api/cvote/all_search?status='+status+'&page='+page+'&results=10').subscribe((res: ProposalsSearchResponse) => {
-                Logger.log('crproposal', res);
-                if (this.pageNumbersLoaded < page) {
-                  if (res && res.data && res.data.list) {
-                    this.allSearchResults = this.allSearchResults.concat(res.data.list);
-                    this.pageNumbersLoaded = page;
-                  } else {
-                    Logger.error('crproposal', 'can not get vote data!');
-                  }
-                }
-                resolve(this.allSearchResults);
-            }, (err) => {
-                Logger.error('crproposal', 'fetchProposals error:', err);
-                reject(err);
-            });
+        if (this.pageNumbersLoaded >= page) {
+          resolve(this.allSearchResults);
+        }
+
+        Logger.log('crproposal', 'Fetching proposals... page:', page);
+        this.http.get<any>(this.cr_rpc_api+'/api/cvote/all_search?status='+status+'&page='+page+'&results=10').subscribe((res: ProposalsSearchResponse) => {
+            Logger.log('crproposal', res);
+            if (this.pageNumbersLoaded < page) {
+              if (res && res.data && res.data.list) {
+                this.allSearchResults = this.allSearchResults.concat(res.data.list);
+                this.pageNumbersLoaded = page;
+              } else {
+                Logger.error('crproposal', 'can not get vote data!');
+              }
+            }
+            resolve(this.allSearchResults);
+        }, (err) => {
+            Logger.error('crproposal', 'fetchProposals error:', err);
+            reject(err);
         });
+      });
     }
 
-    public async fetchProposalDetails(proposalId: number): Promise<ProposalDetails> {
+    public fetchProposalDetails(proposalId: number): Promise<ProposalDetails> {
         return new Promise((resolve, reject)=>{
             Logger.log('crproposal', 'Fetching proposal details for proposal '+proposalId+'...');
             this.http.get<any>(this.cr_rpc_api+'/api/cvote/get_proposal/'+proposalId).subscribe((res: ProposalsDetailsResponse) => {
@@ -94,7 +98,7 @@ export class ProposalService {
         });
     }
 
-    public async fetchSearchedProposal(page: number = 1, status: ProposalStatus, search?: string): Promise<ProposalSearchResult[]> {
+    public fetchSearchedProposal(page = 1, status: ProposalStatus, search?: string): Promise<ProposalSearchResult[]> {
         return new Promise((resolve, reject)=>{
             Logger.log('crproposal', 'Fetching searched proposal for status: ' + status, + 'with search: ' + search);
             this.http.get<any>(this.cr_rpc_api+'/api/cvote/all_search?page='+page+'&results=10&status='+status+'&search='+search).subscribe((res: ProposalsSearchResponse) => {
@@ -111,7 +115,7 @@ export class ProposalService {
         });
     }
 
-    public async fetchSuggestionDetails(suggestionId: string): Promise<SuggestionDetails> {
+    public fetchSuggestionDetails(suggestionId: string): Promise<SuggestionDetails> {
         return new Promise((resolve, reject)=>{
             Logger.log('crproposal', 'Fetching suggestion details for suggestion '+suggestionId+'...');
             this.http.get<any>(this.cr_rpc_api+'/api/suggestion/get_suggestion/'+suggestionId).subscribe((res: SuggestionDetailsResponse) => {
@@ -158,7 +162,7 @@ export class ProposalService {
     }
 
     public navigateToProposalDetailsPage(proposal: ProposalSearchResult) {
-        this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalId: proposal.id } });
+        void this.nav.navigateTo(App.CRPROPOSAL_VOTING, "/crproposalvoting/proposal-details", { state: { proposalId: proposal.id } });
 
         /* this.router.navigate(["/crproposalvoting/proposal-details"], {
             queryParams: {

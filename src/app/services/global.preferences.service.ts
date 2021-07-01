@@ -34,15 +34,6 @@ export class GlobalPreferencesService {
       "chain.network.type": "MainNet",
       "chain.network.config": "",
       "chain.network.configurl": "",
-      "mainchain.rpcapi": "https://api.elastos.io/ela",
-      "sidechain.id.rpcapi": "https://api.elastos.io/did",
-      "sidechain.eid.rpcapi": "https://api.elastos.io/eid",
-      "sidechain.eth.oracle": "https://api.elastos.io/oracle",
-      "sidechain.eth.apimisc": "https://api.elastos.io/misc",
-      "sidechain.eth.rpcapi": "https://api.elastos.io/eth",
-      "sidechain.eth.browserapi": "https://eth.elastos.io",
-      "cr.rpcapi": 'https://api.cyberrepublic.org',
-      "trinitycli.runaddress": "",
       "elastosapi.provider": "elastosio"
     };
   }
@@ -55,6 +46,9 @@ export class GlobalPreferencesService {
   public async getPreference<T>(did: string, key: string, allowNullDID = false): Promise<T> {
     if (did == null && !allowNullDID)
       throw new Error("Getting a global preference (no DID set) without allowNullDID set to false is forbidden! key= " + key);
+
+    if (!(key in this.getDefaultPreferences()))
+      throw new Error("Preference " + key + " is not a registered preference!");
 
     let preferences = await this.getPreferences(did, allowNullDID);
     if (!(key in preferences))
