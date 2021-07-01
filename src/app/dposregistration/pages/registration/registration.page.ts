@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
@@ -9,10 +9,9 @@ import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { AuthService } from 'src/app/wallet/services/auth.service';
-import { ActivatedRoute } from '@angular/router';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';

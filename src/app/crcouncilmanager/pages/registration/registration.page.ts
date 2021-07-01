@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
@@ -15,7 +15,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
 import { App } from 'src/app/model/app.enum';
-import { ApiUrlType, GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 

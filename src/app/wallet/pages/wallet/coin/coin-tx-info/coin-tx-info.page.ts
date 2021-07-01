@@ -300,15 +300,9 @@ export class CoinTxInfoPage implements OnInit {
     async getETHSCTransactionTargetAddres(transaction: EthTransaction) {
         let targetAddress = transaction.to;
         const withdrawContractAddress = (this.subWallet as ETHChainSubWallet).getWithdrawContractAddress();
-        // TODO
-        // if (transaction.to === withdrawContractAddress) {
-        //     targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(transaction.BlockNumber + 6, transaction.hash);
-        //     // If the targetAddress is empty, then this transaction is error.
-        //     // TODO: But now, the spvsdk does not set any flag to this transaction. 2020.9.29
-        // } else if ('ERC20Transfer' === transaction.TokenFunction) {
-        //     // ERC20 Token transfer
-        //     targetAddress = transaction.TokenAddress;
-        // }
+        if (transaction.to.toLowerCase() === withdrawContractAddress.toLowerCase()) {
+            targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
+        }
         return targetAddress;
     }
 

@@ -15,7 +15,9 @@ import moment from 'moment';
  */
 export class ETHChainSubWallet extends StandardSubWallet {
     private ethscAddress: string = null;
+    private contractAddress: string = null;
     private web3 = null;
+    // private erc20ABI: any;
 
     private tokenList: ERC20TokenInfo[] = null;
 
@@ -23,7 +25,20 @@ export class ETHChainSubWallet extends StandardSubWallet {
         super(masterWallet, id);
 
         this.initWeb3();
+        // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
         this.loadTransactionsFromCache();
+
+        switch (this.id) {
+          case StandardCoinName.ETHSC:
+            this.contractAddress = Config.ETHSC_CONTRACT_ADDRESS.toLowerCase();
+          break;
+          case StandardCoinName.ETHDID:
+            this.contractAddress = Config.ETHDID_CONTRACT_ADDRESS.toLowerCase();
+          break;
+          default:
+            Logger.warn('wallet', 'The ', this.id, ' does not set the contract address!');
+          break;
+        }
 
         setTimeout(async () => {
           this.updateBalance();
@@ -87,7 +102,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
      * Use smartcontract to Send ELA from ETHSC to mainchain.
      */
     public getWithdrawContractAddress() {
-        return Config.ETHSC_CONTRACT_ADDRESS;
+        return this.contractAddress;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
@@ -190,7 +205,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
         let toAddressLowerCase = transaction.to.toLowerCase();
         if (this.isERC20TokenTransfer(toAddressLowerCase)) {
             return "wallet.coin-op-contract-token-transfer";
-        } else if (toAddressLowerCase === Config.ETHSC_CONTRACT_ADDRESS.toLowerCase()) {
+        } else if (toAddressLowerCase === this.contractAddress) {
             // withdraw to MainChain
             return "wallet.coin-dir-to-mainchain";
         } else if (toAddressLowerCase === '') {
@@ -254,18 +269,63 @@ export class ETHChainSubWallet extends StandardSubWallet {
         );
     }
 
+    /* Use createTransferGeneric for createPaymentTransaction
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
+      const tokenAccountAddress = await this.getTokenAddress();
+      const contractAddress = this.contractAddress;
+      const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
+      const gasPrice = await this.web3.eth.getGasPrice();
+      // const gasPrice = '2000000000';
+
+      Logger.warn('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
+
+      // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
+      // const amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
+      const amountWithDecimals = this.web3.utils.toWei(amount.toString());
+
+      // Incompatibility between our bignumber lib and web3's BN lib. So we must convert by using intermediate strings
+      const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
+      const method = erc20Contract.methods.transfer(toAddress, web3BigNumber);
+
+      let gasLimit = 100000;
+      try {
+          // Estimate gas cost
+          gasLimit = await method.estimateGas();
+      } catch (error) {
+          Logger.log('wallet', 'estimateGas error:', error);
+      }
+
+      let nonce = await this.getNonce();
+      Logger.warn('wallet', 'createPaymentTransaction nonce:', nonce);
+      const rawTx =
+      await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
+          this.masterWallet.id,
+          contractAddress,
+          '0',
+          0, // WEI
+          gasPrice,
+          0, // WEI
+          gasLimit.toString(),
+          method.encodeABI(),
+          nonce
+      );
+
+      Logger.warn ('wallet', 'createPaymentTransaction transaction:', rawTx);
+
+      return rawTx;
+    }
+    */
+
     public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
         const provider = new EssentialsWeb3Provider();
         const web3 = new Web3(provider);
 
         const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
-        const contractAddress = Config.ETHSC_CONTRACT_ADDRESS;
-        const ethscWithdrawContract = new web3.eth.Contract(contractAbi, contractAddress);
+        const ethscWithdrawContract = new web3.eth.Contract(contractAbi, this.contractAddress);
         const gasPrice = await web3.eth.getGasPrice();
         const toAmountSend = web3.utils.toWei(toAmount.toString());
 
         const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
-
         const gasLimit = 100000;
         // TODO: The value from estimateGas is too small sometimes (eg 22384) for withdraw transaction.
         // Maybe it is the bug of node?
@@ -275,12 +335,13 @@ export class ETHChainSubWallet extends StandardSubWallet {
         // } catch (error) {
         //     Logger.log('wallet', 'estimateGas error:', error);
         // }
-
         const data = method.encodeABI();
         let nonce = await this.getNonce();
+        Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce);
+
         return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
-            contractAddress,
+            this.contractAddress,
             toAmountSend,
             0, // WEI
             gasPrice,
