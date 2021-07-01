@@ -8,6 +8,7 @@ import moment from 'moment';
 import { Events } from 'src/app/services/events.service';
 import { WalletJsonRPCService } from '../../services/jsonrpc.service';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
+import { Logger } from 'src/app/logger';
 
 /**
  * Result of calls to signAndSendRawTransaction().
@@ -83,7 +84,7 @@ export abstract class SubWallet {
 
     public saveBalanceToCache() {
       const timestamp = (new Date()).valueOf();
-      this.balanceCache.set('balacne', this.balance, timestamp);
+      this.balanceCache.set('balance', this.balance, timestamp);
       this.balanceCache.save();
     }
 
@@ -149,6 +150,8 @@ export abstract class SubWallet {
      * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
      */
     public destroy(): Promise<void> {
+        if (this.balanceCache) this.balanceCache.delete();
+        if (this.transactionsCache) this.transactionsCache.delete();
         return Promise.resolve();
     }
 

@@ -1,3 +1,4 @@
+import { Logger } from "src/app/logger";
 import { JSONObject } from "src/app/model/json";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
@@ -102,5 +103,12 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    */
   public async load(): Promise<void> {
     this.items = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name, []);
+  }
+
+  /**
+   * Delete cache.
+   */
+  public async delete() {
+    await GlobalStorageService.instance.deleteSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name);
   }
 }

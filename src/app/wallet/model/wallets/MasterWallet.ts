@@ -191,6 +191,16 @@ export class MasterWallet {
     }
 
     /**
+     * Removes all subwallets from the given wallet.
+     */
+    public async destroyAllSubWallet() {
+        for (let subWallet of Object.values(this.subWallets)) {
+            subWallet.destroy();
+            delete this.subWallets[subWallet.id];
+        }
+    }
+
+    /**
      * Convenient method to access subwallets as an array alphabetically.
      */
     public getSubWallets(): SubWallet[] {

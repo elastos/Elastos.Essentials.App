@@ -405,6 +405,9 @@ export class WalletManager {
      * Destroy a master wallet, active or not, base on its id
      */
     async destroyMasterWallet(id: string) {
+        // Delete all subwallet
+        this.masterWallets[id].destroyAllSubWallet();
+
         // Destroy the wallet in the wallet plugin
         await this.spvBridge.destroyWallet(id);
 
