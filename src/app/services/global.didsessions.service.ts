@@ -6,9 +6,11 @@ import { GlobalServiceManager } from './global.service.manager';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.service';
+import { HiveManagerInitModule } from '../hivemanager/init.module';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
+declare let hiveManager: HivePlugin.HiveManager;
 
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
@@ -201,11 +203,16 @@ export class GlobalDIDSessionsService {
   private setupDIDResolver() {
     this.globalElastosAPIService.activeProvider.subscribe((provider) => {
       let didResolverUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.EID_RPC);
-      Logger.log('DIDSessionsService', 'Changing DID plugin resolver to :', didResolverUrl);
+
+      Logger.log('DIDSessionsService', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
+      // DID Plugin
       didManager.setResolverUrl(didResolverUrl, () => {
       }, (err) => {
           Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
       });
+
+      // Hive plugin
+      void hiveManager.setDIDResolverUrl(didResolverUrl);
     });
   }
 }
