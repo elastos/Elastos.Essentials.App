@@ -120,7 +120,9 @@ export class AdminService {
 
   public async getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
     return new Promise((resolve)=>{
-      didManager.initDidStore(provider.did.storeId, ()=>{}, async (didStore)=>{
+      didManager.initDidStore(provider.did.storeId, ()=>{
+        Logger.warn("hivemanager", "Create ID transaction callback called but we do not handle it!");
+      }, async (didStore)=>{
         let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
         didStore.exportMnemonic(passwordInfo.password, (mnemonic)=>{
           resolve(mnemonic);
@@ -154,7 +156,7 @@ export class AdminService {
    */
   public async publishAdminDID(provider: ManagedProvider): Promise<void> {
     return new Promise((resolve)=>{
-      didManager.initDidStore(provider.did.storeId, (payload: String, memo: string)=>{
+      didManager.initDidStore(provider.did.storeId, (payload: string, memo: string)=>{
         Logger.log('HiveManager', "payload",payload)
         Logger.log('HiveManager', "payload fixed",payload.toString());
         this.sendDIDTransactionIntentRequest(payload.toString());

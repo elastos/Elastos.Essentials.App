@@ -9,8 +9,6 @@ import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.
 import { HiveManagerInitModule } from '../hivemanager/init.module';
 
 declare let internalManager: InternalPlugin.InternalManager;
-declare let didManager: DIDPlugin.DIDManager;
-declare let hiveManager: HivePlugin.HiveManager;
 
 export type IdentityAvatar = {
   /** Picture content type: "image/jpeg" or "image/png" */
@@ -68,8 +66,6 @@ export class GlobalDIDSessionsService {
         await this.navigateHome();
       }
     }
-
-    this.setupDIDResolver();
   }
 
   public saveDidSessionsToDisk(): Promise<void> {
@@ -193,28 +189,5 @@ export class GlobalDIDSessionsService {
 
   public async markActiveIdentityBackedUp(): Promise<void> {
     await this.storage.setSetting(this.getSignedInIdentity().didString, "didsessions", "identitybackedup", true);
-  }
-
-  /**
-   * Globally, updates plugins to use a different DID resolver depending on which Elastos API provider is used.
-   * This can happen when a different user signs in (has a different elastos api provider in preferences) or when
-   * the same user manually changes his elastos api provider from settings.
-   */
-  private setupDIDResolver() {
-    this.globalElastosAPIService.activeProvider.subscribe((provider) => {
-      if (provider) {
-        let didResolverUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.EID_RPC);
-
-        Logger.log('DIDSessionsService', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
-        // DID Plugin
-        didManager.setResolverUrl(didResolverUrl, () => {
-        }, (err) => {
-            Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
-        });
-
-        // Hive plugin
-        void hiveManager.setDIDResolverUrl(didResolverUrl);
-      }
-    });
   }
 }

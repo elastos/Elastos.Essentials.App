@@ -76,6 +76,7 @@ export class DIDStore {
                 didStoreId,
                 (payload: string, memo: string) =>{
                     // Never called
+                    Logger.warn("didsessions", "Create ID transaction callback called but we do not handle it!");
                 },
                 (pluginDidStore: DIDPlugin.DIDStore) => {
                     Logger.log("DIDSessions", "Initialized DID Store is ", pluginDidStore);

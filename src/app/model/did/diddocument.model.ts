@@ -7,11 +7,11 @@ declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDDocument {
 
-    public timer: number = 0;
+    public timer = 0;
     private didString: string;
 
 
-    public static async getDIDDocumentFromDIDString(didString: string): Promise<DIDDocument> {
+    public static getDIDDocumentFromDIDString(didString: string): Promise<DIDDocument> {
         if (didString.indexOf(':') == -1) {
             didString = "did:elastos:" + didString;
         }

@@ -148,6 +148,7 @@ export class DAppService {
             didManager.initDidStore(didStoreId, (payload, memo) => {
                 // No transaction to publish in this ID transaction callback, it should never be called.
                 // Another callback is used when publishing the app.
+                Logger.warn("developertools", "Create ID transaction callback called but we do not handle it!");
             }, async (didStore) => {
                 Logger.log("developertools", "DID store created");
 

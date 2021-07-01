@@ -16,7 +16,7 @@ export class IdentityService {
     /**
      * Queries the DID sidechain to check if the given app DID is published or not.
      */
-    public async getAppIdentityOnChain(appDID: string): Promise<DIDPlugin.DIDDocument> {
+    public getAppIdentityOnChain(appDID: string): Promise<DIDPlugin.DIDDocument> {
         return new Promise((resolve, reject)=>{
             didManager.resolveDidDocument(appDID, true, (document)=>{
                 resolve(document);
@@ -26,7 +26,7 @@ export class IdentityService {
         });
     }
 
-    public async getDeveloperIdentityOnChain(developerDID: string): Promise<DIDPlugin.DIDDocument> {
+    public getDeveloperIdentityOnChain(developerDID: string): Promise<DIDPlugin.DIDDocument> {
         return new Promise((resolve, reject)=>{
             didManager.resolveDidDocument(developerDID, true, (document)=>{
                 resolve(document);

@@ -27,7 +27,7 @@ export class DIDSession {
             didManager.initDidStore(didStoreId, (payload, memo) => {
                 // Create ID transaction
                 Logger.log("developertools", "Create id transaction callback called");
-                session.createIdTransactionCallback(payload as string, memo);
+                void session.createIdTransactionCallback(payload as string, memo);
             }, (didStore) => {
                 session.didStore = didStore;
                 didStore.exportMnemonic(storePassword, (mnemonic) => {

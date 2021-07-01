@@ -9,6 +9,9 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalLanguageService } from './global.language.service';
 
+declare let didManager: DIDPlugin.DIDManager;
+declare let hiveManager: HivePlugin.HiveManager;
+
 export enum ElastosApiUrlType {
     // Main chain
     ELA_RPC = "mainChainRPC",
@@ -84,6 +87,7 @@ export class GlobalElastosAPIService extends GlobalService {
      */
     public init(): Promise<void> {
         GlobalServiceManager.getInstance().registerService(this);
+        this.setupDIDResolver();
         return;
     }
 
@@ -171,6 +175,8 @@ export class GlobalElastosAPIService extends GlobalService {
         else {
             this.activeProvider = new BehaviorSubject(provider);
         }
+
+        this.setResolverUrl();
 
         Logger.log("elastosapi", "User's Elastos API provider is:", this.activeProvider.value);
     }
@@ -298,4 +304,31 @@ export class GlobalElastosAPIService extends GlobalService {
             }
         });
     }
+
+  /**
+   * Globally, updates plugins to use a different DID resolver depending on which Elastos API provider is used.
+   * This can happen when a different user signs in (has a different elastos api provider in preferences) or when
+   * the same user manually changes his elastos api provider from settings.
+   */
+  private setupDIDResolver() {
+    this.activeProvider.subscribe((provider) => {
+      if (provider) {
+        this.setResolverUrl();
+      }
+    });
+  }
+
+  private setResolverUrl() {
+    let didResolverUrl = this.getApiUrl(ElastosApiUrlType.EID_RPC);
+
+    Logger.log('DIDSessionsService', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
+    // DID Plugin
+    didManager.setResolverUrl(didResolverUrl, () => {
+    }, (err) => {
+        Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+    });
+
+    // Hive plugin
+    void hiveManager.setDIDResolverUrl(didResolverUrl);
+  }
 }
