@@ -15,9 +15,9 @@ declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
 const availableHideNodeProviders: string[] = [
-  /* "https://hive1.trinity-tech.io",
-  "https://hive2.trinity-tech.io", */
-  "https://hive-testnet3.trinity-tech.io ", // TMP
+  "https://hive1.trinity-tech.io",
+  "https://hive2.trinity-tech.io",
+  //"https://hive-testnet3.trinity-tech.io ", // TMP
 ];
 
 export enum VaultLinkStatusCheckState {

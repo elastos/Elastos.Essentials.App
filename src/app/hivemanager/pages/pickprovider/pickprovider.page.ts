@@ -74,7 +74,7 @@ export class PickProviderPage implements OnInit {
       this.storageProviders =  [
         { name: 'Trinity Tech Hive 1', vaultAddress: "https://hive1.trinity-tech.io" },
         { name: 'Trinity Tech Hive 2', vaultAddress: "https://hive2.trinity-tech.io" },
-        { name: 'Trinity Tech Hive Mainnet TEST 3', vaultAddress: "https://hive-testnet3.trinity-tech.io" } // TMP
+        //{ name: 'Trinity Tech Hive Mainnet TEST 3', vaultAddress: "https://hive-testnet3.trinity-tech.io" } // TMP
       ];
     }
     else if (networkType == NetworkType.TestNet) {
