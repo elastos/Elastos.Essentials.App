@@ -120,7 +120,7 @@ export class CROperationsService {
         this.onGoingCommand = jwtPayload;
 
         if (!Util.isEmptyObject(jwtPayload.data.userdid)) {
-            if (jwtPayload.data.userdid.toLocaleLowerCase() != GlobalDIDSessionsService.signedInDIDString.toLocaleLowerCase()) {
+            if (jwtPayload.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
                 this.popup.alert("DID isn't match", "The DID isn't match", "Ok");
                 return;

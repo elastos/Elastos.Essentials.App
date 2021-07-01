@@ -94,7 +94,7 @@ export class DPosRegistrationPage implements OnInit {
         this.masterWalletId = this.voteService.masterWalletId;
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
 
-        // this.crmemberInfo = null;
+        //Get ower dpos info
         const param = {
             method: 'listproducers',
             params: {
@@ -109,7 +109,7 @@ export class DPosRegistrationPage implements OnInit {
         if (!Util.isEmptyObject(result.producers)) {
             Logger.log(App.DPOS_REGISTRATION, "dposlist:", result.producers);
             for (const producer of result.producers) {
-                if (producer.ownerpublickey.toLocaleLowerCase() == this.ownerPublicKey.toLocaleLowerCase()) {
+                if (producer.ownerpublickey == this.ownerPublicKey) {
                     this.state = producer.state;
                     this.dposInfo = producer;
                     break;
