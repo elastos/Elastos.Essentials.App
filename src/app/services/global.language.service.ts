@@ -75,6 +75,8 @@ export class GlobalLanguageService extends GlobalService {
 
   public async onUserSignOut(): Promise<void> {
     this.selectedLanguage = null;
+    // Reset language.
+    this.setAppLanguage(this.systemLanguage);
   }
 
   /**

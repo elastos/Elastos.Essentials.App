@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
-import { AppmanagerService } from '../launcher/services/appmanager.service';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
-import { Event } from '@angular/router';
-import { TitleBarForegroundMode } from '../components/titlebar/titlebar.types';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 export enum AppTheme {
@@ -22,11 +18,12 @@ export class GlobalThemeService extends GlobalService {
   public activeTheme = new BehaviorSubject<AppTheme>(AppTheme.DARK);
 
   constructor(
-    private platform: Platform,
     private prefs: GlobalPreferencesService,
-    private didSessions: GlobalDIDSessionsService,
   ) {
     super();
+
+    // Default theme is dark.
+    passwordManager.setDarkMode(true);
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.prefs.preferenceListener.subscribe(async (prefChanged)=>{
@@ -53,8 +50,9 @@ export class GlobalThemeService extends GlobalService {
   }
 
   public async onUserSignOut(): Promise<void> {
-    // Default mode for password popups: light
-    await passwordManager.setDarkMode(false);
+    // Default mode for password popups: dark
+    await passwordManager.setDarkMode(true);
+    this.activeTheme.next(AppTheme.DARK);
   }
 
   public async fetchThemeFromPreferences() {
