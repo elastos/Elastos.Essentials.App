@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonInput, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -63,6 +63,7 @@ export class ImportDIDPage {
         private popup: PopupProvider,
         public theme: GlobalThemeService,
         private events: Events,
+        public element: ElementRef
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
@@ -73,7 +74,6 @@ export class ImportDIDPage {
               this.onMnemonicSentenceChanged();
               this.readonly = true;
             }
-            //Logger.log('didsessions', 'Importdid - Mnemonic', navigation.extras.state.enterEvent.data);
         }
     }
 
@@ -94,6 +94,7 @@ export class ImportDIDPage {
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             this.uxService.onTitleBarItemClicked(icon);
         });
+        this.adjustTextareaHeight();
 
         // the rootContent clientHeight is wrong in android?
         if (this.platform.platforms().indexOf('android') < 0) {
@@ -128,6 +129,15 @@ export class ImportDIDPage {
         return true
       } else {
         return false;
+      }
+    }
+
+    // TODO: the height of the textarea is not enough when get mnemonic from scanner.
+    private adjustTextareaHeight() {
+      // textarea: the element in the ion-textarea.
+      let textarea = this.element.nativeElement.querySelector("textarea");
+      if (textarea) {
+        textarea.style.height = '100px';
       }
     }
 
