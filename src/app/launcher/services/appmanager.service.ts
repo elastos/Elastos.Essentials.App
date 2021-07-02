@@ -168,15 +168,6 @@ export class AppmanagerService {
                 type: 'launcher.utilities',
                 apps: [
                     {
-                        id: 'hive',
-                        routerContext: App.HIVE_MANAGER,
-                        name: this.translate.instant('launcher.app-hive'),
-                        description: this.translate.instant('launcher.app-hive-description'),
-                        icon: '/assets/launcher/apps/app-icons/hive.svg',
-                        hasWidget: true,
-                        startCall: () => this.hiveManagerInitService.start()
-                    },
-                    {
                         id: 'scanner',
                         routerContext: App.SCANNER,
                         name: this.translate.instant('launcher.app-scanner'),
@@ -193,6 +184,15 @@ export class AppmanagerService {
                         icon: '/assets/launcher/apps/app-icons/settings.svg',
                         hasWidget: false,
                         routerPath: '/settings/menu'
+                    },
+                    {
+                        id: 'hive',
+                        routerContext: App.HIVE_MANAGER,
+                        name: this.translate.instant('launcher.app-hive'),
+                        description: this.translate.instant('launcher.app-hive-description'),
+                        icon: '/assets/launcher/apps/app-icons/hive.svg',
+                        hasWidget: true,
+                        startCall: () => this.hiveManagerInitService.start()
                     },
                 ]
             },
