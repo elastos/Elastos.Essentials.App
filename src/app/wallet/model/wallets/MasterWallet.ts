@@ -304,8 +304,7 @@ export class MasterWallet {
             let assets = await this.erc721Service.fetchAllAssets(accountAddress, nft.contractAddress);
             console.log("ASSETS", assets);
 
-            // TMP
-            nft.assets = assets;
+            nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
         }
     }
 }

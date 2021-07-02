@@ -14,7 +14,7 @@
                 <h1>
                     <span>{{ nft.type }} NFT: {{ nft.name }}</span>
                 </h1>
-                <h3 *ngIf="!refreshingAssets"><b>{{ nft.getAssets().length }}</b> assets owned</h3>
+                <h3 *ngIf="!refreshingAssets && nft.getAssets()"><b>{{ nft.getAssets().length }}</b> assets owned</h3>
             </ion-row>
             <!-- <ion-row class="card-btn-row">
                 <ion-col offset="0.25" size="3">
@@ -33,7 +33,7 @@
         <ion-row *ngIf="refreshingAssets">
             <ion-spinner></ion-spinner>
         </ion-row>
-        <div *ngIf="!refreshingAssets">
+        <div *ngIf="!refreshingAssets && nft.getAssets()">
             <ion-row class="item-row ripple ion-activatable" *ngFor="let asset of nft.getAssets()" (click)="showAssetDetails(asset)">
                 <ion-col size="2" class="left-col">
                     <div class="asset-icon">
@@ -48,6 +48,10 @@
                     <p>{{ asset.description }}</p>
                 </ion-col>
             </ion-row>
+        </div>
+        <div class="empty-list" *ngIf="!refreshingAssets && !nft.getAssets()">
+            <img src="assets/wallet/icons/warning.svg"/>
+            <h2>Collectibles for this NFT type cannot be listed.</h2>
         </div>
 
         <!-- <ion-row class="list-title-row">

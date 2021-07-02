@@ -96,8 +96,11 @@ export class ERC721Service {
 
     /**
      * Finds all assets owned by a given user for a given NFT contract.
+     *
+     * Returns null if owner assets can't be retrieved (i.e. not a enumerable contract, non standard contract, etc)
      */
     public async fetchAllAssets(accountAddress: string, contractAddress: string): Promise<NFTAsset[]> {
+        let assetsCouldBeRetrieved = false;
         const erc721Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress, { from: accountAddress });
 
         // Make sure this is a enumerable NFT - If not, we can't get the assets.
@@ -114,23 +117,25 @@ export class ERC721Service {
 
         // Iterate over tokenOfOwnerByIndex() to get more info. If an exception occurs this probably
         // means that tokenOfOwnerByIndex() is not implemented (not an enumerable ERC721).
+        let assets: NFTAsset[] = [];
         try {
             let tokenIDs = [];
             // Some contracts implement getOwnerTokens() (crypto kitties) which directly returns the
             // tokens ids without a loop. This is legacy from when ERC721Enumerable was not defined.
             try {
                 tokenIDs = await erc721Contract.methods.getOwnerTokens(accountAddress).call();
+                assetsCouldBeRetrieved = true;
             }
             catch (e) {
                 // Method not implemented. Try the standard enumeration (ERC721Enumerable)
                 for (let i=0; i<assetsNumber; i++) {
                     const tokenID = await erc721Contract.methods.tokenOfOwnerByIndex(accountAddress, i).call();
+                    assetsCouldBeRetrieved = true;
                     tokenIDs.push(tokenID);
                 }
             }
-            console.log("tokenIDs", tokenIDs)
+            console.log("tokenIDs", tokenIDs, assetsCouldBeRetrieved);
 
-            let assets: NFTAsset[] = [];
             for (let i=0; i<tokenIDs.length; i++) {
                 let tokenID = tokenIDs[i];
 
@@ -141,18 +146,14 @@ export class ERC721Service {
                let tokenURI: string = null;
                try {
                 tokenURI = await erc721Contract.methods.tokenURI(tokenID).call();
-                console.log("tokenURI", tokenURI);
                }
                catch (e) {
-                   console.warn("1", e);
                    // Inexisting method, contract not adhering to the metadata interface?
                    // Try the legacy tokenMetadata() implemented by some contracts
                    try {
                     tokenURI = await erc721Contract.methods.tokenMetadata(tokenID).call();
-                    console.log("tokenURI 2", tokenURI);
                    }
                    catch (e) {
-                    console.warn("2", e);
                     // Still nothing? That's ok, we'll display placeholder values.
                     // Silent catch
                    }
@@ -164,16 +165,18 @@ export class ERC721Service {
 
                assets.push(asset);
             }
-
-            return assets;
         }
         catch (e) {
             // Silent catch
             console.warn(e); // TMP
-            return [];
         }
 
-        return [];
+        // If assets list couldn't be fetched, return null so that the caller knows this
+        // doesn't mean we have "0" asset.
+        if (!assetsCouldBeRetrieved)
+            return null;
+
+        return assets;
     }
 
     /**
