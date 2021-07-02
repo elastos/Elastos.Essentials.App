@@ -78,10 +78,10 @@ export const fr = {
     'qrcode-and-mnemonic-words': 'QR Code et Clé Papier',
     'verify-did': 'Vérifier',
     'print-title': 'GARDEZ CECI SECRET!',
-    'print-confirmation-title': 'Print confirmation',
-    'print-confirmation-des': 'Did you successfully print your identity QR Code?',
-    'print-try-again': 'No, try again',
-    'print-yes': 'Yes',
+    'print-confirmation-title': 'Confirmation d\'impression',
+    'print-confirmation-des': 'Avez-vous réussi à imprimer le QR code de votre identité?',
+    'print-try-again': 'Non, réessayer',
+    'print-yes': 'Oui',
 
     // Prepare DID
     'getting-ready': 'Finalisation en cours',
