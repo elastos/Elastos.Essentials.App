@@ -29,13 +29,12 @@ export class AssistPublishingComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  async ionViewWillEnter() {
+  ionViewWillEnter() {
     this.publishing = true;
     this.publicationSuccessful = false;
     this.publicationFailed = false;
 
     // Listen to publication event
-    await GlobalPublicationService.instance.resetStatus();
     this.publicationStatusSub = GlobalPublicationService.instance.publicationStatus.subscribe((status)=>{
       if (status.status == DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION) {
         this.publishing = true;

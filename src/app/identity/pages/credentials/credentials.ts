@@ -67,6 +67,7 @@ export class CredentialsPage {
   private didchangedSubscription: Subscription = null;
   private publicationstatusSubscription: Subscription = null;
   private documentChangedSubscription: Subscription = null;
+  private onlineDIDDocumentStatusSub: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
   private promptpublishdidSubscription: Subscription = null;
 
@@ -96,8 +97,14 @@ export class CredentialsPage {
       });
     });
 
-    this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
+    let didString = this.didService.getActiveDid().getDIDString();
+    this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((document) => {
+      // When the did document content changes, we rebuild our profile entries on screen.
+      // (published status)
+      this.init();
+    });
 
+    this.documentChangedSubscription = this.events.subscribe("diddocument:changed", (publishAvatar: boolean) => {
       // When the did document content changes, we rebuild our profile entries on screen.
       this.init(publishAvatar);
     });
@@ -648,13 +655,9 @@ export class CredentialsPage {
   }
 
   get filteredCredentials(): CredentialDisplayEntry[] {
-   /*  if (this.segment == "all") return this.profileService.allCreds
+    if (this.segment == "all") return this.profileService.allCreds
     if (this.segment == "hidden") return this.profileService.invisibleCredentials
-    if (this.segment == "visible") return this.profileService.visibleCredentials */
-
-    if (this.segment == "all") return this.profileService.allCreds.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));
-    if (this.segment == "hidden") return this.profileService.invisibleCredentials.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
-    if (this.segment == "visible") return this.profileService.visibleCredentials.filter((item) => !item.credential.getSubject().hasOwnProperty("apppackage"));;
+    if (this.segment == "visible") return this.profileService.visibleCredentials
 
     return this.profileService.allCreds.filter((item) => {
       let types = item.credential.getTypes();

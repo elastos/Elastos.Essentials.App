@@ -150,7 +150,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         mainChainRPC: 'https://api-testnet.trinity-tech.cn/ela',
                         idChainRPC: 'https://api-testnet.trinity-tech.cn/did',
                         eidChainRPC: 'https://api-testnet.trinity-tech.cn/eid',
-                        eidMiscRPC: 'https://aapi-testnetpi.trinity-tech.cn/eid-misc',
+                        eidMiscRPC: 'https://api-testnet.trinity-tech.cn/eid-misc',
                         eidOracleRPC: 'https://api-testnet.trinity-tech.cn/eid-oracle',
                         escRPC: 'https://api-testnet.trinity-tech.cn/eth',
                         escOracleRPC: 'https://api-testnet.trinity-tech.cn/eth-oracle',

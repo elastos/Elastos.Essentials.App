@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild } from "@angular/core";
+import { Component, NgZone, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
@@ -53,7 +53,7 @@ type CredentialDisplayEntry = {
   templateUrl: "credentialdetails.page.html",
   styleUrls: ["credentialdetails.page.scss"],
 })
-export class CredentialDetailsPage {
+export class CredentialDetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public profile: Profile;
@@ -179,6 +179,8 @@ export class CredentialDetailsPage {
   }
 
   async selectCredential() {
+    Logger.log("identity", "Computing credential status");
+
     this.credential = null;
     this.issuer = null;
     this.segment = "validator";

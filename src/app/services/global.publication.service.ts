@@ -219,6 +219,7 @@ namespace AssistPublishing {
             if (this.manager.persistentInfo.did.publicationStatus !== DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION)
                 return;
 
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
             return new Promise(async (resolve, reject) => {
                 Logger.log("publicationservice", "Requesting identity publication status to Assist for confirmation ID " + this.manager.persistentInfo.did.assist.publicationID);
 
@@ -360,7 +361,7 @@ class DIDPublishingManager {
         private theme: GlobalThemeService,
         private modalCtrl: ModalController,
         private prefs: GlobalPreferencesService,
-        private globalIntentService: GlobalIntentService) {}
+        private globalIntentService: GlobalIntentService) {}
 
     public async init(): Promise<void> {
         this.persistentInfo = await this.loadPersistentInfo();
@@ -404,10 +405,12 @@ class DIDPublishingManager {
     }
 
     public async savePersistentInfo(persistentInfo: PersistentInfo) {
+        this.persistentInfo = persistentInfo;
         await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'publicationservice', "persistentInfo", JSON.stringify(persistentInfo));
     }
 
     public async savePersistentInfoAndEmitStatus(persistentInfo: PersistentInfo) {
+        console.log("DEBUG savePersistentInfoAndEmitStatus", persistentInfo);
         await this.savePersistentInfo(persistentInfo);
         this.emitPublicationStatusChangeFromPersistentInfo();
     }
@@ -416,6 +419,7 @@ class DIDPublishingManager {
     * Emit a public publication status event that matches the current persistent info state.
     */
     public emitPublicationStatusChangeFromPersistentInfo() {
+        console.log("DEBUG emitPublicationStatusChangeFromPersistentInfo", this.persistentInfo);
         this.publicationService.publicationStatus.next({
             didString: this.persistentInfo.did.didString,
             status: this.persistentInfo.did.publicationStatus
@@ -425,7 +429,7 @@ class DIDPublishingManager {
     public async resetStatus() {
         if (this.activePublisher)
             await this.activePublisher.resetStatus();
-
+            
         this.persistentInfo = this.createNewPersistentInfo();
         await this.savePersistentInfoAndEmitStatus(this.persistentInfo);
     }
