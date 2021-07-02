@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild, ElementRef } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Util } from '../../services/util';
@@ -9,8 +9,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { UXService } from '../../services/ux.service';
-import { DIDService } from '../../services/did.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
@@ -36,8 +34,6 @@ export class VerifyMnemonicsPage {
     constructor(
       public router: Router,
       public zone: NgZone,
-      private didService: DIDService,
-      private uxService: UXService,
       public theme: GlobalThemeService,
       private translate: TranslateService,
       private alertCtrl: AlertController,
@@ -90,7 +86,6 @@ export class VerifyMnemonicsPage {
     }
 
     removeWord(word: any, index: number) {
-      Logger.log('didsessions', word);
       if(isNaN(word)) {
         this.mnemonicList.map((mnemonic) => {
           if(mnemonic.text === word) {
@@ -99,7 +94,6 @@ export class VerifyMnemonicsPage {
         });
 
         this.selectedList[index] = index;
-        Logger.log('didsessions', this.selectedList);
       } else {
         return;
       }
@@ -142,7 +136,7 @@ export class VerifyMnemonicsPage {
     private async continueAfterSuccessfulVerification() {
       this.native.genericToast('identity.backup-success');
       await this.didSessions.markActiveIdentityBackedUp();
-      void this.globalNav.exitCurrentContext();
+      void this.globalNav.navigateHome();
     }
 
     async returnToBackup() {
@@ -152,7 +146,7 @@ export class VerifyMnemonicsPage {
         message: this.translate.instant('didsessions.check-mnemonics'),
         buttons: [
           {
-            text: this.translate.instant('Okay'),
+            text: this.translate.instant('common.Okay'),
             handler: () => {
               void this.globalNav.navigateBack();
             }
