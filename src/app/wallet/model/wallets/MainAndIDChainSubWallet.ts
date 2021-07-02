@@ -612,7 +612,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
         let votedContents: VoteContent[] = await this.transformVoteContentForSDK(rawvotedContents);
 
-        let newVoteContents = await this.invalidVoteCandidatesHelper.removeInvalidCandidates(votedContents, userVoteContents);
+        let newVoteContents = await this.invalidVoteCandidatesHelper.removeInvalidCandidates(userVoteContents, votedContents);
         Logger.log('wallet', 'newVoteContents :', newVoteContents);
         return newVoteContents;
     }

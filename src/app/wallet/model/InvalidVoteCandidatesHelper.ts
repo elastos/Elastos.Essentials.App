@@ -64,6 +64,8 @@ export class InvalidVoteCandidatesHelper {
                   let validImpeachment = await this.computeValidCRCImpeachment(oldVotedContent[i].Candidates);
                   if (validImpeachment && Object.keys(validImpeachment).length > 0) {
                     oldVotedContent[i].Candidates = validImpeachment;
+                  } else {
+                    validContent = false;
                   }
                   break;
                 case VoteType.CRCProposal:
@@ -71,6 +73,8 @@ export class InvalidVoteCandidatesHelper {
                   let validProposals = await this.computeValidProposals(oldVotedContent[i].Candidates);
                   if (validProposals && Object.keys(validProposals).length > 0) {
                     oldVotedContent[i].Candidates = validProposals;
+                  } else {
+                    validContent = false;
                   }
                   break;
                 case VoteType.Delegate:
@@ -78,6 +82,8 @@ export class InvalidVoteCandidatesHelper {
                   let validDposNodes = await this.computeValidDposnodes(oldVotedContent[i].Candidates);
                   if (validDposNodes && Object.keys(validDposNodes).length > 0) {
                     oldVotedContent[i].Candidates = validDposNodes;
+                  } else {
+                    validContent = false;
                   }
                   break;
                 default:
@@ -91,7 +97,7 @@ export class InvalidVoteCandidatesHelper {
           }
         }
 
-        newVoteContents.push.apply(newVoteContents, oldVotedContent);
+        newVoteContents.push.apply(newVoteContents, votingContent);
         return newVoteContents;
     }
 
@@ -155,20 +161,20 @@ export class InvalidVoteCandidatesHelper {
         Logger.warn('wallet', 'dpos nodes:', dposnodes)
 
         for (let dposnode in dposNodeCandidates) {
-          Logger.log('wallet', "Checking vote for CR proposal invalidity:", dposnode);
+          Logger.log('wallet', "Checking vote for DPOS voting invalidity:", dposnode);
 
           let matchingProposal = dposnodes.producers.find((currentlyDposnode)=>{
-              return currentlyDposnode.nodepublickey === dposnode;
+              return currentlyDposnode.ownerpublickey === dposnode;
+              // return currentlyDposnode.nodepublickey === dposnode;
           });
 
           if (!matchingProposal) {
               // Previously voted dops node is not in active state any more. Don't add it.
-              Logger.log('wallet', "Previous vote added to invalid proposals list");
+              Logger.log('wallet', "Previous vote added to invalid dpos node list");
           }
           else {
               // Previously voted proposals is still in active state. Add it.
               validDposNodes[dposnode] = dposNodeCandidates[dposnode];
-              Logger.log('wallet', "Previous vote still in notification state, doing nothing");
           }
         }
         Logger.warn('wallet', 'valid Dpos Voting:', validDposNodes)
