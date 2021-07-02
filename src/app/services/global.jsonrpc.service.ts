@@ -23,7 +23,7 @@ export class GlobalJsonRPCService {
                     'Content-Type': 'application/json',
                 })
             };
-            // Logger.warn("JSONRPC", 'httpPost rpcApiUrl:', rpcApiUrl);
+            // Logger.log("GlobalJsonRPCService", 'httpPost rpcApiUrl:', rpcApiUrl);
             this.http.post(rpcApiUrl, JSON.stringify(param), httpOptions)
                 .subscribe((res: any) => {
                     if (res) {

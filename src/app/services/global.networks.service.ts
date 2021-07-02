@@ -17,7 +17,7 @@ export const TESTNET_TEMPLATE = "TestNet";
 })
 export class GlobalNetworksService extends GlobalService {
     /** RxJS subject that holds the network template in use */
-    public activeNetworkTemplate: BehaviorSubject<string> = new BehaviorSubject(null);
+    public activeNetworkTemplate: BehaviorSubject<string> = new BehaviorSubject(MAINNET_TEMPLATE);
 
     private availableNetworkTemplate = [
         MAINNET_TEMPLATE, // All operations use main nets for all chains

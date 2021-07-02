@@ -23,6 +23,7 @@ import { Events } from 'src/app/services/events.service';
 import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -66,6 +67,7 @@ export class IdentityService {
         private alertCtrl: AlertController,
         private uxService: UXService,
         private nativeService: GlobalNativeService,
+        private prefs: GlobalPreferencesService,
         private globalElastosAPIService: GlobalElastosAPIService,
         private didSessions: GlobalDIDSessionsService
     ) {
@@ -455,6 +457,9 @@ export class IdentityService {
 
             // Delete entry from the did session plugin
             await this.didSessions.deleteIdentityEntry(identity.didString);
+
+            // Delete all preferences
+            await this.prefs.deletePreferences(identity.didString);
 
             // Notify listeners of this deletion
             this.zone.run(() => {

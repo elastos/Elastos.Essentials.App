@@ -4,9 +4,6 @@ import { GlobalStorageService } from './global.storage.service';
 import { Direction, GlobalNavService } from './global.nav.service';
 import { GlobalServiceManager } from './global.service.manager';
 import { GlobalIntentService } from './global.intent.service';
-import { GlobalPreferencesService } from './global.preferences.service';
-import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.service';
-import { HiveManagerInitModule } from '../hivemanager/init.module';
 
 declare let internalManager: InternalPlugin.InternalManager;
 
@@ -49,8 +46,6 @@ export class GlobalDIDSessionsService {
 
   constructor(private storage: GlobalStorageService,
     private globalNavService: GlobalNavService,
-    private prefs: GlobalPreferencesService,
-    private globalElastosAPIService: GlobalElastosAPIService,
     private globalIntentService: GlobalIntentService) {
   }
 

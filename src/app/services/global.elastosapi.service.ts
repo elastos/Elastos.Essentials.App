@@ -90,6 +90,8 @@ export class GlobalElastosAPIService extends GlobalService {
      */
     public init(): Promise<void> {
         GlobalServiceManager.getInstance().registerService(this);
+        // DIDSession also need providers list.
+        this.initProvidersList();
         this.setupDIDResolver();
         return;
     }
@@ -193,6 +195,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
     async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
         this.languageSubscription = this.language.activeLanguage.subscribe((lang) => {
+            // For translation.
             this.initProvidersList();
         });
 

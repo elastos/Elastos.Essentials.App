@@ -91,6 +91,17 @@ export class GlobalPreferencesService {
     this.preferenceListener.next({ key, value });
   }
 
+  /**
+   * Delete all system preferences.
+   * Call this when the did is deleted.
+   */
+  public async deletePreferences(did: string, allowNullDID = false) {
+    if (did == null && !allowNullDID)
+      throw new Error("Getting global preferences (no DID set) without allowNullDID set to false is forbidden!");
+
+    await this.storage.deleteSetting(did, "prefservice", "preferences");
+  }
+
   public async developerModeEnabled(did: string): Promise<boolean> {
     try {
       let devMode = await this.getPreference(did, "developer.mode");
