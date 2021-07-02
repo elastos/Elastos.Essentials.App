@@ -213,6 +213,7 @@ export class EditProfilePage {
             let currentUserDID = this.didService.getActiveDid().getDIDString();
             let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
             let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/getMainIdentityAvatar?params=a=2"; // TODO: USELESS PARAMS TO AVOID HIVE NATIVE CRASH
+            Logger.log("identity", "Generated avatar url:", avatarHiveURL);
 
             // TEST
             let hiveClient = await this.globalHiveService.getHiveClient();
