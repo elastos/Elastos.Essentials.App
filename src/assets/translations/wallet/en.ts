@@ -280,13 +280,6 @@ export const en = {
         'select-subwallet': 'Select Subwallet',
         'select-wallet': 'Select wallet',
 
-        /*********************
-        * Wait For Sync Page *
-        **********************/
-        "waitforsync-syncing": "Syncing",
-        "waitforsync-loading": "Loading...",
-        "waitforsync-intro": "Operation can only be performed after data has synced from chain.",
-
         /**************
         * Access Page *
         ***************/

@@ -98,21 +98,7 @@ export const fr = {
         'showing-all-visible-credentials': 'Montrez Tous les Crédentiels Visibles',
         'toggle-credentials-to-publish': 'Sélectionnez les Crédentiels à Publier',
 
-        // page: publishing
-        "publishing": {
-            "create-did": "Create Identity",
-            "create-did-msg": "Add a new Identity locally on your device",
-            "publish-did": "Publish Identity",
-            "publish-did-msg": "Record identity to the public repository. This step takes between 10 and 15 minutes.",
-            "config-storage": "Configure Storage",
-            "config-storage-msg": "Setup a personal storage for your Identity's data.",
-            "progress-msg": "Please don't hesitate to leave at any time. Your Identity will continue to publish while you are away.",
-            "done-msg": "All done, you now have a decentralized identity and storage space! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.",
-            "takes-long-time": "(this takes several minutes)",
-        },
-
         // page: settings & advanced-settings
-        'publication-status': 'Publication Status',
         'advanced-settings': 'Paramètres avancés',
         'available-options': 'Options disponibles',
         'sync-did-profile': 'Synchroniser l\'identité',
@@ -147,10 +133,10 @@ export const fr = {
         'avatar-publish-yes': 'Oui',
 
         // component: success
-        'request': 'Your Request',
-        'sent': 'is on its way',
-        'success-msg': 'This app will automatically close when your request is delivered.',
-        'backup-success': 'Great, your identity is now backed up!',
+        'request': 'Votre réponse',
+        'sent': 'est en route',
+        'success-msg': 'L\'application sera fermée automatiquement lorsque la réponse sera arrivée à destination.',
+        'backup-success': 'Top, votre identité est désormais sauvegardée!',
 
         /******************** Intent Screens  ********************/
         // page: appidcredissue
@@ -257,8 +243,8 @@ export const fr = {
         'publish-error': 'Vos informations publiques n\'ont pas pu être publiées pour l\'instant. Veuillez réessayer dans un moment.',
         'publish-error-title': "Erreur de publication",
         'publish-wait': 'Veuillez attendre quelques minutes avant de publier à nouveau.',
-        'publish-error2': 'Publication error',
-        'publish-wait2': 'Your identity is being published online, please wait a few seconds.',
+        'publish-error2': 'Erreur de publication',
+        'publish-wait2': 'Votre profil public est en train d\'être mis à jour, veuillez patienter quelques secondes.',
     },
 };
 

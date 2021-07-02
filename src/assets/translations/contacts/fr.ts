@@ -7,10 +7,10 @@ export const fr = {
     /********** Prompts **********/
     'no-contacts-alert': 'Vous n\'avez aucun contact avec qui partager!',
     'no-contacts-with-cred-alert': 'Vous n\'avez aucun contact avec le crédentiel nécessaire.',
-    'please-dont-add-self': 'Please add an Identity other than your own',
-    'restoring-contacts-backup': 'Restoring Contacts',
-    'contact-copied-to-clipboard': 'Contact Identity Copied',
-    'resolve-error-header': 'An error occurred when Resolve DID',
+    'please-dont-add-self': 'Veuillez ajouter un contact qui n\'est pas le votre',
+    'restoring-contacts-backup': 'Restoration des Contacts',
+    'contact-copied-to-clipboard': 'Identité du Contact Copiée',
+    'resolve-error-header': 'Erreur lors de la récupération du DID',
 
     /********** Buttons **********/
     'add-contact': 'Ajouter le contact',

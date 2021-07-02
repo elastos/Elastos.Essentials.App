@@ -7,7 +7,7 @@ export const fr = {
         'cancel': 'Annuler',
         'begin': 'Commencer',
         'continue': 'Continuer',
-        'go-back': 'Go Back',
+        'go-back': 'Retour',
         'ok': 'D\'accord',
         'confirm': 'Confirmer',
         'share': 'Partager',
@@ -21,13 +21,13 @@ export const fr = {
         'copy-to-clipboard': 'Copier',
         'photo-library': 'Bibliothèque de photos',
         'take-pictures': 'Prendre une photo',
-        'title': 'Title',
+        'title': 'Titre',
         'done': 'Terminer',
         'mnemonic': 'Mnémonique',
         'description': 'Description',
-        'tx-copied-to-clipboard': 'Transaction ID copied',
-        'copy': 'Copy',
-        'dismiss': 'Dismiss',
+        'tx-copied-to-clipboard': 'ID de transaction ID copié',
+        'copy': 'Copier',
+        'dismiss': 'Annuler',
         'vote-success': 'Votes sauvegardés!',
 
         // Navigation
@@ -39,12 +39,12 @@ export const fr = {
         'favorite': 'Favori',
 
         // Popups, error messages
-        'something-went-wrong': 'Something went wrong, please try again later',
+        'something-went-wrong': 'Erreur, veuillez réessayer plus tard',
         'please-wait': "Veuillez patienter...",
         "sorry": "Désolé",
         'name-is-missing': "Veuillez saisir un nom",
         'error': 'Erreur',
-        'sentry-message': 'Sorry, the application encountered an error. This has been reported to the team.',
+        'sentry-message': 'Aie désolés... une erreur est apparue dans l\'application. L\'équipe de développement en a été informée.',
 
         // Related to DID
         'sign-in': 'Connexion',

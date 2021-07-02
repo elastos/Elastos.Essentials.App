@@ -2,19 +2,18 @@ export const fr = {
 
     'crcouncilmanager': {
         /********** Registration **********/
-        'registration': 'Registration',
-        'register': 'Register',
-        'unregister': 'Unregister',
-        'update': 'Update',
-        'retrieve': 'Retrieve',
-        'node-name': 'Enter node name (Required)',
-        'node-publickey': 'Enter public key of your node (Required)',
-        'node-area': 'Choose Country/Region',
-        'node-url': 'Enter website URL of your node (Required)',
-        'registration-confirm': 'Confirm',
-        'member-info': 'CRCouncil Member Info',
-        'crnode-manager': 'CR Node Manager',
-        'registration-manager': 'Registration Manager',
+        'registration': 'Enregistrement',
+        'register': 'S\'enregistrer',
+        'unregister': 'Se désenregistrer',
+        'update': 'Mettre à jour',
+        'retrieve': 'Récupérer',
+        'node-name': 'Saisir le nom du noeud (requis)',
+        'node-publickey': 'Clé publique du noeud (requis)',
+        'node-area': 'Pays/Région',
+        'node-url': 'URL du site web du noeud (requis)',
+        'registration-confirm': 'Confirmer',
+        'member-info': 'Info Membre du Conseil',
+        'crnode-manager': 'Gestionnaire Noeud CR',
+        'registration-manager': 'Gestionnaire d\'enregistrement',
     }
-
 };

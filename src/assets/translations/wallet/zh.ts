@@ -280,13 +280,6 @@ export const zh = {
         'select-subwallet': '选择子钱包',
         'select-wallet': '选择钱包',
 
-        /*********************
-        * Wait For Sync Page *
-        **********************/
-        "waitforsync-syncing": "正在同步",
-        "waitforsync-loading": "加载中...",
-        "waitforsync-intro": "链的数据同步完成后才能执行相关操作，请耐心等待！",
-
         /**************
         * Access Page *
         ***************/

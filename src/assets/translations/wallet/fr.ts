@@ -57,7 +57,7 @@ export const fr = {
         "hive-not-configured-text": "Votre espace de stockage Hive n'est pas configuré. Voulez-vous le configurer maintenant?",
         "hive-not-configured-not-now": "Pas maintenant",
         "hive-not-configured-configure": "Configurer",
-        "collectibles": "Collectibles",
+        "collectibles": "Collections",
 
         /********************************************** General Settings Screen ***********************************************/
 
@@ -121,8 +121,8 @@ export const fr = {
         "coin-transaction-status-pending": "En attente",
         "coin-transaction-status-unconfirmed": "Non confirmé",
         "text-coin-close-warning": "Le jeton sera supprimé de la liste",
-        "erc20-transactions": "ERC20 token transactions",
-        "cannot-display": "cannot be displayed at this time",
+        "erc20-transactions": "Les transactions ERC20",
+        "cannot-display": "ne peuvent pas être affichées pour l'instant",
 
         /*******************
         * Coin Select Page *
@@ -146,7 +146,7 @@ export const fr = {
         "insufficient-balance": "Solde insuffisant",
         "transfer-all": "Tous",
         "max": "MAX",
-        "touch-to-select-a-personal-wallet": "Touch to select a personal wallet",
+        "touch-to-select-a-personal-wallet": "Toucher pour choisir un portefeuille personnel",
 
         /********************
         * Coin Receive Page *
@@ -278,14 +278,7 @@ export const fr = {
         * Select Subwallet Page *
         *************************/
         'select-subwallet': 'Selectionner le portefeuille',
-        'select-wallet': 'Select wallet',
-
-        /*********************
-        * Wait For Sync Page *
-        **********************/
-        "waitforsync-syncing": "Synchronisation",
-        "waitforsync-loading": "En attente...",
-        "waitforsync-intro": "Cette opération pourra continuer une fois toutes vos données synchronisées depuis la châine publique.",
+        'select-wallet': 'Selectionner le portefeuille',
 
         /**************
         * Access Page *
@@ -330,8 +323,8 @@ export const fr = {
         /***********************
         * CRCrouncil Voting Transaction Page *
         ************************/
-        "crcouncilvote-title": "Vote for CR Council",
-        "crcouncilvote-voting-with": "You are voting with:",
+        "crcouncilvote-title": "Vote pour le Conseil CR",
+        "crcouncilvote-voting-with": "Vous votez avec:",
 
         /***********************
         * ESC Transaction Page *
@@ -346,7 +339,7 @@ export const fr = {
         /***********************
         * No Wallet *
         ************************/
-        "intent-no-wallet-title": "No Wallet",
+        "intent-no-wallet-title": "Aucun Portefeuille",
         "intent-no-wallet-msg": "Vous n'avez pas de portefeuille, voulez-vous le créer maintenant?",
 
         /********************************************** Create Wallet Screens ***********************************************/
@@ -394,7 +387,7 @@ export const fr = {
         'import-wallet': 'Importer Portefeuiller',
         "mnemonic-import-missing-words": "Veuillez saisir tous les mots avant de continuer",
         "mnemonic-check-title": "Vérification du mnémonique",
-        "memory-written-down": "Je l\'ai noté",
+        "memory-written-down": "Je l'ai noté",
         "mnemonic-verify-sucess": "Mnémonique vérifié et confirmé",
         "mnemonic-verify-fail": "Le mnémonique est incorrect, veuillez le saisir à nouveau.",
         "mnemonic-input-passphrase": "Mot de passe associé au mnémonique",

@@ -86,7 +86,7 @@ export const fr = {
     // Prepare DID
     'getting-ready': 'Finalisation en cours',
     'ready': 'Prêt!',
-    prepare: {
+    'prepare': {
       'publish-title': 'Publication de votre identité dans le registre public',
       'publish-intro': 'Cette étape est indispensable et prend quelques secondes, veuillez patienter.',
       'sign-in-title': 'Connexion',
