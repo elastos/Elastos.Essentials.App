@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
-import { NetworkType } from '../model/networktype';
 import { GlobalStorageService } from './global.storage.service';
 
 export type AllPreferences = { [key: string]: any };
@@ -31,7 +29,7 @@ export class GlobalPreferencesService {
       "developer.backgroundservices.startonboot": true,
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "ui.darkmode": true,
-      "chain.network.type": "MainNet",
+      "network.template": "MainNet",
       "chain.network.config": "",
       "chain.network.configurl": "",
       "elastosapi.provider": "elastosio"
@@ -91,21 +89,6 @@ export class GlobalPreferencesService {
 
     // Notify listeners about a preference change
     this.preferenceListener.next({ key, value });
-  }
-
-  /**
-   * Returns the currently active network such as mainnet or testnet.
-   */
-  public getActiveNetworkType(did: string): Promise<NetworkType> {
-    return this.getPreference<NetworkType>(did, "chain.network.type");
-  }
-
-  public getMainchainRPCApiEndpoint(did: string): Promise<string> {
-    return this.getPreference<string>(did, "mainchain.rpcapi");
-  }
-
-  public getETHSidechainRPCApiEndpoint(did: string): Promise<string> {
-    return this.getPreference<string>(did, "sidechain.eth.rpcapi");
   }
 
   public async developerModeEnabled(did: string): Promise<boolean> {

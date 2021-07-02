@@ -91,7 +91,7 @@ export class SwapTestPage implements OnInit {
         private storage: LocalStorage,
         private prefs: GlobalPreferencesService,
         public native: Native) {
-        this.init();
+        void this.init();
     }
 
     ngOnInit() {
@@ -123,9 +123,9 @@ export class SwapTestPage implements OnInit {
      *      wELA: 0x517E9e5d46C1EA8aB6f78677d6114Ef47F71f6c4
      *      Uniswap V2 Router: 0x1FF9598aBCBbC2F3A9B15261403459215b352e2b
      */
-    async doSwap() {
+    doSwap(): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise<void>(async (resolve)=>{
-            let ethRpcApi = await this.prefs.getETHSidechainRPCApiEndpoint(GlobalDIDSessionsService.signedInDIDString);
             let provider = new InternalWeb3Provider(this.walletManager, this.masterWallet);
             let web3 = new Web3(provider);
             let routerContract = new web3.eth.Contract(IUniswapV2Router02ABI as any, "0x1FF9598aBCBbC2F3A9B15261403459215b352e2b");

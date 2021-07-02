@@ -44,7 +44,6 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { NFT } from 'src/app/wallet/model/nft';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
-import { NetworkType } from 'src/app/model/networktype';
 
 
 @Component({
@@ -67,7 +66,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public masterWalletList: MasterWallet[] = [];
     public isSingleWallet = false;
 
-    private networkType: NetworkType;
+    private networkTemplate: string;
 
     private walletChangedSubscription: Subscription = null;
 
@@ -102,7 +101,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.updateWallet();
-        this.networkType = this.prefs.getNetworkType();
+        this.networkTemplate = this.prefs.getNetworkTemplate();
 
         this.walletChangedSubscription = this.events.subscribe("masterwalletcount:changed", (result) => {
             Logger.log("wallet", "masterwalletcount:changed event received result:", result);
@@ -112,8 +111,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 if (result.action === 'add') {
                     const index = this.masterWalletList.findIndex(e => e.id === result.walletId);
                     if (index) {
-                        setTimeout(async () => {
-                            if (this.slider) this.slider.slideTo(index);
+                        setTimeout(() => {
+                            if (this.slider) 
+                                void this.slider.slideTo(index);
                         }, 1000);
                     }
                 }
@@ -160,7 +160,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.walletManager.getWalletsCount() > 0) {
-            this.promptTransfer2IDChain();
+            void this.promptTransfer2IDChain();
         }
 
         this.startUpdateInterval();
@@ -212,7 +212,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
 
         await curMasterWallet.update();
-        await curMasterWallet.updateERCTokenList(this.networkType);
+        await curMasterWallet.updateERCTokenList(this.networkTemplate);
         curMasterWallet.getSubWalletBalance(StandardCoinName.ELA);
         this.currencyService.fetch();
     }
@@ -220,7 +220,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     startUpdateInterval() {
       if (this.updateInterval === null) {
         this.updateInterval = setInterval(() => {
-          this.updateCurrentWalletInfo();
+          void this.updateCurrentWalletInfo();
         }, 30000);// 30s
       }
     }
@@ -233,19 +233,19 @@ export class WalletHomePage implements OnInit, OnDestroy {
     async doRefresh(event) {
         if (!this.uiService.returnedUser) {
             this.uiService.returnedUser = true;
-            this.storage.setVisit(true);
+            await this.storage.setVisit(true);
         }
         this.restartUpdateInterval();
-        this.updateCurrentWalletInfo();
+        void this.updateCurrentWalletInfo();
         setTimeout(() => {
             event.target.complete();
         }, 1000);
     }
 
-    promptTransfer2IDChain() {
+    async promptTransfer2IDChain() {
         if (this.walletManager.needToPromptTransferToIDChain) {
-            this.popupProvider.ionicAlert('wallet.text-did-balance-not-enough');
-            this.walletManager.setHasPromptTransfer2IDChain();
+            void this.popupProvider.ionicAlert('wallet.text-did-balance-not-enough');
+            await this.walletManager.setHasPromptTransfer2IDChain();
         }
     }
 
@@ -259,7 +259,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     closeRefreshBox() {
         this.uiService.returnedUser = true;
-        this.storage.setVisit(true);
+        void this.storage.setVisit(true);
     }
 
     public goNFTHome(masterWallet: MasterWallet, nft: NFT) {

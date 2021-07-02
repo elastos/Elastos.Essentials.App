@@ -1,1 +1,9 @@
 @import "src/app/settings/root.scss";
+
+.subsetting-grid {
+  .section-row {
+    .left-col {
+      padding: 3px 0;
+    }
+  }
+}

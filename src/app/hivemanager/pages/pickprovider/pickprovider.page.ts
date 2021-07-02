@@ -5,18 +5,19 @@ import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { PopupService } from '../../services/popup.service';
-import { PrefsService } from '../../services/prefs.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarMenuItem, BuiltInIcon, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { NetworkType } from 'src/app/model/networktype';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Events } from 'src/app/services/events.service';
 import { ProfileService } from 'src/app/identity/services/profile.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { App } from "src/app/model/app.enum"
 import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 type StorageProvider = {
   name: string,
@@ -61,23 +62,24 @@ export class PickProviderPage implements OnInit {
     private nav: GlobalNavService,
     private globalIntentService: GlobalIntentService,
     private popup: PopupService,
-    private prefs: PrefsService,
+    private prefs: GlobalPreferencesService,
     private events: Events,
     public profileService: ProfileService,
+    private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService
   ) {}
 
   async ngOnInit() {
     // Adapt the proposed default hive nodes to the selected network in settings.
-    let networkType = await this.prefs.getActiveNetworkType();
-    if (networkType == NetworkType.MainNet) {
+    let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
+    if (networkTemplate == MAINNET_TEMPLATE) {
       this.storageProviders =  [
         { name: 'Trinity Tech Hive 1', vaultAddress: "https://hive1.trinity-tech.io" },
         { name: 'Trinity Tech Hive 2', vaultAddress: "https://hive2.trinity-tech.io" },
         //{ name: 'Trinity Tech Hive Mainnet TEST 3', vaultAddress: "https://hive-testnet3.trinity-tech.io" } // TMP
       ];
     }
-    else if (networkType == NetworkType.TestNet) {
+    else if (networkTemplate == TESTNET_TEMPLATE) {
       this.storageProviders =  [
         { name: 'Trinity Tech Hive Testnet 1', vaultAddress: "https://hive-testnet1.trinity-tech.io" },
         { name: 'Trinity Tech Hive Testnet 2', vaultAddress: "https://hive-testnet2.trinity-tech.io" }
@@ -109,7 +111,7 @@ export class PickProviderPage implements OnInit {
       }
     ];
 
-    this.developerMode = await this.prefs.developerModeEnabled();
+    this.developerMode = await this.prefs.developerModeEnabled(GlobalDIDSessionsService.signedInDIDString);
 
     if (this.developerMode) {
       // Add a special menu item to be able to switch to another vault without transfer

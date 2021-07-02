@@ -1,5 +1,4 @@
 import { Logger } from "src/app/logger";
-import { NetworkType } from "src/app/model/networktype";
 
 export type CoinID = string; // ELA, IDChain, ERC1, ERC2...
 
@@ -30,7 +29,7 @@ export class Coin {
         private name: string,
         private description: string,
         private removable: boolean,
-        public network: NetworkType,
+        public networkTemplate: string,
     ) {}
 
     public getType(): CoinType {
@@ -72,10 +71,10 @@ export class ERC20Coin extends Coin {
         name: string,
         description: string,
         private erc20ContractAddress: string,
-        network: NetworkType,
+        networkTemplate: string,
         private isCustom: boolean,
     ) {
-        super(CoinType.ERC20, id, name, description, true, network);
+        super(CoinType.ERC20, id, name, description, true, networkTemplate);
     }
 
     /**

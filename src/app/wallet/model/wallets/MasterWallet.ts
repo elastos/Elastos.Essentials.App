@@ -15,7 +15,6 @@ import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nft';
 import { ERC721Service } from '../../services/erc721.service';
 import { ERC20TokenInfo } from '../Transaction';
-import { NetworkType } from 'src/app/model/networktype';
 
 export type WalletID = string;
 
@@ -182,7 +181,7 @@ export class MasterWallet {
      */
     public async destroySubWallet(coinId: CoinID) {
         let subWallet = this.subWallets[coinId];
-        subWallet.destroy();
+        await subWallet.destroy();
 
         // Delete the subwallet from out local model.
         delete this.subWallets[coinId];
@@ -195,7 +194,7 @@ export class MasterWallet {
      */
     public async destroyAllSubWallet() {
         for (let subWallet of Object.values(this.subWallets)) {
-            subWallet.destroy();
+            await subWallet.destroy();
             delete this.subWallets[subWallet.id];
         }
     }
@@ -223,7 +222,7 @@ export class MasterWallet {
     /**
      * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
      */
-    public async updateERCTokenList(activeNetwork: NetworkType) {
+    public async updateERCTokenList(activeNetworkTemplate: string) {
         if (!this.subWallets[StandardCoinName.ETHSC]) {
             Logger.log("wallet", 'updateERC20TokenList no ETHSC');
             return;
@@ -233,7 +232,8 @@ export class MasterWallet {
         if (ercTokenList == null) return;
 
         // For each ERC token discovered by the wallet SDK, we check its type and handle it.
-        ercTokenList.forEach( async (token: ERC20TokenInfo) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        ercTokenList.forEach(async (token: ERC20TokenInfo) => {
             if (token.type === "ERC-20") {
                 if (token.symbol && token.name) {
                     if (!this.subWallets[token.symbol] && !this.coinService.isCoinDeleted(token.contractAddress)) {
@@ -245,7 +245,7 @@ export class MasterWallet {
                             if (erc20Coin) {
                                 await this.createSubWallet(erc20Coin);
                             } else {
-                                const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetwork, true);
+                                const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
                                 await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
                             }
                         } catch (e) {

@@ -20,6 +20,7 @@ import { GlobalWalletConnectService } from './services/global.walletconnect.serv
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { GlobalHiveService } from './services/global.hive.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
+import { GlobalNetworksService } from './services/global.networks.service';
 
 @Component({
     selector: 'app-root',
@@ -48,6 +49,7 @@ export class AppComponent {
         private publicationService: GlobalPublicationService,
         private globalHiveService: GlobalHiveService,
         private walletConnect: GlobalWalletConnectService,
+        private globalNetworksService: GlobalNetworksService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) {
     }
@@ -84,6 +86,7 @@ export class AppComponent {
             // Initialize mandatory services
             this.theme.init();
             await this.language.init();
+            await this.globalNetworksService.init();
             await this.globalElastosAPIService.init();
             await this.notificationsService.init();
             await this.intentService.init();

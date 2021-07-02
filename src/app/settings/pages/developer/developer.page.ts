@@ -15,7 +15,7 @@ import { App } from "src/app/model/app.enum"
 export class DeveloperPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public privatenet: string = '';
+  public privatenet = '';
 
   constructor(
     public settings: SettingsService,
@@ -43,6 +43,6 @@ export class DeveloperPage implements OnInit {
   }
 
   go(route: string) {
-    this.nav.navigateTo(App.SETTINGS, route);
+    void this.nav.navigateTo(App.SETTINGS, route);
   }
 }

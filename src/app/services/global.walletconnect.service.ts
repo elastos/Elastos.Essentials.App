@@ -5,12 +5,12 @@ import WalletConnect from "@walletconnect/client";
 import { GlobalNavService } from './global.nav.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
-import { NetworkType } from '../model/networktype';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalStorageService } from './global.storage.service';
 import { GlobalNativeService } from './global.native.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +27,7 @@ export class GlobalWalletConnectService extends GlobalService {
     private intent: GlobalIntentService,
     private didSessions: GlobalDIDSessionsService,
     private intents: GlobalIntentService,
+    private globalNetworksService: GlobalNetworksService,
     private native: GlobalNativeService
   ) {
     super();
@@ -387,13 +388,16 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   public async acceptSessionRequest(connectorKey: string, ethAccountAddresses: string[]) {
-    let activeNetwork = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+    let activeNetworkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
     let chainId: number;
 
-    switch (activeNetwork) {
-      case NetworkType.MainNet:
+    // TODO: We keep this for now but this is wrong. Later we should use the active wallet in the wallet
+    // app, not the settings' "network template" (one template can have many wallets: elastos, heco, etc, therefore 
+    // different chain ids)
+    switch (activeNetworkTemplate) {
+      case MAINNET_TEMPLATE:
         chainId = 20; break;
-      case NetworkType.TestNet:
+      case TESTNET_TEMPLATE:
         chainId = 21; break;
       default:
         throw new Error("Network currently selected in settings is not supported with wallet connect yet (unknown chain id). To be improved.");

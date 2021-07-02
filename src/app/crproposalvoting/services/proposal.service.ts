@@ -14,6 +14,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum'
 import { Subscription } from 'rxjs';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 
 @Injectable({
     providedIn: 'root'
@@ -29,15 +30,13 @@ export class ProposalService {
         private prefs: GlobalPreferencesService,
         private nav: GlobalNavService,
         private globalPreferences: GlobalPreferencesService,
+        private globalNetworksService: GlobalNetworksService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) {}
 
     async init() {
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      this.subscription = this.globalPreferences.preferenceListener.subscribe(async (preference)=>{
-        if (preference.key === "chain.network.type") {
-          this.cr_rpc_api = await this.getCRProposalAPI();
-        }
+      this.subscription = this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
+        this.cr_rpc_api = this.getCRProposalAPI();
       });
       this.cr_rpc_api = await this.getCRProposalAPI();
     }

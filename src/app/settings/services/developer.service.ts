@@ -3,12 +3,13 @@ import { ToastController, LoadingController, Platform, PopoverController } from 
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { SettingsWarningComponent } from '../components/warning/warning.component';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -19,167 +20,71 @@ type privateConfig = {
 @Injectable({
   providedIn: 'root'
 })
-export class DeveloperService {
-
+export class DeveloperService extends GlobalService  {
   constructor(
-    private http: HttpClient,
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
-    private platform: Platform,
     private popoverCtrl: PopoverController,
     private zone: NgZone,
     private translate: TranslateService,
     private prefs: GlobalPreferencesService,
-    private globalNav: GlobalNavService,
+    private globalNetworksService: GlobalNetworksService,
     private splashScreen: SplashScreen,
   ) {
-    this.platform.ready().then(() => {
-        this.getCurrentConfigurations();
-      });
+    super();
   }
 
   public popover: any = null;
 
   public backgroundServicesEnabled = false;
-  public selectedNet: string = null;
+  public selectedNetworkTemplate: string = null;
   public privateNet: privateConfig = {
     configUrl: '',
     resolveUrl: ''
   }
-  public networks = [
-    {
-      type: 'settings.main-net',
-      code: 'MainNet',
-      mainChainRPCApi: 'https://api.elastos.io/ela',
-      idChainRPCApi: 'https://api.elastos.io/did',
-      eidRPCApi: 'https://api.elastos.io/eid',
-      ethscRPCApi: 'https://api.elastos.io/eth',
-      ethscApiMisc: 'https://api.elastos.io/misc',
-      ethscOracle: 'https://api.elastos.io/oracle',
-      ethscBrowserApiUrl: 'https://eth.elastos.io',
-      crRPCApi: 'https://api.cyberrepublic.org',
-      icon: '/assets/icon/main.svg'
-    },
-    {
-      type: 'settings.test-net',
-      code: 'TestNet',
-      mainChainRPCApi: 'https://api-testnet.elastos.io/ela',
-      idChainRPCApi: 'https://api-testnet.elastos.io/did',
-      eidRPCApi: 'https://api-testnet.elastos.io/eid',
-      ethscRPCApi: 'https://api-testnet.elastos.io/eth',
-      ethscApiMisc: 'https://api-testnet.elastos.io/misc',
-      ethscOracle: 'https://api-testnet.elastos.io/oracle',
-      ethscBrowserApiUrl: 'https://eth-testnet.elastos.io',
-      crRPCApi: 'https://api.cyberrepublic.org',
-      icon: '/assets/icon/test.svg'
-    },
-    /* {
-      type: 'settings.reg-net',
-      code: 'RegTest',
-      mainChainRPCApi: 'http://api.elastos.io:22336',
-      idChainRPCApi: 'http://api.elastos.io:22606',
-      eidRPCApi: 'https://api-testnet.elastos.io/newid', // Devnet
-      ethscRPCApi: 'http://api.elastos.io:22636',
-      ethscApiMisc: 'http://api.elastos.io:22634',
-      ethscOracle: 'http://api.elastos.io:22632',
-      ethscBrowserApiUrl: 'https://eth.elastos.io',
-      crRPCApi: 'https://api.cyberrepublic.org',
-      icon: '/assets/icon/reg.svg'
-    }, */
-    {
-      type: 'settings.lrw-net',
-      code: 'LrwNet',
-      mainChainRPCApi: 'http://crc1rpc.longrunweather.com:18080',
-      idChainRPCApi: 'http://did1rpc.longrunweather.com:18080',
-      eidRPCApi: 'http://eid02.longrunweather.com:18080',
-      ethscRPCApi: '',
-      ethscApiMisc: '',
-      ethscOracle: '',
-      ethscBrowserApiUrl: '',
-      crRPCApi: 'http://crapi.longrunweather.com:18080',
-      icon: '/assets/icon/priv.svg'
-    },
-    {
-      type: 'settings.priv-net',
-      code: 'PrvNet',
-      mainChainRPCApi: 'http://api.elastos.io:22336',
-      idChainRPCApi: 'http://api.elastos.io:22606',
-      eidRPCApi: 'https://api.elastos.io/eid',
-      ethscRPCApi: 'http://api.elastos.io:22636',
-      ethscApiMisc: 'http://api.elastos.io:22634',
-      ethscOracle: 'http://api.elastos.io:22632',
-      ethscBrowserApiUrl: 'https://eth.elastos.io',
-      crRPCApi: 'https://api.cyberrepublic.org',
-      icon: '/assets/icon/priv.svg'
-    }
-  ];
+
+  public init() {
+    GlobalServiceManager.getInstance().registerService(this);
+  }
+
+  async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    Logger.log("settings", "User signing in, reloading configuration for developer networks");
+    await this.getCurrentConfigurations();
+  }
+
+  onUserSignOut(): Promise<void> {
+    return;
+  }
 
   async getCurrentConfigurations() {
-    let networkCode = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, "chain.network.type");
+    let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
     let mode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "developer.backgroundservices.startonboot");
-    let address = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, "trinitycli.runaddress");
+
     this.zone.run(() => {
-      this.selectedNet = networkCode;
+      this.selectedNetworkTemplate = networkTemplate;
       this.backgroundServicesEnabled = mode;
     });
   }
 
-  async selectNet(
-    networkCode: string,
-    mainchainRPCApi: string,
-    idChainRPCApi: string,
-    eidRPCApi: string,
-    ethscRPCApi: string,
-    ethscApiMisc: string,
-    ethscOracle: string,
-    ethscBrowserApi: string,
-    crRPCApi: string
+  async selectNetworkTemplate(
+    networkTemplate: string
   ) {
-    Logger.log('settings', 'Dev preference set to ' + networkCode);
-    this.selectedNet = networkCode;
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "mainchain.rpcapi", mainchainRPCApi);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.id.rpcapi", idChainRPCApi);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eid.rpcapi", eidRPCApi);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.rpcapi", ethscRPCApi);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.apimisc", ethscApiMisc);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.oracle", ethscOracle);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "sidechain.eth.browserapi", ethscBrowserApi);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "cr.rpcapi", crRPCApi);
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "chain.network.type", networkCode);
+    Logger.log('settings', 'Dev preference set to ' + networkTemplate);
+    this.selectedNetworkTemplate = networkTemplate;
+    await this.globalNetworksService.setActiveNetworkTemplate(networkTemplate);
 
     void this.showRestartPrompt();
   }
 
-  getIndexByNetCode(netCode: string) {
-    return this.networks.findIndex(e => e.code === netCode)
-  }
-
   // Reset to MainNet
-  resetNet() {
-      if (this.selectedNet !== 'MainNet') {
-          const index = this.getIndexByNetCode('MainNet');
-          this.selectNet(
-            this.networks[index].code,
-            this.networks[index].mainChainRPCApi,
-            this.networks[index].idChainRPCApi,
-            this.networks[index].eidRPCApi,
-            this.networks[index].ethscRPCApi,
-            this.networks[index].ethscApiMisc,
-            this.networks[index].ethscOracle,
-            this.networks[index].ethscBrowserApiUrl,
-            this.networks[index].crRPCApi
-          );
-          this.showToast('Network type has been set to main net');
-      }
+  async resetNet() {
+    if (this.selectedNetworkTemplate !== MAINNET_TEMPLATE) {
+      await this.globalNetworksService.setActiveNetworkTemplate(MAINNET_TEMPLATE);
+      void this.showToast('Network template has been reset to main net');
+    }
   }
 
-  async toggleBackgroundServices() {
-    this.backgroundServicesEnabled = !this.backgroundServicesEnabled;
-    await this.setPreference("developer.backgroundservices.startonboot", this.backgroundServicesEnabled);
-    this.showToast(this.translate.instant('settings.please-restart'));
-  }
-
-  async configNetwork() {
+  /* async configNetwork() {
     if(!this.privateNet.configUrl.length || !this.privateNet.resolveUrl.length) {
       Logger.log('settings', 'Not private net urls filled');
       return;
@@ -218,13 +123,13 @@ export class DeveloperService {
         this.privConfigToastErr(err);
       }
     }
-  }
+  } */
 
   private async setPreference(key: string, value: any): Promise<void> {
     await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, key, value);
   }
 
-  async showToast(header: string, msg?: string, duration: number = 4000) {
+  async showToast(header: string, msg?: string, duration = 4000) {
     const toast = await this.toastController.create({
       color: 'primary',
       mode: 'ios',
@@ -232,7 +137,7 @@ export class DeveloperService {
       message: msg ? msg : null,
       duration: duration
     });
-    toast.present();
+    await toast.present();
   }
 
   async privConfigToastErr(err) {
@@ -245,15 +150,15 @@ export class DeveloperService {
         {
           text: 'Okay',
           handler: () => {
-            toast.dismiss();
+            void toast.dismiss();
             if(this.loadingCtrl) {
-              this.loadingCtrl.dismiss();
+              void this.loadingCtrl.dismiss();
             }
           }
         }
       ]
     });
-    toast.present();
+    await toast.present();
   }
 
   async loading() {

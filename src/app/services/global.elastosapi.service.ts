@@ -159,6 +159,34 @@ export class GlobalElastosAPIService extends GlobalService {
                         crRPC: 'https://api.cyberrepublic.org'
                     }
                 }
+                /*
+                {
+                    type: 'settings.lrw-net',
+                    code: 'LrwNet',
+                    mainChainRPCApi: 'http://crc1rpc.longrunweather.com:18080',
+                    idChainRPCApi: 'http://did1rpc.longrunweather.com:18080',
+                    eidRPCApi: 'http://eid02.longrunweather.com:18080',
+                    ethscRPCApi: '',
+                    ethscApiMisc: '',
+                    ethscOracle: '',
+                    ethscBrowserApiUrl: '',
+                    crRPCApi: 'http://crapi.longrunweather.com:18080',
+                    icon: '/assets/icon/priv.svg'
+                },
+                {
+                    type: 'settings.priv-net',
+                    code: 'PrvNet',
+                    mainChainRPCApi: 'http://api.elastos.io:22336',
+                    idChainRPCApi: 'http://api.elastos.io:22606',
+                    eidRPCApi: 'https://api.elastos.io/eid',
+                    ethscRPCApi: 'http://api.elastos.io:22636',
+                    ethscApiMisc: 'http://api.elastos.io:22634',
+                    ethscOracle: 'http://api.elastos.io:22632',
+                    ethscBrowserApiUrl: 'https://eth.elastos.io',
+                    crRPCApi: 'https://api.cyberrepublic.org',
+                    icon: '/assets/icon/priv.svg'
+                }
+                */
             }
         ];
     }

@@ -47,7 +47,7 @@ export class AdminService {
     });
   }
 
-  public async updateAndSaveProvider(provider: ManagedProvider, insertAfterRemoving: boolean = true) {
+  public async updateAndSaveProvider(provider: ManagedProvider, insertAfterRemoving = true) {
     let currentProviders = await this.getManagedProviders() || [];
 
     // First remove the given provider from the currently saved list, if existing.
@@ -111,17 +111,18 @@ export class AdminService {
       didString: createdDIDInfo.did.getDIDString()
     }
 
-    this.updateAndSaveProvider(provider);
+    await this.updateAndSaveProvider(provider);
 
     Logger.log('HiveManager', "Updated provider after DID creation:", provider);
 
     return createdDIDInfo;
   }
 
-  public async getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
+  public getAdminDIDMnemonic(provider: ManagedProvider): Promise<string> {
     return new Promise((resolve)=>{
       didManager.initDidStore(provider.did.storeId, ()=>{
         Logger.warn("hivemanager", "Create ID transaction callback called but we do not handle it!");
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }, async (didStore)=>{
         let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
         didStore.exportMnemonic(passwordInfo.password, (mnemonic)=>{
@@ -135,7 +136,7 @@ export class AdminService {
    * Check on chain if the administration DID for the given vault provider has been published or not.
    * We are not looking for anything special in the did document. Just the document itself is enough.
    */
-  public async retrieveAdminDIDPublicationStatus(provider: ManagedProvider): Promise<boolean> {
+  public retrieveAdminDIDPublicationStatus(provider: ManagedProvider): Promise<boolean> {
     // No DID created? Then it's of course not published.
     if (!provider.did) {
       return Promise.resolve(false);
@@ -154,13 +155,14 @@ export class AdminService {
   /**
    * Initiate a DID publication.
    */
-  public async publishAdminDID(provider: ManagedProvider): Promise<void> {
+  public publishAdminDID(provider: ManagedProvider): Promise<void> {
     return new Promise((resolve)=>{
       didManager.initDidStore(provider.did.storeId, (payload: string, memo: string)=>{
         Logger.log('HiveManager', "payload",payload)
         Logger.log('HiveManager', "payload fixed",payload.toString());
         this.sendDIDTransactionIntentRequest(payload.toString());
-      }, async (didStore)=>{
+      }, (didStore)=>{
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         didStore.loadDidDocument(provider.did.didString, async (didDocument)=>{
           let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
           didDocument.publish(passwordInfo.password, ()=>{
@@ -173,7 +175,7 @@ export class AdminService {
 
   private sendDIDTransactionIntentRequest(payload: string) {
     Logger.log('HiveManager', "Sending didtransaction intent");
-    this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", {
+    void  this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", {
       didrequest: JSON.parse(payload)
     });
   }

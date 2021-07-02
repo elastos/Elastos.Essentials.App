@@ -34,12 +34,12 @@ export class CoinAddERC20Page implements OnInit {
     public allCustomERC20Coins: ERC20Coin[] = [];
 
     // public coinAddress: string = "0xa4e4a46b228f3658e96bf782741c67db9e1ef91c"; // TEST - TTECH ERC20 on mainnet
-    public coinAddress: string = "";
+    public coinAddress = "";
     public coinName: string = null;
     public coinSymbol: string = null;
 
-    public coinInfoFetched: boolean = false;
-    public fetchingCoinInfo: boolean = false;
+    public coinInfoFetched = false;
+    public fetchingCoinInfo = false;
 
     public Util = Util;
 
@@ -120,7 +120,7 @@ export class CoinAddERC20Page implements OnInit {
         this.zone.run(() => {
             // Check if this looks like a valid address. If not, give feedback to user.
             if (!this.erc20CoinService.isAddress(this.coinAddress)) {
-                this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
+                void this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
                 this.coinAddress = '';
             } else {
               /*   if (this.coinAlreadyAdded(this.coinAddress)) {
@@ -130,7 +130,7 @@ export class CoinAddERC20Page implements OnInit {
                     this.tryFetchingCoinByAddress(this.coinAddress);
                 } */
 
-                this.tryFetchingCoinByAddress(this.coinAddress);
+                void this.tryFetchingCoinByAddress(this.coinAddress);
             }
         });
     }
@@ -170,7 +170,7 @@ export class CoinAddERC20Page implements OnInit {
                         this.coinSymbol = coinInfo.coinSymbol;
                         Logger.log('wallet', "Coin symbol", this.coinSymbol);
                     } else {
-                        this.popup.ionicAlert("common.sorry", "common.something-went-wrong", "common.ok");
+                        void this.popup.ionicAlert("common.sorry", "common.something-went-wrong", "common.ok");
                     }
 
                     this.coinInfoFetched = true;
@@ -179,7 +179,7 @@ export class CoinAddERC20Page implements OnInit {
             } catch (e) {
                 this.fetchingCoinInfo = false;
                 Logger.log('wallet', "Contract call exception - invalid contract? Not ERC20?");
-                this.popup.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "common.ok");
+                void this.popup.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "common.ok");
             }
         }
     }
@@ -196,8 +196,8 @@ export class CoinAddERC20Page implements OnInit {
         if (this.coinAlreadyAdded(this.coinAddress)) {
             this.native.toast_trans('wallet.coin-adderc20-alreadyadded');
         }  else {
-            const activeNetwork = this.prefs.getNetworkType();
-            const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetwork, true);
+            const activeNetworkTemplate = this.prefs.getNetworkTemplate();
+            const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetworkTemplate, true);
             await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
 
              // Coin added - go back to the previous screen

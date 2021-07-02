@@ -3,30 +3,19 @@
   <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
     <!-- Network Lists -->
     <ion-row
-      *ngFor="let network of developer.networks"
+      *ngFor="let networkTemplate of availableNetworkTemplates"
       class="section-row"
-      (click)="
-        developer.selectNet(
-          network.code,
-          network.mainChainRPCApi,
-          network.idChainRPCApi,
-          network.eidRPCApi,
-          network.ethscRPCApi,
-          network.ethscApiMisc,
-          network.ethscOracle,
-          network.ethscBrowserApiUrl,
-          network.crRPCApi
-        )"
+      (click)="selectNetworkTemplate(networkTemplate)"
       >
         <ion-col size="9" class="left-col">
-          <h1>{{ network.type | translate }}</h1>
+          <h1>{{ networkTemplate | translate }}</h1>
         </ion-col>
         <ion-col size="3" class="right-col">
-          <ion-icon *ngIf="developer.selectedNet === network.code" name="checkmark"></ion-icon>
+          <ion-icon *ngIf="developer.selectedNetworkTemplate === networkTemplate" name="checkmark"></ion-icon>
         </ion-col>
     </ion-row>
     <!-- Config Private Net -->
-    <ion-row *ngIf="developer.selectedNet === 'PrvNet'" class="section-row input-row remove-border">
+    <!-- <ion-row *ngIf="developer.selectedNet === 'PrvNet'" class="section-row input-row remove-border">
       <ion-col class="left-col" size="9.5">
         <ion-input
           [(ngModel)]="developer.privateNet.configUrl"
@@ -48,6 +37,6 @@
           <ion-ripple-effect></ion-ripple-effect>
         </div>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
   </ion-grid>
 </ion-content>

@@ -40,7 +40,6 @@ export class CandidatesService {
     public councilTerm: number;
     public council: CouncilMember[] = [];
 
-    // public activeNetwork: NetworkType;
     private subscription: Subscription = null;
 
     public httpOptions = {

@@ -11,6 +11,7 @@ import { GlobalThemeService } from './global.theme.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalIntentService } from './global.intent.service';
 import { JSONObject } from '../model/json';
+import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -100,6 +101,7 @@ namespace AssistPublishing {
             private storage: GlobalStorageService,
             private theme: GlobalThemeService,
             private modalCtrl: ModalController,
+            private globalNetworksService: GlobalNetworksService,
             private prefs: GlobalPreferencesService,) {
             super();
         }
@@ -193,21 +195,21 @@ namespace AssistPublishing {
          * Computes the right assist api endpoint according to current active network in settings.
          */
         private async getAssistEndpoint(): Promise<string> {
-            let activeNetworkType: string = null;
+            let activeNetworkTemplate: string = null;
 
             if (!GlobalDIDSessionsService.signedInDIDString) {
                 // No active user? Use mainnet
-                activeNetworkType = 'MainNet';
+                activeNetworkTemplate = MAINNET_TEMPLATE;
             }
             else {
-                activeNetworkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+                activeNetworkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
             }
 
-            switch (activeNetworkType) {
-                case 'MainNet':
+            switch (activeNetworkTemplate) {
+                case MAINNET_TEMPLATE:
                     return assistAPIEndpoints.MainNet;
                 default:
-                    throw new Error("Assist service cannot be used to published on network "+activeNetworkType);
+                    throw new Error("Assist service cannot be used to published on network "+activeNetworkTemplate);
             }
         }
 
@@ -361,6 +363,7 @@ class DIDPublishingManager {
         private theme: GlobalThemeService,
         private modalCtrl: ModalController,
         private prefs: GlobalPreferencesService,
+        private globalNetworksService: GlobalNetworksService,
         private globalIntentService: GlobalIntentService) {}
 
     public async init(): Promise<void> {
@@ -372,6 +375,7 @@ class DIDPublishingManager {
             this.storage,
             this.theme,
             this.modalCtrl,
+            this.globalNetworksService,
             this.prefs);
 
         this.walletPublisher = new WalletPublishing.WalletPublisher(
@@ -429,7 +433,7 @@ class DIDPublishingManager {
     public async resetStatus() {
         if (this.activePublisher)
             await this.activePublisher.resetStatus();
-            
+
         this.persistentInfo = this.createNewPersistentInfo();
         await this.savePersistentInfoAndEmitStatus(this.persistentInfo);
     }
@@ -471,6 +475,7 @@ export class GlobalPublicationService {
         private modalCtrl: ModalController,
         private theme: GlobalThemeService,
         private prefs: GlobalPreferencesService,
+        private globalNetworksService: GlobalNetworksService,
         private globalIntentService: GlobalIntentService
     ) {
         GlobalPublicationService.instance = this;
@@ -482,6 +487,7 @@ export class GlobalPublicationService {
             this.theme,
             this.modalCtrl,
             this.prefs,
+            this.globalNetworksService,
             this.globalIntentService);
     }
 

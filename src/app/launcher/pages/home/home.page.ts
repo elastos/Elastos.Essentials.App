@@ -25,6 +25,7 @@ import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Subscription } from 'rxjs';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 
 @Component({
   selector: 'app-home',
@@ -69,6 +70,7 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private walletService: WalletManager,
     private globalNotifications: GlobalNotificationsService,
+    private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService,
     private didSessions: GlobalDIDSessionsService) {
   }
@@ -108,24 +110,25 @@ export class HomePage implements OnInit {
     this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
 
     if (this.didService.signedIdentity) { // Should not happend, just in case - for ionic hot reload
-      let networkCode = await this.pref.getPreference(this.didService.signedIdentity.didString, "chain.network.type");
-      switch (networkCode) {
-        case 'MainNet':
-          this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
-        break;
-        case 'TestNet':
-          this.titleBar.setTitle('Test Net Active');
-        break;
-        case 'RegTest':
-          this.titleBar.setTitle('Regression Net Active');
-        break;
-        case 'PrvNet':
-          this.titleBar.setTitle('Private Net Active');
+      this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
+        switch (template) {
+          case MAINNET_TEMPLATE:
+            this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
           break;
-        case 'LrwNet':
-          this.titleBar.setTitle('CR Private Net Active');
-        break;
-      }
+          case TESTNET_TEMPLATE:
+            this.titleBar.setTitle('TEST NET Active');
+          break;
+          case 'RegTest':
+            this.titleBar.setTitle('Regression Net Active');
+          break;
+          case 'PrvNet':
+            this.titleBar.setTitle('Private Net Active');
+            break;
+          case 'LrwNet':
+            this.titleBar.setTitle('CR Private Net Active');
+          break;
+        }
+      });
     }
 
     // Wait for wallet service to be initialized (existing wallets loaded) so we can display some balance

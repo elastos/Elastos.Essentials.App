@@ -42,13 +42,13 @@ import { ETHChainSubWallet } from '../model/wallets/ETHChainSubWallet';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
-import { NetworkType } from 'src/app/model/networktype';
 import { Events } from 'src/app/services/events.service';
 import { StandardSubWalletBuilder } from '../model/wallets/StandardSubWalletBuilder';
 import { ERC721Service } from './erc721.service';
 import { BehaviorSubject } from 'rxjs';
 import { Util } from '../model/Util';
 import { WalletConfig } from '../model/WalletConfig';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 
 
 class TransactionMapEntry {
@@ -81,7 +81,7 @@ export class WalletManager {
 
     public spvBridge: SPVWalletPluginBridge = null;
 
-    private networkType: NetworkType;
+    private networkTemplate: string;
 
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
 
@@ -98,6 +98,7 @@ export class WalletManager {
         public popupProvider: PopupProvider,
         public jsonRPCService: WalletJsonRPCService,
         private prefs: GlobalPreferencesService,
+        private globalNetworksService: GlobalNetworksService,
         private didSessions: GlobalDIDSessionsService,
     ) {
         WalletManager.instance = this;
@@ -117,9 +118,7 @@ export class WalletManager {
             return;
         }
 
-        this.localStorage.get('hasPrompt').then((val) => {
-            this.hasPromptTransfer2IDChain = val ? val : false;
-        });
+        this.hasPromptTransfer2IDChain = await this.localStorage.get('hasPrompt') ?? false;
 
         Logger.log('wallet', "Wallet manager initialization complete");
 
@@ -136,18 +135,18 @@ export class WalletManager {
 
         try {
             // NetWork Type
-            this.networkType = await this.prefs.getActiveNetworkType(GlobalDIDSessionsService.signedInDIDString);
+            this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
             let networkConfig = null;
-            if (this.networkType === NetworkType.PrvNet) {
+            if (this.networkTemplate === "PrvNet") { // TODO - rework for network templates
               networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
             } else {
-              networkConfig = WalletConfig.getNetConfig(this.networkType);
-              if (this.networkType === NetworkType.LrwNet) { // For crcouncil voting test
-                this.networkType = NetworkType.PrvNet;
+              networkConfig = WalletConfig.getNetConfig(this.networkTemplate);
+              if (this.networkTemplate === "LrwNet") { // For crcouncil voting test
+                this.networkTemplate = "PrvNet";
               }
             }
-            Logger.log('wallet', "Setting network to ", this.networkType, networkConfig);
-            await this.spvBridge.setNetwork(this.networkType, networkConfig);
+            Logger.log('wallet', "Setting network to ", this.networkTemplate, networkConfig);
+            await this.spvBridge.setNetwork(this.networkTemplate, networkConfig);
             // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
@@ -225,7 +224,7 @@ export class WalletManager {
                 }
 
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
-                /* await  */this.masterWallets[masterId].updateERCTokenList(this.networkType);
+                /* await  */void this.masterWallets[masterId].updateERCTokenList(this.networkTemplate);
             }
         } catch (error) {
             Logger.error('wallet', 'initWallets error:', error);
@@ -393,7 +392,7 @@ export class WalletManager {
         // await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
 
         // Get all tokens and create subwallet
-        await this.masterWallets[id].updateERCTokenList(this.networkType);
+        await this.masterWallets[id].updateERCTokenList(this.networkTemplate);
 
         // Save state to local storage
         await this.saveMasterWallet(this.masterWallets[id]);

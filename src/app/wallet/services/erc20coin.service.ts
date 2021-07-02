@@ -80,16 +80,16 @@ export class ERC20CoinService {
         try {
             const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc20ABI, address, /* { from: ethAccountAddress } */);
             Logger.log('wallet', 'erc20Contract', erc20Contract);
-    
+
             const coinName = await erc20Contract.methods.name().call();
             Logger.log('wallet', 'Coin name:', coinName);
-    
+
             const coinSymbol = await erc20Contract.methods.symbol().call();
             Logger.log('wallet', 'Coin symbol:', coinSymbol);
-    
+
             const coinDecimals = await erc20Contract.methods.decimals().call();
             Logger.log('wallet', 'Coin decimals:', coinDecimals);
-    
+
             return { coinName, coinSymbol, coinDecimals };
         } catch (err) {
             Logger.log('wallet', 'getCoinInfo', err);
@@ -99,7 +99,7 @@ export class ERC20CoinService {
 
     public async getERC20Coin(address: string, ethAccountAddress: string) {
         const coinInfo = await this.getCoinInfo(address, ethAccountAddress);
-        const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinSymbol, coinInfo.coinName, address, this.prefs.activeNetwork, false);
+        const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinSymbol, coinInfo.coinName, address, this.prefs.getNetworkTemplate(), false);
         return newCoin;
     }
 }

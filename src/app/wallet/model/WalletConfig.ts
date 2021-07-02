@@ -1,4 +1,5 @@
 import { Logger } from "src/app/logger";
+import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export class WalletConfig {
   private static mainNet = {
@@ -36,19 +37,19 @@ export class WalletConfig {
     'ETHDID': {'ChainID': 24, 'NetworkID': 24}
   }
 
-  public static getNetConfig(netType) {
-    switch (netType) {
-      case 'MainNet':
+  public static getNetConfig(networkTemplate: string) {
+    switch (networkTemplate) {
+      case MAINNET_TEMPLATE:
         return JSON.stringify(WalletConfig.mainNet);
       break;
-      case 'TestNet':
+      case TESTNET_TEMPLATE:
         return JSON.stringify(WalletConfig.testNet);
       break;
       case 'LrwNet':
         return JSON.stringify(WalletConfig.LrwNet);
       break;
       default:
-        Logger.warn('wallet', 'WalletConfig: Not support ', netType)
+        Logger.warn('wallet', 'WalletConfig: Not support ', networkTemplate)
       break;
     }
   }
