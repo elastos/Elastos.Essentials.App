@@ -202,7 +202,7 @@ export const zh = {
         'sethiveprovider-address': '地址:',
 
         'publishing': {
-            'publish-did': 'Publishing Identity'
+            'publish-did': '发布身份'
         },
 
         /******************** Profile Entries ********************/

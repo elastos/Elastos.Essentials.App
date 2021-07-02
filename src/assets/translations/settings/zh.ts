@@ -87,7 +87,7 @@ export const zh = {
 
           /*********** Privacy page **********/
           'privacy': '隐私',
-          'identity-publishing': '身份发布',
+          'identity-publishing': '发布身份',
           'publish-identity-medium-assist': '使用名为 ASSIST 的第三方服务快速发布身份',
           'publish-identity-medium-wallet': '使用您的钱包自行发布身份',
 
