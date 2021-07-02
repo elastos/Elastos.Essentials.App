@@ -72,6 +72,7 @@ export const en = {
     'retrieve-prompt': 'Trying to retrieve identities, please wait.',
 
     // Backup
+    'name-s': '\'s',
     'decentralized-id': 'Decentralized ID',
     'did-warning-info': 'This is your secret QR Code which holds your identity private key, don\'t share this with anyone.',
     'print-qrcode': 'Print QR Code',
@@ -80,6 +81,10 @@ export const en = {
     'qrcode-and-mnemonic-words': 'QR Code and Mnemonic words',
     'verify-did': 'Verify',
     'print-title': 'KEEP THIS PRIVATE!',
+    'print-confirmation-title': 'Print confirmation',
+    'print-confirmation-des': 'Did you successfully print your identity QR Code?',
+    'print-try-again': 'No, try again',
+    'print-yes': 'Yes',
 
     // Prepare DID
     'getting-ready': 'Getting ready',

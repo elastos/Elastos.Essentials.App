@@ -69,6 +69,7 @@ export const fr = {
     'retrieve-prompt': 'Recherche et importation des identités, veuillez patienter.',
 
     // Backup
+    'name-s': '\'s',
     'decentralized-id': 'ID décentralisé',
     'did-warning-info': 'Ceci est le QR code qui contient la clé secrète de votre identité. Ne le partagez avec personne.',
     'print-qrcode': 'Imprimer le QR Code',
@@ -77,6 +78,10 @@ export const fr = {
     'qrcode-and-mnemonic-words': 'QR Code et Clé Papier',
     'verify-did': 'Vérifier',
     'print-title': 'GARDEZ CECI SECRET!',
+    'print-confirmation-title': 'Print confirmation',
+    'print-confirmation-des': 'Did you successfully print your identity QR Code?',
+    'print-try-again': 'No, try again',
+    'print-yes': 'Yes',
 
     // Prepare DID
     'getting-ready': 'Finalisation en cours',

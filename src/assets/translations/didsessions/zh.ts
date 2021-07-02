@@ -71,6 +71,7 @@ export const zh = {
     'retrieve-prompt': '正在获取身份信息，请稍候...',
 
     // Backup
+    'name-s': '的',
     'decentralized-id': '分布式 ID',
     'did-warning-info': '这是您的私有二维码，其中包含您的身份私钥，请勿与任何人共享。',
     'print-qrcode': '打印二维码',
@@ -79,6 +80,10 @@ export const zh = {
     'qrcode-and-mnemonic-words': '打印 二维码+助记词',
     'verify-did': '验证',
     'print-title': '请保存好此私钥!',
+    'print-confirmation-title': '打印确认',
+    'print-confirmation-des': '您是否成功打印了您的身份二维码？',
+    'print-try-again': '不，再试一次',
+    'print-yes': '是',
 
     // Prepare DID
     'getting-ready': '准备',
