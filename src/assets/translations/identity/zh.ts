@@ -201,6 +201,10 @@ export const zh = {
         'sethiveprovider-name': '名称:',
         'sethiveprovider-address': '地址:',
 
+        'publishing': {
+            'publish-did': 'Publishing Identity'
+        },
+
         /******************** Profile Entries ********************/
         'credential-info-type-did': 'DID',
         'credential-info-type-avatar': '档案头像',

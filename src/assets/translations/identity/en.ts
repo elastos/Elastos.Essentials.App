@@ -200,6 +200,11 @@ export const en = {
         'sethiveprovider-name': 'Name:',
         'sethiveprovider-address': 'Address:',
 
+        // Global component: assist publishing
+        'publishing': {
+            'publish-did': 'Publishing Identity'
+        },
+        
         /******************** Profile Entries ********************/
         'credential-info-type-did': 'Identity',
         'credential-info-type-avatar': 'Avatar',
