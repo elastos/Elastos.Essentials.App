@@ -128,7 +128,19 @@ export class GlobalElastosAPIService extends GlobalService {
                         escMiscRPC: 'https://api.elastos.io/misc',
                         escBrowserRPC: 'https://eth.elastos.io',
                         crRPC: 'https://api.cyberrepublic.org'
-                    }
+                    },
+                    "LRW": {
+                      mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
+                      idChainRPC: 'http://did1rpc.longrunweather.com:18080',
+                      eidChainRPC: 'http://eid02.longrunweather.com:18080',
+                      eidMiscRPC:'',
+                      eidOracleRPC: '',
+                      escRPC:'',
+                      escOracleRPC: '',
+                      escMiscRPC: '',
+                      escBrowserRPC: '',
+                      crRPC: 'http://crapi.longrunweather.com:18080',
+                  },
                 }
             },
             {
@@ -159,7 +171,19 @@ export class GlobalElastosAPIService extends GlobalService {
                         escMiscRPC: 'https://api-testnet.trinity-tech.cn/eth-misc',
                         escBrowserRPC: '',
                         crRPC: 'https://api.cyberrepublic.org'
-                    }
+                    },
+                    "LRW": {
+                      mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
+                      idChainRPC: 'http://did1rpc.longrunweather.com:18080',
+                      eidChainRPC: 'http://eid02.longrunweather.com:18080',
+                      eidMiscRPC:'',
+                      eidOracleRPC: '',
+                      escRPC:'',
+                      escOracleRPC: '',
+                      escMiscRPC: '',
+                      escBrowserRPC: '',
+                      crRPC: 'http://crapi.longrunweather.com:18080',
+                  },
                 }
                 /*
                 {

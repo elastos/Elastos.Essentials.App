@@ -45,7 +45,7 @@ export class WalletConfig {
       case TESTNET_TEMPLATE:
         return JSON.stringify(WalletConfig.testNet);
       break;
-      case 'LrwNet':
+      case 'LRW':
         return JSON.stringify(WalletConfig.LrwNet);
       break;
       default:

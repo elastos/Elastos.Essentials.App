@@ -141,7 +141,7 @@ export class WalletManager {
               networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
             } else {
               networkConfig = WalletConfig.getNetConfig(this.networkTemplate);
-              if (this.networkTemplate === "LrwNet") { // For crcouncil voting test
+              if (this.networkTemplate === "LRW") {
                 this.networkTemplate = "PrvNet";
               }
             }
