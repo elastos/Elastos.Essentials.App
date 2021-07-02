@@ -2,7 +2,7 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, ERC20TokenInfo, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, ERC20TokenInfo, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
@@ -138,10 +138,10 @@ export class ETHChainSubWallet extends StandardSubWallet {
         transactionInfo.fee = new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI).toString();
 
         if (transactionInfo.confirmStatus !== 0) {
-            transactionInfo.status = 'Confirmed';
+            transactionInfo.status = TransactionStatus.CONFIRMED;
             transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
         } else {
-            transactionInfo.status = 'Pending';
+            transactionInfo.status = TransactionStatus.PENDING;
             transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
         }
 

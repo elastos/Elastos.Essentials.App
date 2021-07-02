@@ -7,7 +7,7 @@ import { Util } from '../Util';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
@@ -238,10 +238,10 @@ export class ERC20SubWallet extends SubWallet {
         transactionInfo.fee = (new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toString();
 
         if (transactionInfo.confirmStatus !== 0) {
-            transactionInfo.status = 'Confirmed';
+            transactionInfo.status = TransactionStatus.CONFIRMED;
             transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-confirmed");
         } else {
-            transactionInfo.status = 'Pending';
+            transactionInfo.status = TransactionStatus.PENDING;
             transactionInfo.statusName = translate.instant("wallet.coin-transaction-status-pending");
         }
 

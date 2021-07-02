@@ -14,9 +14,9 @@
             <ion-card-title>{{ transactionInfo.name | translate }}</ion-card-title>
             <ion-card-subtitle>{{ symbol }}{{ amount }}</ion-card-subtitle>
             <p
-                [class.complete]="status === 'Confirmed'"
-                [class.pending]="status === 'Pending'"
-                [class.incomplete]="status === 'Incomplete'"
+                [class.complete]="status === 'confirmed'"
+                [class.pending]="status === 'pending'"
+                [class.incomplete]="status === 'incomplete'"
             > {{ statusName }}
             </p>
         </ion-card>
