@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSession } from '../model/didsession.model';
@@ -18,6 +19,7 @@ export class IdentityService {
      */
     public getAppIdentityOnChain(appDID: string): Promise<DIDPlugin.DIDDocument> {
         return new Promise((resolve, reject)=>{
+            Logger.log("developertools", "Get app identity on chain - Resolving appDID", appDID);
             didManager.resolveDidDocument(appDID, true, (document)=>{
                 resolve(document);
             }, (err)=>{
@@ -27,7 +29,11 @@ export class IdentityService {
     }
 
     public getDeveloperIdentityOnChain(developerDID: string): Promise<DIDPlugin.DIDDocument> {
+        if (!developerDID)
+            return null;
+
         return new Promise((resolve, reject)=>{
+            Logger.log("developertools", "Get developer identity on chain - Resolving developerDID", developerDID);
             didManager.resolveDidDocument(developerDID, true, (document)=>{
                 resolve(document);
             }, (err)=>{
