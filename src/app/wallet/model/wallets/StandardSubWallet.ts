@@ -98,19 +98,61 @@ export abstract class StandardSubWallet extends SubWallet {
                 break;
             case TransactionDirection.SENT:
                 transactionName = "wallet.coin-op-sent-token";
-                if (transaction.txtype === RawTransactionType.TransferCrossChainAsset) {
-                    switch (transaction.outputs[0]) {
-                        case Config.IDCHAIN_ADDRESS:
-                        case Config.ETHDID_ADDRESS:
-                            transactionName = "wallet.coin-dir-to-idchain";
-                            break;
-                        case Config.ETHSC_ADDRESS:
-                            transactionName = "wallet.coin-dir-to-ethsc";
-                            break;
-                        default:
-                            transactionName = "wallet.coin-dir-to-mainchain";
-                            break;
-                    }
+                switch (transaction.txtype) {
+                    case RawTransactionType.TransferCrossChainAsset:
+                        switch (transaction.outputs[0]) {
+                            case Config.IDCHAIN_ADDRESS:
+                            case Config.ETHDID_ADDRESS:
+                                transactionName = "wallet.coin-dir-to-idchain";
+                                break;
+                            case Config.ETHSC_ADDRESS:
+                                transactionName = "wallet.coin-dir-to-ethsc";
+                                break;
+                            default:
+                                transactionName = "wallet.coin-dir-to-mainchain";
+                                break;
+                        }
+                        break;
+                    case RawTransactionType.RegisterProducer:
+                        transactionName = "wallet.coin-op-producer-register";
+                        break;
+                    case RawTransactionType.CancelProducer:
+                        transactionName = "wallet.coin-op-producer-cancel";
+                        break;
+                    case RawTransactionType.UpdateProducer:
+                        transactionName = "wallet.coin-op-producer-update";
+                        break;
+                    case RawTransactionType.ReturnDepositCoin:
+                        transactionName = "wallet.coin-op-producer-return";
+                        break;
+                    case RawTransactionType.ActivateProducer:
+                        transactionName = "wallet.coin-op-producer-active";
+                        break;
+                    case RawTransactionType.RegisterCR:
+                        transactionName = "wallet.coin-op-cr-register";
+                        break;
+                    case RawTransactionType.UnregisterCR:
+                        transactionName = "wallet.coin-op-cr-cancel";
+                        break;
+                    case RawTransactionType.UpdateCR:
+                        transactionName = "wallet.coin-op-cr-update";
+                        break;
+                    case RawTransactionType.ReturnCRDepositCoin:
+                        transactionName = "wallet.coin-op-cr-return";
+                        break;
+
+                    case RawTransactionType.CrcProposal:
+                        transactionName = "wallet.coin-op-proposal";
+                        break;
+                    case RawTransactionType.CrcProposalReview:
+                        transactionName = "wallet.coin-op-proposal-review";
+                        break;
+                    case RawTransactionType.CrcProposalTracking:
+                        transactionName = "wallet.coin-op-proposal-tracking";
+                        break;
+                    case RawTransactionType.CrcProposalWithdraw:
+                        transactionName = "wallet.coin-op-proposal-withdraw";
+                        break;
                 }
                 break;
             case TransactionDirection.MOVED:
@@ -214,6 +256,7 @@ export abstract class StandardSubWallet extends SubWallet {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
       }
+      Logger.warn('wallet', 'saveTransactions:', this.transactionsCache)
       this.transactionsCache.save();
     }
 }

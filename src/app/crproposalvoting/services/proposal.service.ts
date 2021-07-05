@@ -29,7 +29,6 @@ export class ProposalService {
         private http: HttpClient,
         private prefs: GlobalPreferencesService,
         private nav: GlobalNavService,
-        private globalPreferences: GlobalPreferencesService,
         private globalNetworksService: GlobalNetworksService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) {}

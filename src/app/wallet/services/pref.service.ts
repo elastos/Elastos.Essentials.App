@@ -16,7 +16,6 @@ export class WalletPrefsService {
   private languageSubscription: Subscription = null;
 
   constructor(
-    private globalPreferences: GlobalPreferencesService,
     private globalNetworksService: GlobalNetworksService,
     public translate: TranslateService,
   ) {}

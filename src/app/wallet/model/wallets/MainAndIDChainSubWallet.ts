@@ -24,6 +24,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     private votingAmountSELA = 0; // ELA
     private votingUtxoArray: Utxo[] = null;
 
+    private ownerAddress = null;
+
     private needtoLoadMoreAddresses: string[] = [];
     private TRANSACTION_LIMIT = 50;// for rpc
     // Maybe there are lots of transactions and we need to merge the transactions for multi address wallet,
@@ -55,6 +57,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 this.checkIDChainToBeDestroy();
             }
         }, 3000);
+    }
+
+    public async getOwnerAddress(): Promise<string> {
+      if (!this.ownerAddress) {
+        this.ownerAddress = await this.masterWallet.walletManager.spvBridge.getOwnerAddress(
+          this.masterWallet.id, this.id);
+      }
+      return this.ownerAddress;
     }
 
     checkIDChainToBeDestroy() {
@@ -660,9 +670,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     private async getBalanceByOwnerAddress() {
       if (this.id != StandardCoinName.ELA) return;
 
-      let address = await this.masterWallet.walletManager.spvBridge.getOwnerAddress(
-          this.masterWallet.id, this.id);
-      let addressArray = [address];
+      let ownerAddress = await this.getOwnerAddress();
+      let addressArray = [ownerAddress];
       try {
           const balance = await this.jsonRPCService.getBalanceByAddress(this.id as StandardCoinName, addressArray);
           if (balance === null) {
@@ -814,6 +823,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             if (addressArray.Addresses.length === 0) {
                 break;
             }
+            if ((startIndex === 0) && internalAddress) {
+              // OwnerAddress: for register dpos node, CRC.
+              const ownerAddress = await this.getOwnerAddress();
+              addressArray.Addresses.push(ownerAddress);
+            }
+
             startIndex += addressArray.Addresses.length;
 
             try {
