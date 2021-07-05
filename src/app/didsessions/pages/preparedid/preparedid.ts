@@ -170,6 +170,7 @@ export class PrepareDIDPage {
    * Depending on things that need to be done for this DID, the next slide to show is computed here.
    */
   private async computeNextSlideIndex(currentSlideIndex: number): Promise<number> {
+    Logger.log("didsessions", "Computing next slide index");
     if (currentSlideIndex <= this.PUBLISH_DID_SLIDE_INDEX && await this.needToPublishIdentity()) {
       return this.PUBLISH_DID_SLIDE_INDEX;
     }
@@ -193,7 +194,7 @@ export class PrepareDIDPage {
   }
 
   private fetchPublishedDID(): Promise<DIDPlugin.DIDDocument> {
-    Logger.log("didsessions", "Checking if identity is published");
+    Logger.log("didsessions", "Checking if identity is published for ", this.identityService.identityBeingCreated.did.getDIDString());
     return new Promise<DIDPlugin.DIDDocument>((resolve, reject) =>{
       didManager.resolveDidDocument(this.identityService.identityBeingCreated.did.getDIDString(), true, (doc) => {
         Logger.log("didsessions", "Resolved identity:", doc);
@@ -264,7 +265,15 @@ export class PrepareDIDPage {
         this.publishIdentityReal()
       ]);
 
+      // NOTE: A bit dirty workaround to "make sure" the resolver node that will tell us if the
+      // identity is published, had time to sync the latest info from the chain, because the resolver
+      // node is not always the node used to publish the DID and resolving right after publish
+      // sometimes returns NULL.
+      Logger.log("didsessions", "Waiting a moment to let the DID resolver node sync the latest data");
+      await sleep(5000);
+
       // Resolve the published DID to make sure everything is all right
+      Logger.log("didsessions", "Verifying is the identity is well published", this.publishedDID);
       if (await this.needToPublishIdentity()) {
         Logger.warn("didsessions", "Identity is supposed to be published and ready but cannot be resolved");
         this.publishError = "Sorry, your identity could not be published for now";

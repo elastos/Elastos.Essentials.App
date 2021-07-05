@@ -8,6 +8,7 @@ import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalLanguageService } from './global.language.service';
+import { rejects } from 'assert';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -234,7 +235,7 @@ export class GlobalElastosAPIService extends GlobalService {
             this.activeProvider = new BehaviorSubject(provider);
         }
 
-        this.setResolverUrl();
+        await this.setResolverUrl();
 
         Logger.log("elastosapi", "User's Elastos API provider is:", this.activeProvider.value);
     }
@@ -314,7 +315,13 @@ export class GlobalElastosAPIService extends GlobalService {
         Logger.log("elastosapi", "Trying to auto detect the best elastos api provider");
         let bestProvider = await this.findTheBestProvider();
         Logger.log("elastosapi", "Best provider found:", bestProvider);
+
+        // Use this provider
         this.activeProvider.next(bestProvider);
+
+        // Immediatelly let plugins know about this selected provider, because DID sessions
+        // need to set the right resolver urls even if no user is signed in.
+        await this.setResolverUrl();
     }
 
     /**
@@ -371,22 +378,26 @@ export class GlobalElastosAPIService extends GlobalService {
   private setupDIDResolver() {
     this.activeProvider.subscribe((provider) => {
       if (provider) {
-        this.setResolverUrl();
+        void this.setResolverUrl();
       }
     });
   }
 
-  private setResolverUrl() {
+  private async setResolverUrl(): Promise<void> {
     let didResolverUrl = this.getApiUrl(ElastosApiUrlType.EID_RPC);
 
-    Logger.log('DIDSessionsService', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
+    Logger.log('elastosapi', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
     // DID Plugin
-    didManager.setResolverUrl(didResolverUrl, () => {
-    }, (err) => {
-        Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+    await new Promise<void>((resolve, reject) => {
+        didManager.setResolverUrl(didResolverUrl, () => {
+            resolve();
+        }, (err) => {
+            Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+            reject(err);
+        });
     });
 
     // Hive plugin
-    void hiveManager.setDIDResolverUrl(didResolverUrl);
+    await hiveManager.setDIDResolverUrl(didResolverUrl);
   }
 }
