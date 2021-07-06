@@ -7,8 +7,6 @@ import { ProposalDetails } from '../model/proposal-details';
 import { ProposalsDetailsResponse } from '../model/proposal-details-response';
 import { SuggestionDetails } from '../model/suggestion-details';
 import { SuggestionDetailsResponse } from '../model/suggestion-details-response';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum'
@@ -27,7 +25,6 @@ export class ProposalService {
 
     constructor(
         private http: HttpClient,
-        private prefs: GlobalPreferencesService,
         private nav: GlobalNavService,
         private globalNetworksService: GlobalNetworksService,
         private globalElastosAPIService: GlobalElastosAPIService

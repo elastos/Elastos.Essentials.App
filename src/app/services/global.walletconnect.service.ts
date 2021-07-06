@@ -1,5 +1,4 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Subject } from 'rxjs';
 import { Logger } from '../logger';
 import WalletConnect from "@walletconnect/client";
 import { GlobalNavService } from './global.nav.service';
@@ -25,7 +24,6 @@ export class GlobalWalletConnectService extends GlobalService {
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
     private intent: GlobalIntentService,
-    private didSessions: GlobalDIDSessionsService,
     private intents: GlobalIntentService,
     private globalNetworksService: GlobalNetworksService,
     private native: GlobalNativeService
@@ -392,7 +390,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let chainId: number;
 
     // TODO: We keep this for now but this is wrong. Later we should use the active wallet in the wallet
-    // app, not the settings' "network template" (one template can have many wallets: elastos, heco, etc, therefore 
+    // app, not the settings' "network template" (one template can have many wallets: elastos, heco, etc, therefore
     // different chain ids)
     switch (activeNetworkTemplate) {
       case MAINNET_TEMPLATE:

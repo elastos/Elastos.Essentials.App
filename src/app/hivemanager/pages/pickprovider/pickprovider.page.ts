@@ -60,7 +60,6 @@ export class PickProviderPage implements OnInit {
     private route: ActivatedRoute,
     public theme: GlobalThemeService,
     private nav: GlobalNavService,
-    private globalIntentService: GlobalIntentService,
     private popup: PopupService,
     private prefs: GlobalPreferencesService,
     private events: Events,

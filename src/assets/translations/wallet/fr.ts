@@ -123,6 +123,7 @@ export const fr = {
         "coin-op-proposal-review": "Review Proposal",
         "coin-op-proposal-tracking": "Proposal Tracking",
         "coin-op-proposal-withdraw": "Proposal Fund Withdrawal",
+        "coin-op-crc-claim": "CR Council Member Transaction",
         "coin-dir-from-mainchain": "Depuis ELA mainchain",
         "coin-dir-from-idchain": "Depuis la chaîne Identité",
         "coin-dir-from-ethsc": "Depuis la chaîne ETH",

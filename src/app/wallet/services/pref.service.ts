@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Config } from '../config/Config';
 
 @Injectable({

@@ -1,11 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ToastController, LoadingController, Platform, PopoverController } from '@ionic/angular';
-import { HttpClient } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
+import { ToastController, LoadingController, PopoverController } from '@ionic/angular';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { SettingsWarningComponent } from '../components/warning/warning.component';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
@@ -26,7 +23,6 @@ export class DeveloperService extends GlobalService  {
     private loadingCtrl: LoadingController,
     private popoverCtrl: PopoverController,
     private zone: NgZone,
-    private translate: TranslateService,
     private prefs: GlobalPreferencesService,
     private globalNetworksService: GlobalNetworksService,
     private splashScreen: SplashScreen,

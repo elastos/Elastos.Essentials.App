@@ -123,6 +123,7 @@ export const zh = {
         "coin-op-proposal-review": "评审提案",
         "coin-op-proposal-tracking": "提案反馈",
         "coin-op-proposal-withdraw": "提取提案资金",
+        "coin-op-crc-claim": "CR委员节点交易",
         "coin-dir-from-mainchain": "ELA 主链充值",
         "coin-dir-from-idchain": "ID 侧链提现",
         "coin-dir-from-ethsc": "ETH 侧链提现",

@@ -8,7 +8,6 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { App } from 'src/app/model/app.enum';
 
 const DURATION_MIN_BETWEEN_2_TIPS_HOURS = 12; // 12 hours

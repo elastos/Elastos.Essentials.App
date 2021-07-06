@@ -1,9 +1,7 @@
-import { AbstractProvider, RequestArguments } from "web3-core";
+import { AbstractProvider } from "web3-core";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
 import { Logger } from "../logger";
-import { GlobalDIDSessionsService } from "../services/global.didsessions.service";
 import { ElastosApiUrlType, GlobalElastosAPIService } from "../services/global.elastosapi.service";
-import { GlobalPreferencesService } from "../services/global.preferences.service";
 
 export class EssentialsWeb3Provider implements AbstractProvider {
     rpcApiEndpoint: string = null; // RPC API server url. Do NOT read this value directly.

@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalStorageService } from './global.storage.service';
-import { DIDStore } from '../identity/model/didstore.model';
 import { Logger } from '../logger';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AssistPublishingComponent } from '../components/assist-publishing/assist-publishing.component';
 import { ModalController } from '@ionic/angular';
 import { GlobalThemeService } from './global.theme.service';
@@ -98,11 +97,9 @@ namespace AssistPublishing {
         constructor(
             private manager: DIDPublishingManager,
             private http: HttpClient,
-            private storage: GlobalStorageService,
             private theme: GlobalThemeService,
             private modalCtrl: ModalController,
-            private globalNetworksService: GlobalNetworksService,
-            private prefs: GlobalPreferencesService,) {
+            private globalNetworksService: GlobalNetworksService) {
             super();
         }
 
@@ -372,11 +369,9 @@ class DIDPublishingManager {
         this.assistPublisher = new AssistPublishing.AssistPublisher(
             this,
             this.http,
-            this.storage,
             this.theme,
             this.modalCtrl,
-            this.globalNetworksService,
-            this.prefs);
+            this.globalNetworksService);
 
         this.walletPublisher = new WalletPublishing.WalletPublisher(
             this,

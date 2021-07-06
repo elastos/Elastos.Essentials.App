@@ -9,7 +9,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Subscription } from 'rxjs';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
@@ -25,7 +24,6 @@ export class CandidatesService {
         private alertCtrl: AlertController,
         private toastCtrl: ToastController,
         private storage: GlobalStorageService,
-        private globalPreferences: GlobalPreferencesService,
         public translate: TranslateService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) { }

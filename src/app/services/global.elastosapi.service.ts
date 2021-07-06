@@ -8,7 +8,6 @@ import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalLanguageService } from './global.language.service';
-import { rejects } from 'assert';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;

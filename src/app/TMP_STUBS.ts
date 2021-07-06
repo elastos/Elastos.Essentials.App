@@ -1,9 +1,3 @@
-import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
-import { BehaviorSubject } from 'rxjs';
-import { AppmanagerService } from './launcher/services/appmanager.service';
-import { GlobalPreferencesService } from './services/global.preferences.service';
-
 // TODO: ALL THIS FILE MUST DISAPPEAR AND BE REPLACED BY THE NEW APP MANAGER PLUGIN
 
 /**

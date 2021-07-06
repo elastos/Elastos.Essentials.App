@@ -9,8 +9,6 @@ import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import { StandardSubWalletBuilder } from './StandardSubWalletBuilder';
 import { ETHChainSubWallet } from './ETHChainSubWallet';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nft';
 import { ERC721Service } from '../../services/erc721.service';

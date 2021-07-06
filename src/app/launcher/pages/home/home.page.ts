@@ -16,11 +16,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NotificationsPage } from '../notifications/notifications.page';
-import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
-import { AuthService } from "src/app/identity/services/auth.service";
-import { DIDService } from "src/app/identity/services/did.service";
-import { App } from "src/app/model/app.enum"
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Subscription } from 'rxjs';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -62,14 +58,10 @@ export class HomePage implements OnInit {
     public splashScreen: SplashScreen,
     public appService: AppmanagerService,
     public didService: DIDManagerService,
-    private identityService: DIDService,
     private nav: GlobalNavService,
-    private pref: GlobalPreferencesService,
     private modalCtrl: ModalController,
     private appBackGroundService: GlobalAppBackgroundService,
-    private authService: AuthService,
     private walletService: WalletManager,
-    private globalNotifications: GlobalNotificationsService,
     private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService,
     private didSessions: GlobalDIDSessionsService) {
