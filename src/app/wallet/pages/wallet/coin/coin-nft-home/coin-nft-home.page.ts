@@ -156,6 +156,7 @@ export class CoinNFTHomePage implements OnInit {
 
     restartUpdateInterval() {
       clearInterval(this.updateInterval);
+      this.updateInterval = null;
       this.startUpdateInterval();
     }
 

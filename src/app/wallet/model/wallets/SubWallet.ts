@@ -5,7 +5,6 @@ import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
-import { Events } from 'src/app/services/events.service';
 import { WalletJsonRPCService } from '../../services/jsonrpc.service';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 import { Logger } from 'src/app/logger';
@@ -56,17 +55,18 @@ export abstract class SubWallet {
     public transactionsCache: TimeBasedPersistentCache<any> = null;
     public transactionKeyInCache = '';
 
-    private events: Events;
+    public subwalletTransactionStatusID = '';
+
     public jsonRPCService: WalletJsonRPCService = null;
 
     constructor(protected masterWallet: MasterWallet, id: CoinID, public type: CoinType) {
         this.id = id;
         this.type = type;
-        this.events = this.masterWallet.walletManager.events;
         this.jsonRPCService = this.masterWallet.walletManager.jsonRPCService;
 
         this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
         this.transactionKeyInCache = this.masterWallet.id + '-' + this.id + '-tx';
+        this.subwalletTransactionStatusID = this.masterWallet.id + '-' + this.id;
 
         this.loadBalanceFromCache();
     }

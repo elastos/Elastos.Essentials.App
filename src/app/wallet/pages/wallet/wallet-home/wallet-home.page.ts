@@ -112,7 +112,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
                     const index = this.masterWalletList.findIndex(e => e.id === result.walletId);
                     if (index) {
                         setTimeout(() => {
-                            if (this.slider) 
+                            if (this.slider)
                                 void this.slider.slideTo(index);
                         }, 1000);
                     }
@@ -227,6 +227,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     restartUpdateInterval() {
       clearInterval(this.updateInterval);
+      this.updateInterval = null;
       this.startUpdateInterval();
     }
 

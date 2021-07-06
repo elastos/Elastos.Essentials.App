@@ -1112,6 +1112,16 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         return { value, type, inputs: sentInputs, outputs: sentOutputs }
     }
 
+    public saveTransactions(transactionsList: TransactionHistory[]) {
+      for (let i = 0, len = transactionsList.length; i < len; i++) {
+        this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
+      }
+      if (this.transactionsCache.hasNewItem()) {
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      }
+      this.transactionsCache.save();
+    }
+
     accMul(arg1, arg2) {
         let m = 0, s1 = arg1.toString(), s2 = arg2.toString();
         try { m += s1.split(".")[1].length } catch (e) { }

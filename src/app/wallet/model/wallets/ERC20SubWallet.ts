@@ -403,6 +403,9 @@ export class ERC20SubWallet extends SubWallet {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
+      if (this.transactionsCache.hasNewItem()) {
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      }
       this.transactionsCache.save();
     }
 }

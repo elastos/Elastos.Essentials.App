@@ -140,7 +140,9 @@ export class CoinHomePage implements OnInit {
         // Only update balance, It will save some time for the second time you enter this page.
         this.subWallet.updateBalance();
 
-        this.updateTransactions();
+        this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe((count) => {
+            this.updateTransactions();
+        });
 
         this.updateTmeout = setTimeout(async () => {
           if (this.subWallet.isLoadTxDataFromCache()) {
@@ -162,13 +164,11 @@ export class CoinHomePage implements OnInit {
     async updateWalletInfo() {
       // Update balance and get the latest transactions.
       await this.subWallet.update();
-      this.updateTransactions();
     }
 
     startUpdateInterval() {
       if (this.updateInterval === null) {
         this.updateInterval = setInterval(() => {
-          // TODO: Do not update Wallet info, if there is no new transaction.
           this.updateWalletInfo();
         }, 30000);// 30s
       }
@@ -176,6 +176,7 @@ export class CoinHomePage implements OnInit {
 
     restartUpdateInterval() {
       clearInterval(this.updateInterval);
+      this.updateInterval = null;
       this.startUpdateInterval();
     }
 

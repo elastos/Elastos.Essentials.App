@@ -36,7 +36,6 @@ import { Native } from './native.service';
 import { LocalStorage } from './storage.service';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
-import { IDChainSubWallet } from '../model/wallets/IDChainSubWallet';
 import { MainchainSubWallet } from '../model/wallets/MainchainSubWallet';
 import { ETHChainSubWallet } from '../model/wallets/ETHChainSubWallet';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -64,6 +63,23 @@ type TransactionMap = {
     [k: string]: TransactionMapEntry;
 };
 
+class SubwalletTransactionStatus {
+  private subwalletSubjects = new Map<string, BehaviorSubject<number>>();
+
+  public get(subwalletSubjectId: string): BehaviorSubject<number> {
+    if (!this.subwalletSubjects.has(subwalletSubjectId)) {
+      let subject = new BehaviorSubject<number>(0);
+      this.subwalletSubjects.set(subwalletSubjectId, subject);
+    }
+    return this.subwalletSubjects.get(subwalletSubjectId);
+  }
+
+  public set(subwalletSubjectId: string, count: number) {
+    // Create the subject if needed, and emit an update event.
+    this.subwalletSubjects.get(subwalletSubjectId).next(count);
+  }
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -84,6 +100,8 @@ export class WalletManager {
     private networkTemplate: string;
 
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
+
+    public subwalletTransactionStatus = new SubwalletTransactionStatus();
 
     constructor(
         public events: Events,
