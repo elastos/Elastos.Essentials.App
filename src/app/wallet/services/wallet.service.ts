@@ -76,7 +76,7 @@ class SubwalletTransactionStatus {
 
   public set(subwalletSubjectId: string, count: number) {
     // Create the subject if needed, and emit an update event.
-    this.subwalletSubjects.get(subwalletSubjectId).next(count);
+    this.get(subwalletSubjectId).next(count);
   }
 }
 

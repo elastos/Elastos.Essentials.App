@@ -823,7 +823,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             if (addressArray.Addresses.length === 0) {
                 break;
             }
-            if ((startIndex === 0) && internalAddress) {
+            if ((startIndex === 0) && internalAddress && (this.id === StandardCoinName.ELA)) {
               // OwnerAddress: for register dpos node, CRC.
               const ownerAddress = await this.getOwnerAddress();
               addressArray.Addresses.push(ownerAddress);
