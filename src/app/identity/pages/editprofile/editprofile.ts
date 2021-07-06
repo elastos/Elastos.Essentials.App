@@ -28,6 +28,7 @@ import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalHiveService } from "src/app/services/global.hive.service";
 import { GlobalConfig } from "src/app/config/globalconfig";
+import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 
 declare const hiveManager: HivePlugin.HiveManager;
 
@@ -43,6 +44,7 @@ export class EditProfilePage {
   public profile: Profile;
   public credentials: VerifiableCredential[];
   private showSelectCountry = false;
+  public avatarDataUrl: string = null;
 
   private selectCountrySubscription: Subscription = null;
   private showmenuSubscription: Subscription = null;
@@ -67,6 +69,7 @@ export class EditProfilePage {
     private native: Native,
     public theme: GlobalThemeService,
     private globalHiveService: GlobalHiveService,
+    private hiveCache: GlobalHiveCacheService,
     private popup: PopupProvider)
   {
     Logger.log('Identity', "Entering EditProfile page");
@@ -89,6 +92,10 @@ export class EditProfilePage {
       // Creation
       this.profile = Profile.createDefaultProfile();
     }
+
+    this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
+      this.avatarDataUrl = dataUrl;
+    });
   }
 
   ionViewWillEnter() {
@@ -175,7 +182,7 @@ export class EditProfilePage {
   async getPhoto() {
     Logger.log('Identity', "ENTRIES :", JSON.stringify(this.profile.entries));
 
-    PictureComponent.shared.dataUrlImageIn = this.profileService.getAvatarDataUrl();
+    PictureComponent.shared.dataUrlImageIn = this.avatarDataUrl;
     const modal = await this.modalCtrl.create({
       component: PictureComponent,
       componentProps: {},
@@ -197,29 +204,30 @@ export class EditProfilePage {
 
             // Upload the whole data url to hive for convenience to save the picture type as well.
             let randomPictureID = new Date().getTime();
-            let avatarFileName = "/identity/avatar/"+randomPictureID;
+            let avatarFileName = "identity/avatar/"+randomPictureID;
             let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(avatarFileName);
             // TODO: ideally we may save the raw image, not base64 encoded...
-            await uploader.write(Buffer.from(PictureComponent.shared.dataUrlImageOut));
+            let avatarData = PictureComponent.shared.dataUrlImageOut;
+            let avatarBuffer = Buffer.from(avatarData);
+            Logger.log("identity", "Uploaded avatar buffer:", avatarBuffer);
+            await uploader.write(avatarBuffer);
+            await uploader.flush();
             await uploader.close();
             Logger.log('identity', "Completed avatar upload to hive");
 
             // Create a script to make this picture available to everyone
-            let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript("test", hiveManager.Scripting.Executables.newAggregatedExecutable(
-              [hiveManager.Scripting.Executables.Files.newDownloadExecutable(avatarFileName, "getMainIdentityAvatar")]
+            let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript("getMainIdentityAvatar", hiveManager.Scripting.Executables.newAggregatedExecutable(
+              [hiveManager.Scripting.Executables.Files.newDownloadExecutable(avatarFileName)]
             ), null, true, true);
             Logger.log('identity', "Could create avatar script?", couldCreateScript);
 
             let currentUserDID = this.didService.getActiveDid().getDIDString();
             let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
-            let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/getMainIdentityAvatar?params=a=2"; // TODO: USELESS PARAMS TO AVOID HIVE NATIVE CRASH
+            let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/getMainIdentityAvatar?params={a:2}"; // TODO: USELESS PARAMS TO AVOID HIVE NATIVE CRASH
             Logger.log("identity", "Generated avatar url:", avatarHiveURL);
 
-            // TEST
-            let hiveClient = await this.globalHiveService.getHiveClient();
-            let reader = await hiveClient.downloadFileByScriptUrl(avatarHiveURL);
-            let blob = await reader.readAll();
-            console.log("READ BLOB:", blob);
+            // Save the new avatar to the cache
+            this.hiveCache.set(currentUserDID+"-avatar", avatarData);
 
             let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
             let avatar = this.profileService.buildAvatar("image/png", "elastoshive", PictureComponent.shared.rawBase64ImageOut);

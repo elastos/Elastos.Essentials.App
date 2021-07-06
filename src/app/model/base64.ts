@@ -1,16 +1,18 @@
 
 export class BASE64 {
-
     public static fromString(value: string): string{
         let base64string = Buffer.from(value, "utf-8").toString("base64");
         return  this.convertToURI(base64string)
     }
+
     public static fromHex(hexString: string): string{
        return this.encode(hexString)
     }
+
     public static fromUrlFormat(b64uString: string): string{
         return this.convertFromURI(b64uString)
     }
+
     public static toUrlFormat(b64String: string): string{
         return this.convertToURI(b64String)
     }
@@ -18,15 +20,12 @@ export class BASE64 {
     public static toHex(b64String: string): string{
         return this.decode(b64String)
     }
+
     public static toString(b64String: string): string{
         let b64str = b64String
         if (!b64str.endsWith("=")) b64str = this.convertFromURI(b64str)
         return Buffer.from(b64str, "base64").toString("utf-8")
     }
-
-
-
-
 
     // TODO: Should clean up the above mess conversion methods.
 

@@ -18,6 +18,10 @@ import { GlobalHiveService, VaultLinkStatus } from 'src/app/services/global.hive
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+
+declare let hiveManager: HivePlugin.HiveManager;
 
 type StorageProvider = {
   name: string,
@@ -63,6 +67,7 @@ export class PickProviderPage implements OnInit {
     private popup: PopupService,
     private prefs: GlobalPreferencesService,
     private events: Events,
+    private native: GlobalNativeService,
     public profileService: ProfileService,
     private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService
@@ -119,6 +124,12 @@ export class PickProviderPage implements OnInit {
         key: "pickprovider-forceproviderchange",
         iconPath: BuiltInIcon.EDIT
       });
+      // Add a special menu item to be able to revoke the hive auth token for test purpose
+      menuItems.push({
+        title: 'Revoke hive vault auth token',
+        key: "pickprovider-revokeauthtoken",
+        iconPath: BuiltInIcon.DELETE
+      });
     }
 
     this.titleBar.setupMenuItems(menuItems);
@@ -134,6 +145,9 @@ export class PickProviderPage implements OnInit {
             this.forceProviderChange = true;
             this.vaultProviderCouldBeContacted = true;
           });
+          break;
+        case "pickprovider-revokeauthtoken":
+          void this.revokeHiveAuthToken();
           break;
       }
     });
@@ -284,5 +298,15 @@ export class PickProviderPage implements OnInit {
 
   public transferVault() {
     void this.popup.ionicAlert("hivemanager.alert.not-available", "hivemanager.alert.not-available-msg");
+  }
+
+  private async revokeHiveAuthToken() {
+    Logger.log("HiveManager", "Revoking main user vault authentication token");
+    // Revoke the vualt auth token
+    await this.globalHiveService.getActiveVault().revokeAccessToken();
+    // Also remove the app instance DID because it contains data (app did) we may want to renew.
+    // Setting the active connector to null will clenaup its context, including the app instance DID.
+    await connectivity.setActiveConnector(null);
+    this.native.genericToast("Vault auth token revoked");
   }
 }

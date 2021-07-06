@@ -6,8 +6,8 @@
     <ion-grid class="header-grid">
       <ion-row class="avatar-row">
         <div class="icon-section">
-          <ion-icon *ngIf="!profileService.getAvatarDataUrl()" mode="ios" name="person"></ion-icon>
-          <img *ngIf="profileService.getAvatarDataUrl()" [src]="profileService.getAvatarDataUrl()" />
+          <ion-icon *ngIf="!avatarDataUrl" mode="ios" name="person"></ion-icon>
+          <img *ngIf="avatarDataUrl" [src]="avatarDataUrl" />
         </div>
       </ion-row>
       <ion-row class="title-row">
@@ -17,7 +17,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
- 
+
     <ion-grid  class="status-grid">
       <ion-row *ngIf="profileService.isPublishStatusFetched() && !profileService.didNeedsToBePublished">
         <ion-col size="1.5">
@@ -80,7 +80,7 @@
         <ion-icon src="/assets/identity/svg/chevron-thin-right-dark.svg" class="chevron-thin-right"></ion-icon>
       </ion-col>
     </ion-row>
-  
+
     <ion-grid class="options-grid">
       <ion-row class="title-row">
         <ion-col>

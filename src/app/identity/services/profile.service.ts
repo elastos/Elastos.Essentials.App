@@ -16,6 +16,8 @@ import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
 import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { AvatarCredentialSubject } from "../model/avatarcredentialsubject";
+import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
+import { BehaviorSubject } from "rxjs";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -106,7 +108,8 @@ export class ProfileService {
     private translate: TranslateService,
     private basicCredentialService: BasicCredentialsService,
     private globalIntentService: GlobalIntentService,
-    private contactNotifier: ContactNotifierService
+    private contactNotifier: ContactNotifierService,
+    private hiveCache: GlobalHiveCacheService
   ) { }
 
   changeList(list: string) {
@@ -630,11 +633,14 @@ export class ProfileService {
     };
   }
 
-  public getAvatarDataUrl(): string {
+  public getAvatarDataUrl(): BehaviorSubject<string> {
     let avatarCredential = this.getAvatarCredential();
     if (!avatarCredential)
       return null;
 
-    return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
+    //return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
+    let avatarCacheKey = this.didService.getActiveDid().getDIDString()+"-avatar";
+    let hiveAssetUrl = avatarCredential.getSubject().avatar.data;
+    return this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl);
   }
 }

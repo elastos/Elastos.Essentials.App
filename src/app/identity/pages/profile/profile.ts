@@ -54,9 +54,10 @@ export class ProfilePage {
 
   public credentials: VerifiableCredential[];
 
-  public hasCredential: boolean = false;
-  public creatingIdentity: boolean = false;
+  public hasCredential = false;
+  public creatingIdentity = false;
   public slideOpts: any;
+  public avatarDataUrl: string = null;
 
   public fetchingApps = false;
   public foundApps = false;
@@ -110,7 +111,7 @@ export class ProfilePage {
 
     this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
       this.zone.run(() => {
-        this.profileService.showWarning("publishIdentity", null);
+        void this.profileService.showWarning("publishIdentity", null);
       });
     });
   }
@@ -176,6 +177,10 @@ export class ProfilePage {
         slidesPerView: 4,
         speed: 400,
       };
+
+      this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
+        this.avatarDataUrl = dataUrl;
+      });
     }
   }
 

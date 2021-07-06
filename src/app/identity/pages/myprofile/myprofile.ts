@@ -61,6 +61,7 @@ export class MyProfilePage {
   public creatingIdentity = false;
   public hasModifiedCredentials = false;
   public unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
+  public avatarDataUrl: string = null;
 
   public fetchingApps = false;
 
@@ -166,7 +167,6 @@ export class MyProfilePage {
       // Happens when importing a new mnemonic over an existing one
       this.profile = identity.getBasicProfile();
 
-
       this.profileName = this.profile.getName();
       this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
@@ -184,6 +184,10 @@ export class MyProfilePage {
 
       this.buildDetailEntries();
       this.buildCredentialEntries(publishAvatar);
+
+      this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
+        this.avatarDataUrl = dataUrl;
+      });
     }
   }
 

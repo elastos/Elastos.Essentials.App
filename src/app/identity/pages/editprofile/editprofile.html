@@ -1,12 +1,12 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="container" [class.blur]="profileService.popover" [class.darkContainer]="theme.darkMode">
-  
+
     <ion-row class="header-row">
       <ion-col size="12" class="avatar-col">
         <div class="avatar">
-          <ion-icon *ngIf="!profileService.getAvatarDataUrl()" mode="ios" name="person"></ion-icon>
-          <img *ngIf="profileService.getAvatarDataUrl()" [src]="profileService.getAvatarDataUrl()" />
+          <ion-icon *ngIf="!avatarDataUrl" mode="ios" name="person"></ion-icon>
+          <img *ngIf="avatarDataUrl" [src]="avatarDataUrl" />
         </div>
         <span (click)="getPhoto()">{{ 'identity.edit-avatar' | translate }}</span>
       </ion-col>

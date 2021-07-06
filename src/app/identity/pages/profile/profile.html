@@ -5,8 +5,8 @@
 
     <ion-row class="avatar-row">
       <div class="icon-section">
-        <ion-icon *ngIf="!profileService.getAvatarDataUrl()" mode="ios" name="person"></ion-icon>
-        <img *ngIf="profileService.getAvatarDataUrl()" [src]="profileService.getAvatarDataUrl()" />
+        <ion-icon *ngIf="!avatarDataUrl" mode="ios" name="person"></ion-icon>
+        <img *ngIf="avatarDataUrl" [src]="avatarDataUrl" />
       </div>
     </ion-row>
 
@@ -16,9 +16,9 @@
       </ion-col>
       <ion-col size="4" class="icon-col">
         <div class="qrcode ripple ion-activatable">
-          <img 
+          <img
             src="{{ this.theme.darkMode ? '/assets/identity/svg/qrcode-dark.svg' : '/assets/identity/svg/qrcode.svg' }}"
-            (click)="showQRCode()" 
+            (click)="showQRCode()"
           >
           <ion-ripple-effect></ion-ripple-effect>
         </div>
@@ -31,7 +31,7 @@
         </div>
       </ion-col>
       <ion-col size="12" class="description-col">
-        <p>{{ profile.getDescription() }}</p> 
+        <p>{{ profile.getDescription() }}</p>
       </ion-col>
     </ion-row>
 
