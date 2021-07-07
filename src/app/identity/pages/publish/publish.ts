@@ -27,7 +27,7 @@ type CredentialDisplayEntry = {
 export class PublishPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    avatarImg = "";
+    avatarImg = null;
     _publishableCredentials: CredentialDisplayEntry[] = [];
     public unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
     private subscription: Subscription = null;
@@ -42,7 +42,6 @@ export class PublishPage {
         private basicCredentialService: BasicCredentialsService
     ) {
         this.init();
-
     }
 
     ngOnInit() {
@@ -72,6 +71,9 @@ export class PublishPage {
     }
 
     init() {
+        this.profileService.getAvatarDataUrl().subscribe(avatarDataUrl => {
+            this.avatarImg = avatarDataUrl;
+        })
     }
 
     ionViewWillEnter() {
@@ -140,14 +142,8 @@ export class PublishPage {
         this.profileService.updateDIDDocument();
     }
 
-
     getAvatar(entry: CredentialDisplayEntry): string {
-        if (this.avatarImg == "") {
-            let subject = entry.credential.getSubject();
-            let avatar = subject["avatar"];
-            this.avatarImg = `data:${avatar["content-type"]};${avatar["type"]},${avatar["data"]}`;
-        }
-        return this.avatarImg;
+        return this.avatarImg || '/assets/identity/smallIcons/dark/name.svg';
     }
 
     getCredIconSrc(entry: CredentialDisplayEntry): string {
