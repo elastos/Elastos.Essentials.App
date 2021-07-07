@@ -46,7 +46,8 @@ export class HomePage implements OnInit {
   public hiveVaultStorageStats: {
     usedStorage: string; // Used storage, formatted for display, in GB
     maxStorage: string;  // Max storage, formatted for display, in GB
-    percentUsage: string; // usedStorage / maxStorage ratio, 0-100%
+    usageRatio: number // usedStorage / maxStorage ratio, 0-1 numeric range
+    percentUsage: string; // usedStorage / maxStorage ratio, 0-100% string
   } = null;
 
   constructor(
@@ -147,6 +148,7 @@ export class HomePage implements OnInit {
         this.hiveVaultStorageStats = {
           usedStorage: usedStorageGb.toFixed(2),
           maxStorage: maxStorageGb.toFixed(2),
+          usageRatio: usedStorageGb / maxStorageGb,
           percentUsage: (100 * usedStorageGb / maxStorageGb).toFixed(1)
         };
         this.hiveVaultLinked = true;

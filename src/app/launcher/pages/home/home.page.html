@@ -69,8 +69,8 @@
               <span>{{ mainWalletName }}:  {{ mainWalletELABalance }} ELA</span>
             </div>
             <div *ngIf="app.id === 'hive' && hiveVaultLinked" class="hive-widget">
-              <ion-progress-bar color="warning" [value]="hiveVaultStorageStats.percentUsage"></ion-progress-bar>
-              <span>{{ hiveVaultStorageStats.percentUsage * 100 }}% / {{ hiveVaultStorageStats.maxStorage }} GB</span>
+              <ion-progress-bar color="warning" [value]="hiveVaultStorageStats.usageRatio"></ion-progress-bar>
+              <span>{{ hiveVaultStorageStats.percentUsage }}% / {{ hiveVaultStorageStats.maxStorage }} GB</span>
             </div>
           </ion-col>
         </ion-row>
