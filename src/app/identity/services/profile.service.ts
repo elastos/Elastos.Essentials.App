@@ -17,7 +17,9 @@ import { Events } from "src/app/services/events.service";
 import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { AvatarCredentialSubject } from "../model/avatarcredentialsubject";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
+import { GlobalHiveService, VaultLinkStatusCheckState } from "src/app/services/global.hive.service";
+import { DIDEvents } from "./events";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -60,6 +62,8 @@ type AppCredentialDisplayEntry = {
   providedIn: "root",
 })
 export class ProfileService {
+  public static instance: ProfileService = null;
+
   public didString = "";
 
   // Profile Data
@@ -103,14 +107,16 @@ export class ProfileService {
     private native: Native,
     private popoverCtrl: PopoverController,
     private didService: DIDService,
-    private authService: AuthService,
     private didSyncService: DIDSyncService,
     private translate: TranslateService,
     private basicCredentialService: BasicCredentialsService,
     private globalIntentService: GlobalIntentService,
     private contactNotifier: ContactNotifierService,
-    private hiveCache: GlobalHiveCacheService
-  ) { }
+    private hiveCache: GlobalHiveCacheService,
+    private globalHiveService: GlobalHiveService
+  ) {
+    ProfileService.instance = this;
+  }
 
   changeList(list: string) {
     if (list === "details") {
@@ -149,7 +155,17 @@ export class ProfileService {
 
     this.didSyncService.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {
       this.didNeedsToBePublished = didNeedsToBePublished;
-    })
+    });
+
+    this.globalHiveService.vaultStatus.subscribe(status => {
+      if (status && status.checkState === VaultLinkStatusCheckState.SUCCESSFULLY_RETRIEVED && status.publishedInfo) {
+        // We don't need it yet, but we start fetching the avatar that is possibly stored on a hive vault,
+        // as soon as the main user's hive vault is ready. This way, the avatar will be ready when the user
+        // starts the main identity screen.
+        Logger.log("identity", "User's hive vault is ready, fetching his avatar if any");
+        this.getAvatarDataUrl();
+      }
+    });
   }
 
   isPublishStatusFetched(): boolean {
@@ -633,14 +649,53 @@ export class ProfileService {
     };
   }
 
+  private avatarDataUrlSubject: BehaviorSubject<string> = null;
+  private hiveCacheDataUrlSub: Subscription = null;
   public getAvatarDataUrl(): BehaviorSubject<string> {
-    let avatarCredential = this.getAvatarCredential();
-    if (!avatarCredential)
-      return null;
+    if (!this.avatarDataUrlSubject) {
+      this.avatarDataUrlSubject = new BehaviorSubject<string>(null);
 
-    //return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
-    let avatarCacheKey = this.didService.getActiveDid().getDIDString()+"-avatar";
-    let hiveAssetUrl = avatarCredential.getSubject().avatar.data;
-    return this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl);
+      DIDEvents.instance.events.subscribe("did:avatarchanged", () => {
+        console.log("DEBUG did:avatarchanged EVENT IN getAvatarDataUrl()")
+        this.refreshAvatarUrl();
+      });
+    }
+
+    this.refreshAvatarUrl();
+
+    // Always return a subject that can be updated with a raw base64 url or data from a hive url
+    // later on, even if null at first.
+    console.log("DEBUG getAvatarDataUrl() returns:", this.avatarDataUrlSubject);
+    return this.avatarDataUrlSubject;
+  }
+
+  private refreshAvatarUrl() {
+    // Unsubscribe from previous hive cache if needed, as the avatar content type could have changed and become
+    // a non hive type.
+    if (this.hiveCacheDataUrlSub) {
+      this.hiveCacheDataUrlSub.unsubscribe();
+      this.hiveCacheDataUrlSub = null;
+    }
+
+    let avatarCredential = this.getAvatarCredential();
+    if (avatarCredential) {
+      console.log("DEBUG refreshAvatarUrl()", avatarCredential, avatarCredential.getSubject())
+      if (avatarCredential.getSubject() && avatarCredential.getSubject().avatar && avatarCredential.getSubject().avatar.data) {
+        //return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
+        let avatarCacheKey = this.didService.getActiveDid().getDIDString()+"-avatar";
+        let hiveAssetUrl: string = avatarCredential.getSubject().avatar.data;
+
+        console.log("DEBUG refreshAvatarUrl() hiveAssetUrl", hiveAssetUrl)
+
+        if (hiveAssetUrl.startsWith("hive://")) {
+          // Listen to user's hive cache avatar changes
+          console.log("DEBUG PROFILE SERVICE SUBSCR")
+          this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(url => {
+            console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT")
+            this.avatarDataUrlSubject.next(url);
+          });
+        }
+      }
+    }
   }
 }

@@ -11,9 +11,12 @@ import { GlobalHiveService } from './global.hive.service';
   providedIn: 'root'
 })
 export class GlobalHiveCacheService {
+  public static instance: GlobalHiveCacheService = null;
+
   private cache = new Map<string, BehaviorSubject<string>>(); // Map of asset unique key / asset data
 
   constructor(private globalHiveService: GlobalHiveService) {
+    GlobalHiveCacheService.instance = this;
   }
 
   /**
@@ -43,27 +46,35 @@ export class GlobalHiveCacheService {
         // TODO: TMP WHILE HIVE BUG IS NOT FIXED - ONLY WORKS FOR PERSONAL AVATAR !!! NOT WORKING FOR OTHER PICTURES FROM OTHER USERS
         // TODO: REPLACE WITH THE 2 LINES ABOVE
 
-        let activeVault = await this.globalHiveService.getActiveVault();
-        let directCallResult = await activeVault.getScripting().call("getMainIdentityAvatar", {}, GlobalConfig.ESSENTIALS_APP_DID);
-        //console.log("DIRECT SCRIPT CALL RESULT:", directCallResult);
-        let txId = directCallResult["download"]["transaction_id"];
-        //console.log("DOWNLOAD TX ID:", txId);
-        let reader = await activeVault.getScripting().downloadFile(txId);
-        let blob: any = await reader.readAll();
+        try {
+          let activeVault = await this.globalHiveService.getActiveVault();
+          let dirtyExtractedParams = JSON.parse(hiveScriptUrl.substring(hiveScriptUrl.indexOf("params=")+7));
+          console.log("DEBUG dirtyExtractedParams = ",dirtyExtractedParams);
+          let directCallResult = await activeVault.getScripting().call("getMainIdentityAvatar", dirtyExtractedParams, GlobalConfig.ESSENTIALS_APP_DID);
+          console.log("DEBUG DIRECT SCRIPT CALL RESULT:", directCallResult);
+          let txId = directCallResult["download"]["transaction_id"];
+          //console.log("DOWNLOAD TX ID:", txId);
+          let reader = await activeVault.getScripting().downloadFile(txId);
+          let blob: any = await reader.readAll();
 
-        let fileReader = new FileReader();
-        fileReader.addEventListener('loadend', (e) => {
-          let assetData = e.target.result; // "data:image/png;base64,......"
-          Logger.log("hivecache", "Emitting hive asset to listeners:", key, hiveScriptUrl, assetData);
-          subject.next(assetData);
-        });
+          let fileReader = new FileReader();
+          fileReader.addEventListener('loadend', (e) => {
+            let assetData = e.target.result; // "data:image/png;base64,......"
+            //Logger.log("hivecache", "Emitting hive asset to listeners:", key, hiveScriptUrl, assetData);
+            subject.next(assetData);
+          });
 
-        // TODO: DIRTY - hive plugin's readAll() is supposed to return a Blob type but we actually seem to get
-        // a ArrayBuffer object.
-        if (blob instanceof ArrayBuffer)
-          fileReader.readAsText(new Blob([new Uint8Array(blob)]));
-        else
-          fileReader.readAsText(blob);
+          // TODO: DIRTY - hive plugin's readAll() is supposed to return a Blob type but we actually seem to get
+          // a ArrayBuffer object from cordova (sometimes? or always? read() vs readAll()).
+          if (blob instanceof ArrayBuffer)
+            fileReader.readAsText(new Blob([new Uint8Array(blob)]));
+          else
+            fileReader.readAsText(blob);
+        }
+        catch (e) {
+          // Can't download the asset
+          Logger.warn("hivecache", "Failed to download hive asset at "+hiveScriptUrl, e);
+        }
 
         resolve();
       });
@@ -79,7 +90,7 @@ export class GlobalHiveCacheService {
    * Manually sets an assets value, for example right after creating a local avatar.
    */
   public set(key: string, data: string) {
-    Logger.log("hivecache", "Setting cache item:", key, data);
+    Logger.log("hivecache", "Setting hive cache item:", key);
     if (!this.cache.has(key))
       this.cache.set(key, new BehaviorSubject(data));
 

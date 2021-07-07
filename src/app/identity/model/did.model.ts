@@ -10,6 +10,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { AvatarCredentialSubject } from './avatarcredentialsubject';
+import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
 
 export class DID {
     public credentials: VerifiableCredential[] = [];
@@ -58,11 +59,12 @@ export class DID {
 
     /**
      */
-    async addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: String[]): Promise<DIDPlugin.VerifiableCredential> {
+    addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: string[]): Promise<DIDPlugin.VerifiableCredential> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject) => {
             Logger.log('Identity', "Adding credential with id:", credentialId, props, userTypes);
 
-            let types: String[] = [
+            let types: string[] = [
                 "SelfProclaimedCredential"
             ];
             // types[0] = "BasicProfileCredential";
@@ -139,6 +141,9 @@ export class DID {
      * Returns true if local did document has been modified, false otherwise.
      */
     public writeProfile(newProfile: Profile, password: string): Promise<boolean> {
+        console.log("DEBUG WRITE PROFILE");
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject) => {
             Logger.log('Identity', "Writing profile fields as credentials", newProfile);
 
@@ -191,6 +196,7 @@ export class DID {
                     }
 
                     Logger.log('Identity', "Adding credential for profile key " + entry.key);
+                    // eslint-disable-next-line no-useless-catch
                     try {
                         let credential = await this.addCredential(credentialId, props, password, ["BasicProfileCredential"]);
                         Logger.log('Identity', "Credential added:", credential);
@@ -231,18 +237,35 @@ export class DID {
                         let avatar: AvatarCredentialSubject = entry.value as AvatarCredentialSubject;
                         Logger.log('Identity', "Saving avatar info to signed in identity", avatar)
 
-                        // For now we only know how to save base64 avatars. Other formats are unsupported
-                        if (avatar.type === "base64") {
-                            // Save this new avatar in the did session plugin.
-                            let signedInEntry = await this.didSessions.getSignedInIdentity();
-                            signedInEntry.avatar = {
-                                contentType: avatar["content-type"],
-                                base64ImageData: avatar.data
-                            }
-                            await this.didSessions.addIdentityEntry(signedInEntry);
+                        // For now we only know how to save base64 avatars and hive urls. Other formats are unsupported
+                        let base64ImageData: string = null;
+                        if (avatar.type === "elastoshive") {
+                            let avatarCacheKey = this.getDIDString()+"-avatar";
+                            let hiveAssetUrl = avatar.data;
+                            // Theoretically, the avatar content is already resolved when we are here.
+                            let hiveAvatarDataUrl = GlobalHiveCacheService.instance.getAssetByUrl(avatarCacheKey, hiveAssetUrl).value;
+                            // Strip the data url prefix to get only the base64 picture data for did sessions
+                            // data:image/png;base64,iVBORw0KGgoAAAAN --> iVBORw0KGgoAAAAN
+                            base64ImageData = hiveAvatarDataUrl.substring(hiveAvatarDataUrl.indexOf(",")+1);
+                        }
+                        else if (avatar.type === "base64") {
+                            base64ImageData = avatar.data;
+                        }
 
-                            // Let listeners know
-                            DIDEvents.instance.events.publish("did:avatarchanged");
+                        if (base64ImageData) {
+                             // Save this new avatar in the did session plugin.
+                             let signedInEntry = await this.didSessions.getSignedInIdentity();
+                             signedInEntry.avatar = {
+                                 contentType: avatar["content-type"],
+                                 base64ImageData: base64ImageData
+                             }
+                             await this.didSessions.addIdentityEntry(signedInEntry);
+
+                             // Let listeners know
+                             DIDEvents.instance.events.publish("did:avatarchanged");
+                        }
+                        else {
+                            Logger.warn("identity", "Avatar type "+avatar.type+" is unknown. Not applying it to DID session");
                         }
                     }
                 }
@@ -297,7 +320,7 @@ export class DID {
     }
 
     private createPluginCredential(credentialId: DIDURL, type, validityDays, properties, passphrase): Promise<DIDPlugin.VerifiableCredential> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.pluginDid.issueCredential(
                 this.getDIDString(), credentialId.toString(), type, validityDays, properties, passphrase,
                 (ret) => { resolve(ret) },
@@ -327,7 +350,7 @@ export class DID {
     }
 
     private deletePluginCredential(didUrlString: DIDURL): Promise<any> {
-        return new Promise<void>(async (resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.pluginDid.deleteCredential(
                 didUrlString.toString(),
                 () => { resolve() }, (err) => {
@@ -340,7 +363,7 @@ export class DID {
 
     private addPluginCredential(credential: DIDPlugin.VerifiableCredential): Promise<void> {
         Logger.log('Identity', "DIDService - storeCredential", this.getDIDString(), JSON.parse(JSON.stringify(credential)));
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             Logger.log('Identity', "DIDService - Calling real storeCredential");
             this.pluginDid.addCredential(
                 credential,
@@ -372,7 +395,7 @@ export class DID {
     }
 
     createVerifiablePresentationFromCredentials(credentials: DIDPlugin.VerifiableCredential[], storePass: string, nonce: string, realm: string): Promise<DIDPlugin.VerifiablePresentation> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.pluginDid.createVerifiablePresentation(credentials, realm, nonce, storePass, (presentation: DIDPlugin.VerifiablePresentation) => {
                 resolve(presentation);
             }, (err) => {
@@ -383,7 +406,7 @@ export class DID {
     }
 
     public signData(data: string, storePass: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.didDocument.pluginDidDocument.sign(storePass, data,
                 (ret) => {
                     resolve(ret)

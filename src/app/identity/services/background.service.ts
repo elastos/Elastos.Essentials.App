@@ -25,7 +25,7 @@ export interface LastExpirationNotification {
     providedIn: 'root'
 })
 export class BackgroundService extends GlobalService {
-    private EXPIRATION_STORAGE_KEY : string = "LastExpirationVerification";
+    private EXPIRATION_STORAGE_KEY = "LastExpirationVerification";
     private synchronizeTimeout: NodeJS.Timeout = null;
     private notifyTimeout: NodeJS.Timeout = null;
 
@@ -38,7 +38,6 @@ export class BackgroundService extends GlobalService {
         private authService: AuthService,
         private expirationService: ExpirationService,
         private notifications: GlobalNotificationsService,
-        private didsessions: GlobalDIDSessionsService,
         public native: Native) {
           super();
     }
@@ -58,7 +57,7 @@ export class BackgroundService extends GlobalService {
         this.synchronizeActiveDIDAndRepeat();
       }, 30*1000); // 30 seconds
 
-      //Notify expired DID and credentials
+      // Notify expired DID and credentials
       this.notifyTimeout = setTimeout(() => {
         void this.notifyExpiredCredentials();
       }, 5 * 1000); // 5 seconds

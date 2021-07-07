@@ -23,7 +23,6 @@ export class Profile {
     } else {
       entry.value = value;
     }
-
   }
 
   deleteEntry(entry: BasicCredentialEntry) {

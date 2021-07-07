@@ -94,6 +94,7 @@ export class EditProfilePage {
     }
 
     this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
+      console.log("DEBUG GOT AVATAR DATA URL IN EDIT PROFILE", this.avatarDataUrl)
       this.avatarDataUrl = dataUrl;
     });
   }
@@ -180,7 +181,7 @@ export class EditProfilePage {
 
   /********** For 'avatar' entry **********/
   async getPhoto() {
-    Logger.log('Identity', "ENTRIES :", JSON.stringify(this.profile.entries));
+    //Logger.log('Identity', "ENTRIES :", JSON.stringify(this.profile.entries));
 
     PictureComponent.shared.dataUrlImageIn = this.avatarDataUrl;
     const modal = await this.modalCtrl.create({
@@ -199,6 +200,8 @@ export class EditProfilePage {
           try {
             Logger.log('Identity', "Starting avatar upload to hive");
 
+            await this.native.showLoading("Saving your avatar to your hive storage");
+
             // TODO: we probalby need to delete older pictures from the vault somewhere...
             // But not that easy because we need to keep both the local and published avatars.
 
@@ -206,7 +209,6 @@ export class EditProfilePage {
             let randomPictureID = new Date().getTime();
             let avatarFileName = "identity/avatar/"+randomPictureID;
             let uploader = await this.globalHiveService.getActiveVault().getFiles().upload(avatarFileName);
-            // TODO: ideally we may save the raw image, not base64 encoded...
             let avatarData = PictureComponent.shared.dataUrlImageOut;
             let avatarBuffer = Buffer.from(avatarData);
             Logger.log("identity", "Uploaded avatar buffer:", avatarBuffer);
@@ -217,20 +219,26 @@ export class EditProfilePage {
 
             // Create a script to make this picture available to everyone
             let couldCreateScript = await this.globalHiveService.getActiveVault().getScripting().setScript("getMainIdentityAvatar", hiveManager.Scripting.Executables.newAggregatedExecutable(
-              [hiveManager.Scripting.Executables.Files.newDownloadExecutable(avatarFileName)]
+              [hiveManager.Scripting.Executables.Files.newDownloadExecutable("identity/avatar/${params.avatar}")]
             ), null, true, true);
             Logger.log('identity', "Could create avatar script?", couldCreateScript);
 
             let currentUserDID = this.didService.getActiveDid().getDIDString();
             let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
-            let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/getMainIdentityAvatar?params={a:2}"; // TODO: USELESS PARAMS TO AVOID HIVE NATIVE CRASH
+            let scriptParams = {
+              avatar: randomPictureID
+            };
+            let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/getMainIdentityAvatar?params="+JSON.stringify(scriptParams);
             Logger.log("identity", "Generated avatar url:", avatarHiveURL);
 
             // Save the new avatar to the cache
             this.hiveCache.set(currentUserDID+"-avatar", avatarData);
 
+            // Update UI locally without saving to permanent profile yet.
+            this.avatarDataUrl = avatarData;
+
             let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
-            let avatar = this.profileService.buildAvatar("image/png", "elastoshive", PictureComponent.shared.rawBase64ImageOut);
+            let avatar = this.profileService.buildAvatar("image/png", "elastoshive", avatarHiveURL);
             if (entry == null) {
               entry = new BasicCredentialEntry("avatar", null);
               entry.value = avatar;
@@ -239,11 +247,13 @@ export class EditProfilePage {
               entry.value = avatar;
             }
 
-            Logger.log('identity', "New avatar entry:", entry.value);
+            Logger.log('identity', "New or updated avatar entry:", entry.value);
           }
           catch (e) {
             Logger.error("identity", "Error while saving the avatar", e);
           }
+
+          await this.native.hideLoading();
         }
       }
     });

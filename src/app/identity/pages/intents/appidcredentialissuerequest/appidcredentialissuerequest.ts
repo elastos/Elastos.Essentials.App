@@ -31,11 +31,11 @@ export class AppIdCredentialIssueRequestPage {
 
     public receivedIntent: AppIdCredIssueIdentityIntent = null;
     public displayableCredential: IssuedAppIdCredential = null; // Displayable reworked material
-    public preliminaryChecksCompleted: boolean = false;
+    public preliminaryChecksCompleted = false;
 
-    public showAppInstanceDid: boolean = false;
-    public showAppDID: boolean = false;
-    public showExpiration: boolean = false;
+    public showAppInstanceDid = false;
+    public showAppDID = false;
+    public showExpiration = false;
 
     constructor(
         private zone: NgZone,
@@ -55,7 +55,7 @@ export class AppIdCredentialIssueRequestPage {
         this.titleBar.setTitle(this.translate.instant('identity.appidcredential-issue'));
         this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
-        this.zone.run(async () => {
+        void this.zone.run(async () => {
             this.receivedIntent = this.intentService.getReceivedIntent<AppIdCredIssueIdentityIntent>();
             await this.checkIntentSenderAppDid();
 
@@ -73,7 +73,7 @@ export class AppIdCredentialIssueRequestPage {
         this.preliminaryChecksCompleted = true; // Checks completed and everything is all right.
     }
 
-    async checkIntentSenderAppDid() {
+    checkIntentSenderAppDid() {
         if (this.receivedIntent.from == "internal") { // TODO: use appmanager enum when ready
             // Intent received from essentials itself. Everything is ok.
         }
@@ -135,11 +135,11 @@ export class AppIdCredentialIssueRequestPage {
         };
     }
 
-    async acceptRequest() {
-        this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(this.receivedIntent.params);
+    acceptRequest() {
+        void this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(this.receivedIntent.params);
     }
 
-    async rejectRequest() {
-        this.appIDService.rejectExternalRequest();
+    rejectRequest() {
+        void this.appIDService.rejectExternalRequest();
     }
 }
