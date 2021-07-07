@@ -24,6 +24,7 @@ import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -69,6 +70,7 @@ export class IdentityService {
         private nativeService: GlobalNativeService,
         private prefs: GlobalPreferencesService,
         private globalElastosAPIService: GlobalElastosAPIService,
+        private globalHiveService: GlobalHiveService,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -528,6 +530,7 @@ export class IdentityService {
         if (avatar) {
             Logger.log('didsessions', "Found an avatar in the created DID. Now applying it to the DID session manager entry.", avatar);
 
+            // base64 encoded picture inside the DID Document
             if (avatar.type && avatar.type == "base64") {
                 if (avatar.data && avatar["content-type"]) {
                     newIdentity.avatar = {
@@ -536,6 +539,22 @@ export class IdentityService {
                     }
                 }
             }
+            // hive url that points to a script that provides the picture
+            /* else if (avatar.type && avatar.type == "elastoshive") {
+                if (avatar.data && avatar["content-type"]) {
+                    let hiveUrl = avatar.data;
+                    Logger.log("didsessions", "Retrieve avatar from a hive url");
+                    let base64url = await this.globalHiveService.fetchHiveScriptPictureToDataUrl(hiveUrl);
+                    if (base64url) {
+                        Logger.log("didsessions", "Got base64 url for user's avatar:", base64url);
+
+                        newIdentity.avatar = {
+                            base64ImageData: base64url.substring(base64url.indexOf(",")+1),
+                            contentType: avatar["content-type"]
+                        }
+                    }
+                }
+            } */
         }
 
         Logger.log('didsessions', "Adding identity entry to DID session manager:", newIdentity);
