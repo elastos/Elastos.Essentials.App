@@ -169,6 +169,7 @@ export class EscTransactionPage implements OnInit {
         const rawTx =
         await this.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
+            StandardCoinName.ETHSC,
             this.coinTransferService.payloadParam.to,
             this.coinTransferService.payloadParam.value,
             0, // WEI

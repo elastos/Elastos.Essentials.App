@@ -66,6 +66,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
             totalcount: this.transactions.totalcount,
             txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
         }
+        if (startIndex == 0 && this.transactionsInPool.length > 0) {
+            let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
+            newTxList.txhistory = newTxhistory;
+            newTxList.totalcount = newTxList.txhistory.length;
+        }
         return newTxList;
       }
       else {
@@ -262,6 +267,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
       Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
       return this.masterWallet.walletManager.spvBridge.createTransfer(
             this.masterWallet.id,
+            this.id,
             toAddress,
             amount.toString(),
             6, // ETHER_ETHER
@@ -269,13 +275,13 @@ export class ETHChainSubWallet extends StandardSubWallet {
         );
     }
 
-    /* Use createTransferGeneric for createPaymentTransaction
+    /*
+    //Use createTransferGeneric for createPaymentTransaction
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
       const tokenAccountAddress = await this.getTokenAddress();
       const contractAddress = this.contractAddress;
       const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
       const gasPrice = await this.web3.eth.getGasPrice();
-      // const gasPrice = '2000000000';
 
       Logger.warn('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
 
@@ -300,6 +306,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
       const rawTx =
       await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
           this.masterWallet.id,
+          this.id,
           contractAddress,
           '0',
           0, // WEI
@@ -341,6 +348,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
         return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
+            this.id,
             this.contractAddress,
             toAmountSend,
             0, // WEI
@@ -355,6 +363,10 @@ export class ETHChainSubWallet extends StandardSubWallet {
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
       let txid = await this.jsonRPCService.eth_sendRawTransaction(this.id as StandardCoinName, obj.TxSigned);
+      if (txid.length > 0) {
+        let rawtx = await this.getTransactionDetails(txid);
+        this.addLocalTransaction(rawtx);
+      }
       return txid;
     }
 
@@ -382,7 +394,19 @@ export class ETHChainSubWallet extends StandardSubWallet {
       }
       if (this.transactionsCache.hasNewItem()) {
         this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.transactionsCache.save();
+        this.cleanLocalTransactions(transactionsList);
       }
-      this.transactionsCache.save();
+    }
+
+    private cleanLocalTransactions(transactionsList: EthTransaction[]) {
+      for (let i = this.transactionsInPool.length - 1; i >= 0; i--) {
+        let existingIndex = transactionsList.findIndex(tx => tx.hash == (this.transactionsInPool[i] as EthTransaction).hash);
+        if (existingIndex !== -1) {
+          this.transactionsInPool.splice(i, 1);
+        }
+      }
+
+      Logger.log('wallet', 'cleanLocalTransactions :', this.transactionsInPool)
     }
 }

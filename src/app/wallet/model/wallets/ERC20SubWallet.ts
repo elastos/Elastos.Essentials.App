@@ -181,12 +181,21 @@ export class ERC20SubWallet extends SubWallet {
           this.loadTxDataFromCache = true;
         }
 
-        // For performance, only return 20 transactions.
-        let newTxList:AllTransactionsHistory = {
-          totalcount: this.transactions.totalcount,
-          txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
+        if (this.transactions) {
+          // For performance, only return 20 transactions.
+          let newTxList:AllTransactionsHistory = {
+            totalcount: this.transactions.totalcount,
+            txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
+          }
+          if (startIndex == 0 && this.transactionsInPool.length > 0) {
+            let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
+            newTxList.txhistory = newTxhistory;
+            newTxList.totalcount = newTxList.txhistory.length;
+          }
+          return newTxList;
+        } else {
+          return null;
         }
-        return newTxList;
     }
 
     async getTransactionByRPC() {
@@ -319,6 +328,7 @@ export class ERC20SubWallet extends SubWallet {
         const rawTx =
         await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
+            StandardCoinName.ETHSC,
             contractAddress,
             '0',
             0, // WEI
@@ -337,6 +347,10 @@ export class ERC20SubWallet extends SubWallet {
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
       let txid = await this.jsonRPCService.eth_sendRawTransaction(StandardCoinName.ETHSC, obj.TxSigned);
+      if (txid.length > 0) {
+        let rawtx = await this.getTransactionDetails(txid);
+        this.addLocalTransaction(rawtx);
+      }
       return txid;
     }
 
@@ -380,11 +394,17 @@ export class ERC20SubWallet extends SubWallet {
                 await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
             }
 
+            let published = true;
+            let status = 'published';
+            if (!txid || txid.length == 0) {
+              published = false;
+              status = 'error';
+            }
             resolve({
-              published: true,
-              status: 'published',
-              txid: txid
-          });
+                published,
+                status,
+                txid
+            });
         });
     }
 
@@ -405,7 +425,19 @@ export class ERC20SubWallet extends SubWallet {
       }
       if (this.transactionsCache.hasNewItem()) {
         this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.transactionsCache.save();
+        this.cleanLocalTransactions(transactionsList);
       }
-      this.transactionsCache.save();
+    }
+
+    private cleanLocalTransactions(transactionsList: EthTransaction[]) {
+      for (let i = this.transactionsInPool.length - 1; i >= 0; i--) {
+        let existingIndex = transactionsList.findIndex(tx => tx.hash == (this.transactionsInPool[i] as EthTransaction).hash);
+        if (existingIndex !== -1) {
+          this.transactionsInPool.splice(i, 1);
+        }
+      }
+
+      Logger.log('wallet', 'cleanLocalTransactions :', this.transactionsInPool)
     }
 }

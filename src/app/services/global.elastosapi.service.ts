@@ -108,8 +108,8 @@ export class GlobalElastosAPIService extends GlobalService {
                         mainChainRPC: 'https://api.elastos.io/ela',
                         idChainRPC: 'https://api.elastos.io/did',
                         eidChainRPC: 'https://api.elastos.io/eid',
-                        eidMiscRPC: '',
-                        eidOracleRPC: '',
+                        eidMiscRPC: 'https://api.elastos.io/eid-misc',
+                        eidOracleRPC: 'https://api.elastos.io/eid-oracle',
                         escRPC: 'https://api.elastos.io/eth',
                         escMiscRPC: 'https://api.elastos.io/misc',
                         escOracleRPC: 'https://api.elastos.io/oracle',
@@ -121,12 +121,12 @@ export class GlobalElastosAPIService extends GlobalService {
                         mainChainRPC: 'https://api.elastos.io/ela',
                         idChainRPC: 'https://api.elastos.io/did',
                         eidChainRPC: 'https://api.elastos.io/eid',
-                        eidMiscRPC: '',
-                        eidOracleRPC: '',
+                        eidMiscRPC: 'https://api-testnet.elastos.io/eid-misc',
+                        eidOracleRPC: 'https://api-testnet.elastos.io/eid-oracle',
                         escRPC: 'https://api.elastos.io/eth',
                         escOracleRPC: 'https://api.elastos.io/oracle',
                         escMiscRPC: 'https://api.elastos.io/misc',
-                        escBrowserRPC: 'https://eth.elastos.io',
+                        escBrowserRPC: 'https://eth-testnet.elastos.io',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {
@@ -169,7 +169,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escRPC: 'https://api-testnet.trinity-tech.cn/eth',
                         escOracleRPC: 'https://api-testnet.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api-testnet.trinity-tech.cn/eth-misc',
-                        escBrowserRPC: '',
+                        escBrowserRPC: 'https://eth-testnet.elastos.io',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {

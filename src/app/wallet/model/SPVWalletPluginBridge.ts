@@ -581,6 +581,7 @@ export class SPVWalletPluginBridge {
     // ETHSC
     createTransfer(
         masterWalletId: string,
+        chainID: string,
         toAddress: string,
         amount: string,
         amountUnit: number,
@@ -590,6 +591,7 @@ export class SPVWalletPluginBridge {
              walletManager.createTransfer(
                 [
                     masterWalletId,
+                    chainID,
                     toAddress,
                     amount,
                     amountUnit,
@@ -602,6 +604,7 @@ export class SPVWalletPluginBridge {
 
     createTransferGeneric(
         masterWalletId: string,
+        chainID: string,
         toAddress: string,
         amount: string,
         amountUnit: number,
@@ -615,6 +618,7 @@ export class SPVWalletPluginBridge {
              walletManager.createTransferGeneric(
                 [
                     masterWalletId,
+                    chainID,
                     toAddress,
                     Util.getDecimalString(amount),
                     amountUnit,

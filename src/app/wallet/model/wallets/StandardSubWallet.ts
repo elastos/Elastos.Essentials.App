@@ -209,10 +209,16 @@ export abstract class StandardSubWallet extends SubWallet {
               if (navigateHomeAfterCompletion)
                   await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
 
+              let published = true;
+              let status = 'published';
+              if (!txid || txid.length == 0) {
+                published = false;
+                status = 'error';
+              }
               resolve({
-                  published: true,
-                  status: 'published',
-                  txid: txid
+                  published,
+                  status,
+                  txid
               });
             }
             catch (err) {
@@ -225,13 +231,5 @@ export abstract class StandardSubWallet extends SubWallet {
               });
             }
         });
-    }
-
-    public saveTransactions(transactionsList: TransactionHistory[]) {
-      for (let i = 0, len = transactionsList.length; i < len; i++) {
-        this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
-      }
-      Logger.warn('wallet', 'saveTransactions:', this.transactionsCache)
-      this.transactionsCache.save();
     }
 }

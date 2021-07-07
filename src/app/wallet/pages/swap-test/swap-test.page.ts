@@ -40,6 +40,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
         const rawTx =
             await this.walletManager.spvBridge.createTransferGeneric(
                 this.masterWallet.id,
+                StandardCoinName.ETHSC,
                 payload.params[0].to,
                 payload.params[0].value,
                 0, // WEI

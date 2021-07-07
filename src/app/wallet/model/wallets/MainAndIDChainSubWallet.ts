@@ -1,7 +1,7 @@
 import { StandardSubWallet } from './StandardSubWallet';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
-import { AllTransactionsHistory, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
+import { AllTransactionsHistory, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
@@ -94,6 +94,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           let newTxList: AllTransactionsHistory = {
               totalcount: this.transactions.totalcount,
               txhistory: this.transactions.txhistory.slice(startIndex, startIndex + 20),
+          }
+
+          if (startIndex == 0 && this.transactionsInPool.length > 0) {
+              let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
+              newTxList.txhistory = newTxhistory;
+              newTxList.totalcount = newTxList.txhistory.length;
+              Logger.warn('wallet', 'newTxList ', newTxList)
           }
           return newTxList;
         }
@@ -271,6 +278,25 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         )
 
         let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
+        if (txid.length > 0) {
+          let rawtx = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, txid);
+          let tx : TransactionHistory = {
+            address: '',
+            fee: '',
+            height: 0,
+            inputs:[],
+            outputs: [],
+            memo: '',
+            Status: TransactionStatus.PENDING,
+            time: moment().valueOf() / 1000,
+            txid: txid,
+            txtype: rawtx.type,
+            type: TransactionDirection.SENT,
+            value: '-',
+            votecategory: 0
+          }
+          this.addLocalTransaction(tx);
+        }
         return txid;
     }
 
@@ -868,7 +894,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                     let realtxid = Util.reversetxid(txDetail.payload.sidechaintransactionhashes[0]);
 
                     if (txDetail.payload.genesisblockaddress === Config.ETHSC_ADDRESS) {
-                        let result = await this.jsonRPCService.getETHSCTransactionByHash(this.id as StandardCoinName, realtxid);
+                        let result = await this.jsonRPCService.getETHSCTransactionByHash(StandardCoinName.ETHSC, realtxid);
                         if (result && result.from) {
                             targetAddress = result.from;
                         }
@@ -1118,8 +1144,20 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
       if (this.transactionsCache.hasNewItem()) {
         this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.transactionsCache.save();
+        this.cleanLocalTransactions(transactionsList);
       }
-      this.transactionsCache.save();
+    }
+
+    private cleanLocalTransactions(transactionsList: TransactionHistory[]) {
+      for (let i = this.transactionsInPool.length - 1; i >= 0; i--) {
+        let existingIndex = transactionsList.findIndex((tx) => tx.txid == this.transactionsInPool[i].txid);
+        if (existingIndex !== -1) {
+          this.transactionsInPool.splice(i, 1);
+        }
+      }
+
+      Logger.log('wallet', 'cleanLocalTransactions :', this.transactionsInPool)
     }
 
     accMul(arg1, arg2) {

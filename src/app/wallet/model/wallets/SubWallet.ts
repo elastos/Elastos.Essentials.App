@@ -55,6 +55,9 @@ export abstract class SubWallet {
     public transactionsCache: TimeBasedPersistentCache<any> = null;
     public transactionKeyInCache = '';
 
+    // Transaction not on chain
+    public transactionsInPool: TransactionHistory[] = [];
+
     public subwalletTransactionStatusID = '';
 
     public jsonRPCService: WalletJsonRPCService = null;
@@ -116,6 +119,14 @@ export abstract class SubWallet {
      * Save the transctions list to cache.
      */
     protected abstract saveTransactions(transactionsList: TransactionHistory[]);
+
+    /**
+     *
+     */
+    public addLocalTransaction(tx: TransactionHistory) {
+        this.transactionsInPool.push(tx);
+        Logger.log('wallet', 'addLocalTransaction:', tx, this.id)
+    }
 
     /**
      * From a raw status, returns a UI readable string status.
