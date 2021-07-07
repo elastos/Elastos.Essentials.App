@@ -73,7 +73,7 @@ export class PictureComponent implements OnInit {
       destinationType: 0,
       encodingType: 1, // PNG
       mediaType: 0,
-      correctOrientation: false,
+      correctOrientation: true,
       sourceType: sourceType,
       targetWidth: 256,
       targetHeight: 256
@@ -81,7 +81,7 @@ export class PictureComponent implements OnInit {
 
     navigator.camera.getPicture((imageData) => {
       this.zone.run(() => {
-        //Logger.log('Identity', "Chosen image data base64:", imageData);
+        Logger.log('Identity', "Chosen image data base64:", imageData);
 
         PictureComponent.shared.rawBase64ImageOut = imageData;
         PictureComponent.shared.dataUrlImageOut = 'data:image/png;base64,' + imageData;

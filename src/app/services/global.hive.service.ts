@@ -74,7 +74,7 @@ export class GlobalHiveService extends GlobalService {
     this.activeVault = null;
 
     if (this.client) {
-      this.client = null;
+      this.client.next(null);
     }
 
     this.vaultStatus.next(this.vaultLinkStatus);

@@ -13,7 +13,7 @@ import { GlobalHiveService } from './global.hive.service';
 export class GlobalHiveCacheService {
   public static instance: GlobalHiveCacheService = null;
 
-  private cache = new Map<string, BehaviorSubject<string>>(); // Map of asset unique key / asset data
+  private cache = new Map<string, BehaviorSubject<any>>(); // Map of asset unique key / asset data
 
   constructor(private globalHiveService: GlobalHiveService) {
     GlobalHiveCacheService.instance = this;
@@ -25,7 +25,7 @@ export class GlobalHiveCacheService {
    * - if hiveScriptUrl is set: fetched the assets from hive then caches and returns the asset.
    * - if hiveScriptUrl is not set: returns null.
    */
-  public getAssetByUrl(key: string, hiveScriptUrl?: string): BehaviorSubject<string> {
+  public getAssetByUrl(key: string, hiveScriptUrl?: string): BehaviorSubject<any> {
     // Already in cache? Return the cached data.
     if (this.cache.has(key))
       return this.cache.get(key);
@@ -48,28 +48,32 @@ export class GlobalHiveCacheService {
 
         try {
           let activeVault = await this.globalHiveService.getActiveVault();
-          let dirtyExtractedParams = JSON.parse(hiveScriptUrl.substring(hiveScriptUrl.indexOf("params=")+7));
-          console.log("DEBUG dirtyExtractedParams = ",dirtyExtractedParams);
-          let directCallResult = await activeVault.getScripting().call("getMainIdentityAvatar", dirtyExtractedParams, GlobalConfig.ESSENTIALS_APP_DID);
+          let dirtyScriptName = hiveScriptUrl.substring(hiveScriptUrl.lastIndexOf("/")+1, hiveScriptUrl.indexOf("?"));
+          console.log("DEBUG dirtyScriptName = ",dirtyScriptName);
+          let directCallResult = await activeVault.getScripting().call(dirtyScriptName, {}, GlobalConfig.ESSENTIALS_APP_DID);
           console.log("DEBUG DIRECT SCRIPT CALL RESULT:", directCallResult);
           let txId = directCallResult["download"]["transaction_id"];
           //console.log("DOWNLOAD TX ID:", txId);
           let reader = await activeVault.getScripting().downloadFile(txId);
           let blob: any = await reader.readAll();
 
-          let fileReader = new FileReader();
+          console.log("DEBUG DOWNLOADED BLOB:", blob);
+
+          subject.next(Buffer.from(blob));
+
+          /* let fileReader = new FileReader();
           fileReader.addEventListener('loadend', (e) => {
             let assetData = e.target.result; // "data:image/png;base64,......"
             //Logger.log("hivecache", "Emitting hive asset to listeners:", key, hiveScriptUrl, assetData);
             subject.next(assetData);
-          });
+          }); */
 
           // TODO: DIRTY - hive plugin's readAll() is supposed to return a Blob type but we actually seem to get
           // a ArrayBuffer object from cordova (sometimes? or always? read() vs readAll()).
-          if (blob instanceof ArrayBuffer)
+          /* if (blob instanceof ArrayBuffer)
             fileReader.readAsText(new Blob([new Uint8Array(blob)]));
           else
-            fileReader.readAsText(blob);
+            fileReader.readAsText(blob); */
         }
         catch (e) {
           // Can't download the asset
@@ -89,7 +93,7 @@ export class GlobalHiveCacheService {
   /**
    * Manually sets an assets value, for example right after creating a local avatar.
    */
-  public set(key: string, data: string) {
+  public set(key: string, data: any) {
     Logger.log("hivecache", "Setting hive cache item:", key);
     if (!this.cache.has(key))
       this.cache.set(key, new BehaviorSubject(data));

@@ -690,9 +690,16 @@ export class ProfileService {
         if (hiveAssetUrl.startsWith("hive://")) {
           // Listen to user's hive cache avatar changes
           console.log("DEBUG PROFILE SERVICE SUBSCR")
-          this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(url => {
-            console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT")
-            this.avatarDataUrlSubject.next(url);
+          this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(rawData => {
+            console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", rawData)
+            if (rawData) {
+              let base64DataUrl = "data:image/png;base64,"+Buffer.from(rawData).toString("base64");
+              console.log("DEBUG BASE64 ENCODED", base64DataUrl);
+              this.avatarDataUrlSubject.next(base64DataUrl);
+            }
+            else {
+              this.avatarDataUrlSubject.next(null);
+            }
           });
         }
       }
