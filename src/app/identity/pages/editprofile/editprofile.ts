@@ -30,6 +30,7 @@ import { GlobalHiveService } from "src/app/services/global.hive.service";
 import { GlobalConfig } from "src/app/config/globalconfig";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { BASE64 } from "src/app/model/base64";
+import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 
 declare const hiveManager: HivePlugin.HiveManager;
 
@@ -233,7 +234,7 @@ export class EditProfilePage {
             this.hiveCache.set(currentUserDID+"-avatar", avatarData);
 
             // Update UI locally without saving to permanent profile yet.
-            //this.avatarDataUrl = avatarHiveURL;
+            this.avatarDataUrl = rawImageToBase64DataUrl(avatarData);
 
             let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
             let avatar = this.profileService.buildAvatar("image/png", "elastoshive", avatarHiveURL);

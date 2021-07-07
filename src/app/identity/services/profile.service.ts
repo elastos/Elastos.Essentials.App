@@ -20,6 +20,7 @@ import { GlobalHiveCacheService } from "src/app/services/global.hivecache.servic
 import { BehaviorSubject, Subscription } from "rxjs";
 import { GlobalHiveService, VaultLinkStatusCheckState } from "src/app/services/global.hive.service";
 import { DIDEvents } from "./events";
+import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -656,7 +657,6 @@ export class ProfileService {
       this.avatarDataUrlSubject = new BehaviorSubject<string>(null);
 
       DIDEvents.instance.events.subscribe("did:avatarchanged", () => {
-        console.log("DEBUG did:avatarchanged EVENT IN getAvatarDataUrl()")
         this.refreshAvatarUrl();
       });
     }
@@ -665,7 +665,6 @@ export class ProfileService {
 
     // Always return a subject that can be updated with a raw base64 url or data from a hive url
     // later on, even if null at first.
-    console.log("DEBUG getAvatarDataUrl() returns:", this.avatarDataUrlSubject);
     return this.avatarDataUrlSubject;
   }
 
@@ -693,7 +692,7 @@ export class ProfileService {
           this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(rawData => {
             console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", rawData)
             if (rawData) {
-              let base64DataUrl = "data:image/png;base64,"+Buffer.from(rawData).toString("base64");
+              let base64DataUrl = rawImageToBase64DataUrl(rawData);
               console.log("DEBUG BASE64 ENCODED", base64DataUrl);
               this.avatarDataUrlSubject.next(base64DataUrl);
             }

@@ -186,7 +186,7 @@ export class MyProfilePage {
       this.buildCredentialEntries(publishAvatar);
 
       this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
-        console.log("DEBUG MYPROFILE AVATAR DATA URL CB", dataUrl)
+        //console.log("DEBUG MYPROFILE AVATAR DATA URL CB", dataUrl)
         this.avatarDataUrl = dataUrl;
       });
     }

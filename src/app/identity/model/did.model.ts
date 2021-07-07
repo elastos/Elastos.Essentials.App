@@ -141,7 +141,7 @@ export class DID {
      * Returns true if local did document has been modified, false otherwise.
      */
     public writeProfile(newProfile: Profile, password: string): Promise<boolean> {
-        console.log("DEBUG WRITE PROFILE");
+        //console.log("DEBUG WRITE PROFILE");
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject) => {
@@ -242,10 +242,10 @@ export class DID {
                         if (avatar.type === "elastoshive") {
                             let avatarCacheKey = this.getDIDString()+"-avatar";
                             let hiveAssetUrl = avatar.data;
-                            console.log("DEBUG DID MODEL avatar.data", avatar.data);
+                            //console.log("DEBUG DID MODEL avatar.data", avatar.data);
                             // Theoretically, the avatar content is already resolved when we are here. Received as raw binary picture, not base64
                             let hiveAvatarRawPicture = GlobalHiveCacheService.instance.getAssetByUrl(avatarCacheKey, hiveAssetUrl).value;
-                            console.log("DEBUG DID MODEL hiveAvatarRawPicture", hiveAvatarRawPicture);
+                            //console.log("DEBUG DID MODEL hiveAvatarRawPicture", hiveAvatarRawPicture);
                             // Strip the data url prefix to get only the base64 picture data for did sessions
                             // data:image/png;base64,iVBORw0KGgoAAAAN --> iVBORw0KGgoAAAAN
                             base64ImageData = Buffer.from(hiveAvatarRawPicture).toString("base64");

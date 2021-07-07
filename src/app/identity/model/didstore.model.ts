@@ -236,7 +236,7 @@ export class DIDStore {
             didManager.initDidStore(
                 didStoreId,
                 (payload: string, memo: string) => {
-                    console.log("DEBUG initPluginDidStore", payload, memo);
+                    //console.log("DEBUG initPluginDidStore", payload, memo);
                     void this.createIdTransactionCallback(payload, memo);
                 },
                 (pluginDidStore: DIDPlugin.DIDStore) => {
