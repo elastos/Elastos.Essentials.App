@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
+import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
@@ -24,9 +25,14 @@ export class ETHChainSubWallet extends StandardSubWallet {
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
 
+        this.initialize();
+    }
+
+    private async initialize() {
+
         this.initWeb3();
         // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
-        this.loadTransactionsFromCache();
+        await this.loadTransactionsFromCache();
 
         switch (this.id) {
           case StandardCoinName.ETHSC:
@@ -111,7 +117,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
-        if (transaction.isError != '0') {
+        if (transaction.isError && transaction.isError != '0') {
           return null;
         }
 
@@ -225,7 +231,13 @@ export class ETHChainSubWallet extends StandardSubWallet {
     }
 
     private async initWeb3() {
-        const trinityWeb3Provider = new EssentialsWeb3Provider();
+        let urlType;
+        if (this.id === StandardCoinName.ETHDID) {
+          urlType = ElastosApiUrlType.EID_RPC;
+        } else {
+          urlType = ElastosApiUrlType.ETHSC_RPC;
+        }
+        const trinityWeb3Provider = new EssentialsWeb3Provider(urlType);
         this.web3 = new Web3(trinityWeb3Provider);
     }
 
@@ -324,13 +336,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
     */
 
     public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
-        const provider = new EssentialsWeb3Provider();
-        const web3 = new Web3(provider);
-
         const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
-        const ethscWithdrawContract = new web3.eth.Contract(contractAbi, this.contractAddress);
-        const gasPrice = await web3.eth.getGasPrice();
-        const toAmountSend = web3.utils.toWei(toAmount.toString());
+        const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.contractAddress);
+        const gasPrice = await this.web3.eth.getGasPrice();
+        // const gasPrice = '1000000000';
+        const toAmountSend = this.web3.utils.toWei(toAmount.toString());
 
         const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
         const gasLimit = 100000;
@@ -344,7 +354,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
         // }
         const data = method.encodeABI();
         let nonce = await this.getNonce();
-        Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce);
+        Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' contractAddress:', this.contractAddress);
 
         return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
@@ -365,6 +375,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
       let txid = await this.jsonRPCService.eth_sendRawTransaction(this.id as StandardCoinName, obj.TxSigned);
       if (txid.length > 0) {
         let rawtx = await this.getTransactionDetails(txid);
+        rawtx.timeStamp = (moment().valueOf() / 1000).toString(),
         this.addLocalTransaction(rawtx);
       }
       return txid;

@@ -26,6 +26,7 @@ import { ERC20Coin } from '../model/Coin';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import { WalletPrefsService } from './pref.service';
+import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 
 @Injectable({
     providedIn: 'root'
@@ -48,7 +49,7 @@ export class ERC20CoinService {
         if (this.web3)
             return this.web3;
 
-        const trinityWeb3Provider = new EssentialsWeb3Provider();
+        const trinityWeb3Provider = new EssentialsWeb3Provider(ElastosApiUrlType.ETHSC_RPC);
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI

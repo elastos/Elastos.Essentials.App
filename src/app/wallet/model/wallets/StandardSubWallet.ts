@@ -13,11 +13,6 @@ import { Logger } from 'src/app/logger';
 export abstract class StandardSubWallet extends SubWallet {
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id, CoinType.STANDARD);
-
-        this.initialize();
-    }
-
-    protected async initialize() {
     }
 
     public async destroy() {

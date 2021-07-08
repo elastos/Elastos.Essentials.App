@@ -28,6 +28,7 @@ import { Logger } from 'src/app/logger';
 import { WalletPrefsService } from './pref.service';
 import { NFTAsset } from '../model/nftasset';
 import { HttpClient } from '@angular/common/http';
+import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 
 export type ERC721ResolvedInfo = {
     /** Main NFT name, if set, or "" */
@@ -50,7 +51,7 @@ export class ERC721Service {
         if (this.web3)
             return this.web3;
 
-        const trinityWeb3Provider = new EssentialsWeb3Provider();
+        const trinityWeb3Provider = new EssentialsWeb3Provider(ElastosApiUrlType.ETHSC_RPC);
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI

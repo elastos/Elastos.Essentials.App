@@ -228,6 +228,7 @@ export class CoinHomePage implements OnInit {
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
             if (!transactionInfo) {
+                Logger.warn('wallet', 'Invalid transaction ', transaction);
                 continue;
             }
 

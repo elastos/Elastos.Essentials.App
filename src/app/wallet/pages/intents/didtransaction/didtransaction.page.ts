@@ -84,12 +84,6 @@ export class DidTransactionPage implements OnInit {
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
 
-        if (this.chainId === StandardCoinName.IDChain && !this.masterWallet.hasSubWallet(StandardCoinName.IDChain)) {
-            await this.notifyNoIDChain();
-            this.cancelOperation();
-            return;
-        }
-
         this.sourceSubwallet = this.masterWallet.getSubWallet(this.chainId) as MainAndIDChainSubWallet;
     }
 
@@ -106,10 +100,6 @@ export class DidTransactionPage implements OnInit {
 
     goTransaction() {
         this.checkValue();
-    }
-
-    notifyNoIDChain() {
-        return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
     }
 
     async checkValue() {

@@ -42,6 +42,7 @@ export class UiService {
         case StandardCoinName.ELA:
             return "assets/wallet/coins/ela-black.svg";
         case StandardCoinName.IDChain:
+        case StandardCoinName.ETHDID:
             return "assets/wallet/coins/ela-turquoise.svg";
         case StandardCoinName.ETHSC:
             return "assets/wallet/coins/ela-gray.svg";

@@ -17,6 +17,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
+import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 
 const BIPS_BASE = JSBI.BigInt(10000) // Fixed, don't touch
 const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than this (price changed a lot between 2 blocks), transaction will be cancelled
@@ -26,7 +27,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
     private elaEthSubwallet: ETHChainSubWallet;
 
     constructor(private walletManager: WalletManager, private masterWallet: MasterWallet) {
-        super();
+        super(ElastosApiUrlType.ETHSC_RPC);
         this.elaEthSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
     }
 

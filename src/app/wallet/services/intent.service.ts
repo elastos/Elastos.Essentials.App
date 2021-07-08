@@ -187,7 +187,7 @@ export class IntentService {
 
             case 'didtransaction':
                 this.nextScreen = '/wallet/intents/didtransaction';
-                this.coinTransferService.chainId = StandardCoinName.IDChain;
+                this.coinTransferService.chainId = StandardCoinName.ETHDID;
                 this.coinTransferService.didrequest = intent.params.didrequest;
                 break;
 
@@ -341,6 +341,10 @@ export class IntentService {
             case 'ETHSC':
             case 'ELA/ETHSC':
                 chainID = StandardCoinName.ETHSC;
+                break;
+            case 'ETHDID':
+            case 'ELA/ETHDID':
+                chainID = StandardCoinName.ETHDID;
                 break;
             default:
                 if (currency.startsWith('ELA/ETHSC:')) {

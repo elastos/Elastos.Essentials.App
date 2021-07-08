@@ -4,8 +4,12 @@ import { Logger } from "../logger";
 import { ElastosApiUrlType, GlobalElastosAPIService } from "../services/global.elastosapi.service";
 
 export class EssentialsWeb3Provider implements AbstractProvider {
+    apiurlType: ElastosApiUrlType = ElastosApiUrlType.ETHSC_RPC
     rpcApiEndpoint: string = null; // RPC API server url. Do NOT read this value directly.
 
+    constructor(urlType: ElastosApiUrlType) {
+      this.apiurlType = urlType;
+    }
     /**
      * Returns the previously fetched RPC API endpoint from Elastos Essentials's preferences
      */
@@ -13,7 +17,8 @@ export class EssentialsWeb3Provider implements AbstractProvider {
         if (this.rpcApiEndpoint != null)
             return this.rpcApiEndpoint;
 
-        return GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.ETHSC_RPC);
+        // return GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.ETHSC_RPC);
+        return GlobalElastosAPIService.instance.getApiUrl(this.apiurlType);
     }
 
     private callJsonRPC(payload): Promise<any> {

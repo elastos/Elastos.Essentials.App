@@ -117,13 +117,6 @@ export class CRMemberRegisterPage implements OnInit {
                 break;
         }
 
-        // TODO: Can we really register CR member from another chain than the mainchain?
-        if (this.chainId === StandardCoinName.IDChain && !this.masterWallet.hasSubWallet(StandardCoinName.IDChain)) {
-            await this.notifyNoIDChain();
-            this.cancelOperation();
-            return;
-        }
-
         this.balance = this.masterWallet.getSubWalletBalance(this.chainId);
     }
 
@@ -140,10 +133,6 @@ export class CRMemberRegisterPage implements OnInit {
 
     goTransaction() {
         this.checkValue();
-    }
-
-    notifyNoIDChain() {
-        return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
     }
 
     checkValue() {

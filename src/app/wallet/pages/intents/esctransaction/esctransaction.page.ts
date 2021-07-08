@@ -90,12 +90,6 @@ export class EscTransactionPage implements OnInit {
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
 
-        if (this.chainId === StandardCoinName.ETHSC && !this.masterWallet.hasSubWallet(StandardCoinName.ETHSC)) {
-            await this.notifyNoETHSCChain();
-            this.cancelOperation();
-            return;
-        }
-
         this.ethSidechainSubWallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
         this.balance = await this.ethSidechainSubWallet.getDisplayBalance();
         this.gasPrice = await this.ethSidechainSubWallet.getGasPrice();
@@ -116,10 +110,6 @@ export class EscTransactionPage implements OnInit {
 
     goTransaction() {
         this.checkValue();
-    }
-
-    notifyNoETHSCChain() {
-        return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
     }
 
     checkValue() {

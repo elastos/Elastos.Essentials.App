@@ -12,6 +12,7 @@ import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { Config } from '../../config/Config';
+import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -55,7 +56,7 @@ export class ERC20SubWallet extends SubWallet {
     private async initialize() {
         this.coin = this.masterWallet.coinService.getCoinByID(this.id) as ERC20Coin;
         // Get Web3 and the ERC20 contract ready
-        const trinityWeb3Provider = new EssentialsWeb3Provider();
+        const trinityWeb3Provider = new EssentialsWeb3Provider(ElastosApiUrlType.ETHSC_RPC);
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
@@ -65,7 +66,7 @@ export class ERC20SubWallet extends SubWallet {
         // as we need to convert the balance integer using the number of decimals.
         await this.fetchTokenDecimals();
 
-        this.loadTransactionsFromCache();
+        await this.loadTransactionsFromCache();
 
         setTimeout(async () => {
           this.updateBalance();
@@ -349,6 +350,7 @@ export class ERC20SubWallet extends SubWallet {
       let txid = await this.jsonRPCService.eth_sendRawTransaction(StandardCoinName.ETHSC, obj.TxSigned);
       if (txid.length > 0) {
         let rawtx = await this.getTransactionDetails(txid);
+        rawtx.timeStamp = (moment().valueOf() / 1000).toString(),
         this.addLocalTransaction(rawtx);
       }
       return txid;

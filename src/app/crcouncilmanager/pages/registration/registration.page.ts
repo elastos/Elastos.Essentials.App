@@ -191,10 +191,6 @@ export class CRCouncilRegistrationPage implements OnInit {
 
     }
 
-    // notifyNoIDChain() {
-    //     return this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.no-open-side-chain');
-    // }
-
     async register() {
         Logger.log('crcouncilregistration', 'Calling register()', this.crInfo);
 

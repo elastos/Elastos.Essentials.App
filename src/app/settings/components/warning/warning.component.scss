@@ -40,7 +40,12 @@
     width: 95%;
 
     ion-button {
-      width: 95%;
+      height: 50px;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      --border-radius: 8px;
     }
   }
 }

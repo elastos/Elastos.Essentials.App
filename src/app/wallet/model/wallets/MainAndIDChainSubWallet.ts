@@ -39,9 +39,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
 
+        this.initialize();
+    }
+
+    private async initialize() {
+
         this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper(this.jsonRPCService);
 
-        this.loadTransactionsFromCache();
+        await this.loadTransactionsFromCache();
 
         setTimeout(async () => {
             if (!this.masterWallet.account.SingleAddress) {
@@ -50,7 +55,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             }
             await this.updateBalance();
             // await this.getTransactionByRPC();
-            if (id === StandardCoinName.ELA) {
+            if (this.id === StandardCoinName.ELA) {
                 await this.getVotingUtxoByRPC();
             } else {
                 //Do not use id chain any more.
