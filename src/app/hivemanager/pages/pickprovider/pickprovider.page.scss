@@ -1,30 +1,40 @@
 @import "src/app/hivemanager/root.scss";
 
+.hive-icon-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+
+    img {
+        height: 80px;
+    }
+}
+
 .container {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     padding: 10px 15px;
-  
+
     h1, h2, h3, h4, p {
         width: 100%;
         margin: 0;
         padding: 0 10px;
         letter-spacing: -0.5px;
     }
-  
+
     h1 {
         font-size: 24px;
         font-weight: 700;
     }
-  
+
     h2 {
         margin-top: 40px;
         font-size: 16px;
         font-weight: 700;
     }
-  
+
     h3 {
         font-size: 20px;
         font-weight: 700;
@@ -41,7 +51,7 @@
         font-weight: 500;
         line-height: 1.2;
     }
-  
+
     .bubble {
         position: relative;
         margin: 5px 0 0;
@@ -50,11 +60,11 @@
         background-color: #ffffff;
         box-shadow: 0 3px 15px 0 #ededf0;
         border-radius: 17px;
-        
+
         p {
             margin: 0;
         }
-  
+
         .bubble-tail {
             position: absolute;
             width: 0;
@@ -66,7 +76,7 @@
             border-top: 25px solid white;
         }
     }
-  
+
     ion-input {
         margin: 10px;
         background: #f0f1ff;
@@ -78,29 +88,29 @@
         width: 95%;
     }
   }
-  
+
 .darkContainer {
     ion-input {
         background: #212021;
         box-shadow: none;
     }
-  
+
     .bubble {
         background: #212021;
         box-shadow: none;
-  
+
         .bubble-tail {
             border-top: 25px solid #212021;
         }
     }
 }
-  
+
 .center {
     height: 100%;
     justify-content: center;
     align-items: center;
     padding: 30px;
-  
+
     ion-spinner {
         margin-bottom: 10px;
         zoom: 1.5;
