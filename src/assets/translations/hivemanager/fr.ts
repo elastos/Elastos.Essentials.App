@@ -13,18 +13,19 @@ export const fr = {
     "alert.confirm": "Confirmer",
     "alert.cancel": "Annuler",
     "alert.not-available": "Pas encore disponible",
-    "alert.not-available-msg": "Cette fonctionnalité n\'est pas encore disponible dans Hive. A venir - Transférez toutes vos données vers un autre fournisseur de stockage à tout moment. Préparez-vous à être maître de vos données!",
+    "alert.not-available-msg": "Cette fonctionnalité n'est pas encore disponible dans Hive. A venir - Transférez toutes vos données vers un autre fournisseur de stockage à tout moment. Préparez-vous à être maître de vos données!",
     "alert.error": "Erreur",
-    "alert.sorry-provider-not-save": "Désolé, votre fournisseur de stockage n\'a pas pu être sauvegardé pour le moment.",
+    "alert.sorry-provider-not-save": "Désolé, votre fournisseur de stockage n'a pas pu être sauvegardé pour le moment.",
     "alert.ok": "Ok",
     "alert.unavailable": "Non disponible",
     "alert.only-payments-in-ELA": "Désolé, seuls les paiements en ELA sont supportés actuellement",
     "alert.completed": "Terminé",
     "alert.plan-has-been-configured": "La formule a été correctement mise en place",
     "alert.operation-not-completed-title": "Opération non terminée",
-    "alert.operation-not-completed-text": "Votre formule de stockage demeure inchangée - l\'opération a été annulée, ou le paiement a échoué.",
+    "alert.operation-not-completed-text": "Votre formule de stockage demeure inchangée - l'opération a été annulée, ou le paiement a échoué.",
     "alert.didpublish-title": 'DID is unpublished',
     "alert.didpublish-msg": 'Your DID has not been published yet. Publish now？<br/><br/>After publishing, please wait a few minutes to retry activating here.',
+    "token-revoked": "Authentification révoquée",
 
     /********** Screens **********/
     "signin": {
@@ -44,14 +45,14 @@ export const fr = {
       "hivevault-publishing": "Le lien vers votre nouveau fournisseur de stockage Hive est actuellement en cours de publication. Veuillez patienter quelques minutes, vous pourrez ensuite utiliser votre espace de stockage.",
       "elastos": "Elastos",
       "hivestorage": "Stockage Hive",
-      "no-storage-intro": "Il semble que vous n\'ayez pas encore choisi de fournisseur de stockage Hive. Vous êtes libre de choisir un service commercial ou votre propre service (avancé). Pour vous aider, voici certains fournisseurs que vous pouvez utiliser dans un premier temps.",
+      "no-storage-intro": "Il semble que vous n'ayez pas encore choisi de fournisseur de stockage Hive. Vous êtes libre de choisir un service commercial ou votre propre service (avancé). Pour vous aider, voici certains fournisseurs que vous pouvez utiliser dans un premier temps.",
       "no-storage-intro2": "Avec la version actuelle de Hive, vous ne pouvez pas transférer vos données. Après avoir choisi un fournisseur de stockage, vous devrez attendre une version future pour pouvoir transférer vos données ailleurs.",
       "please-note": "Veuillez noter:",
       "select-provider": "Sélectionner un fournisseur",
       "input-provider": "Ou saisir votre propre fournisseur",
       "use-address": "Utiliser cette adresse personnalisée",
       "provider-offline": "Fournisseur de stockage hors ligne?",
-      "provider-offline-msg": "Votre fournisseur de stockage actuel n\'a pas pu être contacté. C\'est peut-être un problème temporaire, dans ce cas patientez un moment. Dans le cas contraire, il vous faudra peut-être transférer vos données manuellement vers un autre fournisseur.",
+      "provider-offline-msg": "Votre fournisseur de stockage actuel n'a pas pu être contacté. C'est peut-être un problème temporaire, dans ce cas patientez un moment. Dans le cas contraire, il vous faudra peut-être transférer vos données manuellement vers un autre fournisseur.",
       "vault-active": "Espace de stockage actif",
       "vault-msg": "Vous avez déjà sélectionné un fournisseur de stockage. Pour le moment vous ne pouvez pas le modifier. Les futures versions de Hive vous permettront de transférer vos données à tout moment.",
       "address": "Adresse:",
@@ -63,9 +64,9 @@ export const fr = {
       "choose-another-plan": "Choisir une formule différente",
       "payment-processing": "Votre paiement précédent est en cours de validation, vous pourrez modifier votre formule à nouveau une fois la validation terminée.",
       "backup-provider": "Fournisseur de sauvegarde",
-      "backup-provider-msg": "La fonctionnalité de sauvegarde et récupération n\'est pas encore disponible. Vous pourrez bientôt choisir un fournisseur de sauvegarde pour garantir que vos données sont en sécurité même si votre fournisseur principal disparaît un jour.",
+      "backup-provider-msg": "La fonctionnalité de sauvegarde et récupération n'est pas encore disponible. Vous pourrez bientôt choisir un fournisseur de sauvegarde pour garantir que vos données sont en sécurité même si votre fournisseur principal disparaît un jour.",
       "backup-plan": "Formule de sauvegarde",
-      "backup-plan-msg": "Aucun fournisseur de sauvegarde disponible pour l\'instant.",
+      "backup-plan-msg": "Aucun fournisseur de sauvegarde disponible pour l'instant.",
       "pending-orders": "Achats en cours",
       "retrieving-orders": "récupération des données",
       "no-pending-order": "Aucun achat en cours."
@@ -73,7 +74,7 @@ export const fr = {
     "pickplanpurchase": {
       "title": "Confirmer l'achat",
       "confirm-plan": "Confirmer le changement de formule",
-      "purchase-msg": "Vous êtes sur le point d\'utiliser cette nouvelle formule pour votre espace de stockage. Veuillez vérifier les informations puis procéder au paiement.",
+      "purchase-msg": "Vous êtes sur le point d'utiliser cette nouvelle formule pour votre espace de stockage. Veuillez vérifier les informations puis procéder au paiement.",
       "purchase-now": "Acheter maintenant",
     },
     "pickplan": {
@@ -86,8 +87,8 @@ export const fr = {
     },
     "adminproviderlist": {
       "title": "Gérer mes fournisseurs",
-      "no-providers": "Vous n\'avez pas encore configuré de fournisseur.",
-      "providers-msg": "Voici une liste de fournisseurs de stockage que vous gérez (en tant que fournisseur pour d\'autres).",
+      "no-providers": "Vous n'avez pas encore configuré de fournisseur.",
+      "providers-msg": "Voici une liste de fournisseurs de stockage que vous gérez (en tant que fournisseur pour d'autres).",
       "providers-msg2": 'Cette page est pour personnes gérant des noeuds de stockage hive uniquement, et non pour les utilisateurs standards.'
     },
     "adminprovideredit": {
@@ -95,8 +96,8 @@ export const fr = {
       "provider-name": "Nom du fournisseur",
       "enter-name": "Saisir un nom",
       "create": "Créer",
-      "admin-id": "Identité de l\'administrateur",
-      "admin-mnemonic": "Mnémonique de l\'administrateur",
+      "admin-id": "Identité de l'administrateur",
+      "admin-mnemonic": "Mnémonique de l'administrateur",
       "delete": "Supprimer",
       "publish": "Publier",
     },
@@ -104,7 +105,7 @@ export const fr = {
       "id": "ID:",
       "plan": "Formule:",
       "state": "Statut:",
-      "date": "Date d\'achat:",
+      "date": "Date d'achat:",
     },
     "payment-plan": {
       "max-storage": "Stockage max:",
@@ -119,9 +120,10 @@ export const fr = {
     "hive-menu": {
       "vault-providers-administration": "Administration pour les fournisseurs",
       "force-provider-change": "[Attention!] Forcer le changement de fournisseur",
+      "revoke-auth-token": "Revoquer l'authentification à Hive"
     },
   }
-  
+
 };
 
 

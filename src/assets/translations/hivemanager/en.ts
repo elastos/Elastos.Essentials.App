@@ -25,6 +25,7 @@ export const en = {
     "alert.operation-not-completed-text": "Your storage plan remains unchanged - the operation was cancelled or the payment has failed.",
     "alert.didpublish-title": 'DID is unpublished',
     "alert.didpublish-msg": 'Your DID has not been published yet. Publish now？<br/><br/>After publishing, please wait a few minutes to retry activating here.',
+    "token-revoked": "Vault auth token revoked",
 
     /********** Screens **********/
     "signin": {
@@ -119,6 +120,7 @@ export const en = {
     "hive-menu": {
       "vault-providers-administration": "Vault Providers Administration",
       "force-provider-change": "[Caution!] Force provider change",
+      "revoke-auth-token": "Revoke hive vault auth token"
     },
   }
   

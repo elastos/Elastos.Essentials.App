@@ -203,7 +203,7 @@ export const fr = {
 
         // Global component: assist publishing
         'publishing': {
-            'publish-did': 'Publicaiton d\'identité'
+            'publish-did': 'Publication d\'identité'
         },
 
         /******************** Profile Entries ********************/

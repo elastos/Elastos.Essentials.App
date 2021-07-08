@@ -126,7 +126,7 @@ export class PickProviderPage implements OnInit {
       });
       // Add a special menu item to be able to revoke the hive auth token for test purpose
       menuItems.push({
-        title: 'Revoke hive vault auth token',
+        title: this.translate.instant('hivemanager.hive-menu.revoke-auth-token'),
         key: "pickprovider-revokeauthtoken",
         iconPath: BuiltInIcon.DELETE
       });
@@ -307,6 +307,6 @@ export class PickProviderPage implements OnInit {
     // Also remove the app instance DID because it contains data (app did) we may want to renew.
     // Setting the active connector to null will clenaup its context, including the app instance DID.
     await connectivity.setActiveConnector(null);
-    this.native.genericToast("Vault auth token revoked");
+    this.native.genericToast("hivemanager.token-revoked");
   }
 }
