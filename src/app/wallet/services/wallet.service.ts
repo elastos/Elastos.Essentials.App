@@ -423,7 +423,7 @@ export class WalletManager {
      */
     async destroyMasterWallet(id: string) {
         // Delete all subwallet
-        this.masterWallets[id].destroyAllSubWallet();
+        await this.masterWallets[id].destroyAllSubWallet();
 
         // Destroy the wallet in the wallet plugin
         await this.spvBridge.destroyWallet(id);
