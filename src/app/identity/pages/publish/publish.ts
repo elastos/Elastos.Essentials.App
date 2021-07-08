@@ -8,6 +8,7 @@ import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { Logger } from "src/app/logger";
 import { Subscription } from "rxjs";
 import { Events } from "src/app/services/events.service";
+import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 
 type CredentialDisplayEntry = {
     credential: DIDPlugin.VerifiableCredential;
@@ -73,7 +74,7 @@ export class PublishPage {
     init() {
         this.profileService.getAvatarDataUrl().subscribe(avatarDataUrl => {
             this.avatarImg = avatarDataUrl;
-        })
+        });
     }
 
     ionViewWillEnter() {
@@ -143,7 +144,7 @@ export class PublishPage {
     }
 
     getAvatar(entry: CredentialDisplayEntry): string {
-        return this.avatarImg || '/assets/identity/smallIcons/dark/name.svg';
+        return this.avatarImg || transparentPixelIconDataUrl();
     }
 
     getCredIconSrc(entry: CredentialDisplayEntry): string {

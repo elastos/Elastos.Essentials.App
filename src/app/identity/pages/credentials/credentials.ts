@@ -21,6 +21,7 @@ import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { ProfileService } from "../../services/profile.service";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
+import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -57,7 +58,7 @@ export class CredentialsPage {
   private publishedCredentials: DIDPlugin.VerifiableCredential[];
   public hasCredential = false;
   public creatingIdentity = false;
-
+  public avatarImg = null;
   public fetchingApps = false;
 
   public segment = "all";
@@ -165,6 +166,10 @@ export class CredentialsPage {
 
       this.buildDetailEntries();
       //this.buildCredentialEntries(publishAvatar);
+
+      this.profileService.getAvatarDataUrl().subscribe(avatarDataUrl => {
+        this.avatarImg = avatarDataUrl;
+      });
     }
   }
 
@@ -528,15 +533,8 @@ export class CredentialsPage {
     }
   }
 
-  avatarImg = "";
-
   getAvatar(entry: CredentialDisplayEntry): string {
-    if (this.avatarImg == "") {
-      let subject = entry.credential.getSubject();
-      let avatar = subject["avatar"];
-      this.avatarImg = `data:${avatar["content-type"]};${avatar["type"]},${avatar["data"]}`;
-    }
-    return this.avatarImg;
+    return this.avatarImg || transparentPixelIconDataUrl(); // Transparent pixel while loading
   }
 
   getCredIconSrc(entry: CredentialDisplayEntry): string {
