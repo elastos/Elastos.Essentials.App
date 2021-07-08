@@ -34,6 +34,18 @@
         opacity: 0.7;
       }
     }
+
+    .right-col {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      
+      div {
+        ion-toggle {
+          zoom: 0.85;
+        }
+      }
+    }
   }
 }
 

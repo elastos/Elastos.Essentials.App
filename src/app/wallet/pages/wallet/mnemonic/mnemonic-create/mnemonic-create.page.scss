@@ -1,6 +1,8 @@
 @import 'src/app/wallet/root.scss';
 
 ion-slides { 
+    position: relative;
+    top: -1px;
     min-height: 100%;
     background-image: url('/assets/wallet/background/background2.svg');
     object-fit: cover;

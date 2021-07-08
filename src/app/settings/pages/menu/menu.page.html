@@ -1,18 +1,8 @@
 <ion-content *ngIf="hasConfigSections">
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <!-- Language selection -->
-        <ion-row class="section" (click)="open('/settings/language')">
-            <ion-col size="11" class="title-col">
-                <h1>{{ 'common.language-setting' | translate }}</h1>
-                <h2>{{ 'settings.change-lang' | translate }}</h2>
-            </ion-col>
-            <ion-col size="1" class="arrow-col">
-                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
-            </ion-col>
-        </ion-row>
         <!-- Theme -->
-        <ion-row class="section dev-mode">
+        <ion-row class="section theme-mode">
             <ion-col size="8" class="title-col">
                 <h1>{{ 'settings.display-setting' | translate }}</h1>
                 <h2 *ngIf="!theme.darkMode">{{ 'settings.light-mode-on' | translate }}</h2>
@@ -27,6 +17,16 @@
                     <div class="dark-mode"><p>{{ 'settings.dark' | translate }}</p></div>
                     <div class="light-mode" (click)="theme.toggleTheme()"><p>{{ 'settings.light' | translate }}</p></div>
                 </div>
+            </ion-col>
+        </ion-row>
+        <!-- Language selection -->
+        <ion-row class="section" (click)="open('/settings/language')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'common.language-setting' | translate }}</h1>
+                <h2>{{ 'settings.change-lang' | translate }}</h2>
+            </ion-col>
+            <ion-col size="1" class="arrow-col">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
         <!-- Privacy -->
@@ -59,15 +59,14 @@
                 <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
-        <!-- Developer mode -->
-        <ion-row class="section dev-mode">
-            <ion-col size="9" class="title-col">
-                <h1>{{ 'settings.dev-mode' | translate }}</h1>
-                <h2 *ngIf="prefs.developerMode">{{ 'settings.on' | translate }}</h2>
-                <h2 *ngIf="!prefs.developerMode">{{ 'settings.off' | translate }}</h2>
+        <!-- About -->
+        <ion-row class="section" (click)="open('/settings/about')">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'settings.about-setting' | translate }}</h1>
+                <h2>{{ 'settings.about-elastos' | translate }}</h2>
             </ion-col>
-            <ion-col size="3" class="arrow-col">
-                <ion-toggle mode="ios" [(ngModel)]="prefs.developerMode" (ngModelChange)="toggleDeveloperMode()" ngDefaultControl></ion-toggle>
+            <ion-col size="1" class="arrow-col">
+                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
         <!-- Developer settings -->
@@ -80,14 +79,15 @@
                 <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
-        <!-- About -->
-        <ion-row class="section" (click)="open('/settings/about')">
-            <ion-col size="11" class="title-col">
-                <h1>{{ 'settings.about-setting' | translate }}</h1>
-                <h2>{{ 'settings.about-elastos' | translate }}</h2>
+         <!-- Developer mode -->
+         <ion-row class="section dev-mode">
+            <ion-col size="9" class="title-col">
+                <h1>{{ 'settings.dev-mode' | translate }}</h1>
+                <h2 *ngIf="prefs.developerMode">{{ 'settings.on' | translate }}</h2>
+                <h2 *ngIf="!prefs.developerMode">{{ 'settings.off' | translate }}</h2>
             </ion-col>
-            <ion-col size="1" class="arrow-col">
-                <img [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            <ion-col size="3" class="arrow-col">
+                <ion-toggle mode="ios" [(ngModel)]="prefs.developerMode" (ngModelChange)="toggleDeveloperMode()" ngDefaultControl></ion-toggle>
             </ion-col>
         </ion-row>
     </ion-grid>

@@ -112,6 +112,10 @@
     }
   }
 
+  .theme-mode {
+    margin-right: 5px;
+  }
+
   .dev-mode {
     border: none;
     margin-right: 5px;
@@ -123,6 +127,10 @@
     border-bottom: 1.5px solid #464646;
 
     .title-col {
+      h1 {
+        // font-weight: 500;
+      }
+      
       h2 {
         color: #9D9D9D;
         opacity: 1;
