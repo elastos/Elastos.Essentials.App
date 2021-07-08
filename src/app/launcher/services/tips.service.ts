@@ -44,11 +44,6 @@ export class TipsService {
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-dev-wipe-data",
-      message: "launcher.tip-message-dev-wipe-data",
-      audience: TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS
-    },
-    {
       title: "launcher.tip-title-toolbox",
       message: "launcher.tip-message-toolbox",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
@@ -56,16 +51,6 @@ export class TipsService {
     {
       title: "launcher.tip-title-not-only-for-crypto-players",
       message: "launcher.tip-message-not-only-for-crypto-players",
-      audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
-    },
-    {
-      title: "launcher.tip-title-dev-trinity-native",
-      message: "launcher.tip-message-dev-trinity-native",
-      audience: TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS
-    },
-    {
-      title: "launcher.tip-title-capsule-marketplace",
-      message: "launcher.tip-message-capsule-marketplace",
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
@@ -81,14 +66,14 @@ export class TipsService {
     private prefs: GlobalPreferencesService,
     private notifications: GlobalNotificationsService) { }
 
-  public async init() {
+  public init() {
     Logger.log("Launcher", "Tips service is initializing");
 
     // await this.resetAllTipsAsNotViewed(); // DEBUG ONLY
 
     // Wait a moment while the launcher starts, then start showing tips if needed.
     setTimeout(() => {
-      this.checkIfTimeToShowATip();
+      void this.checkIfTimeToShowATip();
     }, 1000);
   }
 
@@ -101,12 +86,12 @@ export class TipsService {
     }
 
     if (await this.rightTimeToShowATip()) {
-      this.showNextTip();
+      await this.showNextTip();
     }
 
     // No matter what, check again in X minutes
     setTimeout(() => {
-      this.checkIfTimeToShowATip();
+      void this.checkIfTimeToShowATip();
     }, DURATION_BETWEEN_2_CHECKS_MS);
   }
 
@@ -142,7 +127,7 @@ export class TipsService {
         message: this.translate.instant(tipToNotify.message)
       }
 
-      this.notifications.sendNotification({
+      void this.notifications.sendNotification({
         app: App.LAUNCHER,
         key: "launcher_tip_of_the_day", // Always overwrite previous tip notifications, if any
         title: this.translate.instant(tipToNotify.title),
@@ -155,37 +140,33 @@ export class TipsService {
   }
 
   private async rightTimeToShowATip(): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      try {
-        let value = await this.storage.getSetting<string>(GlobalDIDSessionsService.signedInDIDString, "launcher", "latest-sent-tip-time", null);
-        // value must be a ISO string
-        let latestSentTipTime = moment(value);
+    try {
+      let value = await this.storage.getSetting<string>(GlobalDIDSessionsService.signedInDIDString, "launcher", "latest-sent-tip-time", null);
+      if (!value)
+        return true; // Nothing saved yet: so it's a right time to show a tip.
 
-        Logger.log('Launcher', latestSentTipTime, moment())
+      // value must be a ISO string
+      let latestSentTipTime = moment(value);
 
-        // Right time to show if last time we have shown a tip was more than X hours ago.
-        resolve(latestSentTipTime.add(DURATION_MIN_BETWEEN_2_TIPS_HOURS, "hours").isBefore(moment()));
-        // resolve(true);
-      }
-      catch (err) {
-        Logger.error('Launcher', "rightTimeToShowATip() error:", err);
-        resolve(true);
-      }
-    });
+      //Logger.log('Launcher', latestSentTipTime, moment())
+
+      // Right time to show if last time we have shown a tip was more than X hours ago.
+      return (latestSentTipTime.add(DURATION_MIN_BETWEEN_2_TIPS_HOURS, "hours").isBefore(moment()));
+    }
+    catch (err) {
+      Logger.error('Launcher', "rightTimeToShowATip() error:", err);
+      return true;
+    }
   }
 
   private async saveSentTipTime() {
-    return new Promise<void>(async (resolve) => {
-      try {
-        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "latest-sent-tip-time", new Date().toISOString());
-        resolve();
-      }
-      catch (err) {
-        // Kind of blocking issue, but let's resolve anyway...
-        Logger.error('Launcher', "saveSentTipTime() error:", err);
-        resolve();
-      }
-    });
+    try {
+      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "latest-sent-tip-time", new Date().toISOString());
+    }
+    catch (err) {
+      // Kind of blocking issue, but let's resolve anyway...
+      Logger.error('Launcher', "saveSentTipTime() error:", err);
+    }
   }
 
   /**
@@ -205,17 +186,15 @@ export class TipsService {
     return tipsThatCanBeViewed;
   }
 
-  private userWantsToSeeTips(): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      try {
-        let value = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "help.dailytips.show");
-        resolve(value);
-      }
-      catch (err) {
-        // Preference does not exist - Consider this as a yes
-        resolve(true);
-      }
-    });
+  private async userWantsToSeeTips(): Promise<boolean> {
+    try {
+      let value = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "help.dailytips.show");
+      return value;
+    }
+    catch (err) {
+      // Preference does not exist - Consider this as a yes
+      return true;
+    }
   }
 
   public async markTipAsViewed(tip: Tip) {
@@ -238,38 +217,31 @@ export class TipsService {
     });
   }
 
-  private async saveViewedTips(tips: Tip[]) {
-    return new Promise<void>(async (resolve) => {
-      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "viewed-tips", tips);
-      resolve();
-    });
+  private saveViewedTips(tips: Tip[]): Promise<void> {
+    return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "viewed-tips", tips);
   }
 
-  private loadViewedTips(): Promise<Tip[]> {
-    return new Promise(async (resolve) => {
-      try {
-        let tips = await this.storage.getSetting<Tip[]>(GlobalDIDSessionsService.signedInDIDString, "launcher", "viewed-tips", []);
-        resolve(tips);
-      }
-      catch (err) {
-        resolve([]);
-      }
-    });
+  private async loadViewedTips(): Promise<Tip[]> {
+    try {
+      let tips = await this.storage.getSetting<Tip[]>(GlobalDIDSessionsService.signedInDIDString, "launcher", "viewed-tips", []);
+      return tips;
+    }
+    catch (err) {
+      return [];
+    }
   }
 
-  private developerModeEnabled(): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      try {
-        let devMode = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode");
-        if (devMode)
-          resolve(true);
-        else
-          resolve(false);
-      }
-      catch (err) {
-        Logger.warn('Launcher', "developerModeEnabled() error", err);
-        resolve(false);
-      }
-    });
+  private async developerModeEnabled(): Promise<boolean> {
+    try {
+      let devMode = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "developer.mode");
+      if (devMode)
+        return true;
+      else
+        return false;
+    }
+    catch (err) {
+      Logger.warn('Launcher', "developerModeEnabled() error", err);
+      return false;
+    }
   }
 }

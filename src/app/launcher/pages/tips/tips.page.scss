@@ -5,6 +5,13 @@ ion-grid {
   margin: 0;
   padding: 15px 20px;
 
+  ion-row.tip-message {
+    p {
+      line-height: 1.8;
+      font-size: 14px;
+    }
+  }
+
   .title-row {
     margin-bottom: 15px;
 

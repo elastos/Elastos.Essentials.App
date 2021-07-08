@@ -12,7 +12,7 @@
         <ion-row *ngIf="currentlyShownTip">
             <p style="color:gray;font-size:12px;font-style: italic;">{{ getTipAudience(currentlyShownTip) }}</p>
         </ion-row>
-        <ion-row *ngIf="currentlyShownTip">
+        <ion-row *ngIf="currentlyShownTip" class="tip-message">
             <p [innerHtml]="getTipMessage(currentlyShownTip)"></p>
         </ion-row>
         <ion-row *ngIf="currentlyShownTip">

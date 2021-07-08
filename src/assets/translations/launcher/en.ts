@@ -71,26 +71,20 @@ export const en = {
 
         /*********** Tips ************/
         'tip-title-welcome': 'Welcome to Elastos Essentials',
-        'tip-message-welcome': 'Thank you for running this app! Elastos Essentials can manage your <b>digital identity</b>, your <b>personal storage</b>, your contacts, and your crypto-currency <b>wallet</b>. You can use part, or all of this.<br/><br/>Elastos Essentials is also your <b>super wallet toolbox</b> while running other apps.',
+        'tip-message-welcome': 'Thank you for running this app! Elastos Essentials can manage your <b>digital identity</b>, your <b>personal storage</b>, your contacts, and your crypto-currency <b>wallets</b>. You can use part, or all of this.<br/><br/>Elastos Essentials is also your <b>super wallet toolbox</b> while running other apps, similar to Metamask (if you\'ve header of it), but for more than only cryptos.',
         'tip-title-what-is-did': 'What is a DID?',
         'tip-message-what-is-did': 'A DID is a <b>decentralized identity</b>. This identity is <b>owned by you</b> and by no one else. This is why you have to save those strange mnemonic words and keep them safe.<br/><br/>DIDs allow to <b>verify things that are claimed</b> by you or by others (for example, a diploma). They also allow you <b>being in control of your applications data</b>, therefore increasing your privacy.',
         'tip-title-what-is-hive': 'What is Hive (storage)?',
         'tip-message-what-is-hive': 'Hive is your <b>personal storage space</b>. Not to store documents or holiday pictures, but to save all kind of <b>data managed by the applications you use every day</b>.<br/><br/>Applications data is <b>stored where you decide</b>, and not by the application developers any more. As a consequence, you get <b>more privacy and control</b> over your data.',
         'tip-title-toolbox': 'Elastos Essentials is a toolbox',
-        'tip-message-toolbox': 'While android and desktop users have access to a marketplace of dApps from inside Elastos Essentials, <b>the main purpose of Elastos Essentials is to serve other apps as a toolbox</b>. It may not apparently do much at first, but it opens the way to a whole new range of applications and features.',
+        'tip-message-toolbox': '<b>What can Essentials do for me when used by other apps?</b>. With Essentials, you can <b>sign in</b> to third party apps or websites with your DID, you can <b>share and modify some of your personal data</b>, run crypto transactions, make payments, and many other decentralized operations, without relying on third parties to do so.',
         'tip-title-not-only-for-crypto-players': 'Not just about cryptos',
         'tip-message-not-only-for-crypto-players': 'While Elastos Essentials uses blockchains to manage decentralized identities - and blockchains need crypto currencies to run - we try our best to <b>bring most of the features without requesting you to hold crypto currencies</b>, as we know it can be complex (and worrying) to acquire crypto-currencies.',
-        'tip-title-capsule-marketplace': 'The marketplace',
-        'tip-message-capsule-marketplace': 'Android and desktop users can directly <b>access Elastos Essentials capsules from inside Elastos Essentials</b>, by getting them <b>from the capsule marketplace</b>. Those capsules can be added to the Elastos Essentials home screen as favorites for convenience.<br/><br/>iOS users have to wait until application developers of they favorite capsules publish a trinity native version on the itunes app store.',
         'tip-title-bring-friends': 'Inviting friends',
         'tip-message-bring-friends': 'So you like the Elastos Essentials concept? You like to own your identity, having privacy over your data, using a internet with more trust and less hiding?<br/><br/>You would like your friends to join, but you feel using Elastos Essentials powered apps is <b>not as easy</b> as using traditional applications?<br/><br/>YOU ARE RIGHT! But like every <b>new innovation</b>, it takes a bit of time to adapt. After a while, most people <b>will understand the power of this new internet</b> and will join without efforts.',
 
         /********* Developer Tips *********/
         'tip-title-dev-getting-support': 'Where to get dev support?',
         'tip-message-dev-getting-support': 'Don\'t hesitate to ask development questions and report issues on our <b>Telegram channel https://t.me/elastosbrowser</b>.',
-        'tip-title-dev-wipe-data': 'App data wipe',
-        'tip-message-dev-wipe-data': 'Did you know? In order to <b>clear all of your app data</b>, for example if you want to remove all local storage and restart from scratch without having to reinstall the app, you can go to settings and <b>Clear app data</b>. You app will become as bright as the moon.',
-        'tip-title-dev-trinity-native': 'Trinity Native',
-        'tip-message-dev-trinity-native': 'Did you know? After your app is completed and runs well in Elastos Essentials, you can <b>use the trinity native toolchain to package your app into a android or iOS native app</b>, without changing a single line of code.'
     }
 };
