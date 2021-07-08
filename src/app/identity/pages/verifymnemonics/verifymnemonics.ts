@@ -46,7 +46,6 @@ export class VerifyMnemonicsPage {
 
     ionViewWillEnter() {
       this.titleBar.setTitle(this.translate.instant('didsessions.verify-mnemonic'));
-      this.titleBar.setTheme('#f8f8ff', TitleBarForegroundMode.DARK);
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key:'back', iconPath: BuiltInIcon.BACK });
       this.titleBar.setNavigationMode(null);
       this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
@@ -146,7 +145,7 @@ export class VerifyMnemonicsPage {
         message: this.translate.instant('didsessions.check-mnemonics'),
         buttons: [
           {
-            text: this.translate.instant('common.Okay'),
+            text: this.translate.instant('common.ok'),
             handler: () => {
               void this.globalNav.navigateBack();
             }
