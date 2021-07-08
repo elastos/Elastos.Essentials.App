@@ -17,7 +17,7 @@ import { ElastosSDKHelper } from './app/helpers/elastossdk.helper';
 Logger.init(console);
 
 // Setup Lottie animation player
-defineCustomElements(window);
+void defineCustomElements(window);
 
 // Enable production mode
 if (environment.production) {
@@ -25,7 +25,7 @@ if (environment.production) {
 }
 
 // Load translations
-TranslationsLoader.loadAllModulesAndMerge().then(()=>{
+void TranslationsLoader.loadAllModulesAndMerge().then(()=>{
   Logger.log("global", "Bootstrapping the App Module");
   platformBrowserDynamic().bootstrapModule(AppModule).then((module)=>{
     let applicationRef = module.injector.get(ApplicationRef);

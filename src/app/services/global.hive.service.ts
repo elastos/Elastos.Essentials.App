@@ -423,13 +423,17 @@ export class GlobalHiveService extends GlobalService {
   public fetchHiveScriptPicture(hiveScriptUrl: string): Promise<Buffer> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise<Buffer>(async (resolve) => {
-      //let hiveClient = await this.globalHiveService.getHiveClient();
-      //let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
 
       // TODO: TMP WHILE HIVE BUG IS NOT FIXED - ONLY WORKS FOR PERSONAL AVATAR !!! NOT WORKING FOR OTHER PICTURES FROM OTHER USERS
       // TODO: REPLACE WITH THE 2 LINES ABOVE
 
       try {
+        /* console.log("DEBUG 1");
+        let hiveClient = await this.getHiveClient();
+        console.log("DEBUG 2");
+        let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
+        console.log("DEBUG 3"); */
+
         let activeVault = await this.getActiveVault();
         let dirtyScriptName = hiveScriptUrl.substring(hiveScriptUrl.lastIndexOf("/")+1, hiveScriptUrl.indexOf("?"));
         console.log("DEBUG dirtyScriptName = ",dirtyScriptName);
