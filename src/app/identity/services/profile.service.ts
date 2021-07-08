@@ -74,7 +74,7 @@ export class ProfileService {
   // Profile Credentials
   // private visibleCred: CredentialDisplayEntry[];
   // private invisibleCred: CredentialDisplayEntry[];
-  public appCreds: AppCredentialDisplayEntry[];
+  //public appCreds: AppCredentialDisplayEntry[];
   private credentials: CredentialDisplayEntry[] = [];
 
   public issuers: {
@@ -297,9 +297,7 @@ export class ProfileService {
   }
 
   editVisibility() {
-    if (this.appCreds.length === 0) {
-      this.changeList("details");
-    }
+    this.changeList("details");
     this.deleteMode = false;
     //this.options.dismiss();
     this.editingVisibility = !this.editingVisibility;

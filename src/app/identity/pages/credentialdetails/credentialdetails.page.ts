@@ -173,9 +173,9 @@ export class CredentialDetailsPage implements OnInit {
       "Credential details ionViewDidEnter did: " + this.profileService.didString
     );
 
-    if (this.isApp()) {
+    /* if (this.isApp()) {
       this.getAppIcon();
-    }
+    } */
   }
 
   async selectCredential() {
@@ -290,32 +290,6 @@ export class CredentialDetailsPage implements OnInit {
 
   getSmallIcon(iconName: string) {
     return this.theme.darkMode ? `/assets/identity/smallIcons/dark/${iconName}.svg` : `/assets/identity/smallIcons/light/${iconName}.svg`
-  }
-
-  getAppIcon() {
-    this.http
-      .get<any>(
-        "https://dapp-store.elastos.org/apps/" +
-        this.credential.pluginVerifiableCredential.getSubject().apppackage +
-        "/manifest"
-      )
-      .subscribe(
-        (manifest: any) => {
-          Logger.log('Identity', "Got app!", manifest);
-          void this.zone.run(() => {
-            let iconUrl = "https://dapp-store.elastos.org/apps/" + manifest.id + "/icon";
-            //Logger.log('Identity', iconUrl);
-            this.appIcon = iconUrl;
-
-          })
-        }, (error: any) => {
-          let skin = this.theme.darkMode ? "dark" : "light";
-          this.appIcon = `../../../assets/identity/headerIcons/${skin}/finger-print.svg`;
-        });
-  }
-
-  isApp() {
-    return "apppackage" in this.credential.pluginVerifiableCredential.getSubject();
   }
 
   getCredIcon(): string {
@@ -446,18 +420,9 @@ export class CredentialDetailsPage implements OnInit {
     }
 
     if (!localValue) {
-      //handling capsules credential
-      localValue = this.getLocalCredByProperty("apppackage");
-      if (localValue) {
-        let apppackage = chainValue.getSubject().apppackage;
-        this.isPublished = localValue === apppackage;
-        return;
-      }
-      else {
-        // handle external credentials
-        this.isPublished = true;
-        return;
-      }
+      // handle external credentials
+      this.isPublished = true;
+      return;
     }
 
     chainValue = chainValue.getSubject()[fragment];

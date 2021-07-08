@@ -184,8 +184,7 @@ export class FriendsService {
               weibo: null,
               twitch: null,
               elaAddress: null,
-              avatar: contactAvatar && Object.getOwnPropertyNames(contactAvatar).length !== 0 ? Avatar.fromContactNotifierContactAvatar(contactAvatar) : null,
-              applicationProfileCredentials: [],
+              avatar: contactAvatar && Object.getOwnPropertyNames(contactAvatar).length !== 0 ? Avatar.fromContactNotifierContactAvatar(contactAvatar) : null
             },
             avatarLocal: null,
             customName: null,
@@ -406,14 +405,6 @@ export class FriendsService {
           if(key.credentialSubject.hasOwnProperty('elaAddress')) {
             contact.credentials.elaAddress = key.credentialSubject.elaAddress;
           }
-          if(key.credentialSubject.hasOwnProperty('apppackage')) {
-            contact.credentials.applicationProfileCredentials = [];
-            contact.credentials.applicationProfileCredentials.push({
-              action: key.credentialSubject.action,
-              apppackage: key.credentialSubject.apppackage,
-              apptype: key.credentialSubject.apptype,
-            });
-          }
         });
 
         this.saveContactsState();
@@ -466,8 +457,7 @@ export class FriendsService {
         weibo: null,
         twitch: null,
         elaAddress: null,
-        avatar: null,
-        applicationProfileCredentials: [],
+        avatar: null
       },
       avatarLocal: null,
       customName: null,
@@ -598,14 +588,6 @@ export class FriendsService {
       if(key.credentialSubject.hasOwnProperty('elaAddress')) {
         Logger.log('contacts', 'Contact has ela wallet');
         this.pendingContact.credentials.elaAddress = key.credentialSubject.elaAddress;
-      }
-      if(key.credentialSubject.hasOwnProperty('apppackage')) {
-        Logger.log('contacts', 'Contact has apps');
-        this.pendingContact.credentials.applicationProfileCredentials.push({
-          action: key.credentialSubject.action,
-          apppackage: key.credentialSubject.apppackage,
-          apptype: key.credentialSubject.apptype,
-        });
       }
     });
 
@@ -832,29 +814,19 @@ export class FriendsService {
 
   // 'pickfriend' intent with filter param
   getFilteredContacts(isSingleInvite: boolean, ret) {
-    this.getStoredContacts().then((contacts: Contact[]) => {
+    void this.getStoredContacts().then((contacts: Contact[]) => {
       Logger.log('contacts', 'Fetched stored contacts for pickfriend intent', contacts);
       const realContacts = contacts.filter((contact) => contact.id !== 'did:elastos');
       if(realContacts.length > 0) {
         this.filteredContacts = [];
 
-        if(ret.params.filter.credentialType === 'ApplicationProfileCredential') {
-          Logger.log('contacts', 'pickfriend intent requesting contact with app', ret.from);
-          realContacts.map((contact) => {
-            contact.credentials.applicationProfileCredentials.map((appCreds) => {
-              if(appCreds.apppackage === ret.from) {
-                this.filteredContacts.push(contact);
-              }
-            });
-          });
-        } else {
-          Logger.log('contacts', 'Intent requesting friends with credential', ret.params.filter.credentialType);
-          realContacts.map((contact) => {
-            if(contact.credentials[ret.params.filter.credentialType]) {
-              this.filteredContacts.push(contact);
-            }
-          });
-        }
+
+        Logger.log('contacts', 'Intent requesting friends with credential', ret.params.filter.credentialType);
+        realContacts.map((contact) => {
+          if(contact.credentials[ret.params.filter.credentialType]) {
+            this.filteredContacts.push(contact);
+          }
+        });
 
         if(this.filteredContacts.length > 0) {
           let props: NavigationExtras = {

@@ -298,118 +298,31 @@ export class ProfilePage {
 
   /***** Find and build app and avatar creds *****/
   buildAppAndAvatarCreds(publishAvatar?: boolean) {
-    this.profileService.appCreds = [];
-    let hasAvatar: boolean = false;
+    //this.profileService.appCreds = [];
+    let hasAvatar = false;
 
     this.profileService.visibleCredentials.map((cred) => {
-      // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("apppackage")) {
-
-        this.profileService.appCreds.push({
-          credential: cred.credential,
-          willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
-          willingToDelete: cred.willingToDelete,
-          canDelete: cred.canDelete,
-          appInfo: {
-            packageId: null,
-            app: null,
-            action: null,
-          },
-        });
-      }
       // Find Avatar Credential
-      if (cred.credential.getSubject().hasOwnProperty("avatar")) {
+      if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
       }
       // Find Description Credential
-      if (cred.credential.getSubject().hasOwnProperty("description")) {
+      if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
     this.profileService.invisibleCredentials.map((cred) => {
       // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("apppackage")) {
-        this.profileService.appCreds.push({
-          credential: cred.credential,
-          willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
-          willingToDelete: cred.willingToDelete,
-          canDelete: cred.canDelete,
-          appInfo: {
-            packageId: null,
-            app: null,
-            action: null,
-          },
-        });
-      }
-      // Find App Credentials
-      if (cred.credential.getSubject().hasOwnProperty("avatar")) {
+      if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
       }
       // Find Description Credentials
-      if (cred.credential.getSubject().hasOwnProperty("description")) {
+      if ("description" in cred.credential.getSubject()) {
         this.profileService.displayedBio = cred.credential.getSubject().description;
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
-
-    Logger.log("identity", "App creds", this.profileService.appCreds);
-    if (this.profileService.appCreds.length > 0) {
-      this.buildDisplayableAppsInfo();
-    }
-  }
-
-  private async buildDisplayableAppsInfo() {
-    let fetchCount = this.profileService.appCreds.length;
-    this.fetchingApps = true;
-    this.profileService.appCreds.forEach((cred) => {
-      this.http
-        .get<any>(
-          "https://dapp-store.elastos.org/apps/" +
-          cred.credential.getSubject().apppackage +
-          "/manifest"
-        )
-        .subscribe(
-          (manifest: any) => {
-            Logger.log("identity", "Got app!", manifest);
-            this.foundApps = true;
-            this.zone.run(async () => {
-              cred.appInfo = {
-                packageId: cred.credential.getSubject().apppackage,
-                app: manifest,
-                action: cred.credential.getSubject().action
-                  ? cred.credential.getSubject().action
-                  : manifest.short_description,
-              };
-
-              fetchCount--;
-              if (fetchCount == 0) this.fetchingApps = false;
-            });
-          },
-          (err) => {
-            Logger.log("identity", "HTTP ERROR " + JSON.stringify(err));
-            this.zone.run(async () => {
-              cred.appInfo = {
-                packageId: cred.credential.getSubject().apppackage,
-                app: null,
-                action: cred.credential.getSubject().action
-                  ? cred.credential.getSubject().action
-                  : null,
-              };
-
-              fetchCount--;
-              if (fetchCount == 0) this.fetchingApps = false;
-            });
-          }
-        );
-    });
-
-    Logger.log("identity", "App infos", this.profileService.appCreds);
-  }
-
-  getAppIcon(appId: string) {
-    let iconUrl = "https://dapp-store.elastos.org/apps/" + appId + "/icon";
-    return iconUrl;
   }
 
   /**********************************************
@@ -483,8 +396,8 @@ export class ProfilePage {
       },
       cssClass: !this.theme.darkMode ? "identity-showqrcode-component" : 'identity-showqrcode-component-dark',
     });
-    modal.onDidDismiss().then((params) => { });
-    modal.present();
+    void modal.onDidDismiss().then((params) => { });
+    await modal.present();
   }
 
 
@@ -493,12 +406,12 @@ export class ProfilePage {
    * for each profile item (+ the DID itself).
    */
   publishVisibilityChanges() {
-    this.profileService.showWarning("publishVisibility", null);
+    void this.profileService.showWarning("publishVisibility", null);
   }
 
   /********** Prompt warning before deleting if creds are selected **********/
   deleteSelectedCredentials() {
-    let selectedCreds: number = 0;
+    let selectedCreds = 0;
     this.profileService.invisibleCredentials.map((cred) => {
       if (cred.willingToDelete) {
         selectedCreds++;
@@ -511,7 +424,7 @@ export class ProfilePage {
     });
 
     if (selectedCreds > 0) {
-      this.profileService.showWarning("delete", null);
+      void this.profileService.showWarning("delete", null);
     } else {
       this.native.toast("You did not select any credentials to delete", 2000);
     }

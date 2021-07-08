@@ -54,9 +54,7 @@ export class PublishPage {
 
         this._publishableCredentials = [];
         this.profileService.visibleCredentials.forEach(val => {
-            if(!val.credential.getSubject().hasOwnProperty("apppackage")) {
-                this._publishableCredentials.push(Object.assign({}, val))
-            }
+            this._publishableCredentials.push(Object.assign({}, val))
         });
         this.profileService.invisibleCredentials.forEach(val => {
             if (!val.credential.getSubject().hasOwnProperty("apppackage") || (val.credential.getFragment() == "avatar" && val.credential.getSubject().hasOwnProperty["data"]))

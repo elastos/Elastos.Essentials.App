@@ -34,8 +34,5 @@ export class CredentialProfile {
 
     // Avatar Credentials
     public avatar: Avatar,
-
-    // Application Credentials
-    public applicationProfileCredentials: any,
   ) {}
 }

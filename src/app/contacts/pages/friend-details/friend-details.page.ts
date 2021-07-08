@@ -40,7 +40,7 @@ export class FriendDetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public contact: Contact;
-  public contactsApps: DisplayableAppInfo[] = [];
+  //public contactsApps: DisplayableAppInfo[] = [];
   public fetchingApps = false;
   public detailsActive = true;
 
@@ -65,7 +65,7 @@ export class FriendDetailsPage implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
       if (!paramMap.has('friendId')) {
-        this.globalNavService.navigateRoot('contacts', '/contacts/friends');
+        void this.globalNavService.navigateRoot('contacts', '/contacts/friends');
         return;
       }
 
@@ -77,7 +77,7 @@ export class FriendDetailsPage implements OnInit {
       });
 
       Logger.log('contacts', 'Contact profile for', this.contact);
-      this.buildDisplayableAppsInfo();
+      //this.buildDisplayableAppsInfo();
     });
   }
 
@@ -100,109 +100,13 @@ export class FriendDetailsPage implements OnInit {
     });
   }
 
-  /* From the app credentials, build a list of displayable items onced its fetched from the app store */
-  private async buildDisplayableAppsInfo() {
-    this.contactsApps = [];
-
-    if (this.contact.credentials.applicationProfileCredentials.length > 0) {
-      Logger.log('contacts', 'Contact\'s app creds ', this.contact.credentials.applicationProfileCredentials);
-
-      let fetchCount = this.contact.credentials.applicationProfileCredentials.length;
-      this.fetchingApps = true;
-      this.contact.credentials.applicationProfileCredentials.forEach((apc)=>{
-        this.http.get<DApp>('https://dapp-store.elastos.org/apps/' + apc.apppackage + '/manifest').subscribe((manifest: DApp) => {
-          Logger.log('contacts', 'Got app!', manifest);
-          this.zone.run(async () => {
-            this.contactsApps.push({
-              packageId: apc.apppackage,
-              app: manifest,
-              action: apc.action ? apc.action : manifest.short_description,
-              isInstalled: false // TODO @chad await this.appService.appIsInstalled(apc.apppackage)
-            });
-
-            fetchCount--;
-            if (fetchCount == 0)
-              this.fetchingApps = false;
-          });
-        }, (err) => {
-          Logger.log('contacts', "HTTP ERROR " + JSON.stringify(err));
-          this.zone.run(async () => {
-            this.contactsApps.push({
-              packageId: apc.apppackage,
-              app: null,
-              action: apc.action ? apc.action : null,
-              isInstalled: false // TODO @chad await this.appService.appIsInstalled(apc.apppackage)
-            });
-
-            fetchCount--;
-            if (fetchCount == 0)
-              this.fetchingApps = false;
-          });
-        });
-        Logger.log('contacts', 'Updated apps for contact profile', this.contactsApps);
-      });
-    }
-    else {
-      Logger.log('contacts', "No application profile credential found in this contact's profile.");
-    }
-  }
-
-  getAppIcon(appId: string) {
-    return "https://dapp-store.elastos.org/apps/" +appId+ "/icon";
-  }
-
   fixBirthDate(birth) {
     return moment(birth).format("MMMM Do YYYY");
   }
 
-  // Find app in marketplace, if marketplace is not installed, automatically install app //
-  discoverApp(appId: string) {
-    /* TODO - remove? Logger.log('contacts', 'Inquiring app in app-store..', appId);
-    this.globalIntentService.sendIntent("appdetails", appId, {}, (res) => {
-      Logger.log('contacts', res)
-    }, (err) => {
-      Logger.error('contacts', err);
-      this.globalIntentService.sendIntent(
-        "app",
-        { id: appId },
-        {}
-      );
-    });*/
-  }
-
-  // If app is installed, connect app to identity demo, if identity demo is not installed, open app instead  //
-  connectApp(appId: string) {
-    const targetAppCred = this.contact.credentials.applicationProfileCredentials.find((appCred) => appCred.apppackage === appId);
-    if(targetAppCred) {
-      Logger.log('contacts', 'Launching appCred: ' + targetAppCred, 'appManifest: ', appId);
-
-      let passedFields = {};
-      for (let key of Object.keys(targetAppCred)) {
-        // Don't pass specific keys to the receiving app.
-        if (key === "action" || key === "apppackage" || key === "apptype")
-          continue;
-
-        passedFields[key] = targetAppCred[key];
-      }
-
-      Logger.log('contacts', "Passing fields to the connectapplicationprofile intent:", passedFields);
-
-      /* TODO - Remove? this.globalIntentService.sendIntent(
-        "connectapplicationprofile",
-        passedFields,
-        { appId: appId },
-        () => {
-        Logger.log('contacts', "connectapplicationprofile intent success");
-      }, (err) => {
-        this.appService.startApp(appId);
-        Logger.error('contacts', "connectapplicationprofile intent error", err);
-      });*/
-    }
-  }
-
   copyAddress(type: string, address: string) {
-    this.clipboard.copy(address);
-    this.native.genericToast(
+    void this.clipboard.copy(address);
+    void this.native.genericToast(
       this.translate.instant(type) + this.translate.instant('contacts.copied-with-type')
     );
   }

@@ -353,24 +353,10 @@ export class MyProfilePage {
 
   /***** Find and build app and avatar creds *****/
   buildAppAndAvatarCreds(publishAvatar?: boolean) {
-    this.profileService.appCreds = [];
+    //this.profileService.appCreds = [];
     let hasAvatar = false;
 
     this.profileService.visibleCredentials.map((cred) => {
-      // Find App Credentials
-      if ("apppackage" in cred.credential.getSubject()) {
-        this.profileService.appCreds.push({
-          credential: cred.credential,
-          willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
-          willingToDelete: cred.willingToDelete,
-          canDelete: cred.canDelete,
-          appInfo: {
-            packageId: null,
-            app: null,
-            action: null,
-          },
-        });
-      }
       // Find Avatar Credential
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -389,20 +375,6 @@ export class MyProfilePage {
       }
     });
     this.profileService.invisibleCredentials.map((cred) => {
-      // Find App Credentials
-      if ("apppackage" in cred.credential.getSubject()) {
-        this.profileService.appCreds.push({
-          credential: cred.credential,
-          willingToBePubliclyVisible: cred.willingToBePubliclyVisible,
-          willingToDelete: cred.willingToDelete,
-          canDelete: cred.canDelete,
-          appInfo: {
-            packageId: null,
-            app: null,
-            action: null,
-          },
-        });
-      }
       // Find App Credentials
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
@@ -423,55 +395,7 @@ export class MyProfilePage {
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
-
-    Logger.log("identity", "App creds", this.profileService.appCreds);
-    if (this.profileService.appCreds.length > 0) {
-
-    }
   }
-
-
-  getAppIcon(appId: string) {
-    return "https://dapp-store.elastos.org/apps/" + appId + "/icon";
-  }
-
-  /**********************************************
-   Update app's visibility's selection for both
-   'credentials' and 'capsules' tab
-  ***********************************************/
-  updateAppVisibility(event: any, entry: any) {
-    if (this.profileService.capsulesActive) {
-      // Update app credential's visibility under 'credentials' if its visibility was changed under 'capsules'
-      this.profileService.visibleCredentials.map((cred) => {
-        if (cred.credential === entry.credential) {
-          Logger.log("identity",
-            'Updating app cred\'s visibility selection under "credentials" tab'
-          );
-          cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
-        }
-      });
-      this.profileService.invisibleCredentials.map((cred) => {
-        if (cred.credential === entry.credential) {
-          Logger.log("identity",
-            'Updating app cred\'s visibility selection under "credentials" tab'
-          );
-          cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
-        }
-      });
-    } else {
-      // Update app credential's visibility under 'capsules' if its visibility was changed under 'credentials'
-      this.profileService.appCreds.map((cred) => {
-        if (cred.credential === entry.credential) {
-          Logger.log("identity",
-            'Updating app cred\'s visibility selection under "capsules" tab'
-          );
-          cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
-        }
-      });
-    }
-  }
-
-
 
   /**
    * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
@@ -627,7 +551,7 @@ export class MyProfilePage {
     let localValue = entry.credential.getSubject()[fragment];
     let chainValue = this.currentOnChainDIDDocument.getCredentialById(new DIDURL("#" + fragment));
 
-    if (!localValue) { //handling capsules credential
+    /* if (!localValue) { //handling capsules credential
 
       let chainValue2 = '';
       localValue = this.getLocalCredByProperty(entry, 'apppackage');
@@ -636,7 +560,7 @@ export class MyProfilePage {
 
         return localValue === chainValue2;
       }
-    }
+    } */
 
     if (!chainValue)
       return false;
