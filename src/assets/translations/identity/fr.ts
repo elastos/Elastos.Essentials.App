@@ -77,6 +77,7 @@ export const fr = {
         'select-date': 'Sélectionnez une date',
         'enter-here': 'Saisir ici',
         'select-gender': 'Sélectionnez un genre',
+        'saving-picture-to-hive': 'Sauvegarde de l\'image dans votre espace de stockage Elastos Hive',
 
         // tabnav
         'home': 'Accueil',

@@ -76,6 +76,7 @@ export const en = {
         'select-date': 'Select date',
         'enter-here': 'Enter here',
         'select-gender': 'Select Gender',
+        'saving-picture-to-hive': 'Saving picture to your Elastos Hive storage',
 
         // tabnav
         'home': 'Home',

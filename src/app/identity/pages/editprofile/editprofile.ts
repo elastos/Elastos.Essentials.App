@@ -202,7 +202,7 @@ export class EditProfilePage {
           try {
             Logger.log('Identity', "Starting avatar upload to hive");
 
-            await this.native.showLoading("Saving your avatar to your hive storage");
+            await this.native.showLoading('identity.saving-picture-to-hive');
 
             // TODO: we probably need to delete older pictures from the vault somewhere...
             // But not that easy because we need to keep both the local and published avatars.

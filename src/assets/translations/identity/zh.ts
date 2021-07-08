@@ -77,6 +77,7 @@ export const zh = {
         'select-date': '选择日期',
         'enter-here': '请输入',
         'select-gender': '选择性别',
+        'saving-picture-to-hive': 'Saving picture to your Elastos Hive storage',
 
         // tabnav
         'home': '主页',
