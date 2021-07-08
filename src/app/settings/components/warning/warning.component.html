@@ -11,11 +11,8 @@
     </ion-col>
   </ion-row>
   <ion-row  class="btn-row">
-    <ion-col class="btn" size="5" (click)="cancel()">
-      <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-    </ion-col>
-    <ion-col class="btn" size="5" (click)="confirm()">
-      <ion-label>{{ 'common.confirm' | translate }}</ion-label>
-    </ion-col>
+    <ion-button color="primary" (click)="confirm()">
+      {{ 'common.confirm' | translate }}
+    </ion-button>
   </ion-row>
 </div>

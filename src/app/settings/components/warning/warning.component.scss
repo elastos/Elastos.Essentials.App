@@ -34,25 +34,13 @@
   }
 
   .btn-row {
-    height: 80px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+    position: absolute;
+    bottom: 25px;
+    z-index: 100;
+    width: 95%;
 
-    .btn {
-      width: 167px;
-      height: 41px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 8px;
-      background-color: #ffffff;
-
-      ion-label {
-        font-size: 16px;
-        font-weight: 500;
-        color: #161740;
-      }
+    ion-button {
+      width: 95%;
     }
   }
 }
