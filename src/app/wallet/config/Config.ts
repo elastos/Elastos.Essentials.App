@@ -58,6 +58,7 @@ export class Config {
     public static ETHSC_CONTRACT_ADDRESS_TESTNET = "0x491bC043672B9286fA02FA7e0d6A3E5A0384A31A";
     public static ETHSC_WITHDRAW_GASPRICE = 100000000000000; // >= 10^14 and must be an integer multiple of 10^10
 
+    // Send ELA from ETHEID to mainchain by smartcontract
     // public static ETHDID_CONTRACT_ADDRESS = "0x8b2324fd40a74843711C9B48BC968A5FAEdd4Ef0";
     public static ETHDID_CONTRACT_ADDRESS = "0x6F60FdED6303e73A83ef99c53963407f415e80b9";
     public static ETHDID_CONTRACT_ADDRESS_MAINNET = "0x6F60FdED6303e73A83ef99c53963407f415e80b9";

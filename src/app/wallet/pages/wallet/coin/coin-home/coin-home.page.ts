@@ -141,7 +141,7 @@ export class CoinHomePage implements OnInit {
         this.subWallet.updateBalance();
 
         this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe((count) => {
-            this.updateTransactions();
+            if (count > 0) this.updateTransactions();
         });
 
         this.updateTmeout = setTimeout(async () => {
@@ -149,7 +149,7 @@ export class CoinHomePage implements OnInit {
             await this.updateWalletInfo();
           }
           this.startUpdateInterval();
-        }, 3000);
+        }, 1000);
     }
 
     updateTransactions() {

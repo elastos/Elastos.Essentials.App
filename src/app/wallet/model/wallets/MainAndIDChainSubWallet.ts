@@ -104,7 +104,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           if (startIndex == 0 && this.transactionsInPool.length > 0) {
               let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
               newTxList.txhistory = newTxhistory;
-              newTxList.totalcount = newTxList.txhistory.length;
+              newTxList.totalcount += this.transactionsInPool.length;
               Logger.warn('wallet', 'newTxList ', newTxList)
           }
           return newTxList;
@@ -1148,9 +1148,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
       }
       if (this.transactionsCache.hasNewItem()) {
+        this.cleanLocalTransactions(transactionsList);
         this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
         this.transactionsCache.save();
-        this.cleanLocalTransactions(transactionsList);
       }
     }
 

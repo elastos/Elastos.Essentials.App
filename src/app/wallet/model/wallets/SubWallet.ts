@@ -50,7 +50,7 @@ export abstract class SubWallet {
     public balanceCache: TimeBasedPersistentCache<any> = null;
     public balanceKeyInCache = '';
 
-    public loadTxDataFromCache = false;
+    public loadTxDataFromCache = true;
     public transactions: AllTransactionsHistory = null;
     public transactionsCache: TimeBasedPersistentCache<any> = null;
     public transactionKeyInCache = '';
@@ -103,6 +103,7 @@ export abstract class SubWallet {
         for (let i = 0, len = this.transactions.totalcount; i < len; i++) {
           this.transactions.txhistory.push(items[i].data);
         }
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       }
       return null;
     }

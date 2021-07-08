@@ -75,7 +75,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
         if (startIndex == 0 && this.transactionsInPool.length > 0) {
             let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
             newTxList.txhistory = newTxhistory;
-            newTxList.totalcount = newTxList.txhistory.length;
+            newTxList.totalcount += this.transactionsInPool.length;
         }
         return newTxList;
       }
@@ -404,9 +404,9 @@ export class ETHChainSubWallet extends StandardSubWallet {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
       if (this.transactionsCache.hasNewItem()) {
+        this.cleanLocalTransactions(transactionsList);
         this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
         this.transactionsCache.save();
-        this.cleanLocalTransactions(transactionsList);
       }
     }
 
