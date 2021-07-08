@@ -71,14 +71,14 @@ export const zh = {
 
         /*********** Tips ************/
         'tip-title-welcome': '欢迎使用 Elastos Essentials',
-        'tip-message-welcome': 'Thank you for running this app! Elastos Essentials can manage your <b>digital identity</b>, your <b>personal storage</b>, your contacts, and your crypto-currency <b>wallets</b>. You can use part, or all of this.<br/><br/>Elastos Essentials is also your <b>super wallet toolbox</b> while running other apps, similar to Metamask (if you\'ve header of it), but for more than only cryptos.',
+        'tip-message-welcome': '感谢您运行此应用程序！Elastos Essentials 可以管理您的 <b>数字身份</b>、您的 <b>个人存储</b>、您的联系人和您的加密货币<b>钱包</b>。您可以使用部分或全部这些功能。<br/><br/>在运行其他应用程序时，Elastos Essentials 也是您的<b>超级钱包工具箱</b>，类似于 MetaMask（如果您听说过），但不仅仅是加密货币。',
         'tip-title-what-is-did': 'DID是什么？',
         'tip-message-what-is-did': 'DID是<b>去中心化身份</b>。 此身份<b>由您自己拥有</b>，并且没有其他人可以拥有。 这就是为什么您必须保存那些奇怪的助记词并保证安全保管。<br/><br/> DID允许您或他人<b>验证要求保护的内容</b>（例如，文凭）。 它们还允许您<b>控制您的应用程序数据</b>，从而增加了您的隐私。',
         'tip-title-what-is-hive': '什么是Hive（存储）？',
         'tip-message-what-is-hive': 'Hive是您的<b>个人存储空间</b>。不是存储文档或假期图片，而是保存<b>每天使用的应用程序管理的所有数据</b>。<br/><br/>应用程序数据存储在<b>您决定的位置</b>，不再由应用程序开发人员决定。因而，对于数据您可以获得<b>更多的隐私和控制权</b>。',
 
         'tip-title-toolbox': 'Elastos Essentials 是一个工具箱',
-        'tip-message-toolbox': '<b>What can Essentials do for me when used by other apps?</b>. With Essentials, you can <b>sign in</b> to third party apps or websites with your DID, you can <b>share and modify some of your personal data</b>, run crypto transactions, make payments, and many other decentralized operations, without relying on third parties to do so.',
+        'tip-message-toolbox': '<b>当被其他应用程序使用时，Essentials 能为我做什么？</b>使用 Essentials，您可以使用您的 DID <b>登录</b>第三方应用程序或网站，您可以<b>共享和修改您的一些个人数据</b>、运行加密交易、进行支付以及许多其他去中心化操作，而无需依赖第三方这样做。',
         'tip-title-not-only-for-crypto-players': '不只是关于加密货币',
         'tip-message-not-only-for-crypto-players': '尽管 Elastos Essentials 使用区块链来管理去中心的身份 - 区块链需要加密货币才能运行 - 但我们尽力<b>提供大多数功能而不要求您持有加密货币</b>，因为我们知道这很复杂（和令人担忧）来获取加密货币。',
         'tip-title-bring-friends': '邀请朋友',
