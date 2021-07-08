@@ -6,7 +6,7 @@ import { Native } from '../../../../services/native.service';
 import { PopupProvider} from '../../../../services/popup.service';
 import { WalletManager } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
-import { Coin, CoinType } from '../../../../model/Coin';
+import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
 import { CoinService } from '../../../../services/coin.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 import { Util } from '../../../../model/Util';
@@ -151,9 +151,13 @@ export class CoinListPage implements OnInit, OnDestroy {
     private async refreshCoinList() {
         this.coinList = [];
         for (let availableCoin of await this.coinService.getAvailableCoins()) {
-            let isOpen = (availableCoin.getID() in this.masterWallet.subWallets);
-            Logger.log('wallet', availableCoin, "isOpen?", isOpen);
-            this.coinList.push({ coin: availableCoin, isOpen: isOpen });
+            const coinID = availableCoin.getID();
+            // Do not show IDChain in coin list.
+            if (coinID !== StandardCoinName.IDChain) {
+              let isOpen = (coinID in this.masterWallet.subWallets);
+              Logger.log('wallet', availableCoin, "isOpen?", isOpen);
+              this.coinList.push({ coin: availableCoin, isOpen: isOpen });
+            }
         }
         Logger.log('wallet', 'coin list', this.coinList);
     }
