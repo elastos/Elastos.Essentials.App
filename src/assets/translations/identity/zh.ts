@@ -77,7 +77,7 @@ export const zh = {
         'select-date': '选择日期',
         'enter-here': '请输入',
         'select-gender': '选择性别',
-        'saving-picture-to-hive': 'Saving picture to your Elastos Hive storage',
+        'saving-picture-to-hive': '将图片保存到 Elastos Hive 存储',
 
         // tabnav
         'home': '主页',
@@ -239,7 +239,7 @@ export const zh = {
         // errors
         'text-request-fail': '授权失败',
         'text-request-no-credential': '没有凭证',
-        'hive-not-ready': 'Pictures need to be stored on your Hive storage space but your Hive vault is not ready. Please use the Hive Manager screen to configure your storage.',
+        'hive-not-ready': '图片需要存储在您的 Hive 存储空间中，但您的 Hive Vault 尚未准备就绪。 请使用 Hive Manager 来配置您的存储。',
 
         // loading
         'loading-msg': '加载中，请稍候',

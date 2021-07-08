@@ -15,7 +15,7 @@ export const zh = {
     "alert.not-available": "尚不可用",
     "alert.not-available-msg": "Hive当前不提供此功能。 即将推出-将您的所有数据转移到其他Vault提供商。 准备拥有您的数据！",
     "alert.error": "错误",
-    "alert.sorry-provider-not-save": "抱歉，您的存储提供商暂时无法保存。 ",
+    "alert.sorry-provider-not-save": "抱歉，您的存储提供商暂时无法保存。",
     "alert.ok": "好的",
     "alert.unavailable": "不可用",
     "alert.only-payments-in-ELA": "抱歉，目前仅支持ELA付款",
@@ -24,8 +24,8 @@ export const zh = {
     "alert.operation-not-completed-title": "操作未完成",
     "alert.operation-not-completed-text": "您的存储空间方案保持不变-操作已取消或付款失败。",
     "alert.didpublish-title": 'DID未发布',
-    "alert.didpublish-msg": '您的 DID 还未发布，发布后才能使用 Hive服务，立即发布？<br/><br/>发布后请等待几分钟再尝试重新注册。',
-    "token-revoked": "Vault auth token revoked",
+    "alert.didpublish-msg": '您的 DID 还未发布，发布后才能使用 Hive 服务，立即发布？<br/><br/>发布后请等待几分钟再尝试重新注册。',
+    "token-revoked": "Vault身份验证令牌已撤销",
 
     /********** Screens **********/
     "signin": {
@@ -120,8 +120,8 @@ export const zh = {
     "hive-menu": {
       "vault-providers-administration": "Vault服务提供商管理",
       "force-provider-change": "[注意！]强制更改提供商",
-      "revoke-auth-token": "Revoke hive vault auth token"
+      "revoke-auth-token": "撤销Hive Vault身份验证令牌"
     },
   }
-  
+
 };
