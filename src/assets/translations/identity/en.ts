@@ -205,7 +205,7 @@ export const en = {
         'publishing': {
             'publish-did': 'Publishing Identity'
         },
-        
+
         /******************** Profile Entries ********************/
         'credential-info-type-did': 'Identity',
         'credential-info-type-avatar': 'Avatar',
@@ -239,6 +239,7 @@ export const en = {
         // errors
         'text-request-fail': 'request fail',
         'text-request-no-credential': 'no credential',
+        'hive-not-ready': 'Pictures need to be stored on your Hive storage space but your Hive vault is not ready. Please use the Hive Manager screen to configure your storage.',
 
         // loading
         'loading-msg': 'Wait a moment',

@@ -8,7 +8,7 @@
           <ion-icon *ngIf="!avatarDataUrl" mode="ios" name="person"></ion-icon>
           <img *ngIf="avatarDataUrl" [src]="avatarDataUrl" />
         </div>
-        <span (click)="getPhoto()">{{ 'identity.edit-avatar' | translate }}</span>
+        <span (click)="editAvatar()">{{ 'identity.edit-avatar' | translate }}</span>
       </ion-col>
       <ion-col size="12" class="show-col ion-align-self-end">
         <span>{{ 'identity.show-on-profile' | translate }}</span>
@@ -178,7 +178,7 @@
         <ion-col size="8.75">
           <ion-grid>
             <ion-row class="subject-col">
-              <ion-col (click)="getPhoto()">
+              <ion-col (click)="editAvatar()">
                 <ion-label class="avatar-label">{{ 'identity.credential-info-type-'+entry.key | translate }}</ion-label>
               </ion-col>
             </ion-row>

@@ -239,6 +239,7 @@ export const zh = {
         // errors
         'text-request-fail': '授权失败',
         'text-request-no-credential': '没有凭证',
+        'hive-not-ready': 'Pictures need to be stored on your Hive storage space but your Hive vault is not ready. Please use the Hive Manager screen to configure your storage.',
 
         // loading
         'loading-msg': '加载中，请稍候',

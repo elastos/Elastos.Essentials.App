@@ -240,6 +240,7 @@ export const fr = {
         // errors
         'text-request-fail': 'Erreur lors de la requête',
         'text-request-no-credential': 'Aucun crédentiel',
+        'hive-not-ready': 'Les photos doivent être sauvegardées dans votre espace de stockage Hive, mais il n\'est actuellement pas disponible. Veuillez utiliser le gestionnaire Hive pour configure votre espace.',
 
         // loading
         'loading-msg': 'Veuillez patienter',
