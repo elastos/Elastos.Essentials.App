@@ -4,9 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-language',
@@ -15,6 +15,8 @@ import { TitleBarIconSlot, TitleBarForegroundMode } from 'src/app/components/tit
 })
 export class LanguagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   public identities = [];
 
@@ -28,13 +30,20 @@ export class LanguagePage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.theme.activeTheme.subscribe(theme => {
+      this.updateTitleBarIcons();
+    })
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(' ');
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
+    this.updateTitleBarIcons();
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+      this.uxService.onTitleBarItemClicked(icon);
+    });
     this.titleBar.setNavigationMode(null);
-    this.checkForIdentities();
+    void this.checkForIdentities();
   }
 
   ionViewDidEnter() {
@@ -43,6 +52,13 @@ export class LanguagePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    //this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+  }
+
+  private updateTitleBarIcons() {
+    let themeIconPath = this.theme.activeTheme.value == AppTheme.LIGHT ? 'assets/didsessions/icon/palette.svg' : 'assets/didsessions/icon/dark_mode/palette.svg';
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "theme", iconPath: themeIconPath });
   }
 
   async checkForIdentities() {
@@ -50,6 +66,6 @@ export class LanguagePage implements OnInit {
   }
 
   continue() {
-    this.identities.length ? this.uxService.navigateRoot() : this.uxService.go("/didsessions/createidentity");
+    this.identities.length ? void this.uxService.navigateRoot() : this.uxService.go("/didsessions/createidentity");
   }
 }

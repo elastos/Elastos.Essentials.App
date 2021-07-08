@@ -23,19 +23,13 @@ export class GlobalThemeService extends GlobalService {
     super();
 
     // Default theme is dark.
-    passwordManager.setDarkMode(true);
+    void passwordManager.setDarkMode(true);
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.prefs.preferenceListener.subscribe(async (prefChanged)=>{
+    this.prefs.preferenceListener.subscribe((prefChanged) => {
       if (prefChanged.key == "ui.darkmode") {
         let darkMode = prefChanged.value as boolean;
-        await passwordManager.setDarkMode(darkMode);
-
-        if (darkMode)
-          this.activeTheme.next(AppTheme.DARK);
-          //this.events.emit('titlebar-foregroundmode', TitleBarForegroundMode.LIGHT);
-        else
-          this.activeTheme.next(AppTheme.LIGHT);
+        void this.updateTheme(darkMode);
       }
     });
   }
@@ -56,21 +50,52 @@ export class GlobalThemeService extends GlobalService {
   }
 
   public async fetchThemeFromPreferences() {
-    // Let's initialize the backup service asynchronously without blocking the UI
-    // TODO @chad: why is ths backup service initialized from the theme service ?
-    // TODO @chad: this is launcher's backup service. Move to launcher folder and initialize in a better location
-    // this.backupService.init();
+    let useDarkMode: boolean;
 
-    const currentlyUsingDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
-    void passwordManager.setDarkMode(currentlyUsingDarkMode);
-    if (currentlyUsingDarkMode)
+    // If no theme preference is set for the user, we use the currently active theme.
+    // During identity creation, user may have changed the theme in DID Sessions, so we want to save this
+    // info to the newly created DID context.
+    if (!await this.prefs.preferenceIsSet(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode")) {
+      useDarkMode = (this.activeTheme.value === AppTheme.DARK);
+      // Save the preference
+      await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode", useDarkMode);
+    }
+    else {
+      useDarkMode = await this.prefs.getPreference<boolean>(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode");
+    }
+
+    void passwordManager.setDarkMode(useDarkMode);
+    if (useDarkMode)
       this.activeTheme.next(AppTheme.DARK);
     else
       this.activeTheme.next(AppTheme.LIGHT);
   }
 
+  /**
+   * This method changes the current theme mode. Usually, a user is signed in so we change the dark mode settings
+   * and we react on the preference change event to update the theme.
+   * But we also want to allow DID Sessions to toggle theme while no user is signed in. In this case we change the
+   * theme directly without saving any preference.
+   */
   public async toggleTheme() {
-    await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
+    if (GlobalDIDSessionsService.signedInDIDString) {
+      // A user is signed in, update his preferences
+      await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, "ui.darkmode", this.activeTheme.value == AppTheme.DARK ? false : true);
+    }
+    else {
+      // No signed in user, directly change the theme.
+      await this.updateTheme(!this.activeTheme.value);
+    }
+  }
+
+  private async updateTheme(darkMode: boolean): Promise<void> {
+    await passwordManager.setDarkMode(darkMode);
+
+    if (darkMode)
+      this.activeTheme.next(AppTheme.DARK);
+      //this.events.emit('titlebar-foregroundmode', TitleBarForegroundMode.LIGHT);
+    else
+      this.activeTheme.next(AppTheme.LIGHT);
   }
 
   public get darkMode() {

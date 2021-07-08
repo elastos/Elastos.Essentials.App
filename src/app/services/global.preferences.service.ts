@@ -37,6 +37,14 @@ export class GlobalPreferencesService {
   }
 
   /**
+   * Tells if a given preference was saved to persistent storage or if we may use the default value instead.
+   */
+  public async preferenceIsSet(did: string, key: string) {
+    let diskPreferences = await this.storage.getSetting<AllPreferences>(did, "prefservice", "preferences", {});
+    return key in diskPreferences;
+  }
+
+  /**
    * Get a specific system preference. System preferences setting shared by all parts of the app.
    *
    * @param key Unique key identifying the preference data.

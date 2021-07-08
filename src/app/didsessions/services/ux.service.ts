@@ -75,6 +75,9 @@ export class UXService {
         case 'language':
           this.go('/didsessions/language');
           break;
+        case 'theme':
+          void this.theme.toggleTheme();
+          break;
         case 'scan':
           this.go('/didsessions/scan');
           break;
@@ -127,7 +130,7 @@ export class UXService {
         this.loader = null;
       });
       return await this.loader.present();
-    } 
+    }
 
     public async hideLoading() {
       if (this.loader) {
