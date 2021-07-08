@@ -133,6 +133,14 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
       }
     }
   }
+
+  ion-alert {
+    [aria-checked=true].sc-ion-alert-ios .alert-radio-label.sc-ion-alert-ios, 
+    .alert-radio-inner.sc-ion-alert-ios {
+      font-weight: 600;
+      color: #565bdb;
+    }
+  }
 }
 
 /*
@@ -225,6 +233,12 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
       span {
         color: #ffffff;
       }
+    }
+
+    [aria-checked=true].sc-ion-alert-ios .alert-radio-label.sc-ion-alert-ios, 
+    .alert-radio-inner.sc-ion-alert-ios {
+      color: #565bdb;
+      font-weight: 600;
     }
   }
 
