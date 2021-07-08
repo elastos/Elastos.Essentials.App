@@ -10,12 +10,13 @@ import { GlobalThemeService } from './global.theme.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalIntentService } from './global.intent.service';
 import { JSONObject } from '../model/json';
-import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
 const assistAPIEndpoints = {
-    MainNet: "https://assist-restapi.tuum.tech/v2"
+    MainNet: "https://assist-restapi.tuum.tech/v2",
+    TestNet: "https://assist-restapi-testnet.tuum.tech/v2"
 }; // Assist DID 2.0
 
 //const assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod/v1"; // Assist V1 DID 1.0
@@ -205,6 +206,8 @@ namespace AssistPublishing {
             switch (activeNetworkTemplate) {
                 case MAINNET_TEMPLATE:
                     return assistAPIEndpoints.MainNet;
+                case TESTNET_TEMPLATE:
+                    return assistAPIEndpoints.TestNet;
                 default:
                     throw new Error("Assist service cannot be used to published on network "+activeNetworkTemplate);
             }
