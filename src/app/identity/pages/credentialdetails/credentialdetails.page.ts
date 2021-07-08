@@ -20,6 +20,7 @@ import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { isNil } from "lodash-es";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
+import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 
 
 type ProfileDisplayEntry = {
@@ -61,6 +62,7 @@ export class CredentialDetailsPage implements OnInit {
   public currentOnChainDIDDocument: DIDDocument = null;
   public credential: VerifiableCredential;
   public issuer: IssuerDisplayEntry;
+  private avatarImg = null;
 
   public segment = "validator";
   public credentialId: string = null;
@@ -153,6 +155,10 @@ export class CredentialDetailsPage implements OnInit {
     if (identity) {
       this.profile = identity.getBasicProfile();
       this.credentials = identity.credentials;
+
+      this.profileService.getAvatarDataUrl().subscribe(avatarDataUrl => {
+        this.avatarImg = avatarDataUrl;
+      });
     }
   }
 
@@ -257,15 +263,9 @@ export class CredentialDetailsPage implements OnInit {
       return false;
     }
   }
-  avatarImg = "";
 
   getAvatar(): string {
-    if (this.avatarImg == "") {
-      let subject = this.credential.pluginVerifiableCredential.getSubject();
-      let avatar = subject["avatar"];
-      this.avatarImg = `data:${avatar["content-type"]};${avatar["type"]},${avatar["data"]}`;
-    }
-    return this.avatarImg;
+    return this.avatarImg || transparentPixelIconDataUrl(); // Transparent pixel while loading
   }
 
   hasIssuerName() {
