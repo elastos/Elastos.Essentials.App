@@ -39,11 +39,11 @@ export class Native {
       this.log(message, "Warnning");
   }
 
-  public toast(msg: string = '操作完成', duration: number = 2000): void {
+  public toast(msg = '操作完成', duration = 2000): void {
       this.native.genericToast(msg, duration);
   }
 
-  public toast_trans(msg: string = '', duration: number = 2000, color = "tertiary"): void {
+  public toast_trans(msg = '', duration = 2000, color = "tertiary"): void {
       this.native.genericToast(msg, duration, color);
   }
 
@@ -55,17 +55,17 @@ export class Native {
   public async go(page: any, options: any = {}) {
     Logger.log('Identity', "NAV - Going to " + page);
     await this.hideLoading();
-    this.nav.navigateTo(App.IDENTITY, page, { state: options });
+    await this.nav.navigateTo(App.IDENTITY, page, { state: options });
   }
 
   public pop() {
-      this.nav.navigateBack();
+      void this.nav.navigateBack();
   }
 
   public async setRootRouter(page: any,  options: any = {}) {
     Logger.log('Identity', "NAV - Setting root to " + page);
     await this.hideLoading();
-    this.nav.navigateRoot(App.IDENTITY, page, { state: options });
+    await this.nav.navigateRoot(App.IDENTITY, page, { state: options });
   }
 
   public getMnemonicLang(): DIDPlugin.MnemonicLanguage {
@@ -83,7 +83,7 @@ export class Native {
       let newObj;
 
       if (Obj instanceof (Array)) {
-          newObj = new Array();
+          newObj = [];
       } else {
           newObj = new Object();
       }
@@ -97,11 +97,11 @@ export class Native {
 
   public async showLoading(content = 'common.please-wait') {
     await this.native.showLoading(content);
-  };
+  }
 
   public async hideLoading() {
     await this.native.hideLoading();
-  };
+  }
 
   public getTimestamp() {
       return new Date().getTime().toString();

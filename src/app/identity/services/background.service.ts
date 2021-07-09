@@ -74,7 +74,7 @@ export class BackgroundService extends GlobalService {
     private synchronizeActiveDIDAndRepeat() {
       Logger.log("Identity", "Synchronizing current DID with ID chain");
 
-      this.authService.checkPasswordThenExecute(async ()=>{
+      void this.authService.checkPasswordThenExecute(async ()=>{
         Logger.log("Identity", "Synchronization is starting");
         try {
           await this.didService.getActiveDidStore().synchronize(this.authService.getCurrentUserPassword());
@@ -90,7 +90,7 @@ export class BackgroundService extends GlobalService {
       }, () => {
         // Operation cancelled
         Logger.log("Identity", "Password operation cancelled");
-        this.native.hideLoading();
+        void this.native.hideLoading();
 
         this.synchronizeTimeout = setTimeout(()=>{
           this.synchronizeActiveDIDAndRepeat();
@@ -104,17 +104,17 @@ export class BackgroundService extends GlobalService {
           Logger.log("Identity", "Expiration was already checked today, next verification in 24h");
 
           this.notifyTimeout = setTimeout(()=>{
-            this.notifyExpiredCredentials();
+            void this.notifyExpiredCredentials();
           }, 24*60*60*1000); // Repeat after 24 hours
         } else {
           Logger.log("Identity", "Starting check expirations");
-          let maxDaysToExpire: number = 7;
+          let maxDaysToExpire = 7;
           let expirations = await this.expirationService.getElementsAboutToExpireOnActiveDID(maxDaysToExpire);
 
           if (expirations.length > 0) {
             Logger.log("Identity", "Sending expirations notifications");
             expirations.forEach(expiration =>{
-              this.notifications.sendNotification({
+              void this.notifications.sendNotification({
                 app: App.IDENTITY,
                 key: expiration.id,
                 title: "Expiration",
@@ -129,7 +129,7 @@ export class BackgroundService extends GlobalService {
           await this.localStorage.set(this.EXPIRATION_STORAGE_KEY, lastCheck);
 
           this.notifyTimeout = setTimeout(()=>{
-            this.notifyExpiredCredentials();
+            void this.notifyExpiredCredentials();
           }, 24*60*60*1000); // Repeat after 24 hours
 
           Logger.log("Identity", "End expiration notifications, next verification in 24h");

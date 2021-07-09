@@ -185,14 +185,8 @@ export class DIDStore {
         did = new DID(createdDid, this.events, this.didSessions);
         this.dids.push(did);
 
-        try {
-            // Now create credentials for each profile entry
-            await did.writeProfile(newDid.profile, newDid.password);
-        }
-        catch (e) {
-            // Api No Authority
-            throw e;
-        }
+        // Now create credentials for each profile entry
+        await did.writeProfile(newDid.profile, newDid.password);
 
         // This new DID becomes the active one.
         await this.setActiveDid(did);
@@ -216,7 +210,7 @@ export class DIDStore {
         await this.setActiveDid(null);
     }
 
-    private async wasDIDDeleted(didString: DIDPlugin.DIDString): Promise<Boolean> {
+    private async wasDIDDeleted(didString: DIDPlugin.DIDString): Promise<boolean> {
         let deleted = await LocalStorage.instance.get("deleted-did-" + didString) || false;
         return deleted;
     }
