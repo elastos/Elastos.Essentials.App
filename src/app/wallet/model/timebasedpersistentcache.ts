@@ -1,4 +1,3 @@
-import { Logger } from "src/app/logger";
 import { JSONObject } from "src/app/model/json";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
@@ -19,8 +18,6 @@ export type CacheEntry<T> = {
 export class TimeBasedPersistentCache<T extends JSONObject> {
   // List of items, sorted by time value.
   private items: CacheEntry<T>[];
-
-  private addedNewItem = false;
 
   /**
    * Creates a new cache.
@@ -44,6 +41,7 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    * If set() is called again with an existing key, the existing item is overwritten.
    */
   public set(itemKey: string, data: T, timeValue = 0) {
+
     let existingIndex = this.items.findIndex(i => i.key == itemKey);
 
     let newEntry = {
@@ -54,7 +52,6 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
     if (existingIndex === -1) {
       // Insert the new item
       this.items.push(newEntry);
-      this.addedNewItem = true;
     }
     else {
       this.items[existingIndex] = newEntry;
@@ -93,21 +90,12 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
   }
 
   /**
-   * Is a new item added.
-   */
-   public hasNewItem(): boolean {
-    return this.addedNewItem;
-  }
-
-  /**
    * Saves the whole cache to disk.
    */
   public async save(): Promise<void> {
     // Keep at most maxItemsOnDisk items.
     let itemsToSave = this.items.slice(0, Math.min(this.items.length, this.maxItemsOnDisk));
     await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name, itemsToSave);
-
-    this.addedNewItem = false;
   }
 
   /**

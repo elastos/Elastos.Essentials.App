@@ -283,25 +283,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         )
 
         let txid = await this.jsonRPCService.sendrawtransaction(this.id as StandardCoinName, rawTx);
-        if (txid.length > 0) {
-          let rawtx = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, txid);
-          let tx : TransactionHistory = {
-            address: '',
-            fee: '',
-            height: 0,
-            inputs:[],
-            outputs: [],
-            memo: '',
-            Status: TransactionStatus.PENDING,
-            time: moment().valueOf() / 1000,
-            txid: txid,
-            txtype: rawtx.type,
-            type: TransactionDirection.SENT,
-            value: '-',
-            votecategory: 0
-          }
-          this.addLocalTransaction(tx);
-        }
         return txid;
     }
 
@@ -986,6 +967,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
         // sort by block height
         this.transactions.txhistory.sort(function (A, B) {
+            // The height is 0 if the transaction is pending.
+            if (B.height === 0) return 1;
+            if (A.height === 0) return -1;
             return B.height - A.height;
         });
 
@@ -1055,6 +1039,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           let existingIndex = this.transactions.txhistory.findIndex(tx => tx.txid == transactionHistory[i].txid);
           if (existingIndex === -1) {
             this.transactions.txhistory.push(transactionHistory[i]);
+          } else {
+            // update
+            this.transactions.txhistory[existingIndex] = transactionHistory[i];
           }
         }
 
@@ -1147,22 +1134,26 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
       }
-      if (this.transactionsCache.hasNewItem()) {
-        this.cleanLocalTransactions(transactionsList);
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-        this.transactionsCache.save();
-      }
+      this.cleanUTXO(transactionsList);
+      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      this.transactionsCache.save();
     }
 
-    private cleanLocalTransactions(transactionsList: TransactionHistory[]) {
-      for (let i = this.transactionsInPool.length - 1; i >= 0; i--) {
-        let existingIndex = transactionsList.findIndex((tx) => tx.txid == this.transactionsInPool[i].txid);
-        if (existingIndex !== -1) {
-          this.transactionsInPool.splice(i, 1);
-        }
-      }
+    /**
+     * We can not use the UTXO that we used but the transaction is not on chain.
+     */
+    private cleanUTXO(transactionsList: TransactionHistory[]) {
+      // Logger.log('wallet', 'cleanLocalTransactions transactionsList:', transactionsList);
+      // for (let i = this.transactionsInPool.length - 1; i >= 0; i--) {
+      //   let existingIndex = transactionsList.findIndex((tx) => tx.txid === this.transactionsInPool[i].txid);
+      //   Logger.warn('wallet', 'existingIndex:', existingIndex)
+      //   if (existingIndex !== -1) {
+      //     Logger.log('wallet', 'cleanLocalTransactions remove:', this.transactionsInPool[i]);
+      //     this.transactionsInPool.splice(i, 1);
+      //   }
+      // }
 
-      Logger.log('wallet', 'cleanLocalTransactions :', this.transactionsInPool)
+      // Logger.log('wallet', 'cleanLocalTransactions :', this.transactionsInPool)
     }
 
     accMul(arg1, arg2) {

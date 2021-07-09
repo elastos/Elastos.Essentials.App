@@ -373,11 +373,6 @@ export class ETHChainSubWallet extends StandardSubWallet {
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
       let txid = await this.jsonRPCService.eth_sendRawTransaction(this.id as StandardCoinName, obj.TxSigned);
-      if (txid.length > 0) {
-        let rawtx = await this.getTransactionDetails(txid);
-        rawtx.timeStamp = (moment().valueOf() / 1000).toString(),
-        this.addLocalTransaction(rawtx);
-      }
       return txid;
     }
 
@@ -403,21 +398,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
-      if (this.transactionsCache.hasNewItem()) {
-        this.cleanLocalTransactions(transactionsList);
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-        this.transactionsCache.save();
-      }
-    }
-
-    private cleanLocalTransactions(transactionsList: EthTransaction[]) {
-      for (let i = this.transactionsInPool.length - 1; i >= 0; i--) {
-        let existingIndex = transactionsList.findIndex(tx => tx.hash == (this.transactionsInPool[i] as EthTransaction).hash);
-        if (existingIndex !== -1) {
-          this.transactionsInPool.splice(i, 1);
-        }
-      }
-
-      Logger.log('wallet', 'cleanLocalTransactions :', this.transactionsInPool)
+      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      this.transactionsCache.save();
     }
 }

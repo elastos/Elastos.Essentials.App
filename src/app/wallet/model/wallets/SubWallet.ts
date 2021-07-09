@@ -122,14 +122,6 @@ export abstract class SubWallet {
     protected abstract saveTransactions(transactionsList: TransactionHistory[]);
 
     /**
-     *
-     */
-    public addLocalTransaction(tx: TransactionHistory) {
-        this.transactionsInPool.push(tx);
-        Logger.log('wallet', 'addLocalTransaction:', tx, this.id)
-    }
-
-    /**
      * From a raw status, returns a UI readable string status.
      */
     public getTransactionStatusName(status: TransactionStatus, translate: TranslateService): string {
