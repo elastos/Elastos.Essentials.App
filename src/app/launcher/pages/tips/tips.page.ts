@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -7,6 +7,8 @@ import { Tip } from '../../model/tip.model';
 import { TipAudience } from '../../model/tipaudience.model';
 import { TipsService } from '../../services/tips.service';
 import { Logger } from 'src/app/logger';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-tips',
@@ -14,6 +16,8 @@ import { Logger } from 'src/app/logger';
   styleUrls: ['./tips.page.scss'],
 })
 export class TipsPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
   public tipToShow: Tip;
   public currentlyShownTip: Tip;
   private allDisplayableTips: Tip[];
@@ -33,7 +37,20 @@ export class TipsPage implements OnInit {
     Logger.log('Launcher', 'Tip to show:', this.tipToShow);
 
     // Mark tip as shown to not notify it any more
-    this.tipsService.markTipAsViewed(this.currentlyShownTip);
+    await this.tipsService.markTipAsViewed(this.currentlyShownTip);
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setNavigationMode(null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
+      key: "close",
+      iconPath: BuiltInIcon.CLOSE
+    });
+    this.titleBar.addOnItemClickedListener(icon => {
+      if (icon.key === "close") {
+        this.closePage();
+      }
+    });
   }
 
   public getTipTitle(tip: Tip) {
@@ -51,25 +68,25 @@ export class TipsPage implements OnInit {
       return this.translate.instant("launcher.tip-audience-developers");
   }
 
-  public showPreviousTip() {
+  public async showPreviousTip() {
     let currentTipIndex = this.allDisplayableTips.findIndex(tip => tip == this.currentlyShownTip);
     let previousTipIndex = (currentTipIndex>0 ? currentTipIndex-1 : this.allDisplayableTips.length-1);
     this.currentlyShownTip = this.allDisplayableTips[previousTipIndex];
 
     // Mark tip as shown to not notify it any more
-    this.tipsService.markTipAsViewed(this.currentlyShownTip);
+    await this.tipsService.markTipAsViewed(this.currentlyShownTip);
   }
 
-  public showNextTip() {
+  public async showNextTip() {
     let currentTipIndex = this.allDisplayableTips.findIndex(tip => tip == this.currentlyShownTip);
     let nextTipIndex = (currentTipIndex+1)%this.allDisplayableTips.length;
     this.currentlyShownTip = this.allDisplayableTips[nextTipIndex];
 
     // Mark tip as shown to not notify it any more
-    this.tipsService.markTipAsViewed(this.currentlyShownTip);
+    await this.tipsService.markTipAsViewed(this.currentlyShownTip);
   }
 
   public closePage() {
-    this.modalController.dismiss();
+    void this.modalController.dismiss();
   }
 }
