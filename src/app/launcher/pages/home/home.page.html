@@ -41,7 +41,7 @@
 
     <ion-row class="wallet-connect-row" *ngIf="walletConnectConnectors.length > 0" (click)="showWalletConnectSessions()">
       <img class="icon" src="assets/settings/icon/walletconnect.svg">
-      <ion-label>Active wallet connect sessions</ion-label>
+      <ion-label>{{ 'launcher.active-wallet-connect-sessions' | translate }}</ion-label>
       <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="12">
         <div class="connector" *ngIf="connector.connected">
           <img class="connector-logo" [src]="connector.peerMeta.icons[0]">

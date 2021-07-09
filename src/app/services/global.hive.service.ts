@@ -423,25 +423,18 @@ export class GlobalHiveService extends GlobalService {
   public fetchHiveScriptPicture(hiveScriptUrl: string): Promise<Buffer> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise<Buffer>(async (resolve) => {
-
-      // TODO: TMP WHILE HIVE BUG IS NOT FIXED - ONLY WORKS FOR PERSONAL AVATAR !!! NOT WORKING FOR OTHER PICTURES FROM OTHER USERS
-      // TODO: REPLACE WITH THE 2 LINES ABOVE
-
       try {
-        /* console.log("DEBUG 1");
         let hiveClient = await this.getHiveClient();
-        console.log("DEBUG 2");
         let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
-        console.log("DEBUG 3"); */
 
-        let activeVault = await this.getActiveVault();
+        /* let activeVault = await this.getActiveVault();
         let dirtyScriptName = hiveScriptUrl.substring(hiveScriptUrl.lastIndexOf("/")+1, hiveScriptUrl.indexOf("?"));
         console.log("DEBUG dirtyScriptName = ",dirtyScriptName);
         let directCallResult = await activeVault.getScripting().call(dirtyScriptName, {}, GlobalConfig.ESSENTIALS_APP_DID);
         console.log("DEBUG DIRECT SCRIPT CALL RESULT:", directCallResult);
         let txId = directCallResult["download"]["transaction_id"];
         //console.log("DOWNLOAD TX ID:", txId);
-        let reader = await activeVault.getScripting().downloadFile(txId);
+        let reader = await activeVault.getScripting().downloadFile(txId); */
         let blob: any = await reader.readAll();
 
         console.log("DEBUG DOWNLOADED BLOB:", blob);
@@ -450,7 +443,7 @@ export class GlobalHiveService extends GlobalService {
       }
       catch (e) {
         // Can't download the asset
-        Logger.warn("hivecache", "Failed to download hive asset at "+hiveScriptUrl, e);
+        Logger.warn("GlobalHiveService", "Failed to download hive asset at "+hiveScriptUrl, e);
       }
     });
   }

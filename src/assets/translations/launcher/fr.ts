@@ -30,6 +30,7 @@ export const fr = {
         'backup-title': 'IDENTITE NON SAUVEGARDEE',
         'backup-message': 'Sauvegarder la "clé papier" de votre identité est indispensable, car c\'est le seul moyen de la récupérer plus tard.',
         'backup-button': 'Continuer',
+        'active-wallet-connect-sessions': 'Sessions Wallet Connect actives',
 
         /********** Onboard Page **********/
 

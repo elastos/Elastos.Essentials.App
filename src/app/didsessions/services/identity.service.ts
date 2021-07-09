@@ -540,7 +540,7 @@ export class IdentityService {
                 }
             }
             // hive url that points to a script that provides the picture
-            /* else if (avatar.type && avatar.type == "elastoshive") {
+            else if (avatar.type && avatar.type == "elastoshive") {
                 if (avatar.data && avatar["content-type"]) {
                     let hiveUrl = avatar.data;
                     Logger.log("didsessions", "Retrieve avatar from a hive url");
@@ -554,7 +554,10 @@ export class IdentityService {
                         }
                     }
                 }
-            } */
+            }
+            else {
+                Logger.warn('didsessions', 'The avatar is not a known format. Skipping it.');
+            }
         }
 
         Logger.log('didsessions', "Adding identity entry to DID session manager:", newIdentity);
