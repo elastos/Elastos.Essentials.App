@@ -39,6 +39,17 @@
       </ion-col>
     </ion-row>
 
+    <ion-row class="wallet-connect-row" *ngIf="walletConnectConnectors.length > 0" (click)="showWalletConnectSessions()">
+      <img class="icon" src="assets/settings/icon/walletconnect.svg">
+      <ion-label>Active wallet connect sessions</ion-label>
+      <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="12">
+        <div class="connector" *ngIf="connector.connected">
+          <img class="connector-logo" [src]="connector.peerMeta.icons[0]">
+          <p>{{ connector.peerMeta.name }}</p>
+        </div>
+      </ion-col>
+    </ion-row>
+
     <ion-row *ngFor="let category of appService.runnableApps" class="category-row">
       <ion-col size="12" class="title-col">
         <ion-label>{{ category.type | translate }}</ion-label>

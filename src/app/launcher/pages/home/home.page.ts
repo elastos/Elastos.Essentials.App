@@ -23,6 +23,8 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { MasterWallet } from 'src/app/wallet/model/wallets/MasterWallet';
+import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import WalletConnect from '@walletconnect/client';
 
 @Component({
   selector: 'app-home',
@@ -40,6 +42,7 @@ export class HomePage implements OnInit {
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
   private walletStateSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
   private vaultStatusSub: Subscription = null; // Subscription to vault link status event
+  private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
 
   // Widget data
   private mainWallet: MasterWallet = null;
@@ -52,6 +55,7 @@ export class HomePage implements OnInit {
     usageRatio: number // usedStorage / maxStorage ratio, 0-1 numeric range
     percentUsage: string; // usedStorage / maxStorage ratio, 0-100% string
   } = null;
+  public walletConnectConnectors: WalletConnect[] = [];
 
   constructor(
     public toastCtrl: ToastController,
@@ -68,6 +72,7 @@ export class HomePage implements OnInit {
     private walletService: WalletManager,
     private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService,
+    private globalWalletConnectService: GlobalWalletConnectService,
     private didSessions: GlobalDIDSessionsService) {
   }
 
@@ -162,6 +167,11 @@ export class HomePage implements OnInit {
         this.hiveVaultLinked = true;
       }
     });
+
+    this.walletConnectSub = this.globalWalletConnectService.walletConnectSessionsStatus.subscribe(connectors => {
+      this.walletConnectConnectors = Array.from(connectors.values());
+      Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors);
+    });
   }
 
   ionViewDidEnter() {
@@ -181,6 +191,10 @@ export class HomePage implements OnInit {
     if (this.vaultStatusSub) {
       this.vaultStatusSub.unsubscribe();
       this.vaultStatusSub = null;
+    }
+    if (this.walletConnectSub) {
+      this.walletConnectSub.unsubscribe();
+      this.walletConnectSub = null;
     }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
@@ -250,5 +264,12 @@ export class HomePage implements OnInit {
   getDateFromNow() {
     // return moment().format('dddd MMM Do') + ', ' + moment().format('LT');
     return moment().format('dddd, MMM Do');
+  }
+
+  /**
+   * Opens the wallet connect sessions screen in settings
+   */
+  public showWalletConnectSessions() {
+    void this.nav.navigateTo("settings", "/settings/walletconnect/sessions");
   }
 }

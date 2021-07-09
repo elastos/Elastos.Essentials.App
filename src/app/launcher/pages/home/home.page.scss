@@ -160,7 +160,7 @@ ion-content {
     }
   }
 
-  .category-row {
+  .category-row, .wallet-connect-row {
     border-radius: 25px;
     display: flex;
     flex-direction: column;
@@ -274,6 +274,30 @@ ion-content {
     }
   }
 
+  .wallet-connect-row {
+    .icon {
+      height: 30px;
+      margin-top: -35px;
+      margin-bottom: 10px;
+    }
+
+    .connector-col {
+      .connector {
+        display: flex;
+        align-items: center;
+
+        .connector-logo {
+          height: 20px;
+          margin-right: 10px;
+        }
+
+        p {
+          font-weight:bold;
+        }
+      }
+    }
+  }
+
   .logout-row {
     padding: 10px 15px;
   }
@@ -291,7 +315,7 @@ ion-content {
     }
   }
 
-  .category-row {
+  .category-row, .wallet-connect-row {
     background-color: #ffffff;
     box-shadow: 0 3px 15px 0 #ededf0;
 
@@ -383,6 +407,13 @@ ion-content {
       }
     }
   }
+
+  .wallet-connect-row {
+    ion-label {
+      color: #000000;
+      opacity: 0.7;
+    }
+  }
 }
 
 /************************************** DARK THEME **************************************/
@@ -397,7 +428,7 @@ ion-content {
     }
   }
 
-  .category-row {
+  .category-row, .wallet-connect-row {
     background: #212021;
     box-shadow: none;
 
@@ -448,6 +479,12 @@ ion-content {
           }
         }
       }
+    }
+  }
+
+  .wallet-connect-row {
+    ion-label {
+      color: #ACACAC;
     }
   }
 }

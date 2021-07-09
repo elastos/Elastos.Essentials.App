@@ -10,6 +10,7 @@ import { GlobalStorageService } from './global.storage.service';
 import { GlobalNativeService } from './global.native.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,9 @@ import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './glo
 export class GlobalWalletConnectService extends GlobalService {
   private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
   private initiatingConnector: WalletConnect = null;
+
+  // Subject updated with the whole list of active sessions every time there is a change.
+  public walletConnectSessionsStatus = new BehaviorSubject<Map<string, WalletConnect>>(new Map());
 
   constructor(
     private zone: NgZone,
@@ -140,6 +144,7 @@ export class GlobalWalletConnectService extends GlobalService {
 
   private prepareConnectorForEvents(connector: WalletConnect) {
     this.connectors.set(connector.key, connector);
+    this.walletConnectSessionsStatus.next(this.connectors);
 
     // Subscribe to session requests events, when a client app wants to link with our wallet.
     connector.on("session_request", (error, payload) => {
@@ -175,6 +180,7 @@ export class GlobalWalletConnectService extends GlobalService {
 
       this.initiatingConnector = null;
       this.connectors.delete(connector.key);
+      this.walletConnectSessionsStatus.next(this.connectors);
       void this.deleteSession(connector.session);
     });
   }
