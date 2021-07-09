@@ -22,7 +22,6 @@ import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
-import { DPoSRegistrationInitService } from 'src/app/dposregistration/services/init.service';
 import { CRCouncilManagerInitService } from 'src/app/crcouncilmanager/services/init.service';
 import { App } from "src/app/model/app.enum";
 import { ContactsInitService } from 'src/app/contacts/services/init.service';
@@ -81,7 +80,6 @@ export class AppmanagerService {
         private hiveManagerInitService: HiveManagerInitService,
         private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
-        private dposRegistrationInitService: DPoSRegistrationInitService,
         private crcouncilManagerInitService: CRCouncilManagerInitService,
         private contactsInitService: ContactsInitService
     ) {}
@@ -226,15 +224,6 @@ export class AppmanagerService {
                         icon: '/assets/launcher/apps/app-icons/proposal.svg',
                         hasWidget: false,
                         routerPath: '/crproposalvoting/proposals/ALL'
-                    },
-                    {
-                        id: 'dposregistration',
-                        routerContext: App.DPOS_REGISTRATION,
-                        name: this.translate.instant('launcher.app-dpos-registration'),
-                        description: this.translate.instant('launcher.app-dpos-registration-description'),
-                        icon: '/assets/launcher/apps/app-icons/dpos.svg',
-                        hasWidget: false,
-                        startCall: () => this.dposRegistrationInitService.start()
                     },
                     {
                         id: 'crcouncilmanager',

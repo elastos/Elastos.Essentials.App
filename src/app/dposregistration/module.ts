@@ -12,11 +12,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { DPoSRegistrationRoutingModule } from './routing';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { DPosUnRegistrationPage } from './pages/unregistration/unregistration.page';
 
 
 @NgModule({
   declarations: [
     DPosRegistrationPage,
+    DPosUnRegistrationPage
   ],
   imports: [
     CommonModule,

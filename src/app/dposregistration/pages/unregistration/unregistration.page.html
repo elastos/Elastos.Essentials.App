@@ -1,0 +1,111 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div class="header">
+    </div>
+
+    <!-- <div class="title">
+        <h1>{{ 'dposregistration.register-header' | translate }}</h1>
+    </div> -->
+
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+
+        <p *ngIf="dposInfo.state == 'Pending'" class="block-height">
+            <span>{{ 'dposregistration.confirm-count-prefix' | translate }}</span>
+            <span>{{ confirmCount }}</span>
+            <span>{{ 'dposregistration.confirm-count-postfix' | translate }}</span>
+        </p>
+
+        <ion-list-header>
+            <h4>{{ 'dposregistration.node-detials' | translate }}</h4>
+        </ion-list-header>
+
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="nodesService.dposInfo.nickname">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-name' | translate }}</h5>
+                    <h4>{{ nodesService.dposInfo.nickname }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="nodesService.dposInfo.state">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-status' | translate }}</h5>
+                    <h4>{{ nodesService.dposInfo.state }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="nodesService.dposInfo.votes">
+                <ion-col>
+                    <h5>{{ 'dposregistration.current-votes' | translate }}</h5>
+                    <h4>{{ nodesService.dposInfo.votes }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="nodesService.dposInfo.nodepublickey">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-publickey' | translate }}</h5>
+                    <h4>{{ nodesService.dposInfo.nodepublickey }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="nodesService.dposInfo.url">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-url' | translate }}</h5>
+                    <h4>{{ nodesService.dposInfo.url }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="nodesService.dposInfo.location">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-location' | translate }}</h5>
+                    <h4>{{'crcouncilvoting.' + 'nodesService.dposInfo.location' | translate }}</h4>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <br />
+        <ion-list-header>
+            <h4>{{ 'dposregistration.transaction-detials' | translate }}</h4>
+        </ion-list-header>
+
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="transactionInfo.txid">
+                <ion-col>
+                    <h5>{{ 'dposregistration.transaction-id' | translate }}</h5>
+                    <h4>{{ transactionInfo.txid }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="transactionInfo.time">
+                <ion-col>
+                    <h5>{{ 'dposregistration.time-published' | translate }}</h5>
+                    <h4>{{ publishedTime }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="nodesService.dposInfo.votes">
+                <ion-col>
+                    <h5>{{ 'dposregistration.block-id' | translate }}</h5>
+                    <h4>{{ transactionInfo.height }}</h4>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <ion-row class="btn-container">
+            <ion-button *ngIf="dposInfo.state == 'Active'" color="success" (click)="unregister()">
+                {{ 'dposregistration.unregister' | translate }}
+            </ion-button>
+            <ng-container *ngIf="dposInfo.state == 'Canceled'">
+                <ion-row>
+                    <ion-label>BlockHeight - CancelHeight: {{ blockHeight - cancelHeight }}</ion-label>
+                </ion-row>
+                <ion-button color="success" [attr.disabled]="available == 0" (click)="retrieve()">
+                    {{ 'dposregistration.retrieve' | translate }}
+                </ion-button>
+            </ng-container>
+            <!-- <ion-button  *ngIf="state == 'ReturnDeposit'" color="success" (click)="">
+                        {{ 'dposregistration.back' | translate }}
+                    </ion-button> -->
+        </ion-row>
+    </ion-grid>
+</ion-content>

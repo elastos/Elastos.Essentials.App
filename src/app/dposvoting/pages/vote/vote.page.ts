@@ -6,7 +6,7 @@ import { DPosNode } from '../../model/nodes.model';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -39,14 +39,17 @@ export class VotePage implements OnInit {
     // Toast for voteFailed/voteSuccess
     private toast: any = null;
 
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
     constructor(
         public nodesService: NodesService,
         private storage: GlobalStorageService,
         private toastController: ToastController,
         private translate: TranslateService,
         private globalNative: GlobalNativeService,
-        private nav: GlobalNavService,
+        private globalNav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
+        public voteService: VoteService,
         public theme: GlobalThemeService,
     ) {
     }
@@ -54,10 +57,36 @@ export class VotePage implements OnInit {
     ngOnInit() {
     }
 
+    private async setRegistrationIcon() {
+        let dposInfo = await this.nodesService.getRegistrationNodeInfo();
+
+        switch (dposInfo.state) {
+            case 'Unregistered':
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+                    await this.voteService.selectWalletAndNavTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
+                });
+
+                break;
+            case 'Pending':
+            case 'Active':
+            case 'Inactive':
+            case 'Canceled':
+            case 'Illegal':
+            case 'Returned':
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png'});
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+                    this.globalNav.navigateTo(App.DPOS_VOTING, '/dposregistration/unregistration');
+                });
+                break;
+        }
+    }
+
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         this.titleBar.setNavigationMode(null);
+        this.setRegistrationIcon();
     }
 
     ionViewWillLeave() {

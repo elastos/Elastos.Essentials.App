@@ -11,17 +11,44 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { Util } from 'src/app/model/util';
+import { App } from 'src/app/model/app.enum';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
 
+
+export type DPoSRegistrationInfo = {
+    active?: boolean;
+    cancelheight?: number;
+    illegalheight?: number;
+    inactiveheight?: number;
+    index?: number;
+    location?: number;
+    nickname?: string;
+    nodepublickey?: string;
+    ownerpublickey?: string;
+    registerheight?: 113;
+    state: string;
+    url?: string;
+    votes?: string;
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class NodesService {
 
+    //Registration
+    public dposInfo: DPoSRegistrationInfo;
+
     // Nodes
     public _nodes: DPosNode[] = [];
     public activeNodes: DPosNode[] = [];
     public totalVotes: number = 0;
+
+
 
     // Stats
     public statsFetched: boolean = false;
@@ -79,7 +106,10 @@ export class NodesService {
         private storage: GlobalStorageService,
         private globalIntentService: GlobalIntentService,
         private globalJsonRPCService: GlobalJsonRPCService,
-        private globalElastosAPIService: GlobalElastosAPIService
+        private globalElastosAPIService: GlobalElastosAPIService,
+        public walletRPCService: WalletJsonRPCService,
+        public voteService: VoteService,
+        private walletManager: WalletManager,
     ) { }
 
     get nodes(): DPosNode[] {
@@ -162,6 +192,57 @@ export class NodesService {
         } catch (err) {
             Logger.error('dposvoting', 'fetchStats error:', err);
         }
+    }
+
+    async getRegistrationNodeInfo(): Promise<DPoSRegistrationInfo> {
+        let ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
+        this.dposInfo = {
+            state: "Unregistered",
+            nodepublickey: ownerPublicKey,
+            ownerpublickey: ownerPublicKey
+        };
+
+        //Get ower dpos info
+        const param = {
+            method: 'listproducers',
+            params: {
+                state: "all"
+            },
+        };
+
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+
+        if (!Util.isEmptyObject(result.producers)) {
+            Logger.log(App.DPOS_REGISTRATION, "dposlist:", result.producers);
+            for (const producer of result.producers) {
+                if (producer.ownerpublickey == ownerPublicKey) {
+                    this.dposInfo = producer;
+                    break;
+                }
+            }
+        }
+
+        return this.dposInfo;
+    }
+
+    async getConfirmCount(txid: string): Promise<number> {
+        //Get ower dpos info
+        const param = {
+            method: 'getrawtransaction',
+            params: {
+                txid: txid,
+                verbose:true
+            },
+        };
+
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        if (result && result.confirmations) {
+            return result.confirmations;
+        }
+
+        return -1;
     }
 
     async fetchCurrentHeight(): Promise<number> {
