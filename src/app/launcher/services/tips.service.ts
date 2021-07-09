@@ -85,9 +85,9 @@ export class TipsService {
       return;
     }
 
-    //if (await this.rightTimeToShowATip()) {
+    if (await this.rightTimeToShowATip()) {
       await this.showNextTip();
-    //}
+    }
 
     // No matter what, check again in X minutes
     setTimeout(() => {
