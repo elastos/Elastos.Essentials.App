@@ -44,7 +44,7 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { StandardSubWalletBuilder } from '../model/wallets/StandardSubWalletBuilder';
 import { ERC721Service } from './erc721.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Util } from '../model/Util';
 import { WalletConfig } from '../model/WalletConfig';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
@@ -80,6 +80,20 @@ class SubwalletTransactionStatus {
   }
 }
 
+export enum WalletStateOperation {
+    // Wallet just got created
+    CREATED,
+    // Wallet just got deleted
+    DELETED,
+    // Wallet just became active (selected as the active wallet by the user)
+    BECAME_ACTIVE
+}
+
+export type WalletStateChange = {
+    wallet: MasterWallet;
+    operation: WalletStateOperation;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -100,6 +114,7 @@ export class WalletManager {
     private networkTemplate: string;
 
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
+    public walletStateChanges = new Subject<WalletStateChange>(); // Whenever a master wallet becomes created, deleted or active
 
     public subwalletTransactionStatus = new SubwalletTransactionStatus();
 
@@ -416,6 +431,12 @@ export class WalletManager {
         await this.saveMasterWallet(this.masterWallets[id]);
 
         await this.setRecentWalletId(id);
+
+        // Notify listeners
+        this.walletStateChanges.next({
+            wallet: this.masterWallets[id],
+            operation: WalletStateOperation.CREATED
+        });
     }
 
     /**
@@ -439,6 +460,10 @@ export class WalletManager {
 
         // Notify some listeners
         this.events.publish("masterwallet:destroyed", id);
+        this.walletStateChanges.next({
+            wallet: this.masterWallets[id],
+            operation: WalletStateOperation.DELETED
+        });
 
         if (Object.values(this.masterWallets).length > 0) {
 

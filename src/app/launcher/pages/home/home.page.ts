@@ -17,11 +17,12 @@ import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon, TitleBar
 import { Logger } from 'src/app/logger';
 import { NotificationsPage } from '../notifications/notifications.page';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletManager, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
 import { Subscription } from 'rxjs';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { MasterWallet } from 'src/app/wallet/model/wallets/MasterWallet';
 
 @Component({
   selector: 'app-home',
@@ -37,9 +38,11 @@ export class HomePage implements OnInit {
   public identityNeedsBackup = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
+  private walletStateSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
   private vaultStatusSub: Subscription = null; // Subscription to vault link status event
 
   // Widget data
+  private mainWallet: MasterWallet = null;
   public mainWalletName = "";
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
   public hiveVaultLinked = false;
@@ -128,13 +131,18 @@ export class HomePage implements OnInit {
     // on the wallet widget.
     this.walletServiceSub = this.walletService.walletServiceStatus.subscribe((initializationComplete) => {
       if (initializationComplete) {
-        let wallets = this.walletService.getWalletsList();
-        // We need to have at least one existing wallet to display something.
-        if (wallets && wallets.length > 0) {
-          // Simple widget for now: display the main balance of the first wallet we find.
-          this.mainWalletName = wallets[0].name;
-          this.mainWalletELABalance = wallets[0].getDisplayBalance().toFixed(2);
-        }
+        this.updateWidgetMainWallet();
+      }
+    });
+
+    this.walletStateSub = this.walletService.walletStateChanges.subscribe(state => {
+      // If the wallet displayed on the widget is deleted, we update our screen
+      if (this.mainWallet && state.operation == WalletStateOperation.DELETED && state.wallet.id == this.mainWallet.id) {
+        this.updateWidgetMainWallet();
+      }
+      // Also re-enable the widget if we had no wallet and one just got created
+      else if (!this.mainWallet && state.operation == WalletStateOperation.CREATED) {
+        this.updateWidgetMainWallet();
       }
     });
 
@@ -166,6 +174,10 @@ export class HomePage implements OnInit {
       this.walletServiceSub.unsubscribe();
       this.walletServiceSub = null;
     }
+    if (this.walletStateSub) {
+      this.walletStateSub.unsubscribe();
+      this.walletStateSub = null;
+    }
     if (this.vaultStatusSub) {
       this.vaultStatusSub.unsubscribe();
       this.vaultStatusSub = null;
@@ -174,6 +186,22 @@ export class HomePage implements OnInit {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.popover) {
       this.popover.dimiss();
+    }
+  }
+
+  private updateWidgetMainWallet() {
+    let wallets = this.walletService.getWalletsList();
+    // We need to have at least one existing wallet to display something.
+    if (wallets && wallets.length > 0) {
+      // Simple widget for now: display the main balance of the first wallet we find.
+      this.mainWallet = wallets[0];
+      this.mainWalletName = wallets[0].name;
+      this.mainWalletELABalance = wallets[0].getDisplayBalance().toFixed(2);
+    }
+    else {
+      this.mainWallet = null;
+      this.mainWalletName = "";
+      this.mainWalletELABalance = null;
     }
   }
 
