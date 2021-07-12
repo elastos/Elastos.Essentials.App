@@ -31,6 +31,8 @@ export class NotificationsPage implements OnInit {
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
+  private modalAlreayDismiss = false;
+
   constructor(
     private sanitizer: DomSanitizer,
     private modalController: ModalController,
@@ -58,7 +60,7 @@ export class NotificationsPage implements OnInit {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.NOTIFICATIONS });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.modalController.dismiss();
+      this.closeNotificationPage();
     });
 
     if(this.theme.darkMode) {
@@ -72,12 +74,20 @@ export class NotificationsPage implements OnInit {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
+  async closeNotificationPage() {
+    if (!this.modalAlreayDismiss) {
+      await this.modalController.dismiss();
+      this.modalAlreayDismiss = true;
+    }
+  }
+
   sanitize(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   async start(notification: LauncherNotification) {
     await this.close(notification);
+    await this.closeNotificationPage();
     if (notification.type == LauncherNotificationType.TIP) {
       // Special "tip" notification: handle this directly in the launcher app without starting an intent
       Logger.log('Launcher', "Opening tip from notification", notification);
@@ -133,7 +143,7 @@ export class NotificationsPage implements OnInit {
     }
 
     if (this.notificationService.notifications.length === 0) {
-      await this.modalController.dismiss();
+      await this.closeNotificationPage();
     }
   }
 

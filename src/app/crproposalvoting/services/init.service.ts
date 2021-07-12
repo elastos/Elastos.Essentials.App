@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppService } from './app.service';
 import { CROperationsService } from './croperations.service';
@@ -15,7 +15,6 @@ export class CRProposalVotingInitService extends GlobalService {
     private uxService: UXService,
     private crOperations: CROperationsService,
     private proposalService: ProposalService,
-    private didSessions: GlobalDIDSessionsService
   ) {
     super();
   }
