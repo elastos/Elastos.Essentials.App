@@ -118,6 +118,7 @@ export class CoinHomePage implements OnInit {
     }
 
     async init() {
+        this.loadingTX = true;
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             let masterWalletId = navigation.extras.state.masterWalletId;

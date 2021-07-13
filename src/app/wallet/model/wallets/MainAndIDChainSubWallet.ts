@@ -629,7 +629,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 }
             }
         }
-        if (!getEnoughUTXO) {
+        if (!getEnoughUTXO && (amountSELA != -1)) {
           Logger.warn('wallet', 'utxo is not enought');
           if (usedUTXOs.length > 0) {
             Logger.warn('wallet', 'used UTXOs count:', usedUTXOs.length);
