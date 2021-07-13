@@ -22,7 +22,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #ffffff;
+    background: #fafaff;
     height: 110px;
     overflow: hidden;
 
@@ -52,7 +52,7 @@
 }
 
 .darkContainer {
-  background: #72748e;
+  background: #2b2c49;
 
   .header {
     h1 {
@@ -61,7 +61,7 @@
   }
 
   .message {
-    background: #393A48;
+    background: #2b2c49;
 
     p {
       color: #fdfeff;
@@ -70,8 +70,6 @@
 
   .btn-row {
     .btn {
-      background: #393A48;
-
       ion-label {
         color: #fdfeff;
       }

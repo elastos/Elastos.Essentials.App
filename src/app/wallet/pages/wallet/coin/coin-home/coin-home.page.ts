@@ -144,7 +144,7 @@ export class CoinHomePage implements OnInit {
         this.subWallet.updateBalance();
 
         this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe((count) => {
-            if (count > 0) this.updateTransactions();
+            this.updateTransactions();
         });
 
         this.updateTmeout = setTimeout(async () => {
@@ -155,13 +155,14 @@ export class CoinHomePage implements OnInit {
         }, 1000);
     }
 
-    updateTransactions() {
+    async updateTransactions() {
         this.pageNo = 0;
         this.start = 0;
         this.MaxCount = 0;
         this.transferList = [];
         this.todaysTransactions = 0;
-        this.getAllTx();
+        await this.getAllTx();
+        this.loadingTX = false;
     }
 
     async updateWalletInfo() {
@@ -172,6 +173,7 @@ export class CoinHomePage implements OnInit {
     startUpdateInterval() {
       if (this.updateInterval === null) {
         this.updateInterval = setInterval(() => {
+          this.loadingTX = true;
           this.updateWalletInfo();
         }, 30000);// 30s
       }
@@ -200,9 +202,7 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
-        this.loadingTX = true;
         let allTransactions = await this.subWallet.getTransactions(this.start);
-        this.loadingTX = false;
         if (!allTransactions) {
           Logger.log('wallet', "Can not get transaction");
           return;

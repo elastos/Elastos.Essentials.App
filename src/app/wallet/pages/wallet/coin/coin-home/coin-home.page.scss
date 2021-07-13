@@ -253,6 +253,14 @@
           margin-top: 5px;
           margin-left: 10px;
         }
+
+        .spinner {
+          margin: 0 0;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
     }
 
     .item-row {
