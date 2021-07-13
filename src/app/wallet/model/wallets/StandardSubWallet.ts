@@ -169,7 +169,7 @@ export abstract class StandardSubWallet extends SubWallet {
      */
     public async signAndSendRawTransaction(transaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {
         return new Promise(async (resolve) => {
-            Logger.log("wallet", 'Received raw transaction', transaction);
+            // Logger.log("wallet", 'Received raw transaction', transaction);
             try {
               const password = await this.masterWallet.walletManager.openPayModal(transfer);
               if (!password) {

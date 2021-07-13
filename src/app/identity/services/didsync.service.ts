@@ -1,22 +1,17 @@
 import { Injectable, NgZone } from "@angular/core";
-import { ModalController, Platform, ToastController } from "@ionic/angular";
+import { ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { LocalStorage } from "./localstorage";
 import { PopupProvider } from "./popup";
 import { Native } from "./native";
-import { DID } from "../model/did.model";
 import {
   DIDDocumentPublishEvent
 } from "../model/eventtypes.model";
 import { DIDService } from "./did.service";
 import { DIDDocument } from "../model/diddocument.model";
-import { AuthService } from "./auth.service";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
-import { GlobalIntentService } from "src/app/services/global.intent.service";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { GlobalNavService } from "src/app/services/global.nav.service";
-import { PublicationStatus, GlobalPublicationService, DIDPublicationStatus } from "src/app/services/global.publication.service";
+import { GlobalPublicationService, DIDPublicationStatus } from "src/app/services/global.publication.service";
 import { BehaviorSubject } from "rxjs";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
@@ -80,18 +75,13 @@ export class DIDSyncService implements GlobalService {
   constructor(
     public zone: NgZone,
     private translate: TranslateService,
-    private modalCtrl: ModalController,
     public toastCtrl: ToastController,
     public events: Events,
     public popupProvider: PopupProvider,
     public localStorage: LocalStorage,
     private didService: DIDService,
     public native: Native,
-    private globalNav: GlobalNavService,
-    private authService: AuthService,
-    private theme: GlobalThemeService,
     private globalPublicationService: GlobalPublicationService,
-    private globalIntentService: GlobalIntentService
   ) {
     DIDSyncService.instance = this;
   }

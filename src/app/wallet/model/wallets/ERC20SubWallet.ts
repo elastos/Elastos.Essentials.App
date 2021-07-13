@@ -352,10 +352,10 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
-        Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
+        // Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
 
         return new Promise(async (resolve)=>{
-            Logger.log('wallet', 'Received raw transaction', transaction);
+            // Logger.log('wallet', 'Received raw transaction', transaction);
             const password = await this.masterWallet.walletManager.openPayModal(transfer);
             if (!password) {
                 Logger.log('wallet', "No password received. Cancelling");

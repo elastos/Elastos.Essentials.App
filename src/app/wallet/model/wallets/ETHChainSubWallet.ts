@@ -16,7 +16,8 @@ import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
  */
 export class ETHChainSubWallet extends StandardSubWallet {
     private ethscAddress: string = null;
-    private contractAddress: string = null;
+    private withdrawContractAddress: string = null;
+    private publishdidContractAddress: string = null;
     private web3 = null;
     // private erc20ABI: any;
 
@@ -36,10 +37,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
         switch (this.id) {
           case StandardCoinName.ETHSC:
-            this.contractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();
+            this.withdrawContractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();
           break;
           case StandardCoinName.ETHDID:
-            this.contractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();
+            this.withdrawContractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();
+            this.publishdidContractAddress = Config.ETHDID_CONTRACT_ADDRESS.toLowerCase();
           break;
           default:
             Logger.warn('wallet', 'The ', this.id, ' does not set the contract address!');
@@ -113,7 +115,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
      * Use smartcontract to Send ELA from ETHSC to mainchain.
      */
     public getWithdrawContractAddress() {
-        return this.contractAddress;
+        return this.withdrawContractAddress;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
@@ -216,9 +218,12 @@ export class ETHChainSubWallet extends StandardSubWallet {
         let toAddressLowerCase = transaction.to.toLowerCase();
         if (this.isERC20TokenTransfer(toAddressLowerCase)) {
             return "wallet.coin-op-contract-token-transfer";
-        } else if (toAddressLowerCase === this.contractAddress) {
+        } else if (toAddressLowerCase === this.withdrawContractAddress) {
             // withdraw to MainChain
             return "wallet.coin-dir-to-mainchain";
+        } else if ((this.id === StandardCoinName.ETHDID) && (toAddressLowerCase === this.publishdidContractAddress)) {
+            // publish did
+            return "wallet.coin-op-identity";
         } else if (toAddressLowerCase === '') {
             return "wallet.coin-op-contract-create";
         } else if (toAddressLowerCase === '0x0000000000000000000000000000000000000000') {
@@ -299,8 +304,8 @@ export class ETHChainSubWallet extends StandardSubWallet {
     //Use createTransferGeneric for createPaymentTransaction
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
       const tokenAccountAddress = await this.getTokenAddress();
-      const contractAddress = this.contractAddress;
-      const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
+      const withdrawContractAddress = this.withdrawContractAddress;
+      const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, withdrawContractAddress, { from: tokenAccountAddress });
       const gasPrice = await this.web3.eth.getGasPrice();
 
       Logger.warn('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
@@ -327,7 +332,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
       await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
           this.masterWallet.id,
           this.id,
-          contractAddress,
+          withdrawContractAddress,
           '0',
           0, // WEI
           gasPrice,
@@ -345,7 +350,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
         const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
-        const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.contractAddress);
+        const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);
         const gasPrice = await this.web3.eth.getGasPrice();
         // const gasPrice = '1000000000';
         const toAmountSend = this.web3.utils.toWei(toAmount.toString());
@@ -362,12 +367,12 @@ export class ETHChainSubWallet extends StandardSubWallet {
         // }
         const data = method.encodeABI();
         let nonce = await this.getNonce();
-        Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' contractAddress:', this.contractAddress);
+        Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
 
         return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
             this.id,
-            this.contractAddress,
+            this.withdrawContractAddress,
             toAmountSend,
             0, // WEI
             gasPrice,
@@ -400,18 +405,24 @@ export class ETHChainSubWallet extends StandardSubWallet {
         }
       ];
 
-      let contractAddress = '0xF654c3cBBB60D7F4ac7cDA325d51E62f47ACD436';
-      const publishDIDContract = new this.web3.eth.Contract(contractAbi, contractAddress);
+      const publishDIDContract = new this.web3.eth.Contract(contractAbi, Config.ETHDID_CONTRACT_ADDRESS);
       const gasPrice = await this.web3.eth.getGasPrice();
       const method = publishDIDContract.methods.publishDidTransaction(payload);
-      const gasLimit = 100000;
+      let gasLimit = 200000;
+      try {
+          // Estimate gas cost
+          gasLimit = await method.estimateGas();
+          Logger.log('wallet', 'estimateGas :', gasLimit);
+      } catch (error) {
+          Logger.warn('wallet', 'estimateGas error:', error);
+      }
       const data = method.encodeABI();
       let nonce = await this.getNonce();
-      Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' contractAddress:', contractAddress);
+      Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' withdrawContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
       return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
           this.masterWallet.id,
           this.id,
-          contractAddress,
+          Config.ETHDID_CONTRACT_ADDRESS,
           '0',
           0, // WEI
           gasPrice,

@@ -84,7 +84,6 @@ export class DidTransactionPage implements OnInit {
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
 
         this.sourceSubwallet = this.masterWallet.getSubWallet(this.chainId) as ETHChainSubWallet;
-        Logger.warn('wallet', 'DidTransactionPage this ', this)
     }
 
     /**
@@ -117,15 +116,15 @@ export class DidTransactionPage implements OnInit {
     }
 
     async createIDTransaction() {
-        Logger.log('wallet', 'Calling createIdTransaction(): ', this.coinTransferService.didrequest);
+        Logger.log('wallet', 'Calling createIdTransaction()');
 
         const rawTx = await (this.sourceSubwallet as ETHChainSubWallet).createIDTransaction(
-              this.coinTransferService.didrequest,
+              JSON.stringify(this.coinTransferService.didrequest),
           );
 
-        Logger.log('wallet', 'Created raw DID transaction:', rawTx);
 
         if (rawTx) {
+          Logger.log('wallet', 'Created raw DID transaction');
           const transfer = new Transfer();
           Object.assign(transfer, {
               masterWalletId: this.masterWallet.id,

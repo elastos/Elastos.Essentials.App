@@ -10,7 +10,7 @@ import { ExpirationService } from './expiration.service';
 import { isNil } from 'lodash-es';
 
 import * as moment from 'moment';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';

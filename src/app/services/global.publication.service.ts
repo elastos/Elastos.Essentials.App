@@ -11,6 +11,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalIntentService } from './global.intent.service';
 import { JSONObject } from '../model/json';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
+import { GlobalNativeService } from './global.native.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -474,7 +475,8 @@ export class GlobalPublicationService {
         private theme: GlobalThemeService,
         private prefs: GlobalPreferencesService,
         private globalNetworksService: GlobalNetworksService,
-        private globalIntentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService,
+        private globalNativeService: GlobalNativeService
     ) {
         GlobalPublicationService.instance = this;
 
@@ -515,6 +517,8 @@ export class GlobalPublicationService {
                 // Callback called by the DID SDK when trying to publish a DID.
                 Logger.log("publicationservice", "Create ID transaction callback is being called", payload, memo);
                 const payloadAsJson = JSON.parse(payload);
+                // TODO: Identiy will showLoading when publish did. we can improve it.
+                await this.globalNativeService.hideLoading();
                 await this.publishDIDFromRequest(didString, payloadAsJson, memo, showBlockingLoader);
                 resolve();
             });
