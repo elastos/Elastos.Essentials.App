@@ -43,6 +43,8 @@ export class GlobalNetworksService extends GlobalService {
     }
 
     onUserSignOut(): Promise<void> {
+        // Reset to MainNet
+        this.activeNetworkTemplate.next(MAINNET_TEMPLATE);
         return;
     }
 
