@@ -79,6 +79,37 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     private updateInterval = null;
 
+    public showNetworkOptions = false;
+    // Dummy Current Network
+    public currentNetwork = {
+        id: 1,
+        name: 'Elastos',
+        logo: 'assets/wallet/coins/ela-black.svg',
+    }
+     // Dummy Network Options
+    public networkOptions = [
+        {
+            id: 1,
+            name: 'Elastos',
+            logo: 'assets/wallet/coins/ela-black.svg',
+        },
+        {
+            id: 2,
+            name: 'HECO',
+            logo: 'assets/wallet/coins/ela-black.svg',
+        },
+        {
+            id: 3,
+            name: 'BSC',
+            logo: 'assets/wallet/coins/ela-black.svg',
+        },
+        {
+            id: 4,
+            name: 'Generic Network',
+            logo: 'assets/wallet/coins/ela-black.svg',
+        },
+    ];
+
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 

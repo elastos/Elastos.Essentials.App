@@ -17,14 +17,53 @@
         </ion-col>
     </ion-row> -->
 
+    <div class="network-container" [class.dark-network-container]="theme.darkMode" [class.networkOptions-container]="showNetworkOptions">
+        <ion-row *ngIf="!showNetworkOptions" class="displayed-network" (click)="showNetworkOptions = true">
+            <ion-col offset="3" size="4">
+                <img [src]="currentNetwork.logo"> 
+                <ion-label>{{ currentNetwork.name }}</ion-label>
+            </ion-col>
+            <ion-col offset="1" size="1">
+                <img class="arrow-icon" [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'">
+            </ion-col>
+        </ion-row>
+
+        <div *ngIf="showNetworkOptions" class="network-options" (click)="showNetworkOptions = false">
+            <ion-row class="header-row">
+                <ion-col size="12">
+                    <ion-label>
+                        <h1>Networks</h1>
+                        <p>Choose your active network</p>
+                    </ion-label>
+                    <img class="arrow-icon" [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'">
+                </ion-col>
+            </ion-row>
+            <ion-row 
+                *ngFor="let network of networkOptions"
+                class="network-row" [class.selected-network]="network.id === currentNetwork.id"
+                (click)="currentNetwork = network"
+            >
+                <ion-col size="10" class="left-col">
+                    <img [src]="network.logo">
+                    <h1>{{ network.name }}</h1>
+                </ion-col>
+                <ion-col size="2" class="right-col">
+                    <ion-icon name="checkmark"></ion-icon>
+                </ion-col>
+            </ion-row>
+        </div>
+    </div>
+  
+
     <ion-slides *ngIf="!isSingleWallet" [class.dark-slides]="theme.darkMode" [class.blur]="native.popup" [options]="slideOpts" #slider pager>
         <ion-slide *ngFor="let masterWallet of masterWalletList">
-            <ion-row class="main-title-row">
+       <!--      <ion-row class="main-title-row">
                 <ion-col size="12">
                     <h1>{{ 'wallet.wallet-overview' | translate }}</h1>
                     <p>{{ 'wallet.you-have-n-wallets' | translate: {walletsCount: masterWallet.getSubWallets().length} }}</p>
                 </ion-col>
-            </ion-row>
+            </ion-row> -->
+            
             <ion-row
                 class="card-row"
                 [ngStyle]="
@@ -96,7 +135,7 @@
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
 
-            <ion-row class="list-title-row collectibles-title">
+            <ion-row *ngIf="masterWallet.getNFTs().length" class="list-title-row collectibles-title">
                 <ion-col size="12">
                     <h1>{{ 'wallet.collectibles' | translate }}</h1>
                 </ion-col>
@@ -111,11 +150,11 @@
                     </div>
                 </ion-col>
                 <ion-col size="8" class="middle-col">
-                    <h1>{{nft.name}}</h1>
+                    <h1>{{ nft.name }}</h1>
                     <div class="bottom-col"><span class="synced">ELASTOS {{nft.type}} NFT</span></div>
                 </ion-col>
                 <ion-col size="2" class="right-col">
-                    <h1>{{nft.balance}}</h1>
+                    <h1>{{ nft.balance }}</h1>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
@@ -123,12 +162,14 @@
     </ion-slides>
 
     <ion-grid class="single-slide" [class.dark-slide]="theme.darkMode" [class.blur]="native.popup" *ngIf="isSingleWallet">
-        <ion-row class="main-title-row">
+
+<!--         <ion-row class="main-title-row">
             <ion-col size="12">
                 <h1>{{ 'wallet.wallet-overview' | translate }}</h1>
                 <p>{{ 'wallet.you-have-n-wallets' | translate: {walletsCount: masterWallet.getSubWallets().length} }}</p>
             </ion-col>
-        </ion-row>
+        </ion-row> -->
+
         <ion-row
             class="card-row"
             [ngStyle]="
