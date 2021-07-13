@@ -3,7 +3,7 @@ import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, TitleBarForegroundMode, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 
@@ -92,16 +92,22 @@ export class ScanPage implements OnInit {
       }
     })
     .catch(async (err: any) => {
-      Logger.log('didsessions', 'QRScanner error', err);
+      Logger.warn('didsessions', 'QRScanner error', err);
       await this.identityService.startImportingMnemonic(null);
     });
   }
 
-  ionViewWillLeave() {
+  async ionViewWillLeave() {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    await this.hideCamera();
+  }
+
+  async hideCamera() {
     this.zone.run(() => {
       this.scanning = false;
     });
+    await this.qrScanner.hide();
+    await this.qrScanner.destroy();
   }
 
 }
