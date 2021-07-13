@@ -14,7 +14,6 @@ import { ContactNotifierService } from "src/app/services/contactnotifier.service
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
-import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { AvatarCredentialSubject } from "../model/avatarcredentialsubject";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
 import { BehaviorSubject, Subscription } from "rxjs";

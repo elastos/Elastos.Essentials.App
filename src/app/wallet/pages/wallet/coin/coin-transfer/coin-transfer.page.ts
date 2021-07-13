@@ -81,6 +81,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public fromSubWallet: SubWallet;
     public toSubWallet: SubWallet = null;
 
+    // Intent
+    private action = null;
+    private intentId = null;
+
     // Display memo
     public hideMemo = true;
 
@@ -258,6 +262,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 if (this.amount) {
                     this.amountCanBeEditedInPayIntent = false;
                 }
+                this.action = this.coinTransferService.intentTransfer.action;
+                this.intentId = this.coinTransferService.intentTransfer.intentId;
                 break;
         }
     }
@@ -266,13 +272,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * Same chain, different "users"
      */
     async createSendTransaction() {
-        // let toAmount: number;
-        // if (!this.sendMax && (this.chainId === StandardCoinName.ELA || this.chainId === StandardCoinName.IDChain)) {
-        //     toAmount = this.accMul(this.amount, Config.SELA);
-        // } else {
-        //     toAmount = this.amount;
-        // }
-
         // Call dedicated api to the source subwallet to generate the appropriate transaction type.
         // For example, ERC20 token transactions are different from standard coin transactions (for now - as
         // the spv sdk doesn't support ERC20 yet).
@@ -282,20 +281,29 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.memo // User input memo
         );
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            action: this.transferType === TransferType.PAY ? this.coinTransferService.intentTransfer.action : null ,
-            intentId: this.transferType === TransferType.PAY ? this.coinTransferService.intentTransfer.intentId : null ,
-        });
+        if (rawTx) {
+          const transfer = new Transfer();
+          Object.assign(transfer, {
+              masterWalletId: this.masterWallet.id,
+              chainId: this.chainId,
+              rawTransaction: rawTx,
+              action: this.action,
+              intentId: this.intentId
+          });
 
-        const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-        if (result.published)
-            this.showSuccess();
-        if (transfer.intentId) {
-          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+          if (result.published)
+              this.showSuccess();
+          if (transfer.intentId) {
+            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          }
+        } else {
+          if (this.intentId) {
+            await this.globalIntentService.sendIntentResponse(
+              { txid: null, status: 'error' },
+              this.intentId
+            );
+          }
         }
     }
 
@@ -313,19 +321,21 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.memo // Memo, not necessary
             );
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: null,
-            intentId: null,
-        });
+        if (rawTx) {
+          const transfer = new Transfer();
+          Object.assign(transfer, {
+              masterWalletId: this.masterWallet.id,
+              chainId: this.chainId,
+              rawTransaction: rawTx,
+              payPassword: '',
+              action: null,
+              intentId: null,
+          });
 
-        const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-        if (result.published)
-            this.showSuccess();
+          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+          if (result.published)
+              this.showSuccess();
+        }
     }
 
     /**
@@ -338,19 +348,21 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.memo
         );
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: null,
-            intentId: null,
-        });
+        if (rawTx) {
+          const transfer = new Transfer();
+          Object.assign(transfer, {
+              masterWalletId: this.masterWallet.id,
+              chainId: this.chainId,
+              rawTransaction: rawTx,
+              payPassword: '',
+              action: null,
+              intentId: null,
+          });
 
-        const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-        if (result.published)
-            this.showSuccess();
+          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+          if (result.published)
+              this.showSuccess();
+        }
     }
 
     goScan() {

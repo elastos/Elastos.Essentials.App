@@ -78,11 +78,11 @@ export abstract class StandardSubWallet extends SubWallet {
                         break;
                     case RawTransactionType.WithdrawFromSideChain:
                         switch (transaction.inputs[0]) {
-                            case Config.IDCHAIN_ADDRESS:
-                            case Config.ETHDID_ADDRESS:
+                            case Config.IDCHAIN_DEPOSIT_ADDRESS:
+                            case Config.ETHDID_DEPOSIT_ADDRESS:
                                 transactionName = "wallet.coin-dir-from-idchain";
                                 break;
-                            case Config.ETHSC_ADDRESS:
+                            case Config.ETHSC_DEPOSIT_ADDRESS:
                                 transactionName = "wallet.coin-dir-from-ethsc";
                                 break;
                             default:
@@ -105,11 +105,11 @@ export abstract class StandardSubWallet extends SubWallet {
                 switch (transaction.txtype) {
                     case RawTransactionType.TransferCrossChainAsset:
                         switch (transaction.outputs[0]) {
-                            case Config.IDCHAIN_ADDRESS:
-                            case Config.ETHDID_ADDRESS:
+                            case Config.IDCHAIN_DEPOSIT_ADDRESS:
+                            case Config.ETHDID_DEPOSIT_ADDRESS:
                                 transactionName = "wallet.coin-dir-to-idchain";
                                 break;
-                            case Config.ETHSC_ADDRESS:
+                            case Config.ETHSC_DEPOSIT_ADDRESS:
                                 transactionName = "wallet.coin-dir-to-ethsc";
                                 break;
                             default:

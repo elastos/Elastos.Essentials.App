@@ -110,36 +110,42 @@ export class WalletJsonRPCService {
         }
     }
 
-    async getrawtransaction(chainID: StandardCoinName, txid: string): Promise<TransactionDetail> {
+    async getrawtransaction(chainID: StandardCoinName, txidArray: string[]): Promise<any[]> {
+      const paramArray = [];
+      for (let i = 0, len = txidArray.length; i < len; i++) {
+        const txid = txidArray[i];
         const param = {
             method: 'getrawtransaction',
             params: {
               txid,
               verbose : true
             },
+            id: i.toString()
         };
+        paramArray.push(param);
+      }
 
-        let apiurltype = this.getApiUrlTypeForRpc(chainID);
-        const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
-        if (rpcApiUrl === null) {
-            return null;
-        }
+      let apiurltype = this.getApiUrlTypeForRpc(chainID);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
+      if (rpcApiUrl === null) {
+          return null;
+      }
 
-        let result: TransactionDetail = null;
-        // httpPost fail sometimes, retry 5 times.
-        let retryTimes = 0;
-        do {
-            try {
-                result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-                break;
-            } catch (e) {
-                // wait 100ms?
-            }
-        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
+      let result: any[] = null;
+      // httpPost fail sometimes, retry 5 times.
+      let retryTimes = 0;
+      do {
+          try {
+              result = await this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
+              break;
+          } catch (e) {
+              // wait 100ms?
+          }
+      } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
 
-        // Logger.log('wallet', 'getrawtransaction:', result)
-        return result;
-    }
+      // Logger.log('wallet', 'getrawtransaction:', result)
+      return result;
+  }
 
     // return all utxo by address
     async getAllUtxoByAddress(chainID: StandardCoinName, addresses: string[], utxotype: UtxoType = UtxoType.Mixed): Promise<any> {

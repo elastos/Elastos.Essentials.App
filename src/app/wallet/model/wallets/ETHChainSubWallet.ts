@@ -36,10 +36,10 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
         switch (this.id) {
           case StandardCoinName.ETHSC:
-            this.contractAddress = Config.ETHSC_CONTRACT_ADDRESS.toLowerCase();
+            this.contractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();
           break;
           case StandardCoinName.ETHDID:
-            this.contractAddress = Config.ETHDID_CONTRACT_ADDRESS.toLowerCase();
+            this.contractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();
           break;
           default:
             Logger.warn('wallet', 'The ', this.id, ' does not set the contract address!');
@@ -274,6 +274,14 @@ export class ETHChainSubWallet extends StandardSubWallet {
         return this.tokenList;
     }
 
+    /**
+     * Check whether the available balance is enough.
+     * @param amount
+     */
+    public async isAvailableBalanceEnough(amount: BigNumber) {
+      return this.balance.gt(amount);
+    }
+
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
       let nonce = await this.getNonce();
       Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
@@ -369,6 +377,50 @@ export class ETHChainSubWallet extends StandardSubWallet {
             nonce
         );
     }
+
+    public async createIDTransaction(payload: string): Promise<string> {
+      const contractAbi = [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "name": "publishDidTransaction",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
+
+      let contractAddress = '0xF654c3cBBB60D7F4ac7cDA325d51E62f47ACD436';
+      const publishDIDContract = new this.web3.eth.Contract(contractAbi, contractAddress);
+      const gasPrice = await this.web3.eth.getGasPrice();
+      const method = publishDIDContract.methods.publishDidTransaction(payload);
+      const gasLimit = 100000;
+      const data = method.encodeABI();
+      let nonce = await this.getNonce();
+      Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' contractAddress:', contractAddress);
+      return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
+          this.masterWallet.id,
+          this.id,
+          contractAddress,
+          '0',
+          0, // WEI
+          gasPrice,
+          0, // WEI
+          gasLimit.toString(),
+          data,
+          nonce
+      );
+  }
 
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;

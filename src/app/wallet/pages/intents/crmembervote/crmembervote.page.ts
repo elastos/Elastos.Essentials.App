@@ -150,18 +150,25 @@ export class CRmembervotePage implements OnInit {
             '', // Memo, not necessary
         );
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWalletId,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: this.intentTransfer.action,
-            intentId: this.intentTransfer.intentId,
-        });
+        if (rawTx) {
+          const transfer = new Transfer();
+          Object.assign(transfer, {
+              masterWalletId: this.masterWalletId,
+              chainId: this.chainId,
+              rawTransaction: rawTx,
+              payPassword: '',
+              action: this.intentTransfer.action,
+              intentId: this.intentTransfer.intentId,
+          });
 
-        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+        } else {
+          await this.globalIntentService.sendIntentResponse(
+            { txid: null, status: 'error' },
+            this.intentTransfer.intentId
+          );
+        }
     }
 }
 

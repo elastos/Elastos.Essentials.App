@@ -26,14 +26,13 @@ import { PopupProvider } from '../../../services/popup.service';
 import { WalletManager } from '../../../services/wallet.service';
 import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
-import { StandardCoinName } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
-import { MainAndIDChainSubWallet } from '../../../model/wallets/MainAndIDChainSubWallet';
 import BigNumber from 'bignumber.js';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
 
 
 @Component({
@@ -45,7 +44,7 @@ export class DidTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private masterWallet: MasterWallet;
-    private sourceSubwallet: MainAndIDChainSubWallet;
+    private sourceSubwallet: ETHChainSubWallet;
     private intentTransfer: IntentTransfer;
     private balance: number; // ELA
     private chainId: string; // IDChain
@@ -84,7 +83,8 @@ export class DidTransactionPage implements OnInit {
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
 
-        this.sourceSubwallet = this.masterWallet.getSubWallet(this.chainId) as MainAndIDChainSubWallet;
+        this.sourceSubwallet = this.masterWallet.getSubWallet(this.chainId) as ETHChainSubWallet;
+        Logger.warn('wallet', 'DidTransactionPage this ', this)
     }
 
     /**
@@ -119,25 +119,31 @@ export class DidTransactionPage implements OnInit {
     async createIDTransaction() {
         Logger.log('wallet', 'Calling createIdTransaction(): ', this.coinTransferService.didrequest);
 
-        const rawTx = await (this.sourceSubwallet as MainAndIDChainSubWallet).createIDTransaction(
+        const rawTx = await (this.sourceSubwallet as ETHChainSubWallet).createIDTransaction(
               this.coinTransferService.didrequest,
-              '', // Memo, not necessary
           );
 
         Logger.log('wallet', 'Created raw DID transaction:', rawTx);
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: this.intentTransfer.action,
-            intentId: this.intentTransfer.intentId,
-        });
+        if (rawTx) {
+          const transfer = new Transfer();
+          Object.assign(transfer, {
+              masterWalletId: this.masterWallet.id,
+              chainId: this.chainId,
+              rawTransaction: rawTx,
+              payPassword: '',
+              action: this.intentTransfer.action,
+              intentId: this.intentTransfer.intentId,
+          });
 
-        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+        } else {
+          await this.globalIntentService.sendIntentResponse(
+            { txid: null, status: 'error' },
+            this.intentTransfer.intentId
+          );
+        }
     }
 }
 

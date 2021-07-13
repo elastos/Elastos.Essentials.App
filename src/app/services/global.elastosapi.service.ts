@@ -354,7 +354,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
             try {
                 let data = await this.globalJsonRPCService.httpPost(testApiUrl, param);
-                Logger.log("elastosapi", "Provider "+provider.name+" just answered the test api call with value", data);
+                Logger.log("elastosapi", "Provider "+provider.name+" just answered the test api call with value (block height) ", data);
                 // Set the provider as best provider if no one did that yet. We are the fastest api call to answer.
                 if (!this._bestProvider)
                     this._bestProvider = provider;

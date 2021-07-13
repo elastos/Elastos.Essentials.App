@@ -172,21 +172,30 @@ export class EscTransactionPage implements OnInit {
 
         Logger.log('wallet', 'Created raw ESC transaction:', rawTx);
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: this.intentTransfer.action,
-            intentId: this.intentTransfer.intentId,
-        });
+        if (rawTx) {
+          const transfer = new Transfer();
+          Object.assign(transfer, {
+              masterWalletId: this.masterWallet.id,
+              chainId: this.chainId,
+              rawTransaction: rawTx,
+              payPassword: '',
+              action: this.intentTransfer.action,
+              intentId: this.intentTransfer.intentId,
+          });
 
-        let sourceSubwallet = this.walletManager.getMasterWallet(this.masterWallet.id).getSubWallet(this.chainId);
-        const result = await sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        if (transfer.intentId) {
-            Logger.log('wallet', 'Sending esctransaction intent response');
-            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          let sourceSubwallet = this.walletManager.getMasterWallet(this.masterWallet.id).getSubWallet(this.chainId);
+          const result = await sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+          if (transfer.intentId) {
+              Logger.log('wallet', 'Sending esctransaction intent response');
+              await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          }
+        } else {
+          if (this.intentTransfer.intentId) {
+            await this.globalIntentService.sendIntentResponse(
+              { txid: null, status: 'error' },
+              this.intentTransfer.intentId
+            );
+          }
         }
     }
 }

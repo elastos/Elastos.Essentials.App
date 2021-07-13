@@ -26,8 +26,6 @@ export class WalletPrefsService {
       this.updateConfig(this.activeNetworkTemplate);
     })
 
-    this.updateConfig(this.activeNetworkTemplate);
-
     this.setMnemonicLangByLanguage(this.translate.currentLang);
     this.languageSubscription = this.translate.onLangChange.subscribe(data => {
       this.setMnemonicLangByLanguage(data.lang);
@@ -36,21 +34,21 @@ export class WalletPrefsService {
 
   private updateConfig(networkTemplate: string) {
     if (networkTemplate === MAINNET_TEMPLATE) {
-      Config.ETHDID_ADDRESS = Config.ETHDID_ADDRESS_MAINNET;
-      Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_MAINNET;
-      Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_MAINNET;
-      Config.ETHDID_CONTRACT_ADDRESS = Config.ETHDID_CONTRACT_ADDRESS_MAINNET;
+      Config.ETHDID_DEPOSIT_ADDRESS = Config.ETHDID_DEPOSIT_ADDRESS_MAINNET;
+      Config.ETHSC_DEPOSIT_ADDRESS = Config.ETHSC_DEPOSIT_ADDRESS_MAINNET;
+      Config.ETHSC_WITHDRAW_ADDRESS = Config.ETHSC_WITHDRAW_ADDRESS_MAINNET;
+      Config.ETHDID_WITHDRAW_ADDRESS = Config.ETHDID_WITHDRAW_ADDRESS_MAINNET;
     } else if (networkTemplate === TESTNET_TEMPLATE) {
-      Config.ETHDID_ADDRESS = Config.ETHDID_ADDRESS_TESTNET;
-      Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_TESTNET;
-      Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_TESTNET;
-      Config.ETHDID_CONTRACT_ADDRESS = Config.ETHDID_CONTRACT_ADDRESS_TESTNET;
+      Config.ETHDID_DEPOSIT_ADDRESS = Config.ETHDID_DEPOSIT_ADDRESS_TESTNET;
+      Config.ETHSC_DEPOSIT_ADDRESS = Config.ETHSC_DEPOSIT_ADDRESS_TESTNET;
+      Config.ETHSC_WITHDRAW_ADDRESS = Config.ETHSC_WITHDRAW_ADDRESS_TESTNET;
+      Config.ETHDID_WITHDRAW_ADDRESS = Config.ETHDID_WITHDRAW_ADDRESS_TESTNET;
     } else {
       // Use MainNet config for others.
-      Config.ETHDID_ADDRESS = Config.ETHDID_ADDRESS_MAINNET;
-      Config.ETHSC_ADDRESS = Config.ETHSC_ADDRESS_MAINNET;
-      Config.ETHSC_CONTRACT_ADDRESS = Config.ETHSC_CONTRACT_ADDRESS_MAINNET;
-      Config.ETHDID_CONTRACT_ADDRESS = Config.ETHDID_CONTRACT_ADDRESS_MAINNET;
+      Config.ETHDID_DEPOSIT_ADDRESS = Config.ETHDID_DEPOSIT_ADDRESS_MAINNET;
+      Config.ETHSC_DEPOSIT_ADDRESS = Config.ETHSC_DEPOSIT_ADDRESS_MAINNET;
+      Config.ETHSC_WITHDRAW_ADDRESS = Config.ETHSC_WITHDRAW_ADDRESS_MAINNET;
+      Config.ETHDID_WITHDRAW_ADDRESS = Config.ETHDID_WITHDRAW_ADDRESS_MAINNET;
     }
   }
 

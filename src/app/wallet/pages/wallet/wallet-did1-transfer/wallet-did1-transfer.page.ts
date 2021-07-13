@@ -165,19 +165,21 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
             "Funds migration from DID 1.0 chain"
         );
 
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
-            chainId: this.chainId,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: null,
-            intentId: null,
-        });
+        if (rawTx) {
+          const transfer = new Transfer();
+          Object.assign(transfer, {
+              masterWalletId: this.masterWallet.id,
+              chainId: this.chainId,
+              rawTransaction: rawTx,
+              payPassword: '',
+              action: null,
+              intentId: null,
+          });
 
-        const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-        if (result.published)
-            this.showSuccess();
+          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+          if (result.published)
+              this.showSuccess();
+        }
     }
 
     goScan() {

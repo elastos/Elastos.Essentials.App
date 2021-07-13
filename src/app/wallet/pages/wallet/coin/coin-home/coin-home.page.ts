@@ -75,6 +75,7 @@ export class CoinHomePage implements OnInit {
 
     private syncSubscription: Subscription = null;
     private syncCompletedSubscription: Subscription = null;
+    private transactionStatusSubscription: Subscription = null;
 
     private updateInterval = null;
     private updateTmeout = null;
@@ -113,6 +114,7 @@ export class CoinHomePage implements OnInit {
         }
         if (this.syncSubscription) this.syncSubscription.unsubscribe();
         if (this.syncCompletedSubscription) this.syncCompletedSubscription.unsubscribe();
+        if (this.transactionStatusSubscription) this.transactionStatusSubscription.unsubscribe();
     }
 
     async init() {
@@ -140,7 +142,7 @@ export class CoinHomePage implements OnInit {
         // Only update balance, It will save some time for the second time you enter this page.
         this.subWallet.updateBalance();
 
-        this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe((count) => {
+        this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe((count) => {
             if (count > 0) this.updateTransactions();
         });
 

@@ -163,7 +163,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * @param amount unit is SELA
      */
     public async isAvailableBalanceEnough(amount: BigNumber) {
-        return true;
+        return this.balance.gt(amount);
     }
 
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string = ""): Promise<string> {
@@ -181,6 +181,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         }]
 
         let utxo = await this.getUtxo(toAmount + 10000);// 10000: fee
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createTransaction(
             this.masterWallet.id,
@@ -209,19 +210,20 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createDepositTransaction(sideChainID: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
         let toAmount = this.accMul(amount, Config.SELA);
-        let utxo = await this.getUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
         Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
+        let utxo = await this.getUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
+        if (!utxo) return;
 
         let lockAddres = '';
         switch (sideChainID) {
           case StandardCoinName.IDChain:
-            lockAddres = Config.IDCHAIN_ADDRESS;
+            lockAddres = Config.IDCHAIN_DEPOSIT_ADDRESS;
           break;
           case StandardCoinName.ETHSC:
-            lockAddres = Config.ETHSC_ADDRESS;
+            lockAddres = Config.ETHSC_DEPOSIT_ADDRESS;
           break;
           case StandardCoinName.ETHDID:
-            lockAddres = Config.ETHDID_ADDRESS;
+            lockAddres = Config.ETHDID_DEPOSIT_ADDRESS;
           break;
           default:
             Logger.error('wallet', 'createDepositTransaction not support ', sideChainID);
@@ -248,8 +250,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         } else {
             toAmount = this.accMul(amount, Config.SELA);
         }
-        let utxo = await this.getUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
         Logger.log('wallet', 'createWithdrawTransaction toAmount:', toAmount);
+        let utxo = await this.getUtxo(toAmount + 20000); //20000: fee, cross transafer need more fee.
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createWithdrawTransaction(
             this.masterWallet.id,
@@ -264,6 +267,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createIDTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createIdTransaction(
             this.masterWallet.id,
@@ -292,6 +296,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createProposalTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalTransaction(
             this.masterWallet.id,
@@ -305,6 +310,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createProposalChangeOwnerTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalChangeOwnerTransaction(
             this.masterWallet.id,
@@ -318,6 +324,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createTerminateProposalTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createTerminateProposalTransaction(
             this.masterWallet.id,
@@ -331,6 +338,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createSecretaryGeneralElectionTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createSecretaryGeneralElectionTransaction(
             this.masterWallet.id,
@@ -344,6 +352,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createProposalTrackingTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalTrackingTransaction(
             this.masterWallet.id,
@@ -357,6 +366,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createProposalReviewTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalReviewTransaction(
             this.masterWallet.id,
@@ -370,6 +380,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createProposalWithdrawTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createProposalWithdrawTransaction(
             this.masterWallet.id,
@@ -386,6 +397,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     //
     public async createRegisterProducerTransaction(payload: string, amount: number, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(amount);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRegisterProducerTransaction(
             this.masterWallet.id,
@@ -400,6 +412,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createCancelProducerTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createCancelProducerTransaction(
             this.masterWallet.id,
@@ -413,6 +426,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createUpdateProducerTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createUpdateProducerTransaction(
             this.masterWallet.id,
@@ -440,6 +454,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     //
     public async createRegisterCRTransaction(payload: string, amount: number, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(amount);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRegisterCRTransaction(
             this.masterWallet.id,
@@ -454,6 +469,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createUnregisterCRTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createUnregisterCRTransaction(
             this.masterWallet.id,
@@ -467,6 +483,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createUpdateCRTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createUpdateCRTransaction(
             this.masterWallet.id,
@@ -480,6 +497,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createRetrieveCRDepositTransaction(amount: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createRetrieveCRDepositTransaction(
             this.masterWallet.id,
@@ -493,6 +511,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createCRCouncilMemberClaimNodeTransaction(payload: string, memo: string = ""): Promise<string> {
         let utxo = await this.getUtxo(20000);
+        if (!utxo) return;
 
         return this.masterWallet.walletManager.spvBridge.createCRCouncilMemberClaimNodeTransaction(
             this.masterWallet.id,
@@ -535,6 +554,35 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         }
     }
 
+    private getPendingTransaction() {
+      let pendingTransactions = [];
+      for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
+        if (this.transactions.txhistory[i].type === TransactionDirection.SENT) {
+          if (this.transactions.txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+            pendingTransactions.push(this.transactions.txhistory[i].txid);
+          } else {
+            // the transactions list is sorted by block height.
+            break;
+          }
+        }
+      }
+      return pendingTransactions;
+    }
+
+    private async getUTXOUsedInPendingTransaction() {
+      let pendingTx = this.getPendingTransaction();
+      if (pendingTx.length === 0) return [];
+
+      let txList = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, pendingTx);
+      let usedUTXO = [];
+      for (let i = 0, len = txList.length; i < len; i++) {
+        for (let j = 0, vinLen = txList[i].result.vin.length; j < vinLen; j++) {
+          usedUTXO.push(txList[i].result.vin[j].txid);
+        }
+      }
+      return usedUTXO;
+    }
+
     /**
      *
      * @param amountSELA SELA
@@ -552,7 +600,16 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
         }
 
+        // Remove the utxo that used in pending transactions.
+        let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
+        for (let i = utxoArray.length - 1; i >= 0; i--) {
+          if (usedUTXOs.indexOf(utxoArray[i].txid) >= 0) {
+              utxoArray.splice(i, 1);
+          }
+        }
+
         let utxoArrayForSDK = [];
+        let getEnoughUTXO = false;
         if (utxoArray) {
             let totalAmount = 0;
             for (let i = 0, len = utxoArray.length; i < len; i++) {
@@ -567,11 +624,22 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 totalAmount += utxoAmountSELA;
                 if ((amountSELA != -1) && (totalAmount > amountSELA)) {
                     Logger.log('wallet', 'Get enought utxo for :', amountSELA);
+                    getEnoughUTXO = true;
                     break;
                 }
             }
         }
-        return utxoArrayForSDK;
+        if (!getEnoughUTXO) {
+          Logger.warn('wallet', 'utxo is not enought');
+          if (usedUTXOs.length > 0) {
+            Logger.warn('wallet', 'used UTXOs count:', usedUTXOs.length);
+            // Need to wait the pending transaction to be confirmed.
+            await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-pending');
+            return null;
+          }
+        } else {
+          return utxoArrayForSDK;
+        }
     }
 
     public async getUtxoForSDK(utxoArray: Utxo[] = null): Promise<UtxoForSDK[]> {
@@ -601,10 +669,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         // We only consider the case of one utxo for voting.
         if (this.votingUtxoArray && (this.votingUtxoArray.length > 0)) {
             let detail = await this.getTransactionDetails(this.votingUtxoArray[0].txid);
-            return detail.vout[0].payload.contents;
-        } else {
-            return null;
+            if (detail) {
+              return detail.vout[0].payload.contents;
+            }
         }
+        return null;
     }
 
     // Transform vote contents from raw rpc to the format required by the SDK
@@ -861,8 +930,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     async getTransactionDetails(txid: string): Promise<TransactionDetail> {
-        let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, txid);
-        return details;
+        let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, [txid]);
+        if (details) {
+          return details[0].result;
+        }
+        return null;
     }
 
     async getRealAddressInCrosschainTx(txDetail: TransactionDetail) {
@@ -879,14 +951,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                     // Sending address
                     let realtxid = Util.reversetxid(txDetail.payload.sidechaintransactionhashes[0]);
 
-                    if (txDetail.payload.genesisblockaddress === Config.ETHSC_ADDRESS) {
+                    if (txDetail.payload.genesisblockaddress === Config.ETHSC_DEPOSIT_ADDRESS) {
                         let result = await this.jsonRPCService.getETHSCTransactionByHash(StandardCoinName.ETHSC, realtxid);
                         if (result && result.from) {
                             targetAddress = result.from;
                         }
-                    } else if (txDetail.payload.genesisblockaddress === Config.IDCHAIN_ADDRESS) {
+                    } else if (txDetail.payload.genesisblockaddress === Config.IDCHAIN_DEPOSIT_ADDRESS) {
                         // TODO: get the real address.
-                    } else if (txDetail.payload.genesisblockaddress === Config.ETHDID_ADDRESS) {
+                    } else if (txDetail.payload.genesisblockaddress === Config.ETHDID_DEPOSIT_ADDRESS) {
                         // TODO: get the real address.
                     } else {
                         Logger.error('wallet', 'Can not find the chain for genesis block address:', txDetail.payload.genesisblockaddress);
@@ -1113,7 +1185,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 // break;
             } else {
                 // This address belongs to this wallet, so remove it.
-                sentOutputs.splice(i);
+                sentOutputs.splice(i, 1);
             }
         }
 
@@ -1134,26 +1206,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].txid, transactionsList[i], transactionsList[i].time);
       }
-      this.cleanUTXO(transactionsList);
       this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       this.transactionsCache.save();
-    }
-
-    /**
-     * We can not use the UTXO that we used but the transaction is not on chain.
-     */
-    private cleanUTXO(transactionsList: TransactionHistory[]) {
-      // Logger.log('wallet', 'cleanLocalTransactions transactionsList:', transactionsList);
-      // for (let i = this.transactionsInPool.length - 1; i >= 0; i--) {
-      //   let existingIndex = transactionsList.findIndex((tx) => tx.txid === this.transactionsInPool[i].txid);
-      //   Logger.warn('wallet', 'existingIndex:', existingIndex)
-      //   if (existingIndex !== -1) {
-      //     Logger.log('wallet', 'cleanLocalTransactions remove:', this.transactionsInPool[i]);
-      //     this.transactionsInPool.splice(i, 1);
-      //   }
-      // }
-
-      // Logger.log('wallet', 'cleanLocalTransactions :', this.transactionsInPool)
     }
 
     accMul(arg1, arg2) {
