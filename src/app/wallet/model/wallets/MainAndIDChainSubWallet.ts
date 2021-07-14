@@ -839,6 +839,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
         if (txList.length > 0) {
             this.mergeTransactionListAndSort(txList);
+        } else {
+            // Notify the page to show the right time of the transactions even no new transaction.
+            this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length);
         }
 
         Logger.test("wallet", 'TIMETEST getTransactionByRPC ', this.id, ' end');
