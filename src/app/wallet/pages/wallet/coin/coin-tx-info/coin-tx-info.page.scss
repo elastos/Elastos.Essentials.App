@@ -29,7 +29,7 @@ ion-grid {
             font-size: 20px;
             font-weight: 600;
             line-height: 1.29;
-            color: #2e2f4e;
+            color: #000000;
             padding: 5px 5px 10px;
         }
 
@@ -40,7 +40,7 @@ ion-grid {
             letter-spacing: 0.7px;
             text-align: center;
             text-transform: none;
-            color: #7b15ff;
+            color: #000000;
         }
 
         p {
@@ -118,7 +118,7 @@ ion-grid {
             ion-icon {
                 height: 17px;
                 width: 17px;
-                color: #8888b0;
+                color: #620ad4;
             }
         }
 
@@ -161,7 +161,7 @@ ion-grid {
         background-color: #212021;
         box-shadow: none;
 
-        ion-card-title {
+        ion-card-title, ion-card-subtitle {
             color: #ffffff;
         }
     }
