@@ -68,7 +68,7 @@ class SubwalletTransactionStatus {
 
   public get(subwalletSubjectId: string): BehaviorSubject<number> {
     if (!this.subwalletSubjects.has(subwalletSubjectId)) {
-      let subject = new BehaviorSubject<number>(0);
+      let subject = new BehaviorSubject<number>(-1);
       this.subwalletSubjects.set(subwalletSubjectId, subject);
     }
     return this.subwalletSubjects.get(subwalletSubjectId);

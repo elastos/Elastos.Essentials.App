@@ -362,6 +362,14 @@ export class SPVWalletPluginBridge {
         });
     }
 
+    // exportWalletWithPrivateKey(masterWalletId: string, payPassWord: string): Promise<any> {
+    //     return new Promise((resolve, reject)=>{
+    //         walletManager.exportWalletWithPrivateKey([masterWalletId, payPassWord],
+    //             (ret) => { resolve(ret); },
+    //             (err) => { this.handleError(err, reject);  });
+    //     });
+    // }
+
     verifyPassPhrase(masterWalletId: string, passphrase: string, payPassword: string): Promise<void> {
       return new Promise((resolve, reject)=>{
           walletManager.verifyPassPhrase([masterWalletId, passphrase, payPassword],
@@ -632,6 +640,14 @@ export class SPVWalletPluginBridge {
                 (err) => { this.handleError(err, reject); });
         });
     }
+
+    // exportETHSCPrivateKey(masterWalletId: string, chainID: string, payPassWord: string): Promise<any> {
+    //     return new Promise((resolve, reject)=>{
+    //         walletManager.exportETHSCPrivateKey([masterWalletId, chainID, payPassWord],
+    //             (ret) => { resolve(ret); },
+    //             (err) => { this.handleError(err, reject);  });
+    //     });
+    // }
 
     createDepositTransaction(
         masterWalletId: string,
@@ -993,12 +1009,29 @@ export class SPVWalletPluginBridge {
     async handleError(err: any, promiseRejectHandler: (reason?: any)=>void) {
         await this.native.hideLoading();
 
+        // The error has caught, Senty should not capture this exception
+        err.type = 'skipsentry';
+
         if (GlobalDIDSessionsService.signedInDIDString == null) {
-          // Sign out
-          Logger.warn('wallet', 'did sign out, Filter this error:', err);
-          return;
+            // Sign out
+            Logger.warn('wallet', 'did sign out, Filter this error:', err);
+            if (promiseRejectHandler) promiseRejectHandler(err);
+            return;
         }
-        Logger.error('wallet', err);
+
+        // Do not show alert for 10003 and 20001.
+        if (err["code"] === 10003) {
+            Logger.warn('wallet', 'SPVWalletPluginBridge Can\'t get the subwallt :', err);
+            if (promiseRejectHandler) promiseRejectHandler(err);
+            return;
+        }
+        // Maybe some subwallet is not supported in LRW.
+        if (err["code"] === 20001) {
+            Logger.warn('wallet', 'SPVWalletPluginBridge error :', err);
+            if (promiseRejectHandler) promiseRejectHandler(err);
+            return;
+        }
+        Logger.error('wallet', 'SPVWalletPluginBridge::handleError:', err);
 
         let error = err["code"]
         if (error) {
@@ -1009,10 +1042,6 @@ export class SPVWalletPluginBridge {
             else if (err["message"]) {
                 error = error + ": " + err["message"];
             }
-        }
-        if (err["code"] === 10003) {
-            Logger.warn('wallet', 'Can\'t get the subwallt :', err);
-            return;
         }
 
         // Show an error popup
@@ -1032,10 +1061,6 @@ export class SPVWalletPluginBridge {
             this.event.publish("error:update");
         }
 
-        // The error has caught, Senty should not capture this exception
-        err.type = 'skipsentry';
-
-        if (promiseRejectHandler)
-            promiseRejectHandler(err);
+        if (promiseRejectHandler) promiseRejectHandler(err);
     }
 }

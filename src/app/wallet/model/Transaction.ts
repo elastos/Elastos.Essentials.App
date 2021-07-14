@@ -13,6 +13,12 @@ export enum TransactionDirection {
     DEPOSIT = "deposit"
 }
 
+export enum ETHSCTransferType {
+  DEPOSIT = "crossChainEthDeposit",
+  TRANSFER = "ethTransfer",
+}
+
+
 export enum TransactionType {
     RECEIVED = 1,
     SENT = 2,

@@ -113,8 +113,7 @@
         </div>
         <div class="empty-list" *ngIf="transactionsLoaded && (transferList.length === 0)">
             <img src="assets/wallet/icons/warning.svg"/>
-            <h1 *ngIf="!chainIsERC20()">{{ 'wallet.coin-no-transactions' | translate }}</h1>
-            <h2 *ngIf="chainIsERC20()">{{ 'wallet.erc20-transactions' | translate }} <br> {{ 'wallet.cannot-display' | translate }}</h2>
+            <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
         </div>
         <div class="more" (click)="clickMore()" *ngIf="isShowMore">
             {{ 'wallet.click-to-load-more' | translate }}

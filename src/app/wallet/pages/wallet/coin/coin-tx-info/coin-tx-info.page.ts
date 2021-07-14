@@ -140,10 +140,19 @@ export class CoinTxInfoPage implements OnInit {
             const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             // Address
             if ((this.chainId === StandardCoinName.ETHSC) || (this.chainId === StandardCoinName.ETHDID)) {
-                this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
-                await this.getERC20TokenTransactionInfo(transaction);
+                if (this.direction === TransactionDirection.SENT) {
+                  this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
+                  await this.getERC20TokenTransactionInfo(transaction);
+                } else if (this.direction === TransactionDirection.RECEIVED) {
+                  this.targetAddress = transaction.from;
+                }
             } else {
-                this.targetAddress = transaction.to;
+                if (this.direction === TransactionDirection.SENT) {
+                  this.targetAddress = transaction.to;
+                } else if (this.direction === TransactionDirection.RECEIVED) {
+                  // TODO: Do not show sender address for cross chain.
+                  this.targetAddress = transaction.from;
+                }
             }
         }
 

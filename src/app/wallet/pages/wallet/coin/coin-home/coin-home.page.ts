@@ -118,7 +118,6 @@ export class CoinHomePage implements OnInit {
     }
 
     async init() {
-        this.loadingTX = true;
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             let masterWalletId = navigation.extras.state.masterWalletId;
@@ -143,16 +142,20 @@ export class CoinHomePage implements OnInit {
         // Only update balance, It will save some time for the second time you enter this page.
         this.subWallet.updateBalance();
 
-        this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe((count) => {
-            this.updateTransactions();
+        this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
+            if (count >= 0) {
+              await this.updateTransactions();
+            }
+            this.loadingTX = false;
         });
 
         this.updateTmeout = setTimeout(async () => {
           if (this.subWallet.isLoadTxDataFromCache()) {
+            this.loadingTX = true;
             await this.updateWalletInfo();
           }
           this.startUpdateInterval();
-        }, 1000);
+        }, 200);
     }
 
     async updateTransactions() {
@@ -162,7 +165,6 @@ export class CoinHomePage implements OnInit {
         this.transferList = [];
         this.todaysTransactions = 0;
         await this.getAllTx();
-        this.loadingTX = false;
     }
 
     async updateWalletInfo() {

@@ -16,8 +16,12 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     public async destroy() {
-        await this.masterWallet.walletManager.spvBridge.destroySubWallet(this.masterWallet.id, this.id);
-
+        try {
+          await this.masterWallet.walletManager.spvBridge.destroySubWallet(this.masterWallet.id, this.id);
+        }
+        catch (e) {
+          Logger.error('wallet', 'destroySubWallet error:', this.id, e)
+        }
         super.destroy();
     }
 

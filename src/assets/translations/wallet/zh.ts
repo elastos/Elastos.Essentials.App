@@ -134,8 +134,6 @@ export const zh = {
         "coin-transaction-status-pending": "确认中",
         "coin-transaction-status-unconfirmed": "未确认",
         "text-coin-close-warning": "此币种将从列表中删除",
-        "erc20-transactions": "ERC20币种交易",
-        "cannot-display": "目前无法显示",
 
         /*******************
         * Coin Select Page *

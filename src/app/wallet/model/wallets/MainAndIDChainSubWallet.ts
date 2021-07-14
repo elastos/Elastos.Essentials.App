@@ -554,7 +554,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         }
     }
 
-    private getPendingTransaction() {
+    private async getPendingTransaction() {
+      if (this.transactions == null) {
+        // In case of.
+        await this.getTransactionByRPC();
+      }
       let pendingTransactions = [];
       for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
         if (this.transactions.txhistory[i].type === TransactionDirection.SENT) {
@@ -570,7 +574,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     private async getUTXOUsedInPendingTransaction() {
-      let pendingTx = this.getPendingTransaction();
+      let pendingTx = await this.getPendingTransaction();
       if (pendingTx.length === 0) return [];
 
       let txList = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, pendingTx);
@@ -837,6 +841,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             // Logger.warn("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
         }
 
+        if (this.transactions == null) {
+          // init
+          this.transactions = {totalcount:0, txhistory:[]};
+        }
+
         if (txList.length > 0) {
             this.mergeTransactionListAndSort(txList);
         } else {
@@ -1016,6 +1025,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 requestAddressCount = startIndex;
                 break;
             }
+            if ((startIndex === 0) && internalAddress && (this.id === StandardCoinName.ELA)) {
+              // OwnerAddress: for register dpos node, CRC.
+              const ownerAddress = await this.getOwnerAddress();
+              addressArray.Addresses.push(ownerAddress);
+            }
+
             startIndex += addressArray.Addresses.length;
 
             try {
@@ -1103,11 +1118,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                     }
                 }
             }
-        }
-
-        if (this.transactions == null) {
-          // init
-          this.transactions = {totalcount:0, txhistory:[]};
         }
 
         for (let i = 0, len = transactionHistory.length; i < len; i++) {

@@ -2,7 +2,7 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, ERC20TokenInfo, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, ERC20TokenInfo, ETHSCTransferType, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
@@ -95,13 +95,14 @@ export class ETHChainSubWallet extends StandardSubWallet {
           // init
           this.transactions = {totalcount:0, txhistory:[]};
         }
-        if (result.length > 0) {
-          // Has new transactions.
-          if (this.transactions.totalcount !== result.length) {
+        if ((result.length > 0) && (this.transactions.totalcount !== result.length)) {
+            // Has new transactions.
             this.transactions.totalcount = result.length;
             this.transactions.txhistory = result.reverse();
             this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
-          }
+        } else {
+          // Notify the page to show the right time of the transactions even no new transaction.
+          this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
         }
       }
     }
@@ -177,7 +178,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
         const direction = transaction.Direction ? transaction.Direction : await this.getETHSCTransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
-                return "wallet.coin-op-received-token";
+                if (transaction.transferType === ETHSCTransferType.DEPOSIT) {
+                  return "wallet.coin-dir-from-mainchain";
+                } else {
+                  return "wallet.coin-op-received-token";
+                }
             case TransactionDirection.SENT:
                 return this.getETHSCTransactionContractType(transaction, translate);
         }

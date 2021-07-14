@@ -167,11 +167,18 @@ export class MasterWallet {
      * Adds a new subwallet to this master wallet, based on a given coin type.
      */
     public async createSubWallet(coin: Coin) {
-        this.subWallets[coin.getID()] = await SubWalletBuilder.newFromCoin(this, coin);
+        try {
+          this.subWallets[coin.getID()] = await SubWalletBuilder.newFromCoin(this, coin);
 
-        Logger.log("wallet", "Created subwallet with id "+coin.getID()+" for wallet "+this.id);
+          Logger.log("wallet", "Created subwallet with id "+coin.getID()+" for wallet "+this.id);
 
-        await this.walletManager.saveMasterWallet(this);
+          await this.walletManager.saveMasterWallet(this);
+        }
+        catch (err) {
+          if (err.code !== 20001) {// 20001: Unsupported subwallet in some test network.
+            throw err;
+          }
+        }
     }
 
     /**
