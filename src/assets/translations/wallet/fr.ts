@@ -27,7 +27,7 @@ export const fr = {
         * Generic Messages *
         ********************/
         "copied": "Copié dans le presse-papier!",
-        'text-did-balance-not-enough': "Enregistrer des informations sur la châine d'identité requièrt une faible somme d'ELA pour les frais de transactions. Veuillez d'abord transférer un petit montant (ex: 0,1 ELA) depuis votre portefeuille principal vers le portefeuille DID!",
+        'text-did-balance-not-enough': "Enregistrer des informations sur la châine d'identité requièrt une faible somme d'ELA pour les frais de transactions. Veuillez d'abord transférer un petit montant (ex: 0,1 ELA) depuis votre portefeuille principal vers le portefeuille EID!",
         'amount-null': "Veuillez saisir un montant pour la transaction",
         "amount-invalid": "Veuillez saisir un montant valide",
         'eth-insuff-balance': 'Vous n\'avez pas suffisamment d\'ELA/ETHSC pour payer cette transaction de jetons ERC20',

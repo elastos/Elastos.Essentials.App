@@ -27,7 +27,7 @@ export const en = {
         * Generic Messages *
         ********************/
         "copied": "Copied to clipboard!",
-        'text-did-balance-not-enough': 'Writing DID information on chain requires small amounts of ELA to pay the fees. Please transfer a few ELA (ex: 0.1 ELA) from your main wallet to the DID sidechain first!',
+        'text-did-balance-not-enough': 'Writing DID information on chain requires small amounts of ELA to pay the fees. Please transfer a few ELA (ex: 0.1 ELA) from your main wallet to the EID sidechain first!',
         'amount-null': "Please set an amount",
         "amount-invalid": "Please enter the correct amount",
         'eth-insuff-balance': 'You must have enough ETHSC for gas fees in order to send Elastos ERC20 tokens',
@@ -317,7 +317,7 @@ export const en = {
         "didtransaction-title": "Publish Identity",
         "didtransaction-publish-identity": "Publish Identity",
         "didtransaction-transaction-fee": "This will cost a minor transaction fee",
-        "didtransaction-intro": "You are publishing your latest identity changes to the public DID Sidechain.",
+        "didtransaction-intro": "You are publishing your latest identity changes to the public EID Sidechain.",
 
         /*******************
         * Voting Common *

@@ -27,7 +27,7 @@ export const zh = {
         * Generic Messages *
         ********************/
         "copied": "已复制到剪切板!",
-        'text-did-balance-not-enough': '在链上写入DID信息需要少量的ELA来支付费用。请先从主钱包中将ELA（例如：0.1 ELA）充值到ID侧链!',
+        'text-did-balance-not-enough': '在链上写入DID信息需要少量的ELA来支付费用。请先从主钱包中将ELA（例如：0.1 ELA）充值到EID侧链!',
         'amount-null': "请输入交易金额",
         "amount-invalid": "请输入正确的金额",
         'eth-insuff-balance': '您必须有足够的ETHSC来支付gas费，才能发送Elastos ERC20代币',
@@ -317,7 +317,7 @@ export const zh = {
         "didtransaction-title": "发布身份",
         "didtransaction-publish-identity": "发布身份",
         "didtransaction-transaction-fee": "只需要花费很少的交易费",
-        "didtransaction-intro": "您正在将最新的身份更改发布到DID侧链",
+        "didtransaction-intro": "您正在将最新的身份更改发布到EID侧链",
 
         /*******************
         * Voting Common *
