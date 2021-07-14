@@ -93,7 +93,7 @@ export class ERC20CoinService {
 
             return { coinName, coinSymbol, coinDecimals };
         } catch (err) {
-            Logger.log('wallet', 'getCoinInfo', err);
+            Logger.warn('wallet', 'getCoinInfo', err);
             return null;
         }
     }

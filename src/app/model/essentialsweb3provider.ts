@@ -17,7 +17,6 @@ export class EssentialsWeb3Provider implements AbstractProvider {
         if (this.rpcApiEndpoint != null)
             return this.rpcApiEndpoint;
 
-        // return GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.ETHSC_RPC);
         return GlobalElastosAPIService.instance.getApiUrl(this.apiurlType);
     }
 

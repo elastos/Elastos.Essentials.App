@@ -3,7 +3,6 @@ import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WalletManager } from '../../../../services/wallet.service';
-import { WalletEditionService } from '../../../../services/walletedition.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ERC20Coin } from '../../../../model/Coin';
 import { PopupProvider } from '../../../../services/popup.service';
@@ -13,7 +12,6 @@ import { Util } from '../../../../model/Util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
@@ -52,7 +50,6 @@ export class CoinAddERC20Page implements OnInit {
         public localStorage: LocalStorage,
         public events: Events,
         private walletManager: WalletManager,
-        private walletEditionService: WalletEditionService,
         private coinService: CoinService,
         private erc20CoinService: ERC20CoinService,
         private translate: TranslateService,
@@ -169,11 +166,12 @@ export class CoinAddERC20Page implements OnInit {
 
                         this.coinSymbol = coinInfo.coinSymbol;
                         Logger.log('wallet', "Coin symbol", this.coinSymbol);
+                        this.coinInfoFetched = true;
                     } else {
-                        void this.popup.ionicAlert("common.sorry", "common.something-went-wrong", "common.ok");
+                        Logger.warn('wallet', "Can not get the coin info - invalid contract? Not ERC20?");
+                        void this.popup.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "common.ok");
                     }
 
-                    this.coinInfoFetched = true;
                     this.fetchingCoinInfo = false;
                 }
             } catch (e) {
