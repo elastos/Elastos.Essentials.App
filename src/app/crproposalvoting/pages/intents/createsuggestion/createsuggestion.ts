@@ -13,6 +13,7 @@ import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { Util } from 'src/app/model/util';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 
 export type CreateSuggestionCommand = CRWebsiteCommand & {
@@ -47,6 +48,7 @@ export class CreateSuggestionPage {
     private createSuggestionCommand: CreateSuggestionCommand;
     public signingAndSendingSuggestionResponse = false;
     public creationDate: string = "";
+    public buggetAmount: number = 0;
 
     constructor(
         private proposalService: ProposalService,
@@ -57,6 +59,7 @@ export class CreateSuggestionPage {
         private globalNav: GlobalNavService,
         private walletManager: WalletManager,
         private voteService: VoteService,
+        public theme: GlobalThemeService,
     ) {
     }
 
@@ -66,6 +69,13 @@ export class CreateSuggestionPage {
             this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
             this.originalRequestJWT = this.crOperations.originalRequestJWT;
             this.suggestionID = this.createSuggestionCommand.sid;
+
+            if (this.createSuggestionCommand.data.proposaltype == "normal") {
+                for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
+                    this.buggetAmount += parseInt(suggestionBudget.amount);
+                }
+            }
+
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
             Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
@@ -75,6 +85,10 @@ export class CreateSuggestionPage {
         catch (err) {
             Logger.error('crproposal', 'CreateSuggestionPage ionViewDidEnter error:', err);
         }
+    }
+
+    cancel() {
+        this.globalNav.navigateBack();
     }
 
     async signAndCreateSuggestion() {

@@ -35,8 +35,26 @@ export const en = {
         // Intent Screens
         'create-suggestion': 'Create Suggestion',
         'create-suggestion-msg': 'You are about to create the following suggestion. Please review it, and follow the process to sign and publish it.',
+        'type': 'Type',
         'creation-date': 'Creation Date',
         'created-by': 'Created By',
+        'recipient-address': 'Recipient Address',
+        'new-secretarygeneraldid': 'New Secretary General’s DID',
+        'new-recipient-address': 'New Recipient Address',
+        'new-owner-address': 'New Owner Address',
+        'new-owner-did': 'New Owner DID',
+        'secretarygeneraldid': 'New Secretary DID',
+        'target-proposal-title': 'Target Proposal Title',
+        'target-proposal-hash': 'Target Proposal Hash',
+        'suggestion-abstract': 'Abstract',
+        'budget-amount': 'Budget Amount',
+        'suggestion-url': 'Suggestion Url',
+        'suggestion-hash': 'Suggestion Hash',
+        'proposaltype-normal': 'Normal',
+        'proposaltype-changeproposalowner': 'Change Proposal Owner',
+        'proposaltype-closeproposal': 'Terminate Proposal',
+        'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+
         'sign-create-suggestion': 'Sign and Create Suggestion',
 
         'create-proposal': 'Create Proposal',
@@ -56,12 +74,18 @@ export const en = {
         'vote-against-proposal': 'Vote against this proposal',
 
         'update-milestone': 'Update Milestone',
+        'milestone-stage': 'Milestone Stage',
         'update-milestone-msg': 'You are about to review the following milestone. Please review it, and follow the process to sign and publish it.',
         'sign-update-milestone': 'Sign and Update Milestone',
 
         'review-milestone': 'Review Milestone',
         'review-milestone-msg': 'You are about to review the following milestone. Please review it, and follow the process to sign and publish it.',
         'sign-review-milestone': 'Sign and Review Milestone',
+
+        'withdraw': 'Withdraw',
+        'withdraw-msg': 'You are about to withdraw. Please review it, and follow the process to sign and publish it.',
+        'withdraw-amount': 'Withdraw Amount',
+        'sign-withdraw': 'Sign and Withdraw',
 
         'crc-proposals-today': 'CRC Proposals Today',
         'crc-proposals-today-msg': 'There is a new CRC proposal today, click to check it out.',

@@ -30,7 +30,7 @@
             <ion-row class="profile-data" *ngIf="nodesService.dposInfo.state">
                 <ion-col>
                     <h5>{{ 'dposregistration.node-status' | translate }}</h5>
-                    <h4>{{ nodesService.dposInfo.state }}</h4>
+                    <h4 class="active-status">{{ nodesService.dposInfo.state }}</h4>
                 </ion-col>
             </ion-row>
 
@@ -96,9 +96,9 @@
                 {{ 'dposregistration.unregister' | translate }}
             </ion-button>
             <ng-container *ngIf="dposInfo.state == 'Canceled'">
-                <ion-row>
+                <!-- <ion-row>
                     <ion-label>BlockHeight - CancelHeight: {{ blockHeight - cancelHeight }}</ion-label>
-                </ion-row>
+                </ion-row> -->
                 <ion-button color="success" [attr.disabled]="available == 0" (click)="retrieve()">
                     {{ 'dposregistration.retrieve' | translate }}
                 </ion-button>

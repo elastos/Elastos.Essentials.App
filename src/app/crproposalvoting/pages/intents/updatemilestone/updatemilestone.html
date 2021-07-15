@@ -1,13 +1,53 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <p>{{ 'crproposalvoting.update-milestone-msg' | translate }}</p>
-    <div>
-        <!-- <ion-row class="header">{{ 'common.title' | translate }}</ion-row>
-        <ion-row>{{ suggestionDetails.title }}</ion-row> -->
-    </div>
-    <ion-button (click)="signAndUpdateMilestone()" *ngIf="!signingAndSendingSuggestionResponse">{{ 'crproposalvoting.sign-update-milestone' | translate }}</ion-button>
-    <div *ngIf="signingAndSendingSuggestionResponse">
+    <div *ngIf="!proposalDetailsFetched">
         <ion-spinner></ion-spinner>
+    </div>
+
+    <div *ngIf="proposalDetailsFetched" [class.darkContainer]="theme.darkMode">
+
+        <div class="message">{{ 'crproposalvoting.update-milestone-msg' | translate }}</div>
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="proposalDetails.title">
+                <ion-col>
+                    <h5>{{ 'common.title' | translate }}</h5>
+                    <h4>{{ proposalDetails.title }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data"
+                *ngIf="updateMilestoneCommand.data.proposalhash">
+                <ion-col>
+                    <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
+                    <h4>{{ updateMilestoneCommand.data.proposalhash }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="updateMilestoneCommand.data.stage">
+                <ion-col>
+                    <h5>{{ 'crproposalvoting.milestone-stage' | translate }}</h5>
+                    <h4>{{ updateMilestoneCommand.data.stage }}</h4>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <ion-row class="btn-container" *ngIf="!signingAndSendingSuggestionResponse">
+            <ion-col class="left-col">
+                <ion-button color="light" (click)="cancel()">
+                    {{ 'common.cancel' | translate }}
+                </ion-button>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+            <ion-col class="right-col" color="success">
+                <ion-button color="success" (click)="signAndUpdateMilestone()">
+                    {{ 'common.confirm' | translate }}
+                </ion-button>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+        </ion-row>
+        <div *ngIf="signingAndSendingSuggestionResponse">
+            <ion-spinner></ion-spinner>
+        </div>
     </div>
 </ion-content>
 

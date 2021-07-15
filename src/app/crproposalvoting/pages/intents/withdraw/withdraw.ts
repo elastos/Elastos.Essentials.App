@@ -10,6 +10,9 @@ import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { Util } from 'src/app/model/util';
+import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
 
 type WithdrawCommand = CRWebsiteCommand & {
     data: {
@@ -30,6 +33,8 @@ export class WithdrawPage {
 
     private withdrawCommand: WithdrawCommand;
     public signingAndSendingSuggestionResponse = false;
+    public proposalDetails: ProposalDetails;
+    public proposalDetailsFetched = false;
 
     constructor(
         private crOperations: CROperationsService,
@@ -38,13 +43,30 @@ export class WithdrawPage {
         private globalIntentService: GlobalIntentService,
         private walletManager: WalletManager,
         private voteService: VoteService,
+        private proposalService: ProposalService,
+        public theme: GlobalThemeService,
+        private globalNav: GlobalNavService,
     ) {
 
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.withdraw'));
         this.withdrawCommand = this.crOperations.onGoingCommand as WithdrawCommand;
+
+        try {
+            // Fetch more details about this proposal, to display to the user
+            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.withdrawCommand.data.proposalhash);
+            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            this.proposalDetailsFetched = true;
+        }
+        catch (err) {
+            Logger.error('crproposal', 'WithdrawPage ionViewDidEnter error:', err);
+        }
+    }
+
+    cancel() {
+        this.globalNav.navigateBack();
     }
 
     async signAndWithdraw() {
@@ -65,15 +87,12 @@ export class WithdrawPage {
                 data: digest,
             });
             Logger.log('crproposal', "Got signed digest.", ret);
-            if (!ret.result) {
-                // Operation cancelled by user
-                return null;
+            if (ret.result) {
+                //Create transaction and send
+                payload.Signature = ret.result.signature;
+                const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(payload, '');
+                await this.voteService.signAndSendRawTransaction(rawTx);
             }
-
-            //Create transaction and send
-            payload.Signature = ret.result.signature;
-            const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(payload, '');
-            await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.

@@ -34,8 +34,26 @@ export const fr = {
         // Intent Screens
         'create-suggestion': 'Créer une Suggestion',
         'create-suggestion-msg': 'Vous êtes sur le point de créer la suggestion suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
+        'type': 'Type',
         'creation-date': 'Date de création',
         'created-by': 'Créé par',
+        'recipient-address': 'Recipient Address',
+        'new-secretarygeneraldid': 'New Secretary General’s DID',
+        'new-recipient-address': 'New Recipient Address',
+        'new-owner-address': 'New Owner Address',
+        'new-owner-did': 'New Owner DID',
+        'secretarygeneraldid': 'New Secretary DID',
+        'target-proposal-title': 'Target Proposal Title',
+        'target-proposal-hash': 'Target Proposal Hash',
+        'suggestion-abstract': 'Abstract',
+        'budget-amount': 'Budget Amount',
+        'suggestion-url': 'Suggestion Url',
+        'suggestion-hash': 'Suggestion Hash',
+        'proposaltype-normal': 'Normal',
+        'proposaltype-changeproposalowner': 'Change Proposal Owner',
+        'proposaltype-closeproposal': 'Terminate Proposal',
+        'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+
         'sign-create-suggestion': 'Signer et Créer la Suggestion',
 
         'create-proposal': 'Créer une Proposition',
@@ -55,12 +73,18 @@ export const fr = {
         'vote-against-proposal': 'Voter contre cette proposition',
 
         'update-milestone': 'Mise à jour d\'échéance',
+        'milestone-stage': 'Milestone Stage',
         'update-milestone-msg': 'Vous êtes sur le point de mettre à jour l\'échéance ci-dessous. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'sign-update-milestone': 'Signer et Mettre à jour',
 
         'review-milestone': 'Vérifier une échéance',
         'review-milestone-msg': 'Vous êtes sur le point de vérifier l\'échéance suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'sign-review-milestone': 'Signer et Vérifier',
+
+        'withdraw': 'Withdraw',
+        'withdraw-msg': 'You are about to withdraw. Please review it, and follow the process to sign and publish it.',
+        'withdraw-amount': 'Withdraw Amount',
+        'sign-withdraw': 'Sign and Withdraw',
 
         'crc-proposals-today': 'Nouvelles propositions CR',
         'crc-proposals-today-msg': 'Il y a une nouvelle proposition CR aujourd\'hui, touchez pour la voir.',

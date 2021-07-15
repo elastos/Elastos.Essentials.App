@@ -10,6 +10,10 @@ import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Util } from 'src/app/model/util';
 import { CROperationsService, CRWebsiteCommand } from 'src/app/crproposalvoting/services/croperations.service';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 type ReviewMilestoneCommand = CRWebsiteCommand & {
     data: {
@@ -37,6 +41,8 @@ export class ReviewMilestonePage {
     private reviewMilestoneCommand: ReviewMilestoneCommand;
     public signingAndSendingProposalResponse = false;
     public trackingType = "";
+    public proposalDetails: ProposalDetails;
+    public proposalDetailsFetched = false;
 
     constructor(
         private crOperations: CROperationsService,
@@ -45,14 +51,31 @@ export class ReviewMilestonePage {
         private globalIntentService: GlobalIntentService,
         public walletManager: WalletManager,
         private voteService: VoteService,
+        private proposalService: ProposalService,
+        public theme: GlobalThemeService,
+        private globalNav: GlobalNavService,
     ) {
 
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
         this.reviewMilestoneCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
         this.trackingType = this.reviewMilestoneCommand.data.proposaltrackingtype;
+
+        try {
+            // Fetch more details about this proposal, to display to the user
+            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewMilestoneCommand.data.proposalhash);
+            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            this.proposalDetailsFetched = true;
+        }
+        catch (err) {
+            Logger.error('crproposal', 'ReviewMilestonePage ionViewDidEnter error:', err);
+        }
+    }
+
+    cancel() {
+        this.globalNav.navigateBack();
     }
 
     async signAndReviewMilestone() {
@@ -74,14 +97,11 @@ export class ReviewMilestonePage {
             });
             Logger.log('crproposal', "Got signed digest.", ret);
             if (!ret.result) {
-                // Operation cancelled by user
-                return null;
+                //Create transaction and send
+                payload.SecretaryGeneralSignature = ret.result.signature;
+                const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
+                await this.voteService.signAndSendRawTransaction(rawTx);
             }
-
-            //Create transaction and send
-            payload.SecretaryGeneralSignature = ret.result.signature;
-            const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
-            await this.voteService.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.

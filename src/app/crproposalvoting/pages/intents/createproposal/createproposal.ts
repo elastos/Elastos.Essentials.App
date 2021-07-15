@@ -13,6 +13,8 @@ import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Util } from 'src/app/model/util';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 
 export type CreateProposalCommand = CRWebsiteCommand & {
@@ -50,6 +52,7 @@ export class CreateProposalPage {
     private createProposalCommand: CreateProposalCommand;
     public signingAndSendingProposalResponse = false;
     public creationDate: string = "";
+    public buggetAmount: number = 0;
 
     constructor(
         private proposalService: ProposalService,
@@ -59,6 +62,8 @@ export class CreateProposalPage {
         private globalIntentService: GlobalIntentService,
         public walletManager: WalletManager,
         private voteService: VoteService,
+        public theme: GlobalThemeService,
+        private globalNav: GlobalNavService,
     ) {
 
     }
@@ -67,6 +72,12 @@ export class CreateProposalPage {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-proposal'));
         this.createProposalCommand = this.crOperations.onGoingCommand as CreateProposalCommand;
         this.suggestionID = this.createProposalCommand.sid;
+
+        if (this.createProposalCommand.data.proposaltype == "normal") {
+            for (let suggestionBudget of this.createProposalCommand.data.budgets) {
+                this.buggetAmount += parseInt(suggestionBudget.amount);
+            }
+        }
 
         try {
             // Fetch more details about this suggestion, to display to the user
@@ -78,6 +89,10 @@ export class CreateProposalPage {
         catch (err) {
             Logger.error('crproposal', 'CreateProposalPage ionViewDidEnter error:', err);
         }
+    }
+
+    cancel() {
+        this.globalNav.navigateBack();
     }
 
     private getPayload(): any {

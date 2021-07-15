@@ -35,8 +35,26 @@ export const zh = {
         // Intent Screens
         'create-suggestion': '提交提议',
         'create-suggestion-msg': '您将要提出以下建议。请对其进行审核，并按照流程进行签名和发布。',
+        'type': '类型',
         'creation-date': '创建日期',
         'created-by': '创建者',
+        'recipient-address': '接收地址',
+        'new-secretarygeneraldid': '新秘书长DID',
+        'new-recipient-address': '新接收地址',
+        'new-owner-address': '新负责人地址',
+        'new-owner-did': '新负责人DID',
+        'secretarygeneraldid': '新秘书长DID',
+        'target-proposal-title': '目标建议标题',
+        'target-proposal-hash': '目标建议哈希',
+        'suggestion-abstract': '摘要',
+        'budget-amount': '预算总额',
+        'suggestion-url': '建议网址',
+        'suggestion-hash': '建议哈希',
+        'proposaltype-normal': '普通',
+        'proposaltype-changeproposalowner': '改变负责人',
+        'proposaltype-closeproposal': '关闭提议',
+        'proposaltype-secretarygeneral': '新的CR委员秘书长',
+
         'sign-create-suggestion': '签名并提交建议',
 
         'create-proposal': '发布提案',
@@ -56,12 +74,18 @@ export const zh = {
         'vote-against-proposal': '反对这个提案',
 
         'update-milestone': '更新Milestone',
+        'milestone-stage': 'Milestone Stage',
         'update-milestone-msg': '您将要更新Milestone。请对其进行审核，并按照流程进行签名和发布。',
         'sign-update-milestone': '签名并更新Milestone',
 
         'review-milestone': '评议Milestone',
         'review-milestone-msg': '您将要评议Milestone。请对其进行审核，并按照流程进行签名和发布。',
         'sign-review-milestone': '签名并评议Milestone',
+
+        'withdraw': '取款',
+        'withdraw-msg': '您将要取款。请对其进行审核，并按照流程进行签名和发布。',
+        'withdraw-amount': '取款总额',
+        'sign-withdraw': '签名并取款',
 
         'crc-proposals-today': '今天的CRC提案',
         'crc-proposals-today-msg': '今天有新的CRC提案，点击查看',

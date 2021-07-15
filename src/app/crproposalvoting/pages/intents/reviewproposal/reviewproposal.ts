@@ -10,6 +10,10 @@ import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Util } from 'src/app/model/util';
 import { CROperationsService, CRWebsiteCommand } from 'src/app/crproposalvoting/services/croperations.service';
+import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
 
 type ReviewProposalCommand = CRWebsiteCommand & {
     data: {
@@ -31,6 +35,8 @@ export class ReviewProposalPage {
     private reviewProposalCommand: ReviewProposalCommand;
     public signingAndSendingProposalResponse = false;
     public voteResult = "";
+    public proposalDetails: ProposalDetails;
+    public proposalDetailsFetched = false;
 
     constructor(
         private crOperations: CROperationsService,
@@ -39,13 +45,30 @@ export class ReviewProposalPage {
         private globalIntentService: GlobalIntentService,
         public walletManager: WalletManager,
         private voteService: VoteService,
+        private proposalService: ProposalService,
+        public theme: GlobalThemeService,
+        private globalNav: GlobalNavService,
     ) {
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-proposal'));
         this.reviewProposalCommand = this.crOperations.onGoingCommand as ReviewProposalCommand;
         this.voteResult = this.reviewProposalCommand.data.voteResult;
+
+        try {
+            // Fetch more details about this proposal, to display to the user
+            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.reviewProposalCommand.data.proposalHash);
+            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            this.proposalDetailsFetched = true;
+        }
+        catch (err) {
+            Logger.error('crproposal', 'ReviewProposalPage ionViewDidEnter error:', err);
+        }
+    }
+
+    cancel() {
+        this.globalNav.navigateBack();
     }
 
     async signAndCreateProposal() {

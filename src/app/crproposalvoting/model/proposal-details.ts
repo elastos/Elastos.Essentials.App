@@ -41,4 +41,6 @@ export class ProposalDetails {
     rejectThroughAmount: string; // ?
     rejectRatio: number; // ?
     tracking: Tracking[] // ?
+    title: string;
+    createdAt: number;
 }

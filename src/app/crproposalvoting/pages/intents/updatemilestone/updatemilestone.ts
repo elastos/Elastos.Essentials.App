@@ -12,6 +12,8 @@ import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { Util } from 'src/app/model/util';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 type UpdateMilestoneCommand = CRWebsiteCommand & {
     data: {
@@ -36,6 +38,8 @@ export class UpdatMilestonePage {
     private originalRequestJWT: string;
     private updateMilestoneCommand: UpdateMilestoneCommand;
     public signingAndSendingSuggestionResponse = false;
+    public proposalDetails: ProposalDetails;
+    public proposalDetailsFetched = false;
 
     constructor(
         private proposalService: ProposalService,
@@ -46,14 +50,30 @@ export class UpdatMilestonePage {
         private globalNav: GlobalNavService,
         private walletManager: WalletManager,
         private voteService: VoteService,
+        public theme: GlobalThemeService,
     ) {
 
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.update-milestone'));
         this.updateMilestoneCommand = this.crOperations.onGoingCommand as UpdateMilestoneCommand;
         this.originalRequestJWT = this.crOperations.originalRequestJWT;
+
+        try {
+            // Fetch more details about this proposal, to display to the user
+            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.updateMilestoneCommand.data.proposalhash);
+            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            this.proposalDetailsFetched = true;
+        }
+        catch (err) {
+            Logger.error('crproposal', 'UpdatMilestonePage ionViewDidEnter error:', err);
+        }
+
+    }
+
+    cancel() {
+        this.globalNav.navigateBack();
     }
 
     async signAndUpdateMilestone() {

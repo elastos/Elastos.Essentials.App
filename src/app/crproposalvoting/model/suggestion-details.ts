@@ -6,4 +6,8 @@ export class SuggestionDetails {
     abs: string;        // Main suggestion description text
     address: string;    // ?
     createdAt: number;  // Timestamp
+    targetProposalTitle: string;
+    newOwnerDID: string;
+    targetProposalHash: string;
+    type: string;
 }
