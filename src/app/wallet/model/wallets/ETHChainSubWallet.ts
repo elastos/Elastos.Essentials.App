@@ -430,19 +430,18 @@ export class ETHChainSubWallet extends StandardSubWallet {
       const data = method.encodeABI();
       let nonce = await this.getNonce();
       Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' ContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
-      return null;
-      // return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
-      //     this.masterWallet.id,
-      //     this.id,
-      //     Config.ETHDID_CONTRACT_ADDRESS,
-      //     '0',
-      //     0, // WEI
-      //     gasPrice,
-      //     0, // WEI
-      //     gasLimit.toString(),
-      //     data,
-      //     nonce
-      // );
+      return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
+          this.masterWallet.id,
+          this.id,
+          Config.ETHDID_CONTRACT_ADDRESS,
+          '0',
+          0, // WEI
+          gasPrice,
+          0, // WEI
+          gasLimit.toString(),
+          data,
+          nonce
+      );
   }
 
     public async publishTransaction(transaction: string): Promise<string> {
