@@ -47,6 +47,8 @@ export const fr = {
         'target-proposal-hash': 'Target Proposal Hash',
         'suggestion-abstract': 'Abstract',
         'attach-budget': 'Attach Budget',
+        'stage': 'Stage',
+        'amount': 'Amount',
         'budget-amount': 'Budget Amount',
         'suggestion-url': 'Suggestion Url',
         'suggestion-hash': 'Suggestion Hash',

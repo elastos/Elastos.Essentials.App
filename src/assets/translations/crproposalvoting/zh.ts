@@ -48,6 +48,8 @@ export const zh = {
         'target-proposal-hash': '目标建议哈希',
         'suggestion-abstract': '摘要',
         'attach-budget': '预算',
+        'stage': '阶段',
+        'amount': '金额',
         'budget-amount': '预算总额',
         'suggestion-url': '建议网址',
         'suggestion-hash': '建议哈希',

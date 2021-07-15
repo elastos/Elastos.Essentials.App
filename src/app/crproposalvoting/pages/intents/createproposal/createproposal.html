@@ -1,4 +1,3 @@
-
 <ion-content>
     <app-titlebar></app-titlebar>
     <div *ngIf="!suggestionDetailsFetched">
@@ -17,11 +16,11 @@
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="createProposalCommand.data.proposaltype">
-                <ion-col>
+                <div>
                     <h5>{{ 'crproposalvoting.type' | translate }}</h5>
                     <h4 class="proposaltype">{{ 'crproposalvoting.proposaltype-' +
                         createProposalCommand.data.proposaltype | translate }}</h4>
-                </ion-col>
+                </div>
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="suggestionDetails.abs">
@@ -43,11 +42,10 @@
                     <h5>{{ 'crproposalvoting.attach-budget' | translate }}</h5>
                     <table>
                         <tr>
-                            <th>Type</th>
-                            <th>Stage</th>
-                            <th>Amount</th>
+                            <th>{{ 'crproposalvoting.type' | translate }}</th>
+                            <th>{{ 'crproposalvoting.stage' | translate }}</th>
+                            <th>{{ 'crproposalvoting.amount' | translate }}</th>
                         </tr>
-
                         <tr *ngFor='let budget of createProposalCommand.data.budgets'>
                             <td>{{ budget.type }}</td>
                             <td>{{ budget.stage }}</td>
@@ -148,4 +146,3 @@
     </div>
 
 </ion-content>
-
