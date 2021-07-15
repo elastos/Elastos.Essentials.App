@@ -1,8 +1,60 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <div>
-        <p>{{ 'crproposalvoting.vote-proposal-msg' | translate }}</p>
-        <div>TODO: fetch and display proposal details when the API is ready for this (see clickup).</div>
-        <ion-button (click)="voteAgainstProposal()">{{ 'crproposalvoting.vote-against-proposal' | translate }}</ion-button>
+    <div *ngIf="!proposalDetailsFetched">
+        <ion-spinner></ion-spinner>
+    </div>
+
+    <div *ngIf="proposalDetailsFetched" [class.darkContainer]="theme.darkMode">
+
+        <div class="message">{{ 'crproposalvoting.vote-proposal-msg' | translate }}</div>
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="proposalDetails && proposalDetails.title">
+                <ion-col>
+                    <h5>{{ 'common.title' | translate }}</h5>
+                    <h4>{{ proposalDetails.title }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="voteForProposalCommand.data.proposalHash">
+                <ion-col>
+                    <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
+                    <h4>{{ voteForProposalCommand.data.proposalHash }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'crproposalvoting.vote-number' | translate }}</h5>
+                    <h5 id="max-votes-label">
+                        <span>{{ 'crproposalvoting.max-votes-pre' | translate }}</span>
+                        <span>{{ maxVotes }}</span>
+                        <span>{{ 'crproposalvoting.max-votes-suf' | translate }}</span>
+                    </h5>
+                </ion-col>
+                <ion-col class="right-col">
+                    <ion-input id="max-votes" type="number" name="amount" ngDefaultControl
+                        [(ngModel)]="amount">
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <ion-row class="btn-container" *ngIf="!signingAndSendingSuggestionResponse">
+            <ion-col class="left-col">
+                <ion-button color="light" (click)="cancel()">
+                    {{ 'common.cancel' | translate }}
+                </ion-button>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+            <ion-col class="right-col" color="success">
+                <ion-button color="success" (click)="voteAgainstProposal()">
+                    {{ 'common.confirm' | translate }}
+                </ion-button>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+        </ion-row>
+        <div *ngIf="signingAndSendingSuggestionResponse">
+            <ion-spinner></ion-spinner>
+        </div>
     </div>
 </ion-content>

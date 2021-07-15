@@ -1,54 +1,9 @@
-.header {
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-.message {
-    margin: 24px;
-    padding: 10px;
-    height: 87px;
-    background: #3f6fea;
-    border-radius: 8px;
-}
-
-
-
-ion-list {
-    margin: 0;
-    padding: 0px 24px;
-
-    .profile-data {
-        padding: 15px 30px 10px 0px;
-        border-bottom: 1px solid #dbdbdb;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        ion-col {
-            h5,
-            h4 {
-                margin: 0;
-            }
-
-            h5 {
-                margin-bottom: 2px;
-                font-size: 13px;
-                line-height: 16px;
-                opacity: 0.7;
-            }
-
-            h4 {
-                font-size: 16px;
-                line-height: 20px;
-            }
-
-        }
-    }
-}
+@import "src/app/crproposalvoting/root.scss";
 
 .proposaltype {
-    padding: 10px, 15px, 10px, 15px;
+    padding: 50px, 15px;
     height: 40px;
+    width: auto;
     border-radius: 7px;
     background-color:#F2F2F2;
     text-align: center;
@@ -66,31 +21,18 @@ table {
     width: 100%;
 }
 
-th {
-    text-align: left;
-}
-
-.btn-container {
-    margin: 0;
-    padding: 24px;
-
-    ion-button {
-        height: 50px;
-        width: 100%;
-        --border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: 0.1px;
-    }
+td {
+    text-align: center;
 }
 
 .darkContainer {
-    ion-input {
-        background-color: #212021;
-        box-shadow: none;
-    }
-
     .proposaltype {
         background-color: #3C3C3C;
+    }
+
+    table,
+    td,
+    th {
+        border: 1px solid white;
     }
 }

@@ -1,4 +1,16 @@
-.header {
-    margin-top:10px;
-    font-weight: bold;
+@import "src/app/crproposalvoting/root.scss";
+
+#max-votes-label {
+    color: #D29700;
+}
+
+#max-votes {
+    width: 118px;
+    height: 46px;
+    padding: 13;
+    text-align: right;
+    float: right;
+    border: 1px solid #C9BFD6;
+    box-sizing: border-box;
+    border-radius: 7px;
 }

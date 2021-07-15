@@ -7,6 +7,12 @@ import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletAccountType } from 'src/app/wallet/model/WalletAccount';
+import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { Config } from 'src/app/wallet/config/Config';
+import { Util } from 'src/app/model/Util';
 
 type VoteForProposalCommand = CRWebsiteCommand & {
     data: {
@@ -22,6 +28,11 @@ export class VoteForProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     private voteForProposalCommand: VoteForProposalCommand;
+    public proposalDetails: ProposalDetails;
+    public proposalDetailsFetched = false;
+    public signingAndSendingSuggestionResponse = false;
+    public maxVotes: number = 0;
+    public amount: number = 0;
 
     constructor(
         private crOperations: CROperationsService,
@@ -29,13 +40,35 @@ export class VoteForProposalPage {
         public popupProvider: PopupProvider,
         public walletManager: WalletManager,
         private voteService: VoteService,
+        private proposalService: ProposalService,
+        public theme: GlobalThemeService,
+        private globalNav: GlobalNavService,
     ) {
 
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.vote-proposal'));
         this.voteForProposalCommand = this.crOperations.onGoingCommand as VoteForProposalCommand;
+
+        try {
+            // Fetch more details about this proposal, to display to the user
+            this.proposalDetails = await this.proposalService.fetchProposalDetails(this.voteForProposalCommand.data.proposalHash);
+            Logger.log('crproposal', "proposalDetails", this.proposalDetails);
+            this.proposalDetailsFetched = true;
+        }
+        catch (err) {
+            Logger.error('crproposal', 'VoteForProposalPage ionViewDidEnter error:', err);
+        }
+
+        const stakeAmount = this.voteService.sourceSubwallet.balance.minus(this.votingFees());
+        if (!stakeAmount.isNegative()) {
+            this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
+        }
+    }
+
+    cancel() {
+        this.globalNav.navigateBack();
     }
 
     async voteAgainstProposal() {
@@ -58,7 +91,7 @@ export class VoteForProposalPage {
 
     async goTransaction(): Promise<boolean> {
         if (this.voteService.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'multi sign reject voting');
+            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.multi-sign-reject-voting');
             return false;
         }
         // Request the wallet to publish our vote.
@@ -66,14 +99,15 @@ export class VoteForProposalPage {
             await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
             return false;
         }
-
-        const stakeAmount = this.voteService.sourceSubwallet.balance.minus(this.votingFees());
-        if (stakeAmount.isNegative()) {
-            Logger.log('wallet', 'CRProposalVoteAgainstPage: Not enough balance:', stakeAmount.toString());
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'wallet.amount-null');
+        else if (this.amount > this.maxVotes) {
+            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.greater-than-max-votes');
+            return false;
+        }
+        else if (this.amount == 0) {
             return false;
         }
 
+        const stakeAmount = Util.accMul(this.votingFees(), Config.SELA);
         await this.createVoteCRProposalTransaction(stakeAmount.toString());
         return true;
     }
@@ -87,12 +121,12 @@ export class VoteForProposalPage {
     }
 
     async createVoteCRProposalTransaction(voteAmount) {
+        this.signingAndSendingSuggestionResponse = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
         // let invalidCandidates = await this.walletManager.computeVoteInvalidCandidates(this.voteService.masterWalletId);
 
         // The transfer "votes" array must contain exactly ONE entry: the voted proposal
-        // TODO: don't use a votes array in a global transfer object. Use a custom object for CR proposal voting.
         let votes = [];
         votes[this.voteForProposalCommand.data.proposalHash] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
@@ -103,6 +137,7 @@ export class VoteForProposalPage {
             );
 
         await this.voteService.signAndSendRawTransaction(rawTx);
+        this.signingAndSendingSuggestionResponse = false;
     }
 
 }
