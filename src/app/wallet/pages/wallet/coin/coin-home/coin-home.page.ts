@@ -145,8 +145,8 @@ export class CoinHomePage implements OnInit {
         this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
             if (count >= 0) {
               await this.updateTransactions();
+              this.loadingTX = false;
             }
-            this.loadingTX = false;
         });
 
         this.updateTmeout = setTimeout(async () => {
