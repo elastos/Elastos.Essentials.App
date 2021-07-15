@@ -18,7 +18,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         switch (transaction.type) {
             case TransactionDirection.MOVED:
                 switch (transaction.txtype) {
-                    case RawTransactionType.CancelProducer: // This transaction type value means "DID published" for ID chain...
+                    case 10: // This transaction type value means "DID published" for ID chain...
                         transactionInfo.type = TransactionType.SENT;
                 }
         }

@@ -119,17 +119,19 @@ export class CoinTxInfoPage implements OnInit {
             this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
 
             const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
-            // Address: sender address or receiver address
-            this.targetAddress = await (this.subWallet as MainAndIDChainSubWallet).getRealAddressInCrosschainTx(transaction);
+            if (transaction) {
+              // Address: sender address or receiver address
+              this.targetAddress = await (this.subWallet as MainAndIDChainSubWallet).getRealAddressInCrosschainTx(transaction);
 
-            this.transactionInfo.confirmStatus = transaction.confirmations;
+              this.transactionInfo.confirmStatus = transaction.confirmations;
 
-            // If the fee is too small, then amount doesn't subtract fee
-            // if (transaction.Fee > 10000000000) {
-            //   this.amount = this.amount.minus(this.payFee);
-            // }
+              // If the fee is too small, then amount doesn't subtract fee
+              // if (transaction.Fee > 10000000000) {
+              //   this.amount = this.amount.minus(this.payFee);
+              // }
 
-        // Tx is ETH - Define amount, fee, total cost and address
+              // Tx is ETH - Define amount, fee, total cost and address
+            }
         } else {
             // Amount
             this.amount = this.transactionInfo.amount.isInteger() ? this.transactionInfo.amount.integerValue() : this.transactionInfo.amount.decimalPlaces(6);
@@ -141,17 +143,21 @@ export class CoinTxInfoPage implements OnInit {
             // Address
             if ((this.chainId === StandardCoinName.ETHSC) || (this.chainId === StandardCoinName.ETHDID)) {
                 if (this.direction === TransactionDirection.SENT) {
-                  this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
-                  await this.getERC20TokenTransactionInfo(transaction);
+                    this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
+                    await this.getERC20TokenTransactionInfo(transaction);
                 } else if (this.direction === TransactionDirection.RECEIVED) {
-                  this.targetAddress = transaction.from;
+                    if (this.transactionInfo.isCrossChain === true) {
+                        // TODO: We can't get the real address for cross chain transafer.
+                        this.targetAddress = null;
+                    } else {
+                        this.targetAddress = transaction.from;
+                    }
                 }
             } else {
                 if (this.direction === TransactionDirection.SENT) {
-                  this.targetAddress = transaction.to;
+                    this.targetAddress = transaction.to;
                 } else if (this.direction === TransactionDirection.RECEIVED) {
-                  // TODO: Do not show sender address for cross chain.
-                  this.targetAddress = transaction.from;
+                    this.targetAddress = transaction.from;
                 }
             }
         }
@@ -257,13 +263,15 @@ export class CoinTxInfoPage implements OnInit {
             );
         }
         else { // Sending address
-          this.txDetails.unshift(
-            {
-                type: 'address',
-                title: 'wallet.tx-info-sender-address',
-                value: this.targetAddress,
-                show: true,
-            })
+            if (this.targetAddress) {
+                this.txDetails.unshift(
+                    {
+                        type: 'address',
+                        title: 'wallet.tx-info-sender-address',
+                        value: this.targetAddress,
+                        show: true,
+                    })
+            }
         }
 
         // Logger.log('wallet', 'Tx details', this.txDetails);

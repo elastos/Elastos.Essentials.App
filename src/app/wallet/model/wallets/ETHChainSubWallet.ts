@@ -74,11 +74,6 @@ export class ETHChainSubWallet extends StandardSubWallet {
             totalcount: this.transactions.totalcount,
             txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
         }
-        if (startIndex == 0 && this.transactionsInPool.length > 0) {
-            let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
-            newTxList.txhistory = newTxhistory;
-            newTxList.totalcount += this.transactionsInPool.length;
-        }
         return newTxList;
       }
       else {
@@ -109,6 +104,10 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
       let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
+      if (!result) {
+        // Remove error transaction.
+        this.removeInvalidTransaction(txid);
+      }
       return result;
     }
 
@@ -131,8 +130,8 @@ export class ETHChainSubWallet extends StandardSubWallet {
         transaction.Direction = direction;
 
         const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(-1), // Defined by inherited classes
-            confirmStatus: parseInt(transaction.confirmations), // Defined by inherited classes
+            amount: new BigNumber(-1),
+            confirmStatus: parseInt(transaction.confirmations),
             datetime,
             direction: direction,
             fee: '0',
@@ -142,10 +141,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
             payStatusIcon: await this.getTransactionIconPath(transaction),
             status: transaction.Status,
             statusName: this.getTransactionStatusName(transaction.Status, translate),
-            symbol: '', // Defined by inherited classes
+            symbol: '',
             timestamp,
-            txid: transaction.hash, // Defined by inherited classes
-            type: null, // Defined by inherited classes
+            txid: transaction.hash,
+            type: null,
+            isCrossChain: false
         };
 
         transactionInfo.amount = new BigNumber(transaction.value).dividedBy(Config.WEI);
@@ -171,6 +171,11 @@ export class ETHChainSubWallet extends StandardSubWallet {
             transactionInfo.symbol = '';
         }
 
+        // TODO improve it
+        if ((transaction.transferType === ETHSCTransferType.DEPOSIT) || (transactionInfo.name === "wallet.coin-dir-to-mainchain")) {
+          transactionInfo.isCrossChain = true;
+        }
+
         return transactionInfo;
     }
 
@@ -184,6 +189,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
                   return "wallet.coin-op-received-token";
                 }
             case TransactionDirection.SENT:
+                // TODO withdraw
                 return this.getETHSCTransactionContractType(transaction, translate);
         }
         return null;
@@ -423,19 +429,20 @@ export class ETHChainSubWallet extends StandardSubWallet {
       }
       const data = method.encodeABI();
       let nonce = await this.getNonce();
-      Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' withdrawContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
-      return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
-          this.masterWallet.id,
-          this.id,
-          Config.ETHDID_CONTRACT_ADDRESS,
-          '0',
-          0, // WEI
-          gasPrice,
-          0, // WEI
-          gasLimit.toString(),
-          data,
-          nonce
-      );
+      Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' ContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
+      return null;
+      // return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
+      //     this.masterWallet.id,
+      //     this.id,
+      //     Config.ETHDID_CONTRACT_ADDRESS,
+      //     '0',
+      //     0, // WEI
+      //     gasPrice,
+      //     0, // WEI
+      //     gasLimit.toString(),
+      //     data,
+      //     nonce
+      // );
   }
 
     public async publishTransaction(transaction: string): Promise<string> {
@@ -468,5 +475,18 @@ export class ETHChainSubWallet extends StandardSubWallet {
       }
       this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       this.transactionsCache.save();
+    }
+
+    private removeInvalidTransaction(hash: string) {
+      let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
+      if (existingIndex >= 0) {
+        Logger.warn('wallet', 'Find invalid transaction, remove it ', hash);
+        this.transactions.txhistory.splice(existingIndex, 1);
+        this.transactions.totalcount--;
+
+        this.transactionsCache.remove(hash);
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.transactionsCache.save();
+      }
     }
 }

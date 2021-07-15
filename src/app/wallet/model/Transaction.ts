@@ -16,8 +16,8 @@ export enum TransactionDirection {
 export enum ETHSCTransferType {
   DEPOSIT = "crossChainEthDeposit",
   TRANSFER = "ethTransfer",
+  WITHDRAW = "crossChainEthWithdraw"
 }
-
 
 export enum TransactionType {
     RECEIVED = 1,
@@ -86,6 +86,7 @@ export type TransactionInfo = {
     timestamp: number,
     txid: string,
     type: TransactionType,
+    isCrossChain: boolean,
 };
 
 /**

@@ -1,7 +1,7 @@
 import { StandardSubWallet } from './StandardSubWallet';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
-import { AllTransactionsHistory, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
+import { AllTransactionsHistory, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
@@ -100,13 +100,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
               totalcount: this.transactions.totalcount,
               txhistory: this.transactions.txhistory.slice(startIndex, startIndex + 20),
           }
-
-          if (startIndex == 0 && this.transactionsInPool.length > 0) {
-              let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
-              newTxList.txhistory = newTxhistory;
-              newTxList.totalcount += this.transactionsInPool.length;
-              Logger.warn('wallet', 'newTxList ', newTxList)
-          }
           return newTxList;
         }
         else {
@@ -128,6 +121,16 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         } else if (transaction.type === TransactionDirection.MOVED) {
             transactionInfo.type = TransactionType.TRANSFER;
             transactionInfo.symbol = '';
+        }
+
+        switch (transaction.txtype) {
+          case RawTransactionType.RechargeToSideChain:
+          case RawTransactionType.WithdrawFromSideChain:
+          case RawTransactionType.TransferCrossChainAsset:
+            transactionInfo.isCrossChain = true;
+            break;
+          default:
+            break;
         }
 
         return transactionInfo;
@@ -580,7 +583,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       let txList = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, pendingTx);
       let usedUTXO = [];
       for (let i = 0, len = txList.length; i < len; i++) {
-        for (let j = 0, vinLen = txList[i].result.vin.length; j < vinLen; j++) {
+        let vinLen = 0;
+        if (txList[i].result && txList[i].result.vin) {
+          vinLen = txList[i].result.vin.length;
+        }
+        for (let j = 0; j < vinLen; j++) {
           usedUTXO.push(txList[i].result.vin[j].txid);
         }
       }
@@ -666,9 +673,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     private async getVotedContent(): Promise<RawVoteContent[]> {
-        if (this.votingUtxoArray && (this.votingUtxoArray.length == 0)) {
-            await this.getVotingUtxoByRPC(); //Try again.
-        }
+        await this.getVotingUtxoByRPC();
 
         // We only consider the case of one utxo for voting.
         if (this.votingUtxoArray && (this.votingUtxoArray.length > 0)) {
@@ -943,10 +948,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     async getTransactionDetails(txid: string): Promise<TransactionDetail> {
         let details = await this.jsonRPCService.getrawtransaction(this.id as StandardCoinName, [txid]);
-        if (details) {
+        if (details && details[0].result) {
           return details[0].result;
+        } else {
+          // Remove error transaction.
+          this.removeInvalidTransaction(txid);
+          return null;
         }
-        return null;
     }
 
     async getRealAddressInCrosschainTx(txDetail: TransactionDetail) {
@@ -1221,6 +1229,19 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
       this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       this.transactionsCache.save();
+    }
+
+    private removeInvalidTransaction(txid: string) {
+      let existingIndex = this.transactions.txhistory.findIndex(i => i.txid == txid);
+      if (existingIndex >= 0) {
+        Logger.warn('wallet', 'Find invalid transaction, remove it ', txid);
+        this.transactions.txhistory.splice(existingIndex, 1);
+        this.transactions.totalcount--;
+
+        this.transactionsCache.remove(txid);
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.transactionsCache.save();
+      }
     }
 
     accMul(arg1, arg2) {

@@ -188,11 +188,6 @@ export class ERC20SubWallet extends SubWallet {
             totalcount: this.transactions.totalcount,
             txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
           }
-          if (startIndex == 0 && this.transactionsInPool.length > 0) {
-            let newTxhistory = this.transactionsInPool.concat(newTxList.txhistory);
-            newTxList.txhistory = newTxhistory;
-            newTxList.totalcount += this.transactionsInPool.length;
-          }
           return newTxList;
         } else {
           return null;
@@ -215,6 +210,10 @@ export class ERC20SubWallet extends SubWallet {
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
       let result = await this.jsonRPCService.eth_getTransactionByHash(StandardCoinName.ETHSC, txid);
+      if (!result) {
+        // Remove error transaction.
+        this.removeInvalidTransaction(txid);
+      }
       return result;
     }
 
@@ -226,8 +225,8 @@ export class ERC20SubWallet extends SubWallet {
         transaction.Direction = direction;
 
         const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes), // Defined by inherited classes
-            confirmStatus: parseInt(transaction.confirmations), // Defined by inherited classes
+            amount: new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes),
+            confirmStatus: parseInt(transaction.confirmations),
             datetime,
             direction: direction,
             fee: transaction.gas,
@@ -237,10 +236,11 @@ export class ERC20SubWallet extends SubWallet {
             payStatusIcon: await this.getTransactionIconPath(transaction),
             status: transaction.Status,
             statusName: this.getTransactionStatusName(transaction.Status, translate),
-            symbol: '', // Defined by inherited classes
+            symbol: '',
             timestamp,
-            txid: transaction.hash, // Defined by inherited classes
-            type: null, // Defined by inherited classes
+            txid: transaction.hash,
+            type: null,
+            isCrossChain: false,
         };
 
         // Use Config.WEI: because the gas is ETHSC.
@@ -422,5 +422,18 @@ export class ERC20SubWallet extends SubWallet {
       }
       this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       this.transactionsCache.save();
+    }
+
+    private removeInvalidTransaction(hash: string) {
+      let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
+      if (existingIndex >= 0) {
+        Logger.warn('wallet', 'Find invalid transaction, remove it ', hash);
+        this.transactions.txhistory.splice(existingIndex, 1);
+        this.transactions.totalcount--;
+
+        this.transactionsCache.remove(hash);
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.transactionsCache.save();
+      }
     }
 }

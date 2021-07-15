@@ -69,6 +69,16 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
   }
 
   /**
+   * Remove an item from the cache.
+   */
+  public remove(itemKey: string) {
+    let existingIndex = this.items.findIndex(i => i.key == itemKey);
+    if (existingIndex >= 0) {
+      this.items.splice(existingIndex, 1)
+    }
+  }
+
+  /**
    * Retrieves a cache item by key.
    */
   public get(itemKey: string): JSONObject | undefined {

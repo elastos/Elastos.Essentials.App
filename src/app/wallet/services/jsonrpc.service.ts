@@ -45,7 +45,6 @@ export class WalletJsonRPCService {
             paramArray.push(param);
         }
 
-        // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
         let alreadyGetBalance = false;
         do {
@@ -89,7 +88,6 @@ export class WalletJsonRPCService {
         }
 
         let transactionsArray = null;
-        // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
         do {
             try {
@@ -132,7 +130,6 @@ export class WalletJsonRPCService {
       }
 
       let result: any[] = null;
-      // httpPost fail sometimes, retry 5 times.
       let retryTimes = 0;
       do {
           try {
@@ -194,18 +191,23 @@ export class WalletJsonRPCService {
         }
 
         let txid = '';
-        // httpPost fail sometimes, retry 5 times.
         let retryTimes = 0;
+        let errorMessage = null;
         do {
             try {
                 txid = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
                 break;
             } catch (e) {
                 // wait 100ms?
+                errorMessage = e;
             }
         } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
 
-        Logger.log('wallet', 'sendrawtransaction:', txid)
+        if (txid !== '') {
+          Logger.log('wallet', 'sendrawtransaction:', txid)
+        } else {
+          Logger.error('wallet', 'sendrawtransaction error:', errorMessage);
+        }
         return txid;
     }
 

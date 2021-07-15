@@ -55,9 +55,6 @@ export abstract class SubWallet {
     public transactionsCache: TimeBasedPersistentCache<any> = null;
     public transactionKeyInCache = '';
 
-    // Transaction not on chain
-    public transactionsInPool: TransactionHistory[] = [];
-
     public subwalletTransactionStatusID = '';
 
     public jsonRPCService: WalletJsonRPCService = null;
@@ -244,6 +241,7 @@ export abstract class SubWallet {
             timestamp,
             txid: null, // Defined by inherited classes
             type: null, // Defined by inherited classes
+            isCrossChain: false, // Defined by inherited classes
         };
         return transactionInfo;
     }
