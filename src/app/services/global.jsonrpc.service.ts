@@ -17,6 +17,10 @@ export class GlobalJsonRPCService {
     }
 
     httpPost(rpcApiUrl: string, param: any): Promise<any> {
+        if (!rpcApiUrl) {
+            return null;
+        }
+
         return new Promise((resolve, reject) => {
             const httpOptions = {
                 headers: new HttpHeaders({

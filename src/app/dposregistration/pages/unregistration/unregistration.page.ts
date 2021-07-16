@@ -46,7 +46,6 @@ export class DPosUnRegistrationPage implements OnInit {
     };
     public state: string = "";
     public chainId = StandardCoinName.ELA;
-    public rpcApiUrl: string;
 
     public ownerPublicKey: string;
 
@@ -101,8 +100,6 @@ export class DPosUnRegistrationPage implements OnInit {
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         // this.titleBar.setNavigationMode(null);
 
-
-
         this.dposInfo = this.nodesService.dposInfo;
         let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
         const txRawList = await this.walletRPCService.getTransactionsByAddress(StandardCoinName.ELA, [depositAddress],
@@ -142,19 +139,7 @@ export class DPosUnRegistrationPage implements OnInit {
 
                 this.blockHeight = await this.walletRPCService.getBlockCount(StandardCoinName.ELA);
                 this.cancelHeight = this.dposInfo.cancelheight;
-                const param = {
-                    method: 'getdepositcoin',
-                    params: {
-                        ownerpublickey: this.ownerPublicKey,
-                    },
-                };
-                const result = await this.jsonRPCService.httpPost(this.rpcApiUrl, param);
-                Logger.log(App.DPOS_REGISTRATION, "getdepositcoin:", result);
-                if (!Util.isEmptyObject(result.available)) {
-                    this.available = result.available;
-                    Logger.log(App.DPOS_REGISTRATION, "available:", this.available);
-                }
-
+                this.getDepositcoin();
                 break;
             // Illegal indicates the producer was found to break the consensus.
             case 'Illegal':
@@ -164,6 +149,22 @@ export class DPosUnRegistrationPage implements OnInit {
             case 'Returned':
                 this.titleBar.setTitle(this.translate.instant('dposregistration.return'));
                 break;
+        }
+    }
+
+    async getDepositcoin() {
+        const param = {
+            method: 'getdepositcoin',
+            params: {
+                ownerpublickey: this.dposInfo.ownerpublickey,
+            },
+        };
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
+        Logger.log(App.DPOS_REGISTRATION, "getdepositcoin:", result);
+        if (!Util.isEmptyObject(result.available)) {
+            this.available = result.available;
+            Logger.log(App.DPOS_REGISTRATION, "available:", this.available);
         }
     }
 

@@ -37,7 +37,6 @@ export class DPosRegistrationPage implements OnInit {
     };
     public state: string = "";
     public chainId = StandardCoinName.ELA;
-    public rpcApiUrl: string;
 
     public ownerPublicKey: string;
 
