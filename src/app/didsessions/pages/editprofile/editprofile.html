@@ -7,7 +7,7 @@
     <ion-input [placeholder]="'didsessions.enter-name-here'|translate" #input [(ngModel)]="name" name="name" ngDefaultControl></ion-input>
 
     <div class="footer">
-      <ion-button (click)="next()">
+      <ion-button [disabled]="creatingDid" (click)="next()">
         {{ 'common.continue' | translate }}
       </ion-button>
     </div>

@@ -189,16 +189,17 @@ export class IdentityService {
         this.identityBeingCreated = new NewIdentity();
 
         Logger.log('didsessions', "Navigating to profile edition");
-        this.navigateWithCompletion("/didsessions/editprofile", (name)=>{
+        this.navigateWithCompletion("/didsessions/editprofile", async (name)=>{
             this.identityBeingCreated.name = name;
             //this.uxService.go('/didsessions/backupdid', { state: { create: true } });
             //this.uxService.go('/didsessions/preparedid');
-            void this.createNewDIDWithNewMnemonic();
+            await this.createNewDIDWithNewMnemonic();
         });
     }
 
     async createNewDIDWithNewMnemonic() {
         Logger.log('didsessions', "Creating new did with new mnemonic");
+        await this.nativeService.showLoading(this.translate.instant('common.please-wait'));
 
         // Automatically find and use the best elastos API provider
         await this.globalElastosAPIService.autoDetectTheBestProvider();
@@ -219,7 +220,7 @@ export class IdentityService {
         // Add a first (and only) identity to the store.
         Logger.log('didsessions', "Adding DID with info name:", this.identityBeingCreated.name);
         let createdDID = await didStore.addDID(this.identityBeingCreated, this.identityBeingCreated.storePass);
-
+        await this.nativeService.hideLoading();
         await this.finalizeIdentityCreation(didStore, this.identityBeingCreated.storePass, createdDID, this.identityBeingCreated.name, false);
     }
 

@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 
 export type EditProfileStateParams = {
@@ -25,6 +25,7 @@ export class EditProfilePage {
   private nextStepId: number = null;
   public isEdit: boolean = false;
   public name: string = ""; // Name being edited
+  public creatingDid = false;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -66,9 +67,11 @@ export class EditProfilePage {
   }
 
   async next() {
+    this.creatingDid = true;
     if(this.checkParams()){
-      this.identityService.runNextStep(this.nextStepId, this.name);
+      await this.identityService.runNextStep(this.nextStepId, this.name);
     }
+    this.creatingDid = false;
   }
 
   checkParams(){
