@@ -58,6 +58,8 @@ export const zh = {
         "hive-not-configured-not-now": "暂不",
         "hive-not-configured-configure": "配置",
         "collectibles": "收藏品",
+        "networks": "Networks",
+        "choose-active-network": "Choose your active network",
 
         /********************************************** General Settings Screen ***********************************************/
 

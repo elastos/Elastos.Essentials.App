@@ -58,6 +58,8 @@ export const en = {
         "hive-not-configured-not-now": "Not now",
         "hive-not-configured-configure": "Configure",
         "collectibles": "Collectibles",
+        "networks": "Networks",
+        "choose-active-network": "Choose your active network",
 
         /********************************************** General Settings Screen ***********************************************/
 
