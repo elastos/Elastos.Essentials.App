@@ -1,4 +1,3 @@
-
 <ion-content>
     <app-titlebar></app-titlebar>
     <div *ngIf="!proposalDetailsFetched">
@@ -16,8 +15,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data"
-                *ngIf="reviewProposalCommand.data.proposalHash">
+            <ion-row class="profile-data" *ngIf="reviewProposalCommand.data.proposalHash">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.proposal-hash' | translate }}</h5>
                     <h4>{{ reviewProposalCommand.data.proposalHash }}</h4>
@@ -25,10 +23,13 @@
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="voteResult">
-                <ion-col>
+                <div>
                     <h5>{{ 'crproposalvoting.vote-result' | translate }}</h5>
-                    <h4>{{ 'crproposalvoting.' + voteResult  | translate }}</h4>
-                </ion-col>
+                    <h4  class="align-center vote-result" [id]="voteResult"><img
+                            [src]="!theme.darkMode ? '../assets/crproposalvoting/icons/' + voteResult + '.svg' : '../assets/crproposalvoting/icons/darkmode/' + voteResult + '.svg'">
+                        <span>{{ 'crproposalvoting.' + voteResult | translate }}</span>
+                    </h4>
+                </div>
             </ion-row>
         </ion-list>
 
@@ -51,8 +52,3 @@
         </div>
     </div>
 </ion-content>
-
-
-
-
-

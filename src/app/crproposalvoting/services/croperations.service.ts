@@ -85,8 +85,9 @@ export class CROperationsService {
     }
 
     private async handledReceivedIntent(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
-        if (receivedIntent.action == "https://did.elastos.net/crproposal")
+        if (receivedIntent.action == "https://did.elastos.net/crproposal") {
             this.handleCRProposalIntentRequest(receivedIntent);
+        }
     }
 
     private async handleCRProposalIntentRequest(receivedIntent: EssentialsIntentPlugin.ReceivedIntent) {
@@ -96,24 +97,25 @@ export class CROperationsService {
         else {
             this.voteService.intentAction = receivedIntent.action;
             this.voteService.intentId = receivedIntent.intentId;
-            this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest);
+            if (!this.handleCRProposalJWTCommand(receivedIntent.originalJwtRequest)) {
+                await this.sendIntentResponse();
+            }
         }
     }
 
-    private async handleCRProposalJWTCommand(crProposalJwtRequest: string) {
+    private async handleCRProposalJWTCommand(crProposalJwtRequest: string): Promise<boolean> {
         // Parse this JWT and verify the signature. We need to make sure the issuer is on chain.
         let parsedJwtresult = await didManager.parseJWT(true, crProposalJwtRequest);
         if (!parsedJwtresult.signatureIsValid) {
-            Logger.warn('crproposal', "Invalid JWT received");
-            return;
+            Logger.error('crproposal', "Invalid JWT received", parsedJwtresult);
+            await this.popup.alert("Invalid JWT", parsedJwtresult.errorReason, "Ok");
+            return false;
         }
-
-        Logger.log("crproposal", "JWT signature is valid");
 
         let jwtPayload = parsedJwtresult.payload as CRWebsiteCommand;
         if (!jwtPayload.command) {
-            Logger.warn('crproposal', "Received CR website command without a command field. Skipping.");
-            return;
+            this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
+            return false;
         }
 
         this.originalRequestJWT = crProposalJwtRequest;
@@ -123,7 +125,7 @@ export class CROperationsService {
             if (jwtPayload.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
                 this.popup.alert("DID isn't match", "The DID isn't match", "Ok");
-                return;
+                return false;
             }
         }
 
@@ -142,6 +144,8 @@ export class CROperationsService {
                 Logger.warn('crproposal', "Unhandled CR command: ", jwtPayload.command);
                 this.popup.alert("Unsupported command", "Sorry, this feature is currently not supported by this capsule", "Ok");
         }
+
+        return true;
     }
 
     public sendIntentResponse(result?: any): Promise<void> {

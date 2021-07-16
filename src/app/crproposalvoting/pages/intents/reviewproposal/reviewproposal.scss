@@ -1,1 +1,40 @@
 @import "../root.scss";
+
+.vote-result {
+    padding: 10px 20px;
+    border-radius: 10px;
+    height: 42;
+}
+
+#approve {
+    background-color: #D0FBEE;
+}
+
+#reject {
+    background-color: #FFE5E5;
+}
+
+#abstain {
+    background-color: #EDEDED;
+}
+
+img {
+    margin-right: 10px;
+    width: 22px;
+    height: 22px;
+}
+
+.darkContainer {
+    #approve {
+        background-color: #252F2C;
+    }
+
+    #reject {
+        background-color: #422727;
+    }
+
+    #abstain {
+        background-color: #404040;
+    }
+
+}

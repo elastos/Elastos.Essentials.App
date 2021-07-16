@@ -7,15 +7,18 @@ ion-spinner {
     align-items: center;
 }
 
+.align-center {
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+}
 //-------- CreateSuggestionPage and CreateProposalPage -------
 .proposaltype {
     padding: 10px 15px;
     border-radius: 7px;
     background-color:#F2F2F2;
-    text-align: center;
-    align-items: center;
-    display: flex;
-    justify-content: center;
 }
 
 table,
