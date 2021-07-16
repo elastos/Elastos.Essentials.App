@@ -53,7 +53,7 @@ export class MnemonicCreatePage implements OnInit {
 
     ionViewWillEnter() {
         // titleBarManager.setBackgroundColor('#732cd0');
-        this.titleBar.setBackgroundColor('#6B26C6');
+        this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
     }

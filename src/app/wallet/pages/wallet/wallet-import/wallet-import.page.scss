@@ -2,8 +2,6 @@
 
 .container {
     position: relative;
-    top: -1px;
-    left: -1px;
     min-height: 100%;
     padding: 10px 0;
     display: flex;
@@ -72,7 +70,7 @@
                 .input-col {
                     justify-content: flex-start;
                 }
-            }        
+            }
 
             .btn-container {
                 margin-top: 150px;

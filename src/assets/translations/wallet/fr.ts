@@ -397,7 +397,7 @@ export const fr = {
         'import-text-word-sucess': 'Portefeuille importé depuis votre mnémonique',
         'next-four-words': '4 mots suivants',
         'create-wallet': 'Créer Portefeuille',
-        'import-wallet': 'Importer Portefeuiller',
+        'import-wallet': 'Importer Portefeuille',
         "mnemonic-import-missing-words": "Veuillez saisir tous les mots avant de continuer",
         "mnemonic-check-title": "Vérification du mnémonique",
         "memory-written-down": "Je l'ai noté",

@@ -113,7 +113,7 @@ export class MnemonicExportPage implements OnInit {
 
     async showMnemonics() {
         const ret = await this.walletManager.spvBridge.exportWalletWithMnemonic(this.masterWalletId, this.payPassword);
-        this.titleBar.setBackgroundColor('#6B26C6');
+        this.titleBar.setBackgroundColor('#732cd0');
         this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
 

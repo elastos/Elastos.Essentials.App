@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="415.003" height="736.502" viewBox="0 0 415.003 736.502">
+<svg xmlns="http://www.w3.org/2000/svg" width="415" height="736.502" viewBox="0 0 415 736.502">
     <defs>
         <linearGradient id="linear-gradient" x1=".5" x2=".5" y2="1" gradientUnits="objectBoundingBox">
             <stop offset="0" stop-color="#732cd0"/>
@@ -10,7 +10,7 @@
     </defs>
     <g id="Component_1038_25" transform="translate(.5)">
         <path id="Rectangle_5479" fill="#6b26c6" d="M0 0H414V736H0z" transform="translate(.003)"/>
-        <path id="Intersection_82" d="M0 609.865V599.8c48.318-30.163 80.919-71.3 78.021-127.408C68.213 282.5 361.357 362.784 414 0v609.865z" class="cls-2" transform="translate(0 126.137)"/>
-        <path id="Intersection_83" d="M0 289.588v-47.227c69.255-11.719 121.691-40.916 140.417-97.27C193.08-13.373 265.32 8.033 414 0v289.588z" class="cls-2" transform="translate(.001 446.414)"/>
+        <path id="Intersection_82" d="M0 609.865V599.8c48.318-30.163 80.919-71.3 78.021-127.408C68.213 282.5 361.357 362.784 415 0v609.865z" class="cls-2" transform="translate(0 126.137)"/>
+        <path id="Intersection_83" d="M0 289.588v-47.227c69.255-11.719 121.691-40.916 140.417-97.27C193.08-13.373 265.32 8.033 415 0v289.588z" class="cls-2" transform="translate(.001 446.414)"/>
     </g>
 </svg>
