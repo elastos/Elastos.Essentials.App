@@ -64,7 +64,7 @@ export class VotePage implements OnInit {
             case 'Unregistered':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-                    await this.voteService.selectWalletAndNavTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
+                    await this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
                 });
 
                 break;
@@ -76,7 +76,7 @@ export class VotePage implements OnInit {
             case 'Returned':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png'});
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-                    this.globalNav.navigateTo(App.DPOS_VOTING, '/dposregistration/unregistration');
+                    this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/unregistration');
                 });
                 break;
         }
