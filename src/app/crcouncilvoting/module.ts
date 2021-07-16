@@ -15,12 +15,14 @@ import { HistoryPage } from './pages/history/history.page';
 import { VotePage } from './pages/vote/vote.page';
 import { CandidateSliderComponent } from './components/candidate-slider/candidate-slider.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { CRNodePage } from './pages/crnode/crnode.page';
 
 @NgModule({
   declarations: [
     VotePage,
     CandidatesPage,
     HistoryPage,
+    CRNodePage,
     CandidateSliderComponent
   ],
   imports: [

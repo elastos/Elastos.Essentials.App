@@ -22,9 +22,9 @@ import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
-import { CRCouncilManagerInitService } from 'src/app/crcouncilmanager/services/init.service';
 import { App } from "src/app/model/app.enum";
 import { ContactsInitService } from 'src/app/contacts/services/init.service';
+import { CRCouncilVotingInitService } from 'src/app/crcouncilvoting/services/init.service';
 
 type RunnableApp = {
     id: string;
@@ -80,7 +80,7 @@ export class AppmanagerService {
         private hiveManagerInitService: HiveManagerInitService,
         private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
-        private crcouncilManagerInitService: CRCouncilManagerInitService,
+        private crcouncilVotingInitService: CRCouncilVotingInitService,
         private contactsInitService: ContactsInitService
     ) {}
 
@@ -213,7 +213,8 @@ export class AppmanagerService {
                         description: this.translate.instant('launcher.app-crcouncil-description'),
                         icon: '/assets/launcher/apps/app-icons/council.svg',
                         hasWidget: false,
-                        routerPath: '/crcouncilvoting/candidates'
+                        startCall: () => this.crcouncilVotingInitService.start()
+                        // routerPath: '/crcouncilvoting/candidates'
                         // routerPath: '/crcouncilvoting/vote'
                     },
                     {
@@ -224,15 +225,6 @@ export class AppmanagerService {
                         icon: '/assets/launcher/apps/app-icons/proposal.svg',
                         hasWidget: false,
                         routerPath: '/crproposalvoting/proposals/ALL'
-                    },
-                    {
-                        id: 'crcouncilmanager',
-                        routerContext: App.CRCOUNCIL_MANAGER,
-                        name: this.translate.instant('launcher.app-crcouncil-registration'),
-                        description: this.translate.instant('launcher.app-crcouncil-registration-description'),
-                        icon: '/assets/launcher/apps/app-icons/council.svg',
-                        hasWidget: false,
-                        startCall: () => this.crcouncilManagerInitService.start()
                     },
                 ]
             }

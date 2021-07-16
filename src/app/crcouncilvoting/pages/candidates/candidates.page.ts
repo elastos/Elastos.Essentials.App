@@ -15,6 +15,7 @@ import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.se
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { VoteService } from "src/app/vote/services/vote.service";
 import { App } from "src/app/model/app.enum";
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 
 
 @Component({
@@ -24,6 +25,14 @@ import { App } from "src/app/model/app.enum";
 })
 export class CandidatesPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
+    public candidate: Candidate;
+    public showCandidate = false;
+    public candidateIndex: number;
+    public addingCandidates = false;
+
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+    public crmemberInfo: any;
 
     constructor(
         public candidatesService: CandidatesService,
@@ -37,17 +46,14 @@ export class CandidatesPage implements OnInit {
         public translate: TranslateService
     ) { }
 
-    public candidate: Candidate;
-    public showCandidate = false;
-    public candidateIndex: number;
-    public addingCandidates = false;
+
 
     ngOnInit() {
         this.showCandidate = false;
     }
 
-    ionViewWillEnter() {
-        this.candidatesService.init();
+    async ionViewWillEnter() {
+        await this.candidatesService.init();
         if (this.candidatesService.candidates.length) {
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
         } else if (this.candidatesService.council.length) {
@@ -55,6 +61,27 @@ export class CandidatesPage implements OnInit {
         } else {
             this.titleBar.setTitle(this.translate.instant('launcher.app-cr-council'));
         }
+
+        let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
+        await this.candidatesService.fetchCRMembers();
+        for (let crmember of this.candidatesService.crmembers) {
+            if (crmember.did == did) {
+                this.crmemberInfo = crmember;
+                this.addEditIcon();
+                break;
+            }
+        }
+    }
+
+    addEditIcon() {
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT });
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+            await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilvoting/crnode', {
+                queryParams: {
+                    crmember: this.crmemberInfo
+                }
+            });
+        });
     }
 
     doRefresh(event) {

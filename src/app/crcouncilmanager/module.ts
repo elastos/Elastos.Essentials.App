@@ -13,13 +13,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { CRCouncilManagerRoutingModule } from './routing';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { CRCouncilManagerPage } from './pages/manager/manager.page';
-import { CRNodePage } from './pages/crnode/crnode.page';
 
 @NgModule({
   declarations: [
     CRCouncilRegistrationPage,
     CRCouncilManagerPage,
-    CRNodePage,
   ],
   imports: [
     CommonModule,

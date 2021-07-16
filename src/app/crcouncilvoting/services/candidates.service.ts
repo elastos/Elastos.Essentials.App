@@ -12,6 +12,9 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +28,7 @@ export class CandidatesService {
         private toastCtrl: ToastController,
         private storage: GlobalStorageService,
         public translate: TranslateService,
+        public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService
     ) { }
 
@@ -33,6 +37,7 @@ export class CandidatesService {
     public candidates: Candidate[] = [];
     public totalVotes = 0;
     public selectedCandidates: Selected[] = [];
+    public crmembers: any[] = [];
 
     /** Election Results **/
     public councilTerm: number;
@@ -51,12 +56,13 @@ export class CandidatesService {
         "params": { "state": "active" }
     };
 
-    init() {
-        void this.initData();
+    async init() {
+        this.initData();
     }
 
-    initData() {
+    async initData() {
         this.candidates = [];
+        this.crmembers = [];
         this.council = [];
         this.selectedCandidates = [];
 
@@ -71,8 +77,26 @@ export class CandidatesService {
         }
     }
 
-    getSelectedCandidates() {
-        void this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
+    async fetchCRMembers() {
+        Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
+        const param = {
+            method: 'listcurrentcrs',
+            params: {
+                state: "all"
+            },
+        };
+
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        Logger.log(App.CRCOUNCIL_VOTING, "rpcApiUrl:", rpcApiUrl);
+        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
+        if (!Util.isEmptyObject(result.crmembersinfo)) {
+            Logger.log(App.CRCOUNCIL_VOTING, "crmembersinfo:", result.crmembersinfo);
+            this.crmembers = result.crmembersinfo;
+        }
+    }
+
+    async getSelectedCandidates() {
+        await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []).then(data => {
             Logger.log('crcouncil', 'Selected Candidates', data);
             if (data) {
                 this.selectedCandidates = data;
