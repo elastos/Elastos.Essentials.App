@@ -27,8 +27,9 @@ export const zh = {
         'transaction-id': '交易ID',
         'time-published': '发布时间',
         'block-id': '区块ID',
-        'confirm-count-prefix': '在',
-        'confirm-count-postfix': '确认块后管理节点',
+        'confirm-count-6': '在6个确认块后管理节点。',
+        'confirm-count-prefix': '当前',
+        'confirm-count-postfix': '个确认块。',
     }
 
 };

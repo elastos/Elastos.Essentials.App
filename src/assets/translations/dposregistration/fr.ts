@@ -26,7 +26,8 @@ export const fr = {
         'transaction-id': 'ID de la Transaction',
         'time-published': 'Date de Publication',
         'block-id': 'ID du bloc',
-        'confirm-count-prefix': 'Gestion du noeud après ',
+        'confirm-count-6': 'Gestion du noeud après 6 confirmations.',
+        'confirm-count-prefix': 'Current ',
         'confirm-count-postfix': ' confirmations',
     }
 };

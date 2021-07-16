@@ -9,11 +9,14 @@
 
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
 
-        <p *ngIf="dposInfo.state == 'Pending'" class="block-height">
-            <span>{{ 'dposregistration.confirm-count-prefix' | translate }}</span>
-            <span>{{ confirmCount }}</span>
-            <span>{{ 'dposregistration.confirm-count-postfix' | translate }}</span>
-        </p>
+        <div *ngIf="dposInfo.state == 'Pending'" class="block-height">
+            <p>
+                <span>{{ 'dposregistration.confirm-count-prefix' | translate }}</span>
+                <span>{{ confirmCount }}</span>
+                <span>{{ 'dposregistration.confirm-count-postfix' | translate }}</span>
+            </p>
+            <p>{{ 'dposregistration.confirm-count-6' | translate }}</p>
+        </div>
 
         <ion-list-header>
             <h4>{{ 'dposregistration.node-detials' | translate }}</h4>
@@ -30,7 +33,8 @@
             <ion-row class="profile-data" *ngIf="nodesService.dposInfo.state">
                 <div>
                     <h5>{{ 'dposregistration.node-status' | translate }}</h5>
-                    <h4 class="align-center status_mark" [id]="nodesService.dposInfo.state">{{ nodesService.dposInfo.state }}</h4>
+                    <h4 class="align-center status_mark" [id]="nodesService.dposInfo.state">{{
+                        nodesService.dposInfo.state }}</h4>
                 </div>
             </ion-row>
 

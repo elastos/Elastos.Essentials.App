@@ -27,7 +27,8 @@ export const en = {
         'transaction-id': 'Transaction ID',
         'time-published': 'Time Published',
         'block-id': 'Block ID',
-        'confirm-count-prefix': 'Manage node after ',
+        'confirm-count-6': 'Manage node after 6 confirmations.',
+        'confirm-count-prefix': 'Current ',
         'confirm-count-postfix': ' confirmations',
     }
 
