@@ -3,44 +3,52 @@
     <div class="header">
     </div>
 
-    <div class="title">
-        <h1 *ngIf="dposInfo.state == 'Unregistered'">{{ 'dposregistration.register-header' | translate }}</h1>
-        <h1 *ngIf="dposInfo.state == 'Active'">{{ 'dposregistration.update-header' | translate }}</h1>
+    <div class="align-center title">
+        <h3 *ngIf="dposInfo.state == 'Unregistered'">{{ 'dposregistration.register-header' | translate }}</h3>
+        <h3 *ngIf="dposInfo.state == 'Active'">{{ 'dposregistration.update-header' | translate }}</h3>
     </div>
 
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
 
-        <div *ngIf="state != 'ReturnDeposit'">
-            <!-- Name -->
-            <p>{{ 'dposregistration.node-name' | translate }}</p>
-            <ion-row>
-                <ion-input type="text" name="name" [attr.disabled]="needConfirm" ngDefaultControl
-                    [placeholder]="'dposregistration.node-name' | translate" [(ngModel)]="dposInfo.nickname">
-                </ion-input>
+        <ion-list *ngIf="state != 'ReturnDeposit'">
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-name' | translate }}</h5>
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm" ngDefaultControl
+                        [(ngModel)]="dposInfo.nickname">
+                    </ion-input>
+                </ion-col>
             </ion-row>
 
-            <p>{{ 'dposregistration.node-publickey' | translate }}</p>
-            <ion-row>
-                <ion-input type="text" name="publickey" [attr.disabled]="needConfirm" ngDefaultControl
-                    [placeholder]="'dposregistration.node-publickey' | translate" [(ngModel)]="dposInfo.nodepublickey">
-                </ion-input>
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-publickey' | translate }}</h5>
+                    <ion-input type="text" name="publickey" [attr.disabled]="needConfirm" ngDefaultControl
+                        [(ngModel)]="dposInfo.nodepublickey">
+                    </ion-input>
+                </ion-col>
             </ion-row>
 
-            <p>{{ 'dposregistration.node-url' | translate }}</p>
-            <ion-row>
-                <ion-input type="text" name="url" [attr.disabled]="needConfirm" ngDefaultControl
-                    [placeholder]="'dposregistration.node-url' | translate" [(ngModel)]="dposInfo.url">
-                </ion-input>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-url' | translate }}</h5>
+                    <ion-input type="text" name="url" [attr.disabled]="needConfirm" ngDefaultControl
+                        [(ngModel)]="dposInfo.url">
+                    </ion-input>
+                </ion-col>
             </ion-row>
 
-            <p>{{ 'dposregistration.node-location' | translate }}</p>
-            <ion-row>
-                <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm">
-                    <ion-select-option *ngFor="let code of areaList" [value]="code">{{ 'crcouncilvoting.' + code |
-                        translate }}</ion-select-option>
-                </ion-select>
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposregistration.node-location' | translate }}</h5>
+                    <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm">
+                        <ion-select-option *ngFor="let code of areaList" [value]="code">{{ 'crcouncilvoting.' + code |
+                            translate }}</ion-select-option>
+                    </ion-select>
+                </ion-col>
             </ion-row>
-        </div>
+        </ion-list>
 
         <ion-row class="btn-container">
             <ng-container *ngIf="!needConfirm">

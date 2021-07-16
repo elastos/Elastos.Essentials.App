@@ -28,10 +28,10 @@
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="nodesService.dposInfo.state">
-                <ion-col>
+                <div>
                     <h5>{{ 'dposregistration.node-status' | translate }}</h5>
-                    <h4 class="active-status">{{ nodesService.dposInfo.state }}</h4>
-                </ion-col>
+                    <h4 class="align-center status_mark" [id]="nodesService.dposInfo.state">{{ nodesService.dposInfo.state }}</h4>
+                </div>
             </ion-row>
 
             <ion-row class="profile-data" *ngIf="nodesService.dposInfo.votes">
