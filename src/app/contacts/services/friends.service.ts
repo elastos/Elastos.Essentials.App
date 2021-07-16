@@ -275,7 +275,6 @@ export class FriendsService {
           Logger.log('contacts', 'Contact is already added');
         }
       } else {
-        this.native.showLoading(this.translate.instant('common.please-wait'));
         this.resolveDIDDocument(did, false, carrierAddress);
       }
     }
@@ -304,7 +303,6 @@ export class FriendsService {
     return new Promise((resolve, reject) => {
       didManager.resolveDidDocument(didString, true, (didDocument: DIDPlugin.DIDDocument) => {
         Logger.log("Contacts", "DIDDocument resolved for DID " + didString, didDocument);
-
         if (didDocument && !updatingFriends) {
           this.buildPublishedContact(didDocument, carrierAddress, requiresConfirmation);
         } else if (didDocument && updatingFriends) {
@@ -777,9 +775,7 @@ export class FriendsService {
       if(targetContact) {
         this.globalNav.navigateTo('contacts', '/contacts/friends/'+didString);
       } else {
-        this.native.showLoading(this.translate.instant('common.please-wait'));
         await this.resolveDIDDocument(didString, false);
-        this.native.hideLoading();
       }
     });
   }

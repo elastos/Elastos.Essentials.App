@@ -1,5 +1,4 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular'
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -53,7 +52,6 @@ export class ScanPage {
         private zone: NgZone,
         private alertController: AlertController,
         public theme: GlobalThemeService,
-        private native: GlobalNativeService,
         private globalIntentService: GlobalIntentService,
         private globalWalletConnectService: GlobalWalletConnectService,
         private globalNav: GlobalNavService,
@@ -194,7 +192,6 @@ export class ScanPage {
         }
 
         Logger.log("Scanner", "Stopping camera, getting ready to pick a picture from the gallery.");
-        void this.native.showLoading();
         await this.hideCamera();
         this.stopScanning();
         this.showGalleryTitlebarKey(false);
@@ -227,7 +224,6 @@ export class ScanPage {
                                 Logger.log("Scanner", "Read qr code:", code);
 
                                 if (code != null) {
-                                    void this.native.hideLoading();
                                     this.showGalleryTitlebarKey(true);
                                     // A QR code could be found in the picture
                                     this.scannedText = code as string;
@@ -255,7 +251,6 @@ export class ScanPage {
             , (err)=>{
                 // 'No Image Selected': User canceled.
                 if (err === 'No Image Selected') {
-                    void this.native.hideLoading();
                     this.showGalleryTitlebarKey(true);
                     this.zone.run(() => {
                         this.startScanningProcess();
@@ -379,7 +374,6 @@ export class ScanPage {
     }
 
     async alertNoScannedContent(title: string, msg: string, btnText = 'ok') {
-        void this.native.hideLoading();
         this.showGalleryTitlebarKey(true);
 
         this.alert = await this.alertController.create({
