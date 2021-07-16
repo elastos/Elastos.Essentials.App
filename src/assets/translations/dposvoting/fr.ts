@@ -50,10 +50,10 @@ export const fr = {
         /********** Vote **********/
         'vote-voted': 'VOTES ACTUELS',
         'vote-not-voted': 'VOTER',
+        'vote-selected': ' noeuds sélectionnés',
         'vote-fail': "Il y a eu une erreur lors de l'envoi des votes...",
         'vote-cancelled': 'Les votes ont été annulés',
         'vote-timeout': 'Aucune réponse du portefeuille',
         'vote-no-nodes-checked': "Veuillez sélectionner jusqu'à 36 nœuds pour voter",
     }
-    
 };
