@@ -83,7 +83,7 @@ export class CreateProposalPage {
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
             Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
-            this.creationDate = (new Date(this.suggestionDetails.createdAt * 1000)).toLocaleString();
+            this.creationDate = Util.timestampToDateTime(this.suggestionDetails.createdAt * 1000);
             this.suggestionDetailsFetched = true;
         }
         catch (err) {

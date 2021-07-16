@@ -106,7 +106,8 @@ export class DPosUnRegistrationPage implements OnInit {
             this.TRANSACTION_LIMIT);
         if (txRawList && txRawList.length > 0) {
             this.transactionInfo = txRawList[0].result.txhistory[0] as DPoSTransactionInfo;
-            this.publishedTime = (new Date(this.transactionInfo.time * 1000)).toLocaleString();
+            // this.publishedTime = (new Date(this.transactionInfo.time * 1000)).toLocaleString();
+            this.publishedTime = Util.timestampToDateTime(this.transactionInfo.time * 1000);
             Logger.log(App.DPOS_REGISTRATION, "transactionInfo:", this.transactionInfo);
         }
 
