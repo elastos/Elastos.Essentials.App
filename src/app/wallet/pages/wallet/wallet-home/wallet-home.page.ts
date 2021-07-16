@@ -93,7 +93,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             name: 'Elastos',
             logo: 'assets/wallet/coins/ela-black.svg',
         },
-        {
+        /* {
             id: 2,
             name: 'HECO',
             logo: 'assets/wallet/coins/ela-black.svg',
@@ -107,7 +107,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             id: 4,
             name: 'Generic Network',
             logo: 'assets/wallet/coins/ela-black.svg',
-        },
+        }, */
     ];
 
     // Titlebar
