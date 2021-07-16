@@ -13,6 +13,7 @@ import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -71,6 +72,7 @@ export class PrepareDIDPage {
     private identityService: IdentityService,
     private platform: Platform,
     private walletService: WalletManager,
+    private native: GlobalNativeService,
     private globalHiveService: GlobalHiveService,
     private globalPublicationService: GlobalPublicationService,
     public theme: GlobalThemeService
@@ -121,6 +123,12 @@ export class PrepareDIDPage {
           break;
         case this.HIVE_SETUP_SLIDE_INDEX:
           operationSuccessful = await this.setupHiveStorage(this.vaultAddress);
+          if (!operationSuccessful) {
+            // Hive setup has failed? Show a error toast to let user know, but we dont block
+            // the on boarding so we just continue to the next step.
+            this.native.errToast("Hive storage setup could not be completed, please try again manually later. Continuing.", 4000);
+            operationSuccessful = true;
+          }
           break;
         case this.DEFAULT_WALLET_SLIDE_INDEX:
           // Note: we don't check if there is an error during wallet creation. This is not a blocking error,

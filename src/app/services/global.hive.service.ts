@@ -444,6 +444,7 @@ export class GlobalHiveService extends GlobalService {
       catch (e) {
         // Can't download the asset
         Logger.warn("GlobalHiveService", "Failed to download hive asset at "+hiveScriptUrl, e);
+        resolve(null);
       }
     });
   }
