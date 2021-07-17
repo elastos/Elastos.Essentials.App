@@ -23,7 +23,7 @@ export class WalletJsonRPCService {
     }
 
     // return balance in SELA
-    async getBalanceByAddress(chainID: StandardCoinName, addressArray: string[]): Promise<BigNumber> {
+    public async getBalanceByAddress(chainID: StandardCoinName, addressArray: string[]): Promise<BigNumber> {
         let apiurltype = this.getApiUrlTypeForRpc(chainID);
         const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
         if (rpcApiUrl === null) {
@@ -62,7 +62,7 @@ export class WalletJsonRPCService {
         return alreadyGetBalance ? balanceOfSELA : null;
     }
 
-    async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<any> {
+    public async getTransactionsByAddress(chainID: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<any> {
         const paramArray = [];
         let index = 0;
 
@@ -108,7 +108,7 @@ export class WalletJsonRPCService {
         }
     }
 
-    async getrawtransaction(chainID: StandardCoinName, txidArray: string[]): Promise<any[]> {
+    public async getrawtransaction(chainID: StandardCoinName, txidArray: string[]): Promise<any[]> {
       const paramArray = [];
       for (let i = 0, len = txidArray.length; i < len; i++) {
         const txid = txidArray[i];
@@ -145,7 +145,7 @@ export class WalletJsonRPCService {
   }
 
     // return all utxo by address
-    async getAllUtxoByAddress(chainID: StandardCoinName, addresses: string[], utxotype: UtxoType = UtxoType.Mixed): Promise<any> {
+    public async getAllUtxoByAddress(chainID: StandardCoinName, addresses: string[], utxotype: UtxoType = UtxoType.Mixed): Promise<any> {
         const param = {
             method: 'listunspent',
             params: {
@@ -176,7 +176,7 @@ export class WalletJsonRPCService {
         return utxoArray;
     }
 
-    async sendrawtransaction(chainID: StandardCoinName, payload: string): Promise<string> {
+    public async sendrawtransaction(chainID: StandardCoinName, payload: string): Promise<string> {
         const param = {
             method: 'sendrawtransaction',
             params: [
@@ -211,7 +211,7 @@ export class WalletJsonRPCService {
         return txid;
     }
 
-    async getBlockCount(chainID: StandardCoinName) {
+    public async getBlockCount(chainID: StandardCoinName) {
         const param = {
             method: 'getblockcount',
         };
@@ -252,7 +252,7 @@ export class WalletJsonRPCService {
     }
 
     //crc
-    async getCRrelatedStage() {
+    public async getCRrelatedStage() {
       const param = {
           method: 'getcrrelatedstage',
       };
@@ -296,7 +296,7 @@ export class WalletJsonRPCService {
     }
 
     // ETHSC:Get the real target address for the send transaction from ethsc to mainchain.
-    async getETHSCWithdrawTargetAddress(blockHeight: number, txHash: string) {
+    public async getETHSCWithdrawTargetAddress(blockHeight: number, txHash: string) {
         const param = {
             method: 'getwithdrawtransactionsbyheight',
             params: {
@@ -325,7 +325,7 @@ export class WalletJsonRPCService {
     // ****************************************
 
     // ELA main chain: Get the real send address for the send transaction from ethsc to mainchain.
-    getETHSCTransactionByHash(chainID: StandardCoinName, txHash: string) {
+    public getETHSCTransactionByHash(chainID: StandardCoinName, txHash: string) {
       if (!txHash.startsWith('0x')) {
         txHash = '0x' + txHash;
       }
@@ -350,7 +350,7 @@ export class WalletJsonRPCService {
       return '';
     }
 
-    async eth_blockNumber(chainID: StandardCoinName): Promise<number> {
+    public async eth_blockNumber(chainID: StandardCoinName): Promise<number> {
       const param = {
           method: 'eth_blockNumber',
           id:'1'
@@ -370,7 +370,7 @@ export class WalletJsonRPCService {
       return -1;
     }
 
-    async eth_getBalance(chainID: StandardCoinName, address: string): Promise<BigNumber> {
+    public async eth_getBalance(chainID: StandardCoinName, address: string): Promise<BigNumber> {
       const param = {
           method: 'eth_getBalance',
           params: [
@@ -394,7 +394,7 @@ export class WalletJsonRPCService {
       return null;
     }
 
-    async getETHSCNonce(chainID: StandardCoinName, address: string): Promise<number> {
+    public async getETHSCNonce(chainID: StandardCoinName, address: string): Promise<number> {
       const param = {
           method: 'eth_getTransactionCount',
           params: [
@@ -418,7 +418,7 @@ export class WalletJsonRPCService {
       return -1;
     }
 
-    async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
+    public async getETHSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
       let apiurltype = this.getApiUrlTypeForMisc(chainID);
       const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
       if (rpcApiUrl === null) {
@@ -438,7 +438,7 @@ export class WalletJsonRPCService {
       return null;
     }
 
-    eth_getTransactionByHash(chainID: StandardCoinName, txHash: string) {
+    public eth_getTransactionByHash(chainID: StandardCoinName, txHash: string) {
       const param = {
         method: 'eth_getTransactionByHash',
         params: [
@@ -461,7 +461,7 @@ export class WalletJsonRPCService {
       return '';
     }
 
-    async getERC20TokenTransactions(chainID: StandardCoinName, address: string): Promise<EthTokenTransaction[]> {
+    public async getERC20TokenTransactions(chainID: StandardCoinName, address: string): Promise<EthTokenTransaction[]> {
       const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ETHSC_BROWSER);
       if (rpcApiUrl.length == 0) {
         return null;
@@ -477,7 +477,7 @@ export class WalletJsonRPCService {
       return null;
     }
 
-    async getERC20TokenList(chainID: StandardCoinName, address: string): Promise<ERC20TokenInfo[]> {
+    public async getERC20TokenList(chainID: StandardCoinName, address: string): Promise<ERC20TokenInfo[]> {
       const rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ETHSC_BROWSER);
       if (rpcApiUrl.length == 0) {
         return null;
@@ -493,7 +493,7 @@ export class WalletJsonRPCService {
       return null;
     }
 
-    eth_sendRawTransaction(chainID: StandardCoinName, txHash: string) {
+    public eth_sendRawTransaction(chainID: StandardCoinName, txHash: string) {
       if (!txHash.startsWith('0x')) {
         txHash = '0x' + txHash;
       }
@@ -521,7 +521,7 @@ export class WalletJsonRPCService {
 
 
     // ERC20 Token
-    eth_getTransactionReceipt(chainID: StandardCoinName, txidArray: string[]): Promise<any> {
+    public eth_getTransactionReceipt(chainID: StandardCoinName, txidArray: string[]): Promise<any> {
       const paramArray = [];
       for (let i = 0, len = txidArray.length; i < len; i++) {
         const txid = txidArray[i];
@@ -572,7 +572,7 @@ export class WalletJsonRPCService {
   }
 
   // TODO: Remove it, Use browser api not misc.
-  getApiUrlTypeForMisc(chainID: string) {
+  public getApiUrlTypeForMisc(chainID: string) {
       let apiUrlType = null;
       switch (chainID) {
           case StandardCoinName.ETHSC:
@@ -588,7 +588,7 @@ export class WalletJsonRPCService {
       return apiUrlType;
   }
 
-  getApiUrlTypeForBrowser(chainID: string) {
+  public getApiUrlTypeForBrowser(chainID: string) {
     let apiUrlType = null;
     switch (chainID) {
         case StandardCoinName.ETHSC:

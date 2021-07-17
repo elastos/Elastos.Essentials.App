@@ -13,6 +13,29 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         super(masterWallet, StandardCoinName.IDChain);
     }
 
+    protected async initialize() {
+        await this.loadTransactionsFromCache();
+
+        setTimeout(async () => {
+            if (!this.masterWallet.account.SingleAddress) {
+                await this.checkAddresses(true);
+                await this.checkAddresses(false);
+            }
+            await this.updateBalance();
+
+            //Do not use id chain any more.
+            this.checkIDChainToBeDestroy();
+        }, 200);
+    }
+
+    checkIDChainToBeDestroy() {
+        // Do not use the id chain any more.
+        // Cross chain transaction need 20000 SELA.
+        if (this.balance.lte(20000)) {
+            this.masterWallet.destroySubWallet(this.id);
+        }
+    }
+
     public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
         let transactionInfo = await super.getTransactionInfo(transaction, translate);
         switch (transaction.type) {

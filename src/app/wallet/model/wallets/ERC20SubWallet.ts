@@ -199,6 +199,7 @@ export class ERC20SubWallet extends SubWallet {
         const contractAddress = this.coin.getContractAddress().toLowerCase();
         const tokenAccountAddress = await this.getTokenAccountAddress();
         let result = await this.jsonRPCService.getERC20TokenTransactions(StandardCoinName.ETHSC, tokenAccountAddress);
+        // Logger.test('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id, ' result:', result)
         if (result) {
           let allTx = result.filter((tx)=> {
             return tx.contractAddress === contractAddress
@@ -309,7 +310,6 @@ export class ERC20SubWallet extends SubWallet {
         const gasPrice = await this.web3.eth.getGasPrice();
 
         Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
-
         // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
         const amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
 
@@ -339,9 +339,6 @@ export class ERC20SubWallet extends SubWallet {
             method.encodeABI(),
             nonce
         );
-
-        Logger.log('wallet', 'Created raw ESC transaction:', rawTx);
-
         return rawTx;
     }
 
@@ -352,56 +349,66 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public async signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
-        // Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
-
+        Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
         return new Promise(async (resolve)=>{
-            // Logger.log('wallet', 'Received raw transaction', transaction);
-            const password = await this.masterWallet.walletManager.openPayModal(transfer);
-            if (!password) {
-                Logger.log('wallet', "No password received. Cancelling");
-                resolve({
-                    published: false,
-                    txid: null,
-                    status: 'cancelled'
-                });
-                return;
+            try {
+              const password = await this.masterWallet.walletManager.openPayModal(transfer);
+              if (!password) {
+                  Logger.log('wallet', "No password received. Cancelling");
+                  resolve({
+                      published: false,
+                      txid: null,
+                      status: 'cancelled'
+                  });
+                  return;
+              }
+
+              Logger.log('wallet', "Password retrieved. Now signing the transaction.");
+
+              await this.masterWallet.walletManager.native.showLoading();
+
+              const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
+                  this.masterWallet.id,
+                  StandardCoinName.ETHSC,
+                  transaction,
+                  password
+              );
+
+              Logger.log('wallet', "Transaction signed. Now publishing.", this);
+
+              const txid = await this.publishTransaction(signedTx);
+              Logger.log('wallet', "Published transaction id:", txid);
+
+              this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
+
+              await this.masterWallet.walletManager.native.hideLoading();
+
+              if (Util.isEmptyObject(transfer.action)) {
+                  await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+              }
+
+              let published = true;
+              let status = 'published';
+              if (!txid || txid.length == 0) {
+                published = false;
+                status = 'error';
+              }
+              resolve({
+                  published,
+                  status,
+                  txid
+              });
             }
-
-            Logger.log('wallet', "Password retrieved. Now signing the transaction.");
-
-            await this.masterWallet.walletManager.native.showLoading();
-
-            const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
-                this.masterWallet.id,
-                StandardCoinName.ETHSC,
-                transaction,
-                password
-            );
-
-            Logger.log('wallet', "Transaction signed. Now publishing.");
-
-            const txid = await this.publishTransaction(signedTx);
-            Logger.log('wallet', "Published transaction id:", txid);
-
-            this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
-
-            await this.masterWallet.walletManager.native.hideLoading();
-
-            if (Util.isEmptyObject(transfer.action)) {
-                await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+            catch (err) {
+              await this.masterWallet.walletManager.native.hideLoading();
+              Logger.error("wallet", "Publish error:", err);
+              resolve({
+                published: false,
+                txid: null,
+                status: 'error'
+              });
+              throw err;
             }
-
-            let published = true;
-            let status = 'published';
-            if (!txid || txid.length == 0) {
-              published = false;
-              status = 'error';
-            }
-            resolve({
-                published,
-                status,
-                txid
-            });
         });
     }
 

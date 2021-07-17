@@ -66,10 +66,12 @@ export class DeveloperService extends GlobalService  {
     networkTemplate: string
   ) {
     Logger.log('settings', 'Dev preference set to ' + networkTemplate);
-    this.selectedNetworkTemplate = networkTemplate;
-    await this.globalNetworksService.setActiveNetworkTemplate(networkTemplate);
+    if (this.selectedNetworkTemplate !== networkTemplate) {
+      this.selectedNetworkTemplate = networkTemplate;
+      await this.globalNetworksService.setActiveNetworkTemplate(networkTemplate);
 
-    void this.showRestartPrompt();
+      void this.showRestartPrompt();
+    }
   }
 
   // Reset to MainNet

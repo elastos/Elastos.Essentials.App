@@ -42,8 +42,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.initialize();
     }
 
-    private async initialize() {
-
+    protected async initialize() {
         this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper(this.jsonRPCService);
 
         await this.loadTransactionsFromCache();
@@ -54,14 +53,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
               await this.checkAddresses(false);
             }
             await this.updateBalance();
-            // await this.getTransactionByRPC();
-            if (this.id === StandardCoinName.ELA) {
-                await this.getVotingUtxoByRPC();
-            } else {
-                //Do not use id chain any more.
-                this.checkIDChainToBeDestroy();
-            }
-        }, 3000);
+        }, 1000);
     }
 
     public async getOwnerAddress(): Promise<string> {
@@ -70,16 +62,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           this.masterWallet.id, this.id);
       }
       return this.ownerAddress;
-    }
-
-    checkIDChainToBeDestroy() {
-      // Do not use the id chain any more.
-      if (this.id === StandardCoinName.IDChain) {
-        // Cross chain transaction need 20000 SELA.
-        if (this.balance.lte(20000)) {
-          this.masterWallet.destroySubWallet(this.id);
-        }
-      }
     }
 
     public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
@@ -533,7 +515,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     /**
      * If the last address is used, the spvsdk will create new addresses.
      */
-    private async checkAddresses(internal: boolean) {
+    protected async checkAddresses(internal: boolean) {
         let addressArrayUsed = []
 
         try {
