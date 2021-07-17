@@ -15,6 +15,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { App } from 'src/app/model/app.enum';
 import { VoteService } from 'src/app/vote/services/vote.service';
+import { PopupProvider } from 'src/app/services/global.popup.service';
 
 
 @Component({
@@ -51,6 +52,7 @@ export class VotePage implements OnInit {
         private globalIntentService: GlobalIntentService,
         public voteService: VoteService,
         public theme: GlobalThemeService,
+        public popupProvider: PopupProvider,
     ) {
     }
 
@@ -58,13 +60,14 @@ export class VotePage implements OnInit {
     }
 
     private async setRegistrationIcon() {
+        await this.nodesService.init();
         let dposInfo = await this.nodesService.getRegistrationNodeInfo();
 
         switch (dposInfo.state) {
             case 'Unregistered':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-                    await this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
+                    await this.goToRegistration();
                 });
 
                 break;
@@ -74,12 +77,24 @@ export class VotePage implements OnInit {
             case 'Canceled':
             case 'Illegal':
             case 'Returned':
-                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png'});
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
                     this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/unregistration');
                 });
                 break;
         }
+    }
+
+    async goToRegistration() {
+        if (!await this.nodesService.checkBalanceForRegDposNode()) {
+            return;
+        }
+
+        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposregistration.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+            return;
+        }
+
+        await this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
     }
 
     ionViewWillEnter() {

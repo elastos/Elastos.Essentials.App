@@ -3,7 +3,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class PopupProvider {
 
     public alertPopup: any = null;

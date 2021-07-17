@@ -30,6 +30,9 @@ export const en = {
         'confirm-count-6': 'Manage node after 6 confirmations.',
         'confirm-count-prefix': 'Current ',
         'confirm-count-postfix': ' confirmations',
+
+        'reg-dpos-balance-not-enough': '5000 ELA deposit + 0.00001 ELA fee are required for DPoS node registration',
+        'dpos-deposit-warning': '5000 ELA deposit + 0.00001 ELA fee are paid for DPoS node registration',
     }
 
 };

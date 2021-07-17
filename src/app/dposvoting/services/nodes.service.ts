@@ -17,6 +17,7 @@ import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { Util } from 'src/app/model/util';
 import { App } from 'src/app/model/app.enum';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { PopupProvider } from 'src/app/services/global.popup.service';
 
 
 export type DPoSRegistrationInfo = {
@@ -110,6 +111,7 @@ export class NodesService {
         public walletRPCService: WalletJsonRPCService,
         public voteService: VoteService,
         private walletManager: WalletManager,
+        public popupProvider: PopupProvider,
     ) { }
 
     get nodes(): DPosNode[] {
@@ -177,6 +179,17 @@ export class NodesService {
                 }
             });
         });
+    }
+
+    async checkBalanceForRegDposNode(): Promise<boolean> {
+        let depositAmount = 50000000000; // 5000 ELA
+        let fee = 10000;
+        let amount = depositAmount + fee;
+        if (this.voteService.sourceSubwallet.balance.lt(amount)) {
+            await this.popupProvider.ionicAlert('wallet.insuff-balance', 'dposregistration.reg-dpos-balance-not-enough');
+            return false;
+        }
+        return true;
     }
 
     async fetchStats() {

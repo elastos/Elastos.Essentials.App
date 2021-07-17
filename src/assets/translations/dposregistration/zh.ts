@@ -30,6 +30,9 @@ export const zh = {
         'confirm-count-6': '在6个确认块后管理节点。',
         'confirm-count-prefix': '当前',
         'confirm-count-postfix': '个确认块。',
+
+        'reg-dpos-balance-not-enough': '注册DPoS节点需要5000ELA押金+0.00001ELA手续费。',
+        'dpos-deposit-warning': '注册DPoS节点会消费5000ELA押金+0.00001ELA手续费。',
     }
 
 };
