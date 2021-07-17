@@ -53,6 +53,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
               await this.checkAddresses(false);
             }
             await this.updateBalance();
+            await this.getVotingUtxoByRPC();
         }, 1000);
     }
 
