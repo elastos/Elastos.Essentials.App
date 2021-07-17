@@ -44,8 +44,6 @@ export class DPosRegistrationPage implements OnInit {
     public cancelHeight = 0;
     public available = 0;
 
-    balance: BigNumber; // ELA
-
     transFunction: any;
     title = '';
     info = '';
@@ -53,6 +51,7 @@ export class DPosRegistrationPage implements OnInit {
     needConfirm = false;
 
     private depositAmount = 500000000000; // 5000 ELA
+    private fee = 10000;
 
     constructor(
         public translate: TranslateService,
@@ -104,11 +103,8 @@ export class DPosRegistrationPage implements OnInit {
     async register() {
         Logger.log('dposregistration', 'Calling register()', this.dposInfo);
 
-        this.balance = this.voteService.masterWallet.getSubWalletBalance(this.chainId);
-
         //Check value
-        if (this.balance.lt(0.0002)) {
-            this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
+        if (!await this.nodesService.checkBalanceForRegDposNode()) {
             return;
         }
 
