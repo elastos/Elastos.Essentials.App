@@ -615,7 +615,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 }
                 utxoArrayForSDK.push(utxoForSDK);
                 totalAmount += utxoAmountSELA;
-                if ((amountSELA != -1) && (totalAmount > amountSELA)) {
+                if ((amountSELA != -1) && (totalAmount >= amountSELA)) {
                     Logger.log('wallet', 'Get enought utxo for :', amountSELA);
                     getEnoughUTXO = true;
                     break;
