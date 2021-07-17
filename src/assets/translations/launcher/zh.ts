@@ -30,7 +30,7 @@ export const zh = {
         'backup-title': '身份未备份',
         'backup-message': '保存您身份的纸质密钥是非常重要的一步，因为这是以后恢复它的唯一方法。',
         'backup-button': '立即备份',
-        'active-wallet-connect-sessions': 'Active wallet connect sessions',
+        'active-wallet-connect-sessions': '活跃的钱包连接会话',
 
         /********** Onboard Page **********/
 
