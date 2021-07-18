@@ -60,7 +60,7 @@ export class VoteService {
         if (this.walletList.length < 1) {
             const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
             if (toCreateWallet) {
-                this.native.setRootRouter('/wallet/wallet-home');
+                this.native.setRootRouter('/wallet/launcher');
             }
             else {
                 return;
