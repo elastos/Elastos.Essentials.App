@@ -170,7 +170,11 @@ export class DPosUnRegistrationPage implements OnInit {
     }
 
     async unregister() {
-        Logger.log('wallet', 'Calling createUnregisterDPoSTransaction()');
+        Logger.log(App.DPOS_REGISTRATION, 'Calling createUnregisterDPoSTransaction()');
+
+        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposregistration.dpos-unregister-warning', 'common.confirm', 'common.cancel')) {
+            return;
+        }
 
         const payPassword = await this.authService.getWalletPassword(this.masterWalletId);
         if (payPassword === null) {// cancelled by user
