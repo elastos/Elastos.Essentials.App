@@ -42,9 +42,10 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposregistration.node-location' | translate }}</h5>
-                    <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm">
-                        <ion-select-option *ngFor="let code of areaList" [value]="code">{{ 'crcouncilvoting.' + code |
-                            translate }}</ion-select-option>
+                    <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm" [attr.ok-text]="'common.confirm' | translate" [attr.cancel-text]="'common.cancel' | translate">
+                        <ion-select-option *ngFor="let code of areaList" [value]="code">
+                            {{ 'crcouncilvoting.' + code | translate }}
+                        </ion-select-option>
                     </ion-select>
                 </ion-col>
             </ion-row>
