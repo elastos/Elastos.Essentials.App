@@ -30,7 +30,7 @@ export const fr = {
         'confirm-count-prefix': 'Current ',
         'confirm-count-postfix': ' confirmations',
 
-        'reg-dpos-balance-not-enough': '5000 ELA deposit + 0.00001 ELA fee are required for DPoS node registration',
-        'dpos-deposit-warning': '5000 ELA deposit + 0.00001 ELA fee are paid for DPoS node registration',
+        'reg-dpos-balance-not-enough': '5000 ELA deposit and a minor transaction fee are required for DPoS node registration',
+        'dpos-deposit-warning': 'Do you want to register your DPoS node? 5000 ELA deposit and a minor transaction fee are paid for DPoS node registration',
     }
 };
