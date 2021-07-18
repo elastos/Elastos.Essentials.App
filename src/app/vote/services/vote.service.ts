@@ -8,11 +8,10 @@ import { Logger } from 'src/app/logger';
 import { WalletAccount, WalletAccountType } from '../../wallet/model/WalletAccount';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { DIDService } from 'src/app/identity/services/did.service';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/MainchainSubWallet';
-import { PopupService } from 'src/app/crproposalvoting/services/popup.service';
+import { PopupProvider } from 'src/app/services/global.popup.service';
 
 @Injectable({
     providedIn: 'root'
@@ -37,7 +36,7 @@ export class VoteService {
     constructor(
         public native: Native,
         private walletManager: WalletManager,
-        private popup: PopupService,
+        public popupProvider: PopupProvider,
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService
     ) {
@@ -57,9 +56,15 @@ export class VoteService {
 
         this.chainId = StandardCoinName.ELA;
         this.walletList = this.walletManager.getWalletsList();
+
         if (this.walletList.length < 1) {
-            await this.popup.alert("Error", "Haven't wallet. Your should create one. ", "Ok");
-            this.native.setRootRouter('/wallet/wallet-home');
+            const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
+            if (toCreateWallet) {
+                this.native.setRootRouter('/wallet/wallet-home');
+            }
+            else {
+                return;
+            }
         }
         else if (this.walletList.length === 1) {
             this.navigateTo(this.walletList[0]);
@@ -91,7 +96,7 @@ export class VoteService {
 
         //If multi sign will be rejected
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
-            await this.popup.alert("Error", "Multi sign reject voting. ", "Ok");
+            await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.multi-sign-reject-voting');
             return;
         }
 
