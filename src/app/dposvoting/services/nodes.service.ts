@@ -48,8 +48,7 @@ export class NodesService {
     public _nodes: DPosNode[] = [];
     public activeNodes: DPosNode[] = [];
     public totalVotes: number = 0;
-
-
+    public dposList: DPoSRegistrationInfo[] = [];
 
     // Stats
     public statsFetched: boolean = false;
@@ -210,6 +209,10 @@ export class NodesService {
     async getRegistrationNodeInfo(): Promise<DPoSRegistrationInfo> {
         let ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
         this.dposInfo = {
+            // nickname: "test",
+            // location: 86,
+            // url: 'http://test.com',
+
             state: "Unregistered",
             nodepublickey: ownerPublicKey,
             ownerpublickey: ownerPublicKey
@@ -228,12 +231,16 @@ export class NodesService {
 
         if (!Util.isEmptyObject(result.producers)) {
             Logger.log(App.DPOS_REGISTRATION, "dposlist:", result.producers);
+            this.dposList = result.producers;
             for (const producer of result.producers) {
                 if (producer.ownerpublickey == ownerPublicKey) {
                     this.dposInfo = producer;
                     break;
                 }
             }
+        }
+        else {
+            this.dposList = [];
         }
 
         return this.dposInfo;

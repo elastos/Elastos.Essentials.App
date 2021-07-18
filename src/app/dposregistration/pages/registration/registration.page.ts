@@ -18,6 +18,7 @@ import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/dposvoting/services/nodes.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Component({
     selector: 'app-registration',
@@ -63,6 +64,7 @@ export class DPosRegistrationPage implements OnInit {
         public jsonRPCService: GlobalJsonRPCService,
         public walletRPCService: WalletJsonRPCService,
         public nodesService: NodesService,
+        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -89,6 +91,16 @@ export class DPosRegistrationPage implements OnInit {
                 this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 break;
         }
+    }
+
+    async checkValues() {
+        for (const dpos of this.nodesService.dposList) {
+            if (dpos.nickname == this.dposInfo.nickname) {
+                this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');
+                return;
+            }
+        }
+        this.needConfirm = true;
     }
 
     async confirm() {

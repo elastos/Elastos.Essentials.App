@@ -53,10 +53,10 @@
 
         <ion-row class="btn-container">
             <ng-container *ngIf="!needConfirm">
-                <ion-button *ngIf="dposInfo.state == 'Unregistered'" color="success" (click)="needConfirm = true;">
+                <ion-button *ngIf="dposInfo.state == 'Unregistered'" color="success" (click)="checkValues()">
                     {{ 'dposregistration.register' | translate }}
                 </ion-button>
-                <ion-button *ngIf="dposInfo.state == 'Active'" color="success" (click)="needConfirm = true;">
+                <ion-button *ngIf="dposInfo.state == 'Active'" color="success" (click)="checkValues()">
                     {{ 'dposregistration.update' | translate }}
                 </ion-button>
             </ng-container>

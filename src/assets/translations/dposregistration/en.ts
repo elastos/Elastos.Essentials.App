@@ -33,6 +33,8 @@ export const en = {
 
         'reg-dpos-balance-not-enough': '5000 ELA deposit and a minor transaction fee are required for DPoS node registration',
         'dpos-deposit-warning': 'Do you want to register your DPoS node? 5000 ELA deposit and a minor transaction fee are paid for DPoS node registration',
+
+        'text-dpos-name-already-used': 'This DPoS node name is already in use',
     }
 
 };
