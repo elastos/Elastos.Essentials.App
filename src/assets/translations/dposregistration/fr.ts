@@ -27,12 +27,12 @@ export const fr = {
         'time-published': 'Date de Publication',
         'block-id': 'ID du bloc',
         'confirm-count-6': 'Gestion du noeud après 6 confirmations.',
-        'confirm-count-prefix': 'Current ',
+        'confirm-count-prefix': 'Actuellement ',
         'confirm-count-postfix': ' confirmations',
 
-        'reg-dpos-balance-not-enough': '5000 ELA deposit and a minor transaction fee are required for DPoS node registration',
-        'dpos-deposit-warning': 'Do you want to register your DPoS node? 5000 ELA deposit and a minor transaction fee are paid for DPoS node registration',
-        'text-dpos-name-already-used': 'This DPoS node name is already in use',
-        'dpos-unregister-warning': 'Do you want to unregister your DPoS node?',
+        'reg-dpos-balance-not-enough': 'Un dépôt de 5000 ELA ainsi que des frais de transaction mineurs sont requis pour l\'enregistrement d\'un noeud DPoS',
+        'dpos-deposit-warning': 'Souhaitez-vous enregistrer votre noeud DPoS? Un dépôt de 5000 ELA ainsi que des frais de transaction mineurs seront payés pour l\'enregistrement',
+        'text-dpos-name-already-used': 'Ce nom est déjà utilisé par un autre noeud',
+        'dpos-unregister-warning': 'Souhaitez-vous désenregistrer votre noeud DPoS?',
     }
 };
