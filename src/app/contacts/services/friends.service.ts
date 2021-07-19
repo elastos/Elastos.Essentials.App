@@ -764,7 +764,7 @@ export class FriendsService {
       }
     }
 
-    void this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends/' + id);
+    void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends/' + id);
   }
 
   /********************************************************

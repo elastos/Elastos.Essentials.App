@@ -27,14 +27,14 @@ export class CustomizePage implements OnInit {
 
   public realName: string;
 
-  public id: string = '';
-  public name: string = '';
-  public gender: string = '';
+  public id = '';
+  public name = '';
+  public gender = '';
   public avatar: Avatar = null;
-  public note: string = '';
+  public note = '';
 
-  public customName: string = '';
-  public customNote: string = '';
+  public customName = '';
+  public customNote = '';
   public contactAddedWithNoName: boolean;
 
   constructor(
@@ -98,7 +98,7 @@ export class CustomizePage implements OnInit {
 
   ionViewDidEnter() {
     setTimeout(() => {
-      this.input.setFocus();
+      void this.input.setFocus();
     }, 200);
   }
 
@@ -139,6 +139,6 @@ export class CustomizePage implements OnInit {
       this.customName = this.translate.instant('contacts.anonymous-contact');
     }
 
-    this.friendsService.customizeContact(this.id, this.customName, this.customNote, this.avatar);
+    void this.friendsService.customizeContact(this.id, this.customName, this.customNote, this.avatar);
   }
 }

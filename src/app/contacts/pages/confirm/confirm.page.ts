@@ -77,7 +77,7 @@ export class ConfirmPage implements OnInit {
         if(!this.name) {
           this.friendsService.showCustomization(this.friendsService.pendingContact, true);
         } else {
-          void this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends/'+this.id);
+          void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends/'+this.id);
         }
       }
     });
