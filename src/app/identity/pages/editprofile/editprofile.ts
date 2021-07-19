@@ -238,7 +238,7 @@ export class EditProfilePage {
           this.hiveCache.set(currentUserDID+"-avatar", avatarData);
 
           // Update UI locally without saving to permanent profile yet.
-          this.avatarDataUrl = rawImageToBase64DataUrl(avatarData);
+          this.avatarDataUrl = await rawImageToBase64DataUrl(avatarData);
 
           let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
           let avatar = this.profileService.buildAvatar("image/png", "elastoshive", avatarHiveURL);

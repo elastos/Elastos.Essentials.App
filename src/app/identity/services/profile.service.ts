@@ -686,10 +686,11 @@ export class ProfileService {
         if (hiveAssetUrl.startsWith("hive://")) {
           // Listen to user's hive cache avatar changes
           console.log("DEBUG PROFILE SERVICE SUBSCR")
-          this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(rawData => {
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(async rawData => {
             console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", rawData)
             if (rawData) {
-              let base64DataUrl = rawImageToBase64DataUrl(rawData);
+              let base64DataUrl = await rawImageToBase64DataUrl(rawData);
               console.log("DEBUG BASE64 ENCODED", base64DataUrl);
               this.avatarDataUrlSubject.next(base64DataUrl);
             }
