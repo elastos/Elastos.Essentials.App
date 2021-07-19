@@ -81,6 +81,7 @@ export class CoinHomePage implements OnInit {
     private updateTmeout = null;
 
     public loadingTX = false;
+    private fromWalletHome = true;
 
     constructor(
         public router: Router,
@@ -105,6 +106,7 @@ export class CoinHomePage implements OnInit {
     }
 
     ionViewDidLeave() {
+        this.fromWalletHome = false;
         if (this.updateInterval) {
           clearInterval(this.updateInterval);
           this.updateInterval = null;
@@ -149,7 +151,7 @@ export class CoinHomePage implements OnInit {
 
     async initData() {
         // Only update balance, It will save some time for the second time you enter this page.
-        this.subWallet.updateBalance();
+        if (this.fromWalletHome) this.subWallet.updateBalance();
 
         if (!this.transactionStatusSubscription) {
             this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
@@ -161,13 +163,13 @@ export class CoinHomePage implements OnInit {
         }
 
         if (!this.updateTmeout) {
-            this.updateTmeout = setTimeout(async () => {
+          this.updateTmeout = setTimeout(async () => {
             if (this.subWallet.isLoadTxDataFromCache()) {
               this.loadingTX = true;
               await this.updateWalletInfo();
             }
             this.startUpdateInterval();
-          }, 200);
+          }, this.fromWalletHome ? 200 : 10000);
         }
     }
 
