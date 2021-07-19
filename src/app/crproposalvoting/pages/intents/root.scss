@@ -95,6 +95,12 @@ ion-list {
         box-shadow: none;
     }
 
+    ion-list {
+        .profile-data {
+            border-bottom: 1px solid #464646;
+        }
+    }
+
     .proposaltype {
         background-color: #3C3C3C;
     }

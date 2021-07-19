@@ -33,6 +33,12 @@ ion-list-header {
         background-color: #212021;
     }
 
+    ion-list {
+        .profile-data {
+            border-bottom: 1px solid #464646;
+        }
+    }
+
     .status_mark {
         background-color: #3B3B3B;
     }
