@@ -31,7 +31,10 @@ export const en = {
         'pledge-some-ELA-to-candidates': 'Please pledge some ELA to your candidates',
         'not-allow-pledge-more-than-own': 'You are not allowed to pledge more ELA than you own',
 
-        /********** Location code **********/
+        /********** Location code **********
+        * Location code - list of international phone number country code / country name.
+        * NOTE: keys are NOT country codes, they are telephone codes, and this list may be used only in the CR council voting app.
+        */
         "93":"Afghanistan",
         "355":"Albania",
         "213":"Algeria",

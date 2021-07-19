@@ -31,7 +31,10 @@ export const zh = {
         'pledge-some-ELA-to-candidates': '请给您的候选人分配一些ELA',
         'not-allow-pledge-more-than-own': '您分配的ELA不能超过您拥有的ELA',
 
-        /********** Location code **********/
+        /********** Location code **********
+        * Location code - list of international phone number country code / country name.
+        * NOTE: keys are NOT country codes, they are telephone codes, and this list may be used only in the CR council voting app.
+        */
         "93":"阿富汗",
         "355":"阿尔巴尼亚",
         "213":"阿尔及利亚",
