@@ -15,6 +15,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { Util } from 'src/app/model/util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from 'src/app/model/app.enum';
 
 
 export type CreateProposalCommand = CRWebsiteCommand & {
@@ -157,7 +158,7 @@ export class CreateProposalPage {
 
             //Create transaction
             let rawTx = await this.creatTransactionFunction(payload, '');
-            await this.voteService.signAndSendRawTransaction(rawTx);
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
