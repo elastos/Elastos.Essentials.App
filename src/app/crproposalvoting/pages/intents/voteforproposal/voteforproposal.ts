@@ -12,7 +12,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
 import { Config } from 'src/app/wallet/config/Config';
-import { Util } from 'src/app/model/Util';
+import { Util } from 'src/app/model/util';
 
 type VoteForProposalCommand = CRWebsiteCommand & {
     data: {
