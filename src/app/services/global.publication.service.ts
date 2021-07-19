@@ -4,7 +4,7 @@ import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { GlobalStorageService } from './global.storage.service';
 import { Logger } from '../logger';
 import { Subject } from 'rxjs';
-import { AssistPublishingComponent } from '../components/assist-publishing/assist-publishing.component';
+import { DIDPublishingComponent } from '../components/did-publishing/did-publishing.component';
 import { ModalController } from '@ionic/angular';
 import { GlobalThemeService } from './global.theme.service';
 import { GlobalPreferencesService } from './global.preferences.service';
@@ -12,6 +12,8 @@ import { GlobalIntentService } from './global.intent.service';
 import { JSONObject } from '../model/json';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 import { GlobalNativeService } from './global.native.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.service';
+import { GlobalJsonRPCService } from './global.jsonrpc.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -31,6 +33,10 @@ export type PersistentInfo = {
 
         assist? : {
             publicationID: string // Unique publication ID returned by the assist API after a successful publication request. This is NOT a blockchain transaction ID.
+        },
+        wallet?: {
+            txId?: string; // After publishing a DID request to the EID chain  we save the txid here.
+            publicationTime?: number; // Unix timestamp seconds
         }
     },
 }
@@ -120,7 +126,7 @@ namespace AssistPublishing {
                 throw new Error("Payload must be a JSON object, not a stringified JSON");
 
             if (showBlockingLoader) {
-                await this.displayAssistPublicationLoader();
+                await this.manager.displayPublicationLoader();
             }
 
             this.manager.persistentInfo.did.didString = didString;
@@ -155,6 +161,7 @@ namespace AssistPublishing {
 
                     this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
                     this.manager.persistentInfo.did.assist.publicationID = response.data.confirmation_id;
+                    // NOTE! For now, assist doesn't save the txid, we don't use it.
                     await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
 
                     void this.checkPublicationStatusAndUpdate();
@@ -170,24 +177,6 @@ namespace AssistPublishing {
                 this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.FAILED_TO_PUBLISH;
                 await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
             }
-        }
-
-        /**
-         * Shows a blocking modal that shows the publication progress on assist.
-         */
-        private async displayAssistPublicationLoader(): Promise<void> {
-            const modal = await this.modalCtrl.create({
-                component: AssistPublishingComponent,
-                componentProps: {},
-                backdropDismiss: false, // Not closeable
-                cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
-            });
-
-            void modal.onDidDismiss().then((params) => {
-                //
-            });
-
-            void modal.present();
         }
 
         /**
@@ -291,25 +280,45 @@ namespace AssistPublishing {
     }
 }
 
+type EIDRPCRequest = {
+    jsonrpc: "2.0",
+    method: string,
+    params: unknown[]
+    id: number
+};
+
+type DIDResolveRequest = EIDRPCRequest & {
+    method: "did_resolveDID",
+    params: [{
+        did: string,
+        all?: boolean
+    }]
+};
+
+type EIDChainResolveResponse = {
+    did: string, // did:elastos:xxx
+    status: 0,
+    transaction: [
+        {
+            "txid": string,
+            "timestamp": string, // ISO date
+            // "operation": Unused
+        }
+    ]
+}
+
 /**
  * Scope: publish using the wallet
  */
 namespace WalletPublishing {
     export class WalletPublisher extends DIDPublisher {
-        constructor (private manager: DIDPublishingManager, private globalIntentService: GlobalIntentService) {
+        constructor (private manager: DIDPublishingManager, private jsonRPC: GlobalJsonRPCService, private globalIntentService: GlobalIntentService) {
             super();
         }
 
         public init() {
         }
 
-        /**
-         * TODO!!!
-         *
-         * - Start polling for tx confirmation in order know the final "published" status for the did
-         * - Show a blocking popup during this phase if needed (showBlockingLoader)
-         * - Check that the wallet network matches the settings network (so we publish a privnet DID on a the privnet wallet network, not on heco...)
-         */
         public async publishDID(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false): Promise<void> {
             Logger.log("publicationservice", "Publishing DID with wallet:", payloadObject);
 
@@ -320,6 +329,10 @@ namespace WalletPublishing {
             Logger.log('publicationservice', "Sending didtransaction intent with params:", params);
 
             try {
+                this.manager.persistentInfo.did.didString = didString;
+                this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.NO_ON_GOING_PUBLICATION;
+                await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
+
                 let response = await this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", params);
 
                 Logger.log('publicationservice', "Got didtransaction intent response from the wallet.", response);
@@ -329,8 +342,21 @@ namespace WalletPublishing {
                 if (response.result && response.result.txid) {
                     Logger.log('publicationservice', 'didtransaction response.result.txid ', response.result.txid);
                     this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
-                    // TODO: save txid
+                    this.manager.persistentInfo.did.wallet = {
+                        txId: response.result.txid,
+                        publicationTime: Date.now() / 1000
+                    };
                     await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
+
+                    // Now we are going to wait for the transaction to be confirmed or rejected on chain. If
+                    // required, show a blocking loader duirng this time.
+                    if (showBlockingLoader) {
+                        await this.manager.displayPublicationLoader();
+                    }
+
+                    setTimeout(() => {
+                        void this.checkPublicationStatusAndUpdate();
+                    }, 1000);
                 }
                 else {
                     Logger.log('publicationservice', 'didtransaction response.result.txid is null');
@@ -343,6 +369,68 @@ namespace WalletPublishing {
                 this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.FAILED_TO_PUBLISH;
                     await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
             }
+        }
+
+        private async checkPublicationStatusAndUpdate(): Promise<void> {
+            // Stop checking status if not awaiting anything.
+            if (this.manager.persistentInfo.did.publicationStatus !== DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION)
+                return;
+
+            // If time elapsed after publishing is too long, just stop checking and mark the publication as failed.
+            const nowSec = Date.now() / 1000;
+            const PUBLICATION_AWAIT_TIMEOUT_SEC = 50; // 50 seconds before considering this publication as errored
+            if (nowSec - this.manager.persistentInfo.did.wallet.publicationTime > PUBLICATION_AWAIT_TIMEOUT_SEC) {
+                Logger.log('publicationservice', "New DID can't be resolved after several seconds. Failing publication.");
+                this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.FAILED_TO_PUBLISH;
+                await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
+                return;
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+            return new Promise(async (resolve, reject) => {
+                Logger.log("publicationservice", "Checking transaction status on chain for txid " + this.manager.persistentInfo.did.wallet.txId);
+
+                let request: DIDResolveRequest = {
+                    jsonrpc:"2.0",
+                    method: "did_resolveDID",
+                    params:[{
+                        did: this.manager.persistentInfo.did.didString,
+                        all: false
+                    }],
+                    id: 1
+                };
+
+                // Try to resolve the DID as the "key to successful publication". NOTE: we could instead listen to the
+                // tx hash and tx receipt but that's a bit more complex for now, not necessary.
+                let endpoint = await this.getEIDEndpoint();
+                void this.jsonRPC.httpPost(endpoint, request).then(async (response: EIDChainResolveResponse) => {
+                    Logger.log("publicationservice", "EID chain successful resolve response:", response);
+                    if (response && response.transaction && response.transaction.length > 0) {
+                        Logger.log("publicationservice", "we got a clear status from the EID resolving RPC api.");
+
+                        if ("0x"+response.transaction[0].txid === this.manager.persistentInfo.did.wallet.txId) {
+                            Logger.log("publicationservice", "All good, we got the published txid in the resolved document (latest)");
+                            this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.PUBLISHED_AND_CONFIRMED;
+                            await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
+                            return;
+                        }
+                        else {
+                            Logger.log("publicationservice", "Txid is still the old one, we keep waiting.", response.transaction[0], this.manager.persistentInfo.did.wallet);
+                        }
+                    }
+                    else {
+                        Logger.log("publicationservice", "Unhandled or unchanged status");
+                    }
+
+                    setTimeout(() => {
+                        void this.checkPublicationStatusAndUpdate();
+                    }, 1000);
+                });
+            });
+        }
+
+        private getEIDEndpoint(): string {
+            return GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.EID_RPC);
         }
 
         public resetStatus() {
@@ -360,6 +448,7 @@ class DIDPublishingManager {
     constructor(
         private publicationService: GlobalPublicationService,
         private http: HttpClient,
+        private jsonRPC: GlobalJsonRPCService,
         private storage: GlobalStorageService,
         private theme: GlobalThemeService,
         private modalCtrl: ModalController,
@@ -379,6 +468,7 @@ class DIDPublishingManager {
 
         this.walletPublisher = new WalletPublishing.WalletPublisher(
             this,
+            this.jsonRPC,
             this.globalIntentService
         );
 
@@ -456,6 +546,24 @@ class DIDPublishingManager {
 
         return this.activePublisher.publishDID(didString, payloadObject, memo, showBlockingLoader);
     }
+
+    /**
+     * Shows a blocking modal that shows the publication progress on assist.
+     */
+    public async displayPublicationLoader(): Promise<void> {
+        const modal = await this.modalCtrl.create({
+            component: DIDPublishingComponent,
+            componentProps: {},
+            backdropDismiss: false, // Not closeable
+            cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
+        });
+
+        void modal.onDidDismiss().then((params) => {
+            //
+        });
+
+        void modal.present();
+    }
 }
 
 @Injectable({
@@ -471,6 +579,7 @@ export class GlobalPublicationService {
     constructor(
         private storage: GlobalStorageService,
         private http: HttpClient,
+        private jsonRPC: GlobalJsonRPCService,
         private modalCtrl: ModalController,
         private theme: GlobalThemeService,
         private prefs: GlobalPreferencesService,
@@ -483,6 +592,7 @@ export class GlobalPublicationService {
         this.manager = new DIDPublishingManager(
             this,
             this.http,
+            this.jsonRPC,
             this.storage,
             this.theme,
             this.modalCtrl,

@@ -9,11 +9,11 @@ import { Logger } from 'src/app/logger';
 import { ModalController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-assist-publishing',
-  templateUrl: './assist-publishing.component.html',
-  styleUrls: ['./assist-publishing.component.scss'],
+  selector: 'app-did-publishing',
+  templateUrl: './did-publishing.component.html',
+  styleUrls: ['./did-publishing.component.scss'],
 })
-export class AssistPublishingComponent implements OnInit {
+export class DIDPublishingComponent implements OnInit {
   public publishing = false;
   public publicationSuccessful = false;
   public publicationFailed = false;

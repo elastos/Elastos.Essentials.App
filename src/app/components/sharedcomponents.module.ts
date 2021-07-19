@@ -4,13 +4,13 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { TitleBarComponent } from './titlebar/titlebar.component';
 import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.component';
-import { AssistPublishingComponent } from './assist-publishing/assist-publishing.component';
+import { DIDPublishingComponent } from './did-publishing/did-publishing.component';
 
 @NgModule({
   declarations: [
     TitleBarComponent,
     TitlebarmenuitemComponent,
-    AssistPublishingComponent
+    DIDPublishingComponent
   ],
   imports: [
     CommonModule,
@@ -20,14 +20,14 @@ import { AssistPublishingComponent } from './assist-publishing/assist-publishing
   exports: [
     TitleBarComponent, 
     TitlebarmenuitemComponent,
-    AssistPublishingComponent
+    DIDPublishingComponent
   ],
   providers: [
   ],
   entryComponents: [
     TitleBarComponent, 
     TitlebarmenuitemComponent,
-    AssistPublishingComponent
+    DIDPublishingComponent
   ],
 })
 export class SharedComponentsModule { }
