@@ -22,6 +22,7 @@ export const en = {
         "refresh-pulling-text": "Update Wallet",
         "refresh-refreshing-text": "Updating Wallet...",
         "intent-select-wallet": "Select Wallet",
+        "personal-wallets-with": "Personal wallets with {{ chainid }}",
 
         /*******************
         * Generic Messages *

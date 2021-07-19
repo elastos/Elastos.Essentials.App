@@ -3,7 +3,7 @@
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-row class="main-title-row">
             <ion-col size="12">
-                <p>Personal wallets with {{ options.chainId }}</p>
+                <p>{{ 'wallet.personal-wallets-with' | translate:{chainid: options.chainId} }}</p>
             </ion-col>
         </ion-row>
         <ion-row
