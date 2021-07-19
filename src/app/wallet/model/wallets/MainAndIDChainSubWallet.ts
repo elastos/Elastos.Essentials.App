@@ -1,5 +1,4 @@
 import { StandardSubWallet } from './StandardSubWallet';
-import moment from 'moment';
 import BigNumber from 'bignumber.js';
 import { AllTransactionsHistory, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../Transaction';
 import { TranslateService } from '@ngx-translate/core';
@@ -631,6 +630,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-pending');
             return null;
           }
+          //TODO. Maybe the coinbase utxo is not avaliable? or popup the prompt?
+          //return all the utxo.
+          return utxoArrayForSDK;
         } else {
           return utxoArrayForSDK;
         }
@@ -754,7 +756,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
           return balance;
       } catch (e) {
-          Logger.log("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
+          Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
           throw e;
       }
     }
@@ -782,7 +784,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 }
                 totalBalance = totalBalance.plus(balance);
             } catch (e) {
-                Logger.log("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
+                Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
                 throw e;
             }
         } while (!this.masterWallet.account.SingleAddress);
@@ -798,10 +800,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * @returns
      */
     async getTransactionByRPC(timestamp: number = 0) {
-        Logger.test("wallet", 'TIMETEST getTransactionByRPC Chain ID:', this.id, ' start timestamp:', timestamp);
-        const currentTimestamp = moment().valueOf();
-        this.timestampEnd = Math.round(currentTimestamp / 1000);
-
+        Logger.test("wallet", 'TIMETEST getTransactionByRPC Chain ID:', this.id, ' start timestamp:', timestamp, ' ', new Date(timestamp * 1000));
         let txList = await this.getTransactionByAddress(false, timestamp);
 
         // The Single Address Wallet should use the external address.
@@ -1054,17 +1053,29 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             return B.height - A.height;
         });
 
+        this.timestampEnd = this.getLastConfirmedTransactionTimestamp();
+
         this.saveTransactions(this.transactions.txhistory);
     }
 
-    mergeTransactionList(txList: AllTransactionsHistory[]) {
+    private getLastConfirmedTransactionTimestamp() {
+      for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
+          if (this.transactions.txhistory[i].Status === TransactionStatus.CONFIRMED) {
+            // the transactions list is sorted by block height.
+            return this.transactions.txhistory[i].time;
+          }
+      }
+      return 0;
+    }
+
+    private mergeTransactionList(txList: AllTransactionsHistory[]) {
         Logger.log('wallet', 'mergeTransactionList timestamp:[', this.timestampStart, ', ', this.timestampEnd, ']');
 
         let transactionHistory: TransactionHistory[] = [];
-        // Get the txhistory between the timestampStart and timestampEnd.
+        // Get the txhistory after the timestampStart.
         for (let i = 0, len = txList.length; i < len; i++) {
             for (const txhistory of txList[i].txhistory) {
-                if ((txhistory.time >= this.timestampStart) && (txhistory.time <= this.timestampEnd)) {
+                if ((txhistory.time >= this.timestampStart)) {
                     transactionHistory.push(txhistory);
                 }
             }

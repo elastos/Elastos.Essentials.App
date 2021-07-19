@@ -101,6 +101,7 @@ export class CoinHomePage implements OnInit {
     ionViewWillEnter() {
         this.coinTransferService.chainId = this.chainId;
         this.titleBar.setTitle(this.chainId);
+        this.initData();
     }
 
     ionViewDidLeave() {
@@ -112,9 +113,18 @@ export class CoinHomePage implements OnInit {
           clearTimeout(this.updateTmeout);
           this.updateTmeout = null;
         }
-        if (this.syncSubscription) this.syncSubscription.unsubscribe();
-        if (this.syncCompletedSubscription) this.syncCompletedSubscription.unsubscribe();
-        if (this.transactionStatusSubscription) this.transactionStatusSubscription.unsubscribe();
+        if (this.syncSubscription) {
+          this.syncSubscription.unsubscribe();
+          this.syncSubscription = null;
+        }
+        if (this.syncCompletedSubscription) {
+          this.syncCompletedSubscription.unsubscribe();
+          this.syncCompletedSubscription = null;
+        }
+        if (this.transactionStatusSubscription) {
+          this.transactionStatusSubscription.unsubscribe();
+          this.transactionStatusSubscription = null;
+        }
     }
 
     async init() {
@@ -131,7 +141,6 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.walletInfo = this.native.clone(this.masterWallet.account);
 
             this.subWallet = this.masterWallet.getSubWallet(this.chainId);
-            this.initData();
         }
     }
 
@@ -142,20 +151,24 @@ export class CoinHomePage implements OnInit {
         // Only update balance, It will save some time for the second time you enter this page.
         this.subWallet.updateBalance();
 
-        this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
-            if (count >= 0) {
-              await this.updateTransactions();
-              this.loadingTX = false;
-            }
-        });
+        if (!this.transactionStatusSubscription) {
+            this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
+              if (count >= 0) {
+                await this.updateTransactions();
+                this.loadingTX = false;
+              }
+          });
+        }
 
-        this.updateTmeout = setTimeout(async () => {
-          if (this.subWallet.isLoadTxDataFromCache()) {
-            this.loadingTX = true;
-            await this.updateWalletInfo();
-          }
-          this.startUpdateInterval();
-        }, 200);
+        if (!this.updateTmeout) {
+            this.updateTmeout = setTimeout(async () => {
+            if (this.subWallet.isLoadTxDataFromCache()) {
+              this.loadingTX = true;
+              await this.updateWalletInfo();
+            }
+            this.startUpdateInterval();
+          }, 200);
+        }
     }
 
     async updateTransactions() {
