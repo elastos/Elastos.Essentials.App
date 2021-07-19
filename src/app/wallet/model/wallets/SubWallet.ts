@@ -238,6 +238,8 @@ export abstract class SubWallet {
             status: transaction.Status,
             statusName: this.getTransactionStatusName(transaction.Status, translate),
             symbol: '', // Defined by inherited classes
+            from: null,
+            to: transaction.address,
             timestamp,
             txid: null, // Defined by inherited classes
             type: null, // Defined by inherited classes

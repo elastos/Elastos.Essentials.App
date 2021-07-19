@@ -83,6 +83,8 @@ export type TransactionInfo = {
     status: string,
     statusName: string,
     symbol: string,
+    to: string,
+    from: string,
     timestamp: number,
     txid: string,
     type: TransactionType,

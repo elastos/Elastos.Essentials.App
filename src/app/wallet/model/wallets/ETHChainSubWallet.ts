@@ -142,6 +142,8 @@ export class ETHChainSubWallet extends StandardSubWallet {
             status: transaction.Status,
             statusName: this.getTransactionStatusName(transaction.Status, translate),
             symbol: '',
+            from: transaction.from,
+            to: transaction.to,
             timestamp,
             txid: transaction.hash,
             type: null,

@@ -107,6 +107,7 @@ export class CoinTxInfoPage implements OnInit {
             this.direction = this.transactionInfo.direction;
             this.memo = this.transactionInfo.memo;
             this.height = this.transactionInfo.height;
+            this.targetAddress = this.transactionInfo.to;
 
             this.getTransactionDetails();
         }
@@ -139,9 +140,9 @@ export class CoinTxInfoPage implements OnInit {
             const newPayFee = new BigNumber(this.transactionInfo.fee);
             this.payFee = newPayFee.toNumber();
 
-            const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             // Address
             if ((this.chainId === StandardCoinName.ETHSC) || (this.chainId === StandardCoinName.ETHDID)) {
+                const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 if (this.direction === TransactionDirection.SENT) {
                     this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
                     await this.getERC20TokenTransactionInfo(transaction);
@@ -154,10 +155,8 @@ export class CoinTxInfoPage implements OnInit {
                     }
                 }
             } else {
-                if (this.direction === TransactionDirection.SENT) {
-                    this.targetAddress = transaction.to;
-                } else if (this.direction === TransactionDirection.RECEIVED) {
-                    this.targetAddress = transaction.from;
+                if (this.direction === TransactionDirection.RECEIVED) {
+                    this.targetAddress = this.transactionInfo.from;
                 }
             }
         }
