@@ -265,12 +265,12 @@ export class FriendsService {
         if(carrierAddress) {
           this.contacts[this.contacts.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
           await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", this.contacts);
-          void this.globalNav.navigateTo('contacts', '/contacts/friends/'+targetContact.id);
+          void this.globalNav.navigateRoot('contacts', '/contacts/friends/'+targetContact.id);
           void this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.indexOf(targetContact)]);
         } else {
           void this.native.genericToast(promptName + this.translate.instant('contacts.is-already-added'));
-          void this.globalNav.navigateTo('contacts', '/contacts/friends/'+targetContact.id);
+          void this.globalNav.navigateRoot('contacts', '/contacts/friends/'+targetContact.id);
           Logger.log('contacts', 'Contact is already added');
         }
       } else {
@@ -610,7 +610,7 @@ export class FriendsService {
         isPublished: isPublished,
       }
     }
-    void this.globalNav.navigateTo('contacts', '/contacts/confirm', props);
+    void this.globalNav.navigateRoot('contacts', '/contacts/confirm', props);
   }
 
   /********************************************************
@@ -955,7 +955,7 @@ export class FriendsService {
         contactAddedWithNoName: contactAddedWithNoName,
       }
     }
-    void this.globalNav.navigateTo('contacts', '/contacts/customize', props);
+    void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/customize', props);
   }
 
   /********************************************************
