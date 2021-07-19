@@ -58,7 +58,7 @@ export class ConfirmPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('contacts.confirm-contact'));
-    this.native.hideLoading();
+    void this.native.hideLoading();
   }
 
   ionViewWillLeave() {
@@ -72,26 +72,26 @@ export class ConfirmPage implements OnInit {
 
     this.zone.run(() => {
       if(contactAlreadyAdded) {
-        this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
+        void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
       } else {
         if(!this.name) {
           this.friendsService.showCustomization(this.friendsService.pendingContact, true);
         } else {
-          this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends/'+this.id);
+          void this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends/'+this.id);
         }
       }
     });
   }
 
-  denyContact() {
+  async denyContact() {
     if(this.friendsService.contactNotifierInviationId) {
       Logger.log('contacts', 'Rejecting contact notifier invitation', this.friendsService.contactNotifierInviationId);
-      this.contactNotifier.rejectInvitation(this.friendsService.contactNotifierInviationId);
+      await this.contactNotifier.rejectInvitation(this.friendsService.contactNotifierInviationId);
       this.friendsService.contactNotifierInviationId = null;
     } else {
       Logger.log('contacts', 'Rejected contact did not come from a "viewfriendinvitation" intent');
     }
 
-    this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
+    void this.globalNav.navigateRoot(App.CONTACTS, '/contacts/friends');
   }
 }

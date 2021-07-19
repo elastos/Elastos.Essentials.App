@@ -59,7 +59,7 @@ export class AddPage implements OnInit {
   }
 
   async addContact() {
-    Logger.log('contacts', this.didInput.length, 'DID INPUT LENGTH')
+    Logger.log('contacts', this.didInput.length, 'DID INPUT LENGTH');
     if(this.didInput.length < 33 || this.didInput.slice(0,11) !== 'did:elastos') {
       this.didInput = "";
       this.native.genericToast('contacts.please-add-a-valid-identity');

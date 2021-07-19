@@ -13,6 +13,7 @@ import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalConfig } from '../config/globalconfig';
 import { resolve } from 'path';
 import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
+import { JSONObject } from '../model/json';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -461,5 +462,20 @@ export class GlobalHiveService extends GlobalService {
         resolve(rawImageToBase64DataUrl(rawPicture));
       });
     });
+  }
+
+  /**
+   * From a DID Credential subject payload, tries to extract a avatar hive url. 
+   * Returns this url if possible, or null otherwise.
+   */
+  public getHiveAvatarUrlFromDIDAvatarCredential(avatarCredentialSubject: JSONObject): string {
+    if (avatarCredentialSubject.type && avatarCredentialSubject.type == "elastoshive") {
+      if (avatarCredentialSubject.data && avatarCredentialSubject["content-type"]) {
+          let hiveUrl = avatarCredentialSubject.data as string;
+          return hiveUrl;
+      }
+    }
+    // Other cases: return nothing.
+    return null;
   }
 }

@@ -1,4 +1,7 @@
+import { pictureMimeType, rawImageToBase64, rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
+import { Logger } from "src/app/logger";
 import { ContactAvatar } from "src/app/services/contactnotifier.service";
+import { GlobalHiveService } from "src/app/services/global.hive.service";
 
 type CredentialAvatar = {
     "content-type": string;
@@ -6,18 +9,41 @@ type CredentialAvatar = {
 }
 
 export class Avatar {
-    contentType: string; // Ex: "image/jpeg"
+    contentType: string;    // Ex: "image/jpeg"
     data: string;           // Ex: "/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQ..."
     type?: string;          // Ex: "base64"
 
-    static fromAvatarCredential(credentialAvatar: CredentialAvatar): Avatar {
+    static async fromAvatarCredential(credentialAvatar: CredentialAvatar): Promise<Avatar> {
         if (credentialAvatar == null)
             return null;
 
-        return {
-            contentType: credentialAvatar["content-type"],
-            data: credentialAvatar.data,
-            type: "base64"
+        let hiveUrlAvatar = GlobalHiveService.instance.getHiveAvatarUrlFromDIDAvatarCredential(credentialAvatar);
+
+        // hive url that points to a script that provides the picture
+        if (hiveUrlAvatar) {
+            let pictureBuffer = await GlobalHiveService.instance.fetchHiveScriptPicture(hiveUrlAvatar);
+            if (pictureBuffer) {
+                let base64EncodedImage = rawImageToBase64(pictureBuffer);
+                let mimeType = await pictureMimeType(pictureBuffer);
+
+                Logger.log("contacts", "Building avatar from credential with hive url", hiveUrlAvatar, mimeType, base64EncodedImage);
+                return {
+                    contentType: mimeType,
+                    data: base64EncodedImage,
+                    type: "base64"
+                }
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            // Assume base64 data url
+            return {
+                contentType: credentialAvatar["content-type"],
+                data: credentialAvatar.data,
+                type: "base64"
+            }
         }
     }
 

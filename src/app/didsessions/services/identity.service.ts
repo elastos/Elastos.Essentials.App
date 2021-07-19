@@ -531,28 +531,27 @@ export class IdentityService {
         if (avatar) {
             Logger.log('didsessions', "Found an avatar in the created DID. Now applying it to the DID session manager entry.", avatar);
 
+            let hiveUrlAvatar = this.globalHiveService.getHiveAvatarUrlFromDIDAvatarCredential(avatar);
+
+            // hive url that points to a script that provides the picture
+            if (hiveUrlAvatar) {
+                Logger.log("didsessions", "Retrieve avatar from a hive url");
+                let base64url = await this.globalHiveService.fetchHiveScriptPictureToDataUrl(hiveUrlAvatar);
+                if (base64url) {
+                    Logger.log("didsessions", "Got base64 url for user's avatar:", base64url);
+
+                    newIdentity.avatar = {
+                        base64ImageData: base64url.substring(base64url.indexOf(",")+1),
+                        contentType: avatar["content-type"]
+                    }
+                }
+            }
             // base64 encoded picture inside the DID Document
             if (avatar.type && avatar.type == "base64") {
                 if (avatar.data && avatar["content-type"]) {
                     newIdentity.avatar = {
                         base64ImageData: avatar.data,
                         contentType: avatar["content-type"]
-                    }
-                }
-            }
-            // hive url that points to a script that provides the picture
-            else if (avatar.type && avatar.type == "elastoshive") {
-                if (avatar.data && avatar["content-type"]) {
-                    let hiveUrl = avatar.data;
-                    Logger.log("didsessions", "Retrieve avatar from a hive url");
-                    let base64url = await this.globalHiveService.fetchHiveScriptPictureToDataUrl(hiveUrl);
-                    if (base64url) {
-                        Logger.log("didsessions", "Got base64 url for user's avatar:", base64url);
-
-                        newIdentity.avatar = {
-                            base64ImageData: base64url.substring(base64url.indexOf(",")+1),
-                            contentType: avatar["content-type"]
-                        }
                     }
                 }
             }
