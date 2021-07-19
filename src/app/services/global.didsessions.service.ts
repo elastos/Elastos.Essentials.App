@@ -163,6 +163,9 @@ export class GlobalDIDSessionsService {
   public async signOut(): Promise<void> {
     Logger.log('DIDSessionsService', "Signing out");
 
+    // Call this before setting the signed in did to null, because signing out operations may require it.
+    await GlobalServiceManager.getInstance().emitUserSignOut();
+
     this.signedInIdentity = null;
     GlobalDIDSessionsService.signedInDIDString = null;
 
@@ -171,7 +174,6 @@ export class GlobalDIDSessionsService {
     // clear the last intent
     this.globalIntentService.clear();
 
-    await GlobalServiceManager.getInstance().emitUserSignOut();
     await this.globalNavService.navigateDIDSessionHome();
   }
 

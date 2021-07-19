@@ -62,7 +62,7 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   public async onUserSignOut(): Promise<void> {
-
+    await this.killAllSessions();
   }
 
   /* public async init(): Promise<void> {
@@ -216,6 +216,8 @@ export class GlobalWalletConnectService extends GlobalService {
       }
       await this.deleteSession(session);
     }
+
+    this.connectors.clear();
 
     Logger.log("walletconnect", "Killed all sessions");
   }
@@ -477,6 +479,7 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   private async loadSessions(): Promise<WalletConnectSession[]> {
+    Logger.log("walletconnect", "Loading storage sessions for user ", GlobalDIDSessionsService.signedInDIDString);
     let sessions = await this.storage.getSetting<WalletConnectSession[]>(GlobalDIDSessionsService.signedInDIDString, "walletconnect", "sessions", []);
     return sessions;
   }
