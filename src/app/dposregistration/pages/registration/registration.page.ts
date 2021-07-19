@@ -130,7 +130,7 @@ export class DPosRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.depositAmount, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
     }
 
     async update() {
@@ -146,7 +146,7 @@ export class DPosRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
     }
 
 }

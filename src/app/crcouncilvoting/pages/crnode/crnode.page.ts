@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Util } from 'src/app/model/util';
 import { PopupService } from 'src/app/crproposalvoting/services/popup.service';
+import { App } from 'src/app/model/app.enum';
 
 
 @Component({
@@ -82,7 +83,7 @@ export class CRNodePage implements OnInit {
             //Create transaction and send
             payload.CRCouncilMemberSignature = ret.result.signature;
             const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(payload, '');
-            await this.voteService.signAndSendRawTransaction(rawTx);
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.

@@ -215,7 +215,7 @@ export class CRCouncilRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createRegisterCRTransaction(payload, this.depositAmount, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
     }
 
     async unregister() {
@@ -227,7 +227,7 @@ export class CRCouncilRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createUnregisterCRTransaction(payload, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
     }
 
     async update() {
@@ -242,7 +242,7 @@ export class CRCouncilRegistrationPage implements OnInit {
             this.crPublicKey, this.crInfo.did, this.crInfo.nickname, this.crInfo.url, this.crInfo.location);
 
         const rawTx = await this.voteService.sourceSubwallet.createUpdateCRTransaction(payload, "");
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
     }
 
     async retrieve() {
@@ -260,7 +260,7 @@ export class CRCouncilRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING);
     }
 
 }

@@ -105,7 +105,7 @@ export class VoteService {
         this.clearRoute();
     }
 
-    public async signAndSendRawTransaction(rawTx: any): Promise<void> {
+    public async signAndSendRawTransaction(rawTx: any, context?: string): Promise<void> {
 
         const transfer = new Transfer();
         Object.assign(transfer, {
@@ -121,6 +121,12 @@ export class VoteService {
         if (this.intentAction != null) {
             await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         }
-        this.nav.goToLauncher();
+
+        if (context) {
+            this.nav.navigateRoot(context);
+        }
+        else {
+            this.nav.goToLauncher();
+        }
     }
 }

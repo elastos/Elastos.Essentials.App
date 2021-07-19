@@ -13,6 +13,7 @@ import { Util } from 'src/app/model/util';
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { App } from 'src/app/model/app.enum';
 
 type WithdrawCommand = CRWebsiteCommand & {
     data: {
@@ -91,7 +92,7 @@ export class WithdrawPage {
                 //Create transaction and send
                 payload.Signature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(payload, '');
-                await this.voteService.signAndSendRawTransaction(rawTx);
+                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
             }
         }
         catch (e) {

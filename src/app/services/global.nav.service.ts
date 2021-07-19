@@ -71,6 +71,9 @@ export class GlobalNavService {
                 case App.CRPROPOSAL_VOTING:
                     route = '/crproposalvoting/proposals/ALL';
                     break;
+                case App.DPOS_VOTING:
+                    route = '/dposvoting/menu/vote';
+                    break;
             }
         } else {
             route = customRoute;

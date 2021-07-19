@@ -186,7 +186,7 @@ export class DPosUnRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createCancelProducerTransaction(payload, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
     }
 
     async retrieve() {
@@ -200,7 +200,7 @@ export class DPosUnRegistrationPage implements OnInit {
 
         const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING);
     }
 
 }

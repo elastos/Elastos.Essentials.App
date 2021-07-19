@@ -14,6 +14,7 @@ import { ProposalService } from 'src/app/crproposalvoting/services/proposal.serv
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { App } from 'src/app/model/app.enum';
 
 type ReviewProposalCommand = CRWebsiteCommand & {
     data: {
@@ -97,7 +98,7 @@ export class ReviewProposalPage {
             //Create transaction and send
             proposalPayload.Signature = ret.result.signature;
             const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(proposalPayload, '');
-            await this.voteService.signAndSendRawTransaction(rawTx);
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.

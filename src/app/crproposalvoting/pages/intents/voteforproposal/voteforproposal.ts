@@ -13,6 +13,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
 import { Config } from 'src/app/wallet/config/Config';
 import { Util } from 'src/app/model/util';
+import { App } from 'src/app/model/app.enum';
 
 type VoteForProposalCommand = CRWebsiteCommand & {
     data: {
@@ -136,7 +137,7 @@ export class VoteForProposalPage {
             '', //memo
             );
 
-        await this.voteService.signAndSendRawTransaction(rawTx);
+        await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
         this.signingAndSendingSuggestionResponse = false;
     }
 

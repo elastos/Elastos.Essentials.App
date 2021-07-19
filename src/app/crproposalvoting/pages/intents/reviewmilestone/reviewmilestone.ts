@@ -14,6 +14,7 @@ import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { App } from 'src/app/model/app.enum';
 
 type ReviewMilestoneCommand = CRWebsiteCommand & {
     data: {
@@ -100,7 +101,7 @@ export class ReviewMilestonePage {
                 //Create transaction and send
                 payload.SecretaryGeneralSignature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
-                await this.voteService.signAndSendRawTransaction(rawTx);
+                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
             }
         }
         catch (e) {
