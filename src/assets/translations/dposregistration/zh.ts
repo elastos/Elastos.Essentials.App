@@ -37,6 +37,8 @@ export const zh = {
         'dpos-deposit-warning': '您想注册DPoS节点吗？注册DPoS节点需要质押5000ELA，注册交易花费少量的交易费。',
         'text-dpos-name-already-used': '此DPoS节点名称已经存在',
         'dpos-unregister-warning': '您要注销DPoS节点吗？',
+        'text-dpos-info-dont-modify': 'DPoS节点信息没有修改.',
+        'test-input-is-blank': "输入为空，这项必填。"
     }
 
 };

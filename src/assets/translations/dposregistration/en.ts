@@ -37,6 +37,8 @@ export const en = {
         'dpos-deposit-warning': 'Do you want to register your DPoS node? 5000 ELA deposit and a minor transaction fee are paid for DPoS node registration',
         'text-dpos-name-already-used': 'This DPoS node name is already in use',
         'dpos-unregister-warning': 'Do you want to unregister your DPoS node?',
+        'text-dpos-info-dont-modify': 'This DPoS node info do not modify.',
+        'test-input-is-blank': " is blank, It is required."
     }
 
 };

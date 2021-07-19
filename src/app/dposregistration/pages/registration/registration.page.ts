@@ -36,6 +36,7 @@ export class DPosRegistrationPage implements OnInit {
         url: 'http://test.com',
         state: "Unregistered",
     };
+    public originInfo: DPoSRegistrationInfo;
     public state: string = "";
     public chainId = StandardCoinName.ELA;
 
@@ -83,23 +84,63 @@ export class DPosRegistrationPage implements OnInit {
 
         switch (this.dposInfo.state) {
             case 'Unregistered':
+                this.originInfo = null;
                 this.titleBar.setTitle(this.translate.instant('dposregistration.registration'));
                 break;
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
             case 'Active':
+                this.originInfo = Util.clone(this.dposInfo);
                 this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 break;
         }
     }
 
     async checkValues() {
-        for (const dpos of this.nodesService.dposList) {
-            if (dpos.nickname == this.dposInfo.nickname) {
-                this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');
-                return;
+        Logger.log("DPosRegistrationPage", "Dpos Info", this.dposInfo);
+
+        var blankMsg = this.translate.instant('dposregistration.test-input-is-blank');
+        if (!this.dposInfo.nickname || this.dposInfo.nickname == "") {
+            blankMsg = this.translate.instant('dposregistration.node-name') + blankMsg;
+            this.globalNative.genericToast(blankMsg);
+            return;
+        }
+
+        if (!this.dposInfo.nodepublickey || this.dposInfo.nodepublickey == "") {
+            blankMsg = this.translate.instant('dposregistration.node-publickey') + blankMsg;
+            this.globalNative.genericToast(blankMsg);
+            return;
+        }
+
+        if (!this.dposInfo.url || this.dposInfo.url == "") {
+            blankMsg = this.translate.instant('dposregistration.node-url') + blankMsg;
+            this.globalNative.genericToast(blankMsg);
+            return;
+        }
+
+        if (!this.dposInfo.location) {
+            blankMsg = this.translate.instant('dposregistration.node-location') + blankMsg;
+            this.globalNative.genericToast(blankMsg);
+            return;
+        }
+
+        if (this.originInfo != null && this.dposInfo.nickname == this.originInfo.nickname
+            && this.dposInfo.location == this.originInfo.location
+            && this.dposInfo.url == this.originInfo.url
+            && this.dposInfo.nodepublickey == this.originInfo.nodepublickey) {
+            this.globalNative.genericToast('dposregistration.text-dpos-info-dont-modify');
+            return;
+        }
+
+        if (this.originInfo == null || this.dposInfo.nickname != this.originInfo.nickname) {
+            for (const dpos of this.nodesService.dposList) {
+                if (dpos.nickname == this.dposInfo.nickname) {
+                    this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');
+                    return;
+                }
             }
         }
+
         this.needConfirm = true;
     }
 

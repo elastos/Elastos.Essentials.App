@@ -36,5 +36,7 @@ export const fr = {
         'dpos-deposit-warning': 'Souhaitez-vous enregistrer votre noeud DPoS? Un dépôt de 5000 ELA ainsi que des frais de transaction mineurs seront payés pour l\'enregistrement',
         'text-dpos-name-already-used': 'Ce nom est déjà utilisé par un autre noeud',
         'dpos-unregister-warning': 'Souhaitez-vous désenregistrer votre noeud DPoS?',
+        'text-dpos-info-dont-modify': 'This DPoS node info do not modify.',
+        'test-input-is-blank': " is blank, It is required."
     }
 };
