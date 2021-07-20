@@ -546,13 +546,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
       }
       let pendingTransactions = [];
       for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
-        if (this.transactions.txhistory[i].type === TransactionDirection.SENT) {
-          if (this.transactions.txhistory[i].Status !== TransactionStatus.CONFIRMED) {
-            pendingTransactions.push(this.transactions.txhistory[i].txid);
-          } else {
-            // the transactions list is sorted by block height.
-            break;
-          }
+        if (this.transactions.txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+          pendingTransactions.push(this.transactions.txhistory[i].txid);
+        } else {
+          // the transactions list is sorted by block height.
+          break;
         }
       }
       return pendingTransactions;
