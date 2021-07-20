@@ -240,6 +240,7 @@ export const en = {
         'text-request-fail': 'request fail',
         'text-request-no-credential': 'no credential',
         'hive-not-ready': 'Pictures need to be stored on your Hive storage space but your Hive vault is not ready. Please use the Hive Manager screen to configure your storage.',
+        'not-a-valid-picture': 'Please select a JPG or PNG picture',
 
         // loading
         'loading-msg': 'Wait a moment',

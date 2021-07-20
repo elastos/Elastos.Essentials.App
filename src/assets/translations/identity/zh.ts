@@ -240,6 +240,7 @@ export const zh = {
         'text-request-fail': '授权失败',
         'text-request-no-credential': '没有凭证',
         'hive-not-ready': '图片需要存储在您的 Hive 存储空间中，但您的 Hive Vault 尚未准备就绪。 请使用 Hive Manager 来配置您的存储。',
+        'not-a-valid-picture': 'Please select a JPG or PNG picture',
 
         // loading
         'loading-msg': '加载中，请稍候',
