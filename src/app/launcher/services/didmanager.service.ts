@@ -13,8 +13,6 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
   providedIn: 'root'
 })
 export class DIDManagerService extends GlobalService {
-  public signedIdentity: IdentityEntry;
-
   constructor(
     private translate: TranslateService,
     private native: GlobalNativeService ,
@@ -32,12 +30,16 @@ export class DIDManagerService extends GlobalService {
 
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     Logger.log("Launcher", "Signed in identity changed", signedInIdentity);
-    this.signedIdentity = signedInIdentity;
+    //this.signedIdentity = signedInIdentity;
     return;
   }
 
   public async onUserSignOut(): Promise<void> {
 
+  }
+
+  public get signedIdentity(): IdentityEntry {
+    return this.didSessions.getSignedInIdentity();
   }
 
   async shareIdentity() {

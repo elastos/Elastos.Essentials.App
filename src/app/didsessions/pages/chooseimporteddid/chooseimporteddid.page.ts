@@ -66,6 +66,6 @@ export class ChooseImportedDIDPage implements OnInit {
   }
 
   continue() {
-    this.identityService.runNextStep(this.nextStepId, this.selectedDid);
+    void this.identityService.runNextStep(this.nextStepId, this.selectedDid);
   }
 }

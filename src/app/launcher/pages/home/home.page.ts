@@ -19,7 +19,7 @@ import { NotificationsPage } from '../notifications/notifications.page';
 import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { WalletManager, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
 import { Subscription } from 'rxjs';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { MasterWallet } from 'src/app/wallet/model/wallets/MasterWallet';
@@ -110,7 +110,7 @@ export class HomePage implements OnInit {
 
     this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
 
-    if (this.didService.signedIdentity) { // Should not happend, just in case - for ionic hot reload
+    if (this.didService.signedIdentity) { // Should not happen, just in case - for ionic hot reload
       this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
         switch (template) {
           case MAINNET_TEMPLATE:
@@ -259,6 +259,10 @@ export class HomePage implements OnInit {
   async signOut() {
     await this.appBackGroundService.stop();
     await this.didService.signOut();
+  }
+
+  public getSignedInIdentity(): IdentityEntry {
+    return this.didService.signedIdentity;
   }
 
   getDateFromNow() {

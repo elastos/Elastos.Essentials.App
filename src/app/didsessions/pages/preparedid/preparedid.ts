@@ -47,6 +47,8 @@ export class PrepareDIDPage {
   private walletStepCompleted = false;
   // Whether creation hive vault has already been tried once during this process or not.
   private hiveSetupAlreadyTried = false;
+  // True when we are doing thevery last finalization before showing the launch screen.
+  private finalizingPreparation = false;
 
   // UI
   public slideIndex = 0;
@@ -172,6 +174,7 @@ export class PrepareDIDPage {
     this.hiveError = null;
 
     this.walletStepCompleted = false;
+    this.finalizingPreparation = false;
   }
 
   /**
@@ -377,6 +380,7 @@ export class PrepareDIDPage {
 
   finalizePreparation() {
     Logger.log('didsessions', "Exiting the DID preparation screen, next step:", this.nextStepId);
+    this.finalizingPreparation = true;
     void this.identityService.runNextStep(this.nextStepId);
   }
 

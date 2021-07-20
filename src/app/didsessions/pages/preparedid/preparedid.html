@@ -60,7 +60,7 @@
           </div>
         </div>
       </ion-slide>
-  
+
       <ion-slide class="ion-text-center">
         <div class="slide-card">
           <img src="assets/didsessions/onboard/slide4.svg">
@@ -78,15 +78,15 @@
           <img src="assets/didsessions/onboard/slide5.svg">
           <h1>{{ 'didsessions.prepare.done-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.done-intro' | translate }}</p>
-          <ion-button (click)="finalizePreparation()">
+          <ion-button (click)="finalizePreparation()" *ngIf="!finalizingPreparation">
             {{ 'common.continue' | translate }} &nbsp; <ion-icon name="arrow-forward"></ion-icon>
           </ion-button>
         </div>
       </ion-slide>
-  
+
     </ion-slides>
 
-    <ion-row *ngIf="slideIndex < 4" class="slide-circle-row">
+    <ion-row *ngIf="slideIndex < 4 || finalizingPreparation" class="slide-circle-row">
       <ion-col size="12">
         <ion-spinner></ion-spinner>
         <span>{{ 'common.please-wait' | translate }}</span>
@@ -94,7 +94,7 @@
     </ion-row>
 
 <!--     <div class="progress-circle progress-1"><span>1</span></div>   -->
-    
+
   </ion-grid>
-  
+
 </ion-content>
