@@ -80,7 +80,7 @@ export class DPosRegistrationPage implements OnInit {
         this.masterWalletId = this.voteService.masterWalletId;
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
-        this.dposInfo = this.nodesService.dposInfo;
+        this.dposInfo = Util.clone(this.nodesService.dposInfo);
 
         switch (this.dposInfo.state) {
             case 'Unregistered':
@@ -134,7 +134,7 @@ export class DPosRegistrationPage implements OnInit {
 
         if (this.originInfo == null || this.dposInfo.nickname != this.originInfo.nickname) {
             for (const dpos of this.nodesService.dposList) {
-                if (dpos.nickname == this.dposInfo.nickname) {
+                if (dpos.nickname == this.dposInfo.nickname && dpos.nickname != this.originInfo.nickname) {
                     this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');
                     return;
                 }
