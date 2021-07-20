@@ -30,9 +30,9 @@
           <img [src]="!theme.darkMode ? 'assets/didsessions/onboard/slide1.svg' : 'assets/didsessions/onboard/dark_mode/slide1.svg'">
           <h1>{{ 'didsessions.prepare.publish-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.publish-intro' | translate }}</p>
-          <div class="error-box" *ngIf="signInError">
+          <div class="error-box" *ngIf="publishError">
             <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
-            <span class="error">{{ signInError }}</span>
+            <span class="error">{{ publishError }}</span>
           </div>
         </div>
       </ion-slide>
@@ -54,9 +54,9 @@
           <img src="assets/didsessions/onboard/slide3.svg">
           <h1>{{ 'didsessions.prepare.hive-title' | translate }}</h1>
           <p>{{ 'didsessions.prepare.hive-intro' | translate }}</p>
-          <div class="error-box" *ngIf="signInError">
+          <div class="error-box" *ngIf="hiveError">
             <ion-button (click)="cancelPreparation()">{{ 'common.back' | translate }}</ion-button>
-            <span class="error">{{ signInError }}</span>
+            <span class="error">{{ hiveError }}</span>
           </div>
         </div>
       </ion-slide>
@@ -86,7 +86,7 @@
 
     </ion-slides>
 
-    <ion-row *ngIf="slideIndex < 4 || finalizingPreparation" class="slide-circle-row">
+    <ion-row *ngIf="(slideIndex < 4 || finalizingPreparation) && !(signInError || hiveError || publishError)" class="slide-circle-row">
       <ion-col size="12">
         <ion-spinner></ion-spinner>
         <span>{{ 'common.please-wait' | translate }}</span>

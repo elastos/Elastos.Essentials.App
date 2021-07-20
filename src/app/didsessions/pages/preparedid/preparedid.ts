@@ -303,7 +303,7 @@ export class PrepareDIDPage {
   private publishIdentityReal(): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     return new Promise<boolean>((resolve) => {
-      void this.globalPublicationService.resetStatus().then(() => {
+      void this.globalPublicationService.resetStatus().then(async () => {
         let publicationStatusSub = this.globalPublicationService.publicationStatus.subscribe((status)=>{
           if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
             Logger.log("didsessions", "Identity publication success");
@@ -317,10 +317,17 @@ export class PrepareDIDPage {
           }
         });
 
-        void this.globalPublicationService.publishDIDFromStore(
-          this.identityService.identityBeingCreated.didStore.getId(),
-          this.identityService.identityBeingCreated.storePass,
-          this.identityService.identityBeingCreated.did.getDIDString());
+        try {
+          await this.globalPublicationService.publishDIDFromStore(
+                  this.identityService.identityBeingCreated.didStore.getId(),
+                  this.identityService.identityBeingCreated.storePass,
+                  this.identityService.identityBeingCreated.did.getDIDString());
+        }
+        catch (e) {
+          Logger.log("didsessions", "Identity publication failure (publishDIDFromStore)", e);
+          publicationStatusSub.unsubscribe();
+          resolve(false);
+        }
       });
     });
   }

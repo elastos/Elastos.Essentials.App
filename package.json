@@ -150,7 +150,8 @@
       "@elastosfoundation/elastos-cordova-plugin-did": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

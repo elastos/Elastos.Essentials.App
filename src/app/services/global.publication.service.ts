@@ -634,13 +634,18 @@ export class GlobalPublicationService {
             });
 
             const localDIDDocument = await this.loadLocalDIDDocument(didStore, didString);
-
-            // Start the publication flow
-            localDIDDocument.publish(storePass, () => { }, (err) => {
-                // Local "publish" process errored
-                Logger.log("publicationservice", "Local DID Document publish(): error", err);
-                reject(err);
-            });
+            if (localDIDDocument) {
+                // Start the publication flow
+                localDIDDocument.publish(storePass, () => { }, (err) => {
+                    // Local "publish" process errored
+                    Logger.log("publicationservice", "Local DID Document publish(): error", err);
+                    reject(err);
+                });
+            }
+            else {
+                // Weird, the DID we've just created could not be loaded... Let user know anyway
+                reject("Failed to load DID document for DID "+didString+" in store id "+didStore.getId());
+            }
         });
     }
 
