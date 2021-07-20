@@ -7,7 +7,7 @@ import { Util } from '../../../../model/Util';
 import { WalletManager } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/MasterWallet';
 import { StandardCoinName } from '../../../../model/Coin';
-import { TransactionDirection, TransactionType, TransactionInfo, EthTransaction } from '../../../../model/Transaction';
+import { TransactionDirection, TransactionType, TransactionInfo, EthTransaction, TransactionStatus } from '../../../../model/Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { SubWallet } from '../../../../model/wallets/SubWallet';
@@ -145,7 +145,6 @@ export class CoinTxInfoPage implements OnInit {
                 const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 if (this.direction === TransactionDirection.SENT) {
                     this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
-                    await this.getERC20TokenTransactionInfo(transaction);
                 } else if (this.direction === TransactionDirection.RECEIVED) {
                     if (this.transactionInfo.isCrossChain === true) {
                         // TODO: We can't get the real address for cross chain transafer.
@@ -155,6 +154,11 @@ export class CoinTxInfoPage implements OnInit {
                     }
                 }
             } else {
+                // For erc20, we use getTransactionDetails to check whether the transaction is valid.
+                if (this.status !== TransactionStatus.CONFIRMED) {
+                  const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
+                }
+
                 if (this.direction === TransactionDirection.RECEIVED) {
                     this.targetAddress = this.transactionInfo.from;
                 }
@@ -222,29 +226,40 @@ export class CoinTxInfoPage implements OnInit {
         // Only show receiving address, total cost and fees if tx was not received
         if (this.direction !== TransactionDirection.RECEIVED) {
             // For ERC20 Token Transfer
-            // TODO
-            // if ((this.chainId === StandardCoinName.ETHSC) && ('ERC20Transfer' === (transaction as EthTransaction).TokenFunction)) {
-            //     this.txDetails.unshift(
-            //         {
-            //             type: 'contractAddress',
-            //             title: 'wallet.tx-info-token-address',
-            //             value: this.tokenName ? 0 : this.contractAddress,
-            //             show: true,
-            //         },
-            //         {
-            //             type: 'tokenSymbol',
-            //             title: 'wallet.erc-20-token',
-            //             value: this.tokenName,
-            //             show: true,
-            //         },
-            //         {
-            //             type: 'tokenAmount',
-            //             title: 'wallet.tx-info-erc20-amount',
-            //             value: this.tokenAmount,
-            //             show: true,
-            //         },
-            //     );
-            // }
+            if ((this.chainId === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
+              if (this.transactionInfo.erc20TokenValue) {
+                this.txDetails.unshift(
+                  {
+                      type: 'tokenAmount',
+                      title: 'wallet.tx-info-erc20-amount',
+                      value: this.transactionInfo.erc20TokenValue,
+                      show: true,
+                  },
+                );
+              }
+
+              if (this.transactionInfo.erc20TokenSymbol) {
+                this.txDetails.unshift(
+                  {
+                      type: 'tokenSymbol',
+                      title: 'wallet.erc-20-token',
+                      value: this.transactionInfo.erc20TokenSymbol,
+                      show: true,
+                  },
+                );
+              }
+
+              if (this.transactionInfo.erc20TokenContractAddress) {
+                this.txDetails.unshift(
+                    {
+                        type: 'contractAddress',
+                        title: 'wallet.tx-info-token-address',
+                        value: this.transactionInfo.erc20TokenContractAddress,
+                        show: true,
+                    },
+                );
+              }
+            }
 
             this.txDetails.unshift(
                 {
@@ -272,8 +287,6 @@ export class CoinTxInfoPage implements OnInit {
                     })
             }
         }
-
-        // Logger.log('wallet', 'Tx details', this.txDetails);
     }
 
     goWebSite(chainId, txid) {
@@ -317,21 +330,6 @@ export class CoinTxInfoPage implements OnInit {
             targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
         }
         return targetAddress;
-    }
-
-    private async getERC20TokenTransactionInfo(transaction: EthTransaction) {
-        // TODO
-        // if ('ERC20Transfer' === transaction.TokenFunction) {
-        //     this.isERC20TokenTransactionInETHSC = true;
-        //     this.contractAddress = transaction.Token;
-        //     const ethAccountAddress = await (this.subWallet as ETHChainSubWallet).getTokenAddress();
-        //     const erc20Coin = this.coinService.getERC20CoinByContracAddress(this.contractAddress);
-        //     if (erc20Coin) {// erc20Coin is true normally.
-        //         this.tokenName = erc20Coin.getName();
-        //         const coinDecimals = await this.erc20CoinService.getCoinDecimals(this.contractAddress, ethAccountAddress);
-        //         this.tokenAmount = (new BigNumber(transaction.value).dividedBy(new BigNumber(10).pow(coinDecimals))).toString();
-        //     }
-        // }
     }
 
     getDisplayableName(): string {

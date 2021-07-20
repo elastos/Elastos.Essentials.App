@@ -89,6 +89,9 @@ export type TransactionInfo = {
     txid: string,
     type: TransactionType,
     isCrossChain: boolean,
+    erc20TokenSymbol?: string,
+    erc20TokenValue?: string,
+    erc20TokenContractAddress?: string,
 };
 
 /**
@@ -196,6 +199,7 @@ export type EthTransaction = TransactionHistory & {
   transferType: string;
 
   Direction: TransactionDirection;
+  isERC20TokenTransfer: boolean,
 };
 
 // Returned by rpc,
@@ -203,6 +207,14 @@ export type EthTokenTransaction = EthTransaction & {
   tokenSymbol: string;
   tokenName: string;
   tokenDecimal: string;
+}
+
+// Show the erc20 token info if the ETHSC transaction is a erc20 token transfer.
+export type ERC20TokenTransactionInfo = {
+  to: string;
+  tokenContractAddress: string;
+  tokenSymbol: string;
+  tokenValue: string;
 }
 
 // Raw list of transactions as received from the rpc.

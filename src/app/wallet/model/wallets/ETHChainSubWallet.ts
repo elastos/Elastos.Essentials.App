@@ -2,7 +2,7 @@ import { StandardSubWallet } from './StandardSubWallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, ERC20TokenInfo, ETHSCTransferType, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
+import { AllTransactionsHistory, ERC20TokenInfo, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
 import { StandardCoinName } from '../Coin';
 import { MasterWallet } from './MasterWallet';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,6 +10,7 @@ import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { ERC20SubWallet } from './ERC20SubWallet';
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
@@ -123,11 +124,20 @@ export class ETHChainSubWallet extends StandardSubWallet {
           return null;
         }
 
+        transaction.to = transaction.to.toLowerCase();
+
         const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
         const direction = await this.getETHSCTransactionDirection(transaction.to);
         transaction.Direction = direction;
+
+        const isERC20TokenTransfer = await this.isERC20TokenTransfer(transaction.to);
+        transaction.isERC20TokenTransfer = isERC20TokenTransfer;
+        let erc20TokenTransactionInfo: ERC20TokenTransactionInfo = null;
+        if (isERC20TokenTransfer) {
+          erc20TokenTransactionInfo = this.getERC20TokenTransactionInfo(transaction)
+        }
 
         const transactionInfo: TransactionInfo = {
             amount: new BigNumber(-1),
@@ -143,11 +153,14 @@ export class ETHChainSubWallet extends StandardSubWallet {
             statusName: this.getTransactionStatusName(transaction.Status, translate),
             symbol: '',
             from: transaction.from,
-            to: transaction.to,
+            to: isERC20TokenTransfer ? erc20TokenTransactionInfo.to : transaction.to,
             timestamp,
             txid: transaction.hash,
             type: null,
-            isCrossChain: false
+            isCrossChain: false,
+            erc20TokenSymbol: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenSymbol : null,
+            erc20TokenValue: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenValue : null,
+            erc20TokenContractAddress: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenContractAddress : null,
         };
 
         transactionInfo.amount = new BigNumber(transaction.value).dividedBy(Config.WEI);
@@ -191,7 +204,6 @@ export class ETHChainSubWallet extends StandardSubWallet {
                   return "wallet.coin-op-received-token";
                 }
             case TransactionDirection.SENT:
-                // TODO withdraw
                 return this.getETHSCTransactionContractType(transaction, translate);
         }
         return null;
@@ -209,7 +221,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
     private async getETHSCTransactionDirection(targetAddress: string): Promise<TransactionDirection> {
         const address = await this.getTokenAddress();
-        if (address === targetAddress.toLowerCase()) {
+        if (address === targetAddress) {
             return TransactionDirection.RECEIVED;
         } else {
             return TransactionDirection.SENT;
@@ -227,9 +239,33 @@ export class ETHChainSubWallet extends StandardSubWallet {
       return false;
     }
 
+    private getERC20TokenTransactionInfo(transaction: EthTransaction): ERC20TokenTransactionInfo {
+        let contractAddress = transaction.to;
+        let toAddress = null, erc20TokenSymbol = null, erc20TokenValue = null;
+        const erc20Coin = this.masterWallet.coinService.getERC20CoinByContracAddress(contractAddress);
+        if (erc20Coin) {// erc20Coin is true normally.
+          erc20TokenSymbol = erc20Coin.getName();
+          // Get transaction from erc20 token subwallet.
+          let erc20Subwallet : ERC20SubWallet = (this.masterWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet);
+          let erc20Tansaction: EthTokenTransaction = erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
+          if (erc20Tansaction) {
+            toAddress = erc20Tansaction.to;
+            erc20TokenValue = erc20Subwallet.getDisplayValue(erc20Tansaction.value).toString();
+          }
+        }
+
+        if (!toAddress) {
+          toAddress = transaction.to;
+          contractAddress = null;
+        }
+
+        return {to: toAddress, tokenContractAddress: contractAddress, tokenSymbol: erc20TokenSymbol, tokenValue: erc20TokenValue}
+    }
+
     private getETHSCTransactionContractType(transaction: EthTransaction, translate: TranslateService): string {
         let toAddressLowerCase = transaction.to.toLowerCase();
-        if (this.isERC20TokenTransfer(toAddressLowerCase)) {
+
+        if (transaction.isERC20TokenTransfer) {
             return "wallet.coin-op-contract-token-transfer";
         } else if (toAddressLowerCase === this.withdrawContractAddress) {
             // withdraw to MainChain

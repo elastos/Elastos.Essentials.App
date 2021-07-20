@@ -123,6 +123,11 @@ export class ERC20SubWallet extends SubWallet {
         return amount; // Raw value and display value are the same: the number of tokens.
     }
 
+    // The resurn value is devided by the number of decimals used by the token.
+    public getDisplayValue(amount: string): BigNumber {
+      return new BigNumber(amount).dividedBy(this.tokenAmountMulipleTimes);
+    }
+
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
         // No way to compute the actual value in currency for this token - would require to be bound to an exchange
         // to get its valuation, which we have not for now.
@@ -194,6 +199,14 @@ export class ERC20SubWallet extends SubWallet {
         }
     }
 
+    public getTransactionByHash(hash: string) : EthTransaction {
+      let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
+      if (existingIndex >= 0) {
+        return this.transactions.txhistory[existingIndex] as EthTransaction;
+      }
+      return null;
+    }
+
     async getTransactionByRPC() {
         Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
         const contractAddress = this.coin.getContractAddress().toLowerCase();
@@ -226,7 +239,7 @@ export class ERC20SubWallet extends SubWallet {
         transaction.Direction = direction;
 
         const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes),
+            amount: this.getDisplayValue(transaction.value),
             confirmStatus: parseInt(transaction.confirmations),
             datetime,
             direction: direction,
