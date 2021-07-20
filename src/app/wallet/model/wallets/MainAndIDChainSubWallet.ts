@@ -52,7 +52,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
               await this.checkAddresses(false);
             }
             await this.updateBalance();
-            await this.getVotingUtxoByRPC();
         }, 1000);
     }
 
@@ -581,6 +580,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     private async getUtxo(amountSELA: number) {
         let utxoArray: Utxo[] = null;
         if (this.id === StandardCoinName.ELA) {
+            await this.getVotingUtxoByRPC();
             if ((amountSELA === -1) || (!this.balance.gt(amountSELA + this.votingAmountSELA))) {
                 utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
                 // TODO: Notify user to vote?
@@ -656,8 +656,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     private async getVotedContent(): Promise<RawVoteContent[]> {
-        await this.getVotingUtxoByRPC();
-
         // We only consider the case of one utxo for voting.
         if (this.votingUtxoArray && (this.votingUtxoArray.length > 0)) {
             let detail = await this.getTransactionDetails(this.votingUtxoArray[0].txid);
