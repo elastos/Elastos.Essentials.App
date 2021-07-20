@@ -7,6 +7,8 @@ import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Events } from 'src/app/services/events.service';
+import { pictureMimeType } from 'src/app/helpers/picture.helpers';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 @Component({
   selector: 'app-picture',
@@ -35,6 +37,7 @@ export class PictureComponent implements OnInit {
     public profileService: ProfileService,
     public theme: GlobalThemeService,
     public storage: LocalStorage,
+    private native: GlobalNativeService,
     public events: Events
   ) {}
 
@@ -75,17 +78,27 @@ export class PictureComponent implements OnInit {
       mediaType: 0,
       correctOrientation: true,
       sourceType: sourceType,
-      targetWidth: 256,
-      targetHeight: 256
+      targetWidth: 350,
+      targetHeight: 350
     };
 
     navigator.camera.getPicture((imageData) => {
-      this.zone.run(() => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.zone.run(async () => {
         //Logger.log('Identity', "Chosen image data base64:", imageData);
 
-        PictureComponent.shared.rawBase64ImageOut = imageData;
-        PictureComponent.shared.dataUrlImageOut = 'data:image/png;base64,' + imageData;
-        this.dataUrlImage = PictureComponent.shared.dataUrlImageOut;
+        if (imageData) {
+          let mimeType = await pictureMimeType(imageData);
+
+          if (["image/png", "image/jpg", "image/jpeg"].indexOf(mimeType) < 0) {
+            this.native.genericToast('identity.not-a-valid-picture');
+            return;
+          }
+
+          PictureComponent.shared.rawBase64ImageOut = imageData;
+          PictureComponent.shared.dataUrlImageOut = 'data:'+mimeType+';base64,' + imageData;
+          this.dataUrlImage = PictureComponent.shared.dataUrlImageOut;
+        }
       });
     }, ((err) => {
       Logger.error('identity', err);
