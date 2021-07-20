@@ -10,6 +10,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { IdentityIntent, AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent, CredImportIdentityIntent } from '../model/identity.intents';
 import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 
 @Injectable({
@@ -52,21 +53,27 @@ export class IntentReceiverService {
             case "appidcredissue":
                 Logger.log('identity', "Received appid credential issue intent request");
                 if (this.checkAppIdCredIssueIntentParams(intent)) {
-                    await this.uxService.loadIdentityAndShow(false);
-
-                    let appIdIssueIntent = intent as AppIdCredIssueIdentityIntent;
-
-                    // Check if we can directly fullfil the request or not (silent intent).
-                    // From inside trinity, as the runtime can ensure the app did, we can directly
-                    // issue the credential most of the times. Native apps though require a UI
-                    // confirmation.
-                    this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
-                    if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
-                        this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
+                    if (!GlobalDIDSessionsService.signedInDIDString) {
+                        Logger.log("identity", "No signed in identity. Returning no app id credential");
+                        await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
                     }
                     else {
-                        // We have to show a UI confirmation so let's do it.
-                        this.native.setRootRouter("/identity/intents/appidcredissuerequest");
+                        await this.uxService.loadIdentityAndShow(false);
+
+                        let appIdIssueIntent = intent as AppIdCredIssueIdentityIntent;
+
+                        // Check if we can directly fullfil the request or not (silent intent).
+                        // From inside trinity, as the runtime can ensure the app did, we can directly
+                        // issue the credential most of the times. Native apps though require a UI
+                        // confirmation.
+                        this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
+                        if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
+                            this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
+                        }
+                        else {
+                            // We have to show a UI confirmation so let's do it.
+                            this.native.setRootRouter("/identity/intents/appidcredissuerequest");
+                        }
                     }
                 }
                 else {

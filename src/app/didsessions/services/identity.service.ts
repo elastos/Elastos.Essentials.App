@@ -241,17 +241,23 @@ export class IdentityService {
                 await this.nativeService.showLoading(this.translate.instant('common.please-wait'));
                 // Master password was created and did store password could be saved
                 // Save the identity entry in the did session plugin
-                let avatar = createdDID.getAvatarCredentialValue();
+                // IMPORTANT: Don't set the avatar here before signing in. Because the avatar could be stored on hive,
+                // And currently hive needs a user to be signed in to generate a APPID credential during its auth.
+                // The identity is updated just after signing in below, with the avatar.
                 this.identityBeingCreated.name = identityName;
                 this.identityBeingCreated.didStore = didStore;
                 this.identityBeingCreated.did = createdDID;
-                this.identityBeingCreated.didSessionsEntry = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
+                this.identityBeingCreated.didSessionsEntry = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, null);
 
                 await this.nativeService.hideLoading();
 
                 //await this.signIn(this.identityBeingCreated.didSessionsEntry);
                 this.navigateWithCompletion('/didsessions/preparedid', async () => {
                     Logger.log("didsessions", "DID preparation is complete, now navigating to home screen");
+
+                    // IMPORTANT: We UPDATE the new identity with the avatar here after signing in. See comment above.
+                    let avatar = createdDID.getAvatarCredentialValue();
+                    this.identityBeingCreated.didSessionsEntry = await this.addIdentity(didStore.getId(), createdDID.getDIDString(), identityName, avatar);
 
                     // Imported DIDs are automatically marked as backed up, no need to remind users about this.
                     if (isImportOperation)

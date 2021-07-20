@@ -2,19 +2,19 @@
   <app-titlebar></app-titlebar>
 
   <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
-    <ion-row *ngIf="didService.signedIdentity" class="id-row">
+    <ion-row *ngIf="getSignedInIdentity()" class="id-row">
       <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
-        <ion-avatar *ngIf="!didService.signedIdentity.avatar" class="noAvatar">
+        <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
           <img src="assets/launcher/default/default-contact.svg">
         </ion-avatar>
-        <ion-avatar *ngIf="didService.signedIdentity.avatar" class="hasAvatar">
-          <img [src]="'data:'+didService.signedIdentity.avatar.contentType+';base64,'+didService.signedIdentity.avatar.base64ImageData">
+        <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
+          <img [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">
         </ion-avatar>
       </ion-col>
 
       <ion-col size="7.25" class="mid-col" (click)="showMyIdentity()">
         <h1>{{ getDateFromNow().toUpperCase() }}</h1>
-        <h2>{{ didService.signedIdentity.name }}</h2>
+        <h2>{{ getSignedInIdentity().name }}</h2>
       </ion-col>
       <ion-col offset="0.75" size="1.25" class="right-col" (click)="showOptions($event)">
         <img [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
@@ -88,7 +88,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="didService.signedIdentity" class="category-row logout-row ion-activatable ripple" (click)="signOut()">
+    <ion-row *ngIf="getSignedInIdentity()" class="category-row logout-row ion-activatable ripple" (click)="signOut()">
       <ion-col class="app-col" size="12">
         <ion-row class="app-row logout-row">
           <ion-col class="left-col" size="2">

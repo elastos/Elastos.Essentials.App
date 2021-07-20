@@ -95,6 +95,11 @@ export class GlobalDIDSessionsService {
     this.identities.push(entry);
 
     await this.saveDidSessionsToDisk();
+
+    // If we are modifying the signed in identity (ex: avatar), we update our local cache
+    if (this.signedInIdentity && this.signedInIdentity.didString === entry.didString) {
+      this.signedInIdentity = entry;
+    }
   }
 
   /**

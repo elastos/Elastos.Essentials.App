@@ -30,7 +30,8 @@ export class AuthService {
      *
      * @param showMasterPromptIfDatabaseLocked If false, this function will silently fail and return a cancellation, in case the master password was locked.
      */
-    public async checkPasswordThenExecute(writeActionCb: () => Promise<void>, onCancelled: () => void, showMasterPromptIfDatabaseLocked: boolean = true, forceShowMasterPrompt: boolean = false) {
+    public checkPasswordThenExecute(writeActionCb: () => Promise<void>, onCancelled: () => void, showMasterPromptIfDatabaseLocked = true, forceShowMasterPrompt = false) {
+        // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
         return new Promise(async (resolve, reject) => {
             try {
                 let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
@@ -55,13 +56,13 @@ export class AuthService {
                 }
             }
             catch (e) {
-                e = DIDHelper.reworkedPluginException(e);
-                if (e instanceof PasswordManagerCancelallationException) {
+                let reworkedError = DIDHelper.reworkedPluginException(e);
+                if (reworkedError instanceof PasswordManagerCancelallationException) {
                     // Nothing to do, just stop the flow here.
                     onCancelled();
                 }
                 else {
-                    throw e;
+                    throw reworkedError;
                 }
             }
         });
