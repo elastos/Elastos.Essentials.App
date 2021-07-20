@@ -48,7 +48,7 @@ export class PrepareDIDPage {
   // Whether creation hive vault has already been tried once during this process or not.
   private hiveSetupAlreadyTried = false;
   // True when we are doing thevery last finalization before showing the launch screen.
-  private finalizingPreparation = false;
+  public finalizingPreparation = false;
 
   // UI
   public slideIndex = 0;
