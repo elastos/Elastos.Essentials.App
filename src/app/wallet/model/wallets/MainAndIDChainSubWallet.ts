@@ -1071,13 +1071,13 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     private mergeTransactionList(txList: AllTransactionsHistory[]) {
-        Logger.log('wallet', 'mergeTransactionList timestamp:[', this.timestampStart, ', ', this.timestampEnd, ']');
-
+        Logger.log('wallet', 'mergeTransactionList start timestamp:', this.timestampStart);
         let transactionHistory: TransactionHistory[] = [];
         // Get the txhistory after the timestampStart.
         for (let i = 0, len = txList.length; i < len; i++) {
             for (const txhistory of txList[i].txhistory) {
-                if ((txhistory.time >= this.timestampStart)) {
+                // txhistory.time === 0: pending transaction.
+                if ((txhistory.time === 0) || (txhistory.time >= this.timestampStart)) {
                     transactionHistory.push(txhistory);
                 }
             }
