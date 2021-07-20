@@ -20,15 +20,33 @@ export class GlobalStorageService {
   }
 
   private getFullStorageKey(did: string | null, context, key): string {
-    let fullKey: string = "";
+    let fullKey = "";
     if (did)
       fullKey += did + "_";
     fullKey += context + "_" + key;
     return fullKey;
   }
 
+  /**
+   * Deletes all settings for a specific DID.
+   */
+  public async deleteDIDSettings(did: string): Promise<void> {
+    // Delete all settings that start with the DID string
+    let existingKeys: string[] = await this.storage.keys();
+    let deletedEntries = 0;
+    for (let key of existingKeys) {
+      if (key.startsWith(did + "_")) {
+        await this.storage.remove(key);
+        deletedEntries++;
+      }
+    }
+
+    Logger.log("StorageService", "Deleted " + deletedEntries + " settings entries for DID " + did);
+  }
+
   public setSetting<T>(did: string | null, context: string, key: string, value: T): Promise<void> {
     let fullKey = this.getFullStorageKey(did, context, key);
+    //Logger.log("STORAGEDEBUG", "setSetting", context, key, value);
     return this.storage.set(fullKey, JSON.stringify(value)).then((res) => {
     }, (err) => {
     });
@@ -37,9 +55,9 @@ export class GlobalStorageService {
   public async getSetting<T>(did: string | null, context: string, key: string, defaultValue: T): Promise<T> {
     let fullKey = this.getFullStorageKey(did, context, key);
 
-    // Return the default value is nothing saved in file system yet.
+    // Return the default value if nothing saved in file system yet.
     let existingKeys: string[] = await this.storage.keys();
-    if (!existingKeys.find((k)=>k === fullKey)) {
+    if (!existingKeys.find((k) => k === fullKey)) {
       return defaultValue;
     }
 
