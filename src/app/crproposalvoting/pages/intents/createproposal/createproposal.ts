@@ -101,11 +101,11 @@ export class CreateProposalPage {
             case "normal":
                 return this.getNormalPayload();
             case "changeproposalowner":
-                return this.getChangeOwnerPayload;
+                return this.getChangeOwnerPayload();
             case "closeproposal":
-                return this.getTerminatePayload;
+                return this.getTerminatePayload();
             case "secretarygeneral":
-                return this.getSecretaryGeneralPayload;
+                return this.getSecretaryGeneralPayload();
             default:
                 throw new Error("Don't support this proposaltype: " + this.createProposalCommand.data.proposaltype);
         }
