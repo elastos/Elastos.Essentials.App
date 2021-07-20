@@ -85,7 +85,7 @@ export const fr = {
         'tip-message-bring-friends': 'Donc vous appréciez le concept Elastos Essentials? Vous aimez controller votre identité numérique, améliorer votre vie privée, utiliser un internet avec plus de confiance et de transparence?<br/><br/>Vous voudriez que vos contacts vous rejoignent, mais vous avez le sentiment qu\'utiliser des applications Elastos n\'est <b>pas aussi simple</b> que d\'utiliser des applications traditionnelles?<br/><br/>VOUS AVEZ RAISON! Mais comme pour toute <b>innovation</b>, cela prend un peu de temps d\'adaptation. Après un certain temps, la plupart des gens <b>comprendront la valeur apportée par ce nouvel "internet"</b> et vous rejoindront sans difficulté.',
 
         /********* Developer Tips *********/
-        'tip-title-dev-getting-support': 'Où trouver de support dev?',
+        'tip-title-dev-getting-support': 'Où trouver du support dev?',
         'tip-message-dev-getting-support': 'N\'hésitez pas à poser vos questions concernant le développement d\'applications, et à reporter vos problèmes, sur notre <b>groupe Telegram https://t.me/elastosbrowser</b>.',
     }
 

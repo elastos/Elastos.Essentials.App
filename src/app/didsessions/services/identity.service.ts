@@ -25,6 +25,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -69,6 +70,7 @@ export class IdentityService {
         private uxService: UXService,
         private nativeService: GlobalNativeService,
         private prefs: GlobalPreferencesService,
+        private storage: GlobalStorageService,
         private globalElastosAPIService: GlobalElastosAPIService,
         private globalHiveService: GlobalHiveService,
         private didSessions: GlobalDIDSessionsService
@@ -463,6 +465,9 @@ export class IdentityService {
 
             // Delete all preferences
             await this.prefs.deletePreferences(identity.didString);
+
+            // Delete all settings
+            await this.storage.deleteDIDSettings(identity.didString);
 
             // Notify listeners of this deletion
             this.zone.run(() => {
