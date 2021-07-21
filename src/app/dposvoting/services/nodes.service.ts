@@ -159,20 +159,23 @@ export class NodesService {
         });
     }
 
+    sortVotes() {
+        this._votes.sort((a, b) => b.date - a.date);
+    }
+
     getStoredVotes() {
         this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'votes', []).then(data => {
             Logger.log('dposvoting', 'Vote history', data);
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });;
+                this.sortVotes();
             }
         });
     }
 
-
-
     async setStoredVotes() {
-        this._votes.sort((a, b) => b.date - a.date);
+        this.sortVotes();
         Logger.log('dposvoting', 'Vote history updated', this._votes);
         await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "votes", this._votes);
     }
