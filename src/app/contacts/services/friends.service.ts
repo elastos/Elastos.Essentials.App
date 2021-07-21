@@ -9,21 +9,21 @@ import { Contact } from '../models/contact.model';
 import { Avatar } from '../models/avatar';
 import { DidService } from './did.service';
 import { ContactNotifierService, Contact as ContactNotifierContact } from 'src/app/services/contactnotifier.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { App } from "src/app/model/app.enum"
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 
 declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable({
   providedIn: 'root'
 })
-export class FriendsService {
-
+export class FriendsService extends GlobalService {
   // Pending contact
   public pendingContact: Contact = {
     id: null,
@@ -84,7 +84,26 @@ export class FriendsService {
     private contactNotifier: ContactNotifierService,
     private globalIntentService: GlobalIntentService,
   ) {
+    super();
+    GlobalServiceManager.getInstance().registerService(this);
     this.managerService = this;
+  }
+
+  onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    return;
+  }
+
+  onUserSignOut(): Promise<void> {
+    this.resetService();
+    return;
+  }
+
+  private resetService() {
+    this.pendingContact = null;
+    this.contacts = [];
+    this.filteredContacts = [];
+    this.contactsChecked = false;
+    this.contactsFetched = false;
   }
 
   async init() {
@@ -108,6 +127,7 @@ export class FriendsService {
   **** Fetch Stored Contacts ****
   *******************************/
   async getStoredContacts(): Promise<Contact[]> {
+    Logger.log("contacts", "Getting stored contacts for DID ", GlobalDIDSessionsService.signedInDIDString);
     let contacts = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "contacts", "contacts", []);
     Logger.log("Contacts", 'Stored contacts fetched', contacts);
     this.contactsFetched = true;
@@ -194,7 +214,7 @@ export class FriendsService {
             notificationsCarrierAddress: null
           }
 
-          this.contacts.push(newContact);
+          this.safeAddContact(newContact);
         } else {
           Logger.log('contacts', 'Contact Notifier Contact', alreadyAddedContact + ' is already added');
         }
@@ -478,7 +498,7 @@ export class FriendsService {
     this.resetPendingContact(didString, carrierString);
 
     if(requiresConfirmation === false) {
-      this.contacts.push(this.pendingContact);
+      this.safeAddContact(this.pendingContact);
       await this.saveContactsState();
     } else {
       this.showConfirmPrompt(false);
@@ -592,7 +612,7 @@ export class FriendsService {
     }
 
     if(requiresConfirmation === false) {
-      this.contacts.push(this.pendingContact);
+      this.safeAddContact(this.pendingContact);
       await this.saveContactsState();
     } else {
       this.showConfirmPrompt(true);
@@ -660,7 +680,7 @@ export class FriendsService {
           Logger.log('contacts', 'Confirmed contact did not come from a "viewfriendinvitation" intent');
         }
 
-        this.contacts.push(this.pendingContact);
+        this.safeAddContact(this.pendingContact);
         this.updateNotifierContact(this.pendingContact);
 
         // Add contact in backup
@@ -672,6 +692,19 @@ export class FriendsService {
 
       await this.saveContactsState();
     });
+  }
+
+  /**
+   * Adds a contact to the global contacts array, but first makes sure that the contact (by DID)
+   * doesn't already exit yet to be robust against any logic mistake.
+   */
+  public safeAddContact(contact: Contact) {
+    if (this.contacts.find(c => c.id === contact.id)) {
+      Logger.warn("contacts", "Trying to add contact that already exists in the list! Logic error", contact, this.contacts);
+      return;
+    }
+
+    this.contacts.push(contact);
   }
 
   /********************************************************
@@ -818,7 +851,6 @@ export class FriendsService {
       const realContacts = contacts.filter((contact) => contact.id !== 'did:elastos');
       if(realContacts.length > 0) {
         this.filteredContacts = [];
-
 
         Logger.log('contacts', 'Intent requesting friends with credential', ret.params.filter.credentialType);
         realContacts.map((contact) => {

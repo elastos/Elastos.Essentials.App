@@ -25,10 +25,10 @@ export class BackupService {
 
   async init() {
     this.events.subscribe("backup:contact", (contact) => {
-      this.upsertDatabaseEntry('contacts', contact.id, contact);
+      void this.upsertDatabaseEntry('contacts', contact.id, contact);
     });
     this.events.subscribe("backup:deleteContact", (contact) => {
-      this.deleteDatabaseEntry('contacts', contact.id);
+      void this.deleteDatabaseEntry('contacts', contact.id);
     });
 
     try {
@@ -70,13 +70,13 @@ export class BackupService {
         }, async (entry) => {
           // Modify backup locally
           Logger.log("contacts", "Modify request from the backup helper", entry);
-          this.modifyContactEntryLocally(entry.data);
+          await this.modifyContactEntryLocally(entry.data);
           return true;
 
         }, async (entry) => {
           // Delete backup locally
           Logger.log("contacts", "Deletion request from the backup helper", entry);
-          this.deleteContactEntryLocally(entry.data.id);
+          await this.deleteContactEntryLocally(entry.data.id);
           return true;
         }
       );
@@ -113,9 +113,10 @@ export class BackupService {
 
   addContact(data: Contact): Promise<void> {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        this.friendsService.contacts.push(data);
-        this.friendsService.saveContactsState();
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      setTimeout(async () => {
+        this.friendsService.safeAddContact(data);
+        await this.friendsService.saveContactsState();
 
         // Update home page contacts slide
         this.events.publish('friends:updateSlider');
@@ -125,7 +126,7 @@ export class BackupService {
     })
   }
 
-  modifyContactEntryLocally(data: Contact) {
+  async modifyContactEntryLocally(data: Contact): Promise<void> {
     this.restoredContacts.map((contact) => {
       if (contact.id === data.id) {
         contact = data;
@@ -138,13 +139,13 @@ export class BackupService {
       }
     });
 
-    this.friendsService.saveContactsState();
+    await this.friendsService.saveContactsState();
   }
 
-  deleteContactEntryLocally(contactId: string) {
+  async deleteContactEntryLocally(contactId: string): Promise<void> {
     this.restoredContacts = this.restoredContacts.filter((contact) => contact.id !== contactId);
     this.friendsService.contacts = this.friendsService.contacts.filter((contact) => contact.id !== contactId);
-    this.friendsService.saveContactsState();
+    await this.friendsService.saveContactsState();
 
     // Update home page contacts slide
     this.events.publish('friends:updateSlider');
