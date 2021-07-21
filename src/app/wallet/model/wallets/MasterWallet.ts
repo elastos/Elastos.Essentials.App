@@ -291,12 +291,13 @@ export class MasterWallet {
 
     public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
         let resolvedInfo = await this.erc721Service.getCoinInfo(contractAddress);
+        if (resolvedInfo) {
+          let nft = new NFT(nftType, contractAddress, balance);
+          nft.setResolvedInfo(resolvedInfo);
+          this.nfts.push(nft);
 
-        let nft = new NFT(nftType, contractAddress, balance);
-        nft.setResolvedInfo(resolvedInfo);
-        this.nfts.push(nft);
-
-        await this.walletManager.saveMasterWallet(this);
+          await this.walletManager.saveMasterWallet(this);
+        }
     }
 
     public getNFTs(): NFT[] {
