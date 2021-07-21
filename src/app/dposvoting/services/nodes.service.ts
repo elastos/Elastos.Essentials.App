@@ -64,34 +64,34 @@ export class NodesService {
     // Storage
     private firstVisit: boolean = false;
     public _votes: Vote[] = [
-        /*  {
-            date: new Date(),
+        /*{
+            date: new Date(2000,10,13,11,33,0),
             tx: 'a2677487ba6c406f70b22c6902b3b2ffe582f99b58848bbfba9127c5fa47c712',
             keys: [
-              '0368044f3b3582000597d40c9293ea894237a88b2cd55f79a18193399937d22664',
-              '03d55285f06683c9e5c6b5892a688affd046940c7161571611ea3a98330f72459f',
-              '024b527700491895b79fc5bfde8a60395307c5416a075503e6ac7d1df61c971c78'
+                '0368044f3b3582000597d40c9293ea894237a88b2cd55f79a18193399937d22664',
+                '03d55285f06683c9e5c6b5892a688affd046940c7161571611ea3a98330f72459f',
+                '024b527700491895b79fc5bfde8a60395307c5416a075503e6ac7d1df61c971c78'
             ]
-          },
-          {
+        },
+        {
             date: new Date(),
             tx: 'd42da61ad9d12e0adf167d9451506cc119ad6384cae6d57158e643192720cf10',
             keys: [
-              '03674a7867f2d4a557764d1f61138b9f98542c9a77e8773953432ac3e48ae60226',
-              '02d6f8ff72eaa9aada515d6b316cff2cbc55be09ddab17981d74a585ae20617a72',
-              '02a85be1f6244b40b8778b626bde33e1d666b3b5863f195487e72dc0e2a6af33a1'
+                '03674a7867f2d4a557764d1f61138b9f98542c9a77e8773953432ac3e48ae60226',
+                '02d6f8ff72eaa9aada515d6b316cff2cbc55be09ddab17981d74a585ae20617a72',
+                '02a85be1f6244b40b8778b626bde33e1d666b3b5863f195487e72dc0e2a6af33a1'
             ]
-          },
-          {
-            date: new Date(),
+        },
+        {
+            date: new Date(79,5,24,11,33,0),
             tx: '241315309c645e52fabafe9e8963037829f025526b9b616972b8b7a0965e6ac4',
             keys: [
-              '026c8ce246d2587df8a669eee82be4f365ab6cf4fc45e3e539cf0ab91fbab3a809',
-              '0315067144eaad471ed0c355e6f9822c51b93308e0cd9febf0792304c605973916',
-              '030cda9b67897652dbf9f85cb0aba39a09203004f59366517a5461b1e48d9faa64',
-              '02b6052f5f65089be3b94efb91c98a5f94c0bf7fbefdbd85c1d547aa7b3d547710'
+                '026c8ce246d2587df8a669eee82be4f365ab6cf4fc45e3e539cf0ab91fbab3a809',
+                '0315067144eaad471ed0c355e6f9822c51b93308e0cd9febf0792304c605973916',
+                '030cda9b67897652dbf9f85cb0aba39a09203004f59366517a5461b1e48d9faa64',
+                '02b6052f5f65089be3b94efb91c98a5f94c0bf7fbefdbd85c1d547aa7b3d547710'
             ]
-          } */
+        }*/
     ];
 
     // Fetch
@@ -133,7 +133,7 @@ export class NodesService {
         }
 
         // await this.getVisit();
-        // await this.getStoredVotes();
+        this.getStoredVotes();
         await this.fetchStats();
         await this.fetchNodes();
         if (!this.isFetchingRewardOrDone) {
@@ -169,16 +169,24 @@ export class NodesService {
         });
     }
 
-    getStoredNodes() {
-        this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'nodes', []).then(data => {
-            Logger.log('dposvoting', data);
-            this._nodes.map(node => {
-                if (data && data.includes(node.ownerpublickey) && node.state === 'Active') {
-                    node.isChecked = true;
-                }
-            });
-        });
+
+
+    async setStoredVotes() {
+        this._votes.sort((a, b) => b.date - a.date);
+        Logger.log('dposvoting', 'Vote history updated', this._votes);
+        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "votes", this._votes);
     }
+
+    // getStoredNodes() {
+    //     this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'nodes', []).then(data => {
+    //         Logger.log('dposvoting', data);
+    //         this._nodes.map(node => {
+    //             if (data && data.includes(node.ownerpublickey) && node.state === 'Active') {
+    //                 node.isChecked = true;
+    //             }
+    //         });
+    //     });
+    // }
 
     async checkBalanceForRegDposNode(): Promise<boolean> {
         let depositAmount = 50000000000; // 5000 ELA
@@ -206,7 +214,7 @@ export class NodesService {
         }
     }
 
-    async getRegistrationNodeInfo(): Promise<DPoSRegistrationInfo> {
+    async fetchNodes() {
         let ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
         this.dposInfo = {
             // nickname: "test",
@@ -226,24 +234,36 @@ export class NodesService {
             },
         };
 
+        this.activeNodes = [];
+        this.dposList = [];
+
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        try {
+            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
 
-        if (!Util.isEmptyObject(result.producers)) {
-            Logger.log(App.DPOS_REGISTRATION, "dposlist:", result.producers);
-            this.dposList = result.producers;
-            for (const producer of result.producers) {
-                if (producer.ownerpublickey == ownerPublicKey) {
-                    this.dposInfo = producer;
-                    break;
+            if (result && !Util.isEmptyObject(result.producers)) {
+                Logger.log(App.DPOS_VOTING, "dposlist:", result.producers);
+                this.dposList = result.producers;
+                this.totalVotes = result.totalvotes;
+                this._nodes = result.producers;
+                for (const node of result.producers) {
+                    if (node.ownerpublickey == ownerPublicKey) {
+                        this.dposInfo = node;
+                    }
+                    node.index += 1;
+                    if (node.state === 'Active') {
+                        this.activeNodes.push(node);
+                    }
+                    this.getNodeIcon(node);
                 }
+                Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
+                this.setupRewardInfo();
             }
-        }
-        else {
-            this.dposList = [];
+
+        } catch (err) {
+            Logger.error('dposvoting', 'fetchNodes error:', err);
         }
 
-        return this.dposInfo;
     }
 
     async getConfirmCount(txid: string): Promise<number> {
@@ -252,7 +272,7 @@ export class NodesService {
             method: 'getrawtransaction',
             params: {
                 txid: txid,
-                verbose:true
+                verbose: true
             },
         };
 
@@ -279,39 +299,39 @@ export class NodesService {
         return this.currentHeight;
     }
 
-    async fetchNodes() {
-        Logger.log('dposvoting', 'Fetching Nodes..');
-        const param = {
-            method: 'listproducers',
-            params: {
-                state: 'all'
-                // state: 'active'
-            },
-        };
+    // async fetchNodes() {
+    //     Logger.log('dposvoting', 'Fetching Nodes..');
+    //     const param = {
+    //         method: 'listproducers',
+    //         params: {
+    //             state: 'all'
+    //             // state: 'active'
+    //         },
+    //     };
 
-        let apiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+    //     let apiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
-        try {
-            let result = await this.globalJsonRPCService.httpPost(apiUrl, param);
-            if (result) {
-                result.producers.map(node => {
-                    node.index += 1; // the index start from 0;
-                });
+    //     try {
+    //         let result = await this.globalJsonRPCService.httpPost(apiUrl, param);
+    //         if (result) {
+    //             result.producers.map(node => {
+    //                 node.index += 1; // the index start from 0;
+    //             });
 
-                this._nodes = result.producers;
-                this.activeNodes = this._nodes.filter(node => node.state === 'Active');
-                this.getNodeIcon();
-                this.getStoredNodes();
-                this.totalVotes = result.totalvotes;
-                this.setupRewardInfo();
+    //             this._nodes = result.producers;
+    //             this.activeNodes = this._nodes.filter(node => node.state === 'Active');
+    //             this.getNodeIcon();
+    //             this.getStoredNodes();
+    //             this.totalVotes = result.totalvotes;
+    //             this.setupRewardInfo();
 
-                Logger.log('dposvoting', 'Nodes Added..', this._nodes);
-                Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
-            }
-        } catch (err) {
-            Logger.error('dposvoting', 'fetchNodes error:', err);
-        }
-    }
+    //             Logger.log('dposvoting', 'Nodes Added..', this._nodes);
+    //             Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
+    //         }
+    //     } catch (err) {
+    //         Logger.error('dposvoting', 'fetchNodes error:', err);
+    //     }
+    // }
 
     async fetchReward() {
         Logger.log('dposvoting', 'start fetchReward');
@@ -357,417 +377,417 @@ export class NodesService {
       });
     } */
 
-    getNodeIcon() {
-        this.activeNodes.map(node => {
-            if (node.nickname === '韩锋/SunnyFengHan') {
+    getNodeIcon(node: DPosNode) {
+        switch (node.nickname) {
+            case '韩锋/SunnyFengHan':
                 node.imageUrl = this.elaNodeUrl + 'Sunny_Feng_Han_min.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'Elephant Wallet') {
+                node.Location = 'United States';
+                break;
+            case 'Elephant Wallet':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/elephant-wallet.png';
-                node.Location = 'Singapore'
-            }
-            if (node.nickname === 'Elastos Scandinavia') {
+                node.Location = 'Singapore';
+                break;
+            case 'Elastos Scandinavia':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Scandinavia.png';
-                node.Location = 'Sweden'
-            };
-            if (node.nickname === 'AnyPeer') {
+                node.Location = 'Sweden';
+                break;
+            case 'AnyPeer':
                 node.imageUrl = 'https://i.ibb.co/hcVLkJP/download.png';
-                node.Location = 'Hong Kong'
-            };
-            if (node.nickname === 'Wild Strawberries Atlas') {
+                node.Location = 'Hong Kong';
+                break;
+            case 'Wild Strawberries Atlas':
                 node.imageUrl = 'https://i.ibb.co/qDdmLQJ/EPpf-VIMW4-AIx-J30.jpg';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'Enter Elastos - Ganymede') {
+                node.Location = 'United States';
+                break;
+            case 'Enter Elastos - Ganymede':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Enter%20Elastos.png';
-                node.Location = 'Australia'
-            };
-            if (node.nickname === 'Wild Strawberries Apollo') {
+                node.Location = 'Australia';
+                break;
+            case 'Wild Strawberries Apollo':
                 node.imageUrl = 'https://i.ibb.co/F7L83NH/EPpf-VIa-Wk-AAUM3d.jpg';
-                node.Location = 'Ireland'
-            };
-            if (node.nickname === 'Enter Elastos -Callisto') {
+                node.Location = 'Ireland';
+                break;
+            case 'Enter Elastos -Callisto':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Enter%20Elastos.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'TYROLEE(小黑狼)') {
+                node.Location = 'United States';
+                break;
+            case 'TYROLEE(小黑狼)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/TyroLee.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'Hyper') {
+                node.Location = 'China';
+                break;
+            case 'Hyper':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/hyperim-logo.png';
-                node.Location = 'Austria'
-            };
-            if (node.nickname === 'WeFilmchain') {
+                node.Location = 'Austria';
+                break;
+            case 'WeFilmchain':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/wefilmchain.png';
-                node.Location = 'Canada'
-            };
-            if (node.nickname === 'Elastos HIVE') {
+                node.Location = 'Canada';
+                break;
+            case 'Elastos HIVE':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Hive.png';
-                node.Location = 'Hong Kong'
-            };
-            if (node.nickname === 'Wild Strawberries Calypso') {
+                node.Location = 'Hong Kong';
+                break;
+            case 'Wild Strawberries Calypso':
                 node.imageUrl = 'https://i.ibb.co/ZfCj6Yj/EPpf-VJGXs-AEq0-X1.jpg';
-                node.Location = 'Brazil'
-            };
-            if (node.nickname === 'Enter Elastos - Titan ') {
+                node.Location = 'Brazil';
+                break;
+            case 'Enter Elastos - Titan ':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Enter%20Elastos.png';
-                node.Location = 'United Kingdom'
-            };
-            if (node.nickname === 'Noderators - Watermelon') {
+                node.Location = 'United Kingdom';
+                break;
+            case 'Noderators - Watermelon':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Noderators.png';
-                node.Location = 'India'
-            };
-            if (node.nickname === 'Elate.ch') {
+                node.Location = 'India';
+                break;
+            case 'Elate.ch':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELATE.CH.png';
-                node.Location = 'Switzerland'
-            };
-            if (node.nickname === 'ThaiEla') {
+                node.Location = 'Switzerland';
+                break;
+            case 'ThaiEla':
                 node.imageUrl = 'https://i.ibb.co/qF16Mgn/download-1.png';
-                node.Location = 'Thailand'
-            };
-            if (node.nickname === 'Elastos Carrier') {
+                node.Location = 'Thailand';
+                break;
+            case 'Elastos Carrier':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Carrier.png';
-                node.Location = 'Hong Kong'
-            };
-            if (node.nickname === 'Cyber Republic Press CR新闻团队') {
+                node.Location = 'Hong Kong';
+                break;
+            case 'Cyber Republic Press CR新闻团队':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Cyber%20Republic%20Press3_min.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'Elastos Forest Node (EFN)') {
+                node.Location = 'United States';
+                break;
+            case 'Elastos Forest Node (EFN)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Elaforestnode.png';
-                node.Location = 'Netherlands'
-            };
-            if (node.nickname === 'ELA News (ELA新闻)') {
+                node.Location = 'Netherlands';
+                break;
+            case 'ELA News (ELA新闻)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELA%20News2.png';
-                node.Location = 'South Africa'
-            };
-            if (node.nickname === 'Elastos News') {
+                node.Location = 'South Africa';
+                break;
+            case 'Elastos News':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELA%20News2.png';
-                node.Location = 'South Africa'
-            };
-            if (node.nickname === 'elafans') {
+                node.Location = 'South Africa';
+                break;
+            case 'elafans':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELA%20Fans.png';
-                node.Location = 'Singapore'
-            };
-            if (node.nickname === 'elaHorse @ 亦乐马') {
+                node.Location = 'Singapore';
+                break;
+            case 'elaHorse @ 亦乐马':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELAHORSE1.png';
-                node.Location = 'Malaysia'
-            };
-            if (node.nickname === 'Witzer（无智）') {
+                node.Location = 'Malaysia';
+                break;
+            case 'Witzer（无智）':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Witzer1.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === '无智(Witzer)') {
+                node.Location = 'China';
+                break;
+            case '无智(Witzer)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Witzer1.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ElastosDMA') {
+                node.Location = 'China';
+                break;
+            case 'ElastosDMA':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Elastos%20DMA_min.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'ELAONSEN 亦来温泉') {
+                node.Location = 'United States';
+                break;
+            case 'ELAONSEN 亦来温泉':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELAONSEN.png';
-                node.Location = 'Hong Kong'
-            };
-            if (node.nickname === 'Starfish') {
+                node.Location = 'Hong Kong';
+                break;
+            case 'Starfish':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Starfish.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'greengang') {
+                node.Location = 'United States';
+                break;
+            case 'greengang':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Greengang1.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'Elastos Australia') {
+                node.Location = 'China';
+                break;
+            case 'Elastos Australia':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Elastos%20Australia1.png';
-                node.Location = 'Australia'
-            };
-            if (node.nickname === 'DACA区块链技术公开课') {
+                node.Location = 'Australia';
+                break;
+            case 'DACA区块链技术公开课':
                 node.imageUrl = 'https://i.ibb.co/jRdhF7L/download-2.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'RUOLAN(若兰)') {
+                node.Location = 'China';
+                break;
+            case 'RUOLAN(若兰)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Roulon1.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'RUOLAN节点') {
+                node.Location = 'China';
+                break;
+            case 'RUOLAN节点':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Roulon1.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'The Houston Supernode') {
+                node.Location = 'China';
+                break;
+            case 'The Houston Supernode':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Houston-Supernode2_min.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'Cheery Community') {
+                node.Location = 'United States';
+                break;
+            case 'Cheery Community':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/CheeryCommunity1_min.png';
-                node.Location = 'Australia'
-            };
-            if (node.nickname === 'KuCoin') {
+                node.Location = 'Australia';
+                break;
+            case 'KuCoin':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/KuCoin.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'Noderators - Champagne') {
+                node.Location = 'China';
+                break;
+            case 'Noderators - Champagne':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Noderators.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'Noderators - Jazz') {
+                node.Location = 'United States';
+                break;
+            case 'Noderators - Jazz':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Noderators.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'Quantum Wealth Supernode') {
+                node.Location = 'United States';
+                break;
+            case 'Quantum Wealth Supernode':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Quantum%20Wealth%20Supernode.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'Northern Lights') {
+                node.Location = 'United States';
+                break;
+            case 'Northern Lights':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Northern%20Lights.png';
-                node.Location = 'Russia'
-            };
-            if (node.nickname === '链世界') {
+                node.Location = 'Russia';
+                break;
+            case '链世界':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Blockchain_World_1.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'HashWorld') {
+                node.Location = 'China';
+                break;
+            case 'HashWorld':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/HashWorld.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'IOEX(ioeX Network)') {
+                node.Location = 'China';
+                break;
+            case 'IOEX(ioeX Network)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ioeX2.png';
-                node.Location = 'Hong Kong'
-            };
-            if (node.nickname === 'Antpool-ELA') {
+                node.Location = 'Hong Kong';
+                break;
+            case 'Antpool-ELA':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Antpool.png';
-                node.Location = 'Brazil'
-            };
-            if (node.nickname === 'Black Swan') {
+                node.Location = 'Brazil';
+                break;
+            case 'Black Swan':
                 node.imageUrl = 'https://i.ibb.co/yq6z86Y/thumbnail.png';
-                node.Location = 'Czech Republic'
-            };
-            if (node.nickname === 'DHG(大黄哥)') {
+                node.Location = 'Czech Republic';
+                break;
+            case 'DHG(大黄哥)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/DHG2.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'DHG') {
+                node.Location = 'China';
+                break;
+            case 'DHG':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/DHG2.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'CR Regions Global Fund - Clarence Liu') {
+                node.Location = 'China';
+                break;
+            case 'CR Regions Global Fund - Clarence Liu':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Cyber%20Republic%20Regions.png';
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'CR Herald | CR 先锋资讯') {
+                node.Location = 'United States';
+                break;
+            case 'CR Herald | CR 先锋资讯':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/CR%20Herald.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'BitWork (CR Region HK)') {
+                node.Location = 'China';
+                break;
+            case 'BitWork (CR Region HK)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/BitWork_1.png';
-                node.Location = 'Hong Kong'
-            };
-            if (node.nickname === 'YDiot(云端物联）') {
+                node.Location = 'Hong Kong';
+                break;
+            case 'YDiot(云端物联）':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/YDiot.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === '曲率区动') {
+                node.Location = 'China';
+                break;
+            case '曲率区动':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Curvature_Zone.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === '区块链研习社') {
+                node.Location = 'China';
+                break;
+            case '区块链研习社':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Chainclub.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'BIT.GAME') {
+                node.Location = 'China';
+                break;
+            case 'BIT.GAME':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/BIT.GAME.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'F2Pool') {
+                node.Location = 'China';
+                break;
+            case 'F2Pool':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/F2Pool.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'BTC.com') {
+                node.Location = 'China';
+                break;
+            case 'BTC.com':
                 node.imageUrl = 'https://i.ibb.co/0sddwC5/download.jpg';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ELAFISH') {
+                node.Location = 'China';
+                break;
+            case 'ELAFISH':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELAFISH_1.png';
-                node.Location = 'Canada'
-            };
-            if (node.nickname === 'NextGenius') {
+                node.Location = 'Canada';
+                break;
+            case 'NextGenius':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Next%20Genius.png';
-                node.Location = 'Australia'
-            };
-            if (node.nickname === 'ElaChat') {
+                node.Location = 'Australia';
+                break;
+            case 'ElaChat':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELAChat.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'AIoTV(视九TVbox)') {
+                node.Location = 'China';
+                break;
+            case 'AIoTV(视九TVbox)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ShijuiTV.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === '比特头条BITETT ') {
+                node.Location = 'China';
+                break;
+            case '比特头条BITETT ':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Bitett.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ELAlliance 大水瓢') {
+                node.Location = 'China';
+                break;
+            case 'ELAlliance 大水瓢':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/ELAlliance.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'Long ELA，Short the world(追风筝的人)') {
+                node.Location = 'China';
+                break;
+            case 'Long ELA，Short the world(追风筝的人)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Crypto_World1.png';
-                node.Location = 'Germany'
-            };
-            if (node.nickname === 'StorSwift (Elastos HIVE)') {
+                node.Location = 'Germany';
+                break;
+            case 'StorSwift (Elastos HIVE)':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/StorSwift.png';
-                node.Location = 'China'
-            };
-            if (node.nickname === 'viewchain') {
+                node.Location = 'China';
+                break;
+            case 'viewchain':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/viewchain.png';
-                node.Location = 'Singapore'
-            };
-            if (node.nickname === 'Famous Amos') {
+                node.Location = 'Singapore';
+                break;
+            case 'Famous Amos':
                 node.imageUrl = 'https://i.imgur.com/cHRF2Ov.jpg';
-                node.Location = 'Trinidad'
-            };
-            if (node.nickname === 'eladapp.org') {
+                node.Location = 'Trinidad';
+                break;
+            case 'eladapp.org':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/eladapp.png'
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'ELA.SYDNEY') {
-                node.Location = 'Australia'
-            };
-            if (node.nickname === 'Orion Supernode') {
-                node.Location = 'France'
-            };
-            if (node.nickname === 'Elastos Contributors') {
-                node.Location = 'Japan'
-            };
-            if (node.nickname === 'Ela-Mao') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ManhattanProjectFund') {
-                node.Location = 'United States'
-            };
-            if (node.nickname === '河北社区') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ELA.GOLD') {
-                node.Location = 'Switzerland'
-            };
-            if (node.nickname === 'Orchard - Elastos Business Development') {
+                node.Location = 'United States';
+                break;
+            case 'ELA.SYDNEY':
+                node.Location = 'Australia';
+                break;
+            case 'Orion Supernode':
+                node.Location = 'France';
+                break;
+            case 'Elastos Contributors':
+                node.Location = 'Japan';
+                break;
+            case 'Ela-Mao':
+                node.Location = 'China';
+                break;
+            case 'ManhattanProjectFund':
+                node.Location = 'United States';
+                break;
+            case '河北社区':
+                node.Location = 'China';
+                break;
+            case 'ELA.GOLD':
+                node.Location = 'Switzerland';
+                break;
+            case 'Orchard - Elastos Business Development':
                 node.Location = 'Netherlands'
-                node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Orchard.png';
-            };
-            if (node.nickname === 'KANG') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '虎哥') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '亦来力-ELAPower') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ELA new internet') {
-                node.Location = 'Pitcairn Islands'
-            };
-            if (node.nickname === 'To the Moon') {
-                node.Location = 'China'
-            }
-            if (node.nickname === 'Cape of Good Hope') {
-                node.Location = 'South Africa'
-            };
-            if (node.nickname === 'ELABay') {
-                node.Location = 'Canada'
-            };
-            if (node.nickname === 'BOHUI') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '云上') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'Elastos Blockchain') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'HicKs乡巴佬') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'llamamama') {
-                node.Location = 'United States'
-            };
-            if (node.nickname === 'The land of abundance') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '韭菜必赢WE WILL WIN') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '文亦') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'silence') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'The future is coming 未来亦来') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'Ken.Tan') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'Nights Watch 守夜人') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '米（粒）力联盟') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ela') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '我爱云') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '群山') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'ELADAO') {
-                node.Location = 'China'
-            };
-            if (node.nickname === '币.天下') {
-                node.Location = 'China'
-            };
-            if (node.nickname === 'cryptocalnews') {
-                node.Location = 'Canada'
-            };
-            if (node.nickname === 'Blockchain007') {
-                node.Location = 'China'
-            }
-            if (node.nickname === 'Dragonela') {
+                node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Orchard.png';;
+                break;
+            case 'KANG':
+                node.Location = 'China';
+                break;
+            case '虎哥':
+                node.Location = 'China';
+                break;
+            case '亦来力-ELAPower':
+                node.Location = 'China';
+                break;
+            case 'ELA new internet':
+                node.Location = 'Pitcairn Islands';
+                break;
+            case 'To the Moon':
+                node.Location = 'China';
+                break;
+            case 'Cape of Good Hope':
+                node.Location = 'South Africa';
+                break;
+            case 'ELABay':
+                node.Location = 'Canada';
+                break;
+            case 'BOHUI':
+                node.Location = 'China';
+                break;
+            case '云上':
+                node.Location = 'China';
+                break;
+            case 'Elastos Blockchain':
+                node.Location = 'China';
+                break;
+            case 'HicKs乡巴佬':
+                node.Location = 'China';
+                break;
+            case 'llamamama':
+                node.Location = 'United States';
+                break;
+            case 'The land of abundance':
+                node.Location = 'China';
+                break;
+            case '韭菜必赢WE WILL WIN':
+                node.Location = 'China';
+                break;
+            case '文亦':
+                node.Location = 'China';
+                break;
+            case 'silence':
+                node.Location = 'China';
+                break;
+            case 'The future is coming 未来亦来':
+                node.Location = 'China';
+                break;
+            case 'Ken.Tan':
+                node.Location = 'China';
+                break;
+            case 'Nights Watch 守夜人':
+                node.Location = 'China';
+                break;
+            case '米（粒）力联盟':
+                node.Location = 'China';
+                break;
+            case 'ela':
+                node.Location = 'China';
+                break;
+            case '我爱云':
+                node.Location = 'China';
+                break;
+            case '群山':
+                node.Location = 'China';
+                break;
+            case 'ELADAO':
+                node.Location = 'China';
+                break;
+            case '币.天下':
+                node.Location = 'China';
+                break;
+            case 'cryptocalnews':
+                node.Location = 'Canada';
+                break;
+            case 'Blockchain007':
+                node.Location = 'China';
+                break;
+            case 'Dragonela':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/dragonela.png';
-                node.Location = 'United States'
-            }
-            if (node.nickname === 'Daily Rewards') {
+                node.Location = 'United States';
+                break;
+            case 'Daily Rewards':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Daily_Rewards.png';
-                node.Location = 'Japan'
-            }
-            if (node.nickname === 'United Kingdom') {
+                node.Location = 'Japan';
+                break;
+            case 'United Kingdom':
                 node.imageUrl = 'https://cdn.pixabay.com/photo/2015/11/06/13/29/union-jack-1027898_1280.jpg';
-                node.Location = 'United Kingdom'
-            }
-            if (node.nickname === 'ELA2020') {
-                node.Location = 'China'
-            }
-            if (node.nickname === 'RichMan') {
+                node.Location = 'United Kingdom';
+                break;
+            case 'ELA2020':
+                node.Location = 'China';
+                break;
+            case 'RichMan':
+                node.Location = 'Canada';
+                break;
+            case 'Good Luck':
+                node.Location = 'Canada';
+                break;
+            case 'ElaHome':
+                node.Location = 'Canada';
+                break;
+            case 'CloudSea':
                 node.Location = 'Canada'
-            }
-            if (node.nickname === 'Good Luck') {
-                node.Location = 'Canada'
-            }
-            if (node.nickname === 'ElaHome') {
-                node.Location = 'Canada'
-            }
-            if (node.nickname === 'CloudSea') {
-                node.Location = 'Canada'
-            }
-            if (node.state !== 'Active') {
-                node.Location = 'Inactive';
-            }
-        });
+        }
+
+        if (node.state !== 'Active') {
+            node.Location = 'Inactive';
+        }
     }
 
     openLink(url: string) {

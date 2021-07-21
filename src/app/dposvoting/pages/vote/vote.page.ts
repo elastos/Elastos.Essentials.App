@@ -61,9 +61,8 @@ export class VotePage implements OnInit {
 
     private async setRegistrationIcon() {
         await this.nodesService.init();
-        let dposInfo = await this.nodesService.getRegistrationNodeInfo();
 
-        switch (dposInfo.state) {
+        switch (this.nodesService.dposInfo.state) {
             case 'Unregistered':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
@@ -142,7 +141,7 @@ export class VotePage implements OnInit {
 
                     this.nodesService._votes = this.nodesService._votes.concat({ date: date, tx: txid, keys: castedNodeKeys });
                     Logger.log('dposvoting', 'Vote history updated', this.nodesService._votes);
-                    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "votes", this.nodesService._votes);
+                    await this.nodesService.setStoredVotes();
                     this.voteSuccess(res.result.txid);
                 }
             }

@@ -8,8 +8,10 @@ import { DPosNode } from '../../model/nodes.model';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { TranslateService } from '@ngx-translate/core';
+import { App } from 'src/app/model/app.enum';
+import { NavController } from '@ionic/angular';
 
 @Component({
     selector: 'app-tx',
@@ -28,11 +30,14 @@ export class TxPage implements OnInit {
     public nodeIndex: number;
     public node: DPosNode;
 
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
     constructor(
         public nodesService: NodesService,
         private route: ActivatedRoute,
         public translate: TranslateService,
         private globalNav: GlobalNavService,
+        private navCtrl: NavController,
     ) { }
 
     ngOnInit() {
@@ -49,7 +54,11 @@ export class TxPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-        this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK);
+        this.titleBar.setNavigationMode(null);
+        this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, { key: null, iconPath: BuiltInIcon.BACK });
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            this.navCtrl.navigateBack('/dposvoting/menu/history');
+        });
     }
 
     getNodes() {
