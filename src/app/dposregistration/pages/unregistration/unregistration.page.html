@@ -29,8 +29,9 @@
             <ion-row class="profile-data" *ngIf="nodesService.dposInfo.state">
                 <div>
                     <h5>{{ 'dposregistration.node-status' | translate }}</h5>
-                    <h4 class="align-center status_mark" [id]="nodesService.dposInfo.state">{{
-                        nodesService.dposInfo.state }}</h4>
+                    <h4 class="align-center status_mark" [id]="nodesService.dposInfo.state">
+                        {{ 'dposregistration.' + nodesService.dposInfo.state | translate }}
+                    </h4>
                 </div>
             </ion-row>
 

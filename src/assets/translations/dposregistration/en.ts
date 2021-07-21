@@ -23,6 +23,12 @@ export const en = {
         'dpos-node-info': 'DPoS Node Info',
         'back': 'back',
         'state': 'State:',
+        'Pending': 'Pending',
+        'Active': 'Active',
+        'Inactive': 'Inactive',
+        'Canceled': 'Canceled',
+        'Illegal': 'Illegal',
+        'Returned': 'Returned',
         'current-votes': 'Current Votes',
 
         'transaction-detials': 'Transaction Details',

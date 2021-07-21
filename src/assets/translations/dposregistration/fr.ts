@@ -22,6 +22,12 @@ export const fr = {
         'dpos-node-info': 'Infos du noeud DPoS',
         'back': 'retour',
         'state': 'Statut:',
+        'Pending': 'Pending',
+        'Active': 'Active',
+        'Inactive': 'Inactive',
+        'Canceled': 'Canceled',
+        'Illegal': 'Illegal',
+        'Returned': 'Returned',
         'current-votes': 'Votes Actuels',
 
         'transaction-detials': 'Détails de la Transaction',

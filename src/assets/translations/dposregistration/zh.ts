@@ -23,6 +23,12 @@ export const zh = {
         'dpos-node-info': 'DPoS节点信息',
         'back': '返回',
         'state': '状态:',
+        'Pending': '确认中',
+        'Active': '有效',
+        'Inactive': '非激活',
+        'Canceled': '已注销',
+        'Illegal': '非法',
+        'Returned': '已取回质押金',
         'current-votes': '当前票数',
 
         'transaction-detials': '交易详情',
