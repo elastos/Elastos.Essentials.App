@@ -73,8 +73,8 @@ export const zh = {
         /*********** Tips ************/
         'tip-title-welcome': '欢迎使用 Elastos Essentials',
         'tip-message-welcome': '感谢您运行此应用程序！Elastos Essentials 可以管理您的<b>数字身份</b>、您的<b>个人存储</b>、您的联系人和您的加密货币<b>钱包</b>。您可以使用部分或全部这些功能。<br/><br/>在运行其他应用程序时，Elastos Essentials 也是您的<b>超级钱包工具箱</b>，类似于 MetaMask（如果您听说过），但不仅仅是加密货币。',
-        'tip-title-what-is-did': 'DID是什么？',
-        'tip-message-what-is-did': 'DID是<b>去中心化身份</b>。此身份<b>由您自己拥有</b>，并且没有其他人可以拥有。这就是为什么您必须保存那些奇怪的助记词并保证安全保管。<br/><br/>DID允许<b>验证</b>您或他人<b>声明的内容</b>（例如，一个文凭）。它们还允许您<b>控制您的应用程序数据</b>，从而提高您的隐私。',
+        'tip-title-what-is-did': 'DID 是什么？',
+        'tip-message-what-is-did': 'DID 是<b>去中心化身份</b>。此身份<b>由您自己拥有</b>，并且没有其他人可以拥有。这就是为什么您必须保存那些奇怪的助记词并保证安全保管。<br/><br/>DID允许<b>验证</b>您或他人<b>声明的内容</b>（例如，一个文凭）。它们还允许您<b>控制您的应用程序数据</b>，从而提高您的隐私。',
         'tip-title-what-is-hive': '什么是Hive（存储）？',
         'tip-message-what-is-hive': 'Hive是您的<b>个人存储空间</b>。不是存储文档或假期图片，而是保存所有类型的<b>由您每天使用的应用程序管理的数据</b>。<br/><br/>应用程序数据存储在<b>您决定的位置</b>，不再由应用程序开发人员决定。因而，对于数据您可以获得<b>更多的隐私和控制权</b>。',
 

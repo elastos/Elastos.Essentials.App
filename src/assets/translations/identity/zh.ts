@@ -240,13 +240,13 @@ export const zh = {
         'text-request-fail': '授权失败',
         'text-request-no-credential': '没有凭证',
         'hive-not-ready': '图片需要存储在您的 Hive 存储空间中，但您的 Hive Vault 尚未准备就绪。 请使用 Hive Manager 来配置您的存储。',
-        'not-a-valid-picture': 'Please select a JPG or PNG picture',
+        'not-a-valid-picture': '请选择 JPG 或 PNG 图片',
 
         // loading
         'loading-msg': '加载中，请稍候',
 
         // id transaction
-        'publish-success': '您公开的身份信息已发送到ID链。',
+        'publish-success': '您公开的身份信息已发布到ID链。',
         'publish-error': '抱歉，暂时无法发布您公开的身份信息。请稍后重试。',
         'publish-error-title': "发布失败",
         'publish-wait': '请稍等几分钟再发布',

@@ -92,7 +92,7 @@ export const zh = {
           'publish-identity-medium-wallet': '使用您的钱包自行发布身份',
 
           'elastos-api-provider': 'Elastos API 提供商',
-          'elastos-api-provider-des': '为所有Elastos相关服务选择您的首选提供商',
+          'elastos-api-provider-des': '为所有 Elastos 相关服务选择您的首选提供商',
           'elastos-io-des': '亦来云基金会的亦来云联合子团队（也称为产品团队）部署和维护的 Elastos API 集。',
           'trinity-tech-cn-des': '亦来云基金会的 Trinity Tech 团队部署和维护的一组 Elastos API，负责亦来云 SDK 的开发。',
 
