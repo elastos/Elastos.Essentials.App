@@ -20,6 +20,8 @@ import { BehaviorSubject, Subscription } from "rxjs";
 import { GlobalHiveService, VaultLinkStatusCheckState } from "src/app/services/global.hive.service";
 import { DIDEvents } from "./events";
 import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
+import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
+import { IdentityEntry } from "src/app/services/global.didsessions.service";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -61,7 +63,7 @@ type AppCredentialDisplayEntry = {
 @Injectable({
   providedIn: "root",
 })
-export class ProfileService {
+export class ProfileService extends GlobalService {
   public static instance: ProfileService = null;
 
   public didString = "";
@@ -102,6 +104,9 @@ export class ProfileService {
   public popover: any = null; // Store generic popover
   //public options: any = null; // Store options popover
 
+  private avatarDataUrlSubject: BehaviorSubject<string> = null;
+  private hiveCacheDataUrlSub: Subscription = null;
+
   constructor(
     public events: Events,
     private native: Native,
@@ -115,7 +120,42 @@ export class ProfileService {
     private hiveCache: GlobalHiveCacheService,
     private globalHiveService: GlobalHiveService
   ) {
+    super();
+    GlobalServiceManager.getInstance().registerService(this);
     ProfileService.instance = this;
+
+    // Initialize values
+    this.resetService();
+  }
+
+  onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    return;
+  }
+
+  onUserSignOut(): Promise<void> {
+    Logger.log("identity", "Signing out from profile service");
+
+    this.resetService();
+
+    return;
+  }
+
+  private resetService() {
+    if (this.avatarDataUrlSubject) {
+      this.avatarDataUrlSubject.next(null);
+      this.avatarDataUrlSubject = null;
+    }
+    this.unsubscribeCacheDataUrl();
+
+    this.didString = "";
+    this.credentials = [];
+    this.publishedDIDDocument = null;
+    this.didNeedsToBePublished = false;
+    this.publishStatusFetched = false;
+    this.issuers = {};
+    this.visibleData = [];
+    this.invisibleData = [];
+    this.displayedBio = null;
   }
 
   changeList(list: string) {
@@ -647,8 +687,6 @@ export class ProfileService {
     };
   }
 
-  private avatarDataUrlSubject: BehaviorSubject<string> = null;
-  private hiveCacheDataUrlSub: Subscription = null;
   public getAvatarDataUrl(): BehaviorSubject<string> {
     if (!this.avatarDataUrlSubject) {
       this.avatarDataUrlSubject = new BehaviorSubject<string>(null);
@@ -665,13 +703,17 @@ export class ProfileService {
     return this.avatarDataUrlSubject;
   }
 
-  private refreshAvatarUrl() {
-    // Unsubscribe from previous hive cache if needed, as the avatar content type could have changed and become
-    // a non hive type.
+  private unsubscribeCacheDataUrl() {
     if (this.hiveCacheDataUrlSub) {
       this.hiveCacheDataUrlSub.unsubscribe();
       this.hiveCacheDataUrlSub = null;
     }
+  }
+
+  private refreshAvatarUrl() {
+    // Unsubscribe from previous hive cache if needed, as the avatar content type could have changed and become
+    // a non hive type.
+    this.unsubscribeCacheDataUrl();
 
     let avatarCredential = this.getAvatarCredential();
     if (avatarCredential) {
@@ -681,7 +723,7 @@ export class ProfileService {
         let avatarCacheKey = this.didService.getActiveDid().getDIDString()+"-avatar";
         let hiveAssetUrl: string = avatarCredential.getSubject().avatar.data;
 
-        console.log("DEBUG refreshAvatarUrl() hiveAssetUrl", hiveAssetUrl)
+        console.log("DEBUG refreshAvatarUrl() hiveAssetUrl", avatarCacheKey, hiveAssetUrl)
 
         if (hiveAssetUrl.startsWith("hive://")) {
           // Listen to user's hive cache avatar changes

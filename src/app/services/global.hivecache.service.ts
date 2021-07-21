@@ -27,8 +27,10 @@ export class GlobalHiveCacheService {
    */
   public getAssetByUrl(key: string, hiveScriptUrl?: string): BehaviorSubject<any> {
     // Already in cache? Return the cached data.
-    if (this.cache.has(key))
+    if (this.cache.has(key)) {
+      console.log("DEBUG HIVE CACHE RETURN FROM KEY", key);
       return this.cache.get(key);
+    }
 
     // Nothing in cache? try to fetch something
     let subject = new BehaviorSubject(null);
