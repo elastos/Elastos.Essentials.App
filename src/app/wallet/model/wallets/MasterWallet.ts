@@ -186,12 +186,14 @@ export class MasterWallet {
      */
     public async destroySubWallet(coinId: CoinID) {
         let subWallet = this.subWallets[coinId];
-        await subWallet.destroy();
+        if (subWallet) {
+          await subWallet.destroy();
 
-        // Delete the subwallet from out local model.
-        delete this.subWallets[coinId];
+          // Delete the subwallet from out local model.
+          delete this.subWallets[coinId];
 
-        await this.walletManager.saveMasterWallet(this);
+          await this.walletManager.saveMasterWallet(this);
+        }
     }
 
     /**

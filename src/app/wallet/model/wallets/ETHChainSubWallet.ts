@@ -51,7 +51,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
         setTimeout(async () => {
           this.updateBalance();
-        }, 3000);
+        }, 2000);
     }
 
     public async getTokenAddress(): Promise<string> {
@@ -247,10 +247,12 @@ export class ETHChainSubWallet extends StandardSubWallet {
           erc20TokenSymbol = erc20Coin.getName();
           // Get transaction from erc20 token subwallet.
           let erc20Subwallet : ERC20SubWallet = (this.masterWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet);
-          let erc20Tansaction: EthTokenTransaction = erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
-          if (erc20Tansaction) {
-            toAddress = erc20Tansaction.to;
-            erc20TokenValue = erc20Subwallet.getDisplayValue(erc20Tansaction.value).toString();
+          if (erc20Subwallet) {
+            let erc20Tansaction: EthTokenTransaction = erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
+            if (erc20Tansaction) {
+              toAddress = erc20Tansaction.to;
+              erc20TokenValue = erc20Subwallet.getDisplayValue(erc20Tansaction.value).toString();
+            }
           }
         }
 

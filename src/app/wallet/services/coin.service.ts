@@ -101,7 +101,7 @@ export class CoinService {
 
     public getERC20CoinByContracAddress(address: string): ERC20Coin | null {
         return this.getAvailableERC20Coins().find((c) => {
-            return c.getContractAddress() === address;
+            return c.getContractAddress().toLowerCase() === address.toLowerCase();
         }) || null;
     }
 
@@ -111,7 +111,7 @@ export class CoinService {
 
     public isCoinDeleted(address: string) {
         for (let coin of this.deletedERC20Coins) {
-            if (coin.getContractAddress() === address) return true;
+            if (coin.getContractAddress().toLowerCase() === address.toLowerCase()) return true;
         }
         return false;
     }
@@ -139,7 +139,7 @@ export class CoinService {
         // Save to permanent storage
         await this.storage.set("custom-erc20-coins", existingCoins);
 
-        this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress() !== coin.getContractAddress());
+        this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase());
         await this.storage.set("custom-erc20-coins-deleted", this.deletedERC20Coins);
 
         // Activate this new coin in all wallets
@@ -161,7 +161,7 @@ export class CoinService {
     public async deleteERC20Coin(erc20Coin: ERC20Coin) {
         this.availableCoins = this.availableCoins.filter((coin) => coin.getID() !== erc20Coin.getID());
         let allCustomERC20Coins = await this.getCustomERC20Coins();
-        allCustomERC20Coins = allCustomERC20Coins.filter((coin) => coin.getContractAddress() !== erc20Coin.getContractAddress());
+        allCustomERC20Coins = allCustomERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== erc20Coin.getContractAddress().toLowerCase());
         await this.storage.set("custom-erc20-coins", allCustomERC20Coins);
         Logger.log('wallet', 'availableCoins after deleting', this.availableCoins);
 
