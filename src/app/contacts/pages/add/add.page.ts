@@ -20,7 +20,7 @@ export class AddPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
   @ViewChild('input', {static: false}) input: IonInput;
 
-  didInput: string = '';
+  didInput = '';
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -53,24 +53,24 @@ export class AddPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    setTimeout(() => {
-      this.input.setFocus();
-    }, 200);
+    /* setTimeout(() => {
+      void this.input.setFocus();
+    }, 200); */
   }
 
   async addContact() {
     Logger.log('contacts', this.didInput.length, 'DID INPUT LENGTH');
     if(this.didInput.length < 33 || this.didInput.slice(0,11) !== 'did:elastos') {
       this.didInput = "";
-      this.native.genericToast('contacts.please-add-a-valid-identity');
+      void this.native.genericToast('contacts.please-add-a-valid-identity');
     } else if(this.didService.getUserDID() === this.didInput) {
-      this.native.genericToast('contacts.please-dont-add-self');
+      void this.native.genericToast('contacts.please-dont-add-self');
     } else {
-      this.native.showLoading(this.translate.instant('common.please-wait'));
+      void this.native.showLoading(this.translate.instant('common.please-wait'));
       Logger.log('contacts', "Resolving DID Document");
 
       await this.friendsService.resolveDIDDocument(this.didInput, false);
-      this.native.hideLoading();
+      void this.native.hideLoading();
       this.didInput = "";
     }
   }

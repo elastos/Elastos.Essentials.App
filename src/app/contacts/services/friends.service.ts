@@ -274,7 +274,9 @@ export class FriendsService {
           Logger.log('contacts', 'Contact is already added');
         }
       } else {
-        void this.resolveDIDDocument(did, false, carrierAddress);
+        void this.native.showLoading(this.translate.instant('common.please-wait'));
+        await this.resolveDIDDocument(did, false, carrierAddress);
+        void this.native.hideLoading();
       }
     }
   }
