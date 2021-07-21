@@ -232,25 +232,23 @@ export class WalletManager {
                     //     extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     // }
                     subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHSC);
-                    if (!subwallet) {
+                    if (!subwallet && networkConfig['ETHSC']) {
+                        // There is no ETHSC in LRW
                         Logger.log('wallet', '(Re)Opening ETHSC');
                         const subWallet = new ETHChainSubWallet(this.masterWallets[masterId], StandardCoinName.ETHSC);
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
 
                     subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHDID);
-                    if (!subwallet) {
+                    if (!subwallet && networkConfig['ETHDID']) {
                         Logger.log('wallet', '(Re)Opening ETHDID');
-                        // const subWallet = new ETHChainSubWallet(this.masterWallets[masterId], StandardCoinName.ETHDID);
-                        // await this.masterWallets[masterId].walletManager.spvBridge.createSubWallet(masterId, StandardCoinName.ETHDID);
                         const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHDID));
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
 
                     // subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHHECO);
-                    // if (!subwallet) {
+                    // if (!subwallet && networkConfig['ETHHECO']) {
                     //     Logger.log('wallet', '(Re)Opening ETHHECO');
-                    //     // const subWallet = new ETHChainSubWallet(this.masterWallets[masterId], StandardCoinName.ETHHECO);
                     //     const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHHECO));
                     //     extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     // }
