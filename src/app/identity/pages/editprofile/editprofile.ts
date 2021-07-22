@@ -231,7 +231,7 @@ export class EditProfilePage {
 
           let currentUserDID = this.didService.getActiveDid().getDIDString();
           let essentialsAppDID = GlobalConfig.ESSENTIALS_APP_DID;
-          let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/"+scriptName+"?params={empty:0}"; // Fake params to prevent hive SDK bug crash
+          let avatarHiveURL = "hive://"+currentUserDID+"@"+essentialsAppDID+"/"+scriptName+"?params={\"empty\":0}"; // Fake params to prevent hive SDK bug crash
           Logger.log("identity", "Generated avatar url:", avatarHiveURL);
 
           // Save the new avatar to the cache
