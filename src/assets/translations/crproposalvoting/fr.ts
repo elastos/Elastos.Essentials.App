@@ -56,6 +56,9 @@ export const fr = {
         'proposaltype-changeproposalowner': 'Change Proposal Owner',
         'proposaltype-closeproposal': 'Terminate Proposal',
         'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+        'imprest': 'Imprest',
+        'normalpayment': 'NormalPayment',
+        'finalpayment': 'FinalPayment',
 
         'sign-create-suggestion': 'Signer et Créer la Suggestion',
 

@@ -14,34 +14,13 @@ ion-spinner {
     justify-content: center;
 
 }
-//-------- CreateSuggestionPage and CreateProposalPage -------
-.proposaltype {
-    padding: 10px 15px;
-    border-radius: 7px;
-    background-color:#F2F2F2;
-}
-
-table,
-td,
-th {
-    border: 1px solid black;
-}
-
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-td {
-    text-align: center;
-}
-//--------------------------------------------------------
 
 .message {
     margin: 24px;
     padding: 10px;
     height: 87px;
-    background: #3f6fea;
+    color: white;
+    background-color: #3f6fea;
     border-radius: 8px;
 }
 
@@ -72,8 +51,40 @@ ion-list {
             font-size: 16px;
             line-height: 20px;
         }
+
+        div {
+            padding-left: 5px;
+            h5 {
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+        }
     }
 }
+
+//-------- CreateSuggestionPage and CreateProposalPage -------
+.proposaltype {
+    padding: 10px 15px;
+    border-radius: 7px;
+    background-color:#F2F2F2;
+}
+
+table,
+td,
+th {
+    border: 1px solid black;
+}
+
+table {
+    margin-top: 5px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td {
+    text-align: center;
+}
+//--------------------------------------------------------
 
 .btn-container {
     margin: 0;

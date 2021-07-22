@@ -22,14 +22,6 @@ ion-spinner {
     justify-content: center;
 }
 
-.message {
-    margin: 24px;
-    padding: 10px;
-    height: 87px;
-    background: #3f6fea;
-    border-radius: 8px;
-}
-
 ion-list {
     margin: 0;
     padding: 0px 24px;
@@ -78,9 +70,5 @@ ion-list {
     ion-input {
         background-color: #212021;
         box-shadow: none;
-    }
-
-    .proposaltype {
-        background-color: #3C3C3C;
     }
 }

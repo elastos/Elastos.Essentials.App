@@ -47,7 +47,7 @@
                             <th>{{ 'crproposalvoting.amount' | translate }}</th>
                         </tr>
                         <tr *ngFor='let budget of createSuggestionCommand.data.budgets'>
-                            <td>{{ budget.type }}</td>
+                            <td>{{ 'crproposalvoting.' + budget.type | translate }}</td>
                             <td>{{ budget.stage }}</td>
                             <td>{{ budget.amount }}</td>
                         </tr>
@@ -71,22 +71,6 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="creationDate">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.creation-date' | translate }}</h5>
-                    <h4>{{ creationDate }}</h4>
-                </ion-col>
-            </ion-row>
-
-            <ion-row class="profile-data"
-                *ngIf="suggestionDetails.targetProposalTitle &&
-                    (createSuggestionCommand.data.proposaltype == 'changeproposalowner' || createSuggestionCommand.data.proposaltype == 'closeproposal')">
-                <ion-col>
-                    <h5>{{ 'crproposalvoting.target-proposal-title' | translate }}</h5>
-                    <h4>{{ suggestionDetails.targetProposalTitle }}</h4>
-                </ion-col>
-            </ion-row>
-
             <ion-row class="profile-data"
                 *ngIf="createSuggestionCommand.data.newrecipient && createSuggestionCommand.data.proposaltype == 'changeproposalowner'">
                 <ion-col>
@@ -100,6 +84,22 @@
                 <ion-col>
                     <h5>{{ 'crproposalvoting.new-owner-did' | translate }}</h5>
                     <h4>{{ suggestionDetails.newOwnerDID }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="creationDate">
+                <ion-col>
+                    <h5>{{ 'crproposalvoting.creation-date' | translate }}</h5>
+                    <h4>{{ creationDate }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data"
+                *ngIf="suggestionDetails.targetProposalTitle &&
+                (createSuggestionCommand.data.proposaltype == 'changeproposalowner' || createSuggestionCommand.data.proposaltype == 'closeproposal')">
+                <ion-col>
+                    <h5>{{ 'crproposalvoting.target-proposal-title' | translate }}</h5>
+                    <h4>{{ suggestionDetails.targetProposalTitle }}</h4>
                 </ion-col>
             </ion-row>
 

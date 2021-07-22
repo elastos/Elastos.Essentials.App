@@ -57,6 +57,9 @@ export const zh = {
         'proposaltype-changeproposalowner': '改变负责人',
         'proposaltype-closeproposal': '关闭提议',
         'proposaltype-secretarygeneral': '新的CR委员秘书长',
+        'imprest': '首付款/预付款',
+        'normalpayment': '阶段款',
+        'finalpayment': '结项款/尾款',
 
         'sign-create-suggestion': '签名并提交建议',
 
