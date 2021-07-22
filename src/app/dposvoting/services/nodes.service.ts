@@ -160,16 +160,21 @@ export class NodesService {
     }
 
     sortVotes() {
-        this._votes.sort((a, b) => b.date - a.date);
+        this._votes.sort((a, b) => {
+            if (b.date > a.date)
+                return 1;
+            else
+                return -1;
+        });
     }
 
     getStoredVotes() {
         this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'votes', []).then(data => {
-            Logger.log('dposvoting', 'Vote history', data);
             if (data && data.length > 0) {
                 // filter invalid votes.
-                this._votes = data.filter(c => { return c.tx; });;
+                this._votes = data.filter(c => { return c.tx; });
                 this.sortVotes();
+                Logger.log('dposvoting', 'Vote history', this._votes);
             }
         });
     }
