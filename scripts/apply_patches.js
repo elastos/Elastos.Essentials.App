@@ -26,6 +26,12 @@ const patch_dirs = [
     "plugin_id": "cordova-plugin-qrscanner",
     "patch_dir": "patches/before_plugin_install_qrscanner"
   },
+  {
+    "hook": "before_plugin_install",
+    "platform": "ios",
+    "plugin_id": "cordova-plugin-statusbar",
+    "patch_dir": "patches/before_plugin_install_statusbar"
+  },
 ]
 // no need to configure below
 
