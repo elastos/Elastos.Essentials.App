@@ -117,15 +117,14 @@ export class GlobalElastosAPIService extends GlobalService {
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "TestNet": {
-                        // TODO - testnet endpoints
-                        mainChainRPC: 'https://api.elastos.io/ela',
-                        idChainRPC: 'https://api.elastos.io/did',
-                        eidChainRPC: 'https://api.elastos.io/eid',
+                        mainChainRPC: 'https://api-testnet.elastos.io/ela',
+                        idChainRPC: 'https://api-testnet.elastos.io/did',
+                        eidChainRPC: 'https://api-testnet.elastos.io/eid',
                         eidMiscRPC: 'https://api-testnet.elastos.io/eid-misc',
                         eidOracleRPC: 'https://api-testnet.elastos.io/eid-oracle',
-                        escRPC: 'https://api.elastos.io/eth',
-                        escOracleRPC: 'https://api.elastos.io/oracle',
-                        escMiscRPC: 'https://api.elastos.io/misc',
+                        escRPC: 'https://api-testnet.elastos.io/eth',
+                        escOracleRPC: 'https://api-testnet.elastos.io/oracle',
+                        escMiscRPC: 'https://api-testnet.elastos.io/misc',
                         escBrowserRPC: 'https://eth-testnet.elastos.io',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
