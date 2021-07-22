@@ -189,26 +189,8 @@ export class WalletJsonRPCService {
         if (rpcApiUrl === null) {
             return '';
         }
-
-        let txid = '';
-        let retryTimes = 0;
-        let errorMessage = null;
-        do {
-            try {
-                txid = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-                break;
-            } catch (e) {
-                // wait 100ms?
-                errorMessage = e;
-            }
-        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
-
-        if (txid !== '') {
-          Logger.log('wallet', 'sendrawtransaction:', txid)
-        } else {
-          Logger.error('wallet', 'sendrawtransaction error:', errorMessage);
-        }
-        return txid;
+        // The caller need catch the execption.
+        return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
     }
 
     public async getBlockCount(chainID: StandardCoinName) {

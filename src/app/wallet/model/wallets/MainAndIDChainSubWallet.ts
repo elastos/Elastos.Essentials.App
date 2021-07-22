@@ -537,10 +537,9 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     private async getPendingTransaction() {
-      if (this.transactions == null) {
-        // In case of.
-        await this.getTransactionByRPC();
-      }
+      // Update transactions to get the pending transactions.
+      await this.getTransactionByRPC(this.timestampEnd);
+
       let pendingTransactions = [];
       for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
         if (this.transactions.txhistory[i].Status !== TransactionStatus.CONFIRMED) {
@@ -550,6 +549,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
           break;
         }
       }
+      Logger.log('wallet', 'Pending Transactions:', pendingTransactions);
       return pendingTransactions;
     }
 
@@ -618,14 +618,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
                 }
             }
         }
-        if (!getEnoughUTXO && (amountSELA != -1)) {
-          Logger.warn('wallet', 'utxo is not enought');
-          if (usedUTXOs.length > 0) {
+
+        if ((usedUTXOs.length > 0) && (!getEnoughUTXO || (amountSELA == -1))) {
             Logger.warn('wallet', 'used UTXOs count:', usedUTXOs.length);
-            // Need to wait the pending transaction to be confirmed.
             await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-pending');
             return null;
-          }
+        }
+
+        if (!getEnoughUTXO) {
           //TODO. Maybe the coinbase utxo is not avaliable? or popup the prompt?
           //return all the utxo.
           return utxoArrayForSDK;

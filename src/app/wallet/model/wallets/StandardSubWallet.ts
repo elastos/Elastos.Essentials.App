@@ -223,6 +223,7 @@ export abstract class StandardSubWallet extends SubWallet {
             catch (err) {
               await this.masterWallet.walletManager.native.hideLoading();
               Logger.error("wallet", "Publish error:", err);
+              await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
               resolve({
                 published: false,
                 txid: null,
