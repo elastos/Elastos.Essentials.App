@@ -14,7 +14,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { isObject } from 'lodash-es';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { App } from 'src/app/model/app.enum';
 
 // The worker JS file from qr-scanner must be copied manually from
 // the qr-scanner node_modules sources and copied to our assets/folder
@@ -314,6 +314,9 @@ export class ScanPage {
         }
         catch (err) {
             Logger.error("Scanner", "sendUrlIntent failed", err)
+            // We call exitCurrentContext before,
+            // so we need add scanner to navigation history again if do not exit scanner.
+            this.globalNav.navigateRoot(App.SCANNER)
             this.ngZone.run(() => {
                 void this.showNooneToHandleIntent()
             })
@@ -343,6 +346,9 @@ export class ScanPage {
         }
         catch (err) {
             Logger.error("Scanner", "Intent sending failed", err)
+            // We call exitCurrentContext before,
+            // so we need add scanner to navigation history again if do not exit scanner.
+            this.globalNav.navigateRoot(App.SCANNER)
             this.ngZone.run(() => {
                 void this.showNooneToHandleIntent()
             })

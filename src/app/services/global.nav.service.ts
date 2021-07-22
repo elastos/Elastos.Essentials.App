@@ -83,8 +83,7 @@ export class GlobalNavService {
 
         while (this.canGoBack()) {
             let lastStep = this.navigationHistory[this.navigationHistory.length-1];
-            let last2Step = this.navigationHistory[this.navigationHistory.length-2];
-            if ((lastStep.context != context) || (last2Step.context != context)) {
+            if ((lastStep.context != context)) {
                 break; // Found the previous context - stop unstacking.
             }
             else {
