@@ -33,6 +33,8 @@ export const en = {
         'status-rejected': 'Rejected',
 
         // Intent Screens
+        'wrong-did': 'DID do not match',
+
         'create-suggestion': 'Create Suggestion',
         'create-suggestion-msg': 'You are about to create the following suggestion. Please review it, and follow the process to sign and publish it.',
         'type': 'Type',

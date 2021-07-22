@@ -33,6 +33,8 @@ export const zh = {
         'status-rejected': '已废止',
 
         // Intent Screens
+        'wrong-did': 'DID错误',
+
         'create-suggestion': '提交提议',
         'create-suggestion-msg': '您将要提出以下建议。请对其进行审核，并按照流程进行签名和发布。',
         'type': '类型',

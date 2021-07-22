@@ -7,6 +7,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { PopupProvider } from 'src/app/services/global.popup.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { PopupService } from './popup.service';
 
@@ -37,6 +38,7 @@ export class CROperationsService {
         private popup: PopupService,
         private globalIntentService: GlobalIntentService,
         private voteService: VoteService,
+        public popupProvider: PopupProvider,
     ) {}
 
     async init() {
@@ -124,7 +126,7 @@ export class CROperationsService {
         if (!Util.isEmptyObject(jwtPayload.data.userdid)) {
             if (jwtPayload.data.userdid != GlobalDIDSessionsService.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
-                this.popup.alert("DID isn't match", "The DID isn't match", "Ok");
+                await this.popupProvider.ionicAlert('wallet.text-warning', 'crproposalvoting.wrong-did');
                 return false;
             }
         }
