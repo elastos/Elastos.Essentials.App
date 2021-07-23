@@ -722,7 +722,7 @@ export class ProfileService extends GlobalService {
   }
 
   /**
-   * Adds, removes or update a credential based on its state as a CredentialDisplayEntry,
+   * Adds, removes or update a credential based on its in-app state as a CredentialDisplayEntry,
    * into the local did document.
    */
   private async updateDIDDocumentFromSelectionEntry(

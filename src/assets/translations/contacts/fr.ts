@@ -27,9 +27,9 @@ export const fr = {
     /********** Friends Pg **********/
     'no-contacts': 'Aucun contact?',
     'add-a-contact': "Ajouter un contact en cliquant sur l'icône d'ajout ci-dessus",
-    'add-a-contact2': "Ajouter un contact en cliquant sur l\'icône d'ajout ci-dessous",
+    'add-a-contact2': "Ajouter un contact en cliquant sur l'icône d'ajout ci-dessous",
     'all-contacts': 'Contacts',
-    'starter-contact': 'Voici votre contact de démonstration. Cliquez pour voir ses informations. Ajoutez de nouveaux contacts via le bouton ajouter ci-dessus.',
+    'starter-contact': 'Voici vos contacts de démonstration. Touchez pour voir leur informations publiques. Ajoutez de nouveaux contacts via le bouton ajouter ci-dessus.',
 
     /********** Friend Details Pg **********/
     'contact-profile': "Profil du contact",

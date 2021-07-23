@@ -17,6 +17,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { App } from "src/app/model/app.enum"
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { defaultContacts } from '../config/config';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -107,20 +108,33 @@ export class FriendsService extends GlobalService {
   }
 
   async init() {
-      await this.getVisit();
+      await this.checkFirstVisitOperations();
       await this.getStoredContacts();
       this.getContactNotifierContacts();
   }
 
   /******************************************************
-  * Get Visit, if first time, add a fake 'First Contact' *
+  * Check if it's the first time user enters contacts.
+  * If so, add a few default fake contacts.
   *******************************************************/
-  async getVisit() {
+  async checkFirstVisitOperations() {
     let visit = await this.storage.getSetting<boolean>(GlobalDIDSessionsService.signedInDIDString, "contacts", 'visited', false);
     if (!visit) {
-      await this.resolveDIDDocument('did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2', false, null, false);
+      await this.addDefaultContacts();
       await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'contacts', 'visited', true)
     }
+  }
+
+  /**
+   * Adds a few default contacts to the contacts list, so that user feels he is not alone.
+   */
+  private async addDefaultContacts(): Promise<void> {
+    // Show a loader - this may take a while
+    void this.native.showLoading(this.translate.instant('common.please-wait'));
+    for (let contactDID of defaultContacts) {
+      await this.resolveDIDDocument(contactDID, false, null, false);
+    }
+    void this.native.hideLoading();
   }
 
   /******************************

@@ -29,7 +29,7 @@ export const zh = {
     'add-a-contact': '请点击上面的添加图标添加联系人',
     'add-a-contact2': '请点击下面的添加图标添加联系人',
     'all-contacts': '所有联系人',
-    'starter-contact': '这是您的初始联系人。单击可以查看其已验证的凭证。 通过上方的添加图标可以添加新联系人',
+    'starter-contact': 'These are your starter contacts. Touch them to view their public information. Add new contacts by the add icon above',
 
     /********** Friend Details Pg **********/
     'contact-profile': '联系人信息',

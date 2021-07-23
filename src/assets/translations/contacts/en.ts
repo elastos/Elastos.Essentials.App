@@ -29,7 +29,7 @@ export const en = {
     'add-a-contact': 'Add a contact by clicking the add icon above',
     'add-a-contact2': 'Add a contact by clicking the add icon below',
     'all-contacts': 'All Contacts',
-    'starter-contact': 'This is your starter contact. Click on it to see their verified credentials. Add new contacts by the add icon above',
+    'starter-contact': 'These are your starter contacts. Touch them to view their public information. Add new contacts by the add icon above',
 
     /********** Friend Details Pg **********/
     'contact-profile': "Contact's Profile",

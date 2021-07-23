@@ -18,6 +18,7 @@ import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 's
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { defaultContacts } from '../../config/config';
 
 @Component({
   selector: 'app-friends',
@@ -61,7 +62,7 @@ export class FriendsPage implements OnInit {
     this.subscription = this.events.subscribe("friends:updateSlider", () => {
       this.zone.run(() => {
         Logger.log('contacts', 'friends:updateSlider event');
-        this.getActiveSlide();
+        void this.getActiveSlide();
       });
     });
 
@@ -77,7 +78,7 @@ export class FriendsPage implements OnInit {
     }
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener)
 
-    this.getContacts();
+    void this.getContacts();
   }
 
   ionViewWillLeave() {
@@ -110,19 +111,22 @@ export class FriendsPage implements OnInit {
     }
   }
 
-  // Reveal 'First Contact' Intro if user's only contact is 'First Contact'
-  firstContact(): boolean {
-    if (
-      this.friendsService.contacts.length === 1 &&
-      this.friendsService.contacts[0].id === 'did:elastos:iXyYFboFAd2d9VmfqSvppqg1XQxBtX9ea2'
-    ) {
-      return true;
-    } else {
+  // Reveal 'First Contact' Intro if user's list of contacts exactly matches the default
+  // contacts list.
+  shouldShowFirstContactInformation(): boolean {
+    // Different list size means different content.
+    if (this.friendsService.contacts.length != defaultContacts.length)
       return false;
+
+    for (let userContact of this.friendsService.contacts) {
+      if (!defaultContacts.find(c => c === userContact.id))
+        return false;
     }
+
+    return true;
   }
 
   goToContact(contact: Contact) {
-    this.globalNav.navigateTo('contacts', '/contacts/friends/' + contact.id);
+    void this.globalNav.navigateTo('contacts', '/contacts/friends/' + contact.id);
   }
 }

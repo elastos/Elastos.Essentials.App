@@ -21,7 +21,7 @@
           <img
             [src]="uxService.getAvatar(contact)"
             class="inactiveSlide profile-img"
-            [class.activeSlide]="contact === friendsService.activeSlide || firstContact()"
+            [class.activeSlide]="contact === friendsService.activeSlide || shouldShowFirstContactInformation()"
             (click)="goToContact(contact)"
           >
         </ion-slide>
@@ -61,7 +61,7 @@
           page fails to detect active slide since it is loaded
           before service can resolve the first contact
       -->
-      <div class="slide-content" *ngIf="!friendsService.activeSlide && firstContact()">
+      <div class="slide-content" *ngIf="!friendsService.activeSlide && shouldShowFirstContactInformation()">
         <h1>{{ uxService.getDisplayableName(friendsService.contacts[0]) }}</h1>
         <p>{{ uxService.getDisplayableBio(friendsService.contacts[0]) }}</p>
         <ion-row class="btn-row">
@@ -116,7 +116,7 @@
             class="ripple ion-activatable"
             [class.activeItem]="
               contact === friendsService.activeSlide ||
-              !friendsService.activeSlide && firstContact() ?
+              !friendsService.activeSlide && shouldShowFirstContactInformation() ?
               'secondary' : null"
             detail="false"
             lines="none"
@@ -186,7 +186,7 @@
           class="ripple ion-activatable"
           [class.activeItem]="
             contact === friendsService.activeSlide ||
-            !friendsService.activeSlide && firstContact() ?
+            !friendsService.activeSlide && shouldShowFirstContactInformation() ?
             'secondary' : null"
           detail="false"
           lines="none"
@@ -221,7 +221,7 @@
     </ion-list>
 
     <!-- Empty Contacts -->
-    <div *ngIf="firstContact()" class="onboard-msg">
+    <div *ngIf="shouldShowFirstContactInformation()" class="onboard-msg">
       <h1>{{ 'contacts.no-contacts' | translate }}</h1>
       <p>{{ 'contacts.starter-contact' | translate }}</p>
     </div>
