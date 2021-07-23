@@ -150,9 +150,6 @@ export class CoinHomePage implements OnInit {
     }
 
     async initData() {
-        // Only update balance, It will save some time for the second time you enter this page.
-        if (this.fromWalletHome) this.subWallet.updateBalance();
-
         if (!this.transactionStatusSubscription) {
             this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
               if (count >= 0) {
