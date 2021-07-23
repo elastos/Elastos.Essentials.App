@@ -119,13 +119,7 @@ export class HomePage implements OnInit {
           case TESTNET_TEMPLATE:
             this.titleBar.setTitle('TEST NET Active');
           break;
-          case 'RegTest':
-            this.titleBar.setTitle('Regression Net Active');
-          break;
-          case 'PrvNet':
-            this.titleBar.setTitle('Private Net Active');
-            break;
-          case 'LrwNet':
+          case 'LRW':
             this.titleBar.setTitle('CR Private Net Active');
           break;
         }
