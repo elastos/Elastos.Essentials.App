@@ -72,7 +72,7 @@ export class ReviewProposalPage {
         this.globalNav.navigateBack();
     }
 
-    async signAndCreateProposal() {
+    async signAndReviewProposal() {
         this.signingAndSendingProposalResponse = true;
 
         try {

@@ -72,6 +72,7 @@ export const en = {
         'review-proposal': 'Review Proposal',
         'review-proposal-msg': 'You are about to review the following proposal. Please review it, and follow the process to sign and publish it.',
         'sign-review-proposal': 'Sign and Review Proposal',
+        'proposal-title': 'Proposal Title',
         'vote-result': 'Vote Result',
         'approve': 'Approve',
         'reject': 'Reject',

@@ -71,6 +71,7 @@ export const fr = {
         'review-proposal': 'Vote pour une Proposition',
         'review-proposal-msg': 'Vous êtes sur le point de voter pour la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'sign-review-proposal': 'Signer et Voter pour cette Proposition',
+        'proposal-title': 'Proposal Title',
         'vote-result': 'Résultat du Vote',
         'approve': 'Approver',
         'reject': 'Rejecter',

@@ -72,6 +72,7 @@ export const zh = {
         'review-proposal': '评议提案',
         'review-proposal-msg': '您将要评议以下提案。请对其进行审核，并按照流程进行签名和评议。',
         'sign-review-proposal': '签名并评议提案',
+        'proposal-title': '提案标题',
         'vote-result': '投票结果',
         'approve': '赞成',
         'reject': '反对',

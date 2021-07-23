@@ -38,23 +38,24 @@
             </ion-row>
         </ion-list>
 
-        <ion-row class="btn-container" *ngIf="!signingAndSendingSuggestionResponse">
-            <ion-col class="left-col">
-                <ion-button color="light" (click)="cancel()">
-                    {{ 'common.cancel' | translate }}
-                </ion-button>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-col>
-            <ion-col class="right-col" color="success">
-                <ion-button color="success" (click)="signAndWithdraw()">
-                    {{ 'common.confirm' | translate }}
-                </ion-button>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-col>
-        </ion-row>
-        <div *ngIf="signingAndSendingSuggestionResponse">
-            <ion-spinner></ion-spinner>
-        </div>
+        <ion-footer *ngIf="!signingAndSendingSuggestionResponse">
+            <ion-row>
+                <ion-col class="left-col">
+                    <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                        {{ 'common.cancel' | translate }}
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+                <ion-col class="right-col">
+                    <div class="btn-container align-center" id="confirm" (click)="signAndWithdraw()">
+                        {{ 'common.confirm' | translate }}
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+            </ion-row>
+        </ion-footer>
+
+        signingAndSendingSuggestionResponse
     </div>
 </ion-content>
 
