@@ -57,10 +57,9 @@ export class MyProfilePage {
 
   public profileName: string = null;
   public credentials: VerifiableCredential[];
-  public hasCredential = false;
+  //public hasCredential = false;
   public creatingIdentity = false;
-  public hasModifiedCredentials = false;
-  public unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
+  //public hasModifiedCredentials = false;
   public avatarDataUrl: string = null;
 
   public fetchingApps = false;
@@ -97,7 +96,6 @@ export class MyProfilePage {
   }
 
   ngOnInit() {
-    Logger.log("identity", "MYPROFILE NGONINIT")
     this.didchangedSubscription = this.events.subscribe("did:didchanged", () => {
       this.zone.run(() => {
         this.init();
@@ -112,16 +110,14 @@ export class MyProfilePage {
 
     // When the personal DID document finished being fetched from chain
     let didString = this.didService.getActiveDid().getDIDString();
-    this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
+    /* this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
       if (status.checked) {
         this.zone.run(() => {
           // Compare local credentials with the ones in the document.
           Logger.log("identity", "DID Document fetch completed, comparing local credentials with document ones");
-          this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
-          this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
         });
       }
-    });
+    }); */
 
     this.credentialaddedSubscription = this.events.subscribe("did:credentialadded", () => {
       this.zone.run(() => {
@@ -135,13 +131,11 @@ export class MyProfilePage {
       });
     });
 
-    this.modifiedCredentialsSubscription = this.events.subscribe("credentials:modified", () => {
+    /* this.modifiedCredentialsSubscription = this.events.subscribe("credentials:modified", () => {
       this.zone.run(() => {
         Logger.log("identity", "Credentials have been modified, comparing local credentials with document ones");
-        this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
-        this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
       });
-    });
+    }); */
   }
 
   unsubscribe(subscription: Subscription) {
@@ -162,7 +156,7 @@ export class MyProfilePage {
   }
 
   init(publishAvatar?: boolean) {
-    let identity = this.didService.getActiveDid();
+    /* let identity = this.didService.getActiveDid();
     if (identity) {
       // Happens when importing a new mnemonic over an existing one
       this.profile = identity.getBasicProfile();
@@ -189,15 +183,15 @@ export class MyProfilePage {
         //console.log("DEBUG MYPROFILE AVATAR DATA URL CB", dataUrl)
         this.avatarDataUrl = dataUrl;
       });
-    }
+    } */
   }
 
   ionViewWillEnter() {
     Logger.log("identity", "ionWillEnter");
-    this.buildCredentialEntries();
+    //this.buildCredentialEntries();
 
-    this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
-    this.hasModifiedCredentials = this.profileService.hasModifiedCredentials();
+    /* this.unchangedPublishedCredentials = this.profileService.getUnchangedPublishedCredentials();
+    this.hasModifiedCredentials = this.profileService.hasModifiedCredentials(); */
 
     this.profileService.didString = this.didService.getActiveDid().getDIDString();
     void this.didSyncService
@@ -295,128 +289,6 @@ export class MyProfilePage {
       new DIDURL("#" + profileKey)
     );
     return credential != null;
-  }
-
-  /**
-   * Convenience conversion to display credential data on UI.
-   */
-  buildCredentialEntries(publishAvatar?: boolean) {
-    // Initialize
-    //this.profileService.visibleCred = [];
-    //this.profileService.invisibleCred = [];
-    this.profileService.cleanCredentials();
-    // DID issuers found on credentials
-    let issuersId: string[] = [];
-
-    for (let c of this.credentials) {
-      let canDelete = this.credentialIsCanDelete(c);
-
-      let issuerId = this.getIssuerIdFromVerifiableCredential(
-        c.pluginVerifiableCredential
-      );
-      if (issuerId !== null) issuersId.push(issuerId);
-
-      if (this.credentialIsVisibleOnChain(c)) {
-        this.profileService.pushCredentials({
-          credential: c.pluginVerifiableCredential,
-          issuer: issuerId,
-          isVisible: true,
-          willingToBePubliclyVisible: true,
-          willingToDelete: false,
-          canDelete: canDelete,
-        });
-      } else {
-        this.profileService.pushCredentials({
-          credential: c.pluginVerifiableCredential,
-          issuer: issuerId,
-          willingToBePubliclyVisible:
-            c.pluginVerifiableCredential.getFragment() === "name"
-              ? true
-              : false,
-          isVisible: false,
-          willingToDelete: false,
-          canDelete: canDelete,
-        });
-      }
-    }
-
-    if (issuersId.length > 0) {
-      this.zone.run(() => {
-        void this.profileService.loadIssuers(issuersId);
-      });
-    }
-
-    Logger.log("identity", "Visible creds", this.profileService.visibleCredentials);
-    Logger.log("identity", "Invisible creds", this.profileService.invisibleCredentials);
-    this.buildAppAndAvatarCreds(publishAvatar);
-  }
-
-  /***** Find and build app and avatar creds *****/
-  buildAppAndAvatarCreds(publishAvatar?: boolean) {
-    //this.profileService.appCreds = [];
-    let hasAvatar = false;
-
-    this.profileService.visibleCredentials.map((cred) => {
-      // Find Avatar Credential
-      if ("avatar" in cred.credential.getSubject()) {
-        hasAvatar = true;
-        Logger.log("identity", "Profile has avatar");
-
-        if (publishAvatar) {
-          Logger.log("identity", "Prompting avatar publish");
-          cred.willingToBePubliclyVisible = true;
-          void this.profileService.showWarning("publishVisibility", null);
-        }
-      }
-      // Find Description Credential
-      if ("description" in cred.credential.getSubject()) {
-        this.profileService.displayedBio = cred.credential.getSubject().description;
-        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
-      }
-    });
-    this.profileService.invisibleCredentials.map((cred) => {
-      // Find App Credentials
-      if ("avatar" in cred.credential.getSubject()) {
-        hasAvatar = true;
-        let data = "";
-        if (cred.credential.getSubject().avatar != null) {
-          data = cred.credential.getSubject().avatar.data;
-        }
-
-        if (publishAvatar) {
-          Logger.log("identity", "Prompting avatar publish");
-          cred.willingToBePubliclyVisible = true;
-          void this.profileService.showWarning("publishVisibility", null);
-        }
-      }
-      // Find Description Credentials
-      if ("description" in cred.credential.getSubject()) {
-        this.profileService.displayedBio = cred.credential.getSubject().description;
-        Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
-      }
-    });
-  }
-
-  /**
-   * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
-   */
-  credentialIsVisibleOnChain(credential: VerifiableCredential) {
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
-
-    let didDocumentCredential = currentDidDocument.getCredentialById(
-      new DIDURL(credential.pluginVerifiableCredential.getId())
-    );
-    return didDocumentCredential != null;
-  }
-
-  /**
-   * The name credential can not be deleted.
-   */
-  credentialIsCanDelete(credential: VerifiableCredential) {
-    let fragment = credential.pluginVerifiableCredential.getFragment();
-    if (fragment === "name") return false;
-    else return true;
   }
 
   /******************** Reveal QR Code ********************/
@@ -590,18 +462,6 @@ export class MyProfilePage {
     } else {
       return false;
     }
-  }
-
-
-  getIssuerIdFromVerifiableCredential(
-    vc: DIDPlugin.VerifiableCredential
-  ): string {
-    if (vc === null) return null;
-
-    let id = vc.getIssuer();
-    if (id === undefined) return null;
-
-    return id;
   }
 
   hasIssuer(issuerId: string): boolean {

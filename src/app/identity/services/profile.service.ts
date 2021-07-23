@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, NgZone } from "@angular/core";
 import { Native } from "./native";
 import { PopoverController } from "@ionic/angular";
 import { AuthService } from "./auth.service";
@@ -22,6 +22,7 @@ import { DIDEvents } from "./events";
 import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
+import { VerifiableCredential } from "../model/verifiablecredential.model";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -77,6 +78,8 @@ export class ProfileService extends GlobalService {
   // private invisibleCred: CredentialDisplayEntry[];
   //public appCreds: AppCredentialDisplayEntry[];
   private credentials: CredentialDisplayEntry[] = [];
+  private unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
+  private _hasModifiedCredentials = false;
 
   public issuers: {
     [issuerDid: string]: IssuerDisplayEntry;
@@ -110,6 +113,7 @@ export class ProfileService extends GlobalService {
   constructor(
     public events: Events,
     private native: Native,
+    private zone: NgZone,
     private popoverCtrl: PopoverController,
     private didService: DIDService,
     private didSyncService: DIDSyncService,
@@ -121,14 +125,54 @@ export class ProfileService extends GlobalService {
     private globalHiveService: GlobalHiveService
   ) {
     super();
-    GlobalServiceManager.getInstance().registerService(this);
     ProfileService.instance = this;
 
     // Initialize values
     this.resetService();
   }
 
+  init() {
+    Logger.log("identity", "Profile service is initializing");
+
+    GlobalServiceManager.getInstance().registerService(this);
+
+    this.didSyncService.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {
+      this.didNeedsToBePublished = didNeedsToBePublished;
+    });
+
+    this.globalHiveService.vaultStatus.subscribe(status => {
+      if (status && status.checkState === VaultLinkStatusCheckState.SUCCESSFULLY_RETRIEVED && status.publishedInfo) {
+        // We don't need it yet, but we start fetching the avatar that is possibly stored on a hive vault,
+        // as soon as the main user's hive vault is ready. This way, the avatar will be ready when the user
+        // starts the main identity screen.
+        Logger.log("identity", "User's hive vault is ready, fetching his avatar if any");
+        this.getAvatarDataUrl();
+      }
+    });
+  }
+
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    let didString = this.didService.getActiveDid().getDIDString();
+    this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
+      Logger.log("identity", "Profile service got DID Document status change event for DID " + didString);
+      if (status.checked) {
+        this.publishStatusFetched = true;
+        this.publishedDIDDocument = status.document;
+        this.recomputeDocumentAndCredentials();
+      }
+      else {
+        this.publishStatusFetched = false;
+        this.publishedDIDDocument = null;
+      }
+    });
+
+    this.events.subscribe("credentials:modified", () => {
+      this.recomputeDocumentAndCredentials();
+    });
+    this.events.subscribe("did:didchanged", () => {
+      this.recomputeDocumentAndCredentials();
+    });
+
     return;
   }
 
@@ -176,54 +220,160 @@ export class ProfileService extends GlobalService {
     }
   }
 
-  init() {
-    // Wait for DID store to be activated ("did changed") to subscribe to more DID specific events.
-    this.events.subscribe("did:didchanged", () => {
-      let didString = this.didService.getActiveDid().getDIDString();
-      this.didSyncService.onlineDIDDocumentsStatus.get(didString).subscribe((status) => {
-        if (status.checked) {
-          this.publishStatusFetched = true;
-          this.publishedDIDDocument = status.document;
-          this.handleFetchedOnlinedDIDDocument();
-        }
-        else {
-          this.publishStatusFetched = false;
-          this.publishedDIDDocument = null;
-        }
-      });
-    });
-
-    this.didSyncService.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {
-      this.didNeedsToBePublished = didNeedsToBePublished;
-    });
-
-    this.globalHiveService.vaultStatus.subscribe(status => {
-      if (status && status.checkState === VaultLinkStatusCheckState.SUCCESSFULLY_RETRIEVED && status.publishedInfo) {
-        // We don't need it yet, but we start fetching the avatar that is possibly stored on a hive vault,
-        // as soon as the main user's hive vault is ready. This way, the avatar will be ready when the user
-        // starts the main identity screen.
-        Logger.log("identity", "User's hive vault is ready, fetching his avatar if any");
-        this.getAvatarDataUrl();
-      }
-    });
-  }
-
   isPublishStatusFetched(): boolean {
     return this.publishStatusFetched;
   }
 
+  /**
+   * Convenience conversion to display credential data on UI.
+   */
+  buildCredentialEntries(publishAvatar?: boolean) {
+    // Sort credentials by title
+    let rawCredentials = this.didService.getActiveDid().credentials;
+    rawCredentials.sort((c1, c2) => {
+      if (c1.pluginVerifiableCredential.getFragment() >c2.pluginVerifiableCredential.getFragment())
+        return 1;
+      else
+        return -1;
+    });
+
+    // DID issuers found on credentials
+    let issuersId: string[] = [];
+    this.credentials = [];
+    for (let c of rawCredentials) {
+      let canDelete = this.credentialCanBeDeleted(c.pluginVerifiableCredential);
+
+      let issuerId = this.getIssuerIdFromVerifiableCredential(
+        c.pluginVerifiableCredential
+      );
+      if (issuerId !== null) issuersId.push(issuerId);
+
+      if (this.credentialIsInLocalDIDDocument(c.pluginVerifiableCredential)) {
+        this.credentials.push({
+          credential: c.pluginVerifiableCredential,
+          issuer: issuerId,
+          isVisible: true,
+          willingToBePubliclyVisible: true,
+          willingToDelete: false,
+          canDelete: canDelete,
+        });
+      } else {
+        this.credentials.push({
+          credential: c.pluginVerifiableCredential,
+          issuer: issuerId,
+          willingToBePubliclyVisible:
+            c.pluginVerifiableCredential.getFragment() === "name"
+              ? true
+              : false,
+          isVisible: false,
+          willingToDelete: false,
+          canDelete: canDelete,
+        });
+      }
+    }
+
+    if (issuersId.length > 0) {
+      this.zone.run(() => {
+        void this.loadIssuers(issuersId);
+      });
+    }
+
+    Logger.log("identity", "Visible credentials", this.visibleCredentials);
+    Logger.log("identity", "Invisible credentials", this.invisibleCredentials);
+    this.buildAppAndAvatarCreds(publishAvatar);
+  }
+
+  /***** Find and build app and avatar creds *****/
+  buildAppAndAvatarCreds(publishAvatar?: boolean) {
+    //this.profileService.appCreds = [];
+    let hasAvatar = false;
+
+    this.visibleCredentials.map((cred) => {
+      // Find Avatar Credential
+      if ("avatar" in cred.credential.getSubject()) {
+        hasAvatar = true;
+        Logger.log("identity", "Profile has avatar");
+
+        if (publishAvatar) {
+          Logger.log("identity", "Prompting avatar publish");
+          cred.willingToBePubliclyVisible = true;
+          void this.showWarning("publishVisibility", null);
+        }
+      }
+      // Find Description Credential
+      if ("description" in cred.credential.getSubject()) {
+        this.displayedBio = cred.credential.getSubject().description;
+        Logger.log("identity", "Profile has bio", this.displayedBio);
+      }
+    });
+    this.invisibleCredentials.map((cred) => {
+      // Find App Credentials
+      if ("avatar" in cred.credential.getSubject()) {
+        hasAvatar = true;
+        let data = "";
+        if (cred.credential.getSubject().avatar != null) {
+          data = cred.credential.getSubject().avatar.data;
+        }
+
+        if (publishAvatar) {
+          Logger.log("identity", "Prompting avatar publish");
+          cred.willingToBePubliclyVisible = true;
+          void this.showWarning("publishVisibility", null);
+        }
+      }
+      // Find Description Credentials
+      if ("description" in cred.credential.getSubject()) {
+        this.displayedBio = cred.credential.getSubject().description;
+        Logger.log("identity", "Profile has bio", this.displayedBio);
+      }
+    });
+  }
+
+
+  getIssuerIdFromVerifiableCredential(
+    vc: DIDPlugin.VerifiableCredential
+  ): string {
+    if (vc === null) return null;
+
+    let id = vc.getIssuer();
+    if (id === undefined) return null;
+
+    return id;
+  }
+
+  /**
+   * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
+   */
+  credentialIsInLocalDIDDocument(credential: DIDPlugin.VerifiableCredential) {
+    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
+    if (!currentDidDocument) return false;
+
+    let didDocumentCredential = currentDidDocument.getCredentialById(
+      new DIDURL(credential.getId())
+    );
+    return didDocumentCredential != null;
+  }
+
+  /**
+   * The name credential can not be deleted.
+   */
+  credentialCanBeDeleted(credential: DIDPlugin.VerifiableCredential) {
+    let fragment = credential.getFragment();
+    if (fragment === "name") return false;
+    else return true;
+  }
+
   setCredentialVisibility(key: string, isVisible: boolean) {
     let credential = this.credentials.find((item) => {
-      Logger.log("identity", item.credential.getFragment());
-
       return item.credential.getFragment() == key;
     });
     if (credential) {
+      Logger.log("identity", "Changing visibility of "+key+" to visible: "+isVisible);
       credential.isVisible = isVisible;
-      Logger.log("identity", "Credential2 : " + JSON.stringify(credential));
-      Logger.log("identity", "all credentials: " + JSON.stringify(this.credentials));
-
       this.events.publish("credentials:modified");
+    }
+    else {
+      Logger.log("identity", "Unable to change visibility of "+key+". Credential not found");
     }
   }
 
@@ -297,16 +447,6 @@ export class ProfileService extends GlobalService {
     });
   }
 
-  cleanCredentials() {
-    this.credentials = [];
-    this.events.publish("credentials:modified");
-  }
-
-  pushCredentials(credential: CredentialDisplayEntry) {
-    this.credentials.push(credential);
-    this.events.publish("credentials:modified");
-  }
-
   get verifiedCredentials(): CredentialDisplayEntry[] {
     return this.allCreds.filter((item) => {
       let types = item.credential.getTypes();
@@ -363,10 +503,10 @@ export class ProfileService extends GlobalService {
       translucent: false,
     });
     void this.popover.onWillDismiss().then(async (params) => {
-      if(params.data) {
-        if(params.data.action === 'confirmDeleteCredentials') {
+      if (params.data) {
+        if (params.data.action === 'confirmDeleteCredentials') {
           this.confirmDeleteCredentials();
-        } else if(params.data.action === 'publishDIDDocumentReal') {
+        } else if (params.data.action === 'publishDIDDocumentReal') {
           // this.native.go("/identity/publishing")
           this.publishDIDDocumentReal();
         }
@@ -438,28 +578,34 @@ export class ProfileService extends GlobalService {
     void this.native.go("/identity/publish");
   }
 
-  private handleFetchedOnlinedDIDDocument() {
-    // Nothing yet
+  private recomputeDocumentAndCredentials() {
+    Logger.log("identity", "Profile service is recomputing its local model");
+    // Refresh our local model
+    this.buildCredentialEntries();
+    this.computeUnchangedPublishedCredentials();
+    this.computeHasModifiedCredentials();
   }
 
   getPublishedCredentials(): DIDPlugin.VerifiableCredential[] {
     if (this.publishedDIDDocument) {
       // We already have a document
       let creds = this.publishedDIDDocument.getCredentials();
+      Logger.log("identity", "There are "+creds.length+" published credentials.", creds);
       return creds;
     }
     else {
       // We don't have the online document yet (fetch not complete?)
+      Logger.log("identity", "No resolved published document (yet?), published credentials list is empty (for now)");
       return [];
     }
   }
 
-  getUnchangedPublishedCredentials(): DIDPlugin.VerifiableCredential[] {
+  private computeUnchangedPublishedCredentials() {
     let publishedCredentials = this.getPublishedCredentials();
     let unchangedCredentials: DIDPlugin.VerifiableCredential[] = [];
     publishedCredentials.forEach(pubCred => {
       var found = this.credentials.find(x => {
-        return x.credential.getId() == pubCred.getId();
+        return new DIDURL(x.credential.getId()).getFragment() === new DIDURL(pubCred.getId()).getFragment();
       });
 
       if (found) {
@@ -469,12 +615,23 @@ export class ProfileService extends GlobalService {
           unchangedCredentials.push(pubCred)
       }
     });
-    return unchangedCredentials;
+    Logger.log("identity", "Unchanged published credentials were computed:", unchangedCredentials);
+    this.unchangedPublishedCredentials = unchangedCredentials;
   }
 
-  hasModifiedCredentials(): boolean {
+  getUnchangedPublishedCredentials(): DIDPlugin.VerifiableCredential[] {
+    return this.unchangedPublishedCredentials;
+  }
+
+  /**
+   * Compute if some published credentials have changed locally, or if some new credentials
+   * that were now published now need to be published.
+   */
+  private computeHasModifiedCredentials() {
+    Logger.log("identity", "Computing if some credentials are modified. Credentials:", this.credentials);
     let publishedCredentials = this.getPublishedCredentials();
-    Logger.log("identity", "local creds:", this.credentials, "published:", publishedCredentials);
+
+    // For each published cred, check if a local change occured.
     for (let pubCred of publishedCredentials) {
       var found = this.credentials.find(x => {
         return x.credential.getId() == pubCred.getId();
@@ -485,12 +642,32 @@ export class ProfileService extends GlobalService {
         let published = JSON.parse(JSON.stringify(pubCred.getSubject()));
         if (!deepEqual(local, published)) {
           Logger.log("identity", "Local and published credentials don't match. hasModifiedCredentials() returns true.", "Local:", local, "Published:", published);
-          return true; // we handle only the modified case not the added or removed case
+          this._hasModifiedCredentials = true;
+          return;
         }
       }
     }
 
-    return false;
+    // For each VISIBLE local credential, check if it's already in the published credentials.
+    // We may have set a credential to become public
+    for (let localCred of this.credentials) {
+      if (localCred.willingToBePubliclyVisible) {
+        if (!publishedCredentials.find(c => c.getFragment() === localCred.credential.getFragment())) {
+          // local cred willing to be visible but not found in published creds? we have a modified credential
+          Logger.log("identity", "Local credential should be published for the first time", localCred);
+          this._hasModifiedCredentials = true;
+          return;
+        }
+      }
+    }
+
+    Logger.log("identity", "No credentials needs to be published");
+
+    this._hasModifiedCredentials = false;
+  }
+
+  hasModifiedCredentials(): boolean {
+    return this._hasModifiedCredentials;
   }
 
   /***********************************************************************************
@@ -544,44 +721,47 @@ export class ProfileService extends GlobalService {
     );
   }
 
+  /**
+   * Adds, removes or update a credential based on its state as a CredentialDisplayEntry,
+   * into the local did document.
+   */
   private async updateDIDDocumentFromSelectionEntry(
     currentDidDocument: DIDDocument,
     credentialEntry: CredentialDisplayEntry,
     password: string
   ) {
     Logger.log("identity",
-      "Updating document selection from entry ",
+      "Checking if local document has to be modified for entry",
       currentDidDocument,
       credentialEntry
     );
     let credentialId = credentialEntry.credential.getId();
-    Logger.log("identity", "Found credential id to publish", credentialId);
     let existingCredential = await currentDidDocument.getCredentialById(
       new DIDURL(credentialId)
     );
-    if (!existingCredential && credentialEntry.isVisible) {
+    if (!existingCredential && credentialEntry.willingToBePubliclyVisible) {
       // Credential doesn't exist in the did document yet but user wants to add it? Then add it.
-      Logger.log("identity", "add");
+      Logger.log("identity", "Credential wants to be published but not in the local document. Adding it");
       await currentDidDocument.addCredential(
         credentialEntry.credential,
         password
       );
     } else if (
       existingCredential &&
-      !credentialEntry.isVisible
+      !credentialEntry.willingToBePubliclyVisible
     ) {
       // Credential exists but user wants to remove it on chain? Then delete it from the did document
-      Logger.log("identity", "delete");
+      Logger.log("identity", "Credential wants to NOT be published but it's in the local document. Removing it");
       await currentDidDocument.deleteCredential(
         credentialEntry.credential,
         password
       );
     } else if (
       existingCredential &&
-      credentialEntry.isVisible
+      credentialEntry.willingToBePubliclyVisible
     ) {
       // Credential exists but user wants to update it on chain? Then delete it from the did document and add it again
-      Logger.log("identity", "update");
+      Logger.log("identity", "Credential exists in the local did document. Updating it");
       await currentDidDocument.updateOrAddCredential(
         credentialEntry.credential,
         password
@@ -720,7 +900,7 @@ export class ProfileService extends GlobalService {
       console.log("DEBUG refreshAvatarUrl()", avatarCredential, avatarCredential.getSubject())
       if (avatarCredential.getSubject() && avatarCredential.getSubject().avatar && avatarCredential.getSubject().avatar.data) {
         //return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
-        let avatarCacheKey = this.didService.getActiveDid().getDIDString()+"-avatar";
+        let avatarCacheKey = this.didService.getActiveDid().getDIDString() + "-avatar";
         let hiveAssetUrl: string = avatarCredential.getSubject().avatar.data;
 
         console.log("DEBUG refreshAvatarUrl() hiveAssetUrl", avatarCacheKey, hiveAssetUrl)

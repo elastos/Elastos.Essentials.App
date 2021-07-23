@@ -260,7 +260,7 @@ export class GlobalHiveService extends GlobalService {
     };
 
     // Check if we can find an existing vault provider address on DID chain for this user.
-    Logger.log("GlobalHiveService", "Asking hive manager to give us the vault address for current user's DID " + signedInDID);
+    Logger.log("GlobalHiveService", "Retrieving vault of current user's DID " + signedInDID);
     try {
       this.activeVault = await hiveClient.getVault(signedInDID);
     }
@@ -285,6 +285,8 @@ export class GlobalHiveService extends GlobalService {
       // call create vault. So the user will have to do it.
     }
     else {
+      Logger.log("GlobalHiveService", "Got user vault", this.activeVault);
+
       // Ensure the vault was created by calling the createVault() API. We can make sure of this by getting the active
       // payment plan. If none or if a vault not found exception is returned, this means the vault was not yet created.
       let activePricingPlan: HivePlugin.Payment.ActivePricingPlan = null;
