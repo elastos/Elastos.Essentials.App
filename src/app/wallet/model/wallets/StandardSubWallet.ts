@@ -203,7 +203,6 @@ export abstract class StandardSubWallet extends SubWallet {
               Logger.log("wallet", "pubishTransaction txid:", txid);
 
               await this.masterWallet.walletManager.native.hideLoading();
-              this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
 
               if (navigateHomeAfterCompletion)
                   await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');

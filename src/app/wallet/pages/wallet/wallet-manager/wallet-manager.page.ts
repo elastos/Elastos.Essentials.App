@@ -67,12 +67,16 @@ export class WalletManagerPage implements OnInit {
             } else if (this.intent === 'addcoin') {
                 this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
                 this.native.go("/wallet/coin-add-erc20", { contract: this.intentParams.contract });
-
             }
         } else {
-            this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
-            this.native.go("/wallet/wallet-settings");
+            this.walletManager.setActiveMasterWallet(masterWallet.id);
+            this.native.pop();
         }
+    }
+
+    goWalletSettings(masterWallet: MasterWallet) {
+        this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
+        this.native.go("/wallet/wallet-settings");
     }
 
     getWalletIndex(masterWallet: MasterWallet): number {

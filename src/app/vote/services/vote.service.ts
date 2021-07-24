@@ -17,7 +17,7 @@ import { PopupProvider } from 'src/app/services/global.popup.service';
     providedIn: 'root'
 })
 export class VoteService {
-    private walletList: MasterWallet[] = null;
+    private activeWallet: MasterWallet = null;
 
     public masterWallet: MasterWallet = null;
     public masterWalletId: string;
@@ -55,9 +55,9 @@ export class VoteService {
         this.routerOptions = routerOptions;
 
         this.chainId = StandardCoinName.ELA;
-        this.walletList = this.walletManager.getWalletsList();
+        this.activeWallet = this.walletManager.getActiveMasterWallet();
 
-        if (this.walletList.length < 1) {
+        if (!this.activeWallet) {
             const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
             if (toCreateWallet) {
                 this.native.setRootRouter('/wallet/launcher');
@@ -66,11 +66,8 @@ export class VoteService {
                 return;
             }
         }
-        else if (this.walletList.length === 1) {
-            this.navigateTo(this.walletList[0]);
-        }
         else {
-            this.native.setRootRouter('/vote/select-wallet');
+            this.navigateTo(this.activeWallet);
         }
     }
 

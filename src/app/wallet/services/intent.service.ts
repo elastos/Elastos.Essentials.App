@@ -26,7 +26,7 @@ export enum ScanType {
     providedIn: 'root'
 })
 export class IntentService {
-    private walletList: MasterWallet [] = null;
+    private activeWallet: MasterWallet = null;
     private subscription: Subscription = null;
     private nextScreen = '';
 
@@ -74,8 +74,8 @@ export class IntentService {
         if (intent.action.indexOf("https://wallet.elastos.net/") != 0)
             return; // Not for us.
 
-        this.walletList = this.walletManager.getWalletsList();
-        if (this.walletList.length === 0) {
+        this.activeWallet = this.walletManager.getActiveMasterWallet();
+        if (!this.activeWallet) {
             this.native.setRootRouter('/wallet/launcher');
             const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'wallet.exit');
             if (toCreateWallet) {
@@ -139,7 +139,7 @@ export class IntentService {
             };
         }
 
-        let intentRequiresWalletSelection = true; // User must select a walelt first before doing the real action
+        // let intentRequiresWalletSelection = true; // User must select a walelt first before doing the real action
         let navigationState = {};
         switch (this.getShortAction(intent.action)) {
             case 'crmembervote':
@@ -197,16 +197,17 @@ export class IntentService {
                 this.coinTransferService.payloadParam = intent.params.payload.params[0];
                 // this.coinTransferService.amount = intent.params.amount;
 
-                if (this.coinTransferService.payloadParam.from) {
-                    Logger.log("wallet", "Auto-selecting wallet with ETH address "+this.coinTransferService.payloadParam.from+" as requested by the 'from' field");
+                // To Remove: All wallet has ETHSC.
+                // if (this.coinTransferService.payloadParam.from) {
+                //     Logger.log("wallet", "Auto-selecting wallet with ETH address "+this.coinTransferService.payloadParam.from+" as requested by the 'from' field");
 
                     // If the "from" address is set, this means the received raw transaction is already
                     // for a specific account. In this case we auto-select the related wallet without asking user.
-                    let escWallet: MasterWallet = this.walletManager.findMasterWalletBySubWalletID(StandardCoinName.ETHSC);
-                    this.coinTransferService.masterWalletId = escWallet.id;
-                    this.coinTransferService.walletInfo = escWallet.account;
-                    intentRequiresWalletSelection = false;
-                }
+                    // let escWallet: MasterWallet = this.walletManager.findMasterWalletBySubWalletID(StandardCoinName.ETHSC);
+                    // this.coinTransferService.masterWalletId = this.activeWallet.id;
+                    // this.coinTransferService.walletInfo = this.activeWallet.account;
+                    // intentRequiresWalletSelection = false;
+                // }
 
                 break;
 
@@ -248,19 +249,14 @@ export class IntentService {
                 return;
         }
 
-        if (intentRequiresWalletSelection) {
-            if (this.walletList.length === 1) {
-                const masterWallet = this.walletList[0];
-                this.coinTransferService.masterWalletId = masterWallet.id;
-                this.coinTransferService.walletInfo = masterWallet.account;
-                this.native.setRootRouter(this.nextScreen, navigationState);
-            } else {
-                this.native.setRootRouter('/wallet/intents/select-subwallet', {...navigationState, nextScreen: this.nextScreen});
-            }
-        }
-        else {
+        // if (intentRequiresWalletSelection) {
+            this.coinTransferService.masterWalletId = this.activeWallet.id;
+            this.coinTransferService.walletInfo = this.activeWallet.account;
             this.native.setRootRouter(this.nextScreen, navigationState);
-        }
+        // }
+        // else {
+        //     this.native.setRootRouter(this.nextScreen, navigationState);
+        // }
     }
 
     handleAddCoinIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
@@ -282,20 +278,19 @@ export class IntentService {
             intentId: intent.intentId
         };
         this.walletAccessService.requestFields = intent.params.reqfields || intent.params;
-        if (this.walletList.length === 1) {
-            const masterWallet = this.walletList[0];
-            this.walletAccessService.masterWalletId = masterWallet.id;
+        // if (this.walletList.length === 1) {
+            this.walletAccessService.masterWalletId = this.activeWallet.id;
             this.native.setRootRouter('/wallet/intents/access', { rootPage: true});
-        } else {
-            this.native.setRootRouter(
-                '/wallet/wallet-manager',
-                {
-                    forIntent: true,
-                    intent: 'access',
-                    intentParams: intent.params
-                }
-            );
-        }
+        // } else {
+        //     this.native.setRootRouter(
+        //         '/wallet/wallet-manager',
+        //         {
+        //             forIntent: true,
+        //             intent: 'access',
+        //             intentParams: intent.params
+        //         }
+        //     );
+        // }
     }
 
     private async handleVoteAgainstProposalIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {

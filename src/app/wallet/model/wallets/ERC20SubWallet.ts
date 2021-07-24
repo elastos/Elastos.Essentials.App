@@ -394,8 +394,6 @@ export class ERC20SubWallet extends SubWallet {
               const txid = await this.publishTransaction(signedTx);
               Logger.log('wallet', "Published transaction id:", txid);
 
-              this.masterWallet.walletManager.setRecentWalletId(this.masterWallet.id);
-
               await this.masterWallet.walletManager.native.hideLoading();
 
               if (Util.isEmptyObject(transfer.action)) {

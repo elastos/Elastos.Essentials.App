@@ -50,19 +50,6 @@ import { WalletConfig } from '../model/WalletConfig';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 
 
-class TransactionMapEntry {
-    Code: number = null;
-    Reason: string = null;
-    WalletID: string = null;
-    ChainID: string = null;
-    Status: string = null;
-    lock = false;
-}
-
-type TransactionMap = {
-    [k: string]: TransactionMapEntry;
-};
-
 class SubwalletTransactionStatus {
   private subwalletSubjects = new Map<string, BehaviorSubject<number>>();
 
@@ -88,7 +75,7 @@ export enum WalletStateOperation {
     // Wallet just became active (selected as the active wallet by the user)
     BECAME_ACTIVE
 }
-
+// TODO: replace this with activeMasterWallet?
 export type WalletStateChange = {
     wallet: MasterWallet;
     operation: WalletStateOperation;
@@ -99,6 +86,8 @@ export type WalletStateChange = {
 })
 export class WalletManager {
     public static instance: WalletManager = null;
+
+    public activeMasterWalletId = null;
 
     public masterWallets: {
         [index: string]: MasterWallet
@@ -113,6 +102,7 @@ export class WalletManager {
 
     private networkTemplate: string;
 
+    public activeMasterWallet = new BehaviorSubject<string>(null);
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
     public walletStateChanges = new Subject<WalletStateChange>(); // Whenever a master wallet becomes created, deleted or active
 
@@ -257,6 +247,9 @@ export class WalletManager {
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
                 /* await  */void this.masterWallets[masterId].updateERCTokenList(this.networkTemplate);
             }
+
+            this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();
+            this.activeMasterWallet.next(this.activeMasterWalletId);
         } catch (error) {
             Logger.error('wallet', 'initWallets error:', error);
             return false;
@@ -280,9 +273,21 @@ export class WalletManager {
         }
     }
 
-    // TODO: delete it, we do not use active wallet
-    public async setRecentWalletId(id): Promise<void> {
-        await this.localStorage.saveCurMasterId({ masterId: id });
+    public getActiveMasterWallet() {
+        if (this.activeMasterWalletId) {
+          return this.masterWallets[this.activeMasterWalletId];
+        } else {
+          return null;
+        }
+    }
+
+    public async setActiveMasterWallet(masterId: WalletID) {
+      Logger.log('wallet', 'setActiveMasterWallet ', masterId);
+      if (masterId && (this.masterWallets[masterId])) {
+          this.activeMasterWalletId = masterId;
+          await this.localStorage.saveCurMasterId({ masterId: masterId });
+          this.activeMasterWallet.next(this.activeMasterWalletId);
+      }
     }
 
     public getMasterWallet(masterId: WalletID): MasterWallet {
@@ -428,7 +433,7 @@ export class WalletManager {
         // Save state to local storage
         await this.saveMasterWallet(this.masterWallets[id]);
 
-        await this.setRecentWalletId(id);
+        await this.setActiveMasterWallet(id);
 
         // Notify listeners
         this.walletStateChanges.next({
@@ -464,9 +469,11 @@ export class WalletManager {
         });
 
         if (Object.values(this.masterWallets).length > 0) {
-
+            let walletList = this.getWalletsList();
+            await this.setActiveMasterWallet(walletList[0].id);
             this.native.setRootRouter("/wallet/wallet-home");
         } else {
+            await this.setActiveMasterWallet(null);
             this.goToLauncherScreen();
         }
     }
