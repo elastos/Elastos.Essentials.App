@@ -73,6 +73,7 @@ export class MyProfilePage {
   private credentialaddedSubscription: Subscription = null;
   private promptpublishdidSubscription: Subscription = null;
   private modifiedCredentialsSubscription: Subscription = null;
+  private avatarSubscription: Subscription = null;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -136,6 +137,10 @@ export class MyProfilePage {
         Logger.log("identity", "Credentials have been modified, comparing local credentials with document ones");
       });
     }); */
+
+    this.avatarSubscription = this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
+      this.avatarDataUrl = dataUrl;
+    });
   }
 
   unsubscribe(subscription: Subscription) {
@@ -153,6 +158,7 @@ export class MyProfilePage {
     this.unsubscribe(this.credentialaddedSubscription);
     this.unsubscribe(this.promptpublishdidSubscription);
     this.unsubscribe(this.modifiedCredentialsSubscription);
+    this.unsubscribe(this.avatarSubscription);
   }
 
   init(publishAvatar?: boolean) {
@@ -178,11 +184,6 @@ export class MyProfilePage {
 
       this.buildDetailEntries();
       this.buildCredentialEntries(publishAvatar);
-
-      this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
-        //console.log("DEBUG MYPROFILE AVATAR DATA URL CB", dataUrl)
-        this.avatarDataUrl = dataUrl;
-      });
     } */
   }
 
