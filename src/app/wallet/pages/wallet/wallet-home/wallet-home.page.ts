@@ -98,6 +98,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }, */
     ];
 
+    public showWalletSelection = false;
+
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -198,6 +200,22 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     goSelectMasterWallet() {
       this.native.go("/wallet/wallet-manager");
+    }
+
+    public getPotentialActiveWallets(): MasterWallet[] {
+        return this.walletManager.getWalletsList();
+    }
+
+    /**
+     * Shows or hides the active wallet selection UI.
+     */
+    public toggleActiveWalletSelection() {
+        this.showWalletSelection = !this.showWalletSelection;
+        this.showNetworkOptions = false;
+    }
+
+    public selectActiveWallet(wallet: MasterWallet) {
+        this.walletManager.setActiveMasterWallet(wallet.id);
     }
 
     async updateCurrentWalletInfo() {
