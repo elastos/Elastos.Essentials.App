@@ -200,9 +200,11 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public getTransactionByHash(hash: string) : EthTransaction {
-      let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
-      if (existingIndex >= 0) {
-        return this.transactions.txhistory[existingIndex] as EthTransaction;
+      if (this.transactions && this.transactions.txhistory) {
+        let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
+        if (existingIndex >= 0) {
+          return this.transactions.txhistory[existingIndex] as EthTransaction;
+        }
       }
       return null;
     }
