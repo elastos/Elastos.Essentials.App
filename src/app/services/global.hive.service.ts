@@ -438,9 +438,9 @@ export class GlobalHiveService extends GlobalService {
         let txId = directCallResult["download"]["transaction_id"];
         //console.log("DOWNLOAD TX ID:", txId);
         let reader = await activeVault.getScripting().downloadFile(txId); */
-        let blob: any = await reader.readAll();
+        let blob: Uint8Array = await reader.readAll();
 
-        //console.log("DEBUG DOWNLOADED BLOB:", blob);
+        console.log("DEBUG DOWNLOADED BLOB:", blob);
 
         resolve(Buffer.from(blob));
       }
