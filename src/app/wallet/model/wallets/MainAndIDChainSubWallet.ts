@@ -93,6 +93,10 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         transactionInfo.amount = new BigNumber(transaction.value, 10);//.dividedBy(Config.SELAAsBigNumber);
         transactionInfo.txid = transaction.txid;
 
+        let senderAddresses = this.getSenderAddress(transaction);
+        // TODO: Should show all the sender address.
+        transactionInfo.from = senderAddresses ? senderAddresses[0] : null;
+
         if (transaction.type === TransactionDirection.RECEIVED) {
             transactionInfo.type = TransactionType.RECEIVED;
             transactionInfo.symbol = '+';
@@ -115,6 +119,21 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         }
 
         return transactionInfo;
+    }
+
+    private getSenderAddress(transaction: TransactionHistory): string[] {
+      if (transaction.type === TransactionDirection.RECEIVED) {
+        if (!transaction.inputs) {
+          return null;
+        }
+        let senderAddress = [];
+        for (let i = 0, len = transaction.inputs.length; i < len; i++) {
+          senderAddress.push(transaction.inputs[i])
+        }
+        return senderAddress.length > 0 ? senderAddress : null;
+      } else {
+        return null;
+      }
     }
 
     public async update() {

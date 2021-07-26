@@ -55,7 +55,8 @@ export class CoinTxInfoPage implements OnInit {
     // Other Values
     public payFee: number = null;
     // public payType: string = '';
-    public targetAddress = '';
+    public targetAddress = null;
+    public fromAddress = null;
 
     // Show the ERC20 Token detail in ETHSC transaction.
     public isERC20TokenTransactionInETHSC = false;
@@ -108,6 +109,7 @@ export class CoinTxInfoPage implements OnInit {
             this.memo = this.transactionInfo.memo;
             this.height = this.transactionInfo.height;
             this.targetAddress = this.transactionInfo.to;
+            this.fromAddress = this.transactionInfo.from;
 
             this.getTransactionDetails();
         }
@@ -151,20 +153,19 @@ export class CoinTxInfoPage implements OnInit {
                 } else if (this.direction === TransactionDirection.RECEIVED) {
                     if (this.transactionInfo.isCrossChain === true) {
                         // TODO: We can't get the real address for cross chain transafer.
-                        this.targetAddress = null;
-                    } else {
-                        this.targetAddress = transaction.from;
+                        this.fromAddress = null;
                     }
                 }
             } else {
+                // TODO: We can remove invalid transaction when get the transactions list?
                 // For erc20, we use getTransactionDetails to check whether the transaction is valid.
                 if (this.status !== TransactionStatus.CONFIRMED) {
                   const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 }
 
-                if (this.direction === TransactionDirection.RECEIVED) {
-                    this.targetAddress = this.transactionInfo.from;
-                }
+                // if (this.direction === TransactionDirection.RECEIVED) {
+                //     this.fromAddress = this.transactionInfo.from;
+                // }
             }
         }
 
@@ -279,22 +280,26 @@ export class CoinTxInfoPage implements OnInit {
                 },
             );
         }
-        else { // Sending address
-            if (this.targetAddress) {
+        else { // Receving or move transaction
+            // Sending address
+            if (this.fromAddress) {
               // TODO: We should show all the inputs and outputs for ELA main chain.
-              if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
+              this.txDetails.unshift(
+                  {
+                      type: 'address',
+                      title: 'wallet.tx-info-sender-address',
+                      value: this.fromAddress,
+                      show: true,
+                  })
+            }
+
+            if (this.targetAddress) {
+              // Only show the receiving address for multiable address wallet.
+              if (((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) && !this.masterWallet.account.SingleAddress) {
                 this.txDetails.unshift(
                     {
                         type: 'address',
                         title: 'wallet.tx-info-receiver-address',
-                        value: this.targetAddress,
-                        show: true,
-                    })
-              } else {
-                this.txDetails.unshift(
-                    {
-                        type: 'address',
-                        title: 'wallet.tx-info-sender-address',
                         value: this.targetAddress,
                         show: true,
                     })

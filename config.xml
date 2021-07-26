@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android-versionCode="20100" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.1.0.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
         Elastos essentials
@@ -33,6 +33,8 @@
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
     <preference name="AndroidXEnabled" value="true" />
     <platform name="android">
+        <preference name="android-targetSdkVersion" value="30" />
+        <preference name="android-minSdkVersion" value="24" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
             <manifest xmlns:tools="http://schemas.android.com/tools" />
         </edit-config>
@@ -194,12 +196,7 @@
         <splash height="1792" src="resources/ios/splash/Default-1792h~iphone.png" width="828" />
         <splash height="828" src="resources/ios/splash/Default-Landscape-1792h~iphone.png" width="1792" />
     </platform>
-    <hook src="scripts/apply_patches.js" type="after_platform_add" />
     <hook src="scripts/download_3rdparty.js" type="after_platform_add" />
     <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
-    <allow-navigation href="http://0.0.0.0:8100" sessionid="0a4ae993" />
-    <allow-navigation href="http://192.168.8.214:8100" sessionid="02508576" />
-    <allow-navigation href="http://192.168.31.114:8100" sessionid="3e677180" />
-    <allow-navigation href="http://192.168.1.7:8100" sessionid="83f6b0e2" />
 </widget>
