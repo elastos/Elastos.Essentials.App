@@ -129,7 +129,7 @@
                         <span class="ela">  {{ currencyService.selectedCurrency.symbol }}</span>
                     </h4>
                 </div>
-                <ion-row class="change-wallet" (click)="toggleActiveWalletSelection()">
+                <ion-row class="change-wallet" (click)="toggleActiveWalletSelection()" *ngIf="getPotentialActiveWallets().length > 1">
                     <ion-col class="change-wallet-col">
                         <img src="assets/wallet/icons/change-wallet.svg">
                         <span class="change">{{ 'wallet.change-wallet' | translate }}</span>
