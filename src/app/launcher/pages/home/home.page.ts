@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ToastController, PopoverController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -68,6 +68,7 @@ export class HomePage implements OnInit {
     public didService: DIDManagerService,
     private nav: GlobalNavService,
     private modalCtrl: ModalController,
+    private zone: NgZone,
     private appBackGroundService: GlobalAppBackgroundService,
     private walletService: WalletManager,
     private globalNetworksService: GlobalNetworksService,
@@ -163,8 +164,10 @@ export class HomePage implements OnInit {
     });
 
     this.walletConnectSub = this.globalWalletConnectService.walletConnectSessionsStatus.subscribe(connectors => {
-      this.walletConnectConnectors = Array.from(connectors.values());
-      Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors);
+      this.zone.run(() => {
+        Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors);
+        this.walletConnectConnectors = Array.from(connectors.values());
+      });
     });
   }
 
