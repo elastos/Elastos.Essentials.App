@@ -440,7 +440,7 @@ export class GlobalHiveService extends GlobalService {
         let reader = await activeVault.getScripting().downloadFile(txId); */
         let blob: any = await reader.readAll();
 
-        console.log("DEBUG DOWNLOADED BLOB:", blob);
+        //console.log("DEBUG DOWNLOADED BLOB:", blob);
 
         resolve(Buffer.from(blob));
       }

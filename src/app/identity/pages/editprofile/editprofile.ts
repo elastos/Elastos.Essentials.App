@@ -99,7 +99,7 @@ export class EditProfilePage {
     }
 
     this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
-      console.log("DEBUG GOT AVATAR DATA URL IN EDIT PROFILE", this.avatarDataUrl)
+      //console.log("DEBUG GOT AVATAR DATA URL IN EDIT PROFILE", this.avatarDataUrl)
       this.avatarDataUrl = dataUrl;
     });
   }

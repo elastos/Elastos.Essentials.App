@@ -128,13 +128,14 @@ export class FriendsService extends GlobalService {
   /**
    * Adds a few default contacts to the contacts list, so that user feels he is not alone.
    */
-  private async addDefaultContacts(): Promise<void> {
+  private addDefaultContacts(): Promise<void> {
     // Show a loader - this may take a while
-    void this.native.showLoading(this.translate.instant('common.please-wait'));
     for (let contactDID of defaultContacts) {
-      await this.resolveDIDDocument(contactDID, false, null, false);
+      // Don't await to resovle each contact  one by one. This may work in parrallel and not
+      // block the boot sequence.
+      void this.resolveDIDDocument(contactDID, false, null, false);
     }
-    void this.native.hideLoading();
+    return;
   }
 
   /******************************

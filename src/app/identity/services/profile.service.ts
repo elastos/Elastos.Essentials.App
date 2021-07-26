@@ -723,7 +723,7 @@ export class ProfileService extends GlobalService {
           await this.didService.getActiveDidStore().synchronize(password);
           resolve();
         },
-        () => { 
+        () => {
           resolve();
         }
       );
@@ -919,10 +919,10 @@ export class ProfileService extends GlobalService {
           console.log("DEBUG PROFILE SERVICE SUBSCR")
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(async rawData => {
-            console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", rawData)
+            console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", /* rawData */)
             if (rawData) {
               let base64DataUrl = await rawImageToBase64DataUrl(rawData);
-              console.log("DEBUG BASE64 ENCODED", base64DataUrl);
+              console.log("DEBUG BASE64 ENCODED", /* base64DataUrl */);
               this.avatarDataUrlSubject.next(base64DataUrl);
             }
             else {

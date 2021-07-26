@@ -339,6 +339,7 @@ export class PrepareDIDPage {
         sleep(MIN_SLIDE_SHOW_DURATION_MS),
         this.identityService.signIn(this.identityService.identityBeingCreated.didSessionsEntry)
       ]);
+      Logger.log("didsessions", "Sign in complete");
       return true;
     }
     catch(e) {

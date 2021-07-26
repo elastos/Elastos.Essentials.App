@@ -26,7 +26,12 @@ export class Avatar {
                 let base64EncodedImage = rawImageToBase64(pictureBuffer);
                 let mimeType = await pictureMimeType(pictureBuffer);
 
-                Logger.log("contacts", "Building avatar from credential with hive url", hiveUrlAvatar, mimeType, base64EncodedImage);
+                if (!mimeType) {
+                    Logger.warn("contacts", "Unable to extract mime type from picture buffer. Returning no avatar picture.");
+                    return null;
+                }
+
+                Logger.log("contacts", "Building avatar from credential with hive url", hiveUrlAvatar, mimeType, /* base64EncodedImage */);
                 return {
                     contentType: mimeType,
                     data: base64EncodedImage,
