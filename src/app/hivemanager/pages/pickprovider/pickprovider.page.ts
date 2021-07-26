@@ -78,9 +78,9 @@ export class PickProviderPage implements OnInit {
     let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
     if (networkTemplate == MAINNET_TEMPLATE) {
       this.storageProviders =  [
-        { name: 'Trinity Tech Hive 1', vaultAddress: "https://hive1.trinity-tech.io" },
-        { name: 'Trinity Tech Hive 2', vaultAddress: "https://hive2.trinity-tech.io" },
-        //{ name: 'Trinity Tech Hive Mainnet TEST 3', vaultAddress: "https://hive-testnet3.trinity-tech.io" } // TMP
+        { name: 'Trinity-tech.io 1', vaultAddress: "https://hive1.trinity-tech.io" },
+        { name: 'Trinity-tech.io 2', vaultAddress: "https://hive2.trinity-tech.io" },
+        { name: 'Trinity-tech.cn 1', vaultAddress: "https://hive1.trinity-tech.cn" }
       ];
     }
     else if (networkTemplate == TESTNET_TEMPLATE) {

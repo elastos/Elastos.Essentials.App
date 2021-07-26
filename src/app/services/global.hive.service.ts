@@ -21,7 +21,7 @@ declare let hiveManager: HivePlugin.HiveManager;
 const availableHideNodeProviders: string[] = [
   "https://hive1.trinity-tech.io",
   "https://hive2.trinity-tech.io",
-  //"https://hive-testnet3.trinity-tech.io ", // TMP
+  "https://hive1.trinity-tech.cn"
 ];
 
 export enum VaultLinkStatusCheckState {
@@ -467,7 +467,7 @@ export class GlobalHiveService extends GlobalService {
   }
 
   /**
-   * From a DID Credential subject payload, tries to extract a avatar hive url. 
+   * From a DID Credential subject payload, tries to extract a avatar hive url.
    * Returns this url if possible, or null otherwise.
    */
   public getHiveAvatarUrlFromDIDAvatarCredential(avatarCredentialSubject: JSONObject): string {
