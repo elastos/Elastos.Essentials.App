@@ -62,6 +62,9 @@ export const fr = {
         "collectibles": "Collections",
         "networks": "Réseaux",
         "choose-active-network": "Choix du réseau actif",
+        "change-wallet": "Changer de portefeuille",
+        "wallets": "Portefeuilles",
+        "explore-your-wallets": "Explorez vos autres portefeuilles",
 
         /********************************************** General Settings Screen ***********************************************/
 

@@ -61,6 +61,9 @@ export const en = {
         "collectibles": "Collectibles",
         "networks": "Networks",
         "choose-active-network": "Choose your active network",
+        "change-wallet": "Change wallet",
+        "wallets": "Wallets",
+        "explore-your-wallets": "Explore your wallets",
 
         /********************************************** General Settings Screen ***********************************************/
 

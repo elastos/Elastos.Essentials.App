@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, ViewChild, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -36,14 +36,13 @@ import { UiService } from '../../../services/ui.service';
 import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
 import { IonSlides } from '@ionic/angular';
 import { LocalStorage } from '../../../services/storage.service';
-import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
 import { NFT } from 'src/app/wallet/model/nft';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -55,20 +54,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', {static: false}) slider: IonSlides;
 
-    public slideOpts = {
-        initialSlide: 0,
-        speed: 400,
-        centeredSlides: true,
-        slidesPerView: 1.1
-    };
-
     public masterWallet: MasterWallet = null;
-    public masterWalletList: MasterWallet[] = [];
-    public isSingleWallet = false;
-
+    private activeWalletSubscription: Subscription = null;
     private networkTemplate: string;
-
-    private walletChangedSubscription: Subscription = null;
 
     // Helpers
     public Util = Util;
@@ -110,11 +98,12 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }, */
     ];
 
+    public showWalletSelection = false;
+
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
-        private events: Events,
         public native: Native,
         public popupProvider: PopupProvider,
         public walletManager: WalletManager,
@@ -124,32 +113,18 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private prefs: WalletPrefsService,
         public theme: GlobalThemeService,
         public uiService: UiService,
-        private zone: NgZone,
         private storage: LocalStorage,
     ) {
     }
 
     ngOnInit() {
         this.showRefresher();
-        this.updateWallet();
         this.networkTemplate = this.prefs.getNetworkTemplate();
-
-        this.walletChangedSubscription = this.events.subscribe("masterwalletcount:changed", (result) => {
-            Logger.log("wallet", "masterwalletcount:changed event received result:", result);
-            this.zone.run(() => {
-                this.updateWallet();
-
-                if (result.action === 'add') {
-                    const index = this.masterWalletList.findIndex(e => e.id === result.walletId);
-                    if (index) {
-                        setTimeout(() => {
-                            if (this.slider)
-                                void this.slider.slideTo(index);
-                        }, 1000);
-                    }
-                }
-            });
-        });
+        this.activeWalletSubscription =  this.walletManager.activeMasterWallet.subscribe((masterId) => {
+          if (masterId) {
+            this.masterWallet = this.walletManager.getActiveMasterWallet()
+          }
+        })
     }
 
     showRefresher() {
@@ -158,21 +133,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }, 4000);
     }
 
-    updateWallet() {
-        this.masterWalletList = this.walletManager.getWalletsList();
-        switch (this.masterWalletList.length) {
-            case 1:
-                this.isSingleWallet = true;
-                this.masterWallet = this.masterWalletList[0];
-                break;
-            default:
-                this.isSingleWallet = false;
-                this.masterWallet = this.masterWalletList[0];
-        }
-    }
-
     ngOnDestroy() {
-        this.walletChangedSubscription.unsubscribe();
+        if (this.activeWalletSubscription) {
+          this.activeWalletSubscription.unsubscribe();
+          this.activeWalletSubscription = null;
+        }
     }
 
     ionViewWillEnter() {
@@ -233,18 +198,30 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.native.go("/wallet/coin", { masterWalletId, chainId });
     }
 
-    async updateCurrentWalletInfo() {
-        let curMasterWallet: MasterWallet = null;
-        if (this.isSingleWallet) {
-            curMasterWallet = this.masterWallet;
-        } else {
-            const index = await this.slider.getActiveIndex();
-            curMasterWallet = this.masterWalletList[index];
-        }
+    goSelectMasterWallet() {
+      this.native.go("/wallet/wallet-manager");
+    }
 
-        await curMasterWallet.update();
-        await curMasterWallet.updateERCTokenList(this.networkTemplate);
-        curMasterWallet.getSubWalletBalance(StandardCoinName.ELA);
+    public getPotentialActiveWallets(): MasterWallet[] {
+        return this.walletManager.getWalletsList();
+    }
+
+    /**
+     * Shows or hides the active wallet selection UI.
+     */
+    public toggleActiveWalletSelection() {
+        this.showWalletSelection = !this.showWalletSelection;
+        this.showNetworkOptions = false;
+    }
+
+    public selectActiveWallet(wallet: MasterWallet) {
+        this.walletManager.setActiveMasterWallet(wallet.id);
+    }
+
+    async updateCurrentWalletInfo() {
+        await this.masterWallet.update();
+        await this.masterWallet.updateERCTokenList(this.networkTemplate);
+        this.masterWallet.getSubWalletBalance(StandardCoinName.ELA);
         this.currencyService.fetch();
     }
 

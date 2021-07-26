@@ -10,7 +10,11 @@ import { GlobalStorageService } from './global.storage.service';
 import { GlobalNativeService } from './global.native.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { WalletManager } from '../wallet/services/wallet.service';
+import { MasterWallet } from '../wallet/model/wallets/MasterWallet';
+import { StandardCoinName } from '../wallet/model/Coin';
+import { ETHChainSubWallet } from '../wallet/model/wallets/ETHChainSubWallet';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +22,7 @@ import { BehaviorSubject } from 'rxjs';
 export class GlobalWalletConnectService extends GlobalService {
   private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
   private initiatingConnector: WalletConnect = null;
+  private activeWalletSubscription: Subscription = null;
 
   // Subject updated with the whole list of active sessions every time there is a change.
   public walletConnectSessionsStatus = new BehaviorSubject<Map<string, WalletConnect>>(new Map());
@@ -30,6 +35,7 @@ export class GlobalWalletConnectService extends GlobalService {
     private intent: GlobalIntentService,
     private intents: GlobalIntentService,
     private globalNetworksService: GlobalNetworksService,
+    private walletManager: WalletManager,
     private native: GlobalNativeService
   ) {
     super();
@@ -59,10 +65,30 @@ export class GlobalWalletConnectService extends GlobalService {
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // Re-activate existing sessions to reconnect to their wallet connect bridges.
     await this.restoreSessions();
+
+    this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe(async activeWalletId => {
+      Logger.log("walletconnect", "Updating active connectors with new active wallet information");
+      for (let c of Array.from(this.connectors.values())) {
+        c.updateSession({
+          chainId: c.chainId,
+          accounts: [await this.getAccountFromMasterWallet(this.walletManager.getMasterWallet(activeWalletId))]
+        })
+      }
+    });
+  }
+
+  /**
+   * Returns the eth account address associated with the given master wallet.
+   */
+  private getAccountFromMasterWallet(wallet: MasterWallet): Promise<string> {
+    let subwallet = wallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
+    return subwallet.createAddress();
   }
 
   public async onUserSignOut(): Promise<void> {
     await this.killAllSessions();
+
+    this.activeWalletSubscription.unsubscribe();
   }
 
   /* public async init(): Promise<void> {

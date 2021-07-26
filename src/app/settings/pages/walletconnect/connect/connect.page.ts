@@ -49,15 +49,15 @@ export class WalletConnectConnectPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.route.queryParams.subscribe(async params => {
       this.sessionRequest = params as any;
 
+      // Use only the active master wallet.
       this.ethAccounts = [];
-      let wallets = this.walletManager.getWalletsList();
-      for (let wallet of wallets) {
-        let subwallet = wallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
-        this.ethAccounts.push(await subwallet.createAddress());
-      }
+      let activeWallet = this.walletManager.getMasterWallet(this.walletManager.activeMasterWallet.value);
+      let subwallet = activeWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
+      this.ethAccounts.push(await subwallet.createAddress());
     });
   }
 
@@ -65,15 +65,16 @@ export class WalletConnectConnectPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-request'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
       // Close
       await this.walletConnect.rejectSession("Scanning again");
-      this.titleBar.globalNav.exitCurrentContext();
+      void this.titleBar.globalNav.exitCurrentContext();
     });
 
     // Catch android back key to reject the session
-    this.backSubscription = this.platform.backButton.subscribeWithPriority(0, (processNext) => {
-      this.walletConnect.rejectSession("Scanning again");
+    this.backSubscription = this.platform.backButton.subscribeWithPriority(0, async (processNext) => {
+      await this.walletConnect.rejectSession("Scanning again");
       processNext();
     });
   }
@@ -84,7 +85,7 @@ export class WalletConnectConnectPage implements OnInit {
 
   async openSession() {
     await this.walletConnect.acceptSessionRequest(this.sessionRequest.connectorKey, this.ethAccounts);
-    this.nav.exitCurrentContext();
+    await this.nav.exitCurrentContext();
 
     // Because for now we don't close Essentials after handling wallet connect requests, we simply
     // inform users to manually "alt tab" to return to the app they are coming from.

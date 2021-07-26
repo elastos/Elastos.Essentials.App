@@ -61,6 +61,9 @@ export const zh = {
         "collectibles": "收藏品",
         "networks": "网络",
         "choose-active-network": "选择网络",
+        "change-wallet": "Change wallet",
+        "wallets": "Wallets",
+        "explore-your-wallets": "Explore your wallets",
 
         /********************************************** General Settings Screen ***********************************************/
 

@@ -12,7 +12,6 @@ import { DIDManagerService } from '../../services/didmanager.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { NotificationsPage } from '../notifications/notifications.page';
@@ -201,13 +200,13 @@ export class HomePage implements OnInit {
   }
 
   private updateWidgetMainWallet() {
-    let wallets = this.walletService.getWalletsList();
+    let activeWallet = this.walletService.getActiveMasterWallet();
     // We need to have at least one existing wallet to display something.
-    if (wallets && wallets.length > 0) {
+    if (activeWallet) {
       // Simple widget for now: display the main balance of the first wallet we find.
-      this.mainWallet = wallets[0];
-      this.mainWalletName = wallets[0].name;
-      this.mainWalletELABalance = wallets[0].getDisplayBalance().toFixed(2);
+      this.mainWallet = activeWallet;
+      this.mainWalletName = activeWallet.name;
+      this.mainWalletELABalance = activeWallet.getDisplayBalance().toFixed(2);
     }
     else {
       this.mainWallet = null;
