@@ -35,7 +35,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -65,7 +65,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -88,7 +88,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -111,7 +111,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -140,7 +140,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -167,7 +167,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
 
@@ -185,7 +185,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible" (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
     </div>

@@ -710,15 +710,24 @@ export class ProfileService extends GlobalService {
     }
   }
 
-  public updateDIDDocument() {
-    void AuthService.instance.checkPasswordThenExecute(
-      async () => {
-        let password = AuthService.instance.getCurrentUserPassword();
-        await this.updateDIDDocumentFromSelection(password);
-        await this.didService.getActiveDidStore().synchronize(password);
-      },
-      () => { }
-    );
+  /**
+   * Returns a promise that resolves when the document update is fully completed or when the operation
+   * is cancelled.
+   */
+  public updateDIDDocument(): Promise<void> {
+    return new Promise((resolve) => {
+      void AuthService.instance.checkPasswordThenExecute(
+        async () => {
+          let password = AuthService.instance.getCurrentUserPassword();
+          await this.updateDIDDocumentFromSelection(password);
+          await this.didService.getActiveDidStore().synchronize(password);
+          resolve();
+        },
+        () => { 
+          resolve();
+        }
+      );
+    });
   }
 
   /**

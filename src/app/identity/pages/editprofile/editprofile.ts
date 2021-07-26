@@ -48,6 +48,7 @@ export class EditProfilePage {
   public credentials: VerifiableCredential[];
   private showSelectCountry = false;
   public avatarDataUrl: string = null;
+  public updatingVisibility = false; // Lock toggles while updating the document for a short while to avoid parrallel updates
 
   private selectCountrySubscription: Subscription = null;
   private showmenuSubscription: Subscription = null;
@@ -117,10 +118,12 @@ export class EditProfilePage {
     } */
   }
 
-  onVisibilityChange(e, entry: BasicCredentialEntry) {
+  async onVisibilityChange(e, entry: BasicCredentialEntry) {
+    this.updatingVisibility = true;
     entry.isVisible = e;
     this.profileService.setCredentialVisibility(entry.key, e);
-    this.profileService.updateDIDDocument();
+    await this.profileService.updateDIDDocument();
+    this.updatingVisibility = false;
   }
 
   showMenu() {

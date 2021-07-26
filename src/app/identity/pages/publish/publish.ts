@@ -32,6 +32,7 @@ export class PublishPage {
     _publishableCredentials: CredentialDisplayEntry[] = [];
     public unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
     private subscription: Subscription = null;
+    public updatingVisibility = false; // Lock toggles while updating the document for a short while to avoid parrallel updates
 
     constructor(
         public events: Events,
@@ -133,12 +134,13 @@ export class PublishPage {
         //   }
     }
 
-
-    onVisibilityChange(e, entry: CredentialDisplayEntry) {
+    async onVisibilityChange(e, entry: CredentialDisplayEntry) {
+        this.updatingVisibility = true;
         Logger.log('Identity', entry.credential.getId());
         Logger.log('Identity', entry.credential.getFragment());
         this.profileService.setCredentialVisibility(entry.credential.getFragment(), e);
-        this.profileService.updateDIDDocument();
+        await this.profileService.updateDIDDocument();
+        this.updatingVisibility = false;
     }
 
     getAvatar(entry: CredentialDisplayEntry): string {

@@ -51,6 +51,7 @@
                             <ion-toggle
                                 color="tertiary"
                                 [(ngModel)]="entry.isVisible" mode="ios"
+                                [disabled]="updatingVisibility"
                                 (ngModelChange)="onVisibilityChange($event, entry)">
                             </ion-toggle>
                         </ion-col>
