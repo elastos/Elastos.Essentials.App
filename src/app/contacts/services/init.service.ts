@@ -24,21 +24,22 @@ export class ContactsInitService extends GlobalService {
 
   public init(): Promise<void> {
     GlobalServiceManager.getInstance().registerService(this);
-
-    this.appService.init();
-    this.intentService.init();
     return;
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    await this.friendsService.init();
+    // Make sure to call intent service after friends services because contacts must be
+    // initialized before handling any intent that would modify contacts.
+    this.intentService.init();
   }
 
-  public async onUserSignOut(): Promise<void> {
-
+  public onUserSignOut(): Promise<void> {
+    this.intentService.stop();
+    return;
   }
 
   public async start() {
-    await this.friendsService.init();
 
     await this.globalNav.navigateTo('contacts', '/contacts/friends');
 

@@ -1,13 +1,15 @@
 import { Injectable, NgZone } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { FriendsService } from './friends.service';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class IntentService {
+  private intentSubscription: Subscription = null;
+
   constructor(
     private zone: NgZone,
     private friendsService: FriendsService,
@@ -17,10 +19,17 @@ export class IntentService {
   }
 
   init() {
-    this.intentService.intentListener.subscribe((receivedIntent)=>{
+    this.intentSubscription = this.intentService.intentListener.subscribe((receivedIntent)=>{
       if(receivedIntent)
         this.onReceiveIntent(receivedIntent);
     })
+  }
+
+  stop() {
+    if (this.intentSubscription) {
+      this.intentSubscription.unsubscribe();
+      this.intentSubscription = null;
+    }
   }
 
   onReceiveIntent(ret: EssentialsIntentPlugin.ReceivedIntent) {
@@ -30,21 +39,21 @@ export class IntentService {
       case "handlescannedcontent_did":
         Logger.log('contacts', 'handlescannedcontent_did intent', ret);
         this.zone.run(() => {
-          this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
+          void this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
           this.sendEmptyIntentRes();
         });
         break;
       case "https://contact.elastos.net/addfriend":
         Logger.log('contacts', 'addfriend intent', ret);
         this.zone.run(() => {
-          this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
+          void this.friendsService.addContactByIntent(ret.params.did, ret.params.carrier);
         });
         break;
       case "https://contact.elastos.net/viewfriendinvitation":
         Logger.log('contacts', 'viewfriendinvitation intent', ret);
         this.zone.run(() => {
           this.friendsService.contactNotifierInviationId = ret.params.invitationid;
-          this.friendsService.addContactByIntent(ret.params.did);
+          void this.friendsService.addContactByIntent(ret.params.did);
         });
         break;
       case "share":
@@ -103,7 +112,7 @@ export class IntentService {
 
   // Just notify the qrscanner to quit
   sendEmptyIntentRes() {
-    this.globalIntentService.sendIntentResponse(
+    void this.globalIntentService.sendIntentResponse(
       {},
       this.friendsService.managerService.handledIntentId
     );

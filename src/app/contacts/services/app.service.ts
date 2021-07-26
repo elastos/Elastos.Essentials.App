@@ -21,9 +21,6 @@ export class AppService {
   ) {
   }
 
-  init() {
-  }
-
   onTitleBarItemClicked(icon: TitleBarIcon) {
     if(this.popupService.qrModal) {
       this.popupService.qrModal.dismiss();
@@ -54,7 +51,7 @@ export class AppService {
   /********************************************************
   ************************ Misc ***************************
   *********************************************************/
-  deleteStorage() {
-    this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'contacts', 'visited', false)
+  async deleteStorage(): Promise<void> {
+    await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'contacts', 'visited', false)
   }
 }
