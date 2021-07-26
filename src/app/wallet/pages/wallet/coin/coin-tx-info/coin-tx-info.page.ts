@@ -121,17 +121,20 @@ export class CoinTxInfoPage implements OnInit {
 
             const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
-              // Address: sender address or receiver address
-              this.targetAddress = await (this.subWallet as MainAndIDChainSubWallet).getRealAddressInCrosschainTx(transaction);
+              if (this.direction === TransactionDirection.SENT) {
+                // Address: sender address or receiver address
+                this.targetAddress = await (this.subWallet as MainAndIDChainSubWallet).getRealAddressInCrosschainTx(transaction);
+                this.transactionInfo.confirmStatus = transaction.confirmations;
 
-              this.transactionInfo.confirmStatus = transaction.confirmations;
+                // If the fee is too small, then amount doesn't subtract fee
+                // if (transaction.Fee > 10000000000) {
+                //   this.amount = this.amount.minus(this.payFee);
+                // }
 
-              // If the fee is too small, then amount doesn't subtract fee
-              // if (transaction.Fee > 10000000000) {
-              //   this.amount = this.amount.minus(this.payFee);
-              // }
-
-              // Tx is ETH - Define amount, fee, total cost and address
+                // Tx is ETH - Define amount, fee, total cost and address
+              } else if (this.direction === TransactionDirection.RECEIVED) {
+                // TODO: show all the inputs and outputs.
+              }
             }
         } else {
             // Amount
@@ -278,6 +281,16 @@ export class CoinTxInfoPage implements OnInit {
         }
         else { // Sending address
             if (this.targetAddress) {
+              // TODO: We should show all the inputs and outputs for ELA main chain.
+              if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
+                this.txDetails.unshift(
+                    {
+                        type: 'address',
+                        title: 'wallet.tx-info-receiver-address',
+                        value: this.targetAddress,
+                        show: true,
+                    })
+              } else {
                 this.txDetails.unshift(
                     {
                         type: 'address',
@@ -285,6 +298,7 @@ export class CoinTxInfoPage implements OnInit {
                         value: this.targetAddress,
                         show: true,
                     })
+              }
             }
         }
     }
