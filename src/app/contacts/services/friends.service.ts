@@ -108,8 +108,8 @@ export class FriendsService extends GlobalService {
   }
 
   async init() {
-      await this.checkFirstVisitOperations();
       await this.getStoredContacts();
+      void this.checkFirstVisitOperations(); // Non blocking add of default contacts in background
       this.getContactNotifierContacts();
   }
 
@@ -128,13 +128,15 @@ export class FriendsService extends GlobalService {
   /**
    * Adds a few default contacts to the contacts list, so that user feels he is not alone.
    */
-  private addDefaultContacts(): Promise<void> {
+  private async addDefaultContacts(): Promise<void> {
     // Show a loader - this may take a while
+    Logger.log("contacts", "Adding default contacts", defaultContacts);
     for (let contactDID of defaultContacts) {
-      // Don't await to resovle each contact  one by one. This may work in parrallel and not
+      // Don't await to resolve each contact  one by one. This may work in parrallel and not
       // block the boot sequence.
-      void this.resolveDIDDocument(contactDID, false, null, false);
+      await this.resolveDIDDocument(contactDID, false, null, false);
     }
+    Logger.log("contacts", "Default contacts were added");
     return;
   }
 

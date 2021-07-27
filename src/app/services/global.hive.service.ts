@@ -136,7 +136,7 @@ export class GlobalHiveService extends GlobalService {
 
       Logger.log("GlobalHiveService", "Emitting client created");
       this.clientCreationSubject.next(this.client.value);
-      this.clientCreationSubject = null;
+      //this.clientCreationSubject = null; // NOTE: don't set the subject to null otherwise observers don't receive the event from the next() above. Weird - Maybe some garbage collection?
 
       return this.client.value;
     }
@@ -144,8 +144,14 @@ export class GlobalHiveService extends GlobalService {
       Logger.log("GlobalHiveService", "Waiting for another client creation request to complete");
 
       // Not the first call, just wait for client creation completion
-      this.client.next(await this.clientCreationSubject.toPromise());
-      return this.client.value;
+      return new Promise(resolve => {
+        let tempSub = this.clientCreationSubject.subscribe(pendingClient => {
+          Logger.log("GlobalHiveService", "Got pending hive client, now informing the listeners", pendingClient);
+          tempSub.unsubscribe();
+          this.client.next(pendingClient);
+          resolve(pendingClient);
+        });
+      });
     }
   }
 
@@ -428,6 +434,7 @@ export class GlobalHiveService extends GlobalService {
     return new Promise<Buffer>(async (resolve) => {
       try {
         let hiveClient = await this.getHiveClient();
+        Logger.log("GlobalHiveService", "Calling script url to download file", hiveScriptUrl);
         let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
 
         /* let activeVault = await this.getActiveVault();
@@ -438,11 +445,11 @@ export class GlobalHiveService extends GlobalService {
         let txId = directCallResult["download"]["transaction_id"];
         //console.log("DOWNLOAD TX ID:", txId);
         let reader = await activeVault.getScripting().downloadFile(txId); */
-        let blob: Uint8Array = await reader.readAll();
+        let rawData: Uint8Array = await reader.readAll();
 
-        console.log("DEBUG DOWNLOADED BLOB:", blob);
+        //console.log("DEBUG DOWNLOADED BLOB:", blob);
 
-        resolve(Buffer.from(blob));
+        resolve(Buffer.from(rawData));
       }
       catch (e) {
         // Can't download the asset
