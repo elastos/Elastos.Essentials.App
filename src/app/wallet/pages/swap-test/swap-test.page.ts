@@ -18,6 +18,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 
 const BIPS_BASE = JSBI.BigInt(10000) // Fixed, don't touch
 const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than this (price changed a lot between 2 blocks), transaction will be cancelled
@@ -89,9 +90,8 @@ export class SwapTestPage implements OnInit {
 
     constructor(public walletManager: WalletManager,
         private coinTransferService: CoinTransferService,
-        private translate: TranslateService,
         private storage: LocalStorage,
-        private prefs: GlobalPreferencesService,
+        private globalNetworksService: GlobalNetworksService,
         public native: Native) {
         void this.init();
     }
@@ -100,7 +100,8 @@ export class SwapTestPage implements OnInit {
     }
 
     async init() {
-        let currentMasterWalletId = await this.storage.getCurMasterId();
+        let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
+        let currentMasterWalletId = await this.storage.getCurMasterId(networkTemplate);
         Logger.log('wallet', "currentMasterWalletId", currentMasterWalletId);
         this.masterWallet = this.walletManager.getMasterWallet(currentMasterWalletId.masterId);
     }

@@ -160,17 +160,18 @@ export class WalletManager {
         try {
             // NetWork Type
             this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
+            let spvsdkNetwork = this.networkTemplate;
             let networkConfig = null;
             if (this.networkTemplate === "PrvNet") { // TODO - rework for network templates
               networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
             } else {
               networkConfig = WalletConfig.getNetConfig(this.networkTemplate);
               if (this.networkTemplate === "LRW") {
-                this.networkTemplate = "PrvNet";
+                spvsdkNetwork = "PrvNet";
               }
             }
             Logger.log('wallet', "Setting network to ", this.networkTemplate, networkConfig);
-            await this.spvBridge.setNetwork(this.networkTemplate, networkConfig);
+            await this.spvBridge.setNetwork(spvsdkNetwork, networkConfig);
             // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
@@ -250,6 +251,7 @@ export class WalletManager {
             }
 
             this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();
+            Logger.log('wallet', 'active master wallet id:', this.activeMasterWalletId)
             this.activeMasterWallet.next(this.activeMasterWalletId);
         } catch (error) {
             Logger.error('wallet', 'initWallets error:', error);
@@ -286,7 +288,7 @@ export class WalletManager {
       Logger.log('wallet', 'setActiveMasterWallet ', masterId);
       if (masterId && (this.masterWallets[masterId])) {
           this.activeMasterWalletId = masterId;
-          await this.localStorage.saveCurMasterId({ masterId: masterId });
+          await this.localStorage.saveCurMasterId(this.networkTemplate, { masterId: masterId });
           this.activeMasterWallet.next(this.activeMasterWalletId);
       }
     }
@@ -329,11 +331,18 @@ export class WalletManager {
     }
 
     public async getCurrentMasterIdFromStorage(): Promise<string> {
-        const data = await this.localStorage.getCurMasterId();
+        const data = await this.localStorage.getCurMasterId(this.networkTemplate);
         if (data && data["masterId"]) {
             return data["masterId"];
         } else {
-            return null;
+            // Compatible with older versions.
+            let walletList = this.getWalletsList();
+            if (walletList.length > 0) {
+              await this.setActiveMasterWallet(walletList[0].id);
+              return walletList[0].id;
+            } else {
+              return null;
+            }
         }
     }
 

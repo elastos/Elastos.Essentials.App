@@ -56,13 +56,13 @@ export class LocalStorage {
         func(await this.get(key));
     }
 
-    public saveCurMasterId(value) {
-        let key = "cur-masterId";
+    public saveCurMasterId(network: string, value) {
+        let key = network + "cur-masterId";
         return this.set(key, JSON.stringify(value));
     }
 
-    public async getCurMasterId(): Promise<any> {
-        return await this.get("cur-masterId");
+    public async getCurMasterId(network: string): Promise<any> {
+        return await this.get(network + "cur-masterId");
     }
 
     public saveMappingTable(obj) {
