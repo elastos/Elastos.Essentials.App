@@ -77,6 +77,7 @@ export class GlobalHiveService extends GlobalService {
     this.vaultLinkStatus = null;
     this.activeVault = null;
 
+    this.clientCreationSubject = null;
     if (this.client) {
       this.client.next(null);
     }
@@ -102,7 +103,6 @@ export class GlobalHiveService extends GlobalService {
   }
 
   async onUserSignOut(): Promise<void> {
-    this.client.next(null);
     await this.stop();
     return;
   }
@@ -447,9 +447,15 @@ export class GlobalHiveService extends GlobalService {
         let reader = await activeVault.getScripting().downloadFile(txId); */
         let rawData: Uint8Array = await reader.readAll();
 
-        //console.log("DEBUG DOWNLOADED BLOB:", blob);
-
-        resolve(Buffer.from(rawData));
+        if (!rawData || rawData.length == 0) {
+          Logger.warn("GlobalHiveService", "Got empty data while fetching hive script picture", hiveScriptUrl);
+          resolve(null);
+        }
+        else {
+          Logger.warn("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", rawData.length);
+          //console.log("DEBUG DOWNLOADED BLOB:", blob);
+          resolve(Buffer.from(rawData));
+        }
       }
       catch (e) {
         // Can't download the asset

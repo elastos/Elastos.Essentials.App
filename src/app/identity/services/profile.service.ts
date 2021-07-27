@@ -906,26 +906,29 @@ export class ProfileService extends GlobalService {
 
     let avatarCredential = this.getAvatarCredential();
     if (avatarCredential) {
-      console.log("DEBUG refreshAvatarUrl()", avatarCredential, avatarCredential.getSubject())
+      //console.log("DEBUG refreshAvatarUrl()", avatarCredential, avatarCredential.getSubject())
       if (avatarCredential.getSubject() && avatarCredential.getSubject().avatar && avatarCredential.getSubject().avatar.data) {
         //return "data:image/png;base64," + avatarCredential.getSubject().avatar.data;
         let avatarCacheKey = this.didService.getActiveDid().getDIDString() + "-avatar";
         let hiveAssetUrl: string = avatarCredential.getSubject().avatar.data;
 
-        console.log("DEBUG refreshAvatarUrl() hiveAssetUrl", avatarCacheKey, hiveAssetUrl)
+        //console.log("DEBUG refreshAvatarUrl() hiveAssetUrl", avatarCacheKey, hiveAssetUrl)
 
         if (hiveAssetUrl.startsWith("hive://")) {
+          Logger.log("identity", "Refreshing avatar from hive url", hiveAssetUrl);
           // Listen to user's hive cache avatar changes
-          console.log("DEBUG PROFILE SERVICE SUBSCR")
+          //console.log("DEBUG PROFILE SERVICE SUBSCR")
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           this.hiveCacheDataUrlSub = this.hiveCache.getAssetByUrl(avatarCacheKey, hiveAssetUrl).subscribe(async rawData => {
-            console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", /* rawData */)
+            //console.log("DEBUG HIVE CACHE CHANGED IN PROFILE SERVICE, NEXT", /* rawData */)
             if (rawData) {
+              Logger.log("identity", "Got raw avatar data from hive");
               let base64DataUrl = await rawImageToBase64DataUrl(rawData);
-              console.log("DEBUG BASE64 ENCODED", /* base64DataUrl */);
+              //console.log("DEBUG BASE64 ENCODED", /* base64DataUrl */);
               this.avatarDataUrlSubject.next(base64DataUrl);
             }
             else {
+              Logger.log("identity", "Got empty avatar data from hive");
               this.avatarDataUrlSubject.next(null);
             }
           });
