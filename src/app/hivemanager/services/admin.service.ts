@@ -6,6 +6,7 @@ import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalPublicationService } from 'src/app/services/global.publication.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
@@ -19,6 +20,7 @@ export class AdminService {
   constructor(
     private storage: GlobalStorageService,
     private globalIntentService: GlobalIntentService,
+    private globalPublicationService: GlobalPublicationService
   ) {}
 
   async init() {
@@ -155,28 +157,12 @@ export class AdminService {
   /**
    * Initiate a DID publication.
    */
-  public publishAdminDID(provider: ManagedProvider): Promise<void> {
-    return new Promise((resolve)=>{
-      didManager.initDidStore(provider.did.storeId, (payload: string, memo: string)=>{
-        Logger.log('HiveManager', "payload",payload)
-        Logger.log('HiveManager', "payload fixed",payload.toString());
-        this.sendDIDTransactionIntentRequest(payload.toString());
-      }, (didStore)=>{
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        didStore.loadDidDocument(provider.did.didString, async (didDocument)=>{
-          let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
-          didDocument.publish(passwordInfo.password, ()=>{
-            resolve();
-          });
-        });
-      });
-    });
-  }
-
-  private sendDIDTransactionIntentRequest(payload: string) {
-    Logger.log('HiveManager', "Sending didtransaction intent");
-    void  this.globalIntentService.sendIntent("https://wallet.elastos.net/didtransaction", {
-      didrequest: JSON.parse(payload)
-    });
+  public async publishAdminDID(provider: ManagedProvider): Promise<void> {
+    let passwordInfo = await passwordManager.getPasswordInfo("vaultprovideradmindid-"+provider.id) as PasswordManagerPlugin.GenericPasswordInfo;
+    await this.globalPublicationService.publishDIDFromStore(
+      provider.did.storeId,
+      passwordInfo.password,
+      provider.did.didString,
+      true);
   }
 }

@@ -356,8 +356,6 @@ export class FriendsService extends GlobalService {
         resolve();
       }, (err: any) => {
         Logger.error('contacts', "DIDDocument resolving error", err);
-        void this.native.didResolveErr(err.message);
-        void this.globalNav.navigateRoot('contacts', '/contacts/friends');
         resolve();
       });
     });
