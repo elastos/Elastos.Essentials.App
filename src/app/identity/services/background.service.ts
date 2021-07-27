@@ -54,7 +54,7 @@ export class BackgroundService extends GlobalService {
 
       // Wait a moment when Elastos Essentials starts, before starting a background sync.
       this.synchronizeTimeout = setTimeout(() => {
-        this.synchronizeActiveDIDAndRepeat();
+        void this.synchronizeActiveDIDAndRepeat();
       }, 30*1000); // 30 seconds
 
       // Notify expired DID and credentials
@@ -71,31 +71,20 @@ export class BackgroundService extends GlobalService {
     }
 
     // Synchronizes the active DID with the ID chain, to make sure we always have up to date information.
-    private synchronizeActiveDIDAndRepeat() {
+    private async synchronizeActiveDIDAndRepeat() {
       Logger.log("Identity", "Synchronizing current DID with ID chain");
 
-      void this.authService.checkPasswordThenExecute(async ()=>{
-        Logger.log("Identity", "Synchronization is starting");
-        try {
-          await this.didService.getActiveDidStore().synchronize(this.authService.getCurrentUserPassword());
-          Logger.log("Identity", "Synchronization ended");
-        }
-        catch (err) {
-          Logger.error("Identity", "Synchronization error:", err);
-        }
+      try {
+        await this.didService.getActiveDidStore().synchronize();
+        Logger.log("Identity", "Synchronization ended");
+      }
+      catch (err) {
+        Logger.error("Identity", "Synchronization error:", err);
+      }
 
-        this.synchronizeTimeout = setTimeout(() => {
-          this.synchronizeActiveDIDAndRepeat();
-        }, 30*60*1000); // Repeat after 30 minutes
-      }, () => {
-        // Operation cancelled
-        Logger.log("Identity", "Password operation cancelled");
-        void this.native.hideLoading();
-
-        this.synchronizeTimeout = setTimeout(()=>{
-          this.synchronizeActiveDIDAndRepeat();
-        }, 1*60*1000); // Retry after 1 minute
-      }, false);
+      this.synchronizeTimeout = setTimeout(() => {
+        void this.synchronizeActiveDIDAndRepeat();
+      }, 30*60*1000); // Repeat after 30 minutes
     }
 
     private async notifyExpiredCredentials()   {

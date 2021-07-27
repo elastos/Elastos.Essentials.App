@@ -720,7 +720,7 @@ export class ProfileService extends GlobalService {
         async () => {
           let password = AuthService.instance.getCurrentUserPassword();
           await this.updateDIDDocumentFromSelection(password);
-          await this.didService.getActiveDidStore().synchronize(password);
+          await this.didService.getActiveDidStore().synchronize();
           resolve();
         },
         () => {

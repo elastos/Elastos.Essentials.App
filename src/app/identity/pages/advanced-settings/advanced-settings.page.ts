@@ -34,23 +34,15 @@ export class AdvancedSettingsPage implements OnInit {
   }
 
   public async startSync() {
-    await this.authService.checkPasswordThenExecute(
-      async () => {
-        this.native.showLoading();
-        const res = await this.didService.activeDidStore.synchronize(
-          AuthService.instance.getCurrentUserPassword()
-        );
-        Logger.log('Identity', res);
-        this.events.publish('did:didchanged');
-        this.native.go("/identity/myprofile");
-        this.native.hideLoading();
-        this.native.toast_trans('identity.did-sync-success');
-      }, () => {
-        Logger.log('Identity', "Password operation cancelled");
-      },
-      true,
-      true
-    );
+    await this.native.showLoading();
+
+    const res = await this.didService.activeDidStore.synchronize();
+    this.events.publish('did:didchanged');
+
+    await this.native.hideLoading();
+    this.native.toast_trans('identity.did-sync-success');
+
+    await this.native.go("/identity/myprofile");
   }
 
 }

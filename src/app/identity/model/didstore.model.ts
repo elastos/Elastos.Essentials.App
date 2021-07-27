@@ -351,10 +351,10 @@ export class DIDStore {
         });
     }
 
-    synchronize(storepass): Promise<any> {
+    synchronize(): Promise<any> {
         return new Promise((resolve, reject) => {
             this.pluginDidStore.synchronize(
-                storepass,
+                null, // Not needed any more with DID 2.0
                 () => { resolve('didStore synchronize success') }, (err) => {
                     reject(DIDHelper.reworkedPluginException(err))
                 },
