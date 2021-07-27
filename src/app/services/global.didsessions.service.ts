@@ -139,6 +139,10 @@ export class GlobalDIDSessionsService {
       await internalManager.changeOldPath(entry.didStoreId, entry.didString);
       entry.didStoragePath = await internalManager.getDidStoragePath(entry.didStoreId, entry.didString);
       await this.saveDidSessionsToDisk();
+    } else {
+      // TODO: The NSHomeDirectory() will change after reinstall app in iOS.
+      // so we need to update the didStoragePath.
+      entry.didStoragePath = await internalManager.getDidStoragePath(entry.didStoreId, entry.didString);
     }
 
     this.signedInIdentity = entry;
