@@ -56,6 +56,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public masterWallet: MasterWallet = null;
     private activeWalletSubscription: Subscription = null;
+    private activeNetworkSubscription: Subscription = null;
     private networkTemplate: string;
 
     // Helpers
@@ -120,11 +121,17 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.networkTemplate = this.prefs.getNetworkTemplate();
-        this.activeWalletSubscription =  this.walletManager.activeMasterWallet.subscribe((masterId) => {
+        this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe((masterId) => {
           if (masterId) {
             this.masterWallet = this.walletManager.getActiveMasterWallet()
           }
-        })
+        });
+        this.activeNetworkSubscription = this.walletManager.activeNetwork.subscribe(networkName => {
+            this.currentNetwork = this.networkOptions.find(netOpt => {
+                // DIRTY TEMP WAITING FOR REAL MULTI NETWORK SUPPORT
+                return netOpt.name == networkName;
+            })
+        });
     }
 
     showRefresher() {
@@ -135,8 +142,13 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         if (this.activeWalletSubscription) {
-          this.activeWalletSubscription.unsubscribe();
-          this.activeWalletSubscription = null;
+            this.activeWalletSubscription.unsubscribe();
+            this.activeWalletSubscription = null;
+        }
+
+        if (this.activeNetworkSubscription) {
+            this.activeNetworkSubscription.unsubscribe();
+            this.activeNetworkSubscription = null;
         }
     }
 
@@ -215,7 +227,12 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public selectActiveWallet(wallet: MasterWallet) {
-        this.walletManager.setActiveMasterWallet(wallet.id);
+        void this.walletManager.setActiveMasterWallet(wallet.id);
+    }
+
+    public selectActiveNetwork(network: string) {
+        // TODO: Use network object, not string
+        void this.walletManager.setActiveNetwork(network);
     }
 
     async updateCurrentWalletInfo() {

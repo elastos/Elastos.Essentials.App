@@ -50,7 +50,7 @@ export class ERC20SubWallet extends SubWallet {
     constructor(masterWallet: MasterWallet, id: CoinID) {
         super(masterWallet, id, CoinType.ERC20);
 
-        this.initialize();
+        void this.initialize();
     }
 
     private async initialize() {
@@ -68,8 +68,8 @@ export class ERC20SubWallet extends SubWallet {
 
         await this.loadTransactionsFromCache();
 
-        setTimeout(async () => {
-          this.updateBalance();
+        setTimeout(() => {
+          void this.updateBalance();
         }, 3000);
     }
 
@@ -220,7 +220,7 @@ export class ERC20SubWallet extends SubWallet {
             return tx.contractAddress === contractAddress
           })
           this.transactions = {totalcount:allTx.length, txhistory:allTx};
-          this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
+          await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
         }
     }
 
@@ -228,7 +228,7 @@ export class ERC20SubWallet extends SubWallet {
       let result = await this.jsonRPCService.eth_getTransactionByHash(StandardCoinName.ETHSC, txid);
       if (!result) {
         // Remove error transaction.
-        this.removeInvalidTransaction(txid);
+        await this.removeInvalidTransaction(txid);
       }
       return result;
     }
@@ -316,7 +316,7 @@ export class ERC20SubWallet extends SubWallet {
         return null;
     }
 
-    public async createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
+    public createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
         return Promise.resolve([]);
     }
 
@@ -365,8 +365,9 @@ export class ERC20SubWallet extends SubWallet {
       return txid;
     }
 
-    public async signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
+    public signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
         Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve)=>{
             try {
               const password = await this.masterWallet.walletManager.openPayModal(transfer);
@@ -438,15 +439,15 @@ export class ERC20SubWallet extends SubWallet {
       return -1;
     }
 
-    public saveTransactions(transactionsList: EthTransaction[]) {
+    public async saveTransactions(transactionsList: EthTransaction[]): Promise<void> {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
       this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-      this.transactionsCache.save();
+      await this.transactionsCache.save();
     }
 
-    private removeInvalidTransaction(hash: string) {
+    private async removeInvalidTransaction(hash: string): Promise<void> {
       let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
       if (existingIndex >= 0) {
         Logger.warn('wallet', 'Find invalid transaction, remove it ', hash);
@@ -455,7 +456,7 @@ export class ERC20SubWallet extends SubWallet {
 
         this.transactionsCache.remove(hash);
         this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-        this.transactionsCache.save();
+        await this.transactionsCache.save();
       }
     }
 }

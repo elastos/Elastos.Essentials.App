@@ -41,7 +41,7 @@
             <ion-row
                 *ngFor="let network of networkOptions"
                 class="network-row" [class.selected-network]="network.id === currentNetwork.id"
-                (click)="currentNetwork = network"
+                (click)="selectActiveNetwork(network.name)"
             >
                 <ion-col size="10" class="left-col">
                     <img [src]="network.logo">

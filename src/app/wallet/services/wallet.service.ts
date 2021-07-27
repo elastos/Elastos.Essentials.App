@@ -105,6 +105,7 @@ export class WalletManager {
     public activeMasterWallet = new BehaviorSubject<string>(null);
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
     public walletStateChanges = new Subject<WalletStateChange>(); // Whenever a master wallet becomes created, deleted or active
+    public activeNetwork = new BehaviorSubject<string>("Elastos");
 
     public subwalletTransactionStatus = new SubwalletTransactionStatus();
 
@@ -301,6 +302,11 @@ export class WalletManager {
                 return w;
         }
         return null;
+    }
+
+    public setActiveNetwork(network: string) {
+        Logger.log("wallet", "Setting active network to", network);
+        this.activeNetwork.next(network);
     }
 
     public getWalletsList(): MasterWallet[] {

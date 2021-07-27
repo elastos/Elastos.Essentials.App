@@ -236,14 +236,17 @@ ion-content {
           .wallet-widget {
             border-radius: 7px;
             display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             justify-content: center;
-            align-items: center;
             padding: 8px;
+            line-height: 1.6;
 
-            span {
+            .active-wallet, .active-network {
               font-size: 11px;
               font-weight: 500;
               letter-spacing: 0.5px;
+              display: block;
             }
           }
 

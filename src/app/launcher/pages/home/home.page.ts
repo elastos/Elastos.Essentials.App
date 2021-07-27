@@ -40,12 +40,14 @@ export class HomePage implements OnInit {
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
   private walletStateSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
+  private activeNetworkSub: Subscription = null; // Subscription to wallet service to know when the active network (elastos, heco, bsc, etc) changes
   private vaultStatusSub: Subscription = null; // Subscription to vault link status event
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
 
   // Widget data
   private mainWallet: MasterWallet = null;
   public mainWalletName = "";
+  public activeNetworkName = "";
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {
@@ -145,6 +147,10 @@ export class HomePage implements OnInit {
       }
     });
 
+    this.activeNetworkSub = this.walletService.activeNetwork.subscribe(networkName => {
+      this.updateWidgetMainWallet();
+    });
+
     // Wait to know user's hive vault status to show the hive storage widget
     this.vaultStatusSub = this.globalHiveService.vaultStatus.subscribe((vaultStatus) => {
       if (vaultStatus && vaultStatus.publishedInfo && vaultStatus.publishedInfo.vaultAddress && vaultStatus.publishedInfo.activePricingPlan) {
@@ -184,6 +190,10 @@ export class HomePage implements OnInit {
       this.walletStateSub.unsubscribe();
       this.walletStateSub = null;
     }
+    if (this.activeNetworkSub) {
+      this.activeNetworkSub.unsubscribe();
+      this.activeNetworkSub = null;
+    }
     if (this.vaultStatusSub) {
       this.vaultStatusSub.unsubscribe();
       this.vaultStatusSub = null;
@@ -207,11 +217,13 @@ export class HomePage implements OnInit {
       this.mainWallet = activeWallet;
       this.mainWalletName = activeWallet.name;
       this.mainWalletELABalance = activeWallet.getDisplayBalance().toFixed(2);
+      this.activeNetworkName = this.walletService.activeNetwork.value;
     }
     else {
       this.mainWallet = null;
       this.mainWalletName = "";
       this.mainWalletELABalance = null;
+      this.activeNetworkName = "";
     }
   }
 
