@@ -14,7 +14,7 @@ export const zh = {
         'node-url': '请输入节点官网URL(必填)',
         'registration-confirm': '确认参选',
         'member-info': 'CR委员信息',
-        'crnode-manager': 'CR DPoS Node管理',
+        'crnode-manager': 'CR DPoS 节点管理',
         'registration-manager': '参选管理',
     }
 
