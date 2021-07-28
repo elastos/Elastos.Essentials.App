@@ -14,6 +14,7 @@ import { WalletManager } from 'src/app/wallet/services/wallet.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { Util } from 'src/app/model/util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Config } from 'src/app/wallet/config/Config';
 
 
 export type CreateSuggestionCommand = CRWebsiteCommand & {
@@ -49,6 +50,7 @@ export class CreateSuggestionPage {
     public signingAndSendingSuggestionResponse = false;
     public creationDate: string = "";
     public buggetAmount: number = 0;
+    public Config = Config;
 
     constructor(
         private proposalService: ProposalService,

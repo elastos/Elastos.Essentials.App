@@ -49,7 +49,7 @@
                         <tr *ngFor='let budget of createProposalCommand.data.budgets'>
                             <td>{{ 'crproposalvoting.' + budget.type | translate }}</td>
                             <td>{{ budget.stage }}</td>
-                            <td>{{ budget.amount }}</td>
+                            <td>{{ budget.amount / Config.SELA }}</td>
                         </tr>
                     </table>
                     <!-- <h4>View Attachment</h4> -->

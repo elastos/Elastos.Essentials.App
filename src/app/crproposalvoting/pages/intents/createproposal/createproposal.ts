@@ -16,6 +16,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { App } from 'src/app/model/app.enum';
+import { Config } from 'src/app/wallet/config/Config';
 
 
 export type CreateProposalCommand = CRWebsiteCommand & {
@@ -54,6 +55,7 @@ export class CreateProposalPage {
     public signingAndSendingProposalResponse = false;
     public creationDate: string = "";
     public buggetAmount: number = 0;
+    public Config = Config;
 
     constructor(
         private proposalService: ProposalService,
