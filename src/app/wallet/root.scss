@@ -48,7 +48,7 @@ ion-footer {
 .card-row {
     position: relative;
     border-radius: 20px;
-    padding: 25px 20px 20px;
+    padding: 5px 10px 10px;
     margin-bottom: 32px;
     background-repeat: no-repeat;
     background-size: cover;
@@ -60,7 +60,7 @@ ion-footer {
         align-items: flex-start;
 
         .top-row {
-            padding: 0;
+            padding: 20px 10px 10px;
             margin-bottom: 7.5px;
 
             ion-col {
