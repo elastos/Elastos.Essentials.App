@@ -18,6 +18,7 @@ import { Util } from 'src/app/model/util';
 import { App } from 'src/app/model/app.enum';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { PopupProvider } from 'src/app/services/global.popup.service';
+import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/Transaction';
 
 
 export type DPoSRegistrationInfo = {
@@ -34,6 +35,7 @@ export type DPoSRegistrationInfo = {
     state: string;
     url?: string;
     votes?: string;
+    txConfirm?: boolean; // For after register and update info, the transaction don't confirm
 }
 
 @Injectable({
@@ -225,13 +227,13 @@ export class NodesService {
     async fetchNodes() {
         let ownerPublicKey = await this.walletManager.spvBridge.getOwnerPublicKey(this.voteService.masterWalletId, StandardCoinName.ELA);
         this.dposInfo = {
-            // nickname: "test",
-            // location: 86,
-            // url: 'http://test.com',
+            nickname: "test",
+            location: 86,
+            url: 'http://test.com',
 
             state: "Unregistered",
             nodepublickey: ownerPublicKey,
-            ownerpublickey: ownerPublicKey
+            ownerpublickey: ownerPublicKey,
         };
 
         //Get ower dpos info
@@ -272,6 +274,23 @@ export class NodesService {
             Logger.error('dposvoting', 'fetchNodes error:', err);
         }
 
+        this.dposInfo.txConfirm = true;
+        await this.voteService.sourceSubwallet.getTransactionByRPC();
+        let txhistory = this.voteService.sourceSubwallet.transactions.txhistory;
+        for (let i = 0; i < txhistory.length; i++) {
+            if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+                if (this.dposInfo.state == 'Unregistered') {
+                    if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {
+                        this.dposInfo.txConfirm = false;
+                        break;
+                    }
+                }
+                else if (txhistory[i].txtype == RawTransactionType.UpdateProducer) {
+                    this.dposInfo.txConfirm = false;
+                    break;
+                }
+            }
+        }
     }
 
     async getConfirmCount(txid: string): Promise<number> {

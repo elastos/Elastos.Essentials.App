@@ -19,6 +19,7 @@ import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/dposvoting/services/nodes.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 type DPoSTransactionInfo = {
     Status?: string;
@@ -85,6 +86,7 @@ export class DPosUnRegistrationPage implements OnInit {
         private globalElastosAPIService: GlobalElastosAPIService,
         private globalNav: GlobalNavService,
         public nodesService: NodesService,
+        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -101,6 +103,11 @@ export class DPosUnRegistrationPage implements OnInit {
         // this.titleBar.setNavigationMode(null);
 
         this.dposInfo = this.nodesService.dposInfo;
+        if (this.nodesService.dposInfo.state = 'Pending') {
+            await this.nodesService.fetchNodes();
+            this.dposInfo = this.nodesService.dposInfo;
+        }
+
         let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
         const txRawList = await this.walletRPCService.getTransactionsByAddress(StandardCoinName.ELA, [depositAddress],
             this.TRANSACTION_LIMIT);
@@ -125,7 +132,7 @@ export class DPosUnRegistrationPage implements OnInit {
                 this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT }); // Replace ela logo with close icon
                     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-                        this.globalNav.navigateTo(App.DPOS_VOTING, '/dposregistration/registration');
+                        await this.goToUpdate();
                 });
                 break;
 
@@ -151,6 +158,15 @@ export class DPosUnRegistrationPage implements OnInit {
                 this.titleBar.setTitle(this.translate.instant('dposregistration.return'));
                 break;
         }
+    }
+
+    async goToUpdate() {
+        if (!this.nodesService.dposInfo.txConfirm) {
+            this.globalNative.genericToast('dposregistration.text-update-no-confirm');
+            return;
+        }
+
+        this.globalNav.navigateTo(App.DPOS_VOTING, '/dposregistration/registration');
     }
 
     async getDepositcoin() {

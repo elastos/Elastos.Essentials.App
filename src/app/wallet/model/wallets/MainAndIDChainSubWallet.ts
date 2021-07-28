@@ -405,7 +405,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             this.id,
             JSON.stringify(utxo),
             payload,
-            amount,
+            amount.toString(),
             '10000',
             memo
         );
@@ -462,7 +462,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             this.id,
             JSON.stringify(utxo),
             payload,
-            amount,
+            amount.toString(),
             '10000',
             memo
         );

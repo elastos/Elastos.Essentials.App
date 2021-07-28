@@ -16,6 +16,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { App } from 'src/app/model/app.enum';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { PopupProvider } from 'src/app/services/global.popup.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -53,7 +54,12 @@ export class VotePage implements OnInit {
         public voteService: VoteService,
         public theme: GlobalThemeService,
         public popupProvider: PopupProvider,
+        private router: Router,
     ) {
+        const navigation = this.router.getCurrentNavigation();
+        if (navigation.extras.state && navigation.extras.state.refreash) {
+            this.nodesService.init();
+        }
     }
 
     ngOnInit() {
@@ -85,6 +91,11 @@ export class VotePage implements OnInit {
     }
 
     async goToRegistration() {
+        if (!this.nodesService.dposInfo.txConfirm) {
+            this.globalNative.genericToast('dposregistration.text-registration-no-confirm');
+            return;
+        }
+
         if (!await this.nodesService.checkBalanceForRegDposNode()) {
             return;
         }
@@ -133,7 +144,8 @@ export class VotePage implements OnInit {
                 if (!res.result.txid) {
                     votesSent = true;
                     this.voteFailed('dposvoting.vote-cancelled');
-                } else {
+                }
+                else {
                     votesSent = true;
                     this.voted = true;
                     let date = new Date;

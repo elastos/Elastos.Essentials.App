@@ -686,7 +686,7 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createRegisterProducerTransaction(masterWalletId: string, chainId: string, input: string, payloadJson: string, amount: number, fee: string, memo: string): Promise<string> {
+    createRegisterProducerTransaction(masterWalletId: string, chainId: string, input: string, payloadJson: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             walletManager.createRegisterProducerTransaction([masterWalletId, chainId, input, payloadJson, amount, fee, memo],
                 (ret) => { resolve(ret); },
@@ -776,7 +776,7 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createRegisterCRTransaction(masterWalletId: string, chainId: string, input: string, payloadJson: string, amount: number, fee: string, memo: string): Promise<string> {
+    createRegisterCRTransaction(masterWalletId: string, chainId: string, input: string, payloadJson: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             walletManager.createRegisterCRTransaction([masterWalletId, chainId, input, payloadJson, amount, fee, memo],
                 (ret) => { resolve(ret); },

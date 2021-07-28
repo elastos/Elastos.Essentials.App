@@ -150,14 +150,14 @@ export class CreateProposalPage {
             Logger.log('crproposal', 'get payload', payload);
 
             //Get digest
-            var digest = await this.digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+            var digest = await this.digestFunction(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
 
             //Get did sign digest
             payload.CRCouncilMemberSignature = await this.signDigest(digest);
 
             //Create transaction
-            let rawTx = await this.creatTransactionFunction(payload, '');
+            let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
             await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
         }
         catch (e) {
@@ -168,7 +168,6 @@ export class CreateProposalPage {
             return;
         }
     }
-
 
     private getNormalPayload(): any {
         let data = this.createProposalCommand.data;

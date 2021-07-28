@@ -44,7 +44,9 @@ export const en = {
         'text-dpos-name-already-used': 'This DPoS node name is already in use',
         'dpos-unregister-warning': 'Do you want to unregister your DPoS node?',
         'text-dpos-info-dont-modify': 'This DPoS node info do not modify.',
-        'test-input-is-blank': " is blank, It is required."
+        'text-input-is-blank': " is blank, It is required.",
+        'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
+        'text-update-no-confirm': "Last time update don't confirm, please wait.",
     }
 
 };

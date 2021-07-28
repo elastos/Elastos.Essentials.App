@@ -51,7 +51,7 @@ export class GlobalNavService {
         let route = '';
 
         // Add a default route for apps by simply giving the context
-        if(!customRoute) {
+        if(!customRoute || customRoute == null) {
             switch(context) {
                 case App.CONTACTS:
                     route = '/contacts/friends';

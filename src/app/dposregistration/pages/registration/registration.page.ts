@@ -99,7 +99,7 @@ export class DPosRegistrationPage implements OnInit {
     async checkValues() {
         Logger.log("DPosRegistrationPage", "Dpos Info", this.dposInfo);
 
-        var blankMsg = this.translate.instant('dposregistration.test-input-is-blank');
+        var blankMsg = this.translate.instant('dposregistration.text-input-is-blank');
         if (!this.dposInfo.nickname || this.dposInfo.nickname == "") {
             blankMsg = this.translate.instant('dposregistration.node-name') + blankMsg;
             this.globalNative.genericToast(blankMsg);
@@ -124,15 +124,26 @@ export class DPosRegistrationPage implements OnInit {
             return;
         }
 
-        if (this.originInfo != null && this.dposInfo.nickname == this.originInfo.nickname
-            && this.dposInfo.location == this.originInfo.location
-            && this.dposInfo.url == this.originInfo.url
-            && this.dposInfo.nodepublickey == this.originInfo.nodepublickey) {
-            this.globalNative.genericToast('dposregistration.text-dpos-info-dont-modify');
-            return;
+        if (this.originInfo == null) { // Create
+            // Check the nickname whether used
+            for (const dpos of this.nodesService.dposList) {
+                if (dpos.nickname == this.dposInfo.nickname) {
+                    this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');
+                    return;
+                }
+            }
         }
+        else { // Update
+            // Check don't modify
+            if (this.dposInfo.nickname == this.originInfo.nickname
+                && this.dposInfo.location == this.originInfo.location
+                && this.dposInfo.url == this.originInfo.url
+                && this.dposInfo.nodepublickey == this.originInfo.nodepublickey) {
+                this.globalNative.genericToast('dposregistration.text-dpos-info-dont-modify');
+                return;
+            }
 
-        if (this.originInfo == null || this.dposInfo.nickname != this.originInfo.nickname) {
+            // Check the nickname whether used
             for (const dpos of this.nodesService.dposList) {
                 if (dpos.nickname == this.dposInfo.nickname && dpos.nickname != this.originInfo.nickname) {
                     this.globalNative.genericToast('dposregistration.text-dpos-name-already-used');

@@ -5,7 +5,7 @@
 
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
 
-        <div *ngIf="dposInfo.state == 'Pending'" class="block-height">
+        <div *ngIf="dposInfo.state == 'Pending'" class="pending-msg">
             <p>
                 <span>{{ 'dposregistration.confirm-count-prefix' | translate }}</span>
                 <span>{{ confirmCount }}</span>

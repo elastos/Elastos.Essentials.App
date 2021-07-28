@@ -120,7 +120,7 @@ export class VoteService {
         }
 
         if (context) {
-            this.nav.navigateRoot(context);
+            this.nav.navigateRoot(context, null, {state: {refreash: true}});
         }
         else {
             this.nav.goToLauncher();
