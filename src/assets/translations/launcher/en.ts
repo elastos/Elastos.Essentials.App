@@ -31,6 +31,7 @@ export const en = {
         'backup-message': 'Saving your identity’s paper key is a very important step as this the only way to recover it later.',
         'backup-button': 'Backup Now',
         'active-wallet-connect-sessions': 'Active wallet connect sessions',
+        'active-network': 'Active network',
 
         /********** Onboard Page **********/
 
