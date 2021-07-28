@@ -64,7 +64,7 @@ export class AppService {
       if (newProposalsCount === 1) {
         message = this.translate.instant('crproposalvoting.crc-proposals-today-msg');
       } else {
-        message = this.translate.instant('crproposalvoting.crc-proposals-today-msg1') + newProposalsCount + this.translate.instant('crproposalvoting.crp-proposals-today-msg2');
+        message = this.translate.instant('crproposalvoting.crc-proposals-today-msg1') + newProposalsCount + this.translate.instant('crproposalvoting.crc-proposals-today-msg2');
       }
 
       const notification = {
