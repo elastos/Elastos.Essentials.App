@@ -61,6 +61,10 @@ export class TxPage implements OnInit {
         });
     }
 
+    ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
     getNodes() {
         this._nodes = [];
         this.nodesService._nodes.map(node => {

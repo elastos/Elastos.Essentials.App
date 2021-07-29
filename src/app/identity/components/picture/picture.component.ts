@@ -66,6 +66,7 @@ export class PictureComponent implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     // let the editprofile screen to show menu
     this.events.publish('editprofile-showmenu');
   }

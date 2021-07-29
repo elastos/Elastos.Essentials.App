@@ -73,6 +73,10 @@ export class CandidatesPage implements OnInit {
         }
     }
 
+    ionViewWillLeave() {
+      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
     addEditIcon() {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {

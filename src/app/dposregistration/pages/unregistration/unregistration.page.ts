@@ -95,6 +95,10 @@ export class DPosUnRegistrationPage implements OnInit {
         Logger.log("DPosRegistrationPage", "ngOnInit")
     }
 
+    ionViewWillLeave() {
+      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
     async ionViewWillEnter() {
 
         Logger.log("DPosRegistrationPage", this.voteService.masterWalletId);

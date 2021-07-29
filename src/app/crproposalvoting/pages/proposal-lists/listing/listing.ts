@@ -57,6 +57,7 @@ export class ProposalListingPage implements OnInit {
     }
 
     ionViewWillLeave() {
+      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     async init() {

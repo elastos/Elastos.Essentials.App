@@ -115,6 +115,7 @@ export class VotePage implements OnInit {
     }
 
     ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         if (this.toast) {
             this.toast.dismiss();
         }

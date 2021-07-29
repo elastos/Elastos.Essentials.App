@@ -64,6 +64,10 @@ export class SetHiveProviderRequestPage {
     this.receivedIntent = this.intentService.getReceivedIntent();
   }
 
+  ionViewWillLeave() {
+      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+  }
+
   acceptRequest() {
     // Prompt password if needed
     void AuthService.instance.checkPasswordThenExecute(async ()=>{

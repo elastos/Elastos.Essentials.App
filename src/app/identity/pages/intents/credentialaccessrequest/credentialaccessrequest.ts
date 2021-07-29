@@ -186,6 +186,7 @@ export class CredentialAccessRequestPage {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     if (this.onlineDIDDocumentStatusSub) {
       this.onlineDIDDocumentStatusSub.unsubscribe();
       this.onlineDIDDocumentStatusSub = null;

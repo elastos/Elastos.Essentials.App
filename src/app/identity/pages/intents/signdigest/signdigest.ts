@@ -45,6 +45,10 @@ export class SignDigestPage {
         this.receivedIntent = this.intentService.getReceivedIntent();
     }
 
+    ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
     async acceptRequest() {
         Logger.log('Identity', "Signing user data now");
 

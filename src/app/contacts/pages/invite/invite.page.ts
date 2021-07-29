@@ -81,6 +81,7 @@ export class InvitePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   getContacts() {

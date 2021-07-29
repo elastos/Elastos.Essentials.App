@@ -8,7 +8,7 @@ import { TipAudience } from '../../model/tipaudience.model';
 import { TipsService } from '../../services/tips.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIconSlot, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 
 @Component({
   selector: 'app-tips',
@@ -21,6 +21,8 @@ export class TipsPage implements OnInit {
   public tipToShow: Tip;
   public currentlyShownTip: Tip;
   private allDisplayableTips: Tip[];
+
+  private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
     private navParams: NavParams,
@@ -46,11 +48,15 @@ export class TipsPage implements OnInit {
       key: "close",
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(icon => {
+    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       if (icon.key === "close") {
         this.closePage();
       }
     });
+  }
+
+  ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   public getTipTitle(tip: Tip) {
