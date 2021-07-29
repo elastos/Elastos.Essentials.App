@@ -51,7 +51,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       // Close
-      this.walletConnect.rejectSession("Cancelled by user");
+      void this.walletConnect.rejectSession("Cancelled by user");
       void this.titleBar.globalNav.exitCurrentContext();
     });
 
@@ -61,7 +61,6 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
     this.watchdogTimer = setTimeout(() => {
       this.zone.run(()=>{
         this.suggestToResetSession = true;
-        void this.walletConnect.killAllSessions();
       });
     }, 10000);
   }
@@ -76,6 +75,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
 
   public async scanAgain() {
     await this.walletConnect.rejectSession("Scanning again");
+    await void this.walletConnect.killAllSessions();
     await this.globalNav.navigateTo("scanner", '/scanner/scan');
   }
 

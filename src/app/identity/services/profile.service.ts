@@ -79,6 +79,12 @@ export class ProfileService extends GlobalService {
   // private visibleCred: CredentialDisplayEntry[];
   // private invisibleCred: CredentialDisplayEntry[];
   //public appCreds: AppCredentialDisplayEntry[];
+
+  /**
+   * UI model for credentials currently present in the local DID document. Meaning that this is
+   * the representation of what user has currently locally and possibly willing to publish, but maybe not
+   * published yet.
+   */
   private credentials: CredentialDisplayEntry[] = [];
   private unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
   private _hasModifiedCredentials = false;
@@ -938,7 +944,6 @@ export class ProfileService extends GlobalService {
         else {
           // Assume base64.
           let avatar = await Avatar.fromAvatarCredential(avatarCredential.getSubject().avatar as CredentialAvatar);
-          console.log("BASE64", avatarCredential, avatar.toBase64DataUrl())
           this.avatarDataUrlSubject.next(avatar.toBase64DataUrl());
         }
       }
