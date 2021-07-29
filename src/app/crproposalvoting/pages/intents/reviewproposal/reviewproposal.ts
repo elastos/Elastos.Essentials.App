@@ -77,11 +77,11 @@ export class ReviewProposalPage {
 
         try {
             //Get payload
-            var proposalPayload = this.getProposalPayload(this.reviewProposalCommand);
-            Logger.log('crproposal', "Got review proposal payload.", proposalPayload);
+            var payload = this.getProposalPayload(this.reviewProposalCommand);
+            Logger.log('crproposal', "Got review proposal payload.", payload);
 
             //Get digest
-            var digest = await this.walletManager.spvBridge.proposalReviewDigest(this.voteService.masterWalletId, StandardCoinName.ELA, proposalPayload);
+            var digest = await this.walletManager.spvBridge.proposalReviewDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
             Logger.log('crproposal', "Got review proposal digest.", digest);
 
@@ -90,15 +90,12 @@ export class ReviewProposalPage {
                 data: digest,
             });
             Logger.log('crproposal', "Got signed digest.", ret);
-            if (!ret.result) {
-                // Operation cancelled by user
-                return null;
+            if (ret.result) {
+                //Create transaction and send
+                payload.Signature = ret.result.signature;
+                const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');
+                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
             }
-
-            //Create transaction and send
-            proposalPayload.Signature = ret.result.signature;
-            const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(proposalPayload, '');
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.

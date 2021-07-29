@@ -156,19 +156,21 @@ export class CreateProposalPage {
             digest = Util.reverseHexToBE(digest);
 
             //Get did sign digest
-            payload.CRCouncilMemberSignature = await this.signDigest(digest);
+            let ret = await this.signDigest(digest);
+            if (ret) {
+                payload.CRCouncilMemberSignature = ret;
 
-            //Create transaction
-            let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+                //Create transaction
+                let rawTx = await this.creatTransactionFunction(JSON.stringify(payload), '');
+                await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+            }
         }
         catch (e) {
-            this.signingAndSendingProposalResponse = false;
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
             await this.popup.alert("Error", "Sorry, unable to sign your crproposal. Your crproposal can't be created for now. " + e, "Ok");
             Logger.error('crproposal', 'signAndCreateProposal error:', e);
-            return;
         }
+        this.signingAndSendingProposalResponse = false;
     }
 
     private getNormalPayload(): any {

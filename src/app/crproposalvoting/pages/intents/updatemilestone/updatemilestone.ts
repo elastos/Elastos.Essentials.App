@@ -85,16 +85,11 @@ export class UpdatMilestonePage {
 
             let signedJWT = await this.signMilestoneDigestAsJWT(digest);
 
-            if (!signedJWT) {
-                // Operation cancelled, cancel the operation silently.
-                this.signingAndSendingSuggestionResponse = false;
-                return;
+            if (signedJWT) {
+                await this.proposalService.sendProposalCommandResponseToCallbackURL(this.updateMilestoneCommand.callbackurl, signedJWT);
+                //Go to launcher
+                this.globalNav.goToLauncher();
             }
-
-            await this.proposalService.sendProposalCommandResponseToCallbackURL(this.updateMilestoneCommand.callbackurl, signedJWT);
-            //Go to launcher
-            this.globalNav.goToLauncher();
-
         }
         catch (e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.

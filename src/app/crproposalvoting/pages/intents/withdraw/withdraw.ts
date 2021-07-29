@@ -79,7 +79,7 @@ export class WithdrawPage {
             Logger.log('crproposal', "Got payload.", payload);
 
             //Get digest
-            var digest = await this.walletManager.spvBridge.proposalWithdrawDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+            var digest = await this.walletManager.spvBridge.proposalWithdrawDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
             Logger.log('crproposal', "Got proposal digest.", digest);
 
@@ -91,7 +91,7 @@ export class WithdrawPage {
             if (ret.result) {
                 //Create transaction and send
                 payload.Signature = ret.result.signature;
-                const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(payload, '');
+                const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(JSON.stringify(payload), '');
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
             }
         }

@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../services/auth.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { SignIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
@@ -21,6 +21,7 @@ export class SignDigestPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public receivedIntent: SignIdentityIntent = null;
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
         private didService: DIDService,
@@ -35,7 +36,11 @@ export class SignDigestPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('identity.sign-data'));
-        this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
+        this.titleBar.setNavigationMode(null);
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.CLOSE });
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+            await this.rejectRequest();
+        });
 
         this.receivedIntent = this.intentService.getReceivedIntent();
     }

@@ -97,7 +97,7 @@ export class ReviewMilestonePage {
                 data: digest,
             });
             Logger.log('crproposal', "Got signed digest.", ret);
-            if (!ret.result) {
+            if (ret.result) {
                 //Create transaction and send
                 payload.SecretaryGeneralSignature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
