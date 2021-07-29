@@ -59,7 +59,7 @@
             <ion-row class="profile-data" *ngIf="createSuggestionCommand.data.proposaltype == 'normal'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.budget-amount' | translate }}</h5>
-                    <h4>{{ buggetAmount }}</h4>
+                    <h4>{{ buggetAmount / Config.SELA }}</h4>
                 </ion-col>
             </ion-row>
 
