@@ -31,7 +31,7 @@ export const fr = {
         'backup-message': 'Sauvegarder la "clé papier" de votre identité est indispensable, car c\'est le seul moyen de la récupérer plus tard.',
         'backup-button': 'Continuer',
         'active-wallet-connect-sessions': 'Sessions Wallet Connect actives',
-        'active-network': 'Réseau active',
+        'active-network': 'Réseau actif',
 
         /********** Onboard Page **********/
 
