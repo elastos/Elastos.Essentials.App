@@ -332,7 +332,7 @@ export class WalletManager {
 
     public async getCurrentMasterIdFromStorage(): Promise<string> {
         const data = await this.localStorage.getCurMasterId(this.networkTemplate);
-        if (data && data["masterId"]) {
+        if (data && data["masterId"] && this.masterWallets[data["masterId"]]) {
             return data["masterId"];
         } else {
             // Compatible with older versions.
