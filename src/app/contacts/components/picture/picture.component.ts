@@ -37,10 +37,7 @@ export class PictureComponent implements OnInit {
       this.oldAvatar = JSON.parse(this.navParams.get('avatar'));
       this.avatar = JSON.parse(this.navParams.get('avatar'));
     } else {
-      this.avatar = {
-        contentType : "image/jpeg",
-        data : null
-      }
+      this.avatar = new Avatar("image/jpeg", null);
     }
 
     Logger.log('contacts', 'Current avatar', this.avatar);
@@ -82,12 +79,12 @@ export class PictureComponent implements OnInit {
 
   submit(useImg: boolean): void {
     if(useImg) {
-      this.modalCtrl.dismiss({
+      void this.modalCtrl.dismiss({
         useImg: true,
         avatar: this.avatar
       });
     } else {
-      this.modalCtrl.dismiss({
+      void this.modalCtrl.dismiss({
         useImg: false,
         avatar: null
       });

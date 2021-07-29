@@ -9,9 +9,11 @@ type CredentialAvatar = {
 }
 
 export class Avatar {
-    contentType: string;    // Ex: "image/jpeg"
-    data: string;           // Ex: "/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQ..."
-    type?: string;          // Ex: "base64"
+    public constructor(
+        public contentType: string,    // Ex: "image/jpeg"
+        public data: string,           // Ex: "/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQ..."
+        public type?: string          // Ex: "base64"
+    ) {}
 
     static async fromAvatarCredential(credentialAvatar: CredentialAvatar): Promise<Avatar> {
         if (credentialAvatar == null)
@@ -32,11 +34,7 @@ export class Avatar {
                 }
 
                 Logger.log("contacts", "Building avatar from credential with hive url", hiveUrlAvatar, mimeType, /* base64EncodedImage */);
-                return {
-                    contentType: mimeType,
-                    data: base64EncodedImage,
-                    type: "base64"
-                }
+                return new Avatar(mimeType,base64EncodedImage, "base64");
             }
             else {
                 return null;
@@ -44,11 +42,7 @@ export class Avatar {
         }
         else {
             // Assume base64 data url
-            return {
-                contentType: credentialAvatar["content-type"],
-                data: credentialAvatar.data,
-                type: "base64"
-            }
+            return new Avatar(credentialAvatar["content-type"], credentialAvatar.data, "base64");
         }
     }
 
@@ -56,10 +50,10 @@ export class Avatar {
         if (contentNotifierAvatar == null)
             return null;
 
-        return {
-            contentType: contentNotifierAvatar.contentType,
-            data: contentNotifierAvatar.base64ImageData,
-            type: "base64"
-        }
+        return new Avatar(contentNotifierAvatar.contentType, contentNotifierAvatar.base64ImageData, "base64");
+    }
+
+    public toBase64DataUrl(): string {
+        return "data:"+this.contentType+";base64,"+this.data;
     }
 }

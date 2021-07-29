@@ -23,6 +23,8 @@ import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
 import { VerifiableCredential } from "../model/verifiablecredential.model";
+import { Avatar } from "src/app/contacts/models/avatar";
+import { CredentialAvatar } from "src/app/didsessions/model/did.model";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -881,11 +883,11 @@ export class ProfileService extends GlobalService {
       this.avatarDataUrlSubject = new BehaviorSubject<string>(null);
 
       DIDEvents.instance.events.subscribe("did:avatarchanged", () => {
-        this.refreshAvatarUrl();
+        void this.refreshAvatarUrl();
       });
     }
 
-    this.refreshAvatarUrl();
+    void this.refreshAvatarUrl();
 
     // Always return a subject that can be updated with a raw base64 url or data from a hive url
     // later on, even if null at first.
@@ -899,7 +901,7 @@ export class ProfileService extends GlobalService {
     }
   }
 
-  private refreshAvatarUrl() {
+  private async refreshAvatarUrl() {
     // Unsubscribe from previous hive cache if needed, as the avatar content type could have changed and become
     // a non hive type.
     this.unsubscribeCacheDataUrl();
@@ -932,6 +934,12 @@ export class ProfileService extends GlobalService {
               this.avatarDataUrlSubject.next(null);
             }
           });
+        }
+        else {
+          // Assume base64.
+          let avatar = await Avatar.fromAvatarCredential(avatarCredential.getSubject().avatar as CredentialAvatar);
+          console.log("BASE64", avatarCredential, avatar.toBase64DataUrl())
+          this.avatarDataUrlSubject.next(avatar.toBase64DataUrl());
         }
       }
     }
