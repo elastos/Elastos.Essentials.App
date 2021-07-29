@@ -1,6 +1,8 @@
 import { BasicCredentialEntry } from "./basiccredentialentry.model";
 
 /**
+ * High level representation of the local DID document for convenience while displaying data on UI.
+ *
  * Fields in this class match the Elastos DID specification naming convention for credentials.
  */
 export class Profile {
@@ -14,11 +16,11 @@ export class Profile {
     });
   }
 
-  setValue(basiccredentialentry: BasicCredentialEntry, value: string) {
+  setValue(basiccredentialentry: BasicCredentialEntry, value: string, isVisible: boolean) {
     // If the entry already exists, we just update it. Otherwise we add it first.
     let entry = this.getEntryByKey(basiccredentialentry.key);
     if (!entry) {
-      entry = new BasicCredentialEntry(basiccredentialentry.key, value, basiccredentialentry.isVisible);
+      entry = new BasicCredentialEntry(basiccredentialentry.key, value, isVisible);
       this.entries.push(entry);
     } else {
       entry.value = value;

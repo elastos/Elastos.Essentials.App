@@ -22,9 +22,9 @@ import { DIDEvents } from "./events";
 import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
-import { VerifiableCredential } from "../model/verifiablecredential.model";
 import { Avatar } from "src/app/contacts/models/avatar";
 import { CredentialAvatar } from "src/app/didsessions/model/did.model";
+import { CredentialDisplayEntry } from "../model/credentialdisplayentry.model";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var deepEqual = require('deep-equal');
@@ -40,27 +40,6 @@ type IssuerDisplayEntry = {
   did: string;
   name: string;
   avatar: string;
-};
-
-type CredentialDisplayEntry = {
-  credential: DIDPlugin.VerifiableCredential;
-  issuer: string;
-  isVisible: boolean;
-  willingToBePubliclyVisible: boolean;
-  willingToDelete: boolean;
-  canDelete: boolean;
-};
-
-type AppCredentialDisplayEntry = {
-  credential: DIDPlugin.VerifiableCredential;
-  willingToBePubliclyVisible: boolean;
-  willingToDelete: boolean;
-  canDelete: boolean;
-  appInfo: {
-    packageId: string;
-    app: any;
-    action: string;
-  };
 };
 
 @Injectable({
@@ -85,7 +64,7 @@ export class ProfileService extends GlobalService {
    * the representation of what user has currently locally and possibly willing to publish, but maybe not
    * published yet.
    */
-  private credentials: CredentialDisplayEntry[] = [];
+  private credentials: CredentialDisplayEntry[] = []; // Can also be inheriting BasicCredentialDisplayEntry for some items
   private unchangedPublishedCredentials: DIDPlugin.VerifiableCredential[] = [];
   private _hasModifiedCredentials = false;
 
@@ -261,7 +240,6 @@ export class ProfileService extends GlobalService {
           credential: c.pluginVerifiableCredential,
           issuer: issuerId,
           isVisible: true,
-          willingToBePubliclyVisible: true,
           willingToDelete: false,
           canDelete: canDelete,
         });
@@ -269,10 +247,6 @@ export class ProfileService extends GlobalService {
         this.credentials.push({
           credential: c.pluginVerifiableCredential,
           issuer: issuerId,
-          willingToBePubliclyVisible:
-            c.pluginVerifiableCredential.getFragment() === "name"
-              ? true
-              : false,
           isVisible: false,
           willingToDelete: false,
           canDelete: canDelete,
@@ -288,11 +262,13 @@ export class ProfileService extends GlobalService {
 
     Logger.log("identity", "Visible credentials", this.visibleCredentials);
     Logger.log("identity", "Invisible credentials", this.invisibleCredentials);
-    this.buildAppAndAvatarCreds(publishAvatar);
+    this.buildAppAndAvatarCreds();
+
+    Logger.log("identity", "Built credential entries", this.credentials);
   }
 
   /***** Find and build app and avatar creds *****/
-  buildAppAndAvatarCreds(publishAvatar?: boolean) {
+  buildAppAndAvatarCreds() {
     //this.profileService.appCreds = [];
     let hasAvatar = false;
 
@@ -301,12 +277,6 @@ export class ProfileService extends GlobalService {
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
         Logger.log("identity", "Profile has avatar");
-
-        if (publishAvatar) {
-          Logger.log("identity", "Prompting avatar publish");
-          cred.willingToBePubliclyVisible = true;
-          void this.showWarning("publishVisibility", null);
-        }
       }
       // Find Description Credential
       if ("description" in cred.credential.getSubject()) {
@@ -321,12 +291,6 @@ export class ProfileService extends GlobalService {
         let data = "";
         if (cred.credential.getSubject().avatar != null) {
           data = cred.credential.getSubject().avatar.data;
-        }
-
-        if (publishAvatar) {
-          Logger.log("identity", "Prompting avatar publish");
-          cred.willingToBePubliclyVisible = true;
-          void this.showWarning("publishVisibility", null);
         }
       }
       // Find Description Credentials
@@ -352,7 +316,7 @@ export class ProfileService extends GlobalService {
   /**
    * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
    */
-  credentialIsInLocalDIDDocument(credential: DIDPlugin.VerifiableCredential) {
+  public credentialIsInLocalDIDDocument(credential: DIDPlugin.VerifiableCredential) {
     let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
     if (!currentDidDocument) return false;
 
@@ -371,13 +335,15 @@ export class ProfileService extends GlobalService {
     else return true;
   }
 
-  setCredentialVisibility(key: string, isVisible: boolean) {
+  async setCredentialVisibility(key: string, willingToBePubliclyVisible: boolean, password: string): Promise<void> {
     let credential = this.credentials.find((item) => {
       return item.credential.getFragment() == key;
     });
+    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
     if (credential) {
-      Logger.log("identity", "Changing visibility of "+key+" to visible: "+isVisible);
-      credential.isVisible = isVisible;
+      Logger.log("identity", "Changing visibility of "+key+" to visibility "+willingToBePubliclyVisible+" in profile service credentials");
+      credential.isVisible = willingToBePubliclyVisible;
+      await this.updateDIDDocumentFromSelectionEntry(currentDidDocument, credential, password);
       this.events.publish("credentials:modified");
     }
     else {
@@ -402,16 +368,15 @@ export class ProfileService extends GlobalService {
         if (p == "id") continue;
 
         // Try to retrieve a standard property info from this property
-        let basicCredentialInfo = BasicCredentialsService.instance.getBasicCredentialInfoByKey(p, cred.isVisible);
+        let basicCredentialInfo = BasicCredentialsService.instance.getBasicCredentialInfoByKey(p);
         if (basicCredentialInfo) {
-          profile.setValue(basicCredentialInfo, props[p]);
+          profile.setValue(basicCredentialInfo, props[p], cred.isVisible);
         }
       }
     });
 
     //Logger.log("identity", "Basic profile:", JSON.stringify(profile));
     return profile;
-
   }
 
   /*****************************************************************************
@@ -464,14 +429,14 @@ export class ProfileService extends GlobalService {
     });
   }
 
+  /**
+   * Returns the displayable credentials that are basic profile credentials only.
+   */
   get profileEntries(): CredentialDisplayEntry[] {
     let basicCredentials = this.basicCredentialService.getBasicCredentialkeys();
     return this.visibleCredentials.filter((item) => {
       let fragment = item.credential.getFragment();
-      // let types = item.credential.getTypes();
-      // let isApp = types.includes("ApplicationProfileCredential");
-
-      return basicCredentials.find(x => x == fragment) && fragment !== "avatar";
+      return basicCredentials.find(x => x == fragment) && fragment !== "avatar" // default credential display entry
     });
   }
 
@@ -659,7 +624,7 @@ export class ProfileService extends GlobalService {
     // For each VISIBLE local credential, check if it's already in the published credentials.
     // We may have set a credential to become public
     for (let localCred of this.credentials) {
-      if (localCred.willingToBePubliclyVisible) {
+      if (localCred.isVisible) {
         if (!publishedCredentials.find(c => c.getFragment() === localCred.credential.getFragment())) {
           // local cred willing to be visible but not found in published creds? we have a modified credential
           Logger.log("identity", "Local credential should be published for the first time", localCred);
@@ -711,7 +676,6 @@ export class ProfileService extends GlobalService {
       );
     }
 
-
     // Tell everyone that the DID document has some modifications.
     if (changeCount > 0) {
       this.events.publish("diddocument:changed");
@@ -756,7 +720,7 @@ export class ProfileService extends GlobalService {
     let existingCredential = await currentDidDocument.getCredentialById(
       new DIDURL(credentialId)
     );
-    if (!existingCredential && credentialEntry.willingToBePubliclyVisible) {
+    if (!existingCredential && credentialEntry.isVisible) {
       // Credential doesn't exist in the did document yet but user wants to add it? Then add it.
       Logger.log("identity", "Credential wants to be published but not in the local document. Adding it");
       await currentDidDocument.addCredential(
@@ -765,7 +729,7 @@ export class ProfileService extends GlobalService {
       );
     } else if (
       existingCredential &&
-      !credentialEntry.willingToBePubliclyVisible
+      !credentialEntry.isVisible
     ) {
       // Credential exists but user wants to remove it on chain? Then delete it from the did document
       Logger.log("identity", "Credential wants to NOT be published but it's in the local document. Removing it");
@@ -775,7 +739,7 @@ export class ProfileService extends GlobalService {
       );
     } else if (
       existingCredential &&
-      credentialEntry.willingToBePubliclyVisible
+      credentialEntry.isVisible
     ) {
       // Credential exists but user wants to update it on chain? Then delete it from the did document and add it again
       Logger.log("identity", "Credential exists in the local did document. Updating it");

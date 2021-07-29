@@ -22,27 +22,12 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
-
-
-type ProfileDisplayEntry = {
-  credentialId: string; // related credential id
-  label: string; // "title" to display
-  value: string; // value to display
-  willingToBePubliclyVisible?: boolean; // Whether it's currently set to become published or not.
-};
+import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 
 type IssuerDisplayEntry = {
   did: string;
   name: string;
   avatar: string;
-};
-
-type CredentialDisplayEntry = {
-  credential: DIDPlugin.VerifiableCredential;
-  issuer: string;
-  willingToBePubliclyVisible: boolean;
-  willingToDelete: boolean;
-  canDelete: boolean;
 };
 
 @Component({
@@ -229,39 +214,6 @@ export class MyProfilePage {
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
-  /**
-   * Convenience conversion to display profile data on UI.
-   */
-  buildDetailEntries() {
-    let notSetTranslated = this.translate.instant("identity.not-set");
-
-    // Initialize
-    this.profileService.visibleData = [];
-    this.profileService.invisibleData = [];
-
-    let profileEntries = this.profile.entries;
-    for (let entry of profileEntries) {
-      this.pushDisplayEntry(entry.key, {
-        credentialId: entry.key,
-        label: this.translate.instant("identity.credential-info-type-" + entry.key),
-        value: entry.toDisplayString() || notSetTranslated,
-      });
-    }
-  }
-
-  pushDisplayEntry(profileKey: string, entry: ProfileDisplayEntry) {
-    if (this.profileEntryIsVisibleOnChain(profileKey)) {
-      entry.willingToBePubliclyVisible = true;
-      this.profileService.visibleData.push(entry);
-    } else {
-      entry.willingToBePubliclyVisible = profileKey === "name" ? true : false;
-      this.profileService.invisibleData.push(entry);
-    }
-
-    Logger.log("identity", "Invisible data", this.profileService.invisibleData);
-    Logger.log("identity", "Visible data", this.profileService.visibleData);
-  }
-
   getProfileName() {
 
     if (this.profileName == null) {
@@ -275,21 +227,6 @@ export class MyProfilePage {
 
     }
     return this.profileName;
-  }
-
-  /**
-   * Tells if a given profile key is currently visible on chain or not (inside the DID document or not).
-   *
-   * @param profileKey Credential key.
-   */
-  profileEntryIsVisibleOnChain(profileKey: string): boolean {
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
-
-    let credential = currentDidDocument.getCredentialById(
-      new DIDURL("#" + profileKey)
-    );
-    return credential != null;
   }
 
   /******************** Reveal QR Code ********************/

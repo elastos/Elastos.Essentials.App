@@ -68,14 +68,10 @@ export class BasicCredentialsService {
     return keys;
   }
 
-  getBasicCredentialInfoByKey(key: string, isVisible: boolean): BasicCredentialEntry {
+  getBasicCredentialInfoByKey(key: string): BasicCredentialEntry {
     let info = this.basicCredentialEntryList.find((i) => {
       return i.key == key;
     });
-
-    if (info != null) {
-      info.isVisible = isVisible;
-    }
     return info;
   }
 }

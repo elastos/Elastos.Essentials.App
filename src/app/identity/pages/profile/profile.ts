@@ -20,27 +20,7 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { Logger } from "src/app/logger";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Events } from "src/app/services/events.service";
-
-type ProfileDisplayEntry = {
-  credentialId: string; // related credential id
-  label: string; // "title" to display
-  value: string; // value to display
-  willingToBePubliclyVisible?: boolean; // Whether it's currently set to become published or not.
-};
-
-type IssuerDisplayEntry = {
-  did: string;
-  name: string;
-  avatar: string;
-};
-
-type CredentialDisplayEntry = {
-  credential: DIDPlugin.VerifiableCredential;
-  issuer: string;
-  willingToBePubliclyVisible: boolean;
-  willingToDelete: boolean;
-  canDelete: boolean;
-};
+import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 
 @Component({
   selector: "page-profile",
@@ -170,7 +150,7 @@ export class ProfilePage {
         else return -1;
       });
 
-      this.buildDetailEntries();
+      //this.buildDetailEntries();
       //this.buildCredentialEntries(publishAvatar);
 
       this.slideOpts = {
@@ -194,107 +174,6 @@ export class ProfilePage {
     let identity = this.didService.getActiveDid();
     this.profileService.didString = identity.getDIDString();
   }
-
-  /**
-   * Convenience conversion to display profile data on UI.
-   */
-  buildDetailEntries() {
-    let notSetTranslated = this.translate.instant("identity.not-set");
-
-    // Initialize
-    this.profileService.visibleData = [];
-    this.profileService.invisibleData = [];
-
-    let profileEntries = this.profile.entries;
-    for (let entry of profileEntries) {
-      this.pushDisplayEntry(entry.key, {
-        credentialId: entry.key,
-        label: this.translate.instant("identity.credential-info-type-" + entry.key),
-        value: entry.toDisplayString() || notSetTranslated,
-      });
-    }
-  }
-
-  pushDisplayEntry(profileKey: string, entry: ProfileDisplayEntry) {
-    if (this.profileEntryIsVisibleOnChain(profileKey)) {
-      entry.willingToBePubliclyVisible = true;
-      this.profileService.visibleData.push(entry);
-    } else {
-      entry.willingToBePubliclyVisible = profileKey === "name" ? true : false;
-      this.profileService.invisibleData.push(entry);
-    }
-
-    Logger.log("identity", "Invisible data", this.profileService.invisibleData);
-    Logger.log("identity", "Visible data", this.profileService.visibleData);
-  }
-
-
-  /**
-   * Tells if a given profile key is currently visible on chain or not (inside the DID document or not).
-   *
-   * @param profileKey Credential key.
-   */
-  profileEntryIsVisibleOnChain(profileKey: string): boolean {
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
-
-    let credential = currentDidDocument.getCredentialById(
-      new DIDURL("#" + profileKey)
-    );
-    return credential != null;
-  }
-
-  /**
-   * Convenience conversion to display credential data on UI.
-   */
-  // buildCredentialEntries(publishAvatar?: boolean) {
-  //   // Initialize
-  //   this.profileService.visibleCred = [];
-  //   this.profileService.invisibleCred = [];
-
-  //   // DID issuers found on credentials
-  //   let issuersId: string[] = [];
-
-  //   for (let c of this.credentials) {
-  //     let canDelete = this.credentialIsCanDelete(c);
-
-  //     let issuerId = this.getIssuerIdFromVerifiableCredential(
-  //       c.pluginVerifiableCredential
-  //     );
-  //     if (issuerId !== null) issuersId.push(issuerId);
-
-  //     if (this.credentialIsVisibleOnChain(c)) {
-  //       this.profileService.visibleCred.push({
-  //         credential: c.pluginVerifiableCredential,
-  //         issuer: issuerId,
-  //         willingToBePubliclyVisible: true,
-  //         willingToDelete: false,
-  //         canDelete: canDelete,
-  //       });
-  //     } else {
-  //       this.profileService.invisibleCred.push({
-  //         credential: c.pluginVerifiableCredential,
-  //         issuer: issuerId,
-  //         willingToBePubliclyVisible:
-  //           c.pluginVerifiableCredential.getFragment() === "name"
-  //             ? true
-  //             : false,
-  //         willingToDelete: false,
-  //         canDelete: canDelete,
-  //       });
-  //     }
-  //   }
-
-  //   // if (issuersId.length > 0) {
-  //   //   this.zone.run(async () => {
-  //   //     await this.profileService.loadIssuers(issuersId);
-  //   //   });
-  //   // }
-
-  //   Logger.log("identity", "Visible creds", this.profileService.visibleCredentials);
-  //   Logger.log("identity", "Invisible creds", this.profileService.invisibleCredentials);
-  //   this.buildAppAndAvatarCreds(publishAvatar);
-  // }
 
   /***** Find and build app and avatar creds *****/
   buildAppAndAvatarCreds(publishAvatar?: boolean) {
@@ -323,58 +202,6 @@ export class ProfilePage {
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
-  }
-
-  /**********************************************
-   Update data's visibility's selection for both
-   'credentials' and 'data' tab
-  ***********************************************/
-  updateDataVisibility(event: any, entry: any) {
-    if (this.profileService.detailsActive) {
-      // Update credential's visibility under 'credentials' if its visibility was changed under 'data'
-      let key = entry.credentialId;
-      this.profileService.visibleCredentials.map((cred) => {
-        if (cred.credential.getFragment() === key) {
-          cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
-        }
-      });
-
-      this.profileService.invisibleCredentials.map((cred) => {
-        if (cred.credential.getFragment() === key) {
-          cred.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
-        }
-      });
-    } else {
-      // Update credential's visibility under 'data' if its visibility was changed under 'credentials'
-      let key = entry.credential.getFragment();
-      Logger.log("identity",
-        "Found credential key to update data visibility selection:",
-        key
-      );
-      this.profileService.visibleData.map((data) => {
-        if (data.credentialId === key) {
-          data.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
-        }
-      });
-      this.profileService.invisibleData.map((data) => {
-        if (data.credentialId === key) {
-          data.willingToBePubliclyVisible = entry.willingToBePubliclyVisible;
-        }
-      });
-    }
-  }
-
-  /**
-   * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
-   */
-  credentialIsVisibleOnChain(credential: VerifiableCredential) {
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
-
-    let didDocumentCredential = currentDidDocument.getCredentialById(
-      new DIDURL(credential.pluginVerifiableCredential.getId())
-    );
-    return didDocumentCredential != null;
   }
 
   /**

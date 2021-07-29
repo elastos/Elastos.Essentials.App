@@ -5,4 +5,5 @@ export const defaultContacts = [
   'did:elastos:imxNkhKuuXaefyFKQuzFnkfRdedDVLYmKV', // Tuum Tech
   'did:elastos:iXEgnmYTbFGSsVf16gkVcrGuK3Nv2vGTMD', // Donald Bullers, Tuum Tech
   'did:elastos:ijQcPGNKAUWQEwoTPTHqLwGeBVS6CidePP', // Michael S, community, moderator
+  'did:elastos:in2Zy5UqvdgGY41149cE5UTJEzgSdcf558', // Ryan, Elanodes, Elavate DEX, community.
 ];

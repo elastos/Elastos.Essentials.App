@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { NewDID } from '../model/newdid.model';
-
 @Injectable()
 export class Config {
     //public static requestDapp: any;

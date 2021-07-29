@@ -2,8 +2,6 @@ import { Component, NgZone, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-
-import { Profile } from "../../model/profile.model";
 import { DIDURL } from "../../model/didurl.model";
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
@@ -21,14 +19,8 @@ import { isNil } from "lodash-es";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
-
-
-type ProfileDisplayEntry = {
-  credentialId: string; // related credential id
-  label: string; // "title" to display
-  value: string; // value to display
-  willingToBePubliclyVisible?: boolean; // Whether it's currently set to become published or not.
-};
+import { AuthService } from "src/app/identity/services/auth.service";
+import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 
 type IssuerDisplayEntry = {
   did: string;
@@ -41,14 +33,6 @@ type DisplayProperty = {
   value: string;
 };
 
-type CredentialDisplayEntry = {
-  credential: DIDPlugin.VerifiableCredential;
-  issuer: string;
-  willingToBePubliclyVisible: boolean;
-  willingToDelete: boolean;
-  canDelete: boolean;
-};
-
 @Component({
   selector: "credentialdetails-profile",
   templateUrl: "credentialdetails.page.html",
@@ -57,7 +41,6 @@ type CredentialDisplayEntry = {
 export class CredentialDetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public profile: Profile;
   public credentials: VerifiableCredential[];
   public currentOnChainDIDDocument: DIDDocument = null;
   public credential: VerifiableCredential;
@@ -94,7 +77,8 @@ export class CredentialDetailsPage implements OnInit {
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
     private basicCredentialService: BasicCredentialsService,
-    private globalIntentService: GlobalIntentService
+    private globalIntentService: GlobalIntentService,
+    private authService: AuthService
   ) {
     this.init();
   }
@@ -153,7 +137,6 @@ export class CredentialDetailsPage implements OnInit {
   init(publishAvatar?: boolean) {
     let identity = this.didService.getActiveDid();
     if (identity) {
-      this.profile = identity.getBasicProfile();
       this.credentials = identity.credentials;
 
       this.profileService.getAvatarDataUrl().subscribe(avatarDataUrl => {
@@ -372,13 +355,7 @@ export class CredentialDetailsPage implements OnInit {
    * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
    */
   credentialIsVisibleOnChain() {
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
-
-    let didDocumentCredential = currentDidDocument.getCredentialById(
-      new DIDURL(this.credential.pluginVerifiableCredential.getId())
-    );
-    return didDocumentCredential != null;
+    return this.profileService.credentialIsInLocalDIDDocument(this.credential.pluginVerifiableCredential);
   }
 
   /******************** Display Data Sync Status between Local and Onchain ********************/
@@ -437,13 +414,18 @@ export class CredentialDetailsPage implements OnInit {
     this.isPublished = localValue === chainValue;
   }
 
-  publishCredential() {
-    // Make the credential visible in the did document
-    this.profileService.setCredentialVisibility(this.credential.pluginVerifiableCredential.getFragment(), true);
-    this.profileService.updateDIDDocument();
+  async publishCredential(): Promise<void> {
+    await this.authService.checkPasswordThenExecute(
+      async () => {
+        // Make the credential visible in the did document
+        await this.profileService.setCredentialVisibility(this.credential.pluginVerifiableCredential.getFragment(), true, this.authService.getCurrentUserPassword());
 
-    // Show the publish prompt
-    void this.profileService.showWarning("publishVisibility", "");
+        // Show the publish prompt
+        void this.profileService.showWarning("publishVisibility", "");
+      },
+      () => {
+      }
+    );
   }
 
   verifyCredential() {

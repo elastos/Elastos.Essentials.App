@@ -1,7 +1,7 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
-import { IonInput, ModalController, AlertController } from "@ionic/angular";
+import { IonInput, ModalController, AlertController, Platform } from "@ionic/angular";
 
 import { Native } from "../../services/native";
 import { Util } from "../../services/util";
@@ -23,7 +23,7 @@ import { DIDURL } from "../../model/didurl.model";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalHiveService } from "src/app/services/global.hive.service";
@@ -32,9 +32,14 @@ import { GlobalHiveCacheService } from "src/app/services/global.hivecache.servic
 import { BASE64 } from "src/app/model/base64";
 import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { GlobalNativeService } from "src/app/services/global.native.service";
+import { GlobalNavService } from "src/app/services/global.nav.service";
 
 declare const hiveManager: HivePlugin.HiveManager;
 
+/**
+ * IMPORTANT NOTE 2021-07: This screen now saves all data directly to the local did document (except live text changes).
+ * There is no way to "exit without saving", for simplicity.
+ */
 @Component({
   selector: "page-editprofile",
   templateUrl: "./editprofile.html",
@@ -52,6 +57,7 @@ export class EditProfilePage {
 
   private selectCountrySubscription: Subscription = null;
   private showmenuSubscription: Subscription = null;
+  private hwBackKeySubscription: Subscription = null;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -71,46 +77,44 @@ export class EditProfilePage {
     private translate: TranslateService,
     public profileService: ProfileService,
     private native: Native,
+    private platform: Platform,
     private globalNativeService: GlobalNativeService,
     public theme: GlobalThemeService,
     private globalHiveService: GlobalHiveService,
     private hiveCache: GlobalHiveCacheService,
+    private globalNav: GlobalNavService,
     private popup: PopupProvider)
   {
-    Logger.log('Identity', "Entering EditProfile page");
-    const navigation = this.router.getCurrentNavigation();
-    if (
-      !Util.isEmptyObject(navigation.extras.state) &&
-      navigation.extras.state["create"] == false
-    ) {
-      Logger.log('Identity', "Editing an existing profile");
+    Logger.log('Identity', "Editing an existing profile");
 
-      // Edition - We clone the received profile in case user wants to cancel editing.
-      this.profile = Profile.fromProfile(
-        //this.didService.getActiveDid().getBasicProfile()
+    // Get a profile object - higher level representation of the local DID document, for convenience.
+    this.profile = Profile.fromProfile(this.profileService.getBasicProfile());
 
-        this.profileService.getBasicProfile()
-      );
-      this.isEdit = true;
-    } else {
-      Logger.log('Identity', "Editing a new profile");
-      // Creation
-      this.profile = Profile.createDefaultProfile();
-    }
-
+    // Get noticed when the avatar become ready
     this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
-      //console.log("DEBUG GOT AVATAR DATA URL IN EDIT PROFILE", this.avatarDataUrl)
       this.avatarDataUrl = dataUrl;
     });
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("identity.edit-profile"));
+    this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
+    this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
+      key: "back",
+      iconPath: BuiltInIcon.BACK
+    });
+
+    // Catch android back key to save the changes
+    this.hwBackKeySubscription = this.platform.backButton.subscribeWithPriority(0, (processNext) => {
+      void this.next();
+    });
+
     this.showMenu();
     Logger.log('Identity', this.profile);
   }
 
   ionViewWillLeave() {
+    this.hwBackKeySubscription.unsubscribe();
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   /*   // Go to the countrypicker screen will trigger ionViewWillLeave
     if (!this.showSelectCountry) {
@@ -118,23 +122,25 @@ export class EditProfilePage {
     } */
   }
 
-  async onVisibilityChange(e, entry: BasicCredentialEntry) {
+  async onVisibilityChange(visible: boolean, entry: BasicCredentialEntry) {
     this.updatingVisibility = true;
-    entry.isVisible = e;
-    this.profileService.setCredentialVisibility(entry.key, e);
-    await this.profileService.updateDIDDocument();
-    this.updatingVisibility = false;
+
+    await this.authService.checkPasswordThenExecute(
+      async () => {
+        // Instantly update (save) this change in the profile service - cannot undo
+        await this.profileService.setCredentialVisibility(entry.key, visible, AuthService.instance.getCurrentUserPassword());
+        this.updatingVisibility = false;
+      },
+      () => {
+        this.updatingVisibility = false;
+      }
+    );
   }
 
   showMenu() {
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-      key: "done",
-      iconPath: "/assets/identity/icon/check-green.ico",
-    });
-
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon) => {
-      if (menuIcon.key == "done") {
-        void this.next(false);
+      if (menuIcon.key == "back") {
+        void this.next();
       }
     });
   }
@@ -246,9 +252,9 @@ export class EditProfilePage {
           let entry: BasicCredentialEntry = this.profile.getEntryByKey('avatar');
           let avatar = this.profileService.buildAvatar("image/png", "elastoshive", avatarHiveURL);
           if (entry == null) {
-            entry = new BasicCredentialEntry("avatar", null);
+            entry = new BasicCredentialEntry("avatar", null, true);
             entry.value = avatar;
-            this.profile.setValue(entry, entry.value);
+            this.profile.setValue(entry, entry.value, true);
           } else {
             entry.value = avatar;
           }
@@ -286,58 +292,14 @@ export class EditProfilePage {
     }
   }
 
-  /********** Submit Entries **********/
-  /*  async next(publishAvatar: boolean) {
-    if(this.checkParams()){
-      // Edition mode - go back to my profile after editing.
-      let localDidDocumentHasChanged = false;
-      await this.authService.checkPasswordThenExecute(async ()=>{
-        Logger.log('Identity', "Password provided and valid. Now saving profile");
-
-        // We are editing an existing DID: just ask the DID to save its profile.
-        // DID being created are NOT saved here.
-        await this.native.showLoading('loading-msg');
-        localDidDocumentHasChanged = await this.didService.getActiveDid().writeProfile(this.profile, AuthService.instance.getCurrentUserPassword())
-
-        this.native.hideLoading();
-
-        // Tell others that DID needs to be refreshed (profile info has changed)
-        this.events.publish('did:didchanged');
-
-        if(publishAvatar) {
-          this.events.publish('publish:avatar');
-        }
-
-        if (localDidDocumentHasChanged) {
-          Logger.log('Identity', "Asking user to publish his DID document");
-
-          // DID Document was modified: ask user if he wants to publish his new did document version now or not.
-          this.events.publish('diddocument:changed');
-          // Prompt publish permissions
-          this.profileService.showWarning('publishIdentity', null).then(() => {
-            this.navCtrl.pop();
-          });
-        }
-        else {
-          // Exit the screen.
-          Logger.log('Identity', "Exiting profile edition");
-          this.navCtrl.pop();
-        }
-      }, () => {
-        // Operation cancelled
-        Logger.log('Identity', "Password operation cancelled");
-        this.native.hideLoading();
-      });
-    }
-  } */
-
-
+  /**
+   * Full update of the local profile and local DID document.
+   */
   async save() {
     await this.authService.checkPasswordThenExecute(
       async () => {
         Logger.log('Identity', "Password provided and valid. Now saving profile");
         // We are editing an existing DID: just ask the DID to save its profile.
-        // DID being created are NOT saved here.
         await this.native.showLoading(this.translate.instant('identity.loading-msg'));
 
         Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
@@ -360,36 +322,13 @@ export class EditProfilePage {
     );
   }
 
-  async next(publishAvatar: boolean) {
-    if (await this.checkParams()) {
-      // Edition mode - go back to my profile after editing.
-      await this.authService.checkPasswordThenExecute(
-        async () => {
-          Logger.log('Identity', "Password provided and valid. Now saving profile");
-          // We are editing an existing DID: just ask the DID to save its profile.
-          // DID being created are NOT saved here.
-          await this.native.showLoading(this.translate.instant('identity.loading-msg'));
-
-          Logger.log('Identity', "PROFILE TO WRITE: " + JSON.stringify(this.profile));
-          await this.didService
-            .getActiveDid()
-            .writeProfile(
-              this.profile,
-              AuthService.instance.getCurrentUserPassword()
-            );
-
-          await this.native.hideLoading();
-          this.events.publish("did:didchanged");
-          this.events.publish("diddocument:changed", publishAvatar);
-          this.native.pop();
-        },
-        () => {
-          // Operation cancelled
-          Logger.log('Identity', "Password operation cancelled");
-          void this.native.hideLoading();
-        }
-      );
-    }
+  /**
+   * Save all and go back to the previous screen.
+   */
+  async next() {
+    await this.save();
+    Logger.log("identity", "Profile saved, now exiting the edition screen");
+    void this.globalNav.navigateBack();
   }
 
   async checkParams() {
@@ -507,8 +446,7 @@ export class EditProfilePage {
 
         // Add the new entry to the current profile
         // Default value is an empty string
-        this.profile.setValue(pickedItem, "");
-        void this.save();
+        this.profile.setValue(pickedItem, "", false);
       }
     });
 
@@ -521,28 +459,12 @@ export class EditProfilePage {
   deleteProfileEntry(entry: BasicCredentialEntry, event: MouseEvent) {
     event.stopImmediatePropagation();
     this.profile.deleteEntry(entry);
-    void this.save();
   }
 
-  public async alertAvatarPublish() {
-    const alert = await this.alertCtrl.create({
-      mode: "ios",
-      header: this.translate.instant("identity.avatar-publish"),
-      buttons: [
-        {
-          text: this.translate.instant("identity.avatar-publish-cancel"),
-          role: "cancel",
-          cssClass: "secondary",
-        },
-        {
-          text: this.translate.instant("identity.avatar-publish-yes"),
-          handler: () => {
-            void this.next(true);
-          },
-        },
-      ],
-    });
+  /**
+   * Returns the displayable credential entry, from the profiles service, that matches this given profile entry
+   */
+  public getDisplayableCredential() {
 
-    await alert.present();
   }
 }

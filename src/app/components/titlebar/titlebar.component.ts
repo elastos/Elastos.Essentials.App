@@ -238,7 +238,7 @@ export class TitleBarComponent {
   }
 
   /**
-   * Changes the top left icon appearance and behaviour. See @TitleBarNavigationMode for available
+   * Changes the top left inner icon appearance and behaviour. See @TitleBarNavigationMode for available
    * navigation modes.
    *
    * @param navigationMode See @TitleBarNavigationMode

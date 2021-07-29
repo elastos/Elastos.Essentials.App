@@ -7,14 +7,14 @@
           <br/>
           <h2>{{ 'identity.publish-wait2' | translate }}</h2>
         </ion-label>
-        <br/><br/>
-        <ion-spinner *ngIf="publishing"></ion-spinner>
+        
+        <ion-spinner *ngIf="publishing" class="spinner"></ion-spinner>
 
-        <div class="success-row" [class.darkContainer]="theme.darkMode" *ngIf="publicationSuccessful">
+        <div class="success-row result" [class.darkContainer]="theme.darkMode" *ngIf="publicationSuccessful">
           <lottie-player src="../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 80px; height: 80px;" autoplay></lottie-player>
         </div>
 
-        <div *ngIf="publicationFailed">
+        <div class="result" *ngIf="publicationFailed">
           <h2>{{ 'identity.publish-error2' | translate }}</h2>
         </div>
       </ion-col>

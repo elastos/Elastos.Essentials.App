@@ -22,27 +22,8 @@ import { ProfileService } from "../../services/profile.service";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
-
-type ProfileDisplayEntry = {
-  credentialId: string; // related credential id
-  label: string; // "title" to display
-  value: string; // value to display
-  willingToBePubliclyVisible?: boolean; // Whether it's currently set to become published or not.
-};
-
-type IssuerDisplayEntry = {
-  did: string;
-  name: string;
-  avatar: string;
-};
-
-type CredentialDisplayEntry = {
-  credential: DIDPlugin.VerifiableCredential;
-  issuer: string;
-  willingToBePubliclyVisible: boolean;
-  willingToDelete: boolean;
-  canDelete: boolean;
-};
+import { BasicCredentialEntry } from "../../model/basiccredentialentry.model";
+import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 
 @Component({
   selector: "credentials-profile",
@@ -52,7 +33,7 @@ type CredentialDisplayEntry = {
 export class CredentialsPage {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  public profile: Profile;
+  private profile: Profile;
 
   public credentials: VerifiableCredential[];
   private publishedCredentials: DIDPlugin.VerifiableCredential[];
@@ -164,9 +145,6 @@ export class CredentialsPage {
         else return -1;
       });
 
-      this.buildDetailEntries();
-      //this.buildCredentialEntries(publishAvatar);
-
       this.profileService.getAvatarDataUrl().subscribe(avatarDataUrl => {
         this.avatarImg = avatarDataUrl;
       });
@@ -210,59 +188,8 @@ export class CredentialsPage {
     return null;
   }
 
-  /**
-   * Convenience conversion to display profile data on UI.
-   */
-  buildDetailEntries() {
-    let notSetTranslated = this.translate.instant("identity.not-set");
-
-    // Initialize
-    this.profileService.visibleData = [];
-    this.profileService.invisibleData = [];
-
-    let profileEntries = this.profile.entries;
-    for (let entry of profileEntries) {
-      this.pushDisplayEntry(entry.key, {
-        credentialId: entry.key,
-        label: this.translate.instant("identity.credential-info-type-" + entry.key),
-        value: entry.toDisplayString() || notSetTranslated,
-      });
-    }
-  }
-
-  pushDisplayEntry(profileKey: string, entry: ProfileDisplayEntry) {
-    if (this.profileEntryIsVisibleOnChain(profileKey)) {
-      entry.willingToBePubliclyVisible = true;
-      this.profileService.visibleData.push(entry);
-    } else {
-      entry.willingToBePubliclyVisible = profileKey === "name" ? true : false;
-      this.profileService.invisibleData.push(entry);
-    }
-
-    // Logger.log("identity", "Invisible data", this.profileService.invisibleData);
-    // Logger.log("identity", "Visible data", this.profileService.visibleData);
-  }
-
-
-  /**
-   * Tells if a given profile key is currently visible on chain or not (inside the DID document or not).
-   *
-   * @param profileKey Credential key.
-   */
-  profileEntryIsVisibleOnChain(profileKey: string): boolean {
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
-
-    let credential = currentDidDocument.getCredentialById(
-      new DIDURL("#" + profileKey)
-    );
-    return credential != null;
-  }
-
-
-
   /***** Find and build app and avatar creds *****/
-  buildAppAndAvatarCreds(publishAvatar?: boolean) {
+  buildAppAndAvatarCreds() {
     //this.profileService.appCreds = [];
     let hasAvatar = false;
 
@@ -271,12 +198,6 @@ export class CredentialsPage {
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
         Logger.log("identity", "Profile has avatar");
-
-        if (publishAvatar) {
-          Logger.log("identity", "Prompting avatar publish");
-          cred.willingToBePubliclyVisible = true;
-          void this.profileService.showWarning("publishVisibility", null);
-        }
       }
       // Find Description Credential
       if ("description" in cred.credential.getSubject()) {
@@ -289,12 +210,6 @@ export class CredentialsPage {
       if ("avatar" in cred.credential.getSubject()) {
         hasAvatar = true;
         Logger.log("identity", "Profile has avatar");
-
-        if (publishAvatar) {
-          Logger.log("identity", "Prompting avatar publish");
-          cred.willingToBePubliclyVisible = true;
-          void this.profileService.showWarning("publishVisibility", null);
-        }
       }
       // Find Description Credentials
       if ("description" in cred.credential.getSubject()) {
@@ -302,19 +217,6 @@ export class CredentialsPage {
         Logger.log("identity", "Profile has bio", this.profileService.displayedBio);
       }
     });
-  }
-
-  /**
-   * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
-   */
-  credentialIsVisibleOnChain(credential: VerifiableCredential) {
-    let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
-
-    let didDocumentCredential = currentDidDocument.getCredentialById(
-      new DIDURL(credential.pluginVerifiableCredential.getId())
-    );
-    return didDocumentCredential != null;
   }
 
   /**

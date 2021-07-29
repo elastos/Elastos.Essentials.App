@@ -10,7 +10,6 @@ const routes: Routes = [
     loadChildren: "./pages/tabnav/tabnav.module#TabsnavPageModule"
   },
   { path: "countrypicker", loadChildren: ()=>import('./pages/countrypicker/module').then(m => m.CountryPickerModule) },
-  { path: "createidentity", loadChildren: ()=>import('./pages/editprofile/module').then(m => m.EditProfileModule) },
   { path: "editprofile", loadChildren: ()=>import('./pages/editprofile/module').then(m => m.EditProfileModule) },
   { path: "publish", loadChildren: ()=>import('./pages/publish/module').then(m => m.PublishModule) },
   { path: "credentialdetails", loadChildren: ()=>import('./pages/credentialdetails/module').then(m => m.CredentialDetailsModule) },

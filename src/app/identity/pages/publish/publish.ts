@@ -9,15 +9,8 @@ import { Logger } from "src/app/logger";
 import { Subscription } from "rxjs";
 import { Events } from "src/app/services/events.service";
 import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
-
-type CredentialDisplayEntry = {
-    credential: DIDPlugin.VerifiableCredential;
-    issuer: string;
-    willingToBePubliclyVisible: boolean;
-    isVisible: boolean;
-    willingToDelete: boolean;
-    canDelete: boolean;
-};
+import { AuthService } from "../../services/auth.service";
+import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 
 @Component({
     selector: "page-publish",
@@ -41,6 +34,7 @@ export class PublishPage {
         private translate: TranslateService,
         public theme: GlobalThemeService,
         public profileService: ProfileService,
+        private authService: AuthService,
         private basicCredentialService: BasicCredentialsService
     ) {
         this.init();
@@ -116,31 +110,21 @@ export class PublishPage {
 
     publishableCredentials(): CredentialDisplayEntry[] {
         return this._publishableCredentials;
-        // return  get filteredCredentials(): CredentialDisplayEntry[] {
-
-        //     if (this.segment == "all") return this.profileService.allCreds;
-        //     if (this.segment == "hidden") return this.profileService.invisibleCredentials;
-        //     if (this.segment == "visible") return this.profileService.visibleCredentials;
-
-        //     return this.profileService.allCreds.filter((item) => {
-        //       let types = item.credential.getTypes();
-        //       let isVerified = !types.includes("SelfProclaimedCredential");
-
-        //       if (this.segment == "verified" && isVerified) return true;
-        //       if (this.segment == "unverified" && !isVerified) return true;
-
-        //       return false;
-        //     });
-        //   }
     }
 
-    async onVisibilityChange(e, entry: CredentialDisplayEntry) {
+    async onVisibilityChange(visible: boolean, entry: CredentialDisplayEntry) {
         this.updatingVisibility = true;
-        Logger.log('Identity', entry.credential.getId());
-        Logger.log('Identity', entry.credential.getFragment());
-        this.profileService.setCredentialVisibility(entry.credential.getFragment(), e);
-        await this.profileService.updateDIDDocument();
-        this.updatingVisibility = false;
+        
+        await this.authService.checkPasswordThenExecute(
+            async () => {
+                await this.profileService.setCredentialVisibility(entry.credential.getFragment(), visible, this.authService.getCurrentUserPassword());
+                await this.profileService.updateDIDDocument();
+                this.updatingVisibility = false;
+            },
+            () => {
+                this.updatingVisibility = false;
+            }
+        );
     }
 
     getAvatar(entry: CredentialDisplayEntry): string {

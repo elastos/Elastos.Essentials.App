@@ -1,4 +1,3 @@
-import { NewDID } from './newdid.model';
 import { DID } from './did.model';
 import { Config } from '../services/config';
 import { DIDDocument } from './diddocument.model';
@@ -162,36 +161,6 @@ export class DIDStore {
         return this.dids.find((did) => {
             return did.getDIDString() == didString;
         })
-    }
-
-    /**
-     * Converts the DID being created into a real DID in the DID store, with some credentials
-     * for user's default profile.
-     */
-    public async addNewDidWithProfile(newDid: NewDID): Promise<string> {
-        let createdDid: DIDPlugin.DID;
-        try {
-            // Create and add a DID to the DID store in physical storage.
-            createdDid = await this.createPluginDid(newDid.password, "");
-            Logger.log('identity', "Created DID:", createdDid);
-        }
-        catch (e) {
-            Logger.error('identity', "Create DID exception", e);
-            throw DIDHelper.reworkedPluginException(e);
-        }
-
-        // Add DID to our memory model.
-        let did: DID;
-        did = new DID(createdDid, this.events, this.didSessions);
-        this.dids.push(did);
-
-        // Now create credentials for each profile entry
-        await did.writeProfile(newDid.profile, newDid.password);
-
-        // This new DID becomes the active one.
-        await this.setActiveDid(did);
-
-        return did.getDIDString();
     }
 
     public async deleteDid(did: DID) {

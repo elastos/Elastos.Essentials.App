@@ -27,12 +27,14 @@ export class AuthService {
 
     /**
      * Gets DID store password then execute the given code.
+     * 
+     * Resolves when the target write action was fully executed, or when cancelled.
      *
      * @param showMasterPromptIfDatabaseLocked If false, this function will silently fail and return a cancellation, in case the master password was locked.
      */
-    public checkPasswordThenExecute(writeActionCb: () => Promise<void>, onCancelled: () => void, showMasterPromptIfDatabaseLocked = true, forceShowMasterPrompt = false) {
+    public checkPasswordThenExecute(writeActionCb: () => Promise<void>, onCancelled: () => void, showMasterPromptIfDatabaseLocked = true, forceShowMasterPrompt = false): Promise<void> {
         // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
-        return new Promise(async (resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
             try {
                 let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
                     promptPasswordIfLocked: showMasterPromptIfDatabaseLocked,
@@ -46,13 +48,13 @@ export class AuthService {
 
                     // TODO - COMMENTED OUT TEMPORARILY AS IT SHOWS TOO OFTEN - @zhiming TO CHECK WHAT IS HAPPENING - this.popupProvider.ionicAlert("Password error", "Impossible to retrieve your identity store password from your master password. Please try to import your identity again.");
                     onCancelled();
-
-                    return
+                    resolve();
                 }
                 else {
                     // Master password was unlocked and found
                     this.unlockedDidStorePassword = passwordInfo.password;
                     await writeActionCb();
+                    resolve();
                 }
             }
             catch (e) {
@@ -60,9 +62,10 @@ export class AuthService {
                 if (reworkedError instanceof PasswordManagerCancelallationException) {
                     // Nothing to do, just stop the flow here.
                     onCancelled();
+                    resolve();
                 }
                 else {
-                    throw reworkedError;
+                    reject(reworkedError);
                 }
             }
         });

@@ -8,8 +8,15 @@ ion-grid {
         color: #565bdb;
     }
 
-    .success-row {
+    .spinner {
         margin-top: 40px;
+    }
+
+    .result {
+        margin-top: 40px;
+    }
+
+    .success-row {
         display: flex;
         flex-direction: column;
         justify-content: center;
