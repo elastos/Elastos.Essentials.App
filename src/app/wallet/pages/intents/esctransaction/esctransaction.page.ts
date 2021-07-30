@@ -74,13 +74,13 @@ export class EscTransactionPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('wallet.esctransaction-title'));
 
-        this.init();
+        void this.init();
     }
 
     ionViewDidEnter() {
       if (this.walletInfo["Type"] === "Multi-Sign") {
           // TODO: reject esctransaction if multi sign (show error popup)
-          this.cancelOperation();
+          void this.cancelOperation();
       }
     }
 
@@ -109,13 +109,13 @@ export class EscTransactionPage implements OnInit {
     }
 
     goTransaction() {
-        this.checkValue();
+        void this.checkValue();
     }
 
-    checkValue() {
+    async checkValue(): Promise<void> {
         // Nothing to check
 
-        this.createEscTransaction();
+        await this.createEscTransaction();
     }
 
     public balanceIsEnough(): boolean {
@@ -132,7 +132,7 @@ export class EscTransactionPage implements OnInit {
 
         let gas = new BigNumber(this.coinTransferService.payloadParam.gas);
         let gasPrice = new BigNumber(this.coinTransferService.payloadParam.gasPrice || this.gasPrice);
-        let elaEthValue = new BigNumber(this.coinTransferService.payloadParam.value).dividedBy(weiElaRatio);
+        let elaEthValue = new BigNumber(this.coinTransferService.payloadParam.value || 0).dividedBy(weiElaRatio);
         let fees = gas.multipliedBy(gasPrice).dividedBy(weiElaRatio);
         let total = elaEthValue.plus(fees);
 
@@ -161,7 +161,7 @@ export class EscTransactionPage implements OnInit {
             this.masterWallet.id,
             StandardCoinName.ETHSC,
             this.coinTransferService.payloadParam.to,
-            this.coinTransferService.payloadParam.value,
+            this.coinTransferService.payloadParam.value || "0",
             0, // WEI
             this.coinTransferService.payloadParam.gasPrice || this.gasPrice.toString(16),
             0, // WEI
