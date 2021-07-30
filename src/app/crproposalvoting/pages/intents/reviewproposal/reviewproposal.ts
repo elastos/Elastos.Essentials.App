@@ -90,7 +90,7 @@ export class ReviewProposalPage {
                 data: digest,
             });
             Logger.log('crproposal', "Got signed digest.", ret);
-            if (ret.result) {
+            if (ret.result && ret.result.signature) {
                 //Create transaction and send
                 payload.Signature = ret.result.signature;
                 const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(JSON.stringify(payload), '');

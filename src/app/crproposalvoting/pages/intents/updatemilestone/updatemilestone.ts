@@ -123,14 +123,9 @@ export class UpdatMilestonePage {
             });
             Logger.log('crproposal', "Got signed digest.", result);
 
-            if (!result.result) {
+            if (!result.result || !result.responseJWT) {
                 // Operation cancelled by user
                 return null;
-            }
-
-            // The signed JWT is normally in "responseJWT", forwarded directly from the DID app by the runtime
-            if (!result.responseJWT) {
-                throw "Missing JWT in the intent response";
             }
 
             Logger.log('crproposal', "signedJWT", result.responseJWT);
