@@ -346,9 +346,11 @@ export const en = {
         /***********************
         * ESC Transaction Page *
         ************************/
-        "esctransaction-title": "ETHSC Transaction",
+        "esctransaction-title": "Transaction",
         "esctransaction-smart-contract": "Smart Contract",
         "esctransaction-intro": "You are going to sign and run a smart contract on the Ethereum Sidechain.",
+        "esctransaction-approve-token": "Approve Token",
+        "esctransaction-approve-token-intro": "This application or website will be allowed to withdraw and spend your {{token}} tokens on your behalf.",
         "esctransaction-you-are-using": "You are using:",
         "esctransaction-value": "Value:",
         "esctransaction-fees": "Fees:",

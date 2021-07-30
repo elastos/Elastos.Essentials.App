@@ -50,6 +50,7 @@
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v2-periphery": "1.1.0-beta.0",
     "@walletconnect/client": "^1.4.1",
+    "abi-decoder": "^2.4.0",
     "angularx-qrcode": "11.0.0",
     "bignumber.js": "9.0.1",
     "crypto-browserify": "3.12.0",

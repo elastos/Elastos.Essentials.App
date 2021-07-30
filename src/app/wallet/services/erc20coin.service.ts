@@ -32,6 +32,8 @@ import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
     providedIn: 'root'
 })
 export class ERC20CoinService {
+    public static instance: ERC20CoinService = null;
+
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private erc20ABI: any;
@@ -42,6 +44,7 @@ export class ERC20CoinService {
     // 0xa438928dbad409fd927029156542aa7b466508d9
 
     constructor(private prefs: WalletPrefsService) {
+        ERC20CoinService.instance = this;
     }
 
     // Lazy web3 init for angular bundle optimization
