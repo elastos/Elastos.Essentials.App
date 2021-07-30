@@ -351,7 +351,7 @@ export const zh = {
         "esctransaction-smart-contract": "智能合约",
         "esctransaction-intro": "您将在以太坊侧链上签名并运行一个智能合约",
         "esctransaction-approve-token": "Approve Token",
-        "esctransaction-approve-token-intro": "This application or website will be allowed to withdraw and spend your {{token}} tokens on your behalf.",
+        "esctransaction-approve-token-intro": "此应用程序或网站将被允许代表您提取和使用您的 {{token}} 代币",
         "esctransaction-you-are-using": "您正在使用:",
         "esctransaction-value": "金额:",
         "esctransaction-fees": "手续费:",
