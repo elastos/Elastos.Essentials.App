@@ -1,6 +1,36 @@
-@import '../../root.scss';
+@import "../../root.scss";
 
 .container {
-  min-height: 100%;
-  padding-top: 15%;
+    min-height: 100%;
+    padding-top: 15%;
+
+    ion-list {
+        ion-item {
+            --padding-start: 0px;
+            --background: #ffffff;
+            margin: 0 10px 1px 10px;
+            border-radius: 8px;
+
+            ion-row {
+                padding: 2.5px 0;
+
+                .img-container {
+                    img {
+                        height: 24px;
+                        width: 24px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.darkContainer {
+    ion-list {
+        ion-item {
+            --background: #212021;
+            box-shadow: none;
+            --border-color: #2e2f4e;
+        }
+    }
 }

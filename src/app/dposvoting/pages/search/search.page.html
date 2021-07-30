@@ -25,7 +25,7 @@
     >
     </app-node-slider-search>
 
-    <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.dark-node-list]="theme.darkMode">
+    <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
       <ion-virtual-scroll [items]="filteredNodes"  approxItemHeight="240px">
         <ion-item *virtualItem="let node">
           <ion-grid class="ion-no-padding">
@@ -71,7 +71,7 @@
 
   <ng-template #loadingList>
     <ion-grid class="container ion-no-padding">
-      <ion-list class="node-list" [class.dark-node-list]="theme.darkMode" [class.loading-list]="!theme.darkMode">
+      <ion-list class="node-list" [class.darkContainer]="theme.darkMode" [class.loading-list]="!theme.darkMode">
         <ion-item *ngFor='let empty of nodesService.emptyList' lines="none">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">

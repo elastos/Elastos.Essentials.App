@@ -12,6 +12,7 @@ import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, Ti
 import { TranslateService } from '@ngx-translate/core';
 import { App } from 'src/app/model/app.enum';
 import { NavController } from '@ionic/angular';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Component({
     selector: 'app-tx',
@@ -38,6 +39,7 @@ export class TxPage implements OnInit {
         public translate: TranslateService,
         private globalNav: GlobalNavService,
         private navCtrl: NavController,
+        public theme: GlobalThemeService
     ) { }
 
     ngOnInit() {
