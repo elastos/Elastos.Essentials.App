@@ -4,7 +4,7 @@
     <ion-label>{{ 'dposvoting.history-votes-overview' | translate }}</ion-label>
   </div>
 
-  <ion-grid *ngIf="nodesService._nodes.length && nodesService._votes.length" class="container" [class.dark-container]="theme.darkMode">
+  <ion-grid *ngIf="nodesService._nodes.length && nodesService._votes.length" class="container" [class.darkContainer]="theme.darkMode">
     <ion-list>
       <ion-item *ngFor="let vote of nodesService._votes" (click)="showVoteDetail(vote)" detail>
         <ion-grid class="ion-padding-horizontal">

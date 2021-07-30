@@ -1,83 +1,84 @@
-@import '../../root.scss';
+@import "../../root.scss";
 
 .container {
-  min-height: 100%;
-  padding-top: 15%;
-
-  ion-list {
-    padding: 0;
-    margin: 0;
     min-height: 100%;
+    padding-top: 15%;
 
-    ion-item {
-      --padding-start: 0px;
-      --background: #ffffff;
-      margin-bottom: 1px;
+    ion-list {
+        padding: 0;
+        margin: 0;
+        min-height: 100%;
 
-      ion-row {
-        padding: 2.5px 0;
-      }
+        ion-item {
+            --padding-start: 0px;
+            --background: #ffffff;
+            margin-bottom: 1px;
+            border-radius: 8px;
 
-      ion-label {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        overflow: hidden;
-      }
+            ion-row {
+                padding: 2.5px 0;
+            }
 
-      .date {
-        font-weight: 600;
-        font-size: 13px;
-      }
+            ion-label {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                overflow: hidden;
+            }
 
-      .tx {
-        margin-top: 5px;
-        font-size: 11px;
-        font-weight: 600;
-      }
+            .date {
+                font-weight: 600;
+                font-size: 13px;
+            }
+
+            .tx {
+                margin-top: 5px;
+                font-size: 11px;
+                font-weight: 600;
+            }
+        }
     }
-  }
 }
 
-.dark-container {
-  ion-list {
-    ion-item {
-      --background: #212021;
-      box-shadow: none;
-      --border-color: #2e2f4e;
+.darkContainer {
+    ion-list {
+        ion-item {
+            --background: #212021;
+            box-shadow: none;
+            --border-color: #2e2f4e;
+        }
     }
-  }
 }
 
 /** No History **/
 .noHistory {
-  padding-top: 10px;
+    padding-top: 10px;
 
-  ion-col {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    ion-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-    ion-label {
-      font-size: 16px !important;
-      font-weight: 500 !important;
+        ion-label {
+            font-size: 16px !important;
+            font-weight: 500 !important;
+        }
     }
-  }
 }
 
 /** Skeleton **/
 ._date {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 ._keys {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .loading-container {
-  padding-top: 0;
+    padding-top: 0;
 }
