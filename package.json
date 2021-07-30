@@ -61,6 +61,7 @@
     "md5-file": "5.0.0",
     "moment": "2.29.1",
     "node-wget-promise": "0.1.6",
+    "p-queue": "^7.1.0",
     "qr-scanner": "1.2.0",
     "rxjs": "6.6.3",
     "stream-browserify": "3.0.0",

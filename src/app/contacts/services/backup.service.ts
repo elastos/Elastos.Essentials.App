@@ -7,12 +7,15 @@ import { Hive } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackupService {
-  private backupRestoreHelper: Hive.DataSync.HiveDataSync;
+  private backupRestoreHelper: HiveDataSync;
   private userVault: HivePlugin.Vault;
 
   public restoredContacts: Contact[] = [];
@@ -20,6 +23,8 @@ export class BackupService {
   constructor(
     private events: Events,
     private didService: DidService,
+    private globalHiveService: GlobalHiveService,
+    private globalStorage: GlobalStorageService,
     private friendsService: FriendsService,
   ) { }
 
@@ -38,9 +43,7 @@ export class BackupService {
         return;
       }
 
-      const hiveClient = await hiveAuthHelper.getClientWithAuth((authError)=>{
-        Logger.warn("contacts", "Hive authentication error callback: ", authError);
-      });
+      const hiveClient = await this.globalHiveService.getHiveClient();
       Logger.log("contacts", "Hive client initialization complete");
 
       const userDID = await this.didService.getSignedIdentity();
@@ -57,7 +60,7 @@ export class BackupService {
 
       Logger.log("contacts", "User vault retrieved. Now creating a new backup restore helper instance", this.userVault);
 
-      this.backupRestoreHelper = new ElastosSDKHelper().newHiveDataSync(this.userVault, true);
+      this.backupRestoreHelper = new HiveDataSync(this.userVault, this.globalStorage, true);
 
       this.restoredContacts = [];
       this.backupRestoreHelper.addSyncContext("contacts",
@@ -81,6 +84,8 @@ export class BackupService {
         }
       );
 
+      //await this.backupRestoreHelper.wipeLocalContextData("contacts"); // TMP DEBUG
+
       Logger.log("contacts", "Starting backup restore sync");
       await this.backupRestoreHelper.sync();
     } catch (e) {
@@ -98,15 +103,6 @@ export class BackupService {
     const targetContact = this.friendsService.contacts.find((contact) => contact.id === contactId);
     if (!targetContact) {
       Logger.log("contacts", 'Backup data needs to be added', data);
-
-      /* TODO @chad - Replace with another UI indicator?
-      titleBarManager.showActivityIndicator(
-        TitleBarPlugin.TitleBarActivityType.DOWNLOAD,
-        this.translate.instant('restoring-contacts-backup')
-      );*/
-
-      // await this.friendsService.resolveDIDDocument(contactId, false, null, false);
-
       await this.addContact(data);
     }
   }
@@ -120,7 +116,6 @@ export class BackupService {
 
         // Update home page contacts slide
         this.events.publish('friends:updateSlider');
-        // TODO @chad titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.DOWNLOAD);
         resolve();
       }, 1000);
     })
@@ -170,5 +165,4 @@ export class BackupService {
       Logger.error("contacts", 'BackupService deleteDatabaseEntry error:', e);
     }
   }
-
 }
