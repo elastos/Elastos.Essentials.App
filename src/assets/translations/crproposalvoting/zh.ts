@@ -57,6 +57,7 @@ export const zh = {
         'suggestion-hash': '建议哈希',
         'proposaltype-normal': '普通',
         'proposaltype-changeproposalowner': '改变负责人',
+        'proposaltype-changeproposaladdress': '改变接收地址',
         'proposaltype-closeproposal': '关闭提议',
         'proposaltype-secretarygeneral': '新的CR委员秘书长',
         'imprest': '首付款/预付款',

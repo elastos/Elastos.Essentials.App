@@ -15,11 +15,10 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="createProposalCommand.data.proposaltype">
+            <ion-row class="profile-data" *ngIf="proposaltype">
                 <div>
                     <h5>{{ 'crproposalvoting.type' | translate }}</h5>
-                    <h4 class="align-center proposaltype">{{ 'crproposalvoting.proposaltype-' +
-                        createProposalCommand.data.proposaltype | translate }}</h4>
+                    <h4 class="align-center proposaltype">{{ 'crproposalvoting.proposaltype-' + proposaltype | translate }}</h4>
                 </div>
             </ion-row>
 
@@ -37,7 +36,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="createProposalCommand.data.proposaltype == 'normal'">
+            <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.attach-budget' | translate }}</h5>
                     <table>
@@ -56,7 +55,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="profile-data" *ngIf="createProposalCommand.data.proposaltype == 'normal'">
+            <ion-row class="profile-data" *ngIf="proposaltype == 'normal'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.budget-amount' | translate }}</h5>
                     <h4>{{ buggetAmount / Config.SELA  }}</h4>
@@ -64,7 +63,7 @@
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="createProposalCommand.data.secretarygeneraldid && createProposalCommand.data.proposaltype == 'secretarygeneral'">
+                *ngIf="createProposalCommand.data.secretarygeneraldid && proposaltype == 'secretarygeneral'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.secretarygeneraldid' | translate }}</h5>
                     <h4>{{ createProposalCommand.data.secretarygeneraldid }}</h4>
@@ -72,15 +71,15 @@
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="createProposalCommand.data.newrecipient && createProposalCommand.data.proposaltype == 'changeproposalowner'">
+                *ngIf="suggestionDetails.newAddress && proposaltype == 'changeproposaladdress'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.new-recipient-address' | translate }}</h5>
-                    <h4>{{ createProposalCommand.data.newrecipient }}</h4>
+                    <h4>{{ suggestionDetails.newAddress }}</h4>
                 </ion-col>
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="suggestionDetails.newOwnerDID && createProposalCommand.data.proposaltype == 'changeproposalowner'">
+                *ngIf="suggestionDetails.newOwnerDID && proposaltype == 'changeproposalowner'">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.new-owner-did' | translate }}</h5>
                     <h4>{{ suggestionDetails.newOwnerDID }}</h4>
@@ -96,7 +95,7 @@
 
             <ion-row class="profile-data"
                 *ngIf="suggestionDetails.targetProposalTitle &&
-                (createProposalCommand.data.proposaltype == 'changeproposalowner' || createProposalCommand.data.proposaltype == 'closeproposal')">
+                (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.target-proposal-title' | translate }}</h5>
                     <h4>{{ suggestionDetails.targetProposalTitle }}</h4>
@@ -104,7 +103,7 @@
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="createProposalCommand.data.targetproposalhash && (createProposalCommand.data.proposaltype == 'changeproposalowner' || createProposalCommand.data.proposaltype == 'closeproposal')">
+                *ngIf="createProposalCommand.data.targetproposalhash && (proposaltype == 'changeproposalowner' || proposaltype == 'closeproposal')">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.target-proposal-hash' | translate }}</h5>
                     <h4>{{ createProposalCommand.data.targetproposalhash }}</h4>
