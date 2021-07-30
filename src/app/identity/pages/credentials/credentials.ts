@@ -163,8 +163,9 @@ export class CredentialsPage {
     // console.log('ALL CREDS', this.profileService.allCreds);
   }
 
-  isPublished(credential: DIDPlugin.VerifiableCredential) {
-    let foundCred = this.publishedCredentials.find(x => {
+  isPublished(credential: DIDPlugin.VerifiableCredential): boolean {
+    return this.profileService.credentialIsInLocalDIDDocument(credential);
+    /* let foundCred = this.publishedCredentials.find(x => {
       return x.getId() == credential.getId();
     });
 
@@ -177,7 +178,7 @@ export class CredentialsPage {
         return false;
       }
     }
-    return true;
+    return true; */
   }
 
   getLocalCredByProperty(credential: DIDPlugin.VerifiableCredential, property: string): string {
