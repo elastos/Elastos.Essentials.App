@@ -7,7 +7,8 @@ export class SuggestionDetails {
     address: string;    // ?
     createdAt: number;  // Timestamp
     targetProposalTitle: string;
-    newOwnerDID: string;
+    newOwnerDID?: string;
+    newAddress?: string;
     targetProposalHash: string;
     type: string;
 }

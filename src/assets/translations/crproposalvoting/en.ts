@@ -57,6 +57,7 @@ export const en = {
         'suggestion-hash': 'Suggestion Hash',
         'proposaltype-normal': 'Normal',
         'proposaltype-changeproposalowner': 'Change Proposal Owner',
+        'proposaltype-changeproposaladdress': 'Change Proposal Address',
         'proposaltype-closeproposal': 'Terminate Proposal',
         'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
         'imprest': 'Imprest',

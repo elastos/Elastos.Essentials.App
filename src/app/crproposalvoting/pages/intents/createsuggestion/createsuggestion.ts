@@ -51,6 +51,7 @@ export class CreateSuggestionPage {
     public creationDate: string = "";
     public buggetAmount: number = 0;
     public Config = Config;
+    public proposaltype: string;
 
     constructor(
         private proposalService: ProposalService,
@@ -69,8 +70,10 @@ export class CreateSuggestionPage {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.create-suggestion'));
         try {
             this.createSuggestionCommand = this.crOperations.onGoingCommand as CreateSuggestionCommand;
+            Logger.log('crproposal', "createSuggestionCommand", this.createSuggestionCommand);
             this.originalRequestJWT = this.crOperations.originalRequestJWT;
             this.suggestionID = this.createSuggestionCommand.sid;
+            this.proposaltype = this.createSuggestionCommand.data.proposaltype;
 
             if (this.createSuggestionCommand.data.proposaltype == "normal") {
                 for (let suggestionBudget of this.createSuggestionCommand.data.budgets) {
@@ -81,6 +84,9 @@ export class CreateSuggestionPage {
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
             Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetails.newAddress) {
+                this.proposaltype = "changeproposaladdress";
+            }
             this.creationDate = Util.timestampToDateTime(this.suggestionDetails.createdAt * 1000);
             this.suggestionDetailsFetched = true;
         }
