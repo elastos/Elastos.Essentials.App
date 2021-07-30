@@ -347,9 +347,11 @@ export const zh = {
         /***********************
         * ESC Transaction Page *
         ************************/
-        "esctransaction-title": "ETHSC 交易",
+        "esctransaction-title": "交易",
         "esctransaction-smart-contract": "智能合约",
         "esctransaction-intro": "您将在以太坊侧链上签名并运行一个智能合约",
+        "esctransaction-approve-token": "Approve Token",
+        "esctransaction-approve-token-intro": "This application or website will be allowed to withdraw and spend your {{token}} tokens on your behalf.",
         "esctransaction-you-are-using": "您正在使用:",
         "esctransaction-value": "金额:",
         "esctransaction-fees": "手续费:",

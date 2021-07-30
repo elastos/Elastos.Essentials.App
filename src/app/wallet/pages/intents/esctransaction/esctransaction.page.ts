@@ -36,7 +36,8 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
-
+import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/ethtransactioninfoparser';
+import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
 
 @Component({
     selector: 'app-esctransaction',
@@ -54,6 +55,7 @@ export class EscTransactionPage implements OnInit {
     public gasPrice: BigNumber;
     public chainId: string; // ETHSC
     public hasOpenETHSCChain = false;
+    public transactionInfo: ETHTransactionInfo;
 
     constructor(
         public walletManager: WalletManager,
@@ -64,6 +66,7 @@ export class EscTransactionPage implements OnInit {
         public zone: NgZone,
         private translate: TranslateService,
         public theme: GlobalThemeService,
+        private erc20service: ERC20CoinService, // Keep it to initialize the service for the ETHTransactionInfoParser
         public uiService: UiService
     ) {
     }
@@ -95,6 +98,15 @@ export class EscTransactionPage implements OnInit {
         this.gasPrice = await this.ethSidechainSubWallet.getGasPrice();
 
         Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
+
+        // Extract information about the specific transaction type we are handling
+        let transactionInfoParser = new ETHTransactionInfoParser(
+            this.coinTransferService.payloadParam.data,
+            this.coinTransferService.payloadParam.value || "0",
+            this.coinTransferService.payloadParam.to
+        )
+        this.transactionInfo = await transactionInfoParser.computeInfo();
+        Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
     }
 
     /**
