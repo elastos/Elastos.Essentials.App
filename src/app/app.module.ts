@@ -64,7 +64,26 @@ export class SentryErrorHandler implements ErrorHandler {
     });
   }
 
+  /**
+   * Let a few special errors be handled silently.
+   */
+  private shouldHandleAsSilentError(error) {
+    let stringifiedError = ""+error;
+
+    // Error unhandled by the wallet connect 1.0 library, but this is not a real error (caused by calling
+    // disconnect when not connected). This can be removed after upgrading to wallet connect 2.0.
+    if (stringifiedError.indexOf("Missing or invalid topic field") >= 0)
+      return true;
+
+    return false;
+  }
+
   handleError(error) {
+    if (this.shouldHandleAsSilentError(error)) {
+      Logger.warn("Sentry", "Globally catched exception (silently):", error);
+      return;
+    }
+
     Logger.error("Sentry", "Globally catched exception:", error);
     Logger.error("Sentry", document.URL);
     Logger.error("Sentry", 'version:', this.version);

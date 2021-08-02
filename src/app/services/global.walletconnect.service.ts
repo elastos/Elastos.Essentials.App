@@ -66,6 +66,7 @@ export class GlobalWalletConnectService extends GlobalService {
     // Re-activate existing sessions to reconnect to their wallet connect bridges.
     await this.restoreSessions();
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe(async activeWalletId => {
       Logger.log("walletconnect", "Updating active connectors with new active wallet information");
       for (let c of Array.from(this.connectors.values())) {
@@ -202,7 +203,8 @@ export class GlobalWalletConnectService extends GlobalService {
         throw error;
       }
 
-      this.native.genericToast("settings.wallet-connect-session-disconnected");
+      if (this.shouldShowDisconnectionInfo(payload))
+        this.native.genericToast("settings.wallet-connect-session-disconnected");
 
       this.initiatingConnector = null;
       this.connectors.delete(connector.key);
@@ -224,6 +226,22 @@ export class GlobalWalletConnectService extends GlobalService {
       }
     }, 5000);
   } */
+
+  /**
+   * Method that filters some disconnection events to not show a "sessions disconnected" popup in some cases.
+   */
+  private shouldShowDisconnectionInfo(disconnectionPayload: {event: string, params: {message:string}[]}) {
+    // Unhandled payload type - show the disconnection.
+    if (!disconnectionPayload || !disconnectionPayload.params || disconnectionPayload.params.length == 0)
+      return true;
+
+    // Don't show any toast if we are scanning again.
+    if (disconnectionPayload.params[0].message == "Scanning again")
+      return false;
+
+    // All other cases. Show the disconnection.
+    return true;
+  }
 
   public async killAllSessions(): Promise<void> {
     let sessions = await this.loadSessions();
