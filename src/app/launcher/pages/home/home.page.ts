@@ -284,4 +284,14 @@ export class HomePage implements OnInit {
   public showWalletConnectSessions() {
     void this.nav.navigateTo("settings", "/settings/walletconnect/sessions");
   }
+
+  public someWalletConnectSessionsCanBeDisplayed(): boolean {
+    if (!this.walletConnectConnectors || this.walletConnectConnectors.length == 0) 
+      return false;
+
+    // Make sure the connectors are displayable, i.e. they have some peer metadata set
+    return this.walletConnectConnectors.filter(c => {
+      return c.peerMeta && c.peerMeta.icons && c.peerMeta.icons.length > 0;
+    }).length > 0;
+  }
 }

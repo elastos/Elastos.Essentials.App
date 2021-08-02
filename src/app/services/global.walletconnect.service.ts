@@ -70,10 +70,17 @@ export class GlobalWalletConnectService extends GlobalService {
     this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe(async activeWalletId => {
       Logger.log("walletconnect", "Updating active connectors with new active wallet information");
       for (let c of Array.from(this.connectors.values())) {
-        c.updateSession({
-          chainId: c.chainId,
-          accounts: [await this.getAccountFromMasterWallet(this.walletManager.getMasterWallet(activeWalletId))]
-        })
+        if (c.connected) {
+          try {
+            c.updateSession({
+              chainId: c.chainId,
+              accounts: [await this.getAccountFromMasterWallet(this.walletManager.getMasterWallet(activeWalletId))]
+            });
+          }
+          catch (e) {
+            Logger.warn("walletconnect", "Non critical updateSession() error:", e);
+          }
+        }
       }
     });
   }
