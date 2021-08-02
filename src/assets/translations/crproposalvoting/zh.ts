@@ -79,7 +79,7 @@ export const zh = {
         'reject': '反对',
         // 'abstain': '弃权',
 
-        'vote-proposal': '为提案投票',
+        'vote-proposal': '投反对票',
         'vote-proposal-msg': '您将投票否决此提案。如果社区成员使用足够的ELA否决了提案，则该提案将被中止。',
         'vote-against-proposal': '反对这个提案',
         'vote-number': '请输入票数',
