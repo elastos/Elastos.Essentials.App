@@ -50,6 +50,7 @@ export const fr = {
         'credentialdetails-show-on-profile': 'Montrer dans le profil public',
         'credentialdetails-self-proclaimed-credential': 'Crédentiel Auto-Proclamé',
         'credential-published-on-blockchain': 'Crédentiel Publié sur la chaîne de blocs',
+        'credential-should-be-visible': 'Crédentiel visible par tous',
         'credential-verified': 'Crédentiel Vérifié',
         'credential-unverified': 'Crédentiel Non Vérifié',
         'credential-not-published': 'Crédentiel Non Publié',

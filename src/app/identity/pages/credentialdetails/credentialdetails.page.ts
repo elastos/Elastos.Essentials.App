@@ -51,8 +51,7 @@ export class CredentialDetailsPage implements OnInit {
   public credentialId: string = null;
   public appIcon: string;
 
-  public isPublished = true;
-  public isVisible = false;
+  public isCredentialInLocalDocument = true;
   public hasCheckedCredential = false;
 
   private didchangedSubscription: Subscription = null;
@@ -192,9 +191,7 @@ export class CredentialDetailsPage implements OnInit {
 
     await this.getIssuer();
 
-    this.isVisible = this.credentialIsVisibleOnChain();
-
-    await this.isLocalCredSyncOnChain();
+    //await this.isLocalCredSyncOnChain();
     this.hasCheckedCredential = true;
   }
 
@@ -351,13 +348,6 @@ export class CredentialDetailsPage implements OnInit {
     this.segment = ev.detail.value;
   }
 
-  /**
-   * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
-   */
-  credentialIsVisibleOnChain() {
-    return this.profileService.credentialIsInLocalDIDDocument(this.credential.pluginVerifiableCredential);
-  }
-
   /******************** Display Data Sync Status between Local and Onchain ********************/
   getLocalCredByProperty(property: string): string {
     const credHasProp = (property in this.credential.pluginVerifiableCredential.getSubject());
@@ -379,11 +369,11 @@ export class CredentialDetailsPage implements OnInit {
     return chainValue.length ? chainValue[0].getSubject()[property] : null;
   }
 
-  async isLocalCredSyncOnChain() {
+  /* async isLocalCredSyncOnChain() {
     let didString = this.didService.getActiveDid().getDIDString();
     this.currentOnChainDIDDocument = await this.didSyncService.onlineDIDDocumentsStatus.get(didString).value.document;
     if (this.currentOnChainDIDDocument === null) {
-      this.isPublished = false;
+      this.isCredentialInLocalDocument = false;
       return false;
     }
 
@@ -392,13 +382,13 @@ export class CredentialDetailsPage implements OnInit {
 
     let chainValue = this.currentOnChainDIDDocument.getCredentialById(new DIDURL("#" + fragment));
     if (!chainValue) {
-      this.isPublished = false;
+      this.isCredentialInLocalDocument = false;
       return false;
     }
 
     if (!localValue) {
       // handle external credentials
-      this.isPublished = true;
+      this.isCredentialInLocalDocument = true;
       return;
     }
 
@@ -406,12 +396,19 @@ export class CredentialDetailsPage implements OnInit {
 
     if (typeof localValue === "object" || typeof chainValue === "object") {
       //avatar
-      this.isPublished = JSON.stringify(localValue) === JSON.stringify(chainValue);
+      this.isCredentialInLocalDocument = JSON.stringify(localValue) === JSON.stringify(chainValue);
       return;
     }
 
     Logger.log('Identity', 'Local ' + localValue + " ; Chain " + chainValue);
-    this.isPublished = localValue === chainValue;
+    this.isCredentialInLocalDocument = localValue === chainValue;
+  } */
+
+  public isCredentialInLocalDIDDocument(): boolean {
+    if (!this.credential)
+      return false;
+
+    return this.profileService.credentialIsInLocalDIDDocument(this.credential.pluginVerifiableCredential);
   }
 
   async publishCredential(): Promise<void> {
