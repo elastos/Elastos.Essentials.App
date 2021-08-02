@@ -100,6 +100,7 @@ export class DPosRegistrationPage implements OnInit {
         Logger.log("DPosRegistrationPage", "Dpos Info", this.dposInfo);
 
         var blankMsg = this.translate.instant('dposregistration.text-input-is-blank');
+        var formatWrong = this.translate.instant('dposregistration.text-input-format-wrong');
         if (!this.dposInfo.nickname || this.dposInfo.nickname == "") {
             blankMsg = this.translate.instant('dposregistration.node-name') + blankMsg;
             this.globalNative.genericToast(blankMsg);
@@ -112,9 +113,22 @@ export class DPosRegistrationPage implements OnInit {
             return;
         }
 
+        if (!this.dposInfo.nodepublickey.match("^[A-Fa-f0-9]+$") || this.dposInfo.nodepublickey.length != 66
+            || !(this.dposInfo.nodepublickey.startsWith("02") || this.dposInfo.nodepublickey.startsWith("03"))) {
+            formatWrong = this.translate.instant('dposregistration.node-publickey') + formatWrong;
+            this.globalNative.genericToast(formatWrong);
+            return;
+        }
+
         if (!this.dposInfo.url || this.dposInfo.url == "") {
             blankMsg = this.translate.instant('dposregistration.node-url') + blankMsg;
             this.globalNative.genericToast(blankMsg);
+            return;
+        }
+
+        if (!this.dposInfo.url.match("((http|https)://)(([a-zA-Z0-9\._-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\&%_\./-~-]*)?")) {
+            formatWrong = this.translate.instant('dposregistration.node-url') + formatWrong;
+            this.globalNative.genericToast(formatWrong);
             return;
         }
 

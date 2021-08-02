@@ -44,6 +44,7 @@ export const fr = {
         'dpos-unregister-warning': 'Souhaitez-vous désenregistrer votre noeud DPoS?',
         'text-dpos-info-dont-modify': 'This DPoS node info do not modify.',
         'text-input-is-blank': " is blank, It is required.",
+        'text-input-format-wrong': " input format is wrong.",
         'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
         'text-update-no-confirm': "Last time update don't confirm, please wait.",
     }
