@@ -239,6 +239,10 @@ export class GlobalWalletConnectService extends GlobalService {
     if (disconnectionPayload.params[0].message == "Scanning again")
       return false;
 
+    // Don't show any toast if user closes the connection screen while not connected yet.
+    if (disconnectionPayload.params[0].message == "Cancelled by user")
+      return false;
+
     // All other cases. Show the disconnection.
     return true;
   }
