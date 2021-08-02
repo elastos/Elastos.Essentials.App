@@ -430,6 +430,11 @@ export class GlobalHiveService extends GlobalService {
    * Ex: hive://user_did@app_did/getMainIdentityAvatar ---> âPNG   IHDR...
    */
   public fetchHiveScriptPicture(hiveScriptUrl: string): Promise<Buffer> {
+    // DIRTY HACK START - delete this after a while. Reason: Essentials 2.1 android generates invalid script urls such as
+    // ...&params={empty:0} // invalid json. - should be &params={\"empty\"":0}. DELETE this hack after a while.
+    hiveScriptUrl = hiveScriptUrl.replace("params={empty:0}", "params={\"empty\":0}");
+    // DIRTY HACK END
+
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return new Promise<Buffer>(async (resolve) => {
       try {
