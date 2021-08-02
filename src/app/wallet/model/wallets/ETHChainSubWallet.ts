@@ -494,6 +494,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
      * Returns the current gas price on chain.
      */
     public getGasPrice(): Promise<BigNumber> {
+      console.log("GAS PRICE: ", this.web3.eth.getGasPrice())
         return this.web3.eth.getGasPrice();
     }
 
