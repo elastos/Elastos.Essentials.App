@@ -79,7 +79,7 @@ export const en = {
         'reject': 'Reject',
         // 'abstain': 'Abstain',
 
-        'vote-proposal': 'Vote For Proposal',
+        'vote-proposal': 'Vote Against',
         'vote-proposal-msg': 'You are about to vote to veto a proposal. If a proposal is vetoed by community members using enough ELA, it will be aborted.',
         'vote-against-proposal': 'Vote against this proposal',
         'vote-number': 'Enter Number of Votes',

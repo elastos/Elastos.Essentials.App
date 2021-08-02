@@ -78,7 +78,7 @@ export const fr = {
         'reject': 'Rejecter',
         // 'abstain': 'Abstain',
 
-        'vote-proposal': 'Veto sur une Proposition',
+        'vote-proposal': 'Vote Against',
         'vote-proposal-msg': 'Vous êtes sur le point de voter contre la proposition suivante. Veuillez en vérifier le contenu puis suivre les instructions pour signer et publier.',
         'vote-against-proposal': 'Voter contre cette proposition',
         'vote-number': 'Enter Number of Votes',
