@@ -440,13 +440,16 @@ export class EditProfilePage {
       },
     });
 
-    void modal.onDidDismiss().then((params) => {
+    void modal.onDidDismiss().then(async (params) => {
       if (params && params.data && params.data.pickedItem) {
         let pickedItem: BasicCredentialEntry = params.data.pickedItem;
 
         // Add the new entry to the current profile
         // Default value is an empty string
         this.profile.setValue(pickedItem, "", false);
+
+        // Permanently save this change, right after adding a field (not undoable)
+        await this.save();
       }
     });
 
@@ -459,12 +462,5 @@ export class EditProfilePage {
   deleteProfileEntry(entry: BasicCredentialEntry, event: MouseEvent) {
     event.stopImmediatePropagation();
     this.profile.deleteEntry(entry);
-  }
-
-  /**
-   * Returns the displayable credential entry, from the profiles service, that matches this given profile entry
-   */
-  public getDisplayableCredential() {
-
   }
 }
