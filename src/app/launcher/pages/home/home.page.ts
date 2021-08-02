@@ -341,20 +341,21 @@ _state: {accounts: Array(1), isConnected: true, isUnlocked: true, initialized: t
       //browser.insertCSS({ code: "body{color: red;" });
 
 
-      let code = await this.httpClient.get('assets/web3providertest.js', {responseType: 'text'}).toPromise();
+      let code = await this.httpClient.get('assets/essentialsiabprovider.js', {responseType: 'text'}).toPromise();
       console.log("CODE", code);
 
       // Wait a few seconds so we have time to open the safari webview console quickly to see debug logs :D
       setTimeout(() => {
-        // NOTE: KO - TrinityWeb3Provider should extend EventEmitter ('on' and have request(), etc - see trust wallet provider)
         void browser.executeScript({
           code: code + "\
-            window.ethereum = new TrinityWeb3Provider();\
+            console.log('HELLO INJECTED'); \
+            window.ethereum = new InAppBrowserWeb3Provider();\
             window.web3 = { \
               currentProvider: window.ethereum\
             };\
+            console.log(window.ethereum, window.web3);\
           "});
-      }, 5000);
+      }, 0);
 
     });
 
