@@ -49,6 +49,7 @@ export const en = {
         'credentialdetails-show-on-profile': 'Show on public profile',
         'credentialdetails-self-proclaimed-credential': 'Self-Proclaimed Credential',
         'credential-published-on-blockchain': 'Credential Published on Blockchain',
+        'credential-should-be-visible': 'Credential visible to everyone',
         'credential-verified': 'Credential Verified',
         'credential-unverified': 'Credential Not Verified',
         'credential-not-published': 'Credential Not Published',

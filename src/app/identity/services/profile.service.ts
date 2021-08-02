@@ -317,8 +317,12 @@ export class ProfileService extends GlobalService {
    * Tells if a given credential is currently visible on chain or not (inside the DID document or not).
    */
   public credentialIsInLocalDIDDocument(credential: DIDPlugin.VerifiableCredential) {
+    if (!credential)
+      return false; 
+      
     let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) return false;
+    if (!currentDidDocument) 
+      return false;
 
     let didDocumentCredential = currentDidDocument.getCredentialById(
       new DIDURL(credential.getId())
