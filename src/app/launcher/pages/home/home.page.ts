@@ -24,6 +24,9 @@ import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/a
 import { MasterWallet } from 'src/app/wallet/model/wallets/MasterWallet';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import WalletConnect from '@walletconnect/client';
+import { HttpClient } from '@angular/common/http';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { DAppBrowser } from 'src/app/model/dappbrowser/dappbrowser';
 
 @Component({
   selector: 'app-home',
@@ -293,75 +296,5 @@ export class HomePage implements OnInit {
     return this.walletConnectConnectors.filter(c => {
       return c.peerMeta && c.peerMeta.icons && c.peerMeta.icons.length > 0;
     }).length > 0;
-  }
-
-  public browserTest() {
-    console.log("OPENING BROWSER")
-    const browser = this.iab.create('https://www.filda.io', '_blank', {
-      location: 'yes',
-      toolbar: 'yes',
-      toolbartranslucent: 'no',
-      toolbarposition: 'top',
-      footercolor: '#000000',
-      //beforeload: 'yes'
-    });
-
-    /*
-    chainId: "0x80"
-enable: ƒ ()
-isMetaMask: true
-networkVersion: "128"
-request: ƒ ()
-selectedAddress: "0xba1ddcb94b3f8fe5d1c0b2623cf221e099f485d1"
-send: ƒ ()
-sendAsync: ƒ ()
-_events: {connect: Array(3), data: Array(2), error: Array(2), close: Array(2), chainChanged: ƒ, …}
-_eventsCount: 6
-_handleAccountsChanged: ƒ ()
-_handleChainChanged: ƒ ()
-_handleConnect: ƒ ()
-_handleDisconnect: ƒ ()
-_handleStreamDisconnect: ƒ ()
-_handleUnlockStateChanged: ƒ ()
-_jsonRpcConnection: {events: o, stream: d, middleware: ƒ}
-_log: a {name: undefined, levels: {…}, methodFactory: ƒ, getLevel: ƒ, setLevel: ƒ, …}
-_maxListeners: 100
-_metamask: Proxy {isUnlocked: ƒ, requestBatch: ƒ}
-_rpcEngine: s {_events: {…}, _eventsCount: 0, _maxListeners: undefined, _middleware: Array(3)}
-_rpcRequest: ƒ ()
-_sendSync: ƒ ()
-_sentWarnings: {enable: false, experimentalMethods: false, send: false, events: {…}}
-_state: {accounts: Array(1), isConnected: true, isUnlocked: true, initialized: true, isPermanentlyDisconnected: false}
-*/
-
-
-    //browser.insertCSS(...);
-    // eslint-disable-next-line
-    browser.on('loadstop').subscribe(async event => {
-      //browser.insertCSS({ code: "body{color: red;" });
-
-
-      let code = await this.httpClient.get('assets/essentialsiabprovider.js', {responseType: 'text'}).toPromise();
-      console.log("CODE", code);
-
-      // Wait a few seconds so we have time to open the safari webview console quickly to see debug logs :D
-      setTimeout(() => {
-        void browser.executeScript({
-          code: code + "\
-            console.log('HELLO INJECTED'); \
-            window.ethereum = new InAppBrowserWeb3Provider();\
-            window.web3 = { \
-              currentProvider: window.ethereum\
-            };\
-            console.log(window.ethereum, window.web3);\
-          "});
-      }, 0);
-
-    });
-
-    /* setTimeout(() => {
-      console.log("CLOSING BROWSER")
-      browser.close();
-    }, 5000); */
   }
 }

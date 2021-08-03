@@ -9,12 +9,16 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
   providedIn: 'root'
 })
 export class GlobalIntentService {
+  public static instance: GlobalIntentService;
+
   // Emits received intents from the app manager.
   public intentListener = new BehaviorSubject<EssentialsIntentPlugin.ReceivedIntent>(null);
 
   constructor(
     private globalNav: GlobalNavService
-  ) {}
+  ) {
+    GlobalIntentService.instance = this;
+  }
 
   public init() {
     Logger.log("Intents", "Global intent service is initializing");

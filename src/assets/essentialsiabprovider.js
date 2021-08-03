@@ -2927,6 +2927,13 @@
       }
   }
 
+  // TODO: MAKE THIS DYNAMIC, REGISTERED BY ESSENTIALS CHAINID+URL
+  const rpcUrls = {
+      // TODO: add others
+      20: "https://api.trinity-tech.cn/eth",
+      21: "https://api-testnet.trinity-tech.cn/eth",
+      128: "https://http-mainnet.hecochain.com" // HECO mainnet
+  };
   /**
    * Internal web3 provider injected into Elastos Essentials' in app browser dApps and bridging
    * requests from dApps to Essentials (send transaction, etc).
@@ -2934,21 +2941,29 @@
   class InAppBrowserWeb3Provider extends events {
       constructor() {
           super();
-          this.address = "0xeC22e7B0A63a24a2D689B2FFEF5640D141c80F21"; // TODO TMP
+          this.address = "";
           this.ready = false;
           this.idMapping = new IdMapping();
           this.callbacks = new Map(); // TODO: clear type
           this.wrapResults = new Map(); // TODO: clear type
-          this.rpcApiEndpoint = "https://api.trinity-tech.cn/eth"; // RPC API server url.
-          this.chainId = 20; // TODO: config.chainId - hardcoding elastos mainnet for now
-          console.log("Creating an InAppBrowserWeb3Provider");
+          this.chainId = null;
+          console.log("Creating an InAppBrowserWeb3Provider 2");
           this.emitConnect(this.chainId);
+      }
+      setChainId(chainId) {
+          this.chainId = chainId;
+          this.ready = !!(this.chainId && this.address);
+          console.log("Setting chain ID to:", this.chainId);
+          this.emit("chainChanged", this.chainId);
       }
       setAddress(address) {
           const lowerAddress = (address || "").toLowerCase();
           this.address = lowerAddress;
-          this.ready = !!address;
-          /* for (var i = 0; i < window.frames.length; i++) {
+          this.ready = !!(this.chainId && this.address);
+          console.log("Setting address to:", address);
+          this.emit("accountsChanged", [address]); // BPI TEST
+          /* TODO
+          for (var i = 0; i < window.frames.length; i++) {
             const frame = window.frames[i];
             if (frame.ethereum && frame.ethereum.isTrust) {
               frame.ethereum.address = lowerAddress;
@@ -2956,25 +2971,37 @@
             }
           } */
       }
-      setRPCApiEndpoint(endpoint) {
-          this.rpcApiEndpoint = endpoint;
-      }
       getRPCApiEndpoint() {
-          return this.rpcApiEndpoint;
+          return rpcUrls[this.chainId];
+      }
+      isConnected() {
+          return true;
       }
       request(payload) {
-          return this._request(payload, false);
+          // 'this' points to window in methods like web3.eth.getAccounts()
+          var that = this;
+          if (!(this instanceof InAppBrowserWeb3Provider)) {
+              that = window.ethereum;
+          }
+          console.log("THISTHAT1", this, that);
+          return that._request(payload, false);
       }
       /**
        * @deprecated Use request() method instead.
        */
       sendAsync(payload, callback) {
-          this._request(payload)
+          // 'this' points to window in methods like web3.eth.getAccounts()
+          var that = this;
+          if (!(this instanceof InAppBrowserWeb3Provider)) {
+              that = window.ethereum;
+          }
+          console.log("THISTHAT2", this, that);
+          that._request(payload)
               .then((data) => callback(null, data))
               .catch((error) => callback(error, null));
       }
       /**
-       * @private Internal rpc handler
+       * Internal request handler
        */
       _request(payload, wrapResult = true) {
           console.log("InAppBrowserWeb3Provider: _request", payload);
@@ -2984,6 +3011,7 @@
                   payload.id = Utils.genId();
               }
               this.callbacks.set(payload.id, (error, data) => {
+                  console.log("Callback called", error, data);
                   if (error) {
                       reject(error);
                   }
@@ -3041,7 +3069,7 @@
       }
       emitConnect(chainId) {
           console.log("InAppBrowserWeb3Provider: emitting connect", chainId);
-          this.emit("connect", { chainId: chainId });
+          this.emit("connect", { /* chainId: chainId */});
       }
       eth_accounts() {
           return this.address ? [this.address] : [];
@@ -3114,8 +3142,15 @@
        * Internal js -> native message handler
        */
       postMessage(handler, id, data) {
-          console.log("InAppBrowserWeb3Provider: postMessage", handler, data);
-          if (this.ready || handler === "requestAccounts") ;
+          console.log("InAppBrowserWeb3Provider: postMessage", handler, id, data);
+          if (this.ready || handler === "requestAccounts") {
+              let object = {
+                  id: id,
+                  name: handler,
+                  object: data,
+              };
+              window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(object));
+          }
           else {
               this.sendError(id, new ProviderRpcError(4100, "Provider is not ready"));
           }
@@ -3132,14 +3167,17 @@
               jsonrpc: "2.0",
               id: originId
           };
-          if (typeof result === "object" && "jsonrpc" in result && "result" in result) {
-              // result is a JsonRpcResponse
-              data.result = result.result;
-          }
-          else {
-              // result is the JsonRpcResponse result
-              data.result = result;
-          }
+          console.log("typeof result", typeof result);
+          /* if (typeof result === "object" && "jsonrpc" in result && "result" in result) {
+            // result is a JsonRpcResponse
+            data.result = (result as JsonRpcResponse).result;
+          } else {
+            // result is the JsonRpcResponse result
+            data.result = result;
+          } */
+          data.result = result;
+          console.log("data result", data.result);
+          console.log("wrapResult", wrapResult);
           if (callback) {
               wrapResult ? callback(null, data) : callback(null, result);
               this.callbacks.delete(id);
