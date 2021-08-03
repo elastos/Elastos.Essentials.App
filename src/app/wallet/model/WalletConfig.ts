@@ -40,13 +40,13 @@ export class WalletConfig {
   public static getNetConfig(networkTemplate: string) {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
-        return JSON.stringify(WalletConfig.mainNet);
+        return WalletConfig.mainNet;
       break;
       case TESTNET_TEMPLATE:
-        return JSON.stringify(WalletConfig.testNet);
+        return WalletConfig.testNet;
       break;
       case 'LRW':
-        return JSON.stringify(WalletConfig.LrwNet);
+        return WalletConfig.LrwNet;
       break;
       default:
         Logger.warn('wallet', 'WalletConfig: Not support ', networkTemplate)
