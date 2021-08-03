@@ -33,6 +33,9 @@ export class VotePage implements OnInit {
     // Intent
     public voted: boolean = false;
 
+    // Voting
+    public voting: boolean = false;
+
     // DPosNode Detail
     public showNode: boolean = false;
     public nodeIndex: number;
@@ -123,6 +126,7 @@ export class VotePage implements OnInit {
 
     //// Vote intent ////
     async castVote() {
+        this.voting = true;
         let castedNodeKeys: string[] = [];
         this.nodesService._nodes.map(node => {
             if (node.isChecked === true) {
@@ -170,10 +174,11 @@ export class VotePage implements OnInit {
                     this.voteFailed('dposvoting.vote-timeout');
                 }
             }, 10000)
-
-        } else {
+        }
+        else {
             this.noNodesChecked();
         }
+        this.voting = false;
     }
 
     //// Define Values ////
