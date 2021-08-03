@@ -171,7 +171,7 @@ export class WalletManager {
               }
             }
             Logger.log('wallet', "Setting network to ", this.networkTemplate, networkConfig);
-            await this.spvBridge.setNetwork(spvsdkNetwork, networkConfig);
+            await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
             // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
