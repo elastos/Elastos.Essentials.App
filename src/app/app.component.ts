@@ -22,6 +22,8 @@ import { GlobalHiveService } from './services/global.hive.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
 import { GlobalNetworksService } from './services/global.networks.service';
 
+declare let didManager: DIDPlugin.DIDManager;
+
 @Component({
     selector: 'app-root',
     template: '<ion-app><ion-router-outlet [swipeGesture]="false"></ion-router-outlet></ion-app>',
