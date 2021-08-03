@@ -32,10 +32,11 @@ export type PersistentInfo = {
         publicationStatus: DIDPublicationStatus,
 
         assist? : {
-            publicationID: string // Unique publication ID returned by the assist API after a successful publication request. This is NOT a blockchain transaction ID.
+            publicationID: string; // Unique publication ID returned by the assist API after a successful publication request. This is NOT a blockchain transaction ID.
+            txId?: string; // After publishing a DID request to assist we save the returned txid here.
         },
         wallet?: {
-            txId?: string; // After publishing a DID request to the EID chain  we save the txid here.
+            txId?: string; // After publishing a DID request to the EID chain we save the txid here.
             publicationTime?: number; // Unix timestamp seconds
         }
     },
@@ -50,7 +51,8 @@ export const enum DIDPublicationStatus {
 
 export type PublicationStatus = {
     didString: string;
-    status: DIDPublicationStatus
+    status: DIDPublicationStatus;
+    txId?: string;
 }
 
 abstract class DIDPublisher {
@@ -161,7 +163,6 @@ namespace AssistPublishing {
 
                     this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
                     this.manager.persistentInfo.did.assist.publicationID = response.data.confirmation_id;
-                    // NOTE! For now, assist doesn't save the txid, we don't use it.
                     await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
 
                     void this.checkPublicationStatusAndUpdate();
@@ -231,6 +232,10 @@ namespace AssistPublishing {
                         if (response.data.status == AssistTransactionStatus.PENDING || response.data.status == AssistTransactionStatus.PROCESSING) {
                             // Transaction is still pending, we do nothing, just wait and retry later.
                             //Logger.log("publicationservice", "Publication is still pending / processing / not confirmed.");
+
+                            // Don't save or emit for now, this will be sent when we get another useful (completed/failed) event later.
+                            if (response.data.blockchainTxId)
+                                this.manager.persistentInfo.did.assist.txId = response.data.blockchainTxId;
                         }
                         else if (response.data.status == AssistTransactionStatus.QUARANTINED) {
                             // Blocking issue. This publication was quarantined, there is "something wrong somewhere".
@@ -512,10 +517,18 @@ class DIDPublishingManager {
     * Emit a public publication status event that matches the current persistent info state.
     */
     public emitPublicationStatusChangeFromPersistentInfo() {
-        console.log("DEBUG emitPublicationStatusChangeFromPersistentInfo", this.persistentInfo);
+        //console.log("DEBUG emitPublicationStatusChangeFromPersistentInfo", this.persistentInfo);
+
+        let txId: string;
+        if (this.persistentInfo.did.assist)
+            txId = this.persistentInfo.did.assist.txId;
+        else if (this.persistentInfo.did.wallet)
+            txId = this.persistentInfo.did.wallet.txId;
+
         this.publicationService.publicationStatus.next({
             didString: this.persistentInfo.did.didString,
-            status: this.persistentInfo.did.publicationStatus
+            status: this.persistentInfo.did.publicationStatus,
+            txId: txId
         });
     }
 
