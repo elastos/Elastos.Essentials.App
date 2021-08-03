@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 
 import { DPosNode } from '../model/nodes.model';
 import { Vote } from '../model/history.model';
@@ -19,6 +19,8 @@ import { App } from 'src/app/model/app.enum';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { PopupProvider } from 'src/app/services/global.popup.service';
 import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/Transaction';
+import { Events } from 'src/app/services/events.service';
+import { Subscription } from "rxjs";
 
 
 export type DPoSRegistrationInfo = {
@@ -104,6 +106,8 @@ export class NodesService {
     private isFetchingRewardOrDone = false;
     private rewardResult: any = null; //TODO Do not use any.
 
+    private didchangedSubscription: Subscription = null;
+
     constructor(
         private storage: GlobalStorageService,
         private globalIntentService: GlobalIntentService,
@@ -113,7 +117,15 @@ export class NodesService {
         public voteService: VoteService,
         private walletManager: WalletManager,
         public popupProvider: PopupProvider,
-    ) { }
+        public events: Events,
+        public zone: NgZone,
+    ) {
+        this.events.subscribe('signIn', (identity) => {
+            this.zone.run(() => {
+                this.init();
+            });
+        });
+    }
 
     get nodes(): DPosNode[] {
         return [...this._nodes.filter((a, b) => this._nodes.indexOf(a) === b)];
@@ -135,7 +147,7 @@ export class NodesService {
         }
 
         // await this.getVisit();
-        this.getStoredVotes();
+        await this.getStoredVotes();
         await this.fetchStats();
         await this.fetchNodes();
         if (!this.isFetchingRewardOrDone) {
@@ -170,8 +182,8 @@ export class NodesService {
         });
     }
 
-    getStoredVotes() {
-        this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'votes', []).then(data => {
+    async getStoredVotes() {
+        await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'votes', []).then(data => {
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });
@@ -246,6 +258,10 @@ export class NodesService {
 
         this.activeNodes = [];
         this.dposList = [];
+        var vote: Vote = null;
+        if (this._votes.length > 0) {
+            vote = this._votes[0];
+        }
 
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         try {
@@ -263,6 +279,9 @@ export class NodesService {
                     node.index += 1;
                     if (node.state === 'Active') {
                         this.activeNodes.push(node);
+                    }
+                    if (vote != null && vote.keys.includes(node.ownerpublickey)) {
+                        node.isChecked = true;
                     }
                     this.getNodeIcon(node);
                 }
