@@ -50,7 +50,7 @@ export const zh = {
         'credentialdetails-show-on-profile': '公开',
         'credentialdetails-self-proclaimed-credential': '自申明凭证',
         'credential-published-on-blockchain': '凭证已发布到链上',
-        'credential-should-be-visible': 'Credential visible to everyone',
+        'credential-should-be-visible': '凭证对每个人都可见',
         'credential-verified': '凭证已验证',
         'credential-unverified': '凭证未验证',
         'credential-not-published': '凭证未发布',
