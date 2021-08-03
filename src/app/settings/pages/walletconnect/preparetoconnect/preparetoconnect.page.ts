@@ -69,6 +69,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     // Important: stop the watchdog timer to not get sessions killed after a successful connection
     clearTimeout(this.watchdogTimer);
   }

@@ -118,7 +118,7 @@ export class CoinListPage implements OnInit, OnDestroy {
         Logger.log('wallet', item);
 
         this.currentCoin = item;
-        await this.native.showLoading();
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
 
         if (item.isOpen) {
             await this.createSubWallet(item.coin);

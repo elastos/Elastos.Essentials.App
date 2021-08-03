@@ -141,12 +141,12 @@ export class DPoSVotePage implements OnInit {
         }
 
         const voteContent = [dposVoteContent];
-
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
         const rawTx = await this.sourceSubwallet.createVoteTransaction(
                 voteContent,
                 '', // Memo, not necessary
             );
-
+        await this.native.hideLoading();
         if (rawTx) {
           const transfer = new Transfer();
           Object.assign(transfer, {
