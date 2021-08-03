@@ -60,7 +60,7 @@ export class DidTransactionPage implements OnInit {
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {
-        this.init();
+        void this.init();
     }
 
     ngOnInit() {
@@ -73,11 +73,11 @@ export class DidTransactionPage implements OnInit {
     ionViewDidEnter() {
       if (this.walletInfo["Type"] === "Multi-Sign") {
           // TODO: reject didtransaction if multi sign (show error popup)
-          this.cancelOperation();
+          void this.cancelOperation();
       }
     }
 
-    async init() {
+    init() {
         this.chainId = this.coinTransferService.chainId;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
@@ -98,21 +98,21 @@ export class DidTransactionPage implements OnInit {
     }
 
     goTransaction() {
-        this.checkValue();
+        void this.checkValue();
     }
 
     async checkValue() {
         if (this.balance < 0.0002) {
-            this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
+            void this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             return;
         }
         const isAvailableBalanceEnough = await this.sourceSubwallet.isAvailableBalanceEnough(new BigNumber(20000));
         if (!isAvailableBalanceEnough) {
             await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
-            this.cancelOperation();
+            void this.cancelOperation();
             return;
         }
-        this.createIDTransaction();
+        void this.createIDTransaction();
     }
 
     async createIDTransaction() {
@@ -120,8 +120,7 @@ export class DidTransactionPage implements OnInit {
 
         const rawTx = await (this.sourceSubwallet as ETHChainSubWallet).createIDTransaction(
               JSON.stringify(this.coinTransferService.didrequest),
-          );
-
+        );
 
         if (rawTx) {
           Logger.log('wallet', 'Created raw DID transaction');

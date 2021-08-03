@@ -11,6 +11,7 @@ import { Logger } from 'src/app/logger';
 import { IdentityIntent, AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent, CredImportIdentityIntent } from '../model/identity.intents';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 
 
 @Injectable({
@@ -26,16 +27,17 @@ export class IntentReceiverService {
         private popup: PopupProvider,
         private appIDService: AppIDService,
         private uxService: UXService,
-        private globalIntentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService,
+        private globalPublicationService: GlobalPublicationService
     ) {
     }
 
-    async init() {
+    init() {
         this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             if (!receivedIntent)
                 return;
 
-            this.onReceiveIntent(receivedIntent);
+            void this.onReceiveIntent(receivedIntent);
         });
     }
 
@@ -68,76 +70,76 @@ export class IntentReceiverService {
                         // confirmation.
                         this.appIDService.prepareNextRequest(appIdIssueIntent.intentId, appIdIssueIntent.params.appPackageId, appIdIssueIntent.params.appinstancedid, appIdIssueIntent.params.appdid);
                         if (await this.appIDService.applicationIDCredentialCanBeIssuedWithoutUI(appIdIssueIntent.params)) {
-                            this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
+                            void this.appIDService.generateAndSendApplicationIDCredentialIntentResponse(appIdIssueIntent.params);
                         }
                         else {
                             // We have to show a UI confirmation so let's do it.
-                            this.native.setRootRouter("/identity/intents/appidcredissuerequest");
+                            void this.native.setRootRouter("/identity/intents/appidcredissuerequest");
                         }
                     }
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
-                    this.showErrorAndExitFromIntent(intent);
+                    void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
             case "credaccess":
                 Logger.log('identity', "Received credential access intent request");
                 if (this.checkCredAccessIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/identity/intents/credaccessrequest");
+                    void this.native.setRootRouter("/identity/intents/credaccessrequest");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
-                    this.showErrorAndExitFromIntent(intent);
+                    void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
             case "credimport":
                 Logger.log('identity', "Received credential import intent request");
                 if (this.checkCredImportIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/identity/intents/credimportrequest");
+                    void this.native.setRootRouter("/identity/intents/credimportrequest");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
-                    this.showErrorAndExitFromIntent(intent);
+                    void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
             case "credissue":
                 Logger.log('identity', "Received credential issue intent request");
                 if (this.checkCredIssueIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/identity/intents/credissuerequest");
+                    void this.native.setRootRouter("/identity/intents/credissuerequest");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
-                    this.showErrorAndExitFromIntent(intent);
+                    void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
             case "didsign":
                 Logger.log('identity', "Received didsign intent request");
                 if (this.checkSignIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/identity/intents/signrequest");
+                    void this.native.setRootRouter("/identity/intents/signrequest");
                 }
                 else {
                     Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
-                    this.showErrorAndExitFromIntent(intent);
+                    void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
             case "signdigest":
                     Logger.log('identity', "Received didsign intent request");
                     if (this.checkSignIntentParams(intent)) {
                         await this.uxService.loadIdentityAndShow(false);
-                        this.native.setRootRouter("/identity/intents/signdigest");
+                        void this.native.setRootRouter("/identity/intents/signdigest");
                     }
                     else {
                         Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
 
                         // Something wrong happened while trying to handle the intent: send intent response with error
-                        this.showErrorAndExitFromIntent(intent);
+                        void this.showErrorAndExitFromIntent(intent);
                     }
                     break;
             case 'promptpublishdid':
@@ -146,30 +148,38 @@ export class IntentReceiverService {
                 await this.native.setRootRouter('/identity/myprofile/home');
                 this.events.publish('did:promptpublishdid');
                 break;
+            case 'didtransaction':
+                if (this.checkDIDTransactionIntentParams(intent)) {
+                    await this.handleDidTransactionRequest(intent);
+                }
+                else {
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
             case "registerapplicationprofile":
                 Logger.log('identity', "Received register application profile intent request");
                 if (this.checkRegAppProfileIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/identity/intents/regappprofilerequest");
+                    void this.native.setRootRouter("/identity/intents/regappprofilerequest");
                 }
                 else {
                     Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
-                    this.showErrorAndExitFromIntent(intent);
+                    void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
             case "sethiveprovider":
                 Logger.log('identity', "Received set hiveprovider intent request");
                 if (this.checkSetHiveProviderIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
-                    this.native.setRootRouter("/identity/intents/sethiveproviderrequest");
+                    void this.native.setRootRouter("/identity/intents/sethiveproviderrequest");
                 }
                 else {
                     Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
-                    this.showErrorAndExitFromIntent(intent);
+                    void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
         }
@@ -288,7 +298,7 @@ export class IntentReceiverService {
      * Checks generic parameters in the received intent, and fills our requesting DApp object info
      * with intent info for later use.
      */
-    private checkGenericIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent, allowEmptyParams: boolean = false): boolean {
+    private checkGenericIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent, allowEmptyParams = false): boolean {
         Logger.log('identity', "Checking generic intent parameters", intent);
 
         if (!allowEmptyParams && Util.isEmptyObject(intent.params)) {
@@ -392,5 +402,46 @@ export class IntentReceiverService {
         this.receivedIntent = intent;
 
         return true;
+    }
+
+    private checkDIDTransactionIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent): boolean {
+        if (!this.checkGenericIntentParams(intent, true))
+            return false;
+
+        if (!("didrequest" in intent.params))
+            return false;
+
+        let didRequest = intent.params.didrequest as {header: any, payload: any, proof: {verificationMethod: string}};
+        if (!("proof" in didRequest) || !("verificationMethod" in didRequest.proof))
+            return false;
+
+        return true;
+    }
+
+    private async handleDidTransactionRequest(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        // NOTE: wallet's didtransaction VS did's didtransaction:
+        // Wallet will show the wallet confirmation screen directly, to publish with the wallet.
+        // This one (did) will use the publication service current settings, possibly redirecting to the wallet
+        let didRequest = intent.params.didrequest as {header: any, payload: any, proof: {verificationMethod: string}};
+        let didString = didRequest.proof.verificationMethod.substring(0, didRequest.proof.verificationMethod.indexOf("#"));
+        Logger.log("identity", "Asking publication manager to handle did transaction", didString, didRequest);
+        await this.globalPublicationService.resetStatus();
+        let pubStatusSub = this.globalPublicationService.publicationStatus.subscribe(status => {
+            if (status.didString == didString) {
+                if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+                    pubStatusSub.unsubscribe();
+                    void this.uxService.sendIntentResponse(intent.action, {
+                        txid: status.txId
+                    }, intent.intentId);
+                }
+                else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+                    pubStatusSub.unsubscribe();
+                    void this.uxService.sendIntentResponse(intent.action, {
+                        txid: null
+                    }, intent.intentId);
+                }
+            }
+        });
+        await this.globalPublicationService.publishDIDFromRequest(didString, didRequest, "", true);
     }
 }
