@@ -188,7 +188,7 @@ export abstract class StandardSubWallet extends SubWallet {
 
               Logger.log("wallet", "Password retrieved. Now signing the transaction.");
 
-              await this.masterWallet.walletManager.native.showLoading();
+              await this.masterWallet.walletManager.native.showLoading(this.masterWallet.walletManager.translate.instant('common.please-wait'));
 
               const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
                   this.masterWallet.id,

@@ -272,6 +272,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * Same chain, different "users"
      */
     async createSendTransaction() {
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
         // Call dedicated api to the source subwallet to generate the appropriate transaction type.
         // For example, ERC20 token transactions are different from standard coin transactions (for now - as
         // the spv sdk doesn't support ERC20 yet).
@@ -280,7 +281,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.amount, // User input amount
             this.memo // User input memo
         );
-
+        await this.native.hideLoading();
         if (rawTx) {
           const transfer = new Transfer();
           Object.assign(transfer, {
@@ -311,7 +312,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * From mainchain to sidechains (ID, ETH)
      */
     async createRechargeTransaction() {
-        // const toAmount = this.accMul(this.amount, Config.SELA);
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
 
         const rawTx =
             await (this.fromSubWallet as MainAndIDChainSubWallet).createDepositTransaction(
@@ -320,6 +321,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.amount, // User input amount
                 this.memo // Memo, not necessary
             );
+
+        await this.native.hideLoading();
 
         if (rawTx) {
           const transfer = new Transfer();

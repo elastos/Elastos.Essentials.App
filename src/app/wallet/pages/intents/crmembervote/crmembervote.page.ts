@@ -144,12 +144,12 @@ export class CRmembervotePage implements OnInit {
         }
 
         const voteContent = [crVoteContent];
-
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
         const rawTx = await this.sourceSubwallet.createVoteTransaction(
             voteContent,
             '', // Memo, not necessary
         );
-
+        await this.native.hideLoading();
         if (rawTx) {
           const transfer = new Transfer();
           Object.assign(transfer, {

@@ -9,6 +9,7 @@ import { Config } from '../../config/Config';
 import { Util } from '../Util';
 import { AllAddresses, Candidates, VoteContent, VoteType } from '../SPVWalletPluginBridge';
 import { InvalidVoteCandidatesHelper } from '../InvalidVoteCandidatesHelper';
+import moment from 'moment';
 
 
 const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
@@ -32,6 +33,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     private timestampStart = 0;
     private timestampEnd = 0;
     private loadMoreTimes = 0;
+
+    private getTransactionsTime = 0;
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
 
@@ -556,8 +559,12 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     private async getPendingTransaction() {
-      // Update transactions to get the pending transactions.
-      await this.getTransactionByRPC(this.timestampEnd);
+      const twoMinutesago = moment().add(-2, 'minutes').valueOf();
+      // It takes several seconds for getTransactionByRPC.
+      if ((this.transactions === null) || (this.getTransactionsTime < twoMinutesago)) {
+        // Update transactions to get the pending transactions.
+        await this.getTransactionByRPC(this.timestampEnd);
+      }
 
       let pendingTransactions = [];
       for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
@@ -817,6 +824,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      */
     async getTransactionByRPC(timestamp: number = 0) {
         Logger.test("wallet", 'TIMETEST getTransactionByRPC Chain ID:', this.id, ' start timestamp:', timestamp, ' ', new Date(timestamp * 1000));
+        this.getTransactionsTime = moment().valueOf();
         let txList = await this.getTransactionByAddress(false, timestamp);
 
         // The Single Address Wallet should use the external address.
