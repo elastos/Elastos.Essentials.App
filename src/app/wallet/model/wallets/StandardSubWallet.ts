@@ -1,7 +1,6 @@
 import { MasterWallet } from './MasterWallet';
 import { SubWallet, RawTransactionPublishResult } from './SubWallet';
 import { CoinType, StandardCoinName } from '../Coin';
-import { Util } from '../Util';
 import { RawTransactionType, TransactionDirection, TransactionHistory } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
 import { Config } from '../../config/Config';

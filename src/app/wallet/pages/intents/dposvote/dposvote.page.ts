@@ -117,7 +117,7 @@ export class DPoSVotePage implements OnInit {
     }
 
     /**
-     * Fees needed to pay for the vote transaction (Estimate). The more utxo, the more fees.
+     * Balance needs to be greater than 0.0002ELA (or 0.1?).
      */
     votingFees(): number {
         return 20000; // SELA: 0.0002ELA
@@ -128,6 +128,13 @@ export class DPoSVotePage implements OnInit {
      */
     async goTransaction() {
         Logger.log('wallet', 'Creating vote transaction.');
+        const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
+        if (stakeAmount.isNegative()) {
+            Logger.log('wallet', 'DPoSVotePage: Not enough balance:', this.sourceSubwallet.getDisplayBalance());
+            this.native.toast_trans('wallet.insufficient-balance');
+            return false;
+        }
+
         let candidates: Candidates = {};
 
         // TODO: We should include others voting?

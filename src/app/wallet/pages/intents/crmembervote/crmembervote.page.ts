@@ -130,8 +130,20 @@ export class CRmembervotePage implements OnInit {
         }
     }
 
+    /**
+     * Balance needs to be greater than 0.0002ELA (or 0.1?).
+     */
+     votingFees(): number {
+        return 20000; // SELA: 0.0002ELA
+    }
+
     checkValue() {
-        // TODO: Check balance
+        const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
+        if (stakeAmount.isNegative()) {
+            Logger.log('wallet', 'CRProposalVoteAgainstPage: Not enough balance:', stakeAmount.toString());
+            this.native.toast_trans('wallet.insufficient-balance');
+            return false;
+        }
         return true;
     }
 

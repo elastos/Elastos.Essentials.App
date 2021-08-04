@@ -33,7 +33,6 @@ export const fr = {
         'amount-null': "Veuillez saisir un montant pour la transaction",
         "amount-invalid": "Veuillez saisir un montant valide",
         'eth-insuff-balance': 'Vous n\'avez pas suffisamment d\'ELA/ETHSC pour payer cette transaction de jetons ERC20',
-        "insuff-balance": "Solde insuffisant",
         "sync-completed": "Synchr. terminée",
         "not-a-valid-address": "Adresse invalide",
         "no-ethereum-token": "Jeton Ethereum non activé",

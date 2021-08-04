@@ -199,6 +199,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async createVoteTransaction(voteContents: VoteContent[], memo: string = ""): Promise<string> {
         let utxo = await this.getAvailableUtxo(-1);
+        if (!utxo) return;
+
         let newVoteContents = await this.mergeVoteContents(voteContents);
         Logger.log('wallet', 'createVoteTransaction:', JSON.stringify(newVoteContents));
 
@@ -613,6 +615,11 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             }
         } else {
             utxoArray = await this.getAllUtxoByType(UtxoType.Mixed);
+        }
+
+        if (utxoArray === null) {
+          Logger.warn('wallet', 'Can not find utxo!')
+          return null;
         }
 
         // Remove the utxo that used in pending transactions.

@@ -110,7 +110,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
         const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
         if (stakeAmount.isNegative()) {
             Logger.log('wallet', 'CRProposalVoteAgainstPage: Not enough balance:', stakeAmount.toString());
-            this.native.toast_trans('wallet.amount-null');
+            this.native.toast_trans('wallet.insufficient-balance');
             return false;
         }
 
@@ -118,11 +118,10 @@ export class CRProposalVoteAgainstPage implements OnInit {
     }
 
     /**
-     * Fees needed to pay for the vote transaction. They have to be deduced from the total amount otherwise
-     * funds won't be enough to vote.
+     * Balance needs to be greater than 0.0002ELA (or 0.1?).
      */
-    votingFees(): number {
-        return 100000; // SELA: 0.001ELA
+     votingFees(): number {
+        return 20000; // SELA: 0.0002ELA
     }
 
     // TODO: Test it.
