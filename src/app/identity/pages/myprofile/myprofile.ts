@@ -147,13 +147,12 @@ export class MyProfilePage {
   }
 
   init(publishAvatar?: boolean) {
-    /* let identity = this.didService.getActiveDid();
+    let identity = this.didService.getActiveDid();
     if (identity) {
       // Happens when importing a new mnemonic over an existing one
       this.profile = identity.getBasicProfile();
-
       this.profileName = this.profile.getName();
-      this.credentials = identity.credentials;
+      /* this.credentials = identity.credentials;
       this.hasCredential = this.credentials.length > 0 ? true : false;
       Logger.log("identity", "Has credentials?", this.hasCredential);
 
@@ -168,8 +167,8 @@ export class MyProfilePage {
       });
 
       this.buildDetailEntries();
-      this.buildCredentialEntries(publishAvatar);
-    } */
+      this.buildCredentialEntries(publishAvatar); */
+    }
   }
 
   ionViewWillEnter() {
@@ -215,16 +214,17 @@ export class MyProfilePage {
   }
 
   getProfileName() {
-
+    Logger.log("DEBUG", "getProfileName", this.profileName);
     if (this.profileName == null) {
       let identity = this.didService.getActiveDid();
+      Logger.log("DEBUG", "getProfileName identity", identity);
       if (identity) {
         // Happens when importing a new mnemonic over an existing one
         this.profile = this.profileService.getBasicProfile();
 
       }
       this.profileName = this.profile.getName();
-
+      Logger.log("DEBUG", "getProfileName profile", this.profile, this.profileName);
     }
     return this.profileName;
   }
