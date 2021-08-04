@@ -88,7 +88,7 @@ export class CreateProposalPage {
             // Fetch more details about this suggestion, to display to the user
             this.suggestionDetails = await this.proposalService.fetchSuggestionDetails(this.suggestionID);
             Logger.log('crproposal', "suggestionDetails", this.suggestionDetails);
-            if (this.proposaltype == "changeproposalowner" && this.suggestionDetails.newAddress) {
+            if (this.proposaltype == "changeproposalowner" && this.suggestionDetails.newAddress && !this.suggestionDetails.newOwnerDID) {
                 this.proposaltype = "changeproposaladdress";
             }
             this.creationDate = Util.timestampToDateTime(this.suggestionDetails.createdAt * 1000);

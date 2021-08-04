@@ -72,7 +72,7 @@
             </ion-row>
 
             <ion-row class="profile-data"
-                *ngIf="suggestionDetails.newAddress && proposaltype == 'changeproposaladdress'">
+                *ngIf="suggestionDetails.newAddress && (proposaltype == 'changeproposaladdress' || proposaltype == 'changeproposalowner')">
                 <ion-col>
                     <h5>{{ 'crproposalvoting.new-recipient-address' | translate }}</h5>
                     <h4>{{ suggestionDetails.newAddress }}</h4>
