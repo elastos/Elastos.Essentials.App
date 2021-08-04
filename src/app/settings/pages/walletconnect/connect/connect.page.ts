@@ -68,13 +68,13 @@ export class WalletConnectConnectPage implements OnInit {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
       // Close
-      await this.walletConnect.rejectSession("Scanning again");
+      await this.walletConnect.rejectSession(this.sessionRequest.connectorKey, "Scanning again");
       void this.titleBar.globalNav.exitCurrentContext();
     });
 
     // Catch android back key to reject the session
     this.backSubscription = this.platform.backButton.subscribeWithPriority(0, async (processNext) => {
-      await this.walletConnect.rejectSession("Scanning again");
+      await this.walletConnect.rejectSession(this.sessionRequest.connectorKey, "Scanning again");
       processNext();
     });
   }
