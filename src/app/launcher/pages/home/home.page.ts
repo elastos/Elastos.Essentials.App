@@ -170,8 +170,8 @@ export class HomePage implements OnInit {
 
     this.walletConnectSub = this.globalWalletConnectService.walletConnectSessionsStatus.subscribe(connectors => {
       this.zone.run(() => {
-        Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors);
         this.walletConnectConnectors = Array.from(connectors.values());
+        Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors, this.walletConnectConnectors.length);
       });
     });
   }
@@ -286,7 +286,7 @@ export class HomePage implements OnInit {
   }
 
   public someWalletConnectSessionsCanBeDisplayed(): boolean {
-    if (!this.walletConnectConnectors || this.walletConnectConnectors.length == 0) 
+    if (!this.walletConnectConnectors || this.walletConnectConnectors.length == 0)
       return false;
 
     // Make sure the connectors are displayable, i.e. they have some peer metadata set

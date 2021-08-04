@@ -477,16 +477,30 @@ export class GlobalWalletConnectService extends GlobalService {
     await this.saveSession(connector.session);
   }
 
-  public async rejectSession(reason: string) {
-    Logger.log("walletconnect", "Rejecting session request");
+  public async rejectSession(connectorKey: string, reason: string) {
+    Logger.log("walletconnect", "Rejecting session request", this.initiatingConnector);
+
+    let connector: WalletConnect = null;
+    if (connectorKey) {
+      // We are rejecting a from a "session request" screen. The connector is already in our
+      // connectors list and it's not a "initiatingconnector" any more.
+      // We delete this connector from our list.
+      connector = this.findConnectorFromKey(connectorKey);
+      Logger.log("walletconnect", "Rejecting session with connector key", connectorKey, connector);
+    }
+    else {
+      connector = this.initiatingConnector;
+      this.initiatingConnector = null;
+    }
 
     // Reject Session
-    if (this.initiatingConnector) {
+    if (connector) {
       // For some reasons sometimes the website shows a QR code but wallet thinks the connector is connected.
       // In this case we kill the session and restart.
-      if (this.initiatingConnector.connected) {
+      if (connector.connected) {
         try {
-          await this.initiatingConnector.killSession();
+          Logger.log("walletconnect", "Killing session");
+          await connector.killSession();
         }
         catch (e) {
           Logger.warn("walletconnect", "Reject session exception (disconnect):", e);
@@ -494,7 +508,8 @@ export class GlobalWalletConnectService extends GlobalService {
       }
       else {
         try {
-          this.initiatingConnector.rejectSession({
+          Logger.log("walletconnect", "Rejecting session");
+          connector.rejectSession({
             message: reason   // optional
           });
         }
@@ -502,7 +517,10 @@ export class GlobalWalletConnectService extends GlobalService {
           Logger.warn("walletconnect", "Reject session exception (reject):", e);
         }
       }
-      this.initiatingConnector = null;
+
+      /* this.connectors.delete(connectorKey);
+      this.walletConnectSessionsStatus.next(this.connectors);
+      void this.deleteSession(connector.session); */
     }
   }
 
