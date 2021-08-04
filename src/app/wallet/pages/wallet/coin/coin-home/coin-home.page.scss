@@ -339,6 +339,14 @@
                 text-align: left;
                 padding-top: 3px;
             }
+
+            .memo {
+                width:100%;
+                overflow:hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                -o-text-overflow:ellipsis;
+            }
         }
 
         .right-col {
