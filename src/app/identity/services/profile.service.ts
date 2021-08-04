@@ -318,10 +318,10 @@ export class ProfileService extends GlobalService {
    */
   public credentialIsInLocalDIDDocument(credential: DIDPlugin.VerifiableCredential) {
     if (!credential)
-      return false; 
-      
+      return false;
+
     let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
-    if (!currentDidDocument) 
+    if (!currentDidDocument)
       return false;
 
     let didDocumentCredential = currentDidDocument.getCredentialById(
@@ -608,10 +608,10 @@ export class ProfileService extends GlobalService {
     Logger.log("identity", "Computing if some credentials are modified. Credentials:", this.credentials);
     let publishedCredentials = this.getPublishedCredentials();
 
-    // For each published cred, check if a local change occured.
+    // For each published credetial, check if a local change occured.
     for (let pubCred of publishedCredentials) {
       var found = this.credentials.find(x => {
-        return x.credential.getId() == pubCred.getId();
+        return x.credential.getFragment() == pubCred.getFragment();
       });
 
       if (found) {
@@ -622,6 +622,13 @@ export class ProfileService extends GlobalService {
           this._hasModifiedCredentials = true;
           return;
         }
+      }
+      else {
+        // Published credential not found locally? This means the credential was deleted
+        // locally but not published. So we have modified credentials.
+        Logger.log("identity", "A published credential in not in the local document.", pubCred, "published", publishedCredentials, "local", this.credentials);
+        this._hasModifiedCredentials = true;
+        return;
       }
     }
 

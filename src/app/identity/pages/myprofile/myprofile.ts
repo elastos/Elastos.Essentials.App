@@ -214,17 +214,14 @@ export class MyProfilePage {
   }
 
   getProfileName() {
-    Logger.log("DEBUG", "getProfileName", this.profileName);
     if (this.profileName == null) {
       let identity = this.didService.getActiveDid();
-      Logger.log("DEBUG", "getProfileName identity", identity);
       if (identity) {
         // Happens when importing a new mnemonic over an existing one
         this.profile = this.profileService.getBasicProfile();
 
       }
       this.profileName = this.profile.getName();
-      Logger.log("DEBUG", "getProfileName profile", this.profile, this.profileName);
     }
     return this.profileName;
   }
