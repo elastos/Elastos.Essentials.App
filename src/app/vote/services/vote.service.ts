@@ -38,7 +38,7 @@ export class VoteService {
         private walletManager: WalletManager,
         public popupProvider: PopupProvider,
         private nav: GlobalNavService,
-        private globalIntentService: GlobalIntentService
+        private globalIntentService: GlobalIntentService,
     ) {
         this.chainId = StandardCoinName.ELA;
     }
@@ -67,7 +67,7 @@ export class VoteService {
             }
         }
         else {
-            this.navigateTo(this.activeWallet);
+            await this.navigateTo(this.activeWallet);
         }
     }
 

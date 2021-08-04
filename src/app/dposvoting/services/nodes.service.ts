@@ -20,7 +20,6 @@ import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { PopupProvider } from 'src/app/services/global.popup.service';
 import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/Transaction';
 import { Events } from 'src/app/services/events.service';
-import { Subscription } from "rxjs";
 
 
 export type DPoSRegistrationInfo = {
@@ -106,8 +105,6 @@ export class NodesService {
     private isFetchingRewardOrDone = false;
     private rewardResult: any = null; //TODO Do not use any.
 
-    private didchangedSubscription: Subscription = null;
-
     constructor(
         private storage: GlobalStorageService,
         private globalIntentService: GlobalIntentService,
@@ -120,11 +117,7 @@ export class NodesService {
         public events: Events,
         public zone: NgZone,
     ) {
-        this.events.subscribe('signIn', (identity) => {
-            this.zone.run(() => {
-                this.init();
-            });
-        });
+
     }
 
     get nodes(): DPosNode[] {
@@ -183,7 +176,8 @@ export class NodesService {
     }
 
     async getStoredVotes() {
-        await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'votes', []).then(data => {
+        this._votes = [];
+        await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(data => {
             if (data && data.length > 0) {
                 // filter invalid votes.
                 this._votes = data.filter(c => { return c.tx; });
@@ -196,7 +190,7 @@ export class NodesService {
     async setStoredVotes() {
         this.sortVotes();
         Logger.log('dposvoting', 'Vote history updated', this._votes);
-        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", "votes", this._votes);
+        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting",  this.voteService.masterWalletId + '-votes', this._votes);
     }
 
     // getStoredNodes() {
@@ -296,7 +290,7 @@ export class NodesService {
         this.dposInfo.txConfirm = true;
         await this.voteService.sourceSubwallet.getTransactionByRPC();
         let txhistory = this.voteService.sourceSubwallet.transactions.txhistory;
-        for (let i = 0; i < txhistory.length; i++) {
+        for (let i in txhistory) {
             if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
                 if (this.dposInfo.state == 'Unregistered') {
                     if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {

@@ -128,7 +128,7 @@ export class VotePage implements OnInit {
     async castVote() {
         this.voting = true;
         let castedNodeKeys: string[] = [];
-        this.nodesService._nodes.map(node => {
+        this.nodesService._nodes.forEach(node => {
             if (node.isChecked === true) {
                 castedNodeKeys = castedNodeKeys.concat(node.ownerpublickey);
             }

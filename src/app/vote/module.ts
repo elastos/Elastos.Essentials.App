@@ -11,12 +11,8 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { DPoSVotingRoutingModule } from './routing';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
-import { SelectWalletPage } from './pages/select-wallet/select-wallet.page';
-
-
 @NgModule({
   declarations: [
-    SelectWalletPage,
   ],
   imports: [
     CommonModule,
