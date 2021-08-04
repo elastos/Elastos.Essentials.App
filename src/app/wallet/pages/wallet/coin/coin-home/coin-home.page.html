@@ -99,6 +99,7 @@
                 </ion-col>
                 <ion-col [size]="item.amount.isZero() ? 7 : 5" class="middle-col">
                     <h1>{{ item.name | translate }}</h1>
+                    <p class="memo" *ngIf="item.memo" >{{ item.memo }}</p>
                     <p>{{ item.datetime }}</p>
                 </ion-col>
                 <ion-col [size]="item.amount.isZero() ? 3 : 5" class="right-col">
