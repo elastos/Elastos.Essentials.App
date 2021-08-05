@@ -56,14 +56,13 @@ export class CandidatesPage implements OnInit {
         await this.candidatesService.init();
         if (this.candidatesService.candidates.length) {
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
-        } else if (this.candidatesService.council.length) {
+        } else if (this.candidatesService.crmembers.length) {
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
         } else {
             this.titleBar.setTitle(this.translate.instant('launcher.app-cr-council'));
         }
 
         let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
-        await this.candidatesService.fetchCRMembers();
         for (let crmember of this.candidatesService.crmembers) {
             if (crmember.did == did) {
                 this.crmemberInfo = crmember;
@@ -119,18 +118,6 @@ export class CandidatesPage implements OnInit {
     async addCandidates() {
         try {
             await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_VOTING, "/crcouncilvoting/vote");
-            // let res = await this.globalIntentService.sendIntent(
-            //     "https://wallet.elastos.net/walletaccess",
-            //     { elaamount: { reason: this.translate.instant("crcouncilvoting.walletaccess-reason") } });
-            // if (res.result.walletinfo) {
-            //     let props: NavigationExtras = {
-            //         queryParams: {
-            //             elaamount: res.result.walletinfo[0].elaamount
-            //         }
-            //     };
-            //     Logger.log('crcouncil', "addCandidates: Selected Candidates", this.candidatesService.selectedCandidates);
-            //     this.globalNav.navigateTo("crcouncilvoting", "/crcouncilvoting/vote", props);
-            // }
         }
         catch (err) {
             Logger.log('crcouncil', err);

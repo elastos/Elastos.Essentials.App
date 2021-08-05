@@ -21,6 +21,8 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 })
 export class CandidatesService {
 
+    private elaRpcApi: string;
+
     constructor(
         private http: HttpClient,
         private globalNav: GlobalNavService,
@@ -30,7 +32,9 @@ export class CandidatesService {
         public translate: TranslateService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService
-    ) { }
+    ) {
+        this.elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+    }
 
 
     /** Election **/
@@ -41,7 +45,7 @@ export class CandidatesService {
 
     /** Election Results **/
     public councilTerm: number;
-    public council: CouncilMember[] = [];
+    // public council: CouncilMember[] = [];
 
     private subscription: Subscription = null;
 
@@ -51,11 +55,6 @@ export class CandidatesService {
         })
     };
 
-    public params = {
-        "method": "listcrcandidates",
-        "params": { "state": "active" }
-    };
-
     async init() {
         this.initData();
     }
@@ -63,7 +62,6 @@ export class CandidatesService {
     async initData() {
         this.candidates = [];
         this.crmembers = [];
-        this.council = [];
         this.selectedCandidates = [];
 
         this.fetchCandidates();
@@ -79,6 +77,9 @@ export class CandidatesService {
 
     async fetchCRMembers() {
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
+
+        this.crmembers = []
+
         const param = {
             method: 'listcurrentcrs',
             params: {
@@ -86,12 +87,21 @@ export class CandidatesService {
             },
         };
 
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        Logger.log(App.CRCOUNCIL_VOTING, "rpcApiUrl:", rpcApiUrl);
-        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
-        if (!Util.isEmptyObject(result.crmembersinfo)) {
+        try {
+            const result = await this.jsonRPCService.httpPost(this.elaRpcApi, param);
+            if (!result || Util.isEmptyObject(result.crmembersinfo)) {
+                return;
+            }
             Logger.log(App.CRCOUNCIL_VOTING, "crmembersinfo:", result.crmembersinfo);
             this.crmembers = result.crmembersinfo;
+
+            for (let member of this.crmembers) {
+                member.avatar = await this.getAvatar(member.did);
+            }
+        }
+        catch (err) {
+            Logger.error('crcouncil', 'fetchCandidates error', err);
+            await this.alertErr('crcouncilvoting.cr-member-info-no-available');
         }
     }
 
@@ -104,39 +114,44 @@ export class CandidatesService {
         });
     }
 
-    fetchCandidates() {
+    async fetchCandidates() {
         Logger.log('crcouncil', 'Fetching Candidates..');
-        let elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.http.post<any>(elaRpcApi, this.params, this.httpOptions).subscribe(async (res) => {
-            Logger.log('crcouncil', 'Candidates fetched', res);
-            if (res && res.result && res.result.crcandidatesinfo) {
-                this.candidates = res.result.crcandidatesinfo;
+        const param = {
+            method: 'listcrcandidates',
+            params: {
+                state: "active"
+            },
+        };
+
+        this.candidates = [];
+        try {
+            const result = await this.jsonRPCService.httpPost(this.elaRpcApi, param);
+            Logger.log('crcouncil', 'Candidates fetched', result);
+            if (result && result.crcandidatesinfo) {
+                this.candidates = result.crcandidatesinfo;
                 Logger.log('crcouncil', 'Candidates added', this.candidates);
-                this.totalVotes = parseFloat(res.result.totalvotes);
+                this.totalVotes = parseFloat(result.totalvotes);
                 for (let candidate of this.candidates) {
                     candidate.imageUrl = await this.getAvatar(candidate.did);
                 }
-            } else {
-                void this.fetchElectionResults();
             }
-        }, (err) => {
+        }
+        catch (err) {
             Logger.error('crcouncil', 'fetchCandidates error', err);
-            void this.alertErr('crcouncilvoting.cr-council-no-available');
-        });
+        }
+
+        if (this.candidates.length < 1) {
+            await this.fetchElectionResults();
+        }
     }
 
     async fetchElectionResults() {
         await this.fetchCouncilTerm();
-        this.fetchCouncil();
+        this.fetchCRMembers();
     }
 
     private getCRCouncilTermEndpoint(): string {
         return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC) + '/api/council/term';
-    }
-
-    private getCRCouncilListEndpoint(): string {
-        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC) + '/api/council/list';
     }
 
     fetchCouncilTerm() {
@@ -153,24 +168,6 @@ export class CandidatesService {
                 Logger.error('crcouncil', 'fetchCouncilTerm error:', err);
                 resolve();
             });
-        });
-    }
-
-    fetchCouncil() {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.http.get<any>(this.getCRCouncilListEndpoint()).subscribe(async (res) => {
-            Logger.log('crcouncil', 'Council fetched', res);
-            if (res && res.data) {
-                this.council = res.data.council;
-                for (let member of this.council) {
-                    member.avatar = await this.getAvatar(member.did);
-                }
-            } else {
-                Logger.error('crcouncil', 'can not get council data!');
-            }
-        }, (err) => {
-            void this.alertErr('crcouncilvoting.cr-council-no-available');
-            Logger.error('crcouncil', 'fetchCouncil error:', err);
         });
     }
 

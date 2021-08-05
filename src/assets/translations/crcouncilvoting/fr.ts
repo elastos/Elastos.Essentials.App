@@ -17,6 +17,15 @@ export const fr = {
         'current-votes': 'Votes Actuels',
         'percent-votes': 'Pourcentage de Votes',
 
+        /********** State **********/
+        'Elected': 'Elected',
+        'Impeached': 'Impeached',
+        'Returned': 'Returned',
+        'Terminated': 'Terminated',
+        'Inactive': 'Inactive',
+        'Active': 'Active',
+        'Illegal': 'Illegal',
+
         /********** Toast **********/
         'wallet-access-request': 'Accès au Portefeuille',
         'wallet-access-request-message': 'Le solde actuel de vos ELA permettra de déterminer votre pouvoir de vote',
@@ -27,6 +36,7 @@ export const fr = {
         'cr-voting-ended': 'Aucune élection de membres de la Cyber Republic n\'est actuellement en cours',
         'cr-voting-ended-message': 'Il n\'y aura plus d\'élection jusqu\'au prochain cycle',
         'cr-council-no-available' : 'La liste des membres du conseil n\'est actuellement pas disponible, veuillez ré-essayer plus tard',
+        'cr-member-info-no-available' : 'The CRC Council\'s info is not available at this time, please try again later',
         'pledge-some-ELA-to-candidates': 'Veuillez distribuer vos votes-ELA à des candidats',
         'not-allow-pledge-more-than-own': 'Vous ne pouvez pas distribuer plus de votes-ELA que le nombre d\'ELA en votre possession',
 
