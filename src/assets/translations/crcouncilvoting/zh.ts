@@ -18,6 +18,15 @@ export const zh = {
         'percent-votes': '投票百分比',
         'walletaccess-reason': 'CR委员投票',
 
+        /********** State **********/
+        'Elected': '当选',
+        'Impeached': '已弹劾',
+        'Returned': '已去职',
+        'Terminated': '已免职',
+        'Inactive': '非激活',
+        'Active': '激活',
+        'Illegal': '非法',
+
         /********** Toast **********/
         'wallet-access-request': '获取钱包信息',
         'wallet-access-request-message': '将通过钱包获取您的ELA余额，以计算您的投票权',
@@ -28,6 +37,7 @@ export const zh = {
         'cr-voting-ended': 'CR委员选举已经结束',
         'cr-voting-ended-message': '在下一轮选举之前不会有任何投票',
         'cr-council-no-available' : 'CR委员投票暂时不可用, 请稍后再试',
+        'cr-member-info-no-available' : 'CR委员信息获取失败, 请稍后再试',
         'pledge-some-ELA-to-candidates': '请给您的候选人分配一些ELA',
         'not-allow-pledge-more-than-own': '您分配的ELA不能超过您拥有的ELA',
 

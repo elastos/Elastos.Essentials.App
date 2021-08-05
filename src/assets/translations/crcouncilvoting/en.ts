@@ -18,6 +18,15 @@ export const en = {
         'percent-votes': 'Percentage of Votes',
         'walletaccess-reason': 'For CRC voting rights',
 
+        /********** State **********/
+        'Elected': 'Elected',
+        'Impeached': 'Impeached',
+        'Returned': 'Returned',
+        'Terminated': 'Terminated',
+        'Inactive': 'Inactive',
+        'Active': 'Active',
+        'Illegal': 'Illegal',
+
         /********** Toast **********/
         'wallet-access-request': 'Wallet Access Request',
         'wallet-access-request-message': 'Wallet will fetch your ELA balance to estimate your voting power',
@@ -28,6 +37,7 @@ export const en = {
         'cr-voting-ended': 'The CRC Election has ended',
         'cr-voting-ended-message': 'There won\'t be any voting here until the next election cycle',
         'cr-council-no-available' : 'The CRC Council is not available at this time, please try again later',
+        'cr-member-info-no-available' : 'The CRC Council\'s info is not available at this time, please try again later',
         'pledge-some-ELA-to-candidates': 'Please pledge some ELA to your candidates',
         'not-allow-pledge-more-than-own': 'You are not allowed to pledge more ELA than you own',
 
