@@ -66,9 +66,9 @@ export class ProposalListingPage implements OnInit {
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
             await this.globalNav.navigateTo("scanner", '/scanner/scan');
         });
-        if (!this.proposalsFetched) {
-            await this.fetchProposals();
-        }
+        this.proposalsFetched = false;
+        this.proposalService.reset();
+        await this.fetchProposals();
     }
 
     async fetchProposals() {
