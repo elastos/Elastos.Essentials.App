@@ -20,7 +20,6 @@
         </ion-input>
     </ion-row>
 
-
     <ion-grid *ngIf="proposalsFetched" class="container">
         <div *ngIf="proposals.length > 0">
             <ion-row *ngFor="let proposal of proposals" (click)="selectProposal(proposal)" class="item-row ripple ion-activatable">
@@ -49,50 +48,6 @@
             {{ 'crproposalvoting.no-proposals' | translate }}
         </div>
     </ion-grid>
-
-    <!-- Fetched Container - reveal when proposals are fetched
-    <ion-grid *ngIf="proposalsFetched" class="container">
-
-        Use virtual scroll when proposals list gets too long, however styling is limited so wont use for now
-        <ion-virtual-scroll [items]="proposals" approxItemHeight="65px">
-            <ion-row *virtualItem="let proposal" (click)="selectProposal(proposal)" class="item-row ripple ion-activatable">
-                <ion-col size="1.5" class="left-col">
-                    <p>#{{ proposal.id }}</p>
-                </ion-col>
-                <ion-col size="9" class="middle-col">
-                    <h1>{{ proposal.title.slice(0, 15) }}<span *ngIf="proposal.title.length > 15">...</span></h1>
-                    <p class="second-label" [class.middle-label]="proposalType === 'ALL'">{{ uxService.formatDate(proposal.createdAt) }} &#8226; <span>{{ proposal.proposedBy }}</span></p>
-                    <p *ngIf="proposalType === 'ALL'">{{ uxService.getDisplayableStatus(proposal.status) }}</p>
-                </ion-col>
-                <ion-col size="1.5" class="right-col">
-                    <ion-img [src]="!theme.darkMode ? '/assets/crproposalvoting/icons/right-arrow.svg' : '/assets/crproposalvoting/icons/darkmode/right-arrow.svg'"></ion-img>
-                </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-row>
-        </ion-virtual-scroll>
-
-       Use normal loop if proposal length is shorter
-        <div *ngIf="proposals.length > 0">
-            <ion-row *ngFor="let proposal of proposals" (click)="selectProposal(proposal)" class="item-row ripple ion-activatable">
-                <ion-col size="1.5" class="left-col">
-                    <p>#{{ proposal.id }}</p>
-                </ion-col>
-                <ion-col size="9" class="middle-col">
-                    <h1>{{ proposal.title.slice(0, 15) }}<span *ngIf="proposal.title.length > 15">...</span></h1>
-                    <p class="second-label" [class.middle-label]="proposalType === 'ALL'">{{ uxService.formatDate(proposal.createdAt) }} &#8226; <span>{{ proposal.proposedBy }}</span></p>
-                    <p *ngIf="proposalType === 'ALL'">{{ uxService.getDisplayableStatus(proposal.status) }}</p>
-                </ion-col>
-                <ion-col size="1.5" class="right-col">
-                    <ion-img [src]="!theme.darkMode ? '/assets/crproposalvoting/icons/right-arrow.svg' : '/assets/crproposalvoting/icons/darkmode/right-arrow.svg'"></ion-img>
-                </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-row>
-        </div>
-        If there are no fetched proposals
-        <div *ngIf="proposals.length == 0" class="more">
-            No matching proposals for now.
-        </div>
-    </ion-grid> -->
 
     <!-- Spinner Container - Reveal if proposals are being fetched -->
     <ion-grid *ngIf="!proposalsFetched" class="spinner spinner-container">
