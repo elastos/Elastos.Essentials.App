@@ -48,23 +48,20 @@ export class DAppBrowser {
       let subwallet = WalletManager.instance.getActiveMasterWallet().getSubWallet(StandardCoinName.ETHSC);
       dappBrowser.userAddress = await subwallet.createAddress();
 
-      // TMP : Wait a few seconds so we have time to open the safari webview console quickly to see debug logs :D
-      //setTimeout(() => {
-        void dappBrowser.browser.executeScript({
-          code: code + "\
-            console.log('Elastos Essentials Web3 provider is being created'); \
-            window.ethereum = new InAppBrowserWeb3Provider();\
-            window.web3 = { \
-              currentProvider: window.ethereum\
-            };\
-            console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3); \
-            \
-            window.ethereum.setChainId(20); \
-            window.ethereum.setAddress('"+dappBrowser.userAddress+"');\
-          "});
-      //}, 2000);
+      void dappBrowser.browser.executeScript({
+        code: code + "\
+          console.log('Elastos Essentials Web3 provider is being created'); \
+          window.ethereum = new InAppBrowserWeb3Provider();\
+          window.web3 = { \
+            currentProvider: window.ethereum\
+          };\
+          console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3); \
+          \
+          window.ethereum.setChainId(20); \
+          window.ethereum.setAddress('"+dappBrowser.userAddress+"');\
+        "});
 
-      // TODO: window.ethereum.setAddress() should be claled ONLY when receiving a eth_requestAccounts request.
+        // TODO: window.ethereum.setAddress() should maybe be called only when receiving a eth_requestAccounts request.
     });
 
     dappBrowser.browser.on('message').subscribe((dataFromIAB) => {
@@ -76,6 +73,9 @@ export class DAppBrowser {
     return dappBrowser;
   }
 
+  /**
+   * Handles Web3 requests received from a dApp through the injected web3 provider.
+   */
   private async handleIABMessage(message: IABMessage) {
     if (message.type != "message") {
       Logger.warn("dappbrowser", "Received unknown message type", message.type);
@@ -97,6 +97,9 @@ export class DAppBrowser {
     }
   }
 
+  /**
+   * Executes a smart contract transaction then returns the result to the calling dApp.
+   */
   private async handleSignTransaction(message: IABMessage): Promise<void> {
     let response: {
       action: string,
@@ -111,7 +114,6 @@ export class DAppBrowser {
         ]
       }
     });
-    console.log("RESPONSE", response);
 
     this.sendIABResponse(
       message.data.id,
@@ -119,6 +121,9 @@ export class DAppBrowser {
     );
   }
 
+  /**
+   * Returns the active user address to the calling dApp.
+   */
   private handleRequestAccounts(message: IABMessage): Promise<void> {
     this.sendIABResponse(
       message.data.id,
@@ -127,8 +132,10 @@ export class DAppBrowser {
     return;
   }
 
+  /**
+   * Sends a request response from Essentials to the callign web app.
+   */
   private sendIABResponse(id: number, result: any) {
-    // Test send response to dapp
     let stringifiedResult = JSON.stringify(result);
     let code = 'window.ethereum.sendResponse('+id+', '+stringifiedResult+')';
     console.log("stringifiedResult", stringifiedResult, "code", code);

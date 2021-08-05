@@ -1,0 +1,21 @@
+* {
+  font-family: 'Raleway' !important;
+}
+
+ion-content {
+  background: #fafafa;
+}
+
+ion-button {
+  --border-radius: 30px;
+  width: 100%;
+  height: 50px;
+  margin-top: 15px;
+
+  ion-label {
+    letter-spacing: 5px;
+    font-weight: 500;
+    font-size: 14px;
+    color: white !important;
+  }
+}

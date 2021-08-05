@@ -1,0 +1,63 @@
+@import "src/app/developertools/root.scss";
+
+.container {
+  min-height: 100%;
+  background: #FAFAFA;
+  padding: 20px 15px;
+  padding-bottom: 15%;
+
+  h1 {
+    margin: 0px 0px 15px;
+    font-size: 24px;
+    font-weight: 900;
+    color: #21313d;
+  }
+
+  ion-card {
+    background: linear-gradient(to bottom, #181d20 0%,  #21313d 100%);
+    padding: 15px;
+    border-radius: 30px;
+    margin: 5px 0;
+
+    ion-card-subtitle {
+      color: white;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: initial;
+    }
+  }
+}
+
+.btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 7.5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #181d20;
+  border-top: 2px solid #FAFAFA;
+  border-right: 2px solid #FAFAFA;
+  border-left: 2px solid #FAFAFA;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  animation: showBtn;
+  animation-duration: 1000ms;
+  animation-fill-mode: forwards;
+
+  @keyframes showBtn {
+    0% { bottom: -100px }
+    100% { bottom: 0px }
+  }
+
+  ion-label {
+    letter-spacing: 5px;
+    font-weight: 500;
+    font-size: 16px;
+    color: #ffffff;
+  }
+}

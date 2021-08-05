@@ -227,6 +227,20 @@ export class AppmanagerService {
                         routerPath: '/crproposalvoting/proposals/ALL'
                     },
                 ]
+            },
+            {
+                type: 'Discover',
+                apps: [
+                    {
+                        id: 'browser',
+                        routerContext: App.DAPP_BROWSER,
+                        name: this.translate.instant('dApp Browser'),
+                        description: this.translate.instant('Discover dApps that you can use with Essentials'),
+                        icon: '/assets/launcher/apps/app-icons/dpos.svg',
+                        hasWidget: false,
+                        routerPath: '/dappbrowser/home'
+                    }
+                ]
             }
         ];
     }

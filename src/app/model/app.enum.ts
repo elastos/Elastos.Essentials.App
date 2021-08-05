@@ -12,5 +12,6 @@ export enum App {
     DPOS_REGISTRATION = "dposregistration",
     HIVE_MANAGER = "hivemanager",
     SETTINGS = "settings",
-    SCANNER = "scanner"
+    SCANNER = "scanner",
+    DAPP_BROWSER = "dappbrowser",
 }
