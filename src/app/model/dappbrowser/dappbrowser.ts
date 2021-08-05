@@ -40,7 +40,7 @@ export class DAppBrowser {
     });
 
     // eslint-disable-next-line
-    dappBrowser.browser.on('loadstop').subscribe(async event => {
+    dappBrowser.browser.on('loadstart').subscribe(async event => {
       // Prepare our web3 provider bridge for injection
       let code = await httpClient.get('assets/essentialsiabprovider.js', {responseType: 'text'}).toPromise();
 

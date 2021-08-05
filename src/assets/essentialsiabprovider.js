@@ -2946,8 +2946,8 @@
           this.idMapping = new IdMapping();
           this.callbacks = new Map(); // TODO: clear type
           this.wrapResults = new Map(); // TODO: clear type
-          this.chainId = null;
-          console.log("Creating an InAppBrowserWeb3Provider 2");
+          this.chainId = 20;
+          console.log("Creating an Essentials InAppBrowserWeb3Provider");
           this.emitConnect(this.chainId);
       }
       setChainId(chainId) {
@@ -2955,6 +2955,7 @@
           this.ready = !!(this.chainId && this.address);
           console.log("Setting chain ID to:", this.chainId);
           this.emit("chainChanged", this.chainId);
+          this.emit("networkChanged", this.chainId);
       }
       setAddress(address) {
           const lowerAddress = (address || "").toLowerCase();
@@ -2988,6 +2989,121 @@
       }
       /**
        * @deprecated Use request() method instead.
+       * https://docs.metamask.io/guide/ethereum-provider.html#legacy-methods
+       */
+      /* public async send(payload: JsonRpcPayload | string): Promise<JsonRpcResponse | any> {
+        // 'this' points to window in methods like web3.eth.getAccounts()
+        var that = this;
+        if (!(this instanceof InAppBrowserWeb3Provider)) {
+          that = (window as any).ethereum;
+        }
+    
+        let rpcPayload: JsonRpcPayload = null;
+        let isRpcPayload: boolean; // Whether the received payload is a JsonRpcPayload or not
+        if (typeof payload === "string") {
+          isRpcPayload = false;
+          rpcPayload = {
+            jsonrpc: "",
+            method: payload,
+            params: []
+          };
+        }
+        else {
+          isRpcPayload = true;
+          rpcPayload = payload;
+        }
+    
+        let result: any = null;
+        switch (rpcPayload.method) {
+          case "eth_accounts":
+            result = this.eth_accounts();
+            break;
+          case "eth_coinbase":
+            result = this.eth_coinbase();
+            break;
+          case "net_version":
+            result = this.net_version();
+            break;
+          case "eth_chainId":
+            result = this.eth_chainId();
+            break;
+          default:
+            throw new ProviderRpcError(
+              4200,
+              `send() cannot call method ${rpcPayload.method} synchronously without a callback. Please provide a callback parameter to call ${rpcPayload.method} asynchronously.`
+            );
+        }
+    
+        if (isRpcPayload) {
+          // RPC payload? return a RPC response
+          let response: JsonRpcResponse = {
+            jsonrpc: "2.0",
+            id: rpcPayload.id as any,
+            result: result
+          };
+          return response;
+        }
+        else {
+          return result;
+        }
+      } */
+      /**
+       * @deprecated Use request() method instead.
+       * https://docs.metamask.io/guide/ethereum-provider.html#legacy-methods
+       */
+      send(requestOrMethod, callbackOrParams) {
+          if (typeof requestOrMethod === "string") {
+              const method = requestOrMethod;
+              const params = Array.isArray(callbackOrParams)
+                  ? callbackOrParams
+                  : callbackOrParams !== undefined
+                      ? [callbackOrParams]
+                      : [];
+              const request = {
+                  jsonrpc: "2.0",
+                  id: 0,
+                  method,
+                  params
+              };
+              // Call _request() to wrap result into a JsonRpcResponse
+              return this._request(request).then(res => res.result);
+          }
+          // send(JSONRPCRequest | JSONRPCRequest[], callback): void
+          if (typeof callbackOrParams === "function") {
+              const request = requestOrMethod;
+              const callback = callbackOrParams;
+              return this.sendAsync(request, callback);
+          }
+          // send(JSONRPCRequest[]): JSONRPCResponse[]
+          if (Array.isArray(requestOrMethod)) {
+              const requests = requestOrMethod;
+              return requests.map(r => this.request(r));
+          }
+          // send(JSONRPCRequest): JSONRPCResponse
+          const req = requestOrMethod;
+          return this.request(req);
+      }
+      /* sendAsync(request, callback) {
+          if (typeof callback !== "function") {
+              throw new Error("callback is required");
+          }
+          // send(JSONRPCRequest[], callback): void
+          if (Array.isArray(request)) {
+              const arrayCb = callback;
+              this._sendMultipleRequestsAsync(request)
+                  .then(responses => arrayCb(null, responses))
+                  .catch(err => arrayCb(err, null));
+              return;
+          }
+          // send(JSONRPCRequest, callback): void
+          const cb = callback;
+          this._sendRequestAsync(request)
+              .then(response => cb(null, response))
+              .catch(err => cb(err, null));
+      } */
+      /**
+       * @deprecated Use request() method instead.
+       * https://docs.metamask.io/guide/ethereum-provider.html#legacy-methods
        */
       sendAsync(payload, callback) {
           // 'this' points to window in methods like web3.eth.getAccounts()
@@ -2995,7 +3111,6 @@
           if (!(this instanceof InAppBrowserWeb3Provider)) {
               that = window.ethereum;
           }
-          console.log("THISTHAT2", this, that);
           that._request(payload)
               .then((data) => callback(null, data))
               .catch((error) => callback(error, null));
@@ -3069,7 +3184,7 @@
       }
       emitConnect(chainId) {
           console.log("InAppBrowserWeb3Provider: emitting connect", chainId);
-          this.emit("connect", { /* chainId: chainId */});
+          this.emit("connect", { chainId: chainId });
       }
       eth_accounts() {
           return this.address ? [this.address] : [];
