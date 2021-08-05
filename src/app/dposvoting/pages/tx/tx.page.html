@@ -7,6 +7,7 @@
     <ion-grid class="container ion-no-padding" [class.darkContainer]="theme.darkMode">
         <app-node-slider-tx *ngIf="showNode" [nodeIndex]="nodeIndex" [totalVotes]="nodesService.totalVotes"
             [_nodes]="_nodes" [node]="node"></app-node-slider-tx>
+
         <ion-list lines="none" [class.blur]="showNode" class="node-list">
             <ion-virtual-scroll [items]="_nodes" approxItemHeight="240px">
                 <ion-item *virtualItem="let node">
