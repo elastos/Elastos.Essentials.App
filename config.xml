@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="20100" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.1.0.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android-versionCode="20106" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="2.1.2.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
         Elastos essentials
@@ -33,7 +33,7 @@
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
     <preference name="AndroidXEnabled" value="true" />
     <platform name="android">
-        <preference name="android-targetSdkVersion" value="30" />
+        <preference name="android-targetSdkVersion" value="29" />
         <preference name="android-minSdkVersion" value="24" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
             <manifest xmlns:tools="http://schemas.android.com/tools" />
