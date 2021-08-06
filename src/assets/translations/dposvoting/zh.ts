@@ -56,13 +56,7 @@ export const zh = {
         'vote-timeout': '投票超时',
         'vote-no-nodes-checked': '请最多选择36个节点进行投票',
 
-        /********** Registration **********/
-        'registration': '报名参选',
-        'node-name': '请输入节点名称(必填)',
-        'node-publickey': '请输入节点公钥(必填)',
-        'choose-area': '请选择国家/地区',
-        'inputurl': '请输入节点官网URL(必填)',
-        'registration-confirm': '确认参选',
+        'dpos-node-info-no-available' : 'DPoS节点信息获取失败, 请稍后再试',
     }
 
 };

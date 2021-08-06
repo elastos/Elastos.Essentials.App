@@ -189,7 +189,7 @@ export class VotePage implements OnInit {
 
     getSelectedNodes(): number {
         this.selectedNodes = 0;
-        this.nodesService._nodes.map(node => {
+        this.nodesService._nodes.forEach(node => {
             if (node.isChecked === true) {
                 this.selectedNodes++;
             }

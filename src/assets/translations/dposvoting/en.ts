@@ -56,13 +56,7 @@ export const en = {
         'vote-timeout': 'No response from wallet',
         'vote-no-nodes-checked': 'Please select up to 36 nodes in order to vote',
 
-        /********** Registration **********/
-        'registration': 'Registration',
-        'node-name': 'Enter node name (Required)',
-        'node-publickey': 'Enter public key of your node (Required)',
-        'choose-area': 'Choose Country/Region',
-        'inputurl': 'Enter website URL of your node (Required)',
-        'registration-confirm': 'Confirm',
+        'dpos-node-info-no-available' : 'The DPoS Node\'s info is not available at this time, please try again later',
     }
 
 };

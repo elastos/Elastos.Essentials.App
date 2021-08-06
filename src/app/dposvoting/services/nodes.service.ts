@@ -143,11 +143,12 @@ export class NodesService {
         await this.getStoredVotes();
         await this.fetchStats();
         await this.fetchNodes();
-        if (!this.isFetchingRewardOrDone) {
-            this.isFetchingRewardOrDone = true
-            // Too slow, don't await
-            void this.fetchReward();
-        }
+        //TODO:: Maybe can remove
+        // if (!this.isFetchingRewardOrDone) {
+        //     this.isFetchingRewardOrDone = true
+        //     // Too slow, don't await
+        //     void this.fetchReward();
+        // }
     }
 
     // Titlebar
@@ -190,7 +191,7 @@ export class NodesService {
     async setStoredVotes() {
         this.sortVotes();
         Logger.log('dposvoting', 'Vote history updated', this._votes);
-        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting",  this.voteService.masterWalletId + '-votes', this._votes);
+        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "dposvoting", this.voteService.masterWalletId + '-votes', this._votes);
     }
 
     // getStoredNodes() {
@@ -280,11 +281,12 @@ export class NodesService {
                     this.getNodeIcon(node);
                 }
                 Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
-                this.setupRewardInfo();
+                // this.setupRewardInfo();
             }
 
         } catch (err) {
             Logger.error('dposvoting', 'fetchNodes error:', err);
+            await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
         }
 
         this.dposInfo.txConfirm = true;
@@ -325,6 +327,7 @@ export class NodesService {
         return -1;
     }
 
+    /*---- Reward ----
     async fetchCurrentHeight(): Promise<number> {
         Logger.log('dposvoting', 'Fetching height');
         try {
@@ -338,40 +341,6 @@ export class NodesService {
 
         return this.currentHeight;
     }
-
-    // async fetchNodes() {
-    //     Logger.log('dposvoting', 'Fetching Nodes..');
-    //     const param = {
-    //         method: 'listproducers',
-    //         params: {
-    //             state: 'all'
-    //             // state: 'active'
-    //         },
-    //     };
-
-    //     let apiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-
-    //     try {
-    //         let result = await this.globalJsonRPCService.httpPost(apiUrl, param);
-    //         if (result) {
-    //             result.producers.map(node => {
-    //                 node.index += 1; // the index start from 0;
-    //             });
-
-    //             this._nodes = result.producers;
-    //             this.activeNodes = this._nodes.filter(node => node.state === 'Active');
-    //             this.getNodeIcon();
-    //             this.getStoredNodes();
-    //             this.totalVotes = result.totalvotes;
-    //             this.setupRewardInfo();
-
-    //             Logger.log('dposvoting', 'Nodes Added..', this._nodes);
-    //             Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
-    //         }
-    //     } catch (err) {
-    //         Logger.error('dposvoting', 'fetchNodes error:', err);
-    //     }
-    // }
 
     async fetchReward() {
         Logger.log('dposvoting', 'start fetchReward');
@@ -402,6 +371,7 @@ export class NodesService {
             }
         });
     }
+    ---- Reward ----*/
 
     /* getNodeIcon() {
       this._nodes.map(node => {
