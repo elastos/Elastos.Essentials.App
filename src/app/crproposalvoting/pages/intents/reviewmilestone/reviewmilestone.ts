@@ -89,7 +89,7 @@ export class ReviewMilestonePage {
             Logger.log('crproposal', "Got review milestone payload.", payload);
 
             //Get digest
-            var digest = await this.walletManager.spvBridge.proposalTrackingSecretaryDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+            var digest = await this.walletManager.spvBridge.proposalTrackingSecretaryDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
             digest = Util.reverseHexToBE(digest);
             Logger.log('crproposal', "Got review milestone digest.", digest);
 
