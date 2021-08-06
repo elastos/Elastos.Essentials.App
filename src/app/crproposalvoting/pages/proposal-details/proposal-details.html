@@ -2,76 +2,81 @@
     <app-titlebar></app-titlebar>
     <ion-grid *ngIf="proposal" [class.darkContainer]="theme.darkMode">
 
-      <ion-card>
-        <ion-card-title>{{ 'crproposalvoting.proposal' | translate }} <span>#</span>{{ proposal.id }}</ion-card-title>
-        <ion-card-subtitle>{{ 'crproposalvoting.by' | translate }} {{ proposal.proposedBy }} &#8226; {{ uxService.formatDate(proposal.createdAt) }}</ion-card-subtitle>
-        <p 
-          [class.final]="proposal.status === 'FINAL'"
-          [class.active]="proposal.status === 'ACTIVE'"
-          [class.rejected]="proposal.status === 'REJECTED'"
-        >
-          {{ uxService.getDisplayableStatus(proposal.status) }}
-        </p>
-      </ion-card>
+        <ion-card>
+            <ion-card-title>{{ 'crproposalvoting.proposal' | translate }} <span>#</span>{{ proposal.id }}
+            </ion-card-title>
+            <ion-card-subtitle>{{ 'crproposalvoting.by' | translate }} {{ proposal.proposedBy }} &#8226; {{
+                uxService.formatDate(proposal.createdAt) }}</ion-card-subtitle>
+            <p [class.final]="proposal.status === 'FINAL'" [class.active]="proposal.status === 'ACTIVE'"
+                [class.rejected]="proposal.status === 'REJECTED'">
+                {{ uxService.getDisplayableStatus(proposal.status) }}
+            </p>
+        </ion-card>
 
-      <ion-row *ngFor="let item of proposalDetails" class="section-row">
-        <ion-col size="12" (click)="item.active = !item.active">
-          <h1>{{ item.title }}</h1>
-          <img [class.rotate]="item.active" [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'"/>
-        </ion-col>
-        <ion-col *ngIf="item.active" class="details-col" size="12">
-          <pre (click)="openLink(item)" [class.url]="item.type === 'url'">{{ item.description }}</pre>
-        </ion-col>
-      </ion-row>
+        <ion-row *ngFor="let item of proposalDetails" class="section-row">
+            <ion-col size="12" (click)="item.active = !item.active">
+                <h1>{{ item.title }}</h1>
+                <img [class.rotate]="item.active"
+                    [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
+            </ion-col>
+            <ion-col *ngIf="item.active" class="details-col" size="12">
+                <div (click)="openLink(item)" [class.url]="item.type === 'url'" [innerHtml]="item.description"></div>
+            </ion-col>
+        </ion-row>
 
-      <ion-row *ngIf="proposal.status === 'VOTING' || proposal.status === 'NOTIFICATION'" class="section-row">
-        <ion-col size="12" (click)="timeActive = !timeActive">
-          <h1>{{ 'crproposalvoting.time-remaining' | translate }}</h1>
-          <img [class.rotate]="timeActive" [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'"/>
-        </ion-col>
-        <ion-col *ngIf="timeActive" class="details-col" size="12">
-          <pre>{{ getTimeLeft(proposal.duration) }}</pre>
-        </ion-col>
-      </ion-row>
+        <ion-row *ngIf="proposal.status === 'VOTING' || proposal.status === 'NOTIFICATION'" class="section-row">
+            <ion-col size="12" (click)="timeActive = !timeActive">
+                <h1>{{ 'crproposalvoting.time-remaining' | translate }}</h1>
+                <img [class.rotate]="timeActive"
+                    [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
+            </ion-col>
+            <ion-col *ngIf="timeActive" class="details-col" size="12">
+                <pre>{{ getTimeLeft(proposal.duration) }}</pre>
+            </ion-col>
+        </ion-row>
 
-      <ion-row *ngIf="proposal.status === 'NOTIFICATION'" class="section-row">
-        <ion-col size="12" (click)="rejectActive = !rejectActive">
-          <h1>{{ 'crproposalvoting.reject-ratio' | translate }}</h1>
-          <img [class.rotate]="rejectActive" [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'"/>
-        </ion-col>
-        <ion-col *ngIf="rejectActive" class="details-col" size="12">
-          <pre>{{ proposal.rejectRatio }}</pre>
-        </ion-col>
-      </ion-row>
+        <ion-row *ngIf="proposal.status === 'NOTIFICATION'" class="section-row">
+            <ion-col size="12" (click)="rejectActive = !rejectActive">
+                <h1>{{ 'crproposalvoting.reject-ratio' | translate }}</h1>
+                <img [class.rotate]="rejectActive"
+                    [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
+            </ion-col>
+            <ion-col *ngIf="rejectActive" class="details-col" size="12">
+                <pre>{{ proposal.rejectRatio }}</pre>
+            </ion-col>
+        </ion-row>
 
-      <div>
-        <div class="tab-container">
-          <div class="tab" [class.tab-active]="activeTab === 1" (click)='activeTab = 1'>
-            <p>{{ 'crproposalvoting.yes' | translate }} <span>({{ getVotesByType('support').length }})</span></p>
-          </div>
-          <div class="tab" [class.tab-active]="activeTab === 2 " (click)='activeTab = 2'>
-              <p>{{ 'crproposalvoting.no' | translate }} <span>({{ getVotesByType('reject').length }})</span></p>
-          </div>
-          <div class="tab right-tab" [class.tab-active]="activeTab === 3 "(click)='activeTab = 3'>
-              <p>{{ 'crproposalvoting.abstain' | translate }} <span>({{ getVotesByType('abstention').length }})</span></p>
-          </div>
+        <div>
+            <div class="tab-container">
+                <div class="tab" [class.tab-active]="activeTab === 1" (click)='activeTab = 1'>
+                    <p>{{ 'crproposalvoting.yes' | translate }} <span>({{ getVotesByType('support').length }})</span>
+                    </p>
+                </div>
+                <div class="tab" [class.tab-active]="activeTab === 2 " (click)='activeTab = 2'>
+                    <p>{{ 'crproposalvoting.no' | translate }} <span>({{ getVotesByType('reject').length }})</span></p>
+                </div>
+                <div class="tab right-tab" [class.tab-active]="activeTab === 3 " (click)='activeTab = 3'>
+                    <p>{{ 'crproposalvoting.abstain' | translate }}
+                        <span>({{ getVotesByType('abstention').length}})</span>
+                    </p>
+                </div>
+            </div>
+            <div *ngIf="activeTab === 1">
+                <div *ngFor="let vote of getVotesByType('support')">
+                    <vote-result [vote]="vote"></vote-result>
+                </div>
+            </div>
+            <div *ngIf="activeTab === 2">
+                <div *ngFor="let vote of getVotesByType('reject')">
+                    <vote-result [vote]="vote"></vote-result>
+                </div>
+            </div>
+            <div *ngIf="activeTab === 3">
+                <div *ngFor="let vote of getVotesByType('abstention')">
+                    <vote-result [vote]="vote"></vote-result>
+                </div>
+            </div>
         </div>
-        <div *ngIf="activeTab === 1">
-          <div *ngFor="let vote of getVotesByType('support')">
-            <vote-result [vote]="vote"></vote-result>
-          </div>
-        </div>
-        <div *ngIf="activeTab === 2">
-          <div *ngFor="let vote of getVotesByType('reject')">
-            <vote-result [vote]="vote"></vote-result>
-          </div>
-        </div>
-        <div *ngIf="activeTab === 3">
-          <div *ngFor="let vote of getVotesByType('abstention')">
-            <vote-result [vote]="vote"></vote-result>
-          </div>
-        </div>
-      </div>
 
     </ion-grid>
 
