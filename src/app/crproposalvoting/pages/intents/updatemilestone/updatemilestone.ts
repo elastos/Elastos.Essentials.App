@@ -102,7 +102,7 @@ export class UpdatMilestonePage {
     private async getMilestoneDigest(): Promise<string> {
         let payload = this.getMilestonePayload(this.updateMilestoneCommand);
         Logger.log('crproposal', "milestone payload", payload);
-        let digest = await this.walletManager.spvBridge.proposalTrackingOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, payload);
+        let digest = await this.walletManager.spvBridge.proposalTrackingOwnerDigest(this.voteService.masterWalletId, StandardCoinName.ELA, JSON.stringify(payload));
         let ret = Util.reverseHexToBE(digest);
 
         Logger.log('crproposal', "Got milestone digest.", ret);

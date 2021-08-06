@@ -100,7 +100,7 @@ export class ReviewMilestonePage {
             if (ret.result && ret.result.signature) {
                 //Create transaction and send
                 payload.SecretaryGeneralSignature = ret.result.signature;
-                const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
+                const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(JSON.stringify(payload), '');
                 await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
             }
         }
