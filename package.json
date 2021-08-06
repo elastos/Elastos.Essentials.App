@@ -33,6 +33,7 @@
     "@ionic-native/clipboard": "5.31.1",
     "@ionic-native/core": "5.30.0",
     "@ionic-native/file": "5.31.1",
+    "@ionic-native/in-app-browser": "^5.35.0",
     "@ionic-native/ionic-webview": "5.31.1",
     "@ionic-native/keyboard": "5.31.1",
     "@ionic-native/qr-scanner": "5.31.1",
