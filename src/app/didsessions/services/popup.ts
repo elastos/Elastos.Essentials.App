@@ -14,7 +14,7 @@ export class PopupProvider {
 
     public ionicAlert(title: string, subTitle?: string, okText?: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.alertCtrl.create({
+            void this.alertCtrl.create({
                 mode: 'ios',
                 header : this.translate.instant(title),
                 subHeader: subTitle ? this.translate.instant(subTitle) : '',
@@ -29,7 +29,7 @@ export class PopupProvider {
                 }]
             }).then(alert => alert.present());
         });
-    };
+    }
 
     public ionicConfirm(title: string, message: string, okText?: string, cancelText?: string): Promise<any> {
         return new Promise((resolve, reject) => {
