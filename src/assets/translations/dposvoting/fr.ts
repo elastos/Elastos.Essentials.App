@@ -55,5 +55,7 @@ export const fr = {
         'vote-cancelled': 'Les votes ont été annulés',
         'vote-timeout': 'Aucune réponse du portefeuille',
         'vote-no-nodes-checked': "Veuillez sélectionner jusqu'à 36 nœuds pour voter",
+
+        'dpos-node-info-no-available' : 'The DPoS Node\'s info is not available at this time, please try again later',
     }
 };
