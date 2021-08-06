@@ -14,10 +14,11 @@ import { ProposalService } from 'src/app/crproposalvoting/services/proposal.serv
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
 import { App } from 'src/app/model/app.enum';
+import { Config } from 'src/app/wallet/config/Config';
 
 type WithdrawCommand = CRWebsiteCommand & {
     data: {
-        amount: string,
+        amount: number,
         ownerpublickey: string,
         proposalhash: string,
         recipient: string,
@@ -36,6 +37,7 @@ export class WithdrawPage {
     public signingAndSendingSuggestionResponse = false;
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
+    public Config = Config;
 
     constructor(
         private crOperations: CROperationsService,
