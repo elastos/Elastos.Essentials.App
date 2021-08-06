@@ -26,6 +26,7 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -69,6 +70,7 @@ export class IdentityService {
         private alertCtrl: AlertController,
         private uxService: UXService,
         private nativeService: GlobalNativeService,
+        private globalNavService: GlobalNavService,
         private prefs: GlobalPreferencesService,
         private storage: GlobalStorageService,
         private globalElastosAPIService: GlobalElastosAPIService,
@@ -356,7 +358,26 @@ export class IdentityService {
         await this.uxService.showLoading(this.translate.instant('didsessions.retrieve-prompt'));
 
         try {
-            await didStore.synchronize(storePassword);
+            try {
+                await didStore.synchronize(storePassword);
+            }
+            catch (e) {
+                // Special case - "invalid signature" during synchronize - bug of getdids.com DIDs.
+                // Recommend user to create a new DID
+                if (e && new String(e).indexOf("signature mismatch") > 0) {
+                    Logger.warn("didsessions", "Corrupted user DID, synchronize() has failed. Need to create a new DID");
+
+                    await this.uxService.hideLoading();
+                    void this.popupProvider.ionicAlert("Corrupted DID error", "Apparently, your DID is corrupted and Essentials cannot recover it. The only solution for now is to create a new DID.", "Got it").then(() => {
+                        void this.globalNavService.navigateDIDSessionHome();
+                    });
+
+                    return;
+                }
+                else {
+                    throw e;
+                }
+            }
             void this.uxService.hideLoading();
 
             // Check if we could retrieve a DID or not.
@@ -401,10 +422,9 @@ export class IdentityService {
         }
         catch (e) {
             void this.uxService.hideLoading();
-            let reworkedEx = e ? e : "Not specific information";
+            let reworkedEx = e ? e : "No specific information";
             Logger.error('didsessions', 'createStoreAfterImport error', reworkedEx);
             await this.popupProvider.ionicAlert("Synchronization error", reworkedEx, this.translate.instant("common.close"));
-
         }
     }
 
@@ -664,18 +684,8 @@ export class IdentityService {
         this.uxService.go(
             route,
             {
-                'enterEvent': enterEvent,
-                "toto": 1
+                'enterEvent': enterEvent
             }
-         /*    {
-                queryParams: {
-                    enterEvent: enterEvent
-                },
-                state: {
-                    'enterEvent': enterEvent,
-                    "toto": 1
-                }
-            } */
         );
     }
 
