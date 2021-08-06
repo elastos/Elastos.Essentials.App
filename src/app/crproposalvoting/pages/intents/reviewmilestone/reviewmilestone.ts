@@ -62,6 +62,7 @@ export class ReviewMilestonePage {
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.review-milestone'));
         this.reviewMilestoneCommand = this.crOperations.onGoingCommand as ReviewMilestoneCommand;
+        Logger.log('crproposal', "reviewMilestoneCommand", this.reviewMilestoneCommand);
         this.trackingType = this.reviewMilestoneCommand.data.proposaltrackingtype;
 
         try {
