@@ -77,6 +77,7 @@ export const zh = {
         'vote-result': '投票结果',
         'approve': '赞成',
         'reject': '反对',
+        'progress': '同意',
         'finalized': '同意',
         // 'abstain': '弃权',
 
