@@ -17,8 +17,8 @@ export const zh = {
 
     // Popups
     'mnemonic-invalid': '助记词无效',
-    'mnemonic-invalid-prompt': '请检查助记词... ',
-    'mnemonicpasscheck-question': '是否有助记词密码?',
+    'mnemonic-invalid-prompt': '请检查助记词...',
+    'mnemonicpasscheck-question': '是否有助记词密码？',
     'mnemonicpasscheck-have-passphrase': '有助记词密码',
     'mnemonicpasscheck-no-passphrase': '没有助记词密码',
     'mnemonicpassword-intro': '输入您的助记词密码',
@@ -45,7 +45,7 @@ export const zh = {
     'import': '导入',
 
     // Edit
-    'your-name': '您的名称?',
+    'your-name': '您的名称？',
 
     // Verify Mnemonic
     'verify-prompt': '请按顺序点击这12个安全字（助记词）进行验证。',
@@ -79,7 +79,7 @@ export const zh = {
     'only-qrcode': '只打印二维码',
     'qrcode-and-mnemonic-words': '打印 二维码+助记词',
     'verify-did': '验证',
-    'print-title': '请保存好此私钥!',
+    'print-title': '请保存好此私钥！',
     'print-confirmation-title': '打印确认',
     'print-confirmation-des': '您是否成功打印了您的身份二维码？',
     'print-try-again': '不，再试一次',
@@ -94,11 +94,11 @@ export const zh = {
       'sign-in-title': '登录中',
       'sign-in-intro': '进入 Elastos Essentials',
       'hive-title': '为应用程序腾出一些存储空间',
-      'hive-intro': '正在一个随机的 Elastos Hive 存储提供商上创建存储空间。 您可以稍后将数据移动到其他地方。',
+      'hive-intro': '正在一个随机的 Elastos Hive 存储提供商上创建存储空间。您可以稍后将数据移动到其他地方。',
       'wallet-title': '创建默认钱包',
-      'wallet-intro': '使用与您的 DID 相同的纸质密钥来创建默认钱包。 您可以选择使用它或删除它。',
+      'wallet-intro': '使用与您的 DID 相同的纸质密钥来创建默认钱包。您可以选择使用它或删除它。',
       'done-title': '全部完成！',
-      'done-intro': '您的身份现在已经完全准备好了， 您可以开始使用 Elastos Essentials。'
+      'done-intro': '您的身份现在已经完全准备好了，您可以开始使用 Elastos Essentials。'
     }
   }
 };
