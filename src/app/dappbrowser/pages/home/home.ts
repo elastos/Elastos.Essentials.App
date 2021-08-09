@@ -41,6 +41,10 @@ export class HomePage {
     let browser = DAppBrowser.open("https://filda.io", this.iab, this.httpClient);
   }
 
+  public browserCredaTest() {
+    let browser = DAppBrowser.open("https://beta.creda.app", this.iab, this.httpClient);
+  }
+
   public browserElavateTest() {
     //let browser = DAppBrowser.open("https://elavate.exchange/", this.iab, this.httpClient);
     let browser = DAppBrowser.open("http://192.168.31.114:3000/", this.iab, this.httpClient);
@@ -59,7 +63,7 @@ export class HomePage {
   }
 
   public browserOtherTest() {
-    let browser = DAppBrowser.open("http://192.168.31.114:8100", this.iab, this.httpClient);
+    let browser = DAppBrowser.open("http://192.168.31.114:8101", this.iab, this.httpClient);
     //let browser = DAppBrowser.open("https://o3swap.com/vault", this.iab, this.httpClient);
   }
 }

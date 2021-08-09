@@ -2937,32 +2937,40 @@
   /**
    * Internal web3 provider injected into Elastos Essentials' in app browser dApps and bridging
    * requests from dApps to Essentials (send transaction, etc).
+   *
+   * Source code inspired by the Trust Wallet provider (https://github.com/trustwallet/trust-web3-provider/blob/master/src/index.js).
    */
   class InAppBrowserWeb3Provider extends events {
       constructor() {
           super();
           this.address = "";
           this.ready = false;
-          this.idMapping = new IdMapping();
-          this.callbacks = new Map(); // TODO: clear type
-          this.wrapResults = new Map(); // TODO: clear type
+          this.idMapping = new IdMapping(); // Helper class to create and retrieve payload IDs for requests and responses.
+          this.callbacks = new Map();
+          this.wrapResults = new Map();
           this.chainId = 20;
           console.log("Creating an Essentials InAppBrowserWeb3Provider");
           this.emitConnect(this.chainId);
       }
+      /**
+       * Sets the active wallet chain ID and informs listeners about the change.
+       */
       setChainId(chainId) {
+          console.log("Setting chain ID to:", this.chainId);
           this.chainId = chainId;
           this.ready = !!(this.chainId && this.address);
-          console.log("Setting chain ID to:", this.chainId);
           this.emit("chainChanged", this.chainId);
           this.emit("networkChanged", this.chainId);
       }
+      /**
+       * Sets the active wallet address and informs listeners about the change.
+       */
       setAddress(address) {
+          console.log("Setting address to:", address);
           const lowerAddress = (address || "").toLowerCase();
           this.address = lowerAddress;
           this.ready = !!(this.chainId && this.address);
-          console.log("Setting address to:", address);
-          this.emit("accountsChanged", [address]); // BPI TEST
+          this.emit("accountsChanged", [address]);
           /* TODO
           for (var i = 0; i < window.frames.length; i++) {
             const frame = window.frames[i];
@@ -2971,9 +2979,6 @@
               frame.ethereum.ready = !!address;
             }
           } */
-      }
-      getRPCApiEndpoint() {
-          return rpcUrls[this.chainId];
       }
       isConnected() {
           return true;
@@ -2984,69 +2989,8 @@
           if (!(this instanceof InAppBrowserWeb3Provider)) {
               that = window.ethereum;
           }
-          console.log("THISTHAT1", this, that);
           return that._request(payload, false);
       }
-      /**
-       * @deprecated Use request() method instead.
-       * https://docs.metamask.io/guide/ethereum-provider.html#legacy-methods
-       */
-      /* public async send(payload: JsonRpcPayload | string): Promise<JsonRpcResponse | any> {
-        // 'this' points to window in methods like web3.eth.getAccounts()
-        var that = this;
-        if (!(this instanceof InAppBrowserWeb3Provider)) {
-          that = (window as any).ethereum;
-        }
-    
-        let rpcPayload: JsonRpcPayload = null;
-        let isRpcPayload: boolean; // Whether the received payload is a JsonRpcPayload or not
-        if (typeof payload === "string") {
-          isRpcPayload = false;
-          rpcPayload = {
-            jsonrpc: "",
-            method: payload,
-            params: []
-          };
-        }
-        else {
-          isRpcPayload = true;
-          rpcPayload = payload;
-        }
-    
-        let result: any = null;
-        switch (rpcPayload.method) {
-          case "eth_accounts":
-            result = this.eth_accounts();
-            break;
-          case "eth_coinbase":
-            result = this.eth_coinbase();
-            break;
-          case "net_version":
-            result = this.net_version();
-            break;
-          case "eth_chainId":
-            result = this.eth_chainId();
-            break;
-          default:
-            throw new ProviderRpcError(
-              4200,
-              `send() cannot call method ${rpcPayload.method} synchronously without a callback. Please provide a callback parameter to call ${rpcPayload.method} asynchronously.`
-            );
-        }
-    
-        if (isRpcPayload) {
-          // RPC payload? return a RPC response
-          let response: JsonRpcResponse = {
-            jsonrpc: "2.0",
-            id: rpcPayload.id as any,
-            result: result
-          };
-          return response;
-        }
-        else {
-          return result;
-        }
-      } */
       /**
        * @deprecated Use request() method instead.
        * https://docs.metamask.io/guide/ethereum-provider.html#legacy-methods
@@ -3083,24 +3027,6 @@
           const req = requestOrMethod;
           return this.request(req);
       }
-      /* sendAsync(request, callback) {
-          if (typeof callback !== "function") {
-              throw new Error("callback is required");
-          }
-          // send(JSONRPCRequest[], callback): void
-          if (Array.isArray(request)) {
-              const arrayCb = callback;
-              this._sendMultipleRequestsAsync(request)
-                  .then(responses => arrayCb(null, responses))
-                  .catch(err => arrayCb(err, null));
-              return;
-          }
-          // send(JSONRPCRequest, callback): void
-          const cb = callback;
-          this._sendRequestAsync(request)
-              .then(response => cb(null, response))
-              .catch(err => cb(err, null));
-      } */
       /**
        * @deprecated Use request() method instead.
        * https://docs.metamask.io/guide/ethereum-provider.html#legacy-methods
@@ -3116,17 +3042,16 @@
               .catch((error) => callback(error, null));
       }
       /**
-       * Internal request handler
+       * Internal request handler that receives JsonRpcPayloads and returns JsonRpcResponses.
        */
       _request(payload, wrapResult = true) {
-          console.log("InAppBrowserWeb3Provider: _request", payload);
+          //console.log("InAppBrowserWeb3Provider: _request", payload);
           this.idMapping.tryIntifyId(payload);
           return new Promise((resolve, reject) => {
               if (!payload.id) {
                   payload.id = Utils.genId();
               }
               this.callbacks.set(payload.id, (error, data) => {
-                  console.log("Callback called", error, data);
                   if (error) {
                       reject(error);
                   }
@@ -3201,6 +3126,7 @@
       eth_sign(payload) {
           const buffer = Utils.messageToBuffer(payload.params[1]);
           Utils.bufferToHex(buffer);
+          throw new Error("eth_sign NOT IMPLEMENTED");
           // TODO: unclear why this is a "personal message" if the buffer is utf8...
           /* if (isUtf8(buffer)) {
             this.postMessage("signPersonalMessage", payload.id, { data: hex });
@@ -3257,7 +3183,7 @@
        * Internal js -> native message handler
        */
       postMessage(handler, id, data) {
-          console.log("InAppBrowserWeb3Provider: postMessage", handler, id, data);
+          //console.log("InAppBrowserWeb3Provider: postMessage", handler, id, data);
           if (this.ready || handler === "requestAccounts") {
               let object = {
                   id: id,
@@ -3274,7 +3200,7 @@
        * Internal native result -> js
        */
       sendResponse(id, result) {
-          console.log("InAppBrowserWeb3Provider: sendResponse", result);
+          //console.log("InAppBrowserWeb3Provider: sendResponse", result);
           let originId = this.idMapping.tryPopId(id) || id;
           let callback = this.callbacks.get(id);
           let wrapResult = this.wrapResults.get(id);
@@ -3282,7 +3208,6 @@
               jsonrpc: "2.0",
               id: originId
           };
-          console.log("typeof result", typeof result);
           /* if (typeof result === "object" && "jsonrpc" in result && "result" in result) {
             // result is a JsonRpcResponse
             data.result = (result as JsonRpcResponse).result;
@@ -3291,8 +3216,8 @@
             data.result = result;
           } */
           data.result = result;
-          console.log("data result", data.result);
-          console.log("wrapResult", wrapResult);
+          //console.log("data result", data.result);
+          //console.log("wrapResult", wrapResult);
           if (callback) {
               wrapResult ? callback(null, data) : callback(null, result);
               this.callbacks.delete(id);
@@ -3317,12 +3242,15 @@
        * Internal native error -> js
        */
       sendError(id, error) {
-          console.log(`<== ${id} sendError ${error}`);
+          //console.log(`<== ${id} sendError ${error}`);
           let callback = this.callbacks.get(id);
           if (callback) {
               callback(error instanceof Error ? error : new Error(error), null);
               this.callbacks.delete(id);
           }
+      }
+      getRPCApiEndpoint() {
+          return rpcUrls[this.chainId];
       }
       async callJsonRPC(payload) {
           return new Promise(async (resolve, reject) => {
@@ -3335,7 +3263,7 @@
                   if (request.readyState === 4 && request.timeout !== 1) {
                       var result = request.responseText;
                       try {
-                          console.log("Ethereum JSON RPC call result:", result, "for payload:", payload);
+                          console.log("JSON RPC call result:", result, "for payload:", payload);
                           resolve(JSON.parse(result));
                       }
                       catch (e) {
@@ -3360,7 +3288,8 @@
           });
       }
   }
+  // Expose this class globally to be able to create instances from the browser dApp.
   window["InAppBrowserWeb3Provider"] = InAppBrowserWeb3Provider;
 
 })));
-//# sourceMappingURL=essentialsiabprovider.js.map
+//# sourceMappingURL=essentialsiabweb3provider.js.map

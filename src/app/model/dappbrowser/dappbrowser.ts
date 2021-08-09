@@ -1,4 +1,5 @@
 import { HttpClient } from "@angular/common/http";
+import { GetCredentialsQuery } from "@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did";
 import { InAppBrowser, InAppBrowserObject } from "@ionic-native/in-app-browser/ngx";
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
@@ -41,15 +42,20 @@ export class DAppBrowser {
 
     // eslint-disable-next-line
     dappBrowser.browser.on('loadstart').subscribe(async event => {
-      // Prepare our web3 provider bridge for injection
-      let code = await httpClient.get('assets/essentialsiabprovider.js', {responseType: 'text'}).toPromise();
+      // Prepare our web3 provider bridge and elastos connectors for injection
+      Logger.log("dappbrowser", "Loading the IAB web3 provider");
+      let web3ProviderCode = await httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
+      Logger.log("dappbrowser", "Loading the IAB elastos connector");
+      let elastosConnectorCode = await httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
 
       // Get the active wallet address
       let subwallet = WalletManager.instance.getActiveMasterWallet().getSubWallet(StandardCoinName.ETHSC);
       dappBrowser.userAddress = await subwallet.createAddress();
 
+      // Inject the web3 provider
+      Logger.log("dappbrowser", "Executing Web3 provider injection script");
       void dappBrowser.browser.executeScript({
-        code: code + "\
+        code: web3ProviderCode + "\
           console.log('Elastos Essentials Web3 provider is being created'); \
           window.ethereum = new InAppBrowserWeb3Provider();\
           window.web3 = { \
@@ -58,10 +64,21 @@ export class DAppBrowser {
           console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3); \
           \
           window.ethereum.setChainId(20); \
-          window.ethereum.setAddress('"+dappBrowser.userAddress+"');\
+          window.ethereum.setAddress('"+ dappBrowser.userAddress + "');\
         "});
 
-        // TODO: window.ethereum.setAddress() should maybe be called only when receiving a eth_requestAccounts request.
+      // Inject the Elastos connectivity connector
+      Logger.log("dappbrowser", "Executing Elastos connector injection script");
+      void dappBrowser.browser.executeScript({
+        code: elastosConnectorCode + "\
+          console.log('Elastos Essentials in app browser connector is being created'); \
+          window.elastos = new EssentialsIABConnector();\
+          console.log('Elastos Essentials in app browser connector is injected', window.elastos); \
+        "});
+
+      Logger.log("dappbrowser", "Load start completed");
+
+      // TODO: window.ethereum.setAddress() should maybe be called only when receiving a eth_requestAccounts request.
     });
 
     dappBrowser.browser.on('message').subscribe((dataFromIAB) => {
@@ -83,17 +100,26 @@ export class DAppBrowser {
     }
 
     switch (message.data.name) {
+      // WEB3 PROVIDER
       case "signTransaction":
-        this.browser.hide(); // TODO: FIND SOMETHING BETTER LATER
+        this.browser.hide();
         await this.handleSignTransaction(message);
-        this.browser.show(); // TODO: FIND SOMETHING BETTER LATER
+        this.browser.show();
         break;
       case "requestAccounts":
         // NOTE: for now, directly return user accounts without asking for permission
         await this.handleRequestAccounts(message);
         break;
+
+      // ELASTOS CONNECTOR
+      case "elastos_getCredentials":
+        this.browser.hide();
+        await this.handleElastosGetCredentials(message);
+        this.browser.show();
+        break;
+
       default:
-        Logger.warn("dappbrowser", "Unhandle message command", message.data.name);
+        Logger.warn("dappbrowser", "Unhandled message command", message.data.name);
     }
   }
 
@@ -104,8 +130,8 @@ export class DAppBrowser {
     let response: {
       action: string,
       result: {
-          txid: string,
-          status: "published" | "cancelled"
+        txid: string,
+        status: "published" | "cancelled"
       }
     } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/esctransaction", {
       payload: {
@@ -115,7 +141,7 @@ export class DAppBrowser {
       }
     });
 
-    this.sendIABResponse(
+    this.sendWeb3IABResponse(
       message.data.id,
       response.result.txid // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
     );
@@ -125,20 +151,65 @@ export class DAppBrowser {
    * Returns the active user address to the calling dApp.
    */
   private handleRequestAccounts(message: IABMessage): Promise<void> {
-    this.sendIABResponse(
+    this.sendWeb3IABResponse(
       message.data.id,
       [this.userAddress]
     );
     return;
   }
 
+  private async handleElastosGetCredentials(message: IABMessage): Promise<void> {
+    try {
+      let query = message.data.object as GetCredentialsQuery;
+
+      let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
+      res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/credaccess", query);
+
+      if (!res || !res.result || !res.result.presentation) {
+        console.warn("Missing presentation. The operation was maybe cancelled.");
+        // TODO: SEND IAB ERROR
+        return;
+      }
+
+      this.sendElastosConnectorIABResponse(
+        message.data.id,
+        res.result.presentation
+      );
+    }
+    catch(e) {
+      this.sendElastosConnectorIABError(message.data.id, e);
+    }
+  }
+
   /**
-   * Sends a request response from Essentials to the callign web app.
+   * Sends a request response from Essentials to the calling web app (web3).
    */
-  private sendIABResponse(id: number, result: any) {
+  private sendWeb3IABResponse(id: number, result: any) {
     let stringifiedResult = JSON.stringify(result);
-    let code = 'window.ethereum.sendResponse('+id+', '+stringifiedResult+')';
+    let code = 'window.ethereum.sendResponse(' + id + ', ' + stringifiedResult + ')';
     console.log("stringifiedResult", stringifiedResult, "code", code);
+
+    void this.browser.executeScript({
+      code: code
+    });
+  }
+
+  private sendElastosConnectorIABResponse(id :number, result: any) {
+    let stringifiedResult = JSON.stringify(result);
+    let code = 'window.elastos.sendResponse(' + id + ', ' + stringifiedResult + ')';
+    console.log("stringifiedResult", stringifiedResult, "code", code);
+
+    void this.browser.executeScript({
+      code: code
+    });
+  }
+
+  private sendElastosConnectorIABError(id: number, error: Error | string) {
+    Logger.log("dappbrowser", "Sending elastos error", error);
+
+    let stringifiedError = typeof error == "string" ? error : new String(error);
+    let code = 'window.elastos.sendError(' + id + ', "' + stringifiedError + '")';
+    console.log("stringifiedError", stringifiedError, "code", code);
 
     void this.browser.executeScript({
       code: code
