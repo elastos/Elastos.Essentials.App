@@ -190,6 +190,8 @@ export class WalletSettingsPage implements OnInit {
 
     public async destroyWallet(id: string) {
         await this.walletManager.destroyMasterWallet(id);
+        // Remove password
+        await this.authService.deleteWalletPassword(id);
 
         this.events.publish("masterwalletcount:changed", {
             action: 'remove',
