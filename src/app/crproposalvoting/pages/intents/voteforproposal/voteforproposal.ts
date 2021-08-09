@@ -137,7 +137,13 @@ export class VoteForProposalPage {
             '', //memo
             );
 
-        await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+        try {
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+        }
+        catch (e) {
+            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', "Sorry, unable to vote. Your crproposal can't be vote for now. ");
+        }
+
         this.signingAndSendingSuggestionResponse = false;
     }
 
