@@ -129,6 +129,10 @@
                         (input)='onSendToAddressInput($event.target.value)'
                     >
                     </ion-input>
+                    <div class="ripple ion-activatable">
+                      <ion-icon mode="ios" name="clipboard-outline" (click)="pasteFromClipboard()"></ion-icon>
+                      <ion-ripple-effect></ion-ripple-effect>
+                    </div>
                     <div class="scan-btn ripple ion-activatable">
                         <img (click)="goScan()" [src]="!theme.darkMode ? 'assets/wallet/icons/scan.svg' : 'assets/wallet/icons/darkmode/scan.svg'"/>
                         <ion-ripple-effect></ion-ripple-effect>

@@ -368,6 +368,17 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
     }
 
+    async pasteFromClipboard() {
+      this.toAddress = await this.native.pasteFromClipboard();
+
+      const toChainId = this.toSubWallet ? this.toSubWallet.id : this.chainId;
+      const isAddressValid = await this.isSubWalletAddressValid(this.masterWallet.id, toChainId, this.toAddress);
+      if (!isAddressValid) {
+          this.native.toast_trans('wallet.not-a-valid-address');
+          return;
+      }
+    }
+
     goScan() {
         this.intentService.scan(ScanType.Address);
     }
@@ -491,6 +502,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case StandardCoinName.ELA:
             case StandardCoinName.IDChain:
             case StandardCoinName.ETHSC:
+            case StandardCoinName.ETHDID:
                 break;
             default:
                 chainIDTemp = StandardCoinName.ETHSC;

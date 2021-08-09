@@ -27,6 +27,10 @@ export class GlobalNativeService {
         return this.clipboard.copy(text);
     }
 
+    pasteFromClipboard() {
+      return this.clipboard.paste();
+    }
+
     errToast(msg: string, duration = 3000) {
         const msgTranslated = this.translate.instant(msg);
         void this.toastCtrl.create({
