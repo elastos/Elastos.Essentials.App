@@ -76,6 +76,7 @@ export const fr = {
         'vote-result': 'Résultat du Vote',
         'approve': 'Approver',
         'reject': 'Rejecter',
+        'progress': 'Progress',
         'finalized': 'Finalized',
         // 'abstain': 'Abstain',
 
