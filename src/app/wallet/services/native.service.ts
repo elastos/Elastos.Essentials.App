@@ -55,6 +55,10 @@ export class Native {
         return this.globalNative.copyClipboard(text);
     }
 
+    pasteFromClipboard() {
+      return this.globalNative.pasteFromClipboard();
+    }
+
     public go(page: string, options: any = {}) {
         Logger.log("wallet", "Navigating to:", page);
         this.zone.run(() => {
