@@ -458,17 +458,16 @@ export class WalletManager {
     }
 
     /**
-     * Destroy a master wallet, active or not, base on its id
+     * Destroy a master wallet, active or not, base on its id.
+     *
+     * triggleEvent: If the wallet is deleted by the system, no related event need be triggered
      */
-    async destroyMasterWallet(id: string) {
+    async destroyMasterWallet(id: string, triggleEvent: boolean = true) {
         // Delete all subwallet
         await this.masterWallets[id].destroyAllSubWallet();
 
         // Destroy the wallet in the wallet plugin
         await this.spvBridge.destroyWallet(id);
-
-        // Remove password
-        await this.authService.deleteWalletPassword(id);
 
         // Save this modification to our permanent local storage
         await this.localStorage.setExtendedMasterWalletInfo(this.masterWallets[id].id, null);
@@ -476,20 +475,26 @@ export class WalletManager {
         // Destroy from our local model
         delete this.masterWallets[id];
 
-        // Notify some listeners
-        this.events.publish("masterwallet:destroyed", id);
-        this.walletStateChanges.next({
-            wallet: this.masterWallets[id],
-            operation: WalletStateOperation.DELETED
-        });
+        // When importing did, the default wallet will be created.
+        // In this process, a multi address wallet will be created first,
+        // If it is detected that this is a single address wallet, then the multi address wallet will be deleted.
+        // In this case, we do not need to triggle event and delete password.
+        if (triggleEvent) {
+          // Notify some listeners
+          this.events.publish("masterwallet:destroyed", id);
+          this.walletStateChanges.next({
+              wallet: this.masterWallets[id],
+              operation: WalletStateOperation.DELETED
+          });
 
-        if (Object.values(this.masterWallets).length > 0) {
-            let walletList = this.getWalletsList();
-            await this.setActiveMasterWallet(walletList[0].id);
-            this.native.setRootRouter("/wallet/wallet-home");
-        } else {
-            await this.setActiveMasterWallet(null);
-            this.goToLauncherScreen();
+          if (Object.values(this.masterWallets).length > 0) {
+              let walletList = this.getWalletsList();
+              await this.setActiveMasterWallet(walletList[0].id);
+              this.native.setRootRouter("/wallet/wallet-home");
+          } else {
+              await this.setActiveMasterWallet(null);
+              this.goToLauncherScreen();
+          }
         }
     }
     /**
@@ -552,12 +557,37 @@ export class WalletManager {
      * Usually this method should be called only once per new DID created, so the newly created
      * user also has a default wallet.
      */
-     public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
+    public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
         Logger.log("wallet", "Creating wallet from new identity");
         let masterWalletId = Util.uuid(6, 16);
         const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
         if (payPassword) {
           try {
+            // First create multi address wallet.
+            await this.importWalletWithMnemonic(
+              masterWalletId,
+              walletName,
+              mnemonic,
+              mnemonicPassphrase || "",
+              payPassword,
+              false
+            );
+
+            let mainchainSubwalelt : MainchainSubWallet = this.masterWallets[masterWalletId].subWallets[StandardCoinName.ELA] as MainchainSubWallet;
+            let txListsInternal = await mainchainSubwalelt.getTransactionByAddress(true, 0);
+            if (txListsInternal.length > 1) {
+              Logger.log('wallet', 'Multi address wallet!')
+              return;
+            }
+            let txListsExternal = await mainchainSubwalelt.getTransactionByAddress(false, 0);
+            if (txListsExternal.length > 1) {
+              Logger.log('wallet', 'Multi address wallet!')
+              return;
+            }
+
+            Logger.log('wallet', 'Single address wallet!')
+            // Not multi address wallet, delete multi address wallet and create a single address wallet.
+            await this.destroyMasterWallet(masterWalletId, false);
             await this.importWalletWithMnemonic(
               masterWalletId,
               walletName,
@@ -571,5 +601,5 @@ export class WalletManager {
             Logger.error('wallet', 'Wallet import error:', err);
           }
         }
-      }
+    }
 }
