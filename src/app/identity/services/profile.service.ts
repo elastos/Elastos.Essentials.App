@@ -119,8 +119,6 @@ export class ProfileService extends GlobalService {
   }
 
   init() {
-    Logger.log("identity", "Profile service is initializing");
-
     GlobalServiceManager.getInstance().registerService(this);
 
     this.didSyncService.didNeedsToBePublishedStatus.subscribe((didNeedsToBePublished) => {

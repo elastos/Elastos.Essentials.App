@@ -14,6 +14,7 @@ import { GlobalConfig } from '../config/globalconfig';
 import { resolve } from 'path';
 import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
 import { JSONObject } from '../model/json';
+import { runDelayed } from '../helpers/sleep.helper';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -88,8 +89,8 @@ export class GlobalHiveService extends GlobalService {
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // New user is signing in: initialize a global hive client and try to get his hive vault status.
     // Not a blocking call
-    Logger.log("GlobalHiveService", "Getting a global hive client instance");
-    void this.getHiveClient().then((client) => {
+    //Logger.log("GlobalHiveService", "Getting a global hive client instance");
+    /* void this.getHiveClient().then((client) => {
       if (!client) {
         Logger.error("GlobalHiveService", "Fatal error in hive manager: Unable to get a global hive client instance.");
       }
@@ -98,7 +99,13 @@ export class GlobalHiveService extends GlobalService {
         Logger.log("GlobalHiveService", "Global hive client instance was created", this.client);
         void this.retrieveVaultLinkStatus();
       }
-    });
+    }); */
+
+    runDelayed(() => {
+      Logger.log("GlobalHiveService", "Global hive client instance was created", this.client);
+      void this.retrieveVaultLinkStatus();
+    }, 3000);
+
     return;
   }
 

@@ -40,9 +40,7 @@ export class ContactsInitService extends GlobalService {
   }
 
   public async start() {
-
     await this.globalNav.navigateTo('contacts', '/contacts/friends');
-
     void this.backupService.init();
   }
 }

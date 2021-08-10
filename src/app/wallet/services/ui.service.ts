@@ -20,17 +20,13 @@ export class UiService {
     await this.getVisit();
   }
 
-  getVisit(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.storage.getVisit().then((visited) => {
-        if (visited) {
-          this.returnedUser = true;
-        } else {
-          this.returnedUser = false;
-        }
-        resolve();
-      });
-    });
+  async getVisit(): Promise<void> {
+    let visited = await this.storage.getVisit();
+    if (visited) {
+      this.returnedUser = true;
+    } else {
+      this.returnedUser = false;
+    }
   }
 
   getSubWalletIcon = (subwallet: SubWallet): string => {

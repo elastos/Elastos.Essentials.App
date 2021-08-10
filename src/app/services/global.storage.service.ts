@@ -55,18 +55,19 @@ export class GlobalStorageService {
   public async getSetting<T>(did: string | null, context: string, key: string, defaultValue: T): Promise<T> {
     let fullKey = this.getFullStorageKey(did, context, key);
 
-    // Return the default value if nothing saved in file system yet.
-    let existingKeys: string[] = await this.storage.keys();
-    if (!existingKeys.find((k) => k === fullKey)) {
-      return defaultValue;
+    try {
+      let res = await this.storage.get(fullKey);
+      if (res === undefined || res === null)
+        return defaultValue;
+      else {
+        let parsed = JSON.parse(res);
+        return parsed;
+      }
     }
-
-    return this.storage.get(fullKey).then((res) => {
-      return JSON.parse(res);
-    }, (err) => {
+    catch (err) {
       Logger.warn('StorageService', "Global storage service getSetting() error:", fullKey, err);
       return defaultValue;
-    });
+    }
   }
 
   public deleteSetting(did: string | null, context: string, key: string): Promise<void> {
