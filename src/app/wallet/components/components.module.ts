@@ -10,6 +10,7 @@ import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from './tx-success/tx-success.component';
 import { WarningComponent } from './warning/warning.component';
 import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transfer-wallet-chooser.component';
+import { OptionsComponent } from './options/options.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transf
     TxSuccessComponent,
     HelpComponent,
     ContactsComponent,
+    OptionsComponent,
     WarningComponent,
     TransferWalletChooserComponent
   ],
@@ -36,6 +38,7 @@ import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transf
     TxSuccessComponent,
     HelpComponent,
     ContactsComponent,
+    OptionsComponent,
     WarningComponent,
     TransferWalletChooserComponent
   ],

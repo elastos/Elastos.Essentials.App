@@ -118,7 +118,7 @@
 
             <h1>{{ 'wallet.send-to' | translate }}</h1>
             <ion-row class="item-row">
-                <ion-col size="12">
+                <ion-col size="10">
                     <ion-input
                         type="text"
                         clearInput
@@ -129,14 +129,9 @@
                         (input)='onSendToAddressInput($event.target.value)'
                     >
                     </ion-input>
-                    <div class="ripple ion-activatable">
-                      <ion-icon mode="ios" name="clipboard-outline" (click)="pasteFromClipboard()"></ion-icon>
-                      <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <div class="scan-btn ripple ion-activatable">
-                        <img (click)="goScan()" [src]="!theme.darkMode ? 'assets/wallet/icons/scan.svg' : 'assets/wallet/icons/darkmode/scan.svg'"/>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
+                </ion-col>
+                <ion-col offset="0.75" size="1.25" class="right-col" (click)="showOptions($event)">
+                  <img [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
                 </ion-col>
             </ion-row>
 

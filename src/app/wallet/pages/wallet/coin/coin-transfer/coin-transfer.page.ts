@@ -22,7 +22,7 @@
 
 import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
@@ -45,7 +45,7 @@ import { ContactsService } from '../../../../services/contacts.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { MainAndIDChainSubWallet } from '../../../../model/wallets/MainAndIDChainSubWallet';
 import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -54,6 +54,7 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { CoinService } from 'src/app/wallet/services/coin.service';
+import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 
 
 @Component({
@@ -116,6 +117,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Input
     public inputActive = false;
 
+    private popover: any = null;
+    private showContactsOption = false;
+    private showCryptonamesOption = false;
+
     constructor(
         public route: ActivatedRoute,
         public walletManager: WalletManager,
@@ -133,7 +138,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         public uiService: UiService,
         public keyboard: Keyboard,
         private contactsService: ContactsService,
-        private modalCtrl: ModalController
+        private modalCtrl: ModalController,
+        private popoverCtrl: PopoverController,
     ) {
     }
 
@@ -144,14 +150,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.toAddress = address;
                 this.addressName = null;
             });
-        });
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (menuIcon: TitleBarIcon) => {
-            if (menuIcon.key === "cryptonames") {
-                this.showCryptonames();
-            }
-            if (menuIcon.key === "contacts") {
-                this.openContacts();
-            }
         });
     }
 
@@ -171,25 +169,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     setContactsKeyVisibility(showKey: boolean) {
-        if (showKey) {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-                key: "contacts",
-                iconPath: !this.theme.darkMode ? "assets/wallet/icons/contacts.svg" : "assets/wallet/icons/darkmode/contacts.svg"
-            });
-        } else {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-        }
+        this.showContactsOption = showKey;
     }
 
     setCryptonamesKeyVisibility(showKey: boolean) {
-        if (showKey) {
-            this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
-                key: "cryptonames",
-                iconPath: !this.theme.darkMode ? 'assets/wallet/logos/cryptoname.svg' : 'assets/wallet/logos/darkmode/cryptoname.svg'
-            });
-        } else {
-            this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, null);
-        }
+        this.showCryptonamesOption = showKey;
     }
 
     async init() {
@@ -366,6 +350,42 @@ export class CoinTransferPage implements OnInit, OnDestroy {
           if (result.published)
               this.showSuccess();
         }
+    }
+
+    async showOptions(ev: any) {
+      this.popover = await this.popoverCtrl.create({
+        mode: 'ios',
+        component: OptionsComponent,
+        componentProps: {
+          showContacts: this.showContactsOption,
+          showCryptonames: this.showCryptonamesOption,
+        },
+        cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'options-component-dark',
+        event: ev,
+        translucent: false
+      });
+      this.popover.onWillDismiss().then((ret) => {
+        this.popover = null;
+        this.doActionAccordingToOptions(ret.data);
+      });
+      return await this.popover.present();
+    }
+
+    async doActionAccordingToOptions(ret: OptionsType) {
+      switch (ret) {
+        case OptionsType.CONTACTS:
+          this.openContacts();
+          break;
+        case OptionsType.CRYPTONAMES:
+          this.showCryptonames();
+          break;
+        case OptionsType.Paste:
+          await this.pasteFromClipboard();
+          break;
+        case OptionsType.SCAN:
+          this.goScan();
+          break;
+      }
     }
 
     async pasteFromClipboard() {

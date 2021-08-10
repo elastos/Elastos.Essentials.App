@@ -199,6 +199,13 @@ export const en = {
         ************************************/
         'tx-success': "Transaction Successful",
 
+        /***********************************
+        * Options Component *
+        ************************************/
+        'paste': "Paste",
+        'contacts': "Contacts",
+        'scan': "Scan",
+
         /************************
         * Transaction Info Page *
         *************************/

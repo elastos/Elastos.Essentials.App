@@ -200,6 +200,14 @@ export const fr = {
         ************************************/
         'tx-success': "Transaction réussie",
 
+        /***********************************
+        * Options Component *
+        ************************************/
+        'paste': "Paste",
+        'contacts': "Contacts",
+        'scan': "Scan",
+
+
         /************************
         * Transaction Info Page *
         *************************/
