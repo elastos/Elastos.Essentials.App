@@ -57,10 +57,10 @@ export class NotificationsPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setNavigationMode(null);
     this.titleBar.setTitle(this.translate.instant('launcher.notifications'));
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE });
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.NOTIFICATIONS });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.closeNotificationPage();
+      void this.closeNotificationPage();
     });
 
     if(this.theme.darkMode) {
@@ -97,31 +97,31 @@ export class NotificationsPage implements OnInit {
     } else {
       switch (notification.app) {
         case App.CONTACTS:
-          this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends');
+          void this.globalNav.navigateTo(App.CONTACTS, '/contacts/friends');
           break;
         case App.CRCOUNCIL_VOTING:
-          this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+          void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
           break;
         case App.CRPROPOSAL_VOTING:
-          this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, '/crproposalvoting/proposals/ALL');
+          void this.globalNav.navigateTo(App.CRPROPOSAL_VOTING, '/crproposalvoting/proposals/ALL');
           break;
         case App.SCANNER:
-          this.globalNav.navigateTo(App.SCANNER, '/scanner/scan');
+          void this.globalNav.navigateTo(App.SCANNER, '/scanner/scan');
           break;
         case App.DEVELOPER_TOOLS:
-          this.globalNav.navigateTo(App.DEVELOPER_TOOLS, '/developertools/home');
+          void this.globalNav.navigateTo(App.DEVELOPER_TOOLS, '/developertools/home');
           break;
         case App.DPOS_VOTING:
-          this.dposVotingInitService.start()
+          void this.dposVotingInitService.start()
           break;
         case App.HIVE_MANAGER:
-          this.hiveManagerInitService.start();
+          void this.hiveManagerInitService.start();
           break;
         case App.IDENTITY:
-          this.globalNav.navigateTo(App.IDENTITY, '/identity/myprofile/home');
+          void this.globalNav.navigateTo(App.IDENTITY, '/identity/myprofile/home');
           break;
         case App.SETTINGS:
-          this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
+          void this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
           break;
         case App.WALLET:
           this.walletInitService.start();
@@ -139,7 +139,7 @@ export class NotificationsPage implements OnInit {
       // Dismissed tip = mark as viewed to not bother user again with it.
       let tipData = JSON.parse(notification.message);
       let tip = this.tipsService.findTipByIdentifier(tipData.key);
-      this.tipsService.markTipAsViewed(tip);
+      void this.tipsService.markTipAsViewed(tip);
     }
 
     if (this.notificationService.notifications.length === 0) {
