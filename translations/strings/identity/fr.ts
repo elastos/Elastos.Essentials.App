@@ -125,7 +125,7 @@ export const fr = {
         'publish-identity': 'Publier l\'identité?',
         'publish-visibility': 'Publier les modifications?',
         'publish-visibility-prompt': 'Vous pouvez publier vos modifications pour partager vos informations les plus récentes avec d\'autres personnes. Cette action peut coûter quelques frais de transactions mineurs en ELA.',
-        'publish-identity-prompt': 'Votre identité n\'est pas encore en ligne. Publier votre identité vous permettra de prouver qui vous êtes dans les applications de l\'écosystème Elastos. Cette action peut coûter quelques frais de transactions mineurs en ELA.',
+        'publish-identity-prompt': 'Vous êtes sur le point de publier votre identité. Seules les informations que vous avez sélectionnées pour être publiques seront envoyées.',
         'not-yet': 'Pas maintenant',
 
         // component: avatar
