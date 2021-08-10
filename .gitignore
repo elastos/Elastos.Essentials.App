@@ -14,3 +14,4 @@ platforms/
 origin_plugins/
 plugins/
 scripts/cache/
+src/assets/generated/

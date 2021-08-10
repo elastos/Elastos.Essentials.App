@@ -5,7 +5,9 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng",
+    "translations": "ts-node --project translations/tsconfig.json translations/generate_translations.ts",
     "start": "ng serve",
+    "ionic:build:before": "npm run translations",
     "build": "ng build",
     "test": "ng test",
     "e2e": "ng e2e",

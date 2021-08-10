@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "include": [
     "src/**/*.ts"
-  ],
+, "src/assets/web3providertest.js"  ],
   "exclude": [
     "node_modules",
     "plugins",
