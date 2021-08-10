@@ -25,12 +25,10 @@ if (true && environment.production) {
 }
 
 // Load translations
-void TranslationsLoader.loadAllModulesAndMerge().then(()=>{
-  Logger.log("global", "Bootstrapping the App Module");
-  platformBrowserDynamic().bootstrapModule(AppModule).then((module)=>{
-    let applicationRef = module.injector.get(ApplicationRef);
-    let appComponent = applicationRef.components[0];
-    enableDebugTools(appComponent);
-    Logger.log("global", "App module bootstrap complete");
-  }).catch(err => console.log(err));
-});
+Logger.log("global", "Bootstrapping the App Module");
+platformBrowserDynamic().bootstrapModule(AppModule).then((module)=>{
+  let applicationRef = module.injector.get(ApplicationRef);
+  let appComponent = applicationRef.components[0];
+  enableDebugTools(appComponent);
+  Logger.log("global", "App module bootstrap complete");
+}).catch(err => console.log(err));

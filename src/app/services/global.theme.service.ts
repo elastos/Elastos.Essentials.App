@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
@@ -19,11 +20,14 @@ export class GlobalThemeService extends GlobalService {
 
   constructor(
     private prefs: GlobalPreferencesService,
+    private platform: Platform
   ) {
     super();
 
-    // Default theme is dark.
-    void passwordManager.setDarkMode(true);
+    void this.platform.ready().then(() => {
+      // Default theme is dark.
+      void passwordManager.setDarkMode(true);
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.prefs.preferenceListener.subscribe((prefChanged) => {
