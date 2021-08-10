@@ -312,7 +312,9 @@ export class WalletManager {
     }
 
     public getWalletsList(): MasterWallet[] {
-        return Object.values(this.masterWallets);
+        return Object.values(this.masterWallets).sort((a, b) => {
+            return a.name > b.name ? 1 : -1;
+        });
     }
 
     public getWalletsCount(): number {
