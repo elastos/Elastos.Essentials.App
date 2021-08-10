@@ -116,7 +116,7 @@ export class HomePage implements OnInit {
 
     this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
 
-    /* if (this.didService.signedIdentity) { // Should not happen, just in case - for ionic hot reload
+    if (this.didService.signedIdentity) { // Should not happen, just in case - for ionic hot reload
       this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
         switch (template) {
           case MAINNET_TEMPLATE:
@@ -177,7 +177,7 @@ export class HomePage implements OnInit {
         this.walletConnectConnectors = Array.from(connectors.values());
         Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors, this.walletConnectConnectors.length);
       });
-    }); */
+    });
 
     Logger.log("launcher", "Launcher home screen will enter completed")
   }
