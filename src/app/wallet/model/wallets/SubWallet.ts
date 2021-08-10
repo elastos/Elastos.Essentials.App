@@ -16,6 +16,8 @@ export type RawTransactionPublishResult = {
     published: boolean; // Whether the transaction was successfully published to the node/spvsdk or not
     txid?: string; // In case of successful publication, ID of the published transaction.
     status?: string; // published, cancelled, error
+    code?: number;  // Error code.
+    message?: string; // Errror message.
 }
 
 /**
@@ -258,8 +260,8 @@ export abstract class SubWallet {
 
     // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
 
-    public abstract createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string>;
-    public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string>;
+    public abstract createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string): Promise<string>;
+    public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string): Promise<string>;
     public abstract publishTransaction(transaction: string): Promise<string>;
     public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
 }

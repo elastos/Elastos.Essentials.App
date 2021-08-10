@@ -53,7 +53,37 @@ export class ETHChainSubWallet extends StandardSubWallet {
           this.updateBalance();
         }, 2000);
     }
+/*
+    // Get txpool information.
+    private gettxpoolinfo() {
+      this.web3.eth.extend({
+        property: 'txpool',
+        methods: [{
+          name: 'content',
+          call: 'txpool_content'
+        },{
+          name: 'inspect',
+          call: 'txpool_inspect'
+        },{
+          name: 'status',
+          call: 'txpool_status'
+        }]
+      });
+      this.web3.eth.txpool.status().then( (result) => {
+        Logger.log('wallet', 'txpool status:', this.id, result)
+      })
+      .catch( (error) => {
+        Logger.error('wallet', 'txpool status error:', error)
+      })
 
+      this.web3.eth.txpool.content().then( (result) => {
+        Logger.log('wallet', 'txpool content:', this.id, result)
+      })
+      .catch( (error) => {
+        Logger.error('wallet', 'txpool content error:', error)
+      })
+    }
+*/
     public async getTokenAddress(): Promise<string> {
         if (!this.ethscAddress) {
             this.ethscAddress = (await this.createAddress()).toLowerCase();
@@ -338,7 +368,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
       return this.balance.gt(amount);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPrice: string = null, gasLimit:string = null): Promise<string> {
       let nonce = await this.getNonce();
       Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
       return this.masterWallet.walletManager.spvBridge.createTransfer(
@@ -351,13 +381,16 @@ export class ETHChainSubWallet extends StandardSubWallet {
         );
     }
 
-    /*
+/*
     //Use createTransferGeneric for createPaymentTransaction
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg:string = null): Promise<any> {
       const tokenAccountAddress = await this.getTokenAddress();
       const withdrawContractAddress = this.withdrawContractAddress;
       const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, withdrawContractAddress, { from: tokenAccountAddress });
-      const gasPrice = await this.web3.eth.getGasPrice();
+      let gasPrice = gasPriceArg;
+      if (gasPrice === null) {
+        gasPrice = await this.getGasPrice();
+      }
 
       Logger.warn('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
 
@@ -369,22 +402,24 @@ export class ETHChainSubWallet extends StandardSubWallet {
       const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
       const method = erc20Contract.methods.transfer(toAddress, web3BigNumber);
 
-      let gasLimit = 100000;
-      try {
-          // Estimate gas cost
-          gasLimit = await method.estimateGas();
-      } catch (error) {
-          Logger.log('wallet', 'estimateGas error:', error);
+      let gasLimit = gasLimitArg;
+      if (gasLimit === null) {
+        gasLimit = '100000';
+        // try {
+        //     // Estimate gas cost
+        //    gasLimit = await method.estimateGas();
+        // } catch (error) {
+        //     Logger.log('wallet', 'estimateGas error:', error);
+        // }
       }
 
       let nonce = await this.getNonce();
-      Logger.warn('wallet', 'createPaymentTransaction nonce:', nonce);
       const rawTx =
       await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
           this.masterWallet.id,
           this.id,
-          withdrawContractAddress,
-          '0',
+          toAddress,
+          amountWithDecimals,
           0, // WEI
           gasPrice,
           0, // WEI
@@ -397,17 +432,23 @@ export class ETHChainSubWallet extends StandardSubWallet {
 
       return rawTx;
     }
-    */
-
-    public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
+*/
+    public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string): Promise<string> {
         const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
         const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);
-        const gasPrice = await this.web3.eth.getGasPrice();
+        let gasPrice = gasPriceArg;
+        if (gasPrice === null) {
+          gasPrice = await this.getGasPrice();
+        }
         // const gasPrice = '1000000000';
         const toAmountSend = this.web3.utils.toWei(toAmount.toString());
 
         const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
-        const gasLimit = 100000;
+
+        let gasLimit = gasLimitArg;
+        if (gasLimit === null) {
+          gasLimit = '100000';
+        }
         // TODO: The value from estimateGas is too small sometimes (eg 22384) for withdraw transaction.
         // Maybe it is the bug of node?
         // try {
@@ -428,7 +469,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
             0, // WEI
             gasPrice,
             0, // WEI
-            gasLimit.toString(),
+            gasLimit,
             data,
             nonce
         );
@@ -457,7 +498,7 @@ export class ETHChainSubWallet extends StandardSubWallet {
       ];
 
       const publishDIDContract = new this.web3.eth.Contract(contractAbi, Config.ETHDID_CONTRACT_ADDRESS);
-      const gasPrice = await this.web3.eth.getGasPrice();
+      const gasPrice = await this.getGasPrice();
       const method = publishDIDContract.methods.publishDidTransaction(payload);
       let gasLimit = 200000;
       try {
@@ -493,9 +534,10 @@ export class ETHChainSubWallet extends StandardSubWallet {
     /**
      * Returns the current gas price on chain.
      */
-    public getGasPrice(): Promise<BigNumber> {
-      console.log("GAS PRICE: ", this.web3.eth.getGasPrice())
-        return this.web3.eth.getGasPrice();
+    public async getGasPrice(): Promise<string> {
+      const gasPrice = await this.web3.eth.getGasPrice();
+      Logger.log('wallet', "GAS PRICE: ", gasPrice)
+      return gasPrice;
     }
 
     public async getNonce() {

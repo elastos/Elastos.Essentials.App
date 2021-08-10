@@ -3,7 +3,6 @@ import Web3 from 'web3';
 import { MasterWallet } from './MasterWallet';
 import { SubWallet, SerializedSubWallet, RawTransactionPublishResult } from './SubWallet';
 import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../Coin';
-import { Util } from '../Util';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
@@ -332,15 +331,18 @@ export class ERC20SubWallet extends SubWallet {
         return null;
     }
 
-    public createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
+    public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gssLimit: string): Promise<any> {
         return Promise.resolve([]);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg:string = null): Promise<any> {
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
-        const gasPrice = await this.web3.eth.getGasPrice();
+        let gasPrice = gasPriceArg;
+        if (gasPrice == null) {
+          gasPrice = await this.web3.eth.getGasPrice();
+        }
 
         Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
         // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
@@ -350,12 +352,15 @@ export class ERC20SubWallet extends SubWallet {
         const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
         const method = erc20Contract.methods.transfer(toAddress, web3BigNumber);
 
-        let gasLimit = 100000;
-        try {
-            // Estimate gas cost
-            gasLimit = await method.estimateGas();
-        } catch (error) {
-            Logger.log('wallet', 'estimateGas error:', error);
+        let gasLimit = gasLimitArg;
+        if (gasLimit == null) {
+          gasLimit = '100000';
+          try {
+              // Estimate gas cost
+              gasLimit = await method.estimateGas();
+          } catch (error) {
+              Logger.log('wallet', 'estimateGas error:', error);
+          }
         }
 
         let nonce = await this.getNonce();
@@ -399,8 +404,6 @@ export class ERC20SubWallet extends SubWallet {
 
               Logger.log('wallet', "Password retrieved. Now signing the transaction.");
 
-              await this.masterWallet.walletManager.native.showLoading(this.masterWallet.walletManager.translate.instant('common.please-wait'));
-
               const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
                   this.masterWallet.id,
                   StandardCoinName.ETHSC,
@@ -412,12 +415,6 @@ export class ERC20SubWallet extends SubWallet {
 
               const txid = await this.publishTransaction(signedTx);
               Logger.log('wallet', "Published transaction id:", txid);
-
-              await this.masterWallet.walletManager.native.hideLoading();
-
-              if (Util.isEmptyObject(transfer.action)) {
-                  await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
-              }
 
               let published = true;
               let status = 'published';
@@ -437,11 +434,21 @@ export class ERC20SubWallet extends SubWallet {
               resolve({
                 published: false,
                 txid: null,
-                status: 'error'
+                status: 'error',
+                code: err.code,
+                message: err.message,
               });
-              throw err;
             }
         });
+    }
+
+    /**
+     * Returns the current gas price on chain.
+     */
+     public async getGasPrice(): Promise<string> {
+      const gasPrice = await this.web3.eth.getGasPrice();
+      Logger.log('wallet', "GAS PRICE: ", gasPrice)
+      return gasPrice;
     }
 
     private async getNonce() {

@@ -492,13 +492,8 @@ export class WalletJsonRPCService {
       if (rpcApiUrl === null) {
           return '';
       }
-
-      try {
-          return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-      } catch (e) {
-        Logger.error('wallet', 'eth_sendRawTransaction error:', e)
-      }
-      return '';
+      // The caller need catch the execption.
+      return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
     }
 
 

@@ -225,7 +225,9 @@ export abstract class StandardSubWallet extends SubWallet {
               resolve({
                 published: false,
                 txid: null,
-                status: 'error'
+                status: 'error',
+                code: err.code,
+                message: err.message,
               });
             }
         });

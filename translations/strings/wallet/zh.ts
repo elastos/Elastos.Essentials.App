@@ -222,6 +222,17 @@ export const zh = {
         "tx-info-token-address": "币种地址",
         "tx-info-erc20-amount": "ERC20转账金额",
 
+        /***********************************
+        * ETH Transaction Component *
+        ************************************/
+        "eth-sending-transaction": "交易发送中",
+        "eth-transaction-wait": "请稍候...",
+        "eth-transaction-fail": "交易失败",
+        "eth-transaction-speedup-prompt": "您可以通过增加燃料价格对交易进行加速",
+        "eth-transaction-speedup": "加速交易",
+        "eth-gasprice": "燃料价格(GWEI)",
+        "eth-gaslimit": "燃料限制",
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************

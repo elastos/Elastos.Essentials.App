@@ -55,6 +55,9 @@ import { Events } from 'src/app/services/events.service';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { CoinService } from 'src/app/wallet/services/coin.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
+import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
+import { ETHTransactionStatus } from 'src/app/wallet/model/Transaction';
 
 
 @Component({
@@ -81,6 +84,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Display recharge wallets
     public fromSubWallet: SubWallet;
     public toSubWallet: SubWallet = null;
+
+    // User can set gas price and limit.
+    private gasPrice: string = null;
+    private gasLimit: string = null;
 
     // Intent
     private action = null;
@@ -111,7 +118,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Addresses resolved from typed user friendly names (ex: user types "rong" -> resolved to rong's ela address)
     public suggestedAddresses: CryptoAddressResolvers.Address[] = [];
 
-    private syncSubscription: Subscription = null;
     private addressUpdateSubscription: Subscription = null;
 
     // Input
@@ -120,6 +126,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private popover: any = null;
     private showContactsOption = false;
     private showCryptonamesOption = false;
+    private publicationStatusSub: Subscription;
+    private ethTransactionSpeedupSub: Subscription;
+    private isEthsubwallet = false;
 
     constructor(
         public route: ActivatedRoute,
@@ -140,6 +149,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private contactsService: ContactsService,
         private modalCtrl: ModalController,
         private popoverCtrl: PopoverController,
+        private ethTransactionService: ETHTransactionService
     ) {
     }
 
@@ -167,7 +177,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         if (this.addressUpdateSubscription) this.addressUpdateSubscription.unsubscribe();
-        if (this.syncSubscription) this.syncSubscription.unsubscribe();
+        if (this.publicationStatusSub) this.publicationStatusSub.unsubscribe();
+        if (this.ethTransactionSpeedupSub) this.ethTransactionSpeedupSub.unsubscribe();
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
@@ -187,6 +198,49 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.fromSubWallet = this.masterWallet.getSubWallet(this.elastosChainCode);
 
         Logger.log('wallet', 'Balance', this.masterWallet.subWallets[this.elastosChainCode].getDisplayBalance());
+
+        if ((this.elastosChainCode !== StandardCoinName.ELA) && (this.elastosChainCode !== StandardCoinName.IDChain)) {
+          this.isEthsubwallet = true;
+          this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status)=>{
+            Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
+            switch (status.status) {
+              case ETHTransactionStatus.PACKED:
+                this.walletManager.native.setRootRouter('/wallet/wallet-home');
+                if (this.intentId) {
+                  let result = {
+                    published: true,
+                    txid: status.txId,
+                    status: 'published'
+                  }
+                  await this.globalIntentService.sendIntentResponse(result, this.intentId);
+                }
+                break;
+              case ETHTransactionStatus.CANCEL:
+                if (this.intentId) {
+                  let result = {
+                    published: false,
+                    txid: null,
+                    status: 'cancelled'
+                  }
+                  await this.globalIntentService.sendIntentResponse(result, this.intentId);
+                }
+                break;
+            }
+          });
+
+          this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status)=>{
+            Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
+            if (status) {
+              this.gasPrice = status.gasPrice;
+              this.gasLimit = status.gasLimit;
+              // Do Transaction
+              void await this.transaction();
+              // Reset gas price.
+              this.gasPrice = null;
+              this.gasLimit = null;
+            }
+          });
+        }
 
         switch (this.transferType) {
             // For Recharge Transfer
@@ -266,7 +320,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         const rawTx = await this.fromSubWallet.createPaymentTransaction(
             this.toAddress, // User input address
             this.amount, // User input amount
-            this.memo // User input memo
+            this.memo, // User input memo
+            this.gasPrice,
+            this.gasLimit
         );
         await this.native.hideLoading();
         if (rawTx) {
@@ -279,11 +335,20 @@ export class CoinTransferPage implements OnInit, OnDestroy {
               intentId: this.intentId
           });
 
-          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-          if (result.published)
-              this.showSuccess();
-          if (transfer.intentId) {
-            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          if (this.isEthsubwallet) {
+            try {
+              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ETHChainSubWallet, rawTx, transfer, true)
+            }
+            catch (err) {
+              Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
+            }
+          } else {
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+            if (result.published)
+                this.showSuccess();
+            if (transfer.intentId) {
+              await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            }
           }
         } else {
           if (this.intentId) {
@@ -335,7 +400,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         const rawTx = await this.fromSubWallet.createWithdrawTransaction(
             this.toAddress,
             this.amount,
-            this.memo
+            this.memo,
+            this.gasPrice,
+            this.gasLimit
         );
 
         if (rawTx) {
@@ -349,9 +416,18 @@ export class CoinTransferPage implements OnInit, OnDestroy {
               intentId: null,
           });
 
-          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-          if (result.published)
-              this.showSuccess();
+          if (this.isEthsubwallet) {
+            try {
+              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ETHChainSubWallet, rawTx, transfer, true)
+            }
+            catch (err) {
+              Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
+            }
+          } else {
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+            if (result.published)
+                this.showSuccess();
+          }
         }
     }
 

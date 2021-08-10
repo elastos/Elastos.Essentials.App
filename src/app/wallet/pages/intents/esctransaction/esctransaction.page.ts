@@ -28,7 +28,6 @@ import { MasterWallet } from '../../../model/wallets/MasterWallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { StandardCoinName } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
-import { SubWallet } from '../../../model/wallets/SubWallet';
 import BigNumber from "bignumber.js";
 import { UiService } from '../../../services/ui.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -38,6 +37,9 @@ import { Logger } from 'src/app/logger';
 import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
 import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/ethtransactioninfoparser';
 import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
+import { Subscription } from 'rxjs';
+import { ETHTransactionStatus } from 'src/app/wallet/model/Transaction';
+import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
 
 @Component({
     selector: 'app-esctransaction',
@@ -52,10 +54,14 @@ export class EscTransactionPage implements OnInit {
     private intentTransfer: IntentTransfer;
     private walletInfo = {};
     public balance: BigNumber; // ELA
-    public gasPrice: BigNumber;
+    public gasPrice: string;
+    public gasLimit: string;
     public elastosChainCode: string; // ETHSC
     public hasOpenETHSCChain = false;
     public transactionInfo: ETHTransactionInfo;
+
+    private publicationStatusSub: Subscription;
+    private ethTransactionSpeedupSub: Subscription;
 
     constructor(
         public walletManager: WalletManager,
@@ -67,7 +73,8 @@ export class EscTransactionPage implements OnInit {
         private translate: TranslateService,
         public theme: GlobalThemeService,
         private erc20service: ERC20CoinService, // Keep it to initialize the service for the ETHTransactionInfoParser
-        public uiService: UiService
+        public uiService: UiService,
+        private ethTransactionService: ETHTransactionService
     ) {
     }
 
@@ -88,15 +95,25 @@ export class EscTransactionPage implements OnInit {
       }
     }
 
+    ionViewWillLeave() {
+      if (this.publicationStatusSub) this.publicationStatusSub.unsubscribe();
+      if (this.ethTransactionSpeedupSub) this.ethTransactionSpeedupSub.unsubscribe();
+    }
+
     async init() {
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
 
-        this.ethSidechainSubWallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
+        this.ethSidechainSubWallet = this.masterWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
         this.balance = await this.ethSidechainSubWallet.getDisplayBalance();
-        this.gasPrice = await this.ethSidechainSubWallet.getGasPrice();
+        this.gasPrice = this.coinTransferService.payloadParam.gasPrice;
+        if (!this.gasPrice) {
+          this.gasPrice = await this.ethSidechainSubWallet.getGasPrice();
+        }
+
+        this.gasLimit = this.coinTransferService.payloadParam.gas || '200000';
 
         Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
 
@@ -108,6 +125,41 @@ export class EscTransactionPage implements OnInit {
         )
         this.transactionInfo = await transactionInfoParser.computeInfo();
         Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
+
+        this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status)=>{
+          Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
+          switch (status.status) {
+            case ETHTransactionStatus.PACKED:
+                let resultOk = {
+                  published: true,
+                  txid: status.txId,
+                  status: 'published'
+                }
+                await this.globalIntentService.sendIntentResponse(resultOk, this.intentTransfer.intentId);
+              break;
+            case ETHTransactionStatus.CANCEL:
+                let result = {
+                  published: false,
+                  txid: null,
+                  status: 'cancelled'
+                }
+                await this.globalIntentService.sendIntentResponse(result, this.intentTransfer.intentId);
+              break;
+          }
+        });
+
+        this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status)=>{
+          Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
+          if (status) {
+            this.gasPrice = status.gasPrice;
+            this.gasLimit = status.gasLimit;
+            // Do Transaction
+            void await this.goTransaction();
+            // Reset gas price.
+            this.gasPrice = null;
+            this.gasLimit = null;
+          }
+        });
     }
 
     /**
@@ -143,7 +195,7 @@ export class EscTransactionPage implements OnInit {
     public getTotalTransactionCostInELA(): {totalAsBigNumber: BigNumber, total: string, valueAsBigNumber: BigNumber, value: string, feesAsBigNumber: BigNumber, fees: string } {
         let weiElaRatio = new BigNumber("1000000000000000000");
 
-        let gas = new BigNumber(this.coinTransferService.payloadParam.gas);
+        let gas = new BigNumber(this.gasLimit);
         let gasPrice = new BigNumber(this.coinTransferService.payloadParam.gasPrice || this.gasPrice);
         let elaEthValue = new BigNumber(this.coinTransferService.payloadParam.value || 0).dividedBy(weiElaRatio);
         let fees = gas.multipliedBy(gasPrice).dividedBy(weiElaRatio);
@@ -172,13 +224,13 @@ export class EscTransactionPage implements OnInit {
         const rawTx =
         await this.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
-            StandardCoinName.ETHSC,
+            this.elastosChainCode,
             this.coinTransferService.payloadParam.to,
             this.coinTransferService.payloadParam.value || "0",
             0, // WEI
-            this.coinTransferService.payloadParam.gasPrice || this.gasPrice.toString(16),
+            this.gasPrice,
             0, // WEI
-            this.coinTransferService.payloadParam.gas, // TODO: gasLimit
+            this.gasLimit,
             this.coinTransferService.payloadParam.data,
             nonce
         );
@@ -196,11 +248,17 @@ export class EscTransactionPage implements OnInit {
               intentId: this.intentTransfer.intentId,
           });
 
-          let sourceSubwallet = this.walletManager.getMasterWallet(this.masterWallet.id).getSubWallet(this.elastosChainCode);
-          const result = await sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-          if (transfer.intentId) {
-              Logger.log('wallet', 'Sending esctransaction intent response');
-              await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+          try {
+            await this.ethTransactionService.publishTransaction(this.ethSidechainSubWallet, rawTx, transfer, true)
+          }
+          catch (err) {
+            Logger.error('wallet', 'EscTransactionPage publishTransaction error:', err)
+            if (this.intentTransfer.intentId) {
+              await this.globalIntentService.sendIntentResponse(
+                { txid: null, status: 'error' },
+                this.intentTransfer.intentId
+              );
+            }
           }
         } else {
           if (this.intentTransfer.intentId) {

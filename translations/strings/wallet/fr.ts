@@ -224,6 +224,17 @@ export const fr = {
         "tx-info-token-address": "Adresse du jeton ERC20",
         "tx-info-erc20-amount": "Montant du jeton ERC20",
 
+        /***********************************
+        * ETH Transaction Component *
+        ************************************/
+        "eth-sending-transaction": "Transaction is sending",
+        "eth-transaction-wait": "Please wait...",
+        "eth-transaction-fail": "Transaction failed",
+        "eth-transaction-speedup-prompt": "You can speedup the transaction by increasing the gas price",
+        "eth-transaction-speedup": "Speedup",
+        "eth-gasprice": "Gas Price(GWEI)",
+        "eth-gaslimit": "Gas Limit",
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************

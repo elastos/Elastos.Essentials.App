@@ -162,7 +162,9 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         const rawTx = await this.fromSubWallet.createWithdrawTransaction(
             this.toAddress,
             -1,//this.amount,
-            "Funds migration from DID 1.0 chain"
+            "Funds migration from DID 1.0 chain",
+            null,
+            null
         );
 
         if (rawTx) {

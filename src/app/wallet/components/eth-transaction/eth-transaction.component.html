@@ -1,0 +1,65 @@
+<ion-content>
+  <ion-grid class="ion-text-center" [class.dark-process-container]="theme.darkMode">
+    <ion-row *ngIf="!publicationFailed">
+      <ion-col size="12">
+        <ion-label>
+          <h1 *ngIf="publicationSuccessful">{{ 'wallet.tx-success' | translate }}</h1>
+          <h1 *ngIf="publishing">{{ 'wallet.eth-sending-transaction' | translate }}</h1>
+          <br/>
+          <h2 *ngIf="publishing">{{ 'wallet.eth-transaction-wait' | translate }}</h2>
+        </ion-label>
+
+        <ion-spinner *ngIf="publishing" class="spinner"></ion-spinner>
+
+        <div class="success-row result" [class.darkContainer]="theme.darkMode" *ngIf="publicationSuccessful">
+          <lottie-player src="../../../assets/wallet/animations/success-1.json" background="transparent" speed="0.5" style="width: 80px; height: 80px;" autoplay></lottie-player>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="item-row ripple ion-activatable" *ngIf="publicationFailed">
+      <ion-col size="12">
+        <h1>{{ 'wallet.eth-transaction-fail' | translate }}</h1>
+        <h2>{{ 'wallet.eth-transaction-speedup-prompt' | translate }}</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row class="item-row ripple ion-activatable" *ngIf="publicationFailed">
+      <ion-col size="6">
+        <div>{{ 'wallet.eth-gasprice' | translate }}</div>
+        <ion-input
+            autosize
+            clearInput
+            name="gasPrice" ngDefaultControl
+            [(ngModel)]="gasPrice"
+            mode="ios"
+        >
+        </ion-input>
+      </ion-col>
+      <ion-col size="6">
+        <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
+        <ion-input
+            autosize
+            clearInput
+            name="gasLimit" ngDefaultControl
+            [(ngModel)]="gasLimit"
+            mode="ios"
+        >
+        </ion-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="publicationFailed">
+      <ion-col class="btn cancel ion-activatable ripple" size="5.6">
+        <ion-button color="tertiary" (click)="cancel()">
+          {{ 'common.close' | translate }}
+        </ion-button>
+      </ion-col>
+      <ion-col class="btn confirm ion-activatable ripple" size="5.6">
+        <ion-button color="tertiary" (click)="speedup()">
+          {{ 'wallet.eth-transaction-speedup' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+

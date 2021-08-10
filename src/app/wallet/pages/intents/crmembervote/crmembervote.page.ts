@@ -141,7 +141,7 @@ export class CRmembervotePage implements OnInit {
     checkValue() {
         const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
         if (stakeAmount.isNegative()) {
-            Logger.log('wallet', 'CRProposalVoteAgainstPage: Not enough balance:', stakeAmount.toString());
+            Logger.log('wallet', 'CRmembervotePage: Not enough balance:', this.sourceSubwallet.getDisplayBalance());
             this.native.toast_trans('wallet.insufficient-balance');
             return false;
         }

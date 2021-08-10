@@ -245,6 +245,20 @@
   color: white;
 }
 
+.wallet-component-base {
+  --height: 35%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
 /********************** CONTACTS **********************/
 .contacts-qrcode-component {
   --height: 55%;
