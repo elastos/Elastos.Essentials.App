@@ -222,6 +222,17 @@ export const en = {
         "tx-info-token-address": "ERC20 Token Address",
         "tx-info-erc20-amount": "ERC20 Token Amount",
 
+        /***********************************
+        * ETH Transaction Component *
+        ************************************/
+        "eth-sending-transaction": "Transaction is sending",
+        "eth-transaction-wait": "Please wait...",
+        "eth-transaction-fail": "Transaction failed",
+        "eth-transaction-speedup-prompt": "You can speedup the transaction by increasing the gas price",
+        "eth-transaction-speedup": "Speedup",
+        "eth-gasprice": "Gas Price(GWEI)",
+        "eth-gaslimit": "Gas Limit",
+
         /********************************************** Wallet Settings Screens ***********************************************/
 
         /***********************

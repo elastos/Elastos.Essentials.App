@@ -6,6 +6,13 @@ export enum TransactionStatus {
     UNCONFIRMED = 'unconfirmed'
 }
 
+// For speedup eth transaction.
+export enum ETHTransactionStatus {
+  CANCEL = 'cancel',
+  PACKED = 'packed',
+  UNPACKED = 'unpacked',
+}
+
 export enum TransactionDirection {
     RECEIVED = "received",
     SENT = "sent",

@@ -170,7 +170,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         return this.balance.gt(amount);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string = ""): Promise<string> {
+    // Ignore gasPrice and gasLimit.
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string = "", gasPrice: string = null, gasLimit:string = null): Promise<string> {
         let toAmount = 0;
         if (amount == -1) {
             toAmount = Math.floor(this.balance.minus(10000).toNumber());
@@ -249,7 +250,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
-    public async createWithdrawTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
+    // Ignore gasPrice and gasLimit.
+    public async createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string): Promise<string> {
         let toAmount = 0;
         if (amount == -1) {
             toAmount = Math.floor(this.balance.minus(20000).toNumber());

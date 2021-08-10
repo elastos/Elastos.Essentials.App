@@ -11,6 +11,7 @@ import { TxSuccessComponent } from './tx-success/tx-success.component';
 import { WarningComponent } from './warning/warning.component';
 import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { OptionsComponent } from './options/options.component';
+import { ETHTransactionComponent } from './eth-transaction/eth-transaction.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { OptionsComponent } from './options/options.component';
     TxSuccessComponent,
     HelpComponent,
     ContactsComponent,
+    ETHTransactionComponent,
     OptionsComponent,
     WarningComponent,
     TransferWalletChooserComponent
@@ -40,6 +42,7 @@ import { OptionsComponent } from './options/options.component';
     ContactsComponent,
     OptionsComponent,
     WarningComponent,
+    ETHTransactionComponent,
     TransferWalletChooserComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

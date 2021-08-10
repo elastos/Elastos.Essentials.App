@@ -12,6 +12,7 @@ import { WalletPrefsService } from './pref.service';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { ETHTransactionService } from './ethtransaction.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,7 @@ export class WalletInitService extends GlobalService {
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
+    private ethTransactionService: ETHTransactionService
   ) {
     super();
   }
@@ -49,6 +51,7 @@ export class WalletInitService extends GlobalService {
     void this.currencyService.init();
     // Do not await.
     void this.contactsService.init();
+    void this.ethTransactionService.init();
     await this.uiService.init();
 
     // TODO: dirty, rework this
