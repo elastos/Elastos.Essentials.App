@@ -103,7 +103,7 @@
     "cordova-plugin-screen-orientation": "3.0.2",
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-whitelist": "1.3.4",
-    "cordova-sqlite-storage": "5.1.0",
+    "cordova-sqlite-storage": "6.0.0",
     "elastos-essentials-plugin-fingerprint": "file:../Plugins/Fingerprint",
     "elastos-essentials-plugin-intent": "file:../Plugins/EssentialsIntent",
     "elastos-essentials-plugin-internal": "file:plugin_src/Internal",
