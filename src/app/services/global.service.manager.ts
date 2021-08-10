@@ -35,7 +35,7 @@ export class GlobalServiceManager {
             Logger.log("servicemanager", "Exiting onUserSignIn for service:", service);
 
             // Make sure to warn in logs if a service starts to take too much time and is blocking others.
-            const SLOW_INIT_DELAY_MS = 200;
+            const SLOW_INIT_DELAY_MS = 100;
             const CRITICALLY_SLOW_INIT_DELAY_MS = 1000;
             let endTimeMs = Date.now();
             let durationMs = endTimeMs - startTimeMs;
@@ -46,6 +46,8 @@ export class GlobalServiceManager {
                 Logger.warn("servicemanager", "Call to onUserSignIn() took too much time! Expected less than "+SLOW_INIT_DELAY_MS+" ms, but took "+durationMs+" ms.", service);
             }
         }
+
+        Logger.log("servicemanager", "Sign in complete for all services");
     }
 
     async emitUserSignOut(): Promise<void> {

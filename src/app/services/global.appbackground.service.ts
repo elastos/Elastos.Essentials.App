@@ -36,7 +36,6 @@ export class GlobalAppBackgroundService {
    *
    */
   public async init(): Promise<void> {
-      Logger.log('AppBackgroundService', 'init');
       await this.didSessionsInitService.init();
       await this.launcherInitService.init();
       await this.scannerInitService.init();
@@ -47,7 +46,6 @@ export class GlobalAppBackgroundService {
       await this.walletInitService.init();
       await this.crProposalVotingInitService.init();
       await this.developerToolsInitService.init();
-      Logger.log('AppBackgroundService', 'init finished')
   }
 
   /**

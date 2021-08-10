@@ -15,6 +15,7 @@ import { GlobalPublicationService, DIDPublicationStatus } from "src/app/services
 import { BehaviorSubject } from "rxjs";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { IdentityEntry } from "src/app/services/global.didsessions.service";
+import { runDelayed } from "src/app/helpers/sleep.helper";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -93,7 +94,8 @@ export class DIDSyncService implements GlobalService {
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // Fetch online DID document for this user.
-    void this.fetchActiveUserOnlineDIDDocument();
+    // Give some time to release the Essentials startup from too many operations.
+    runDelayed(() => this.fetchActiveUserOnlineDIDDocument(), 3000);
 
     return;
   }

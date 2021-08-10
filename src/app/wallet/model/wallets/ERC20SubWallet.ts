@@ -13,6 +13,9 @@ import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { Config } from '../../config/Config';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -68,9 +71,7 @@ export class ERC20SubWallet extends SubWallet {
 
         await this.loadTransactionsFromCache();
 
-        setTimeout(() => {
-          void this.updateBalance();
-        }, 3000);
+        runDelayed(() => this.updateBalance(), 5000);
     }
 
     public async createAddress(): Promise<string> {
@@ -101,18 +102,33 @@ export class ERC20SubWallet extends SubWallet {
         return coin.getName();
     }
 
+    /**
+     * Tries to retrieve the token decimals from local cache if we saved this earlier.
+     * Otherwise, fetches it from chain.
+     */
     private async fetchTokenDecimals(): Promise<void> {
-        try {
-            const tokenAccountAddress = await this.getTokenAccountAddress();
-            const contractAddress = this.coin.getContractAddress();
-            const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
-            this.tokenDecimals = await erc20Contract.methods.decimals().call();
-            this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
+        // Check cache
+        let tokenCacheKey = this.masterWallet.id + this.coin.getContractAddress();
+        this.tokenDecimals = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", tokenCacheKey, null);
 
-            Logger.log('wallet', this.id+" decimals: ", this.tokenDecimals);
-        } catch (error) {
-            Logger.log('wallet', 'ERC20 Token (', this.id, ') fetchTokenDecimals error:', error);
+        if (this.tokenDecimals === null) {
+            try {
+                const tokenAccountAddress = await this.getTokenAccountAddress();
+                const contractAddress = this.coin.getContractAddress();
+                const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
+                this.tokenDecimals = await erc20Contract.methods.decimals().call();
+                await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", tokenCacheKey, this.tokenDecimals);
+
+                Logger.log('wallet', "Got ERC20 token decimals", this.id, "Decimals: ", this.tokenDecimals, ". Saving to disk");
+            } catch (error) {
+                Logger.log('wallet', 'ERC20 Token (', this.id, ') fetchTokenDecimals error:', error);
+            }
         }
+        else {
+            //Logger.log('wallet', "Got ERC20 token decimals from cache", this.id, "Decimals: ", this.tokenDecimals);
+        }
+
+        this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
     }
 
     public getDisplayBalance(): BigNumber {

@@ -180,6 +180,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewDidEnter() {
+    Logger.log("launcher", "Launcher home screen did enter");
     // We are ready, we can hide the splash screen
     this.splashScreen.hide();
   }

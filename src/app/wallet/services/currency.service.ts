@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { LocalStorage } from './storage.service';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 
 type Currency = {
   symbol: string;
@@ -60,7 +61,7 @@ export class CurrencyService {
     await this.getSavedCurrencyDisplayPreference();
 
     // Wait a moment before fetching latest prices, to not struggle the main essentials boot sequence.
-    setTimeout(() => {
+    runDelayed(() => {
       if (!this.stopService) {
         this.fetch();
       }
@@ -76,7 +77,7 @@ export class CurrencyService {
   getSavedPrices(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.currencies.forEach((currency) => {
-        this.storage.getPrice(currency.symbol).then((price) => {
+        void this.storage.getPrice(currency.symbol).then((price) => {
           Logger.log('wallet', 'Saved ela price', currency.symbol, price);
           price ? currency.price = price : currency.price = 0;
         });
@@ -85,32 +86,24 @@ export class CurrencyService {
     });
   }
 
-  getSavedCurrency(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.storage.getCurrency().then((symbol) => {
-        Logger.log('wallet', "Got storage currency", symbol);
-        if (symbol) {
-          this.selectedCurrency = this.currencies.find((currency) => currency.symbol === symbol);
-          Logger.log('wallet', 'Currency saved', this.selectedCurrency);
-        } else {
-          this.selectedCurrency = this.currencies.find((currency) => currency.symbol === 'USD');
-          Logger.log('wallet', 'No currency saved, using default USD', this.selectedCurrency);
-        }
-        resolve();
-      });
-    });
+  async getSavedCurrency(): Promise<void> {
+    let symbol = await this.storage.getCurrency();
+    Logger.log('wallet', "Got storage currency", symbol);
+    if (symbol) {
+      this.selectedCurrency = this.currencies.find((currency) => currency.symbol === symbol);
+      Logger.log('wallet', 'Currency saved', this.selectedCurrency);
+    } else {
+      this.selectedCurrency = this.currencies.find((currency) => currency.symbol === 'USD');
+      Logger.log('wallet', 'No currency saved, using default USD', this.selectedCurrency);
+    }
   }
 
-  getSavedCurrencyDisplayPreference(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.storage.getCurrencyDisplayPreference().then((useCurrency) => {
-        Logger.log('wallet', 'Got stored currency display preference', useCurrency);
-        if (useCurrency) {
-          this.useCurrency = useCurrency;
-        }
-        resolve();
-      });
-    });
+  async getSavedCurrencyDisplayPreference(): Promise<void> {
+    let useCurrency = await this.storage.getCurrencyDisplayPreference();
+    Logger.log('wallet', 'Got stored currency display preference', useCurrency);
+    if (useCurrency) {
+      this.useCurrency = useCurrency;
+    }
   }
 
   fetch() {
@@ -121,7 +114,7 @@ export class CurrencyService {
         this.elaStats = res.find((coin) => coin.symbol === 'ELA');
         if (this.elaStats) {
           Logger.log('wallet', 'CMC ELA stats', this.elaStats);
-          this.addPriceToCurrency();
+          void this.addPriceToCurrency();
         }
       }
     }, (err) => {
@@ -129,18 +122,18 @@ export class CurrencyService {
     });
   }
 
-  async addPriceToCurrency() {
+  addPriceToCurrency() {
     this.currencies.map((currency) => {
       if (currency.symbol === 'USD') {
-        this.storage.setPrice(currency.symbol, this.elaStats.price_usd);
+        void this.storage.setPrice(currency.symbol, this.elaStats.price_usd);
         currency.price = parseFloat(this.elaStats.price_usd);
       }
       if (currency.symbol === 'CNY') {
-        this.storage.setPrice(currency.symbol, this.elaStats.price_cny);
+        void this.storage.setPrice(currency.symbol, this.elaStats.price_cny);
         currency.price = parseFloat(this.elaStats.price_cny);
       }
       if (currency.symbol === 'BTC') {
-        this.storage.setPrice(currency.symbol, this.elaStats.price_btc);
+        void this.storage.setPrice(currency.symbol, this.elaStats.price_btc);
         currency.price = parseFloat(this.elaStats.price_btc);
       }
     });
@@ -170,13 +163,13 @@ export class CurrencyService {
     }
   }
 
-  saveCurrency(currency: Currency) {
+  async saveCurrency(currency: Currency): Promise<void> {
     this.selectedCurrency = currency;
-    this.storage.setCurrency(currency.symbol);
+    await this.storage.setCurrency(currency.symbol);
   }
 
-  toggleCurrencyDisplay() {
+  async toggleCurrencyDisplay(): Promise<void> {
     this.useCurrency = !this.useCurrency;
-    this.storage.setCurrencyDisplayPreference(this.useCurrency);
+    await this.storage.setCurrencyDisplayPreference(this.useCurrency);
   }
 }

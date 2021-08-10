@@ -48,6 +48,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { Util } from '../model/Util';
 import { WalletConfig } from '../model/WalletConfig';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 
 
 class SubwalletTransactionStatus {
@@ -247,7 +248,7 @@ export class WalletManager {
                 }
 
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
-                /* await  */void this.masterWallets[masterId].updateERCTokenList(this.networkTemplate);
+                runDelayed(() => this.masterWallets[masterId].updateERCTokenList(this.networkTemplate), 5000);
             }
 
             this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();
@@ -462,7 +463,7 @@ export class WalletManager {
      *
      * triggleEvent: If the wallet is deleted by the system, no related event need be triggered
      */
-    async destroyMasterWallet(id: string, triggleEvent: boolean = true) {
+    async destroyMasterWallet(id: string, triggleEvent = true) {
         // Delete all subwallet
         await this.masterWallets[id].destroyAllSubWallet();
 

@@ -30,8 +30,7 @@ export class UXService {
         public translate: TranslateService
     ) {}
 
-    async init() {
-        Logger.log('crproposal', "UXService is initializing");
+    init() {
     }
 
     formatDate(timestamp) {

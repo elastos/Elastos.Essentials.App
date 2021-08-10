@@ -41,11 +41,10 @@ export class CROperationsService {
         public popupProvider: PopupProvider,
     ) {}
 
-    async init() {
-        Logger.log("crproposal", "CROperationsService is initializing");
+    init() {
         this.subscription = this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
             if (receivedIntent)
-                this.handledReceivedIntent(receivedIntent);
+                void this.handledReceivedIntent(receivedIntent);
         });
     }
 

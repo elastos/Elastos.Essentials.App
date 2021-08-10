@@ -34,22 +34,20 @@ export class LocalStorage {
 
     public async get(key: string): Promise<any> {
         // Logger.log('wallet', 'Fetching for ' + key + ' in app manager settings');
-        return new Promise(async (resolve) => {
-            let val = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
-            if (val === null)
-                resolve(null); // Key not found in setting
-            else {
-                if (typeof(val) === "string") {
-                    try {
-                        val = JSON.parse(val);
-                    }
-                    catch (e) {
-                        // Do nothing. Saved value is probably a real string
-                    }
+        let val = await this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", key, null);
+        if (val === null)
+            return null; // Key not found in setting
+        else {
+            if (typeof(val) === "string") {
+                try {
+                    val = JSON.parse(val);
                 }
-                resolve(val);
+                catch (e) {
+                    // Do nothing. Saved value is probably a real string
+                }
             }
-        });
+            return val;
+        }
     }
 
     public async getVal(key, func) {
@@ -84,9 +82,9 @@ export class LocalStorage {
         return await this.get(key);
     }
 
-    public savePublishTxList(obj) {
+    public async savePublishTxList(obj): Promise<void> {
         let key = "publishTx";
-        this.set(key, JSON.stringify(obj));
+        await this.set(key, JSON.stringify(obj));
     }
 
     public async getPublishTxList(): Promise<any> {

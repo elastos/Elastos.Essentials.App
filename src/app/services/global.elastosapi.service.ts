@@ -227,7 +227,10 @@ export class GlobalElastosAPIService extends GlobalService {
         let provider = this.getProviderByName(providerName);
         if (!provider) {
             // This saved provider doesn't exist any more maybe. Use the default provider.
-            this.activeProvider = new BehaviorSubject(await this.getDefaultProvider());
+            Logger.log("elastosapi", "Current provider name could not be found, looking for the default one");
+            provider = await this.getDefaultProvider();
+            this.activeProvider = new BehaviorSubject(provider);
+            await this.useProvider(provider); // Save this preference for later.
         }
         else {
             this.activeProvider = new BehaviorSubject(provider);
@@ -327,11 +330,15 @@ export class GlobalElastosAPIService extends GlobalService {
      */
     private _bestProvider: ElastosAPIProvider;
     private async findTheBestProvider(): Promise<ElastosAPIProvider> {
+        Logger.log("elastosapi", "Starting to look for the best API provider");
+
         // To know the best provider, we try to call an api on all of them and then select the fastest
         // one to answer.
         this._bestProvider = null;
         let testPromises: Promise<void>[]= this.availableProviders.map(p => this.callTestAPIOnProvider(p));
         await Promise.race(testPromises);
+        Logger.log("elastosapi", "Got the best API provider", this._bestProvider);
+
         return this._bestProvider;
     }
 

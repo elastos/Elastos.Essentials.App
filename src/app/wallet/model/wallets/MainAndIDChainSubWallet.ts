@@ -736,8 +736,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * Get balance by RPC
      */
     public async getBalanceByRPC() {
-        Logger.test("wallet", 'TIMETEST getBalanceByRPC start:', this.masterWallet.id, this.id);
-
         let totalBalance = new BigNumber(0);
 
         let balance: BigNumber;
@@ -768,7 +766,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         this.balance = totalBalance;
         this.saveBalanceToCache();
 
-        Logger.test("wallet", 'TIMETEST getBalanceByRPC ', this.id, ' end');
         Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
     }
 
@@ -830,7 +827,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
      * @returns
      */
     async getTransactionByRPC(timestamp: number = 0) {
-        Logger.test("wallet", 'TIMETEST getTransactionByRPC Chain ID:', this.id, ' start timestamp:', timestamp, ' ', new Date(timestamp * 1000));
         this.getTransactionsTime = moment().valueOf();
         let txList = await this.getTransactionByAddress(false, timestamp);
 
@@ -871,7 +867,6 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length);
         }
 
-        Logger.test("wallet", 'TIMETEST getTransactionByRPC ', this.id, ' end');
         return true;
     }
 

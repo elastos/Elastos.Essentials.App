@@ -20,7 +20,7 @@ Logger.init(console);
 void defineCustomElements(window);
 
 // Enable production mode
-if (environment.production) {
+if (true && environment.production) {
   enableProdMode();
 }
 
@@ -31,5 +31,6 @@ void TranslationsLoader.loadAllModulesAndMerge().then(()=>{
     let applicationRef = module.injector.get(ApplicationRef);
     let appComponent = applicationRef.components[0];
     enableDebugTools(appComponent);
+    Logger.log("global", "App module bootstrap complete");
   }).catch(err => console.log(err));
 });
