@@ -26,7 +26,6 @@ export class LauncherInitService extends GlobalService {
     GlobalServiceManager.getInstance().registerService(this);
 
     this.didManager.init();
-    void this.tipsService.init();
 
     return;
   }
@@ -34,6 +33,7 @@ export class LauncherInitService extends GlobalService {
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // No blocking services start
     this.appManagerService.init();
+    this.tipsService.init();
 
     return;
   }

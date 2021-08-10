@@ -78,7 +78,7 @@ export class CurrencyService {
     return new Promise((resolve, reject) => {
       this.currencies.forEach((currency) => {
         void this.storage.getPrice(currency.symbol).then((price) => {
-          Logger.log('wallet', 'Saved ela price', currency.symbol, price);
+          //Logger.log('wallet', 'Saved ela price', currency.symbol, price);
           price ? currency.price = price : currency.price = 0;
         });
       });

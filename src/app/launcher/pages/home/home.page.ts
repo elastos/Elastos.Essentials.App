@@ -85,6 +85,7 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    Logger.log("launcher", "Launcher home screen will enter");
    /*  setTimeout(()=>{
       const notification = {
         key: 'storagePlanExpiring',
@@ -115,7 +116,7 @@ export class HomePage implements OnInit {
 
     this.identityNeedsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
 
-    if (this.didService.signedIdentity) { // Should not happen, just in case - for ionic hot reload
+    /* if (this.didService.signedIdentity) { // Should not happen, just in case - for ionic hot reload
       this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
         switch (template) {
           case MAINNET_TEMPLATE:
@@ -176,13 +177,17 @@ export class HomePage implements OnInit {
         this.walletConnectConnectors = Array.from(connectors.values());
         Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors, this.walletConnectConnectors.length);
       });
-    });
+    }); */
+
+    Logger.log("launcher", "Launcher home screen will enter completed")
   }
 
   ionViewDidEnter() {
     Logger.log("launcher", "Launcher home screen did enter");
     // We are ready, we can hide the splash screen
     this.splashScreen.hide();
+
+    Logger.log("launcher", "Launcher home screen did enter completed");
   }
 
   ionViewWillLeave() {

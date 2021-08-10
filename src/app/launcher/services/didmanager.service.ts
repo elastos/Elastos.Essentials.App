@@ -29,7 +29,6 @@ export class DIDManagerService extends GlobalService {
   }
 
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    Logger.log("Launcher", "Signed in identity changed", signedInIdentity);
     //this.signedIdentity = signedInIdentity;
     return;
   }

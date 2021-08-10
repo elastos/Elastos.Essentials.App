@@ -33,13 +33,14 @@ export class ContactsService {
 
   getContacts() {
     return new Promise<void>((resolve, reject) => {
-      this.storage.getContacts().then((contacts) => {
+      void this.storage.getContacts().then((contacts) => {
         Logger.log('wallet', "Fetched stored contacts", contacts);
         if (contacts) {
           this.contacts = contacts;
           let contactsChecked = 0;
           let needUpdate = false;
           const cryptoNameResolver = new CryptoAddressResolvers.CryptoNameResolver(this.http);
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           contacts.forEach(async (contact, index) => {
             if (contact.cryptoname.startsWith('CryptoName: ')) {
               contact.cryptoname = contact.cryptoname.replace('CryptoName: ', '')
@@ -55,7 +56,7 @@ export class ContactsService {
               this.contacts.splice(index, 1);
             }
             if ((contactsChecked === contacts.length) && needUpdate) {
-              this.storage.setContacts(this.contacts);
+              void this.storage.setContacts(this.contacts);
             }
           });
         }
