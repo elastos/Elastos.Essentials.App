@@ -228,7 +228,7 @@ export function TranslateLoaderFactory() {
     }),
     IonicStorageModule.forRoot({
       name: '__essentials.db',
-      driverOrder: ['sqlite',  'indexeddb', 'localstorage', 'websql']
+      driverOrder: ['indexeddb', 'sqlite', 'localstorage', 'websql']
     }),
     BrowserAnimationsModule,
   ],
