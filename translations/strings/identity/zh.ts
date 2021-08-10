@@ -125,7 +125,7 @@ export const zh = {
         'publish-identity': '发布身份?',
         'publish-visibility': '发布可见性？',
         'publish-visibility-prompt': '您可以发布新的更改，以便将其记录下来供所有人查看。此操作只花费少量的ELA交易费用',
-        'publish-identity-prompt': '您的身份尚未发布。执行下一步操作，您将声明对此数据的所有权，并挖掘Elastos生态系统的全部潜力。此操作只花费少量的ELA交易费用',
+        'publish-identity-prompt': 'You are going to publish your identity. Only the information that you have selected to be publicly visible will be sent.',
         'not-yet': '取消',
 
         // component: avatar
