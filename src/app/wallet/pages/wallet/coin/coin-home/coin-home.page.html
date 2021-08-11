@@ -27,11 +27,7 @@
         </ion-row>
         <ion-row [class]="getSubwalletClass()">
             <ion-row class="card-label-row">
-                <h1>
-                    <span>{{ getSubwalletTitle() }}</span>
-                    {{ 'wallet.coin-balance' | translate }}
-                </h1>
-                <h3>{{ 'wallet.total-amount' | translate }}</h3>
+                <h3>{{ 'wallet.coin-balance' | translate }}</h3>
                 <div (click)="!chainIsERC20() ? currencyService.toggleCurrencyDisplay() : null">
                     <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()">{{ Util.getWholeBalance(masterWallet.subWallets[chainId].getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.subWallets[chainId].getDisplayBalance().isZero() && !masterWallet.subWallets[chainId].getDisplayBalance().isNaN() && Util.getDecimalBalance(masterWallet.subWallets[chainId].getDisplayBalance())">.</span>
                         <span class="decimals">{{ Util.getDecimalBalance(masterWallet.subWallets[chainId].getDisplayBalance()) }}</span>
