@@ -84,6 +84,8 @@ export const en = {
         'url': 'URL',
         'wallet-accounts': 'Wallet accounts',
         'connect': 'Connect',
+        'wallet-connect-no-session': 'No active session',
+        'wallet-connect-no-session-info': 'There is currently no session with a third party app through Wallet Connect. Find the Wallet Connect button on your external app and scan the provided QR code using Elastos Essentials\' scanner to start.',
 
         /*********** Privacy page **********/
         'privacy': 'Privacy',

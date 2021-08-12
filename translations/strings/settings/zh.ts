@@ -84,6 +84,8 @@ export const zh = {
           'url': '网址',
           'wallet-accounts': '钱包账户',
           'connect': '连接',
+          'wallet-connect-no-session': 'No active session',
+          'wallet-connect-no-session-info': 'There is currently no session with a third party app through Wallet Connect. Find the Wallet Connect button on your external app and scan the provided QR code using Elastos Essentials\' scanner to start.',
 
           /*********** Privacy page **********/
           'privacy': '隐私',
