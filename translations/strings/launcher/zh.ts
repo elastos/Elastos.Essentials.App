@@ -14,7 +14,7 @@ export const zh = {
         /********** Notifications Page **********/
         'notifications': '消息通知',
         'no-empty': '空空如也',
-        'no-notif': '没有新的消息!',
+        'no-notif': '没有新的消息！',
         'close-notifs': '关闭通知',
         'system-notification': '系统消息',
 
@@ -67,7 +67,7 @@ export const zh = {
         'tip-of-the-day': '每日提示',
         'previous-tip': '上一步',
         'next-tip': '下一步',
-        'touch-to-read-all': '(触摸阅读全部)',
+        'touch-to-read-all': '（触摸阅读全部）',
         'tip-audience-generic': '入门提示',
         'tip-audience-developers': '给开发人员的提示',
 
