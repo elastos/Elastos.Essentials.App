@@ -20,10 +20,10 @@ export const zh = {
         'url': '原始网址',
         'time-remaining': '剩余时间',
         'reject-ratio': '拒绝率',
-        'yes': '是的',
-        'no': '不',
+        'yes': '赞成',
+        'no': '否决',
         'abstain': '弃权',
-        'by': '被',
+        'by': '提案人:',
 
         // Status
         'status-voting': '委会评议中',
