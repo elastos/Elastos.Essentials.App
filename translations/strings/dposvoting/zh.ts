@@ -21,7 +21,7 @@ export const zh = {
         'menu-search': '搜索',
 
         /********** Search **********/
-        'search-supernode': '搜索超级节点..',
+        'search-supernode': '搜索超级节点...',
 
         /********** Slider **********/
         'slider-rank': '排名',
