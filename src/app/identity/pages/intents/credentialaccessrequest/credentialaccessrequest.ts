@@ -110,8 +110,10 @@ export class CredentialAccessRequestPage {
   public profile = new Profile(); // Empty profile waiting to get the real one.
   public credentials: VerifiableCredential[] = [];
   public did: DID = null;
+  public avatarDataUrl: string = null;
 
   private onlineDIDDocumentStatusSub: Subscription = null;
+  private avatarSubscription: Subscription = null;
   public publishStatusFetched = false;
   public didNeedsToBePublished = false;
   public publishedDidRequested = false;
@@ -183,6 +185,10 @@ export class CredentialAccessRequestPage {
       Logger.log('Identity', "Mandatory claims:", this.mandatoryItems);
       Logger.log('Identity', "Optional claims:", this.optionalItems);
     });
+
+    this.avatarSubscription = this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
+      this.avatarDataUrl = dataUrl;
+    });
   }
 
   ionViewWillLeave() {
@@ -190,6 +196,11 @@ export class CredentialAccessRequestPage {
     if (this.onlineDIDDocumentStatusSub) {
       this.onlineDIDDocumentStatusSub.unsubscribe();
       this.onlineDIDDocumentStatusSub = null;
+    }
+
+    if (this.avatarSubscription) {
+      this.avatarSubscription.unsubscribe();
+      this.avatarSubscription = null;
     }
   }
 
@@ -606,13 +617,10 @@ export class CredentialAccessRequestPage {
 
   getCredIcon(item: ClaimRequest): any {
     if(item.name === 'avatar') {
-      if(!item.credential || !item.credential.getSubject() || !item.credential.getSubject()["avatar"]){
-        return this.translate.instant('identity.missing');
-      }
-
-      const subject = item.credential.getSubject();
-      const avatar = subject["avatar"];
-      return `data:${avatar["content-type"]};${avatar["type"]},${avatar["data"]}`;
+      if (this.avatarDataUrl)
+        return this.avatarDataUrl;
+      else
+      return `/assets/identity/smallIcons/nofill/name.svg`;
     } else {
       const imgName = item.name === "did" ? "finger-print" : item.name;
       const theme = this.theme.darkMode ? "dark" : "light";
