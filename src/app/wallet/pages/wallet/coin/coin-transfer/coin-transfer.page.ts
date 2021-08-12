@@ -464,7 +464,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         } else if (this.amount <= 0) {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else if (!this.masterWallet.subWallets[this.chainId].isBalanceEnough(new BigNumber(this.amount))) {
-            if (showToast) this.native.toast_trans('wallet.insuff-balance');
+            if (showToast) this.native.toast_trans('wallet.insufficient-balance');
         } else if (this.amount.toString().indexOf('.') > -1 && this.amount.toString().split(".")[1].length > 8) {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else {
