@@ -39,7 +39,7 @@ export const zh = {
         'confirm-count-prefix': '当前',
         'confirm-count-postfix': '个确认块。',
 
-        'reg-dpos-balance-not-enough': '注册DPoS节点需要5000EL质押金以及很少的交易费',
+        'reg-dpos-balance-not-enough': '注册DPoS节点需要5000ELA质押金以及很少的交易费',
         'dpos-deposit-warning': '您想注册DPoS节点吗？注册DPoS节点需要质押5000ELA，注册交易花费少量的交易费。',
         'text-dpos-name-already-used': '此DPoS节点名称已经存在',
         'dpos-unregister-warning': '您要注销DPoS节点吗？',

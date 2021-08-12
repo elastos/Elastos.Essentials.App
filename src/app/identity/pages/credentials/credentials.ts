@@ -153,7 +153,6 @@ export class CredentialsPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("identity.my-identity"));
-    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {

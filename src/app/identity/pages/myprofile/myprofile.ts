@@ -191,7 +191,6 @@ export class MyProfilePage {
       });
 
     this.titleBar.setTitle(this.translate.instant("identity.my-identity"));
-    this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "settings",
       iconPath: BuiltInIcon.SETTINGS

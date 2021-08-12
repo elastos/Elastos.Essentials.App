@@ -103,7 +103,7 @@ export class NodesService {
 
     // This is too slow, so call once.
     private isFetchingRewardOrDone = false;
-    private rewardResult: any = null; //TODO Do not use any.
+    private rewardResult: any = null;
 
     constructor(
         private storage: GlobalStorageService,
@@ -143,12 +143,11 @@ export class NodesService {
         await this.getStoredVotes();
         await this.fetchStats();
         await this.fetchNodes();
-        //TODO:: Maybe can remove
-        // if (!this.isFetchingRewardOrDone) {
-        //     this.isFetchingRewardOrDone = true
-        //     // Too slow, don't await
-        //     void this.fetchReward();
-        // }
+        if (!this.isFetchingRewardOrDone) {
+            this.isFetchingRewardOrDone = true
+            // Too slow, don't await
+            void this.fetchReward();
+        }
     }
 
     // Titlebar
@@ -210,7 +209,7 @@ export class NodesService {
         let fee = 10000;
         let amount = depositAmount + fee;
         if (this.voteService.sourceSubwallet.balance.lt(amount)) {
-            await this.popupProvider.ionicAlert('wallet.insuff-balance', 'dposregistration.reg-dpos-balance-not-enough');
+            await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'dposregistration.reg-dpos-balance-not-enough');
             return false;
         }
         return true;
@@ -327,7 +326,6 @@ export class NodesService {
         return -1;
     }
 
-    /*---- Reward ----
     async fetchCurrentHeight(): Promise<number> {
         Logger.log('dposvoting', 'Fetching height');
         try {
@@ -371,7 +369,6 @@ export class NodesService {
             }
         });
     }
-    ---- Reward ----*/
 
     /* getNodeIcon() {
       this._nodes.map(node => {

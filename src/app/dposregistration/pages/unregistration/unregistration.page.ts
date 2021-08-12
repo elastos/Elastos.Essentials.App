@@ -104,7 +104,6 @@ export class DPosUnRegistrationPage implements OnInit {
         Logger.log("DPosRegistrationPage", this.voteService.masterWalletId);
         this.masterWalletId = this.voteService.masterWalletId;
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-        // this.titleBar.setNavigationMode(null);
 
         this.dposInfo = this.nodesService.dposInfo;
         if (this.nodesService.dposInfo.state = 'Pending') {

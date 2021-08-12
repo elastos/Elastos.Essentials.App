@@ -55,7 +55,6 @@ export class MnemonicExportPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setNavigationMode(null);
     }
 
     init() {
