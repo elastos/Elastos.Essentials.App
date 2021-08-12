@@ -40,7 +40,7 @@
 
         <!-- BUTTONS FOOTER -->
         <div class="btn cancel ion-activatable ripple" [class.expand]="!balanceIsEnough()" (click)="cancelOperation()">
-            <h3 *ngIf="!balanceIsEnough()">{{ 'wallet.insuff-balance' | translate }}</h3>
+            <h3 *ngIf="!balanceIsEnough()">{{ 'wallet.insufficient-balance' | translate }}</h3>
             <ion-label>{{ 'common.cancel' | translate}}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </div>
