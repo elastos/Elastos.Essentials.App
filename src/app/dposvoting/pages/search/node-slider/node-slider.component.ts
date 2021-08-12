@@ -59,8 +59,12 @@ export class NodeSliderComponent implements OnInit {
   }
 
   getRewards(yearlyRewards: string): string {
-    const dailyRewards: number =  parseFloat(yearlyRewards) / 365;
-    return dailyRewards.toFixed(2);
+    if (yearlyRewards) {
+      const dailyRewards: number =  parseFloat(yearlyRewards) / 365;
+      return dailyRewards.toFixed(2);
+    } else {
+      return '...';
+    }
   }
 
   /* getEla(votes: number): string {
