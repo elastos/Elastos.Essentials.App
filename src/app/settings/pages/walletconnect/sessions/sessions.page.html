@@ -10,7 +10,7 @@
         <img src="assets/settings/icon/delete.svg">
       </ion-col>
     </ion-row>
-    <div class="no-session">
+    <div class="no-session" *ngIf="activeSessions && activeSessions.length == 0">
       <h3>{{ 'settings.wallet-connect-no-session' | translate }}</h3>
       <p>{{ 'settings.wallet-connect-no-session-info' | translate }}</p>
     </div>
