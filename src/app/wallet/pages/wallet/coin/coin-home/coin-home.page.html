@@ -1,11 +1,13 @@
 <ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-refresher (ionRefresh)="doRefresh($event)">
-        <ion-refresher-content refreshingSpinner="crescent"></ion-refresher-content>
-    </ion-refresher>
+    <ion-content>
+        <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+            <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
+            </ion-refresher-content>
+        </ion-refresher>
 
-  <!--   <ion-row class="refresh-row" [class.dark-refresh-row]="theme.darkMode" *ngIf="!uiService.returnedUser">
+        <!--   <ion-row class="refresh-row" [class.dark-refresh-row]="theme.darkMode" *ngIf="!uiService.returnedUser">
         <ion-col size="1.3" class="left-col">
             <ion-icon name="arrow-down"></ion-icon>
         </ion-col>
@@ -17,103 +19,108 @@
         </ion-col>
     </ion-row> -->
 
-    <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <ion-row class="main-title-row">
-            <ion-col size="12">
-                <h1>{{ getSubwalletTitle() }}</h1>
-                <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+': todaysTransactions} }}}</p>
-                <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' | translate:{todaysTransactions: todaysTransactions} }}</p>
-            </ion-col>
-        </ion-row>
-        <ion-row [class]="getSubwalletClass()">
-            <ion-row class="card-label-row">
-                <h3>{{ 'wallet.coin-balance' | translate }}</h3>
-                <div (click)="!chainIsERC20() ? currencyService.toggleCurrencyDisplay() : null">
-                    <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()">{{ Util.getWholeBalance(masterWallet.subWallets[chainId].getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.subWallets[chainId].getDisplayBalance().isZero() && !masterWallet.subWallets[chainId].getDisplayBalance().isNaN() && Util.getDecimalBalance(masterWallet.subWallets[chainId].getDisplayBalance())">.</span>
-                        <span class="decimals">{{ Util.getDecimalBalance(masterWallet.subWallets[chainId].getDisplayBalance()) }}</span>
-                        <span class="ela"> {{ getCoinBalanceCurrency() }}</span>
-                    </h4>
-                    <h4 *ngIf="currencyService.useCurrency && !chainIsERC20()">{{ Util.getWholeBalance(currencyService.getCurrencyBalance(masterWallet.subWallets[chainId].getDisplayBalance())) }}<span class="dot" *ngIf="!masterWallet.subWallets[chainId].getDisplayBalance().isZero() && !masterWallet.subWallets[chainId].getDisplayBalance().isNaN() && Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.subWallets[chainId].getDisplayBalance()))">.</span>
-                        <span class="decimals">{{ Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.subWallets[chainId].getDisplayBalance())) }}</span>
-                        <span class="ela">  {{ currencyService.selectedCurrency.symbol }}</span>
-                    </h4>
-                </div>
-            </ion-row>
-            <ion-row class="card-btn-row">
-                <ion-col size="3" *ngIf="!coinCanBeTransferred()"></ion-col>
-                <ion-col size="3" *ngIf="coinCanBeTransferred()">
-                    <div class="ion-activatable btn-box" (click)="transferFunds()">
-                        <img class="transfer" src="assets/wallet/buttons/transfer.png">
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <p *ngIf="chainIsELA()" class="btn-label">{{ 'wallet.coin-action-recharge' | translate }}</p>
-                    <p *ngIf="!chainIsELA()" class="btn-label">{{ 'wallet.coin-action-withdraw' | translate }}</p>
-                </ion-col>
-                <ion-col offset="0.25" size="3" (click)="sendFunds()">
-                    <div class="ion-activatable btn-box">
-                        <img class="send" src="assets/wallet/buttons/send.png">
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <p class="btn-label">{{ 'wallet.coin-action-send' | translate }}</p>
-                </ion-col>
-                <ion-col offset="0.25" size="3">
-                    <div class="ion-activatable btn-box" (click)="receiveFunds()">
-                        <img class="receive" src="assets/wallet/buttons/receive.png">
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </div>
-                    <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
+        <ion-grid class="container" [class.dark-container]="theme.darkMode">
+            <ion-row class="main-title-row">
+                <ion-col size="12">
+                    <h1>{{ getSubwalletTitle() }}</h1>
+                    <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+':
+                        todaysTransactions} }}}</p>
+                    <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' |
+                        translate:{todaysTransactions: todaysTransactions} }}</p>
                 </ion-col>
             </ion-row>
-            <div class="arrow-down"></div>
-        </ion-row>
-        <ion-row class="list-title-row">
-          <ion-col size="5">
-              <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
-          </ion-col>
-          <ion-col size="2">
-            <div class="spinner" *ngIf="loadingTX">
-              <ion-spinner name="bubbles"></ion-spinner>
-            </div>
-          </ion-col>
-        </ion-row>
+            <ion-row [class]="getSubwalletClass()">
+                <ion-row class="card-label-row">
+                    <h3>{{ 'wallet.coin-balance' | translate }}</h3>
+                    <div (click)="!chainIsERC20() ? currencyService.toggleCurrencyDisplay() : null">
+                        <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()">{{
+                            Util.getWholeBalance(masterWallet.subWallets[chainId].getDisplayBalance()) }}<span
+                                class="dot"
+                                *ngIf="!masterWallet.subWallets[chainId].getDisplayBalance().isZero() && !masterWallet.subWallets[chainId].getDisplayBalance().isNaN() && Util.getDecimalBalance(masterWallet.subWallets[chainId].getDisplayBalance())">.</span>
+                            <span class="decimals">{{
+                                Util.getDecimalBalance(masterWallet.subWallets[chainId].getDisplayBalance()) }}</span>
+                            <span class="ela"> {{ getCoinBalanceCurrency() }}</span>
+                        </h4>
+                        <h4 *ngIf="currencyService.useCurrency && !chainIsERC20()">{{
+                            Util.getWholeBalance(currencyService.getCurrencyBalance(masterWallet.subWallets[chainId].getDisplayBalance()))
+                            }}<span class="dot"
+                                *ngIf="!masterWallet.subWallets[chainId].getDisplayBalance().isZero() && !masterWallet.subWallets[chainId].getDisplayBalance().isNaN() && Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.subWallets[chainId].getDisplayBalance()))">.</span>
+                            <span class="decimals">{{
+                                Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.subWallets[chainId].getDisplayBalance()))
+                                }}</span>
+                            <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
+                        </h4>
+                    </div>
+                </ion-row>
+                <ion-row class="card-btn-row">
+                    <ion-col size="3" *ngIf="!coinCanBeTransferred()"></ion-col>
+                    <ion-col size="3" *ngIf="coinCanBeTransferred()">
+                        <div class="ion-activatable btn-box" (click)="transferFunds()">
+                            <img class="transfer" src="assets/wallet/buttons/transfer.png">
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </div>
+                        <p *ngIf="chainIsELA()" class="btn-label">{{ 'wallet.coin-action-recharge' | translate }}</p>
+                        <p *ngIf="!chainIsELA()" class="btn-label">{{ 'wallet.coin-action-withdraw' | translate }}</p>
+                    </ion-col>
+                    <ion-col offset="0.25" size="3" (click)="sendFunds()">
+                        <div class="ion-activatable btn-box">
+                            <img class="send" src="assets/wallet/buttons/send.png">
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </div>
+                        <p class="btn-label">{{ 'wallet.coin-action-send' | translate }}</p>
+                    </ion-col>
+                    <ion-col offset="0.25" size="3">
+                        <div class="ion-activatable btn-box" (click)="receiveFunds()">
+                            <img class="receive" src="assets/wallet/buttons/receive.png">
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </div>
+                        <p class="btn-label">{{ 'wallet.coin-action-receive' | translate }}</p>
+                    </ion-col>
+                </ion-row>
+                <div class="arrow-down"></div>
+            </ion-row>
+            <ion-row class="list-title-row">
+                <ion-col size="5">
+                    <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
+                </ion-col>
+                <ion-col size="2">
+                    <div class="spinner" *ngIf="loadingTX">
+                        <ion-spinner name="bubbles"></ion-spinner>
+                    </div>
+                </ion-col>
+            </ion-row>
 
-        <div *ngIf="transferList.length > 0">
-            <ion-row
-                class="item-row ripple ion-activatable"
-                *ngFor="let item of transferList"
-                (click)="onItem(item)"
-            >
-                <ion-col size="2" class="left-col">
-                    <div
-                        class="icon-container"
-                        [class.purple]="item.type === 1"
-                        [class.black]="item.type === 2"
-                        [class.orange]="item.type === 3"
-                    >
-                        <img [src]="item.payStatusIcon">
-                    </div>
-                </ion-col>
-                <ion-col [size]="item.amount.isZero() ? 7 : 5" class="middle-col">
-                    <h1>{{ item.name | translate }}</h1>
-                    <p class="memo" *ngIf="item.memo" >{{ item.memo }}</p>
-                    <p>{{ item.datetime }}</p>
-                </ion-col>
-                <ion-col [size]="item.amount.isZero() ? 3 : 5" class="right-col">
-                    <h1>{{ item.symbol }}{{ uiService.getFixedBalance(item.amount) }}</h1>
-                    <p *ngIf="subWallet.getAmountInExternalCurrency(item.amount)">
-                        {{ item.symbol }}{{ subWallet.getAmountInExternalCurrency(item.amount) }}
-                        {{ currencyService.selectedCurrency.symbol }}
-                    </p>
-                </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
-            </ion-row>
-        </div>
-        <div class="empty-list" *ngIf="transactionsLoaded && (transferList.length === 0)">
-            <img src="assets/wallet/icons/warning.svg"/>
-            <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
-        </div>
-        <div class="more" (click)="clickMore()" *ngIf="isShowMore">
-            {{ 'wallet.click-to-load-more' | translate }}
-        </div>
-    </ion-grid>
+            <div *ngIf="transferList.length > 0">
+                <ion-row class="item-row ripple ion-activatable" *ngFor="let item of transferList"
+                    (click)="onItem(item)">
+                    <ion-col size="2" class="left-col">
+                        <div class="icon-container" [class.purple]="item.type === 1" [class.black]="item.type === 2"
+                            [class.orange]="item.type === 3">
+                            <img [src]="item.payStatusIcon">
+                        </div>
+                    </ion-col>
+                    <ion-col [size]="item.amount.isZero() ? 7 : 5" class="middle-col">
+                        <h1>{{ item.name | translate }}</h1>
+                        <p class="memo" *ngIf="item.memo">{{ item.memo }}</p>
+                        <p>{{ item.datetime }}</p>
+                    </ion-col>
+                    <ion-col [size]="item.amount.isZero() ? 3 : 5" class="right-col">
+                        <h1>{{ item.symbol }}{{ uiService.getFixedBalance(item.amount) }}</h1>
+                        <p *ngIf="subWallet.getAmountInExternalCurrency(item.amount)">
+                            {{ item.symbol }}{{ subWallet.getAmountInExternalCurrency(item.amount) }}
+                            {{ currencyService.selectedCurrency.symbol }}
+                        </p>
+                    </ion-col>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-row>
+            </div>
+            <div class="empty-list" *ngIf="transactionsLoaded && (transferList.length === 0)">
+                <img src="assets/wallet/icons/warning.svg" />
+                <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
+            </div>
+            <div class="more" (click)="clickMore()" *ngIf="isShowMore">
+                {{ 'wallet.click-to-load-more' | translate }}
+            </div>
+        </ion-grid>
+    </ion-content>
 </ion-content>
