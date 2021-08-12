@@ -51,7 +51,6 @@ export class MenuPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('launcher.app-settings'));
-    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {

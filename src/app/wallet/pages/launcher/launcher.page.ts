@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Native } from '../../services/native.service';
 import { WalletCreationService } from '../../services/walletcreation.service';
-import { WalletManager } from '../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { Router } from '@angular/router';
+import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 
@@ -22,17 +20,9 @@ export class LauncherPage implements OnInit {
     constructor(
         public native: Native,
         private walletCreationService: WalletCreationService,
-        private walletManager: WalletManager,
         public translate: TranslateService,
-        private router: Router,
         private theme: GlobalThemeService
     ) {
-        const navigation = this.router.getCurrentNavigation();
-        if (navigation.extras.state) {
-            if(navigation.extras.state.from === 'settings') {
-                this.useBackNav = true;
-            }
-        }
     }
 
     ngOnInit() {
@@ -41,13 +31,6 @@ export class LauncherPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTheme('#732cd0', TitleBarForegroundMode.LIGHT)
         this.titleBar.setTitle(this.translate.instant('launcher.app-wallet'));
-        this.useBackNav ? this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK) : this.titleBar.setNavigationMode(null);
-
-   /*      if(this.walletManager.getWalletsCount() === 0) {
-            this.titleBar.setNavigationMode(null)
-        } else {
-            this.titleBar.setNavigationMode(TitleBarNavigationMode.BACK)
-        } */
     }
 
     ionViewWillLeave() {

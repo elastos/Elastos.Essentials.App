@@ -21,7 +21,6 @@ export class StatsPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-        this.titleBar.setNavigationMode(null);
     }
 
     updateStats(event) {

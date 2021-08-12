@@ -104,7 +104,6 @@ export class PickProviderPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.titleBar.setNavigationMode(null);
     this.titleBar.setMenuVisibility(true);
 
     const menuItems: TitleBarMenuItem[] = [

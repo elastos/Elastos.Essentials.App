@@ -167,7 +167,6 @@ export class ProfilePage {
   ionViewWillEnter() {
     this.buildAppAndAvatarCreds(false);
     this.titleBar.setTitle(this.translate.instant("identity.my-identity"));
-    this.titleBar.setNavigationMode(null);
   }
 
   ionViewDidEnter() {

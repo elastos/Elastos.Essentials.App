@@ -65,7 +65,6 @@ export class ScanPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-scanner'));
-        this.titleBar.setNavigationMode(null);
         this.showGalleryTitlebarKey(true);
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem)=>{
             if (clickedItem.key == "gallery") {
