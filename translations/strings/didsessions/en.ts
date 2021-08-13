@@ -92,7 +92,7 @@ export const en = {
     prepare: {
       'publish-title': 'Publishing your identity to the public ledger',
       'publish-intro': 'This is mandatory but takes a few seconds',
-      'sign-in-title': 'Signing in..',
+      'sign-in-title': 'Signing in...',
       'sign-in-intro': 'Entering Elastos Essentials',
       'hive-title': 'Making storage for your apps',
       'hive-intro': 'A storage space is being created on a random Elastos Hive storage provider. You can move your data somewhere else later.',

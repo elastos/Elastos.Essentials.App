@@ -5,9 +5,9 @@ export const zh = {
     'anonymous-contact': '匿名联系人',
 
     /********** Prompts **********/
-    'no-contacts-alert': '没有联系人!',
+    'no-contacts-alert': '没有联系人！',
     'no-contacts-with-cred-alert': '没有联系人持有所需信息',
-    'please-dont-add-self': '请添加其他人的身份ID(不能添加自己)',
+    'please-dont-add-self': '请添加其他人的身份ID（不能添加自己）',
     'restoring-contacts-backup': '恢复联系人',
     'contact-copied-to-clipboard': '联系人身份已复制',
     'resolve-error-header': 'Resolve DID 时出现错误',
@@ -25,7 +25,7 @@ export const zh = {
     'invite': '邀请',
 
     /********** Friends Pg **********/
-    'no-contacts': '联系人为空?',
+    'no-contacts': '联系人为空？',
     'add-a-contact': '请点击上面的添加图标添加联系人',
     'add-a-contact2': '请点击下面的添加图标添加联系人',
     'all-contacts': '所有联系人',
@@ -54,7 +54,7 @@ export const zh = {
     'please-add-a-valid-identity': '请添加有效的身份码',
 
     /********** Confirm Pg **********/
-    'do-you-want-to-add': '添加到联系人?',
+    'do-you-want-to-add': '添加到联系人？',
     'confirm-contact': '添加联系人',
 
     /********** Customize Pg **********/

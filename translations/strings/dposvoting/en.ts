@@ -21,7 +21,7 @@ export const en = {
         'menu-search': 'Search',
 
         /********** Search **********/
-        'search-supernode': 'Search for supernode..',
+        'search-supernode': 'Search for supernode...',
 
         /********** Slider **********/
         'slider-rank': 'Current Rank',
