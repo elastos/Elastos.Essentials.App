@@ -295,6 +295,8 @@ export class WalletManager {
     }
 
     public getMasterWallet(masterId: WalletID): MasterWallet {
+        if (masterId === null)
+            throw new Error("getMasterWallet() can't be called with a null ID");
         return this.masterWallets[masterId];
     }
 

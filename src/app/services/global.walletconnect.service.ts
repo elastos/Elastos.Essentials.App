@@ -68,17 +68,19 @@ export class GlobalWalletConnectService extends GlobalService {
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe(async activeWalletId => {
-      Logger.log("walletconnect", "Updating active connectors with new active wallet information");
-      for (let c of Array.from(this.connectors.values())) {
-        if (c.connected) {
-          try {
-            c.updateSession({
-              chainId: c.chainId,
-              accounts: [await this.getAccountFromMasterWallet(this.walletManager.getMasterWallet(activeWalletId))]
-            });
-          }
-          catch (e) {
-            Logger.warn("walletconnect", "Non critical updateSession() error:", e);
+      if (activeWalletId) { // null value when essentials starts, while wallets are not yet initialized.
+        Logger.log("walletconnect", "Updating active connectors with new active wallet information", activeWalletId);
+        for (let c of Array.from(this.connectors.values())) {
+          if (c.connected) {
+            try {
+              c.updateSession({
+                chainId: c.chainId,
+                accounts: [await this.getAccountFromMasterWallet(this.walletManager.getMasterWallet(activeWalletId))]
+              });
+            }
+            catch (e) {
+              Logger.warn("walletconnect", "Non critical updateSession() error:", e);
+            }
           }
         }
       }
