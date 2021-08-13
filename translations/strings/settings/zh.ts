@@ -75,6 +75,7 @@ export const zh = {
           'wallet-connect-request-error1': '似乎无法建立与应用程序的链接。 请从调用的应用程序',
           'get-a-new-qr-code': '获取新的二维码',
           'wallet-connect-request-error2': '并再次扫描它。',
+          'wallet-connect-request-error3': 'Connection seems to take a long time. You could cancel it and try again from the original app.',
           'scan-again': '重新扫描',
           'wallet-connect-request-title': '钱包连接请求',
           'wallet-connect-request-des': '您想使用以下外部应用程序打开会话吗？',

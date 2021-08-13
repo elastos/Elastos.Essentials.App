@@ -7,8 +7,11 @@
 </ion-content>
 
 <ion-footer *ngIf="suggestToResetSession" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
-  <p>
+  <p *ngIf="comingFromScanner()">
     {{ 'settings.wallet-connect-request-error1' | translate }} <b>{{ 'settings.get-a-new-qr-code' | translate }}</b>{{ 'settings.wallet-connect-request-error2' | translate }}
   </p>
-  <ion-button color="primary" (click)="scanAgain()">{{ 'settings.scan-again' | translate }}</ion-button>
+  <p *ngIf="!comingFromScanner()">
+    {{ 'settings.wallet-connect-request-error3' | translate }}
+  </p>
+  <ion-button color="primary" (click)="retryOrCancel()">{{ getActionButtonTitle() }}</ion-button>
 </ion-footer>
