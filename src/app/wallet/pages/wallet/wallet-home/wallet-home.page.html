@@ -115,8 +115,16 @@
                             <img src="assets/wallet/icons/dots.svg">
                         </ion-col>
                     </ion-row>
-                    <h2></h2>
-                    <h3>{{ 'wallet.total-amount' | translate }}</h3>
+                    <ion-row class="change-wallet">
+                        <ion-col size='6'>
+                          <h3>{{ 'wallet.total-amount' | translate }}</h3>
+                        </ion-col>
+                        <ion-col class="change-wallet-col" size='6' (click)="toggleActiveWalletSelection()"
+                            *ngIf="getPotentialActiveWallets().length > 1">
+                          <img src="assets/wallet/icons/change-wallet.svg">
+                          <span class="change">{{ 'wallet.change-wallet' | translate }}</span>
+                        </ion-col>
+                    </ion-row>
                     <div (click)="currencyService.toggleCurrencyDisplay()">
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot"
@@ -134,13 +142,6 @@
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>
                     </div>
-                    <ion-row class="change-wallet" (click)="toggleActiveWalletSelection()"
-                        *ngIf="getPotentialActiveWallets().length > 1">
-                        <ion-col class="change-wallet-col">
-                            <img src="assets/wallet/icons/change-wallet.svg">
-                            <span class="change">{{ 'wallet.change-wallet' | translate }}</span>
-                        </ion-col>
-                    </ion-row>
                 </ion-row>
                 <div class="arrow-down" [ngStyle]="{
                     'background-color': masterWallet.theme ?
