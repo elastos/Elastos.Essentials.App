@@ -5,7 +5,7 @@ export const zh = {
     "toast.provide-name": "请给您的服务提供商起一个名字",
     "toast.provide-name-update": "服务提供商名字已更新",
     "toast.provide-name2": "请为您的服务提供商添加名字",
-    "toast.copied": "已复制到剪切板!",
+    "toast.copied": "已复制到剪切板！",
     "alert.delete-title": "确认删除",
     "alert.delete-msg": "您确定要删除此配置吗？",
     "alert.okay": "好的",
@@ -102,7 +102,7 @@ export const zh = {
       "publish": "发布",
     },
     "order": {
-      "id": "ID:",
+      "id": "ID：",
       "plan": "计划：",
       "state": "状态：",
       "date": "购买日期：",

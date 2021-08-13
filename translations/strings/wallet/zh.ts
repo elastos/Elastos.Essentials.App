@@ -18,7 +18,7 @@ export const zh = {
         "exit": "退出",
         'click-to-load-more': "点击加载更多",
         'transaction-fail': '交易失败',
-        "confirmTitle": "确定?",
+        "confirmTitle": "确定？",
         "refresh-pulling-text": "更新钱包",
         "refresh-refreshing-text": "正在更新...",
         "intent-select-wallet": "请选择钱包",
@@ -27,8 +27,8 @@ export const zh = {
         /*******************
         * Generic Messages *
         ********************/
-        "copied": "已复制到剪切板!",
-        'text-did-balance-not-enough': '在链上写入DID信息需要少量的ELA来支付费用。请先从主钱包中将ELA（例如：0.1 ELA）充值到EID侧链!',
+        "copied": "已复制到剪切板！",
+        'text-did-balance-not-enough': '在链上写入DID信息需要少量的ELA来支付费用。请先从主钱包中将ELA（例如：0.1 ELA）充值到EID侧链！',
         'amount-null': "请输入交易金额",
         "amount-invalid": "请输入正确的金额",
         'eth-insuff-balance': '您必须有足够的ETHSC来支付gas费，才能发送Elastos ERC20代币',
@@ -171,7 +171,7 @@ export const zh = {
         "coin-receive-title": "接收 {{coinName}}",
         "coin-receive-ela-address": "您的{{coinName}}地址",
         "coin-receive-tap-to-copy": "点击地址即可复制",
-        "coin-address-copied": "{{coinName}} 地址已复制!",
+        "coin-address-copied": "{{coinName}} 地址已复制！",
         "coin-receive-address-list": "地址列表",
 
         /********************
@@ -308,8 +308,8 @@ export const zh = {
         * Access Page *
         ***************/
         "access-title": "钱包访问请求",
-        "access-subtitle-wallet-access-from": "数据请求来自于:",
-        "access-subtitle-access-mnemonic-from": "请求助记词来自于:",
+        "access-subtitle-wallet-access-from": "数据请求来自于：",
+        "access-subtitle-access-mnemonic-from": "请求助记词来自于：",
         "access-request-for-info": "此请求需要从您的钱包获取如下信息",
         "access-reason": "说明",
         "access-data-access": "请求的数据",
@@ -342,14 +342,14 @@ export const zh = {
         ********************/
         "dposvote-title": "超级节点投票",
 
-        "dposvote-voting-for": "您正在投票给:",
+        "dposvote-voting-for": "您正在投票给：",
         "dposvote-with": "使用:",
 
         /***********************
         * CRCrouncil Voting Transaction Page *
         ************************/
         "crcouncilvote-title": "CR委员投票",
-        "crcouncilvote-voting-with": "用于投票的 ELA 金额:",
+        "crcouncilvote-voting-with": "用于投票的 ELA 金额：",
 
         /***********************
         * ESC Transaction Page *
@@ -359,7 +359,7 @@ export const zh = {
         "esctransaction-intro": "您将在以太坊侧链上签名并运行一个智能合约",
         "esctransaction-approve-token": "Approve Token",
         "esctransaction-approve-token-intro": "此应用程序或网站将被允许代表您提取和使用您的 {{token}} 代币",
-        "esctransaction-you-are-using": "您正在使用:",
+        "esctransaction-you-are-using": "您正在使用：",
         "esctransaction-value": "金额:",
         "esctransaction-fees": "手续费:",
 
