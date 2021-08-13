@@ -161,24 +161,27 @@ export class CredentialAccessRequestPage {
     this.mandatoryItems = [];
     this.optionalItems = [];
 
+    // Show the spinner while we make sure if the DID is published or not
+    this.publishStatusFetched = false;
+
     this.profile = this.didService.getActiveDidStore().getActiveDid().getBasicProfile();
     this.credentials = this.didService.getActiveDidStore().getActiveDid().credentials;
     this.did = this.didService.getActiveDidStore().getActiveDid();
-    Logger.log('Identity', 'Publish status fetched?', this.publishStatusFetched);
     Logger.log('Identity', 'Did needs to be published?', this.didNeedsToBePublished);
+
+    this.receivedIntent = this.intentService.getReceivedIntent();
 
     this.onlineDIDDocumentStatusSub = this.didSyncService.onlineDIDDocumentsStatus.get(this.did.getDIDString()).subscribe((status) => {
       if (status.checked) {
         this.publishStatusFetched = true;
         this.didNeedsToBePublished = status.document == null;
+
+        void this.handleRequiresPublishing();
       }
     });
 
     void this.zone.run(async () => {
-      this.receivedIntent = this.intentService.getReceivedIntent();
-
       await this.getRequestedTheme();
-      await this.requiresPublishing();
       await this.organizeRequestedClaims();
 
       Logger.log('Identity', "Request Dapp color", this.requestDappColor);
@@ -219,7 +222,7 @@ export class CredentialAccessRequestPage {
     });
   }
 
-  requiresPublishing() {
+  private handleRequiresPublishing() {
     return new Promise<void>((resolve) => {
       // Intent service marks value as true if intent does not specify 'publisheddid' params
       const publisheddidParams = this.receivedIntent.params.publisheddid;
