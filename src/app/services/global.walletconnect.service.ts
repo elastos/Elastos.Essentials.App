@@ -16,6 +16,14 @@ import { MasterWallet } from '../wallet/model/wallets/MasterWallet';
 import { StandardCoinName } from '../wallet/model/Coin';
 import { ETHChainSubWallet } from '../wallet/model/wallets/ETHChainSubWallet';
 
+/**
+ * Indicates from where a request to initiate a new WC session came from
+ */
+export enum WalletConnectSessionRequestSource {
+  SCANNER, // User manually used the essentials scanner to scan a WC QR code
+  EXTERNAL_INTENT // Probably a request from the connectivity SDK (mobile app, web app) that opens Essentials directly
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,6 +31,8 @@ export class GlobalWalletConnectService extends GlobalService {
   private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
   private initiatingConnector: WalletConnect = null;
   private activeWalletSubscription: Subscription = null;
+
+  private onGoingRequestSource: WalletConnectSessionRequestSource = null;
 
   // Subject updated with the whole list of active sessions every time there is a change.
   public walletConnectSessionsStatus = new BehaviorSubject<Map<string, WalletConnect>>(new Map());
@@ -54,7 +64,7 @@ export class GlobalWalletConnectService extends GlobalService {
           let rawUrl: string = receivedIntent.params.url;
           if (this.canHandleUri(rawUrl)) {
             this.zone.run(()=>{
-              void this.handleWCURIRequest(rawUrl);
+              void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT);
             });
           }
         }
@@ -101,6 +111,10 @@ export class GlobalWalletConnectService extends GlobalService {
     this.activeWalletSubscription.unsubscribe();
   }
 
+  public getRequestSource(): WalletConnectSessionRequestSource {
+    return this.onGoingRequestSource;
+  }
+
   /* public async init(): Promise<void> {
     Logger.log("Intents", "Global intent service is initializing");
   } */
@@ -123,11 +137,13 @@ export class GlobalWalletConnectService extends GlobalService {
    * Handles a scanned or received wc:// url in order to initiate a session with a wallet connect proxy
    * server and client.
    */
-  public handleWCURIRequest(uri: string) {
+  public handleWCURIRequest(uri: string, source: WalletConnectSessionRequestSource) {
     if (!this.canHandleUri(uri))
       throw new Error("Invalid WalletConnect URL: "+uri);
 
-    Logger.log("walletconnect", "Handling uri request", uri);
+    Logger.log("walletconnect", "Handling uri request", uri, source);
+
+    this.onGoingRequestSource = source;
 
     // While we are waiting to receive the "session_request" command, which could possibly take
     // between a few ms and a few seconds depending on the network, we want to show a temporary screen

@@ -13,7 +13,7 @@ import { TitleBarIconSlot, TitleBarIcon, TitleBarMenuItem } from 'src/app/compon
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { isObject } from 'lodash-es';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { GlobalWalletConnectService, WalletConnectSessionRequestSource } from 'src/app/services/global.walletconnect.service';
 import { App } from 'src/app/model/app.enum';
 
 // The worker JS file from qr-scanner must be copied manually from
@@ -286,7 +286,7 @@ export class ScanPage {
             await this.sendIntentAsRaw(scannedContent)
         }
         else if (this.globalWalletConnectService.canHandleUri(scannedContent)) {
-            await this.globalWalletConnectService.handleWCURIRequest(scannedContent);
+            await this.globalWalletConnectService.handleWCURIRequest(scannedContent, WalletConnectSessionRequestSource.SCANNER);
         }
         else {
             try {
@@ -315,7 +315,7 @@ export class ScanPage {
             Logger.error("Scanner", "sendUrlIntent failed", err)
             // We call exitCurrentContext before,
             // so we need add scanner to navigation history again if do not exit scanner.
-            this.globalNav.navigateRoot(App.SCANNER)
+            void this.globalNav.navigateRoot(App.SCANNER)
             this.ngZone.run(() => {
                 void this.showNooneToHandleIntent()
             })
@@ -347,7 +347,7 @@ export class ScanPage {
             Logger.error("Scanner", "Intent sending failed", err)
             // We call exitCurrentContext before,
             // so we need add scanner to navigation history again if do not exit scanner.
-            this.globalNav.navigateRoot(App.SCANNER)
+            void this.globalNav.navigateRoot(App.SCANNER)
             this.ngZone.run(() => {
                 void this.showNooneToHandleIntent()
             })

@@ -75,6 +75,7 @@ export const fr = {
         'wallet-connect-request-error1': 'Il semble que le lien ne puisse pas être établi. Veuillez ',
         'get-a-new-qr-code': 'générer un nouveau QR code',
         'wallet-connect-request-error2': ' dans l\'application d\'origine et le scanner à nouveau.',
+        'wallet-connect-request-error3': 'La connexion semble prendre trop longtemps. Vous pouvez annuler et essayer à nouveau depuis l\'application d\'origine.',
         'scan-again': 'Scanner à nouveau',
         'wallet-connect-request-title': 'Requête Wallet Connect',
         'wallet-connect-request-des': 'Souhaitez-vous vous connecter à l\'application suivante?',
