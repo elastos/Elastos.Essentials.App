@@ -64,7 +64,12 @@
               "bignumber.js",
               "bn.js",
               "web3",
-              "@walletconnect/client"
+              "@walletconnect/client",
+              "@walletconnect/socket-transport",
+              "@walletconnect/encoding",
+              "@walletconnect/window-metadata",
+              "@walletconnect/environment",
+              "query-string"
             ]
           },
           "configurations": {
