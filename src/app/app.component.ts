@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Platform, IonRouterOutlet } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 
 import { GlobalStorageService } from './services/global.storage.service';
 import { GlobalThemeService } from './services/global.theme.service';
@@ -21,6 +22,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { GlobalHiveService } from './services/global.hive.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
 import { GlobalNetworksService } from './services/global.networks.service';
+import { GlobalFirebaseService } from './services/global.firebase.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -51,8 +53,10 @@ export class AppComponent {
         private publicationService: GlobalPublicationService,
         private globalHiveService: GlobalHiveService,
         private walletConnect: GlobalWalletConnectService,
+        private globalFirebaseService: GlobalFirebaseService,
         private globalNetworksService: GlobalNetworksService,
-        private globalElastosAPIService: GlobalElastosAPIService
+        private globalElastosAPIService: GlobalElastosAPIService,
+        private firebase: FirebaseX
     ) {
     }
 
@@ -95,6 +99,7 @@ export class AppComponent {
             await this.publicationService.init();
             await this.walletConnect.init();
             await this.globalHiveService.init();
+            void this.globalFirebaseService.init();
 
             // "DApps" initializations
             await this.globalAppBackgroundService.init();

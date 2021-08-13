@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "859676453180",
+    "firebase_url": "https://elastos-trinity-browser.firebaseio.com",
+    "project_id": "elastos-trinity-browser",
+    "storage_bucket": "elastos-trinity-browser.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859676453180:android:887c16b58f0c50e4425639",
+        "android_client_info": {
+          "package_name": "org.elastos.essentials.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859676453180-hiebt3ld587qvvfd3v0pc097akc28u9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWXRNytaDLjv3takKzA43LNcYNRguVbCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859676453180-hiebt3ld587qvvfd3v0pc097akc28u9e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "859676453180-488sh58m1qd6p0nt5oh5i712vdlr5eb4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.elastos.essentials.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
