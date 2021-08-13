@@ -47,7 +47,6 @@ export const en = {
         'developer-options': 'Developer Options',
         'background-services-enabled': 'Background services enabled',
         'background-services-disabled': 'Background services disabled',
-        'please-restart': 'Please restart Elastos Essentials to apply changes',
         'configure-network': 'Configure Network',
         'on': 'ON',
         'off': 'OFF',

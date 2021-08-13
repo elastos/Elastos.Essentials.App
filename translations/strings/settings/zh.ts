@@ -47,7 +47,6 @@ export const zh = {
           'developer-options': '开发者选项',
           'background-services-enabled': '启用后台服务',
           'background-services-disabled': '禁用后台服务',
-          'please-restart': '请重新启动 Elastos Essentials 以应用更改',
           'configure-network': '配置网络',
           'on': '开',
           'off': '关',
@@ -75,7 +74,7 @@ export const zh = {
           'wallet-connect-request-error1': '似乎无法建立与应用程序的链接。 请从调用的应用程序',
           'get-a-new-qr-code': '获取新的二维码',
           'wallet-connect-request-error2': '并再次扫描它。',
-          'wallet-connect-request-error3': 'Connection seems to take a long time. You could cancel it and try again from the original app.',
+          'wallet-connect-request-error3': '连接长时间无响应，您可以点击取消并从原应用程序重试。',
           'scan-again': '重新扫描',
           'wallet-connect-request-title': '钱包连接请求',
           'wallet-connect-request-des': '您想使用以下外部应用程序打开会话吗？',
@@ -85,8 +84,8 @@ export const zh = {
           'url': '网址',
           'wallet-accounts': '钱包账户',
           'connect': '连接',
-          'wallet-connect-no-session': 'No active session',
-          'wallet-connect-no-session-info': 'There is currently no session with a third party app through Wallet Connect. Find the Wallet Connect button on your external app and scan the provided QR code using Elastos Essentials\' scanner to start.',
+          'wallet-connect-no-session': '没有活动的会话',
+          'wallet-connect-no-session-info': '当前没有通过 Wallet Connect 与第三方应用程序的会话。请在外部应用程序上找到 Wallet Connect 按钮，然后使用 Elastos Essentials 的扫描仪扫描此二维码以建立会话连接。',
 
           /*********** Privacy page **********/
           'privacy': '隐私',
