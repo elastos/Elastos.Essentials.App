@@ -1,12 +1,18 @@
 import { Logger } from "./app/logger";
 
 export class TranslationsLoader {
-    public static async getTranslations(lang: string): Promise<{[key:string]:string}> {
-      let languageToLoad: string = lang;
+    private static supportedLanguages = ['en', 'zh', 'fr'];
 
-      Logger.log("translations", "Loading translations for language:", lang);
+    public static async getTranslations(lang: string): Promise<{ [key: string]: string }> {
+        // Fallback to english if the target language is not supported.
+        if (TranslationsLoader.supportedLanguages.indexOf(lang) < 0) {
+            Logger.log("translations", "Got request to switch language to "+lang+" but this language is not supported. Falling back to english");
+            lang = "en";
+        }
 
-      let translations = await import("./assets/generated/translations/"+lang+".json");
-      return Promise.resolve(translations);
+        Logger.log("translations", "Loading translations for language:", lang);
+
+        let translations = await import("./assets/generated/translations/" + lang + ".json");
+        return Promise.resolve(translations);
     }
-  }
+}
