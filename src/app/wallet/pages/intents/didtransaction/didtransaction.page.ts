@@ -68,6 +68,7 @@ export class DidTransactionPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.didtransaction-title"));
+        this.titleBar.setNavigationMode(null);
     }
 
     ionViewDidEnter() {

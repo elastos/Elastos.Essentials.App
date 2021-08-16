@@ -64,6 +64,10 @@ export class CRProposalVoteAgainstPage implements OnInit {
     ngOnInit() {
     }
 
+    ionViewWillEnter() {
+      this.titleBar.setNavigationMode(null);
+  }
+
     async ionViewDidEnter() {
         // TODO
         // this.titleBar.setTitle(this.translate.instant(''));

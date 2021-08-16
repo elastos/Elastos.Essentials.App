@@ -64,6 +64,7 @@ export class AccessPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('wallet.access-title'));
+        this.titleBar.setNavigationMode(null);
     }
 
     ionViewWillLeave() {

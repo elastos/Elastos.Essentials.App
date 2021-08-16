@@ -71,6 +71,7 @@ export class CRmembervotePage implements OnInit {
 
     ionViewWillEnter() {
       this.titleBar.setTitle(this.translate.instant('wallet.crcouncilvote-title'));
+      this.titleBar.setNavigationMode(null);
     }
 
     ionViewDidEnter() {

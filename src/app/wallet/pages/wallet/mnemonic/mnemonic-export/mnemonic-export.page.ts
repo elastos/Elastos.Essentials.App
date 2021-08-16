@@ -52,6 +52,9 @@ export class MnemonicExportPage implements OnInit {
 
     ngOnInit() {
         this.titleBar.setTitle(this.translate.instant('wallet.wallet-settings-backup-wallet'));
+        if (this.isFromIntent) {
+            this.titleBar.setNavigationMode(null);
+        }
     }
 
     ionViewWillEnter() {

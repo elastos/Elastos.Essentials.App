@@ -76,6 +76,10 @@ export class CRMemberRegisterPage implements OnInit {
     ngOnInit() {
     }
 
+    ionViewWillEnter() {
+      this.titleBar.setNavigationMode(null);
+    }
+
     ionViewDidEnter() {
         // TODO
         // this.titleBar.setTitle(this.translate.instant(''));

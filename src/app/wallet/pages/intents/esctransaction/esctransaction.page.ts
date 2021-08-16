@@ -76,6 +76,7 @@ export class EscTransactionPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('wallet.esctransaction-title'));
+        this.titleBar.setNavigationMode(null);
 
         void this.init();
     }
