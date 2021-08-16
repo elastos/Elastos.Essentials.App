@@ -1,18 +1,23 @@
 <ion-content class="ion-text-center">
-  <app-titlebar></app-titlebar>
-  <ion-grid class="container">
+  <browser-titlebar (urlChanged)="onUrlInput($event)"></browser-titlebar>
+  <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
     <h1>Discover dApps</h1>
+    <h2>Central place to find Essentials-compatible dApps.</h2>
 
-    <ion-row>
-      <ion-col>
-        <ion-button (click)="browserTokswapTest()">Tokswap</ion-button>
-        <ion-button (click)="browserTokbridgeTest()">Tokbridge</ion-button>
-        <ion-button (click)="browserMdexTest()">MDEX</ion-button>
-        <ion-button (click)="browserFildaTest()">Filda</ion-button>
-        <ion-button (click)="browserCredaTest()">Creda</ion-button>
-        <ion-button (click)="browserElavateTest()">Elavate</ion-button>
-        <ion-button (click)="browserPilotTest()">Pilot</ion-button>
-        <ion-button (click)="browserOtherTest()">Other</ion-button>
+    <ion-row *ngFor="let app of dApps" class="dapp-row" (click)="onDAppClicked(app)">
+      <ion-col class="left-col" size="2">
+        <div class="icon-container">
+          <img [src]="app.icon">
+        </div>
+      </ion-col>
+      <ion-col class="mid-col" offset="0.2" size="8">
+        <ion-label>
+          <div class="title">{{ app.title }}</div>
+          <div class="description">{{ app.description }}</div>
+        </ion-label>
+      </ion-col>
+      <ion-col class="right-col" size="1.8">
+        <img [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
       </ion-col>
     </ion-row>
 

@@ -21,7 +21,7 @@ export const fr = {
         'menu-search': 'Recherche',
 
         /********** Search **********/
-        'search-supernode': 'Rechercher un supernoeud..',
+        'search-supernode': 'Rechercher un supernoeud...',
 
         /********** Slider **********/
         'slider-rank': 'Position actuelle',

@@ -371,8 +371,16 @@ ion-slide, .single-slide {
     .card-label-row {
         .change-wallet {
             .change-wallet-col {
+                padding: 0;
                 text-align:right;
+
+                img {
+                    vertical-align:middle;
+                    width: 22px;
+                    height: 22px;
+                }
                 .change {
+                    vertical-align:middle;
                     margin-left: 5px;
                     color: #ffffff;
                 }

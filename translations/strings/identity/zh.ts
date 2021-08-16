@@ -13,7 +13,7 @@ export const zh = {
 
         /******************** Main Screens  ********************/
         // page: myprofile
-        'welcome-back': '欢迎回来!',
+        'welcome-back': '欢迎回来！',
         'identity-not-published-on-blockchain': '身份未发布',
         'identity-published-on-blockchain': '身份已发布',
         'credentials-published-on-blockchain': '凭证已发布',
@@ -66,8 +66,8 @@ export const zh = {
 
         // Credentiallist
         'publish-changes': '发布更新',
-        'publish-popup-content': '确认后信息将存储并保存在区块链上!',
-        'publish-popup-confirm-question': '确定?',
+        'publish-popup-content': '确认后信息将存储并保存在区块链上！',
+        'publish-popup-confirm-question': '确定？',
 
         // page: editprofile
         'edit-avatar': '编辑头像',
@@ -110,7 +110,7 @@ export const zh = {
         // component: qrcode
         'my-identity-qr-code': '我的DID身份码',
         'qr-code': '二维码',
-        'copied-to-clipboard': '已复制到剪切板!',
+        'copied-to-clipboard': '已复制到剪切板！',
 
         // component: options
         'edit-visibility': '编辑公开档案',
@@ -120,9 +120,9 @@ export const zh = {
         'export': '导出',
 
         // component: warning
-        'delete-creds': '删除凭证?',
+        'delete-creds': '删除凭证？',
         'delete-creds-prompt': '此凭证将会永久删除',
-        'publish-identity': '发布身份?',
+        'publish-identity': '发布身份？',
         'publish-visibility': '发布可见性？',
         'publish-visibility-prompt': '您可以发布新的更改，以便将其记录下来供所有人查看。此操作只花费少量的ELA交易费用',
         'publish-identity-prompt': '即将发布您的身份。只发布您选择公开可见的信息。',
@@ -130,7 +130,7 @@ export const zh = {
 
         // component: avatar
         'uploading-photo-to-hive': '将照片上传到Hive',
-        'avatar-publish': '您想发布您的头像吗?',
+        'avatar-publish': '您想发布您的头像吗？',
         'avatar-publish-cancel': '取消',
         'avatar-publish-yes': '是的',
 
@@ -167,7 +167,7 @@ export const zh = {
         'mandatory-data-access': '必需数据',
         'optional-data-access': '可选数据',
         'credaccess-information-missing': '您的个人资料中缺少必填信息。请先完成您的个人资料，然后重试。',
-        'cant-be-displayed': "(无法显示)",
+        'cant-be-displayed': "（无法显示）",
         'credaccess-publish-required': '必须具有公开的身份才能满足此请求。 请先发布您的身份，然后再试一次。',
         'credaccess-alert-publish-required-title': '需要公开身份',
         'credaccess-alert-publish-required-msg': '默认情况下，访问凭证要求发布您的身份。 请先发布您的身份，然后再试一次。',
@@ -198,10 +198,10 @@ export const zh = {
 
         // page: sethiveprovider
         'sethiveprovider-title': '注册 Hive 服务',
-        'sethiveprovider-app-id': '应用ID:',
+        'sethiveprovider-app-id': '应用ID：',
         'sethiveprovider-intro': '此新服务将保存在您的身份配置文件中',
-        'sethiveprovider-name': '名称:',
-        'sethiveprovider-address': '地址:',
+        'sethiveprovider-name': '名称：',
+        'sethiveprovider-address': '地址：',
 
         'publishing': {
             'publish-did': '发布身份'

@@ -1,0 +1,15 @@
+<ion-header class="ion-no-border">
+    <ion-row [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode">
+        <ion-col size="2">
+            <div class="img-btn">
+                <img [src]="getEssentialsLogoPath()" (click)="homeClicked()">
+            </div>
+        </ion-col>
+        <ion-col size="10">
+            <ion-input type="text" name="url" ngDefaultControl (keyup.enter)="emit()"
+                placeholder="Input a custom address here" [(ngModel)]="_url" class="url-input"
+                inputmode="url" enterkeyhint="go">
+            </ion-input>
+        </ion-col>
+    </ion-row>
+</ion-header>

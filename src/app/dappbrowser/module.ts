@@ -9,10 +9,12 @@ import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { HomePage } from './pages/home/home';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { BrowserTitleBarComponent } from './components/titlebar/titlebar.component';
 
 @NgModule({
   declarations: [
     HomePage,
+    BrowserTitleBarComponent
   ],
   imports: [
     CommonModule,
