@@ -71,6 +71,7 @@ export class DPoSVotePage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('wallet.dposvote-title'));
+        this.titleBar.setNavigationMode(null);
     }
 
     ionViewDidEnter() {

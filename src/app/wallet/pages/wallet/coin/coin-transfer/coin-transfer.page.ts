@@ -154,6 +154,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
+      if (this.intentId) {
+        this.titleBar.setNavigationMode(null);
+      }
     }
 
     ionViewWillLeave() {

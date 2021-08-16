@@ -82,6 +82,9 @@ export class CoinAddERC20Page implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.coin-adderc20-title"));
+        if (this.intentMode) {
+          this.titleBar.setNavigationMode(null);
+        }
         if (this.rootPage) {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
                 key: "backToHome",
