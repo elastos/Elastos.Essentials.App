@@ -1,0 +1,57 @@
+@import "src/app/components/titlebar/titlebar.component.scss";
+
+:host {
+    ion-header {
+        ion-row {
+            padding: 2px 2px;
+
+            ion-col {
+                .img-btn {
+                    height: 31px;
+                    width: 30px;
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .img-btn-mark {
+                    background-color: #e5e8f1;
+                    border-radius: 5px;
+                }
+
+                ion-input {
+                    height: 37px;
+                    background-color: #E5E8F1;
+                    border-radius: 5px;
+                    text-align: left;
+                    font-weight: 600;
+                    --padding-start: 10px;
+                    --padding-end: 10px;
+                    text-transform: lowercase;
+                }
+            }
+
+        }
+
+        .lightContainer {
+            ion-col {
+                ion-input {
+                    color: #888888;
+                }
+            }
+        }
+
+        .darkContainer {
+            ion-col {
+                .img-btn-mark {
+                    background-color: #313131;
+                }
+                ion-input {
+                    color: #BBBBBB;
+                    background-color: #313131;
+                }
+            }
+        }
+    }
+}
