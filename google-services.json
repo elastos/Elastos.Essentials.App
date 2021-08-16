@@ -32,46 +32,10 @@
               "client_type": 3
             },
             {
-              "client_id": "859676453180-am1v76m9qq2g810d802pi9qn0vq4ajj7.apps.googleusercontent.com",
+              "client_id": "859676453180-488sh58m1qd6p0nt5oh5i712vdlr5eb4.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.elastos.trinity.essentials"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:859676453180:android:4a3408056b2e2eaf425639",
-        "android_client_info": {
-          "package_name": "org.elastos.trinity.runtime"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "859676453180-hiebt3ld587qvvfd3v0pc097akc28u9e.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDWXRNytaDLjv3takKzA43LNcYNRguVbCo"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "859676453180-hiebt3ld587qvvfd3v0pc097akc28u9e.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "859676453180-am1v76m9qq2g810d802pi9qn0vq4ajj7.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "org.elastos.trinity.essentials"
+                "bundle_id": "org.elastos.essentials.app"
               }
             }
           ]
