@@ -157,6 +157,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let connector = new WalletConnect(
       {
         uri: uri,
+        storageId: ""+Math.random(), // Using a different storage ID for every sessions seems to be necessary to deal with cache/multi-sessions issues
         clientMeta: {
           description: "Elastos Essentials",
           url: "https://www.elastos.org",
