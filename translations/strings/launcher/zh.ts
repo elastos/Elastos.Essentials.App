@@ -57,7 +57,8 @@ export const zh = {
         'app-cr-proposal': 'CR 提案',
         'app-crproposal-description': '参与社区运营共治',
         'app-dev-tools': '开发者工具',
-
+        'app-browser': 'Discover dApps',
+        'app-browser-description': 'Discover dApps that you can use with Essentials',
         'app-dpos-registration': 'DPoS 参选',
         'app-dpos-registration-description': 'DPoS 参选管理',
         'app-crcouncil-registration': 'CR 委员参选',

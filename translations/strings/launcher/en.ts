@@ -57,7 +57,8 @@ export const en = {
         'app-cr-proposal': 'CR Proposal',
         'app-crproposal-description': 'Cyber Republic proposals',
         'app-dev-tools': 'Developer Tools',
-
+        'app-browser': 'Discover dApps',
+        'app-browser-description': 'Discover dApps that you can use with Essentials',
         'app-dpos-registration': 'DPoS Registration',
         'app-dpos-registration-description': 'DPoS registration manager',
         'app-crcouncil-registration': 'CR Registration',
