@@ -14,6 +14,7 @@ import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details
 import { Config } from 'src/app/wallet/config/Config';
 import { Util } from 'src/app/model/util';
 import { App } from 'src/app/model/app.enum';
+import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
 
 type VoteForProposalCommand = CRWebsiteCommand & {
     data: {
@@ -108,7 +109,7 @@ export class VoteForProposalPage {
             return false;
         }
 
-        const stakeAmount = Util.accMul(this.votingFees(), Config.SELA);
+        const stakeAmount = Util.accMul(this.amount, Config.SELA);
         await this.createVoteCRProposalTransaction(stakeAmount.toString());
         return true;
     }
@@ -125,15 +126,18 @@ export class VoteForProposalPage {
         this.signingAndSendingSuggestionResponse = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
-        // let invalidCandidates = await this.walletManager.computeVoteInvalidCandidates(this.voteService.masterWalletId);
-
-        // The transfer "votes" array must contain exactly ONE entry: the voted proposal
-        let votes = [];
+        let votes = {};
         votes[this.voteForProposalCommand.data.proposalHash] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
 
+        let crVoteContent: VoteContent = {
+          Type: VoteType.CRCProposal,
+          Candidates: votes
+        }
+
+        const voteContent = [crVoteContent];
         const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
-            votes,
+            voteContent,
             '', //memo
             );
 
