@@ -179,7 +179,7 @@ export class GlobalWalletConnectService extends GlobalService {
       */
       {
         // Optional
-        url: "https://walletconnect-push.elastos.net/v1",
+        url: "https://walletconnect-push.elastos.net/v2",
         type: "fcm",
         token: this.globalFirebaseService.token.value,
         peerMeta: true,
