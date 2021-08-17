@@ -33,6 +33,12 @@ export class HomePage {
       url: 'https://profile.site/'
     },
     {
+      icon: '/assets/browser/dapps/glidefinance.svg',
+      title: 'Glide Finance',
+      description: 'Elastos ecosystem decentralized exchange',
+      url: 'https://glidefinance.io/'
+    },
+    {
       icon: '/assets/browser/dapps/tokswap.png',
       title: 'TokSwap',
       description: 'Swap your tokens on the Elastos blockchain',
