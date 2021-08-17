@@ -145,7 +145,6 @@
       "cordova-plugin-screen-orientation": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-whitelist": {},
-      "cordova-sqlite-storage": {},
       "elastos-essentials-plugin-fingerprint": {
         "FACEID_USAGE_DESCRIPTION": " "
       },
@@ -157,10 +156,10 @@
       "elastos-essentials-plugin-internal": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
       "cordova-plugin-firebasex": {
+        "ANDROID_ICON_ACCENT": "#FFFFFFFF",
         "FIREBASE_ANALYTICS_COLLECTION_ENABLED": "true",
         "FIREBASE_PERFORMANCE_COLLECTION_ENABLED": "true",
         "FIREBASE_CRASHLYTICS_COLLECTION_ENABLED": "true",
-        "ANDROID_ICON_ACCENT": "#FF00FFFF",
         "ANDROID_FIREBASE_PERFORMANCE_MONITORING": "false",
         "ANDROID_PLAY_SERVICES_TAGMANAGER_VERSION": "17.0.0",
         "ANDROID_PLAY_SERVICES_AUTH_VERSION": "19.0.0",
@@ -178,11 +177,12 @@
         "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "18.1.0",
         "ANDROID_GSON_VERSION": "2.8.7",
         "ANDROID_FIREBASE_PERF_GRADLE_PLUGIN_VERSION": "1.4.0"
-      }
+      },
+      "cordova-sqlite-storage": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }

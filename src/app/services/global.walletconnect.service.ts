@@ -185,8 +185,8 @@ export class GlobalWalletConnectService extends GlobalService {
       */
       {
         // Optional
-        //url: "https://walletconnect-push.elastos.net/v2",
-        url: "http://192.168.31.113:5002",
+        url: "https://walletconnect-push.elastos.net/v2",
+        //url: "http://192.168.31.113:5002",
         type: "fcm",
         token: this.globalFirebaseService.token.value,
         peerMeta: true,
@@ -217,6 +217,11 @@ export class GlobalWalletConnectService extends GlobalService {
   private prepareConnectorForEvents(connector: WalletConnect) {
     this.connectors.set(connector.key, connector);
     this.walletConnectSessionsStatus.next(this.connectors);
+
+    // TMP DEBUG - TRY TO UNDERSTAND IF WS ARE DISCONNECTED AFTER SOME TIME IN BACKGROUND
+    /* setInterval(() => {
+      Logger.log("walletconnect", "Connector status", connector.key, "connected?", connector.connected);
+    }, 3000); */
 
     // Subscribe to session requests events, when a client app wants to link with our wallet.
     connector.on("session_request", (error, payload) => {

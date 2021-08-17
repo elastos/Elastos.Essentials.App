@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content original-src="index.html" src="https://192.168.31.113:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -39,11 +39,13 @@
             <manifest xmlns:tools="http://schemas.android.com/tools" />
         </edit-config>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:allowBackup="false" android:fullBackupContent="false" android:usesCleartextTraffic="true" tools:replace="android:allowBackup">
-                <uses-library android:name="org.apache.http.legacy" android:required="false" />
-            </application>
+            <application android:allowBackup="false" android:fullBackupContent="false" android:usesCleartextTraffic="true" tools:replace="android:allowBackup" />
         </edit-config>
-        <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
+        <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
+            <uses-library android:name="org.apache.http.legacy" android:required="false" />
+            <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/notification_icon" />
+        </config-file>
+        <config-file parent="/manifest/application/activity" target="app/src/main/AndroidManifest.xml">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -113,6 +115,12 @@
         <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png" />
         <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
+        <resource-file src="resources/android/notifications/drawable-mdpi/notification_icon.png" target="app/src/main/res/drawable-mdpi/notification_icon.png" />
+        <resource-file src="resources/android/notifications/drawable-hdpi/notification_icon.png" target="app/src/main/res/drawable-hdpi/notification_icon.png" />
+        <resource-file src="resources/android/notifications/drawable-xhdpi/notification_icon.png" target="app/src/main/res/drawable-xhdpi/notification_icon.png" />
+        <resource-file src="resources/android/notifications/drawable-xxhdpi/notification_icon.png" target="app/src/main/res/drawable-xxhdpi/notification_icon.png" />
+        <resource-file src="resources/android/notifications/drawable-xxxhdpi/notification_icon.png" target="app/src/main/res/drawable-xxxhdpi/notification_icon.png" />
+        <resource-file src="resources/android/notifications/drawable-xxxhdpi/notification_icon_large.png" target="app/src/main/res/drawable-xxxhdpi/notification_icon_large.png" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -209,5 +217,5 @@
     <allow-navigation href="http://192.168.8.214:8100" sessionid="02508576" />
     <allow-navigation href="http://192.168.31.114:8100" sessionid="3e677180" />
     <allow-navigation href="http://192.168.1.7:8100" sessionid="83f6b0e2" />
-    <allow-navigation href="https://192.168.31.113:8100" sessionid="b631e95c" />
+    <allow-navigation href="https://0.0.0.0:8101" sessionid="a8570f3d" />
 </widget>
