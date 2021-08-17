@@ -525,7 +525,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case StandardCoinName.ELA:
             case StandardCoinName.IDChain:
             case StandardCoinName.ETHSC:
-            case StandardCoinName.ETHDID:
+            // TODO : Open it after spvsdk fix the isSubWalletAddressValid bug.
+            // case StandardCoinName.ETHDID:
                 break;
             default:
                 chainIDTemp = StandardCoinName.ETHSC;
