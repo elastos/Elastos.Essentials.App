@@ -16,6 +16,7 @@ import { MasterWallet } from '../wallet/model/wallets/MasterWallet';
 import { StandardCoinName } from '../wallet/model/Coin';
 import { ETHChainSubWallet } from '../wallet/model/wallets/ETHChainSubWallet';
 import { GlobalFirebaseService } from './global.firebase.service';
+import { runDelayed } from '../helpers/sleep.helper';
 
 /**
  * Indicates from where a request to initiate a new WC session came from
@@ -74,9 +75,12 @@ export class GlobalWalletConnectService extends GlobalService {
     });
   }
 
-  public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+  public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // Re-activate existing sessions to reconnect to their wallet connect bridges.
-    await this.restoreSessions();
+    // IMPORTANT: Wait a moment before restoring sessions. We need to "make sure" (dirty for now)
+    // that all intent listeners are registered otherwise the received request from WC would be lost,
+    // if a WC request is pending (ex: essentials is starting from a WC intent or push notif).
+    runDelayed(() => this.restoreSessions(), 5000);
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe(async activeWalletId => {
@@ -97,6 +101,8 @@ export class GlobalWalletConnectService extends GlobalService {
         }
       }
     });
+
+    return;
   }
 
   /**
@@ -179,7 +185,8 @@ export class GlobalWalletConnectService extends GlobalService {
       */
       {
         // Optional
-        url: "https://walletconnect-push.elastos.net/v2",
+        //url: "https://walletconnect-push.elastos.net/v2",
+        url: "http://192.168.31.113:5002",
         type: "fcm",
         token: this.globalFirebaseService.token.value,
         peerMeta: true,
