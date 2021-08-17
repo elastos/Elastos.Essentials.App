@@ -35,6 +35,7 @@
     "@ionic-native/clipboard": "5.31.1",
     "@ionic-native/core": "5.30.0",
     "@ionic-native/file": "5.31.1",
+    "@ionic-native/firebase-x": "^5.35.0",
     "@ionic-native/in-app-browser": "^5.35.0",
     "@ionic-native/ionic-webview": "5.31.1",
     "@ionic-native/keyboard": "5.31.1",
@@ -97,6 +98,7 @@
     "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-app-version": "0.1.12",
     "cordova-plugin-camera": "5.0.1",
+    "cordova-plugin-firebasex": "^13.0.1",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "5.0.0",
     "cordova-plugin-printer": "0.8.0",
@@ -143,7 +145,6 @@
       "cordova-plugin-screen-orientation": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-whitelist": {},
-      "cordova-sqlite-storage": {},
       "elastos-essentials-plugin-fingerprint": {
         "FACEID_USAGE_DESCRIPTION": " "
       },
@@ -153,11 +154,35 @@
       "elastos-essentials-plugin-intent": {},
       "cordova-plugin-statusbar": {},
       "elastos-essentials-plugin-internal": {},
-      "@elastosfoundation/elastos-cordova-plugin-did": {}
+      "@elastosfoundation/elastos-cordova-plugin-did": {},
+      "cordova-plugin-firebasex": {
+        "ANDROID_ICON_ACCENT": "#FFFFFFFF",
+        "FIREBASE_ANALYTICS_COLLECTION_ENABLED": "true",
+        "FIREBASE_PERFORMANCE_COLLECTION_ENABLED": "true",
+        "FIREBASE_CRASHLYTICS_COLLECTION_ENABLED": "true",
+        "ANDROID_FIREBASE_PERFORMANCE_MONITORING": "false",
+        "ANDROID_PLAY_SERVICES_TAGMANAGER_VERSION": "17.0.0",
+        "ANDROID_PLAY_SERVICES_AUTH_VERSION": "19.0.0",
+        "ANDROID_FIREBASE_ANALYTICS_VERSION": "19.0.0",
+        "ANDROID_FIREBASE_MESSAGING_VERSION": "22.0.0",
+        "ANDROID_FIREBASE_CONFIG_VERSION": "21.0.0",
+        "ANDROID_FIREBASE_PERF_VERSION": "20.0.2",
+        "ANDROID_FIREBASE_AUTH_VERSION": "21.0.1",
+        "ANDROID_FIREBASE_INAPPMESSAGING_VERSION": "20.0.0",
+        "ANDROID_FIREBASE_FIRESTORE_VERSION": "23.0.2",
+        "ANDROID_FIREBASE_FUNCTIONS_VERSION": "20.0.0",
+        "ANDROID_FIREBASE_IID_VERSION": "21.1.0",
+        "ANDROID_FIREBASE_INSTALLATIONS_VERSION": "17.0.0",
+        "ANDROID_FIREBASE_CRASHLYTICS_VERSION": "18.1.0",
+        "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "18.1.0",
+        "ANDROID_GSON_VERSION": "2.8.7",
+        "ANDROID_FIREBASE_PERF_GRADLE_PLUGIN_VERSION": "1.4.0"
+      },
+      "cordova-sqlite-storage": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }

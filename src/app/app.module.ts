@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -239,6 +240,7 @@ export function TranslateLoaderFactory() {
     ScreenOrientation,
     SplashScreen,
     StatusBar,
+    FirebaseX,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
    // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
     { provide: ErrorHandler, useClass: SentryErrorHandler },

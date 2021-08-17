@@ -15,6 +15,7 @@ import { WalletManager } from '../wallet/services/wallet.service';
 import { MasterWallet } from '../wallet/model/wallets/MasterWallet';
 import { StandardCoinName } from '../wallet/model/Coin';
 import { ETHChainSubWallet } from '../wallet/model/wallets/ETHChainSubWallet';
+import { GlobalFirebaseService } from './global.firebase.service';
 import { runDelayed } from '../helpers/sleep.helper';
 
 /**
@@ -47,6 +48,7 @@ export class GlobalWalletConnectService extends GlobalService {
     private intents: GlobalIntentService,
     private globalNetworksService: GlobalNetworksService,
     private walletManager: WalletManager,
+    private globalFirebaseService: GlobalFirebaseService,
     private native: GlobalNativeService
   ) {
     super();
@@ -171,14 +173,25 @@ export class GlobalWalletConnectService extends GlobalService {
           name: "Elastos Essentials",
         },
       },
-      /* {
+      /*
+      About the push messages flow:
+      - When essentials gets an incoming request from a WC client, it creates a connector with the
+      push server info + user token info.
+      - This info is sent to the bridge, and the bridge remembers those info for the current "topic" (on going session talk).
+      - TBC - When the bridge receives a message request from the client for a topic, it calls our WC push
+      server API and that push server sends the Firebase push message to the user token previously registered.
+      - This silent push message is catched by the user's device and this wakes up Essentials, and the original
+      request can then be processed.
+      */
+      {
         // Optional
-        url: "<YOUR_PUSH_SERVER_URL>",
+        url: "https://walletconnect-push.elastos.net/v2",
+        //url: "http://192.168.31.113:5002",
         type: "fcm",
-        token: token,
+        token: this.globalFirebaseService.token.value,
         peerMeta: true,
-        language: language,
-      } */
+        language: "en",
+      }
     );
 
     // Remember this connector for a while, for example to be able to reject the session request
@@ -204,6 +217,11 @@ export class GlobalWalletConnectService extends GlobalService {
   private prepareConnectorForEvents(connector: WalletConnect) {
     this.connectors.set(connector.key, connector);
     this.walletConnectSessionsStatus.next(this.connectors);
+
+    // TMP DEBUG - TRY TO UNDERSTAND IF WS ARE DISCONNECTED AFTER SOME TIME IN BACKGROUND
+    /* setInterval(() => {
+      Logger.log("walletconnect", "Connector status", connector.key, "connected?", connector.connected);
+    }, 3000); */
 
     // Subscribe to session requests events, when a client app wants to link with our wallet.
     connector.on("session_request", (error, payload) => {
