@@ -162,6 +162,19 @@ export class GlobalWalletConnectService extends GlobalService {
     });
 
     // Create connector
+    let pushServerOptions = undefined;
+    if (this.globalFirebaseService.token.value) {
+      pushServerOptions = {
+        // Optional
+        url: "https://walletconnect-push.elastos.net/v2",
+        //url: "http://192.168.31.113:5002",
+        type: "fcm",
+        token: this.globalFirebaseService.token.value,
+        peerMeta: true,
+        language: "en",
+      };
+    }
+
     let connector = new WalletConnect(
       {
         uri: uri,
@@ -178,20 +191,12 @@ export class GlobalWalletConnectService extends GlobalService {
       - When essentials gets an incoming request from a WC client, it creates a connector with the
       push server info + user token info.
       - This info is sent to the bridge, and the bridge remembers those info for the current "topic" (on going session talk).
-      - TBC - When the bridge receives a message request from the client for a topic, it calls our WC push
+      - When the bridge receives a message request from the client for a topic, it calls our WC push
       server API and that push server sends the Firebase push message to the user token previously registered.
-      - This silent push message is catched by the user's device and this wakes up Essentials, and the original
-      request can then be processed.
+      - This push message is catched by the user's device and this shows a user notification if essentials is
+      not in foreground. User clicks the notification and Essentials is opened and handles the request.
       */
-      {
-        // Optional
-        url: "https://walletconnect-push.elastos.net/v2",
-        //url: "http://192.168.31.113:5002",
-        type: "fcm",
-        token: this.globalFirebaseService.token.value,
-        peerMeta: true,
-        language: "en",
-      }
+      pushServerOptions
     );
 
     // Remember this connector for a while, for example to be able to reject the session request
