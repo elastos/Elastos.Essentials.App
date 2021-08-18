@@ -27,7 +27,12 @@ export class WalletConnectSessionsPage implements OnInit {
     private walletConnect: GlobalWalletConnectService,
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.walletConnect.walletConnectSessionsStatus.subscribe(status => {
+      // Refresh sessions list after disconnection for example
+      this.activeSessions = this.walletConnect.getActiveSessions();
+    });
+  }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-sessions'));
@@ -46,7 +51,15 @@ export class WalletConnectSessionsPage implements OnInit {
   }
 
   getSessionID(session: WalletConnect): string {
-    return session.key.substr(0, 25)+"...";
+    //return session.key.substr(0, 25)+"...";
+    return session.key;
+  }
+
+  getSessionLogo(session: WalletConnect): string {
+    if (!session || !session.peerMeta || !session.peerMeta.icons || session.peerMeta.icons.length == 0)
+      return 'assets/settings/icon/walletconnect.svg';
+
+    return session.peerMeta.icons[0];
   }
 
   async killSession(session: WalletConnect) {
@@ -56,10 +69,5 @@ export class WalletConnectSessionsPage implements OnInit {
     catch (e) {
       console.warn("Kill session exception: ", e)
     }
-
-    // TODO! : subscribe to a "disconnected" event and refresh at that time
-    setTimeout(() => {
-      this.activeSessions = this.walletConnect.getActiveSessions();
-    }, 2000);
   }
 }

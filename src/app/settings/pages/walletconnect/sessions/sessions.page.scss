@@ -1,14 +1,37 @@
 @import "src/app/settings/root.scss";
 
 .subsetting-grid {
+    min-height: auto;
+
     .section-row {
+        .icon-col {
+            align-items: start;
+
+            img {
+                width: 70%;
+            }
+        }
+
         .left-col {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: start;
+            overflow: hidden;
 
-            p {
+            .name {
+                font-weight: 600;
+                font-size: 18px;
+            }
+
+            .description {
                 margin: 5px 0 0;
+            }
+
+            .sessionid {
+                margin: 5px 0 0;
+                color: #444;
+                font-size: 11px;
+                width: 100%;
             }
         }
 
@@ -22,5 +45,19 @@
     .no-session {
         text-align: center;
         margin: 40px;
+    }
+}
+
+.dark-subsetting-grid {
+    border-bottom: 0;
+
+    .section-row {
+        border-bottom: 0;
+
+        .left-col {
+            .sessionid {
+                color: #CCC;
+            }
+        }
     }
 }
