@@ -34,8 +34,6 @@ export const zh = {
         'eth-insuff-balance': '您必须有足够的ETHSC来支付gas费，才能发送Elastos ERC20代币',
         "sync-completed": "已完成同步",
         "not-a-valid-address": "地址无效",
-        "no-ethereum-token": "没有以太坊币种",
-        "please-add-ethereum-first": "请先将以太坊币种添加到您的钱包中",
         "transaction-pending" : "前一个交易正在确认中，请等待此交易确认后再执行",
         "share-erc20-token": "查看这个Elastos ERC20币种",
 
@@ -355,7 +353,7 @@ export const zh = {
         ************************/
         "esctransaction-title": "交易",
         "esctransaction-smart-contract": "智能合约",
-        "esctransaction-intro": "您将在以太坊侧链上签名并运行一个智能合约",
+        "esctransaction-intro": "您将在 ETHSC 上签名并运行一个智能合约",
         "esctransaction-approve-token": "Approve Token",
         "esctransaction-approve-token-intro": "此应用程序或网站将被允许代表您提取和使用您的 {{token}} 代币",
         "esctransaction-you-are-using": "您正在使用：",

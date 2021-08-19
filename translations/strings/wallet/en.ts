@@ -34,8 +34,6 @@ export const en = {
         'eth-insuff-balance': 'You must have enough ETHSC for gas fees in order to send Elastos ERC20 tokens',
         "sync-completed": "Sync completed",
         "not-a-valid-address": "Not a valid address",
-        "no-ethereum-token": "No ethereum token",
-        "please-add-ethereum-first": "Please add the ethereum token to your wallet first",
         "transaction-pending" : "There is already an on going transaction. Please wait for the transaction to be confirmed.",
         "share-erc20-token": "Check out this Elastos ERC20 Token",
 
@@ -354,7 +352,7 @@ export const en = {
         ************************/
         "esctransaction-title": "Transaction",
         "esctransaction-smart-contract": "Smart Contract",
-        "esctransaction-intro": "You are going to sign and run a smart contract on the Ethereum Sidechain.",
+        "esctransaction-intro": "You are going to sign and run a smart contract on the ETHSC.",
         "esctransaction-approve-token": "Approve Token",
         "esctransaction-approve-token-intro": "This application or website will be allowed to withdraw and spend your {{token}} tokens on your behalf.",
         "esctransaction-you-are-using": "You are using:",

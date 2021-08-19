@@ -35,8 +35,6 @@ export const fr = {
         'eth-insuff-balance': 'Vous n\'avez pas suffisamment d\'ELA/ETHSC pour payer cette transaction de jetons ERC20',
         "sync-completed": "Synchr. terminée",
         "not-a-valid-address": "Adresse invalide",
-        "no-ethereum-token": "Jeton Ethereum non activé",
-        "please-add-ethereum-first": "Veuillez d'abord ajouter le jeton Ethereum à votre portefeuille.",
         "transaction-pending" : "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
         "share-erc20-token": "Adresse de jeton ERC20 partagée",
 
