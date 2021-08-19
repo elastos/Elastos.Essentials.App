@@ -37,7 +37,7 @@ export class UXService {
         UXService.instance = this;
     }
 
-    async init() {
+    init() {
     }
 
     /**

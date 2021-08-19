@@ -14,7 +14,6 @@ import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.servic
 
 export class DID {
     public credentials: VerifiableCredential[] = [];
-    public DisplayCredentials = [];
 
     private didDocument: DIDDocument;
 
@@ -45,8 +44,6 @@ export class DID {
         })
 
         Logger.log("Identity", "Current credentials list: ", this.credentials);
-
-        //this.DisplayCredentials = this.profileService.allCreds;
     }
 
     private loadPluginCredentials(): Promise<DIDPlugin.VerifiableCredential[]> {
@@ -59,9 +56,18 @@ export class DID {
 
     /**
      */
-    addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: string[]): Promise<DIDPlugin.VerifiableCredential> {
+    upsertCredential(credentialId: DIDURL, props: any, password: string, notifyChange: boolean, userTypes?: string[]): Promise<DIDPlugin.VerifiableCredential> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject) => {
+            Logger.log('Identity', "Adding or updating credential with id:", credentialId, props, userTypes);
+
+            // Update use case: if this credential already exist, we delete it first before re-creating it.
+            let existingCredential = this.getCredentialById(credentialId);
+            if (existingCredential) {
+                Logger.log('Identity', "Credential with id " + existingCredential.pluginVerifiableCredential.getId() + " already exists - deleting");
+                await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()), false);
+            }
+
             Logger.log('Identity', "Adding credential with id:", credentialId, props, userTypes);
 
             let types: string[] = [
@@ -95,13 +101,20 @@ export class DID {
             }
 
             let vc = new VerifiableCredential(credential);
-            await this.addRawCredential(vc);
+            await this.addRawCredential(vc, false);
+
+            if (notifyChange) {
+                if (existingCredential)
+                    this.events.publish('did:credentialmodified', vc.pluginVerifiableCredential.getId());
+                else
+                    this.events.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
+            }
 
             resolve(credential);
         });
     }
 
-    async addRawCredential(vc: VerifiableCredential) {
+    async addRawCredential(vc: VerifiableCredential, notifyChange: boolean) {
         Logger.log('Identity', "Asking DIDService to store the credential", vc);
         await this.addPluginCredential(vc.pluginVerifiableCredential);
 
@@ -110,8 +123,27 @@ export class DID {
         // Add the new credential to the memory model
         this.credentials.push(vc);
 
-        // Notify listeners that a credential has been added
-        this.events.publish('did:credentialadded');
+        if (notifyChange) {
+            // Notify listeners that a credential has been added
+            this.events.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
+        }
+    }
+
+    public async upsertRawCredential(vc: VerifiableCredential, notifyChange: boolean) {
+        let existingCredential = this.getCredentialById(new DIDURL(vc.pluginVerifiableCredential.getId()));
+        if (existingCredential) {
+            // Existing: delete then add again (update)
+            await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()), false);
+        }
+
+        await this.addRawCredential(vc, false );
+
+        if (notifyChange) {
+            if (existingCredential)
+                this.events.publish('did:credentialmodified', vc.pluginVerifiableCredential.getId());
+            else
+                this.events.publish('did:credentialadded', vc.pluginVerifiableCredential.getId());
+        }
     }
 
     getCredentialById(credentialId: DIDURL): VerifiableCredential {
@@ -160,7 +192,7 @@ export class DID {
                     let existingCredential = this.getCredentialById(credentialId);
                     if (existingCredential) {
                         Logger.log('Identity', "Deleting credential with id " + existingCredential.pluginVerifiableCredential.getId() + " as it's being deleted from user profile.");
-                        await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()));
+                        await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()), true);
                     }
 
                     // Remove the info from the DID document, if any
@@ -188,18 +220,11 @@ export class DID {
                 }
 
                 try {
-                    // Update use case: if this credential already exist, we delete it first before re-creating it.
-                    let existingCredential = this.getCredentialById(credentialId);
-                    if (existingCredential) {
-                        Logger.log('Identity', "Credential with id " + existingCredential.pluginVerifiableCredential.getId() + " already exists - deleting");
-                        await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()));
-                    }
-
-                    Logger.log('Identity', "Adding credential for profile key " + entry.key);
+                    Logger.log('Identity', "Upserting credential for profile key " + entry.key);
                     // eslint-disable-next-line no-useless-catch
                     try {
-                        let credential = await this.addCredential(credentialId, props, password, ["BasicProfileCredential"]);
-                        Logger.log('Identity', "Credential added:", credential);
+                        let credential = await this.upsertCredential(credentialId, props, password, true, ["BasicProfileCredential"]);
+                        Logger.log('Identity', "Credential added/updated:", credential);
 
                         // Update the DID Document in case it contains the credential. Then we will have to
                         // ask user if he wants to publish a new version of his did document on chain.
@@ -310,7 +335,7 @@ export class DID {
             return true; // Doesn't exist? consider this has changed.
         }
 
-        // NOTE: FLAT comparison only for now, not deep.
+        // TODO: FLAT comparison only for now, not deep.
         let currentProps = currentCredential.pluginVerifiableCredential.getSubject();
         let credentialFragment = currentCredential.pluginVerifiableCredential.getFragment();
         if (currentProps[credentialFragment] != newProfileValue) {
@@ -331,7 +356,7 @@ export class DID {
         });
     }
 
-    public async deleteCredential(credentialDidUrl: DIDURL): Promise<boolean> {
+    public async deleteCredential(credentialDidUrl: DIDURL, notifyChange: boolean): Promise<boolean> {
         Logger.log('Identity', "Asking DIDService to delete the credential " + credentialDidUrl);
 
         await this.deletePluginCredential(credentialDidUrl);
@@ -347,6 +372,11 @@ export class DID {
             return false;
         }
         this.credentials.splice(deletionIndex, 1);
+
+        if (notifyChange) {
+            // Notify listeners that a credential has been deleted
+            this.events.publish('did:credentialdeleted', credentialDidUrl.toString());
+        }
 
         return true;
     }

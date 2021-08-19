@@ -151,6 +151,15 @@ export class ProfileService extends GlobalService {
       }
     });
 
+    this.events.subscribe("did:credentialadded", () => {
+      this.recomputeDocumentAndCredentials();
+    });
+    this.events.subscribe("did:credentialdeleted", () => {
+      this.recomputeDocumentAndCredentials();
+    });
+    this.events.subscribe("did:credentialmodified", () => {
+      this.recomputeDocumentAndCredentials();
+    });
     this.events.subscribe("credentials:modified", () => {
       this.recomputeDocumentAndCredentials();
     });
@@ -535,7 +544,7 @@ export class ProfileService extends GlobalService {
     // Delete locally
     await this.didService
       .getActiveDid()
-      .deleteCredential(new DIDURL(entry.credential.getId()));
+      .deleteCredential(new DIDURL(entry.credential.getId()), true);
     // Delete from local DID document
     if (
       currentDidDocument.getCredentialById(new DIDURL(entry.credential.getId()))

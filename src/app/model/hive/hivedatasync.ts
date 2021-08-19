@@ -130,6 +130,14 @@ export class HiveDataSync {
     }
 
     /**
+     * Stops all on going operations.
+     */
+    public stop() {
+        // Cancel on going sync, if any.
+        this.cancelOnGoingSync();
+    }
+
+    /**
      * Requests to stop the on going sync, if any, so we can probably add/remove more items and start a new sync
      * with the latest data.
      */

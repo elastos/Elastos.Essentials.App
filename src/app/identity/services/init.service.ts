@@ -6,6 +6,8 @@ import { TranslationService } from './translation.service';
 import { DIDEvents } from './events';
 import { ProfileService } from './profile.service';
 import { DIDSyncService } from './didsync.service';
+import { BackupService } from './backup.service';
+import { DIDService } from './did.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +19,20 @@ export class IdentityInitService {
     public didEvents: DIDEvents,
     private didSyncService: DIDSyncService,
     private profileService: ProfileService,
+    private didService: DIDService,
     private intentReceiverService: IntentReceiverService,
+    private backupService: BackupService,
     public translationService: TranslationService // Don't delete, static instance initialized
   ) {}
 
-  public async init(): Promise<void> {
-    await this.backgroundService.init();
-    await this.didSyncService.init();
-    await this.profileService.init();
-    await this.uxService.init();
-    await this.intentReceiverService.init();
+  public init() {
+    this.didService.init();
+    this.backgroundService.init();
+    this.didSyncService.init();
+    this.profileService.init();
+    this.uxService.init();
+    this.intentReceiverService.init();
+    this.backupService.init();
   }
 
   public start() {
