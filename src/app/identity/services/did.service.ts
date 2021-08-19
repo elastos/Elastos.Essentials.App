@@ -8,19 +8,24 @@ import { Native } from "./native";
 import { DIDStore } from "../model/didstore.model";
 import { DID } from "../model/did.model";
 import { ApiNoAuthorityException } from "../model/exceptions/apinoauthorityexception.exception";
-import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
+import { GlobalDIDSessionsService, IdentityEntry } from "src/app/services/global.didsessions.service";
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { Events } from "src/app/services/events.service";
+import { BehaviorSubject } from "rxjs";
+import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 
 declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable({
   providedIn: "root",
 })
-export class DIDService {
+export class DIDService extends GlobalService {
   public static instance: DIDService = null;
   public activeDidStore: DIDStore;
+
+  // Currently active DID.
+  public activatedDid: BehaviorSubject<DID> = new BehaviorSubject(null);
 
   constructor(
     public zone: NgZone,
@@ -33,7 +38,21 @@ export class DIDService {
     private didSessions: GlobalDIDSessionsService,
     private globalIntentService: GlobalIntentService
   ) {
+    super();
     DIDService.instance = this;
+  }
+
+  public init() {
+    GlobalServiceManager.getInstance().registerService(this);
+  }
+
+  onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    return;
+  }
+
+  onUserSignOut(): Promise<void> {
+    this.activatedDid.next(null);
+    return;
   }
 
   handleNull() {
@@ -78,11 +97,6 @@ export class DIDService {
         return false;
       }
 
-      if (storeId == this.getCurDidStoreId()) {
-        Logger.log('identity', "DID Store ID hasn't changed - not loading the DID Store");
-        return true; // Nothing changed but considered as successful.
-      }
-
       let didStore = await DIDStore.loadFromDidStoreId(storeId, this.events, this.didSessions, this.globalIntentService);
       if (!didStore) {
         void this.popupProvider.ionicAlert(
@@ -125,6 +139,8 @@ export class DIDService {
         return false;
       }
       await this.getActiveDidStore().setActiveDid(did);
+
+      this.activatedDid.next(did);
 
       this.events.publish("did:didchanged");
 
@@ -182,14 +198,6 @@ export class DIDService {
     if (!this.activeDidStore)
       return null;
     return this.activeDidStore.getActiveDid();
-  }
-
-  async deleteDid(did: DID) {
-    let storeId = this.getActiveDidStore().getId();
-    await this.getActiveDidStore().deleteDid(did);
-
-    // Sign out and go back to the DID session app
-    await this.didSessions.signOut();
   }
 
   generateMnemonic(language): Promise<any> {

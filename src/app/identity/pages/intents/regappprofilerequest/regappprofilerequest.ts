@@ -73,6 +73,7 @@ export class RegisterApplicationProfileRequestPage {
   ngOnInit() {
     // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
     // request initiated by publish() on a did document.
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.publishresultSubscription = this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
       Logger.log("identity", "diddocument:publishresultpopupclosed event received in regappprofile request", result);
       if (result.published) {
@@ -104,9 +105,9 @@ export class RegisterApplicationProfileRequestPage {
     Logger.log("identity", "Modified request data:", this.receivedIntent);
   }
 
-  async acceptRequest() {
+  acceptRequest() {
     // Prompt password if needed
-    AuthService.instance.checkPasswordThenExecute(async ()=>{
+    void AuthService.instance.checkPasswordThenExecute(async ()=>{
       let password = AuthService.instance.getCurrentUserPassword();
 
       // Create the main application profile credential
@@ -165,7 +166,7 @@ export class RegisterApplicationProfileRequestPage {
 
     // Create and append the new ApplicationProfileCredential credential to the local store.
     let credentialId = new DIDURL("#"+credentialTitle);
-    let createdCredential = await this.didService.getActiveDid().addCredential(credentialId, props, password, customCredentialTypes);
+    let createdCredential = await this.didService.getActiveDid().upsertCredential(credentialId, props, password, true, customCredentialTypes);
 
     // Add this credential to the DID document.
     await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(createdCredential, password);
@@ -173,7 +174,7 @@ export class RegisterApplicationProfileRequestPage {
     Logger.warn('identity', "diddoc after main app profile added:", this.didService.getActiveDid().getDIDDocument());
   }
 
-  async createIndependantCredentials(password: string) {
+  createIndependantCredentials(password: string) {
     Logger.log("identity", "Creating independant credentials");
 
     let sharedClaims = this.receivedIntent.params.sharedclaims;
@@ -183,7 +184,7 @@ export class RegisterApplicationProfileRequestPage {
 
         Logger.log("identity", "Creating independant credential with key "+key+" and value:", value);
         let credentialId = new DIDURL("#"+key);
-        let createdCredential: DIDPlugin.VerifiableCredential = await this.didService.getActiveDid().addCredential(credentialId, {key:value}, password);
+        let createdCredential: DIDPlugin.VerifiableCredential = await this.didService.getActiveDid().upsertCredential(credentialId, {key:value}, password, true);
         this.credentials.push(createdCredential);
         // Add this credential to the DID document.
         await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(createdCredential, password);

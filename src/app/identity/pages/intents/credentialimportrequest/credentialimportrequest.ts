@@ -204,7 +204,7 @@ export class CredentialImportRequestPage {
       let importedCredentialsResult: string[] = [];
       for (let displayableCredential of this.displayableCredentials) {
         Logger.log('Identity', "CredImportRequest - storing credential: ", displayableCredential.credential);
-        await this.didService.getActiveDid().addRawCredential(displayableCredential.credential);
+        await this.didService.getActiveDid().upsertRawCredential(displayableCredential.credential, true);
         // NOTE: Currently, DID SDK's storeCredential() on a DID doesn't require a storepass, which is strange... // this.authService.getCurrentUserPassword());
 
         // Also add the credential to the DID document if we need to publish it.

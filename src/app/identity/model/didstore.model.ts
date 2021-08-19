@@ -163,22 +163,6 @@ export class DIDStore {
         })
     }
 
-    public async deleteDid(did: DID) {
-        // Delete for real
-        await this.deletePluginDid(did.getDIDString());
-
-        // Delete from our local model
-        let didIndex = this.dids.findIndex(d => d == did);
-        this.dids.splice(didIndex, 1);
-
-        // Mark as deleted in permanent storage
-        await this.markDIDAsDeleted(did.getDIDString());
-
-        Logger.log('identity', "Deleted DID");
-
-        await this.setActiveDid(null);
-    }
-
     private async wasDIDDeleted(didString: DIDPlugin.DIDString): Promise<boolean> {
         let deleted = await LocalStorage.instance.get("deleted-did-" + didString) || false;
         return deleted;
