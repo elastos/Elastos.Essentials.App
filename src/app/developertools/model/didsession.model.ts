@@ -1,6 +1,7 @@
 import { CLIApp } from "./cliapp.model";
 import { AppPublicationCredentialSubject } from "./apppubcredsubject.model";
 import { Logger } from "src/app/logger";
+import { GlobalPublicationService } from "src/app/services/global.publication.service";
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -26,8 +27,7 @@ export class DIDSession {
         return new Promise((resolve, reject) => {
             didManager.initDidStore(didStoreId, (payload, memo) => {
                 // Create ID transaction
-                Logger.log("developertools", "Create id transaction callback called");
-                void session.createIdTransactionCallback(payload as string, memo);
+                Logger.warn("developertools", "Create id transaction callback called, but it's empty!");
             }, (didStore) => {
                 session.didStore = didStore;
                 didStore.exportMnemonic(storePassword, (mnemonic) => {
@@ -104,10 +104,12 @@ export class DIDSession {
     }
 
     private updateDIDDocumentsWithCredential(credentialName: string, properties: any, credentialType: string): Promise<void> {
-        return new Promise(async (resolve, reject) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise((resolve, reject) => {
             let validityDays: any = 5 * 365; // 5 years
 
             // Create a new credential that contains all the app info, in our local DID
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
             this.did.issueCredential(this.didString, credentialName, [credentialType], validityDays, properties, this.storePassword, async credential => {
                 Logger.log("developertools", "Credential issued:", credential);
                 // Also add this credential into the local DID document, ready for publishing.
@@ -129,7 +131,8 @@ export class DIDSession {
     }
 
     private deleteExistingCredentialIfAny(credentialName: string): Promise<void> {
-        return new Promise(async (resolve, reject)=>{
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise((resolve, reject) => {
             let credential = this.didDocument.getCredential(credentialName);
             if (credential) {
                 this.didDocument.deleteCredential(credential, this.storePassword, ()=>{
@@ -145,50 +148,9 @@ export class DIDSession {
         });
     }
 
-    public publishDIDDocument(): Promise < void> {
-        return new Promise((resolve, reject) => {
-            //DIDSession.onGoingIdTransactionSession = this;
-            this.onGoingIdTransactionResolve = resolve;
-            this.onGoingIdTransactionReject = reject;
-
-            Logger.log("developertools", "Publishing DID document");
-            this.didDocument.publish(this.storePassword, () => {
-            }, err => {
-                reject(err);
-            });
-        });
-    }
-
-    /**
-     * This callback is called after calling publish() on a DIDDocument. It returns a DID request payload
-     * that we have to forward to the wallet application so it can write the did request on the did
-     * sidechain for us.
-     */
-    private async createIdTransactionCallback(payload: string, memo: string) {
-        let jsonPayload = JSON.parse(payload);
-        Logger.log("developertools", "Received id transaction callback with payload: ", jsonPayload, payload);
-        let params = {
-            didrequest: jsonPayload
-        }
-
-        try {
-            Logger.log("developertools", "Sending didtransaction intent with params:", params);
-            let response = await essentialsIntentManager.sendIntent("https://wallet.elastos.net/didtransaction", params);
-            Logger.log("developertools", "Got didtransaction intent response.", response);
-
-            // If txid is set in the response this means a transaction has been sent on chain.
-            // If null, this means user has cancelled the operation (no ELA, etc).
-            if (response && response.result && response.result.txid) {
-                Logger.log("developertools", 'didtransaction response.result.txid ', response.result.txid);
-                this.onGoingIdTransactionResolve();
-            }
-            else {
-                Logger.log("developertools", 'didtransaction response content or response.result.txid is null');
-                this.onGoingIdTransactionReject("DID transaction operation cancelled");
-            }
-        }
-        catch (err) {
-            this.onGoingIdTransactionReject(err);
-        }
+    public async publishDIDDocument(): Promise < void> {
+        await GlobalPublicationService.instance.publishDIDFromStore(
+            this.didStore.getId(),
+            this.storePassword, this.didString, true);
     }
 }

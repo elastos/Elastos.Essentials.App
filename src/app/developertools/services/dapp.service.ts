@@ -30,23 +30,19 @@ export class DAppService {
         await this.loadDApps();
     }
 
-    private loadDApps() {
+    private async loadDApps(): Promise<void> {
         Logger.log("developertools", "Loading local dapps list");
 
-        return new Promise<void>((resolve, reject) => {
-            this.storage.getSetting<any[]>(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", null).then((dappsJson) => {
-                Logger.log("developertools", "Loaded dapps json:", dappsJson);
-                this.dapps = [];
-                if (dappsJson) {
-                    for (let dappJson of dappsJson) {
-                        Logger.log("developertools", "Adding Dapp from json:", dappJson);
-                        this.dapps.push(StorageDApp.fromJson(dappJson))
-                    }
-                }
-                Logger.log("developertools", "Loaded dapps after conversion:", this.dapps);
-                resolve();
-            })
-        });
+        let dappsJson = await this.storage.getSetting<any[]>(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", null);
+        Logger.log("developertools", "Loaded dapps json:", dappsJson);
+        this.dapps = [];
+        if (dappsJson) {
+            for (let dappJson of dappsJson) {
+                Logger.log("developertools", "Adding Dapp from json:", dappJson);
+                this.dapps.push(StorageDApp.fromJson(dappJson))
+            }
+        }
+        Logger.log("developertools", "Loaded dapps after conversion:", this.dapps);
     }
 
     public getDApps(): StorageDApp[] {
@@ -54,9 +50,9 @@ export class DAppService {
         return this.dapps;
     }
 
-    private storeDApp(dapp: StorageDApp) {
+    private async storeDApp(dapp: StorageDApp): Promise<void> {
         this.dapps.push(dapp);
-        this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps);
+        await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps);
     }
 
     public async getStorePassword(didStoreId: string): Promise<string> {
@@ -79,6 +75,7 @@ export class DAppService {
     }
 
     private createDAppInternal(appName: string, mnemonic: string, passphrase: string): Promise<CreatedDApp> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject) => {
             Logger.log("developertools", "Creating DApp with name " + appName);
 
@@ -104,7 +101,8 @@ export class DAppService {
                 didStore.initPrivateIdentity("ENGLISH", mnemonic, passphrase, storePassword, true, () => {
                     Logger.log("developertools", "Private identity created successfully");
 
-                    didStore.newDid(storePassword, "", (did) => {
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                    didStore.newDid(storePassword, "", async (did) => {
                         Logger.log("developertools", "DID created successfully", did);
 
                         let dapp = new StorageDApp();
@@ -113,7 +111,7 @@ export class DAppService {
                         dapp.didString = did.getDIDString();
 
                         // Store app info to permanent storage
-                        this.storeDApp(dapp);
+                        await this.storeDApp(dapp);
 
                         resolve({
                             dapp: dapp,
@@ -149,6 +147,7 @@ export class DAppService {
                 // No transaction to publish in this ID transaction callback, it should never be called.
                 // Another callback is used when publishing the app.
                 Logger.warn("developertools", "Create ID transaction callback called but we do not handle it!");
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             }, async (didStore) => {
                 Logger.log("developertools", "DID store created");
 
@@ -216,13 +215,13 @@ export class DAppService {
       return await popover.present();
     }
 
-    deleteApp(app: StorageDApp) {
-      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps = this.dapps.filter(dapp => dapp.didStoreId !== app.didStoreId));
-      this.popoverController.dismiss();
-      this.router.navigate(['/developertools/home']);
+    async deleteApp(app: StorageDApp): Promise<void> {
+      await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", this.dapps = this.dapps.filter(dapp => dapp.didStoreId !== app.didStoreId));
+      void this.popoverController.dismiss();
+      void this.router.navigate(['/developertools/home']);
     }
 
-    public deleteApps() {
-      this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", []);
+    public deleteApps(): Promise<void> {
+      return this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "developertools", "dapps", []);
     }
 }
