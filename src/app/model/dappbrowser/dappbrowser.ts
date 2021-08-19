@@ -25,8 +25,23 @@ export class DAppBrowser {
    * @param url The dApp URL to show.
    * @param iab Instance of the InAppBrowser cordova plugin.
    */
-  public static open(url: string, iab: InAppBrowser, httpClient: HttpClient): DAppBrowser {
+  public static async open(url: string, iab: InAppBrowser, httpClient: HttpClient): Promise<DAppBrowser> {
     let dappBrowser = new DAppBrowser();
+
+    // NOTE: Make sure to load everything before creating the browser, to be able to synchronously
+    // inject the code in the "loadstart" event. Otherwise, the target dapp code loads partially
+    // or fully before our injection and the web3 provider is sometimes not found.
+
+    // Prepare our web3 provider bridge and elastos connectors for injection
+    Logger.log("dappbrowser", "Loading the IAB web3 provider");
+    let web3ProviderCode = await httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
+
+    Logger.log("dappbrowser", "Loading the IAB elastos connector");
+    let elastosConnectorCode = await httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
+
+    // Get the active wallet address
+    let subwallet = WalletManager.instance.getActiveMasterWallet().getSubWallet(StandardCoinName.ETHSC);
+    dappBrowser.userAddress = await subwallet.createAddress();
 
     dappBrowser.browser = iab.create(url, '_blank', {
       location: 'yes',
@@ -42,16 +57,6 @@ export class DAppBrowser {
 
     // eslint-disable-next-line
     dappBrowser.browser.on('loadstart').subscribe(async event => {
-      // Prepare our web3 provider bridge and elastos connectors for injection
-      Logger.log("dappbrowser", "Loading the IAB web3 provider");
-      let web3ProviderCode = await httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
-      Logger.log("dappbrowser", "Loading the IAB elastos connector");
-      let elastosConnectorCode = await httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
-
-      // Get the active wallet address
-      let subwallet = WalletManager.instance.getActiveMasterWallet().getSubWallet(StandardCoinName.ETHSC);
-      dappBrowser.userAddress = await subwallet.createAddress();
-
       // Inject the web3 provider
       Logger.log("dappbrowser", "Executing Web3 provider injection script");
       void dappBrowser.browser.executeScript({
