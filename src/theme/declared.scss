@@ -2,6 +2,7 @@
 
 /********************** ALERT CONTROLLER **********************/
 .alert {
+  z-index:100000 !important;
   --ion-text-color: #000000;
 }
 
