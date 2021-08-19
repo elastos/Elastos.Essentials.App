@@ -1,0 +1,19 @@
+--- origin_plugins/cordova-plugin-ionic-webview/src/ios/CDVWKWebViewEngine.m	null
++++ plugins/cordova-plugin-ionic-webview/src/ios/CDVWKWebViewEngine.m	null
+@@ -660,6 +660,16 @@
+     }
+ }
+
++#ifdef DEBUG
++// Disable SSL certificate verification checks to allow ionic to run with --ssl and --livereload
++- (void)webView:(WKWebView *) webView
++        didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *) challenge
++        completionHandler:(void (^) (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential)) completionHandler
++{
++    SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
++    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:serverTrust]);
++}
++#endif
+
+ #pragma mark WKNavigationDelegate implementation
+

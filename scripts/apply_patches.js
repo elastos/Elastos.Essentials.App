@@ -32,6 +32,12 @@ const patch_dirs = [
     "plugin_id": "cordova-plugin-statusbar",
     "patch_dir": "patches/before_plugin_install_statusbar"
   },
+  {
+    "hook": "before_plugin_install",
+    "platform": "ios",
+    "plugin_id": "cordova-plugin-ionic-webview",
+    "patch_dir": "patches/before_plugin_install_ionicwebview"
+  },
 ]
 // no need to configure below
 
