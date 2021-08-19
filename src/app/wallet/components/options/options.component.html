@@ -1,4 +1,4 @@
-<ion-grid>
+<ion-grid [class.darkContainer]="theme.darkMode">
 
   <ion-row class="ion-activatable ripple" (click)="pasteFromClipboard()">
     <ion-label>{{ 'wallet.paste' | translate }}</ion-label>

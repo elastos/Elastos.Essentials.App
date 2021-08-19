@@ -60,8 +60,7 @@ ion-footer {
         align-items: flex-start;
 
         .top-row {
-            padding: 20px 10px 10px;
-            margin-bottom: 7.5px;
+            padding: 20px 0px;
 
             ion-col {
                 display: flex;
@@ -75,10 +74,20 @@ ion-footer {
 
             .right-col {
                 justify-content: flex-end;
+
+                img, ion-icon {
+                    padding: 0 10px;
+                }
+
+                ion-icon {
+                    width: 22px;
+                    height: 22px;
+                }
             }
         }
 
         h1, h2, h3, h4 {
+            padding: 0 10px;
             margin: 0;
             line-height: 1;
         }

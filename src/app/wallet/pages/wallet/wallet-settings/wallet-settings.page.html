@@ -16,7 +16,6 @@
                         <h1>{{ masterWallet.name }}</h1>
                     </ion-col>
                 </ion-row>
-                <h2></h2>
                 <h3>{{ 'wallet.total-amount' | translate }}</h3>
                 <div (click)="currencyService.toggleCurrencyDisplay()">
                     <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(masterWallet.getDisplayBalance())">.</span>

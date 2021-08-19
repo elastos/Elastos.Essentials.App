@@ -79,7 +79,7 @@
 
         .network-row {
             border-radius: 17px;
-            padding: 5px 10px 5px 5px;
+            padding: 5px 10px;
             margin-bottom: 7.5px;
             background-color: transparent;
             border: 1px solid #ededf0;
@@ -216,7 +216,7 @@
 
         .wallet-row {
             border-radius: 17px;
-            padding: 5px 10px 5px 5px;
+            padding: 5px 10px;
             margin-bottom: 7.5px;
             background-color: transparent;
             border: 1px solid #ededf0;
@@ -231,7 +231,6 @@
                     width: 100%;
                     height: 30px;
                     border-radius: 10px;
-                    //background: #6D29FF;
                 }
             }
 
@@ -249,11 +248,11 @@
                     font-size: 14px;
                     font-weight: 600;
                     letter-spacing: 0.7px;
-                    text-align: left;
                 }
 
                 .wallet-amount {
-                    margin-top: 5px;
+                    font-size: 13px;
+                    font-weight: 400;
                 }
             }
 
@@ -370,8 +369,11 @@ ion-slide, .single-slide {
 
     .card-label-row {
         .change-wallet {
-            .change-wallet-col {
+            ion-col {
                 padding: 0;
+            }
+
+            .change-wallet-col {
                 text-align:right;
 
                 img {

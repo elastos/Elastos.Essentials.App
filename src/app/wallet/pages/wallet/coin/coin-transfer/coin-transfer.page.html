@@ -118,7 +118,7 @@
 
             <h1>{{ 'wallet.send-to' | translate }}</h1>
             <ion-row class="item-row">
-                <ion-col size="10">
+                <ion-col size="11">
                     <ion-input
                         type="text"
                         clearInput
@@ -130,7 +130,7 @@
                     >
                     </ion-input>
                 </ion-col>
-                <ion-col offset="0.75" size="1.25" class="right-col" (click)="showOptions($event)">
+                <ion-col size="1" class="right-col" (click)="showOptions($event)">
                   <img [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
                 </ion-col>
             </ion-row>

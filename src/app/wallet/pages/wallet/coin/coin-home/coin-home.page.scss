@@ -37,7 +37,7 @@
     .card-row {
         position: relative;
         border-radius: 20px;
-        padding: 25px 20px 15px;
+        padding: 25px 10px 10px;
         margin-bottom: 32px;
 
         // Default background
@@ -52,6 +52,7 @@
             align-items: flex-start;
 
             h1, h2, h3, h4 {
+                padding: 0 10px;
                 margin: 0;
                 line-height: 1;
             }
@@ -233,33 +234,24 @@
 
     .list-title-row {
         margin-bottom: 10px;
-        margin-left: 5px;
 
-        h1, h2 {
-            margin: 0;
-            font-weight: 500;
-            line-height: 0.8;
-            letter-spacing: -0.45px;
+        .title-col {
+            margin-left: 5px;
+
+            h1 {
+                margin: 0;
+                font-weight: 500;
+                line-height: 0.8;
+                letter-spacing: -0.45px;
+                font-size: 18px;
+                text-align: left;
+            }
         }
 
-        h1 {
-          font-size: 18px;
-          text-align: left;
-        }
-
-        h2 {
-          letter-spacing: 0.32px;
-          font-size: 12px;
-          margin-top: 5px;
-          margin-left: 10px;
-        }
-
-        .spinner {
-          margin: 0 0;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+        .spinner-col {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 
