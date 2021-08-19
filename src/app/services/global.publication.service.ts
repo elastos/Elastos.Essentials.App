@@ -520,15 +520,15 @@ class DIDPublishingManager {
         //console.log("DEBUG emitPublicationStatusChangeFromPersistentInfo", this.persistentInfo);
 
         let txId: string;
-        if (this.persistentInfo.did.assist)
+        if (this.persistentInfo.did.assist && this.persistentInfo.did.assist.txId)
             txId = this.persistentInfo.did.assist.txId;
-        else if (this.persistentInfo.did.wallet)
+        else if (this.persistentInfo.did.wallet && this.persistentInfo.did.wallet.txId)
             txId = this.persistentInfo.did.wallet.txId;
 
         this.publicationService.publicationStatus.next({
             didString: this.persistentInfo.did.didString,
             status: this.persistentInfo.did.publicationStatus,
-            txId: txId
+            txId: txId || null
         });
     }
 
