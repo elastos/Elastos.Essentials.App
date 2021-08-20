@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flRoot"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="#E5E8F1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp">
+
+        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView
+            android:id="@+id/btnOuterLeft"
+            android:layout_width="40dp"
+            android:layout_height="41dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0" />
+
+        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView
+            android:id="@+id/btnInnerLeft"
+            android:layout_width="40dp"
+            android:layout_height="41dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <EditText
+            android:id="@+id/txtUrl"
+            android:layout_width="282dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:inputType="textWebEditText"
+            android:singleLine="true" />
+
+        <!--        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView-->
+        <!--            android:id="@+id/btnInnerRight"-->
+        <!--            android:layout_width="48dp"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_gravity="center_vertical"-->
+        <!--            android:layout_weight="0" />-->
+
+        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView
+            android:id="@+id/btnOuterRight"
+            android:layout_width="40dp"
+            android:layout_height="41dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        tools:text="In-app test title"></TextView>
+
+    <TextView
+        android:id="@+id/tvAnimationHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:alpha="0.7"
+        android:text="aph "
+        android:textColor="#FFFFFF"
+        android:textSize="9sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/progressBarBackground"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_gravity="bottom"
+                android:background="#50000000" />
+
+            <View
+                android:id="@+id/progressBarSeparator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="#40FFFFFF" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_gravity="top"
+            android:visibility="invisible" />
+    </FrameLayout>
+
+</FrameLayout>

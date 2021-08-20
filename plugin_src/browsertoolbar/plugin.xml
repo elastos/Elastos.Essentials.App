@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="elastos-essentials-plugins-browsertoolbar" version="1.0.0"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>BrowserToolBar</name>
+    <js-module name="BrowserToolBar" src="www/BrowserToolBar.js">
+        <clobbers target="browserToolBar" />
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="BrowserToolBar">
+                <param name="android-package" value="org.elastos.essentials.plugins.BrowserToolBar" />
+            </feature>
+        </config-file>
+        <!-- <source-file src="src/android/WebViewFragment.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" /> -->
+        <source-file src="src/android/TitleBarPlugin.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/BuiltInIcon.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarActivityType.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarIconSlot.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarNavigationMode.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/NativeStatusBarVisibility.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarForegroundMode.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarIconView.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarVisibility.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/ToolBar.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarIcon.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+        <source-file src="src/android/TitleBarMenuItem.java" target-dir="src/org/elastos/essentials/plugins/browsertoolbar" />
+
+        <resource-file src="src/android/res/fragments_view.xml" target="/res/layout/fragments_view.xml" />
+        <resource-file src="src/android/res/title_bar.xml" target="/res/layout/title_bar.xml" />
+        <resource-file src="src/android/res/title_bar_icon_view.xml" target="/res/layout/title_bar_icon_view.xml" />
+        <resource-file src="src/android/res/title_bar_menu.xml" target="/res/layout/title_bar_menu.xml" />
+        <resource-file src="src/android/res/title_bar_menu_item.xml" target="/res/layout/title_bar_menu_item.xml" />
+        <resource-file src="src/android/res/styles.xml" target="/res/values/styles.xml" />
+        <resource-file src="src/android/res/fadein.xml" target="/res/anim/fadein.xml" />
+        <resource-file src="src/android/res/fadeout.xml" target="/res/anim/fadeout.xml" />
+        <resource-file src="src/android/res/title_bar_background.xml" target="/res/drawable/title_bar_background.xml" />
+
+        <resource-file src="src/android/res/ic_back.xml" target="/res/drawable/ic_back.xml" />
+        <resource-file src="src/android/res/ic_close.xml" target="/res/drawable/ic_close.xml" />
+        <resource-file src="src/android/res/ic_url_lock.xml" target="/res/drawable/ic_url_lock.xml" />
+        <resource-file src="src/android/res/ic_elastos.xml" target="/res/drawable/ic_elastos.xml" />
+        <resource-file src="src/android/res/ic_vertical_menu.xml" target="/res/drawable/ic_vertical_menu.xml" />
+        <resource-file src="src/android/res/ic_back_darkmode.xml" target="/res/drawable/ic_back_darkmode.xml" />
+        <resource-file src="src/android/res/ic_close_darkmode.xml" target="/res/drawable/ic_close_darkmode.xml" />
+        <resource-file src="src/android/res/ic_url_lock_darkmode.xml" target="/res/drawable/ic_url_lock_darkmode.xml" />
+         <resource-file src="src/android/res/ic_elastos_darkmode.xml" target="/res/drawable/ic_elastos_darkmode.xml" />
+        <resource-file src="src/android/res/ic_vertical_menu_darkmode.xml" target="/res/drawable/ic_vertical_menu_darkmode.xml" />
+
+        <framework src="src/android/titlebar.gradle" custom="true" type="gradleReference"/>
+    </platform>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="BrowserToolBar">
+                <param name="ios-package" value="BrowserToolBar" />
+            </feature>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="UIViewControllerBasedStatusBarAppearance">
+            <true/>
+        </config-file>
+    </platform>
+</plugin>

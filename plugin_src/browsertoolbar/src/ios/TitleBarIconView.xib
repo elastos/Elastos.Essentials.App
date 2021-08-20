@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TitleBarIconView" customModule="elastOS" customModuleProvider="target">
+            <connections>
+                <outlet property="badgeView" destination="tld-yJ-g4p" id="Nuf-YJ-NHl"/>
+                <outlet property="iconView" destination="7SE-2C-WNx" id="xVI-Dr-EnZ"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="72" height="72"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7SE-2C-WNx" userLabel="Main image" customClass="AdvancedButton" customModule="elastOS" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="72" height="72"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
+                            <color key="value" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="spacingTrailing">
+                            <real key="value" value="5"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="spacingTitleIcon">
+                            <real key="value" value="0.0"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="spacingTop">
+                            <real key="value" value="5"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="spacingBottom">
+                            <real key="value" value="5"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="spacingLeading">
+                            <real key="value" value="5"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="mainIconClicked:" destination="-1" eventType="touchUpInside" id="AGR-o6-1AE"/>
+                    </connections>
+                </view>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_badge_red_circle" translatesAutoresizingMaskIntoConstraints="NO" id="tld-yJ-g4p" userLabel="Badge">
+                    <rect key="frame" x="64" y="0.0" width="8" height="8"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="8" id="FNb-hY-QNV"/>
+                        <constraint firstAttribute="width" constant="8" id="c8h-hW-btC"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="7SE-2C-WNx" secondAttribute="bottom" id="Gk4-Fl-Wgf"/>
+                <constraint firstItem="tld-yJ-g4p" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Ld1-D2-5Fb"/>
+                <constraint firstAttribute="trailing" secondItem="tld-yJ-g4p" secondAttribute="trailing" id="M8t-nP-cXb"/>
+                <constraint firstItem="7SE-2C-WNx" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Pe6-dg-bZI"/>
+                <constraint firstAttribute="trailing" secondItem="7SE-2C-WNx" secondAttribute="trailing" id="tPy-vy-b9i"/>
+                <constraint firstItem="7SE-2C-WNx" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="wLJ-Y4-gvC"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-111.59420289855073" y="-156.02678571428569"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="ic_badge_red_circle" width="70" height="70"/>
+    </resources>
+</document>

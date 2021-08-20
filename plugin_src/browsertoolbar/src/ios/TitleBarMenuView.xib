@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TitleBarMenuView" customModule="elastOS" customModuleProvider="target">
+            <connections>
+                <outlet property="itemsStackView" destination="KgA-Xq-TnL" id="GsX-3n-P4c"/>
+                <outlet property="panelView" destination="7g2-SJ-cV7" id="Mkn-CV-pmn"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7g2-SJ-cV7">
+                    <rect key="frame" x="274" y="94" width="130" height="105"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" placeholderIntrinsicWidth="110" placeholderIntrinsicHeight="85" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="KgA-Xq-TnL">
+                            <rect key="frame" x="10" y="10" width="110" height="85"/>
+                        </stackView>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <gestureRecognizers/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="KgA-Xq-TnL" secondAttribute="trailing" constant="10" id="Bf9-A8-0VT"/>
+                        <constraint firstAttribute="bottom" secondItem="KgA-Xq-TnL" secondAttribute="bottom" constant="10" id="pVY-tq-atm"/>
+                        <constraint firstItem="KgA-Xq-TnL" firstAttribute="top" secondItem="7g2-SJ-cV7" secondAttribute="top" constant="10" id="ySy-wy-GGl"/>
+                        <constraint firstItem="KgA-Xq-TnL" firstAttribute="leading" secondItem="7g2-SJ-cV7" secondAttribute="leading" constant="10" id="zrM-Ib-dbG"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="7g2-SJ-cV7" secondAttribute="trailing" constant="10" id="G3q-du-j3i"/>
+                <constraint firstItem="7g2-SJ-cV7" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="50" id="qPX-3u-9Yt"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outletCollection property="gestureRecognizers" destination="8wt-lt-hmQ" appends="YES" id="T3O-By-SKH"/>
+            </connections>
+            <point key="canvasLocation" x="137.68115942028987" y="141.96428571428569"/>
+        </view>
+        <tapGestureRecognizer id="8wt-lt-hmQ">
+            <connections>
+                <action selector="backgroundTapped:" destination="-1" id="2hY-YA-A7J"/>
+                <outlet property="delegate" destination="7g2-SJ-cV7" id="ovV-5Z-HPq"/>
+            </connections>
+        </tapGestureRecognizer>
+    </objects>
+</document>

@@ -99,6 +99,7 @@
     "cordova-plugin-app-version": "0.1.12",
     "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-firebasex": "^13.0.1-cli",
+    "cordova-plugin-inappbrowser": "file:plugin_src/inappbrowser",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "5.0.0",
     "cordova-plugin-printer": "0.8.0",
@@ -112,6 +113,7 @@
     "elastos-essentials-plugin-internal": "file:plugin_src/Internal",
     "elastos-essentials-plugin-passwordmanager": "file:../Plugins/PasswordManager",
     "elastos-essentials-plugin-wallet": "file:../Plugins/Wallet",
+    "elastos-essentials-plugins-browsertoolbar": "file:plugin_src/browsertoolbar",
     "es6-promise-plugin": "4.2.2",
     "eslint": "^7.28.0",
     "eslint-plugin-node": "^11.1.0",
@@ -176,7 +178,9 @@
         "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "18.1.0",
         "ANDROID_GSON_VERSION": "2.8.7",
         "ANDROID_FIREBASE_PERF_GRADLE_PLUGIN_VERSION": "1.4.0"
-      }
+      },
+      "cordova-plugin-inappbrowser": {},
+      "elastos-essentials-plugins-browsertoolbar": {}
     },
     "platforms": [
       "android"

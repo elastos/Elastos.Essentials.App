@@ -21,7 +21,11 @@ package org.apache.cordova.inappbrowser;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.webkit.WebView;
+import android.widget.EditText;
 
+import org.elastos.essentials.app.R;
+import org.elastos.essentials.plugins.browsertoolbar.ToolBar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,11 +34,21 @@ import org.json.JSONObject;
  */
 public class InAppBrowserDialog extends Dialog {
     Context context;
-    InAppBrowser inAppBrowser = null;
+    public InAppBrowser inAppBrowser = null;
+
+    public ToolBar toolbar;
+    public WebView webView = null;
+    public EditText edittext;
 
     public InAppBrowserDialog(Context context, int theme) {
         super(context, theme);
         this.context = context;
+        this.setContentView(R.layout.fragments_view);
+        webView = this.findViewById(R.id.webView);
+        toolbar = this.findViewById(R.id.titlebar);
+        edittext = toolbar.findViewById(R.id.txtUrl);
+
+        toolbar.initialize(this, "abc");
     }
 
     public void setInAppBroswer(InAppBrowser browser) {
@@ -53,5 +67,9 @@ public class InAppBrowserDialog extends Dialog {
                 this.inAppBrowser.closeDialog();
             }
         }
+    }
+
+    public void close() {
+        this.inAppBrowser.closeDialog();
     }
 }

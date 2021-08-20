@@ -1,0 +1,24 @@
+{
+  "name": "elastos-essentials-plugins-browsertoolbar",
+  "version": "1.0.0",
+  "description": "Elastos Browser ToolBar Plugin",
+  "cordova": {
+    "id": "elastos-essentials-plugins-browsertoolbar",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "browsertoolbar",
+    "trinity",
+    "elastos",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-browser"
+  ],
+  "author": "Elastos Foundation",
+  "license": "MIT"
+}

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TitleBarView" customModule="elastOS" customModuleProvider="target">
+            <connections>
+                <outlet property="animationHintLabel" destination="6wo-44-kzS" id="ORa-Ww-uU9"/>
+                <outlet property="btnInnerLeft" destination="eIU-Zx-Lj2" id="5Ic-FY-NYx"/>
+                <outlet property="btnInnerRight" destination="gQO-Jk-yxd" id="AgD-OM-NnD"/>
+                <outlet property="btnOuterLeft" destination="NUJ-Jq-dWa" id="MWy-0D-Njh"/>
+                <outlet property="btnOuterRight" destination="9FO-hv-pCX" id="Mmb-At-8yv"/>
+                <outlet property="progressBar" destination="j0x-4Z-CuE" id="GAC-QH-zdw"/>
+                <outlet property="progressBarBackground" destination="LzE-Zz-Rvg" id="2Z4-vw-YHD"/>
+                <outlet property="rootView" destination="iN0-l3-epB" id="3ly-uo-tmT"/>
+                <outlet property="titleLabel" destination="QgE-ZC-TrP" id="K05-2z-IfR"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="458" height="91"/>
+            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="gMt-fa-WuX">
+                    <rect key="frame" x="0.0" y="0.0" width="120" height="87"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" horizontalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NUJ-Jq-dWa" userLabel="Outer left icon" customClass="TitleBarIconView" customModule="elastOS" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="70" height="87"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
+                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eIU-Zx-Lj2" userLabel="Inner left icon" customClass="TitleBarIconView" customModule="elastOS" customModuleProvider="target">
+                            <rect key="frame" x="70" y="0.0" width="50" height="87"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
+                    </subviews>
+                </stackView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QgE-ZC-TrP">
+                    <rect key="frame" x="10" y="43.5" width="438" height="0.0"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="WbG-oN-BBX">
+                    <rect key="frame" x="398" y="0.0" width="100" height="87"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gQO-Jk-yxd" userLabel="Inner right icon" customClass="TitleBarIconView" customModule="elastOS" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="50" height="87"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
+                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9FO-hv-pCX" userLabel="Outer right icon" customClass="TitleBarIconView" customModule="elastOS" customModuleProvider="target">
+                            <rect key="frame" x="50" y="0.0" width="50" height="87"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
+                    </subviews>
+                </stackView>
+                <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6wo-44-kzS" userLabel="Animation hint label">
+                    <rect key="frame" x="0.0" y="75" width="458" height="12"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view hidden="YES" alpha="0.29999999999999999" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LzE-Zz-Rvg" userLabel="Progress bar background">
+                    <rect key="frame" x="0.0" y="86" width="458" height="4"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="4" id="IiJ-Wt-y4V"/>
+                    </constraints>
+                </view>
+                <view hidden="YES" alpha="0.25" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Jc-th-LAj" userLabel="Progress bar separator">
+                    <rect key="frame" x="0.0" y="90" width="458" height="1"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="CI2-Sn-5f6"/>
+                    </constraints>
+                </view>
+                <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j0x-4Z-CuE" userLabel="Progress bar">
+                    <rect key="frame" x="0.0" y="87" width="458" height="4"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="4" id="SgS-BM-ZT3"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="0.28235294117647058" green="0.31372549019607843" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="WbG-oN-BBX" secondAttribute="trailing" constant="5" id="2bH-ib-MJ9"/>
+                <constraint firstAttribute="bottom" secondItem="6wo-44-kzS" secondAttribute="bottom" constant="4" id="4u0-c1-TVG"/>
+                <constraint firstAttribute="bottom" secondItem="WbG-oN-BBX" secondAttribute="bottom" constant="4" id="5vx-kM-AjO"/>
+                <constraint firstItem="9Jc-th-LAj" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="6if-yc-jX6"/>
+                <constraint firstAttribute="bottom" secondItem="9Jc-th-LAj" secondAttribute="bottom" id="7J9-3j-G6o"/>
+                <constraint firstItem="LzE-Zz-Rvg" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="7aJ-2c-0Ri"/>
+                <constraint firstAttribute="trailing" secondItem="j0x-4Z-CuE" secondAttribute="trailing" id="7rf-UM-LU4"/>
+                <constraint firstItem="6wo-44-kzS" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="EbW-ol-dgb"/>
+                <constraint firstAttribute="trailing" secondItem="LzE-Zz-Rvg" secondAttribute="trailing" id="LDa-xS-wSD"/>
+                <constraint firstItem="QgE-ZC-TrP" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" constant="-2" id="LcP-GB-N1P"/>
+                <constraint firstItem="WbG-oN-BBX" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="NDT-Sy-xeP"/>
+                <constraint firstItem="gMt-fa-WuX" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="5" id="TyE-aP-sW6"/>
+                <constraint firstAttribute="bottom" secondItem="gMt-fa-WuX" secondAttribute="bottom" constant="4" id="VvJ-Nw-xNZ"/>
+                <constraint firstAttribute="trailing" secondItem="QgE-ZC-TrP" secondAttribute="trailing" constant="10" id="a7p-qP-eZm"/>
+                <constraint firstAttribute="bottom" secondItem="j0x-4Z-CuE" secondAttribute="bottom" id="eLs-yy-sZi"/>
+                <constraint firstAttribute="trailing" secondItem="6wo-44-kzS" secondAttribute="trailing" id="ebr-cZ-S1O"/>
+                <constraint firstAttribute="trailing" secondItem="9Jc-th-LAj" secondAttribute="trailing" id="hZd-Yq-RtE"/>
+                <constraint firstItem="j0x-4Z-CuE" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="n6F-ya-cKR"/>
+                <constraint firstItem="gMt-fa-WuX" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="onJ-J2-uFz"/>
+                <constraint firstItem="QgE-ZC-TrP" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="10" id="vIz-hT-SYn"/>
+                <constraint firstAttribute="bottom" secondItem="LzE-Zz-Rvg" secondAttribute="bottom" constant="1" id="yZS-Dn-DsR"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="160.86956521739131" y="-438.28125"/>
+        </view>
+    </objects>
+</document>

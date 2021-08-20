@@ -38,6 +38,7 @@ import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -71,6 +72,8 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.LOG;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
+import org.elastos.essentials.app.R;
+import org.elastos.essentials.plugins.browsertoolbar.ToolBar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -116,10 +119,13 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String FOOTER_COLOR = "footercolor";
     private static final String BEFORELOAD = "beforeload";
     private static final String FULLSCREEN = "fullscreen";
+    private static final String TITLE = "title";
+    private static final String DARKMODE = "darkMode";
 
-    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR);
+    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR, TITLE);
 
     private InAppBrowserDialog dialog;
+    private ToolBar toolbar;
     private WebView inAppWebView;
     private EditText edittext;
     private CallbackContext callbackContext;
@@ -147,6 +153,9 @@ public class InAppBrowser extends CordovaPlugin {
     private boolean fullscreen = true;
     private String[] allowedSchemes;
     private InAppBrowserClient currentClient;
+
+    private String title;
+    private boolean darkMode = false;
 
     /**
      * Executes the request and returns PluginResult.
@@ -517,6 +526,10 @@ public class InAppBrowser extends CordovaPlugin {
      * Closes the dialog
      */
     public void closeDialog() {
+        closeDialogWithMode(null);
+    }
+
+    public void closeDialogWithMode(String mode) {
         this.cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -544,12 +557,23 @@ public class InAppBrowser extends CordovaPlugin {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("type", EXIT_EVENT);
+                    if (mode != null) {
+                        obj.put("mode", mode);
+                    }
                     sendUpdate(obj, false);
                 } catch (JSONException ex) {
                     LOG.d(LOG_TAG, "Should never happen");
                 }
             }
         });
+    }
+
+    /**
+     * Gt to the essentials launcher page
+     *
+     */
+    public void goToLauncher() {
+        closeDialogWithMode("goToLauncher");
     }
 
     /**
@@ -710,6 +734,12 @@ public class InAppBrowser extends CordovaPlugin {
             if (fullscreenSet != null) {
                 fullscreen = fullscreenSet.equals("yes") ? true : false;
             }
+
+            title = features.get(TITLE);
+            String darkModeSet = features.get(DARKMODE);
+            if (darkModeSet != null) {
+                darkMode = darkModeSet.equals("yes") ? true : false;
+            }
         }
 
         final CordovaWebView thatWebView = this.webView;
@@ -780,101 +810,114 @@ public class InAppBrowser extends CordovaPlugin {
                 if (dialog != null) {
                     dialog.dismiss();
                 };
+//
+//                fragment = WebViewFragment.newInstance("abc");
 
-                // Let's create the main dialog
+//                // Let's create the main dialog
                 dialog = new InAppBrowserDialog(cordova.getActivity(), android.R.style.Theme_NoTitleBar);
                 dialog.getWindow().getAttributes().windowAnimations = android.R.style.Animation_Dialog;
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 if (fullscreen) {
                     dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 }
                 dialog.setCancelable(true);
                 dialog.setInAppBroswer(getInAppBrowser());
-
-                // Main container layout
-                LinearLayout main = new LinearLayout(cordova.getActivity());
-                main.setOrientation(LinearLayout.VERTICAL);
-
-                // Toolbar layout
-                RelativeLayout toolbar = new RelativeLayout(cordova.getActivity());
-                //Please, no more black!
-                toolbar.setBackgroundColor(toolbarColor);
-                toolbar.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, this.dpToPixels(44)));
-                toolbar.setPadding(this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2));
-                if (leftToRight) {
-                    toolbar.setHorizontalGravity(Gravity.LEFT);
-                } else {
-                    toolbar.setHorizontalGravity(Gravity.RIGHT);
+//
+//                // Main container layout
+//                LinearLayout main = new LinearLayout(cordova.getActivity());
+//                main.setOrientation(LinearLayout.VERTICAL);
+//
+//                // Toolbar layout
+//                LayoutInflater li = LayoutInflater.from(cordova.getActivity());
+//                toolbar = (TitleBar)li.inflate(R.layout.title_bar, null);
+                toolbar = dialog.toolbar;
+                edittext = dialog.edittext;
+                toolbar.setDarkMode(darkMode);
+                toolbar.initialize(dialog, "test");
+                if (title != null) {
+                    toolbar.setTitle(title);
+                    edittext.setVisibility(View.GONE);
                 }
-                toolbar.setVerticalGravity(Gravity.TOP);
+//
+//                //Please, no more black!
+//                toolbar.setBackgroundColor(toolbarColor);
+//                toolbar.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, this.dpToPixels(44)));
+//                toolbar.setPadding(this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2));
+//                if (leftToRight) {
+//                    toolbar.setHorizontalGravity(Gravity.LEFT);
+//                } else {
+//                    toolbar.setHorizontalGravity(Gravity.RIGHT);
+//                }
+//                toolbar.setVerticalGravity(Gravity.TOP);
+//
+//                // Action Button Container layout
+//                RelativeLayout actionButtonContainer = new RelativeLayout(cordova.getActivity());
+//                RelativeLayout.LayoutParams actionButtonLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//                if (leftToRight) actionButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//                else actionButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+//                actionButtonContainer.setLayoutParams(actionButtonLayoutParams);
+//                actionButtonContainer.setHorizontalGravity(Gravity.LEFT);
+//                actionButtonContainer.setVerticalGravity(Gravity.CENTER_VERTICAL);
+//                actionButtonContainer.setId(leftToRight ? Integer.valueOf(5) : Integer.valueOf(1));
+//
+//                // Back button
+//                ImageButton back = new ImageButton(cordova.getActivity());
+//                RelativeLayout.LayoutParams backLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+//                backLayoutParams.addRule(RelativeLayout.ALIGN_LEFT);
+//                back.setLayoutParams(backLayoutParams);
+//                back.setContentDescription("Back Button");
+//                back.setId(Integer.valueOf(2));
+//                Resources activityRes = cordova.getActivity().getResources();
+//                int backResId = activityRes.getIdentifier("ic_action_previous_item", "drawable", cordova.getActivity().getPackageName());
+//                Drawable backIcon = activityRes.getDrawable(backResId);
+//                if (navigationButtonColor != "") back.setColorFilter(android.graphics.Color.parseColor(navigationButtonColor));
+//                back.setBackground(null);
+//                back.setImageDrawable(backIcon);
+//                back.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                back.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
+//                back.getAdjustViewBounds();
+//
+//                back.setOnClickListener(new View.OnClickListener() {
+//                    public void onClick(View v) {
+//                        goBack();
+//                    }
+//                });
+//
+//                // Forward button
+//                ImageButton forward = new ImageButton(cordova.getActivity());
+//                RelativeLayout.LayoutParams forwardLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+//                forwardLayoutParams.addRule(RelativeLayout.RIGHT_OF, 2);
+//                forward.setLayoutParams(forwardLayoutParams);
+//                forward.setContentDescription("Forward Button");
+//                forward.setId(Integer.valueOf(3));
+//                int fwdResId = activityRes.getIdentifier("ic_action_next_item", "drawable", cordova.getActivity().getPackageName());
+//                Drawable fwdIcon = activityRes.getDrawable(fwdResId);
+//                if (navigationButtonColor != "") forward.setColorFilter(android.graphics.Color.parseColor(navigationButtonColor));
+//                forward.setBackground(null);
+//                forward.setImageDrawable(fwdIcon);
+//                forward.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                forward.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
+//                forward.getAdjustViewBounds();
+//
+//                forward.setOnClickListener(new View.OnClickListener() {
+//                    public void onClick(View v) {
+//                        goForward();
+//                    }
+//                });
+//
+//                // Edit Text Box
+//                edittext = new EditText(cordova.getActivity());
 
-                // Action Button Container layout
-                RelativeLayout actionButtonContainer = new RelativeLayout(cordova.getActivity());
-                RelativeLayout.LayoutParams actionButtonLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                if (leftToRight) actionButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                else actionButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                actionButtonContainer.setLayoutParams(actionButtonLayoutParams);
-                actionButtonContainer.setHorizontalGravity(Gravity.LEFT);
-                actionButtonContainer.setVerticalGravity(Gravity.CENTER_VERTICAL);
-                actionButtonContainer.setId(leftToRight ? Integer.valueOf(5) : Integer.valueOf(1));
-
-                // Back button
-                ImageButton back = new ImageButton(cordova.getActivity());
-                RelativeLayout.LayoutParams backLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                backLayoutParams.addRule(RelativeLayout.ALIGN_LEFT);
-                back.setLayoutParams(backLayoutParams);
-                back.setContentDescription("Back Button");
-                back.setId(Integer.valueOf(2));
-                Resources activityRes = cordova.getActivity().getResources();
-                int backResId = activityRes.getIdentifier("ic_action_previous_item", "drawable", cordova.getActivity().getPackageName());
-                Drawable backIcon = activityRes.getDrawable(backResId);
-                if (navigationButtonColor != "") back.setColorFilter(android.graphics.Color.parseColor(navigationButtonColor));
-                back.setBackground(null);
-                back.setImageDrawable(backIcon);
-                back.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                back.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
-                back.getAdjustViewBounds();
-
-                back.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        goBack();
-                    }
-                });
-
-                // Forward button
-                ImageButton forward = new ImageButton(cordova.getActivity());
-                RelativeLayout.LayoutParams forwardLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                forwardLayoutParams.addRule(RelativeLayout.RIGHT_OF, 2);
-                forward.setLayoutParams(forwardLayoutParams);
-                forward.setContentDescription("Forward Button");
-                forward.setId(Integer.valueOf(3));
-                int fwdResId = activityRes.getIdentifier("ic_action_next_item", "drawable", cordova.getActivity().getPackageName());
-                Drawable fwdIcon = activityRes.getDrawable(fwdResId);
-                if (navigationButtonColor != "") forward.setColorFilter(android.graphics.Color.parseColor(navigationButtonColor));
-                forward.setBackground(null);
-                forward.setImageDrawable(fwdIcon);
-                forward.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                forward.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
-                forward.getAdjustViewBounds();
-
-                forward.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        goForward();
-                    }
-                });
-
-                // Edit Text Box
-                edittext = new EditText(cordova.getActivity());
-                RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                textLayoutParams.addRule(RelativeLayout.RIGHT_OF, 1);
-                textLayoutParams.addRule(RelativeLayout.LEFT_OF, 5);
-                edittext.setLayoutParams(textLayoutParams);
-                edittext.setId(Integer.valueOf(4));
-                edittext.setSingleLine(true);
+//                RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//                textLayoutParams.addRule(RelativeLayout.RIGHT_OF, 1);
+//                textLayoutParams.addRule(RelativeLayout.LEFT_OF, 5);
+//                edittext.setLayoutParams(textLayoutParams);
+//                edittext.setId(Integer.valueOf(4));
+//                edittext.setSingleLine(true);
                 edittext.setText(url);
-                edittext.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+//                edittext.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
                 edittext.setImeOptions(EditorInfo.IME_ACTION_GO);
-                edittext.setInputType(InputType.TYPE_NULL); // Will not except input... Makes the text NON-EDITABLE
+//                edittext.setInputType(InputType.TYPE_NULL); // Will not except input... Makes the text NON-EDITABLE
                 edittext.setOnKeyListener(new View.OnKeyListener() {
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
                         // If the event is a key-down event on the "enter" button
@@ -885,37 +928,38 @@ public class InAppBrowser extends CordovaPlugin {
                         return false;
                     }
                 });
-
-
-                // Header Close/Done button
-                int closeButtonId = leftToRight ? 1 : 5;
-                View close = createCloseButton(closeButtonId);
-                toolbar.addView(close);
-
-                // Footer
-                RelativeLayout footer = new RelativeLayout(cordova.getActivity());
-                int _footerColor;
-                if(footerColor != "") {
-                    _footerColor = Color.parseColor(footerColor);
-                } else {
-                    _footerColor = android.graphics.Color.LTGRAY;
-                }
-                footer.setBackgroundColor(_footerColor);
-                RelativeLayout.LayoutParams footerLayout = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, this.dpToPixels(44));
-                footerLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-                footer.setLayoutParams(footerLayout);
-                if (closeButtonCaption != "") footer.setPadding(this.dpToPixels(8), this.dpToPixels(8), this.dpToPixels(8), this.dpToPixels(8));
-                footer.setHorizontalGravity(Gravity.LEFT);
-                footer.setVerticalGravity(Gravity.BOTTOM);
-
-                View footerClose = createCloseButton(7);
-                footer.addView(footerClose);
+//
+//
+//                // Header Close/Done button
+//                int closeButtonId = leftToRight ? 1 : 5;
+//                View close = createCloseButton(closeButtonId);
+//                toolbar.addView(close);
+//
+//                // Footer
+//                RelativeLayout footer = new RelativeLayout(cordova.getActivity());
+//                int _footerColor;
+//                if(footerColor != "") {
+//                    _footerColor = Color.parseColor(footerColor);
+//                } else {
+//                    _footerColor = android.graphics.Color.LTGRAY;
+//                }
+//                footer.setBackgroundColor(_footerColor);
+//                RelativeLayout.LayoutParams footerLayout = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, this.dpToPixels(44));
+//                footerLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+//                footer.setLayoutParams(footerLayout);
+//                if (closeButtonCaption != "") footer.setPadding(this.dpToPixels(8), this.dpToPixels(8), this.dpToPixels(8), this.dpToPixels(8));
+//                footer.setHorizontalGravity(Gravity.LEFT);
+//                footer.setVerticalGravity(Gravity.BOTTOM);
+//
+//                View footerClose = createCloseButton(7);
+//                footer.addView(footerClose);
 
 
                 // WebView
-                inAppWebView = new WebView(cordova.getActivity());
-                inAppWebView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-                inAppWebView.setId(Integer.valueOf(6));
+//                inAppWebView = new WebView(cordova.getActivity());
+                inAppWebView = dialog.webView;
+//                inAppWebView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//                inAppWebView.setId(Integer.valueOf(6));
                 // File Chooser Implemented ChromeClient
                 inAppWebView.setWebChromeClient(new InAppChromeClient(thatWebView) {
                     public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
@@ -993,7 +1037,7 @@ public class InAppBrowser extends CordovaPlugin {
                 CookieManager.getInstance().setAcceptThirdPartyCookies(inAppWebView,true);
 
                 inAppWebView.loadUrl(url);
-                inAppWebView.setId(Integer.valueOf(6));
+//                inAppWebView.setId(Integer.valueOf(6));
                 inAppWebView.getSettings().setLoadWithOverviewMode(true);
                 inAppWebView.getSettings().setUseWideViewPort(useWideViewPort);
                 // Multiple Windows set to true to mitigate Chromium security bug.
@@ -1002,39 +1046,45 @@ public class InAppBrowser extends CordovaPlugin {
                 inAppWebView.requestFocus();
                 inAppWebView.requestFocusFromTouch();
 
-                // Add the back and forward buttons to our action button container layout
-                actionButtonContainer.addView(back);
-                actionButtonContainer.addView(forward);
-
-                // Add the views to our toolbar if they haven't been disabled
-                if (!hideNavigationButtons) toolbar.addView(actionButtonContainer);
-                if (!hideUrlBar) toolbar.addView(edittext);
-
-                // Don't add the toolbar if its been disabled
-                if (getShowLocationBar()) {
-                    // Add our toolbar to our main view/layout
-                    main.addView(toolbar);
+//                // Add the back and forward buttons to our action button container layout
+//                actionButtonContainer.addView(back);
+//                actionButtonContainer.addView(forward);
+//
+//                // Add the views to our toolbar if they haven't been disabled
+//                if (!hideNavigationButtons) toolbar.addView(actionButtonContainer);
+//                if (!hideUrlBar) toolbar.addView(edittext);
+                if (hideNavigationButtons) toolbar.btnInnerLeft.setVisibility(View.GONE);
+                if (hideUrlBar) edittext.setVisibility(View.GONE);
+                if (!getShowLocationBar()) {
+                    toolbar.setVisibility(View.GONE);
                 }
 
-                // Add our webview to our main view/layout
-                RelativeLayout webViewLayout = new RelativeLayout(cordova.getActivity());
-                webViewLayout.addView(inAppWebView);
-                main.addView(webViewLayout);
-
-                // Don't add the footer unless it's been enabled
-                if (showFooter) {
-                    webViewLayout.addView(footer);
-                }
-
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(dialog.getWindow().getAttributes());
-                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+//
+//                // Don't add the toolbar if its been disabled
+//                if (getShowLocationBar()) {
+//                    // Add our toolbar to our main view/layout
+//                    main.addView(toolbar);
+//                }
+//
+//                // Add our webview to our main view/layout
+//                RelativeLayout webViewLayout = new RelativeLayout(cordova.getActivity());
+//                webViewLayout.addView(inAppWebView);
+//                main.addView(webViewLayout);
+//
+//                // Don't add the footer unless it's been enabled
+//                if (showFooter) {
+//                    webViewLayout.addView(footer);
+//                }
+//
+//                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//                lp.copyFrom(dialog.getWindow().getAttributes());
+//                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+//                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
 
                 if (dialog != null) {
-                    dialog.setContentView(main);
+//                    dialog.setContentView(main);
                     dialog.show();
-                    dialog.getWindow().setAttributes(lp);
+//                    dialog.getWindow().setAttributes(lp);
                 }
                 // the goal of openhidden is to load the url and not display it
                 // Show() needs to be called to cause the URL to be loaded
@@ -1392,25 +1442,25 @@ public class InAppBrowser extends CordovaPlugin {
                 obj.put("sslerror", error.getPrimaryError());
                 String message;
                 switch (error.getPrimaryError()) {
-                case SslError.SSL_DATE_INVALID:
-                    message = "The date of the certificate is invalid";
-                    break;
-                case SslError.SSL_EXPIRED:
-                    message = "The certificate has expired";
-                    break;
-                case SslError.SSL_IDMISMATCH:
-                    message = "Hostname mismatch";
-                    break;
-                default:
-                case SslError.SSL_INVALID:
-                    message = "A generic error occurred";
-                    break;
-                case SslError.SSL_NOTYETVALID:
-                    message = "The certificate is not yet valid";
-                    break;
-                case SslError.SSL_UNTRUSTED:
-                    message = "The certificate authority is not trusted";
-                    break;
+                    case SslError.SSL_DATE_INVALID:
+                        message = "The date of the certificate is invalid";
+                        break;
+                    case SslError.SSL_EXPIRED:
+                        message = "The certificate has expired";
+                        break;
+                    case SslError.SSL_IDMISMATCH:
+                        message = "Hostname mismatch";
+                        break;
+                    default:
+                    case SslError.SSL_INVALID:
+                        message = "A generic error occurred";
+                        break;
+                    case SslError.SSL_NOTYETVALID:
+                        message = "The certificate is not yet valid";
+                        break;
+                    case SslError.SSL_UNTRUSTED:
+                        message = "The certificate authority is not trusted";
+                        break;
                 }
                 obj.put("message", message);
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/ivMainIcon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0"
+        android:background="#00FFFFFF"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:scaleType="fitCenter"
+        />
+
+    <ImageView
+        android:id="@+id/ivBadge"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="4dp"
+        android:layout_weight="0"
+        android:scaleType="fitCenter"
+        />
+
+</FrameLayout>
