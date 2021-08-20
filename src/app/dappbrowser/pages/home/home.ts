@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -67,6 +67,7 @@ export class HomePage implements InAppBrowserClient {
         public iab: InAppBrowser,
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
+        public zone: NgZone,
         private globalStartupService: GlobalStartupService
     ) {
     }
@@ -98,7 +99,9 @@ export class HomePage implements InAppBrowserClient {
     }
 
     onExit(data: IABExitData) {
-        this.iabRunning = false;
+        this.zone.run(() => {
+            this.iabRunning = false;
+        });
         if (data.mode) {
             this.nav.goToLauncher();
         }
