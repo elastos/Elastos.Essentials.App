@@ -35,7 +35,7 @@ export class CoinTxInfoPage implements OnInit {
 
     // General Values
     private masterWallet: MasterWallet = null;
-    public elastosChainCode: string = '';
+    public elastosChainCode = '';
     public subWallet: SubWallet = null;
     public transactionInfo: TransactionInfo;
     private blockchain_url = Config.BLOCKCHAIN_URL;
@@ -43,14 +43,14 @@ export class CoinTxInfoPage implements OnInit {
 
     // Header Display Values
     public type: TransactionType;
-    public payStatusIcon: string = '';
-    public direction: string = '';
-    public symbol: string = '';
+    public payStatusIcon = '';
+    public direction = '';
+    public symbol = '';
     public amount: BigNumber;
-    public status: string = '';
-    public statusName: string = '';
-    public memo: string = '';
-    public height: number = 0;
+    public status = '';
+    public statusName = '';
+    public memo = '';
+    public height = 0;
 
     // Other Values
     public payFee: number = null;
@@ -89,7 +89,6 @@ export class CoinTxInfoPage implements OnInit {
     init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
-
             // General Values
             this.transactionInfo = navigation.extras.state.transactionInfo;
             this.masterWallet = this.walletManager.getMasterWallet(navigation.extras.state.masterWalletId);
@@ -111,7 +110,7 @@ export class CoinTxInfoPage implements OnInit {
             this.targetAddress = this.transactionInfo.to;
             this.fromAddress = this.transactionInfo.from;
 
-            this.getTransactionDetails();
+            void this.getTransactionDetails();
         }
     }
 
@@ -363,7 +362,8 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     worthCopying(item: TransactionDetail) {
-        if (item.type === 'blockId' || item.type === 'txid' || item.type === 'address' || item.type === 'contractAddress') {
+        if (item.type === 'blockId' || item.type === 'txid' || item.type === 'address' ||
+            item.type === 'contractAddress' || item.type === 'memo') {
             return true;
         } else {
             return false;
@@ -371,8 +371,8 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     copy(value) {
-        this.native.copyClipboard(value);
-        this.native.toast_trans('wallet.copied');
+        void this.native.copyClipboard(value);
+        void this.native.toast_trans('wallet.copied');
     }
 }
 
