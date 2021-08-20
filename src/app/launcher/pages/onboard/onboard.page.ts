@@ -41,8 +41,6 @@ export class OnboardPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    // TODO @chad - titleBarManager.setTitle(this.translate.instant("dapp-browser"));
-    // TODO @chad - titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT);
   }
 
   ionViewDidEnter() {

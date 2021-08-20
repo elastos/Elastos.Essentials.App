@@ -603,7 +603,7 @@ export class HiveDataSync {
     private async addKeyToSavedEntriesList(context: string, key: string) {
         let indexKey = context + "_index";
 
-        // Reload the whole index - TODO: cache for perf
+        // Reload the whole index - NOTE: we could use a cache for perf
         let savedEntries = await this.getSavedEntriesList(context);
         if (savedEntries.indexOf(key) < 0) {
             savedEntries.push(key);
@@ -616,7 +616,7 @@ export class HiveDataSync {
     private async removeKeyFromSavedEntriesList(context: string, key: string) {
         let indexKey = context + "_index";
 
-        // Reload the whole index - TODO: cache for perf
+        // Reload the whole index - NOTE: we could use a cache for perf
         let savedEntries = await this.getSavedEntriesList(context);
         let deletionIndex = savedEntries.indexOf(key);
         if (deletionIndex >= 0) {

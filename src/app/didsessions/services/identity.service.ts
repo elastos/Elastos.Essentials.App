@@ -174,21 +174,6 @@ export class IdentityService {
         return this.identityBeingCreated.didStore.loadDIDDocument(this.identityBeingCreated.did.getDIDString());
     }
 
-    /**
-     * Flow:
-     * - TODO: BELOW FLOW IS OUTDATED
-     *
-     * - User sets a profile name
-     * - Generate a mnemonic (backupdid screen) + display to user (backupdid screen)  + verify it (verifymnemonic screen)
-     * - Create a new DID store (shared with did app) + automatic did store password
-     * - Create a new DID in store + add credential with the name
-     * - Set a virtual did context to the password manager (using the created did string)
-     *        (so the password manager can save the did store password in the DID session password sandbox,
-     *         without being signed in yet)
-     * - Save the did store password to the password manager (will ask to create a master password)
-     * - If master password created, add a did session identity entry with did string, user name
-     * - Sign in with the new DID in did session plugin. DID session app is closed and launcher is started.
-     */
     public startCreatingNewDIDWithNewMnemonic() {
         this.identityBeingCreated = new NewIdentity();
 
@@ -218,7 +203,6 @@ export class IdentityService {
         let mnemonic = this.identityBeingCreated.mnemonic;
 
         // Initialize the new DID store with a mnemonic and store password
-        // TODO: ASK USER IF HE WANTS A MNEMONIC PASSWORD ?
         await didStore.createPrivateIdentity(null, this.identityBeingCreated.storePass, mnemonicLanguage, mnemonic);
 
         // Add a first (and only) identity to the store.

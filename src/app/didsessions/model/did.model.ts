@@ -72,7 +72,7 @@ export class DID {
             // types[0] = "BasicProfileCredential";
 
             // If caller provides custom types, we add them to the list
-            // TODO: This is way too simple for now. We need to deal with types schemas in the future.
+            // NOTE: This is way too simple for now. We need to deal with types schemas in the future.
             if (userTypes) {
                 userTypes.map((type)=>{
                     types.push(type);

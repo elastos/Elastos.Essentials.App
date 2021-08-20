@@ -40,7 +40,6 @@ export class CRProposalVotingInitService extends GlobalService {
   public onUserSignOut(): Promise<void> {
     this.crOperations.stop();
     this.proposalService.stop();
-    // TODO something else need to stop?
     return;
   }
 }

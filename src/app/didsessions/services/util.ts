@@ -32,21 +32,20 @@ export class Util {
         return uuid.join('');
     }
 
-    // TODO: not enough for other western languages like french.
     static english(text): boolean {
         var pattern = new RegExp("[A-Za-z]+");
         return pattern.test(text);
-    };
+    }
 
     static chinese(text): boolean {
         var pattern = new RegExp("[\u4E00-\u9FA5]+");
         return pattern.test(text);
-    };
+    }
 
     static japanese(text): boolean {
         var pattern = new RegExp("[\u0800-\u4e00]+");
         return pattern.test(text);
-    };
+    }
 
     public static isEmptyObject(obj): boolean {
         for (let key in obj) {
@@ -68,7 +67,7 @@ export class Util {
         let newObj;
 
         if (Obj instanceof (Array)) {
-            newObj = new Array();
+            newObj = [];
         } else {
             newObj = new Object();
         }

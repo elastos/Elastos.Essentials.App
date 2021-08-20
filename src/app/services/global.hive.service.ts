@@ -449,14 +449,6 @@ export class GlobalHiveService extends GlobalService {
         Logger.log("GlobalHiveService", "Calling script url to download file", hiveScriptUrl);
         let reader = await hiveClient.downloadFileByScriptUrl(hiveScriptUrl); // Broken in Hive Java SDK 2.0.29
 
-        /* let activeVault = await this.getActiveVault();
-        let dirtyScriptName = hiveScriptUrl.substring(hiveScriptUrl.lastIndexOf("/")+1, hiveScriptUrl.indexOf("?"));
-        console.log("DEBUG dirtyScriptName = ",dirtyScriptName);
-        let directCallResult = await activeVault.getScripting().call(dirtyScriptName, {}, GlobalConfig.ESSENTIALS_APP_DID);
-        console.log("DEBUG DIRECT SCRIPT CALL RESULT:", directCallResult);
-        let txId = directCallResult["download"]["transaction_id"];
-        //console.log("DOWNLOAD TX ID:", txId);
-        let reader = await activeVault.getScripting().downloadFile(txId); */
         let rawData: Uint8Array = await reader.readAll();
 
         if (!rawData || rawData.length == 0) {
@@ -464,8 +456,7 @@ export class GlobalHiveService extends GlobalService {
           resolve(null);
         }
         else {
-          Logger.warn("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", rawData.length);
-          //console.log("DEBUG DOWNLOADED BLOB:", blob);
+          Logger.log("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", rawData.length);
           resolve(Buffer.from(rawData));
         }
       }

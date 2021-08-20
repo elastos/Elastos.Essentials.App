@@ -36,19 +36,6 @@ export class ScanPage implements OnInit {
         this.uxService.onTitleBarItemClicked(icon);
     });
 
-    /* TODO @chad
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-      key: "backToImport",
-      iconPath: TitleBarPlugin.BuiltInIcon.BACK
-    });
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, null);
-    titleBarManager.addOnItemClickedListener(async (menuItem)=>{
-      if (menuItem.key === "backToImport") {
-        await this.identityService.startImportingMnemonic(null);
-      }
-    });
-    */
-
     Logger.log('didsessions', 'Start scanning');
     // Optionally request the permission early
     this.qrScanner.prepare().then(async (status: QRScannerStatus) => {

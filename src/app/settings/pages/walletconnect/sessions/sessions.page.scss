@@ -5,7 +5,7 @@
 
     .section-row {
         .icon-col {
-            align-items: start;
+            align-items: flex-start;
 
             img {
                 width: 70%;
@@ -15,7 +15,7 @@
         .left-col {
             display: flex;
             flex-direction: column;
-            align-items: start;
+            align-items: flex-start;
             overflow: hidden;
 
             .name {
