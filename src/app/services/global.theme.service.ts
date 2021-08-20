@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
+import { Logger } from '../logger';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
@@ -69,6 +70,7 @@ export class GlobalThemeService extends GlobalService {
     }
 
     void passwordManager.setDarkMode(useDarkMode);
+    Logger.log("theme", "Emitting active theme (fetch prefs) to value:", (useDarkMode?"dark":"light"));
     if (useDarkMode)
       this.activeTheme.next(AppTheme.DARK);
     else
@@ -95,6 +97,7 @@ export class GlobalThemeService extends GlobalService {
   private async updateTheme(darkMode: boolean): Promise<void> {
     await passwordManager.setDarkMode(darkMode);
 
+    Logger.log("theme", "Emitting active theme (update theme) to value:", (darkMode?"dark":"light"));
     if (darkMode)
       this.activeTheme.next(AppTheme.DARK);
       //this.events.emit('titlebar-foregroundmode', TitleBarForegroundMode.LIGHT);

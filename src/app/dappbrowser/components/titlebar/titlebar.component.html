@@ -1,5 +1,5 @@
-<ion-header class="ion-no-border">
-    <ion-row [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode">
+<ion-header class="ion-no-border" [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode">
+    <ion-row>
         <ion-col size="2">
             <div class="img-btn">
                 <img [src]="getEssentialsLogoPath()" (click)="homeClicked()">

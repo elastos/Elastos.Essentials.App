@@ -58,7 +58,6 @@ export class GlobalDIDSessionsService {
       let identity = this.identities.find(entry => lastSignedInIdentity.didString == entry.didString);
       if (identity) {
         await this.signIn(identity);
-        await this.navigateHome();
       }
     }
   }

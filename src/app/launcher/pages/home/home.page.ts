@@ -27,6 +27,7 @@ import WalletConnect from '@walletconnect/client';
 import { HttpClient } from '@angular/common/http';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { DAppBrowser } from 'src/app/model/dappbrowser/dappbrowser';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 
 @Component({
   selector: 'app-home',
@@ -78,6 +79,7 @@ export class HomePage implements OnInit {
     private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService,
     private globalWalletConnectService: GlobalWalletConnectService,
+    private globalStartupService: GlobalStartupService,
     private didSessions: GlobalDIDSessionsService) {
   }
 
@@ -184,8 +186,8 @@ export class HomePage implements OnInit {
 
   ionViewDidEnter() {
     Logger.log("launcher", "Launcher home screen did enter");
-    // We are ready, we can hide the splash screen
-    this.splashScreen.hide();
+    
+    this.globalStartupService.setStartupScreenReady();
 
     Logger.log("launcher", "Launcher home screen did enter completed");
   }

@@ -43,6 +43,7 @@ import { Logger } from 'src/app/logger';
 import { NFT } from 'src/app/wallet/model/nft';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { Subscription } from 'rxjs';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 
 
 @Component({
@@ -115,6 +116,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         public theme: GlobalThemeService,
         public uiService: UiService,
         private storage: LocalStorage,
+        private globalStartupService: GlobalStartupService
     ) {
     }
 
@@ -171,6 +173,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
 
         this.startUpdateInterval();
+
+        this.globalStartupService.setStartupScreenReady();
     }
 
     ionViewWillLeave() {

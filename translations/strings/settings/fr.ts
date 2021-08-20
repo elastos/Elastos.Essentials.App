@@ -16,6 +16,8 @@ export const fr = {
         'wallet-setting': 'Mon portefeuille',
         'wallet-connect-sessions-setting': 'Sessions Wallet Connect',
         'privacy-setting': 'Vie privée',
+        'startupscreen-setting': 'Ecran de démarrage',
+        'startupscreen-intro-setting': 'Choix de l\'écran à afficher au démarrage d\'Essentials',
 
         // Subtitles
         'advanced-setting': 'PARAMETRES AVANCES',
@@ -86,6 +88,15 @@ export const fr = {
         'connect': 'Connexion',
         'wallet-connect-no-session': 'Aucune session active',
         'wallet-connect-no-session-info': 'Il n\'y a actuellement pas de connexion avec une appli tierce via Wallet Connect. Trouvez le boutton Wallet Connect dans l\'application externe, et scannez le QR code fourni, avec le scanner Elastos Essentials.',
+
+        /********** Startup Screen Page **********/
+        'startupscreen': 'Ecran de démarrage',
+        'startupscreen-home-title':'Accueil Essentials',
+        'startupscreen-home-description':'Ecran par défaut avec toutes les fonctionnalités et les widgets.',
+        'startupscreen-wallets-title':'Portefeuilles',
+        'startupscreen-wallets-description':'Affiche votre portefeuille actif par défaut. Si vos fonds sont votre priorité.',
+        'startupscreen-dapps-title':'Portail de DApps',
+        'startupscreen-dapps-description':'Vous ne pouvez pas vous passer de naviguer sur des dApps? Ce mode est pour vous.',
 
         /*********** Privacy page **********/
         'privacy': 'Vie privée',

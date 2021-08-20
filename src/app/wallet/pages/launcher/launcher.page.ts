@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class LauncherPage implements OnInit {
         public native: Native,
         private walletCreationService: WalletCreationService,
         public translate: TranslateService,
-        private theme: GlobalThemeService
+        private theme: GlobalThemeService,
+        private globalStartupService: GlobalStartupService
     ) {
     }
 
@@ -31,6 +33,10 @@ export class LauncherPage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTheme('#732cd0', TitleBarForegroundMode.LIGHT)
         this.titleBar.setTitle(this.translate.instant('launcher.app-wallet'));
+    }
+
+    ionViewDidEnter() {
+        this.globalStartupService.setStartupScreenReady();
     }
 
     ionViewWillLeave() {

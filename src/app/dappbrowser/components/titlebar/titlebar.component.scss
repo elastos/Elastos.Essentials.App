@@ -1,6 +1,30 @@
 @import "src/app/components/titlebar/titlebar.component.scss";
 
 :host {
+    .lightContainer {
+        ion-col {
+            ion-input {
+                color: #888888;
+            }
+        }
+    }
+
+    .darkContainer {
+        background: #000;
+
+        ion-row {
+            ion-col {
+                .img-btn-mark {
+                    background-color: #313131;
+                }
+                ion-input {
+                    color: #BBBBBB;
+                    background-color: #313131;
+                }
+            }
+        }
+    }
+
     ion-header {
         ion-row {
             padding: 2px 2px;
@@ -32,26 +56,6 @@
                 }
             }
 
-        }
-
-        .lightContainer {
-            ion-col {
-                ion-input {
-                    color: #888888;
-                }
-            }
-        }
-
-        .darkContainer {
-            ion-col {
-                .img-btn-mark {
-                    background-color: #313131;
-                }
-                ion-input {
-                    color: #BBBBBB;
-                    background-color: #313131;
-                }
-            }
         }
     }
 }

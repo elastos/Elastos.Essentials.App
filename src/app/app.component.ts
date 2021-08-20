@@ -23,6 +23,10 @@ import { GlobalHiveService } from './services/global.hive.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
 import { GlobalNetworksService } from './services/global.networks.service';
 import { GlobalFirebaseService } from './services/global.firebase.service';
+import { GlobalPreferencesService } from './services/global.preferences.service';
+import { WalletInitService } from './wallet/services/init.service';
+import { GlobalStartupService } from './services/global.startup.service';
+import { App } from './model/app.enum';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -56,6 +60,8 @@ export class AppComponent {
         private globalFirebaseService: GlobalFirebaseService,
         private globalNetworksService: GlobalNetworksService,
         private globalElastosAPIService: GlobalElastosAPIService,
+        private globalStartupService: GlobalStartupService,
+        private walletInitService: WalletInitService,
         private firebase: FirebaseX
     ) {
     }
@@ -113,14 +119,13 @@ export class AppComponent {
             Logger.log("Global", "Navigating to start screen");
             let entry = await this.didSessions.getSignedInIdentity();
             if (entry != null) {
-                Logger.log("Global", "An active DID exists, navigating to launcher home");
+                Logger.log("Global", "An active DID exists, navigating to startup screen");
 
                 // Make sure to load the active user theme preference before entering the home screen
                 // to avoid blinking from light to dark modes while theme is fetched from preferences
                 await this.theme.fetchThemeFromPreferences();
 
-                // Navigate to home screen
-                await this.globalNav.navigateHome(Direction.NONE);
+                await this.navigateToStartupScreen();
             } else {
                 Logger.log("Global", "No active DID, navigating to DID sessions");
 
@@ -134,6 +139,27 @@ export class AppComponent {
             // All the subscribers may now be listening to received intents
             await this.intentService.listen();
         });
+    }
+
+    /**
+     * Navigates to the startup screen chosen by the user; By default, this is the launcher home screen
+     * but this can be customized.
+     */
+    private async navigateToStartupScreen(): Promise<boolean> {
+      let startupScreen = await this.globalStartupService.getStartupScreen(GlobalDIDSessionsService.signedInDIDString);
+      switch (startupScreen) {
+        case 'wallets':
+          // Navigate to active wallet
+          await this.walletInitService.start();
+          break;
+        case 'dapps':
+          await this.globalNav.navigateRoot(App.DAPP_BROWSER, '/dappbrowser/home');
+          break;
+        case 'home':
+        default:
+          // Navigate to home screen
+          return this.globalNav.navigateHome(Direction.NONE);
+      }
     }
 
   /**

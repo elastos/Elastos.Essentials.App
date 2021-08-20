@@ -29,6 +29,7 @@ export class GlobalPreferencesService {
       "developer.backgroundservices.startonboot": true,
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
       "ui.darkmode": true,
+      "ui.startupscreen": "home",
       "network.template": "MainNet",
       "chain.network.config": "",
       "chain.network.configurl": "",

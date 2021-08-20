@@ -20,6 +20,7 @@ import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessio
 import { WalletConnectPrepareToConnectPage } from './pages/walletconnect/preparetoconnect/preparetoconnect.page';
 import { PrivacyPage } from './pages/privacy/privacy.page';
 import { ElastosAPIProviderPage } from './pages/elastosapiprovider/elastosapiprovider.page';
+import { StartupScreenPage } from './pages/startupscreen/startupscreen.page';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { ElastosAPIProviderPage } from './pages/elastosapiprovider/elastosapipro
     WalletConnectConnectPage,
     WalletConnectSessionsPage,
     PrivacyPage,
-    ElastosAPIProviderPage
+    ElastosAPIProviderPage,
+    StartupScreenPage
   ],
   imports: [
     CommonModule,

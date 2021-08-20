@@ -9,6 +9,7 @@ import { DAppBrowser } from 'src/app/model/dappbrowser/dappbrowser';
 import { HttpClient } from '@angular/common/http';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 
 type DAppMenuEntry = {
   icon: string;
@@ -63,15 +64,20 @@ export class HomePage {
     private nav: GlobalNavService,
     private iab: InAppBrowser,
     public theme: GlobalThemeService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private globalStartupService: GlobalStartupService
   ) {
   }
 
   ionViewWillEnter() {
   }
 
+  ionViewDidEnter() {
+    this.globalStartupService.setStartupScreenReady();
+  }
+
   public onDAppClicked(app: DAppMenuEntry) {
-    DAppBrowser.open(app.url, this.iab, this.httpClient);
+    void DAppBrowser.open(app.url, this.iab, this.httpClient);
   }
 
   public onUrlInput(url: string) {
@@ -80,7 +86,7 @@ export class HomePage {
       if (!fixedUrl.startsWith("http"))
         fixedUrl = "https://"+fixedUrl;
 
-      DAppBrowser.open(fixedUrl, this.iab, this.httpClient);
+      void DAppBrowser.open(fixedUrl, this.iab, this.httpClient);
     }
   }
 

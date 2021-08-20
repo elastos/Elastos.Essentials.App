@@ -1,0 +1,15 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid class="subsetting-grid" [class.dark-container]="theme.darkMode">
+      <ion-row *ngFor="let screen of startupScreens" class="section-row" (click)="useScreen(screen)">
+          <ion-col size="9" class="left-col">
+              <h1>{{ screen.name }}</h1>
+              <h2>{{ screen.description }}</h2>
+          </ion-col>
+          <ion-col size="3" class="right-col">
+            <ion-icon *ngIf="activeStartupScreen && activeStartupScreen.name === screen.name" name="checkmark"></ion-icon>
+          </ion-col>
+      </ion-row>
+  </ion-grid>
+</ion-content>
+

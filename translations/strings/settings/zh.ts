@@ -16,6 +16,8 @@ export const zh = {
           'dev-mode': '开发者模式',
           'wallet-connect-sessions-setting': '钱包连接会话',
           'privacy-setting': '隐私',
+          'startupscreen-setting': 'Startup Screen',
+          'startupscreen-intro-setting': 'Choose which screen to show when Essentials starts',
 
           // Subtitles
           'advanced-setting': '高级设置',
@@ -87,6 +89,15 @@ export const zh = {
           'wallet-connect-no-session': '没有活动的会话',
           'wallet-connect-no-session-info': '当前没有通过 Wallet Connect 与第三方应用程序的会话。请在外部应用程序上找到 Wallet Connect 按钮，然后使用 Elastos Essentials 的扫描仪扫描此二维码以建立会话连接。',
 
+          /********** Startup Screen Page **********/
+          'startupscreen': 'Startup Screen',
+          'startupscreen-home-title':'Essentials Home',
+          'startupscreen-home-description':'Default home screen with all features and widgets.',
+          'startupscreen-wallets-title':'Wallets',
+          'startupscreen-wallets-description':'Shows your active wallet by default. If assets if what matters most for you.',
+          'startupscreen-dapps-title':'DApps Portal',
+          'startupscreen-dapps-description':'You can\'t stop browsing dApps all day long? This mode is for you.',
+          
           /*********** Privacy page **********/
           'privacy': '隐私',
           'identity-publishing': '发布身份',
