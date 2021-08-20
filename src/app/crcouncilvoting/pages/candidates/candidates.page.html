@@ -85,8 +85,10 @@
             </ion-list>
         </ion-grid>
 
-        <ion-grid *ngIf="candidatesService.candidates.length === 0 && candidatesService.crmembers.length === 0"
-            class="spinner-container ion-no-padding">
+        <ion-grid 
+            *ngIf="candidatesService.candidates.length === 0 && candidatesService.crmembers.length === 0"
+            class="spinner-container ion-no-padding"
+        >
             <div class="spinner">
                 <ion-spinner name="crescent"></ion-spinner>
             </div>

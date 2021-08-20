@@ -1,6 +1,8 @@
-<ion-content [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode"
+<ion-content 
+    [scrollEvents]="true" #content [class.darkContent]="theme.darkMode" class="lightmode"
     [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
+
     <ion-content>
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
@@ -46,8 +48,10 @@
         </ion-grid>
 
         <!-- Spinner Container - Reveal if proposals are being fetched -->
-        <ion-grid *ngIf="!proposalsFetched" class="spinner spinner-container">
-            <ion-spinner *ngIf="!proposalsFetched" name="crescent"></ion-spinner>
+        <ion-grid *ngIf="!proposalsFetched" class="spinner-container">
+            <div class="spinner">
+                <ion-spinner name="crescent"></ion-spinner>
+            </div>
         </ion-grid>
 
         <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreProposals($event)">

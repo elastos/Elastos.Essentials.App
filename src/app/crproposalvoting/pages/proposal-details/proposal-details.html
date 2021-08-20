@@ -16,8 +16,10 @@
         <ion-row *ngFor="let item of proposalDetails" class="section-row">
             <ion-col size="12" (click)="item.active = !item.active">
                 <h1>{{ item.title }}</h1>
-                <img [class.rotate]="item.active"
-                    [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'" />
+                <img 
+                    [class.rotate]="item.active"
+                    [src]="!theme.darkMode ? 'assets/crproposalvoting/icons/down-arrow.svg' : 'assets/crproposalvoting/icons/darkmode/down-arrow.svg'"
+                />
             </ion-col>
             <ion-col *ngIf="item.active" class="details-col" size="12">
                 <div (click)="openLink(item)" [class.url]="item.type === 'url'" [innerHtml]="item.description"></div>

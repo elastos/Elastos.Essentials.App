@@ -234,6 +234,7 @@ ion-content {
           padding-top: 0;
 
           .wallet-widget {
+            background: #742fcf;
             border-radius: 7px;
             display: flex;
             flex-direction: column;
@@ -242,9 +243,15 @@ ion-content {
             padding: 8px;
             line-height: 1.6;
 
-            .active-wallet, .active-network {
-              font-size: 11px;
+            span {
+              color: white;
               font-weight: 500;
+              font-size: 10px;
+            }
+
+            .active-wallet, .active-network {
+              font-size: 10px;
+              font-weight: 600;
               letter-spacing: 0.5px;
               display: block;
               color: #ffffff;
@@ -392,11 +399,7 @@ ion-content {
 
         .widget-col {
           .wallet-widget {
-            background: #b176ff;
-
-            span {
-              color: white;
-            }
+            opacity: 0.8;
           }
 
           .hive-widget {
@@ -473,14 +476,6 @@ ion-content {
         }
 
         .widget-col {
-          .wallet-widget {
-            background: #742fcf/* #363636 */;
-
-            span {
-              color: #FFFFFF;
-            }
-          }
-
           .hive-widget {
             span {
               color: #7C7C7C;

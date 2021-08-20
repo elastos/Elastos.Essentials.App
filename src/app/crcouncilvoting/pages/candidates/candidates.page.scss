@@ -179,16 +179,3 @@
 .selected {
     font-weight: 700;
 }
-
-.spinner-container {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .spinner {
-        ion-spinner {
-            zoom: 0.8;
-        }
-    }
-}

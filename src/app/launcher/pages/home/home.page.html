@@ -77,8 +77,8 @@
           </ion-col>
           <ion-col *ngIf="app.hasWidget" class="widget-col" offset="2.2" size="9.8">
             <div *ngIf="app.id === 'wallet' && mainWallet" class="wallet-widget">
-              <div class="active-wallet"><b>{{ mainWalletName }}</b>:  {{ mainWalletELABalance }} ELA</div>
-              <div class="active-network"><b>{{ 'launcher.active-network' | translate }}</b>: {{ activeNetworkName }}</div>
+              <div class="active-wallet"><span>{{ mainWalletName }}</span>:  {{ mainWalletELABalance }} ELA</div>
+              <div class="active-network"><span>{{ 'launcher.active-network' | translate }}</span>: {{ activeNetworkName }}</div>
             </div>
             <div *ngIf="app.id === 'hive' && hiveVaultLinked" class="hive-widget">
               <ion-progress-bar color="warning" [value]="hiveVaultStorageStats.usageRatio"></ion-progress-bar>
