@@ -48,7 +48,7 @@ export class DPoSVotePage implements OnInit {
     private sourceSubwallet: MainchainSubWallet = null;
     public voteAmountELA: string;
     public voteAmount: string; // Estimate amount, Balance in SELA
-    public chainId: string;
+    public elastosChainCode: string;
     private walletInfo = {};
     public intentTransfer: IntentTransfer;
 
@@ -82,12 +82,12 @@ export class DPoSVotePage implements OnInit {
     }
 
     init() {
-        this.chainId = this.coinTransferService.chainId;
+        this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWalletId = this.coinTransferService.masterWalletId;
 
-        this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(this.chainId) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
         // All balance can be used for voting?
         let voteInEla = this.sourceSubwallet.balance.minus(this.votingFees());
         this.voteAmountELA = voteInEla.toString()
@@ -159,7 +159,7 @@ export class DPoSVotePage implements OnInit {
           const transfer = new Transfer();
           Object.assign(transfer, {
               masterWalletId: this.masterWalletId,
-              chainId: this.chainId,
+              elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               payPassword: '',
               action: this.intentTransfer.action,

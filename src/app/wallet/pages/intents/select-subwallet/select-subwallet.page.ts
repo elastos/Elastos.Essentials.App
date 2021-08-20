@@ -23,7 +23,7 @@ export class SelectSubwalletPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public CoinType = CoinType;
-  public chainId: StandardCoinName;
+  public elastosChainCode: StandardCoinName;
 
   private nextScreen = '';
 
@@ -45,8 +45,8 @@ export class SelectSubwalletPage implements OnInit {
   }
 
   ngOnInit() {
-    this.chainId = this.coinTransferService.chainId;
-    // this.chainId = StandardCoinName.ETHSC;
+    this.elastosChainCode = this.coinTransferService.elastosChainCode;
+    // this.elastosChainCode = StandardCoinName.ETHSC;
   }
 
   ionViewWillEnter() {

@@ -56,7 +56,7 @@ export class CRCouncilRegistrationPage implements OnInit {
         did: "",
     };
     public status = "";
-    public chainId = StandardCoinName.ELA;
+    public elastosChainCode = StandardCoinName.ELA;
     public did: string;
     public state = "";
     public crPublicKey = "";
@@ -194,7 +194,7 @@ export class CRCouncilRegistrationPage implements OnInit {
     async register() {
         Logger.log('crcouncilregistration', 'Calling register()', this.crInfo);
 
-        this.balance = this.voteService.masterWallet.getSubWalletBalance(this.chainId);
+        this.balance = this.voteService.masterWallet.getSubWalletBalance(this.elastosChainCode);
 
         //Check value
         if (this.balance.lt(0.0002)) {

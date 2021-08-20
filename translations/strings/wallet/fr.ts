@@ -22,7 +22,7 @@ export const fr = {
         "refresh-pulling-text": "Rafraîchir",
         "refresh-refreshing-text": "Mise à jour du portefeuille...",
         "intent-select-wallet": "Sélect. du portefeuille",
-        "personal-wallets-with": "Portefeuille personnel avec {{ chainid }}",
+        "personal-wallets-with": "Portefeuille personnel avec {{ elastosChainCode }}",
 
 
         /*******************

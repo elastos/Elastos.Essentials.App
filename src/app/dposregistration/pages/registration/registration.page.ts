@@ -38,7 +38,7 @@ export class DPosRegistrationPage implements OnInit {
     };
     public originInfo: DPoSRegistrationInfo;
     public state: string = "";
-    public chainId = StandardCoinName.ELA;
+    public elastosChainCode = StandardCoinName.ELA;
 
     public ownerPublicKey: string;
 

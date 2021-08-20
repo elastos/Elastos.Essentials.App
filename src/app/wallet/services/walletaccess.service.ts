@@ -37,9 +37,9 @@ export class WalletAccessService {
     // Define transfer type
     public masterWalletId: string;
     // From subwallet
-    public chainId: StandardCoinName;
+    public elastosChainCode: StandardCoinName;
     // To subwallet (only for recharging funds)
-    public subchainId: string;
+    public toElastosChainCode: string;
     // TODO define requestField
     public requestFields: any;
 
@@ -60,8 +60,8 @@ export class WalletAccessService {
      */
     public reset() {
         this.masterWalletId = null;
-        this.chainId = null;
-        this.subchainId = null;
+        this.elastosChainCode = null;
+        this.toElastosChainCode = null;
         this.intentTransfer = null;
         this.requestFields = null;
     }

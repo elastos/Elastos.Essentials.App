@@ -53,7 +53,7 @@ export class EscTransactionPage implements OnInit {
     private walletInfo = {};
     public balance: BigNumber; // ELA
     public gasPrice: BigNumber;
-    public chainId: string; // ETHSC
+    public elastosChainCode: string; // ETHSC
     public hasOpenETHSCChain = false;
     public transactionInfo: ETHTransactionInfo;
 
@@ -89,7 +89,7 @@ export class EscTransactionPage implements OnInit {
     }
 
     async init() {
-        this.chainId = this.coinTransferService.chainId;
+        this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
@@ -189,14 +189,14 @@ export class EscTransactionPage implements OnInit {
           const transfer = new Transfer();
           Object.assign(transfer, {
               masterWalletId: this.masterWallet.id,
-              chainId: this.chainId,
+              elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               payPassword: '',
               action: this.intentTransfer.action,
               intentId: this.intentTransfer.intentId,
           });
 
-          let sourceSubwallet = this.walletManager.getMasterWallet(this.masterWallet.id).getSubWallet(this.chainId);
+          let sourceSubwallet = this.walletManager.getMasterWallet(this.masterWallet.id).getSubWallet(this.elastosChainCode);
           const result = await sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
           if (transfer.intentId) {
               Logger.log('wallet', 'Sending esctransaction intent response');

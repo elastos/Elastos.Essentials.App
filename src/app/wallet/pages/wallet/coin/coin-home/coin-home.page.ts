@@ -56,7 +56,7 @@ export class CoinHomePage implements OnInit {
     public masterWalletInfo = '';
     public masterWallet: MasterWallet = null;
     public subWallet: SubWallet = null;
-    public chainId: StandardCoinName = null;
+    public elastosChainCode: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
     public transactionsLoaded = false;
 
@@ -100,8 +100,8 @@ export class CoinHomePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.coinTransferService.chainId = this.chainId;
-        this.titleBar.setTitle(this.chainId);
+        this.coinTransferService.elastosChainCode = this.elastosChainCode;
+        this.titleBar.setTitle(this.elastosChainCode);
         this.initData();
     }
 
@@ -133,16 +133,16 @@ export class CoinHomePage implements OnInit {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             let masterWalletId = navigation.extras.state.masterWalletId;
-            this.chainId = navigation.extras.state.chainId as StandardCoinName;
+            this.elastosChainCode = navigation.extras.state.elastosChainCode as StandardCoinName;
 
             this.masterWallet = this.walletManager.getMasterWallet(masterWalletId);
 
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
-            this.coinTransferService.chainId = this.chainId;
+            this.coinTransferService.elastosChainCode = this.elastosChainCode;
             this.coinTransferService.walletInfo = this.native.clone(this.masterWallet.account);
 
-            this.subWallet = this.masterWallet.getSubWallet(this.chainId);
+            this.subWallet = this.masterWallet.getSubWallet(this.elastosChainCode);
         }
     }
 
@@ -200,15 +200,15 @@ export class CoinHomePage implements OnInit {
     }
 
     chainIsELA(): boolean {
-        return this.chainId === StandardCoinName.ELA;
+        return this.elastosChainCode === StandardCoinName.ELA;
     }
 
     chainIsDID(): boolean {
-        return this.chainId === StandardCoinName.IDChain;
+        return this.elastosChainCode === StandardCoinName.IDChain;
     }
 
     chainIsETHSC(): boolean {
-        return this.chainId === StandardCoinName.ETHSC;
+        return this.elastosChainCode === StandardCoinName.ETHSC;
     }
 
     chainIsERC20(): boolean {
@@ -265,7 +265,7 @@ export class CoinHomePage implements OnInit {
             '/wallet/coin-tx-info',
             {
                 masterWalletId: this.masterWallet.id,
-                chainId: this.chainId,
+                elastosChainCode: this.elastosChainCode,
                 transactionInfo: item
             }
         );
@@ -334,7 +334,7 @@ export class CoinHomePage implements OnInit {
         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
           // TODO
             // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
-            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.chainId, 0, 1, '');
+            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.elastosChainCode, 0, 1, '');
             //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
             //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
             //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
@@ -351,12 +351,12 @@ export class CoinHomePage implements OnInit {
 
     async createConsolidateTransaction() {
       // TODO
-        // let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.chainId, '');
+        // let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.elastosChainCode, '');
         // Logger.log('wallet', 'coin-home.page createConsolidateTransaction');
         // const transfer = new Transfer();
         // Object.assign(transfer, {
         //     masterWalletId: this.masterWallet.id,
-        //     chainId: this.chainId,
+        //     elastosChainCode: this.elastosChainCode,
         //     rawTransaction: rawTx,
         //     payPassword: '',
         //     action: null,

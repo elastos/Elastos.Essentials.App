@@ -46,7 +46,7 @@ export class DPosUnRegistrationPage implements OnInit {
         state: "Unregistered",
     };
     public state: string = "";
-    public chainId = StandardCoinName.ELA;
+    public elastosChainCode = StandardCoinName.ELA;
 
     public ownerPublicKey: string;
 

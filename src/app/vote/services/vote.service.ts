@@ -21,7 +21,7 @@ export class VoteService {
 
     public masterWallet: MasterWallet = null;
     public masterWalletId: string;
-    public chainId: StandardCoinName = StandardCoinName.ELA;;
+    public elastosChainCode: StandardCoinName = StandardCoinName.ELA;;
     public walletInfo: WalletAccount;
     public sourceSubwallet: MainchainSubWallet;
 
@@ -40,7 +40,7 @@ export class VoteService {
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
     ) {
-        this.chainId = StandardCoinName.ELA;
+        this.elastosChainCode = StandardCoinName.ELA;
     }
 
     public async init() {
@@ -54,7 +54,7 @@ export class VoteService {
         this.route = route;
         this.routerOptions = routerOptions;
 
-        this.chainId = StandardCoinName.ELA;
+        this.elastosChainCode = StandardCoinName.ELA;
         this.activeWallet = this.walletManager.getActiveMasterWallet();
 
         if (!this.activeWallet) {
@@ -107,7 +107,7 @@ export class VoteService {
         const transfer = new Transfer();
         Object.assign(transfer, {
             masterWalletId: this.masterWalletId,
-            chainId: this.chainId,
+            elastosChainCode: this.elastosChainCode,
             rawTransaction: rawTx,
             payPassword: '',
             action: this.intentAction,

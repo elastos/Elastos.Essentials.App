@@ -118,16 +118,16 @@ export class CreateProposalPage {
         }
     }
 
-    private async digestFunction(masterWalletId: string, chainId: string, payload: string): Promise<string> {
+    private async digestFunction(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
         switch(this.createProposalCommand.data.proposaltype) {
             case "normal":
-                return await this.walletManager.spvBridge.proposalCRCouncilMemberDigest(masterWalletId, chainId, payload);
+                return await this.walletManager.spvBridge.proposalCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             case "changeproposalowner":
-                return await this.walletManager.spvBridge.proposalChangeOwnerCRCouncilMemberDigest(masterWalletId, chainId, payload);
+                return await this.walletManager.spvBridge.proposalChangeOwnerCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             case "closeproposal":
-                return await this.walletManager.spvBridge.terminateProposalCRCouncilMemberDigest(masterWalletId, chainId, payload);
+                return await this.walletManager.spvBridge.terminateProposalCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             case "secretarygeneral":
-                return await this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId, chainId, payload);
+                return await this.walletManager.spvBridge.proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             default:
                 throw new Error("Don't support this proposaltype: " + this.createProposalCommand.data.proposaltype);
         }

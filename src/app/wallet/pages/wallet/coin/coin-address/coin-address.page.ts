@@ -22,7 +22,7 @@ export class CoinAddressPage {
 
     public addressList = [];
     public masterWalletId: string;
-    public chainId: string;
+    public elastosChainCode: string;
     public curCount = 0;
 
     constructor(
@@ -42,7 +42,7 @@ export class CoinAddressPage {
         if (!Util.isEmptyObject(navigation.extras.state)) {
             // General Values
             this.masterWalletId = navigation.extras.state.masterWalletId;
-            this.chainId = navigation.extras.state.chainId;
+            this.elastosChainCode = navigation.extras.state.elastosChainCode;
             this.getAddressList(null);
         }
     }
@@ -52,7 +52,7 @@ export class CoinAddressPage {
     }
 
     async getAddressList(infiniteScroll: any) {
-        const allAddresses = await this.walletManager.spvBridge.getAllAddresses(this.masterWalletId, this.chainId, this.curCount, AddressCount, false);
+        const allAddresses = await this.walletManager.spvBridge.getAllAddresses(this.masterWalletId, this.elastosChainCode, this.curCount, AddressCount, false);
         const addresses = allAddresses['Addresses'];
         const maxCount = allAddresses['MaxCount'];
         let disabled = true;

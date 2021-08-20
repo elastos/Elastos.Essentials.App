@@ -13,21 +13,21 @@
                 (click)="walletSelected(masterWallet)"
             >
                 <ion-col size="2" class="left-col">
-                    <img [src]="uiService.getSubWalletIcon(masterWallet.getSubWallet(chainId))">
+                    <img [src]="uiService.getSubWalletIcon(masterWallet.getSubWallet(elastosChainCode))">
                 </ion-col>
                 <ion-col size="5" class="middle-col">
-                    <h1>{{ uiService.getSubwalletTitle(masterWallet.getSubWallet(chainId)) }}</h1>
-                    <p>{{ uiService.getSubwalletSubtitle(masterWallet.getSubWallet(chainId)) }}</p>
+                    <h1>{{ uiService.getSubwalletTitle(masterWallet.getSubWallet(elastosChainCode)) }}</h1>
+                    <p>{{ uiService.getSubwalletSubtitle(masterWallet.getSubWallet(elastosChainCode)) }}</p>
                 </ion-col>
                 <ion-col size="5" class="right-col">
-                    <h1>{{ uiService.getFixedBalance(masterWallet.getSubWallet(chainId).getDisplayBalance()) }}</h1>
-                    <p *ngIf="masterWallet.getSubWallet(chainId).getAmountInExternalCurrency(masterWallet.getSubWallet(chainId).getDisplayBalance())">
-                        {{ masterWallet.getSubWallet(chainId).getAmountInExternalCurrency(masterWallet.getSubWallet(chainId).getDisplayBalance()) }}
+                    <h1>{{ uiService.getFixedBalance(masterWallet.getSubWallet(elastosChainCode).getDisplayBalance()) }}</h1>
+                    <p *ngIf="masterWallet.getSubWallet(elastosChainCode).getAmountInExternalCurrency(masterWallet.getSubWallet(elastosChainCode).getDisplayBalance())">
+                        {{ masterWallet.getSubWallet(elastosChainCode).getAmountInExternalCurrency(masterWallet.getSubWallet(elastosChainCode).getDisplayBalance()) }}
                         {{ currencyService.selectedCurrency.symbol }}
                     </p>
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
-                    <span *ngIf="masterWallet.getSubWallet(chainId).type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
+                    <span *ngIf="masterWallet.getSubWallet(elastosChainCode).type === CoinType.ERC20" class="synced">{{ 'wallet.ela-erc20' | translate }}</span>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>

@@ -47,7 +47,7 @@ export class DidTransactionPage implements OnInit {
     private sourceSubwallet: ETHChainSubWallet;
     private intentTransfer: IntentTransfer;
     private balance: number; // ELA
-    private chainId: string; // IDChain
+    private elastosChainCode: string; // IDChain
     private walletInfo = {};
 
     constructor(
@@ -79,12 +79,12 @@ export class DidTransactionPage implements OnInit {
     }
 
     init() {
-        this.chainId = this.coinTransferService.chainId;
+        this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
 
-        this.sourceSubwallet = this.masterWallet.getSubWallet(this.chainId) as ETHChainSubWallet;
+        this.sourceSubwallet = this.masterWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
     }
 
     /**
@@ -128,7 +128,7 @@ export class DidTransactionPage implements OnInit {
           const transfer = new Transfer();
           Object.assign(transfer, {
               masterWalletId: this.masterWallet.id,
-              chainId: this.chainId,
+              elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               payPassword: '',
               action: this.intentTransfer.action,

@@ -214,14 +214,14 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
         );
     }
 
-    public async createDepositTransaction(sideChainID: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
+    public async createDepositTransaction(toElastosChainCode: StandardCoinName, toAddress: string, amount: number, memo: string = ""): Promise<string> {
         let toAmount = this.accMul(amount, Config.SELA);
         Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
         let utxo = await this.getAvailableUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
         if (!utxo) return;
 
         let lockAddres = '';
-        switch (sideChainID) {
+        switch (toElastosChainCode) {
           case StandardCoinName.IDChain:
             lockAddres = Config.IDCHAIN_DEPOSIT_ADDRESS;
           break;
@@ -232,7 +232,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             lockAddres = Config.ETHDID_DEPOSIT_ADDRESS;
           break;
           default:
-            Logger.error('wallet', 'createDepositTransaction not support ', sideChainID);
+            Logger.error('wallet', 'createDepositTransaction not support ', toElastosChainCode);
             return null;
         }
 
@@ -240,7 +240,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             this.masterWallet.id,
             this.id,
             JSON.stringify(utxo),
-            sideChainID,
+            toElastosChainCode,
             toAmount.toString(),
             toAddress,
             lockAddres,
@@ -950,7 +950,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
             }
         } while (!this.masterWallet.account.SingleAddress);
 
-        // Logger.log('Wallet', 'TX:', this.masterWallet.id, ' ChainID:', this.id, ' ', txListTotal)
+        // Logger.log('Wallet', 'TX:', this.masterWallet.id, ' elastosChainCode:', this.id, ' ', txListTotal)
         return txListTotal;
     }
 

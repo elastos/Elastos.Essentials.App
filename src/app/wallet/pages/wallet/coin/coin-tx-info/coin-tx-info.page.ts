@@ -35,7 +35,7 @@ export class CoinTxInfoPage implements OnInit {
 
     // General Values
     private masterWallet: MasterWallet = null;
-    public chainId: string = '';
+    public elastosChainCode: string = '';
     public subWallet: SubWallet = null;
     public transactionInfo: TransactionInfo;
     private blockchain_url = Config.BLOCKCHAIN_URL;
@@ -93,8 +93,8 @@ export class CoinTxInfoPage implements OnInit {
             // General Values
             this.transactionInfo = navigation.extras.state.transactionInfo;
             this.masterWallet = this.walletManager.getMasterWallet(navigation.extras.state.masterWalletId);
-            this.chainId = navigation.extras.state.chainId;
-            this.subWallet = this.masterWallet.getSubWallet(this.chainId);
+            this.elastosChainCode = navigation.extras.state.elastosChainCode;
+            this.subWallet = this.masterWallet.getSubWallet(this.elastosChainCode);
 
             Logger.log('wallet', 'Tx info', this.transactionInfo);
 
@@ -117,7 +117,7 @@ export class CoinTxInfoPage implements OnInit {
 
     async getTransactionDetails() {
         // Tx is NOT ETH - Define total cost and address
-        if ((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) {
+        if ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) {
             // Pay Fee
             this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
 
@@ -146,7 +146,7 @@ export class CoinTxInfoPage implements OnInit {
             this.payFee = newPayFee.toNumber();
 
             // Address
-            if ((this.chainId === StandardCoinName.ETHSC) || (this.chainId === StandardCoinName.ETHDID)) {
+            if ((this.elastosChainCode === StandardCoinName.ETHSC) || (this.elastosChainCode === StandardCoinName.ETHDID)) {
                 const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 if (this.direction === TransactionDirection.SENT) {
                     this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
@@ -172,7 +172,7 @@ export class CoinTxInfoPage implements OnInit {
         // this.payType = "transaction-type-13";
         // if ((this.type >= 0) && this.type <= 12) {
         //     if (this.type === 10) {
-        //         if (this.chainId === StandardCoinName.IDChain) {
+        //         if (this.elastosChainCode === StandardCoinName.IDChain) {
         //             this.payType = "transaction-type-did";
         //         } else {
         //             this.payType = "transaction-type-10";
@@ -230,7 +230,7 @@ export class CoinTxInfoPage implements OnInit {
         // Only show receiving address, total cost and fees if tx was not received
         if (this.direction !== TransactionDirection.RECEIVED) {
             // For ERC20 Token Transfer
-            if ((this.chainId === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
+            if ((this.elastosChainCode === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
               if (this.transactionInfo.erc20TokenValue) {
                 this.txDetails.unshift(
                   {
@@ -295,7 +295,7 @@ export class CoinTxInfoPage implements OnInit {
 
             if (this.targetAddress) {
               // Only show the receiving address for multiable address wallet.
-              if (((this.chainId === StandardCoinName.ELA) || (this.chainId === StandardCoinName.IDChain)) && !this.masterWallet.account.SingleAddress) {
+              if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.masterWallet.account.SingleAddress) {
                 this.txDetails.unshift(
                     {
                         type: 'address',
@@ -308,8 +308,8 @@ export class CoinTxInfoPage implements OnInit {
         }
     }
 
-    goWebSite(chainId, txid) {
-        if (chainId === StandardCoinName.ELA) {
+    goWebSite(elastosChainCode, txid) {
+        if (elastosChainCode === StandardCoinName.ELA) {
             this.native.openUrl(this.blockchain_url + 'tx/' + txid);
         } else {
             this.native.openUrl(this.idchain_url + 'tx/' + txid);
@@ -349,14 +349,6 @@ export class CoinTxInfoPage implements OnInit {
             targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
         }
         return targetAddress;
-    }
-
-    getDisplayableName(): string {
-        if (this.chainId === 'IDChain') {
-            return 'ELA';
-        } else {
-            return this.chainId;
-        }
     }
 
     getTransferClass() {

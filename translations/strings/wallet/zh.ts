@@ -22,7 +22,7 @@ export const zh = {
         "refresh-pulling-text": "更新钱包",
         "refresh-refreshing-text": "正在更新...",
         "intent-select-wallet": "请选择钱包",
-        "personal-wallets-with": "含有 {{ chainid }} 的个人钱包",
+        "personal-wallets-with": "含有 {{ elastosChainCode }} 的个人钱包",
 
         /*******************
         * Generic Messages *

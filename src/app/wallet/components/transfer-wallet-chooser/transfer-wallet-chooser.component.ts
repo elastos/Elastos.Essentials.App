@@ -12,7 +12,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 
 export type WalletChooserComponentOptions = {
     sourceWallet: MasterWallet; // Master wallet from which funds will be transfered
-    chainId: StandardCoinName; // Target chain ID, used to display available balance for each wallet
+    elastosChainCode: StandardCoinName; // Target chain ID, used to display available balance for each wallet
     excludeWalletId?: string; // Optional wallet to not show in the list of selectable wallets
 }
 

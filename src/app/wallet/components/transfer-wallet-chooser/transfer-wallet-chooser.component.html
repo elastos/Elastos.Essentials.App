@@ -3,7 +3,7 @@
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-row class="main-title-row">
             <ion-col size="12">
-                <p>{{ 'wallet.personal-wallets-with' | translate:{chainid: options.chainId} }}</p>
+                <p>{{ 'wallet.personal-wallets-with' | translate:{elastosChainCode: options.elastosChainCode} }}</p>
             </ion-col>
         </ion-row>
         <ion-row
@@ -13,14 +13,14 @@
             (click)="walletSelected(masterWallet)"
         >
             <ion-col size="2" class="left-col">
-                <img [src]="uiService.getSubWalletIcon(options.sourceWallet.getSubWallet(options.chainId))">
+                <img [src]="uiService.getSubWalletIcon(options.sourceWallet.getSubWallet(options.elastosChainCode))">
             </ion-col>
             <ion-col size="5" class="middle-col">
                 <h1>{{ masterWallet.name }}</h1>
             </ion-col>
             <ion-col size="5" class="right-col">
-                <h1 *ngIf="masterWallet.getSubWallet(chainId)">{{ uiService.getFixedBalance(masterWallet.getSubWallet(chainId).getDisplayBalance()) }}</h1>
-                <h1 *ngIf="!masterWallet.getSubWallet(chainId)">0.000</h1>
+                <h1 *ngIf="masterWallet.getSubWallet(elastosChainCode)">{{ uiService.getFixedBalance(masterWallet.getSubWallet(elastosChainCode).getDisplayBalance()) }}</h1>
+                <h1 *ngIf="!masterWallet.getSubWallet(elastosChainCode)">0.000</h1>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
@@ -36,7 +36,7 @@
 <!-- <ion-grid class="container" [class.dark-container]="theme.darkMode">
     <ion-row class="main-title-row">
         <ion-col size="12">
-            <p>Personal wallets with {{ options.chainId }}</p>
+            <p>Personal wallets with {{ options.elastosChainCode }}</p>
         </ion-col>
     </ion-row>
     <div *ngFor="let masterWallet of walletsToShowInList">
@@ -46,14 +46,14 @@
             (click)="walletSelected(masterWallet)"
         >
             <ion-col size="2" class="left-col">
-                <img [src]="uiService.getSubWalletIcon(options.sourceWallet.getSubWallet(options.chainId))">
+                <img [src]="uiService.getSubWalletIcon(options.sourceWallet.getSubWallet(options.elastosChainCode))">
             </ion-col>
             <ion-col size="5" class="middle-col">
                 <h1>{{ masterWallet.name }}</h1>
             </ion-col>
             <ion-col size="5" class="right-col">
-                <h1 *ngIf="masterWallet.getSubWallet(chainId)">{{ uiService.getFixedBalance(masterWallet.getSubWallet(chainId).getDisplayBalance()) }}</h1>
-                <h1 *ngIf="!masterWallet.getSubWallet(chainId)">0.000</h1>
+                <h1 *ngIf="masterWallet.getSubWallet(elastosChainCode)">{{ uiService.getFixedBalance(masterWallet.getSubWallet(elastosChainCode).getDisplayBalance()) }}</h1>
+                <h1 *ngIf="!masterWallet.getSubWallet(elastosChainCode)">0.000</h1>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>

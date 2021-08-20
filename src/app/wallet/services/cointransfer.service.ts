@@ -40,7 +40,7 @@ export class Transfer {
     crDID: string = null;
     from: string = null;
     fee: number = 0;
-    chainId: string = null;
+    elastosChainCode: string = null;
     votes: any; // TODO
     amount: number;
     publickey: string;
@@ -48,7 +48,7 @@ export class Transfer {
     publicKeys: any;
     didrequest: string;
    // type: string = 'payment-confirm';
-    sideChainId: string;
+    toElastosChainCode: string;
     currency: string; // pay
     rate: number;
     payPassword: string;
@@ -95,9 +95,9 @@ export class CoinTransferService {
     public transferType: TransferType;
     public masterWalletId: string;
     // From subwallet
-    public chainId: StandardCoinName;
+    public elastosChainCode: StandardCoinName;
     // To subwallet (only for recharging funds)
-    public subchainId: string;
+    public toElastosChainCode: string;
     public walletInfo: WalletAccount;
 
 
@@ -135,8 +135,8 @@ export class CoinTransferService {
         this.walletInfo = new WalletAccount();
         this.transferType = null;
         this.masterWalletId = null;
-        this.chainId = null;
-        this.subchainId = null;
+        this.elastosChainCode = null;
+        this.toElastosChainCode = null;
         this.intentTransfer = new IntentTransfer();
         this.payTransfer = new PayTransfer();
         this.publickeys = null;

@@ -60,7 +60,7 @@ export class CoinNFTHomePage implements OnInit {
     public masterWallet: MasterWallet = null;
     public nft: NFT = null;
     //public subWallet: SubWallet = null;
-    //public chainId: StandardCoinName = null;
+    //public elastosChainCode: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
     public transactionsLoaded = false;
 
@@ -237,7 +237,7 @@ export class CoinNFTHomePage implements OnInit {
             '/wallet/coin-tx-info',
             {
                 masterWalletId: this.masterWallet.id,
-                chainId: this.chainId,
+                elastosChainCode: this.elastosChainCode,
                 transactionInfo: item
             }
         );
@@ -305,7 +305,7 @@ export class CoinNFTHomePage implements OnInit {
         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
           // TODO
             // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
-            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.chainId, 0, 1, '');
+            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.elastosChainCode, 0, 1, '');
             //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
             //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
             //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {

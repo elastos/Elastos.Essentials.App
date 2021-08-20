@@ -67,7 +67,7 @@
                     ></ion-input>
                     <ion-input
                         *ngIf="sendMax"
-                        [value]="masterWallet.subWallets[chainId].getDisplayBalance().toFixed(6)"
+                        [value]="masterWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)"
                         (ionChange)="resetAmountInput()"
                     ></ion-input>
                     <p *ngIf="supportsMaxTransfer()" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
@@ -83,7 +83,7 @@
             <h1>{{ 'wallet.enter-amount' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="6" class="left-col">
-                    <h2>{{ chainId }}</h2>
+                    <h2>{{ elastosChainCode }}</h2>
                     <p *ngIf="isStandardSubwallet(fromSubWallet)">{{ currencyService.selectedCurrency.symbol }}</p>
                 </ion-col>
                 <ion-col size="6" class="right-col">
@@ -99,21 +99,21 @@
                     <ion-input
                         *ngIf="sendMax"
                         class="amount-input"
-                        [value]="masterWallet.subWallets[chainId].getDisplayBalance().toFixed(6)"
+                        [value]="masterWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)"
                         (ionChange)="resetAmountInput()"
                     ></ion-input>
                     <p *ngIf="amount && !sendMax">
                         {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(amount)) }}
                     </p>
                     <p *ngIf="sendMax">
-                        {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.masterWallet.subWallets[chainId].getDisplayBalance().toFixed(6))) }}
+                        {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.masterWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6))) }}
                     </p>
                 </ion-col>
             </ion-row>
 
             <ion-row class="balance-row">
                 <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
-                <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
+                <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[elastosChainCode].getDisplayBalance() }}</strong></p>
             </ion-row>
 
             <h1>{{ 'wallet.send-to' | translate }}</h1>
@@ -194,7 +194,7 @@
         <h2>{{ 'wallet.confirm-transaction-title' | translate }}</h2>
         <div>
             <h3>{{ 'wallet.from' | translate }}:</h3>
-            <h4>{{ chainId }}</h4>
+            <h4>{{ elastosChainCode }}</h4>
         </div>
         <div>
             <h3>{{ 'wallet.to' | translate }}:</h3>
@@ -210,7 +210,7 @@
         <div class="amount-container">
             <ion-row class="item-row">
                 <ion-col size="6" class="left-col">
-                    <h4 [class.addPaddingBottom]="isStandardSubwallet(fromSubWallet)">{{ chainId }}</h4>
+                    <h4 [class.addPaddingBottom]="isStandardSubwallet(fromSubWallet)">{{ elastosChainCode }}</h4>
                     <p *ngIf="isStandardSubwallet(fromSubWallet)">{{ currencyService.selectedCurrency.symbol }}</p>
                 </ion-col>
                 <ion-col size="6" class="right-col">
@@ -229,7 +229,7 @@
             </ion-row>
         </div>
         <div>
-            <p>{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[chainId].getDisplayBalance() }}</strong></p>
+            <p>{{ 'wallet.balance' | translate }}:  <strong>{{ masterWallet.subWallets[elastosChainCode].getDisplayBalance() }}</strong></p>
         </div>
 
         <div class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode">
