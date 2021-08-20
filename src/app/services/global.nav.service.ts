@@ -164,6 +164,14 @@ export class GlobalNavService {
     }
 
     /**
+     * Manually removes all navigation history items. Caution: this method may most of the
+     * time not be called manually.
+     */
+    public clearNavigationHistory() {
+        this.navigationHistory = [];
+    }
+
+    /**
      * Navigates out of current context to the first screen that belongs to another context
      * If navigate is false, exitCurrentContext will not navigate to new route.
      */

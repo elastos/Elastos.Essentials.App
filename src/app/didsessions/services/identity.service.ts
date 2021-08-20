@@ -27,6 +27,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -75,6 +76,7 @@ export class IdentityService {
         private storage: GlobalStorageService,
         private globalElastosAPIService: GlobalElastosAPIService,
         private globalHiveService: GlobalHiveService,
+        private globalStartupService: GlobalStartupService,
         private didSessions: GlobalDIDSessionsService
     ) {
       this.events.subscribe('signIn', (identity) => {
@@ -138,7 +140,7 @@ export class IdentityService {
                 await this.didSessions.signIn(identityEntry, signInOptions);
 
                 if (goToLauncher)
-                    await this.didSessions.navigateHome();
+                    await this.globalStartupService.navigateToStartupScreen();
             }
             else {
                 Logger.warn('didsessions', "Failed to authentify using master password. Sign in not permitted.");
