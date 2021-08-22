@@ -52,7 +52,7 @@ export class CoinService {
         this.availableCoins.push(new StandardCoin(StandardCoinName.IDChain, "ELA/ID", "Elastos DID"));
         this.availableCoins.push(new StandardCoin(StandardCoinName.ETHSC, "ELA/ESC", "Elastos ESC"));
         this.availableCoins.push(new StandardCoin(StandardCoinName.ETHDID, "ELA/EID", "Elastos EID"));
-        // this.availableCoins.push(new StandardCoin(StandardCoinName.ETHHECO, "ELA/ETHHECO", "HECO"));
+        this.availableCoins.push(new StandardCoin(StandardCoinName.ETHHECO, "ELA/ETHHECO", "HECO"));
 
         // ERC20 tokens
         this.availableCoins.push(new ERC20Coin("TTECH", "TTECH", "Trinity Tech", "0xa4e4a46b228f3658e96bf782741c67db9e1ef91c", MAINNET_TEMPLATE, false));

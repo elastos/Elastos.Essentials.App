@@ -26,7 +26,10 @@ export enum ElastosApiUrlType {
     EID_RPC = "eidChainRPC",
     EID_MISC = "eidMiscRPC",
     // Cyber republic
-    CR_RPC = "crRPC"
+    CR_RPC = "crRPC",
+    HECO_RPC = "hecoRPC",
+    HECO_BROWSER = "hecoBrowserRPC",
+    HECO_ACCOUNT = "hecoAccountRPC",
 }
 
 export type ElastosAPIProvider = {
@@ -52,6 +55,9 @@ export type ElastosAPIProvider = {
             escBrowserRPC: string;
             // Cyber Republic
             crRPC: string;
+            hecoRPC: string;
+            hecoBrowserRPC: string;
+            hecoAccountRPC: string;
         }
     }
 };
@@ -114,7 +120,10 @@ export class GlobalElastosAPIService extends GlobalService {
                         escMiscRPC: 'https://api.elastos.io/misc',
                         escOracleRPC: 'https://api.elastos.io/oracle',
                         escBrowserRPC: 'https://eth.elastos.io',
-                        crRPC: 'https://api.cyberrepublic.org'
+                        crRPC: 'https://api.cyberrepublic.org',
+                        hecoRPC: 'https://http-mainnet.hecochain.com',
+                        hecoBrowserRPC: 'https://scan.hecochain.com',
+                        hecoAccountRPC: 'https://api.hecoinfo.com',
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.elastos.io/ela',
@@ -126,7 +135,10 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: 'https://api-testnet.elastos.io/oracle',
                         escMiscRPC: 'https://api-testnet.elastos.io/misc',
                         escBrowserRPC: 'https://eth-testnet.elastos.io',
-                        crRPC: 'https://api.cyberrepublic.org'
+                        crRPC: 'https://api.cyberrepublic.org',
+                        hecoRPC: 'https://http-testnet.hecochain.com',
+                        hecoBrowserRPC: 'https://testnet.hecoinfo.com',
+                        hecoAccountRPC: 'https://api-testnet.hecoinfo.com',
                     },
                     "LRW": {
                       mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
@@ -139,6 +151,9 @@ export class GlobalElastosAPIService extends GlobalService {
                       escMiscRPC: '',
                       escBrowserRPC: '',
                       crRPC: 'http://crapi.longrunweather.com:18080',
+                      hecoRPC: '',
+                      hecoBrowserRPC: '',
+                      hecoAccountRPC: '',
                   },
                 }
             },
@@ -157,7 +172,10 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: 'https://api.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api.trinity-tech.cn/eth-misc',
                         escBrowserRPC: 'https://eth.elastos.io', // TODO
-                        crRPC: 'https://api.cyberrepublic.org'
+                        crRPC: 'https://api.cyberrepublic.org',
+                        hecoRPC: 'https://http-mainnet-node.huobichain.com',
+                        hecoBrowserRPC: 'https://scan.hecochain.com',
+                        hecoAccountRPC: 'https://api.hecoinfo.com',
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.trinity-tech.cn/ela',
@@ -169,20 +187,26 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: 'https://api-testnet.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api-testnet.trinity-tech.cn/eth-misc',
                         escBrowserRPC: 'https://eth-testnet.elastos.io',
-                        crRPC: 'https://api.cyberrepublic.org'
+                        crRPC: 'https://api.cyberrepublic.org',
+                        hecoRPC: 'https://http-testnet.hecochain.com',
+                        hecoBrowserRPC: 'https://testnet.hecoinfo.com',
+                        hecoAccountRPC: 'https://api-testnet.hecoinfo.com',
                     },
                     "LRW": {
-                      mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
-                      idChainRPC: 'http://did1rpc.longrunweather.com:18080',
-                      eidChainRPC: 'http://eid02.longrunweather.com:18080',
-                      eidMiscRPC:'',
-                      eidOracleRPC: '',
-                      escRPC:'',
-                      escOracleRPC: '',
-                      escMiscRPC: '',
-                      escBrowserRPC: '',
-                      crRPC: 'http://crapi.longrunweather.com:18080',
-                  },
+                        mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
+                        idChainRPC: 'http://did1rpc.longrunweather.com:18080',
+                        eidChainRPC: 'http://eid02.longrunweather.com:18080',
+                        eidMiscRPC:'',
+                        eidOracleRPC: '',
+                        escRPC:'',
+                        escOracleRPC: '',
+                        escMiscRPC: '',
+                        escBrowserRPC: '',
+                        crRPC: 'http://crapi.longrunweather.com:18080',
+                        hecoRPC: '',
+                        hecoBrowserRPC: '',
+                        hecoAccountRPC: '',
+                    },
                 }
                 /*
                 {
