@@ -6,6 +6,7 @@ import { ETHChainSubWallet } from './ETHChainSubWallet';
 import { MainchainSubWallet } from './MainchainSubWallet';
 import { IDChainSubWallet } from './IDChainSubWallet';
 import { Logger } from 'src/app/logger';
+import { HECOChainSubWallet } from './HECOChainSubWallet';
 
 /**
  * Helper class to create and restore standard sub wallet objects.
@@ -19,8 +20,9 @@ export class StandardSubWalletBuilder {
                 return new IDChainSubWallet(masterWallet);
             case StandardCoinName.ETHSC:
             case StandardCoinName.ETHDID:
-            // case StandardCoinName.ETHHECO:
                 return new ETHChainSubWallet(masterWallet, coinName);
+            case StandardCoinName.ETHHECO:
+                return new HECOChainSubWallet(masterWallet, coinName);
             default:
                 return null;
         }

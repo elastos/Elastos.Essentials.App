@@ -526,6 +526,25 @@ export class WalletJsonRPCService {
       return null;
     }
 
+    // ******************
+    // HECO
+    // ******************
+    public async getHECOTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
+      let apiurltype = this.getApiUrlTypeForMisc(chainID);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
+      if (rpcApiUrl === null) {
+          return null;
+      }
+      let hecoTxlistUrl = rpcApiUrl + '/api?module=account&action=txlist&address=' + address;
+      try {
+          let result = await this.globalJsonRPCService.httpGet(hecoTxlistUrl);
+          return result.result as EthTransaction[];
+      } catch (e) {
+        Logger.error('wallet', 'getHECOTransactions error:', e)
+      }
+      return null;
+    }
+
     public getApiUrlTypeForRpc(elastosChainCode: string): ElastosApiUrlType {
       let apiUrlType = ElastosApiUrlType.ELA_RPC;
       switch (elastosChainCode) {
@@ -540,6 +559,9 @@ export class WalletJsonRPCService {
               break;
           case StandardCoinName.ETHDID:
               apiUrlType = ElastosApiUrlType.EID_RPC;
+              break;
+          case StandardCoinName.ETHHECO:
+              apiUrlType = ElastosApiUrlType.HECO_RPC;
               break;
           default:
               Logger.log("wallet", 'WalletJsonRPCService: RPC can not support ' + elastosChainCode);
@@ -558,6 +580,9 @@ export class WalletJsonRPCService {
           case StandardCoinName.ETHDID:
               apiUrlType = ElastosApiUrlType.EID_MISC;
               break;
+          case StandardCoinName.ETHHECO:
+              apiUrlType = ElastosApiUrlType.HECO_ACCOUNT;
+              break;
           default:
               Logger.log("wallet", 'WalletJsonRPCService: Misc can not support ' + elastosChainCode);
               break;
@@ -570,6 +595,9 @@ export class WalletJsonRPCService {
     switch (elastosChainCode) {
         case StandardCoinName.ETHSC:
             apiUrlType = ElastosApiUrlType.ETHSC_BROWSER;
+            break;
+        case StandardCoinName.ETHHECO:
+            apiUrlType = ElastosApiUrlType.HECO_BROWSER;
             break;
         default:
             Logger.log("wallet", 'WalletJsonRPCService: Browser api can not support ' + elastosChainCode);

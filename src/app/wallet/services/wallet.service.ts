@@ -239,12 +239,12 @@ export class WalletManager {
                         extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
                     }
 
-                    // subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHHECO);
-                    // if (!subwallet && networkConfig['ETHHECO']) {
-                    //     Logger.log('wallet', '(Re)Opening ETHHECO');
-                    //     const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHHECO));
-                    //     extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-                    // }
+                    subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHHECO);
+                    if (!subwallet && networkConfig['ETHHECO']) {
+                        Logger.log('wallet', '(Re)Opening ETHHECO');
+                        const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHHECO));
+                        extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
+                    }
                 }
 
                 await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
@@ -445,7 +445,7 @@ export class WalletManager {
         }
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHSC));
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHDID));
-        // await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
+        await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
 
         // Get all tokens and create subwallet
         await this.masterWallets[id].updateERCTokenList(this.networkTemplate);

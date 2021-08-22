@@ -7,6 +7,7 @@ export class WalletConfig {
     'IDChain': {},
     'ETHSC': {'ChainID': 20, 'NetworkID': 20},
     'ETHDID': {'ChainID': 22, 'NetworkID': 22},
+    'ETHHECO': {'ChainID': 128, 'NetworkID': 128},
   }
 
   private static testNet = {
