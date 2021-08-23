@@ -60,4 +60,6 @@
             <true/>
         </config-file>
     </platform>
+
+    <hook src="hooks/before_plugin_install/build_ts.js" type="before_plugin_install" />
 </plugin>
