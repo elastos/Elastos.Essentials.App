@@ -6,14 +6,15 @@ import { Router } from '@angular/router';
 import { ERC20Coin, Coin } from '../../../../model/Coin';
 import { CoinService } from '../../../../services/coin.service';
 import { PopupProvider } from '../../../../services/popup.service';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
-import { WalletManager } from '../../../../services/wallet.service';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
+import { WalletService } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
-import { SubWallet } from '../../../../model/wallets/SubWallet';
+import { SubWallet } from '../../../../model/wallets/subwallet';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 
 @Component({
@@ -24,11 +25,11 @@ import { Logger } from 'src/app/logger';
 export class CoinErc20DetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private masterWallet: MasterWallet = null;
+  private networkWallet: NetworkWallet = null;
   private subWallet: SubWallet = null;
   public coin: ERC20Coin;
-  public contractAddress: string = '1234';
-  public canDelete: boolean = false;
+  public contractAddress = '1234';
+  public canDelete = false;
 
   public Util = Util;
 
@@ -39,7 +40,7 @@ export class CoinErc20DetailsPage implements OnInit {
     private router: Router,
     private coinService: CoinService,
     private popupProvider: PopupProvider,
-    private walletManager: WalletManager,
+    private walletManager: WalletService,
     private walletEditionService: WalletEditionService,
     private globalIntentService: GlobalIntentService,
   ) { }
@@ -48,10 +49,10 @@ export class CoinErc20DetailsPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
         this.coin = navigation.extras.state.coin;
-        this.masterWallet = this.walletManager.getMasterWallet(this.walletEditionService.modifiedMasterWalletId);
-        this.subWallet = this.masterWallet.getSubWallet(this.coin.getID());
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletEditionService.modifiedMasterWalletId);
+        this.subWallet = this.networkWallet.getSubWallet(this.coin.getID());
 
-        Logger.log('wallet', 'ERC20 Masterwallet', this.masterWallet);
+        Logger.log('wallet', 'ERC20 Masterwallet', this.networkWallet);
         Logger.log('wallet', 'ERC20 Subwallet', this.subWallet);
         Logger.log('wallet', 'ERC20 Details', this.coin);
 
@@ -70,18 +71,18 @@ export class CoinErc20DetailsPage implements OnInit {
 
   ionViewWillLeave() {
     if (this.popupProvider.alertPopup) {
-      this.popupProvider.alertCtrl.dismiss();
+      void this.popupProvider.alertCtrl.dismiss();
       this.popupProvider.alertPopup = null;
     }
   }
 
   copy() {
-    this.native.copyClipboard(this.contractAddress);
+    void this.native.copyClipboard(this.contractAddress);
     this.native.toast(this.translate.instant("wallet.copied"));
   }
 
-  async delete() {
-    this.popupProvider.ionicConfirm('wallet.delete-coin-confirm-title', 'wallet.delete-coin-confirm-subtitle')
+  delete() {
+    void this.popupProvider.ionicConfirm('wallet.delete-coin-confirm-title', 'wallet.delete-coin-confirm-subtitle')
       .then(async (data) => {
         if (data) {
           await this.coinService.deleteERC20Coin(this.coin);
@@ -97,7 +98,7 @@ export class CoinErc20DetailsPage implements OnInit {
       "https://wallet.elastos.net/addcoin?contract=" +
       encodeURIComponent(this.contractAddress);
 
-    this.globalIntentService.sendIntent("share", {
+    void this.globalIntentService.sendIntent("share", {
       title: this.translate.instant("wallet.share-erc20-token"),
       url: addCoinUrl,
     });

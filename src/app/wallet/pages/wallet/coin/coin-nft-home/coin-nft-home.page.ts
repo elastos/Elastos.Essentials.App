@@ -26,17 +26,17 @@ import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { Util } from '../../../../model/Util';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/SubWallet';
+import { SubWallet } from '../../../../model/wallets/subwallet';
 import { TransactionInfo } from '../../../../model/Transaction';
 import * as moment from 'moment';
 import { CurrencyService } from '../../../../services/currency.service';
-import { ERC20SubWallet } from '../../../../model/wallets/ERC20SubWallet';
-import { StandardSubWallet } from '../../../../model/wallets/StandardSubWallet';
+import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
+import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
 import { UiService } from '../../../../services/ui.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { Subscription } from 'rxjs';
@@ -44,9 +44,10 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { NFT, NFTType } from 'src/app/wallet/model/nft';
+import { NFT, NFTType } from 'src/app/wallet/model/nfts/nft';
 import { ERC721Service } from 'src/app/wallet/services/erc721.service';
-import { NFTAsset } from 'src/app/wallet/model/nftasset';
+import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Component({
     selector: 'app-coin-nft-home',
@@ -57,7 +58,7 @@ export class CoinNFTHomePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     //public masterWalletInfo = '';
-    public masterWallet: MasterWallet = null;
+    public networkWallet: NetworkWallet = null;
     public nft: NFT = null;
     //public subWallet: SubWallet = null;
     //public elastosChainCode: StandardCoinName = null;
@@ -82,7 +83,7 @@ export class CoinNFTHomePage implements OnInit {
 
     constructor(
         public router: Router,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public translate: TranslateService,
         private coinTransferService: CoinTransferService,
         public native: Native,
@@ -117,11 +118,11 @@ export class CoinNFTHomePage implements OnInit {
 
             // Retrieve the master wallet
             let masterWalletId = navigation.extras.state.masterWalletId;
-            this.masterWallet = this.walletManager.getMasterWallet(masterWalletId);
+            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
 
             // Retrieve the NFT
             let nftContractAddress = navigation.extras.state.contractAddress;
-            this.nft = this.masterWallet.getNFTByAddress(nftContractAddress);
+            this.nft = this.networkWallet.getNFTByAddress(nftContractAddress);
 
             await this.initData();
         }
@@ -162,7 +163,7 @@ export class CoinNFTHomePage implements OnInit {
 
     async refreshAssets() {
         this.refreshingAssets = true;
-        await this.masterWallet.refreshNFTAssets(this.nft);
+        await this.networkWallet.refreshNFTAssets(this.nft);
         this.refreshingAssets = false;
     }
 
@@ -252,7 +253,7 @@ export class CoinNFTHomePage implements OnInit {
      */
     showAssetDetails(asset: NFTAsset) {
         this.native.go('/wallet/coin-nft-details', {
-            masterWalletId: this.masterWallet.id,
+            masterWalletId: this.networkWallet.id,
             nftContractAddress: this.nft.contractAddress,
             assetID: asset.id
         });
@@ -283,13 +284,13 @@ export class CoinNFTHomePage implements OnInit {
         this.getAllTx();
     } */
 
-    doRefresh(event) {
+    async doRefresh(event): Promise<void> {
         if (!this.uiService.returnedUser) {
             this.uiService.returnedUser = true;
-            this.storage.setVisit(true);
+            await this.storage.setVisit(true);
         }
 
-        this.initData();
+        await this.initData();
         this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();
@@ -363,8 +364,8 @@ export class CoinNFTHomePage implements OnInit {
         return !(this.subWallet instanceof ERC20SubWallet);
     } */
 
-    closeRefreshBox() {
+    async closeRefreshBox(): Promise<void> {
         this.uiService.returnedUser = true;
-        this.storage.setVisit(true);
+        await this.storage.setVisit(true);
     }
 }

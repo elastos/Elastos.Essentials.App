@@ -5,9 +5,9 @@ import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { StandardCoinName } from '../wallet/model/Coin';
-import { ETHChainSubWallet } from '../wallet/model/wallets/ETHChainSubWallet';
-import { MasterWallet } from '../wallet/model/wallets/MasterWallet';
-import { WalletManager } from '../wallet/services/wallet.service';
+import { ETHChainSubWallet } from '../wallet/model/wallets/elastos/evm.subwallet';
+import { NetworkWallet } from '../wallet/model/wallets/NetworkWallet';
+import { WalletService } from '../wallet/services/wallet.service';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalFirebaseService } from './global.firebase.service';
 import { GlobalIntentService } from './global.intent.service';
@@ -47,7 +47,7 @@ export class GlobalWalletConnectService extends GlobalService {
     private intent: GlobalIntentService,
     private intents: GlobalIntentService,
     private globalNetworksService: GlobalNetworksService,
-    private walletManager: WalletManager,
+    private walletManager: WalletService,
     private globalFirebaseService: GlobalFirebaseService,
     private native: GlobalNativeService
   ) {
@@ -96,15 +96,15 @@ export class GlobalWalletConnectService extends GlobalService {
     runDelayed(() => this.restoreSessions(), 5000);
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe(async activeWalletId => {
-      if (activeWalletId) { // null value when essentials starts, while wallets are not yet initialized.
-        Logger.log("walletconnect", "Updating active connectors with new active wallet information", activeWalletId);
+    this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async activeWallet => {
+      if (activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
+        Logger.log("walletconnect", "Updating active connectors with new active wallet information", activeWallet);
         for (let c of Array.from(this.connectors.values())) {
           if (c.connected) {
             try {
               c.updateSession({
                 chainId: c.chainId,
-                accounts: [await this.getAccountFromMasterWallet(this.walletManager.getMasterWallet(activeWalletId))]
+                accounts: [await this.getAccountFromNetworkWallet(activeWallet)]
               });
             }
             catch (e) {
@@ -121,7 +121,7 @@ export class GlobalWalletConnectService extends GlobalService {
   /**
    * Returns the eth account address associated with the given master wallet.
    */
-  private getAccountFromMasterWallet(wallet: MasterWallet): Promise<string> {
+  private getAccountFromNetworkWallet(wallet: NetworkWallet): Promise<string> {
     let subwallet = wallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
     return subwallet.createAddress();
   }

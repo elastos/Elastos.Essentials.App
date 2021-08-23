@@ -3,7 +3,7 @@ import { Native } from '../../../../services/native.service';
 import { Util } from "../../../../model/Util";
 import { ActivatedRoute } from '@angular/router';
 import { IonSlides, ModalController, IonInput } from '@ionic/angular';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { AuthService } from '../../../../services/auth.service';
 import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -31,7 +31,7 @@ export class MnemonicWritePage implements OnInit {
     };
 
     public inputList: Array<any> = [];
-    private inputStr: string = "";
+    private inputStr = "";
     private mnemonicStr: string;
 
     private modal: any;
@@ -41,7 +41,7 @@ export class MnemonicWritePage implements OnInit {
         public authService: AuthService,
         public native: Native,
         public events: Events,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         private walletCreationService: WalletCreationService,
         public zone: NgZone,
         private modalCtrl: ModalController,
@@ -102,7 +102,7 @@ export class MnemonicWritePage implements OnInit {
                 nextInput.setFocus();
             }
         } else {
-            this.onCreate();
+            void this.onCreate();
         }
     }
 

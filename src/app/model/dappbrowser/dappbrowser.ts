@@ -1,11 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { GetCredentialsQuery } from "@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did";
+import { InAppBrowser, InAppBrowserObject } from "@ionic-native/in-app-browser/ngx";
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { StandardCoinName } from "src/app/wallet/model/Coin";
-import { WalletManager } from "src/app/wallet/services/wallet.service";
-import { InAppBrowser, InAppBrowserObject } from "@ionic-native/in-app-browser/ngx";
+import { WalletService } from "src/app/wallet/services/wallet.service";
 
 type IABMessage = {
     type: "message";
@@ -55,7 +55,7 @@ export class DAppBrowser {
         let elastosConnectorCode = await iabClient.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
 
         // Get the active wallet address
-        let subwallet = WalletManager.instance.getActiveMasterWallet().getSubWallet(StandardCoinName.ETHSC);
+        let subwallet = WalletService.instance.getActiveNetworkWallet().getSubWallet(StandardCoinName.ETHSC);
         dappBrowser.userAddress = await subwallet.createAddress();
 
         Logger.log("dappbrowser", "title", title);

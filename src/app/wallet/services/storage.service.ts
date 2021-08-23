@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { WalletID, ExtendedWalletInfo } from '../model/wallets/MasterWallet';
+import { WalletID, ExtendedWalletInfo } from '../model/wallets/masterwallet';
 import { Contact } from './contacts.service';
 
 

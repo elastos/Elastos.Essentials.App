@@ -3,7 +3,7 @@ import { Util } from "../../../model/Util";
 import { Native } from '../../../services/native.service';
 import { Config } from '../../../config/Config';
 import { ActivatedRoute } from '@angular/router';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService, NewWallet } from '../../../services/walletcreation.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UiService } from '../../../services/ui.service';
@@ -32,7 +32,7 @@ export class WalletCreatePage implements OnInit {
     constructor(
         public route: ActivatedRoute,
         public native: Native,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         public walletCreationService: WalletCreationService,
         public zone: NgZone,
         public translate: TranslateService,
@@ -123,8 +123,8 @@ export class WalletCreatePage implements OnInit {
         nextInput.setFocus();
     }
 
-    showHelp(event) {
-        this.walletCreationService.type === 1 ?
+    showHelp(event): Promise<any> {
+        return this.walletCreationService.type === 1 ?
             this.native.showHelp(event, 'wallet.help:create-password') :
             this.native.showHelp(event, 'wallet.help:import-password');
     }

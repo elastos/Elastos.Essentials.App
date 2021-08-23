@@ -1,8 +1,8 @@
 import { Native } from '../../wallet/services/native.service';
 import { StandardCoinName } from '../../wallet/model/Coin';
 import { Injectable } from '@angular/core';
-import { WalletManager } from '../../wallet/services/wallet.service';
-import { MasterWallet } from '../../wallet/model/wallets/MasterWallet';
+import { WalletService } from '../../wallet/services/wallet.service';
+import { MasterWallet } from '../../wallet/model/wallets/masterwallet';
 
 import { Logger } from 'src/app/logger';
 import { WalletAccount, WalletAccountType } from '../../wallet/model/WalletAccount';
@@ -10,18 +10,19 @@ import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { MainchainSubWallet } from 'src/app/wallet/model/wallets/MainchainSubWallet';
+import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { PopupProvider } from 'src/app/services/global.popup.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Injectable({
     providedIn: 'root'
 })
 export class VoteService {
-    private activeWallet: MasterWallet = null;
+    private activeWallet: NetworkWallet = null;
 
-    public masterWallet: MasterWallet = null;
+    public networkWallet: NetworkWallet = null;
     public masterWalletId: string;
-    public elastosChainCode: StandardCoinName = StandardCoinName.ELA;;
+    public elastosChainCode: StandardCoinName = StandardCoinName.ELA;
     public walletInfo: WalletAccount;
     public sourceSubwallet: MainchainSubWallet;
 
@@ -35,7 +36,7 @@ export class VoteService {
 
     constructor(
         public native: Native,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         public popupProvider: PopupProvider,
         private nav: GlobalNavService,
         private globalIntentService: GlobalIntentService,
@@ -43,7 +44,7 @@ export class VoteService {
         this.elastosChainCode = StandardCoinName.ELA;
     }
 
-    public async init() {
+    public init() {
         Logger.log("wallet", "VoteService init");
     }
 
@@ -55,7 +56,7 @@ export class VoteService {
         this.routerOptions = routerOptions;
 
         this.elastosChainCode = StandardCoinName.ELA;
-        this.activeWallet = this.walletManager.getActiveMasterWallet();
+        this.activeWallet = this.walletManager.getActiveNetworkWallet();
 
         if (!this.activeWallet) {
             const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
@@ -72,7 +73,7 @@ export class VoteService {
     }
 
     private clear() {
-        this.masterWallet = null;
+        this.networkWallet = null;
         this.masterWalletId = null;
         this.walletInfo = null;
         this.intentAction = null;
@@ -86,10 +87,10 @@ export class VoteService {
     }
 
     //For select-wallet page call
-    public async navigateTo(masterWallet: MasterWallet) {
-        this.masterWallet = masterWallet;
-        this.masterWalletId = masterWallet.id;
-        this.walletInfo = masterWallet.account;
+    public async navigateTo(networkWallet: NetworkWallet) {
+        this.networkWallet = networkWallet;
+        this.masterWalletId = networkWallet.id;
+        this.walletInfo = networkWallet.account;
 
         //If multi sign will be rejected
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
@@ -97,8 +98,8 @@ export class VoteService {
             return;
         }
 
-        this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainchainSubWallet;
-        this.nav.navigateTo(this.context, this.route, this.routerOptions);
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainchainSubWallet;
+        void this.nav.navigateTo(this.context, this.route, this.routerOptions);
         this.clearRoute();
     }
 
@@ -120,10 +121,10 @@ export class VoteService {
         }
 
         if (context) {
-            this.nav.navigateRoot(context, null, {state: {refreash: true}});
+            void this.nav.navigateRoot(context, null, {state: {refreash: true}});
         }
         else {
-            this.nav.goToLauncher();
+            void this.nav.goToLauncher();
         }
     }
 }

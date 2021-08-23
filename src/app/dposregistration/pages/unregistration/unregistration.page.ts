@@ -7,7 +7,7 @@ import { areaList } from 'src/app/model/area.list';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
@@ -77,7 +77,7 @@ export class DPosUnRegistrationPage implements OnInit {
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         public voteService: VoteService,
         private authService: AuthService,
         public popupProvider: PopupProvider,

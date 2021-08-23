@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocalStorage } from '../../../services/storage.service';
 import { PopupProvider } from "../../../services/popup.service";
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { Native } from '../../../services/native.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Util } from '../../../model/Util';
 import { Config } from '../../../config/Config';
 import { WalletEditionService } from '../../../services/walletedition.service';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
 import { AuthService } from '../../../services/auth.service';
@@ -18,6 +18,7 @@ import { PopoverController } from '@ionic/angular';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { Events } from 'src/app/services/events.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Component({
     selector: 'app-wallet-settings',
@@ -27,7 +28,7 @@ import { StandardCoinName } from 'src/app/wallet/model/Coin';
 export class WalletSettingsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public masterWallet: MasterWallet;
+    public networkWallet: NetworkWallet;
 
     public walletName = "";
     private masterWalletId = "1";
@@ -100,7 +101,7 @@ export class WalletSettingsPage implements OnInit {
         public events: Events,
         public localStorage: LocalStorage,
         public popupProvider: PopupProvider,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public native: Native,
         private translate: TranslateService,
         private walletEditionService: WalletEditionService,
@@ -111,16 +112,16 @@ export class WalletSettingsPage implements OnInit {
     ) {
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
-        this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
-        Logger.log('wallet', 'Settings for master wallet - ' + this.masterWallet);
-        this.getMasterWalletBasicInfo();
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
+        Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
+        await this.getMasterWalletBasicInfo();
 
         // Legacy support: ability to migrate remaining balances from DID 1 to DID 2 chains
         // Show this menu entry only if the DID 1.0 subwallet balance is non 0 to not pollute all users
         // with this later on.
-        let did1SubWallet = this.masterWallet.getSubWallet(StandardCoinName.IDChain);
+        let did1SubWallet = this.networkWallet.getSubWallet(StandardCoinName.IDChain);
         // Cross chain transaction need 20000 for fee.
         if (did1SubWallet && did1SubWallet.balance.gt(20000)) {
             this.settings.push({
@@ -156,7 +157,7 @@ export class WalletSettingsPage implements OnInit {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
-               this.showDeletePrompt();
+               void this.showDeletePrompt();
             }
         } catch (e) {
             Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
@@ -165,7 +166,7 @@ export class WalletSettingsPage implements OnInit {
 
     private goToDID1Transfer() {
         this.native.go('/wallet/wallet-did1-transfer', {
-            masterWalletId: this.masterWallet.id
+            masterWalletId: this.networkWallet.id
         });
     }
 
@@ -212,9 +213,9 @@ export class WalletSettingsPage implements OnInit {
 
     public goToSetting(item) {
         if (item.type === 'wallet-export') {
-            this.getPassword();
+            void this.getPassword();
         } else if (item.type === 'wallet-delete') {
-            this.onDelete();
+            void this.onDelete();
         }
         else if (item.type === 'wallet-did1-transfer') {
             this.goToDID1Transfer();

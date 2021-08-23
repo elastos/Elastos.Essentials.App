@@ -7,7 +7,6 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 
-
 @Component({
     selector: 'app-launcher',
     templateUrl: './launcher.page.html',

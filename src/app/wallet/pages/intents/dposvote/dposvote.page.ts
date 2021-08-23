@@ -23,10 +23,10 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
+import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
 import { Config } from '../../../config/Config';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -53,7 +53,7 @@ export class DPoSVotePage implements OnInit {
     public intentTransfer: IntentTransfer;
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public coinTransferService: CoinTransferService,
         public native: Native,
         public zone: NgZone,
@@ -77,7 +77,7 @@ export class DPoSVotePage implements OnInit {
     ionViewDidEnter() {
         if (this.walletInfo["Type"] === "Multi-Sign") {
             // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
-            this.cancelOperation();
+            void this.cancelOperation();
         }
     }
 
@@ -87,18 +87,18 @@ export class DPoSVotePage implements OnInit {
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWalletId = this.coinTransferService.masterWalletId;
 
-        this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
         // All balance can be used for voting?
         let voteInEla = this.sourceSubwallet.balance.minus(this.votingFees());
         this.voteAmountELA = voteInEla.toString()
         this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
-        this.hasPendingVoteTransaction();
+        void this.hasPendingVoteTransaction();
     }
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
             await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
-            this.cancelOperation();
+            void this.cancelOperation();
         }
     }
 
@@ -113,7 +113,7 @@ export class DPoSVotePage implements OnInit {
                 this.intentTransfer.intentId);
         } catch (err) {
             Logger.error('wallet', 'wallet app -> dposvote pg -> cancelOperation err', err);
-            this.globalNav.navigateBack();
+            void this.globalNav.navigateBack();
         }
     }
 

@@ -1,4 +1,4 @@
-import { ERC721ResolvedInfo } from "../services/erc721.service";
+import { ERC721ResolvedInfo } from "../../services/erc721.service";
 import { NFTAsset } from "./nftasset";
 
 /**

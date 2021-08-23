@@ -3,9 +3,9 @@ import { Util } from '../../../model/Util';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { ActivatedRoute } from '@angular/router';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -20,7 +20,7 @@ import { Events } from 'src/app/services/events.service';
 export class WalletEditNamePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public walletname: string = "";
+    public walletname = "";
     public masterWallet: MasterWallet = null;
 
     constructor(
@@ -28,7 +28,7 @@ export class WalletEditNamePage implements OnInit {
         public native: Native,
         public localStorage: LocalStorage,
         public events: Events,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public theme: GlobalThemeService
@@ -60,12 +60,13 @@ export class WalletEditNamePage implements OnInit {
             return;
         }
 
-        this.modifyName();
+        void this.modifyName();
     }
 
     async modifyName() {
-        this.walletManager.masterWallets[this.masterWallet.id].name = this.walletname;
-        await this.walletManager.saveMasterWallet(this.masterWallet);
+        let masterWallet = this.walletManager.masterWallets[this.masterWallet.id];
+        masterWallet.name = this.walletname;
+        await masterWallet.save();
         this.native.pop();
     }
 }

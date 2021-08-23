@@ -4,19 +4,20 @@ import { Config } from '../../../../config/Config';
 import { WalletJsonRPCService } from '../../../../services/jsonrpc.service';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
-import { WalletManager } from '../../../../services/wallet.service';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
+import { WalletService } from '../../../../services/wallet.service';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { StandardCoinName } from '../../../../model/Coin';
 import { TransactionDirection, TransactionType, TransactionInfo, EthTransaction, TransactionStatus } from '../../../../model/Transaction';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
-import { SubWallet } from '../../../../model/wallets/SubWallet';
-import { ETHChainSubWallet } from '../../../../model/wallets/ETHChainSubWallet';
+import { SubWallet } from '../../../../model/wallets/subwallet';
+import { ETHChainSubWallet } from '../../../../model/wallets/elastos/evm.subwallet';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/MainAndIDChainSubWallet';
+import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 class TransactionDetail {
     type: string;
@@ -34,7 +35,7 @@ export class CoinTxInfoPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     // General Values
-    private masterWallet: MasterWallet = null;
+    private networkWallet: NetworkWallet = null;
     public elastosChainCode = '';
     public subWallet: SubWallet = null;
     public transactionInfo: TransactionInfo;
@@ -70,7 +71,7 @@ export class CoinTxInfoPage implements OnInit {
     constructor(
         public events: Events,
         public router: Router,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public native: Native,
         public jsonRPCService: WalletJsonRPCService,
         private translate: TranslateService,
@@ -91,9 +92,9 @@ export class CoinTxInfoPage implements OnInit {
         if (!Util.isEmptyObject(navigation.extras.state)) {
             // General Values
             this.transactionInfo = navigation.extras.state.transactionInfo;
-            this.masterWallet = this.walletManager.getMasterWallet(navigation.extras.state.masterWalletId);
+            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(navigation.extras.state.masterWalletId);
             this.elastosChainCode = navigation.extras.state.elastosChainCode;
-            this.subWallet = this.masterWallet.getSubWallet(this.elastosChainCode);
+            this.subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
 
             Logger.log('wallet', 'Tx info', this.transactionInfo);
 
@@ -294,7 +295,7 @@ export class CoinTxInfoPage implements OnInit {
 
             if (this.targetAddress) {
               // Only show the receiving address for multiable address wallet.
-              if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.masterWallet.account.SingleAddress) {
+              if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.networkWallet.account.SingleAddress) {
                 this.txDetails.unshift(
                     {
                         type: 'address',

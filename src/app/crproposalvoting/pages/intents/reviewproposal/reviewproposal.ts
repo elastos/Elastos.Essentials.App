@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Util } from 'src/app/model/util';
@@ -44,7 +44,7 @@ export class ReviewProposalPage {
         private popup: PopupService,
         public translate: TranslateService,
         private globalIntentService: GlobalIntentService,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         private voteService: VoteService,
         private proposalService: ProposalService,
         public theme: GlobalThemeService,

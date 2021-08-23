@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { Native } from '../../../services/native.service';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { WalletEditionService } from '../../../services/walletedition.service';
 import { Util } from '../../../model/Util';
 import { Config } from '../../../config/Config';
@@ -36,7 +36,7 @@ export class WalletManagerPage implements OnInit {
         public router: Router,
         public theme: GlobalThemeService,
         private walletEditionService: WalletEditionService,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         private translate: TranslateService,
         private walletAccessService: WalletAccessService,
         public currencyService: CurrencyService
@@ -59,7 +59,7 @@ export class WalletManagerPage implements OnInit {
             this.titleBar.setTitle(this.translate.instant('wallet.settings-my-wallets'));
     }
 
-    walletSelected(masterWallet: MasterWallet) {
+    async walletSelected(masterWallet: MasterWallet) {
         if (this.forIntent) {
             if (this.intent === 'access') {
                 this.walletAccessService.masterWalletId = masterWallet.id;
@@ -69,7 +69,7 @@ export class WalletManagerPage implements OnInit {
                 this.native.go("/wallet/coin-add-erc20", { contract: this.intentParams.contract });
             }
         } else {
-            this.walletManager.setActiveMasterWallet(masterWallet.id);
+            await this.walletManager.setActiveMasterWallet(masterWallet.id);
             this.native.pop();
         }
     }
@@ -80,6 +80,6 @@ export class WalletManagerPage implements OnInit {
     }
 
     getWalletIndex(masterWallet: MasterWallet): number {
-       return this.walletManager.getWalletsList().indexOf(masterWallet);
+       return this.walletManager.getMasterWalletsList().indexOf(masterWallet);
     }
 }

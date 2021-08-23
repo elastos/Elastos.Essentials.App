@@ -24,9 +24,9 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
-import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
+import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -54,7 +54,7 @@ export class CRmembervotePage implements OnInit {
     voteBalanceELA = 0; // ELA
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         private coinTransferService: CoinTransferService,
         private globalIntentService: GlobalIntentService,
         private translate: TranslateService,
@@ -77,7 +77,7 @@ export class CRmembervotePage implements OnInit {
     ionViewDidEnter() {
         if (this.coinTransferService.walletInfo['Type'] === 'Multi-Sign') {
             // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
-            this.cancelOperation();
+            void this.cancelOperation();
         }
     }
 
@@ -86,18 +86,18 @@ export class CRmembervotePage implements OnInit {
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.masterWalletId = this.coinTransferService.masterWalletId;
-        this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
         this.balance = this.sourceSubwallet.getDisplayBalance().toString();
 
         this.parseVotes();
 
-        this.hasPendingVoteTransaction();
+        void this.hasPendingVoteTransaction();
     }
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
             await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
-            this.cancelOperation();
+            void this.cancelOperation();
         }
     }
 
@@ -105,6 +105,7 @@ export class CRmembervotePage implements OnInit {
         this.votecount = 0;
         let voteBalanceSela = 0;
         for (const key of Object.keys(this.transfer.votes)) {
+            // eslint-disable-next-line no-prototype-builtins
             if (this.transfer.votes.hasOwnProperty(key)) {
                 voteBalanceSela += parseInt(this.transfer.votes[key], 10);
                 this.votecount++;
@@ -127,7 +128,7 @@ export class CRmembervotePage implements OnInit {
 
     goTransaction() {
         if (this.checkValue()) {
-            this.createVoteCRTransaction();
+            void this.createVoteCRTransaction();
         }
     }
 

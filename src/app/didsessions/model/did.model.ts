@@ -42,7 +42,7 @@ export class DID {
     }
 
     private loadPluginCredentials(): Promise<DIDPlugin.VerifiableCredential[]> {
-        return new Promise(async (resolve, reject)=>{
+        return new Promise((resolve, reject)=>{
             this.pluginDid.loadCredentials(
                 (ret) => {resolve(ret)}, (err) => {reject(err)},
             );
@@ -50,23 +50,19 @@ export class DID {
     }
 
     async addNameCredential(name: string, storePassword: string): Promise<void> {
-        try {
-            await this.addCredential(new DIDURL("#name"), {
-                name: name
-            }, storePassword, ["BasicProfileCredential"]);
-        }
-        catch (e) {
-            throw e;
-        }
+        await this.addCredential(new DIDURL("#name"), {
+            name: name
+        }, storePassword, ["BasicProfileCredential"]);
     }
 
     /**
      */
-    async addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: String[]): Promise<DIDPlugin.VerifiableCredential> {
+    async addCredential(credentialId: DIDURL, props: any, password: string, userTypes?: string[]): Promise<DIDPlugin.VerifiableCredential> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         return new Promise(async (resolve, reject)=>{
             Logger.log('didsessions', "Adding credential with id:", credentialId, props, userTypes);
 
-            let types: String[] = [
+            let types: string[] = [
                 "SelfProclaimedCredential"
             ];
             // types[0] = "BasicProfileCredential";

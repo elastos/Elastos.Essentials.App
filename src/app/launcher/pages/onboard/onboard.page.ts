@@ -58,7 +58,7 @@ export class OnboardPage implements OnInit {
 
   showSlider() {
     this.hidden = false;
-    this.slider.getSwiper().then((swiper) => {
+    void this.slider.getSwiper().then((swiper) => {
       swiper.init();
     });
   }
@@ -73,6 +73,6 @@ export class OnboardPage implements OnInit {
 
   async exit() {
     await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, "launcher", "visit", true);
-    this.router.navigate(['launcher/home']);
+    void this.router.navigate(['launcher/home']);
   }
 }

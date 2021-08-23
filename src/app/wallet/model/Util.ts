@@ -35,17 +35,17 @@ export class Util {
         const email = /^[a-zA-Z0-9.!#$%&*+=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
         return email.test(text);
-    };
+    }
 
     static phone(text): boolean {
         const mPattern = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
         return mPattern.test(text);
-    };
+    }
 
     static username(text): boolean {
         var uPattern = /^[a-zA-Z0-9_-]{4,16}$/;
         return uPattern.test(text);
-    };
+    }
 
     static password(text): boolean {
         if (text.length < 8) {
@@ -55,29 +55,29 @@ export class Util {
         //var pPattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
         //return pPattern.test(text);
 
-    };
+    }
+
     static number(text): boolean {
         // var numPattern = /^(([1-9]\d*)|0)(\.\d{1,2})?$"/;
         // var numPattern = /^-?\d*\.?\d+$/;
         var numPattern = /^(([1-9]\d*)|\d)(\.\d{1,9})?$/;
         return numPattern.test(text);
-    };
+    }
 
-    // TODO: not enough for other western languages like french.
     static english(text): boolean {
         var pattern = new RegExp("[A-Za-z]+");
         return pattern.test(text);
-    };
+    }
 
     static chinese(text): boolean {
         var pattern = new RegExp("[\u4E00-\u9FA5]+");
         return pattern.test(text);
-    };
+    }
 
     static japanese(text): boolean {
         var pattern = new RegExp("[\u0800-\u4e00]+");
         return pattern.test(text);
-    };
+    }
 
     public static isNull(data): boolean {
         return (data === '' || data === undefined || data === null) ? true : false;
@@ -94,6 +94,7 @@ export class Util {
 
     public static isEmptyObject(obj): boolean {
         for (let key in obj) {
+            // eslint-disable-next-line no-prototype-builtins
             if (obj.hasOwnProperty(key)) {
                 return false;
             }
@@ -101,7 +102,7 @@ export class Util {
         return true;
     }
 
-    static dateFormat(date: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {
+    static dateFormat(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
         return moment(date).format(format);
     }
 
@@ -149,12 +150,11 @@ export class Util {
         return false;
         //var pPattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
         //return pPattern.test(text);
-
-    };
+    }
 
     static scientificToNumber(num) {
         let str = num.toString();
-        let reg = /^(\d+)(e)([\-]?\d+)$/;
+        let reg = /^(\d+)(e)([-]?\d+)$/;
         let arr, len,
             zero = '';
 

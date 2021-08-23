@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet, Theme } from '../../../model/wallets/MasterWallet';
-import { WalletManager } from '../../../services/wallet.service';
+import { MasterWallet, Theme } from '../../../model/wallets/masterwallet';
+import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
 import { Native } from '../../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -56,7 +56,7 @@ export class WalletColorPage implements OnInit {
   constructor(
     public themeService: GlobalThemeService,
     public translate: TranslateService,
-    private walletManager: WalletManager,
+    private walletManager: WalletService,
     private walletEditionService: WalletEditionService,
     public native: Native,
     public ngZone: NgZone,
@@ -90,7 +90,7 @@ export class WalletColorPage implements OnInit {
       };
     }
 
-    await this.walletManager.saveMasterWallet(this.masterWallet);
+    await this.masterWallet.save();
     this.native.pop();
   }
 

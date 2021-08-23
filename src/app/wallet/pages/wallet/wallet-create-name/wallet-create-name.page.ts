@@ -3,7 +3,7 @@ import { Native } from '../../../services/native.service';
 import { Config } from '../../../config/Config';
 import { Util } from '../../../model/Util';
 import { ActivatedRoute } from '@angular/router';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
 import { Logger } from 'src/app/logger';
 
@@ -14,12 +14,12 @@ import { Logger } from 'src/app/logger';
 })
 export class WalletCreateNamePage implements OnInit {
 
-    public name: string = "";
+    public name = "";
 
     constructor(
         public route: ActivatedRoute,
         public native: Native,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         private walletCreationService: WalletCreationService
     ) {
     }

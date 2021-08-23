@@ -6,7 +6,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { ActivatedRoute } from '@angular/router';
@@ -31,7 +31,7 @@ export class CRNodePage implements OnInit {
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         public voteService: VoteService,
         private globalIntentService: GlobalIntentService,
         public popupProvider: PopupProvider,

@@ -5,7 +5,7 @@ import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { IntentService } from './intent.service';
 import { NavService } from './nav.service';
-import { WalletManager } from './wallet.service';
+import { WalletService } from './wallet.service';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { WalletPrefsService } from './pref.service';
@@ -24,7 +24,7 @@ export class WalletInitService extends GlobalService {
 
   constructor(
     private intentService: IntentService,
-    private walletManager: WalletManager,
+    private walletManager: WalletService,
     private events: Events,
     private navService: NavService,
     private currencyService: CurrencyService,
