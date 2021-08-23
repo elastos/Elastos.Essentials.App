@@ -23,8 +23,8 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { WalletManager } from '../../../services/wallet.service';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { WalletService } from '../../../services/wallet.service';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
@@ -32,7 +32,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
+import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 
 @Component({
@@ -43,7 +44,7 @@ import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWalle
 export class DidTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    private masterWallet: MasterWallet;
+    private networkWallet: NetworkWallet;
     private sourceSubwallet: ETHChainSubWallet;
     private intentTransfer: IntentTransfer;
     private balance: number; // ELA
@@ -51,7 +52,7 @@ export class DidTransactionPage implements OnInit {
     private walletInfo = {};
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public popupProvider: PopupProvider,
         private coinTransferService: CoinTransferService,
         private globalIntentService: GlobalIntentService,
@@ -82,9 +83,9 @@ export class DidTransactionPage implements OnInit {
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
-        this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
-        this.sourceSubwallet = this.masterWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
+        this.sourceSubwallet = this.networkWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
     }
 
     /**
@@ -127,7 +128,7 @@ export class DidTransactionPage implements OnInit {
           Logger.log('wallet', 'Created raw DID transaction');
           const transfer = new Transfer();
           Object.assign(transfer, {
-              masterWalletId: this.masterWallet.id,
+              masterWalletId: this.networkWallet.id,
               elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               payPassword: '',

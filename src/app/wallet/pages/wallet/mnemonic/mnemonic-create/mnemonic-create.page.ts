@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { NavParams, IonSlides } from '@ionic/angular';
 import { Native } from '../../../../services/native.service';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { Util } from '../../../../model/Util';
 import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute } from '@angular/router';
@@ -28,13 +28,13 @@ export class MnemonicCreatePage implements OnInit {
         slidesPerView: 1
     };
 
-    masterWalletId: string = "1";
+    masterWalletId = "1";
     mnemonicList: SelectableMnemonic[] = [];
     mnemonicStr: string;
 
     constructor(
         public route: ActivatedRoute,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public native: Native,
         public localStorage: LocalStorage,
         public events: Events,
@@ -43,8 +43,8 @@ export class MnemonicCreatePage implements OnInit {
         private translate: TranslateService,
         private prefs: WalletPrefsService
     ) {
-        native.showLoading().then(() => {
-            this.init();
+        void native.showLoading().then(() => {
+            void this.init();
         });
     }
 
@@ -61,7 +61,7 @@ export class MnemonicCreatePage implements OnInit {
     async init() {
         this.masterWalletId = Util.uuid(6, 16);
         this.mnemonicStr = await this.walletManager.spvBridge.generateMnemonic(this.prefs.getMnemonicLang());
-        this.native.hideLoading();
+        void this.native.hideLoading();
         let mnemonicArr = this.mnemonicStr.split(/[\u3000\s]+/);
         this.zone.run(()=>{
             for (var i = 0; i < mnemonicArr.length; i++) {

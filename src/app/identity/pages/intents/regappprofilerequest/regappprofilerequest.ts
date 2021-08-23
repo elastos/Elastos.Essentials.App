@@ -25,6 +25,7 @@ type RegAppProfileIntentParamLocalizedString = {
 }
 type RegAppProfileIntentParamActionTitle = string | RegAppProfileIntentParamLocalizedString[];
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type RegAppProfileIntentParamFlatClaim = {}; // "key": "value"
 
 /*
@@ -55,7 +56,7 @@ export class RegisterApplicationProfileRequestPage {
   credentials: DIDPlugin.VerifiableCredential[] = [];
   denyReason = '';
 
-  public shouldPublishOnSidechain: boolean = true;
+  public shouldPublishOnSidechain = true;
   private publishresultSubscription: Subscription = null;
 
   constructor(

@@ -20,30 +20,31 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { IonSlides } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NFT } from 'src/app/wallet/model/nfts/nft';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { Config } from '../../../config/Config';
+import { CoinType, StandardCoinName } from '../../../model/Coin';
+import { Util } from '../../../model/Util';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
+import { SubWallet } from '../../../model/wallets/subwallet';
+import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { WalletManager } from '../../../services/wallet.service';
-import { TranslateService } from '@ngx-translate/core';
-import { WalletEditionService } from '../../../services/walletedition.service';
-import { SubWallet } from '../../../model/wallets/SubWallet';
-import { StandardCoinName, CoinType } from '../../../model/Coin';
-import { Util } from '../../../model/Util';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
-import { CurrencyService } from '../../../services/currency.service';
-import { UiService } from '../../../services/ui.service';
-import { StandardSubWallet } from '../../../model/wallets/StandardSubWallet';
-import { IonSlides } from '@ionic/angular';
 import { LocalStorage } from '../../../services/storage.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { NFT } from 'src/app/wallet/model/nft';
-import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
-import { Subscription } from 'rxjs';
-import { GlobalStartupService } from 'src/app/services/global.startup.service';
+import { UiService } from '../../../services/ui.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletEditionService } from '../../../services/walletedition.service';
 
 
 @Component({
@@ -55,8 +56,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', {static: false}) slider: IonSlides;
 
-    public masterWallet: MasterWallet = null;
-    private activeWalletSubscription: Subscription = null;
+    public networkWallet: NetworkWallet = null;
+    private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
     private networkTemplate: string;
 
@@ -81,14 +82,14 @@ export class WalletHomePage implements OnInit, OnDestroy {
         {
             id: 1,
             name: 'Elastos',
-            logo: 'assets/wallet/coins/ela-black.svg',
-        },
-        /* {
-            id: 2,
-            name: 'HECO',
-            logo: 'assets/wallet/coins/ela-black.svg',
+            logo: 'assets/wallet/networks/elastos.svg',
         },
         {
+            id: 2,
+            name: 'HECO',
+            logo: 'assets/wallet/networks/hecochain.png',
+        },
+        /*{
             id: 3,
             name: 'BSC',
             logo: 'assets/wallet/coins/ela-black.svg',
@@ -108,7 +109,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     constructor(
         public native: Native,
         public popupProvider: PopupProvider,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
+        private networkService: WalletNetworkService,
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public currencyService: CurrencyService,
@@ -123,12 +125,12 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.networkTemplate = this.prefs.getNetworkTemplate();
-        this.activeWalletSubscription = this.walletManager.activeMasterWallet.subscribe((masterId) => {
-          if (masterId) {
-            this.masterWallet = this.walletManager.getActiveMasterWallet()
+        this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
+          if (activeNetworkWallet) {
+            this.networkWallet = activeNetworkWallet;
           }
         });
-        this.activeNetworkSubscription = this.walletManager.activeNetwork.subscribe(networkName => {
+        this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(networkName => {
             this.currentNetwork = this.networkOptions.find(netOpt => {
                 // DIRTY TEMP WAITING FOR REAL MULTI NETWORK SUPPORT
                 return netOpt.name == networkName;
@@ -143,9 +145,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.activeWalletSubscription) {
-            this.activeWalletSubscription.unsubscribe();
-            this.activeWalletSubscription = null;
+        if (this.activeNetworkWalletSubscription) {
+            this.activeNetworkWalletSubscription.unsubscribe();
+            this.activeNetworkWalletSubscription = null;
         }
 
         if (this.activeNetworkSubscription) {
@@ -168,7 +170,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ionViewDidEnter() {
-        if (this.walletManager.getWalletsCount() > 0) {
+        if (this.walletManager.getMasterWalletsCount() > 0) {
             void this.promptTransfer2IDChain();
         }
 
@@ -218,7 +220,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public getPotentialActiveWallets(): MasterWallet[] {
-        return this.walletManager.getWalletsList();
+        return this.walletManager.getMasterWalletsList();
     }
 
     /**
@@ -235,13 +237,13 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public selectActiveNetwork(network: string) {
         // TODO: Use network object, not string
-        void this.walletManager.setActiveNetwork(network);
+        void this.networkService.setActiveNetwork(network);
     }
 
     async updateCurrentWalletInfo() {
-        await this.masterWallet.update();
-        await this.masterWallet.updateERCTokenList(this.networkTemplate);
-        this.masterWallet.getSubWalletBalance(StandardCoinName.ELA);
+        await this.networkWallet.update();
+        await this.networkWallet.updateERCTokenList(this.networkTemplate);
+        this.networkWallet.getSubWalletBalance(StandardCoinName.ELA);
         this.currencyService.fetch();
     }
 
@@ -279,7 +281,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     getWalletIndex(masterWallet: MasterWallet): number {
-        return this.walletManager.getWalletsList().indexOf(masterWallet);
+        return this.walletManager.getMasterWalletsList().indexOf(masterWallet);
     }
 
     isStandardSubwallet(subWallet: SubWallet) {

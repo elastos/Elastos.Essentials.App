@@ -24,21 +24,25 @@ import { Injectable } from '@angular/core';
 import { Coin, CoinID, CoinType, ERC20Coin, StandardCoin } from '../model/Coin';
 import { StandardCoinName } from '../model/Coin';
 import { LocalStorage } from './storage.service';
-import { MasterWallet } from '../model/wallets/MasterWallet';
+import { MasterWallet } from '../model/wallets/masterwallet';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { WalletPrefsService } from './pref.service';
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { WalletService } from './wallet.service';
+import { NetworkWallet } from '../model/wallets/NetworkWallet';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CoinService {
+    public static instance: CoinService = null;
     private availableCoins: Coin[] = null;
     private deletedERC20Coins: ERC20Coin[] = null;
     private activeNetworkTemplate: string;
 
     constructor(private storage: LocalStorage, private events: Events, private prefs: WalletPrefsService) {
+        CoinService.instance = this;
     }
 
     public async init() {
@@ -122,7 +126,7 @@ export class CoinService {
      *
      * Returns true if the coin was added, false otherwise (already existing or error).
      */
-    public async addCustomERC20Coin(erc20Coin: ERC20Coin, activateInWallets?: MasterWallet[]): Promise<boolean> {
+    public async addCustomERC20Coin(erc20Coin: ERC20Coin, activateInWallets?: NetworkWallet[]): Promise<boolean> {
         Logger.log('wallet', "Adding coin to custom ERC20 coins list", erc20Coin);
 
         const existingCoins = await this.getCustomERC20Coins();

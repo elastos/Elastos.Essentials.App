@@ -1,21 +1,23 @@
-import { StandardSubWallet } from './StandardSubWallet';
+import { StandardSubWallet } from '../standard.subwallet';
 import BigNumber from 'bignumber.js';
-import { Config } from '../../config/Config';
+import { Config } from '../../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, ERC20TokenInfo, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../Transaction';
-import { StandardCoinName } from '../Coin';
-import { MasterWallet } from './MasterWallet';
+import { AllTransactionsHistory, ERC20TokenInfo, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, EthTransaction, SignedETHSCTransaction, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../../Transaction';
+import { StandardCoinName } from '../../Coin';
+import { MasterWallet } from '../masterwallet';
 import { TranslateService } from '@ngx-translate/core';
-import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
+import { EssentialsWeb3Provider } from "../../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
-import { ERC20SubWallet } from './ERC20SubWallet';
+import { ERC20SubWallet } from '../erc20.subwallet';
+import { CoinService } from 'src/app/wallet/services/coin.service';
+import { NetworkWallet } from '../NetworkWallet';
 
 /**
- * Specialized standard sub wallet for the HECO sidechain.
+ * Specialized standard sub wallet for the ETH sidechain.
  */
-export class HECOChainSubWallet extends StandardSubWallet {
+export class ETHChainSubWallet extends StandardSubWallet {
     private ethscAddress: string = null;
     private withdrawContractAddress: string = null;
     private publishdidContractAddress: string = null;
@@ -24,37 +26,65 @@ export class HECOChainSubWallet extends StandardSubWallet {
 
     private tokenList: ERC20TokenInfo[] = null;
 
-    constructor(masterWallet: MasterWallet, id: StandardCoinName) {
-        super(masterWallet, id);
+    constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
+        super(networkWallet, id);
 
-        this.initialize();
+        void this.initialize();
     }
 
     private async initialize() {
-
         this.initWeb3();
         // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
         await this.loadTransactionsFromCache();
 
-        // TODO
-        // switch (this.id) {
-        //   case StandardCoinName.ETHSC:
-        //     this.withdrawContractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();
-        //   break;
-        //   case StandardCoinName.ETHDID:
-        //     this.withdrawContractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();
-        //     this.publishdidContractAddress = Config.ETHDID_CONTRACT_ADDRESS.toLowerCase();
-        //   break;
-        //   default:
-        //     Logger.warn('wallet', 'The ', this.id, ' does not set the contract address!');
-        //   break;
-        // }
+        switch (this.id) {
+          case StandardCoinName.ETHSC:
+            this.withdrawContractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();
+          break;
+          case StandardCoinName.ETHDID:
+            this.withdrawContractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();
+            this.publishdidContractAddress = Config.ETHDID_CONTRACT_ADDRESS.toLowerCase();
+          break;
+          default:
+            Logger.warn('wallet', 'The ', this.id, ' does not set the contract address!');
+          break;
+        }
 
-        setTimeout(async () => {
-          this.updateBalance();
+        setTimeout(() => {
+          void this.updateBalance();
         }, 2000);
     }
+/*
+    // Get txpool information.
+    private gettxpoolinfo() {
+      this.web3.eth.extend({
+        property: 'txpool',
+        methods: [{
+          name: 'content',
+          call: 'txpool_content'
+        },{
+          name: 'inspect',
+          call: 'txpool_inspect'
+        },{
+          name: 'status',
+          call: 'txpool_status'
+        }]
+      });
+      this.web3.eth.txpool.status().then( (result) => {
+        Logger.log('wallet', 'txpool status:', this.id, result)
+      })
+      .catch( (error) => {
+        Logger.error('wallet', 'txpool status error:', error)
+      })
 
+      this.web3.eth.txpool.content().then( (result) => {
+        Logger.log('wallet', 'txpool content:', this.id, result)
+      })
+      .catch( (error) => {
+        Logger.error('wallet', 'txpool content error:', error)
+      })
+    }
+*/
     public async getTokenAddress(): Promise<string> {
         if (!this.ethscAddress) {
             this.ethscAddress = (await this.createAddress()).toLowerCase();
@@ -84,9 +114,9 @@ export class HECOChainSubWallet extends StandardSubWallet {
     }
 
     public async getTransactionsByRpc() {
-      Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
+      Logger.log('wallet', 'getTransactionByRPC:', this.networkWallet.id, ' ', this.id)
       const address = await this.getTokenAddress();
-      let result = await this.jsonRPCService.getHECOTransactions(this.id as StandardCoinName, address);
+      let result = await this.jsonRPCService.getETHSCTransactions(this.id as StandardCoinName, address);
       if (result) {
         if (this.transactions == null) {
           // init
@@ -96,10 +126,10 @@ export class HECOChainSubWallet extends StandardSubWallet {
             // Has new transactions.
             this.transactions.totalcount = result.length;
             this.transactions.txhistory = result.reverse();
-            this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
+            await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
         } else {
           // Notify the page to show the right time of the transactions even no new transaction.
-          this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+          this.networkWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
         }
       }
     }
@@ -108,7 +138,7 @@ export class HECOChainSubWallet extends StandardSubWallet {
       let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
       if (!result) {
         // Remove error transaction.
-        this.removeInvalidTransaction(txid);
+        await this.removeInvalidTransaction(txid);
       }
       return result;
     }
@@ -116,9 +146,9 @@ export class HECOChainSubWallet extends StandardSubWallet {
     /**
      * Use smartcontract to Send ELA from ETHSC to mainchain.
      */
-    // public getWithdrawContractAddress() {
-    //     return this.withdrawContractAddress;
-    // }
+    public getWithdrawContractAddress() {
+        return this.withdrawContractAddress;
+    }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
         if (transaction.isError && transaction.isError != '0') {
@@ -243,11 +273,11 @@ export class HECOChainSubWallet extends StandardSubWallet {
     private getERC20TokenTransactionInfo(transaction: EthTransaction): ERC20TokenTransactionInfo {
         let contractAddress = transaction.to;
         let toAddress = null, erc20TokenSymbol = null, erc20TokenValue = null;
-        const erc20Coin = this.masterWallet.coinService.getERC20CoinByContracAddress(contractAddress);
+        const erc20Coin = CoinService.instance.getERC20CoinByContracAddress(contractAddress);
         if (erc20Coin) {// erc20Coin is true normally.
           erc20TokenSymbol = erc20Coin.getName();
           // Get transaction from erc20 token subwallet.
-          let erc20Subwallet : ERC20SubWallet = (this.masterWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet);
+          let erc20Subwallet : ERC20SubWallet = (this.networkWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet);
           if (erc20Subwallet) {
             let erc20Tansaction: EthTokenTransaction = erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
             if (erc20Tansaction) {
@@ -287,7 +317,7 @@ export class HECOChainSubWallet extends StandardSubWallet {
         }
     }
 
-    private async initWeb3() {
+    private initWeb3() {
         let urlType;
         if (this.id === StandardCoinName.ETHDID) {
           urlType = ElastosApiUrlType.EID_RPC;
@@ -321,7 +351,7 @@ export class HECOChainSubWallet extends StandardSubWallet {
         const balance = await this.jsonRPCService.eth_getBalance(this.id as StandardCoinName, address);
         if (balance) {
           this.balance = balance;
-          this.saveBalanceToCache();
+          await this.saveBalanceToCache();
         }
     }
 
@@ -335,15 +365,15 @@ export class HECOChainSubWallet extends StandardSubWallet {
      * Check whether the available balance is enough.
      * @param amount
      */
-    public async isAvailableBalanceEnough(amount: BigNumber) {
+    public isAvailableBalanceEnough(amount: BigNumber) {
       return this.balance.gt(amount);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPrice: string = null, gasLimit:string = null): Promise<string> {
       let nonce = await this.getNonce();
       Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
-      return this.masterWallet.walletManager.spvBridge.createTransfer(
-            this.masterWallet.id,
+      return this.networkWallet.masterWallet.walletManager.spvBridge.createTransfer(
+            this.networkWallet.id,
             this.id,
             toAddress,
             amount.toString(),
@@ -352,13 +382,16 @@ export class HECOChainSubWallet extends StandardSubWallet {
         );
     }
 
-    /*
+/*
     //Use createTransferGeneric for createPaymentTransaction
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg:string = null): Promise<any> {
       const tokenAccountAddress = await this.getTokenAddress();
       const withdrawContractAddress = this.withdrawContractAddress;
       const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, withdrawContractAddress, { from: tokenAccountAddress });
-      const gasPrice = await this.web3.eth.getGasPrice();
+      let gasPrice = gasPriceArg;
+      if (gasPrice === null) {
+        gasPrice = await this.getGasPrice();
+      }
 
       Logger.warn('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
 
@@ -370,22 +403,24 @@ export class HECOChainSubWallet extends StandardSubWallet {
       const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
       const method = erc20Contract.methods.transfer(toAddress, web3BigNumber);
 
-      let gasLimit = 100000;
-      try {
-          // Estimate gas cost
-          gasLimit = await method.estimateGas();
-      } catch (error) {
-          Logger.log('wallet', 'estimateGas error:', error);
+      let gasLimit = gasLimitArg;
+      if (gasLimit === null) {
+        gasLimit = '100000';
+        // try {
+        //     // Estimate gas cost
+        //    gasLimit = await method.estimateGas();
+        // } catch (error) {
+        //     Logger.log('wallet', 'estimateGas error:', error);
+        // }
       }
 
       let nonce = await this.getNonce();
-      Logger.warn('wallet', 'createPaymentTransaction nonce:', nonce);
       const rawTx =
       await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
           this.masterWallet.id,
           this.id,
-          withdrawContractAddress,
-          '0',
+          toAddress,
+          amountWithDecimals,
           0, // WEI
           gasPrice,
           0, // WEI
@@ -398,11 +433,99 @@ export class HECOChainSubWallet extends StandardSubWallet {
 
       return rawTx;
     }
-    */
+*/
+    public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string): Promise<string> {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const contractAbi = require("../../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
+        const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);
+        let gasPrice = gasPriceArg;
+        if (gasPrice === null) {
+          gasPrice = await this.getGasPrice();
+        }
+        // const gasPrice = '1000000000';
+        const toAmountSend = this.web3.utils.toWei(toAmount.toString());
 
-    public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string): Promise<string> {
-      return '';
+        const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
+
+        let gasLimit = gasLimitArg;
+        if (gasLimit === null) {
+          gasLimit = '100000';
+        }
+        // TODO: The value from estimateGas is too small sometimes (eg 22384) for withdraw transaction.
+        // Maybe it is the bug of node?
+        // try {
+        //     // Estimate gas cost
+        //     gasLimit = await method.estimateGas();
+        // } catch (error) {
+        //     Logger.log('wallet', 'estimateGas error:', error);
+        // }
+        const data = method.encodeABI();
+        let nonce = await this.getNonce();
+        Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
+
+        return this.networkWallet.masterWallet.walletManager.spvBridge.createTransferGeneric(
+            this.networkWallet.id,
+            this.id,
+            this.withdrawContractAddress,
+            toAmountSend,
+            0, // WEI
+            gasPrice,
+            0, // WEI
+            gasLimit,
+            data,
+            nonce
+        );
     }
+
+    public async createIDTransaction(payload: string): Promise<string> {
+      const contractAbi = [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "name": "publishDidTransaction",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
+
+      const publishDIDContract = new this.web3.eth.Contract(contractAbi, Config.ETHDID_CONTRACT_ADDRESS);
+      const gasPrice = await this.getGasPrice();
+      const method = publishDIDContract.methods.publishDidTransaction(payload);
+      let gasLimit = 200000;
+      try {
+          // Estimate gas cost
+          gasLimit = await method.estimateGas();
+          Logger.log('wallet', 'estimateGas :', gasLimit);
+      } catch (error) {
+          Logger.warn('wallet', 'estimateGas error:', error);
+      }
+      const data = method.encodeABI();
+      let nonce = await this.getNonce();
+      Logger.log('wallet', 'createIDTransaction gasPrice:', gasPrice.toString(), ' nonce:', nonce, ' ContractAddress:', Config.ETHDID_CONTRACT_ADDRESS);
+      return this.networkWallet.masterWallet.walletManager.spvBridge.createTransferGeneric(
+          this.networkWallet.id,
+          this.id,
+          Config.ETHDID_CONTRACT_ADDRESS,
+          '0',
+          0, // WEI
+          gasPrice,
+          0, // WEI
+          gasLimit.toString(),
+          data,
+          nonce
+      );
+  }
 
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
@@ -413,9 +536,10 @@ export class HECOChainSubWallet extends StandardSubWallet {
     /**
      * Returns the current gas price on chain.
      */
-    public getGasPrice(): Promise<BigNumber> {
-        Logger.log('wallet', "GAS PRICE: ", this.web3.eth.getGasPrice())
-        return this.web3.eth.getGasPrice();
+    public async getGasPrice(): Promise<string> {
+      const gasPrice = await this.web3.eth.getGasPrice();
+      Logger.log('wallet', "GAS PRICE: ", gasPrice)
+      return gasPrice;
     }
 
     public async getNonce() {
@@ -429,15 +553,15 @@ export class HECOChainSubWallet extends StandardSubWallet {
       return -1;
     }
 
-    public saveTransactions(transactionsList: EthTransaction[]) {
+    public async saveTransactions(transactionsList: EthTransaction[]) {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
-      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-      this.transactionsCache.save();
+      this.networkWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      await this.transactionsCache.save();
     }
 
-    private removeInvalidTransaction(hash: string) {
+    private async removeInvalidTransaction(hash: string) {
       let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
       if (existingIndex >= 0) {
         Logger.warn('wallet', 'Find invalid transaction, remove it ', hash);
@@ -445,8 +569,8 @@ export class HECOChainSubWallet extends StandardSubWallet {
         this.transactions.totalcount--;
 
         this.transactionsCache.remove(hash);
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-        this.transactionsCache.save();
+        this.networkWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        await this.transactionsCache.save();
       }
     }
 }

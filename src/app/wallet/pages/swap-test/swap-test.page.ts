@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { WalletManager } from '../../services/wallet.service';
+import { WalletService } from '../../services/wallet.service';
 import { Native } from '../../services/native.service';
 import Web3 from 'web3';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
 import { StandardCoinName } from '../../model/Coin';
-import { MasterWallet } from '../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../model/wallets/masterwallet';
 import { ChainId, Currency, CurrencyAmount, JSBI, Pair, Percent, Route, Router, Token, TokenAmount, Trade, WETH, ETHER, Fetcher, TradeType } from '@uniswap/sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
@@ -12,13 +12,14 @@ import { LocalStorage } from '../../services/storage.service';
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
 import { BigNumber } from 'bignumber.js';
-import { ETHChainSubWallet } from '../../model/wallets/ETHChainSubWallet';
+import { ETHChainSubWallet } from '../../model/wallets/elastos/evm.subwallet';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { NetworkWallet } from '../../model/wallets/NetworkWallet';
 
 const BIPS_BASE = JSBI.BigInt(10000) // Fixed, don't touch
 const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than this (price changed a lot between 2 blocks), transaction will be cancelled
@@ -27,9 +28,9 @@ const DEFAULT_DEADLINE_FROM_NOW = 60 * 20 // 20 minutes, denominated in seconds
 class InternalWeb3Provider extends EssentialsWeb3Provider {
     private elaEthSubwallet: ETHChainSubWallet;
 
-    constructor(private walletManager: WalletManager, private masterWallet: MasterWallet) {
+    constructor(private walletManager: WalletService, private networkWallet: NetworkWallet) {
         super(ElastosApiUrlType.ETHSC_RPC);
-        this.elaEthSubwallet = this.masterWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
+        this.elaEthSubwallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
     }
 
     protected async sendTransaction(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
@@ -41,7 +42,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
         let nonce = await this.elaEthSubwallet.getNonce();
         const rawTx =
             await this.walletManager.spvBridge.createTransferGeneric(
-                this.masterWallet.id,
+                this.networkWallet.id,
                 StandardCoinName.ETHSC,
                 payload.params[0].to,
                 payload.params[0].value,
@@ -57,7 +58,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
 
         const transfer = new Transfer();
         Object.assign(transfer, {
-            masterWalletId: this.masterWallet.id,
+            masterWalletId: this.networkWallet.id,
             elastosChainCode: this.elaEthSubwallet.id,
             rawTransaction: rawTx,
             payPassword: '',
@@ -85,10 +86,10 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
     styleUrls: ['./swap-test.page.scss'],
 })
 export class SwapTestPage implements OnInit {
-    private masterWallet: MasterWallet;
+    private networkWallet: NetworkWallet;
     public status: string[] = [];
 
-    constructor(public walletManager: WalletManager,
+    constructor(public walletManager: WalletService,
         private coinTransferService: CoinTransferService,
         private storage: LocalStorage,
         private globalNetworksService: GlobalNetworksService,
@@ -103,7 +104,7 @@ export class SwapTestPage implements OnInit {
         let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
         let currentMasterWalletId = await this.storage.getCurMasterId(networkTemplate);
         Logger.log('wallet', "currentMasterWalletId", currentMasterWalletId);
-        this.masterWallet = this.walletManager.getMasterWallet(currentMasterWalletId.masterId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(currentMasterWalletId.masterId);
     }
 
     public async swapELAToDMA() {
@@ -129,7 +130,7 @@ export class SwapTestPage implements OnInit {
     doSwap(): Promise<void> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise<void>(async (resolve)=>{
-            let provider = new InternalWeb3Provider(this.walletManager, this.masterWallet);
+            let provider = new InternalWeb3Provider(this.walletManager, this.networkWallet);
             let web3 = new Web3(provider);
             let routerContract = new web3.eth.Contract(IUniswapV2Router02ABI as any, "0x1FF9598aBCBbC2F3A9B15261403459215b352e2b");
             const DMA = new Token(ChainId.MAINNET, '0x9c22cec60392cb8c87eb65c6e344872f1ead1115', 18, 'DMA', 'DMA token')
@@ -211,7 +212,7 @@ export class SwapTestPage implements OnInit {
     }
 
     private getEthAddress(): Promise<string> {
-        return this.masterWallet.getSubWallet(StandardCoinName.ETHSC).createAddress();
+        return this.networkWallet.getSubWallet(StandardCoinName.ETHSC).createAddress();
     }
 
     /**

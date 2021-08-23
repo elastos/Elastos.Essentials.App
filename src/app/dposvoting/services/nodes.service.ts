@@ -13,7 +13,7 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Util } from 'src/app/model/util';
 import { App } from 'src/app/model/app.enum';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
@@ -112,7 +112,7 @@ export class NodesService {
         private globalElastosAPIService: GlobalElastosAPIService,
         public walletRPCService: WalletJsonRPCService,
         public voteService: VoteService,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         public popupProvider: PopupProvider,
         public events: Events,
         public zone: NgZone,

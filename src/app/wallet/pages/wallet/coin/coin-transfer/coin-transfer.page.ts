@@ -26,24 +26,24 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
-import { WalletManager } from '../../../../services/wallet.service';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
+import { WalletService } from '../../../../services/wallet.service';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType, Transfer } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/SubWallet';
+import { SubWallet } from '../../../../model/wallets/subwallet';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { HttpClient } from '@angular/common/http';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../services/currency.service';
 import { UiService } from '../../../../services/ui.service';
-import { StandardSubWallet } from '../../../../model/wallets/StandardSubWallet';
+import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
 import BigNumber from 'bignumber.js';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
 import { ContactsService } from '../../../../services/contacts.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
-import { MainAndIDChainSubWallet } from '../../../../model/wallets/MainAndIDChainSubWallet';
+import { MainAndIDChainSubWallet } from '../../../../model/wallets/elastos/mainandidchain.subwallet';
 import { Subscription } from 'rxjs';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -56,8 +56,9 @@ import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 's
 import { CoinService } from 'src/app/wallet/services/coin.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
+import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
 import { ETHTransactionStatus } from 'src/app/wallet/model/Transaction';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 
 @Component({
@@ -69,7 +70,7 @@ import { ETHTransactionStatus } from 'src/app/wallet/model/Transaction';
 export class CoinTransferPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public masterWallet: MasterWallet;
+    public networkWallet: NetworkWallet;
 
     // Define transfer type
     public transferType: TransferType;
@@ -132,7 +133,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     constructor(
         public route: ActivatedRoute,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public coinTransferService: CoinTransferService,
         private coinService: CoinService,
         public native: Native,
@@ -191,16 +192,17 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async init() {
-        this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
         this.transferType = this.coinTransferService.transferType;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
 
-        this.fromSubWallet = this.masterWallet.getSubWallet(this.elastosChainCode);
+        this.fromSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
 
-        Logger.log('wallet', 'Balance', this.masterWallet.subWallets[this.elastosChainCode].getDisplayBalance());
+        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.elastosChainCode].getDisplayBalance());
 
         if ((this.elastosChainCode !== StandardCoinName.ELA) && (this.elastosChainCode !== StandardCoinName.IDChain)) {
           this.isEthsubwallet = true;
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status)=>{
             Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
             switch (status.status) {
@@ -228,6 +230,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
           });
 
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status)=>{
             Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
             if (status) {
@@ -247,7 +250,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case TransferType.RECHARGE:
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", {coinName: this.coinTransferService.toElastosChainCode}));
-                this.toSubWallet = this.masterWallet.getSubWallet(this.coinTransferService.toElastosChainCode);
+                this.toSubWallet = this.networkWallet.getSubWallet(this.coinTransferService.toElastosChainCode);
 
                 // Setup params for recharge transaction
                 this.transaction = this.createRechargeTransaction;
@@ -265,7 +268,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case TransferType.WITHDRAW:
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", {coinName: this.elastosChainCode}));
-                this.toSubWallet = this.masterWallet.getSubWallet(StandardCoinName.ELA);
+                this.toSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA);
 
                 // Setup params for withdraw transaction
                 this.transaction = this.createWithdrawTransaction;
@@ -328,7 +331,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (rawTx) {
           const transfer = new Transfer();
           Object.assign(transfer, {
-              masterWalletId: this.masterWallet.id,
+              masterWalletId: this.networkWallet.id,
               elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               action: this.action,
@@ -345,7 +348,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
           } else {
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
             if (result.published)
-                this.showSuccess();
+                void this.showSuccess();
             if (transfer.intentId) {
               await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
             }
@@ -379,7 +382,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (rawTx) {
           const transfer = new Transfer();
           Object.assign(transfer, {
-              masterWalletId: this.masterWallet.id,
+              masterWalletId: this.networkWallet.id,
               elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               payPassword: '',
@@ -389,7 +392,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
           const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
           if (result.published)
-              this.showSuccess();
+              void this.showSuccess();
         }
     }
 
@@ -408,7 +411,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (rawTx) {
           const transfer = new Transfer();
           Object.assign(transfer, {
-              masterWalletId: this.masterWallet.id,
+              masterWalletId: this.networkWallet.id,
               elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               payPassword: '',
@@ -426,7 +429,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
           } else {
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
             if (result.published)
-                this.showSuccess();
+                void this.showSuccess();
           }
         }
     }
@@ -445,7 +448,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
       });
       this.popover.onWillDismiss().then((ret) => {
         this.popover = null;
-        this.doActionAccordingToOptions(ret.data);
+        void this.doActionAccordingToOptions(ret.data);
       });
       return await this.popover.present();
     }
@@ -453,10 +456,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async doActionAccordingToOptions(ret: OptionsType) {
       switch (ret) {
         case OptionsType.CONTACTS:
-          this.openContacts();
+          void this.openContacts();
           break;
         case OptionsType.CRYPTONAMES:
-          this.showCryptonames();
+          void this.showCryptonames();
           break;
         case OptionsType.Paste:
           await this.pasteFromClipboard();
@@ -471,7 +474,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
       this.toAddress = await this.native.pasteFromClipboard();
 
       const toelastosChainCode = this.toSubWallet ? this.toSubWallet.id : this.elastosChainCode;
-      const isAddressValid = await this.isSubWalletAddressValid(this.masterWallet.id, toelastosChainCode, this.toAddress);
+      const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toelastosChainCode, this.toAddress);
       if (!isAddressValid) {
           this.native.toast_trans('wallet.not-a-valid-address');
           return;
@@ -479,7 +482,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     goScan() {
-        this.intentService.scan(ScanType.Address);
+        void this.intentService.scan(ScanType.Address);
     }
 
     supportsMaxTransfer() {
@@ -524,7 +527,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return false;
         } else if (this.amount <= 0) {
             return false;
-        } else if (!this.masterWallet.subWallets[this.elastosChainCode].isBalanceEnough(new BigNumber(this.amount))) {
+        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isBalanceEnough(new BigNumber(this.amount))) {
             return false;
         } else if (this.amount.toString().indexOf('.') > -1 && this.amount.toString().split(".")[1].length > 8) {
             return false;
@@ -542,13 +545,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else if (this.amount <= 0) {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
-        } else if (!this.masterWallet.subWallets[this.elastosChainCode].isBalanceEnough(new BigNumber(this.amount))) {
+        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isBalanceEnough(new BigNumber(this.amount))) {
             if (showToast) this.native.toast_trans('wallet.insufficient-balance');
         } else if (this.amount.toString().indexOf('.') > -1 && this.amount.toString().split(".")[1].length > 8) {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else {
             if (this.fromSubWallet.type === CoinType.ERC20) {
-                if (this.masterWallet.getSubWallet(StandardCoinName.ETHSC).balance.isLessThan(0.001)) {
+                if (this.networkWallet.getSubWallet(StandardCoinName.ETHSC).balance.isLessThan(0.001)) {
                     if (showToast) this.native.toast_trans('wallet.eth-insuff-balance', 4000);
                 } else {
                     valuesValid = true;
@@ -562,7 +565,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     async startTransaction() {
         if (this.elastosChainCode === StandardCoinName.ELA || this.elastosChainCode === StandardCoinName.IDChain) {
-            const mainAndIDChainSubWallet = this.masterWallet.subWallets[this.elastosChainCode] as MainAndIDChainSubWallet;
+            const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.elastosChainCode] as MainAndIDChainSubWallet;
             const isAvailableBalanceEnough =
                 await mainAndIDChainSubWallet.isAvailableBalanceEnough(new BigNumber(this.amount).multipliedBy(Config.SELAAsBigNumber));
 
@@ -579,7 +582,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
 
             const toelastosChainCode = this.toSubWallet ? this.toSubWallet.id : this.elastosChainCode;
-            const isAddressValid = await this.isSubWalletAddressValid(this.masterWallet.id, toelastosChainCode, this.toAddress);
+            const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toelastosChainCode, this.toAddress);
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;
@@ -588,7 +591,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (this.transferType === TransferType.PAY) {
                 this.transaction();
             } else {
-                this.showConfirm();
+                void this.showConfirm();
             }
         } catch (error) {
             this.native.toast_trans('wallet.not-a-valid-address');
@@ -834,7 +837,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * Typically, this returns true if there are more than one wallet created in the app.
      */
     canSendToPersonalWallet(): boolean {
-        return (this.walletManager.getWalletsCount() > 1);
+        return (this.walletManager.getMasterWalletsCount() > 1);
     }
 
     /**
@@ -842,12 +845,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      */
     async choosePersonalWallet(excludeCurrentWallet = false) {
         let options: WalletChooserComponentOptions = {
-            sourceWallet: this.masterWallet,
+            sourceWallet: this.networkWallet,
             elastosChainCode: this.elastosChainCode as StandardCoinName
         };
 
         if (excludeCurrentWallet) {
-            options.excludeWalletId = this.masterWallet.id;
+            options.excludeWalletId = this.networkWallet.id;
         }
 
         this.modal = await this.modalCtrl.create({
@@ -857,7 +860,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.modal.onWillDismiss().then(async (params) => {
             Logger.log('wallet', 'Personal wallet selected:', params);
             if (params.data && params.data.selectedWalletId) {
-                let selectedWallet = this.walletManager.getMasterWallet(params.data.selectedWalletId);
+                let selectedWallet = this.walletManager.getNetworkWalletFromMasterWalletId(params.data.selectedWalletId);
                 let selectedSubwallet = selectedWallet.getSubWallet(this.elastosChainCode);
                 if (!selectedSubwallet) {
                     // Subwallet doesn't exist on target master wallet. So we activate it.

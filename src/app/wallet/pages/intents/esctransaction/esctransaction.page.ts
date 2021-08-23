@@ -23,8 +23,8 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { WalletManager } from '../../../services/wallet.service';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { WalletService } from '../../../services/wallet.service';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { StandardCoinName } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,12 +34,13 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
+import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
 import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/ethtransactioninfoparser';
 import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
 import { Subscription } from 'rxjs';
 import { ETHTransactionStatus } from 'src/app/wallet/model/Transaction';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Component({
     selector: 'app-esctransaction',
@@ -49,7 +50,7 @@ import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.se
 export class EscTransactionPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    private masterWallet: MasterWallet = null;
+    private networkWallet: NetworkWallet = null;
     private ethSidechainSubWallet: ETHChainSubWallet = null;
     private intentTransfer: IntentTransfer;
     private walletInfo = {};
@@ -64,7 +65,7 @@ export class EscTransactionPage implements OnInit {
     private ethTransactionSpeedupSub: Subscription;
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public popupProvider: PopupProvider,
         private coinTransferService: CoinTransferService,
         private globalIntentService: GlobalIntentService,
@@ -104,9 +105,9 @@ export class EscTransactionPage implements OnInit {
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
-        this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
-        this.ethSidechainSubWallet = this.masterWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
+        this.ethSidechainSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
         this.balance = await this.ethSidechainSubWallet.getDisplayBalance();
         this.gasPrice = this.coinTransferService.payloadParam.gasPrice;
         if (!this.gasPrice) {
@@ -126,6 +127,7 @@ export class EscTransactionPage implements OnInit {
         this.transactionInfo = await transactionInfoParser.computeInfo();
         Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
 
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status)=>{
           Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
           switch (status.status) {
@@ -148,13 +150,13 @@ export class EscTransactionPage implements OnInit {
           }
         });
 
-        this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status)=>{
+        this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe((status)=>{
           Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
           if (status) {
             this.gasPrice = status.gasPrice;
             this.gasLimit = status.gasLimit;
             // Do Transaction
-            void await this.goTransaction();
+            void this.goTransaction();
             // Reset gas price.
             this.gasPrice = null;
             this.gasLimit = null;
@@ -223,7 +225,7 @@ export class EscTransactionPage implements OnInit {
         let nonce = await this.ethSidechainSubWallet.getNonce();
         const rawTx =
         await this.walletManager.spvBridge.createTransferGeneric(
-            this.masterWallet.id,
+            this.networkWallet.id,
             this.elastosChainCode,
             this.coinTransferService.payloadParam.to,
             this.coinTransferService.payloadParam.value || "0",
@@ -240,7 +242,7 @@ export class EscTransactionPage implements OnInit {
         if (rawTx) {
           const transfer = new Transfer();
           Object.assign(transfer, {
-              masterWalletId: this.masterWallet.id,
+              masterWalletId: this.networkWallet.id,
               elastosChainCode: this.elastosChainCode,
               rawTransaction: rawTx,
               payPassword: '',

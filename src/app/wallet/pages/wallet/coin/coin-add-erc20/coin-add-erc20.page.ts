@@ -2,7 +2,7 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ERC20Coin } from '../../../../model/Coin';
 import { PopupProvider } from '../../../../services/popup.service';
@@ -49,7 +49,7 @@ export class CoinAddERC20Page implements OnInit {
         public native: Native,
         public localStorage: LocalStorage,
         public events: Events,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         private coinService: CoinService,
         private erc20CoinService: ERC20CoinService,
         private translate: TranslateService,
@@ -199,7 +199,7 @@ export class CoinAddERC20Page implements OnInit {
         }  else {
             const activeNetworkTemplate = this.prefs.getNetworkTemplate();
             const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetworkTemplate, true);
-            await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
+            await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getNetworkWalletsList());
 
              // Coin added - go back to the previous screen
             if (this.intentMode) {

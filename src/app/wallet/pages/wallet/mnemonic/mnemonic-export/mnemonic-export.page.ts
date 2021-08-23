@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/Util';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
@@ -24,19 +24,19 @@ export class MnemonicExportPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public title = '';
-    public payPassword: string = '';
-    public masterWalletId: string = "1";
+    public payPassword = '';
+    public masterWalletId = "1";
     public mnemonicList = [];
-    public hideMnemonic: boolean = true;
+    public hideMnemonic = true;
     public isFromIntent = false;
-    public mnemonicStr: string = "";
-    public walletname: string = "";
+    public mnemonicStr = "";
+    public walletname = "";
     public account: any = {};
     public intentTransfer: IntentTransfer;
 
     constructor(
         public router: Router,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public zone: NgZone,
         private walletEditionService: WalletEditionService,
         private globalIntentService: GlobalIntentService,
@@ -67,7 +67,7 @@ export class MnemonicExportPage implements OnInit {
                 if (navigation.extras.state.payPassword) {
                     this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
                     this.payPassword = navigation.extras.state.payPassword;
-                    this.showMnemonics();
+                    void this.showMnemonics();
                 } else {
                     Logger.log('wallet', 'From intent');
                     this.isFromIntent = true;
@@ -102,7 +102,7 @@ export class MnemonicExportPage implements OnInit {
 
     async onExport() {
         if (await this.getPassword()) {
-           this.showMnemonics();
+           void this.showMnemonics();
         } else {
             // User cancel
             Logger.log('wallet', 'MnemonicExportPage user cancel');

@@ -3,7 +3,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
 import { Util } from "../../../model/Util";
 import { TranslateService } from '@ngx-translate/core';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
@@ -23,7 +23,7 @@ export class WalletAdvancedImportPage implements OnInit {
   public mnemonicWords = new Array<any>();
 
   constructor(
-    private walletManager: WalletManager,
+    private walletManager: WalletService,
     private walletCreateService: WalletCreationService,
     private authService: AuthService,
     private native: Native,

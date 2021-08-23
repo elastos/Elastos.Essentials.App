@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 
-import { MasterWallet } from './MasterWallet';
-import { SubWallet, SerializedSubWallet, RawTransactionPublishResult } from './SubWallet';
+import { MasterWallet } from './masterwallet';
+import { SubWallet, SerializedSubWallet, RawTransactionPublishResult } from './subwallet';
 import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../Coin';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
@@ -15,6 +15,8 @@ import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { NetworkWallet } from './NetworkWallet';
+import { CoinService } from '../../services/coin.service';
 
 export class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
@@ -27,20 +29,20 @@ export class ERC20SubWallet extends SubWallet {
 
     private tokenAddress = '';
 
-    public static newFromCoin(masterWallet: MasterWallet, coin: Coin): Promise<ERC20SubWallet> {
-        const subWallet = new ERC20SubWallet(masterWallet, coin.getID());
+    public static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
+        const subWallet = new ERC20SubWallet(networkWallet, coin.getID());
         return Promise.resolve(subWallet);
     }
 
-    public static newFromSerializedSubWallet(masterWallet: MasterWallet, serializedSubWallet: SerializedSubWallet): ERC20SubWallet {
+    public static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): ERC20SubWallet {
         Logger.log('wallet', "Initializing ERC20 subwallet from serialized sub wallet", serializedSubWallet);
         if (!serializedSubWallet.id) {
             Logger.log('wallet', 'newFromSerializedSubWallet id is null');
             return null;
         }
-        const coin = masterWallet.coinService.getCoinByID(serializedSubWallet.id) as ERC20Coin;
+        const coin = CoinService.instance.getCoinByID(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
-            const subWallet = new ERC20SubWallet(masterWallet, serializedSubWallet.id);
+            const subWallet = new ERC20SubWallet(networkWallet, serializedSubWallet.id);
             // subWallet.initFromSerializedSubWallet(serializedSubWallet);
             return subWallet;
         } else {
@@ -49,14 +51,14 @@ export class ERC20SubWallet extends SubWallet {
         }
     }
 
-    constructor(masterWallet: MasterWallet, id: CoinID) {
-        super(masterWallet, id, CoinType.ERC20);
+    constructor(networkWallet: NetworkWallet, id: CoinID) {
+        super(networkWallet, id, CoinType.ERC20);
 
         void this.initialize();
     }
 
     private async initialize() {
-        this.coin = this.masterWallet.coinService.getCoinByID(this.id) as ERC20Coin;
+        this.coin = this.networkWallet.masterWallet.coinService.getCoinByID(this.id) as ERC20Coin;
         // Get Web3 and the ERC20 contract ready
         const trinityWeb3Provider = new EssentialsWeb3Provider(ElastosApiUrlType.ETHSC_RPC);
         this.web3 = new Web3(trinityWeb3Provider);
@@ -75,7 +77,7 @@ export class ERC20SubWallet extends SubWallet {
 
     public async createAddress(): Promise<string> {
         // Create on ETH always returns the same unique address.
-        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, StandardCoinName.ETHSC);
+        return await this.networkWallet.masterWallet.walletManager.spvBridge.createAddress(this.networkWallet.masterWallet.id, StandardCoinName.ETHSC);
     }
 
     private async getTokenAccountAddress(): Promise<string> {
@@ -86,7 +88,7 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public getFriendlyName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.id);
+        const coin = this.networkWallet.masterWallet.coinService.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }
@@ -94,7 +96,7 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     public getDisplayTokenName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.id);
+        const coin = this.networkWallet.masterWallet.coinService.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }
@@ -107,7 +109,7 @@ export class ERC20SubWallet extends SubWallet {
      */
     private async fetchTokenDecimals(): Promise<void> {
         // Check cache
-        let tokenCacheKey = this.masterWallet.id + this.coin.getContractAddress();
+        let tokenCacheKey = this.networkWallet.masterWallet.id + this.coin.getContractAddress();
         this.tokenDecimals = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "wallet", tokenCacheKey, null);
 
         if (this.tokenDecimals === null) {
@@ -187,7 +189,7 @@ export class ERC20SubWallet extends SubWallet {
             const balanceEla = await erc20Contract.methods.balanceOf(tokenAccountAddress).call();
             // The returned balance is an int. Need to devide by the number of decimals used by the token.
             this.balance = new BigNumber(balanceEla).dividedBy(this.tokenAmountMulipleTimes);
-            this.saveBalanceToCache();
+            await this.saveBalanceToCache();
             Logger.log('wallet', this.id+": raw balance:", balanceEla, " Converted balance: ", this.balance);
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
@@ -225,7 +227,7 @@ export class ERC20SubWallet extends SubWallet {
     }
 
     async getTransactionByRPC() {
-        Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
+        Logger.log('wallet', 'getTransactionByRPC:', this.networkWallet.masterWallet.id, ' ', this.id)
         const contractAddress = this.coin.getContractAddress().toLowerCase();
         const tokenAccountAddress = await this.getTokenAccountAddress();
         let result = await this.jsonRPCService.getERC20TokenTransactions(StandardCoinName.ETHSC, tokenAccountAddress);
@@ -365,8 +367,8 @@ export class ERC20SubWallet extends SubWallet {
 
         let nonce = await this.getNonce();
         const rawTx =
-        await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
-            this.masterWallet.id,
+        await this.networkWallet.masterWallet.walletManager.spvBridge.createTransferGeneric(
+            this.networkWallet.masterWallet.id,
             StandardCoinName.ETHSC,
             contractAddress,
             '0',
@@ -391,7 +393,7 @@ export class ERC20SubWallet extends SubWallet {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve)=>{
             try {
-              const password = await this.masterWallet.walletManager.openPayModal(transfer);
+              const password = await this.networkWallet.masterWallet.walletManager.openPayModal(transfer);
               if (!password) {
                   Logger.log('wallet', "No password received. Cancelling");
                   resolve({
@@ -404,8 +406,8 @@ export class ERC20SubWallet extends SubWallet {
 
               Logger.log('wallet', "Password retrieved. Now signing the transaction.");
 
-              const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
-                  this.masterWallet.id,
+              const signedTx = await this.networkWallet.masterWallet.walletManager.spvBridge.signTransaction(
+                  this.networkWallet.masterWallet.id,
                   StandardCoinName.ETHSC,
                   transaction,
                   password
@@ -429,7 +431,7 @@ export class ERC20SubWallet extends SubWallet {
               });
             }
             catch (err) {
-              await this.masterWallet.walletManager.native.hideLoading();
+              await this.networkWallet.masterWallet.walletManager.native.hideLoading();
               Logger.error("wallet", "Publish error:", err);
               resolve({
                 published: false,
@@ -466,7 +468,7 @@ export class ERC20SubWallet extends SubWallet {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
-      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      this.networkWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       await this.transactionsCache.save();
     }
 
@@ -478,7 +480,7 @@ export class ERC20SubWallet extends SubWallet {
         this.transactions.totalcount--;
 
         this.transactionsCache.remove(hash);
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.networkWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
         await this.transactionsCache.save();
       }
     }

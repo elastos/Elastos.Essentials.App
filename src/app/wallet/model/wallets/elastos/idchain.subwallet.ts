@@ -1,21 +1,23 @@
 import { TranslateService } from '@ngx-translate/core';
-import { RawTransactionType, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../Transaction';
-import { StandardCoinName } from '../Coin';
-import { MasterWallet } from './MasterWallet';
-import { MainAndIDChainSubWallet } from './MainAndIDChainSubWallet';
+import { RawTransactionType, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../../Transaction';
+import { StandardCoinName } from '../../Coin';
+import { MasterWallet } from '../masterwallet';
+import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
+import { NetworkWallet } from '../NetworkWallet';
 
 /**
  * Specialized standard sub wallet for the ID sidechain.
  * Most methods are common with the ELA main chain.
  */
 export class IDChainSubWallet extends MainAndIDChainSubWallet {
-    constructor(masterWallet: MasterWallet) {
-        super(masterWallet, StandardCoinName.IDChain);
+    constructor(networkWallet: NetworkWallet) {
+        super(networkWallet, StandardCoinName.IDChain);
     }
 
     protected async initialize() {
         await this.loadTransactionsFromCache();
 
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
             if (!this.masterWallet.account.SingleAddress) {
                 await this.checkAddresses(true);
@@ -24,15 +26,15 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
             await this.updateBalance();
 
             //Do not use id chain any more.
-            this.checkIDChainToBeDestroy();
+            await this.checkIDChainToBeDestroy();
         }, 200);
     }
 
-    checkIDChainToBeDestroy() {
+    async checkIDChainToBeDestroy() {
         // Do not use the id chain any more.
         // Cross chain transaction need 20000 SELA.
         if (this.balance.lte(20000)) {
-            this.masterWallet.destroySubWallet(this.id);
+            await this.networkWallet.destroySubWallet(this.id);
         }
     }
 

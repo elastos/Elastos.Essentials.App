@@ -4,8 +4,8 @@ import { Config } from '../../../../config/Config';
 import { LocalStorage } from '../../../../services/storage.service';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider} from '../../../../services/popup.service';
-import { WalletManager } from '../../../../services/wallet.service';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
+import { WalletService } from '../../../../services/wallet.service';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
 import { CoinService } from '../../../../services/coin.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
@@ -19,6 +19,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 type EditableCoinInfo = {
     coin: Coin,
@@ -34,11 +35,11 @@ type EditableCoinInfo = {
 export class CoinListPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    masterWallet: MasterWallet = null;
+    networkWallet: NetworkWallet = null;
     coinList: EditableCoinInfo[] = null;
     coinListCache = {};
-    payPassword: string = "";
-    singleAddress: boolean = false;
+    payPassword = "";
+    singleAddress = false;
     currentCoin: any;
 
     // Helpers
@@ -55,7 +56,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public popupProvider: PopupProvider,
         private coinService: CoinService,
         private walletEditionService: WalletEditionService,
@@ -101,14 +102,14 @@ export class CoinListPage implements OnInit, OnDestroy {
             iconPath: BuiltInIcon.ADD
         });
 
-        this.init();
+        void this.init();
     }
 
     ionViewWillLeave() {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
 
         if (this.popupProvider.alertPopup) {
-            this.popupProvider.alertCtrl.dismiss();
+            void this.popupProvider.alertCtrl.dismiss();
             this.popupProvider.alertPopup = null;
         }
     }
@@ -135,15 +136,15 @@ export class CoinListPage implements OnInit, OnDestroy {
             this.currentCoin["open"] = true;
         });
         this.coinAddSubscription = this.events.subscribe("custom-coin-added", () => {
-            this.refreshCoinList();
+            void this.refreshCoinList();
         });
         this.coinDeleteSubscription = this.events.subscribe("custom-coin-deleted", () => {
-            this.refreshCoinList();
+            void this.refreshCoinList();
         });
 
-        this.masterWallet = this.walletManager.getMasterWallet(this.walletEditionService.modifiedMasterWalletId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletEditionService.modifiedMasterWalletId);
 
-        this.native.hideLoading();
+        void this.native.hideLoading();
 
         await this.refreshCoinList();
     }
@@ -154,7 +155,7 @@ export class CoinListPage implements OnInit, OnDestroy {
             const coinID = availableCoin.getID();
             // Do not show IDChain in coin list.
             if (coinID !== StandardCoinName.IDChain) {
-              let isOpen = (coinID in this.masterWallet.subWallets);
+              let isOpen = (coinID in this.networkWallet.subWallets);
               Logger.log('wallet', availableCoin, "isOpen?", isOpen);
               this.coinList.push({ coin: availableCoin, isOpen: isOpen });
             }
@@ -164,29 +165,29 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async createSubWallet(coin: Coin) {
         try {
-            this.native.hideLoading();
+            void this.native.hideLoading();
 
             // Create the sub Wallet (ex: IDChain)
-            await this.masterWallet.createSubWallet(coin);
+            await this.networkWallet.createSubWallet(coin);
         } catch (error) {
             this.currentCoin["open"] = false; // TODO: currentCoin type
         }
     }
 
     async destroySubWallet(coin: Coin) {
-        this.native.hideLoading();
+        void this.native.hideLoading();
 
-        await this.masterWallet.destroySubWallet(coin.getID());
+        await this.networkWallet.destroySubWallet(coin.getID());
     }
 
     onSelect(item: EditableCoinInfo) {
         Logger.log('wallet', 'Toggle triggered!', item);
         if (item.isOpen) {
-            this.switchCoin(item, true);
+            void this.switchCoin(item, true);
         } else {
-            this.popupProvider.ionicConfirm('wallet.confirmTitle', 'wallet.text-coin-close-warning').then((data) => {
+            void this.popupProvider.ionicConfirm('wallet.confirmTitle', 'wallet.text-coin-close-warning').then((data) => {
                 if (data) {
-                    this.switchCoin(item, false);
+                    void this.switchCoin(item, false);
                 } else {
                     item.isOpen = true;
                 }
@@ -195,11 +196,11 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     getCoinTitle(item: EditableCoinInfo) {
-        return this.masterWallet.coinService.getCoinByID(item.coin.getID()).getDescription();
+        return CoinService.instance.getCoinByID(item.coin.getID()).getDescription();
     }
 
     getCoinSubtitle(item: EditableCoinInfo) {
-        return this.masterWallet.coinService.getCoinByID(item.coin.getID()).getName();
+        return CoinService.instance.getCoinByID(item.coin.getID()).getName();
     }
 
     getCoinIcon(item: EditableCoinInfo) {

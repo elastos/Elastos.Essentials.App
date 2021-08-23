@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SubWallet } from '../model/wallets/SubWallet';
+import { SubWallet } from '../model/wallets/subwallet';
 import { StandardCoinName } from '../model/Coin';
 import * as moment from 'moment';
 import BigNumber from 'bignumber.js';

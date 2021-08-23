@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { Util } from "../../../model/Util";
@@ -38,15 +38,15 @@ export class WalletImportPage implements OnInit {
     public slideIndex = 0;
 
     public walletType: string;
-    private masterWalletId: string = "1";
+    private masterWalletId = "1";
 
     private walletIsCreating = false; // Just in case, Ignore user action when the wallet is creating.
 
     public inputList: Array<{input:string}> = [];
-    private inputStr: string = "";
+    private inputStr = "";
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public native: Native,
         public localStorage: LocalStorage,
         public events: Events,
@@ -115,7 +115,7 @@ export class WalletImportPage implements OnInit {
                 nextInput.setFocus();
             }
         } else {
-            this.onImport();
+            void this.onImport();
         }
     }
 
@@ -219,7 +219,7 @@ export class WalletImportPage implements OnInit {
     }
 
     ionSlideDidChange() {
-        this.zone.run(async () => {
+        void this.zone.run(async () => {
             this.slideIndex = await this.slider.getActiveIndex();
         });
     }

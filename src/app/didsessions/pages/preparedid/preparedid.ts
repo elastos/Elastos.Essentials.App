@@ -7,7 +7,7 @@ import { IonSlides, Platform } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { sleep } from 'src/app/helpers/sleep.helper';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
@@ -73,7 +73,7 @@ export class PrepareDIDPage {
     public translate: TranslateService,
     private identityService: IdentityService,
     private platform: Platform,
-    private walletService: WalletManager,
+    private walletService: WalletService,
     private native: GlobalNativeService,
     private globalHiveService: GlobalHiveService,
     private globalPublicationService: GlobalPublicationService,

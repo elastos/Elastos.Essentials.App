@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 import { CoinService } from './coin.service';
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { WalletAccessService } from './walletaccess.service';
-import { WalletManager } from './wallet.service';
-import { MasterWallet } from '../model/wallets/MasterWallet';
+import { WalletService } from './wallet.service';
+import { MasterWallet } from '../model/wallets/masterwallet';
 import { WalletEditionService } from './walletedition.service';
 import { PopupProvider } from './popup.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -33,7 +33,7 @@ export class IntentService {
     constructor(
         public events: Events,
         public native: Native,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         private coinService: CoinService,
         private coinTransferService: CoinTransferService,
         private popupProvider: PopupProvider,
@@ -43,7 +43,7 @@ export class IntentService {
     ) {
     }
 
-    public async init() {
+    public init() {
         Logger.log("wallet", "IntentService init");
 
         // Listen to incoming intents.
@@ -59,7 +59,7 @@ export class IntentService {
             if (!receivedIntent)
                 return;
 
-            this.onReceiveIntent(receivedIntent);
+            void this.onReceiveIntent(receivedIntent);
         });
     }
 
@@ -99,7 +99,7 @@ export class IntentService {
                 break;
             default:
                 // TODO @chad titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
-                this.handleTransactionIntent(intent);
+                void this.handleTransactionIntent(intent);
                 break;
         }
     }
@@ -197,18 +197,6 @@ export class IntentService {
                 this.coinTransferService.payloadParam = intent.params.payload.params[0];
                 // this.coinTransferService.amount = intent.params.amount;
 
-                // To Remove: All wallet has ETHSC.
-                // if (this.coinTransferService.payloadParam.from) {
-                //     Logger.log("wallet", "Auto-selecting wallet with ETH address "+this.coinTransferService.payloadParam.from+" as requested by the 'from' field");
-
-                    // If the "from" address is set, this means the received raw transaction is already
-                    // for a specific account. In this case we auto-select the related wallet without asking user.
-                    // let escWallet: MasterWallet = this.walletManager.findMasterWalletBySubWalletID(StandardCoinName.ETHSC);
-                    // this.coinTransferService.masterWalletId = this.activeWallet.id;
-                    // this.coinTransferService.walletInfo = this.activeWallet.account;
-                    // intentRequiresWalletSelection = false;
-                // }
-
                 break;
 
             case 'pay':
@@ -234,7 +222,7 @@ export class IntentService {
                 break;
 
             case 'crproposalcreatedigest':
-                this.handleCreateProposalDigestIntent(intent);
+                await this.handleCreateProposalDigestIntent(intent);
                 // TODO
                 Logger.error('wallet', 'crproposalcreatedigest Not implemented');
                 break;
@@ -293,7 +281,7 @@ export class IntentService {
         // }
     }
 
-    private async handleVoteAgainstProposalIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
+    private handleVoteAgainstProposalIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         Logger.log("wallet", "Handling vote against proposal intent");
 
         // Let the screen know for which proposal we want to vote against

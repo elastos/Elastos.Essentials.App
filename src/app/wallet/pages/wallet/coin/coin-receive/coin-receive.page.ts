@@ -1,16 +1,17 @@
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { Native } from '../../../../services/native.service';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { StandardCoinName } from '../../../../model/Coin';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Component({
     selector: 'app-coin-receive',
@@ -20,7 +21,7 @@ import { Events } from 'src/app/services/events.service';
 export class CoinReceivePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public masterWallet: MasterWallet = null;
+    public networkWallet: NetworkWallet = null;
     private masterWalletId = '1';
     public elastosChainCode: string;
     public qrcode: string = null;
@@ -31,7 +32,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
         public route: ActivatedRoute,
         public zone: NgZone,
         public events: Events,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public native: Native,
         private coinTransferService: CoinTransferService,
         public theme: GlobalThemeService,
@@ -40,7 +41,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.init();
+        void this.init();
     }
 
     ionViewWillEnter() {
@@ -53,30 +54,30 @@ export class CoinReceivePage implements OnInit, OnDestroy {
         }
     }
 
-    init() {
+    async init(): Promise<void> {
         this.masterWalletId = this.coinTransferService.masterWalletId;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
-        this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
 
-        this.getAddress();
+        await this.getAddress();
         this.isSingleAddressSubwallet();
     }
 
     isSingleAddressSubwallet() {
         if ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) {
-            this.isSingleAddress = this.masterWallet.account.SingleAddress;
+            this.isSingleAddress = this.networkWallet.account.SingleAddress;
         } else {
             this.isSingleAddress = true;
         }
     }
 
     copyAddress() {
-        this.native.copyClipboard(this.qrcode);
+        void this.native.copyClipboard(this.qrcode);
         this.native.toast(this.translate.instant("wallet.coin-address-copied", { coinName: this.elastosChainCode }));
     }
 
     async getAddress() {
-        this.qrcode = await this.masterWallet.getSubWallet(this.elastosChainCode).createAddress();
+        this.qrcode = await this.networkWallet.getSubWallet(this.elastosChainCode).createAddress();
         Logger.log('wallet', 'qrcode', this.qrcode);
     }
 

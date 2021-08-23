@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { Util } from '../../../../model/Util';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -26,7 +26,7 @@ export class CoinAddressPage {
     public curCount = 0;
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public native: Native,
         private globalNav: GlobalNavService,
         public router: Router,
@@ -43,7 +43,7 @@ export class CoinAddressPage {
             // General Values
             this.masterWalletId = navigation.extras.state.masterWalletId;
             this.elastosChainCode = navigation.extras.state.elastosChainCode;
-            this.getAddressList(null);
+            void this.getAddressList(null);
         }
     }
 
@@ -80,12 +80,12 @@ export class CoinAddressPage {
 
     selectAddress(address) {
         this.events.publish('selectaddress', address);
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     doInfinite(event) {
         setTimeout(() => {
-            this.getAddressList(event.target);
+            void this.getAddressList(event.target);
         }, 500);
     }
 }

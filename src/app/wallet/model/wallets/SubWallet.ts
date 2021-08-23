@@ -1,4 +1,4 @@
-import { MasterWallet } from './MasterWallet';
+import { MasterWallet } from './masterwallet';
 import { CoinType, CoinID, StandardCoinName } from '../Coin';
 import { AllTransactionsHistory, TransactionHistory, TransactionInfo, TransactionStatus } from '../Transaction';
 import { Transfer } from '../../services/cointransfer.service';
@@ -8,6 +8,7 @@ import moment from 'moment';
 import { WalletJsonRPCService } from '../../services/jsonrpc.service';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 import { Logger } from 'src/app/logger';
+import { NetworkWallet } from './NetworkWallet';
 
 /**
  * Result of calls to signAndSendRawTransaction().
@@ -45,6 +46,7 @@ export class SerializedSubWallet {
 }
 
 export abstract class SubWallet {
+    protected masterWallet: MasterWallet = null;
     public id: CoinID = null;
     public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
     public lastBlockTime: string = null;
@@ -61,16 +63,17 @@ export abstract class SubWallet {
 
     public jsonRPCService: WalletJsonRPCService = null;
 
-    constructor(protected masterWallet: MasterWallet, id: CoinID, public type: CoinType) {
-        this.id = id;
-        this.type = type;
-        this.jsonRPCService = this.masterWallet.walletManager.jsonRPCService;
+    constructor(protected networkWallet: NetworkWallet, id: CoinID, public type: CoinType) {
+      this.masterWallet = networkWallet.masterWallet;
+      this.id = id;
+      this.type = type;
+      this.jsonRPCService = this.networkWallet.masterWallet.walletManager.jsonRPCService;
 
-        this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
-        this.transactionKeyInCache = this.masterWallet.id + '-' + this.id + '-tx';
-        this.subwalletTransactionStatusID = this.masterWallet.id + '-' + this.id;
+      this.balanceKeyInCache = this.networkWallet.masterWallet.id + '-' + this.id + '-balance';
+      this.transactionKeyInCache = this.networkWallet.masterWallet.id + '-' + this.id + '-tx';
+      this.subwalletTransactionStatusID = this.networkWallet.masterWallet.id + '-' + this.id;
 
-        this.loadBalanceFromCache();
+      void this.loadBalanceFromCache();
     }
 
     public toSerializedSubWallet(): SerializedSubWallet {
@@ -84,10 +87,10 @@ export abstract class SubWallet {
       }
     }
 
-    public saveBalanceToCache() {
+    public async saveBalanceToCache(): Promise<void> {
       const timestamp = (new Date()).valueOf();
       this.balanceCache.set('balance', this.balance, timestamp);
-      this.balanceCache.save();
+      await this.balanceCache.save();
     }
 
     public async loadTransactionsFromCache() {
@@ -102,7 +105,7 @@ export abstract class SubWallet {
         for (let i = 0, len = this.transactions.totalcount; i < len; i++) {
           this.transactions.txhistory.push(items[i].data);
         }
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.networkWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       }
       return null;
     }
@@ -152,9 +155,11 @@ export abstract class SubWallet {
     /**
      * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
      */
-    public destroy(): Promise<void> {
-        if (this.balanceCache) this.balanceCache.delete();
-        if (this.transactionsCache) this.transactionsCache.delete();
+    public async destroy(): Promise<void> {
+        if (this.balanceCache)
+          await this.balanceCache.delete();
+        if (this.transactionsCache)
+          await this.transactionsCache.delete();
         return Promise.resolve();
     }
 

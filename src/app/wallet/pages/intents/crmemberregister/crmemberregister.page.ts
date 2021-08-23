@@ -23,8 +23,8 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { WalletManager } from '../../../services/wallet.service';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { WalletService } from '../../../services/wallet.service';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
 import { WalletAccount, WalletAccountType } from '../../../model/WalletAccount';
 import { StandardCoinName } from '../../../model/Coin';
@@ -34,6 +34,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 
 @Component({
@@ -44,7 +45,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class CRMemberRegisterPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    masterWallet: MasterWallet = null;
+    networkWallet: NetworkWallet = null;
     intentTransfer: IntentTransfer;
     transfer: Transfer = null;
 
@@ -61,7 +62,7 @@ export class CRMemberRegisterPage implements OnInit {
     private depositAmount = new BigNumber(500000000000); // 5000 ELA
 
     constructor(
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         private globalIntentService: GlobalIntentService,
         public popupProvider: PopupProvider,
         private coinTransferService: CoinTransferService,
@@ -85,16 +86,16 @@ export class CRMemberRegisterPage implements OnInit {
         // this.titleBar.setTitle(this.translate.instant(''));
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
             // TODO: reject didtransaction if multi sign (show error popup)
-            this.cancelOperation();
+            void this.cancelOperation();
         }
     }
 
-    async init() {
+    init() {
         this.transfer = this.coinTransferService.transfer;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.walletInfo = this.coinTransferService.walletInfo;
-        this.masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
         switch (this.transfer.action) {
             case 'crmemberregister':
@@ -121,7 +122,7 @@ export class CRMemberRegisterPage implements OnInit {
                 break;
         }
 
-        this.balance = this.masterWallet.getSubWalletBalance(this.elastosChainCode);
+        this.balance = this.networkWallet.getSubWalletBalance(this.elastosChainCode);
     }
 
     /**
@@ -141,14 +142,14 @@ export class CRMemberRegisterPage implements OnInit {
 
     checkValue() {
         if (this.balance.lt(0.0002)) {
-            this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
+            void this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
             return;
         }
 
         this.transFunction();
     }
 
-    async createRegisterCRTransaction() {
+    createRegisterCRTransaction() {
         Logger.log('wallet', 'Calling createRegisterCRTransaction()');
 
         // const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWallet.id, StandardCoinName.IDChain, 0, 1);
@@ -171,7 +172,7 @@ export class CRMemberRegisterPage implements OnInit {
         // this.walletManager.openPayModal(this.transfer); // TODO: USE signAndSendRawTransaction
     }
 
-    async createUpdateCRTransaction() {
+    createUpdateCRTransaction() {
         Logger.log('wallet', 'Calling createUpdateCRTransaction()');
 
         // const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWallet.id,
@@ -185,7 +186,7 @@ export class CRMemberRegisterPage implements OnInit {
         // await this.globalIntentService.sendIntentResponse(result, this.transfer.intentId);
     }
 
-    async createUnregisterCRTransaction() {
+    createUnregisterCRTransaction() {
         Logger.log('wallet', 'Calling createUnregisterCRTransaction()');
 
         // const payload = await this.walletManager.spvBridge.generateUnregisterCRPayload(this.masterWallet.id, this.elastosChainCode,
@@ -195,7 +196,7 @@ export class CRMemberRegisterPage implements OnInit {
         // this.walletManager.openPayModal(this.transfer); // TODO: USE signAndSendRawTransaction
     }
 
-    async createRetrieveCRDepositTransaction() {
+    createRetrieveCRDepositTransaction() {
         Logger.log('wallet', 'Calling createRetrieveCRDepositTransaction()');
 
         // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRetrieveCRDepositTransaction(this.masterWallet.id, this.elastosChainCode,

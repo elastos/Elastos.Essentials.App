@@ -26,17 +26,17 @@ import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { Util } from '../../../../model/Util';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/SubWallet';
+import { SubWallet } from '../../../../model/wallets/subwallet';
 import { TransactionInfo } from '../../../../model/Transaction';
 import * as moment from 'moment';
 import { CurrencyService } from '../../../../services/currency.service';
-import { ERC20SubWallet } from '../../../../model/wallets/ERC20SubWallet';
-import { StandardSubWallet } from '../../../../model/wallets/StandardSubWallet';
+import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
+import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
 import { UiService } from '../../../../services/ui.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { Subscription } from 'rxjs';
@@ -44,9 +44,10 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { NFT, NFTType } from 'src/app/wallet/model/nft';
+import { NFT, NFTType } from 'src/app/wallet/model/nfts/nft';
 import { ERC721Service } from 'src/app/wallet/services/erc721.service';
-import { NFTAsset } from 'src/app/wallet/model/nftasset';
+import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Component({
     selector: 'app-coin-nft-details',
@@ -56,13 +57,13 @@ import { NFTAsset } from 'src/app/wallet/model/nftasset';
 export class CoinNFTDetailsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public masterWallet: MasterWallet = null;
+    public networkWallet: NetworkWallet = null;
     public nft: NFT = null;
     public asset: NFTAsset = null;
 
     constructor(
         public router: Router,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public translate: TranslateService,
         public native: Native,
         public events: Events,
@@ -89,17 +90,17 @@ export class CoinNFTDetailsPage implements OnInit {
             console.log("NAVSTATE", navigation.extras.state)
             // Retrieve the master wallet
             let masterWalletId = navigation.extras.state.masterWalletId;
-            this.masterWallet = this.walletManager.getMasterWallet(masterWalletId);
+            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
 
             // Retrieve the NFT
             let nftContractAddress = navigation.extras.state.nftContractAddress;
-            this.nft = this.masterWallet.getNFTByAddress(nftContractAddress);
+            this.nft = this.networkWallet.getNFTByAddress(nftContractAddress);
 
             // Retrieve the NFT asset
             let assetID = navigation.extras.state.assetID;
             this.asset = this.nft.getAssetById(assetID);
 
-            Logger.log("wallet", "Initialization complete for NFT details", this.masterWallet, this.nft, this.asset);
+            Logger.log("wallet", "Initialization complete for NFT details", this.networkWallet, this.nft, this.asset);
         }
     }
 

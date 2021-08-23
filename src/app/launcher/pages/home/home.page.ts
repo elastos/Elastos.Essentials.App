@@ -1,33 +1,31 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import { ToastController, PopoverController, ModalController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
-
+import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import WalletConnect from '@walletconnect/client';
 import * as moment from 'moment';
-import { OptionsComponent } from '../../components/options/options.component';
-import { DIDManagerService } from '../../services/didmanager.service';
-import { AppmanagerService } from '../../services/appmanager.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarMenuItem, TitleBarIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { NotificationsPage } from '../notifications/notifications.page';
-import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
-import { WalletManager, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
 import { Subscription } from 'rxjs';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
+import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
-import { MasterWallet } from 'src/app/wallet/model/wallets/MasterWallet';
-import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
-import WalletConnect from '@walletconnect/client';
-import { HttpClient } from '@angular/common/http';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { DAppBrowser } from 'src/app/model/dappbrowser/dappbrowser';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletService, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
+import { OptionsComponent } from '../../components/options/options.component';
+import { AppmanagerService } from '../../services/appmanager.service';
+import { DIDManagerService } from '../../services/didmanager.service';
+import { NotificationsPage } from '../notifications/notifications.page';
+
+
 
 @Component({
   selector: 'app-home',
@@ -49,7 +47,7 @@ export class HomePage implements OnInit {
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
 
   // Widget data
-  private mainWallet: MasterWallet = null;
+  private mainWallet: NetworkWallet = null;
   public mainWalletName = "";
   public activeNetworkName = "";
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
@@ -75,7 +73,8 @@ export class HomePage implements OnInit {
     private modalCtrl: ModalController,
     private zone: NgZone,
     private appBackGroundService: GlobalAppBackgroundService,
-    private walletService: WalletManager,
+    private walletService: WalletService,
+    private walletNetworkService: WalletNetworkService,
     private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService,
     private globalWalletConnectService: GlobalWalletConnectService,
@@ -153,7 +152,7 @@ export class HomePage implements OnInit {
       }
     });
 
-    this.activeNetworkSub = this.walletService.activeNetwork.subscribe(networkName => {
+    this.activeNetworkSub = this.walletNetworkService.activeNetwork.subscribe(networkName => {
       this.updateWidgetMainWallet();
     });
 
@@ -186,7 +185,7 @@ export class HomePage implements OnInit {
 
   ionViewDidEnter() {
     Logger.log("launcher", "Launcher home screen did enter");
-    
+
     this.globalStartupService.setStartupScreenReady();
 
     Logger.log("launcher", "Launcher home screen did enter completed");
@@ -221,14 +220,14 @@ export class HomePage implements OnInit {
   }
 
   private updateWidgetMainWallet() {
-    let activeWallet = this.walletService.getActiveMasterWallet();
+    let activeWallet = this.walletService.activeNetworkWallet.value;
     // We need to have at least one existing wallet to display something.
     if (activeWallet) {
       // Simple widget for now: display the main balance of the first wallet we find.
       this.mainWallet = activeWallet;
       this.mainWalletName = activeWallet.name;
       this.mainWalletELABalance = activeWallet.getDisplayBalance().toFixed(2);
-      this.activeNetworkName = this.walletService.activeNetwork.value;
+      this.activeNetworkName = this.walletNetworkService.activeNetwork.value;
     }
     else {
       this.mainWallet = null;

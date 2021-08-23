@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { UiService } from '../../../services/ui.service';
 import { StandardCoinName, CoinType } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { Native } from '../../../services/native.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -28,7 +28,7 @@ export class SelectSubwalletPage implements OnInit {
   private nextScreen = '';
 
   constructor(
-    public walletManager: WalletManager,
+    public walletManager: WalletService,
     public coinTransferService: CoinTransferService,
     public uiService: UiService,
     public translate: TranslateService,
@@ -52,7 +52,6 @@ export class SelectSubwalletPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet.select-subwallet'));
     this.titleBar.setNavigationMode(null);
-    // TODO @chad this.appService.setBackKeyVisibility(false);
   }
 
   walletSelected(masterWallet: MasterWallet) {

@@ -26,17 +26,17 @@ import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { Util } from '../../../../model/Util';
-import { WalletManager } from '../../../../services/wallet.service';
+import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/SubWallet';
+import { SubWallet } from '../../../../model/wallets/subwallet';
 import { TransactionInfo } from '../../../../model/Transaction';
 import * as moment from 'moment';
 import { CurrencyService } from '../../../../services/currency.service';
-import { ERC20SubWallet } from '../../../../model/wallets/ERC20SubWallet';
-import { StandardSubWallet } from '../../../../model/wallets/StandardSubWallet';
+import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
+import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
 import { UiService } from '../../../../services/ui.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { Subscription } from 'rxjs';
@@ -44,6 +44,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Component({
     selector: 'app-coin-home',
@@ -54,17 +55,17 @@ export class CoinHomePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public masterWalletInfo = '';
-    public masterWallet: MasterWallet = null;
+    public networkWallet: NetworkWallet = null;
     public subWallet: SubWallet = null;
     public elastosChainCode: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
     public transactionsLoaded = false;
 
     // Total transactions today
-    public todaysTransactions: number = 0;
-    private MaxCount: number = 0;
-    private pageNo: number = 0;
-    private start: number = 0;
+    public todaysTransactions = 0;
+    private MaxCount = 0;
+    private pageNo = 0;
+    private start = 0;
 
     // Helpers
     public Util = Util;
@@ -85,7 +86,7 @@ export class CoinHomePage implements OnInit {
 
     constructor(
         public router: Router,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public translate: TranslateService,
         private coinTransferService: CoinTransferService,
         public native: Native,
@@ -102,7 +103,7 @@ export class CoinHomePage implements OnInit {
     ionViewWillEnter() {
         this.coinTransferService.elastosChainCode = this.elastosChainCode;
         this.titleBar.setTitle(this.elastosChainCode);
-        this.initData();
+        void this.initData();
     }
 
     ionViewDidLeave() {
@@ -129,28 +130,29 @@ export class CoinHomePage implements OnInit {
         }
     }
 
-    async init() {
+    init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             let masterWalletId = navigation.extras.state.masterWalletId;
             this.elastosChainCode = navigation.extras.state.elastosChainCode as StandardCoinName;
 
-            this.masterWallet = this.walletManager.getMasterWallet(masterWalletId);
+            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
 
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.elastosChainCode = this.elastosChainCode;
-            this.coinTransferService.walletInfo = this.native.clone(this.masterWallet.account);
+            this.coinTransferService.walletInfo = this.native.clone(this.networkWallet.account);
 
-            this.subWallet = this.masterWallet.getSubWallet(this.elastosChainCode);
+            this.subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
         }
     }
 
     ngOnInit() {
     }
 
-    async initData() {
+    initData() {
         if (!this.transactionStatusSubscription) {
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
               if (count >= 0) {
                 await this.updateTransactions();
@@ -160,6 +162,7 @@ export class CoinHomePage implements OnInit {
         }
 
         if (!this.updateTmeout) {
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           this.updateTmeout = setTimeout(async () => {
             if (this.subWallet.isLoadTxDataFromCache()) {
               this.loadingTX = true;
@@ -188,7 +191,7 @@ export class CoinHomePage implements OnInit {
       if (this.updateInterval === null) {
         this.updateInterval = setInterval(() => {
           this.loadingTX = true;
-          this.updateWalletInfo();
+          void this.updateWalletInfo();
         }, 30000);// 30s
       }
     }
@@ -264,7 +267,7 @@ export class CoinHomePage implements OnInit {
         this.native.go(
             '/wallet/coin-tx-info',
             {
-                masterWalletId: this.masterWallet.id,
+                masterWalletId: this.networkWallet.id,
                 elastosChainCode: this.elastosChainCode,
                 transactionInfo: item
             }
@@ -309,13 +312,13 @@ export class CoinHomePage implements OnInit {
             return;
         }
         this.isShowMore = true;
-        this.getAllTx();
+        void this.getAllTx();
     }
 
-    doRefresh(event) {
+    async doRefresh(event): Promise<void> {
         if (!this.uiService.returnedUser) {
             this.uiService.returnedUser = true;
-            this.storage.setVisit(true);
+            await this.storage.setVisit(true);
         }
 
         this.initData();
@@ -329,7 +332,7 @@ export class CoinHomePage implements OnInit {
         return this.transferList.findIndex(e => e.txid === txid);
     }
 
-    async checkUTXOCount() {
+    checkUTXOCount() {
         // Check UTXOs only for SPV based coins.
         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
           // TODO
@@ -416,6 +419,6 @@ export class CoinHomePage implements OnInit {
 
     closeRefreshBox() {
         this.uiService.returnedUser = true;
-        this.storage.setVisit(true);
+        void this.storage.setVisit(true);
     }
 }

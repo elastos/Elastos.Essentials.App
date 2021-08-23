@@ -10,9 +10,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Logger } from 'src/app/logger';
 import { SessionRequestParams } from 'src/app/model/walletconnect/types';
 import { GlobalWalletConnectService, WalletConnectSessionRequestSource } from 'src/app/services/global.walletconnect.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/ETHChainSubWallet';
+import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
 import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Platform } from '@ionic/angular';
 
@@ -37,7 +37,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
     private route: ActivatedRoute,
     private walletConnect: GlobalWalletConnectService,
     private globalNav: GlobalNavService,
-    private walletManager: WalletManager,
+    private walletManager: WalletService,
     private nav: GlobalNavService,
     private platform: Platform
   ) { }

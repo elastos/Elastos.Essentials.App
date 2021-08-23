@@ -1,15 +1,12 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
-import { DAppBrowser, IABExitData, InAppBrowserClient } from 'src/app/model/dappbrowser/dappbrowser';
 import { HttpClient } from '@angular/common/http';
+import { Component, NgZone, ViewChild } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DAppBrowser, IABExitData, InAppBrowserClient } from 'src/app/model/dappbrowser/dappbrowser';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 type DAppMenuEntry = {
     icon: string;

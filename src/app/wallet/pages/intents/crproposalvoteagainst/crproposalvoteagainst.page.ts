@@ -23,12 +23,12 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
 import { WalletAccountType } from '../../../model/WalletAccount';
 import { StandardCoinName } from '../../../model/Coin';
 import { VoteType, CRProposalVoteInfo, VoteContent } from '../../../model/SPVWalletPluginBridge';
-import { MainchainSubWallet } from '../../../model/wallets/MainchainSubWallet';
+import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -51,7 +51,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
 
     balance: string; // Balance in SELA
 
-    constructor(public walletManager: WalletManager,
+    constructor(public walletManager: WalletService,
                 private coinTransferService: CoinTransferService,
                 private globalIntentService: GlobalIntentService,
                 public translate: TranslateService,
@@ -68,17 +68,13 @@ export class CRProposalVoteAgainstPage implements OnInit {
       this.titleBar.setNavigationMode(null);
   }
 
-    async ionViewDidEnter() {
+    ionViewDidEnter() {
         // TODO
         // this.titleBar.setTitle(this.translate.instant(''));
         if (this.coinTransferService.walletInfo.Type === WalletAccountType.MULTI_SIGN) {
             // TODO: reject voting if multi sign (show error popup), as multi sign wallets cannot vote.
-            this.cancelOperation();
+            void this.cancelOperation();
         }
-
-        // TODO TMP BPI TEST
-        // let previousVoteInfo = await this.walletManager.spvBridge.getVoteInfo(this.masterWalletId, StandardCoinName.ELA, VoteType.CRCProposal) as CRProposalVoteInfo[];
-        // Logger.log('wallet', "previousVoteInfo", previousVoteInfo);
     }
 
     init() {
@@ -86,16 +82,16 @@ export class CRProposalVoteAgainstPage implements OnInit {
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.masterWalletId = this.coinTransferService.masterWalletId;
-        this.sourceSubwallet = this.walletManager.getMasterWallet(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
         this.balance = this.sourceSubwallet.getDisplayBalance().toString();
 
-        this.hasPendingVoteTransaction();
+        void this.hasPendingVoteTransaction();
     }
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
             await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
-            this.cancelOperation();
+            void this.cancelOperation();
         }
     }
 
@@ -118,7 +114,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
             return false;
         }
 
-        this.createVoteCRProposalTransaction(stakeAmount.toString());
+        void this.createVoteCRProposalTransaction(stakeAmount.toString());
     }
 
     /**
@@ -128,7 +124,6 @@ export class CRProposalVoteAgainstPage implements OnInit {
         return 20000; // SELA: 0.0002ELA
     }
 
-    // TODO: Test it.
     async createVoteCRProposalTransaction(voteAmount) {
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount, ' this.transfer:', this.transfer);
 

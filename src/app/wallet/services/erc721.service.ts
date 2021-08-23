@@ -26,7 +26,7 @@ import { ERC20Coin } from '../model/Coin';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import { WalletPrefsService } from './pref.service';
-import { NFTAsset } from '../model/nftasset';
+import { NFTAsset } from '../model/nfts/nftasset';
 import { HttpClient } from '@angular/common/http';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 

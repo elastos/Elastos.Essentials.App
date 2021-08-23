@@ -35,14 +35,14 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 export class SettingsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public masterWalletId: string = "1";
-    public masterWalletType: string = "";
-    public readonly: string = "";
-    public currentLanguageName: string = "";
-    public isShowDeposit: boolean = false;
-    public fee: number = 0;
+    public masterWalletId = "1";
+    public masterWalletType = "";
+    public readonly = "";
+    public currentLanguageName = "";
+    public isShowDeposit = false;
+    public fee = 0;
     public walletInfo = {};
-    public password: string = "";
+    public password = "";
     public available = 0;
     public settings = [
         {

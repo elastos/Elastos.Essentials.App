@@ -9,7 +9,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { Util } from 'src/app/model/util';
 import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
@@ -48,7 +48,7 @@ export class UpdatMilestonePage {
         public translate: TranslateService,
         private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
-        private walletManager: WalletManager,
+        private walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
     ) {

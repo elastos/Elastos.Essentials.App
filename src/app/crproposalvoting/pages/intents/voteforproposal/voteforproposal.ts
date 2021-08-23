@@ -4,7 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletManager } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletAccountType } from 'src/app/wallet/model/WalletAccount';
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
@@ -40,7 +40,7 @@ export class VoteForProposalPage {
         private crOperations: CROperationsService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         private voteService: VoteService,
         private proposalService: ProposalService,
         public theme: GlobalThemeService,

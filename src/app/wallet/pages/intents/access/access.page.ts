@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Config } from '../../../config/Config';
-import { WalletManager } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 import { WalletAccessService } from '../../../services/walletaccess.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { StandardCoinName } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../model/wallets/MasterWallet';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { UiService } from '../../../services/ui.service';
 import { IntentTransfer } from '../../../services/cointransfer.service';
 import { Router } from '@angular/router';
@@ -15,6 +15,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 
 type ClaimRequest = {
@@ -34,7 +35,7 @@ export class AccessPage implements OnInit {
     public Config = Config;
     public intentTransfer: IntentTransfer;
     public requestDapp = '';
-    public masterWallet: MasterWallet = null;
+    public networkWallet: NetworkWallet = null;
     public exportMnemonic = false;
     public title = '';
     public requestItems: ClaimRequest[] = [];
@@ -43,7 +44,7 @@ export class AccessPage implements OnInit {
 
     constructor(
         private globalIntentService: GlobalIntentService,
-        public walletManager: WalletManager,
+        public walletManager: WalletService,
         public popupProvider: PopupProvider,
         public native: Native,
         private router: Router,
@@ -59,7 +60,7 @@ export class AccessPage implements OnInit {
     }
 
     ngOnInit() {
-        this.init();
+        void this.init();
     }
 
     ionViewWillEnter() {
@@ -70,11 +71,11 @@ export class AccessPage implements OnInit {
     ionViewWillLeave() {
     }
 
-    init() {
+    async init() {
         this.intentTransfer = this.walletAccessService.intentTransfer;
-        this.masterWallet = this.walletManager.getMasterWallet(this.walletAccessService.masterWalletId);
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletAccessService.masterWalletId);
         if (this.intentTransfer.action === 'walletaccess') {
-            this.organizeRequestedFields();
+            await this.organizeRequestedFields();
             this.title = this.translate.instant("wallet.access-subtitle-wallet-access-from");
         } else {
             this.exportMnemonic = true;
@@ -114,7 +115,7 @@ export class AccessPage implements OnInit {
                 break;
             case 'elaamount':
                 // for now just return the amount of ELA Chain, not include IDChain
-                value = this.masterWallet.subWallets.ELA.balance.toString();
+                value = this.networkWallet.subWallets.ELA.balance.toString();
                 break;
             case 'ethaddress':
                 value = await this.createAddress(StandardCoinName.ETHSC);
@@ -145,8 +146,8 @@ export class AccessPage implements OnInit {
       return value;
     }
 
-    async createAddress(elastosChainCode: string) {
-        return this.masterWallet.getSubWallet(elastosChainCode).createAddress();
+    createAddress(elastosChainCode: string) {
+        return this.networkWallet.getSubWallet(elastosChainCode).createAddress();
     }
 
     reduceArrayToDict(keyProperty: string) {

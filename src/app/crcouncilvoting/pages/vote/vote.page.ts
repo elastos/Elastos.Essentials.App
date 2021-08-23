@@ -37,13 +37,13 @@ export class VotePage implements OnInit, OnDestroy {
 
     public castingVote = false;
     public votesCasted = false;
-    public totalEla: number = 0;
-    private votedEla: number = 0;
+    public totalEla = 0;
+    private votedEla = 0;
     private toast: any;
 
     ngOnInit() {
         Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
-        let elaamount = this.voteService.masterWallet.subWallets.ELA.balance;
+        let elaamount = this.voteService.networkWallet.subWallets.ELA.balance;
         const fees = 0.001;// it is enough.
         this.totalEla = Math.floor(elaamount.toNumber() / 100000000 - fees);
         Logger.log('crcouncil', 'ELA Balance', this.totalEla);
@@ -77,7 +77,7 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     /****************** Cast Votes *******************/
-    cast() {
+    async cast() {
         let votedCandidates = {};
         this.candidatesService.selectedCandidates.map((candidate) => {
             if (candidate.userVotes && candidate.userVotes > 0) {
@@ -90,15 +90,16 @@ export class VotePage implements OnInit, OnDestroy {
         });
 
         if (Object.keys(votedCandidates).length === 0) {
-            this.toastErr(this.translate.instant('crcouncilvoting.pledge-some-ELA-to-candidates'));
+            void this.toastErr(this.translate.instant('crcouncilvoting.pledge-some-ELA-to-candidates'));
         } else if (this.votedEla > this.totalEla) {
-            this.toastErr(this.translate.instant('crcouncilvoting.not-allow-pledge-more-than-own'));
+            void this.toastErr(this.translate.instant('crcouncilvoting.not-allow-pledge-more-than-own'));
         } else {
             Logger.log('crcouncil', votedCandidates);
-            this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.candidatesService.selectedCandidates);
+            await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', this.candidatesService.selectedCandidates);
             this.castingVote = true;
             this.votesCasted = false;
 
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             setTimeout(async () => {
                 try {
                     let res = await this.globalIntentService.sendIntent(
@@ -107,18 +108,18 @@ export class VotePage implements OnInit, OnDestroy {
 
                     if (res.result.txid === null) {
                         this.castingVote = false;
-                        this.voteFailedToast(this.translate.instant('crcouncilvoting.vote-incomplete'));
+                        void this.voteFailedToast(this.translate.instant('crcouncilvoting.vote-incomplete'));
                     } else {
                         Logger.log('crcouncil', 'Intent sent sucessfully', res);
                         this.castingVote = false;
                         this.votesCasted = true;
-                        this.voteSuccessToast(res.result.txid);
+                        void this.voteSuccessToast(res.result.txid);
                     }
                 }
                 catch (err) {
                     Logger.log('crcouncil', 'Intent sent failed', err);
                     this.castingVote = false;
-                    this.voteFailedToast(err);
+                    void this.voteFailedToast(err);
                 }
             }, 1000);
         }
@@ -153,7 +154,7 @@ export class VotePage implements OnInit, OnDestroy {
         this.toast.present();
     }
 
-    async voteSuccessToast(txid: string = 'adwfw3r3wdwagyfgw3dfwdg83addwefwsfssg5g4fwdwsdqdgyywqdqw') {
+    async voteSuccessToast(txid = 'adwfw3r3wdwagyfgw3dfwdg83addwefwsfssg5g4fwdwsdqdgyywqdqw') {
         this.toast = await this.toastCtrl.create({
             mode: 'ios',
             position: 'bottom',
@@ -166,15 +167,15 @@ export class VotePage implements OnInit, OnDestroy {
                     handler: () => {
                         this.toast.dismiss();
                         this.globalNative.genericToast('common.tx-copied-to-clipboard');
-                        this.globalNative.copyClipboard(txid);
-                        this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+                        void this.globalNative.copyClipboard(txid);
+                        void this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
                     }
                 },
                 {
                     text: this.translate.instant('common.dismiss'),
                     handler: () => {
                         this.toast.dismiss();
-                        this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+                        void this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
                     }
                 }
             ]
@@ -196,7 +197,7 @@ export class VotePage implements OnInit, OnDestroy {
                     text: this.translate.instant('common.ok'),
                     handler: () => {
                         this.toast.dismiss();
-                        this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
+                        void this.globalNav.navigateRoot(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
                     }
                 }
             ]

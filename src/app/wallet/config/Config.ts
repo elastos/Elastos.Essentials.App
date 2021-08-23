@@ -23,7 +23,6 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 
-// TODO: translate comments to english
 @Injectable()
 export class Config {
     public static DEBUG_LOGS_ENABLED = true;
@@ -36,13 +35,8 @@ export class Config {
     public static WEI = 1000000000000000000; // 10 ^ 18
     public static WEIAsBigNumber = new BigNumber(Config.WEI);
 
-    // TODO: comment what those below urls are
     public static IDCHAIN_URL = 'https://idchain.elastos.org/';
     public static BLOCKCHAIN_URL = 'https://blockchain.elastos.org/';
-
-    // TODO: cleanup the below urls / find a better way
-    // public static BLOCKCHAIN_URL: String = 'https://blockchain-beta.elastos.org/';
-    //public static BLOCKCHAIN_URL: String = 'https://blockchain-regtest.elastos.org/';
 
     public static IDCHAIN_DEPOSIT_ADDRESS = "XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ";
 
