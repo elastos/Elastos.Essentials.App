@@ -9,6 +9,7 @@ import { QRCodeComponent } from '../components/qrcode/qrcode.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { DIDPublishingComponent } from 'src/app/components/did-publishing/did-publishing.component';
 
 @Injectable({
   providedIn: 'root'
@@ -72,7 +73,7 @@ export class PopupService {
     return await this.optionsPopup.present();
   }
 
-  async showQRCode(contact: Contact) {
+/*   async showQRCode(contact: Contact) {
     this.qrModal = await this.modalCtrl.create({
       component: QRCodeComponent,
       componentProps: {
@@ -84,6 +85,15 @@ export class PopupService {
     });
     this.qrModal.onWillDismiss().then((params) => {
       this.qrModal = null
+    });
+    this.qrModal.present();
+  } */
+
+
+  async showQRCode(contact: Contact) {
+    this.qrModal = await this.modalCtrl.create({
+      component: DIDPublishingComponent,
+      cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
     });
     this.qrModal.present();
   }

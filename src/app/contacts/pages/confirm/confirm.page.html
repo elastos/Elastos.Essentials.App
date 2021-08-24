@@ -4,7 +4,7 @@
     <div class="profile-container">
   
       <ion-row class="img-row">
-        <img *ngIf="!avatar" src="assets/contacts/images/default-contact2.svg">
+        <img *ngIf="!avatar" [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
         <img *ngIf="avatar" class="profile-img" [src]="'data:'+avatar.contentType+';base64,'+avatar.data">
       </ion-row>
   

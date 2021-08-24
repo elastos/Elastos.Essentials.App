@@ -6,7 +6,7 @@
       <div *ngFor="let group of groupedIdentities">
         <ion-row class="id-row ion-activatable ripple" *ngFor="let identityEntry of group.entries">
           <ion-col class="img-col" size="1.9" (click)="signIn(identityEntry)">
-            <img *ngIf="!identityEntry.avatar" class="noAvatar" src="assets/didsessions/images/default-contact.svg">
+            <img *ngIf="!identityEntry.avatar" class="noAvatar" [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
             <img *ngIf="identityEntry.avatar" [src]="'data:'+identityEntry.avatar.contentType+';base64,'+identityEntry.avatar.base64ImageData">
           </ion-col>
           <ion-col class="info-col" size="9" (click)="signIn(identityEntry)">

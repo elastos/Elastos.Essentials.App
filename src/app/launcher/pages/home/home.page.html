@@ -5,7 +5,7 @@
     <ion-row *ngIf="getSignedInIdentity()" class="id-row">
       <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
         <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-          <img src="assets/launcher/default/default-contact.svg">
+          <img [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
         </ion-avatar>
         <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
           <img [src]="'data:'+getSignedInIdentity().avatar.contentType+';base64,'+getSignedInIdentity().avatar.base64ImageData">

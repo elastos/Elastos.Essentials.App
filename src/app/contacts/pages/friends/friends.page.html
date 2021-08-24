@@ -5,7 +5,7 @@
 
       <!-- Empty Contacts -->
       <div *ngIf="friendsService.contacts.length === 0" class="no-contacts">
-        <img class="profile-img" src="/assets/contacts/images/default-contact.svg">
+        <img class="profile-img" [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
         <h1>{{ 'contacts.no-contacts' | translate }}</h1>
         <p>{{ 'contacts.add-a-contact' | translate }}</p>
         <ion-row class="btn-row disabled-btn-row">

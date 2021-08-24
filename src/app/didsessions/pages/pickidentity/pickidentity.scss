@@ -23,11 +23,9 @@
           height: 41px;
           border-radius: 50%;
           object-fit: cover;
-          border: 1.25px solid #000000;
         }
 
         .noAvatar {
-          border: 1.25px solid #6d74ef;
         }
       }
   
@@ -47,6 +45,7 @@
           margin: 0;
           font-size: 9px;
           font-weight: 500;
+          color: #000000;
           opacity: 0.7;
         }
       }

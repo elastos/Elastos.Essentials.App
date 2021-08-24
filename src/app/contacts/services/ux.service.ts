@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Contact } from '../models/contact.model';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class UxService {
 
   constructor(
-    private translate: TranslateService
+    private translate: TranslateService,
+    private theme: GlobalThemeService
   ) { }
 
   getAvatar(contact: Contact) {
@@ -17,7 +19,7 @@ export class UxService {
     } else if(contact.credentials.avatar && !contact.avatarLocal) {
       return 'data:'+contact.credentials.avatar.contentType+';base64,'+contact.credentials.avatar.data;
     } else {
-      return 'assets/contacts/images/default-contact.svg';
+      return !this.theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg';
     }
   }
 
