@@ -7,7 +7,7 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <content src="http://192.168.8.214:8100" />
+    <content original-src="index.html" src="https://192.168.31.113:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

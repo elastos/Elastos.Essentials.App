@@ -141,7 +141,7 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.elastosChainCode = this.elastosChainCode;
-            this.coinTransferService.walletInfo = this.native.clone(this.networkWallet.account);
+            this.coinTransferService.walletInfo = this.native.clone(this.networkWallet.masterWallet.account);
 
             this.subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
         }

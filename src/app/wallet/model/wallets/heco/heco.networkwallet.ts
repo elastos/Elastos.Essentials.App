@@ -9,7 +9,7 @@ import { StandardSubWallet } from "../standard.subwallet";
 
 export class HecoNetworkWallet extends NetworkWallet {
   constructor(masterWallet: MasterWallet) {
-    super(masterWallet);
+    super(masterWallet, "heco");
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {

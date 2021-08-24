@@ -296,7 +296,7 @@ export class CoinTxInfoPage implements OnInit {
 
             if (this.targetAddress) {
               // Only show the receiving address for multiable address wallet.
-              if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.networkWallet.account.SingleAddress) {
+              if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.networkWallet.masterWallet.account.SingleAddress) {
                 this.txDetails.unshift(
                     {
                         type: 'address',

@@ -90,7 +90,7 @@ export class VoteService {
     public async navigateTo(networkWallet: NetworkWallet) {
         this.networkWallet = networkWallet;
         this.masterWalletId = networkWallet.id;
-        this.walletInfo = networkWallet.account;
+        this.walletInfo = this.walletManager.getMasterWallet(this.masterWalletId).account;
 
         //If multi sign will be rejected
         if (this.walletInfo.Type === WalletAccountType.MULTI_SIGN) {

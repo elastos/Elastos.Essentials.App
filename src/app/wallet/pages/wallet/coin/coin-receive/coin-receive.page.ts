@@ -65,7 +65,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     isSingleAddressSubwallet() {
         if ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) {
-            this.isSingleAddress = this.networkWallet.account.SingleAddress;
+            this.isSingleAddress = this.networkWallet.masterWallet.account.SingleAddress;
         } else {
             this.isSingleAddress = true;
         }

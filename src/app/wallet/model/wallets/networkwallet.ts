@@ -16,23 +16,10 @@ import { INetwork } from '../networks/inetwork';
 import { MasterWallet } from './masterwallet';
 import { ERC20TokenInfo } from '../evm.types';
 import { SubWalletBuilder } from './subwalletbuilder';
+import { LocalStorage } from '../../services/storage.service';
 
-export type WalletID = string;
-
-export type Theme = {
-    background: string,
-    color: string
-};
-
-export class ExtendedWalletInfo {
-    /** User defined wallet name */
-    name: string;
-    /** List of serialized subwallets added earlier to this master wallet */
+export class ExtendedNetworkWalletInfo {
     subWallets: SerializedSubWallet[] = [];
-    /** List of serialized NFTs added earlier to this master wallet */
-    nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
-    /* Wallet theme */
-    theme: Theme;
 }
 
 /**
@@ -48,76 +35,17 @@ export abstract class NetworkWallet {
 
     public nfts: NFT[] = [];
 
-    public account: WalletAccount = {
-        Type: WalletAccountType.STANDARD,
-        SingleAddress: false
-    };
-
     constructor(
-        public masterWallet: MasterWallet
+        public masterWallet: MasterWallet,
+        protected networkName: string // Name of the network this network is created for
     ) {
         this.id = masterWallet.id;
     }
 
     public async initialize(): Promise<void> {
         await this.prepareStandardSubWallets();
+        await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, this.networkName));
     }
-
-    /* public getExtendedWalletInfo(): ExtendedWalletInfo {
-        let extendedInfo = new ExtendedWalletInfo();
-
-        extendedInfo.name = this.name;
-        extendedInfo.theme = this.theme;
-
-        for (let subWallet of Object.values(this.subWallets)) {
-            extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-        }
-
-        for (let nft of this.nfts) {
-            extendedInfo.nfts.push(nft.toSerializedNFT());
-        }
-
-        return extendedInfo;
-    } */
-
-    /**
-     * Appends extended info from the local storage to this wallet model.
-     * This includes everything the SPV plugin could not save and that we saved in our local
-     * storage instead.
-     */
-    /* public async populateWithExtendedInfo(extendedInfo: ExtendedWalletInfo) {
-        Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
-
-        // Retrieve wallet account type
-        this.account = await WalletService.instance.spvBridge.getMasterWalletBasicInfo(this.id);
-
-        // In case of newly created wallet we don't have extended info from local storagd yet,
-        // which is normal.
-        if (extendedInfo) {
-            this.name = extendedInfo.name;
-            this.theme = extendedInfo.theme;
-
-            this.subWallets = {};
-            for (let serializedSubWallet of extendedInfo.subWallets) {
-                let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
-                if (subWallet) {
-                    this.subWallets[serializedSubWallet.id] = subWallet;
-                }
-            }
-
-            this.nfts = [];
-            if (extendedInfo.nfts) {
-                for (let serializedNFT of extendedInfo.nfts) {
-                    let nft: NFT = NFT.parse(serializedNFT);
-                    if (nft) {
-                        this.nfts.push(nft);
-                    }
-                }
-            }
-        }
-
-        Logger.log("wallet", "Populated master wallet:", this);
-    } */
 
     public getDisplayBalance(): BigNumber {
         // Sum all subwallets balances to get the master wallet total balance
@@ -145,6 +73,7 @@ export abstract class NetworkWallet {
     }
 
     public getSubWalletBalance(coinId: CoinID): BigNumber {
+        console.log("getSubWalletBalance", coinId, this.subWallets)
         return this.subWallets[coinId].balance;
     }
 
@@ -169,7 +98,7 @@ export abstract class NetworkWallet {
     protected abstract prepareStandardSubWallets(): Promise<void>;
 
     /**
-     * Adds a new subwallet to this master wallet, based on a given coin type.
+     * Adds a new subwallet to this network wallet, based on a given coin type.
      */
     public async createNonStandardSubWallet(coin: Coin) {
         try {
@@ -177,7 +106,7 @@ export abstract class NetworkWallet {
 
           Logger.log("wallet", "Created subwallet with id "+coin.getID()+" for wallet "+this.id);
 
-          await this.masterWallet.save();
+          await this.save();
         }
         catch (err) {
           if (err.code !== 20001) {// 20001: Unsupported subwallet in some test network.
@@ -303,5 +232,55 @@ export abstract class NetworkWallet {
 
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
         }
+    }
+
+    /**
+     * Save network wallet info to permanent storage
+     */
+     public async save() {
+        const extendedInfo = this.getExtendedWalletInfo();
+        Logger.log('wallet', "Saving network wallet extended info", this, extendedInfo);
+
+        await LocalStorage.instance.setExtendedNetworkWalletInfo(this.id, this.networkName, extendedInfo);
+    }
+
+    public getExtendedWalletInfo(): ExtendedNetworkWalletInfo {
+        let extendedInfo = new ExtendedNetworkWalletInfo();
+
+        extendedInfo.subWallets = this.getSubWallets().map(subwallet => SerializedSubWallet.fromSubWallet(subwallet));
+
+        return extendedInfo;
+    }
+
+    /**
+     * Appends extended info from the local storage to this wallet model.
+     * This includes everything the SPV plugin could not save and that we saved in our local
+     * storage instead.
+     */
+    public populateWithExtendedInfo(extendedInfo: ExtendedNetworkWalletInfo) {
+        Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
+
+        // In case of newly created wallet we don't have extended info from local storagd yet,
+        // which is normal.
+        if (extendedInfo) {
+            for (let serializedSubWallet of extendedInfo.subWallets) {
+                let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
+                if (subWallet) {
+                    this.subWallets[serializedSubWallet.id] = subWallet;
+                }
+            }
+
+            /* TODO this.nfts = [];
+            if (extendedInfo.nfts) {
+                for (let serializedNFT of extendedInfo.nfts) {
+                    let nft: NFT = NFT.parse(serializedNFT);
+                    if (nft) {
+                        this.nfts.push(nft);
+                    }
+                }
+            } */
+        }
+
+        Logger.log("wallet", "Populated master wallet:", this);
     }
 }

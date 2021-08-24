@@ -242,3 +242,13 @@ export type UtxoForSDK = {
   TxHash: string;
 }
 
+/**
+ * Result of calls to signAndSendRawTransaction().
+ */
+ export type RawTransactionPublishResult = {
+  published: boolean; // Whether the transaction was successfully published to the node/spvsdk or not
+  txid?: string; // In case of successful publication, ID of the published transaction.
+  status?: string; // published, cancelled, error
+  code?: number;  // Error code.
+  message?: string; // Errror message.
+}
