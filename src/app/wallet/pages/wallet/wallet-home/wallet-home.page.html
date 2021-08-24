@@ -117,16 +117,6 @@
                         </ion-col>
                     </ion-row>
                     <h3>{{ 'wallet.total-amount' | translate }}</h3>
-              <!--       <ion-row class="change-wallet">
-                        <ion-col size='6'>
-                          <h3>{{ 'wallet.total-amount' | translate }}</h3>
-                        </ion-col>
-                        <ion-col class="change-wallet-col" size='6' (click)="toggleActiveWalletSelection()"
-                            *ngIf="getPotentialActiveWallets().length > 1">
-                          <img src="assets/wallet/icons/change-wallet.svg">
-                          <span class="change">{{ 'wallet.change-wallet' | translate }}</span>
-                        </ion-col>
-                    </ion-row> -->
                     <div (click)="currencyService.toggleCurrencyDisplay()">
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             Util.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"

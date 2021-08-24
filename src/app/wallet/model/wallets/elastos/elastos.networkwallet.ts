@@ -7,10 +7,11 @@ import { MainchainSubWallet } from "./mainchain.subwallet";
 import { StandardSubWalletBuilder } from "../standardsubwalletbuilder";
 import { StandardSubWallet } from "../standard.subwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
+import { Network } from "../../networks/network";
 
 export class ElastosNetworkWallet extends NetworkWallet {
-  constructor(masterWallet: MasterWallet) {
-    super(masterWallet, "elastos");
+  constructor(masterWallet: MasterWallet, network: Network) {
+    super(masterWallet, network);
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {

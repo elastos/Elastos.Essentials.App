@@ -17,15 +17,9 @@ import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { Network } from 'src/app/wallet/model/networks/network';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
-import { WalletNetworkInfo, WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { WalletService, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
-import { OptionsComponent } from '../../components/options/options.component';
-import { AppmanagerService } from '../../services/appmanager.service';
-import { DIDManagerService } from '../../services/didmanager.service';
-import { NotificationsPage } from '../notifications/notifications.page';
-
-
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 
 @Component({
   selector: 'app-home',
@@ -49,7 +43,7 @@ export class HomePage implements OnInit {
   // Widget data
   private mainWallet: NetworkWallet = null;
   public mainWalletName = "";
-  public activeNetwork: WalletNetworkInfo = null;
+  public activeNetwork: Network = null;
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {

@@ -260,7 +260,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
     protected getERC20TokenTransactionInfo(transaction: EthTransaction): ERC20TokenTransactionInfo {
         let contractAddress = transaction.to;
         let toAddress = null, erc20TokenSymbol = null, erc20TokenValue = null;
-        const erc20Coin = CoinService.instance.getERC20CoinByContracAddress(contractAddress);
+        const erc20Coin = CoinService.instance.getERC20CoinByContractAddress(contractAddress);
         if (erc20Coin) {// erc20Coin is true normally.
           erc20TokenSymbol = erc20Coin.getName();
           // Get transaction from erc20 token subwallet.

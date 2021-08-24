@@ -28,9 +28,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
-import { WalletNetworkInfo, WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { Config } from '../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../model/Coin';
@@ -74,7 +75,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public showNetworkOptions = false;
     // Dummy Current Network
-    public currentNetwork: WalletNetworkInfo = null;
+    public currentNetwork: Network = null;
 
     public showWalletSelection = false;
 
@@ -215,7 +216,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.walletManager.setActiveMasterWallet(wallet.masterWallet.id);
     }
 
-    public selectActiveNetwork(network: WalletNetworkInfo) {
+    public selectActiveNetwork(network: Network) {
         // TODO: Use network object, not string
         void this.networkService.setActiveNetwork(network);
     }

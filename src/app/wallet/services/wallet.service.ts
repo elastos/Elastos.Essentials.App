@@ -250,9 +250,9 @@ export class WalletService {
         for (let masterWallet of this.getMasterWalletsList()) {
             let networkWallet: NetworkWallet = null;
             if (activeNetwork.key === "elastos")
-                networkWallet = new ElastosNetworkWallet(masterWallet);
+                networkWallet = new ElastosNetworkWallet(masterWallet, activeNetwork);
             else if (activeNetwork.key === "heco")
-                networkWallet = new HecoNetworkWallet(masterWallet);
+                networkWallet = new HecoNetworkWallet(masterWallet, activeNetwork);
 
             await networkWallet.initialize();
             this.networkWallets[masterWallet.id] = networkWallet;
@@ -528,7 +528,7 @@ export class WalletService {
 
             // Get the elastos network wallet instance to know if this wallet is single or multi address, as
             // we want to return this information.
-            let elastosNetworkWallet = new ElastosNetworkWallet(this.masterWallets[masterWalletId]);
+            let elastosNetworkWallet = new ElastosNetworkWallet(this.masterWallets[masterWalletId], this.networkService.getNetworkByKey("elastos"));
             if (await elastosNetworkWallet.multipleAddressesInUse()) {
                 Logger.log('wallet', 'Multi address wallet!')
                 return;

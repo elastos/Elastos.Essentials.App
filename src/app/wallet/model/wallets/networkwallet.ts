@@ -1,22 +1,17 @@
 import { SubWallet, SerializedSubWallet  } from './subwallet';
-import { WalletAccount, WalletAccountType } from '../walletaccount';
 import { WalletService } from '../../services/wallet.service';
 import { StandardSubWallet } from './standard.subwallet';
-import { ERC20SubWallet } from './erc20.subwallet';
 import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../coin';
-import { CoinService } from '../../services/coin.service';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
-import { StandardSubWalletBuilder } from './standardsubwalletbuilder';
 import { ElastosEVMSubWallet } from './elastos/elastos.evm.subwallet';
 import { Logger } from 'src/app/logger';
-import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
-import { ERC721Service } from '../../services/erc721.service';
-import { INetwork } from '../networks/inetwork';
+import { NFT, NFTType } from '../nfts/nft';
 import { MasterWallet } from './masterwallet';
 import { ERC20TokenInfo } from '../evm.types';
 import { SubWalletBuilder } from './subwalletbuilder';
 import { LocalStorage } from '../../services/storage.service';
+import { Network } from '../networks/network';
 
 export class ExtendedNetworkWalletInfo {
     subWallets: SerializedSubWallet[] = [];
@@ -37,14 +32,14 @@ export abstract class NetworkWallet {
 
     constructor(
         public masterWallet: MasterWallet,
-        protected networkName: string // Name of the network this network is created for
+        public network: Network
     ) {
         this.id = masterWallet.id;
     }
 
     public async initialize(): Promise<void> {
         await this.prepareStandardSubWallets();
-        await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, this.networkName));
+        await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, this.network.key));
     }
 
     public getDisplayBalance(): BigNumber {
@@ -166,7 +161,7 @@ export abstract class NetworkWallet {
                             // Check if we already know this token globally. If so, we add it as a new subwallet
                             // to this master wallet. Otherwise we add the new token to the global list first then
                             // add a subwallet as well.
-                            const erc20Coin = this.masterWallet.coinService.getERC20CoinByContracAddress(token.contractAddress);
+                            const erc20Coin = this.masterWallet.coinService.getERC20CoinByContractAddress(token.contractAddress);
                             if (erc20Coin) {
                                 await this.createNonStandardSubWallet(erc20Coin);
                             } else {
@@ -241,7 +236,7 @@ export abstract class NetworkWallet {
         const extendedInfo = this.getExtendedWalletInfo();
         Logger.log('wallet', "Saving network wallet extended info", this, extendedInfo);
 
-        await LocalStorage.instance.setExtendedNetworkWalletInfo(this.id, this.networkName, extendedInfo);
+        await LocalStorage.instance.setExtendedNetworkWalletInfo(this.id, this.network.key, extendedInfo);
     }
 
     public getExtendedWalletInfo(): ExtendedNetworkWalletInfo {

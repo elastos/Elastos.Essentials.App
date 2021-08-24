@@ -23,44 +23,41 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { StandardCoinName } from '../model/coin';
-import { IntentTransfer } from './cointransfer.service';
-
-export type WalletNetworkInfo = {
-    key: string; // unique identifier
-    name: string; // Human readable network name - Elastos, HECO
-    logo: string; // Path to the network icon
-}
-
-const networksInfos: WalletNetworkInfo[] = [
-    // Default
-    {
-        key: "elastos",
-        name: 'Elastos',
-        logo: 'assets/wallet/networks/elastos.svg',
-    },
-    // Others
-    {
-        key: "heco",
-        name: 'HECO',
-        logo: 'assets/wallet/networks/hecochain.png',
-    },
-];
+import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
+import { HECONetwork } from '../model/networks/heco/heco.network';
+import { Network } from '../model/networks/network';
 
 @Injectable({
     providedIn: 'root'
 })
 export class WalletNetworkService {
-    public activeNetwork = new BehaviorSubject<WalletNetworkInfo>(networksInfos[0]);
+    private networks: Network[] = [];
 
-    constructor() {}
+    public activeNetwork = new BehaviorSubject<Network>(null);
 
-    public getAvailableNetworks(): WalletNetworkInfo[] {
-        return networksInfos;
+    constructor() {
     }
 
-    public setActiveNetwork(network: WalletNetworkInfo) {
+    public init() {
+        this.networks = [];
+
+        let elastosNetwork = new ElastosNetwork();
+        this.networks.push(elastosNetwork);
+        this.networks.push(new HECONetwork());
+
+        this.setActiveNetwork(elastosNetwork);
+    }
+
+    public getAvailableNetworks(): Network[] {
+        return this.networks;
+    }
+
+    public setActiveNetwork(network: Network) {
         Logger.log("wallet", "Setting active network to", network);
         this.activeNetwork.next(network);
+    }
+
+    public getNetworkByKey(key: string): Network {
+        return this.networks.find(n => n.key === key);
     }
 }
