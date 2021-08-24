@@ -25,11 +25,11 @@ import { ActivatedRoute } from '@angular/router';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
-import { Util } from '../../../../model/Util';
+import { Util } from '../../../../model/util';
 import { WalletService } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType, Transfer } from '../../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../../model/Coin';
+import { StandardCoinName, CoinType } from '../../../../model/coin';
 import { SubWallet } from '../../../../model/wallets/subwallet';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { HttpClient } from '@angular/common/http';
@@ -56,9 +56,9 @@ import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 's
 import { CoinService } from 'src/app/wallet/services/coin.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
-import { ETHTransactionStatus } from 'src/app/wallet/model/Transaction';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 
 
 @Component({
@@ -340,7 +340,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
           if (this.isEthsubwallet) {
             try {
-              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ETHChainSubWallet, rawTx, transfer, true)
+              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
             }
             catch (err) {
               Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
@@ -421,7 +421,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
           if (this.isEthsubwallet) {
             try {
-              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ETHChainSubWallet, rawTx, transfer, true)
+              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
             }
             catch (err) {
               Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
@@ -711,7 +711,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * A suggested resolved address is picked by the user. Replace user's input (ex: the user friendly name)
      * with its real address.
      */
-    selectSuggestedAddress(suggestedAddress: CryptoAddressResolvers.CryptoNameAddress) {
+    async selectSuggestedAddress(suggestedAddress: CryptoAddressResolvers.CryptoNameAddress): Promise<void> {
         this.toAddress = suggestedAddress.address;
         // this.addressName = suggestedAddress.getDisplayName();
         this.addressName = suggestedAddress.name;
@@ -726,7 +726,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 address: this.toAddress
             });
 
-            this.contactsService.setContacts();
+            await this.contactsService.setContacts();
         }
 
         this.setCryptonamesKeyVisibility(true);
@@ -865,7 +865,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 if (!selectedSubwallet) {
                     // Subwallet doesn't exist on target master wallet. So we activate it.
                     let coin = this.coinService.getCoinByID(this.elastosChainCode);
-                    await selectedWallet.createSubWallet(coin);
+                    await selectedWallet.createNonStandardSubWallet(coin);
                     selectedSubwallet = selectedWallet.getSubWallet(this.elastosChainCode);
                 }
 

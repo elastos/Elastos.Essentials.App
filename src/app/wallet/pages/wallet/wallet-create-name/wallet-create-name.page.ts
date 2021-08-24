@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Native } from '../../../services/native.service';
 import { Config } from '../../../config/Config';
-import { Util } from '../../../model/Util';
+import { Util } from '../../../model/util';
 import { ActivatedRoute } from '@angular/router';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';

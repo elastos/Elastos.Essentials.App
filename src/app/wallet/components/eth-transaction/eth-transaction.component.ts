@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { ModalController } from '@ionic/angular';
 import { ETHTransactionSpeedup, ETHTransactionService, ETHTransactionStatusInfo } from '../../services/ethtransaction.service';
-import { ETHTransactionStatus } from '../../model/Transaction';
 import BigNumber from 'bignumber.js';
+import { ETHTransactionStatus } from '../../model/evm.types';
 
 @Component({
   selector: 'app-eth-transaction',
@@ -20,7 +20,7 @@ export class ETHTransactionComponent implements OnInit {
   // public gasPrice: number = null;
   public gasPrice: string = null;// GWEI
   // public gasLimit: string = null;
-  public gasLimit: string = '200000';
+  public gasLimit = '200000';
 
   private GWEI = 1000000000;
 

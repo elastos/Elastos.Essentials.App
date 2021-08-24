@@ -23,18 +23,43 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { StandardCoinName } from '../model/Coin';
+import { StandardCoinName } from '../model/coin';
 import { IntentTransfer } from './cointransfer.service';
+
+export type WalletNetworkInfo = {
+    key: string; // unique identifier
+    name: string; // Human readable network name - Elastos, HECO
+    logo: string; // Path to the network icon
+}
+
+const networksInfos: WalletNetworkInfo[] = [
+    // Default
+    {
+        key: "elastos",
+        name: 'Elastos',
+        logo: 'assets/wallet/networks/elastos.svg',
+    },
+    // Others
+    {
+        key: "heco",
+        name: 'HECO',
+        logo: 'assets/wallet/networks/hecochain.png',
+    },
+];
 
 @Injectable({
     providedIn: 'root'
 })
 export class WalletNetworkService {
-    public activeNetwork = new BehaviorSubject<string>("Elastos");
+    public activeNetwork = new BehaviorSubject<WalletNetworkInfo>(networksInfos[0]);
 
     constructor() {}
 
-    public setActiveNetwork(network: string) {
+    public getAvailableNetworks(): WalletNetworkInfo[] {
+        return networksInfos;
+    }
+
+    public setActiveNetwork(network: WalletNetworkInfo) {
         Logger.log("wallet", "Setting active network to", network);
         this.activeNetwork.next(network);
     }

@@ -9,7 +9,7 @@ import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { Util } from 'src/app/wallet/model/Util';
+import { Util } from 'src/app/wallet/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 

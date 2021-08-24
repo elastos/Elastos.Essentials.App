@@ -97,8 +97,7 @@ export class InvalidVoteCandidatesHelper {
           }
         }
 
-        newVoteContents.push.apply(newVoteContents, votingContent);
-        return newVoteContents;
+        return [...newVoteContents, ...votingContent];
     }
 
     /**

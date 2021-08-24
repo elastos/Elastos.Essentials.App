@@ -1,12 +1,12 @@
-import { Util } from './Util';
+import { Util } from './util';
 import { Native } from '../services/native.service';
 import { PopupProvider } from '../services/popup.service';
 import { Config } from '../config/Config';
-import { StandardCoinName } from './Coin';
+import { StandardCoinName } from './coin';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Events } from 'src/app/services/events.service';
-import { WalletAccountType } from './WalletAccount';
+import { WalletAccountType } from './walletaccount';
 
 declare let walletManager: WalletPlugin.WalletManager;
 

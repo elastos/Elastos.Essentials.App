@@ -18,7 +18,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
-import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkInfo, WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
 import { OptionsComponent } from '../../components/options/options.component';
 import { AppmanagerService } from '../../services/appmanager.service';
@@ -49,7 +49,7 @@ export class HomePage implements OnInit {
   // Widget data
   private mainWallet: NetworkWallet = null;
   public mainWalletName = "";
-  public activeNetworkName = "";
+  public activeNetwork: WalletNetworkInfo = null;
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {
@@ -225,15 +225,15 @@ export class HomePage implements OnInit {
     if (activeWallet) {
       // Simple widget for now: display the main balance of the first wallet we find.
       this.mainWallet = activeWallet;
-      this.mainWalletName = activeWallet.name;
+      this.mainWalletName = activeWallet.masterWallet.name;
       this.mainWalletELABalance = activeWallet.getDisplayBalance().toFixed(2);
-      this.activeNetworkName = this.walletNetworkService.activeNetwork.value;
+      this.activeNetwork = this.walletNetworkService.activeNetwork.value;
     }
     else {
       this.mainWallet = null;
       this.mainWalletName = "";
       this.mainWalletELABalance = null;
-      this.activeNetworkName = "";
+      this.activeNetwork = null;
     }
   }
 

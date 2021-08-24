@@ -26,8 +26,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
 import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
-import { CoinID, StandardCoinName } from '../model/Coin';
-import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
+import { CoinID, StandardCoinName } from '../model/coin';
+import { WalletAccountType, WalletAccount } from '../model/walletaccount';
 import { SerializedSubWallet } from '../model/wallets/subwallet';
 import { CoinService } from './coin.service';
 import { WalletJsonRPCService } from './jsonrpc.service';
@@ -37,16 +37,16 @@ import { LocalStorage } from './storage.service';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
 import { MainchainSubWallet } from '../model/wallets/elastos/mainchain.subwallet';
-import { ETHChainSubWallet } from '../model/wallets/elastos/evm.subwallet';
+import { ElastosEVMSubWallet } from '../model/wallets/elastos/elastos.evm.subwallet';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { StandardSubWalletBuilder } from '../model/wallets/elastos/StandardSubWalletBuilder';
+import { StandardSubWalletBuilder } from '../model/wallets/standardsubwalletbuilder';
 import { ERC721Service } from './erc721.service';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { Util } from '../model/Util';
-import { WalletConfig } from '../model/WalletConfig';
+import { Util } from '../model/util';
+import { WalletConfig } from '../model/wallet.config';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { WalletNetworkService } from './network.service';
@@ -144,9 +144,13 @@ export class WalletService {
 
         this.spvBridge = new SPVWalletPluginBridge(this.native, this.events, this.popupProvider);
 
-        const hasWallet = await this.initWallets();
+        const hasWallets = await this.initWallets();
 
-        if (!hasWallet) {
+        this.networkService.activeNetwork.subscribe(activeNetwork => {
+            void this.onActiveNetworkChanged();
+        });
+
+        if (!hasWallets) {
             this.walletServiceStatus.next(true);
             this.events.publish("walletmanager:initialized");
             return;
@@ -207,56 +211,19 @@ export class WalletService {
                 Logger.log('wallet', "Rebuilding local model for wallet id "+masterId);
 
                 // Try to retrieve locally storage extended info about this wallet
-                const extendedInfo = await this.localStorage.getExtendedMasterWalletInfos(masterId);
-                if (!extendedInfo) {
+                if (!(await MasterWallet.extendedInfoExistsForMasterId(masterId))) {
                     // No backward compatibility support: old wallets are just destroyed.
                     await this.spvBridge.destroyWallet(masterId);
                     continue;
-                } else {
-                    Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId, extendedInfo);
+                }
+                else {
+                    Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
                     this.masterWallets[masterId] = new MasterWallet(this, this.coinService, this.erc721Service, this.localStorage, masterId);
-
-                    // reopen ELA, IDChain and ETHSC automatically
-                    // Don't need to createSubwallet, MasterWallets::populateWithExtendedInfo will create Subwallet with name.
-                    /* TODO let subwallet: SerializedSubWallet;
-                    subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ELA);
-                    if (!subwallet) {
-                        Logger.log('wallet', '(Re)Opening ELA');
-                        const subWallet = new MainchainSubWallet(this.masterWallets[masterId]);
-                        extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-                    } */
-
-                    /* TODO - MOVE TO ELASTOS SPECIFIC NETWORK WALLET subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHSC);
-                    if (!subwallet && networkConfig['ETHSC']) {
-                        // There is no ETHSC in LRW
-                        Logger.log('wallet', '(Re)Opening ETHSC');
-                        const subWallet = new ETHChainSubWallet(this.masterWallets[masterId], StandardCoinName.ETHSC);
-                        extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-                    }
-
-                    subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHDID);
-                    if (!subwallet && networkConfig['ETHDID']) {
-                        Logger.log('wallet', '(Re)Opening ETHDID');
-                        const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHDID));
-                        extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-                    }
-
-                    subwallet = extendedInfo.subWallets.find(wallet => wallet.id === StandardCoinName.ETHHECO);
-                    if (!subwallet && networkConfig['ETHHECO']) {
-                        Logger.log('wallet', '(Re)Opening ETHHECO');
-                        const subWallet = await StandardSubWalletBuilder.newFromCoin(this.masterWallets[masterId], this.coinService.getCoinByID(StandardCoinName.ETHHECO));
-                        extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-                    } */
+                    await this.masterWallets[masterId].prepareAfterCreation();
                 }
-
-                await this.masterWallets[masterId].populateWithExtendedInfo(extendedInfo);
-                runDelayed(() => this.masterWallets[masterId].updateERCTokenList(this.networkTemplate), 5000);
             }
-
-            // Initialize the active network master wallet and its dependencies
-            await this.onActiveNetworkChanged();
 
             this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();
             Logger.log('wallet', 'active master wallet id:', this.activeMasterWalletId)
@@ -273,19 +240,21 @@ export class WalletService {
     /**
      * Called when the active network changes (by user, or initially).
      * At this time, we need to refresh the displayed wallet content (tokens, subwallets...) for the
-     * newly active network.
+     * newly active network. This happens through the creation of a whole new set of network wallets
+     * for each master wallet.
      */
-    private onActiveNetworkChanged(): void {
+    private async onActiveNetworkChanged(): Promise<void> {
         let activeNetwork = this.networkService.activeNetwork.value;
-        Logger.log('wallet', 'Initializing network master wallet for network', activeNetwork);
+        Logger.log('wallet', 'Initializing network master wallet for active network:', activeNetwork);
 
         for (let masterWallet of this.getMasterWalletsList()) {
             let networkWallet: NetworkWallet = null;
-            if (activeNetwork === "elastos")
+            if (activeNetwork.key === "elastos")
                 networkWallet = new ElastosNetworkWallet(masterWallet);
-            else if (activeNetwork === "heco")
+            else if (activeNetwork.key === "heco")
                 networkWallet = new HecoNetworkWallet(masterWallet);
 
+            await networkWallet.initialize();
             this.networkWallets[masterWallet.id] = networkWallet;
 
             // Notify that this network wallet is the active one
@@ -454,20 +423,11 @@ export class WalletService {
         // Get some basic information ready in our model.
         await this.masterWallets[id].populateWithExtendedInfo(null);
 
-        // A master wallet must always have at least the ELA subwallet
-       /* TODO  await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ELA));
-
-        // Even if not mandatory to have, we open the main sub wallets for convenience as well.
-        if (!newWallet) {
-          // Do not use the id chain any more.
-          await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.IDChain));
-        }
-        await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHSC));
-        await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHDID));
+       /* TODO
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
  */
         // Get all tokens and create subwallet
-        await this.masterWallets[id].updateERCTokenList(this.networkTemplate);
+        await this.masterWallets[id].updateERCTokenList();
 
         // Save state to local storage
         await this.masterWallets[id].save();

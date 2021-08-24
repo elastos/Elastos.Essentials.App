@@ -11,7 +11,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { Util } from 'src/app/model/util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';

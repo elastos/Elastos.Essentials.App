@@ -5,7 +5,7 @@ import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { StandardCoinName } from '../wallet/model/Coin';
-import { ETHChainSubWallet } from '../wallet/model/wallets/elastos/evm.subwallet';
+import { ElastosEVMSubWallet } from '../wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from '../wallet/model/wallets/NetworkWallet';
 import { WalletService } from '../wallet/services/wallet.service';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
@@ -122,7 +122,7 @@ export class GlobalWalletConnectService extends GlobalService {
    * Returns the eth account address associated with the given master wallet.
    */
   private getAccountFromNetworkWallet(wallet: NetworkWallet): Promise<string> {
-    let subwallet = wallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
+    let subwallet = wallet.getSubWallet(StandardCoinName.ETHSC) as ElastosEVMSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
     return subwallet.createAddress();
   }
 

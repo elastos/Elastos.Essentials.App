@@ -6,10 +6,10 @@ import { Native } from '../../../../services/native.service';
 import { PopupProvider} from '../../../../services/popup.service';
 import { WalletService } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
+import { Coin, CoinType, StandardCoinName } from '../../../../model/coin';
 import { CoinService } from '../../../../services/coin.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
-import { Util } from '../../../../model/Util';
+import { Util } from '../../../../model/util';
 import { TranslateService } from '@ngx-translate/core';
 import { UiService } from '../../../../services/ui.service';
 import { CurrencyService } from '../../../../services/currency.service';
@@ -168,7 +168,7 @@ export class CoinListPage implements OnInit, OnDestroy {
             void this.native.hideLoading();
 
             // Create the sub Wallet (ex: IDChain)
-            await this.networkWallet.createSubWallet(coin);
+            await this.networkWallet.createNonStandardSubWallet(coin);
         } catch (error) {
             this.currentCoin["open"] = false; // TODO: currentCoin type
         }
@@ -177,7 +177,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     async destroySubWallet(coin: Coin) {
         void this.native.hideLoading();
 
-        await this.networkWallet.destroySubWallet(coin.getID());
+        await this.networkWallet.removeNonStandardSubWallet(coin);
     }
 
     onSelect(item: EditableCoinInfo) {

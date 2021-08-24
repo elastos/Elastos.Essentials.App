@@ -3,21 +3,22 @@ import { Router } from '@angular/router';
 import { Config } from '../../../../config/Config';
 import { WalletJsonRPCService } from '../../../../services/jsonrpc.service';
 import { Native } from '../../../../services/native.service';
-import { Util } from '../../../../model/Util';
+import { Util } from '../../../../model/util';
 import { WalletService } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { StandardCoinName } from '../../../../model/Coin';
-import { TransactionDirection, TransactionType, TransactionInfo, EthTransaction, TransactionStatus } from '../../../../model/Transaction';
+import { StandardCoinName } from '../../../../model/coin';
+import { TransactionDirection, TransactionType, TransactionInfo, TransactionStatus } from '../../../../model/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { SubWallet } from '../../../../model/wallets/subwallet';
-import { ETHChainSubWallet } from '../../../../model/wallets/elastos/evm.subwallet';
+import { ElastosEVMSubWallet } from '../../../../model/wallets/elastos/elastos.evm.subwallet';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { EthTransaction } from 'src/app/wallet/model/evm.types';
 
 class TransactionDetail {
     type: string;
@@ -147,7 +148,7 @@ export class CoinTxInfoPage implements OnInit {
 
             // Address
             if ((this.elastosChainCode === StandardCoinName.ETHSC) || (this.elastosChainCode === StandardCoinName.ETHDID)) {
-                const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
+                const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 if (this.direction === TransactionDirection.SENT) {
                     this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
                 } else if (this.direction === TransactionDirection.RECEIVED) {
@@ -160,7 +161,7 @@ export class CoinTxInfoPage implements OnInit {
                 // TODO: We can remove invalid transaction when get the transactions list?
                 // For erc20, we use getTransactionDetails to check whether the transaction is valid.
                 if (this.status !== TransactionStatus.CONFIRMED) {
-                  const transaction = await (this.subWallet as ETHChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
+                  const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 }
 
                 // if (this.direction === TransactionDirection.RECEIVED) {
@@ -344,7 +345,7 @@ export class CoinTxInfoPage implements OnInit {
      */
     async getETHSCTransactionTargetAddres(transaction: EthTransaction) {
         let targetAddress = transaction.to;
-        const withdrawContractAddress = (this.subWallet as ETHChainSubWallet).getWithdrawContractAddress();
+        const withdrawContractAddress = (this.subWallet as ElastosEVMSubWallet).getWithdrawContractAddress();
         if (transaction.to.toLowerCase() === withdrawContractAddress.toLowerCase()) {
             targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
         }

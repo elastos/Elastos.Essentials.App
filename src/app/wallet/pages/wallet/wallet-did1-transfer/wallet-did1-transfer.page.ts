@@ -27,7 +27,7 @@ import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { TransferType, Transfer } from '../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../model/Coin';
+import { StandardCoinName, CoinType } from '../../../model/coin';
 import { SubWallet } from '../../../model/wallets/subwallet';
 import { TxConfirmComponent } from '../../../components/tx-confirm/tx-confirm.component';
 import { TranslateService } from '@ngx-translate/core';

@@ -1,21 +1,22 @@
 import { SubWallet, SerializedSubWallet  } from './subwallet';
-import { WalletAccount, WalletAccountType } from '../WalletAccount';
+import { WalletAccount, WalletAccountType } from '../walletaccount';
 import { WalletService } from '../../services/wallet.service';
 import { StandardSubWallet } from './standard.subwallet';
 import { ERC20SubWallet } from './erc20.subwallet';
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../Coin';
+import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../coin';
 import { CoinService } from '../../services/coin.service';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
-import { StandardSubWalletBuilder } from './elastos/StandardSubWalletBuilder';
-import { ETHChainSubWallet } from './elastos/evm.subwallet';
+import { StandardSubWalletBuilder } from './standardsubwalletbuilder';
+import { ElastosEVMSubWallet } from './elastos/elastos.evm.subwallet';
 import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { ERC721Service } from '../../services/erc721.service';
-import { ERC20TokenInfo } from '../Transaction';
 import { INetwork } from '../networks/inetwork';
 import { LocalStorage } from '../../services/storage.service';
 import { NetworkWallet } from './NetworkWallet';
+import { MainchainSubWallet } from './elastos/mainchain.subwallet';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 
 export type WalletID = string;
 
@@ -28,9 +29,9 @@ export class ExtendedWalletInfo {
     /** User defined wallet name */
     name: string;
     /** List of serialized subwallets added earlier to this master wallet */
-    subWallets: SerializedSubWallet[] = [];
+    // TODO - NOT FOR MASTER WALLET subWallets: SerializedSubWallet[] = [];
     /** List of serialized NFTs added earlier to this master wallet */
-    nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
+    // TODO - NOT FOR MASTER WALLET nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
     /* Wallet theme */
     theme: Theme;
 }
@@ -40,12 +41,13 @@ export class MasterWallet {
     public name: string = null;
     public theme: Theme = null;
 
-    /* public subWallets: {
+    /**
+     * The master wallet contains only standard sub wallets shared by all network
+     */
+    public standardSubWalletIDs: {
         [k: string]: SubWallet
     } = {};
 
-    public nfts: NFT[] = [];
-*/
     public account: WalletAccount = {
         Type: WalletAccountType.STANDARD,
         SingleAddress: false
@@ -66,6 +68,18 @@ export class MasterWallet {
             color: '#752fcf',
             background: '/assets/wallet/cards/maincards/card-purple.svg'
         };
+    }
+
+    public static async extendedInfoExistsForMasterId(masterId: string): Promise<boolean> {
+        const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfos(masterId);
+        return !!extendedInfo; // not null or undefined
+    }
+
+    public async prepareAfterCreation(): Promise<void> {
+        let extendedInfo = this.getExtendedWalletInfo();
+        await this.populateWithExtendedInfo(extendedInfo);
+
+        runDelayed(() => this.updateERCTokenList(), 5000);
     }
 
     /**
@@ -105,9 +119,9 @@ export class MasterWallet {
         Logger.log("wallet", "Populating master wallet with extended info", this.id, extendedInfo);
 
         // Retrieve wallet account type
-        /* TODO this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
+        /* TODO NETWORKS this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
 
-        // In case of newly created wallet we don't have extended info from local storagd yet,
+        // In case of newly created wallet we don't have extended info from local storage yet,
         // which is normal.
         if (extendedInfo) {
             this.name = extendedInfo.name;
@@ -147,7 +161,7 @@ export class MasterWallet {
     /**
      * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
      */
-    public async updateERCTokenList(activeNetworkTemplate: string) {
+    public async updateERCTokenList() {
         /* TODO if (!this.subWallets[StandardCoinName.ETHSC]) {
             Logger.log("wallet", 'updateERC20TokenList no ETHSC');
             return;
@@ -195,41 +209,29 @@ export class MasterWallet {
         }); */
     }
 
-}
-
-class SubWalletBuilder {
-    /**
-     * Newly created wallet, base on a coin type.
-     */
-    static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<SubWallet> {
-        Logger.log("wallet", "Creating new subwallet using coin", coin);
-
-        switch (coin.getType()) {
-            case CoinType.STANDARD:
-                return StandardSubWalletBuilder.newFromCoin(networkWallet, coin);
-            case CoinType.ERC20:
-                return ERC20SubWallet.newFromCoin(networkWallet, coin);
-            default:
-                Logger.warn('wallet', "Unsupported coin type", coin.getType());
-                break;
-        }
-    }
 
     /**
-     * Restored wallet from local storage info.
+     * Removes a subwallet (coin - ex: ela, idchain) from the given wallet.
      */
-    static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): SubWallet {
-        if (!serializedSubWallet)
-            return null; // Should never happen, but happened because of some other bugs.
+     /* public async destroyStandardSubWallet(coinId: CoinID) {
+        let subWallet = this.standardSubWallets[coinId];
+        if (subWallet) {
+          await subWallet.destroy();
 
-        switch (serializedSubWallet.type) {
-            case CoinType.STANDARD:
-                return StandardSubWalletBuilder.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
-            case CoinType.ERC20:
-                return ERC20SubWallet.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
-            default:
-                Logger.warn('wallet', "Unsupported subwallet type", serializedSubWallet.type);
-                break;
+          // Delete the subwallet from out local model.
+          delete this.standardSubWallets[coinId];
+
+          await this.masterWallet.save();
         }
-    }
+    } */
+
+    /**
+     * Removes all subwallets from the given wallet.
+     */
+    /* public async destroyAllStandardSubWallets() {
+        for (let subWallet of Object.values(this.standardSubWallets)) {
+            await subWallet.destroy();
+            delete this.standardSubWallets[subWallet.id];
+        }
+    } */
 }

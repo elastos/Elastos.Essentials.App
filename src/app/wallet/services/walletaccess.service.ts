@@ -21,7 +21,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { StandardCoinName } from '../model/Coin';
+import { StandardCoinName } from '../model/coin';
 import { IntentTransfer } from './cointransfer.service';
 
 @Injectable({

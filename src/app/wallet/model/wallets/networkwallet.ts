@@ -1,20 +1,21 @@
 import { SubWallet, SerializedSubWallet  } from './subwallet';
-import { WalletAccount, WalletAccountType } from '../WalletAccount';
+import { WalletAccount, WalletAccountType } from '../walletaccount';
 import { WalletService } from '../../services/wallet.service';
 import { StandardSubWallet } from './standard.subwallet';
 import { ERC20SubWallet } from './erc20.subwallet';
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../Coin';
+import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../coin';
 import { CoinService } from '../../services/coin.service';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
-import { StandardSubWalletBuilder } from './elastos/StandardSubWalletBuilder';
-import { ETHChainSubWallet } from './elastos/evm.subwallet';
+import { StandardSubWalletBuilder } from './standardsubwalletbuilder';
+import { ElastosEVMSubWallet } from './elastos/elastos.evm.subwallet';
 import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { ERC721Service } from '../../services/erc721.service';
-import { ERC20TokenInfo } from '../Transaction';
 import { INetwork } from '../networks/inetwork';
 import { MasterWallet } from './masterwallet';
+import { ERC20TokenInfo } from '../evm.types';
+import { SubWalletBuilder } from './subwalletbuilder';
 
 export type WalletID = string;
 
@@ -35,12 +36,11 @@ export class ExtendedWalletInfo {
 }
 
 /**
- * A network wallet is an instance of a master wallet (one root key) for a given network (elastos, heco, etc).
+ * A network wallet is an instance of a master wallet (one root key) for a
+ * given network (elastos, heco, etc).
  */
 export abstract class NetworkWallet {
     public id: string = null;
-    public name: string = null;
-    public theme: Theme = null;
 
     public subWallets: {
         [k: string]: SubWallet
@@ -59,7 +59,11 @@ export abstract class NetworkWallet {
         this.id = masterWallet.id;
     }
 
-    public getExtendedWalletInfo(): ExtendedWalletInfo {
+    public async initialize(): Promise<void> {
+        await this.prepareStandardSubWallets();
+    }
+
+    /* public getExtendedWalletInfo(): ExtendedWalletInfo {
         let extendedInfo = new ExtendedWalletInfo();
 
         extendedInfo.name = this.name;
@@ -74,14 +78,14 @@ export abstract class NetworkWallet {
         }
 
         return extendedInfo;
-    }
+    } */
 
     /**
      * Appends extended info from the local storage to this wallet model.
      * This includes everything the SPV plugin could not save and that we saved in our local
      * storage instead.
      */
-    public async populateWithExtendedInfo(extendedInfo: ExtendedWalletInfo) {
+    /* public async populateWithExtendedInfo(extendedInfo: ExtendedWalletInfo) {
         Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
 
         // Retrieve wallet account type
@@ -113,7 +117,7 @@ export abstract class NetworkWallet {
         }
 
         Logger.log("wallet", "Populated master wallet:", this);
-    }
+    } */
 
     public getDisplayBalance(): BigNumber {
         // Sum all subwallets balances to get the master wallet total balance
@@ -159,9 +163,15 @@ export abstract class NetworkWallet {
     }
 
     /**
+     * Each inheriting network wallet must create its standard subwallets to the SPVSDK if
+     * not yet created, and push instances of those subwallets so we can store them.
+     */
+    protected abstract prepareStandardSubWallets(): Promise<void>;
+
+    /**
      * Adds a new subwallet to this master wallet, based on a given coin type.
      */
-    public async createSubWallet(coin: Coin) {
+    public async createNonStandardSubWallet(coin: Coin) {
         try {
           this.subWallets[coin.getID()] = await SubWalletBuilder.newFromCoin(this, coin);
 
@@ -176,29 +186,8 @@ export abstract class NetworkWallet {
         }
     }
 
-    /**
-     * Removes a subwallet (coin - ex: ela, idchain) from the given wallet.
-     */
-    public async destroySubWallet(coinId: CoinID) {
-        let subWallet = this.subWallets[coinId];
-        if (subWallet) {
-          await subWallet.destroy();
-
-          // Delete the subwallet from out local model.
-          delete this.subWallets[coinId];
-
-          await this.masterWallet.save();
-        }
-    }
-
-    /**
-     * Removes all subwallets from the given wallet.
-     */
-    public async destroyAllSubWallet() {
-        for (let subWallet of Object.values(this.subWallets)) {
-            await subWallet.destroy();
-            delete this.subWallets[subWallet.id];
-        }
+    public removeNonStandardSubWallet(coin: Coin) {
+        console.log("TODO - removeNonStandardSubWallet not implemented");
     }
 
     /**
@@ -235,7 +224,7 @@ export abstract class NetworkWallet {
             return;
         }
 
-        const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ETHChainSubWallet).getERC20TokenList();
+        const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ElastosEVMSubWallet).getERC20TokenList();
         if (ercTokenList == null) return;
 
         // For each ERC token discovered by the wallet SDK, we check its type and handle it.
@@ -250,7 +239,7 @@ export abstract class NetworkWallet {
                             // add a subwallet as well.
                             const erc20Coin = this.masterWallet.coinService.getERC20CoinByContracAddress(token.contractAddress);
                             if (erc20Coin) {
-                                await this.createSubWallet(erc20Coin);
+                                await this.createNonStandardSubWallet(erc20Coin);
                             } else {
                                 const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
                                 await this.masterWallet.coinService.addCustomERC20Coin(newCoin, WalletService.instance.getNetworkWalletsList());
@@ -313,43 +302,6 @@ export abstract class NetworkWallet {
             console.log("ASSETS", assets);
 
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
-        }
-    }
-}
-
-class SubWalletBuilder {
-    /**
-     * Newly created wallet, base on a coin type.
-     */
-    static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<SubWallet> {
-        Logger.log("wallet", "Creating new subwallet using coin", coin);
-
-        switch (coin.getType()) {
-            case CoinType.STANDARD:
-                return StandardSubWalletBuilder.newFromCoin(networkWallet, coin);
-            case CoinType.ERC20:
-                return ERC20SubWallet.newFromCoin(networkWallet, coin);
-            default:
-                Logger.warn('wallet', "Unsupported coin type", coin.getType());
-                break;
-        }
-    }
-
-    /**
-     * Restored wallet from local storage info.
-     */
-    static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): SubWallet {
-        if (!serializedSubWallet)
-            return null; // Should never happen, but happened because of some other bugs.
-
-        switch (serializedSubWallet.type) {
-            case CoinType.STANDARD:
-                return StandardSubWalletBuilder.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
-            case CoinType.ERC20:
-                return ERC20SubWallet.newFromSerializedSubWallet(networkWallet, serializedSubWallet);
-            default:
-                Logger.warn('wallet', "Unsupported subwallet type", serializedSubWallet.type);
-                break;
         }
     }
 }

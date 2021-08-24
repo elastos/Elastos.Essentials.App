@@ -16,9 +16,9 @@ import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Util } from 'src/app/model/util';
 import { App } from 'src/app/model/app.enum';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { PopupProvider } from 'src/app/services/global.popup.service';
-import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/Transaction';
+import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/transaction.types';
 import { Events } from 'src/app/services/events.service';
 
 

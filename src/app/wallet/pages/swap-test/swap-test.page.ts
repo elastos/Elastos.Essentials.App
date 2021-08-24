@@ -3,7 +3,7 @@ import { WalletService } from '../../services/wallet.service';
 import { Native } from '../../services/native.service';
 import Web3 from 'web3';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
-import { StandardCoinName } from '../../model/Coin';
+import { StandardCoinName } from '../../model/coin';
 import { MasterWallet } from '../../model/wallets/masterwallet';
 import { ChainId, Currency, CurrencyAmount, JSBI, Pair, Percent, Route, Router, Token, TokenAmount, Trade, WETH, ETHER, Fetcher, TradeType } from '@uniswap/sdk';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,7 +12,7 @@ import { LocalStorage } from '../../services/storage.service';
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
 import { BigNumber } from 'bignumber.js';
-import { ETHChainSubWallet } from '../../model/wallets/elastos/evm.subwallet';
+import { ElastosEVMSubWallet } from '../../model/wallets/elastos/elastos.evm.subwallet';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
@@ -26,11 +26,11 @@ const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than
 const DEFAULT_DEADLINE_FROM_NOW = 60 * 20 // 20 minutes, denominated in seconds
 
 class InternalWeb3Provider extends EssentialsWeb3Provider {
-    private elaEthSubwallet: ETHChainSubWallet;
+    private elaEthSubwallet: ElastosEVMSubWallet;
 
     constructor(private walletManager: WalletService, private networkWallet: NetworkWallet) {
         super(ElastosApiUrlType.ETHSC_RPC);
-        this.elaEthSubwallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet;
+        this.elaEthSubwallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as ElastosEVMSubWallet;
     }
 
     protected async sendTransaction(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {

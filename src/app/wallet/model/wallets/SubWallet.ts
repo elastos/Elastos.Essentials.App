@@ -1,6 +1,6 @@
 import { MasterWallet } from './masterwallet';
-import { CoinType, CoinID, StandardCoinName } from '../Coin';
-import { AllTransactionsHistory, TransactionHistory, TransactionInfo, TransactionStatus } from '../Transaction';
+import { CoinType, CoinID, StandardCoinName } from '../coin';
+import { AllTransactionsHistory, TransactionHistory, TransactionInfo, TransactionStatus } from '../transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,7 +46,6 @@ export class SerializedSubWallet {
 }
 
 export abstract class SubWallet {
-    protected masterWallet: MasterWallet = null;
     public id: CoinID = null;
     public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
     public lastBlockTime: string = null;
@@ -63,15 +62,15 @@ export abstract class SubWallet {
 
     public jsonRPCService: WalletJsonRPCService = null;
 
-    constructor(protected networkWallet: NetworkWallet, id: CoinID, public type: CoinType) {
-      this.masterWallet = networkWallet.masterWallet;
+    constructor(protected masterWallet: MasterWallet, id: CoinID, public type: CoinType) {
+      this.masterWallet = masterWallet;
       this.id = id;
       this.type = type;
-      this.jsonRPCService = this.networkWallet.masterWallet.walletManager.jsonRPCService;
+      this.jsonRPCService = this.masterWallet.walletManager.jsonRPCService;
 
-      this.balanceKeyInCache = this.networkWallet.masterWallet.id + '-' + this.id + '-balance';
-      this.transactionKeyInCache = this.networkWallet.masterWallet.id + '-' + this.id + '-tx';
-      this.subwalletTransactionStatusID = this.networkWallet.masterWallet.id + '-' + this.id;
+      this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
+      this.transactionKeyInCache = this.masterWallet.id + '-' + this.id + '-tx';
+      this.subwalletTransactionStatusID = this.masterWallet.id + '-' + this.id;
 
       void this.loadBalanceFromCache();
     }
@@ -105,7 +104,7 @@ export abstract class SubWallet {
         for (let i = 0, len = this.transactions.totalcount; i < len; i++) {
           this.transactions.txhistory.push(items[i].data);
         }
-        this.networkWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       }
       return null;
     }

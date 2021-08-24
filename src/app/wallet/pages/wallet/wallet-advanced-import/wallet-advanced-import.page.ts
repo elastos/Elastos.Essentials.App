@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
-import { Util } from "../../../model/Util";
+import { Util } from "../../../model/util";
 import { TranslateService } from '@ngx-translate/core';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';

@@ -26,7 +26,7 @@ import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
-import { StandardCoinName } from '../../../model/Coin';
+import { StandardCoinName } from '../../../model/coin';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from "bignumber.js";
 import { UiService } from '../../../services/ui.service';
@@ -34,13 +34,13 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/ethtransactioninfoparser';
 import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
 import { Subscription } from 'rxjs';
-import { ETHTransactionStatus } from 'src/app/wallet/model/Transaction';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 
 @Component({
     selector: 'app-esctransaction',
@@ -51,7 +51,7 @@ export class EscTransactionPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private networkWallet: NetworkWallet = null;
-    private ethSidechainSubWallet: ETHChainSubWallet = null;
+    private ethSidechainSubWallet: ElastosEVMSubWallet = null;
     private intentTransfer: IntentTransfer;
     private walletInfo = {};
     public balance: BigNumber; // ELA
@@ -107,7 +107,7 @@ export class EscTransactionPage implements OnInit {
         this.walletInfo = this.coinTransferService.walletInfo;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
-        this.ethSidechainSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
+        this.ethSidechainSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode) as ElastosEVMSubWallet;
         this.balance = await this.ethSidechainSubWallet.getDisplayBalance();
         this.gasPrice = this.coinTransferService.payloadParam.gasPrice;
         if (!this.gasPrice) {

@@ -6,24 +6,11 @@ export enum TransactionStatus {
     UNCONFIRMED = 'unconfirmed'
 }
 
-// For speedup eth transaction.
-export enum ETHTransactionStatus {
-  CANCEL = 'cancel',
-  PACKED = 'packed',
-  UNPACKED = 'unpacked',
-}
-
 export enum TransactionDirection {
     RECEIVED = "received",
     SENT = "sent",
     MOVED = "moved",
     DEPOSIT = "deposit"
-}
-
-export enum ETHSCTransferType {
-  DEPOSIT = "crossChainEthDeposit",
-  TRANSFER = "ethTransfer",
-  WITHDRAW = "crossChainEthWithdraw"
 }
 
 export enum TransactionType {
@@ -149,22 +136,12 @@ export enum RawTransactionType {
 }
 
 /**
- * Signed ETHSC transaction
- */
- export type SignedETHSCTransaction = {
-  Fee: string,
-  Hash: string,
-  TxSigned: string,
-  Unit: number
-};
-
-/**
  * Raw list of transactions as received from the SPVSDK.
  */
-export type AllTransactions = {
+/* export type AllTransactions = {
     MaxCount: number,
-    Transactions: EthTransaction[]
-};
+    Transactions: EthTransaction[] // TODO: ETH transactions? So this Alltransactions type is for ETH only? Rename and move to EVM types?
+}; */
 
 // ****************************************
 
@@ -185,44 +162,7 @@ export type TransactionHistory = {
     votecategory: VoteCategory;
 }
 
-// Returned from rpc
-export type EthTransaction = TransactionHistory & {
-  blockHash: string;
-  blockNumber: string;
-  confirmations: string;
-  contractAddress: string;
-  cumulativeGasUsed: string;
-  from: string;
-  gas: string;
-  gasPrice: string;
-  gasUsed: string;
-  hash: string;
-  input: string;
-  isError: string;
-  nonce: string;
-  timeStamp: string;
-  to: string;
-  transactionIndex: string;
-  transferType: string;
 
-  Direction: TransactionDirection;
-  isERC20TokenTransfer: boolean,
-};
-
-// Returned by rpc,
-export type EthTokenTransaction = EthTransaction & {
-  tokenSymbol: string;
-  tokenName: string;
-  tokenDecimal: string;
-}
-
-// Show the erc20 token info if the ETHSC transaction is a erc20 token transfer.
-export type ERC20TokenTransactionInfo = {
-  to: string;
-  tokenContractAddress: string;
-  tokenSymbol: string;
-  tokenValue: string;
-}
 
 // Raw list of transactions as received from the rpc.
 export type AllTransactionsHistory = {
@@ -263,7 +203,6 @@ export type payload = {
   sidechaintransactionhashes: string[];
 }
 
-
 // Return by getrawtransaction api
 export type TransactionDetail = {
   txid: string;
@@ -303,14 +242,3 @@ export type UtxoForSDK = {
   TxHash: string;
 }
 
-/**
- * Information about ERC20 Token
- */
- export type ERC20TokenInfo = {
-  type: string;
-  symbol: string;
-  name: string;
-  decimals: string;
-  contractAddress: string;
-  balance: string;
-}

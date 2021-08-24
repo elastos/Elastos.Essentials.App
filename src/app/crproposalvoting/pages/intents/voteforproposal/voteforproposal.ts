@@ -6,7 +6,7 @@ import { Logger } from 'src/app/logger';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletAccountType } from 'src/app/wallet/model/WalletAccount';
+import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -33,8 +33,8 @@ export class VoteForProposalPage {
     public proposalDetails: ProposalDetails;
     public proposalDetailsFetched = false;
     public signingAndSendingSuggestionResponse = false;
-    public maxVotes: number = 0;
-    public amount: number = 0;
+    public maxVotes = 0;
+    public amount = 0;
 
     constructor(
         private crOperations: CROperationsService,
@@ -70,7 +70,7 @@ export class VoteForProposalPage {
     }
 
     cancel() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     async voteAgainstProposal() {

@@ -30,7 +30,7 @@ import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
-import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkInfo, WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { Config } from '../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../model/Coin';
@@ -56,7 +56,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', {static: false}) slider: IonSlides;
 
+    public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
+    private activeMasterWalletSubscription: Subscription = null;
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
     private networkTemplate: string;
@@ -72,34 +74,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public showNetworkOptions = false;
     // Dummy Current Network
-    public currentNetwork = {
-        id: 1,
-        name: 'Elastos',
-        logo: 'assets/wallet/coins/ela-black.svg',
-    }
-     // Dummy Network Options
-    public networkOptions = [
-        {
-            id: 1,
-            name: 'Elastos',
-            logo: 'assets/wallet/networks/elastos.svg',
-        },
-        {
-            id: 2,
-            name: 'HECO',
-            logo: 'assets/wallet/networks/hecochain.png',
-        },
-        /*{
-            id: 3,
-            name: 'BSC',
-            logo: 'assets/wallet/coins/ela-black.svg',
-        },
-        {
-            id: 4,
-            name: 'Generic Network',
-            logo: 'assets/wallet/coins/ela-black.svg',
-        }, */
-    ];
+    public currentNetwork: WalletNetworkInfo = null;
 
     public showWalletSelection = false;
 
@@ -110,7 +85,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         public native: Native,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,
-        private networkService: WalletNetworkService,
+        public networkService: WalletNetworkService,
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public currencyService: CurrencyService,
@@ -125,16 +100,16 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.networkTemplate = this.prefs.getNetworkTemplate();
+        this.activeMasterWalletSubscription = this.walletManager.activeMasterWallet.subscribe(activeMasterWallet => {
+            this.masterWallet = activeMasterWallet;
+        });
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
           if (activeNetworkWallet) {
             this.networkWallet = activeNetworkWallet;
           }
         });
-        this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(networkName => {
-            this.currentNetwork = this.networkOptions.find(netOpt => {
-                // DIRTY TEMP WAITING FOR REAL MULTI NETWORK SUPPORT
-                return netOpt.name == networkName;
-            })
+        this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
+            this.currentNetwork = activeNetwork;
         });
     }
 
@@ -145,6 +120,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        if (this.activeMasterWalletSubscription) {
+            this.activeMasterWalletSubscription.unsubscribe();
+            this.activeMasterWalletSubscription = null;
+        }
+
         if (this.activeNetworkWalletSubscription) {
             this.activeNetworkWalletSubscription.unsubscribe();
             this.activeNetworkWalletSubscription = null;
@@ -235,7 +215,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.walletManager.setActiveMasterWallet(wallet.id);
     }
 
-    public selectActiveNetwork(network: string) {
+    public selectActiveNetwork(network: WalletNetworkInfo) {
         // TODO: Use network object, not string
         void this.networkService.setActiveNetwork(network);
     }

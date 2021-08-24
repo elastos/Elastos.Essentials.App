@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Util } from '../../../model/Util';
+import { Util } from '../../../model/util';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { ActivatedRoute } from '@angular/router';

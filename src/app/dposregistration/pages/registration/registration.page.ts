@@ -5,7 +5,7 @@ import { TitleBarForegroundMode, TitleBarIconSlot } from 'src/app/components/tit
 import { Logger } from 'src/app/logger';
 import { areaList } from 'src/app/model/area.list';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { AuthService } from 'src/app/wallet/services/auth.service';
@@ -15,7 +15,7 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
-import { Utxo, UtxoType } from 'src/app/wallet/model/Transaction';
+import { Utxo, UtxoType } from 'src/app/wallet/model/transaction.types';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/dposvoting/services/nodes.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
