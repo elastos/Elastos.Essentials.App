@@ -12,7 +12,6 @@ import { ElastosEVMSubWallet } from './elastos/elastos.evm.subwallet';
 import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { ERC721Service } from '../../services/erc721.service';
-import { INetwork } from '../networks/inetwork';
 import { LocalStorage } from '../../services/storage.service';
 import { NetworkWallet } from './NetworkWallet';
 import { MainchainSubWallet } from './elastos/mainchain.subwallet';
