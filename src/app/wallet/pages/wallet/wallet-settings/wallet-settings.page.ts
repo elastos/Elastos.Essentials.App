@@ -28,6 +28,7 @@ import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 export class WalletSettingsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+    public masterWallet: MasterWallet;
     public networkWallet: NetworkWallet;
 
     public walletName = "";
@@ -114,6 +115,7 @@ export class WalletSettingsPage implements OnInit {
 
     async ngOnInit() {
         this.masterWalletId = this.walletEditionService.modifiedMasterWalletId;
+        this.masterWallet = this.walletManager.getMasterWallet(this.masterWalletId);
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
         await this.getMasterWalletBasicInfo();
