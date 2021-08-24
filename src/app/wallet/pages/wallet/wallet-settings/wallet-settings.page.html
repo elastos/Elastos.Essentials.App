@@ -5,8 +5,8 @@
             class="card-row"
             [ngStyle]="
             {
-                'background-image': masterWallet.theme ?
-                'url(' + masterWallet.theme.background + ')' :
+                'background-image': networkWallet.theme ?
+                'url(' + networkWallet.theme.background + ')' :
                 'url(/assets/wallet/cards/maincards/card-purple.svg)'
             }"
         >
@@ -18,19 +18,19 @@
                 </ion-row>
                 <h3>{{ 'wallet.total-amount' | translate }}</h3>
                 <div (click)="currencyService.toggleCurrencyDisplay()">
-                    <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(masterWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(masterWallet.getDisplayBalance())">.</span>
-                        <span class="decimals">{{ Util.getDecimalBalance(masterWallet.getDisplayBalance()) }}</span>
+                    <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!networkWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
+                        <span class="decimals">{{ Util.getDecimalBalance(networkWallet.getDisplayBalance()) }}</span>
                         <span class="ela">  ELA</span>
                     </h4>
-                    <h4 *ngIf="currencyService.useCurrency">{{ Util.getWholeBalance(currencyService.getCurrencyBalance(masterWallet.getDisplayBalance())) }}<span class="dot" *ngIf="!masterWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.getDisplayBalance()))">.</span>
-                        <span class="decimals">{{ Util.getDecimalBalance(currencyService.getCurrencyBalance(masterWallet.getDisplayBalance())) }}</span>
+                    <h4 *ngIf="currencyService.useCurrency">{{ Util.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance())) }}<span class="dot" *ngIf="!networkWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))">.</span>
+                        <span class="decimals">{{ Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance())) }}</span>
                         <span class="ela">  {{ currencyService.selectedCurrency.symbol }}</span>
                     </h4>
                 </div>
             </ion-row>
             <div
                 class="arrow-down"
-                [ngStyle]="{ 'background-color': masterWallet.theme ? masterWallet.theme.color : '#752fcf' }">
+                [ngStyle]="{ 'background-color': networkWallet.theme ? networkWallet.theme.color : '#752fcf' }">
             </div>
         </ion-row>
         <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode" *ngFor="let item of settings" (click)="goToSetting(item)">
