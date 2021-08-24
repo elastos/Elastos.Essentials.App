@@ -3,8 +3,8 @@ import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { ETHTransactionComponent } from '../components/eth-transaction/eth-transaction.component';
-import { ETHTransactionStatus } from '../model/Transaction';
-import { ETHChainSubWallet } from '../model/wallets/elastos/evm.subwallet';
+import { ETHTransactionStatus } from '../model/evm.types';
+import { ElastosEVMSubWallet } from '../model/wallets/elastos/elastos.evm.subwallet';
 import { RawTransactionPublishResult } from '../model/wallets/subwallet';
 import { Transfer } from './cointransfer.service';
 
@@ -35,14 +35,14 @@ class ETHTransactionManager {
     */
     public emitEthTransactionStatusChange(status) {
         this.publicationService.ethTransactionStatus.next(status);
-        this.resetStatus();
+        void this.resetStatus();
     }
 
-    public async resetStatus() {
+    public resetStatus() {
         this.checkTimes = 0;
     }
 
-    public async publishTransaction(subwallet: ETHChainSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false) {
+    public async publishTransaction(subwallet: ElastosEVMSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false) {
       if (showBlockingLoader) {
         await this.displayPublicationLoader();
       }
@@ -86,7 +86,7 @@ class ETHTransactionManager {
       }
     }
 
-    private async checkPublicationStatusAndUpdate(subwallet: ETHChainSubWallet, txid: string): Promise<void> {
+    private async checkPublicationStatusAndUpdate(subwallet: ElastosEVMSubWallet, txid: string): Promise<void> {
       let result = await subwallet.getTransactionDetails(txid);
       Logger.log('wallet', 'checkPublicationStatusAndUpdate ', result)
       if (result.blockHash) {
@@ -157,16 +157,16 @@ export class ETHTransactionService {
             this.modalCtrl);
     }
 
-    public async init(): Promise<void> {
+    public init(): void {
         this.ethTransactionStatus = new Subject<ETHTransactionStatusInfo>();
         this.ethTransactionSpeedup = new Subject<ETHTransactionSpeedup>();
     }
 
-    public resetStatus(): Promise<void> {
-        return this.manager.resetStatus();
+    public resetStatus(): void {
+        this.manager.resetStatus();
     }
 
-    public async publishTransaction(subwallet: ETHChainSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false) {
+    public publishTransaction(subwallet: ElastosEVMSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false): Promise<void> {
         return this.manager.publishTransaction(subwallet, transaction, transfer, showBlockingLoader);
     }
 }

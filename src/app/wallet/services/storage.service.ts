@@ -12,7 +12,11 @@ import { Contact } from './contacts.service';
  */
 @Injectable()
 export class LocalStorage {
-    constructor(private storage: GlobalStorageService) { }
+    public static instance: LocalStorage = null;
+    
+    constructor(private storage: GlobalStorageService) { 
+        LocalStorage.instance = this;
+    }
 
     public add(key: string, value: any): any {
         return this.get(key).then((val) => {

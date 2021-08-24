@@ -21,8 +21,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoin } from '../model/Coin';
-import { StandardCoinName } from '../model/Coin';
+import { Coin, CoinID, CoinType, ERC20Coin, StandardCoin } from '../model/coin';
+import { StandardCoinName } from '../model/coin';
 import { LocalStorage } from './storage.service';
 import { MasterWallet } from '../model/wallets/masterwallet';
 import { Logger } from 'src/app/logger';
@@ -154,7 +154,7 @@ export class CoinService {
                 continue;
             }
 
-            await wallet.createSubWallet(erc20Coin);
+            await wallet.createNonStandardSubWallet(erc20Coin);
         }
 
         this.events.publish("custom-coin-added", erc20Coin.getID());

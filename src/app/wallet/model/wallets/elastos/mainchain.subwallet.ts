@@ -1,6 +1,6 @@
-import {  RawTransactionType, TransactionDirection, TransactionHistory } from '../../Transaction';
+import {  RawTransactionType, TransactionDirection, TransactionHistory } from '../../transaction.types';
 import { TranslateService } from '@ngx-translate/core';
-import { StandardCoinName } from '../../Coin';
+import { StandardCoinName } from '../../coin';
 import { MasterWallet } from '../masterwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
 import { NetworkWallet } from '../NetworkWallet';
@@ -9,8 +9,8 @@ import { NetworkWallet } from '../NetworkWallet';
  * Specialized standard sub wallet for ELA mainchain.
  */
 export class MainchainSubWallet extends MainAndIDChainSubWallet {
-    constructor(networkWallet: NetworkWallet) {
-        super(networkWallet, StandardCoinName.ELA);
+    constructor(masterWallet: MasterWallet) {
+        super(masterWallet, StandardCoinName.ELA);
     }
 
     protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {

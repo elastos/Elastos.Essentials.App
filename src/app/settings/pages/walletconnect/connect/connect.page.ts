@@ -11,8 +11,8 @@ import { Logger } from 'src/app/logger';
 import { SessionRequestParams } from 'src/app/model/walletconnect/types';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
+import { Coin, StandardCoinName } from 'src/app/wallet/model/coin';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Platform } from '@ionic/angular';
@@ -56,7 +56,7 @@ export class WalletConnectConnectPage implements OnInit {
       // Use only the active master wallet.
       this.ethAccounts = [];
       let activeWallet = this.walletManager.activeNetworkWallet.value;
-      let subwallet = activeWallet.getSubWallet(StandardCoinName.ETHSC) as ETHChainSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
+      let subwallet = activeWallet.getSubWallet(StandardCoinName.ETHSC) as ElastosEVMSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
       this.ethAccounts.push(await subwallet.createAddress());
     });
   }

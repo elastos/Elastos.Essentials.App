@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { Util } from '../../../../model/Util';
+import { Util } from '../../../../model/util';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';

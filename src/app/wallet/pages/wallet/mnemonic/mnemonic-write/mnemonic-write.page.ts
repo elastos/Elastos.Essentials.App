@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
-import { Util } from "../../../../model/Util";
+import { Util } from "../../../../model/util";
 import { ActivatedRoute } from '@angular/router';
 import { IonSlides, ModalController, IonInput } from '@ionic/angular';
 import { WalletService } from '../../../../services/wallet.service';

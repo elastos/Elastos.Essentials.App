@@ -21,15 +21,15 @@
  */
 
 import { Injectable } from '@angular/core';
-import { StandardCoinName } from '../model/Coin';
-import { WalletAccount } from '../model/WalletAccount';
+import { StandardCoinName } from '../model/coin';
+import { WalletAccount } from '../model/walletaccount';
 import { WalletID } from '../model/wallets/masterwallet';
 
 export class Transfer {
     masterWalletId: WalletID = null;
     action: string = null;
     intentId: number = null;
-    memo: string = '';
+    memo = '';
     did: string = null;
     nickname: string = null;
     url: string = null;
@@ -39,12 +39,12 @@ export class Transfer {
     location: number = null;
     crDID: string = null;
     from: string = null;
-    fee: number = 0;
+    fee = 0;
     elastosChainCode: string = null;
     votes: any; // TODO
     amount: number;
     publickey: string;
-    toAddress: string = '';
+    toAddress = '';
     publicKeys: any;
     didrequest: string;
    // type: string = 'payment-confirm';

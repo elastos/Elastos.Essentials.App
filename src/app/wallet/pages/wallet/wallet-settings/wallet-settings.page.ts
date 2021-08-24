@@ -4,7 +4,7 @@ import { PopupProvider } from "../../../services/popup.service";
 import { WalletService } from '../../../services/wallet.service';
 import { Native } from '../../../services/native.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Util } from '../../../model/Util';
+import { Util } from '../../../model/util';
 import { Config } from '../../../config/Config';
 import { WalletEditionService } from '../../../services/walletedition.service';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
@@ -17,7 +17,7 @@ import { Logger } from 'src/app/logger';
 import { PopoverController } from '@ionic/angular';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { Events } from 'src/app/services/events.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 @Component({

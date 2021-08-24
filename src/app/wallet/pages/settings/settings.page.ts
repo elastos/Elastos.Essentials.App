@@ -21,7 +21,7 @@
  */
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Util } from '../../model/Util';
+import { Util } from '../../model/util';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Native } from '../../services/native.service';

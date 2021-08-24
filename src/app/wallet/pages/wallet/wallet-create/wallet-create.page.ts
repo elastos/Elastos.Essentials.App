@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Util } from "../../../model/Util";
+import { Util } from "../../../model/util";
 import { Native } from '../../../services/native.service';
 import { Config } from '../../../config/Config';
 import { ActivatedRoute } from '@angular/router';

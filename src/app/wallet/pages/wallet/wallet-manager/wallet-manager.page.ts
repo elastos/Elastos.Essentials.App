@@ -3,7 +3,7 @@ import { WalletService } from '../../../services/wallet.service';
 import { Native } from '../../../services/native.service';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { WalletEditionService } from '../../../services/walletedition.service';
-import { Util } from '../../../model/Util';
+import { Util } from '../../../model/util';
 import { Config } from '../../../config/Config';
 import { TranslateService } from '@ngx-translate/core';
 import { WalletAccessService } from '../../../services/walletaccess.service';

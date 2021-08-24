@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LocalStorage } from './storage.service';
 import { HttpClient } from '@angular/common/http';
 import * as CryptoAddressResolvers from '../model/address-resolvers';
-import { StandardCoinName } from '../model/Coin';
+import { StandardCoinName } from '../model/coin';
 import { Logger } from 'src/app/logger';
 
 export type Contact = {
@@ -27,8 +27,8 @@ export class ContactsService {
     await this.getContacts();
   }
 
-  setContacts() {
-    this.storage.setContacts(this.contacts);
+  setContacts(): Promise<void> {
+    return this.storage.setContacts(this.contacts);
   }
 
   getContacts() {

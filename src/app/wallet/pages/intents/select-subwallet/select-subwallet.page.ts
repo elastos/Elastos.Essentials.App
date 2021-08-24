@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { WalletService } from '../../../services/wallet.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { UiService } from '../../../services/ui.service';
-import { StandardCoinName, CoinType } from '../../../model/Coin';
+import { StandardCoinName, CoinType } from '../../../model/coin';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
@@ -11,7 +11,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Router } from '@angular/router';
-import { Util } from 'src/app/wallet/model/Util';
+import { Util } from 'src/app/wallet/model/util';
 
 
 @Component({

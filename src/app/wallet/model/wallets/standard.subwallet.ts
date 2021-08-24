@@ -1,7 +1,7 @@
 import { MasterWallet } from './masterwallet';
 import { SubWallet, RawTransactionPublishResult } from './subwallet';
-import { CoinType, StandardCoinName } from '../Coin';
-import { RawTransactionType, TransactionDirection, TransactionHistory } from '../Transaction';
+import { CoinType, StandardCoinName } from '../coin';
+import { RawTransactionType, TransactionDirection, TransactionHistory } from '../transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import { Config } from '../../config/Config';
 import BigNumber from 'bignumber.js';
@@ -11,13 +11,13 @@ import { Logger } from 'src/app/logger';
 import { NetworkWallet } from './NetworkWallet';
 
 export abstract class StandardSubWallet extends SubWallet {
-    constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
-        super(networkWallet, id, CoinType.STANDARD);
+    constructor(masterWallet: MasterWallet, id: StandardCoinName) {
+        super(masterWallet, id, CoinType.STANDARD);
     }
 
     public async destroy() {
         try {
-          await this.networkWallet.masterWallet.walletManager.spvBridge.destroySubWallet(this.networkWallet.masterWallet.id, this.id);
+          await this.masterWallet.walletManager.spvBridge.destroySubWallet(this.masterWallet.id, this.id);
         }
         catch (e) {
           Logger.error('wallet', 'destroySubWallet error:', this.id, e)
@@ -26,11 +26,11 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     public async createAddress(): Promise<string> {
-        return await this.networkWallet.masterWallet.walletManager.spvBridge.createAddress(this.networkWallet.masterWallet.id, this.id);
+        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.id);
     }
 
     public getFriendlyName(): string {
-        const coin = this.networkWallet.masterWallet.coinService.getCoinByID(this.id);
+        const coin = this.masterWallet.coinService.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }
@@ -39,7 +39,7 @@ export abstract class StandardSubWallet extends SubWallet {
     }
 
     public getDisplayTokenName(): string {
-        const coin = this.networkWallet.masterWallet.coinService.getCoinByID(this.id);
+        const coin = this.masterWallet.coinService.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }
@@ -176,7 +176,7 @@ export abstract class StandardSubWallet extends SubWallet {
         return new Promise(async (resolve) => {
             // Logger.log("wallet", 'Received raw transaction', transaction);
             try {
-              const password = await this.networkWallet.masterWallet.walletManager.openPayModal(transfer);
+              const password = await this.masterWallet.walletManager.openPayModal(transfer);
               if (!password) {
                   Logger.log("wallet", "No password received. Cancelling");
                   resolve({
@@ -189,10 +189,10 @@ export abstract class StandardSubWallet extends SubWallet {
 
               Logger.log("wallet", "Password retrieved. Now signing the transaction.");
 
-              await this.networkWallet.masterWallet.walletManager.native.showLoading(this.networkWallet.masterWallet.walletManager.translate.instant('common.please-wait'));
+              await this.masterWallet.walletManager.native.showLoading(this.masterWallet.walletManager.translate.instant('common.please-wait'));
 
-              const signedTx = await this.networkWallet.masterWallet.walletManager.spvBridge.signTransaction(
-                  this.networkWallet.masterWallet.id,
+              const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
+                  this.masterWallet.id,
                   this.id,
                   transaction,
                   password
@@ -203,10 +203,10 @@ export abstract class StandardSubWallet extends SubWallet {
 
               Logger.log("wallet", "publishTransaction txid:", txid);
 
-              await this.networkWallet.masterWallet.walletManager.native.hideLoading();
+              await this.masterWallet.walletManager.native.hideLoading();
 
               if (navigateHomeAfterCompletion)
-                  await this.networkWallet.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+                  await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
 
               let published = true;
               let status = 'published';
@@ -221,9 +221,9 @@ export abstract class StandardSubWallet extends SubWallet {
               });
             }
             catch (err) {
-              await this.networkWallet.masterWallet.walletManager.native.hideLoading();
+              await this.masterWallet.walletManager.native.hideLoading();
               Logger.error("wallet", "Publish error:", err);
-              await this.networkWallet.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
+              await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.transaction-fail', err.message ? err.message : '');
               resolve({
                 published: false,
                 txid: null,

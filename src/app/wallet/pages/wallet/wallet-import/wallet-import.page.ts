@@ -3,7 +3,7 @@ import { IonSlides } from '@ionic/angular';
 import { WalletService } from '../../../services/wallet.service';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
-import { Util } from "../../../model/Util";
+import { Util } from "../../../model/util";
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
 import { AuthService } from '../../../services/auth.service';

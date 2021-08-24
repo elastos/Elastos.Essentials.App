@@ -1,19 +1,27 @@
 import { CoinService } from "src/app/wallet/services/coin.service";
-import { StandardCoinName } from "../../Coin";
+import { StandardCoinName } from "../../coin";
 import { MasterWallet } from "../masterwallet";
 import { NetworkWallet } from "../NetworkWallet";
-import { SubWallet } from "../subwallet";
+import { SerializedSubWallet, SubWallet } from "../subwallet";
 import { MainchainSubWallet } from "./mainchain.subwallet";
-import { StandardSubWalletBuilder } from "./StandardSubWalletBuilder";
+import { StandardSubWalletBuilder } from "../standardsubwalletbuilder";
+import { StandardSubWallet } from "../standard.subwallet";
+import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   constructor(masterWallet: MasterWallet) {
     super(masterWallet);
+  }
 
-    // DIRTY TEST
-    void (async () => {
-      this.subWallets[StandardCoinName.ELA] = await StandardSubWalletBuilder.newFromCoin(this, CoinService.instance.getCoinByID(StandardCoinName.ELA));
-    })();
+  protected async prepareStandardSubWallets(): Promise<void> {
+    this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this.masterWallet);
+    this.subWallets[StandardCoinName.ETHSC] = new ElastosEVMSubWallet(this, StandardCoinName.ETHSC);
+    this.subWallets[StandardCoinName.ETHDID] = new ElastosEVMSubWallet(this, StandardCoinName.ETHDID);
+
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
   }
 
   /**

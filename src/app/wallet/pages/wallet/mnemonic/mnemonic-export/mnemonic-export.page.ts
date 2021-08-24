@@ -2,7 +2,7 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { Native } from '../../../../services/native.service';
-import { Util } from '../../../../model/Util';
+import { Util } from '../../../../model/util';
 import { WalletService } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 import { TranslateService } from '@ngx-translate/core';

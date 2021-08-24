@@ -32,7 +32,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { ETHChainSubWallet } from 'src/app/wallet/model/wallets/elastos/evm.subwallet';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 
 
@@ -45,7 +45,7 @@ export class DidTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private networkWallet: NetworkWallet;
-    private sourceSubwallet: ETHChainSubWallet;
+    private sourceSubwallet: ElastosEVMSubWallet;
     private intentTransfer: IntentTransfer;
     private balance: number; // ELA
     private elastosChainCode: string; // IDChain
@@ -85,7 +85,7 @@ export class DidTransactionPage implements OnInit {
         this.walletInfo = this.coinTransferService.walletInfo;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
-        this.sourceSubwallet = this.networkWallet.getSubWallet(this.elastosChainCode) as ETHChainSubWallet;
+        this.sourceSubwallet = this.networkWallet.getSubWallet(this.elastosChainCode) as ElastosEVMSubWallet;
     }
 
     /**
@@ -120,7 +120,7 @@ export class DidTransactionPage implements OnInit {
     async createIDTransaction() {
         Logger.log('wallet', 'Calling createIdTransaction()');
 
-        const rawTx = await (this.sourceSubwallet as ETHChainSubWallet).createIDTransaction(
+        const rawTx = await (this.sourceSubwallet as ElastosEVMSubWallet).createIDTransaction(
               JSON.stringify(this.coinTransferService.didrequest),
         );
 

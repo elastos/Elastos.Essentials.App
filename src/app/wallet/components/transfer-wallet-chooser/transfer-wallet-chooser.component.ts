@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { WalletService } from '../../services/wallet.service';
 import { UiService } from '../../services/ui.service';
-import { StandardCoinName, CoinType } from '../../model/Coin';
+import { StandardCoinName, CoinType } from '../../model/coin';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
 import { MasterWallet } from '../../model/wallets/masterwallet';

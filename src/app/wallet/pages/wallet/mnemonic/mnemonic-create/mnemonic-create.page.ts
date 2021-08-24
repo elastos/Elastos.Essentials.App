@@ -2,7 +2,7 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { NavParams, IonSlides } from '@ionic/angular';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { Util } from '../../../../model/Util';
+import { Util } from '../../../../model/util';
 import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';

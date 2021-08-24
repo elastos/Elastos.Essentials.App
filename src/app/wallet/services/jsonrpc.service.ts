@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { StandardCoinName } from '../model/Coin';
+import { StandardCoinName } from '../model/coin';
 import { Config } from '../config/Config';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
-import { ERC20TokenInfo, EthTokenTransaction, EthTransaction, TransactionDetail, UtxoType } from '../model/Transaction';
+import { UtxoType } from '../model/transaction.types';
 import { CRProposalStatus } from '../model/cyber-republic/CRProposalStatus';
 import { CRProposalsSearchResponse } from '../model/cyber-republic/CRProposalsSearchResponse';
 import { ProducersSearchResponse } from 'src/app/dposvoting/model/nodes.model';
 import { CRCouncilSearchResponse } from '../model/cyber-republic/CRCouncilSearchResult';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { EthTransaction, EthTokenTransaction, ERC20TokenInfo } from '../model/evm.types';
 
 @Injectable({
     providedIn: 'root'

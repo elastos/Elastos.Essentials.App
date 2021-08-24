@@ -1,6 +1,6 @@
 import { Resolver } from "./Resolver"
 import { Address } from '../addresses/Address';
-import { CoinID, StandardCoinName } from '../../Coin';
+import { CoinID, StandardCoinName } from '../../coin';
 import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
 import { HttpClient } from '@angular/common/http';
 import { Logger } from "src/app/logger";

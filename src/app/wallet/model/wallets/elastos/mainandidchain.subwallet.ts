@@ -1,14 +1,14 @@
 import { StandardSubWallet } from '../standard.subwallet';
 import BigNumber from 'bignumber.js';
-import { AllTransactionsHistory, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../Transaction';
+import { AllTransactionsHistory, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../transaction.types';
 import { TranslateService } from '@ngx-translate/core';
-import { StandardCoinName } from '../../Coin';
+import { StandardCoinName } from '../../coin';
 import { MasterWallet } from '../masterwallet';
 import { Logger } from 'src/app/logger';
 import { Config } from '../../../config/Config';
-import { Util } from '../../Util';
+import { Util } from '../../util';
 import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
-import { InvalidVoteCandidatesHelper } from '../../InvalidVoteCandidatesHelper';
+import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
 import moment from 'moment';
 import { NetworkWallet } from '../NetworkWallet';
 
@@ -39,8 +39,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
 
-    constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
-        super(networkWallet, id);
+    constructor(masterWallet: MasterWallet, id: StandardCoinName) {
+        super(masterWallet, id);
 
         void this.initialize();
     }
@@ -52,7 +52,7 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
-            if (!this.networkWallet.masterWallet.account.SingleAddress) {
+            if (!this.masterWallet.account.SingleAddress) {
               await this.checkAddresses(true);
               await this.checkAddresses(false);
             }
@@ -62,8 +62,8 @@ export class MainAndIDChainSubWallet extends StandardSubWallet {
 
     public async getOwnerAddress(): Promise<string> {
       if (!this.ownerAddress) {
-        this.ownerAddress = await this.networkWallet.masterWallet.walletManager.spvBridge.getOwnerAddress(
-          this.networkWallet.id, this.id);
+        this.ownerAddress = await this.masterWallet.walletManager.spvBridge.getOwnerAddress(
+          this.masterWallet.id, this.id);
       }
       return this.ownerAddress;
     }

@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
-import { RawTransactionType, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../../Transaction';
-import { StandardCoinName } from '../../Coin';
+import { RawTransactionType, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../../transaction.types';
+import { StandardCoinName } from '../../coin';
 import { MasterWallet } from '../masterwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
 import { NetworkWallet } from '../NetworkWallet';
@@ -10,8 +10,8 @@ import { NetworkWallet } from '../NetworkWallet';
  * Most methods are common with the ELA main chain.
  */
 export class IDChainSubWallet extends MainAndIDChainSubWallet {
-    constructor(networkWallet: NetworkWallet) {
-        super(networkWallet, StandardCoinName.IDChain);
+    constructor(masterWallet: MasterWallet) {
+        super(masterWallet, StandardCoinName.IDChain);
     }
 
     protected async initialize() {
@@ -30,11 +30,11 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         }, 200);
     }
 
-    async checkIDChainToBeDestroy() {
+    checkIDChainToBeDestroy() {
         // Do not use the id chain any more.
         // Cross chain transaction need 20000 SELA.
         if (this.balance.lte(20000)) {
-            await this.networkWallet.destroySubWallet(this.id);
+            // TODO await this.masterWallet.destroyStandardSubWallet(this.id);
         }
     }
 

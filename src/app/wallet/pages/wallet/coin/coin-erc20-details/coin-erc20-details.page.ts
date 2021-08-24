@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Util } from '../../../../model/Util';
+import { Util } from '../../../../model/util';
 import { Router } from '@angular/router';
-import { ERC20Coin, Coin } from '../../../../model/Coin';
+import { ERC20Coin, Coin } from '../../../../model/coin';
 import { CoinService } from '../../../../services/coin.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
