@@ -1,8 +1,13 @@
 <ion-content class="ion-text-center">
     <browser-titlebar (urlChanged)="onUrlInput($event)" [attr.disabled]="iabRunning"></browser-titlebar>
-    <ion-grid *ngIf="!iabRunning" class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
-        <h1>Discover dApps</h1>
-        <h2>Central place to find Essentials-compatible dApps.</h2>
+    <ion-grid *ngIf="!iabRunning" class="container" [class.dark-container]="theme.darkMode">
+
+        <ion-row class="header-row">
+            <ion-col size="12">
+                <h1>Discover dApps</h1>
+                <h2>Central place to find Essentials-compatible dApps.</h2>
+            </ion-col>
+        </ion-row>
 
         <ion-row *ngFor="let app of dApps" class="dapp-row" (click)="onDAppClicked(app)">
             <ion-col class="left-col" size="2">
@@ -24,7 +29,8 @@
 
     </ion-grid>
 
-    <div *ngIf="iabRunning">
-        <ion-spinner></ion-spinner>
-    </div>
+    <ion-grid *ngIf="iabRunning" class="spinner-container">
+        <ion-spinner name="crescent"></ion-spinner>
+    </ion-grid>
+
 </ion-content>
