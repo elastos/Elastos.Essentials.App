@@ -199,8 +199,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
       this.native.go("/wallet/wallet-manager");
     }
 
-    public getPotentialActiveWallets(): MasterWallet[] {
-        return this.walletManager.getMasterWalletsList();
+    public getPotentialActiveWallets(): NetworkWallet[] {
+        return this.walletManager.getNetworkWalletsList();
     }
 
     /**
@@ -211,8 +211,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.showNetworkOptions = false;
     }
 
-    public selectActiveWallet(wallet: MasterWallet) {
-        void this.walletManager.setActiveMasterWallet(wallet.id);
+    public selectActiveWallet(wallet: NetworkWallet) {
+        void this.walletManager.setActiveMasterWallet(wallet.masterWallet.id);
     }
 
     public selectActiveNetwork(network: WalletNetworkInfo) {
