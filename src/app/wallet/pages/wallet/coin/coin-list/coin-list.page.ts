@@ -35,6 +35,7 @@ type EditableCoinInfo = {
 export class CoinListPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+    masterWallet: MasterWallet = null;
     networkWallet: NetworkWallet = null;
     coinList: EditableCoinInfo[] = null;
     coinListCache = {};
@@ -143,6 +144,7 @@ export class CoinListPage implements OnInit, OnDestroy {
         });
 
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletEditionService.modifiedMasterWalletId);
+        this.masterWallet = this.networkWallet.masterWallet;
 
         void this.native.hideLoading();
 
