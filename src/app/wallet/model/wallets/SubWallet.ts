@@ -1,6 +1,6 @@
 import { MasterWallet } from './masterwallet';
 import { CoinType, CoinID, StandardCoinName } from '../coin';
-import { AllTransactionsHistory, TransactionHistory, TransactionInfo, TransactionStatus } from '../transaction.types';
+import { AllTransactionsHistory, RawTransactionPublishResult, TransactionHistory, TransactionInfo, TransactionStatus } from '../transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,18 +11,8 @@ import { Logger } from 'src/app/logger';
 import { NetworkWallet } from './NetworkWallet';
 
 /**
- * Result of calls to signAndSendRawTransaction().
- */
-export type RawTransactionPublishResult = {
-    published: boolean; // Whether the transaction was successfully published to the node/spvsdk or not
-    txid?: string; // In case of successful publication, ID of the published transaction.
-    status?: string; // published, cancelled, error
-    code?: number;  // Error code.
-    message?: string; // Errror message.
-}
-
-/**
  * Subwallet representation ready to save to local storage for persistance.
+ * Only non standard subwallets are serialized
  */
 export class SerializedSubWallet {
     public type: CoinType = null;

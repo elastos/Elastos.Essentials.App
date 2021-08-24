@@ -10,7 +10,7 @@ import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   constructor(masterWallet: MasterWallet) {
-    super(masterWallet);
+    super(masterWallet, "elastos");
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {

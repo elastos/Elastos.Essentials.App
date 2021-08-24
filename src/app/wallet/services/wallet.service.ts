@@ -51,8 +51,8 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { WalletNetworkService } from './network.service';
 import { NetworkWallet } from '../model/wallets/NetworkWallet';
-import { ElastosNetworkWallet } from '../model/wallets/elastos/networkwallet';
-import { HecoNetworkWallet } from '../model/wallets/heco/networkwallet';
+import { ElastosNetworkWallet } from '../model/wallets/elastos/elastos.networkwallet';
+import { HecoNetworkWallet } from '../model/wallets/heco/heco.networkwallet';
 
 
 class SubwalletTransactionStatus {
@@ -434,6 +434,8 @@ export class WalletService {
 
         await this.setActiveMasterWallet(id);
 
+        // TODO - NEED TO CHANGE THE ACTIVE NETWORK WALLET TOO SOMEWHERE await this.activeNetworkWallet.next(????)
+
         // Notify listeners
         this.walletStateChanges.next({
             wallet: this.masterWallets[id],
@@ -444,9 +446,9 @@ export class WalletService {
     /**
      * Destroy a master wallet, active or not, base on its id.
      *
-     * triggleEvent: If the wallet is deleted by the system, no related event need be triggered
+     * triggerEvent: If the wallet is deleted by the system, no related event need be triggered
      */
-    async destroyMasterWallet(id: string, triggleEvent = true) {
+    async destroyMasterWallet(id: string, triggerEvent = true) {
         // Delete all subwallet
         // TODO await this.masterWallets[id].destroyAllSubWallet();
 
@@ -463,7 +465,7 @@ export class WalletService {
         // In this process, a multi address wallet will be created first,
         // If it is detected that this is a single address wallet, then the multi address wallet will be deleted.
         // In this case, we do not need to triggle event and delete password.
-        if (triggleEvent) {
+        if (triggerEvent) {
           // Notify some listeners
           this.events.publish("masterwallet:destroyed", id);
           this.walletStateChanges.next({

@@ -25,13 +25,9 @@ export type Theme = {
     color: string
 };
 
-export class ExtendedWalletInfo {
+export class ExtendedMasterWalletInfo {
     /** User defined wallet name */
     name: string;
-    /** List of serialized subwallets added earlier to this master wallet */
-    // TODO - NOT FOR MASTER WALLET subWallets: SerializedSubWallet[] = [];
-    /** List of serialized NFTs added earlier to this master wallet */
-    // TODO - NOT FOR MASTER WALLET nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
     /* Wallet theme */
     theme: Theme;
 }
@@ -40,13 +36,6 @@ export class MasterWallet {
     public id: string = null;
     public name: string = null;
     public theme: Theme = null;
-
-    /**
-     * The master wallet contains only standard sub wallets shared by all network
-     */
-    public standardSubWalletIDs: {
-        [k: string]: SubWallet
-    } = {};
 
     public account: WalletAccount = {
         Type: WalletAccountType.STANDARD,
@@ -71,7 +60,7 @@ export class MasterWallet {
     }
 
     public static async extendedInfoExistsForMasterId(masterId: string): Promise<boolean> {
-        const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfos(masterId);
+        const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfo(masterId);
         return !!extendedInfo; // not null or undefined
     }
 
@@ -85,27 +74,18 @@ export class MasterWallet {
     /**
      * Save master wallet info to permanent storage
      */
-     public async save() {
+    public async save() {
         const extendedInfo = this.getExtendedWalletInfo();
-        Logger.log('wallet', "Saving wallet extended info", this, extendedInfo);
+        Logger.log('wallet', "Saving master wallet extended info", this, extendedInfo);
 
         await this.localStorage.setExtendedMasterWalletInfo(this.id, extendedInfo);
     }
 
-
-    public getExtendedWalletInfo(): ExtendedWalletInfo {
-        let extendedInfo = new ExtendedWalletInfo();
+    public getExtendedWalletInfo(): ExtendedMasterWalletInfo {
+        let extendedInfo = new ExtendedMasterWalletInfo();
 
         extendedInfo.name = this.name;
         extendedInfo.theme = this.theme;
-
-        /* TODO for (let subWallet of Object.values(this.subWallets)) {
-            extendedInfo.subWallets.push(subWallet.toSerializedSubWallet());
-        }
-
-        for (let nft of this.nfts) {
-            extendedInfo.nfts.push(nft.toSerializedNFT());
-        } */
 
         return extendedInfo;
     }
@@ -115,47 +95,13 @@ export class MasterWallet {
      * This includes everything the SPV plugin could not save and that we saved in our local
      * storage instead.
      */
-    public populateWithExtendedInfo(extendedInfo: ExtendedWalletInfo) {
+    public async populateWithExtendedInfo(extendedInfo: ExtendedMasterWalletInfo): Promise<void> {
         Logger.log("wallet", "Populating master wallet with extended info", this.id, extendedInfo);
 
         // Retrieve wallet account type
-        /* TODO NETWORKS this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
-
-        // In case of newly created wallet we don't have extended info from local storage yet,
-        // which is normal.
-        if (extendedInfo) {
-            this.name = extendedInfo.name;
-            this.theme = extendedInfo.theme;
-
-            this.subWallets = {};
-            for (let serializedSubWallet of extendedInfo.subWallets) {
-                let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
-                if (subWallet) {
-                    this.subWallets[serializedSubWallet.id] = subWallet;
-                }
-            }
-
-            this.nfts = [];
-            if (extendedInfo.nfts) {
-                for (let serializedNFT of extendedInfo.nfts) {
-                    let nft: NFT = NFT.parse(serializedNFT);
-                    if (nft) {
-                        this.nfts.push(nft);
-                    }
-                }
-            }
-        } */
+        this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
 
         Logger.log("wallet", "Populated master wallet:", this);
-    }
-
-    /**
-     * Update balance and transaction list.
-     */
-    public async update() {
-        /* TODO for (let subWallet of Object.values(this.subWallets)) {
-            await subWallet.update();
-        } */
     }
 
     /**

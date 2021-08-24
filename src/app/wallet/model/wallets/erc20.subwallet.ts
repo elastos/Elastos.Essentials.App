@@ -1,12 +1,12 @@
 import Web3 from 'web3';
 
 import { MasterWallet } from './masterwallet';
-import { SubWallet, SerializedSubWallet, RawTransactionPublishResult } from './subwallet';
+import { SubWallet, SerializedSubWallet } from './subwallet';
 import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../coin';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactionsHistory, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../transaction.types';
+import { AllTransactionsHistory, RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../transaction.types';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
