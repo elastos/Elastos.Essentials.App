@@ -70,19 +70,19 @@
                             [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'">
                     </ion-col>
                 </ion-row>
-                <ion-row *ngFor="let wallet of getPotentialActiveWallets()" class="wallet-row"
-                    [class.selected-wallet]="wallet.id === networkWallet.id" (click)="selectActiveWallet(wallet)">
+                <ion-row *ngFor="let netWallet of getPotentialActiveWallets()" class="wallet-row"
+                    [class.selected-wallet]="netWallet.id === networkWallet.id" (click)="selectActiveWallet(netWallet)">
                     <ion-col size="2" class="color-col">
                         <div class="color-block" [ngStyle]="
                         {
-                            'background-image': wallet.theme ?
-                            'url(' + wallet.theme.background + ')' :
+                            'background-image': netWallet.masterWallet.theme ?
+                            'url(' + netWallet.masterWallet.theme.background + ')' :
                             'url(/assets/wallet/cards/maincards/card-purple.svg)'
                         }"></div>
                     </ion-col>
                     <ion-col size="8" class="left-col">
-                        <div class="wallet-name">{{ wallet.name }}</div>
-                        <div class="wallet-amount">{{ uiService.getFixedBalance(wallet.getDisplayBalance()) }}</div>
+                        <div class="wallet-name">{{ netWallet.masterWallet.name }}</div>
+                        <div class="wallet-amount">{{ uiService.getFixedBalance(netWallet.getDisplayBalance()) }}</div>
                     </ion-col>
                     <ion-col size="2" class="right-col">
                         <ion-icon name="checkmark"></ion-icon>
