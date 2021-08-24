@@ -88,7 +88,7 @@
 
     <ion-row *ngIf="(slideIndex < 4 || finalizingPreparation) && !(signInError || hiveError || publishError)" class="slide-circle-row">
       <ion-col size="12">
-        <ion-spinner></ion-spinner>
+        <lottie-player src="../../../assets/identity/animations/block-loader.json" background="transparent" speed="1" style="width: 160x; height: 160px;" autoplay loop></lottie-player>
         <span>{{ 'common.please-wait' | translate }}</span>
       </ion-col>
     </ion-row>

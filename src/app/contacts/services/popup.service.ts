@@ -73,7 +73,7 @@ export class PopupService {
     return await this.optionsPopup.present();
   }
 
-/*   async showQRCode(contact: Contact) {
+  async showQRCode(contact: Contact) {
     this.qrModal = await this.modalCtrl.create({
       component: QRCodeComponent,
       componentProps: {
@@ -87,14 +87,18 @@ export class PopupService {
       this.qrModal = null
     });
     this.qrModal.present();
-  } */
+  }
 
+  /*
+  ONLY TO TEST DID-PUBLISHING COMPONENT 
 
-  async showQRCode(contact: Contact) {
+   async showQRCode(contact: Contact) {
     this.qrModal = await this.modalCtrl.create({
       component: DIDPublishingComponent,
       cssClass: !this.theme.darkMode ? "identity-showqrcode-component identity-publishmode-component-base" : 'identity-showqrcode-component-dark identity-publishmode-component-base'
     });
     this.qrModal.present();
-  }
+  } 
+  
+  */
 }
