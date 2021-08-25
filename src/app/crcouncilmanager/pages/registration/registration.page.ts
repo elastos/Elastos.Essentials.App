@@ -253,7 +253,7 @@ export class CRCouncilRegistrationPage implements OnInit {
 
         let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.masterWalletId, StandardCoinName.ELA);
 
-        let utxoArray = await this.walletRPCService.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
+        let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
         Logger.log(App.CRCOUNCIL_MANAGER, "utxoArray:", utxoArray);
 
         let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);

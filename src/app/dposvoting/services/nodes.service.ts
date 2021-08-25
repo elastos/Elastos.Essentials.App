@@ -50,12 +50,12 @@ export class NodesService {
     // Nodes
     public _nodes: DPosNode[] = [];
     public activeNodes: DPosNode[] = [];
-    public totalVotes: number = 0;
+    public totalVotes = 0;
     public dposList: DPoSRegistrationInfo[] = [];
 
     // Stats
-    public statsFetched: boolean = false;
-    public currentHeight: number = 0;
+    public statsFetched = false;
+    public currentHeight = 0;
     public mainchain: Mainchain;
     public voters: Voters;
     public price: Price;
@@ -65,7 +65,7 @@ export class NodesService {
     public emptyList = [];
 
     // Storage
-    private firstVisit: boolean = false;
+    private firstVisit = false;
     public _votes: Vote[] = [
         /*{
             date: new Date(2000,10,13,11,33,0),
@@ -98,8 +98,8 @@ export class NodesService {
     ];
 
     // Fetch
-    private nodeApi: string = 'https://node1.elaphant.app/api/';
-    private elaNodeUrl: string = 'https://elanodes.com/wp-content/uploads/custom/images/';
+    private nodeApi = 'https://node1.elaphant.app/api/';
+    private elaNodeUrl = 'https://elanodes.com/wp-content/uploads/custom/images/';
 
     // This is too slow, so call once.
     private isFetchingRewardOrDone = false;
@@ -159,7 +159,7 @@ export class NodesService {
 
     // Storage
     getVisit() {
-        this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'visited', false).then(data => {
+        void this.storage.getSetting(GlobalDIDSessionsService.signedInDIDString, 'dposvoting', 'visited', false).then(data => {
             if (data || data === true) {
                 this.firstVisit = false;
             }
@@ -289,7 +289,7 @@ export class NodesService {
         }
 
         this.dposInfo.txConfirm = true;
-        await this.voteService.sourceSubwallet.getTransactionByRPC();
+        await this.voteService.sourceSubwallet.getTransactionsByRpc();
         let txhistory = this.voteService.sourceSubwallet.transactions.txhistory;
         for (let i in txhistory) {
             if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
@@ -681,7 +681,7 @@ export class NodesService {
                 break;
             case 'Orchard - Elastos Business Development':
                 node.Location = 'Netherlands'
-                node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Orchard.png';;
+                node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/Orchard.png';
                 break;
             case 'KANG':
                 node.Location = 'China';
@@ -798,6 +798,6 @@ export class NodesService {
     }
 
     openLink(url: string) {
-        this.globalIntentService.sendIntent('openurl', { url: url });
+        void this.globalIntentService.sendIntent('openurl', { url: url });
     }
 }

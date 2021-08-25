@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from '../logger';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,6 +8,12 @@ import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalLanguageService } from './global.language.service';
+import { StandardCoinName } from '../wallet/model/coin';
+import { UtxoType } from '../wallet/model/transaction.types';
+import { ProducersSearchResponse } from '../dposvoting/model/nodes.model';
+import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
+import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
+import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -72,6 +78,7 @@ export type ElastosAPIProvider = {
     providedIn: 'root'
 })
 export class GlobalElastosAPIService extends GlobalService {
+    private static API_RETRY_TIMES = 3;
     public static instance: GlobalElastosAPIService = null;
 
     private availableProviders: ElastosAPIProvider[] = [];
@@ -141,20 +148,20 @@ export class GlobalElastosAPIService extends GlobalService {
                         hecoAccountRPC: 'https://api-testnet.hecoinfo.com',
                     },
                     "LRW": {
-                      mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
-                      idChainRPC: 'http://did1rpc.longrunweather.com:18080',
-                      eidChainRPC: 'http://eid02.longrunweather.com:18080',
-                      eidMiscRPC:'',
-                      eidOracleRPC: '',
-                      escRPC:'',
-                      escOracleRPC: '',
-                      escMiscRPC: '',
-                      escBrowserRPC: '',
-                      crRPC: 'http://crapi.longrunweather.com:18080',
-                      hecoRPC: '',
-                      hecoBrowserRPC: '',
-                      hecoAccountRPC: '',
-                  },
+                        mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
+                        idChainRPC: 'http://did1rpc.longrunweather.com:18080',
+                        eidChainRPC: 'http://eid02.longrunweather.com:18080',
+                        eidMiscRPC: '',
+                        eidOracleRPC: '',
+                        escRPC: '',
+                        escOracleRPC: '',
+                        escMiscRPC: '',
+                        escBrowserRPC: '',
+                        crRPC: 'http://crapi.longrunweather.com:18080',
+                        hecoRPC: '',
+                        hecoBrowserRPC: '',
+                        hecoAccountRPC: '',
+                    },
                 }
             },
             {
@@ -196,9 +203,9 @@ export class GlobalElastosAPIService extends GlobalService {
                         mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
                         idChainRPC: 'http://did1rpc.longrunweather.com:18080',
                         eidChainRPC: 'http://eid02.longrunweather.com:18080',
-                        eidMiscRPC:'',
+                        eidMiscRPC: '',
                         eidOracleRPC: '',
-                        escRPC:'',
+                        escRPC: '',
                         escOracleRPC: '',
                         escMiscRPC: '',
                         escBrowserRPC: '',
@@ -314,14 +321,14 @@ export class GlobalElastosAPIService extends GlobalService {
 
         // Make sure the currently active network template is supported by our elastos api providers
         if (!(activeNetworkTemplate in activeProvider.endpoints)) {
-            Logger.warn("elastosapi", "Unknown network template "+activeNetworkTemplate+"!");
+            Logger.warn("elastosapi", "Unknown network template " + activeNetworkTemplate + "!");
             return null;
         }
 
         // Make sure the currently activ eprovider supports the requested API url type
         let endpoints = activeProvider.endpoints[activeNetworkTemplate];
         if (!(type in endpoints)) {
-            Logger.warn("elastosapi", "Elastos API provider "+activeProvider.name+" does not support url type "+type+"!");
+            Logger.warn("elastosapi", "Elastos API provider " + activeProvider.name + " does not support url type " + type + "!");
             return null;
         }
 
@@ -359,7 +366,7 @@ export class GlobalElastosAPIService extends GlobalService {
         // To know the best provider, we try to call an api on all of them and then select the fastest
         // one to answer.
         this._bestProvider = null;
-        let testPromises: Promise<void>[]= this.availableProviders.map(p => this.callTestAPIOnProvider(p));
+        let testPromises: Promise<void>[] = this.availableProviders.map(p => this.callTestAPIOnProvider(p));
         await Promise.race(testPromises);
         Logger.log("elastosapi", "Got the best API provider", this._bestProvider);
 
@@ -384,7 +391,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
             try {
                 let data = await this.globalJsonRPCService.httpPost(testApiUrl, param);
-                Logger.log("elastosapi", "Provider "+provider.name+" just answered the test api call with value (block height) ", data);
+                Logger.log("elastosapi", "Provider " + provider.name + " just answered the test api call with value (block height) ", data);
                 // Set the provider as best provider if no one did that yet. We are the fastest api call to answer.
                 if (!this._bestProvider)
                     this._bestProvider = provider;
@@ -399,34 +406,240 @@ export class GlobalElastosAPIService extends GlobalService {
         });
     }
 
-  /**
-   * Globally, updates plugins to use a different DID resolver depending on which Elastos API provider is used.
-   * This can happen when a different user signs in (has a different elastos api provider in preferences) or when
-   * the same user manually changes his elastos api provider from settings.
-   */
-  private setupDIDResolver() {
-    this.activeProvider.subscribe((provider) => {
-      if (provider) {
-        void this.setResolverUrl();
-      }
-    });
-  }
-
-  private async setResolverUrl(): Promise<void> {
-    let didResolverUrl = this.getApiUrl(ElastosApiUrlType.EID_RPC);
-
-    Logger.log('elastosapi', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
-    // DID Plugin
-    await new Promise<void>((resolve, reject) => {
-        didManager.setResolverUrl(didResolverUrl, () => {
-            resolve();
-        }, (err) => {
-            Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
-            reject(err);
+    /**
+     * Globally, updates plugins to use a different DID resolver depending on which Elastos API provider is used.
+     * This can happen when a different user signs in (has a different elastos api provider in preferences) or when
+     * the same user manually changes his elastos api provider from settings.
+     */
+    private setupDIDResolver() {
+        this.activeProvider.subscribe((provider) => {
+            if (provider) {
+                void this.setResolverUrl();
+            }
         });
-    });
+    }
 
-    // Hive plugin
-    await hiveManager.setDIDResolverUrl(didResolverUrl);
-  }
+    private async setResolverUrl(): Promise<void> {
+        let didResolverUrl = this.getApiUrl(ElastosApiUrlType.EID_RPC);
+
+        Logger.log('elastosapi', 'Changing DID plugin resolver in DID and Hive plugins to :', didResolverUrl);
+        // DID Plugin
+        await new Promise<void>((resolve, reject) => {
+            didManager.setResolverUrl(didResolverUrl, () => {
+                resolve();
+            }, (err) => {
+                Logger.error('DIDSessionsService', 'didplugin setResolverUrl error:', err);
+                reject(err);
+            });
+        });
+
+        // Hive plugin
+        await hiveManager.setDIDResolverUrl(didResolverUrl);
+    }
+
+    ////////////////
+    ///// APIS /////
+    ////////////////
+
+    public getApiUrlForChainCode(elastosChainCode: StandardCoinName): string {
+        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        return this.getApiUrl(apiurltype);
+    }
+
+    public getApiUrlTypeForRpc(elastosChainCode: string): ElastosApiUrlType {
+        switch (elastosChainCode) {
+            case StandardCoinName.ELA:
+                return ElastosApiUrlType.ELA_RPC;
+            case StandardCoinName.IDChain:
+                return ElastosApiUrlType.DID_RPC;
+            case StandardCoinName.ETHSC:
+                return ElastosApiUrlType.ETHSC_RPC;
+            case StandardCoinName.ETHDID:
+                return ElastosApiUrlType.EID_RPC;
+            default:
+                throw new Error('RPC can not support elastos chain code ' + elastosChainCode);
+        }
+    }
+
+    // TODO: Remove it, Use browser api not misc.
+    public getApiUrlTypeForMisc(elastosChainCode: string) {
+        let apiUrlType = null;
+        switch (elastosChainCode) {
+            case StandardCoinName.ETHSC:
+                apiUrlType = ElastosApiUrlType.ETHSC_MISC;
+                break;
+            case StandardCoinName.ETHDID:
+                apiUrlType = ElastosApiUrlType.EID_MISC;
+                break;
+            case StandardCoinName.ETHHECO:
+                apiUrlType = ElastosApiUrlType.HECO_ACCOUNT;
+                break;
+            default:
+                Logger.log("wallet", 'Elastos API: Misc can not support ' + elastosChainCode);
+                break;
+        }
+        return apiUrlType;
+    }
+
+    public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<any> {
+        const paramArray = [];
+        let index = 0;
+
+        for (const address of addressArray) {
+            const param = {
+                method: 'gethistory',
+                params: {
+                    address,
+                    limit,
+                    skip,
+                    timestamp
+                },
+                id: index.toString()
+            };
+            index++;
+            paramArray.push(param);
+        }
+
+        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        const rpcApiUrl = this.getApiUrl(apiurltype);
+        if (rpcApiUrl === null) {
+            return [];
+        }
+
+        let transactionsArray = null;
+        let retryTimes = 0;
+        do {
+            try {
+                transactionsArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
+                break;
+            } catch (e) {
+                // wait 100ms?
+            }
+        } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
+
+        if (transactionsArray === null) {
+            return [];
+        } else {
+            // Logger.warn('wallet', 'transactionsArray:',transactionsArray)
+            return transactionsArray.filter(c => {
+                return c.result && (c.result.totalcount > 0);
+            });
+        }
+    }
+
+    // return all utxo by address
+    public async getAllUtxoByAddress(elastosChainCode: StandardCoinName, addresses: string[], utxotype: UtxoType = UtxoType.Mixed): Promise<any> {
+        const param = {
+            method: 'listunspent',
+            params: {
+                addresses,
+                utxotype,
+                spendable: true // Coinbase utxo must be confirmed more than 100 times.
+            },
+        };
+
+        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        const rpcApiUrl = this.getApiUrl(apiurltype);
+        if (rpcApiUrl === null) {
+            return [];
+        }
+
+        let utxoArray = null;
+        let retryTimes = 0;
+        do {
+            try {
+                utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+                break;
+            } catch (e) {
+                // wait 100ms?
+            }
+        } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
+
+        // Logger.log('wallet', 'getAllUtxoByAddress:', utxoArray)
+        return utxoArray;
+    }
+
+    public async getBlockCount(elastosChainCode: StandardCoinName) {
+        const param = {
+            method: 'getblockcount',
+        };
+
+        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        const rpcApiUrl = this.getApiUrl(apiurltype);
+        if (rpcApiUrl === null) {
+            return 0;
+        }
+
+        let blockHeight = 0;
+        try {
+            const blockHeightStr = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            blockHeight = parseInt(blockHeightStr, 10);
+        } catch (e) {
+        }
+        return blockHeight;
+    }
+
+    // dpos
+    public async fetchDposNodes(state): Promise<ProducersSearchResponse> {
+        Logger.log('wallet', 'Fetching Dpos Nodes..');
+        const param = {
+            method: 'listproducers',
+            params: {
+              state: state
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+
+        try {
+            const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return dposNodes;
+        } catch (e) {
+        }
+        return null;
+    }
+
+    //crc
+    public async getCRrelatedStage() {
+      const param = {
+          method: 'getcrrelatedstage',
+      };
+
+      const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+
+      let result = null;
+      try {
+          result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+      } catch (e) {
+      }
+      return result;
+    }
+
+    public async fetchCRcouncil(index = 0): Promise<CRCouncilSearchResponse> {
+      const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
+
+      let crfetchCRCurl = rpcApiUrl + '/api/council/list/';
+      if (index > 0) {
+        crfetchCRCurl += index
+      }
+      try {
+          let result = await this.globalJsonRPCService.httpGet(crfetchCRCurl);
+          return result;
+      } catch (e) {
+        Logger.error('wallet', 'fetchProposals error:', e)
+      }
+      return null;
+    }
+
+    public async fetchProposals(status: CRProposalStatus): Promise<CRProposalsSearchResponse> {
+      const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
+      const crfetchproposalsurl = rpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
+      try {
+          let result = await this.globalJsonRPCService.httpGet(crfetchproposalsurl);
+          return result;
+      } catch (e) {
+        Logger.error('wallet', 'fetchProposals error:', e)
+      }
+      return null;
+    }
 }

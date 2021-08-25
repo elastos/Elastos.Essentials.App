@@ -45,7 +45,7 @@ export class DPosUnRegistrationPage implements OnInit {
         url: 'http://test.com',
         state: "Unregistered",
     };
-    public state: string = "";
+    public state = "";
     public elastosChainCode = StandardCoinName.ELA;
 
     public ownerPublicKey: string;
@@ -69,8 +69,8 @@ export class DPosUnRegistrationPage implements OnInit {
         txid: "",
         height: 0,
     }
-    public publishedTime: string = "";
-    public confirmCount: number = -1;
+    public publishedTime = "";
+    public confirmCount = -1;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -106,13 +106,13 @@ export class DPosUnRegistrationPage implements OnInit {
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.dposInfo = this.nodesService.dposInfo;
-        if (this.nodesService.dposInfo.state = 'Pending') {
+        if (this.nodesService.dposInfo.state == 'Pending') {
             await this.nodesService.fetchNodes();
             this.dposInfo = this.nodesService.dposInfo;
         }
 
         let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
-        const txRawList = await this.walletRPCService.getTransactionsByAddress(StandardCoinName.ELA, [depositAddress],
+        const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(StandardCoinName.ELA, [depositAddress],
             this.TRANSACTION_LIMIT);
         if (txRawList && txRawList.length > 0) {
             this.transactionInfo = txRawList[0].result.txhistory[0] as DPoSTransactionInfo;
@@ -134,8 +134,8 @@ export class DPosUnRegistrationPage implements OnInit {
             case 'Active':
                 this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT }); // Replace ela logo with close icon
-                    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-                        await this.goToUpdate();
+                    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                        void this.goToUpdate();
                 });
                 break;
 
@@ -148,9 +148,9 @@ export class DPosUnRegistrationPage implements OnInit {
             case 'Canceled':
                 this.titleBar.setTitle(this.translate.instant('dposregistration.retrieve'));
 
-                this.blockHeight = await this.walletRPCService.getBlockCount(StandardCoinName.ELA);
+                this.blockHeight = await GlobalElastosAPIService.instance.getBlockCount(StandardCoinName.ELA);
                 this.cancelHeight = this.dposInfo.cancelheight;
-                this.getDepositcoin();
+                void this.getDepositcoin();
                 break;
             // Illegal indicates the producer was found to break the consensus.
             case 'Illegal':
@@ -163,13 +163,13 @@ export class DPosUnRegistrationPage implements OnInit {
         }
     }
 
-    async goToUpdate() {
+    goToUpdate() {
         if (!this.nodesService.dposInfo.txConfirm) {
             this.globalNative.genericToast('dposregistration.text-update-no-confirm');
             return;
         }
 
-        this.globalNav.navigateTo(App.DPOS_VOTING, '/dposregistration/registration');
+        void this.globalNav.navigateTo(App.DPOS_VOTING, '/dposregistration/registration');
     }
 
     async getDepositcoin() {
@@ -212,7 +212,7 @@ export class DPosUnRegistrationPage implements OnInit {
         Logger.log('wallet', 'Calling retrieve()', this.dposInfo);
 
         let depositAddress = await this.walletManager.spvBridge.getOwnerDepositAddress(this.masterWalletId, StandardCoinName.ELA);
-        let utxoArray = await this.walletRPCService.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
+        let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
         Logger.log(App.DPOS_REGISTRATION, "utxoArray:", utxoArray);
 
         let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);

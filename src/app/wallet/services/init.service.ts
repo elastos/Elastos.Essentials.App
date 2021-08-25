@@ -34,7 +34,7 @@ export class WalletInitService extends GlobalService {
     private prefs: WalletPrefsService,
     private uiService: UiService,
     private networkService: WalletNetworkService,
-    private ethTransactionService: ETHTransactionService
+    private ethTransactionService: ETHTransactionService,
   ) {
     super();
   }

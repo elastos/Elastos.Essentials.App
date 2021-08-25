@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
-import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { ERC20SubWallet } from './erc20.subwallet';
 import { CoinService } from 'src/app/wallet/services/coin.service';
 import { NetworkWallet } from './networkwallet';
@@ -13,6 +13,7 @@ import { StandardSubWallet } from './standard.subwallet';
 import { StandardCoinName } from '../coin';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, SignedETHSCTransaction } from '../evm.types';
 import { AllTransactionsHistory, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType } from '../transaction.types';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
 /**
  * Specialized standard sub wallet for EVM compatible chains (elastos EID, elastos ESC, heco, etc)
@@ -26,7 +27,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
 
     protected tokenList: ERC20TokenInfo[] = null;
 
-    constructor(protected networkWallet: NetworkWallet, id: StandardCoinName) {
+    constructor(protected networkWallet: NetworkWallet, id: StandardCoinName, protected rpcApiUrl: string) {
         super(networkWallet.masterWallet, id);
 
         void this.initialize();
@@ -100,29 +101,8 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
       }
     }
 
-    public async getTransactionsByRpc() {
-      Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
-      const address = await this.getTokenAddress();
-      let result = await this.jsonRPCService.getETHSCTransactions(this.id as StandardCoinName, address);
-      if (result) {
-        if (this.transactions == null) {
-          // init
-          this.transactions = {totalcount:0, txhistory:[]};
-        }
-        if ((result.length > 0) && (this.transactions.totalcount !== result.length)) {
-            // Has new transactions.
-            this.transactions.totalcount = result.length;
-            this.transactions.txhistory = result.reverse();
-            await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
-        } else {
-          // Notify the page to show the right time of the transactions even no new transaction.
-          this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-        }
-      }
-    }
-
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-      let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
+      let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
       if (!result) {
         // Remove error transaction.
         await this.removeInvalidTransaction(txid);
@@ -335,7 +315,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
     public async updateBalance(): Promise<void> {
         // this.balance = await this.getBalanceByWeb3();
         const address = await this.getTokenAddress();
-        const balance = await this.jsonRPCService.eth_getBalance(this.id as StandardCoinName, address);
+        const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.rpcApiUrl, address);
         if (balance) {
           this.balance = balance;
           await this.saveBalanceToCache();
@@ -344,7 +324,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
 
     public async getERC20TokenList(): Promise<ERC20TokenInfo[]> {
         const address = await this.getTokenAddress();
-        this.tokenList = await this.jsonRPCService.getERC20TokenList(this.id as StandardCoinName, address);
+        this.tokenList = await GlobalEthereumRPCService.instance.getERC20TokenList(this.rpcApiUrl, address);
         return this.tokenList;
     }
 
@@ -369,58 +349,6 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
         );
     }
 
-/*
-    //Use createTransferGeneric for createPaymentTransaction
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg:string = null): Promise<any> {
-      const tokenAccountAddress = await this.getTokenAddress();
-      const withdrawContractAddress = this.withdrawContractAddress;
-      const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, withdrawContractAddress, { from: tokenAccountAddress });
-      let gasPrice = gasPriceArg;
-      if (gasPrice === null) {
-        gasPrice = await this.getGasPrice();
-      }
-
-      Logger.warn('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
-
-      // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
-      // const amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
-      const amountWithDecimals = this.web3.utils.toWei(amount.toString());
-
-      // Incompatibility between our bignumber lib and web3's BN lib. So we must convert by using intermediate strings
-      const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
-      const method = erc20Contract.methods.transfer(toAddress, web3BigNumber);
-
-      let gasLimit = gasLimitArg;
-      if (gasLimit === null) {
-        gasLimit = '100000';
-        // try {
-        //     // Estimate gas cost
-        //    gasLimit = await method.estimateGas();
-        // } catch (error) {
-        //     Logger.log('wallet', 'estimateGas error:', error);
-        // }
-      }
-
-      let nonce = await this.getNonce();
-      const rawTx =
-      await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
-          this.masterWallet.id,
-          this.id,
-          toAddress,
-          amountWithDecimals,
-          0, // WEI
-          gasPrice,
-          0, // WEI
-          gasLimit.toString(),
-          method.encodeABI(),
-          nonce
-      );
-
-      Logger.warn ('wallet', 'createPaymentTransaction transaction:', rawTx);
-
-      return rawTx;
-    }
-*/
     public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string): Promise<string> {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
@@ -466,7 +394,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
 
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
-      let txid = await this.jsonRPCService.eth_sendRawTransaction(this.id as StandardCoinName, obj.TxSigned);
+      let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
       return txid;
     }
 
@@ -482,7 +410,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
     public async getNonce() {
       const address = await this.getTokenAddress();
       try {
-        return this.jsonRPCService.getETHSCNonce(this.id as StandardCoinName, address);
+        return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address);
       }
       catch (err) {
         Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);

@@ -9,19 +9,23 @@ import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
-import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { ERC20SubWallet } from '../erc20.subwallet';
 import { CoinService } from 'src/app/wallet/services/coin.service';
 import { NetworkWallet } from '../NetworkWallet';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
+import { ElastosAPI } from './elastos.api';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
  */
 export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
-    super(networkWallet, id);
+    let rpcApiUrl = GlobalElastosAPIService.instance.getApiUrlForChainCode(id);
+    super(networkWallet, id, rpcApiUrl);
 
     void this.initialize();
   }
@@ -109,10 +113,10 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
       }
   */
 
-  public async getTransactionsByRpc() {
+  protected async getTransactionsByRpc() {
     Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
     const address = await this.getTokenAddress();
-    let result = await this.jsonRPCService.getETHSCTransactions(this.id as StandardCoinName, address);
+    let result = await this.getETHSCTransactions(this.id as StandardCoinName, address);
     if (result) {
       if (this.transactions == null) {
         // init
@@ -130,8 +134,30 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     }
   }
 
+  public async getETHSCTransactions(elastosChainCode: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
+    let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForMisc(elastosChainCode);
+    const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
+    if (rpcApiUrl === null) {
+        return null;
+    }
+    let ethscgethistoryurl = null;
+    // Misc api
+    // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
+    // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
+    ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
+    try {
+        let result = await GlobalJsonRPCService.instance.httpGet(ethscgethistoryurl);
+        return result.result as EthTransaction[];
+    } catch (e) {
+      Logger.error('wallet', 'getETHSCTransactions error:', e)
+    }
+    return null;
+  }
+
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-    let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
+    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(
+      GlobalElastosAPIService.instance.getApiUrlForChainCode(this.id as StandardCoinName), 
+      txid);
     if (!result) {
       // Remove error transaction.
       await this.removeInvalidTransaction(txid);

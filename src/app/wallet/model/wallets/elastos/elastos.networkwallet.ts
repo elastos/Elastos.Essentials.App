@@ -9,6 +9,7 @@ import { StandardSubWallet } from "../standard.subwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 import { Network } from "../../networks/network";
 import { IDChainSubWallet } from "./idchain.subwallet";
+import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   constructor(masterWallet: MasterWallet, network: Network) {

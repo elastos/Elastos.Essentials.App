@@ -16,6 +16,8 @@ export const TESTNET_TEMPLATE = "TestNet";
     providedIn: 'root'
 })
 export class GlobalNetworksService extends GlobalService {
+    public static instance: GlobalNetworksService = null;
+
     /** RxJS subject that holds the network template in use */
     public activeNetworkTemplate: BehaviorSubject<string> = new BehaviorSubject(MAINNET_TEMPLATE);
 
@@ -29,6 +31,7 @@ export class GlobalNetworksService extends GlobalService {
         private prefs: GlobalPreferencesService
     ) {
         super();
+        GlobalNetworksService.instance = this;
     }
 
     public init(): Promise<void> {

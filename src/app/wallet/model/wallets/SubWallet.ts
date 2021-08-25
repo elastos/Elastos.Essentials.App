@@ -142,6 +142,12 @@ export abstract class SubWallet {
     protected abstract getTransactionIconPath(transaction: TransactionHistory): Promise<string>;
 
     /**
+     * Fetches the transactions using the right RPC APIs and converts data into a common transactions
+     * list format shared by all EVM subwallets.
+     */
+    protected abstract getTransactionsByRpc(timestamp?: number): void;
+
+    /**
      * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
      */
     public async destroy(): Promise<void> {

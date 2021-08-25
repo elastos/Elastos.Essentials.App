@@ -37,7 +37,7 @@ export class DPosRegistrationPage implements OnInit {
         state: "Unregistered",
     };
     public originInfo: DPoSRegistrationInfo;
-    public state: string = "";
+    public state = "";
     public elastosChainCode = StandardCoinName.ELA;
 
     public ownerPublicKey: string;
@@ -74,8 +74,7 @@ export class DPosRegistrationPage implements OnInit {
         Logger.log("DPosRegistrationPage", "ngOnInit")
     }
 
-    async ionViewWillEnter() {
-
+    ionViewWillEnter() {
         Logger.log("DPosRegistrationPage", this.voteService.masterWalletId);
         this.masterWalletId = this.voteService.masterWalletId;
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
@@ -96,7 +95,7 @@ export class DPosRegistrationPage implements OnInit {
         }
     }
 
-    async checkValues() {
+    checkValues() {
         Logger.log("DPosRegistrationPage", "Dpos Info", this.dposInfo);
 
         var blankMsg = this.translate.instant('dposregistration.text-input-is-blank');
