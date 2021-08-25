@@ -13,6 +13,14 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
         super(masterWallet, StandardCoinName.ELA);
     }
 
+    public getFriendlyName(): string {
+        return "Main Chain";
+    }
+
+    public getDisplayTokenName(): string {
+        return "ELA";
+      }
+
     protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
         if (transaction.type === TransactionDirection.MOVED) {
             // TODO: show different icon for different vote?

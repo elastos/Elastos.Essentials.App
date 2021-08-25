@@ -29,23 +29,9 @@ export abstract class StandardSubWallet extends SubWallet {
         return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.id);
     }
 
-    public getFriendlyName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.id);
-        if (!coin) {
-            return ''; // Just in case
-        }
+    public abstract getFriendlyName(): string;
 
-        return coin.getDescription();
-    }
-
-    public getDisplayTokenName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.id);
-        if (!coin) {
-            return ''; // Just in case
-        }
-
-        return coin.getName();
-    }
+    public abstract getDisplayTokenName(): string;
 
     public getDisplayBalance(): BigNumber {
         return this.getDisplayAmount(this.balance);

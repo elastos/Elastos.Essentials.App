@@ -248,12 +248,7 @@ export class WalletService {
         Logger.log('wallet', 'Initializing network master wallet for active network:', activeNetwork);
 
         for (let masterWallet of this.getMasterWalletsList()) {
-            let networkWallet: NetworkWallet = null;
-            if (activeNetwork.key === "elastos")
-                networkWallet = new ElastosNetworkWallet(masterWallet, activeNetwork);
-            else if (activeNetwork.key === "heco")
-                networkWallet = new HecoNetworkWallet(masterWallet, activeNetwork);
-
+            let networkWallet = activeNetwork.createNetworkWallet(masterWallet);
             await networkWallet.initialize();
             this.networkWallets[masterWallet.id] = networkWallet;
 
