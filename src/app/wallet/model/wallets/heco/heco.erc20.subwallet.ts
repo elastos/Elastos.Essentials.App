@@ -19,6 +19,10 @@ export class HecoERC20SubWallet extends ERC20SubWallet {
     return "assets/wallet/networks/hecochain.png";
   }
 
+  public getDisplayableERC20TokenInfo(): string {
+    return "HRC20 Token";
+  }
+
   protected async getTransactionsByRpc() {
     // Do nothing for now - Not implemented / Not sure we can get this for heco.
   }

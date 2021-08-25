@@ -1,6 +1,7 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { GlobalEthereumRPCService } from "src/app/services/global.ethereum.service";
+import { GlobalLanguageService } from "src/app/services/global.language.service";
 import { CoinID, StandardCoinName } from "../../coin";
 import { EthTransaction } from "../../evm.types";
 import { ERC20SubWallet } from "../erc20.subwallet";
@@ -21,6 +22,10 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
 
   public getSecondaryIcon(): string {
     return "assets/wallet/coins/ela-black.svg";
+  }
+
+  public getDisplayableERC20TokenInfo(): string {
+    return GlobalLanguageService.instance.translate('wallet.ela-erc20');
   }
 
   protected async getTransactionsByRpc() {

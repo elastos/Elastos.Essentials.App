@@ -13,6 +13,8 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
   providedIn: 'root'
 })
 export class GlobalLanguageService extends GlobalService {
+  public static instance: GlobalLanguageService = null;
+
   public languages = [
     {
       name: 'System Language',
@@ -48,9 +50,10 @@ export class GlobalLanguageService extends GlobalService {
   public activeLanguage = new BehaviorSubject<string>("en"); // Default: english
 
   constructor(
-    private translate: TranslateService,
+    private translationService: TranslateService,
     private prefs: GlobalPreferencesService) {
       super();
+      GlobalLanguageService.instance = this;
   }
 
   public async init() {
@@ -70,13 +73,14 @@ export class GlobalLanguageService extends GlobalService {
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    this.fetchLanguageInfo();
+    await this.fetchLanguageInfo();
   }
 
-  public async onUserSignOut(): Promise<void> {
+  public onUserSignOut(): Promise<void> {
     this.selectedLanguage = null;
     // Reset language.
     this.setAppLanguage(this.systemLanguage);
+    return;
   }
 
   /**
@@ -84,7 +88,7 @@ export class GlobalLanguageService extends GlobalService {
    */
   private setupAvailableLanguages() {
     for (var i = 1; i < this.languages.length; i++) {
-      this.translate.addLangs([this.languages[i].code]);
+      this.translationService.addLangs([this.languages[i].code]);
     }
   }
 
@@ -98,10 +102,10 @@ export class GlobalLanguageService extends GlobalService {
         moment.locale(language);
     }
     // Set language for the ionic translate module that does the actual screen items translations
-    this.translate.setDefaultLang(language);
-    this.translate.use(language);
+    this.translationService.setDefaultLang(language);
+    this.translationService.use(language);
 
-    passwordManager.setLanguage(language);
+    void passwordManager.setLanguage(language);
   }
 
   /**
@@ -110,7 +114,7 @@ export class GlobalLanguageService extends GlobalService {
   async fetchLanguageInfo(): Promise<void> {
     Logger.log("LanguageService", "Fetching language information");
 
-    this.systemLanguage = this.translate.getBrowserLang();
+    this.systemLanguage = this.translationService.getBrowserLang();
     if (GlobalDIDSessionsService.signedInDIDString) {
       let languageFromPref: string = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, "locale.language");
       if (!languageFromPref || languageFromPref == "native system") {
@@ -144,8 +148,8 @@ export class GlobalLanguageService extends GlobalService {
   /**
    * Resets the user defined language and revert active language back to system default language.
    */
-  public clearSelectedLanguage() {
-    this.setSelectedLanguage(null);
+  public clearSelectedLanguage(): Promise<void> {
+    return this.setSelectedLanguage(null);
   }
 
   /**
@@ -183,5 +187,9 @@ export class GlobalLanguageService extends GlobalService {
         return this.languages[i].name;
       }
     }
+  }
+
+  public translate(key: string | string[], interpolateParams?: unknown): string {
+    return this.translationService.instant.apply(this.translationService, [key, interpolateParams]);
   }
 }

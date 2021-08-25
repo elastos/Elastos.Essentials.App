@@ -153,6 +153,12 @@ export abstract class ERC20SubWallet extends SubWallet {
     }
 
     /**
+     * Returns the info string to show to describe the type of ERC20 tokens held by this subwallet.
+     * i.e.: "Elastos ERC20 token"
+     */
+    public abstract getDisplayableERC20TokenInfo(): string;
+
+    /**
      * Check whether the balance is enough.
      * @param amount unit is ETHER
      */
