@@ -31,6 +31,7 @@ export class GlobalPreferencesService {
       "ui.darkmode": true,
       "ui.startupscreen": "home",
       "network.template": "MainNet",
+      "activenetwork": "elastos",
       "chain.network.config": "",
       "chain.network.configurl": "",
       "elastosapi.provider": "elastosio"
