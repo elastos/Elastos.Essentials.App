@@ -1,13 +1,12 @@
 import Web3 from 'web3';
 
-import { MasterWallet } from './masterwallet';
 import { SubWallet, SerializedSubWallet } from './subwallet';
 import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../coin';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import { AllTransactionsHistory, RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../transaction.types';
-import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { Config } from '../../config/Config';
@@ -29,6 +28,8 @@ export abstract class ERC20SubWallet extends SubWallet {
     private tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
 
     private tokenAddress = '';
+
+    protected elastosChainCode : StandardCoinName = null;
 
     public static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
@@ -78,7 +79,7 @@ export abstract class ERC20SubWallet extends SubWallet {
 
     public async createAddress(): Promise<string> {
         // Create on ETH always returns the same unique address.
-        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, StandardCoinName.ETHSC);
+        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.elastosChainCode);
     }
 
     protected async getTokenAccountAddress(): Promise<string> {
@@ -361,7 +362,7 @@ export abstract class ERC20SubWallet extends SubWallet {
         const rawTx =
         await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
             this.masterWallet.id,
-            StandardCoinName.ETHSC,
+            this.elastosChainCode,
             contractAddress,
             '0',
             0, // WEI
@@ -400,7 +401,7 @@ export abstract class ERC20SubWallet extends SubWallet {
 
               const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
                   this.masterWallet.id,
-                  StandardCoinName.ETHSC,
+                  this.elastosChainCode,
                   transaction,
                   password
               );

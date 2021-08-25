@@ -68,7 +68,7 @@ export abstract class NetworkWallet {
     }
 
     public getSubWalletBalance(coinId: CoinID): BigNumber {
-        console.log("getSubWalletBalance", coinId, this.subWallets)
+        Logger.log("wallet", "getSubWalletBalance", coinId, this.subWallets)
         return this.subWallets[coinId].balance;
     }
 

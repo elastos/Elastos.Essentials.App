@@ -1,11 +1,7 @@
-import { CoinService } from "src/app/wallet/services/coin.service";
 import { StandardCoinName } from "../../coin";
 import { MasterWallet } from "../masterwallet";
 import { NetworkWallet } from "../NetworkWallet";
-import { SerializedSubWallet, SubWallet } from "../subwallet";
 import { MainchainSubWallet } from "./mainchain.subwallet";
-import { StandardSubWalletBuilder } from "../standardsubwalletbuilder";
-import { StandardSubWallet } from "../standard.subwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 import { Network } from "../../networks/network";
 import { IDChainSubWallet } from "./idchain.subwallet";

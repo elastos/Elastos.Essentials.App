@@ -1,4 +1,4 @@
-import { CoinID } from "../../coin";
+import { CoinID, StandardCoinName } from "../../coin";
 import { ERC20SubWallet } from "../erc20.subwallet";
 import { NetworkWallet } from "../NetworkWallet";
 import { HecoAPI, HecoApiType } from "./heco.api";
@@ -9,6 +9,8 @@ import { HecoAPI, HecoApiType } from "./heco.api";
 export class HecoERC20SubWallet extends ERC20SubWallet {
   constructor(networkWallet: NetworkWallet, coinID: CoinID) {
     super(networkWallet, coinID, HecoAPI.getApiUrl(HecoApiType.RPC));
+
+    this.elastosChainCode = StandardCoinName.ETHHECO;
   }
 
   public getMainIcon(): string {

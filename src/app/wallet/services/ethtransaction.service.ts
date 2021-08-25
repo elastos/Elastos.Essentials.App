@@ -81,6 +81,9 @@ class ETHTransactionManager {
           if (result.message.includes('known transaction')) {
             return true;
           }
+
+          // 'insufficient funds for gas * price + value'
+          return false;
       } else {
         return false
       }

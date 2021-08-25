@@ -25,33 +25,26 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
-import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
-import { CoinID, StandardCoinName } from '../model/coin';
-import { WalletAccountType, WalletAccount } from '../model/walletaccount';
-import { SerializedSubWallet } from '../model/wallets/subwallet';
+import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
+import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
 import { CoinService } from './coin.service';
 import { PopupProvider } from './popup.service';
 import { Native } from './native.service';
 import { LocalStorage } from './storage.service';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
-import { MainchainSubWallet } from '../model/wallets/elastos/mainchain.subwallet';
-import { ElastosEVMSubWallet } from '../model/wallets/elastos/elastos.evm.subwallet';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { StandardSubWalletBuilder } from '../model/wallets/standardsubwalletbuilder';
 import { ERC721Service } from './erc721.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Util } from '../model/util';
 import { WalletConfig } from '../model/wallet.config';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { WalletNetworkService } from './network.service';
 import { NetworkWallet } from '../model/wallets/NetworkWallet';
 import { ElastosNetworkWallet } from '../model/wallets/elastos/elastos.networkwallet';
-import { HecoNetworkWallet } from '../model/wallets/heco/heco.networkwallet';
 
 
 class SubwalletTransactionStatus {
