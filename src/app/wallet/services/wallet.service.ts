@@ -266,7 +266,13 @@ export class WalletService {
         }
     }
 
-    public async setActiveMasterWallet(masterId: WalletID) {
+    public async setActiveNetworkWallet(networkWallet: NetworkWallet): Promise<void> {
+        Logger.log('wallet', 'Changing the active network wallet to', networkWallet);
+        this.activeNetworkWallet.next(networkWallet);
+        await this.setActiveMasterWallet(networkWallet.masterWallet.id);
+    }
+
+    public async setActiveMasterWallet(masterId: WalletID): Promise<void> {
       Logger.log('wallet', 'setActiveMasterWallet ', masterId);
       if (masterId && (this.masterWallets[masterId])) {
           this.activeMasterWalletId = masterId;
