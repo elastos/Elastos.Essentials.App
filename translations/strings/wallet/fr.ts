@@ -273,7 +273,7 @@ export const fr = {
         *************************/
         "coin-list-title": "Gestion des Jetons",
         "coin-list-enable-disable-coins": "Activer/Désactiver des Jetons",
-        "coin-list-enable-disable-coins-intro": "Sélectionnez les jetons que vous souhaitez afficher dans le portefeuille actuel. Le jeton principal ELA et les chaînes principales Elastos sont toujours actives.",
+        "coin-list-enable-disable-coins-intro": "Sélectionnez les jetons que vous souhaitez afficher dans le portefeuille actuel.",
         "erc-20-token": "Jeton ERC20",
 
         /***********************
