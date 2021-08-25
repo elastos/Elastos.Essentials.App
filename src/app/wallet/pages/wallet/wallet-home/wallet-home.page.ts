@@ -213,7 +213,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     public selectActiveWallet(wallet: NetworkWallet) {
-        void this.walletManager.setActiveMasterWallet(wallet.masterWallet.id);
+        void this.walletManager.setActiveNetworkWallet(wallet);
     }
 
     public selectActiveNetwork(network: Network) {
