@@ -1,0 +1,140 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import BigNumber from 'bignumber.js';
+import { Logger } from 'src/app/logger';
+import { StandardCoinName } from '../wallet/model/coin';
+import { ERC20TokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
+import { GlobalJsonRPCService } from './global.jsonrpc.service';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class GlobalEthereumRPCService {
+    public static instance: GlobalEthereumRPCService = null;
+
+    constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
+        GlobalEthereumRPCService.instance = this;
+    }
+
+    // TODO: duplicate of eth_getTransactionByHash ?
+    public getETHSCTransactionByHash(rpcApiUrl: string, txHash: string) {
+        if (!txHash.startsWith('0x')) {
+            txHash = '0x' + txHash;
+        }
+        const param = {
+            method: 'eth_getTransactionByHash',
+            params: [
+                txHash
+            ],
+            id: '1'
+        };
+
+        return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+    }
+
+    /* public async eth_blockNumber(elastosChainCode: StandardCoinName): Promise<number> {
+      const param = {
+          method: 'eth_blockNumber',
+          id:'1'
+      };
+
+      let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+      const rpcApiUrl = this.globalElastosAPIService.getApiUrl(apiurltype);
+      if (rpcApiUrl === null) {
+          return -1;
+      }
+
+      try {
+          let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+          return parseInt(result);
+      } catch (e) {
+      }
+      return -1;
+    } */
+
+    public async eth_getBalance(rpcApiUrl: string, address: string): Promise<BigNumber> {
+        const param = {
+            method: 'eth_getBalance',
+            params: [
+                address,
+                'latest'
+            ],
+            id: '1'
+        };
+
+        let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
+    }
+
+    public async getETHSCNonce(rpcApiUrl: string, address: string): Promise<number> {
+        const param = {
+            method: 'eth_getTransactionCount',
+            params: [
+                address,
+                'latest'
+            ],
+            id: '1'
+        };
+
+        let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        return parseInt(result);
+    }
+
+    public eth_getTransactionByHash(rpcApiUrl: string, txHash: string) {
+        const param = {
+            method: 'eth_getTransactionByHash',
+            params: [
+                txHash
+            ],
+            id: '1'
+        };
+
+        return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+    }
+
+    public async getERC20TokenTransactions(rpcApiUrl: string, address: string): Promise<EthTokenTransaction[]> {
+        const ethscgetTokenTxsUrl = rpcApiUrl + '/api/?module=account&action=tokentx&address=' + address;
+
+        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
+        return result.result as EthTokenTransaction[];
+    }
+
+    public async getERC20TokenList(rpcApiUrl: string, address: string): Promise<ERC20TokenInfo[]> {
+        const ethscgetTokenListUrl = rpcApiUrl + '/api/?module=account&action=tokenlist&address=' + address;
+
+        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
+        return result.result as ERC20TokenInfo[];
+    }
+
+    public eth_sendRawTransaction(rpcApiUrl: string, txHash: string) {
+        if (!txHash.startsWith('0x')) {
+            txHash = '0x' + txHash;
+        }
+        const param = {
+            method: 'eth_sendRawTransaction',
+            params: [
+                txHash
+            ],
+            id: '1'
+        };
+
+        return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+    }
+
+    public eth_getTransactionReceipt(rpcApiUrl: string, txidArray: string[]): Promise<any> {
+        const paramArray = [];
+        for (let i = 0, len = txidArray.length; i < len; i++) {
+            const txid = txidArray[i];
+            const param = {
+                method: 'eth_getTransactionReceipt',
+                params: [
+                    txid
+                ],
+                id: i.toString()
+            };
+            paramArray.push(param);
+        }
+
+        return this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
+    }
+}

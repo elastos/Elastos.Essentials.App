@@ -14,13 +14,17 @@ import { ERC20SubWallet } from '../erc20.subwallet';
 import { NetworkWallet } from '../NetworkWallet';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, SignedETHSCTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
+import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { HecoAPI, HecoApiType } from './heco.api';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
 /**
  * Specialized standard sub wallet for the HECO sidechain.
  */
 export class HECOChainSubWallet extends StandardEVMSubWallet {
   constructor(networkWallet: NetworkWallet) {
-    super(networkWallet, StandardCoinName.ETHHECO);
+    super(networkWallet, StandardCoinName.ETHHECO, HecoAPI.getApiUrl(HecoApiType.RPC));
 
     void this.initialize();
   }
@@ -45,10 +49,10 @@ export class HECOChainSubWallet extends StandardEVMSubWallet {
     return "HT";
   }
 
-  public async getTransactionsByRpc() {
+  protected async getTransactionsByRpc() {
     Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
     const address = await this.getTokenAddress();
-    let result = await this.jsonRPCService.getHECOTransactions(this.id as StandardCoinName, address);
+    let result = await this.getHECOTransactions(this.id as StandardCoinName, address);
     if (result) {
       if (this.transactions == null) {
         // init
@@ -66,8 +70,23 @@ export class HECOChainSubWallet extends StandardEVMSubWallet {
     }
   }
 
+  private async getHECOTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
+    const rpcApiUrl = HecoAPI.getApiUrl(HecoApiType.RPC);
+    if (rpcApiUrl === null) {
+      return null;
+    }
+    let hecoTxlistUrl = rpcApiUrl + '/api?module=account&action=txlist&address=' + address;
+    try {
+      let result = await GlobalJsonRPCService.instance.httpGet(hecoTxlistUrl);
+      return result.result as EthTransaction[];
+    } catch (e) {
+      Logger.error('wallet', 'getHECOTransactions error:', e)
+    }
+    return null;
+  }
+
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-    let result = await this.jsonRPCService.eth_getTransactionByHash(this.id as StandardCoinName, txid);
+    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(HecoAPI.getApiUrl(HecoApiType.RPC), txid);
     if (!result) {
       // Remove error transaction.
       await this.removeInvalidTransaction(txid);

@@ -13,7 +13,10 @@ type JSONRPCResponse = {
     providedIn: 'root'
 })
 export class GlobalJsonRPCService {
+    public static instance: GlobalJsonRPCService = null;
+
     constructor(private http: HttpClient) {
+        GlobalJsonRPCService.instance = this;
     }
 
     httpPost(rpcApiUrl: string, param: any): Promise<any> {

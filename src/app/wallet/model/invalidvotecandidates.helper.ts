@@ -1,8 +1,9 @@
 
-import { CRProposalStatus } from './cyber-republic/CRProposalStatus';
+import { CRProposalStatus } from '../../model/voting/cyber-republic/CRProposalStatus';
 import { VoteType, VoteContent, Candidates } from './SPVWalletPluginBridge';
 import { Logger } from 'src/app/logger';
 import { WalletJsonRPCService } from '../services/jsonrpc.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 type InvalidCRCCandidate = string;
 type InvalidDelegateCandidate = string;
@@ -104,7 +105,7 @@ export class InvalidVoteCandidatesHelper {
      * If we are outside of the council voting period.
      */
     private async isCRCInVoting() {
-      let crrelatedStage = await this.jsonRPCService.getCRrelatedStage();
+      let crrelatedStage = await GlobalElastosAPIService.instance.getCRrelatedStage();
       if (crrelatedStage) {
         return crrelatedStage.invoting;
       }
@@ -115,7 +116,7 @@ export class InvalidVoteCandidatesHelper {
       let validCRImpeachmentCandidates: Candidates = {};
 
       try {
-        let councilList = await this.jsonRPCService.fetchCRcouncil();
+        let councilList = await GlobalElastosAPIService.instance.fetchCRcouncil();
         if (!councilList) {
           return null;
         }
@@ -153,7 +154,7 @@ export class InvalidVoteCandidatesHelper {
       let validDposNodes: Candidates = {};
 
       try {
-        let dposnodes = await this.jsonRPCService.fetchDposNodes('active');
+        let dposnodes = await GlobalElastosAPIService.instance.fetchDposNodes('active');
         if (!dposnodes) {
           return null;
         }
@@ -192,7 +193,7 @@ export class InvalidVoteCandidatesHelper {
 
       // Fetch all proposals currently in NOTIFICATION state.
       try {
-          let proposalsInNotificationState = await this.jsonRPCService.fetchProposals(CRProposalStatus.NOTIFICATION);
+          let proposalsInNotificationState = await GlobalElastosAPIService.instance.fetchProposals(CRProposalStatus.NOTIFICATION);
           if (!proposalsInNotificationState) {
               return null;
           }

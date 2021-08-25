@@ -1,32 +1,30 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, IonRouterOutlet } from '@ionic/angular';
+import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
-
-import { GlobalStorageService } from './services/global.storage.service';
-import { GlobalThemeService } from './services/global.theme.service';
-import { GlobalDIDSessionsService } from './services/global.didsessions.service';
-import { GlobalLanguageService } from './services/global.language.service';
-import { Logger } from './logger';
-import { GlobalIntentService } from './services/global.intent.service';
-import { Direction, GlobalNavService } from './services/global.nav.service';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
+import { Logger } from './logger';
 import { InternalElastosConnector } from './model/internalelastosconnector';
-import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
+import { GlobalDIDSessionsService } from './services/global.didsessions.service';
+import { GlobalElastosAPIService } from './services/global.elastosapi.service';
+import { GlobalEthereumRPCService } from './services/global.ethereum.service';
+import { GlobalFirebaseService } from './services/global.firebase.service';
+import { GlobalHiveService } from './services/global.hive.service';
+import { GlobalIntentService } from './services/global.intent.service';
+import { GlobalLanguageService } from './services/global.language.service';
+import { GlobalNavService } from './services/global.nav.service';
+import { GlobalNetworksService } from './services/global.networks.service';
 import { GlobalNotificationsService } from './services/global.notifications.service';
 import { GlobalPublicationService } from './services/global.publication.service';
-import { GlobalWalletConnectService } from './services/global.walletconnect.service';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { GlobalHiveService } from './services/global.hive.service';
-import { GlobalElastosAPIService } from './services/global.elastosapi.service';
-import { GlobalNetworksService } from './services/global.networks.service';
-import { GlobalFirebaseService } from './services/global.firebase.service';
-import { GlobalPreferencesService } from './services/global.preferences.service';
-import { WalletInitService } from './wallet/services/init.service';
 import { GlobalStartupService } from './services/global.startup.service';
-import { App } from './model/app.enum';
+import { GlobalStorageService } from './services/global.storage.service';
+import { GlobalThemeService } from './services/global.theme.service';
+import { GlobalWalletConnectService } from './services/global.walletconnect.service';
+
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -61,7 +59,7 @@ export class AppComponent {
         private globalNetworksService: GlobalNetworksService,
         private globalElastosAPIService: GlobalElastosAPIService,
         private globalStartupService: GlobalStartupService,
-        private walletInitService: WalletInitService,
+        public globalEthereumService: GlobalEthereumRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
         private firebase: FirebaseX
     ) {
     }
