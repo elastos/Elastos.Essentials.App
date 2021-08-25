@@ -45,6 +45,7 @@ export class HomePage implements OnInit {
   public mainWalletName = "";
   public activeNetwork: Network = null;
   public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
+  public mainWalletDiaplayTokenName: string = null;
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {
     usedStorage: string; // Used storage, formatted for display, in GB
@@ -222,12 +223,14 @@ export class HomePage implements OnInit {
       this.mainWalletName = activeWallet.masterWallet.name;
       this.mainWalletELABalance = activeWallet.getDisplayBalance().toFixed(2);
       this.activeNetwork = this.walletNetworkService.activeNetwork.value;
+      this.mainWalletDiaplayTokenName = activeWallet.getDisplayTokenName();
     }
     else {
       this.mainWallet = null;
       this.mainWalletName = "";
       this.mainWalletELABalance = null;
       this.activeNetwork = null;
+      this.mainWalletDiaplayTokenName = null;
     }
   }
 
