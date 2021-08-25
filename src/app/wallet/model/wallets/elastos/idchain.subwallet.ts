@@ -3,7 +3,7 @@ import { RawTransactionType, TransactionDirection, TransactionHistory, Transacti
 import { StandardCoinName } from '../../coin';
 import { MasterWallet } from '../masterwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
-import { NetworkWallet } from '../NetworkWallet';
+import { NetworkWallet } from '../networkwallet';
 
 /**
  * Specialized standard sub wallet for the ID sidechain.

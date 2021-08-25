@@ -14,6 +14,7 @@ import { ProducersSearchResponse } from '../dposvoting/model/nodes.model';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
+import { EthTokenTransaction, ERC20TokenInfo } from '../wallet/model/evm.types';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -61,9 +62,6 @@ export type ElastosAPIProvider = {
             escBrowserRPC: string;
             // Cyber Republic
             crRPC: string;
-            hecoRPC: string;
-            hecoBrowserRPC: string;
-            hecoAccountRPC: string;
         }
     }
 };
@@ -127,10 +125,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escMiscRPC: 'https://api.elastos.io/misc',
                         escOracleRPC: 'https://api.elastos.io/oracle',
                         escBrowserRPC: 'https://eth.elastos.io',
-                        crRPC: 'https://api.cyberrepublic.org',
-                        hecoRPC: 'https://http-mainnet.hecochain.com',
-                        hecoBrowserRPC: 'https://scan.hecochain.com',
-                        hecoAccountRPC: 'https://api.hecoinfo.com',
+                        crRPC: 'https://api.cyberrepublic.org'
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.elastos.io/ela',
@@ -142,10 +137,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: 'https://api-testnet.elastos.io/oracle',
                         escMiscRPC: 'https://api-testnet.elastos.io/misc',
                         escBrowserRPC: 'https://eth-testnet.elastos.io',
-                        crRPC: 'https://api.cyberrepublic.org',
-                        hecoRPC: 'https://http-testnet.hecochain.com',
-                        hecoBrowserRPC: 'https://testnet.hecoinfo.com',
-                        hecoAccountRPC: 'https://api-testnet.hecoinfo.com',
+                        crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {
                         mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
@@ -157,10 +149,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: '',
                         escMiscRPC: '',
                         escBrowserRPC: '',
-                        crRPC: 'http://crapi.longrunweather.com:18080',
-                        hecoRPC: '',
-                        hecoBrowserRPC: '',
-                        hecoAccountRPC: '',
+                        crRPC: 'http://crapi.longrunweather.com:18080'
                     },
                 }
             },
@@ -179,10 +168,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: 'https://api.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api.trinity-tech.cn/eth-misc',
                         escBrowserRPC: 'https://eth.elastos.io', // TODO
-                        crRPC: 'https://api.cyberrepublic.org',
-                        hecoRPC: 'https://http-mainnet-node.huobichain.com',
-                        hecoBrowserRPC: 'https://scan.hecochain.com',
-                        hecoAccountRPC: 'https://api.hecoinfo.com',
+                        crRPC: 'https://api.cyberrepublic.org'
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.trinity-tech.cn/ela',
@@ -194,10 +180,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: 'https://api-testnet.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api-testnet.trinity-tech.cn/eth-misc',
                         escBrowserRPC: 'https://eth-testnet.elastos.io',
-                        crRPC: 'https://api.cyberrepublic.org',
-                        hecoRPC: 'https://http-testnet.hecochain.com',
-                        hecoBrowserRPC: 'https://testnet.hecoinfo.com',
-                        hecoAccountRPC: 'https://api-testnet.hecoinfo.com',
+                        crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {
                         mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
@@ -209,10 +192,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escOracleRPC: '',
                         escMiscRPC: '',
                         escBrowserRPC: '',
-                        crRPC: 'http://crapi.longrunweather.com:18080',
-                        hecoRPC: '',
-                        hecoBrowserRPC: '',
-                        hecoAccountRPC: '',
+                        crRPC: 'http://crapi.longrunweather.com:18080'
                     },
                 }
                 /*
@@ -481,6 +461,18 @@ export class GlobalElastosAPIService extends GlobalService {
         return apiUrlType;
     }
 
+    public getApiUrlTypeForBrowser(elastosChainCode: string) {
+        let apiUrlType = null;
+        switch (elastosChainCode) {
+            case StandardCoinName.ETHSC:
+                apiUrlType = ElastosApiUrlType.ETHSC_BROWSER;
+                break;
+            default:
+                Logger.log("wallet", 'Elastos API: Browser api can not support ' + elastosChainCode);
+                break;
+        }
+        return apiUrlType;
+      }
 
     // ETHSC:Get the real target address for the send transaction from ethsc to mainchain.
     public async getETHSCWithdrawTargetAddress(blockHeight: number, txHash: string) {
@@ -549,6 +541,24 @@ export class GlobalElastosAPIService extends GlobalService {
                 return c.result && (c.result.totalcount > 0);
             });
         }
+    }
+
+    public async getERC20TokenTransactions(elastosChainCode: StandardCoinName, address: string): Promise<EthTokenTransaction[]> {
+        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        const rpcApiUrl = this.getApiUrl(apiurltype);
+        const ethscgetTokenTxsUrl = rpcApiUrl + '/api/?module=account&action=tokentx&address=' + address;
+
+        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
+        return result.result as EthTokenTransaction[];
+    }
+
+    public async getERC20TokenList(elastosChainCode: StandardCoinName, address: string): Promise<ERC20TokenInfo[]> {
+        let apiurltype = this.getApiUrlTypeForBrowser(elastosChainCode);
+        const rpcApiUrl = this.getApiUrl(apiurltype);
+        const ethscgetTokenListUrl = rpcApiUrl + '/api/?module=account&action=tokenlist&address=' + address;
+
+        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
+        return result.result as ERC20TokenInfo[];
     }
 
     // return all utxo by address

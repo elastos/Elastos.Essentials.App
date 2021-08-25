@@ -43,7 +43,7 @@ import { Util } from '../model/util';
 import { WalletConfig } from '../model/wallet.config';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { WalletNetworkService } from './network.service';
-import { NetworkWallet } from '../model/wallets/NetworkWallet';
+import { NetworkWallet } from '../model/wallets/networkwallet';
 import { ElastosNetworkWallet } from '../model/wallets/elastos/elastos.networkwallet';
 
 
@@ -418,9 +418,6 @@ export class WalletService {
        /* TODO
         await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
  */
-        // Get all tokens and create subwallet
-        await this.masterWallets[id].updateERCTokenList();
-
         // Save state to local storage
         await this.masterWallets[id].save();
 

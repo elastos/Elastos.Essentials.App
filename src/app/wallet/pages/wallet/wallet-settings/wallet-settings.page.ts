@@ -18,7 +18,7 @@ import { PopoverController } from '@ionic/angular';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { Events } from 'src/app/services/events.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 @Component({
     selector: 'app-wallet-settings',

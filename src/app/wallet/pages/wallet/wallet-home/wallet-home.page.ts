@@ -34,7 +34,7 @@ import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { Config } from '../../../config/Config';
-import { CoinType, StandardCoinName } from '../../../model/Coin';
+import { CoinType } from '../../../model/Coin';
 import { Util } from '../../../model/Util';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
@@ -223,7 +223,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     async updateCurrentWalletInfo() {
         await this.networkWallet.update();
-        await this.networkWallet.updateERCTokenList(this.networkTemplate);
+        await this.networkWallet.updateERCTokenList();
         this.currencyService.fetch();
     }
 

@@ -13,7 +13,7 @@ import { Config } from '../../config/Config';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { NetworkWallet } from './NetworkWallet';
+import { NetworkWallet } from './networkwallet';
 import { CoinService } from '../../services/coin.service';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';

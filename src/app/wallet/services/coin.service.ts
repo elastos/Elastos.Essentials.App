@@ -27,7 +27,7 @@ import { LocalStorage } from './storage.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { WalletPrefsService } from './pref.service';
-import { NetworkWallet } from '../model/wallets/NetworkWallet';
+import { NetworkWallet } from '../model/wallets/networkwallet';
 import { WalletNetworkService } from './network.service';
 import { Network } from '../model/networks/network';
 

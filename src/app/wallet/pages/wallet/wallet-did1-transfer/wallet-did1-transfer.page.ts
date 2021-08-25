@@ -45,7 +45,7 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 /**
  * This screen is a legacy support to let users who have funds on DID 1 migrate them back to mainchain.

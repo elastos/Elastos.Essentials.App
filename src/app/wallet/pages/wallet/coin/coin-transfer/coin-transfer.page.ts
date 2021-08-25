@@ -57,7 +57,7 @@ import { CoinService } from 'src/app/wallet/services/coin.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 
 

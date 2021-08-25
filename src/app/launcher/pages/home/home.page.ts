@@ -18,8 +18,11 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { Network } from 'src/app/wallet/model/networks/network';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletService, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
+import { AppmanagerService } from '../../services/appmanager.service';
+import { DIDManagerService } from '../../services/didmanager.service';
 
 @Component({
   selector: 'app-home',

@@ -12,7 +12,7 @@ import moment from 'moment';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { ERC20SubWallet } from '../erc20.subwallet';
 import { CoinService } from 'src/app/wallet/services/coin.service';
-import { NetworkWallet } from '../NetworkWallet';
+import { NetworkWallet } from '../networkwallet';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
 import { ElastosAPI } from './elastos.api';

@@ -10,7 +10,7 @@ import { Util } from '../../util';
 import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
 import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
 import moment from 'moment';
-import { NetworkWallet } from '../NetworkWallet';
+import { NetworkWallet } from '../networkwallet';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosAPI } from './elastos.api';
