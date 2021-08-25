@@ -58,6 +58,8 @@ export abstract class NetworkWallet {
         return balance.dividedBy(Config.SELAAsBigNumber);
     }
 
+    public abstract getDisplayTokenName(): string;
+
     /**
      * Update balance and transaction list.
      */
