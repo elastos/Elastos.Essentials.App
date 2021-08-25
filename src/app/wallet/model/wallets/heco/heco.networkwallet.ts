@@ -1,4 +1,3 @@
-import { StandardSubWalletBuilder } from "../standardsubwalletbuilder";
 import { MasterWallet } from "../masterwallet";
 import { NetworkWallet } from "../NetworkWallet";
 import { HECOChainSubWallet } from "./heco.subwallet";

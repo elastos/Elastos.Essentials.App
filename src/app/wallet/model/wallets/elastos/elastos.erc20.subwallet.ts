@@ -14,6 +14,8 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
   constructor(networkWallet: NetworkWallet, coinID: CoinID) {
     let rpcApiUrl = GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC);
     super(networkWallet, coinID, rpcApiUrl);
+
+    this.elastosChainCode = StandardCoinName.ETHSC;
   }
 
   public getMainIcon(): string {
@@ -33,7 +35,7 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
     const contractAddress = this.coin.getContractAddress().toLowerCase();
     const tokenAccountAddress = await this.getTokenAccountAddress();
     let result = await GlobalEthereumRPCService.instance.getERC20TokenTransactions(
-        GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC), 
+        GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC),
         tokenAccountAddress);
     // Logger.test('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id, ' result:', result)
     if (result) {

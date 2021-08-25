@@ -22,11 +22,12 @@
 
 import { Injectable } from '@angular/core';
 import Web3 from 'web3';
-import { ERC20Coin } from '../model/coin';
+import { ERC20Coin } from '../model/Coin';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import { WalletPrefsService } from './pref.service';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { WalletNetworkService } from './network.service';
 
 @Injectable({
     providedIn: 'root'
@@ -37,14 +38,35 @@ export class ERC20CoinService {
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private erc20ABI: any;
+    private rpcUrlType = ElastosApiUrlType.ETHSC_RPC;
+
 
     // Addresses to test
     // 0xe125585c7588503927c0b733a9ebd3b8af0a940d
     // 0xdeeddbe67ff585af58622c904b04fca615ffe8aa
     // 0xa438928dbad409fd927029156542aa7b466508d9
 
-    constructor(private prefs: WalletPrefsService) {
+    constructor(private prefs: WalletPrefsService,
+                private networkService: WalletNetworkService) {
         ERC20CoinService.instance = this;
+
+        this.networkService.activeNetwork.subscribe(activeNetwork => {
+          if (activeNetwork) {
+              this.web3 = null;
+
+              switch (activeNetwork.key) {
+                case 'elastos':
+                  this.rpcUrlType = ElastosApiUrlType.ETHSC_RPC;
+                break;
+                case 'heco':
+                  this.rpcUrlType = ElastosApiUrlType.HECO_RPC;
+                break;
+                default:
+                  Logger.warn('wallet', 'ERC20CoinService: Do not support:', activeNetwork);
+                break;
+              }
+          }
+      });
     }
 
     // Lazy web3 init for angular bundle optimization
@@ -52,7 +74,7 @@ export class ERC20CoinService {
         if (this.web3)
             return this.web3;
 
-        const trinityWeb3Provider = new EssentialsWeb3Provider(ElastosApiUrlType.ETHSC_RPC);
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcUrlType);
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI

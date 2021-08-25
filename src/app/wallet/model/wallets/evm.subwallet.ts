@@ -286,11 +286,21 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
 
     protected initWeb3() {
         let urlType;
-        if (this.id === StandardCoinName.ETHDID) {
-          urlType = ElastosApiUrlType.EID_RPC;
-        } else {
-          urlType = ElastosApiUrlType.ETHSC_RPC;
+        switch (this.id) {
+          case StandardCoinName.ETHDID:
+            urlType = ElastosApiUrlType.EID_RPC;
+            break;
+          case StandardCoinName.ETHSC:
+            urlType = ElastosApiUrlType.ETHSC_RPC;
+            break;
+          case StandardCoinName.ETHHECO:
+            urlType = ElastosApiUrlType.HECO_RPC;
+            break;
+          default:
+            Logger.warn('wallet', 'StandardEVMSubWallet: Do not support ', this.id)
+            break;
         }
+
         const trinityWeb3Provider = new EssentialsWeb3Provider(urlType);
         this.web3 = new Web3(trinityWeb3Provider);
     }

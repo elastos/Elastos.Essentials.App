@@ -21,15 +21,12 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoin } from '../model/coin';
+import { Coin, CoinID, CoinType, ERC20Coin } from '../model/coin';
 import { StandardCoinName } from '../model/coin';
 import { LocalStorage } from './storage.service';
-import { MasterWallet } from '../model/wallets/masterwallet';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { WalletPrefsService } from './pref.service';
-import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
-import { WalletService } from './wallet.service';
 import { NetworkWallet } from '../model/wallets/NetworkWallet';
 import { WalletNetworkService } from './network.service';
 import { Network } from '../model/networks/network';
