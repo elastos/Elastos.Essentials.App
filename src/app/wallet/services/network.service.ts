@@ -23,6 +23,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
 import { HECONetwork } from '../model/networks/heco/heco.network';
 import { Network } from '../model/networks/network';
@@ -35,24 +37,33 @@ export class WalletNetworkService {
 
     public activeNetwork = new BehaviorSubject<Network>(null);
 
-    constructor() {
-    }
+    constructor(private prefs: GlobalPreferencesService)
+    {}
 
-    public init() {
+    public async init() {
         this.networks = [];
 
         let elastosNetwork = new ElastosNetwork();
         this.networks.push(elastosNetwork);
         this.networks.push(new HECONetwork());
 
-        this.setActiveNetwork(elastosNetwork);
+        let currentNetwork = await this.prefs.getPreference(GlobalDIDSessionsService.signedInDIDString, 'activenetwork') as string;
+        Logger.log("wallet", "WalletNetworkService - Reloading network:", currentNetwork);
+        const network = await this.getNetworkByKey(currentNetwork);
+        if (network) {
+            this.activeNetwork.next(network);
+        } else {
+            this.activeNetwork.next(elastosNetwork);
+        }
     }
 
     public getAvailableNetworks(): Network[] {
         return this.networks;
     }
 
-    public setActiveNetwork(network: Network) {
+    public async setActiveNetwork(network: Network) {
+        // Save choice to persistent storage
+        await this.prefs.setPreference(GlobalDIDSessionsService.signedInDIDString, 'activenetwork', network.key);
         Logger.log("wallet", "Setting active network to", network);
         this.activeNetwork.next(network);
     }
