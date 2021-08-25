@@ -151,9 +151,9 @@
                 (click)="goCoinHome(networkWallet.id, subWallet.id)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">
-                        <img [src]="uiService.getSubWalletIcon(subWallet)">
-                        <div *ngIf="subWallet.type === CoinType.ERC20" class="ela-icon">
-                            <img src="assets/wallet/coins/ela-black.svg" />
+                        <img [src]="subWallet.getMainIcon()">
+                        <div *ngIf="subWallet.getSecondaryIcon()" class="ela-icon">
+                            <img [src]="subWallet.getSecondaryIcon()" />
                         </div>
                     </div>
                 </ion-col>

@@ -1,5 +1,6 @@
-import { ERC20Coin } from "../../coin";
+import { CoinID, ERC20Coin } from "../../coin";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
+import { HecoERC20SubWallet } from "../../wallets/heco/heco.erc20.subwallet";
 import { HecoNetworkWallet } from "../../wallets/heco/heco.networkwallet";
 import { MasterWallet } from "../../wallets/masterwallet";
 import { NetworkWallet } from "../../wallets/NetworkWallet";
@@ -16,5 +17,9 @@ export class HECONetwork extends Network {
 
   public createNetworkWallet(masterWallet: MasterWallet): NetworkWallet {
     return new HecoNetworkWallet(masterWallet, this);
+  }
+
+  public createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet {
+    return new HecoERC20SubWallet(networkWallet, coinID);
   }
 }

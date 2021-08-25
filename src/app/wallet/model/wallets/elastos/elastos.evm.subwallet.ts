@@ -43,6 +43,22 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     }
   }
 
+  public getMainIcon(): string {
+    switch (this.id) {
+      case StandardCoinName.IDChain:
+      case StandardCoinName.ETHDID:
+        return "assets/wallet/coins/ela-turquoise.svg";
+      case StandardCoinName.ETHSC:
+        return "assets/wallet/coins/ela-gray.svg";
+      default:
+        return null;
+    }
+  }
+
+  public getSecondaryIcon(): string {
+    return null;
+  }
+
   public getFriendlyName(): string {
     if (this.id === StandardCoinName.ETHSC)
       return "Smart Chain";

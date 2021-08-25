@@ -158,6 +158,19 @@ export abstract class SubWallet {
     public abstract createAddress(): Promise<string>;
 
     /**
+     * Returns the path to the main icon representing the subwallet.
+     * For standard subwallets, this is usually the network icon. For ERC20 subwallets,
+     * this is usually a "ETH" icon (default) or the coin icon (if known), as the secondary icon shows the network
+     */
+    public abstract getMainIcon(): string;
+
+    /**
+     * Returns the path to a secondary icon. Standard subwallets usually don't have one and should return null.
+     * ERC20 subwallets usually show the network icon, as the primary icon already shows the coin itself.
+     */
+    public abstract getSecondaryIcon(): string;
+
+    /**
      * Returns a UI readable name for this sub wallet.
      * Ex: for a ERC20 token, this will be the token description such as "Trinity Tech"
      */

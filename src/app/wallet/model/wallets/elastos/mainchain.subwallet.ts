@@ -13,6 +13,14 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
         super(masterWallet, StandardCoinName.ELA);
     }
 
+    public getMainIcon(): string {
+        return "assets/wallet/coins/ela-black.svg";
+    }
+    
+    public getSecondaryIcon(): string {
+        return null;
+    }
+
     public getFriendlyName(): string {
         return "Main Chain";
     }

@@ -18,7 +18,7 @@
             </ion-row>
             <ion-row class="item-row">
                 <ion-col size="2.3" class="left-col">
-                    <img [src]="uiService.getSubWalletIcon(fromSubWallet)">
+                    <img [src]="fromSubWallet.getMainIcon()">
                 </ion-col>
                 <ion-col size="5.5" class="middle-col">
                     <h1>{{ uiService.getSubwalletTitle(fromSubWallet) }}</h1>
@@ -40,7 +40,7 @@
             </ion-row>
             <ion-row class="item-row">
                 <ion-col size="2.3" class="left-col">
-                    <img [src]="uiService.getSubWalletIcon(toSubWallet)">
+                    <img [src]="toSubWallet.getMainIcon()">
                 </ion-col>
                 <ion-col size="5.5" class="middle-col">
                     <h1>{{ uiService.getSubwalletTitle(toSubWallet) }}</h1>

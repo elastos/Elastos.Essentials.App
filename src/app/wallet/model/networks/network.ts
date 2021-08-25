@@ -1,12 +1,14 @@
-import { ERC20Coin } from "../coin";
+import { CoinID, ERC20Coin } from "../coin";
+import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/NetworkWallet";
 
 export abstract class Network {
-  // key: string; // unique identifier
-  // name: string; // Human readable network name - Elastos, HECO
-  // logo: string; // Path to the network icon
-  constructor(public key: string, public name: string, public logo: string) {}
+  constructor(
+    public key: string, // unique identifier
+    public name: string, // Human readable network name - Elastos, HECO
+    public logo: string // Path to the network icon
+  ) {}
 
   /**
    * Returns a list of available ERC20 coins that we trust for this network, and that user will be able to
@@ -18,4 +20,9 @@ export abstract class Network {
    * Creates a network wallet for the given master wallet.
    */
   public abstract createNetworkWallet(masterWallet: MasterWallet): NetworkWallet;
+
+  /**
+   * Creates the right ERC20 sub wallet instance for this network.
+   */
+  public abstract createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet;
 }

@@ -3,7 +3,7 @@
     <ion-grid class="container">
         <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let subWallet of subWallets" (click)="onItem(subWallet)">
             <ion-col size="2" class="left-col">
-                <img [src]="uiService.getSubWalletIcon(subWallet)">
+                <img [src]="subWallet.getMainIcon()">
             </ion-col>
             <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
                 <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>

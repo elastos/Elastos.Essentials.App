@@ -19,7 +19,7 @@ import { NetworkWallet } from './NetworkWallet';
 import { CoinService } from '../../services/coin.service';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
 
-export class ERC20SubWallet extends SubWallet {
+export abstract class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
     private coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
@@ -31,7 +31,7 @@ export class ERC20SubWallet extends SubWallet {
     private tokenAddress = '';
 
     public static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
-        const subWallet = new ERC20SubWallet(networkWallet, coin.getID());
+        const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
         return Promise.resolve(subWallet);
     }
 
@@ -43,7 +43,7 @@ export class ERC20SubWallet extends SubWallet {
         }
         const coin = CoinService.instance.getCoinByID(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
-            const subWallet = new ERC20SubWallet(networkWallet, serializedSubWallet.id);
+            const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id);
             // subWallet.initFromSerializedSubWallet(serializedSubWallet);
             return subWallet;
         } else {

@@ -29,24 +29,6 @@ export class UiService {
     }
   }
 
-  getSubWalletIcon = (subwallet: SubWallet): string => {
-    if (!subwallet) {
-      return '';
-    }
-
-    switch (subwallet.id) {
-        case StandardCoinName.ELA:
-            return "assets/wallet/coins/ela-black.svg";
-        case StandardCoinName.IDChain:
-        case StandardCoinName.ETHDID:
-            return "assets/wallet/coins/ela-turquoise.svg";
-        case StandardCoinName.ETHSC:
-            return "assets/wallet/coins/ela-gray.svg";
-        default:
-            return "assets/wallet/coins/eth-purple.svg";
-    }
-  }
-
   getSubwalletTitle(subwallet: SubWallet): string {
     if (!subwallet) {
       return '';
