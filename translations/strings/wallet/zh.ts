@@ -271,7 +271,7 @@ export const zh = {
         *************************/
         "coin-list-title": "管理币种",
         "coin-list-enable-disable-coins": "开启/关闭 币种",
-        "coin-list-enable-disable-coins-intro": "选择要在钱包主页面显示的币种。 ELA的主链和侧链会一直显示",
+        "coin-list-enable-disable-coins-intro": "选择要在钱包主页面显示的币种。",
         "erc-20-token": "ERC20 币种",
 
         /***********************
