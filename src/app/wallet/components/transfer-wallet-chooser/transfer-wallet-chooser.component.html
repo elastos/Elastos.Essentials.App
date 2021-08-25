@@ -7,20 +7,20 @@
             </ion-col>
         </ion-row>
         <ion-row
-            *ngFor="let masterWallet of walletsToShowInList"
+            *ngFor="let networkWallet of walletsToShowInList"
             class="subwallet-row ripple ion-activatable"
             [class.dark-subwallet-row]="theme.darkMode"
-            (click)="walletSelected(masterWallet)"
+            (click)="walletSelected(networkWallet)"
         >
             <ion-col size="2" class="left-col">
                 <img [src]="options.sourceWallet.getSubWallet(options.elastosChainCode).getMainIcon()">
             </ion-col>
             <ion-col size="5" class="middle-col">
-                <h1>{{ masterWallet.name }}</h1>
+                <h1>{{ networkWallet.masterWallet.name }}</h1>
             </ion-col>
             <ion-col size="5" class="right-col">
-                <h1 *ngIf="masterWallet.getSubWallet(elastosChainCode)">{{ uiService.getFixedBalance(masterWallet.getSubWallet(elastosChainCode).getDisplayBalance()) }}</h1>
-                <h1 *ngIf="!masterWallet.getSubWallet(elastosChainCode)">0.000</h1>
+                <h1 *ngIf="networkWallet.getSubWallet(elastosChainCode)">{{ uiService.getFixedBalance(networkWallet.getSubWallet(elastosChainCode).getDisplayBalance()) }}</h1>
+                <h1 *ngIf="!networkWallet.getSubWallet(elastosChainCode)">0.000</h1>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>

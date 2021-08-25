@@ -27,7 +27,7 @@ export class TransferWalletChooserComponent implements OnInit {
 
   public CoinType = CoinType;
   public options: WalletChooserComponentOptions = null;
-  public walletsToShowInList: MasterWallet[];
+  public walletsToShowInList: NetworkWallet[];
 
   constructor(
     private navParams: NavParams,
@@ -43,7 +43,7 @@ export class TransferWalletChooserComponent implements OnInit {
   ngOnInit() {
     this.options = this.navParams.data as WalletChooserComponentOptions;
 
-    this.walletsToShowInList = this.walletManager.getMasterWalletsList();
+    this.walletsToShowInList = this.walletManager.getNetworkWalletsList();
     // Exclude current wallet if needed
     if (this.options.excludeWalletId) {
       this.walletsToShowInList = this.walletsToShowInList.filter((w) => {
@@ -52,11 +52,11 @@ export class TransferWalletChooserComponent implements OnInit {
     }
   }
 
-  walletSelected(masterWallet: MasterWallet) {
-    Logger.log("wallet", "Wallet selected", masterWallet);
+  walletSelected(networkWallet: NetworkWallet) {
+    Logger.log("wallet", "Wallet selected", networkWallet);
 
     void this.modalCtrl.dismiss({
-      selectedWalletId: masterWallet.id
+      selectedWalletId: networkWallet.id
     });
   }
 
