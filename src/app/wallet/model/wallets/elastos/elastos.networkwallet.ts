@@ -8,6 +8,7 @@ import { StandardSubWalletBuilder } from "../standardsubwalletbuilder";
 import { StandardSubWallet } from "../standard.subwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 import { Network } from "../../networks/network";
+import { IDChainSubWallet } from "./idchain.subwallet";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   constructor(masterWallet: MasterWallet, network: Network) {
@@ -17,12 +18,13 @@ export class ElastosNetworkWallet extends NetworkWallet {
   protected async prepareStandardSubWallets(): Promise<void> {
     this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this.masterWallet);
     this.subWallets[StandardCoinName.ETHSC] = new ElastosEVMSubWallet(this, StandardCoinName.ETHSC);
+    this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
     this.subWallets[StandardCoinName.ETHDID] = new ElastosEVMSubWallet(this, StandardCoinName.ETHDID);
 
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
   }
 
   /**

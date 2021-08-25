@@ -10,8 +10,8 @@ import { NetworkWallet } from '../NetworkWallet';
  * Most methods are common with the ELA main chain.
  */
 export class IDChainSubWallet extends MainAndIDChainSubWallet {
-    constructor(masterWallet: MasterWallet) {
-        super(masterWallet, StandardCoinName.IDChain);
+    constructor(networkWallet: NetworkWallet) {
+        super(networkWallet.masterWallet, StandardCoinName.IDChain);
     }
 
     protected async initialize() {
@@ -31,19 +31,19 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
     }
 
     public getMainIcon(): string {
-        throw new Error('Method not implemented.');
+        return "assets/wallet/coins/ela-turquoise.svg";
     }
-    
+
     public getSecondaryIcon(): string {
-        throw new Error('Method not implemented.');
+        return null;
     }
 
     public getFriendlyName(): string {
-        return "Identity 1.0 Chain";
+        return "Older Identity";
     }
 
     public getDisplayTokenName(): string {
-        return "ELA/ID";
+        return "ELA";
     }
 
     checkIDChainToBeDestroy() {
