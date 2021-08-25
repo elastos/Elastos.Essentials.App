@@ -102,8 +102,8 @@
 
             <ion-row class="card-row" [ngStyle]="
                 {
-                    'background-image': masterWallet.theme ?
-                    'url(' + masterWallet.theme.background + ')' :
+                    'background-image': networkWallet.masterWallet.theme ?
+                    'url(' + networkWallet.masterWallet.theme.background + ')' :
                     'url(/assets/wallet/cards/maincards/card-purple.svg)'
                 }">
                 <ion-row class="card-label-row">
@@ -136,8 +136,8 @@
                     </div>
                 </ion-row>
                 <div class="arrow-down" [ngStyle]="{
-                    'background-color': networkWallet.theme ?
-                    networkWallet.theme.color : '#752fcf'
+                    'background-color': networkWallet.masterWallet.theme ?
+                    networkWallet.masterWallet.theme.color : '#752fcf'
                 }">
                 </div>
             </ion-row>

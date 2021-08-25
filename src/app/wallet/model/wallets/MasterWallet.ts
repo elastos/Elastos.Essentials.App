@@ -1,21 +1,9 @@
-import { SubWallet, SerializedSubWallet  } from './subwallet';
 import { WalletAccount, WalletAccountType } from '../walletaccount';
 import { WalletService } from '../../services/wallet.service';
-import { StandardSubWallet } from './standard.subwallet';
-import { ERC20SubWallet } from './erc20.subwallet';
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../coin';
 import { CoinService } from '../../services/coin.service';
-import BigNumber from 'bignumber.js';
-import { Config } from '../../config/Config';
-import { StandardSubWalletBuilder } from './standardsubwalletbuilder';
-import { ElastosEVMSubWallet } from './elastos/elastos.evm.subwallet';
 import { Logger } from 'src/app/logger';
-import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
-import { NetworkWallet } from './networkwallet';
-import { MainchainSubWallet } from './elastos/mainchain.subwallet';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
 
 export type WalletID = string;
 
@@ -64,7 +52,7 @@ export class MasterWallet {
     }
 
     public async prepareAfterCreation(): Promise<void> {
-        let extendedInfo = this.getExtendedWalletInfo();
+        const extendedInfo = await LocalStorage.instance.getExtendedMasterWalletInfo(this.id);
         await this.populateWithExtendedInfo(extendedInfo);
     }
 
@@ -97,6 +85,11 @@ export class MasterWallet {
 
         // Retrieve wallet account type
         this.account = await this.walletManager.spvBridge.getMasterWalletBasicInfo(this.id);
+
+        if (extendedInfo) {
+            this.name = extendedInfo.name;
+            this.theme = extendedInfo.theme;
+        }
 
         Logger.log("wallet", "Populated master wallet:", this);
     }
