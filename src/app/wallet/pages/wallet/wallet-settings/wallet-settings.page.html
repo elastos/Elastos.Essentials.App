@@ -5,8 +5,8 @@
             class="card-row"
             [ngStyle]="
             {
-                'background-image': networkWallet.theme ?
-                'url(' + networkWallet.theme.background + ')' :
+                'background-image': networkWallet.masterWallet.theme ?
+                'url(' + networkWallet.masterWallet.theme.background + ')' :
                 'url(/assets/wallet/cards/maincards/card-purple.svg)'
             }"
         >
@@ -30,7 +30,7 @@
             </ion-row>
             <div
                 class="arrow-down"
-                [ngStyle]="{ 'background-color': networkWallet.theme ? networkWallet.theme.color : '#752fcf' }">
+                [ngStyle]="{ 'background-color': networkWallet.masterWallet.theme ? networkWallet.masterWallet.theme.color : '#752fcf' }">
             </div>
         </ion-row>
         <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode" *ngFor="let item of settings" (click)="goToSetting(item)">
