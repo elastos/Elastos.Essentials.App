@@ -20,7 +20,7 @@ const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, Vote
  * Most code between these 2 chains is common, while ETH is quite different. This is the reason why this
  * specialized class exists.
  */
-export class MainAndIDChainSubWallet extends StandardSubWallet {
+export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
     // voting
     private votingAmountSELA = 0; // ELA
     private votingUtxoArray: Utxo[] = null;

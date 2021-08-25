@@ -29,6 +29,14 @@ export class HECOChainSubWallet extends StandardEVMSubWallet {
         await super.initialize();
     }
 
+    public getFriendlyName(): string {
+      return "Huobi Token";
+    }
+
+    public getDisplayTokenName(): string {
+      return "HT";
+    }
+
     public async getTransactionsByRpc() {
       Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
       const address = await this.getTokenAddress();

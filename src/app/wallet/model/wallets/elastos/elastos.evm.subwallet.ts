@@ -42,6 +42,25 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
         break;
     }
   }
+
+  public getFriendlyName(): string {
+    if (this.id === StandardCoinName.ETHSC)
+      return "Smart Chain";
+    else if (this.id === StandardCoinName.ETHDID)
+      return "Identity Chain";
+    else
+      return "";
+  }
+
+  public getDisplayTokenName(): string {
+    if (this.id === StandardCoinName.ETHSC)
+      return "ELA";
+    else if (this.id === StandardCoinName.ETHDID)
+      return "ELA";
+    else
+      return "";
+  }
+
   /*
       // Get txpool information.
       private gettxpoolinfo() {

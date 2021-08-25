@@ -30,6 +30,14 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         }, 200);
     }
 
+    public getFriendlyName(): string {
+        return "Identity 1.0 Chain";
+    }
+
+    public getDisplayTokenName(): string {
+        return "ELA/ID";
+    }
+
     checkIDChainToBeDestroy() {
         // Do not use the id chain any more.
         // Cross chain transaction need 20000 SELA.
