@@ -11,7 +11,6 @@ import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { Config } from '../../config/Config';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -22,7 +21,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 
 export abstract class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
-    private coin: ERC20Coin;
+    protected coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private erc20ABI: any;
@@ -53,7 +52,7 @@ export abstract class ERC20SubWallet extends SubWallet {
         }
     }
 
-    constructor(networkWallet: NetworkWallet, id: CoinID) {
+    constructor(networkWallet: NetworkWallet, id: CoinID, private rpcApiUrl: string) {
         super(networkWallet.masterWallet, id, CoinType.ERC20);
 
         void this.initialize();
@@ -62,7 +61,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     private async initialize() {
         this.coin = this.masterWallet.coinService.getCoinByID(this.id) as ERC20Coin;
         // Get Web3 and the ERC20 contract ready
-        const trinityWeb3Provider = new EssentialsWeb3Provider(ElastosApiUrlType.ETHSC_RPC);
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
@@ -82,7 +81,7 @@ export abstract class ERC20SubWallet extends SubWallet {
         return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, StandardCoinName.ETHSC);
     }
 
-    private async getTokenAccountAddress(): Promise<string> {
+    protected async getTokenAccountAddress(): Promise<string> {
         if (!this.tokenAddress) {
             this.tokenAddress = (await this.createAddress()).toLowerCase();
         }
@@ -228,27 +227,8 @@ export abstract class ERC20SubWallet extends SubWallet {
       return null;
     }
 
-    protected async getTransactionsByRpc() {
-        Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
-        const contractAddress = this.coin.getContractAddress().toLowerCase();
-        const tokenAccountAddress = await this.getTokenAccountAddress();
-        let result = await GlobalEthereumRPCService.instance.getERC20TokenTransactions(
-            GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC), 
-            tokenAccountAddress);
-        // Logger.test('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id, ' result:', result)
-        if (result) {
-          let allTx = result.filter((tx)=> {
-            return tx.contractAddress === contractAddress
-          })
-          this.transactions = {totalcount:allTx.length, txhistory:allTx};
-          await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
-        }
-    }
-
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-      let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(
-        GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC), 
-        txid);
+      let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
       if (!result) {
         // Remove error transaction.
         await this.removeInvalidTransaction(txid);
@@ -390,9 +370,7 @@ export abstract class ERC20SubWallet extends SubWallet {
 
     public async publishTransaction(transaction: string): Promise<string> {
       let obj = JSON.parse(transaction) as SignedETHSCTransaction;
-      let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(
-        GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC), 
-        obj.TxSigned);
+      let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
       return txid;
     }
 
@@ -464,9 +442,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     private async getNonce() {
       const address = await this.getTokenAccountAddress();
       try {
-        return GlobalEthereumRPCService.instance.getETHSCNonce(
-            GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC), 
-            address);
+        return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address);
       }
       catch (err) {
         Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);

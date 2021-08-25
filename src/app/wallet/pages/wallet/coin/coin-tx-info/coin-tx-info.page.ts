@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Config } from '../../../../config/Config';
-import { WalletJsonRPCService } from '../../../../services/jsonrpc.service';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/util';
 import { WalletService } from '../../../../services/wallet.service';
@@ -19,6 +18,7 @@ import { Events } from 'src/app/services/events.service';
 import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 import { EthTransaction } from 'src/app/wallet/model/evm.types';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 class TransactionDetail {
     type: string;
@@ -74,7 +74,6 @@ export class CoinTxInfoPage implements OnInit {
         public router: Router,
         public walletManager: WalletService,
         public native: Native,
-        public jsonRPCService: WalletJsonRPCService,
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {
@@ -347,7 +346,7 @@ export class CoinTxInfoPage implements OnInit {
         let targetAddress = transaction.to;
         const withdrawContractAddress = (this.subWallet as ElastosEVMSubWallet).getWithdrawContractAddress();
         if (transaction.to.toLowerCase() === withdrawContractAddress.toLowerCase()) {
-            targetAddress = await this.jsonRPCService.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
+            targetAddress = await GlobalElastosAPIService.instance.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
         }
         return targetAddress;
     }

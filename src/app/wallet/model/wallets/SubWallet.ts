@@ -5,10 +5,7 @@ import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
-import { WalletJsonRPCService } from '../../services/jsonrpc.service';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
-import { Logger } from 'src/app/logger';
-import { NetworkWallet } from './NetworkWallet';
 
 /**
  * Subwallet representation ready to save to local storage for persistance.
@@ -50,13 +47,10 @@ export abstract class SubWallet {
 
     public subwalletTransactionStatusID = '';
 
-    public jsonRPCService: WalletJsonRPCService = null;
-
     constructor(protected masterWallet: MasterWallet, id: CoinID, public type: CoinType) {
       this.masterWallet = masterWallet;
       this.id = id;
       this.type = type;
-      this.jsonRPCService = this.masterWallet.walletManager.jsonRPCService;
 
       this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
       this.transactionKeyInCache = this.masterWallet.id + '-' + this.id + '-tx';

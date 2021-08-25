@@ -11,7 +11,6 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Util } from 'src/app/model/util';
@@ -110,7 +109,6 @@ export class NodesService {
         private globalIntentService: GlobalIntentService,
         private globalJsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService,
-        public walletRPCService: WalletJsonRPCService,
         public voteService: VoteService,
         private walletManager: WalletService,
         public popupProvider: PopupProvider,

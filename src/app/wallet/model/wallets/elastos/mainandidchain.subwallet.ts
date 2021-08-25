@@ -13,7 +13,6 @@ import moment from 'moment';
 import { NetworkWallet } from '../NetworkWallet';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { ElastosAPI } from './elastos.api';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
@@ -51,7 +50,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     protected async initialize() {
-        this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper(this.jsonRPCService);
+        this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper();
 
         await this.loadTransactionsFromCache();
 
@@ -655,7 +654,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
+        } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
 
         // Logger.log('wallet', 'getrawtransaction:', result)
         return result;
@@ -919,7 +918,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
             } catch (e) {
                 // wait 100ms?
             }
-        } while (++retryTimes < WalletJsonRPCService.RETRY_TIMES);
+        } while (++retryTimes < GlobalElastosAPIService.API_RETRY_TIMES);
         return alreadyGetBalance ? balanceOfSELA : null;
     }
 

@@ -14,7 +14,6 @@ import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { Utxo, UtxoType } from 'src/app/wallet/model/transaction.types';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/dposvoting/services/nodes.service';
@@ -63,7 +62,6 @@ export class DPosRegistrationPage implements OnInit {
         private authService: AuthService,
         public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
-        public walletRPCService: WalletJsonRPCService,
         public nodesService: NodesService,
         private globalNative: GlobalNativeService,
     ) {

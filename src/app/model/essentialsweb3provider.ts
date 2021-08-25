@@ -1,33 +1,17 @@
 import { AbstractProvider } from "web3-core";
 import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
 import { Logger } from "../logger";
-import { ElastosApiUrlType, GlobalElastosAPIService } from "../services/global.elastosapi.service";
 
 export class EssentialsWeb3Provider implements AbstractProvider {
-    apiurlType: ElastosApiUrlType = ElastosApiUrlType.ETHSC_RPC
-    rpcApiEndpoint: string = null; // RPC API server url. Do NOT read this value directly.
-
-    constructor(urlType: ElastosApiUrlType) {
-      this.apiurlType = urlType;
-    }
-    /**
-     * Returns the previously fetched RPC API endpoint from Elastos Essentials's preferences
-     */
-    private getRPCApiEndpoint(): string {
-        if (this.rpcApiEndpoint != null)
-            return this.rpcApiEndpoint;
-
-        return GlobalElastosAPIService.instance.getApiUrl(this.apiurlType);
+    constructor(private rpcApiUrl: string) {
     }
 
     private callJsonRPC(payload): Promise<any> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise(async (resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             var request = new XMLHttpRequest();
 
-            let rpcApiEndpoint = await this.getRPCApiEndpoint();
-
-            request.open('POST', rpcApiEndpoint, true);
+            request.open('POST', this.rpcApiUrl, true);
             request.setRequestHeader('Content-Type','application/json');
             request.timeout = 5000;
 

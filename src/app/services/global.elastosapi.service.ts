@@ -78,7 +78,7 @@ export type ElastosAPIProvider = {
     providedIn: 'root'
 })
 export class GlobalElastosAPIService extends GlobalService {
-    private static API_RETRY_TIMES = 3;
+    public static API_RETRY_TIMES = 3;
     public static instance: GlobalElastosAPIService = null;
 
     private availableProviders: ElastosAPIProvider[] = [];
@@ -479,6 +479,30 @@ export class GlobalElastosAPIService extends GlobalService {
                 break;
         }
         return apiUrlType;
+    }
+
+
+    // ETHSC:Get the real target address for the send transaction from ethsc to mainchain.
+    public async getETHSCWithdrawTargetAddress(blockHeight: number, txHash: string) {
+        const param = {
+            method: 'getwithdrawtransactionsbyheight',
+            params: {
+                height: blockHeight
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ETHSC_ORACLE);
+
+        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        for (var i = 0; i < result.length; i++) {
+            if ('0x' + result[i].txid === txHash) {
+                // TODO: crosschainassets has multiple value?
+                // TODO: define the result type
+                return result[i].crosschainassets[0].crosschainaddress;
+            }
+        }
+
+        return '';
     }
 
     public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<any> {
