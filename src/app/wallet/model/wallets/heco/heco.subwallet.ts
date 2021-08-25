@@ -11,7 +11,7 @@ import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 import { ERC20SubWallet } from '../erc20.subwallet';
-import { NetworkWallet } from '../NetworkWallet';
+import { NetworkWallet } from '../networkwallet';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, SignedETHSCTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';

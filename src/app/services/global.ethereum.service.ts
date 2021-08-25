@@ -92,20 +92,6 @@ export class GlobalEthereumRPCService {
         return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
     }
 
-    public async getERC20TokenTransactions(rpcApiUrl: string, address: string): Promise<EthTokenTransaction[]> {
-        const ethscgetTokenTxsUrl = rpcApiUrl + '/api/?module=account&action=tokentx&address=' + address;
-
-        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
-        return result.result as EthTokenTransaction[];
-    }
-
-    public async getERC20TokenList(rpcApiUrl: string, address: string): Promise<ERC20TokenInfo[]> {
-        const ethscgetTokenListUrl = rpcApiUrl + '/api/?module=account&action=tokenlist&address=' + address;
-
-        let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
-        return result.result as ERC20TokenInfo[];
-    }
-
     public eth_sendRawTransaction(rpcApiUrl: string, txHash: string) {
         if (!txHash.startsWith('0x')) {
             txHash = '0x' + txHash;

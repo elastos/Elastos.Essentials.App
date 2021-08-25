@@ -39,7 +39,7 @@ import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/mod
 import { ERC20CoinService } from 'src/app/wallet/services/erc20coin.service';
 import { Subscription } from 'rxjs';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 
 @Component({

@@ -9,7 +9,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { ModalController, NavParams } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { NetworkWallet } from '../../model/wallets/NetworkWallet';
+import { NetworkWallet } from '../../model/wallets/networkwallet';
 
 export type WalletChooserComponentOptions = {
     sourceWallet: NetworkWallet; // Master wallet from which funds will be transfered

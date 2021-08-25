@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../../coin';
 import { MasterWallet } from '../masterwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
-import { NetworkWallet } from '../NetworkWallet';
+import { NetworkWallet } from '../networkwallet';
 
 /**
  * Specialized standard sub wallet for ELA mainchain.

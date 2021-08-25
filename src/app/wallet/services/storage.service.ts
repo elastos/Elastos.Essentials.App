@@ -3,7 +3,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { WalletID, ExtendedMasterWalletInfo } from '../model/wallets/masterwallet';
-import { ExtendedNetworkWalletInfo } from '../model/wallets/NetworkWallet';
+import { ExtendedNetworkWalletInfo } from '../model/wallets/networkwallet';
 import { Contact } from './contacts.service';
 
 

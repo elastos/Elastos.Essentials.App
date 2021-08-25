@@ -38,8 +38,6 @@ export class ERC20CoinService {
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private erc20ABI: any;
-    private rpcUrlType = ElastosApiUrlType.ETHSC_RPC;
-
 
     // Addresses to test
     // 0xe125585c7588503927c0b733a9ebd3b8af0a940d
@@ -47,26 +45,14 @@ export class ERC20CoinService {
     // 0xa438928dbad409fd927029156542aa7b466508d9
 
     constructor(private prefs: WalletPrefsService,
-                private networkService: WalletNetworkService) {
+        private networkService: WalletNetworkService) {
         ERC20CoinService.instance = this;
 
         this.networkService.activeNetwork.subscribe(activeNetwork => {
-          if (activeNetwork) {
-              this.web3 = null;
-
-              switch (activeNetwork.key) {
-                case 'elastos':
-                  this.rpcUrlType = ElastosApiUrlType.ETHSC_RPC;
-                break;
-                case 'heco':
-                  this.rpcUrlType = ElastosApiUrlType.HECO_RPC;
-                break;
-                default:
-                  Logger.warn('wallet', 'ERC20CoinService: Do not support:', activeNetwork);
-                break;
-              }
-          }
-      });
+            if (activeNetwork) {
+                this.web3 = null;
+            }
+        });
     }
 
     // Lazy web3 init for angular bundle optimization
@@ -74,7 +60,7 @@ export class ERC20CoinService {
         if (this.web3)
             return this.web3;
 
-        const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcUrlType);
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getMainEvmRpcApiUrl());
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI

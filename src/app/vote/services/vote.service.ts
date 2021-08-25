@@ -12,7 +12,7 @@ import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { PopupProvider } from 'src/app/services/global.popup.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 @Injectable({
     providedIn: 'root'

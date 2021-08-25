@@ -13,7 +13,7 @@ import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
-import { NetworkWallet } from './NetworkWallet';
+import { NetworkWallet } from './networkwallet';
 import { MainchainSubWallet } from './elastos/mainchain.subwallet';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 
@@ -66,8 +66,6 @@ export class MasterWallet {
     public async prepareAfterCreation(): Promise<void> {
         let extendedInfo = this.getExtendedWalletInfo();
         await this.populateWithExtendedInfo(extendedInfo);
-
-        runDelayed(() => this.updateERCTokenList(), 5000);
     }
 
     /**
@@ -102,58 +100,6 @@ export class MasterWallet {
 
         Logger.log("wallet", "Populated master wallet:", this);
     }
-
-    /**
-     * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
-     */
-    public async updateERCTokenList() {
-        /* TODO if (!this.subWallets[StandardCoinName.ETHSC]) {
-            Logger.log("wallet", 'updateERC20TokenList no ETHSC');
-            return;
-        }
-
-        const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ETHChainSubWallet).getERC20TokenList();
-        if (ercTokenList == null) return;
-
-        // For each ERC token discovered by the wallet SDK, we check its type and handle it.
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        ercTokenList.forEach(async (token: ERC20TokenInfo) => {
-            if (token.type === "ERC-20") {
-                if (token.symbol && token.name) {
-                    if (!this.subWallets[token.symbol] && !this.coinService.isCoinDeleted(token.contractAddress)) {
-                        try {
-                            // Check if we already know this token globally. If so, we add it as a new subwallet
-                            // to this master wallet. Otherwise we add the new token to the global list first then
-                            // add a subwallet as well.
-                            const erc20Coin = this.coinService.getERC20CoinByContracAddress(token.contractAddress);
-                            if (erc20Coin) {
-                                await this.createSubWallet(erc20Coin);
-                            } else {
-                                const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
-                                await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getWalletsList());
-                            }
-                        } catch (e) {
-                            Logger.log("wallet", 'updateERC20TokenList exception:', e);
-                        }
-                    }
-                } else {
-                    Logger.warn('wallet', 'Token has no name or symbol:', token);
-                }
-            }
-            else if (token.type === "ERC-721") {
-                if (!this.containsNFT(token.contractAddress)) {
-                    await this.createNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance));
-                }
-            }
-            else if (token.type === "ERC-1155") {
-                Logger.warn('wallet', 'ERC1155 NFTs not yet implemented', token);
-            }
-            else {
-                Logger.warn('wallet', 'Unhandled token type:', token);
-            }
-        }); */
-    }
-
 
     /**
      * Removes a subwallet (coin - ex: ela, idchain) from the given wallet.

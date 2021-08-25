@@ -7,7 +7,7 @@ import { MainchainSubWallet } from './elastos/mainchain.subwallet';
 import { IDChainSubWallet } from './elastos/idchain.subwallet';
 import { Logger } from 'src/app/logger';
 import { HECOChainSubWallet } from './heco/heco.subwallet';
-import { NetworkWallet } from './NetworkWallet';
+import { NetworkWallet } from './networkwallet';
 
 /**
  * Helper class to create and restore standard sub wallet objects.

@@ -29,6 +29,7 @@ import { WalletPrefsService } from './pref.service';
 import { NFTAsset } from '../model/nfts/nftasset';
 import { HttpClient } from '@angular/common/http';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { WalletNetworkService } from './network.service';
 
 export type ERC721ResolvedInfo = {
     /** Main NFT name, if set, or "" */
@@ -43,7 +44,12 @@ export class ERC721Service {
     private web3: Web3;
     private erc721ABI: any;
 
-    constructor(private prefs: WalletPrefsService, private http: HttpClient) {
+    constructor(private prefs: WalletPrefsService, private http: HttpClient, private networkService: WalletNetworkService) {
+        this.networkService.activeNetwork.subscribe(activeNetwork => {
+            if (activeNetwork) {
+                this.web3 = null;
+            }
+        });
     }
 
     // Lazy web3 init for angular bundle optimization
@@ -51,7 +57,7 @@ export class ERC721Service {
         if (this.web3)
             return this.web3;
 
-        const trinityWeb3Provider = new EssentialsWeb3Provider(ElastosApiUrlType.ETHSC_RPC);
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.networkService.activeNetwork.value.getMainEvmRpcApiUrl());
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
@@ -59,16 +65,16 @@ export class ERC721Service {
         return this.web3;
     }
 
-    public isAddress(address: string) {
+    /* public isAddress(address: string) {
         return this.getWeb3().utils.isAddress(address);
-    }
+    } */
 
-    public async isContractAddress(address: string) {
+    /* public async isContractAddress(address: string) {
         const contractCode = await this.getWeb3().eth.getCode(address);
         return contractCode === '0x' ? false : true;
-    }
+    } */
 
-    public async getCoinDecimals(address: string, ethAccountAddress: string) {
+    /* public async getCoinDecimals(address: string, ethAccountAddress: string) {
         let coinDecimals = 0;
         const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc721ABI, address, { from: ethAccountAddress });
         if (erc20Contract) {
@@ -76,7 +82,7 @@ export class ERC721Service {
             Logger.log('wallet', 'Coin decimals:', coinDecimals);
         }
         return coinDecimals;
-    }
+    } */
 
     public async getCoinInfo(address: string): Promise<ERC721ResolvedInfo> {
         try {

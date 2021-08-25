@@ -1,7 +1,7 @@
 import { Logger } from "src/app/logger";
 import { Coin, CoinType } from "../coin";
 import { ERC20SubWallet } from "./erc20.subwallet";
-import { NetworkWallet } from "./NetworkWallet";
+import { NetworkWallet } from "./networkwallet";
 import { StandardSubWalletBuilder } from "./standardsubwalletbuilder";
 import { SubWallet, SerializedSubWallet } from "./subwallet";
 

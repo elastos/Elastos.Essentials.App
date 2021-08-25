@@ -19,7 +19,7 @@ import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
-import { NetworkWallet } from '../../model/wallets/NetworkWallet';
+import { NetworkWallet } from '../../model/wallets/networkwallet';
 
 const BIPS_BASE = JSBI.BigInt(10000) // Fixed, don't touch
 const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than this (price changed a lot between 2 blocks), transaction will be cancelled

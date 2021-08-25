@@ -27,7 +27,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
 
     protected tokenList: ERC20TokenInfo[] = null;
 
-    constructor(protected networkWallet: NetworkWallet, id: StandardCoinName, protected rpcApiUrl: string) {
+    constructor(protected networkWallet: NetworkWallet, id: StandardCoinName, public rpcApiUrl: string) {
         super(networkWallet.masterWallet, id);
 
         void this.initialize();
@@ -285,23 +285,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
     }
 
     protected initWeb3() {
-        let urlType;
-        switch (this.id) {
-          case StandardCoinName.ETHDID:
-            urlType = ElastosApiUrlType.EID_RPC;
-            break;
-          case StandardCoinName.ETHSC:
-            urlType = ElastosApiUrlType.ETHSC_RPC;
-            break;
-          case StandardCoinName.ETHHECO:
-            urlType = ElastosApiUrlType.HECO_RPC;
-            break;
-          default:
-            Logger.warn('wallet', 'StandardEVMSubWallet: Do not support ', this.id)
-            break;
-        }
-
-        const trinityWeb3Provider = new EssentialsWeb3Provider(urlType);
+        const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
         this.web3 = new Web3(trinityWeb3Provider);
     }
 
@@ -330,12 +314,6 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
           this.balance = balance;
           await this.saveBalanceToCache();
         }
-    }
-
-    public async getERC20TokenList(): Promise<ERC20TokenInfo[]> {
-        const address = await this.getTokenAddress();
-        this.tokenList = await GlobalEthereumRPCService.instance.getERC20TokenList(this.rpcApiUrl, address);
-        return this.tokenList;
     }
 
     /**

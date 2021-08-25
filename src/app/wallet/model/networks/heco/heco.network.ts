@@ -1,10 +1,11 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { CoinID, ERC20Coin } from "../../coin";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
+import { HecoAPI, HecoApiType } from "../../wallets/heco/heco.api";
 import { HecoERC20SubWallet } from "../../wallets/heco/heco.erc20.subwallet";
 import { HecoNetworkWallet } from "../../wallets/heco/heco.networkwallet";
 import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/NetworkWallet";
+import { NetworkWallet } from "../../wallets/networkwallet";
 import { Network } from "../network";
 
 export class HECONetwork extends Network {
@@ -32,5 +33,9 @@ export class HECONetwork extends Network {
 
   public createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet {
     return new HecoERC20SubWallet(networkWallet, coinID);
+  }
+
+  public getMainEvmRpcApiUrl(): string {
+    return HecoAPI.getApiUrl(HecoApiType.RPC);
   }
 }

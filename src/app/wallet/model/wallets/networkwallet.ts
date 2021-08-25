@@ -12,6 +12,10 @@ import { ERC20TokenInfo } from '../evm.types';
 import { SubWalletBuilder } from './subwalletbuilder';
 import { LocalStorage } from '../../services/storage.service';
 import { Network } from '../networks/network';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { StandardEVMSubWallet } from './evm.subwallet';
 
 export class ExtendedNetworkWalletInfo {
     subWallets: SerializedSubWallet[] = [];
@@ -40,6 +44,8 @@ export abstract class NetworkWallet {
     public async initialize(): Promise<void> {
         await this.prepareStandardSubWallets();
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, this.network.key));
+
+        runDelayed(() => this.updateERCTokenList(), 5000);
     }
 
     public getDisplayBalance(): BigNumber {
@@ -81,7 +87,7 @@ export abstract class NetworkWallet {
     /**
      * Returns the list of all subwallets except the excluded one.
      */
-    public subWalletsWithExcludedCoin(excludedCoinName: StandardCoinName, type: CoinType = null): SubWallet[] {
+    public subWalletsWithExcludedCoin(excludedCoinName: CoinID, type: CoinType = null): SubWallet[] {
         // Hide the id chain, do not use the id chain any more.
         return Object.values(this.subWallets).filter((sw)=>{
             return (sw.id !== excludedCoinName) && (sw.id !== StandardCoinName.IDChain) && (type !== null ? sw.type === type : true);
@@ -93,6 +99,12 @@ export abstract class NetworkWallet {
      * not yet created, and push instances of those subwallets so we can store them.
      */
     protected abstract prepareStandardSubWallets(): Promise<void>;
+
+    /**
+     * Returns the main subwallet inside this network wallet, responsible for refreshing the list of
+     * ERC20 tokens, NFTs, etc. For elastos, this is the ESC sidechain (no EID support for now).
+     */
+    protected abstract getMainEvmSubWallet(): StandardEVMSubWallet;
 
     /**
      * Adds a new subwallet to this network wallet, based on a given coin type.
@@ -142,16 +154,21 @@ export abstract class NetworkWallet {
     }
 
     /**
+     * Discovers and returns a list of ERC tokens bound to this wallet address
+     */
+    public abstract getERCTokensList(): Promise<ERC20TokenInfo[]>;
+
+    /**
      * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
      */
-    public async updateERCTokenList(activeNetworkTemplate: string) {
-        if (!this.subWallets[StandardCoinName.ETHSC]) {
-            Logger.log("wallet", 'updateERC20TokenList no ETHSC');
-            return;
-        }
+    public async updateERCTokenList() {
+        Logger.log("wallet", "Updating ERC tokens list for network wallet", this);
+        let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
 
-        const ercTokenList = await (this.subWallets[StandardCoinName.ETHSC] as ElastosEVMSubWallet).getERC20TokenList();
-        if (ercTokenList == null) return;
+        const ercTokenList = await this.getERCTokensList();
+        Logger.log("wallet", "Received ERC tokens list:", ercTokenList);
+        if (ercTokenList == null)
+            return;
 
         // For each ERC token discovered by the wallet SDK, we check its type and handle it.
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -222,7 +239,7 @@ export abstract class NetworkWallet {
      * Retrieves latest information about assets on chain and update the local cache and model.
      */
     public async refreshNFTAssets(nft: NFT): Promise<void> {
-        let accountAddress = await this.getSubWallet(StandardCoinName.ETHSC).createAddress();
+        let accountAddress = await this.getMainEvmSubWallet().createAddress();
         if (nft.type == NFTType.ERC721) {
             let assets = await this.masterWallet.erc721Service.fetchAllAssets(accountAddress, nft.contractAddress);
             console.log("ASSETS", assets);

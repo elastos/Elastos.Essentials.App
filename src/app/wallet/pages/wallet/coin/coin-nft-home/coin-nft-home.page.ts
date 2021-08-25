@@ -47,7 +47,7 @@ import { Events } from 'src/app/services/events.service';
 import { NFT, NFTType } from 'src/app/wallet/model/nfts/nft';
 import { ERC721Service } from 'src/app/wallet/services/erc721.service';
 import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 @Component({
     selector: 'app-coin-nft-home',

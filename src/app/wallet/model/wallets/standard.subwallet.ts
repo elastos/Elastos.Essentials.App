@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
 import { Logger } from 'src/app/logger';
-import { NetworkWallet } from './NetworkWallet';
+import { NetworkWallet } from './networkwallet';
 
 export abstract class StandardSubWallet extends SubWallet {
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {

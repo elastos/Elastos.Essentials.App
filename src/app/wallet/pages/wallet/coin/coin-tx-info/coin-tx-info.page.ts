@@ -16,7 +16,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { EthTransaction } from 'src/app/wallet/model/evm.types';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
