@@ -1,6 +1,8 @@
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { ERC20Coin } from "../../coin";
+import { CoinID, ERC20Coin } from "../../coin";
+import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
 import { ElastosNetworkWallet } from "../../wallets/elastos/elastos.networkwallet";
+import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
 import { MasterWallet } from "../../wallets/masterwallet";
 import { NetworkWallet } from "../../wallets/NetworkWallet";
 import { Network } from "../network";
@@ -29,5 +31,9 @@ export class ElastosNetwork extends Network {
 
   public createNetworkWallet(masterWallet: MasterWallet): NetworkWallet {
     return new ElastosNetworkWallet(masterWallet, this);
+  }
+
+  public createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet {
+    return new ElastosERC20SubWallet(networkWallet, coinID);
   }
 }

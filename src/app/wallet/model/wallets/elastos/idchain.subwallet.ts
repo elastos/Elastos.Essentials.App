@@ -30,6 +30,14 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         }, 200);
     }
 
+    public getMainIcon(): string {
+        throw new Error('Method not implemented.');
+    }
+    
+    public getSecondaryIcon(): string {
+        throw new Error('Method not implemented.');
+    }
+
     public getFriendlyName(): string {
         return "Identity 1.0 Chain";
     }
