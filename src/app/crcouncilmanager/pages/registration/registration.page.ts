@@ -12,7 +12,6 @@ import { AuthService } from 'src/app/wallet/services/auth.service';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { WalletJsonRPCService } from 'src/app/wallet/services/jsonrpc.service';
 import { Utxo, UtxoType } from 'src/app/wallet/model/transaction.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -76,7 +75,6 @@ export class CRCouncilRegistrationPage implements OnInit {
         private authService: AuthService,
         public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
-        public walletRPCService: WalletJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService,
     ) {
 

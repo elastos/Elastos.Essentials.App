@@ -30,7 +30,6 @@ import { CoinID, StandardCoinName } from '../model/coin';
 import { WalletAccountType, WalletAccount } from '../model/walletaccount';
 import { SerializedSubWallet } from '../model/wallets/subwallet';
 import { CoinService } from './coin.service';
-import { WalletJsonRPCService } from './jsonrpc.service';
 import { PopupProvider } from './popup.service';
 import { Native } from './native.service';
 import { LocalStorage } from './storage.service';
@@ -129,7 +128,6 @@ export class WalletService {
         private erc721Service: ERC721Service,
         private authService: AuthService,
         public popupProvider: PopupProvider,
-        public jsonRPCService: WalletJsonRPCService,
         private prefs: GlobalPreferencesService,
         private networkService: WalletNetworkService,
         private globalNetworksService: GlobalNetworksService,
