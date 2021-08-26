@@ -49,7 +49,7 @@ export class HECOChainSubWallet extends StandardEVMSubWallet {
   }
 
   protected async getTransactionsByRpc() {
-    Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
+    Logger.log('wallet', 'getTransactionByRPC (Heco):', this.masterWallet.id, ' ', this.id)
     const address = await this.getTokenAddress();
     let result = await this.getHECOTransactions(this.id as StandardCoinName, address);
     if (result) {

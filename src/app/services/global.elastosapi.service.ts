@@ -468,8 +468,7 @@ export class GlobalElastosAPIService extends GlobalService {
                 apiUrlType = ElastosApiUrlType.ETHSC_BROWSER;
                 break;
             default:
-                Logger.log("wallet", 'Elastos API: Browser api can not support ' + elastosChainCode);
-                break;
+                throw new Error('Elastos API: Browser api can not support ' + elastosChainCode);
         }
         return apiUrlType;
       }

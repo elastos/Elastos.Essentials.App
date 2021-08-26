@@ -30,7 +30,7 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
   }
 
   protected async getTransactionsByRpc() {
-    Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
+    Logger.log('wallet', 'getTransactionByRPC (elastos erc20):', this.masterWallet.id, ' ', this.id)
     const contractAddress = this.coin.getContractAddress().toLowerCase();
     const tokenAccountAddress = await this.getTokenAccountAddress();
     let result = await GlobalElastosAPIService.instance.getERC20TokenTransactions(
