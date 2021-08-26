@@ -44,7 +44,6 @@ import { WalletConfig } from '../model/wallet.config';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { WalletNetworkService } from './network.service';
 import { NetworkWallet } from '../model/wallets/networkwallet';
-import { ElastosNetworkWallet } from '../model/wallets/elastos/elastos.networkwallet';
 
 
 class SubwalletTransactionStatus {
@@ -492,52 +491,5 @@ export class WalletService {
         transfer.payPassword = payPassword;
 
         return payPassword;
-    }
-
-    /**
-     * Creates a wallet that uses the same mnemonic as the DID.
-     * Usually this method should be called only once per new DID created, so the newly created
-     * user also has a default wallet.
-     */
-    public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
-        Logger.log("wallet", "Creating wallet from new identity");
-        let masterWalletId = Util.uuid(6, 16);
-        const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
-        if (payPassword) {
-          try {
-            // First create multi address wallet.
-            await this.importWalletWithMnemonic(
-              masterWalletId,
-              walletName,
-              mnemonic,
-              mnemonicPassphrase || "",
-              payPassword,
-              false
-            );
-
-            // Get the elastos network wallet instance to know if this wallet is single or multi address, as
-            // we want to return this information.
-            let elastosNetworkWallet = new ElastosNetworkWallet(this.masterWallets[masterWalletId], this.networkService.getNetworkByKey("elastos"));
-            if (await elastosNetworkWallet.multipleAddressesInUse()) {
-                Logger.log('wallet', 'Multi address wallet!')
-                return;
-            }
-
-            Logger.log('wallet', 'Single address wallet!')
-            // Not multi address wallet, delete multi address wallet and create a single address wallet.
-            await this.destroyMasterWallet(masterWalletId, false);
-            await this.importWalletWithMnemonic(
-              masterWalletId,
-              walletName,
-              mnemonic,
-              mnemonicPassphrase || "",
-              payPassword,
-              true
-            );
-          }
-          catch (err) {
-            Logger.error('wallet', 'Wallet import error:', err);
-          }
-        }
     }
 }

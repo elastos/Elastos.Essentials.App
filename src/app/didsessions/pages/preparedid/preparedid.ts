@@ -14,6 +14,7 @@ import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { WalletCreationService } from 'src/app/wallet/services/walletcreation.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -73,7 +74,7 @@ export class PrepareDIDPage {
     public translate: TranslateService,
     private identityService: IdentityService,
     private platform: Platform,
-    private walletService: WalletService,
+    private walletCreationService: WalletCreationService,
     private native: GlobalNativeService,
     private globalHiveService: GlobalHiveService,
     private globalPublicationService: GlobalPublicationService,
@@ -377,7 +378,7 @@ export class PrepareDIDPage {
     Logger.log("didsessions", "Creating a default wallet with the same mnemonic as the identity");
     await Promise.all([
       sleep(MIN_SLIDE_SHOW_DURATION_MS),
-      this.walletService.createWalletFromNewIdentity(
+      this.walletCreationService.createWalletFromNewIdentity(
         this.identityService.identityBeingCreated.name, this.identityService.identityBeingCreated.mnemonic,
         this.identityService.identityBeingCreated.mnemonicPassphrase
       )
