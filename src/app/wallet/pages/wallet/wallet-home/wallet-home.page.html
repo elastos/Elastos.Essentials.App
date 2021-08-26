@@ -147,7 +147,7 @@
                 </ion-col>
             </ion-row>
             <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let subWallet of networkWallet.getSubWallets()"
+                *ngFor="let subWallet of getDisplayableSubWallets()"
                 (click)="goCoinHome(networkWallet.id, subWallet.id)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">

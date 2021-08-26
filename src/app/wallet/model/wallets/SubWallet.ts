@@ -225,6 +225,15 @@ export abstract class SubWallet {
     public abstract getTransactions(startIndex: number): Promise<AllTransactionsHistory>;
 
     /**
+     * Method called by the wallet home screen to known if the subwallet should appear in the list or not.
+     * In most cases, this method returns true because we want to show the subwallet. But some cases such
+     * as the old elastos ID chain wallet are hidden by overriding this method.
+     */
+    public shouldShowOnHomeScreen(): boolean {
+      return true;
+    }
+
+    /**
      * Based on a raw transaction object (from the SPV SDK or API), returns a higher level
      * transaction info object ready to use on UI.
      *
