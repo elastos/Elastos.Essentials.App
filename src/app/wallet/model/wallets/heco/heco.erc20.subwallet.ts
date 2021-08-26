@@ -37,7 +37,8 @@ export class HecoERC20SubWallet extends ERC20SubWallet {
         return tx.to === contractAddress || tx.contractAddress === contractAddress
       })
       this.transactions = {totalcount:allTx.length, txhistory:allTx.reverse()};
-      // TODO:Parse the input data.
+
+      this.parseTransactions();
 
       await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
     }
@@ -54,6 +55,29 @@ export class HecoERC20SubWallet extends ERC20SubWallet {
       return result.result as EthTransaction[];
     } catch (e) {
       Logger.error('wallet', 'getHECOTransactions error:', e)
+    }
+    return null;
+  }
+
+  private parseTransactions() {
+    for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
+      const ret = this.parseTransferInput((this.transactions.txhistory[i] as EthTransaction).input);
+      if (ret) {
+        (this.transactions.txhistory[i] as EthTransaction).to = ret[0];
+        this.transactions.txhistory[i].value = ret[1];
+      }
+    }
+  }
+
+
+  // TODO: parse more data, not only transfer
+  // As a utility?
+  private parseTransferInput(input: string) {
+    if (input.startsWith(this.transaferSignature)) {
+      let data = '0x' + input.replace(this.transaferSignature, '');
+      let types = ['address', 'uint256'];
+      let result = this.web3.eth.abi.decodeParameters(types, data);
+      return result;
     }
     return null;
   }

@@ -22,10 +22,11 @@ export abstract class ERC20SubWallet extends SubWallet {
     /** Coin related to this wallet */
     protected coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
-    private web3: Web3;
+    protected web3: Web3;
     private erc20ABI: any;
     private tokenDecimals: number;
     private tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
+    protected transaferSignature = ''
 
     private tokenAddress = '';
 
@@ -67,6 +68,9 @@ export abstract class ERC20SubWallet extends SubWallet {
 
         // Standard ERC20 contract ABI
         this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
+
+        // TODO: Can we set signature to abi?
+        this.transaferSignature = this.web3.eth.abi.encodeFunctionSignature('transfer(address,uint256)');
 
         // First retrieve the number of decimals used by this token. this is needed for a good display,
         // as we need to convert the balance integer using the number of decimals.
