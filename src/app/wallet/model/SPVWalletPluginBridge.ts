@@ -531,7 +531,7 @@ export class SPVWalletPluginBridge {
 
     createTransferGeneric(
         masterWalletId: string,
-        elastosChainCode: string,
+        chainCode: string, // ETHSC, ETHHECO, etc
         toAddress: string,
         amount: string,
         amountUnit: number,
@@ -545,7 +545,7 @@ export class SPVWalletPluginBridge {
              walletManager.createTransferGeneric(
                 [
                     masterWalletId,
-                    elastosChainCode,
+                    chainCode,
                     toAddress,
                     Util.getDecimalString(amount),
                     amountUnit,

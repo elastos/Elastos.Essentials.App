@@ -23,7 +23,7 @@ export class BscNetworkWallet extends NetworkWallet {
     return 'BNB';
   }
 
-  protected getMainEvmSubWallet(): StandardEVMSubWallet {
+  public getMainEvmSubWallet(): StandardEVMSubWallet {
     return this.mainTokenSubWallet;
   }
 

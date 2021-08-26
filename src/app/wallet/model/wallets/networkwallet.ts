@@ -103,7 +103,7 @@ export abstract class NetworkWallet {
      * Returns the main subwallet inside this network wallet, responsible for refreshing the list of
      * ERC20 tokens, NFTs, etc. For elastos, this is the ESC sidechain (no EID support for now).
      */
-    protected abstract getMainEvmSubWallet(): StandardEVMSubWallet;
+    public abstract getMainEvmSubWallet(): StandardEVMSubWallet;
 
     /**
      * Adds a new subwallet to this network wallet, based on a given coin type.

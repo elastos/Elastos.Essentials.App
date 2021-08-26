@@ -23,7 +23,7 @@ export class HecoNetworkWallet extends NetworkWallet {
     return 'HT';
   }
 
-  protected getMainEvmSubWallet(): StandardEVMSubWallet {
+  public getMainEvmSubWallet(): StandardEVMSubWallet {
     return this.mainTokenSubWallet;
   }
 

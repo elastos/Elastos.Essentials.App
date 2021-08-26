@@ -4,8 +4,6 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
-import { StandardCoinName } from '../wallet/model/Coin';
-import { ElastosEVMSubWallet } from '../wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from '../wallet/model/wallets/NetworkWallet';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
@@ -35,7 +33,6 @@ export class GlobalWalletConnectService extends GlobalService {
   private initiatingConnector: WalletConnect = null;
 
   private activeWalletSubscription: Subscription = null;
-  private activeNetworkSubscription: Subscription = null;
 
   private onGoingRequestSource: WalletConnectSessionRequestSource = null;
 
@@ -127,15 +124,13 @@ export class GlobalWalletConnectService extends GlobalService {
    * Returns the eth account address associated with the given master wallet.
    */
   private getAccountFromNetworkWallet(wallet: NetworkWallet): Promise<string> {
-    let subwallet = wallet.getSubWallet(StandardCoinName.ETHSC) as ElastosEVMSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
-    return subwallet.createAddress();
+    return wallet.getMainEvmSubWallet().createAddress();
   }
 
   public async onUserSignOut(): Promise<void> {
     await this.killAllSessions();
 
     this.activeWalletSubscription.unsubscribe();
-    this.activeNetworkSubscription.unsubscribe();
   }
 
   public getRequestSource(): WalletConnectSessionRequestSource {
