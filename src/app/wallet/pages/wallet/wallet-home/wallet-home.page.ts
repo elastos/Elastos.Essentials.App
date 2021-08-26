@@ -273,9 +273,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
         void this.storage.setVisit(true);
     }
 
-    public goNFTHome(masterWallet: MasterWallet, nft: NFT) {
+    public goNFTHome(networkWallet: NetworkWallet, nft: NFT) {
         this.native.go("/wallet/coin-nft-home", {
-            masterWalletId: masterWallet.id,
+            masterWalletId: networkWallet.masterWallet.id,
             contractAddress: nft.contractAddress
         });
     }
