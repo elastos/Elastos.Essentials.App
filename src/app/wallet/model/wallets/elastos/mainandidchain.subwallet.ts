@@ -2,7 +2,7 @@ import { StandardSubWallet } from '../standard.subwallet';
 import BigNumber from 'bignumber.js';
 import { AllTransactionsHistory, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../transaction.types';
 import { TranslateService } from '@ngx-translate/core';
-import { StandardCoinName } from '../../coin';
+import { StandardCoinName } from '../../Coin';
 import { MasterWallet } from '../masterwallet';
 import { Logger } from 'src/app/logger';
 import { Config } from '../../../config/Config';
@@ -10,10 +10,8 @@ import { Util } from '../../util';
 import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
 import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
 import moment from 'moment';
-import { NetworkWallet } from '../networkwallet';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { ElastosAPI } from './elastos.api';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
 
@@ -1082,7 +1080,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
 
                     if (txDetail.payload.genesisblockaddress === Config.ETHSC_DEPOSIT_ADDRESS) {
                         let result = await GlobalEthereumRPCService.instance.getETHSCTransactionByHash(
-                            GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC), 
+                            GlobalElastosAPIService.instance.getApiUrlForChainCode(StandardCoinName.ETHSC),
                             realtxid);
                         if (result && result.from) {
                             targetAddress = result.from;

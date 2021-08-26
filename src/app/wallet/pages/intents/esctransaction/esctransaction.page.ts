@@ -26,7 +26,7 @@ import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
-import { StandardCoinName } from '../../../model/coin';
+import { StandardCoinName } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from "bignumber.js";
 import { UiService } from '../../../services/ui.service';

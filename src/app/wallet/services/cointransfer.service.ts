@@ -21,8 +21,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { StandardCoinName } from '../model/coin';
-import { WalletAccount } from '../model/walletaccount';
+import { StandardCoinName } from '../model/Coin';
+import { WalletAccount } from '../model/WalletAccount';
 import { WalletID } from '../model/wallets/masterwallet';
 
 export class Transfer {

@@ -8,7 +8,7 @@ import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalLanguageService } from './global.language.service';
-import { StandardCoinName } from '../wallet/model/coin';
+import { StandardCoinName } from '../wallet/model/Coin';
 import { UtxoType } from '../wallet/model/transaction.types';
 import { ProducersSearchResponse } from '../dposvoting/model/nodes.model';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';

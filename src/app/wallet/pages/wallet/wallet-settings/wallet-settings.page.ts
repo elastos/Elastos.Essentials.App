@@ -17,7 +17,7 @@ import { Logger } from 'src/app/logger';
 import { PopoverController } from '@ionic/angular';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { Events } from 'src/app/services/events.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 @Component({

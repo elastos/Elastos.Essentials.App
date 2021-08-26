@@ -1,6 +1,6 @@
 import { Native } from './native.service';
 import { Util } from '../model/util';
-import { StandardCoinName } from '../model/coin';
+import { StandardCoinName } from '../model/Coin';
 import { Injectable } from '@angular/core';
 import { CoinService } from './coin.service';
 import { CoinTransferService, TransferType } from './cointransfer.service';

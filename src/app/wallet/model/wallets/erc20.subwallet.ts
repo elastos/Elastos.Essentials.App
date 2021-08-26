@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 
 import { SubWallet, SerializedSubWallet } from './subwallet';
-import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../coin';
+import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../Coin';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';

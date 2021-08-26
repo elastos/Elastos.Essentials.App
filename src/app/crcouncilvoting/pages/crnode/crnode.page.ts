@@ -4,7 +4,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import BigNumber from 'bignumber.js';

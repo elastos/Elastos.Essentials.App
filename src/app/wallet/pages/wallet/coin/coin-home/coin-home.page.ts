@@ -30,7 +30,7 @@ import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../../model/coin';
+import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { SubWallet } from '../../../../model/wallets/subwallet';
 import { TransactionInfo } from '../../../../model/transaction.types';
 import * as moment from 'moment';

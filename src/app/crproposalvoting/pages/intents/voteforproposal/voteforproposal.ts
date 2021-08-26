@@ -6,7 +6,7 @@ import { Logger } from 'src/app/logger';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
+import { WalletAccountType } from 'src/app/wallet/model/WalletAccount';
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';

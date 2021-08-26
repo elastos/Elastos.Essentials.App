@@ -4,7 +4,7 @@ import { LocalStorage } from '../../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ERC20Coin } from '../../../../model/coin';
+import { ERC20Coin } from '../../../../model/Coin';
 import { PopupProvider } from '../../../../services/popup.service';
 import { CoinService } from '../../../../services/coin.service';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';

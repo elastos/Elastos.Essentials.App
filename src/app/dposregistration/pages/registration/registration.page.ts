@@ -5,7 +5,7 @@ import { TitleBarForegroundMode, TitleBarIconSlot } from 'src/app/components/tit
 import { Logger } from 'src/app/logger';
 import { areaList } from 'src/app/model/area.list';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { AuthService } from 'src/app/wallet/services/auth.service';

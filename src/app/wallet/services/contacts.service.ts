@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LocalStorage } from './storage.service';
 import { HttpClient } from '@angular/common/http';
 import * as CryptoAddressResolvers from '../model/address-resolvers';
-import { StandardCoinName } from '../model/coin';
+import { StandardCoinName } from '../model/Coin';
 import { Logger } from 'src/app/logger';
 
 export type Contact = {

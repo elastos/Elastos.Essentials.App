@@ -10,7 +10,7 @@ import { ERC20SubWallet } from './erc20.subwallet';
 import { CoinService } from 'src/app/wallet/services/coin.service';
 import { NetworkWallet } from './networkwallet';
 import { StandardSubWallet } from './standard.subwallet';
-import { StandardCoinName } from '../coin';
+import { StandardCoinName } from '../Coin';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, SignedETHSCTransaction } from '../evm.types';
 import { AllTransactionsHistory, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType } from '../transaction.types';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';

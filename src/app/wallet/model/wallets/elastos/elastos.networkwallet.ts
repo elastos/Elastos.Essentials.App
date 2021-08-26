@@ -1,7 +1,6 @@
-import { StandardCoinName } from "../../coin";
+import { StandardCoinName } from "../../Coin";
 import { MasterWallet } from "../masterwallet";
 import { NetworkWallet } from "../networkwallet";
-import { SerializedSubWallet, SubWallet } from "../subwallet";
 import { MainchainSubWallet } from "./mainchain.subwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 import { Network } from "../../networks/network";
@@ -54,7 +53,7 @@ export class ElastosNetworkWallet extends NetworkWallet {
   public getDisplayTokenName(): string {
     return 'ELA';
   }
-  
+
   public async getERCTokensList(): Promise<ERC20TokenInfo[]> {
     let tokenSubWallet = this.getMainEvmSubWallet();
     const address = await tokenSubWallet.getTokenAddress();

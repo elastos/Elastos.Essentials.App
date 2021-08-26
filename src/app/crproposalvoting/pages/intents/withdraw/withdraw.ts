@@ -8,7 +8,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { Util } from 'src/app/model/util';
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
