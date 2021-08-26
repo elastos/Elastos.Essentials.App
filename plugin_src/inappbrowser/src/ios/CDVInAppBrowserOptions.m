@@ -46,7 +46,7 @@
         self.toolbartranslucent = YES;
         self.beforeload = @"";
 
-        self.darkMode = NO;
+        self.darkmode = NO;
         self.title = nil;
     }
 

@@ -45,7 +45,7 @@
 @property (nonatomic, assign) BOOL disallowoverscroll;
 @property (nonatomic, copy) NSString* beforeload;
 
-@property (nonatomic, assign) BOOL darkMode;
+@property (nonatomic, assign) BOOL darkmode;
 @property (nonatomic, copy) NSString* title;
 
 + (CDVInAppBrowserOptions*)parseOptions:(NSString*)options;

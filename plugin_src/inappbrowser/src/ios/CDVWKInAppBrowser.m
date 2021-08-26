@@ -848,7 +848,7 @@ BOOL isExiting = FALSE;
     [toolbar setViewController:self];
     self.txtUrl = toolbar.txtUrl;
     self.toolbar = toolbar;
-    [toolbar setDarkMode:_browserOptions.darkMode];
+    [toolbar setDarkMode:_browserOptions.darkmode];
     if (_browserOptions.title != nil) {
         [toolbar setTitle:_browserOptions.title];
     }

@@ -268,15 +268,6 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         activityHintTexts[.UPLOAD] = nil
         activityHintTexts[.OTHER] = nil
 
-        if darkModeUsed() {
-            _ = setBackgroundColor("#191a2f")
-            setForegroundMode(.LIGHT)
-        }
-        else {
-            _ = setBackgroundColor("#f8f8ff")
-            setForegroundMode(.DARK)
-        }
-
         setAnimationHintText(nil)
 
         txtUrl.delegate = self;
@@ -537,6 +528,15 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         btnOuterRight.iconView.leftImageHeight = 20
         btnOuterRight.iconView.spacingLeading = 10
 
+        if darkMode {
+            _ = setBackgroundColor("#191a2f")
+            setForegroundMode(.LIGHT)
+        }
+        else {
+            _ = setBackgroundColor("#f8f8ff")
+            setForegroundMode(.DARK)
+        }
+
         btnOuterLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_elastos_darkmode" : "ic_elastos");
         btnInnerLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_back_darkmode" : "ic_back");
         btnOuterRight.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_vertical_menu_darkmode" : "ic_vertical_menu");
@@ -711,14 +711,14 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
     }
 
     private func handleOuterRightClicked() {
-        if (!emptyMenuItems()) {
-            // Title bar has menu items, so we open the menu
-            toggleMenu()
-        }
-        else {
-            // No menu items: this is a custom icon
-            handleIconClicked(icon: outerRightIcon!)
-        }
+//        if (!emptyMenuItems()) {
+//            // Title bar has menu items, so we open the menu
+//            toggleMenu()
+//        }
+//        else {
+//            // No menu items: this is a custom icon
+//            handleIconClicked(icon: outerRightIcon!)
+//        }
     }
 
     private func emptyMenuItems() -> Bool {
