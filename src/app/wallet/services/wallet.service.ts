@@ -156,11 +156,15 @@ export class WalletService {
         Logger.log('wallet', "Initializing wallets");
 
         try {
+            this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
+
+            // Update the SPV SDK with the right network configuration
+            await this.prepareSPVNetworkConfiguration();
+            console.log("AFTER PREPARE");
+
             let signedInEntry = await this.didSessions.getSignedInIdentity();
             let rootPath = signedInEntry.didStoragePath;
             await this.spvBridge.init(rootPath);
-
-            this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
 
             Logger.log('wallet', "Getting all master wallets from the SPV SDK");
             const idList = await this.spvBridge.getAllMasterWallets();
@@ -224,12 +228,9 @@ export class WalletService {
             if (masterWallet.id === this.activeMasterWalletId)
                 this.activeNetworkWallet.next(networkWallet);
         }
-
-        // Update the SPV SDK with the right network configuration
-        await this.updateSPVNetworkConfiguration();
     }
 
-    private async updateSPVNetworkConfiguration(): Promise<void> {
+    private async prepareSPVNetworkConfiguration(): Promise<void> {
         let spvsdkNetwork = this.networkTemplate;
 
         if (this.networkTemplate === "LRW") {

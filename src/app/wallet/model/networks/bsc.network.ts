@@ -1,4 +1,4 @@
-import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
 import { CoinID, ERC20Coin } from "../Coin";
 import { BscAPI, BscApiType } from "../wallets/bsc/bsc.api";
@@ -44,14 +44,18 @@ export class BSCNetwork extends Network {
     return 'BNB';
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {
-    switch (networkTemplate) {
-      case (MAINNET_TEMPLATE):
-        onGoingConfig['ETHHECO'] = {ChainID: 56, NetworkID: 56};
-        return;
-      case (TESTNET_TEMPLATE):
-        onGoingConfig['ETHHECO'] = {ChainID: 97, NetworkID: 97};
-        return;
+  public getMainChainID(networkTemplate?: string): number {
+    let usedNetworkTemplate = networkTemplate ?? GlobalNetworksService.instance.activeNetworkTemplate.value;
+    switch (usedNetworkTemplate) {
+      case (MAINNET_TEMPLATE): return 56;
+      case (TESTNET_TEMPLATE): return 97;
     }
+  }
+
+  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {
+    onGoingConfig['ETHBSC'] = {
+      ChainID: this.getMainChainID(networkTemplate),
+      NetworkID: this.getMainChainID(networkTemplate)
+    };
   }
 }
