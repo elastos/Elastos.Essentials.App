@@ -1,6 +1,6 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { CoinID, ERC20Coin, StandardCoin, StandardCoinName } from "../../coin";
+import { CoinID, ERC20Coin, StandardCoinName } from "../../Coin";
 import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
 import { ElastosNetworkWallet } from "../../wallets/elastos/elastos.networkwallet";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
@@ -40,5 +40,9 @@ export class ElastosNetwork extends Network {
 
   public getMainEvmRpcApiUrl(): string {
     return GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHSC);
+  }
+
+  public getMainTokenSymbol(): string {
+    return 'ELA';
   }
 }

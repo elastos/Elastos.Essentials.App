@@ -26,7 +26,6 @@ import { ERC20Coin } from '../model/Coin';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import { WalletPrefsService } from './pref.service';
-import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 import { WalletNetworkService } from './network.service';
 
 @Injectable({
