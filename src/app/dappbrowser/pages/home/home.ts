@@ -56,7 +56,13 @@ export class HomePage implements InAppBrowserClient {
             title: 'CreDa',
             description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
             url: 'https://beta.creda.app/'
-        }
+        },
+        {
+            icon: '/assets/browser/dapps/cryptoname.png',
+            title: 'Cryptoname',
+            description: 'CryptoName is your passport to the crypto world',
+            url: 'https://cryptoname.org/'
+        },
     ];
 
     public iabRunning: boolean = false;
