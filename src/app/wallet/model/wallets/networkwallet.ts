@@ -107,7 +107,7 @@ export abstract class NetworkWallet {
     /**
      * Adds a new subwallet to this network wallet, based on a given coin type.
      */
-    public async createNonStandardSubWallet(coin: Coin) {
+    public async createNonStandardSubWallet(coin: Coin): Promise<void> {
         try {
           this.subWallets[coin.getID()] = await SubWalletBuilder.newFromCoin(this, coin);
 
@@ -122,8 +122,12 @@ export abstract class NetworkWallet {
         }
     }
 
-    public removeNonStandardSubWallet(coin: Coin) {
-        console.log("TODO - removeNonStandardSubWallet not implemented");
+    public async removeNonStandardSubWallet(coin: Coin): Promise<void> {
+        Logger.log("wallet", "Removing subwallet with id "+coin.getID()+" from wallet "+this.id);
+
+        delete this.subWallets[coin.getID()];
+
+        await this.save();
     }
 
     /**
