@@ -38,7 +38,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { ERC721Service } from './erc721.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Util } from '../model/util';
 import { WalletConfig } from '../model/wallet.config';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
@@ -71,11 +71,6 @@ export enum WalletStateOperation {
     // Wallet just became active (selected as the active wallet by the user)
     BECAME_ACTIVE
 }
-// TODO: replace this with activeMasterWallet?
-export type WalletStateChange = {
-    wallet: MasterWallet;
-    operation: WalletStateOperation;
-}
 
 @Injectable({
     providedIn: 'root'
@@ -102,10 +97,8 @@ export class WalletService {
 
     private networkTemplate: string;
 
-    public activeMasterWallet = new BehaviorSubject<MasterWallet>(null);
     public activeNetworkWallet = new BehaviorSubject<NetworkWallet>(null);
     public walletServiceStatus = new BehaviorSubject<boolean>(false); // Whether the initial initialization is completed or not
-    public walletStateChanges = new Subject<WalletStateChange>(); // Whenever a master wallet becomes created, deleted or active
 
     public subwalletTransactionStatus = new SubwalletTransactionStatus();
 
@@ -217,7 +210,6 @@ export class WalletService {
 
             this.activeMasterWalletId = await this.getCurrentMasterIdFromStorage();
             Logger.log('wallet', 'active master wallet id:', this.activeMasterWalletId)
-            this.activeMasterWallet.next(this.activeMasterWalletId);
 
             return Object.values(this.masterWallets).length > 0;
         } catch (error) {
@@ -267,7 +259,6 @@ export class WalletService {
       if (masterId && (this.masterWallets[masterId])) {
           this.activeMasterWalletId = masterId;
           await this.localStorage.saveCurMasterId(this.networkTemplate, { masterId: masterId });
-          this.activeMasterWallet.next(this.activeMasterWalletId);
       }
     }
 
@@ -414,21 +405,16 @@ export class WalletService {
         // Get some basic information ready in our model.
         await this.masterWallets[id].populateWithExtendedInfo(null);
 
-       /* TODO
-        await this.masterWallets[id].createSubWallet(this.coinService.getCoinByID(StandardCoinName.ETHHECO));
- */
         // Save state to local storage
         await this.masterWallets[id].save();
 
-        await this.setActiveMasterWallet(id);
-
-        // TODO - NEED TO CHANGE THE ACTIVE NETWORK WALLET TOO SOMEWHERE await this.activeNetworkWallet.next(????)
-
-        // Notify listeners
-        this.walletStateChanges.next({
-            wallet: this.masterWallets[id],
-            operation: WalletStateOperation.CREATED
-        });
+        // Built networkWallet
+        let activeNetwork = this.networkService.activeNetwork.value;
+        let networkWallet = activeNetwork.createNetworkWallet(this.masterWallets[id]);
+        await networkWallet.initialize();
+        this.networkWallets[id] = networkWallet;
+        // Notify that this network wallet is the active one
+        await this.setActiveNetworkWallet(networkWallet);
     }
 
     /**
@@ -449,6 +435,9 @@ export class WalletService {
         // Destroy from our local model
         delete this.masterWallets[id];
 
+        // Delete the networkwallet
+        delete this.networkWallets[id];
+
         // When importing did, the default wallet will be created.
         // In this process, a multi address wallet will be created first,
         // If it is detected that this is a single address wallet, then the multi address wallet will be deleted.
@@ -456,17 +445,13 @@ export class WalletService {
         if (triggerEvent) {
           // Notify some listeners
           this.events.publish("masterwallet:destroyed", id);
-          this.walletStateChanges.next({
-              wallet: this.masterWallets[id],
-              operation: WalletStateOperation.DELETED
-          });
 
-          if (Object.values(this.masterWallets).length > 0) {
-              let walletList = this.getMasterWalletsList();
-              await this.setActiveMasterWallet(walletList[0].id);
+          if (Object.values(this.networkWallets).length > 0) {
+              let networkWalletList = this.getNetworkWalletsList();
+              await this.setActiveNetworkWallet(networkWalletList[0]);
               this.native.setRootRouter("/wallet/wallet-home");
           } else {
-              await this.setActiveMasterWallet(null);
+              this.activeNetworkWallet.next(null);
               this.goToLauncherScreen();
           }
         }

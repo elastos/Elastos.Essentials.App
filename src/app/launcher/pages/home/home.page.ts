@@ -38,7 +38,7 @@ export class HomePage implements OnInit {
   public identityNeedsBackup = false;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
-  private walletStateSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
+  private networkWalletSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
   private activeNetworkSub: Subscription = null; // Subscription to wallet service to know when the active network (elastos, heco, bsc, etc) changes
   private vaultStatusSub: Subscription = null; // Subscription to vault link status event
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
@@ -139,15 +139,8 @@ export class HomePage implements OnInit {
       }
     });
 
-    this.walletStateSub = this.walletService.walletStateChanges.subscribe(state => {
-      // If the wallet displayed on the widget is deleted, we update our screen
-      if (this.mainWallet && state.operation == WalletStateOperation.DELETED && state.wallet.id == this.mainWallet.id) {
+    this.networkWalletSub = this.walletService.activeNetworkWallet.subscribe(networkWallet => {
         this.updateWidgetMainWallet();
-      }
-      // Also re-enable the widget if we had no wallet and one just got created
-      else if (!this.mainWallet && state.operation == WalletStateOperation.CREATED) {
-        this.updateWidgetMainWallet();
-      }
     });
 
     this.activeNetworkSub = this.walletNetworkService.activeNetwork.subscribe(networkName => {
@@ -194,9 +187,9 @@ export class HomePage implements OnInit {
       this.walletServiceSub.unsubscribe();
       this.walletServiceSub = null;
     }
-    if (this.walletStateSub) {
-      this.walletStateSub.unsubscribe();
-      this.walletStateSub = null;
+    if (this.networkWalletSub) {
+      this.networkWalletSub.unsubscribe();
+      this.networkWalletSub = null;
     }
     if (this.activeNetworkSub) {
       this.activeNetworkSub.unsubscribe();
