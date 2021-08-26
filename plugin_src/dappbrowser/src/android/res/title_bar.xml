@@ -13,14 +13,14 @@
         android:paddingStart="5dp"
         android:paddingEnd="5dp">
 
-        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView
+        <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView
             android:id="@+id/btnOuterLeft"
             android:layout_width="40dp"
             android:layout_height="41dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="0" />
 
-        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView
+        <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView
             android:id="@+id/btnInnerLeft"
             android:layout_width="40dp"
             android:layout_height="41dp"
@@ -40,14 +40,14 @@
             android:inputType="textWebEditText"
             android:singleLine="true" />
 
-        <!--        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView-->
+        <!--        <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView-->
         <!--            android:id="@+id/btnInnerRight"-->
         <!--            android:layout_width="48dp"-->
         <!--            android:layout_height="match_parent"-->
         <!--            android:layout_gravity="center_vertical"-->
         <!--            android:layout_weight="0" />-->
 
-        <org.elastos.essentials.plugins.browsertoolbar.TitleBarIconView
+        <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView
             android:id="@+id/btnOuterRight"
             android:layout_width="40dp"
             android:layout_height="41dp"
