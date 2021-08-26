@@ -14,6 +14,7 @@ import { Network } from '../networks/network';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { StandardEVMSubWallet } from './evm.subwallet';
+import { WalletNetworkService } from '../../services/network.service';
 
 export class ExtendedNetworkWalletInfo {
     subWallets: SerializedSubWallet[] = [];
@@ -41,7 +42,7 @@ export abstract class NetworkWallet {
 
     public async initialize(): Promise<void> {
         await this.prepareStandardSubWallets();
-        await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, this.network.key));
+        await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
 
         runDelayed(() => this.updateERCTokenList(), 5000);
     }
@@ -257,7 +258,7 @@ export abstract class NetworkWallet {
         const extendedInfo = this.getExtendedWalletInfo();
         Logger.log('wallet', "Saving network wallet extended info", this, extendedInfo);
 
-        await LocalStorage.instance.setExtendedNetworkWalletInfo(this.id, this.network.key, extendedInfo);
+        await LocalStorage.instance.setExtendedNetworkWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key, extendedInfo);
     }
 
     public getExtendedWalletInfo(): ExtendedNetworkWalletInfo {

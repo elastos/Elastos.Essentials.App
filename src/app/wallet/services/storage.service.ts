@@ -90,12 +90,12 @@ export class LocalStorage {
     /**
      * Additional network wallet info, i.e. the list of visible ERC coins.
      */
-     public setExtendedNetworkWalletInfo(masterId: WalletID, networkName: string, extendedInfo: ExtendedNetworkWalletInfo): Promise<void> {
+     public setExtendedNetworkWalletInfo(masterId: WalletID, networkTemplate: string, networkName: string, extendedInfo: ExtendedNetworkWalletInfo): Promise<void> {
         let key = "extended-network-wallet-info-"+masterId+"-"+networkName;
         return this.set(key, JSON.stringify(extendedInfo));
     }
 
-    public async getExtendedNetworWalletInfo(masterId: WalletID, networkName: string): Promise<ExtendedNetworkWalletInfo> {
+    public async getExtendedNetworWalletInfo(masterId: WalletID, networkTemplate: string, networkName: string): Promise<ExtendedNetworkWalletInfo> {
         let key = "extended-network-wallet-info-"+masterId+"-"+networkName;
         return await this.get(key);
     }
