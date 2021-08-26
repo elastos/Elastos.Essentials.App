@@ -70,7 +70,7 @@ export class HECOChainSubWallet extends StandardEVMSubWallet {
   }
 
   private async getHECOTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
-    const rpcApiUrl = HecoAPI.getApiUrl(HecoApiType.RPC);
+    const rpcApiUrl = HecoAPI.getApiUrl(HecoApiType.ACCOUNT_RPC);
     if (rpcApiUrl === null) {
       return null;
     }
