@@ -221,7 +221,7 @@ export abstract class NetworkWallet {
           nft.setResolvedInfo(resolvedInfo);
           this.nfts.push(nft);
 
-          await this.masterWallet.save();
+          await this.save();
         }
     }
 

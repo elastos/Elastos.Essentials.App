@@ -19,8 +19,9 @@ export class ElastosNetworkWallet extends NetworkWallet {
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {
-    this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this.masterWallet);
     this.mainTokenSubWallet = new EscSubWallet(this);
+
+    this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this.masterWallet);
     this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
     this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
     this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
@@ -56,6 +57,9 @@ export class ElastosNetworkWallet extends NetworkWallet {
     return 'ELA';
   }
 
+  /**
+   * For now, the elastos network gets tokens only from the ESC chain, not from EID.
+   */
   public async getERCTokensList(): Promise<ERC20TokenInfo[]> {
     let tokenSubWallet = this.getMainEvmSubWallet();
     const address = await tokenSubWallet.getTokenAddress();
