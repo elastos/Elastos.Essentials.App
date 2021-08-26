@@ -6,7 +6,7 @@ import { Native } from '../../../../services/native.service';
 import { PopupProvider} from '../../../../services/popup.service';
 import { WalletService } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { Coin, CoinType, StandardCoinName } from '../../../../model/coin';
+import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
 import { CoinService } from '../../../../services/coin.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 import { Util } from '../../../../model/util';

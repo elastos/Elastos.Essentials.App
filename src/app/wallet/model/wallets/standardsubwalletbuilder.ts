@@ -1,5 +1,5 @@
 import { MasterWallet } from './masterwallet';
-import { Coin, StandardCoinName } from '../coin';
+import { Coin, StandardCoinName } from '../Coin';
 import { StandardSubWallet } from './standard.subwallet';
 import { SerializedSubWallet } from './subwallet';
 import { ElastosEVMSubWallet } from './elastos/elastos.evm.subwallet';

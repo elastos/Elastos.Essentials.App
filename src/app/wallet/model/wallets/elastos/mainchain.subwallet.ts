@@ -1,9 +1,8 @@
 import {  RawTransactionType, TransactionDirection, TransactionHistory } from '../../transaction.types';
 import { TranslateService } from '@ngx-translate/core';
-import { StandardCoinName } from '../../coin';
+import { StandardCoinName } from '../../Coin';
 import { MasterWallet } from '../masterwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
-import { NetworkWallet } from '../networkwallet';
 
 /**
  * Specialized standard sub wallet for ELA mainchain.
@@ -16,7 +15,7 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
     public getMainIcon(): string {
         return "assets/wallet/coins/ela-black.svg";
     }
-    
+
     public getSecondaryIcon(): string {
         return null;
     }

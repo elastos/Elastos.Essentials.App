@@ -1,8 +1,7 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
-import { GlobalEthereumRPCService } from "src/app/services/global.ethereum.service";
 import { GlobalLanguageService } from "src/app/services/global.language.service";
-import { CoinID, StandardCoinName } from "../../coin";
+import { CoinID, StandardCoinName } from "../../Coin";
 import { EthTransaction } from "../../evm.types";
 import { ERC20SubWallet } from "../erc20.subwallet";
 import { NetworkWallet } from "../networkwallet";
@@ -35,7 +34,7 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
     const contractAddress = this.coin.getContractAddress().toLowerCase();
     const tokenAccountAddress = await this.getTokenAccountAddress();
     let result = await GlobalElastosAPIService.instance.getERC20TokenTransactions(
-      StandardCoinName.ETHSC, 
+      StandardCoinName.ETHSC,
       tokenAccountAddress);
     // Logger.test('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id, ' result:', result)
     if (result) {

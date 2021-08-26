@@ -1,4 +1,4 @@
-import { WalletAccount, WalletAccountType } from '../walletaccount';
+import { WalletAccount, WalletAccountType } from '../WalletAccount';
 import { WalletService } from '../../services/wallet.service';
 import { CoinService } from '../../services/coin.service';
 import { Logger } from 'src/app/logger';

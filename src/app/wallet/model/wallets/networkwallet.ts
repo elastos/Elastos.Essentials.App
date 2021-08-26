@@ -1,10 +1,9 @@
 import { SubWallet, SerializedSubWallet  } from './subwallet';
 import { WalletService } from '../../services/wallet.service';
 import { StandardSubWallet } from './standard.subwallet';
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../coin';
+import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../Coin';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
-import { ElastosEVMSubWallet } from './elastos/elastos.evm.subwallet';
 import { Logger } from 'src/app/logger';
 import { NFT, NFTType } from '../nfts/nft';
 import { MasterWallet } from './masterwallet';
@@ -14,7 +13,6 @@ import { LocalStorage } from '../../services/storage.service';
 import { Network } from '../networks/network';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
-import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { StandardEVMSubWallet } from './evm.subwallet';
 
 export class ExtendedNetworkWalletInfo {

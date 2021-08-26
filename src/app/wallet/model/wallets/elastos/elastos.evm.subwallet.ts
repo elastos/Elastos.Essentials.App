@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { Config } from '../../../config/Config';
 import Web3 from 'web3';
 import { AllTransactionsHistory, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../../transaction.types';
-import { StandardCoinName } from '../../coin';
+import { StandardCoinName } from '../../Coin';
 import { MasterWallet } from '../masterwallet';
 import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../../model/essentialsweb3provider";
@@ -156,7 +156,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
     let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(
-      GlobalElastosAPIService.instance.getApiUrlForChainCode(this.id as StandardCoinName), 
+      GlobalElastosAPIService.instance.getApiUrlForChainCode(this.id as StandardCoinName),
       txid);
     if (!result) {
       // Remove error transaction.

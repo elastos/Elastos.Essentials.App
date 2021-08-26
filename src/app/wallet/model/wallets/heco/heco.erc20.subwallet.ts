@@ -1,4 +1,4 @@
-import { CoinID, StandardCoinName } from "../../coin";
+import { CoinID, StandardCoinName } from "../../Coin";
 import { ERC20SubWallet } from "../erc20.subwallet";
 import { NetworkWallet } from "../networkwallet";
 import { HecoAPI, HecoApiType } from "./heco.api";

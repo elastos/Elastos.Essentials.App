@@ -3,7 +3,7 @@ import { WalletService } from '../../services/wallet.service';
 import { Native } from '../../services/native.service';
 import Web3 from 'web3';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
-import { StandardCoinName } from '../../model/coin';
+import { StandardCoinName } from '../../model/Coin';
 import { MasterWallet } from '../../model/wallets/masterwallet';
 import { ChainId, Currency, CurrencyAmount, JSBI, Pair, Percent, Route, Router, Token, TokenAmount, Trade, WETH, ETHER, Fetcher, TradeType } from '@uniswap/sdk';
 import { TranslateService } from '@ngx-translate/core';

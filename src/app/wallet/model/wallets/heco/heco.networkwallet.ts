@@ -1,7 +1,7 @@
 import { MasterWallet } from "../masterwallet";
 import { NetworkWallet } from "../networkwallet";
 import { HECOChainSubWallet } from "./heco.subwallet";
-import { StandardCoinName } from "../../coin";
+import { StandardCoinName } from "../../Coin";
 import { Network } from "../../networks/network";
 import { StandardEVMSubWallet } from "../evm.subwallet";
 import { ERC20TokenInfo } from "../../evm.types";

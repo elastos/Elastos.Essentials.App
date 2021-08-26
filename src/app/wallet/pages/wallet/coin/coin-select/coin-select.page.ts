@@ -3,7 +3,7 @@ import { Native } from '../../../../services/native.service';
 import { ActivatedRoute } from '@angular/router';
 import { WalletService } from '../../../../services/wallet.service';
 import { SubWallet } from '../../../../model/wallets/subwallet';
-import { StandardCoinName, CoinType } from '../../../../model/coin';
+import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Util } from '../../../../model/util';
 import { Config } from '../../../../config/Config';

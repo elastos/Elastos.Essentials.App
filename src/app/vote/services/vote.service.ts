@@ -1,11 +1,10 @@
 import { Native } from '../../wallet/services/native.service';
-import { StandardCoinName } from '../../wallet/model/coin';
+import { StandardCoinName } from '../../wallet/model/Coin';
 import { Injectable } from '@angular/core';
 import { WalletService } from '../../wallet/services/wallet.service';
-import { MasterWallet } from '../../wallet/model/wallets/masterwallet';
 
 import { Logger } from 'src/app/logger';
-import { WalletAccount, WalletAccountType } from '../../wallet/model/walletaccount';
+import { WalletAccount, WalletAccountType } from '../../wallet/model/WalletAccount';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';

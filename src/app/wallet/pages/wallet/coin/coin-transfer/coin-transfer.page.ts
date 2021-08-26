@@ -29,7 +29,7 @@ import { Util } from '../../../../model/util';
 import { WalletService } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType, Transfer } from '../../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../../model/coin';
+import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { SubWallet } from '../../../../model/wallets/subwallet';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { HttpClient } from '@angular/common/http';

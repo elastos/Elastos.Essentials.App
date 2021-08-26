@@ -5,7 +5,7 @@ import { Native } from '../../../../services/native.service';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { StandardCoinName } from '../../../../model/coin';
+import { StandardCoinName } from '../../../../model/Coin';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';

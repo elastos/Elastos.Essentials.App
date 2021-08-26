@@ -11,7 +11,7 @@ import { Logger } from 'src/app/logger';
 import { SessionRequestParams } from 'src/app/model/walletconnect/types';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Coin, StandardCoinName } from 'src/app/wallet/model/coin';
+import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';

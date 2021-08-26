@@ -1,6 +1,6 @@
 import { MasterWallet } from './masterwallet';
 import { SubWallet } from './subwallet';
-import { CoinType, StandardCoinName } from '../coin';
+import { CoinType, StandardCoinName } from '../Coin';
 import { RawTransactionPublishResult, RawTransactionType, TransactionDirection, TransactionHistory } from '../transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import { Config } from '../../config/Config';
@@ -8,7 +8,6 @@ import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
 import { Logger } from 'src/app/logger';
-import { NetworkWallet } from './networkwallet';
 
 export abstract class StandardSubWallet extends SubWallet {
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {

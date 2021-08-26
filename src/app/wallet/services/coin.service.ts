@@ -21,8 +21,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Coin, CoinID, CoinType, ERC20Coin } from '../model/coin';
-import { StandardCoinName } from '../model/coin';
+import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../model/Coin';
 import { LocalStorage } from './storage.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
@@ -44,7 +43,8 @@ export class CoinService {
         private storage: LocalStorage,
         private events: Events,
         private networkService: WalletNetworkService,
-        private prefs: WalletPrefsService) {
+        private prefs: WalletPrefsService)
+    {
         CoinService.instance = this;
     }
 

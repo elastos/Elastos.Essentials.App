@@ -4,7 +4,7 @@ import { WalletService } from '../../../services/wallet.service';
 import { WalletAccessService } from '../../../services/walletaccess.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
-import { StandardCoinName } from '../../../model/coin';
+import { StandardCoinName } from '../../../model/Coin';
 import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { UiService } from '../../../services/ui.service';

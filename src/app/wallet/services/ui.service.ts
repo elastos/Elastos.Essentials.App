@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SubWallet } from '../model/wallets/subwallet';
-import { StandardCoinName } from '../model/coin';
+import { StandardCoinName } from '../model/Coin';
 import * as moment from 'moment';
 import BigNumber from 'bignumber.js';
 import { LocalStorage } from './storage.service';
