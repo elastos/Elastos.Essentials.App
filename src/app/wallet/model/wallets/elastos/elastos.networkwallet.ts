@@ -32,7 +32,7 @@ export class ElastosNetworkWallet extends NetworkWallet {
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
   }
 
-  protected getMainEvmSubWallet(): StandardEVMSubWallet {
+  public getMainEvmSubWallet(): StandardEVMSubWallet {
     return this.mainTokenSubWallet;
   }
 

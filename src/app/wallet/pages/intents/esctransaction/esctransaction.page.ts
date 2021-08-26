@@ -41,6 +41,7 @@ import { Subscription } from 'rxjs';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
+import { StandardEVMSubWallet } from 'src/app/wallet/model/wallets/evm.subwallet';
 
 @Component({
     selector: 'app-esctransaction',
@@ -51,13 +52,12 @@ export class EscTransactionPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private networkWallet: NetworkWallet = null;
-    private ethSidechainSubWallet: ElastosEVMSubWallet = null;
+    private evmSubWallet: StandardEVMSubWallet = null;
     private intentTransfer: IntentTransfer;
     private walletInfo = {};
     public balance: BigNumber; // ELA
     public gasPrice: string;
     public gasLimit: string;
-    public elastosChainCode: string; // ETHSC
     public hasOpenETHSCChain = false;
     public transactionInfo: ETHTransactionInfo;
 
@@ -102,16 +102,15 @@ export class EscTransactionPage implements OnInit {
     }
 
     async init() {
-        this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
-        this.ethSidechainSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode) as ElastosEVMSubWallet;
-        this.balance = await this.ethSidechainSubWallet.getDisplayBalance();
+        this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
+        this.balance = await this.evmSubWallet.getDisplayBalance();
         this.gasPrice = this.coinTransferService.payloadParam.gasPrice;
         if (!this.gasPrice) {
-          this.gasPrice = await this.ethSidechainSubWallet.getGasPrice();
+          this.gasPrice = await this.evmSubWallet.getGasPrice();
         }
 
         this.gasLimit = this.coinTransferService.payloadParam.gas || '200000';
@@ -222,11 +221,11 @@ export class EscTransactionPage implements OnInit {
     async createEscTransaction() {
         Logger.log('wallet', "Calling createEscTransaction(): ", this.coinTransferService.payloadParam);
 
-        let nonce = await this.ethSidechainSubWallet.getNonce();
+        let nonce = await this.evmSubWallet.getNonce();
         const rawTx =
         await this.walletManager.spvBridge.createTransferGeneric(
             this.networkWallet.id,
-            this.elastosChainCode,
+            this.evmSubWallet.id,
             this.coinTransferService.payloadParam.to,
             this.coinTransferService.payloadParam.value || "0",
             0, // WEI
@@ -243,7 +242,7 @@ export class EscTransactionPage implements OnInit {
           const transfer = new Transfer();
           Object.assign(transfer, {
               masterWalletId: this.networkWallet.id,
-              elastosChainCode: this.elastosChainCode,
+              elastosChainCode: this.evmSubWallet.id,
               rawTransaction: rawTx,
               payPassword: '',
               action: this.intentTransfer.action,
@@ -251,7 +250,7 @@ export class EscTransactionPage implements OnInit {
           });
 
           try {
-            await this.ethTransactionService.publishTransaction(this.ethSidechainSubWallet, rawTx, transfer, true)
+            await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer, true)
           }
           catch (err) {
             Logger.error('wallet', 'EscTransactionPage publishTransaction error:', err)

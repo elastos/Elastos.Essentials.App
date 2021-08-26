@@ -193,7 +193,6 @@ export class IntentService {
 
             case 'esctransaction':
                 this.nextScreen = '/wallet/intents/esctransaction';
-                this.coinTransferService.elastosChainCode = StandardCoinName.ETHSC;
                 this.coinTransferService.payloadParam = intent.params.payload.params[0];
                 // this.coinTransferService.amount = intent.params.amount;
 
