@@ -32,7 +32,6 @@ import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { Config } from '../../../config/Config';
 import { CoinType } from '../../../model/Coin';
 import { Util } from '../../../model/Util';
@@ -59,10 +58,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
-    private activeMasterWalletSubscription: Subscription = null;
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
-    private networkTemplate: string;
 
     // Helpers
     public Util = Util;
@@ -90,7 +87,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public currencyService: CurrencyService,
-        private prefs: WalletPrefsService,
         public theme: GlobalThemeService,
         public uiService: UiService,
         private storage: LocalStorage,
@@ -100,10 +96,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.showRefresher();
-        this.networkTemplate = this.prefs.getNetworkTemplate();
-        this.activeMasterWalletSubscription = this.walletManager.activeMasterWallet.subscribe(activeMasterWallet => {
-            this.masterWallet = activeMasterWallet;
-        });
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
           if (activeNetworkWallet) {
             this.networkWallet = activeNetworkWallet;
@@ -121,11 +113,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.activeMasterWalletSubscription) {
-            this.activeMasterWalletSubscription.unsubscribe();
-            this.activeMasterWalletSubscription = null;
-        }
-
         if (this.activeNetworkWalletSubscription) {
             this.activeNetworkWalletSubscription.unsubscribe();
             this.activeNetworkWalletSubscription = null;
