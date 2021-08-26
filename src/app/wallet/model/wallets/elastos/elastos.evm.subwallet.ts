@@ -30,23 +30,6 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     void this.initialize();
   }
 
-  protected async initialize() {
-    await super.initialize();
-
-    switch (this.id) {
-      case StandardCoinName.ETHSC:
-        this.withdrawContractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();
-        break;
-      case StandardCoinName.ETHDID:
-        this.withdrawContractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();
-        this.publishdidContractAddress = Config.ETHDID_CONTRACT_ADDRESS.toLowerCase();
-        break;
-      default:
-        Logger.warn('wallet', 'The ', this.id, ' does not set the contract address!');
-        break;
-    }
-  }
-
   public getMainIcon(): string {
     switch (this.id) {
       case StandardCoinName.IDChain:
@@ -114,7 +97,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   */
 
   protected async getTransactionsByRpc() {
-    Logger.log('wallet', 'getTransactionByRPC:', this.masterWallet.id, ' ', this.id)
+    Logger.log('wallet', 'getTransactionByRPC (elastos):', this.masterWallet.id, ' ', this.id)
     const address = await this.getTokenAddress();
     let result = await this.getETHSCTransactions(this.id as StandardCoinName, address);
     if (result) {
@@ -135,8 +118,9 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   }
 
   public async getETHSCTransactions(elastosChainCode: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
-    let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForMisc(elastosChainCode);
+    let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(elastosChainCode);
     const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
+    console.log("rpcApiUrl", rpcApiUrl);
     if (rpcApiUrl === null) {
         return null;
     }

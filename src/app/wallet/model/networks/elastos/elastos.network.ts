@@ -39,7 +39,7 @@ export class ElastosNetwork extends Network {
   }
 
   public getMainEvmRpcApiUrl(): string {
-    return GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHSC);
+    return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHSC));
   }
 
   public getMainTokenSymbol(): string {

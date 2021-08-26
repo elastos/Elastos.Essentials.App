@@ -8,6 +8,8 @@ import { IDChainSubWallet } from "./idchain.subwallet";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardEVMSubWallet } from "../evm.subwallet";
 import { ERC20TokenInfo } from "../../evm.types";
+import { EscSubWallet } from "./esc.subwallet";
+import { EidSubWallet } from "./eid.subwallet";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
@@ -18,10 +20,10 @@ export class ElastosNetworkWallet extends NetworkWallet {
 
   protected async prepareStandardSubWallets(): Promise<void> {
     this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this.masterWallet);
-    this.mainTokenSubWallet = new ElastosEVMSubWallet(this, StandardCoinName.ETHSC);
+    this.mainTokenSubWallet = new EscSubWallet(this);
     this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
     this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
-    this.subWallets[StandardCoinName.ETHDID] = new ElastosEVMSubWallet(this, StandardCoinName.ETHDID);
+    this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
 
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
