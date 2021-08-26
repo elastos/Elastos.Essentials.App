@@ -124,10 +124,10 @@ public class ToolBar extends FrameLayout {
         btnOuterRight.setPaddingDp(12);
 
         if (darkModeUsed()) {
-            setBackgroundColor("#191a2f");
+            setBackgroundColor("#FFFFFF");
             setForegroundMode(TitleBarForegroundMode.LIGHT);
         } else {
-            setBackgroundColor("#f8f8ff");
+            setBackgroundColor("#000000");
             setForegroundMode(TitleBarForegroundMode.DARK);
         }
 

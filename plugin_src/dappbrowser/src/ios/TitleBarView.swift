@@ -528,12 +528,12 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         btnOuterRight.iconView.leftImageHeight = 20
         btnOuterRight.iconView.spacingLeading = 10
 
-        if darkMode {
-            _ = setBackgroundColor("#191a2f")
+        if (darkMode) {
+            _ = setBackgroundColor("#FFFFFF")
             setForegroundMode(.LIGHT)
         }
         else {
-            _ = setBackgroundColor("#f8f8ff")
+            _ = setBackgroundColor("#000000")
             setForegroundMode(.DARK)
         }
 
