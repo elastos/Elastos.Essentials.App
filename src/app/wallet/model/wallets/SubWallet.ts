@@ -14,8 +14,6 @@ import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 export class SerializedSubWallet {
     public type: CoinType = null;
     public id: StandardCoinName = null;
-    public balance: string = null; // SELA or wei
-    public lastBlockTime: string = null;
 
     /**
      * Serialize only fields that we are willing to have in the serialized output.
@@ -26,8 +24,6 @@ export class SerializedSubWallet {
         const serializedSubWallet = new SerializedSubWallet();
         serializedSubWallet.type = subWallet.type;
         serializedSubWallet.id = subWallet.id as StandardCoinName;
-        // serializedSubWallet.balance = subWallet.balance.toString();
-        // serializedSubWallet.lastBlockTime = subWallet.lastBlockTime;
         return serializedSubWallet;
     }
 }
