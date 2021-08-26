@@ -16,7 +16,7 @@
        specific language governing permissions and limitations
        under the License.
 */
-package org.apache.cordova.inappbrowser;
+package org.elastos.essentials.plugins.dappbrowser;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -73,7 +73,6 @@ import org.apache.cordova.LOG;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
 import org.elastos.essentials.app.R;
-import org.elastos.essentials.plugins.browsertoolbar.ToolBar;
 import org.json.JSONException;
 import org.json.JSONObject;
 

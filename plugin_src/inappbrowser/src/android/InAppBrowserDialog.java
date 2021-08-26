@@ -16,7 +16,7 @@
        specific language governing permissions and limitations
        under the License.
 */
-package org.apache.cordova.inappbrowser;
+package org.elastos.essentials.plugins.dappbrowser;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,7 +25,6 @@ import android.webkit.WebView;
 import android.widget.EditText;
 
 import org.elastos.essentials.app.R;
-import org.elastos.essentials.plugins.browsertoolbar.ToolBar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
