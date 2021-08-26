@@ -1,12 +1,12 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { CoinID, ERC20Coin, StandardCoinName } from "../../Coin";
-import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
-import { ElastosNetworkWallet } from "../../wallets/elastos/elastos.networkwallet";
-import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
-import { MasterWallet } from "../../wallets/masterwallet";
-import { NetworkWallet } from "../../wallets/networkwallet";
-import { Network } from "../network";
+import { CoinID, ERC20Coin, StandardCoinName } from "../Coin";
+import { ElastosERC20SubWallet } from "../wallets/elastos/elastos.erc20.subwallet";
+import { ElastosNetworkWallet } from "../wallets/elastos/elastos.networkwallet";
+import { ERC20SubWallet } from "../wallets/erc20.subwallet";
+import { MasterWallet } from "../wallets/masterwallet";
+import { NetworkWallet } from "../wallets/networkwallet";
+import { Network } from "./network";
 
 export class ElastosNetwork extends Network {
   constructor() {
