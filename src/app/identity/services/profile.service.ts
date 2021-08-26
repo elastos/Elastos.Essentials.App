@@ -26,8 +26,7 @@ import { Avatar } from "src/app/contacts/models/avatar";
 import { CredentialAvatar } from "src/app/didsessions/model/did.model";
 import { CredentialDisplayEntry } from "../model/credentialdisplayentry.model";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-var deepEqual = require('deep-equal');
+import deepEqual from 'deep-equal';
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id

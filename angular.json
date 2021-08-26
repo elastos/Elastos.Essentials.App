@@ -69,7 +69,9 @@
               "@walletconnect/encoding",
               "@walletconnect/window-metadata",
               "@walletconnect/environment",
-              "query-string"
+              "query-string",
+              "js-sha3",
+              "deep-equal"
             ]
           },
           "configurations": {

@@ -37,7 +37,7 @@ export class ETHTransactionInfoParser {
    */
   public async computeInfo(): Promise<ETHTransactionInfo> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    let erc20ABI = require( "../../../assets/wallet/ethereum/StandardErc20ABI.json");
+    let erc20ABI = import( "../../../assets/wallet/ethereum/StandardErc20ABI.json");
     abiDecoder.addABI(erc20ABI);
 
     // Try to parse a ERC20 method from the data. Is the transaciton is not ERC20 or for any
