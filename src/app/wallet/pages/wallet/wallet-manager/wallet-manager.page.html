@@ -5,7 +5,7 @@
             {{ 'wallet.wallet-manager-intro' | translate }}
         </p>
         <ion-row
-            *ngFor="let masterWallet of walletManager.getWalletsList()"
+            *ngFor="let masterWallet of walletManager.getMasterWalletsList()"
             class="card-row ripple ion-activatable"
             [ngStyle]="
             {

@@ -25,7 +25,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Config } from '../../../config/Config';
 import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { TransferType, Transfer } from '../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../model/Coin';
 import { SubWallet } from '../../../model/wallets/subwallet';
@@ -77,15 +76,6 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
     public Config = Config;
     public CoinType = CoinType;
 
-    // Titlebar
-    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
-
-    // Modal
-    private modal: any = null;
-
-    private syncSubscription: Subscription = null;
-    private addressUpdateSubscription: Subscription = null;
-
     // Input
     public inputActive = false;
 
@@ -126,7 +116,6 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
 
     async init() {
         const navigation = this.router.getCurrentNavigation();
-        console.log("navigation", navigation, this.router, await this.route.snapshot)
         // General Values
         let masterWalletId = navigation.extras.state.masterWalletId;
 
@@ -135,8 +124,6 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         this.elastosChainCode = StandardCoinName.IDChain;
 
         this.fromSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
-
-        console.log("masterWalletId", masterWalletId, this.toSubWallet, this.fromSubWallet)
 
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.elastosChainCode].getDisplayBalance());
 
