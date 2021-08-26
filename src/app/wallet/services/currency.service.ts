@@ -4,6 +4,7 @@ import { LocalStorage } from './storage.service';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { WalletNetworkService } from './network.service';
 
 type Currency = {
   symbol: string;
@@ -20,7 +21,8 @@ export class CurrencyService {
 
   private stopService = false;
 
-  public elaStats: any;
+  private tokenSymbol = 'ELA';
+  public tokenStats: any;
 
   // Use currency as main wallet total amount
   public useCurrency = false;
@@ -56,6 +58,14 @@ export class CurrencyService {
 
   async init() {
     this.stopService = false;
+    WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
+        if (activeNetwork) {
+          this.tokenSymbol = activeNetwork.getMainTokenSymbol();
+          this.fetch();
+        }
+    });
+
+    this.tokenSymbol = WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
     await this.getSavedPrices();
     await this.getSavedCurrency();
     await this.getSavedCurrencyDisplayPreference();
@@ -108,12 +118,12 @@ export class CurrencyService {
 
   fetch() {
     // TODO: Get price by token name.
-    this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=500').subscribe((res) => {
+    this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=600').subscribe((res) => {
       // Logger.log('wallet', 'Got CMC response', res);
       if (res) {
-        this.elaStats = res.find((coin) => coin.symbol === 'ELA');
-        if (this.elaStats) {
-          Logger.log('wallet', 'CMC ELA stats', this.elaStats);
+        this.tokenStats = res.find((coin) => coin.symbol === this.tokenSymbol);
+        if (this.tokenStats) {
+          Logger.log('wallet', 'CMC TOKEN stats', this.tokenStats);
           void this.addPriceToCurrency();
         }
       }
@@ -125,16 +135,16 @@ export class CurrencyService {
   addPriceToCurrency() {
     this.currencies.map((currency) => {
       if (currency.symbol === 'USD') {
-        void this.storage.setPrice(currency.symbol, this.elaStats.price_usd);
-        currency.price = parseFloat(this.elaStats.price_usd);
+        void this.storage.setPrice(currency.symbol, this.tokenStats.price_usd);
+        currency.price = parseFloat(this.tokenStats.price_usd);
       }
       if (currency.symbol === 'CNY') {
-        void this.storage.setPrice(currency.symbol, this.elaStats.price_cny);
-        currency.price = parseFloat(this.elaStats.price_cny);
+        void this.storage.setPrice(currency.symbol, this.tokenStats.price_cny);
+        currency.price = parseFloat(this.tokenStats.price_cny);
       }
       if (currency.symbol === 'BTC') {
-        void this.storage.setPrice(currency.symbol, this.elaStats.price_btc);
-        currency.price = parseFloat(this.elaStats.price_btc);
+        void this.storage.setPrice(currency.symbol, this.tokenStats.price_btc);
+        currency.price = parseFloat(this.tokenStats.price_btc);
       }
     });
     Logger.log('wallet', 'Currency ELA prices updated', this.currencies);

@@ -22,22 +22,25 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { LocalStorage } from 'src/app/identity/services/localstorage';
 import { Logger } from 'src/app/logger';
 import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
 import { HECONetwork } from '../model/networks/heco/heco.network';
 import { Network } from '../model/networks/network';
+import { LocalStorage } from './storage.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class WalletNetworkService {
+    public static instance: WalletNetworkService = null;
     private networks: Network[] = [];
 
     public activeNetwork = new BehaviorSubject<Network>(null);
 
     constructor(private localStorage: LocalStorage)
-    {}
+    {
+      WalletNetworkService.instance = this;
+    }
 
     public async init() {
         this.networks = [];

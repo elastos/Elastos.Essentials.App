@@ -1,4 +1,4 @@
-import { CoinID, ERC20Coin } from "../coin";
+import { CoinID, ERC20Coin } from "../Coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";
@@ -27,4 +27,6 @@ export abstract class Network {
   public abstract createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet;
 
   public abstract getMainEvmRpcApiUrl(): string;
+
+  public abstract getMainTokenSymbol(): string;
 }
