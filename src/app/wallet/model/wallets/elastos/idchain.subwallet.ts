@@ -45,6 +45,12 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         return "ELA";
     }
 
+    // Override
+    // Don't show the old IDChain subwallet if balance is 0.
+    public shouldShowOnHomeScreen(): boolean {
+        return this.balance && !this.balance.eq(0);
+    }
+
     checkIDChainToBeDestroy() {
         // Do not use the id chain any more.
         // Cross chain transaction need 20000 SELA.

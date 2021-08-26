@@ -58,6 +58,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
+    private displayableSubWallets: SubWallet[] = null;
+
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
 
@@ -99,6 +101,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
           if (activeNetworkWallet) {
             this.networkWallet = activeNetworkWallet;
+            this.displayableSubWallets = this.networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
           }
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
@@ -189,6 +192,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public getPotentialActiveWallets(): NetworkWallet[] {
         return this.walletManager.getNetworkWalletsList();
+    }
+
+    public getDisplayableSubWallets(): SubWallet[] {
+        return this.displayableSubWallets;
     }
 
     /**
