@@ -7,13 +7,14 @@ import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../m
 import { StandardCoinName } from '../wallet/model/Coin';
 import { ElastosEVMSubWallet } from '../wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from '../wallet/model/wallets/NetworkWallet';
+import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
 import { GlobalFirebaseService } from './global.firebase.service';
 import { GlobalIntentService } from './global.intent.service';
 import { GlobalNativeService } from './global.native.service';
 import { GlobalNavService } from './global.nav.service';
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
+import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
@@ -32,7 +33,9 @@ export enum WalletConnectSessionRequestSource {
 export class GlobalWalletConnectService extends GlobalService {
   private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
   private initiatingConnector: WalletConnect = null;
+
   private activeWalletSubscription: Subscription = null;
+  private activeNetworkSubscription: Subscription = null;
 
   private onGoingRequestSource: WalletConnectSessionRequestSource = null;
 
@@ -47,6 +50,7 @@ export class GlobalWalletConnectService extends GlobalService {
     private intent: GlobalIntentService,
     private intents: GlobalIntentService,
     private globalNetworksService: GlobalNetworksService,
+    private walletNetworkService: WalletNetworkService,
     private walletManager: WalletService,
     private globalFirebaseService: GlobalFirebaseService,
     private native: GlobalNativeService
@@ -95,6 +99,7 @@ export class GlobalWalletConnectService extends GlobalService {
     // if a WC request is pending (ex: essentials is starting from a WC intent or push notif).
     runDelayed(() => this.restoreSessions(), 5000);
 
+    // NOTE: called when the network changes as well, as a new "network wallet" is created.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async activeWallet => {
       if (activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
@@ -103,7 +108,7 @@ export class GlobalWalletConnectService extends GlobalService {
           if (c.connected) {
             try {
               c.updateSession({
-                chainId: c.chainId,
+                chainId: activeWallet.network.getMainChainID(),
                 accounts: [await this.getAccountFromNetworkWallet(activeWallet)]
               });
             }
@@ -130,6 +135,7 @@ export class GlobalWalletConnectService extends GlobalService {
     await this.killAllSessions();
 
     this.activeWalletSubscription.unsubscribe();
+    this.activeNetworkSubscription.unsubscribe();
   }
 
   public getRequestSource(): WalletConnectSessionRequestSource {
@@ -510,20 +516,10 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   public async acceptSessionRequest(connectorKey: string, ethAccountAddresses: string[]) {
-    let activeNetworkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
+    let activeNetwork = await this.walletNetworkService.activeNetwork.value;
     let chainId: number;
 
-    // TODO: We keep this for now but this is wrong. Later we should use the active wallet in the wallet
-    // app, not the settings' "network template" (one template can have many wallets: elastos, heco, etc, therefore
-    // different chain ids)
-    switch (activeNetworkTemplate) {
-      case MAINNET_TEMPLATE:
-        chainId = 20; break;
-      case TESTNET_TEMPLATE:
-        chainId = 21; break;
-      default:
-        throw new Error("Network currently selected in settings is not supported with wallet connect yet (unknown chain id). To be improved.");
-    }
+    chainId = activeNetwork.getMainChainID();
 
     Logger.log("walletconnect", "Accepting session request with params:", connectorKey, ethAccountAddresses, chainId);
 

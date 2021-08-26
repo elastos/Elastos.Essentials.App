@@ -31,5 +31,11 @@ export abstract class Network {
 
   public abstract getMainTokenSymbol(): string;
 
+  /**
+   * Returns the EVM chain ID for this network (i.e. 128 for heco) according to the active network template.
+   * For elastos, as there are multiple EVM chains, the ETHSC is the "main" one.
+   */
+  public abstract getMainChainID(networkTemplate?: string): number;
+
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
 }

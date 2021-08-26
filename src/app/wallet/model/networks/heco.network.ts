@@ -1,4 +1,4 @@
-import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
 import { CoinID, ERC20Coin } from "../Coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
@@ -44,14 +44,18 @@ export class HECONetwork extends Network {
     return 'HT';
   }
 
-  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {
-    switch (networkTemplate) {
-      case (MAINNET_TEMPLATE):
-        onGoingConfig['ETHHECO'] = {ChainID: 128, NetworkID: 128};
-        return;
-      case (TESTNET_TEMPLATE):
-        onGoingConfig['ETHHECO'] = {ChainID: 256, NetworkID: 256};
-        return;
+  public getMainChainID(networkTemplate?: string): number {
+    let usedNetworkTemplate = networkTemplate ?? GlobalNetworksService.instance.activeNetworkTemplate.value;
+    switch (usedNetworkTemplate) {
+      case (MAINNET_TEMPLATE): return 128;
+      case (TESTNET_TEMPLATE): return 256;
     }
+  }
+
+  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {
+    onGoingConfig['ETHHECO'] = {
+      ChainID: this.getMainChainID(networkTemplate),
+      NetworkID: this.getMainChainID(networkTemplate)
+    };
   }
 }
