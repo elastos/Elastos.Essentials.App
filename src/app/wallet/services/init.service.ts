@@ -14,6 +14,8 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { ETHTransactionService } from './ethtransaction.service';
 import { WalletNetworkService } from './network.service';
+import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
+import { HECONetwork } from '../model/networks/heco/heco.network';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +50,12 @@ export class WalletInitService extends GlobalService {
     Logger.log("Wallet", "Wallet service is initializing");
 
     await this.prefs.init();
+
+    // Networks init + registration
     await this.networkService.init();
+    await this.networkService.registerNetwork(new ElastosNetwork());
+    await this.networkService.registerNetwork(new HECONetwork());
+
     await this.coinService.init(); // Needs the network service
     // Do not await.
     void this.currencyService.init();

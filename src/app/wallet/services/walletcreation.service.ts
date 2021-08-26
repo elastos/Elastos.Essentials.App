@@ -21,6 +21,12 @@
  */
 
 import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
+import { ElastosNetworkWallet } from '../model/wallets/elastos/elastos.networkwallet';
+import { AuthService } from './auth.service';
+import { WalletNetworkService } from './network.service';
+import { WalletService } from './wallet.service';
 
 export type SelectableMnemonic = {
     text: string;
@@ -47,7 +53,7 @@ export class WalletCreationService {
     public name: string;
     public mnemonicPassword: string;
 
-    constructor() {
+    constructor(private walletService: WalletService, private authService: AuthService, private networkService: WalletNetworkService) {
         this.reset();
     }
 
@@ -64,5 +70,52 @@ export class WalletCreationService {
         this.name = null;
 
         this.mnemonicPassword = null;
+    }
+
+    /**
+     * Creates a wallet that uses the same mnemonic as the DID.
+     * Usually this method should be called only once per new DID created, so the newly created
+     * user also has a default wallet.
+     */
+     public async createWalletFromNewIdentity(walletName: string, mnemonic: string, mnemonicPassphrase: string): Promise<void> {
+        Logger.log("wallet", "Creating wallet from new identity");
+        let masterWalletId = Util.uuid(6, 16);
+        const payPassword = await this.authService.createAndSaveWalletPassword(masterWalletId);
+        if (payPassword) {
+          try {
+            // First create multi address wallet.
+            await this.walletService.importWalletWithMnemonic(
+              masterWalletId,
+              walletName,
+              mnemonic,
+              mnemonicPassphrase || "",
+              payPassword,
+              false
+            );
+
+            // Get the elastos network wallet instance to know if this wallet is single or multi address, as
+            // we want to return this information.
+            let elastosNetworkWallet = new ElastosNetworkWallet(this.walletService.getMasterWallet(masterWalletId), this.networkService.getNetworkByKey("elastos"));
+            if (await elastosNetworkWallet.multipleAddressesInUse()) {
+                Logger.log('wallet', 'Multi address wallet!')
+                return;
+            }
+
+            Logger.log('wallet', 'Single address wallet!')
+            // Not multi address wallet, delete multi address wallet and create a single address wallet.
+            await this.walletService.destroyMasterWallet(masterWalletId, false);
+            await this.walletService.importWalletWithMnemonic(
+              masterWalletId,
+              walletName,
+              mnemonic,
+              mnemonicPassphrase || "",
+              payPassword,
+              true
+            );
+          }
+          catch (err) {
+            Logger.error('wallet', 'Wallet import error:', err);
+          }
+        }
     }
 }

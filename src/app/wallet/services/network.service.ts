@@ -23,8 +23,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
-import { HECONetwork } from '../model/networks/heco/heco.network';
 import { Network } from '../model/networks/network';
 import { LocalStorage } from './storage.service';
 
@@ -33,6 +31,7 @@ import { LocalStorage } from './storage.service';
 })
 export class WalletNetworkService {
     public static instance: WalletNetworkService = null;
+
     private networks: Network[] = [];
 
     public activeNetwork = new BehaviorSubject<Network>(null);
@@ -42,20 +41,24 @@ export class WalletNetworkService {
       WalletNetworkService.instance = this;
     }
 
-    public async init() {
-        this.networks = [];
+    public init() {}
 
-        let elastosNetwork = new ElastosNetwork();
-        this.networks.push(elastosNetwork);
-        this.networks.push(new HECONetwork());
+    /**
+     * Appends a usable network to the list. We let networks register themselves, we don't
+     * use networks in this service, to avoid circular dependencies.
+     */
+    public async registerNetwork(network: Network, useAsDefault = false): Promise<void> {
+        this.networks.push(network);
 
-        let currentNetwork = await this.localStorage.get('activenetwork') as string;
-        Logger.log("wallet", "WalletNetworkService - Reloading network:", currentNetwork);
-        const network = await this.getNetworkByKey(currentNetwork);
-        if (network) {
-            this.activeNetwork.next(network);
-        } else {
-            this.activeNetwork.next(elastosNetwork);
+        let savedNetworkKey = await this.localStorage.get('activenetwork') as string;
+        const savedNetwork = await this.getNetworkByKey(savedNetworkKey);
+        if (!savedNetwork && useAsDefault) {
+            Logger.log("wallet", "WalletNetworkService - Using default network:", savedNetwork);
+            this.activeNetwork.next(network); // Normally, elastos
+        }
+        else if (savedNetworkKey && savedNetworkKey === network.key) {
+            Logger.log("wallet", "WalletNetworkService - Reloading network:", savedNetwork);
+            this.activeNetwork.next(savedNetwork);
         }
     }
 
