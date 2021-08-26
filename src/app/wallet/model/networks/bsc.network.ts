@@ -1,4 +1,5 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { SPVNetworkConfig } from "../../services/wallet.service";
 import { CoinID, ERC20Coin } from "../Coin";
 import { BscAPI, BscApiType } from "../wallets/bsc/bsc.api";
 import { BscERC20SubWallet } from "../wallets/bsc/bsc.erc20.subwallet";
@@ -41,5 +42,16 @@ export class BSCNetwork extends Network {
 
   public getMainTokenSymbol(): string {
     return 'BNB';
+  }
+
+  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {
+    switch (networkTemplate) {
+      case (MAINNET_TEMPLATE):
+        onGoingConfig['ETHHECO'] = {ChainID: 56, NetworkID: 56};
+        return;
+      case (TESTNET_TEMPLATE):
+        onGoingConfig['ETHHECO'] = {ChainID: 97, NetworkID: 97};
+        return;
+    }
   }
 }
