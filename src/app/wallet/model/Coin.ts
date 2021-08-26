@@ -13,6 +13,7 @@ export enum StandardCoinName {
     ETHSC = 'ETHSC',
     ETHDID = 'ETHDID',
     ETHHECO = 'ETHHECO',
+    ETHBSC= 'ETHBSC',
 }
 
 export namespace StandardCoinName {
