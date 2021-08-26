@@ -18,9 +18,7 @@
   under the License.
 -->
 
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-           id="cordova-plugin-inappbrowser"
-      version="5.0.1-dev">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-inappbrowser" version="5.0.1-dev">
 
     <name>InAppBrowser</name>
     <description>Cordova InAppBrowser Plugin</description>
@@ -83,12 +81,32 @@
         <source-file src="src/ios/CDVInAppBrowserOptions.m" />
         <header-file src="src/ios/CDVInAppBrowserNavigationController.h" />
         <source-file src="src/ios/CDVInAppBrowserNavigationController.m" />
-	    <header-file src="src/ios/CDVWKInAppBrowser.h" />
-	    <source-file src="src/ios/CDVWKInAppBrowser.m" />
-	    <header-file src="src/ios/CDVWKInAppBrowserUIDelegate.h" />
-	    <source-file src="src/ios/CDVWKInAppBrowserUIDelegate.m" />
+        <header-file src="src/ios/CDVWKInAppBrowser.h" />
+        <source-file src="src/ios/CDVWKInAppBrowser.m" />
+        <header-file src="src/ios/CDVWKInAppBrowserUIDelegate.h" />
+        <source-file src="src/ios/CDVWKInAppBrowserUIDelegate.m" />
 
-	    <framework src="CoreGraphics.framework" />
+        <source-file src="src/ios/TitleBarIconView.swift" />
+        <source-file src="src/ios/TitleBarPlugin.swift" />
+        <source-file src="src/ios/TitleBarMenuView.swift" />
+        <source-file src="src/ios/TitleBarView.swift" />
+        <source-file src="src/ios/TitleBarMenuItemView.swift" />
+
+        <source-file src="src/ios/TitleBarMenuItemView.xib" />
+        <source-file src="src/ios/TitleBarIconView.xib" />
+        <source-file src="src/ios/TitleBarMenuView.xib" />
+        <source-file src="src/ios/TitleBarView.xib" />
+
+        <resource-file src="src/ios/res/ic_back.png" />
+        <resource-file src="src/ios/res/ic_elastos.png" />
+        <resource-file src="src/ios/res/ic_vertical_menu.png" />
+        <resource-file src="src/ios/res/ic_back_darkmode.png" />
+        <resource-file src="src/ios/res/ic_elastos_darkmode.png" />
+        <resource-file src="src/ios/res/ic_vertical_menu_darkmode.png" />
+
+        <header-file src="src/ios/InAppBrowser-Bridging-Header.h" type="BridgingHeader" />
+
+        <framework src="CoreGraphics.framework" />
     </platform>
 
     <!-- osx -->
