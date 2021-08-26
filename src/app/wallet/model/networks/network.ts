@@ -1,3 +1,4 @@
+import { SPVNetworkConfig } from "../../services/wallet.service";
 import { CoinID, ERC20Coin } from "../Coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
@@ -29,4 +30,6 @@ export abstract class Network {
   public abstract getMainEvmRpcApiUrl(): string;
 
   public abstract getMainTokenSymbol(): string;
+
+  public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
 }

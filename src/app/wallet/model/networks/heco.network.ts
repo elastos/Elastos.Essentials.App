@@ -1,4 +1,5 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { SPVNetworkConfig } from "../../services/wallet.service";
 import { CoinID, ERC20Coin } from "../Coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { HecoAPI, HecoApiType } from "../wallets/heco/heco.api";
@@ -41,5 +42,16 @@ export class HECONetwork extends Network {
 
   public getMainTokenSymbol(): string {
     return 'HT';
+  }
+
+  public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {
+    switch (networkTemplate) {
+      case (MAINNET_TEMPLATE):
+        onGoingConfig['ETHHECO'] = {ChainID: 128, NetworkID: 128};
+        return;
+      case (TESTNET_TEMPLATE):
+        onGoingConfig['ETHHECO'] = {ChainID: 256, NetworkID: 256};
+        return;
+    }
   }
 }

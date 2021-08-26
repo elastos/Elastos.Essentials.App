@@ -39,12 +39,10 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { ERC721Service } from './erc721.service';
 import { BehaviorSubject } from 'rxjs';
-import { Util } from '../model/util';
-import { WalletConfig } from '../model/wallet.config';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { WalletNetworkService } from './network.service';
 import { NetworkWallet } from '../model/wallets/networkwallet';
-
+import { JSONObject } from 'src/app/model/json';
 
 class SubwalletTransactionStatus {
   private subwalletSubjects = new Map<string, BehaviorSubject<number>>();
@@ -71,6 +69,9 @@ export enum WalletStateOperation {
     // Wallet just became active (selected as the active wallet by the user)
     BECAME_ACTIVE
 }
+
+// {'ELA':{}, 'ETHSC': {chainid ... }, etc}
+export type SPVNetworkConfig = {[networkName: string]:JSONObject};
 
 @Injectable({
     providedIn: 'root'
@@ -155,26 +156,11 @@ export class WalletService {
         Logger.log('wallet', "Initializing wallets");
 
         try {
-            // NetWork Type
-            this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
-            let spvsdkNetwork = this.networkTemplate;
-            let networkConfig = null;
-
-            if (this.networkTemplate === "PrvNet") { // TODO - rework for network templates
-              networkConfig = await this.prefs.getPreference<string>(GlobalDIDSessionsService.signedInDIDString, 'chain.network.config');
-            } else {
-              networkConfig = WalletConfig.getNetConfig(this.networkTemplate);
-              if (this.networkTemplate === "LRW") {
-                spvsdkNetwork = "PrvNet";
-              }
-            }
-            Logger.log('wallet', "Setting network to ", this.networkTemplate, networkConfig);
-            await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
-            // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
-
             let signedInEntry = await this.didSessions.getSignedInIdentity();
             let rootPath = signedInEntry.didStoragePath;
             await this.spvBridge.init(rootPath);
+
+            this.networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
 
             Logger.log('wallet', "Getting all master wallets from the SPV SDK");
             const idList = await this.spvBridge.getAllMasterWallets();
@@ -238,6 +224,28 @@ export class WalletService {
             if (masterWallet.id === this.activeMasterWalletId)
                 this.activeNetworkWallet.next(networkWallet);
         }
+
+        // Update the SPV SDK with the right network configuration
+        await this.updateSPVNetworkConfiguration();
+    }
+
+    private async updateSPVNetworkConfiguration(): Promise<void> {
+        let spvsdkNetwork = this.networkTemplate;
+
+        if (this.networkTemplate === "LRW") {
+            spvsdkNetwork = "PrvNet";
+        }
+
+        // Ask each network to fill its configuration for the SPVSDK.
+        // For EVM networks, this means adding something like {'ETHxx': {ChainID: 123, NetworkID: 123}}
+        let networkConfig: SPVNetworkConfig = {};
+        for (let network of this.networkService.getAvailableNetworks()) {
+            network.updateSPVNetworkConfig(networkConfig, this.networkTemplate);
+        }
+
+        Logger.log('wallet', "Setting network to ", this.networkTemplate, networkConfig);
+        await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
+        // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
     }
 
     public getActiveMasterWallet() {
