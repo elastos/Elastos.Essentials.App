@@ -127,7 +127,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
         const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
-        const direction = await this.getETHSCTransactionDirection(transaction.to);
+        const direction = await this.getTransactionDirection(transaction.to);
         transaction.Direction = direction;
 
         const isERC20TokenTransfer = await this.isERC20TokenTransfer(transaction.to);
@@ -193,7 +193,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
     }
 
     protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
-        const direction = transaction.Direction ? transaction.Direction : await this.getETHSCTransactionDirection(transaction.to);
+        const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
                 if (transaction.transferType === ETHSCTransferType.DEPOSIT) {
@@ -208,7 +208,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
     }
 
     protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
-        const direction = transaction.Direction ? transaction.Direction : await this.getETHSCTransactionDirection(transaction.to);
+        const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
                 return './assets/wallet/buttons/receive.png';
@@ -217,7 +217,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
         }
     }
 
-    protected async getETHSCTransactionDirection(targetAddress: string): Promise<TransactionDirection> {
+    protected async getTransactionDirection(targetAddress: string): Promise<TransactionDirection> {
         const address = await this.getTokenAddress();
         if (address === targetAddress) {
             return TransactionDirection.RECEIVED;

@@ -4,7 +4,7 @@ import { NetworkWallet } from "../networkwallet";
 import { BscAPI, BscApiType } from "./bsc.api";
 
 /**
- * Subwallet for RC20 tokens.
+ * Subwallet for BEP20 tokens.
  */
 export class BscERC20SubWallet extends ERC20SubWallet {
   constructor(networkWallet: NetworkWallet, coinID: CoinID) {
