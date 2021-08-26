@@ -1,7 +1,7 @@
 <ion-content>
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <div *ngFor="let masterWallet of walletManager.getWalletsList()">
+        <div *ngFor="let masterWallet of walletManager.getMasterWalletsList()">
             <ion-row class="main-title-row">
                 <ion-col size="12">
                     <p>{{ masterWallet.name }}</p>

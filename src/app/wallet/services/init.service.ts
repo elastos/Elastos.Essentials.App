@@ -54,7 +54,7 @@ export class WalletInitService extends GlobalService {
 
     // Networks init + registration
     await this.networkService.init();
-    await this.networkService.registerNetwork(new ElastosNetwork());
+    await this.networkService.registerNetwork(new ElastosNetwork(), true);
     await this.networkService.registerNetwork(new HECONetwork());
     await this.networkService.registerNetwork(new BSCNetwork());
 
