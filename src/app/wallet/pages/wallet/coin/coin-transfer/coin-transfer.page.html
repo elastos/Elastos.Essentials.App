@@ -78,7 +78,7 @@
         <!------------------ SEND ------------------>
 
         <ion-grid *ngIf="transferType === 2" class="send-container" [class.send-dark-container]="theme.darkMode" [class.blur]="native.popup">
-            <img class="header-img" [src]="!theme.darkMode ? 'assets/wallet/coins/ela-black.svg' : 'assets/wallet/coins/ela-white.svg'"/>
+            <img class="header-img" [src]="!theme.darkMode ? this.networkWallet.network.logo : this.networkWallet.network.logo"/>
 
             <h1>{{ 'wallet.enter-amount' | translate }}</h1>
             <ion-row class="item-row">
