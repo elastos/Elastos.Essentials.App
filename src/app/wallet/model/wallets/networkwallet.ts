@@ -1,11 +1,11 @@
-import { SubWallet, SerializedSubWallet  } from './subwallet';
+import { SubWallet, SerializedSubWallet } from './subwallet';
 import { WalletService } from '../../services/wallet.service';
 import { StandardSubWallet } from './standard.subwallet';
 import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../Coin';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import { Logger } from 'src/app/logger';
-import { NFT, NFTType } from '../nfts/nft';
+import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { MasterWallet } from './masterwallet';
 import { ERC20TokenInfo } from '../evm.types';
 import { SubWalletBuilder } from './subwalletbuilder';
@@ -15,9 +15,13 @@ import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { StandardEVMSubWallet } from './evm.subwallet';
 import { WalletNetworkService } from '../../services/network.service';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export class ExtendedNetworkWalletInfo {
+    /** List of serialized subwallets added earlier to this network wallet */
     subWallets: SerializedSubWallet[] = [];
+     /** List of serialized NFTs added earlier to this master wallet */
+     nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
 }
 
 /**
@@ -32,6 +36,8 @@ export abstract class NetworkWallet {
     } = {};
 
     public nfts: NFT[] = [];
+
+    public subWalletsListChange = new Subject<SubWallet>(); // Subwallet added or created
 
     constructor(
         public masterWallet: MasterWallet,
@@ -54,9 +60,9 @@ export abstract class NetworkWallet {
         let balance = new BigNumber(0);
         for (let subWallet of Object.values(this.subWallets)) {
             if (subWallet instanceof StandardSubWallet) {
-              if (!subWallet.balance.isNaN()) {
-                balance = balance.plus(subWallet.balance);
-              }
+                if (!subWallet.balance.isNaN()) {
+                    balance = balance.plus(subWallet.balance);
+                }
             }
         }
 
@@ -88,7 +94,7 @@ export abstract class NetworkWallet {
      */
     public subWalletsWithExcludedCoin(excludedCoinName: CoinID, type: CoinType = null): SubWallet[] {
         // Hide the id chain, do not use the id chain any more.
-        return Object.values(this.subWallets).filter((sw)=>{
+        return Object.values(this.subWallets).filter((sw) => {
             return (sw.id !== excludedCoinName) && (sw.id !== StandardCoinName.IDChain) && (type !== null ? sw.type === type : true);
         });
     }
@@ -110,25 +116,31 @@ export abstract class NetworkWallet {
      */
     public async createNonStandardSubWallet(coin: Coin): Promise<void> {
         try {
-          this.subWallets[coin.getID()] = await SubWalletBuilder.newFromCoin(this, coin);
+            let newSubWallet = await SubWalletBuilder.newFromCoin(this, coin);
+            this.subWallets[coin.getID()] = newSubWallet;
 
-          Logger.log("wallet", "Created subwallet with id "+coin.getID()+" for wallet "+this.id);
+            Logger.log("wallet", "Created subwallet with id " + coin.getID() + " for wallet " + this.id);
 
-          await this.save();
+            await this.save();
+
+            this.subWalletsListChange.next(newSubWallet);
         }
         catch (err) {
-          if (err.code !== 20001) {// 20001: Unsupported subwallet in some test network.
-            throw err;
-          }
+            if (err.code !== 20001) {// 20001: Unsupported subwallet in some test network.
+                throw err;
+            }
         }
     }
 
     public async removeNonStandardSubWallet(coin: Coin): Promise<void> {
-        Logger.log("wallet", "Removing subwallet with id "+coin.getID()+" from wallet "+this.id);
+        Logger.log("wallet", "Removing subwallet with id " + coin.getID() + " from wallet " + this.id);
 
+        let deletedSubWallet = this.subWallets[coin.getID()];
         delete this.subWallets[coin.getID()];
 
         await this.save();
+
+        this.subWalletsListChange.next(deletedSubWallet);
     }
 
     /**
@@ -136,11 +148,12 @@ export abstract class NetworkWallet {
      */
     public getSubWallets(): SubWallet[] {
         return Object.values(this.subWallets).sort((a, b) => {
-          if (a.type == CoinType.STANDARD && (b.type == CoinType.STANDARD)) return 0;
-          if (a.type == CoinType.STANDARD) return -1;
-          if (b.type == CoinType.STANDARD) return 1;
-          return a.getFriendlyName() > b.getFriendlyName() ? 1 : -1}
-          );
+            if (a.type == CoinType.STANDARD && (b.type == CoinType.STANDARD)) return 0;
+            if (a.type == CoinType.STANDARD) return -1;
+            if (b.type == CoinType.STANDARD) return 1;
+            return a.getFriendlyName() > b.getFriendlyName() ? 1 : -1
+        }
+        );
     }
 
     public getSubWallet(id: CoinID): SubWallet {
@@ -151,7 +164,7 @@ export abstract class NetworkWallet {
      * Returns the list of all subwallets by CoinType
      */
     public getSubWalletsByType(type: CoinType): SubWallet[] {
-        return Object.values(this.subWallets).filter((sw)=>{
+        return Object.values(this.subWallets).filter((sw) => {
             return (sw.type === type);
         });
     }
@@ -222,11 +235,11 @@ export abstract class NetworkWallet {
     public async createNFT(nftType: NFTType, contractAddress: string, balance: number): Promise<void> {
         let resolvedInfo = await this.masterWallet.erc721Service.getCoinInfo(contractAddress);
         if (resolvedInfo) {
-          let nft = new NFT(nftType, contractAddress, balance);
-          nft.setResolvedInfo(resolvedInfo);
-          this.nfts.push(nft);
+            let nft = new NFT(nftType, contractAddress, balance);
+            nft.setResolvedInfo(resolvedInfo);
+            this.nfts.push(nft);
 
-          await this.save();
+            await this.save();
         }
     }
 
@@ -254,7 +267,7 @@ export abstract class NetworkWallet {
     /**
      * Save network wallet info to permanent storage
      */
-     public async save() {
+    public async save() {
         const extendedInfo = this.getExtendedWalletInfo();
         Logger.log('wallet', "Saving network wallet extended info", this, extendedInfo);
 
@@ -265,6 +278,10 @@ export abstract class NetworkWallet {
         let extendedInfo = new ExtendedNetworkWalletInfo();
 
         extendedInfo.subWallets = this.getSubWallets().map(subwallet => SerializedSubWallet.fromSubWallet(subwallet));
+
+        for (let nft of this.nfts) {
+            extendedInfo.nfts.push(nft.toSerializedNFT());
+        }
 
         return extendedInfo;
     }
@@ -287,7 +304,7 @@ export abstract class NetworkWallet {
                 }
             }
 
-            /* TODO this.nfts = [];
+            this.nfts = [];
             if (extendedInfo.nfts) {
                 for (let serializedNFT of extendedInfo.nfts) {
                     let nft: NFT = NFT.parse(serializedNFT);
@@ -295,9 +312,7 @@ export abstract class NetworkWallet {
                         this.nfts.push(nft);
                     }
                 }
-            } */
+            }
         }
-
-        Logger.log("wallet", "Populated master wallet:", this);
     }
 }

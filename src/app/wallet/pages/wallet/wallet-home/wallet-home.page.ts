@@ -62,6 +62,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
+    private subWalletsListChangeSubscription: Subscription = null;
 
     // Helpers
     public Util = Util;
@@ -101,18 +102,17 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
           if (activeNetworkWallet) {
             this.networkWallet = activeNetworkWallet;
-            this.displayableSubWallets = this.networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+            this.refreshSubWalletsList();
+
+            // Know when a subwallet is added or removed, to refresh our list
+            this.subWalletsListChangeSubscription = this.networkWallet.subWalletsListChange.subscribe(() => {
+                this.refreshSubWalletsList();
+            });
           }
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
             this.currentNetwork = activeNetwork;
         });
-    }
-
-    showRefresher() {
-        setTimeout(() => {
-            this.hideRefresher = false;
-        }, 4000);
     }
 
     ngOnDestroy() {
@@ -124,6 +124,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
         if (this.activeNetworkSubscription) {
             this.activeNetworkSubscription.unsubscribe();
             this.activeNetworkSubscription = null;
+        }
+
+        if (this.subWalletsListChangeSubscription) {
+            this.subWalletsListChangeSubscription.unsubscribe();
+            this.subWalletsListChangeSubscription = null;
         }
     }
 
@@ -159,6 +164,16 @@ export class WalletHomePage implements OnInit, OnDestroy {
         if (this.native.popup) {
             this.native.popup.dismiss();
         }
+    }
+
+    private refreshSubWalletsList() {
+        this.displayableSubWallets = this.networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+    }
+
+    showRefresher() {
+        setTimeout(() => {
+            this.hideRefresher = false;
+        }, 4000);
     }
 
     handleItem(key: string) {
