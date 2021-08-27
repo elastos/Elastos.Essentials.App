@@ -102,7 +102,7 @@ export class CoinHomePage implements OnInit {
 
     ionViewWillEnter() {
         this.coinTransferService.elastosChainCode = this.elastosChainCode;
-        this.titleBar.setTitle(this.elastosChainCode);
+        this.titleBar.setTitle(this.translate.instant('wallet.coin-transactions'));
         void this.initData();
     }
 
