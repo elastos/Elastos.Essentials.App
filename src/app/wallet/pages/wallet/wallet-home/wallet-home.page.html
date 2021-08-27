@@ -183,9 +183,9 @@
             <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let nft of networkWallet.getNFTs()" (click)="goNFTHome(networkWallet, nft)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">
-                        <img src="assets/wallet/coins/eth-purple.svg">
-                        <div class="ela-icon">
-                            <img src="assets/wallet/coins/ela-black.svg"/>
+                        <img [src]="networkWallet.getMainEvmSubWallet().getMainIcon()">
+                        <div *ngIf="networkWallet.getMainEvmSubWallet().getSecondaryIcon()" class="ela-icon">
+                            <img [src]="networkWallet.getMainEvmSubWallet().getSecondaryIcon()" />
                         </div>
                     </div>
                 </ion-col>

@@ -14,11 +14,11 @@ export class BscERC20SubWallet extends ERC20SubWallet {
   }
 
   public getMainIcon(): string {
-    return "assets/wallet/coins/eth-purple.svg";
+    return "assets/wallet/networks/bscchain.png";
   }
 
   public getSecondaryIcon(): string {
-    return "assets/wallet/networks/bscchain.png";
+    return "assets/wallet/coins/eth-purple.svg";
   }
 
   public getDisplayableERC20TokenInfo(): string {
