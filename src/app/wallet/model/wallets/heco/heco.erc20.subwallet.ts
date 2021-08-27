@@ -29,27 +29,23 @@ export class HecoERC20SubWallet extends ERC20SubWallet {
   }
 
   protected async getTransactionsByRpc() {
-    const contractAddress = this.coin.getContractAddress().toLowerCase();
-    const tokenAccountAddress = await this.getTokenAccountAddress();
-    let result = await this.getHECOTransactions(this.elastosChainCode, tokenAccountAddress);
-    if (result) {
-      let allTx = result.filter((tx)=> {
-        return tx.to === contractAddress || tx.contractAddress === contractAddress
-      })
-      this.transactions = {totalcount:allTx.length, txhistory:allTx.reverse()};
-
-      this.parseTransactions();
-
+    let transactionList = await this.getHECOTransactions();
+    if (transactionList) {
+      this.transactions = {totalcount:transactionList.length, txhistory:transactionList};
       await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
     }
   }
 
-  private async getHECOTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
+  //TODO: use page and offset.
+  private async getHECOTransactions(page = 1, offset = 100): Promise<EthTransaction[]> {
     const rpcApiUrl = HecoAPI.getApiUrl(HecoApiType.ACCOUNT_RPC);
     if (rpcApiUrl === null) {
       return null;
     }
-    let hecoTxlistUrl = rpcApiUrl + '/api?module=account&action=txlist&address=' + address;
+    const contractAddress = this.coin.getContractAddress().toLowerCase();
+    const tokenAccountAddress = await this.getTokenAccountAddress();
+    let hecoTxlistUrl = rpcApiUrl + '/api?module=account&action=tokentx&contractaddress=' + contractAddress
+            + '&address=' + tokenAccountAddress + '&sort=desc';// + '&page=' + page + '&offset=' + offset;
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(hecoTxlistUrl);
       return result.result as EthTransaction[];
@@ -58,28 +54,4 @@ export class HecoERC20SubWallet extends ERC20SubWallet {
     }
     return null;
   }
-
-  private parseTransactions() {
-    for (let i = 0, len = this.transactions.txhistory.length; i < len; i++) {
-      const ret = this.parseTransferInput((this.transactions.txhistory[i] as EthTransaction).input);
-      if (ret) {
-        (this.transactions.txhistory[i] as EthTransaction).to = ret[0];
-        this.transactions.txhistory[i].value = ret[1];
-      }
-    }
-  }
-
-
-  // TODO: parse more data, not only transfer
-  // As a utility?
-  private parseTransferInput(input: string) {
-    if (input.startsWith(this.transaferSignature)) {
-      let data = '0x' + input.replace(this.transaferSignature, '');
-      let types = ['address', 'uint256'];
-      let result = this.web3.eth.abi.decodeParameters(types, data);
-      return result;
-    }
-    return null;
-  }
-
 }
