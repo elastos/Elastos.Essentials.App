@@ -1,9 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
-import { Logger } from 'src/app/logger';
-import { StandardCoinName } from '../wallet/model/Coin';
-import { ERC20TokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 
 @Injectable({
