@@ -158,7 +158,7 @@ export class CoinListPage implements OnInit, OnDestroy {
             // Do not show IDChain in coin list.
             if (coinID !== StandardCoinName.IDChain) {
               let isOpen = (coinID in this.networkWallet.subWallets);
-              Logger.log('wallet', availableCoin, "isOpen?", isOpen);
+              //Logger.log('wallet', availableCoin, "isOpen?", isOpen);
               this.coinList.push({ coin: availableCoin, isOpen: isOpen });
             }
         }

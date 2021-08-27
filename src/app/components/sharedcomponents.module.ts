@@ -5,12 +5,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TitleBarComponent } from './titlebar/titlebar.component';
 import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.component';
 import { DIDPublishingComponent } from './did-publishing/did-publishing.component';
+import { SwitchNetworkToElastosComponent } from './switch-network-to-elastos/switch-network-to-elastos.component';
 
 @NgModule({
   declarations: [
     TitleBarComponent,
     TitlebarmenuitemComponent,
-    DIDPublishingComponent
+    DIDPublishingComponent,
+    SwitchNetworkToElastosComponent
   ],
   imports: [
     CommonModule,
@@ -20,14 +22,16 @@ import { DIDPublishingComponent } from './did-publishing/did-publishing.componen
   exports: [
     TitleBarComponent, 
     TitlebarmenuitemComponent,
-    DIDPublishingComponent
+    DIDPublishingComponent,
+    SwitchNetworkToElastosComponent
   ],
   providers: [
   ],
   entryComponents: [
     TitleBarComponent, 
     TitlebarmenuitemComponent,
-    DIDPublishingComponent
+    DIDPublishingComponent,
+    SwitchNetworkToElastosComponent
   ],
 })
 export class SharedComponentsModule { }

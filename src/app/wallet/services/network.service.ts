@@ -76,4 +76,11 @@ export class WalletNetworkService {
     public getNetworkByKey(key: string): Network {
         return this.networks.find(n => n.key === key);
     }
+
+    /**
+     * Tells if the currently active network is the elastos network.
+     */
+    public isActiveNetworkElastos(): boolean {
+        return this.activeNetwork.value.key === "elastos";
+    }
 }

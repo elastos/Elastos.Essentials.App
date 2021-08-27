@@ -12,6 +12,11 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { PopupProvider } from 'src/app/services/global.popup.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ModalController } from '@ionic/angular';
+import { SwitchNetworkToElastosComponent } from 'src/app/components/switch-network-to-elastos/switch-network-to-elastos.component';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { sleep } from 'src/app/helpers/sleep.helper';
 
 @Injectable({
     providedIn: 'root'
@@ -38,6 +43,9 @@ export class VoteService {
         private walletManager: WalletService,
         public popupProvider: PopupProvider,
         private nav: GlobalNavService,
+        private modalCtrl: ModalController,
+        private theme: GlobalThemeService,
+        private walletNetworkService: WalletNetworkService,
         private globalIntentService: GlobalIntentService,
     ) {
         this.elastosChainCode = StandardCoinName.ELA;
@@ -49,6 +57,15 @@ export class VoteService {
 
     public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
         this.clear();
+
+        // Make sure the active network is elastos, otherwise, ask user to change
+        if (!this.walletNetworkService.isActiveNetworkElastos()) {
+            let networkHasBeenSwitched = await this.promptSwitchToElastosNetwork();
+            if (!networkHasBeenSwitched)
+                return; // Used has denied to switch network. Can't continue.
+
+            await sleep(1000); // TODO DIRTY !! - await to make sure the elastos active network has been re-created
+        }
 
         this.context = context;
         this.route = route;
@@ -120,10 +137,28 @@ export class VoteService {
         }
 
         if (context) {
-            void this.nav.navigateRoot(context, null, {state: {refreash: true}});
+            void this.nav.navigateRoot(context, null, { state: { refreash: true } });
         }
         else {
             void this.nav.goToLauncher();
         }
+    }
+
+    private promptSwitchToElastosNetwork(): Promise<boolean> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+        return new Promise(async resolve => {
+            const modal = await this.modalCtrl.create({
+                component: SwitchNetworkToElastosComponent,
+                componentProps: {},
+                backdropDismiss: true, // Closeable
+                cssClass: !this.theme.darkMode ? "switch-network-component switch-network-component-base" : 'switch-network-component-dark switch-network-component-base'
+            });
+
+            void modal.onDidDismiss().then((response: {data?: boolean}) => {
+                resolve(!!response.data); // true or undefined
+            });
+
+            void modal.present();
+        });
     }
 }
