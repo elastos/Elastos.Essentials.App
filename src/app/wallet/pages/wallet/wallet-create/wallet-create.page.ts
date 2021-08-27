@@ -85,7 +85,7 @@ export class WalletCreatePage implements OnInit {
                 this.native.toast_trans("wallet.text-wallet-passphrase-validator-min-length");
                 return;
             }
-            if (this.walletCreationService.type === NewWallet.CREATE && this.wallet.mnemonicPassword !== this.repeatMnemonicPassword) {
+            if (this.wallet.mnemonicPassword !== this.repeatMnemonicPassword) {
                 this.native.toast_trans("wallet.text-wallet-passphrase-validator-repeat");
                 return;
             }
@@ -124,8 +124,6 @@ export class WalletCreatePage implements OnInit {
     }
 
     showHelp(event): Promise<any> {
-        return this.walletCreationService.type === 1 ?
-            this.native.showHelp(event, 'wallet.help:create-password') :
-            this.native.showHelp(event, 'wallet.help:import-password');
+        return this.native.showHelp(event, 'wallet.help:create-password')
     }
 }
