@@ -17,11 +17,11 @@ export class HecoERC20SubWallet extends ERC20SubWallet {
   }
 
   public getMainIcon(): string {
-    return "assets/wallet/coins/eth-purple.svg";
+    return "assets/wallet/networks/hecochain.png";
   }
 
   public getSecondaryIcon(): string {
-    return "assets/wallet/networks/hecochain.png";
+    return "assets/wallet/coins/eth-purple.svg";
   }
 
   public getDisplayableERC20TokenInfo(): string {
