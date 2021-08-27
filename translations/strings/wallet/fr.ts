@@ -365,7 +365,7 @@ export const fr = {
         ************************/
         "esctransaction-title": "Transaction",
         "esctransaction-smart-contract": "Contrat intelligent",
-        "esctransaction-intro": "Vous allez signer et éxécuter une action sur la châine publique Elastos Ethereum.",
+        "esctransaction-intro": "Vous allez signer et éxécuter un contrat intelligent.",
         "esctransaction-approve-token": "Autoriser un Jeton",
         "esctransaction-approve-token-intro": "Cette application ou site web pourra retirer ou dépenser vos {{token}} pour vous.",
         "esctransaction-you-are-using": "Vous utilisez:",

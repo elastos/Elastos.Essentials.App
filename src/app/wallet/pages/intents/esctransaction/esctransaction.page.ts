@@ -185,22 +185,22 @@ export class EscTransactionPage implements OnInit {
     }
 
     public balanceIsEnough(): boolean {
-        return this.getTotalTransactionCostInELA().totalAsBigNumber.lte(this.balance);
+        return this.getTotalTransactionCostInCurrency().totalAsBigNumber.lte(this.balance);
     }
 
     /**
-     * Returns the total transaction cost, ELA value + fees, in ELA.
+     * Returns the total transaction cost, Currency (ELA, HT) value + fees, in currency.
      *
      * Input values in "payloadParam" are in WEI
      */
-    public getTotalTransactionCostInELA(): {totalAsBigNumber: BigNumber, total: string, valueAsBigNumber: BigNumber, value: string, feesAsBigNumber: BigNumber, fees: string } {
-        let weiElaRatio = new BigNumber("1000000000000000000");
+    public getTotalTransactionCostInCurrency(): {totalAsBigNumber: BigNumber, total: string, valueAsBigNumber: BigNumber, value: string, feesAsBigNumber: BigNumber, fees: string } {
+        let weiToDisplayCurrencyRatio = new BigNumber("1000000000000000000");
 
         let gas = new BigNumber(this.gasLimit);
         let gasPrice = new BigNumber(this.coinTransferService.payloadParam.gasPrice || this.gasPrice);
-        let elaEthValue = new BigNumber(this.coinTransferService.payloadParam.value || 0).dividedBy(weiElaRatio);
-        let fees = gas.multipliedBy(gasPrice).dividedBy(weiElaRatio);
-        let total = elaEthValue.plus(fees);
+        let currencyValue = new BigNumber(this.coinTransferService.payloadParam.value || 0).dividedBy(weiToDisplayCurrencyRatio);
+        let fees = gas.multipliedBy(gasPrice).dividedBy(weiToDisplayCurrencyRatio);
+        let total = currencyValue.plus(fees);
 
         /* Logger.log('wallet', "gasPrice", gasPrice.toString())
         Logger.log('wallet', "gas", gas.toString())
@@ -211,11 +211,16 @@ export class EscTransactionPage implements OnInit {
         return {
             totalAsBigNumber: total,
             total: total.toString(),
-            valueAsBigNumber: elaEthValue,
-            value: elaEthValue.toString(),
+            valueAsBigNumber: currencyValue,
+            value: currencyValue.toString(),
             feesAsBigNumber: fees,
             fees: fees.toString()
         }
+    }
+
+    // ELA, HT, etc
+    public getCurrencyInUse(): string {
+      return this.evmSubWallet.getDisplayTokenName();
     }
 
     async createEscTransaction() {

@@ -1,18 +1,14 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DeveloperService } from '../../../services/developer.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../../services/settings.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
 import { ActivatedRoute } from '@angular/router';
-import { Logger } from 'src/app/logger';
 import { SessionRequestParams } from 'src/app/model/walletconnect/types';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Platform } from '@ionic/angular';
@@ -56,7 +52,7 @@ export class WalletConnectConnectPage implements OnInit {
       // Use only the active master wallet.
       this.ethAccounts = [];
       let activeWallet = this.walletManager.activeNetworkWallet.value;
-      let subwallet = activeWallet.getSubWallet(StandardCoinName.ETHSC) as ElastosEVMSubWallet; // TODO: ONLY ELASTOS ETH FOR NOW
+      let subwallet = activeWallet.getMainEvmSubWallet();
       this.ethAccounts.push(await subwallet.createAddress());
     });
   }
@@ -64,7 +60,7 @@ export class WalletConnectConnectPage implements OnInit {
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-request'));
     this.titleBar.setNavigationMode(null);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace ela logo with close icon
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: null, iconPath: BuiltInIcon.CLOSE }); // Replace essentials logo with close icon
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
       // Close

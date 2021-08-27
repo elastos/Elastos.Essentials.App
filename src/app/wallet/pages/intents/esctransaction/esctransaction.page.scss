@@ -49,6 +49,35 @@
         }
     }
 
+    .network-row {
+        border-radius: 17px;
+        padding: 5px 10px;
+        margin-bottom: 7.5px;
+        background-color: transparent;
+
+        ion-col {
+            display: flex;
+            align-items: center;
+        }
+
+        .left-col {
+            justify-content: center;
+
+            img {
+                width: 35px;
+                height: 35px;
+            }
+
+            h1 {
+                margin: 0 0 0 10px;
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: 0.7px;
+                text-align: left;
+            }
+        }
+    }
+
     .msg-container {
         padding: 20px 20px 5px;
 

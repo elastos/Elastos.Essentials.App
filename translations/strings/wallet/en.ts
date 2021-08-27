@@ -363,7 +363,7 @@ export const en = {
         ************************/
         "esctransaction-title": "Transaction",
         "esctransaction-smart-contract": "Smart Contract",
-        "esctransaction-intro": "You are going to sign and run a smart contract on the ETHSC.",
+        "esctransaction-intro": "You are going to sign and run a smart contract.",
         "esctransaction-approve-token": "Approve Token",
         "esctransaction-approve-token-intro": "This application or website will be allowed to withdraw and spend your {{token}} tokens on your behalf.",
         "esctransaction-you-are-using": "You are using:",

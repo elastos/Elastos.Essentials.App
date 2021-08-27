@@ -364,7 +364,7 @@ export const zh = {
         ************************/
         "esctransaction-title": "交易",
         "esctransaction-smart-contract": "智能合约",
-        "esctransaction-intro": "您将在 ETHSC 上签名并运行一个智能合约",
+        "esctransaction-intro": "You are going to sign and run a smart contract.",
         "esctransaction-approve-token": "Approve Token",
         "esctransaction-approve-token-intro": "此应用程序或网站将被允许代表您提取和使用您的 {{token}} 代币",
         "esctransaction-you-are-using": "您正在使用：",
