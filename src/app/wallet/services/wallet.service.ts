@@ -43,6 +43,7 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { WalletNetworkService } from './network.service';
 import { NetworkWallet } from '../model/wallets/networkwallet';
 import { JSONObject } from 'src/app/model/json';
+import { Network } from '../model/networks/network';
 
 class SubwalletTransactionStatus {
   private subwalletSubjects = new Map<string, BehaviorSubject<number>>();
@@ -130,8 +131,11 @@ export class WalletService {
 
         const hasWallets = await this.initWallets();
 
-        this.networkService.activeNetwork.subscribe(activeNetwork => {
-            void this.onActiveNetworkChanged();
+        // Manually initialize the network wallets the first time.
+        await this.onActiveNetworkChanged(this.networkService.activeNetwork.value);
+        
+        this.networkService.setPriorityNetworkChangeCallback(activatedNetwork => {
+            return this.onActiveNetworkChanged(activatedNetwork);
         });
 
         if (!hasWallets) {
@@ -215,12 +219,11 @@ export class WalletService {
      * newly active network. This happens through the creation of a whole new set of network wallets
      * for each master wallet.
      */
-    private async onActiveNetworkChanged(): Promise<void> {
-        let activeNetwork = this.networkService.activeNetwork.value;
-        Logger.log('wallet', 'Initializing network master wallet for active network:', activeNetwork);
+    private async onActiveNetworkChanged(activatedNetwork: Network): Promise<void> {
+        Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
 
         for (let masterWallet of this.getMasterWalletsList()) {
-            let networkWallet = activeNetwork.createNetworkWallet(masterWallet);
+            let networkWallet = activatedNetwork.createNetworkWallet(masterWallet);
             await networkWallet.initialize();
             this.networkWallets[masterWallet.id] = networkWallet;
 

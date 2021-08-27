@@ -26,6 +26,8 @@ import { Logger } from 'src/app/logger';
 import { Network } from '../model/networks/network';
 import { LocalStorage } from './storage.service';
 
+export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
+
 @Injectable({
     providedIn: 'root'
 })
@@ -35,6 +37,8 @@ export class WalletNetworkService {
     private networks: Network[] = [];
 
     public activeNetwork = new BehaviorSubject<Network>(null);
+
+    private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
 
     constructor(private localStorage: LocalStorage)
     {
@@ -53,12 +57,12 @@ export class WalletNetworkService {
         let savedNetworkKey = await this.localStorage.get('activenetwork') as string;
         const savedNetwork = await this.getNetworkByKey(savedNetworkKey);
         if (!savedNetwork && useAsDefault) {
-            Logger.log("wallet", "WalletNetworkService - Using default network:", savedNetwork);
-            this.activeNetwork.next(network); // Normally, elastos
+            Logger.log("wallet", "WalletNetworkService - Using default network:", network);
+            await this.notifyNetworkChange(network); // Normally, elastos
         }
         else if (savedNetworkKey && savedNetworkKey === network.key) {
             Logger.log("wallet", "WalletNetworkService - Reloading network:", savedNetwork);
-            this.activeNetwork.next(savedNetwork);
+            await this.notifyNetworkChange(savedNetwork);
         }
     }
 
@@ -66,10 +70,32 @@ export class WalletNetworkService {
         return this.networks;
     }
 
+    /**
+     * Callback set by the wallet service to be informed of network change requests before anyone else
+     * and rebuild everything needed first.
+     */
+    public setPriorityNetworkChangeCallback(callback: PriorityNetworkChangeCallback) {
+        Logger.log("wallet", "TMP setPriorityNetworkChangeCallback", callback);
+        this.priorityNetworkChangeCallback = callback;
+    }
+
     public async setActiveNetwork(network: Network) {
         Logger.log("wallet", "Setting active network to", network);
+
         // Save choice to local storage
         await this.localStorage.set('activenetwork', network.key);
+
+        await this.notifyNetworkChange(network);
+    }
+
+    private async notifyNetworkChange(network: Network): Promise<void> {
+        // Inform and await the priority callback (wallet service)
+        if (this.priorityNetworkChangeCallback)
+            await this.priorityNetworkChangeCallback(network);
+
+        Logger.log("wallet", "Network change handled by the priority callback. Now telling other listeners");
+
+        // Inform other lower priority listeners
         this.activeNetwork.next(network);
     }
 

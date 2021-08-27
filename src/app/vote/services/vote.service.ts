@@ -63,8 +63,6 @@ export class VoteService {
             let networkHasBeenSwitched = await this.promptSwitchToElastosNetwork();
             if (!networkHasBeenSwitched)
                 return; // Used has denied to switch network. Can't continue.
-
-            await sleep(1000); // TODO DIRTY !! - await to make sure the elastos active network has been re-created
         }
 
         this.context = context;
