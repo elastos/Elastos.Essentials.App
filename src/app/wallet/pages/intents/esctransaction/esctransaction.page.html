@@ -20,21 +20,29 @@
             </ion-card>
         </div>
 
+        <!-- Network info -->
+        <ion-row class="network-row">
+            <ion-col size="12" class="left-col">
+                <img [src]="networkWallet.network.logo">
+                <h1>{{ networkWallet.network.name }}</h1>
+            </ion-col>
+        </ion-row>
+
         <!-- TX INFO -->
         <div class="msg-container">
             <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
-            <h1><span>{{ uiService.getFixedBalance(getTotalTransactionCostInELA().totalAsBigNumber) }}</span> ELA</h1>
+            <h1><span>{{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().totalAsBigNumber) }}</span> {{ getCurrencyInUse() }}</h1>
             <h2>
                 <b>{{ 'wallet.esctransaction-value' | translate }}</b>
-                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInELA().valueAsBigNumber) }}</span> ELA
+                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().valueAsBigNumber) }}</span> {{ getCurrencyInUse() }}
             </h2>
             <h2>
                 <b>{{ 'wallet.esctransaction-fees' | translate }}</b>
-                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInELA().feesAsBigNumber) }}</span> ELA
+                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().feesAsBigNumber) }}</span> {{ getCurrencyInUse() }}
             </h2>
             <h2>
                 <b>{{ 'wallet.balance-remaining' | translate }}</b>
-                <span> {{ uiService.getFixedBalance(balance) }}</span> ELA
+                <span> {{ uiService.getFixedBalance(balance) }}</span> {{ getCurrencyInUse() }}
             </h2>
         </div>
 
@@ -51,42 +59,3 @@
 
     </ion-grid>
 </ion-content>
-
-<!-- <ion-content>
-    <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <ion-card>
-            <ion-img [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'"></ion-img>
-            <ion-card-title>{{ 'esctransaction-smart-contract' | translate }}</ion-card-title>
-            <ion-card-subtitle>
-                {{ 'esctransaction-intro' | translate }}
-            </ion-card-subtitle>
-        </ion-card>
-        <div class="msg-container">
-            <p>{{ 'esctransaction-you-are-using' | translate }}</p>
-            <h1><span>105</span> ELA</h1>
-            <h2>
-                <b>{{ 'esctransaction-value' | translate }}</b>
-                <span> 105</span> ELA
-            </h2>
-            <h2>
-                <b>{{ 'esctransaction-fees' | translate }}</b>
-                <span> 0.5</span> ELA
-            </h2>
-            <h2>
-                <b>{{ 'coin-balance' | translate }}</b>
-                <span> 110</span> ELA
-            </h2>
-        </div>
-
-
-        <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
-            <h3>Insufficient balance for this operation</h3>
-            <ion-label>{{ 'cancel' | translate}}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-        <div class="btn confirm ion-activatable ripple" (click)="goTransaction()">
-            <ion-label>{{ 'confirm' | translate}}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-    </ion-grid>
-</ion-content> -->
