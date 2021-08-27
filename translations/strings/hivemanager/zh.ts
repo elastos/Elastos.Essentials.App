@@ -34,7 +34,7 @@ export const zh = {
       "signin": '登录',
       "publish-now": '立即发布',
       "didpublish": '发布 DID',
-      "didpublish-msg": '在ID链上无法找到您的DID身份。请确保已经通过 Identity 胶囊发布您的DID身份到ID链上。 您可以随意选择不将任何档案信息公开，但是您的DID必须发布上链。',
+      "didpublish-msg": '在ID链上无法找到您的DID身份。请确保已经通过 Identity 发布您的DID身份到ID链上。 您可以随意选择不将任何档案信息公开，但是您的DID必须发布上链。',
       "didpublish-msg2": '发布后，请等待几分钟再尝试在这里重新登录。',
     },
     "pickprovider": {

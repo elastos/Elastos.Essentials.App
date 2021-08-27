@@ -72,7 +72,7 @@ export const zh = {
         'language-setting': '选择语言',
 
         // Sharing
-        'share-friend': '在 Elastos Essentials 中添加我的朋友',
+        'share-friend': '在 Elastos Essentials 中添加我为好友',
         'share-add-me-as-friend': '加我为好友',
     }
 }
