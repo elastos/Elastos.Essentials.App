@@ -203,6 +203,13 @@ export const zh = {
         'contacts': "联系人",
         'scan': "扫描",
 
+        /***********************************
+        * Network Switch Component *
+        ************************************/
+         'network-switch-component-title': 'Network switch',
+         'network-switch-component-intro': 'To continue, you need to switch the currently active network to the Elastos network.',
+         'network-switch-component-confirm': 'Switch network',
+
         /************************
         * Transaction Info Page *
         *************************/

@@ -179,6 +179,40 @@
   }
 }
 
+/********************** NETWORK SWITCH MODAL **********************/
+
+.switch-network-component {
+  --height: 55%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.switch-network-component-dark {
+  --height: 60%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      border-top-left-radius: 50px;
+      border-top-right-radius: 50px;
+  }
+}
+
+.switch-network-component-base {
+  --height:35%;
+}
+
 /********************** WALLET **********************/
 .wallet-help-component {
   --width: 66.6%;
