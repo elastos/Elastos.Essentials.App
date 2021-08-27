@@ -146,9 +146,9 @@ export const zh = {
         /*********************
         * Coin Transfer Page *
         **********************/
-        "coin-transfer-send-title": "Send money",
-        "coin-transfer-recharge-title": "Money transfer",
-        "coin-transfer-withdraw-title": "Money transfer",
+        "coin-transfer-send-title": "发送代币",
+        "coin-transfer-recharge-title": "代币充值",
+        "coin-transfer-withdraw-title": "代币提现",
         "payment-title": '支付',
         "transfer-from": "来自",
         "transfer-to": "转移到",
@@ -206,9 +206,9 @@ export const zh = {
         /***********************************
         * Network Switch Component *
         ************************************/
-         'network-switch-component-title': 'Network switch',
-         'network-switch-component-intro': 'To continue, you need to switch the currently active network to the Elastos network.',
-         'network-switch-component-confirm': 'Switch network',
+         'network-switch-component-title': '网络切换',
+         'network-switch-component-intro': '您需要将当前网络切换到Elastos网络才能执行下一步操作。',
+         'network-switch-component-confirm': '切换网络',
 
         /************************
         * Transaction Info Page *
@@ -371,7 +371,7 @@ export const zh = {
         ************************/
         "esctransaction-title": "交易",
         "esctransaction-smart-contract": "智能合约",
-        "esctransaction-intro": "You are going to sign and run a smart contract.",
+        "esctransaction-intro": "您将签署并运行智能合约",
         "esctransaction-approve-token": "Approve Token",
         "esctransaction-approve-token-intro": "此应用程序或网站将被允许代表您提取和使用您的 {{token}} 代币",
         "esctransaction-you-are-using": "您正在使用：",
@@ -389,8 +389,8 @@ export const zh = {
         /****************
         * Launcher Page *
         *****************/
-        'wallet-prompt1': 'Your Secure',
-        'wallet-prompt2': 'Digital Wallet',
+        'wallet-prompt1': '安全的',
+        'wallet-prompt2': '数字钱包',
         'get-started': '开始',
         'import-wallet-msg': '已经有钱包? 点击这里导入钱包',
         'launcher-create-wallet': '创建钱包',
