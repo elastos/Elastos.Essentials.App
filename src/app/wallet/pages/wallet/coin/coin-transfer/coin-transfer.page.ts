@@ -267,7 +267,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             case TransferType.WITHDRAW:
                 // Setup page display
-                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", {coinName: this.elastosChainCode}));
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title"));
                 this.toSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA);
 
                 // Setup params for withdraw transaction
@@ -280,7 +280,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             // For Send Transfer
             case TransferType.SEND:
-                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-send-title", {coinName: this.elastosChainCode}));
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-send-title"));
                 this.transaction = this.createSendTransaction;
 
                 if (this.elastosChainCode === StandardCoinName.ELA) {
@@ -551,7 +551,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else {
             if (this.fromSubWallet.type === CoinType.ERC20) {
-                if (this.networkWallet.getSubWallet(StandardCoinName.ETHSC).balance.isLessThan(0.001)) {
+                if (this.networkWallet.getMainEvmSubWallet().balance.isLessThan(0.001)) {
                     if (showToast) this.native.toast_trans('wallet.eth-insuff-balance', 4000);
                 } else {
                     valuesValid = true;

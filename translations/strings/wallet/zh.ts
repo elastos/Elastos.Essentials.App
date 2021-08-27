@@ -146,9 +146,9 @@ export const zh = {
         /*********************
         * Coin Transfer Page *
         **********************/
-        "coin-transfer-send-title": "从 {{coinName}} 发送",
-        "coin-transfer-recharge-title": "{{coinName}} 充值",
-        "coin-transfer-withdraw-title": "{{coinName}} 提现",
+        "coin-transfer-send-title": "Send money",
+        "coin-transfer-recharge-title": "Money transfer",
+        "coin-transfer-withdraw-title": "Money transfer",
         "payment-title": '支付',
         "transfer-from": "来自",
         "transfer-to": "转移到",
