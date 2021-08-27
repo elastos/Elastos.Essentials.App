@@ -381,8 +381,8 @@ export const en = {
         /****************
         * Launcher Page *
         *****************/
-        'wallet-prompt1': 'Secure Wallet for',
-        'wallet-prompt2': 'The Elastos Ecosystem',
+        'wallet-prompt1': 'Your Secure',
+        'wallet-prompt2': 'Digital Wallet',
         'get-started': 'Get Started',
         'import-wallet-msg': 'Already got a Wallet? Import it.',
         'launcher-create-wallet': 'Create Wallet',

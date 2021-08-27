@@ -13,6 +13,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 
 @Component({
@@ -74,8 +75,8 @@ export class WalletManagerPage implements OnInit {
         }
     }
 
-    goWalletSettings(masterWallet: MasterWallet) {
-        this.walletEditionService.modifiedMasterWalletId = masterWallet.id;
+    goWalletSettings(networkWallet: NetworkWallet) {
+        this.walletEditionService.modifiedMasterWalletId = networkWallet.id;
         this.native.go("/wallet/wallet-settings");
     }
 

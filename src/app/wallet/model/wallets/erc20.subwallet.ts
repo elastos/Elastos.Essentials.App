@@ -307,9 +307,9 @@ export abstract class ERC20SubWallet extends SubWallet {
         const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
-                return "wallet.coin-action-receive";
+                return "wallet.coin-op-received-token";
             case TransactionDirection.SENT:
-                return "wallet.coin-action-send";
+                return "wallet.coin-op-sent-token";
             default:
                 return "Invalid";
         }

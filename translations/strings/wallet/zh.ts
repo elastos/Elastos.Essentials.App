@@ -382,8 +382,8 @@ export const zh = {
         /****************
         * Launcher Page *
         *****************/
-        'wallet-prompt1': 'Elastos 生态系统的',
-        'wallet-prompt2': '安全钱包',
+        'wallet-prompt1': 'Your Secure',
+        'wallet-prompt2': 'Digital Wallet',
         'get-started': '开始',
         'import-wallet-msg': '已经有钱包? 点击这里导入钱包',
         'launcher-create-wallet': '创建钱包',

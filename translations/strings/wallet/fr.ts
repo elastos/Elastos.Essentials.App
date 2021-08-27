@@ -383,8 +383,8 @@ export const fr = {
         /****************
         * Launcher Page *
         *****************/
-        'wallet-prompt1': 'Portefeuille sécurisé pour',
-        'wallet-prompt2': "l'écosystème Elastos",
+        'wallet-prompt1': 'Votre Portefeuille',
+        'wallet-prompt2': 'Numérique Sécurisé',
         'get-started': 'Commencer',
         'import-wallet-msg': 'Vous avez déjà un portefeuille? Importez-le.',
         'launcher-create-wallet': 'Créer le portefeuille',
