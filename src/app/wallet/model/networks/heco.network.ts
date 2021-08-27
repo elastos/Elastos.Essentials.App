@@ -23,7 +23,7 @@ export class HECONetwork extends Network {
       availableCoins.push(new ERC20Coin("USDT", "USDT", "Heco USDT", "0xa71EdC38d189767582C38A3145b5873052c3e47a", MAINNET_TEMPLATE, false));
       availableCoins.push(new ERC20Coin("USDC", "USDC", "Heco USDC", "0x9362bbef4b8313a8aa9f0c9808b80577aa26b73b", MAINNET_TEMPLATE, false));
       availableCoins.push(new ERC20Coin("DOT", "DOT", "Heco DOT", "0xa2c49cee16a5e5bdefde931107dc1fae9f7773e3", MAINNET_TEMPLATE, false));
-      availableCoins.push(new ERC20Coin("FilDa", "FilDa", "FilDa", "0xe36ffd17b2661eb57144ceaef942d95295e637f0", MAINNET_TEMPLATE, false));
+      availableCoins.push(new ERC20Coin("FilDA", "FilDA", "FilDA", "0xe36ffd17b2661eb57144ceaef942d95295e637f0", MAINNET_TEMPLATE, false));
     }
 
     return availableCoins;
