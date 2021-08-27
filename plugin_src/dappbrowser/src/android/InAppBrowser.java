@@ -29,18 +29,13 @@ import android.provider.Browser;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.graphics.Color;
 import android.net.http.SslError;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.EditorInfo;
@@ -59,7 +54,6 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -72,7 +66,6 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.LOG;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
-import org.elastos.essentials.app.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -124,7 +117,7 @@ public class InAppBrowser extends CordovaPlugin {
     private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR, TITLE);
 
     private InAppBrowserDialog dialog;
-    private ToolBar toolbar;
+    private TitleBar toolbar;
     private WebView inAppWebView;
     private EditText edittext;
     private CallbackContext callbackContext;
@@ -832,7 +825,6 @@ public class InAppBrowser extends CordovaPlugin {
                 toolbar = dialog.toolbar;
                 edittext = dialog.edittext;
                 toolbar.setDarkMode(darkMode);
-                toolbar.initialize(dialog, "test");
                 if (title != null) {
                     toolbar.setTitle(title);
                     edittext.setVisibility(View.GONE);

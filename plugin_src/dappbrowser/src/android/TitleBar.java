@@ -25,7 +25,7 @@ import org.elastos.essentials.app.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ToolBar extends FrameLayout {
+public class TitleBar extends FrameLayout {
     public interface OnIconClickedListener {
         void onIconCLicked(TitleBarIcon icon);
     }
@@ -67,7 +67,7 @@ public class ToolBar extends FrameLayout {
     TitleBarIcon innerRightIcon = null;
     TitleBarIcon outerRightIcon = null;
 
-    public ToolBar(Context context, AttributeSet attrs) {
+    public TitleBar(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         activityCounters.put(TitleBarActivityType.DOWNLOAD, 0);
@@ -118,18 +118,10 @@ public class ToolBar extends FrameLayout {
             handleOuterRightClicked();
         });
 
-        btnOuterLeft.setPaddingDp(12);
-        btnInnerLeft.setPaddingDp(12);
+//        btnOuterLeft.setPaddingDp(12);
+//        btnInnerLeft.setPaddingDp(12);
         // btnInnerRight.setPaddingDp(12);
-        btnOuterRight.setPaddingDp(12);
-
-        if (darkModeUsed()) {
-            setBackgroundColor("#FFFFFF");
-            setForegroundMode(TitleBarForegroundMode.LIGHT);
-        } else {
-            setBackgroundColor("#000000");
-            setForegroundMode(TitleBarForegroundMode.DARK);
-        }
+//        btnOuterRight.setPaddingDp(12);
 
         setAnimationHintText(null);
 
@@ -137,7 +129,10 @@ public class ToolBar extends FrameLayout {
     }
 
     public void setDarkMode(boolean darkMode) {
-        this.darkMode = darkMode;
+        if (this.darkMode != darkMode) {
+            this.darkMode = darkMode;
+            updateIcons();
+        }
     }
 
     private boolean darkModeUsed() {
@@ -350,6 +345,14 @@ public class ToolBar extends FrameLayout {
      * Updates all icons according to the overall configuration
      */
     private void updateIcons() {
+        if (darkMode) {
+            setBackgroundColor("#000000");
+            setForegroundMode(TitleBarForegroundMode.LIGHT);
+        } else {
+            setBackgroundColor("#FFFFFF");
+            setForegroundMode(TitleBarForegroundMode.DARK);
+        }
+
         btnOuterLeft.setImageResource(darkMode ? R.drawable.ic_elastos_darkmode : R.drawable.ic_elastos);
         btnOuterLeft.setVisibility(View.VISIBLE);
         btnInnerLeft.setImageResource(darkMode ? R.drawable.ic_back_darkmode : R.drawable.ic_back);

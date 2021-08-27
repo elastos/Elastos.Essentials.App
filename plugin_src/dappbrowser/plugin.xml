@@ -74,7 +74,7 @@
         <source-file src="src/android/TitleBarForegroundMode.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/TitleBarIconView.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/TitleBarVisibility.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
-        <source-file src="src/android/ToolBar.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
+        <source-file src="src/android/TitleBar.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/TitleBarIcon.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/TitleBarMenuItem.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
 

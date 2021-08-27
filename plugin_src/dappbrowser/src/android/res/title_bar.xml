@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/flRoot"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:background="#E5E8F1">
+    android:layout_height="50dp"
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,30 +15,24 @@
 
         <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView
             android:id="@+id/btnOuterLeft"
-            android:layout_width="40dp"
-            android:layout_height="41dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0" />
+            android:layout_weight="0"
+            android:paddingLeft="10dp" />
 
         <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView
             android:id="@+id/btnInnerLeft"
-            android:layout_width="40dp"
-            android:layout_height="41dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0" />
+            android:layout_weight="0"
+            android:paddingLeft="20dp" />
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-
-        <EditText
-            android:id="@+id/txtUrl"
-            android:layout_width="282dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:inputType="textWebEditText"
-            android:singleLine="true" />
 
         <!--        <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView-->
         <!--            android:id="@+id/btnInnerRight"-->
@@ -47,12 +41,22 @@
         <!--            android:layout_gravity="center_vertical"-->
         <!--            android:layout_weight="0" />-->
 
+        <EditText
+            android:id="@+id/txtUrl"
+            android:layout_width="282dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:inputType="textWebEditText"
+            android:paddingTop="9dp"
+            android:singleLine="true" />
+
         <org.elastos.essentials.plugins.dappbrowser.TitleBarIconView
             android:id="@+id/btnOuterRight"
-            android:layout_width="40dp"
-            android:layout_height="41dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0" />
+            android:layout_weight="0"
+            android:paddingEnd="9dp" />
 
     </LinearLayout>
 

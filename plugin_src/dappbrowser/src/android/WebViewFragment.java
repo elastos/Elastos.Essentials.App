@@ -80,7 +80,7 @@ public class WebViewFragment extends Fragment {
 
     protected String launchUrl;
 
-    public ToolBar titlebar;
+    public TitleBar titlebar;
     public WebView webView = null;
 
     public static WebViewFragment newInstance(String id) {
@@ -126,7 +126,7 @@ public class WebViewFragment extends Fragment {
         return rootView;
     }
 
-    public ToolBar getTitlebar() {
+    public TitleBar getTitlebar() {
         return titlebar;
     }
 

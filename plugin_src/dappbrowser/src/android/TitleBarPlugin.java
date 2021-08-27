@@ -251,7 +251,7 @@ public class TitleBarPlugin extends CordovaPlugin {
         });
     }
 
-    private ToolBar getToolBar() {
+    private TitleBar getToolBar() {
         return null;
     }
 }

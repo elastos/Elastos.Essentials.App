@@ -18,15 +18,12 @@
 */
 package org.elastos.essentials.plugins.dappbrowser;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.webkit.WebView;
 import android.widget.EditText;
 
 import org.elastos.essentials.app.R;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by Oliver on 22/11/2013.
@@ -35,7 +32,7 @@ public class InAppBrowserDialog extends Dialog {
     Context context;
     public InAppBrowser inAppBrowser = null;
 
-    public ToolBar toolbar;
+    public TitleBar toolbar;
     public WebView webView = null;
     public EditText edittext;
 

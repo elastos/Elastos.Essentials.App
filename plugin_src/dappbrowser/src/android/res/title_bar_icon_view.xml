@@ -13,13 +13,12 @@
         android:layout_weight="0"
         android:background="#00FFFFFF"
         android:foreground="?android:attr/selectableItemBackground"
-        android:scaleType="fitCenter"
         />
 
     <ImageView
         android:id="@+id/ivBadge"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_gravity="top|end"
         android:layout_margin="4dp"
         android:layout_weight="0"

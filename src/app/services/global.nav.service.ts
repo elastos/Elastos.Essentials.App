@@ -35,13 +35,18 @@ type NavigationStep = {
   providedIn: 'root'
 })
 export class GlobalNavService {
+
+    public static instance: GlobalNavService;
+
     public loader: HTMLIonLoadingElement = null;
     public alert = null;
     private navigationHistory: NavigationStep[] = [];
 
     constructor(
       private navCtrl: NavController,
-    ) { }
+    ) {
+        GlobalNavService.instance = this;
+    }
 
     /**
      * Deletes all recent steps as long as they belong to the given context.
