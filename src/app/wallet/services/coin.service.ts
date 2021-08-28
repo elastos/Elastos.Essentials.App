@@ -35,8 +35,8 @@ import { Network } from '../model/networks/network';
 })
 export class CoinService {
     public static instance: CoinService = null;
-    private availableCoins: Coin[] = null;
-    private deletedERC20Coins: ERC20Coin[] = null;
+    private availableCoins: Map<string, Coin[]> = new Map(); // Map of network key -> coins
+    private deletedERC20Coins: Map<string, ERC20Coin[]> = new Map(); // Map of network key -> coins
     private activeNetworkTemplate: string;
 
     constructor(
@@ -49,9 +49,6 @@ export class CoinService {
     }
 
     public init() {
-        this.availableCoins = [];
-        this.deletedERC20Coins = [];
-
         this.activeNetworkTemplate = this.prefs.getNetworkTemplate();
 
         this.networkService.activeNetwork.subscribe(activeNetwork => {
@@ -61,54 +58,55 @@ export class CoinService {
         });
     }
 
-    private async refreshCoins(activeNetwork: Network) {
+    private async refreshCoins(network: Network) {
         Logger.log("wallet", "Coin service - refreshing available coins");
 
-        this.availableCoins = activeNetwork.getBuiltInERC20Coins(this.activeNetworkTemplate);
+        let availableCoins = [];
 
-        // TMP DEBUG
-        //await this.storage.set("custom-erc20-coins", []);
+        // Add default ERC20 tokens built-in essentials
+        availableCoins = network.getBuiltInERC20Coins(this.activeNetworkTemplate);
 
-        await this.addCustomERC20CoinsToAvailableCoins(activeNetwork);
+        // Add custom ERC20 tokens, manually added by the user or discovered
+        availableCoins = [...availableCoins, ...await this.getCustomERC20Coins(network)];
 
-        await this.initDeletedCustomERC20Coins(activeNetwork);
+        await this.initDeletedCustomERC20Coins(network);
 
-        Logger.log('wallet', "Available coins:", this.availableCoins);
-        Logger.log('wallet', "Deleted coins:", this.deletedERC20Coins);
+        Logger.log('wallet', "Available coins for network "+network.key+":", this.availableCoins);
+        Logger.log('wallet', "Deleted coins for network "+network.key+":", this.deletedERC20Coins);
     }
 
-    public getAvailableCoins(): Coin[] {
+    public getAvailableCoins(network: Network): Coin[] {
         // Return only coins that are usable on the active network.
-        return this.availableCoins.filter(c => {
+        return this.availableCoins.get(network.key).filter(c => {
             return c.networkTemplate == null || c.networkTemplate === this.activeNetworkTemplate;
         });
     }
 
-    public getAvailableERC20Coins(): ERC20Coin[] {
+    public getAvailableERC20Coins(network: Network): ERC20Coin[] {
         // Return only ERC20 coins that are usable on the active network.
-        return this.availableCoins.filter(c => {
+        return this.availableCoins.get(network.key).filter(c => {
             return (c.networkTemplate == null || c.networkTemplate === this.activeNetworkTemplate) && (c.getType() === CoinType.ERC20);
         }) as ERC20Coin[];
     }
 
-    public getCoinByID(id: CoinID): Coin {
-        return this.getAvailableCoins().find((c) => {
+    public getCoinByID(network: Network, id: CoinID): Coin {
+        return this.getAvailableCoins(network).find((c) => {
             return c.getID() === id;
         });
     }
 
-    public getERC20CoinByContractAddress(address: string): ERC20Coin | null {
-        return this.getAvailableERC20Coins().find((c) => {
+    public getERC20CoinByContractAddress(network: Network, address: string): ERC20Coin | null {
+        return this.getAvailableERC20Coins(network).find((c) => {
             return c.getContractAddress().toLowerCase() === address.toLowerCase();
         }) || null;
     }
 
-    public coinAlreadyExists(address: string): boolean {
-        return this.getERC20CoinByContractAddress(address) != null;
+    public coinAlreadyExists(network: Network, address: string): boolean {
+        return this.getERC20CoinByContractAddress(network, address) != null;
     }
 
-    public isCoinDeleted(address: string) {
-        for (let coin of this.deletedERC20Coins) {
+    public isCoinDeleted(network: Network, address: string) {
+        for (let coin of this.deletedERC20Coins.get(network.key)) {
             if (coin.getContractAddress().toLowerCase() === address.toLowerCase()) return true;
         }
         return false;
@@ -120,25 +118,24 @@ export class CoinService {
      *
      * Returns true if the coin was added, false otherwise (already existing or error).
      */
-    public async addCustomERC20Coin(erc20Coin: ERC20Coin, activateInWallets?: NetworkWallet[]): Promise<boolean> {
+    public async addCustomERC20Coin(network: Network, erc20Coin: ERC20Coin, activateInWallets?: NetworkWallet[]): Promise<boolean> {
         Logger.log('wallet', "Adding coin to custom ERC20 coins list", erc20Coin);
 
-        let network = this.networkService.activeNetwork.value; // Consider we are adding a coin for the active network
         const existingCoins = await this.getCustomERC20Coins(network);
         existingCoins.push(erc20Coin);
 
-        if (this.coinAlreadyExists(erc20Coin.getContractAddress())) {
+        if (this.coinAlreadyExists(network, erc20Coin.getContractAddress())) {
             Logger.log('wallet', "Not adding coin, it already exists", erc20Coin);
             return false;
         }
 
         // Add to the available coins list
-        this.availableCoins.push(erc20Coin);
+        this.availableCoins.get(network.key).push(erc20Coin);
 
         // Save to permanent storage
         await this.storage.set("custom-erc20-coins-"+network.key, existingCoins);
 
-        this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase());
+        this.deletedERC20Coins.set(network.key, this.deletedERC20Coins.get(network.key).filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase()));
         await this.storage.set("custom-erc20-coins-deleted-"+network.key, this.deletedERC20Coins);
 
         // Activate this new coin in all wallets
@@ -157,15 +154,24 @@ export class CoinService {
         return true;
     }
 
-    public async deleteERC20Coin(erc20Coin: ERC20Coin) {
-        this.availableCoins = this.availableCoins.filter((coin) => coin.getID() !== erc20Coin.getID());
-        let network = this.networkService.activeNetwork.value; // Consider we are deleting a coin for the active network
+
+
+    TODO: SHOULD WE DELETE THIS SERVICE AND MOVE THIS IN NETWORK AND NETWORKWALLET CLASSES?
+    TODO: SHOULD WE DELETE THIS SERVICE AND MOVE THIS IN NETWORK AND NETWORKWALLET CLASSES?
+    TODO: SHOULD WE DELETE THIS SERVICE AND MOVE THIS IN NETWORK AND NETWORKWALLET CLASSES?
+    TODO: SHOULD WE DELETE THIS SERVICE AND MOVE THIS IN NETWORK AND NETWORKWALLET CLASSES?
+    TODO: SHOULD WE DELETE THIS SERVICE AND MOVE THIS IN NETWORK AND NETWORKWALLET CLASSES?
+
+
+
+    public async deleteERC20Coin(network: Network, erc20Coin: ERC20Coin) {
+        this.availableCoins.set(network.key, this.availableCoins.get(network.key).filter((coin) => coin.getID() !== erc20Coin.getID()));
         let allCustomERC20Coins = await this.getCustomERC20Coins(network);
         allCustomERC20Coins = allCustomERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== erc20Coin.getContractAddress().toLowerCase());
         await this.storage.set("custom-erc20-coins-"+network.key, allCustomERC20Coins);
         Logger.log('wallet', 'availableCoins after deleting', this.availableCoins);
 
-        this.deletedERC20Coins.push(erc20Coin);
+        this.deletedERC20Coins.get(network.key).push(erc20Coin);
         await this.storage.set("custom-erc20-coins-deleted-"+network.key, this.deletedERC20Coins);
 
         this.events.publish("custom-coin-deleted");
@@ -185,25 +191,17 @@ export class CoinService {
         return customCoins;
     }
 
-    private async initDeletedCustomERC20Coins(activeNetwork: Network): Promise<ERC20Coin[]> {
-        const rawCoinList = await this.storage.get("custom-erc20-coins-deleted-"+activeNetwork.key);
+    private async initDeletedCustomERC20Coins(network: Network): Promise<ERC20Coin[]> {
+        const rawCoinList = await this.storage.get("custom-erc20-coins-deleted-"+network.key);
         if (!rawCoinList) {
             return [];
         }
 
+        let deletedERC20Coins: ERC20Coin[] = [];
         for (let rawCoin of rawCoinList) {
-            this.deletedERC20Coins.push(ERC20Coin.fromJson(rawCoin));
+            deletedERC20Coins.push(ERC20Coin.fromJson(rawCoin));
         }
-    }
 
-    /**
-     * Appens all custom ERC20 coins to the list of available coins.
-     */
-    private async addCustomERC20CoinsToAvailableCoins(activeNetwork: Network) {
-        const existingCoins = await this.getCustomERC20Coins(activeNetwork);
-
-        for (let coin of existingCoins) {
-            this.availableCoins.push(coin);
-        }
+        this.deletedERC20Coins.set(network.key, deletedERC20Coins);
     }
 }
