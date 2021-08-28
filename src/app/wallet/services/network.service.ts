@@ -75,7 +75,6 @@ export class WalletNetworkService {
      * and rebuild everything needed first.
      */
     public setPriorityNetworkChangeCallback(callback: PriorityNetworkChangeCallback) {
-        Logger.log("wallet", "TMP setPriorityNetworkChangeCallback", callback);
         this.priorityNetworkChangeCallback = callback;
     }
 
@@ -90,10 +89,10 @@ export class WalletNetworkService {
 
     private async notifyNetworkChange(network: Network): Promise<void> {
         // Inform and await the priority callback (wallet service)
-        if (this.priorityNetworkChangeCallback)
+        if (this.priorityNetworkChangeCallback) {
             await this.priorityNetworkChangeCallback(network);
-
-        Logger.log("wallet", "Network change handled by the priority callback. Now telling other listeners");
+            Logger.log("wallet", "Network change handled by the priority callback. Now telling other listeners");
+        }
 
         // Inform other lower priority listeners
         this.activeNetwork.next(network);

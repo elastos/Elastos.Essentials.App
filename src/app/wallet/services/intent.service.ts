@@ -14,6 +14,7 @@ import { Logger } from 'src/app/logger';
 import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
 import { AddERCTokenRequestParams } from '../model/adderctokenrequest';
+import { WalletNetworkService } from './network.service';
 
 export enum ScanType {
   Address     = 1,
@@ -39,6 +40,7 @@ export class IntentService {
         private popupProvider: PopupProvider,
         private walletAccessService: WalletAccessService,
         private walletEditionService: WalletEditionService,
+        private walletNetworkService: WalletNetworkService,
         private globalIntentService: GlobalIntentService,
     ) {
     }
@@ -330,8 +332,9 @@ export class IntentService {
                 break;
             default:
                 if (currency.startsWith('ELA/ETHSC:')) {
+                    let elastosNetwork = this.walletNetworkService.getNetworkByKey("elastos");
                     elastosChainCode = currency.substring(10) as StandardCoinName;
-                    const coin = this.coinService.getCoinByID(elastosChainCode);
+                    const coin = this.coinService.getCoinByID(elastosNetwork, elastosChainCode);
                     if (!coin) {
                         elastosChainCode = null;
                         Logger.log("wallet", 'Not support coin:', currency);

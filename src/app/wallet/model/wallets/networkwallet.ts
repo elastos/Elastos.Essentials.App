@@ -191,17 +191,17 @@ export abstract class NetworkWallet {
         ercTokenList.forEach(async (token: ERC20TokenInfo) => {
             if (token.type === "ERC-20") {
                 if (token.symbol && token.name) {
-                    if (!this.subWallets[token.symbol] && !this.masterWallet.coinService.isCoinDeleted(token.contractAddress)) {
+                    if (!this.subWallets[token.symbol] && !this.masterWallet.coinService.isCoinDeleted(this.network, token.contractAddress)) {
                         try {
                             // Check if we already know this token globally. If so, we add it as a new subwallet
                             // to this master wallet. Otherwise we add the new token to the global list first then
                             // add a subwallet as well.
-                            const erc20Coin = this.masterWallet.coinService.getERC20CoinByContractAddress(token.contractAddress);
+                            const erc20Coin = this.masterWallet.coinService.getERC20CoinByContractAddress(this.network, token.contractAddress);
                             if (erc20Coin) {
                                 await this.createNonStandardSubWallet(erc20Coin);
                             } else {
                                 const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
-                                await this.masterWallet.coinService.addCustomERC20Coin(newCoin, WalletService.instance.getNetworkWalletsList());
+                                await this.masterWallet.coinService.addCustomERC20Coin(this.network, newCoin, WalletService.instance.getNetworkWalletsList());
                             }
                         } catch (e) {
                             Logger.log("wallet", 'updateERC20TokenList exception:', e);

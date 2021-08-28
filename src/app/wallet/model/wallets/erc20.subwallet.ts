@@ -42,7 +42,7 @@ export abstract class ERC20SubWallet extends SubWallet {
             Logger.log('wallet', 'newFromSerializedSubWallet id is null');
             return null;
         }
-        const coin = CoinService.instance.getCoinByID(serializedSubWallet.id) as ERC20Coin;
+        const coin = CoinService.instance.getCoinByID(networkWallet.network, serializedSubWallet.id) as ERC20Coin;
         if (coin) {
             const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id);
             // subWallet.initFromSerializedSubWallet(serializedSubWallet);
@@ -53,14 +53,14 @@ export abstract class ERC20SubWallet extends SubWallet {
         }
     }
 
-    constructor(networkWallet: NetworkWallet, id: CoinID, private rpcApiUrl: string) {
+    constructor(private networkWallet: NetworkWallet, id: CoinID, private rpcApiUrl: string) {
         super(networkWallet.masterWallet, id, CoinType.ERC20);
 
         void this.initialize();
     }
 
     private async initialize() {
-        this.coin = this.masterWallet.coinService.getCoinByID(this.id) as ERC20Coin;
+        this.coin = this.masterWallet.coinService.getCoinByID(this.networkWallet.network, this.id) as ERC20Coin;
         // Get Web3 and the ERC20 contract ready
         const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
         this.web3 = new Web3(trinityWeb3Provider);
@@ -90,7 +90,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     }
 
     public getFriendlyName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.id);
+        const coin = this.masterWallet.coinService.getCoinByID(this.networkWallet.network, this.id);
         if (!coin) {
             return ''; // Just in case
         }
@@ -98,7 +98,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     }
 
     public getDisplayTokenName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.id);
+        const coin = this.masterWallet.coinService.getCoinByID(this.networkWallet.network, this.id);
         if (!coin) {
             return ''; // Just in case
         }

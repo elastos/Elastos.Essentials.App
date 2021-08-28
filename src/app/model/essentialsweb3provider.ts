@@ -20,7 +20,7 @@ export class EssentialsWeb3Provider implements AbstractProvider {
                     var result = request.responseText;
 
                     try {
-                        Logger.log("global", "Ethereum JSON RPC call result:", result, "for payload:", payload);
+                        //Logger.log("global", "Ethereum JSON RPC call result:", result, "for payload:", payload);
                         result = JSON.parse(result);
                         resolve(result);
                     } catch(e) {
@@ -49,7 +49,7 @@ export class EssentialsWeb3Provider implements AbstractProvider {
 
     // Mandatory method: sendAsync()
     async sendAsync(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        Logger.log("global", "Essentials Web3 provider sendAsync payload", payload);
+        //Logger.log("global", "Essentials Web3 provider sendAsync payload", payload);
         switch (payload.method) {
             // All methods not handled above are sent through JSON RPC API to the user-defined node url.
             default:
