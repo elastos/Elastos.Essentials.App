@@ -21,7 +21,7 @@
                 <div (click)="currencyService.toggleCurrencyDisplay()">
                     <h4 *ngIf="!currencyService.useCurrency">{{ Util.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot" *ngIf="!networkWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
                         <span class="decimals">{{ Util.getDecimalBalance(networkWallet.getDisplayBalance()) }}</span>
-                        <span class="ela">  ELA</span>
+                        <span class="ela">  {{ networkWallet.getDisplayTokenName() }}</span>
                     </h4>
                     <h4 *ngIf="currencyService.useCurrency">{{ Util.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance())) }}<span class="dot" *ngIf="!networkWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))">.</span>
                         <span class="decimals">{{ Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance())) }}</span>
