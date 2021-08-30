@@ -10,6 +10,7 @@ import { StandardEVMSubWallet } from "../evm.subwallet";
 import { ERC20TokenInfo } from "../../evm.types";
 import { EscSubWallet } from "./esc.subwallet";
 import { EidSubWallet } from "./eid.subwallet";
+import { Logger } from "src/app/logger";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
@@ -21,15 +22,19 @@ export class ElastosNetworkWallet extends NetworkWallet {
   protected async prepareStandardSubWallets(): Promise<void> {
     this.mainTokenSubWallet = new EscSubWallet(this);
 
+    Logger.log("wallet", "Registering Elastos standard subwallets to the SPVSDK");
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
+    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
+
+    Logger.log("wallet", "Creating Elastos standard subwallets");
     this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this.masterWallet);
     this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
     this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
     this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
 
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
+    Logger.log("wallet", "Elastos standard subwallets preparation completed");
   }
 
   public getMainEvmSubWallet(): StandardEVMSubWallet {

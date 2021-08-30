@@ -31,12 +31,18 @@ export class ElastosNetwork extends Network {
     return availableCoins;
   }
 
-  public createNetworkWallet(masterWallet: MasterWallet): NetworkWallet {
-    return new ElastosNetworkWallet(masterWallet, this);
+  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+    let wallet = new ElastosNetworkWallet(masterWallet, this);
+    await wallet.initialize();
+    if (startBackgroundUpdates)
+      void wallet.startBackgroundUpdates();
+    return wallet;
   }
 
   public createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet {
-    return new ElastosERC20SubWallet(networkWallet, coinID);
+    let subWallet = new ElastosERC20SubWallet(networkWallet, coinID);
+    void subWallet.startBackgroundUpdates();
+    return subWallet;
   }
 
   public getMainEvmRpcApiUrl(): string {

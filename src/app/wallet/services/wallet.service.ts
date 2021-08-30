@@ -218,16 +218,20 @@ export class WalletService {
      * for each master wallet.
      */
     private async onActiveNetworkChanged(activatedNetwork: Network): Promise<void> {
-        Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
+        if (activatedNetwork) {
+            Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
 
-        for (let masterWallet of this.getMasterWalletsList()) {
-            let networkWallet = activatedNetwork.createNetworkWallet(masterWallet);
-            await networkWallet.initialize();
-            this.networkWallets[masterWallet.id] = networkWallet;
+            for (let masterWallet of this.getMasterWalletsList()) {
+                Logger.log("wallet", "Creating network wallet for master wallet:", masterWallet);
+                let networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
+                this.networkWallets[masterWallet.id] = networkWallet;
 
-            // Notify that this network wallet is the active one
-            if (masterWallet.id === this.activeMasterWalletId)
-                this.activeNetworkWallet.next(networkWallet);
+                // Notify that this network wallet is the active one
+                if (masterWallet.id === this.activeMasterWalletId) {
+                    Logger.log("wallet", "Setting the network walelt as active one:", networkWallet);
+                    this.activeNetworkWallet.next(networkWallet);
+                }
+            }
         }
     }
 
@@ -265,7 +269,7 @@ export class WalletService {
     }
 
     public async setActiveMasterWallet(masterId: WalletID): Promise<void> {
-      Logger.log('wallet', 'setActiveMasterWallet ', masterId);
+      Logger.log('wallet', 'Requested to set active master wallet to:', masterId);
       if (masterId && (this.masterWallets[masterId])) {
           this.activeMasterWalletId = masterId;
           await this.localStorage.saveCurMasterId(this.networkTemplate, { masterId: masterId });
@@ -420,8 +424,7 @@ export class WalletService {
 
         // Built networkWallet
         let activeNetwork = this.networkService.activeNetwork.value;
-        let networkWallet = activeNetwork.createNetworkWallet(this.masterWallets[id]);
-        await networkWallet.initialize();
+        let networkWallet = await activeNetwork.createNetworkWallet(this.masterWallets[id]);
         this.networkWallets[id] = networkWallet;
         // Notify that this network wallet is the active one
         await this.setActiveNetworkWallet(networkWallet);

@@ -29,12 +29,18 @@ export class HECONetwork extends Network {
     return availableCoins;
   }
 
-  public createNetworkWallet(masterWallet: MasterWallet): NetworkWallet {
-    return new HecoNetworkWallet(masterWallet, this);
+  public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
+    let wallet = new HecoNetworkWallet(masterWallet, this);
+    await wallet.initialize();
+    if (startBackgroundUpdates)
+      void wallet.startBackgroundUpdates();
+    return wallet;
   }
 
   public createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet {
-    return new HecoERC20SubWallet(networkWallet, coinID);
+    let subWallet = new HecoERC20SubWallet(networkWallet, coinID);
+    void subWallet.startBackgroundUpdates();
+    return subWallet;
   }
 
   public getMainEvmRpcApiUrl(): string {
