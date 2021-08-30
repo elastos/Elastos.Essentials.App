@@ -178,7 +178,9 @@ export abstract class Network {
 
     const customCoins: ERC20Coin[] = [];
     for (let rawCoin of rawCoinList) {
-      customCoins.push(ERC20Coin.fromJson(rawCoin));
+      let coin = ERC20Coin.fromJson(rawCoin);
+      if (!this.coinAlreadyExists(coin.getContractAddress()))
+        customCoins.push();
     }
 
     return customCoins;
