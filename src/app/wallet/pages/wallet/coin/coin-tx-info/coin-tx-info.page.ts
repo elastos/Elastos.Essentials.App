@@ -4,7 +4,6 @@ import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/util';
 import { WalletService } from '../../../../services/wallet.service';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { StandardCoinName } from '../../../../model/Coin';
 import { TransactionDirection, TransactionType, TransactionInfo, TransactionStatus } from '../../../../model/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +18,7 @@ import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/ma
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { EthTransaction } from 'src/app/wallet/model/evm.types';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 
 class TransactionDetail {
     type: string;
@@ -37,6 +37,7 @@ export class CoinTxInfoPage implements OnInit {
 
     // General Values
     private networkWallet: NetworkWallet = null;
+    private mainTokenSymbol = '';
     public elastosChainCode = '';
     public subWallet: SubWallet = null;
     public transactionInfo: TransactionInfo;
@@ -59,6 +60,7 @@ export class CoinTxInfoPage implements OnInit {
     // public payType: string = '';
     public targetAddress = null;
     public fromAddress = null;
+
 
     // Show the ERC20 Token detail in ETHSC transaction.
     public isERC20TokenTransactionInETHSC = false;
@@ -88,6 +90,8 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     init() {
+        this.mainTokenSymbol = WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             // General Values
@@ -275,7 +279,7 @@ export class CoinTxInfoPage implements OnInit {
                 {
                     type: 'fees',
                     title: 'wallet.tx-info-transaction-fees',
-                    value: this.payFee,
+                    value: this.payFee + ' ' + this.mainTokenSymbol,
                     show: true,
                 },
             );
