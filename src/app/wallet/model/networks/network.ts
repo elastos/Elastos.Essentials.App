@@ -11,8 +11,8 @@ import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";
 
 export abstract class Network {
-  private availableCoins: Coin[] = [];
-  private deletedERC20Coins: ERC20Coin[] = [];
+  private availableCoins: Coin[] = null;
+  private deletedERC20Coins: ERC20Coin[] = null;
 
   private activeNetworkTemplate: string;
 
@@ -25,12 +25,10 @@ export abstract class Network {
     public logo: string // Path to the network icon
   ) {
     this.activeNetworkTemplate = GlobalNetworksService.instance.getActiveNetworkTemplate();
+  }
 
-    WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
-      if (activeNetwork) {
-        void this.refreshCoins(activeNetwork);
-      }
-    });
+  public async init(): Promise<void> {
+    await this.refreshCoins();
   }
 
   /**
@@ -62,21 +60,21 @@ export abstract class Network {
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
 
 
-  private async refreshCoins(network: Network) {
+  private async refreshCoins() {
     Logger.log("wallet", "Coin service - refreshing available coins");
 
     let availableCoins = [];
 
     // Add default ERC20 tokens built-in essentials
-    availableCoins = network.getBuiltInERC20Coins(this.activeNetworkTemplate);
+    availableCoins = this.getBuiltInERC20Coins(this.activeNetworkTemplate);
 
     // Add custom ERC20 tokens, manually added by the user or discovered
-    availableCoins = [...availableCoins, ...await this.getCustomERC20Coins()];
+    this.availableCoins = [...availableCoins, ...await this.getCustomERC20Coins()];
 
-    await this.initDeletedCustomERC20Coins(network);
+    await this.initDeletedCustomERC20Coins(this);
 
-    Logger.log('wallet', "Available coins for network " + network.key + ":", this.availableCoins);
-    Logger.log('wallet', "Deleted coins for network " + network.key + ":", this.deletedERC20Coins);
+    Logger.log('wallet', "Available coins for network " + this.key + ":", this.availableCoins);
+    Logger.log('wallet', "Deleted coins for network " + this.key + ":", this.deletedERC20Coins);
   }
 
   public getAvailableCoins(): Coin[] {

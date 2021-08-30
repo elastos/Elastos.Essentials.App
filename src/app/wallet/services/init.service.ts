@@ -16,6 +16,7 @@ import { WalletNetworkService } from './network.service';
 import { ElastosNetwork } from '../model/networks/elastos.network';
 import { HECONetwork } from '../model/networks/heco.network';
 import { BSCNetwork } from '../model/networks/bsc.network';
+import { Network } from '../model/networks/network';
 
 @Injectable({
   providedIn: 'root'
@@ -52,9 +53,9 @@ export class WalletInitService extends GlobalService {
 
     // Networks init + registration
     await this.networkService.init();
-    await this.networkService.registerNetwork(new ElastosNetwork(), true);
-    await this.networkService.registerNetwork(new HECONetwork());
-    await this.networkService.registerNetwork(new BSCNetwork());
+    await this.createAndRegisterNetwork(new ElastosNetwork(), true);
+    await this.createAndRegisterNetwork(new HECONetwork());
+    await this.createAndRegisterNetwork(new BSCNetwork());
 
     // Do not await.
     void this.currencyService.init();
@@ -75,6 +76,11 @@ export class WalletInitService extends GlobalService {
 
   public async onUserSignOut(): Promise<void> {
     await this.stop();
+  }
+
+  private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
+    await network.init();
+    await this.networkService.registerNetwork(network, isDefault);
   }
 
   public async stop(): Promise<void> {
