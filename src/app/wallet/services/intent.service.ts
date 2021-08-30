@@ -2,7 +2,6 @@ import { Native } from './native.service';
 import { Util } from '../model/util';
 import { StandardCoinName } from '../model/Coin';
 import { Injectable } from '@angular/core';
-import { CoinService } from './coin.service';
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { WalletAccessService } from './walletaccess.service';
 import { WalletService } from './wallet.service';
@@ -35,7 +34,6 @@ export class IntentService {
         public events: Events,
         public native: Native,
         private walletManager: WalletService,
-        private coinService: CoinService,
         private coinTransferService: CoinTransferService,
         private popupProvider: PopupProvider,
         private walletAccessService: WalletAccessService,
@@ -334,7 +332,7 @@ export class IntentService {
                 if (currency.startsWith('ELA/ETHSC:')) {
                     let elastosNetwork = this.walletNetworkService.getNetworkByKey("elastos");
                     elastosChainCode = currency.substring(10) as StandardCoinName;
-                    const coin = this.coinService.getCoinByID(elastosNetwork, elastosChainCode);
+                    const coin = elastosNetwork.getCoinByID(elastosChainCode);
                     if (!coin) {
                         elastosChainCode = null;
                         Logger.log("wallet", 'Not support coin:', currency);

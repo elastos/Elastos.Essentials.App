@@ -7,7 +7,6 @@ import { Logger } from 'src/app/logger';
 import moment from 'moment';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { ERC20SubWallet } from './erc20.subwallet';
-import { CoinService } from 'src/app/wallet/services/coin.service';
 import { NetworkWallet } from './networkwallet';
 import { StandardSubWallet } from './standard.subwallet';
 import { StandardCoinName } from '../Coin';
@@ -240,7 +239,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
     protected getERC20TokenTransactionInfo(transaction: EthTransaction): ERC20TokenTransactionInfo {
         let contractAddress = transaction.to;
         let toAddress = null, erc20TokenSymbol = null, erc20TokenValue = null;
-        const erc20Coin = CoinService.instance.getERC20CoinByContractAddress(contractAddress);
+        const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(contractAddress);
         if (erc20Coin) {// erc20Coin is true normally.
           erc20TokenSymbol = erc20Coin.getName();
           // Get transaction from erc20 token subwallet.

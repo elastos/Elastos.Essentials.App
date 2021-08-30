@@ -1,6 +1,5 @@
 import { WalletAccount, WalletAccountType } from '../WalletAccount';
 import { WalletService } from '../../services/wallet.service';
-import { CoinService } from '../../services/coin.service';
 import { Logger } from 'src/app/logger';
 import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
@@ -31,7 +30,6 @@ export class MasterWallet {
 
     constructor(
         public walletManager: WalletService,
-        public coinService: CoinService,
         public erc721Service: ERC721Service,
         private localStorage: LocalStorage,
         id: string,

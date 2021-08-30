@@ -7,7 +7,6 @@ import { PopupProvider} from '../../../../services/popup.service';
 import { WalletService } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
-import { CoinService } from '../../../../services/coin.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 import { Util } from '../../../../model/util';
 import { TranslateService } from '@ngx-translate/core';
@@ -59,7 +58,6 @@ export class CoinListPage implements OnInit, OnDestroy {
     constructor(
         public walletManager: WalletService,
         public popupProvider: PopupProvider,
-        private coinService: CoinService,
         private walletEditionService: WalletEditionService,
         public native: Native,
         public localStorage: LocalStorage,
@@ -130,21 +128,21 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     async init() {
+        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletEditionService.modifiedMasterWalletId);
+        this.masterWallet = this.networkWallet.masterWallet;
+
         this.updateSubscription = this.events.subscribe("error:update", () => {
             this.currentCoin["open"] = false;
         });
         this.destroySubscription = this.events.subscribe("error:destroySubWallet", () => {
             this.currentCoin["open"] = true;
         });
-        this.coinAddSubscription = this.events.subscribe("custom-coin-added", () => {
+        this.coinAddSubscription = this.networkWallet.network.onCoinAdded.subscribe(() => {
             void this.refreshCoinList();
         });
-        this.coinDeleteSubscription = this.events.subscribe("custom-coin-deleted", () => {
+        this.coinDeleteSubscription = this.networkWallet.network.onCoinDeleted.subscribe(() => {
             void this.refreshCoinList();
         });
-
-        this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletEditionService.modifiedMasterWalletId);
-        this.masterWallet = this.networkWallet.masterWallet;
 
         void this.native.hideLoading();
 
@@ -153,7 +151,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     private async refreshCoinList() {
         this.coinList = [];
-        for (let availableCoin of await this.coinService.getAvailableCoins()) {
+        for (let availableCoin of await this.networkWallet.network.getAvailableCoins()) {
             const coinID = availableCoin.getID();
             // Do not show IDChain in coin list.
             if (coinID !== StandardCoinName.IDChain) {
@@ -188,11 +186,11 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     getCoinTitle(item: EditableCoinInfo) {
-        return CoinService.instance.getCoinByID(item.coin.getID()).getDescription();
+        return this.networkWallet.network.getCoinByID(item.coin.getID()).getDescription();
     }
 
     getCoinSubtitle(item: EditableCoinInfo) {
-        return CoinService.instance.getCoinByID(item.coin.getID()).getName();
+        return this.networkWallet.network.getCoinByID(item.coin.getID()).getName();
     }
 
     getCoinIcon(item: EditableCoinInfo) {

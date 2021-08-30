@@ -14,7 +14,6 @@ import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { NetworkWallet } from './networkwallet';
-import { CoinService } from '../../services/coin.service';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
@@ -42,13 +41,13 @@ export abstract class ERC20SubWallet extends SubWallet {
             Logger.log('wallet', 'newFromSerializedSubWallet id is null');
             return null;
         }
-        const coin = CoinService.instance.getCoinByID(networkWallet.network, serializedSubWallet.id) as ERC20Coin;
+        const coin = networkWallet.network.getCoinByID(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
             const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id);
             // subWallet.initFromSerializedSubWallet(serializedSubWallet);
             return subWallet;
         } else {
-            Logger.error('wallet', 'newFromSerializedSubWallet error, this coin is not in coinService');
+            Logger.error('wallet', 'newFromSerializedSubWallet error, this coin is not a known coin for this network');
             return null;
         }
     }
@@ -60,7 +59,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     }
 
     private async initialize() {
-        this.coin = this.masterWallet.coinService.getCoinByID(this.networkWallet.network, this.id) as ERC20Coin;
+        this.coin = this.networkWallet.network.getCoinByID(this.id) as ERC20Coin;
         // Get Web3 and the ERC20 contract ready
         const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
         this.web3 = new Web3(trinityWeb3Provider);
@@ -90,7 +89,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     }
 
     public getFriendlyName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.networkWallet.network, this.id);
+        const coin = this.networkWallet.network.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }
@@ -98,7 +97,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     }
 
     public getDisplayTokenName(): string {
-        const coin = this.masterWallet.coinService.getCoinByID(this.networkWallet.network, this.id);
+        const coin = this.networkWallet.network.getCoinByID(this.id);
         if (!coin) {
             return ''; // Just in case
         }
