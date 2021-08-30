@@ -6,7 +6,6 @@ import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ERC20Coin } from '../../../../model/Coin';
 import { PopupProvider } from '../../../../services/popup.service';
-import { CoinService } from '../../../../services/coin.service';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';
 import { Util } from '../../../../model/util';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -17,6 +16,7 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 
 @Component({
@@ -28,7 +28,7 @@ export class CoinAddERC20Page implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     //public walletname: string = "";
-    //public masterWallet: MasterWallet = null;
+    public networkWallet: NetworkWallet = null;
     public allCustomERC20Coins: ERC20Coin[] = [];
 
     // public coinAddress: string = "0xa4e4a46b228f3658e96bf782741c67db9e1ef91c"; // TEST - TTECH ERC20 on mainnet
@@ -50,7 +50,6 @@ export class CoinAddERC20Page implements OnInit {
         public localStorage: LocalStorage,
         public events: Events,
         private walletManager: WalletService,
-        private coinService: CoinService,
         private erc20CoinService: ERC20CoinService,
         private translate: TranslateService,
         public theme: GlobalThemeService,
@@ -60,7 +59,7 @@ export class CoinAddERC20Page implements OnInit {
         private router: Router,
         private globalIntentService: GlobalIntentService,
     ) {
-        //this.masterWallet = this.walletManager.getMasterWallet(this.walletEditionService.modifiedMasterWalletId);
+        this.networkWallet = this.walletManager.getActiveNetworkWallet();
         //this.walletname = this.walletManager.masterWallets[this.masterWallet.id].name;
         this.getAllCustomERC20Coins();
 
@@ -100,7 +99,7 @@ export class CoinAddERC20Page implements OnInit {
     }
 
     getAllCustomERC20Coins() {
-        this.allCustomERC20Coins = this.coinService.getAvailableERC20Coins();
+        this.allCustomERC20Coins = this.networkWallet.network.getAvailableERC20Coins();
         Logger.log('wallet', 'All available erc20tokens', this.allCustomERC20Coins);
     }
 
@@ -199,7 +198,7 @@ export class CoinAddERC20Page implements OnInit {
         }  else {
             const activeNetworkTemplate = this.prefs.getNetworkTemplate();
             const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetworkTemplate, true);
-            await this.coinService.addCustomERC20Coin(newCoin, this.walletManager.getNetworkWalletsList());
+            await this.networkWallet.network.addCustomERC20Coin(newCoin);
 
              // Coin added - go back to the previous screen
             if (this.intentMode) {

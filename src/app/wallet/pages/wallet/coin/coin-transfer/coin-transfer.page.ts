@@ -53,7 +53,6 @@ import { IntentService, ScanType } from 'src/app/wallet/services/intent.service'
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
-import { CoinService } from 'src/app/wallet/services/coin.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
@@ -135,7 +134,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         public route: ActivatedRoute,
         public walletManager: WalletService,
         public coinTransferService: CoinTransferService,
-        private coinService: CoinService,
         public native: Native,
         public events: Events,
         public zone: NgZone,
@@ -864,7 +862,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 let selectedSubwallet = selectedWallet.getSubWallet(this.elastosChainCode);
                 if (!selectedSubwallet) {
                     // Subwallet doesn't exist on target master wallet. So we activate it.
-                    let coin = this.coinService.getCoinByID(this.elastosChainCode);
+                    let coin = this.networkWallet.network.getCoinByID(this.elastosChainCode);
                     await selectedWallet.createNonStandardSubWallet(coin);
                     selectedSubwallet = selectedWallet.getSubWallet(this.elastosChainCode);
                 }

@@ -1,21 +1,10 @@
-import { StandardSubWallet } from '../standard.subwallet';
-import BigNumber from 'bignumber.js';
 import { Config } from '../../../config/Config';
-import Web3 from 'web3';
-import { AllTransactionsHistory, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../../transaction.types';
 import { StandardCoinName } from '../../Coin';
-import { MasterWallet } from '../masterwallet';
-import { TranslateService } from '@ngx-translate/core';
-import { EssentialsWeb3Provider } from "../../../../model/essentialsweb3provider";
 import { Logger } from 'src/app/logger';
-import moment from 'moment';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { ERC20SubWallet } from '../erc20.subwallet';
-import { CoinService } from 'src/app/wallet/services/coin.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { NetworkWallet } from '../networkwallet';
-import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction } from '../../evm.types';
+import { EthTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
-import { ElastosAPI } from './elastos.api';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 

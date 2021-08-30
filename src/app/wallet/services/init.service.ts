@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { UiService } from './ui.service';
-import { CoinService } from './coin.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { IntentService } from './intent.service';
@@ -32,7 +31,6 @@ export class WalletInitService extends GlobalService {
     private events: Events,
     private navService: NavService,
     private currencyService: CurrencyService,
-    private coinService: CoinService,
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
@@ -58,7 +56,6 @@ export class WalletInitService extends GlobalService {
     await this.networkService.registerNetwork(new HECONetwork());
     await this.networkService.registerNetwork(new BSCNetwork());
 
-    await this.coinService.init(); // Needs the network service
     // Do not await.
     void this.currencyService.init();
     // Do not await.

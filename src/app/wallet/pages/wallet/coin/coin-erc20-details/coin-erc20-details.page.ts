@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Util } from '../../../../model/util';
 import { Router } from '@angular/router';
 import { ERC20Coin, Coin } from '../../../../model/Coin';
-import { CoinService } from '../../../../services/coin.service';
 import { PopupProvider } from '../../../../services/popup.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { WalletService } from '../../../../services/wallet.service';
@@ -38,7 +37,6 @@ export class CoinErc20DetailsPage implements OnInit {
     private native: Native,
     private translate: TranslateService,
     private router: Router,
-    private coinService: CoinService,
     private popupProvider: PopupProvider,
     private walletManager: WalletService,
     private walletEditionService: WalletEditionService,
@@ -85,7 +83,7 @@ export class CoinErc20DetailsPage implements OnInit {
     void this.popupProvider.ionicConfirm('wallet.delete-coin-confirm-title', 'wallet.delete-coin-confirm-subtitle')
       .then(async (data) => {
         if (data) {
-          await this.coinService.deleteERC20Coin(this.coin);
+          await this.networkWallet.network.deleteERC20Coin(this.coin);
           this.native.pop();
         }
     });

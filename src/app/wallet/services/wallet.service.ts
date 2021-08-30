@@ -27,7 +27,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
 import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
 import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
-import { CoinService } from './coin.service';
 import { PopupProvider } from './popup.service';
 import { Native } from './native.service';
 import { LocalStorage } from './storage.service';
@@ -111,7 +110,6 @@ export class WalletService {
         public modalCtrl: ModalController,
         public translate: TranslateService,
         public localStorage: LocalStorage,
-        private coinService: CoinService,
         private erc721Service: ERC721Service,
         private authService: AuthService,
         public popupProvider: PopupProvider,
@@ -133,7 +131,7 @@ export class WalletService {
 
         // Manually initialize the network wallets the first time.
         await this.onActiveNetworkChanged(this.networkService.activeNetwork.value);
-        
+
         this.networkService.setPriorityNetworkChangeCallback(activatedNetwork => {
             return this.onActiveNetworkChanged(activatedNetwork);
         });
@@ -197,7 +195,7 @@ export class WalletService {
                     Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
-                    this.masterWallets[masterId] = new MasterWallet(this, this.coinService, this.erc721Service, this.localStorage, masterId);
+                    this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.localStorage, masterId);
                     await this.masterWallets[masterId].prepareAfterCreation();
                 }
             }
@@ -409,7 +407,7 @@ export class WalletService {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
 
         // Add a new wallet to our local model
-        this.masterWallets[id] = new MasterWallet(this, this.coinService, this.erc721Service, this.localStorage, id, name);
+        this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.localStorage, id, name);
 
         // Set some wallet account info
         this.masterWallets[id].account = walletAccount;
