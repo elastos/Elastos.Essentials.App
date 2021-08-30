@@ -63,13 +63,13 @@ export abstract class Network {
   private async refreshCoins() {
     Logger.log("wallet", "Coin service - refreshing available coins");
 
-    let availableCoins = [];
+    this.availableCoins = [];
 
     // Add default ERC20 tokens built-in essentials
-    availableCoins = this.getBuiltInERC20Coins(this.activeNetworkTemplate);
+    this.availableCoins = this.getBuiltInERC20Coins(this.activeNetworkTemplate);
 
     // Add custom ERC20 tokens, manually added by the user or discovered
-    this.availableCoins = [...availableCoins, ...await this.getCustomERC20Coins()];
+    this.availableCoins = [...this.availableCoins, ...await this.getCustomERC20Coins()];
 
     await this.initDeletedCustomERC20Coins(this);
 
