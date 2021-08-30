@@ -31,6 +31,9 @@ export class GlobalFirebaseService {
             void this.firebase.getToken().then(token => {
                 Logger.log("firebase", "Got device FCM token:", token);
                 this.token.next(token);
+            }).catch(err => {
+                if (new String(err).startsWith("SERVICE_NOT_AVAILABLE"))
+                    Logger.warn("firebase", "Firebase was unable to renew the push notification token. Push notifications won't be received", err);
             });
 
             this.firebase.onMessageReceived().subscribe(msg => {
