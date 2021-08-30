@@ -543,7 +543,7 @@ export class GlobalElastosAPIService extends GlobalService {
     }
 
     public async getERC20TokenTransactions(elastosChainCode: StandardCoinName, address: string): Promise<EthTokenTransaction[]> {
-        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        let apiurltype = this.getApiUrlTypeForBrowser(elastosChainCode);
         const rpcApiUrl = this.getApiUrl(apiurltype);
         const ethscgetTokenTxsUrl = rpcApiUrl + '/api/?module=account&action=tokentx&address=' + address;
 

@@ -74,9 +74,8 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   }
 
   public async getETHSCTransactions(elastosChainCode: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
-    let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(elastosChainCode);
+    let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForMisc(elastosChainCode);
     const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
-    console.log("rpcApiUrl", rpcApiUrl);
     if (rpcApiUrl === null) {
         return null;
     }
@@ -89,7 +88,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
         let result = await GlobalJsonRPCService.instance.httpGet(ethscgethistoryurl);
         return result.result as EthTransaction[];
     } catch (e) {
-      Logger.error('wallet', 'getETHSCTransactions error:', e)
+        Logger.error('wallet', 'getETHSCTransactions error:', e)
     }
     return null;
   }
