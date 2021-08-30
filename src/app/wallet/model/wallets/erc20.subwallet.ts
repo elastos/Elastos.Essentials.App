@@ -38,7 +38,7 @@ export abstract class ERC20SubWallet extends SubWallet {
     public static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): ERC20SubWallet {
         Logger.log('wallet', "Initializing ERC20 subwallet from serialized sub wallet", serializedSubWallet);
         if (!serializedSubWallet.id) {
-            Logger.log('wallet', 'newFromSerializedSubWallet id is null');
+            Logger.error('wallet', 'newFromSerializedSubWallet id is null');
             return null;
         }
         const coin = networkWallet.network.getCoinByID(serializedSubWallet.id) as ERC20Coin;
@@ -47,7 +47,7 @@ export abstract class ERC20SubWallet extends SubWallet {
             // subWallet.initFromSerializedSubWallet(serializedSubWallet);
             return subWallet;
         } else {
-            Logger.error('wallet', 'newFromSerializedSubWallet error, this coin is not a known coin for this network');
+            Logger.error('wallet', 'newFromSerializedSubWallet error, this coin is not a known coin for this network.');
             return null;
         }
     }

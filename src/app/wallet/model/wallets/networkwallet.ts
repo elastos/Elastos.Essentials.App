@@ -305,13 +305,18 @@ export abstract class NetworkWallet {
     public populateWithExtendedInfo(extendedInfo: ExtendedNetworkWalletInfo) {
         Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
 
-        // In case of newly created wallet we don't have extended info from local storagd yet,
+        // In case of newly created wallet we don't have extended info from local storage yet,
         // which is normal.
         if (extendedInfo) {
             for (let serializedSubWallet of extendedInfo.subWallets) {
-                let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
-                if (subWallet) {
-                    this.subWallets[serializedSubWallet.id] = subWallet;
+                // NOTE: for now, we save the standard subwallets but we don't restore them from extended info
+                // as they are always rebuilt by default by the network wallet. Later this COULD be a problem
+                // if we want to save some information about those standard subwallets, in extended infos.
+                if (serializedSubWallet.type !== "STANDARD") { 
+                    let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
+                    if (subWallet) {
+                        this.subWallets[serializedSubWallet.id] = subWallet;
+                    }
                 }
             }
 

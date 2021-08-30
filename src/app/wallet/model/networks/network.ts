@@ -126,12 +126,12 @@ export abstract class Network {
     Logger.log('wallet', "Adding coin to custom ERC20 coins list", erc20Coin);
 
     const existingCoins = await this.getCustomERC20Coins();
-    existingCoins.push(erc20Coin);
-
     if (this.coinAlreadyExists(erc20Coin.getContractAddress())) {
       Logger.log('wallet', "Not adding coin, it already exists", erc20Coin);
       return false;
     }
+
+    existingCoins.push(erc20Coin);
 
     // Add to the available coins list
     this.availableCoins.push(erc20Coin);
@@ -141,18 +141,6 @@ export abstract class Network {
 
     this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase());
     await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.key, this.deletedERC20Coins);
-
-    // Activate this new coin in all wallets
-    /* TODO: MIGRATE THIS - WE DON4T ACTIVATE HERE - THE CALLER SHOULD ACTIVATE IN THE RIGHT NETWORK WALLT
-     for (let wallet of activateInWallets) {
-      // Make sure user has the ETH sidechain enabled
-      if (!wallet.hasSubWallet(StandardCoinName.ETHSC)) {
-        console.warn("Wallet doesn't have ESC. No activating the new ERC token");
-        continue;
-      }
-
-      await wallet.createNonStandardSubWallet(erc20Coin);
-    } */
 
     this.onCoinAdded.next(erc20Coin.getID());
 
@@ -181,8 +169,7 @@ export abstract class Network {
     const customCoins: ERC20Coin[] = [];
     for (let rawCoin of rawCoinList) {
       let coin = ERC20Coin.fromJson(rawCoin);
-      if (!this.coinAlreadyExists(coin.getContractAddress()))
-        customCoins.push();
+      customCoins.push(coin);
     }
 
     return customCoins;
