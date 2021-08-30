@@ -36,10 +36,16 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
         this.initWeb3();
         // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
         await this.loadTransactionsFromCache();
+    }
 
-        setTimeout(() => {
-          void this.updateBalance();
-        }, 2000);
+    public async startBackgroundUpdates(): Promise<void> {
+      await super.startBackgroundUpdates();
+
+      setTimeout(() => {
+        void this.updateBalance();
+      }, 2000);
+      
+      return;
     }
 /*
     // Get txpool information.

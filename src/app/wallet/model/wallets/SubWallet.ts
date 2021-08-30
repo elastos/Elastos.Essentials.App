@@ -51,8 +51,18 @@ export abstract class SubWallet {
       this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
       this.transactionKeyInCache = this.masterWallet.id + '-' + this.id + '-tx';
       this.subwalletTransactionStatusID = this.masterWallet.id + '-' + this.id;
+    }
 
+    /**
+     * Starts updates in background. 
+     * All the initializations here are not mandatory during initializations and can deliver 
+     * asynchronous content at any time.
+     * 
+     * This method can be overriden by subwallet implementations.
+     */
+    public startBackgroundUpdates(): Promise<void> {
       void this.loadBalanceFromCache();
+      return;
     }
 
     public toSerializedSubWallet(): SerializedSubWallet {

@@ -43,11 +43,11 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
 
     constructor(masterWallet: MasterWallet, id: StandardCoinName) {
         super(masterWallet, id);
-
-        void this.initialize();
     }
 
-    protected async initialize() {
+    public async startBackgroundUpdates(): Promise<void> {
+        await super.startBackgroundUpdates();
+        
         this.invalidVoteCandidatesHelper = new InvalidVoteCandidatesHelper();
 
         await this.loadTransactionsFromCache();

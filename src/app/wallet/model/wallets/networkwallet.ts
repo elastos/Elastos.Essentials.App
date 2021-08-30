@@ -49,8 +49,19 @@ export abstract class NetworkWallet {
     public async initialize(): Promise<void> {
         await this.prepareStandardSubWallets();
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
+    }
 
+    /**
+     * Starts network wallet and subwallets updates in background. 
+     * All the initializations here are not mandatory during initializations and can deliver 
+     * asynchronous content at any time.
+     */
+    public startBackgroundUpdates(): Promise<void> {
+        for (let subWallet of this.getSubWallets()) {
+            void subWallet.startBackgroundUpdates();
+        }
         runDelayed(() => this.updateERCTokenList(), 5000);
+        return;
     }
 
     public getDisplayBalance(): BigNumber {

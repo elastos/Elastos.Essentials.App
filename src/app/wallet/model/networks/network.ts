@@ -12,7 +12,7 @@ import { NetworkWallet } from "../wallets/networkwallet";
 
 export abstract class Network {
   private availableCoins: Coin[] = null;
-  private deletedERC20Coins: ERC20Coin[] = null;
+  private deletedERC20Coins: ERC20Coin[] = [];
 
   private activeNetworkTemplate: string;
 
@@ -39,8 +39,10 @@ export abstract class Network {
 
   /**
    * Creates a network wallet for the given master wallet.
+   * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
+   * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
-  public abstract createNetworkWallet(masterWallet: MasterWallet): NetworkWallet;
+  public abstract createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates?: boolean): Promise<NetworkWallet>;
 
   /**
    * Creates the right ERC20 sub wallet instance for this network.
