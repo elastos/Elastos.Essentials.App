@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { Config } from "../config/Config";
 import * as moment from 'moment';
 import BigNumber from 'bignumber.js';
 
@@ -233,10 +232,13 @@ export class Util {
             return '';
         }
 
-        // const decimalBalance = new BigNumber('4.999999');
         const decimalBalance = balance.modulo(1);
-        const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, 5);
-        return fixedDecimalBalance;
+        if (decimalBalance.gt(0.001)) {
+          const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, 5);
+          return fixedDecimalBalance;
+        } else {
+          return '000';
+        }
     }
 
     /**
