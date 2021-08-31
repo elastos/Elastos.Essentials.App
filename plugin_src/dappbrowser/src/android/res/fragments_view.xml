@@ -8,7 +8,7 @@
     <org.elastos.essentials.plugins.dappbrowser.TitleBar
         android:id="@+id/titlebar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_weight="0">
     </org.elastos.essentials.plugins.dappbrowser.TitleBar>
 

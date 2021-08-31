@@ -12,7 +12,6 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="0"
         android:background="#00FFFFFF"
-        android:foreground="?android:attr/selectableItemBackground"
         />
 
     <ImageView

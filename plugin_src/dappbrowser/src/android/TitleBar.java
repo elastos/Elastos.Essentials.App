@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,7 @@ public class TitleBar extends FrameLayout {
     FrameLayout flRoot = null;
     PopupWindow menuPopup = null;
     TextView tvAnimationHint = null;
+    public UrlEditText editUrl = null;
     boolean darkMode = false;
 
     // UI model
@@ -96,11 +99,14 @@ public class TitleBar extends FrameLayout {
         progressBar = findViewById(R.id.progressBar);
         btnOuterLeft = findViewById(R.id.btnOuterLeft);
         btnInnerLeft = findViewById(R.id.btnInnerLeft);
+
         // btnInnerRight = findViewById(R.id.btnInnerRight);
         btnOuterRight = findViewById(R.id.btnOuterRight);
         tvTitle = findViewById(R.id.tvTitle);
         flRoot = findViewById(R.id.flRoot);
         tvAnimationHint = findViewById(R.id.tvAnimationHint);
+
+        editUrl = findViewById(R.id.txtUrl);
 
         btnOuterLeft.setOnClickListener(v -> {
             handleOuterLeftClicked();
@@ -246,14 +252,19 @@ public class TitleBar extends FrameLayout {
             tvTitle.setText(title/* .toUpperCase() */);
     }
 
-    public boolean setBackgroundColor(String hexColor) {
+    public boolean setBackgroundColor(String backgroundColor) {
         try {
-            flRoot.setBackgroundColor(Color.parseColor(hexColor));
+            int color = Color.parseColor(backgroundColor);
+            flRoot.setBackgroundColor(color);
             return true;
         } catch (Exception e) {
             // Wrong color format?
             return false;
         }
+    }
+
+    public void setForeground(String backgroundColor) {
+        int color  = Color.parseColor(backgroundColor);
     }
 
     public void setForegroundMode(TitleBarForegroundMode mode) {
@@ -262,7 +273,7 @@ public class TitleBar extends FrameLayout {
         if (mode == TitleBarForegroundMode.DARK) {
             color = Color.parseColor("#000000");
         } else {
-            color = Color.parseColor("#FFFFFF");
+            color = Color.parseColor("#F5F7FE");
         }
 
         tvTitle.setTextColor(color);
@@ -348,10 +359,12 @@ public class TitleBar extends FrameLayout {
         if (darkMode) {
             setBackgroundColor("#000000");
             setForegroundMode(TitleBarForegroundMode.LIGHT);
-        } else {
-            setBackgroundColor("#FFFFFF");
+        }
+        else {
+            setBackgroundColor("#F5F7FE");
             setForegroundMode(TitleBarForegroundMode.DARK);
         }
+        editUrl.setEditColor(darkMode);
 
         btnOuterLeft.setImageResource(darkMode ? R.drawable.ic_elastos_darkmode : R.drawable.ic_elastos);
         btnOuterLeft.setVisibility(View.VISIBLE);
