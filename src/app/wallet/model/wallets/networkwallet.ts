@@ -1,5 +1,4 @@
 import { SubWallet, SerializedSubWallet } from './subwallet';
-import { WalletService } from '../../services/wallet.service';
 import { StandardSubWallet } from './standard.subwallet';
 import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../Coin';
 import BigNumber from 'bignumber.js';
@@ -14,8 +13,9 @@ import { Network } from '../networks/network';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { StandardEVMSubWallet } from './evm.subwallet';
-import { WalletNetworkService } from '../../services/network.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { App } from 'src/app/model/app.enum';
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 
 export class ExtendedNetworkWalletInfo {
     /** List of serialized subwallets added earlier to this network wallet */
@@ -52,8 +52,8 @@ export abstract class NetworkWallet {
     }
 
     /**
-     * Starts network wallet and subwallets updates in background. 
-     * All the initializations here are not mandatory during initializations and can deliver 
+     * Starts network wallet and subwallets updates in background.
+     * All the initializations here are not mandatory during initializations and can deliver
      * asynchronous content at any time.
      */
     public startBackgroundUpdates(): Promise<void> {
@@ -197,6 +197,8 @@ export abstract class NetworkWallet {
         if (ercTokenList == null)
             return;
 
+        let newCoinList = [];
+
         // For each ERC token discovered by the wallet SDK, we check its type and handle it.
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         ercTokenList.forEach(async (token: ERC20TokenInfo) => {
@@ -208,11 +210,13 @@ export abstract class NetworkWallet {
                             // to this master wallet. Otherwise we add the new token to the global list first then
                             // add a subwallet as well.
                             const erc20Coin = this.network.getERC20CoinByContractAddress(token.contractAddress);
-                            if (erc20Coin) {
-                                await this.createNonStandardSubWallet(erc20Coin);
-                            } else {
+                            if (!erc20Coin) {
                                 const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
-                                await this.network.addCustomERC20Coin(newCoin);
+                                newCoinList.push(token.symbol);
+                                if (await this.network.addCustomERC20Coin(newCoin)) {
+                                  // Find new coin.
+                                  newCoinList.push(token.symbol);
+                                }
                             }
                         } catch (e) {
                             Logger.log("wallet", 'updateERC20TokenList exception:', e);
@@ -234,6 +238,11 @@ export abstract class NetworkWallet {
                 Logger.warn('wallet', 'Unhandled token type:', token);
             }
         });
+
+        // Find new coin
+        if (newCoinList.length > 0) {
+            this.sendNotification(newCoinList);
+        }
     }
 
     /**
@@ -312,7 +321,7 @@ export abstract class NetworkWallet {
                 // NOTE: for now, we save the standard subwallets but we don't restore them from extended info
                 // as they are always rebuilt by default by the network wallet. Later this COULD be a problem
                 // if we want to save some information about those standard subwallets, in extended infos.
-                if (serializedSubWallet.type !== "STANDARD") { 
+                if (serializedSubWallet.type !== "STANDARD") {
                     let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
                     if (subWallet) {
                         this.subWallets[serializedSubWallet.id] = subWallet;
@@ -330,5 +339,23 @@ export abstract class NetworkWallet {
                 }
             }
         }
+    }
+
+    private sendNotification(newCoinList: string[]) {
+        let message = "";
+        if (newCoinList.length === 1) {
+          message = this.masterWallet.walletManager.translate.instant('wallet.find-new-token-msg', { network: this.network.name, token: newCoinList[0]});
+        } else {
+          message = this.masterWallet.walletManager.translate.instant('wallet.find-new-tokens-msg', { network: this.network.name, count: newCoinList.length});
+        }
+
+        const notification = {
+          app: App.WALLET,
+          key: 'newtokens',
+          title: this.masterWallet.walletManager.translate.instant('wallet.find-new-token'),
+          message: message,
+          url: '/wallet/coin-list'
+        };
+        void GlobalNotificationsService.instance.sendNotification(notification);
     }
 }

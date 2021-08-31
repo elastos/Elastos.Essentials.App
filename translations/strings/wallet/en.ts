@@ -23,6 +23,9 @@ export const en = {
         "refresh-refreshing-text": "Updating Wallet...",
         "intent-select-wallet": "Select Wallet",
         "personal-wallets-with": "Personal wallets with {{ elastosChainCode }}",
+        "find-new-token": "New Coin",
+        "find-new-token-msg": "New coin {{ token }} found on {{ network }} network",
+        "find-new-tokens-msg": "{{ count }} new coins found on {{ network }} network",
 
         /*******************
         * Generic Messages *

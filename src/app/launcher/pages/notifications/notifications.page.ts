@@ -86,6 +86,7 @@ export class NotificationsPage implements OnInit {
   }
 
   async start(notification: LauncherNotification) {
+    let url = notification.url;
     await this.close(notification);
     await this.closeNotificationPage();
     if (notification.type == LauncherNotificationType.TIP) {
@@ -124,7 +125,11 @@ export class NotificationsPage implements OnInit {
           void this.globalNav.navigateTo(App.SETTINGS, '/settings/menu');
           break;
         case App.WALLET:
-          this.walletInitService.start();
+          if (url) {
+            void this.globalNav.navigateTo(App.WALLET, url);
+          } else {
+            this.walletInitService.start();
+          }
           break;
         default:
           Logger.log('Launcher', "Notifications.page.start - No routing available");
