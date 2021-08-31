@@ -153,7 +153,7 @@ export const enum InvitationRequestsMode {
 })
 export class ContactNotifierService {
   constructor(private platform: Platform) {
-    this.platform.ready().then(() => {
+    void this.platform.ready().then(() => {
     });
   }
 

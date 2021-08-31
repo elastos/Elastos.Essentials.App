@@ -23,6 +23,9 @@ export const fr = {
         "refresh-refreshing-text": "Mise à jour du portefeuille...",
         "intent-select-wallet": "Sélect. du portefeuille",
         "personal-wallets-with": "Portefeuille personnel avec {{ elastosChainCode }}",
+        "find-new-token": "New Coin",
+        "find-new-token-msg": "New coin {{ token }} found on {{ network }} network",
+        "find-new-tokens-msg": "{{ count }} new coins found on {{ network }} network",
 
 
         /*******************

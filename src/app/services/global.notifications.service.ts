@@ -40,6 +40,8 @@ export type Notification = NotificationRequest & {
     providedIn: 'root'
 })
 export class GlobalNotificationsService extends GlobalService {
+    public static instance: GlobalNotificationsService = null;
+
     public newNotifications = 0;
     public notifications: Notification[] = [];
     private notificationsListener: Subject<Notification> = new Subject();
@@ -48,9 +50,10 @@ export class GlobalNotificationsService extends GlobalService {
         private globalStorageService: GlobalStorageService,
     ) {
         super();
+        GlobalNotificationsService.instance = this;
     }
 
-    public async init() {
+    public init() {
         GlobalServiceManager.getInstance().registerService(this);
     }
 
@@ -72,7 +75,7 @@ export class GlobalNotificationsService extends GlobalService {
     *
     * @returns A promise that can be awaited and catched in case or error.
     */
-    public async sendNotification(request: NotificationRequest): Promise<void> {
+    public sendNotification(request: NotificationRequest): Promise<void> {
         const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
         const notificationsLength = this.notifications.length;
         this.notifications = this.notifications.filter(notification => notification.key !== request.key);
@@ -82,6 +85,7 @@ export class GlobalNotificationsService extends GlobalService {
             message: request.message,
             app: request.app ? request.app : null,
             notificationId: characters.charAt(Math.floor(Math.random() * characters.length)),
+            url: request.url ? request.url : null,
             sent_date: Date.now()
         };
         this.notifications.push(notification);
@@ -103,7 +107,7 @@ export class GlobalNotificationsService extends GlobalService {
      *
      * @returns Unread notifications.
      */
-    public async getNotifications(): Promise<Notification[]> {
+    public getNotifications(): Notification[] {
         return this.notifications;
     }
 
@@ -121,7 +125,7 @@ export class GlobalNotificationsService extends GlobalService {
      * Saves current notifications array to persistent storage.
      */
     private saveNotifications() {
-        this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "notifications", "notifications", this.notifications);
+        void this.globalStorageService.setSetting(GlobalDIDSessionsService.signedInDIDString, "notifications", "notifications", this.notifications);
     }
 
     public setNotificationListener(onNotification: (notification: Notification) => void) {

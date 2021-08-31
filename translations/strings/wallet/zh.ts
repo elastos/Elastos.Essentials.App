@@ -23,6 +23,9 @@ export const zh = {
         "refresh-refreshing-text": "正在更新...",
         "intent-select-wallet": "请选择钱包",
         "personal-wallets-with": "含有 {{ elastosChainCode }} 的个人钱包",
+        "find-new-token": "有新的代币",
+        "find-new-token-msg": "在 {{ network }} 上发现新的代币 {{ token }}",
+        "find-new-tokens-msg": "在 {{ network }} 上发现 {{ count }} 个新的代币 ",
 
         /*******************
         * Generic Messages *
