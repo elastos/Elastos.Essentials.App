@@ -286,7 +286,8 @@ export class CoinTxInfoPage implements OnInit {
         }
         else { // Receving or move transaction
             // Sending address
-            if (this.fromAddress) {
+            // TODO: It is the transaction to create a token if the from address is "0x0000000000000000000000000000000000000000".
+            if (this.fromAddress && this.fromAddress !== "0x0000000000000000000000000000000000000000") {
               // TODO: We should show all the inputs and outputs for ELA main chain.
               this.txDetails.unshift(
                   {
