@@ -59,10 +59,10 @@
         <resource-file src="src/android/res/drawable-xhdpi/ic_action_previous_item.png" target="res/drawable-xhdpi/ic_action_previous_item.png" />
         <resource-file src="src/android/res/drawable-xxhdpi/ic_action_previous_item.png" target="res/drawable-xxhdpi/ic_action_previous_item.png" /> -->
 
-        <resource-file src="src/android/res/drawable-hdpi/ic_action_remove.png" target="res/drawable-hdpi/ic_action_remove.png" />
+        <!-- <resource-file src="src/android/res/drawable-hdpi/ic_action_remove.png" target="res/drawable-hdpi/ic_action_remove.png" />
         <resource-file src="src/android/res/drawable-mdpi/ic_action_remove.png" target="res/drawable-mdpi/ic_action_remove.png" />
         <resource-file src="src/android/res/drawable-xhdpi/ic_action_remove.png" target="res/drawable-xhdpi/ic_action_remove.png" />
-        <resource-file src="src/android/res/drawable-xxhdpi/ic_action_remove.png" target="res/drawable-xxhdpi/ic_action_remove.png" /> -->
+        <resource-file src="src/android/res/drawable-xxhdpi/ic_action_remove.png" target="res/drawable-xxhdpi/ic_action_remove.png" /> --> -->
 
         <!-- <source-file src="src/android/WebViewFragment.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" /> -->
         <source-file src="src/android/TitleBarPlugin.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
@@ -85,8 +85,12 @@
         <resource-file src="src/android/res/title_bar_menu.xml" target="/res/layout/title_bar_menu.xml" />
         <resource-file src="src/android/res/title_bar_menu_item.xml" target="/res/layout/title_bar_menu_item.xml" />
         <resource-file src="src/android/res/styles.xml" target="/res/values/styles.xml" />
+
         <resource-file src="src/android/res/fadein.xml" target="/res/anim/fadein.xml" />
         <resource-file src="src/android/res/fadeout.xml" target="/res/anim/fadeout.xml" />
+        <resource-file src="src/android/res/slide_in_right.xml" target="/res/anim/slide_in_right.xml" />
+        <resource-file src="src/android/res/slide_out_right.xml" target="/res/anim/slide_out_right.xml" />
+
         <resource-file src="src/android/res/title_bar_background.xml" target="/res/drawable/title_bar_background.xml" />
          <resource-file src="src/android/res/rounded_edittext.xml" target="/res/drawable/rounded_edittext.xml" />
 
@@ -102,8 +106,6 @@
          <resource-file src="src/android/res/ic_elastos_darkmode.xml" target="/res/drawable/ic_elastos_darkmode.xml" />
          <resource-file src="src/android/res/ic_clear_input_darkmode.xml" target="/res/drawable/ic_clear_input_darkmode.xml" />
         <resource-file src="src/android/res/ic_vertical_menu_darkmode.xml" target="/res/drawable/ic_vertical_menu_darkmode.xml" />
-
-
 
         <framework src="src/android/titlebar.gradle" custom="true" type="gradleReference"/>
     </platform>

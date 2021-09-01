@@ -45,6 +45,8 @@ public class InAppBrowserDialog extends Dialog {
         edittext = toolbar.findViewById(R.id.txtUrl);
 
         toolbar.initialize(this, "abc");
+
+        this.getWindow().setWindowAnimations(R.style.RightInRightOutAnim);
     }
 
     public void setInAppBroswer(InAppBrowser browser) {
