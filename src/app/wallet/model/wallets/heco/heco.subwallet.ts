@@ -2,7 +2,7 @@ import { StandardSubWallet } from '../standard.subwallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../../config/Config';
 import Web3 from 'web3';
-import { AllTransactionsHistory, TransactionDirection, TransactionHistory, TransactionInfo, TransactionStatus, TransactionType } from '../../transaction.types';
+import { ElastosPaginatedTransactions, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType } from '../../transaction.types';
 import { StandardCoinName } from '../../Coin';
 import { TranslateService } from '@ngx-translate/core';
 import { EssentialsWeb3Provider } from "../../../../model/essentialsweb3provider";
@@ -48,26 +48,26 @@ export class HECOChainSubWallet extends StandardEVMSubWallet {
     return "HT";
   }
 
-  protected async getTransactionsByRpc() {
+  /* protected async getTransactionsByRpc() {
     Logger.log('wallet', 'getTransactionByRPC (Heco):', this.masterWallet.id, ' ', this.id)
     const address = await this.getTokenAddress();
     let result = await this.getHECOTransactions(this.id as StandardCoinName, address);
     if (result) {
-      if (this.transactions == null) {
+      if (this.paginatedTransactions == null) {
         // init
-        this.transactions = { totalcount: 0, txhistory: [] };
+        this.paginatedTransactions = { totalcount: 0, txhistory: [] };
       }
-      if ((result.length > 0) && (this.transactions.totalcount !== result.length)) {
+      if ((result.length > 0) && (this.paginatedTransactions.totalcount !== result.length)) {
         // Has new transactions.
-        this.transactions.totalcount = result.length;
-        this.transactions.txhistory = result.reverse();
-        await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
+        this.paginatedTransactions.totalcount = result.length;
+        this.paginatedTransactions.txhistory = result.reverse();
+        await this.saveTransactions(this.paginatedTransactions.txhistory as EthTransaction[]);
       } else {
         // Notify the page to show the right time of the transactions even no new transaction.
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length)
       }
     }
-  }
+  } */
 
   private async getHECOTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
     const rpcApiUrl = HecoAPI.getApiUrl(HecoApiType.ACCOUNT_RPC);
@@ -88,7 +88,7 @@ export class HECOChainSubWallet extends StandardEVMSubWallet {
     let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(HecoAPI.getApiUrl(HecoApiType.RPC), txid);
     if (!result) {
       // Remove error transaction.
-      await this.removeInvalidTransaction(txid);
+      // TODO await this.removeInvalidTransaction(txid);
     }
     return result;
   }

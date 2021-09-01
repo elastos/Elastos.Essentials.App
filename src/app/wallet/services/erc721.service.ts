@@ -211,8 +211,6 @@ export class ERC721Service {
         }
     */
     private async extractAssetMetadata(asset: NFTAsset, tokenURI: string): Promise<any> {
-        console.log("DEBUG tokenURI", tokenURI)
-
         // Unsupported url format
         if (!tokenURI || !tokenURI.startsWith("http"))
             return;

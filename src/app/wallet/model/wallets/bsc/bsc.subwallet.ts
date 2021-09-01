@@ -1,3 +1,8 @@
+import { StandardSubWallet } from '../standard.subwallet';
+import BigNumber from 'bignumber.js';
+import { Config } from '../../../config/Config';
+import Web3 from 'web3';
+import { ElastosPaginatedTransactions, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType } from '../../transaction.types';
 import { StandardCoinName } from '../../Coin';
 import { Logger } from 'src/app/logger';
 import { NetworkWallet } from '../networkwallet';
@@ -37,7 +42,7 @@ export class BscChainSubWallet extends StandardEVMSubWallet {
     return "BNB";
   }
 
-  protected async getTransactionsByRpc() {
+  /* protected async getTransactionsByRpc() {
     Logger.log('wallet', 'getTransactionByRPC (Bsc):', this.masterWallet.id, ' ', this.id)
     const address = await this.getTokenAddress();
     let result = await this.getBSCTransactions(this.id as StandardCoinName, address);
@@ -56,7 +61,7 @@ export class BscChainSubWallet extends StandardEVMSubWallet {
         this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
       }
     }
-  }
+  } */
 
   private async getBSCTransactions(chainID: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
     const rpcApiUrl = BscAPI.getApiUrl(BscApiType.ACCOUNT_RPC);
@@ -77,7 +82,7 @@ export class BscChainSubWallet extends StandardEVMSubWallet {
     let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(BscAPI.getApiUrl(BscApiType.RPC), txid);
     if (!result) {
       // Remove error transaction.
-      await this.removeInvalidTransaction(txid);
+      // TODO await this.removeInvalidTransaction(txid);
     }
     return result;
   }

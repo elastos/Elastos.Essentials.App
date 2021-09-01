@@ -29,7 +29,7 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
     return GlobalLanguageService.instance.translate('wallet.ela-erc20');
   }
 
-  protected async getTransactionsByRpc() {
+  /* protected async getTransactionsByRpc() {
     Logger.log('wallet', 'getTransactionByRPC (elastos erc20):', this.masterWallet.id, ' ', this.id)
     const contractAddress = this.coin.getContractAddress().toLowerCase();
     const tokenAccountAddress = await this.getTokenAccountAddress();
@@ -41,8 +41,8 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
       let allTx = result.filter((tx)=> {
         return tx.contractAddress === contractAddress
       })
-      this.transactions = {totalcount:allTx.length, txhistory:allTx};
-      await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
+      this.paginatedTransactions = {totalcount:allTx.length, txhistory:allTx};
+      await this.saveTransactions(this.paginatedTransactions.txhistory as EthTransaction[]);
     }
-}
+  } */
 }

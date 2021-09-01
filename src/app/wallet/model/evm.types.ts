@@ -1,7 +1,7 @@
-import { TransactionDirection, TransactionHistory } from "./transaction.types";
+import { TransactionDirection, ElastosTransaction } from "./transaction.types";
 
 // Returned from rpc
-export type EthTransaction = TransactionHistory & {
+export type EthTransaction = ElastosTransaction & {
   blockHash: string;
   blockNumber: string;
   confirmations: string;

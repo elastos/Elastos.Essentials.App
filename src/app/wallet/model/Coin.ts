@@ -18,9 +18,14 @@ export enum StandardCoinName {
 
 export namespace StandardCoinName {
     export function fromCoinID(coinID: CoinID): StandardCoinName {
-        Logger.log('wallet', "debug fromCoinID ", coinID)
         return StandardCoinName[coinID];
     }
+}
+
+export type TokenAddress = string; // EVM address of the token contract
+export enum TokenType {
+    ERC_20 = "ERC-20",
+    ERC_721 = "ERC-721"
 }
 
 export class Coin {

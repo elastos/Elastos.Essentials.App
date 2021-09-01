@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Native } from '../../../../services/native.service';
 import { ActivatedRoute } from '@angular/router';
 import { WalletService } from '../../../../services/wallet.service';
-import { SubWallet } from '../../../../model/wallets/subwallet';
+import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Util } from '../../../../model/util';
@@ -26,7 +26,7 @@ export class CoinSelectPage implements OnInit {
 
     public networkWallet: NetworkWallet;
     // Available subwallets to transfer to
-    public subWallets: SubWallet[] = [];
+    public subWallets: AnySubWallet[] = [];
 
     // Helpers
     public Util = Util;
@@ -64,7 +64,7 @@ export class CoinSelectPage implements OnInit {
         }
     }
 
-    onItem(wallet: SubWallet) {
+    onItem(wallet: AnySubWallet) {
         // Define subwallets to transfer to and from
         this.coinTransferService.toElastosChainCode = wallet.id;
 

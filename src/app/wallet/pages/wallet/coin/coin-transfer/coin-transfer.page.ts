@@ -30,7 +30,7 @@ import { WalletService } from '../../../../services/wallet.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType, Transfer } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/subwallet';
+import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { HttpClient } from '@angular/common/http';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
@@ -82,8 +82,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public sendMax = false;
 
     // Display recharge wallets
-    public fromSubWallet: SubWallet;
-    public toSubWallet: SubWallet = null;
+    public fromSubWallet: AnySubWallet;
+    public toSubWallet: AnySubWallet = null;
 
     // User can set gas price and limit.
     private gasPrice: string = null;
@@ -730,7 +730,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.setCryptonamesKeyVisibility(true);
     }
 
-    isStandardSubwallet(subWallet: SubWallet) {
+    isStandardSubwallet(subWallet: AnySubWallet) {
         return subWallet instanceof StandardSubWallet;
     }
 

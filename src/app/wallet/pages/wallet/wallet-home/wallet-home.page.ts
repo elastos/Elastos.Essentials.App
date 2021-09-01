@@ -37,7 +37,7 @@ import { CoinType } from '../../../model/Coin';
 import { Util } from '../../../model/Util';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
-import { SubWallet } from '../../../model/wallets/subwallet';
+import { AnySubWallet } from '../../../model/wallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
@@ -58,7 +58,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
-    private displayableSubWallets: SubWallet[] = null;
+    private displayableSubWallets: AnySubWallet[] = null;
 
     private activeNetworkWalletSubscription: Subscription = null;
     private activeNetworkSubscription: Subscription = null;
@@ -209,7 +209,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         return this.walletManager.getNetworkWalletsList();
     }
 
-    public getDisplayableSubWallets(): SubWallet[] {
+    public getDisplayableSubWallets(): AnySubWallet[] {
         return this.displayableSubWallets;
     }
 
@@ -273,7 +273,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         return this.walletManager.getMasterWalletsList().indexOf(masterWallet);
     }
 
-    isStandardSubwallet(subWallet: SubWallet) {
+    isStandardSubwallet(subWallet: AnySubWallet) {
         return subWallet instanceof StandardSubWallet;
     }
 

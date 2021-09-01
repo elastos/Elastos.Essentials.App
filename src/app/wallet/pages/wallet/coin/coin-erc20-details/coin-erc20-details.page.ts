@@ -8,7 +8,7 @@ import { PopupProvider } from '../../../../services/popup.service';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { WalletService } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
-import { SubWallet } from '../../../../model/wallets/subwallet';
+import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -25,7 +25,7 @@ export class CoinErc20DetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private networkWallet: NetworkWallet = null;
-  private subWallet: SubWallet = null;
+  private subWallet: AnySubWallet = null;
   public coin: ERC20Coin;
   public contractAddress = '1234';
   public canDelete = false;

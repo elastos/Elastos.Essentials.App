@@ -5,7 +5,7 @@ import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../Coin';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { AllTransactionsHistory, RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../transaction.types';
+import { ElastosPaginatedTransactions, GenericTransaction, RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../transaction.types';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
@@ -16,10 +16,11 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { NetworkWallet } from './networkwallet';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { Subject } from 'rxjs';
 
-export abstract class ERC20SubWallet extends SubWallet {
+export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
     /** Coin related to this wallet */
-    protected coin: ERC20Coin;
+    public coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
     protected web3: Web3;
     private erc20ABI: any;
@@ -52,8 +53,8 @@ export abstract class ERC20SubWallet extends SubWallet {
         }
     }
 
-    constructor(private networkWallet: NetworkWallet, id: CoinID, private rpcApiUrl: string) {
-        super(networkWallet.masterWallet, id, CoinType.ERC20);
+    constructor(public networkWallet: NetworkWallet, id: CoinID, private rpcApiUrl: string) {
+        super(networkWallet, id, CoinType.ERC20);
 
         void this.initialize();
     }
@@ -70,8 +71,6 @@ export abstract class ERC20SubWallet extends SubWallet {
         // First retrieve the number of decimals used by this token. this is needed for a good display,
         // as we need to convert the balance integer using the number of decimals.
         await this.fetchTokenDecimals();
-
-        await this.loadTransactionsFromCache();
 
         runDelayed(() => this.updateBalance(), 5000);
     }
@@ -102,6 +101,10 @@ export abstract class ERC20SubWallet extends SubWallet {
             return ''; // Just in case
         }
         return coin.getName();
+    }
+
+    public transactionsListChanged(): Subject<void> {
+        return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.coin.getContractAddress());
     }
 
     /**
@@ -178,7 +181,6 @@ export abstract class ERC20SubWallet extends SubWallet {
 
     public async update() {
       await this.updateBalance();
-      await this.getTransactionsByRpc();
     }
 
     public async updateBalance() {
@@ -203,31 +205,36 @@ export abstract class ERC20SubWallet extends SubWallet {
         }
     }
 
-    public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-        if (this.transactions == null) {
+    public getTransactionsCacheKey(): string {
+        return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.coin.getContractAddress() + "-transactions";
+      }
+
+    /* public async getTransactions(startIndex: number): Promise<ElastosPaginatedTransactions> {
+        if (this.paginatedTransactions == null) {
           await this.getTransactionsByRpc();
           this.loadTxDataFromCache = false;
         } else {
           this.loadTxDataFromCache = true;
         }
 
-        if (this.transactions) {
+        if (this.paginatedTransactions) {
           // For performance, only return 20 transactions.
-          let newTxList:AllTransactionsHistory = {
-            totalcount: this.transactions.totalcount,
-            txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
+          let newTxList:ElastosPaginatedTransactions = {
+            totalcount: this.paginatedTransactions.totalcount,
+            txhistory :this.paginatedTransactions.txhistory.slice(startIndex, startIndex + 20),
           }
           return newTxList;
         } else {
           return null;
         }
-    }
+    } */
 
     public getTransactionByHash(hash: string) : EthTransaction {
-      if (this.transactions && this.transactions.txhistory) {
-        let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
+        let transactions = this.getTransactions();
+      if (transactions) {
+        let existingIndex = (transactions as EthTransaction[]).findIndex(i => i.hash == hash);
         if (existingIndex >= 0) {
-          return this.transactions.txhistory[existingIndex] as EthTransaction;
+          return transactions[existingIndex] as EthTransaction;
         }
       }
       return null;
@@ -237,7 +244,7 @@ export abstract class ERC20SubWallet extends SubWallet {
       let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
       if (!result) {
         // Remove error transaction.
-        await this.removeInvalidTransaction(txid);
+        // TODO await this.removeInvalidTransaction(txid);
       }
       return result;
     }
@@ -456,24 +463,24 @@ export abstract class ERC20SubWallet extends SubWallet {
       return -1;
     }
 
-    public async saveTransactions(transactionsList: EthTransaction[]): Promise<void> {
+    /* public async saveTransactions(transactionsList: EthTransaction[]): Promise<void> {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
-      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length)
       await this.transactionsCache.save();
-    }
+    } */
 
-    private async removeInvalidTransaction(hash: string): Promise<void> {
-      let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
+    /* TODO private async removeInvalidTransaction(hash: string): Promise<void> {
+      let existingIndex = (this.paginatedTransactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
       if (existingIndex >= 0) {
-        Logger.warn('wallet', 'Find invalid transaction, remove it ', hash);
-        this.transactions.txhistory.splice(existingIndex, 1);
-        this.transactions.totalcount--;
+        Logger.warn('wallet', 'Found invalid transaction, remove it ', hash);
+        this.paginatedTransactions.txhistory.splice(existingIndex, 1);
+        this.paginatedTransactions.totalcount--;
 
         this.transactionsCache.remove(hash);
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length)
         await this.transactionsCache.save();
       }
-    }
+    } */
 }

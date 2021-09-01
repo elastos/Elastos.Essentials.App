@@ -31,7 +31,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/subwallet';
+import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
 import { TransactionInfo } from '../../../../model/transaction.types';
 import * as moment from 'moment';
 import { CurrencyService } from '../../../../services/currency.service';
@@ -56,7 +56,7 @@ export class CoinHomePage implements OnInit {
 
     public masterWalletInfo = '';
     public networkWallet: NetworkWallet = null;
-    public subWallet: SubWallet = null;
+    public subWallet: AnySubWallet = null;
     public elastosChainCode: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
     public transactionsLoaded = false;
@@ -72,7 +72,7 @@ export class CoinHomePage implements OnInit {
     public SELA = Config.SELA;
     public CoinType = CoinType;
 
-    public isShowMore = false;
+    public canShowMore = false;
 
     private syncSubscription: Subscription = null;
     private syncCompletedSubscription: Subscription = null;
@@ -151,7 +151,7 @@ export class CoinHomePage implements OnInit {
     }
 
     initData() {
-        if (!this.transactionStatusSubscription) {
+        /* if (!this.transactionStatusSubscription) {
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
               if (count >= 0) {
@@ -159,18 +159,26 @@ export class CoinHomePage implements OnInit {
                 this.loadingTX = false;
               }
           });
-        }
+        } */
 
-        if (!this.updateTmeout) {
+        /* if (!this.updateTmeout) {
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           this.updateTmeout = setTimeout(async () => {
+            await this.updateTransactions();
             if (this.subWallet.isLoadTxDataFromCache()) {
               this.loadingTX = true;
               await this.updateWalletInfo();
             }
             this.startUpdateInterval();
           }, this.fromWalletHome ? 200 : 10000);
-        }
+        } */
+
+        this.loadingTX = true;
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.subWallet.transactionsListChanged().subscribe(async () => {
+            await this.updateTransactions();
+            this.loadingTX = false;
+        });
     }
 
     async updateTransactions() {
@@ -219,31 +227,32 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
-        let allTransactions = await this.subWallet.getTransactions(this.start);
-        if (!allTransactions) {
+        let transactions = await this.subWallet.getTransactions(this.start);
+        if (!transactions) {
           Logger.log('wallet', "Can not get transaction");
           return;
         }
         this.transactionsLoaded = true;
-        Logger.log('wallet', "Got all transactions: ", allTransactions);
+        Logger.log('wallet', "Got all transactions: ", transactions);
 
-        const transactions = allTransactions.txhistory;
-        this.MaxCount = allTransactions.totalcount;
+        //const transactions = allTransactions.transactions;
+        //this.MaxCount = allTransactions.total;
+        this.MaxCount = transactions.length;
 
         if (this.start >= this.MaxCount) {
-            this.isShowMore = false;
+            this.canShowMore = false;
             return;
         } else {
-            this.isShowMore = true;
+            this.canShowMore = true;
         }
         if (!transactions) {
-            this.isShowMore = false;
+            this.canShowMore = false;
             return;
         }
 
-        if (this.MaxCount <= 20) {
-            this.isShowMore = false;
-        }
+        /* TODO - "can fetch more" to be called on the subwalelt -> transactions provider if (this.MaxCount <= 20) {
+            this.canShowMore = false;
+        } */
 
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
@@ -308,10 +317,10 @@ export class CoinHomePage implements OnInit {
         this.pageNo++;
         this.start = this.pageNo * 20;
         if (this.start >= this.MaxCount) {
-            this.isShowMore = false;
+            this.canShowMore = false;
             return;
         }
-        this.isShowMore = true;
+        this.canShowMore = true;
         void this.getAllTx();
     }
 

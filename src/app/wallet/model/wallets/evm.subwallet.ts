@@ -11,7 +11,7 @@ import { NetworkWallet } from './networkwallet';
 import { StandardSubWallet } from './standard.subwallet';
 import { StandardCoinName } from '../Coin';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, SignedETHSCTransaction } from '../evm.types';
-import { AllTransactionsHistory, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType } from '../transaction.types';
+import { ElastosPaginatedTransactions, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType } from '../transaction.types';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
 /**
@@ -26,16 +26,15 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
 
     protected tokenList: ERC20TokenInfo[] = null;
 
-    constructor(protected networkWallet: NetworkWallet, id: StandardCoinName, public rpcApiUrl: string) {
-        super(networkWallet.masterWallet, id);
+    constructor(networkWallet: NetworkWallet, id: StandardCoinName, public rpcApiUrl: string) {
+        super(networkWallet, id);
 
         void this.initialize();
     }
 
-    protected async initialize() {
+    protected initialize() {
         this.initWeb3();
         // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
-        await this.loadTransactionsFromCache();
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -44,7 +43,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
       setTimeout(() => {
         void this.updateBalance();
       }, 2000);
-      
+
       return;
     }
 /*
@@ -85,32 +84,32 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
         return this.ethscAddress;
     }
 
-    public async getTransactions(startIndex: number): Promise<AllTransactionsHistory> {
-      if (this.transactions == null) {
+    /* public async getTransactions(startIndex: number): Promise<ElastosPaginatedTransactions> {
+      if (this.paginatedTransactions == null) {
         await this.getTransactionsByRpc();
         this.loadTxDataFromCache = false;
       } else {
         this.loadTxDataFromCache = true;
       }
 
-      if (this.transactions) {
+      if (this.paginatedTransactions) {
         // For performance, only return 20 transactions.
-        let newTxList:AllTransactionsHistory = {
-            totalcount: this.transactions.totalcount,
-            txhistory :this.transactions.txhistory.slice(startIndex, startIndex + 20),
+        let newTxList:ElastosPaginatedTransactions = {
+            totalcount: this.paginatedTransactions.totalcount,
+            txhistory :this.paginatedTransactions.txhistory.slice(startIndex, startIndex + 20),
         }
         return newTxList;
       }
       else {
         return null;
       }
-    }
+    } */
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
       let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
       if (!result) {
         // Remove error transaction.
-        await this.removeInvalidTransaction(txid);
+        // TODO await this.removeInvalidTransaction(txid);
       }
       return result;
     }
@@ -308,7 +307,6 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
 
     public async update() {
       await this.updateBalance();
-      await this.getTransactionsByRpc();
     }
 
     public async updateBalance(): Promise<void> {
@@ -411,24 +409,24 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
       return -1;
     }
 
-    public async saveTransactions(transactionsList: EthTransaction[]) {
+    /* public async saveTransactions(transactionsList: EthTransaction[]) {
       for (let i = 0, len = transactionsList.length; i < len; i++) {
         this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
       }
-      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length)
       await this.transactionsCache.save();
     }
 
     protected async removeInvalidTransaction(hash: string) {
-      let existingIndex = (this.transactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
+      let existingIndex = (this.paginatedTransactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
       if (existingIndex >= 0) {
         Logger.warn('wallet', 'Find invalid transaction, remove it ', hash);
-        this.transactions.txhistory.splice(existingIndex, 1);
-        this.transactions.totalcount--;
+        this.paginatedTransactions.txhistory.splice(existingIndex, 1);
+        this.paginatedTransactions.totalcount--;
 
         this.transactionsCache.remove(hash);
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
+        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length)
         await this.transactionsCache.save();
       }
-    }
+    } */
 }

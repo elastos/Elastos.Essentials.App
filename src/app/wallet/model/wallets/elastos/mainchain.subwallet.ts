@@ -1,15 +1,16 @@
-import {  RawTransactionType, TransactionDirection, TransactionHistory } from '../../transaction.types';
+import {  ElastosTransaction, RawTransactionType, TransactionDirection } from '../../transaction.types';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../../Coin';
 import { MasterWallet } from '../masterwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
+import { NetworkWallet } from '../networkwallet';
 
 /**
  * Specialized standard sub wallet for ELA mainchain.
  */
 export class MainchainSubWallet extends MainAndIDChainSubWallet {
-    constructor(masterWallet: MasterWallet) {
-        super(masterWallet, StandardCoinName.ELA);
+    constructor(networkWallet: NetworkWallet) {
+        super(networkWallet, StandardCoinName.ELA);
     }
 
     public getMainIcon(): string {
@@ -28,7 +29,7 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
         return "ELA";
       }
 
-    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
+    protected async getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string> {
         if (transaction.type === TransactionDirection.MOVED) {
             // TODO: show different icon for different vote?
             if (transaction.votecategory !== 0) {

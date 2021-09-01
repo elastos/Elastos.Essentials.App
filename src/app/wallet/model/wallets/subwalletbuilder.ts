@@ -9,7 +9,7 @@ export class SubWalletBuilder {
   /**
    * Newly created wallet, base on a coin type.
    */
-  static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<SubWallet> {
+  static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<SubWallet<any>> {
       Logger.log("wallet", "Creating new subwallet using coin", coin);
 
       switch (coin.getType()) {
@@ -26,7 +26,7 @@ export class SubWalletBuilder {
   /**
    * Restored wallet from local storage info.
    */
-  static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): SubWallet {
+  static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): SubWallet<any> {
       if (!serializedSubWallet)
           return null; // Should never happen, but happened because of some other bugs.
 

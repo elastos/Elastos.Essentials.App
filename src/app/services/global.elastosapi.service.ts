@@ -9,7 +9,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalLanguageService } from './global.language.service';
 import { StandardCoinName } from '../wallet/model/Coin';
-import { UtxoType } from '../wallet/model/transaction.types';
+import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/transaction.types';
 import { ProducersSearchResponse } from '../dposvoting/model/nodes.model';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
@@ -496,7 +496,7 @@ export class GlobalElastosAPIService extends GlobalService {
         return '';
     }
 
-    public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<any> {
+    public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<{result: ElastosPaginatedTransactions}[]> {
         const paramArray = [];
         let index = 0;
 
@@ -548,7 +548,12 @@ export class GlobalElastosAPIService extends GlobalService {
         const ethscgetTokenTxsUrl = rpcApiUrl + '/api/?module=account&action=tokentx&address=' + address;
 
         let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
-        return result.result as EthTokenTransaction[];
+        let resultItems = result.result as EthTokenTransaction[];
+        resultItems.forEach(item => {
+            item.cacheKey = item.hash;
+            item.cacheTimeValue = parseInt(item.timeStamp);
+        })
+        return resultItems;
     }
 
     public async getERC20TokenList(elastosChainCode: StandardCoinName, address: string): Promise<ERC20TokenInfo[]> {

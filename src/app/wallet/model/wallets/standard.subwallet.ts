@@ -1,17 +1,19 @@
 import { MasterWallet } from './masterwallet';
 import { SubWallet } from './subwallet';
 import { CoinType, StandardCoinName } from '../Coin';
-import { RawTransactionPublishResult, RawTransactionType, TransactionDirection, TransactionHistory } from '../transaction.types';
+import { RawTransactionPublishResult, RawTransactionType, TransactionDirection, ElastosTransaction, TransactionInfo } from '../transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import { Config } from '../../config/Config';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../services/currency.service';
 import { Logger } from 'src/app/logger';
+import { NetworkWallet } from './networkwallet';
+import moment from 'moment';
 
-export abstract class StandardSubWallet extends SubWallet {
-    constructor(masterWallet: MasterWallet, id: StandardCoinName) {
-        super(masterWallet, id, CoinType.STANDARD);
+export abstract class StandardSubWallet extends SubWallet<ElastosTransaction> {
+    constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
+        super(networkWallet, id, CoinType.STANDARD);
     }
 
     public async destroy() {
@@ -53,7 +55,7 @@ export abstract class StandardSubWallet extends SubWallet {
         return this.balance.gt(amount.multipliedBy(Config.SELAAsBigNumber));
     }
 
-    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
+    protected async getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string> {
         let transactionName = '';
         // Logger.log("wallet", "getTransactionName std subwallet", transaction);
 
@@ -121,7 +123,7 @@ export abstract class StandardSubWallet extends SubWallet {
         return await transactionName;
     }
 
-    protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
+    protected async getTransactionIconPath(transaction: ElastosTransaction): Promise<string> {
         if (transaction.type === TransactionDirection.RECEIVED) {
             switch (transaction.txtype) {
                 case RawTransactionType.RechargeToSideChain:
@@ -152,6 +154,43 @@ export abstract class StandardSubWallet extends SubWallet {
 
         return null;
     }
+
+
+    /**
+     * Based on a raw transaction object (from the SPV SDK or API), returns a higher level
+     * transaction info object ready to use on UI.
+     *
+     * Can be overriden to customize some fields.
+     *
+     * TODO: MOVE TO ELASTOS SPECIFIC CLASS
+     */
+     public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
+        const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
+        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
+
+        const transactionInfo: TransactionInfo = {
+            amount: new BigNumber(-1), // Defined by inherited classes
+            confirmStatus: -1, // Defined by inherited classes
+            datetime,
+            direction: transaction.type,
+            fee: transaction.fee,
+            height: transaction.height,
+            memo: this.getMemoString(transaction.memo),
+            name: await this.getTransactionName(transaction, translate),
+            payStatusIcon: await this.getTransactionIconPath(transaction),
+            status: transaction.Status,
+            statusName: this.getTransactionStatusName(transaction.Status, translate),
+            symbol: '', // Defined by inherited classes
+            from: null,
+            to: transaction.address,
+            timestamp,
+            txid: null, // Defined by inherited classes
+            type: null, // Defined by inherited classes
+            isCrossChain: false, // Defined by inherited classes
+        };
+        return transactionInfo;
+    }
+
 
     /**
      * Signs raw transaction and sends the signed transaction to the SPV SDK for publication.

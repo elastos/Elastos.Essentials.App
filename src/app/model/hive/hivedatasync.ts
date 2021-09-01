@@ -448,7 +448,7 @@ export class HiveDataSync {
                 for (let entryKey of entriesList) {
                     let localEntry = await this.loadLocalDatabaseEntry(context.name, entryKey);
 
-                    this.logDebug("Checking if local entry needs to be synced with vault", localEntry);
+                    //this.logDebug("Checking if local entry needs to be synced with vault", localEntry);
                     if (!localEntry) {
                         // Should not happen but just in case...
                         this.logWarn("Local entry with key "+entryKey+" exists in saved entries list but the entry itself can't be found. This is an abnormal state. Local entry is skipped.");
@@ -475,11 +475,11 @@ export class HiveDataSync {
                                 }
                             }
                             else {
-                                this.logDebug("Up to date (local modification not more recent than vault modification)", localEntry);
+                                //this.logDebug("Up to date (local modification not more recent than vault modification)", localEntry);
                             }
                         }
                         else {
-                            this.logDebug("Already synchronized (no local modification since last sync)", localEntry);
+                            //this.logDebug("Already synchronized (no local modification since last sync)", localEntry);
                         }
                     }
 

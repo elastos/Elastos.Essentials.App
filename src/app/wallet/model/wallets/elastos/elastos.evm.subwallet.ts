@@ -52,46 +52,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
       return "";
   }
 
-  protected async getTransactionsByRpc() {
-    Logger.log('wallet', 'getTransactionByRPC (elastos):', this.masterWallet.id, ' ', this.id)
-    const address = await this.getTokenAddress();
-    let result = await this.getETHSCTransactions(this.id as StandardCoinName, address);
-    if (result) {
-      if (this.transactions == null) {
-        // init
-        this.transactions = { totalcount: 0, txhistory: [] };
-      }
-      if ((result.length > 0) && (this.transactions.totalcount !== result.length)) {
-        // Has new transactions.
-        this.transactions.totalcount = result.length;
-        this.transactions.txhistory = result.reverse();
-        await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
-      } else {
-        // Notify the page to show the right time of the transactions even no new transaction.
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-      }
-    }
-  }
 
-  public async getETHSCTransactions(elastosChainCode: StandardCoinName, address: string, begBlockNumber = 0, endBlockNumber = 0): Promise<EthTransaction[]> {
-    let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForMisc(elastosChainCode);
-    const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
-    if (rpcApiUrl === null) {
-        return null;
-    }
-    let ethscgethistoryurl = null;
-    // Misc api
-    // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
-    // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
-    ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
-    try {
-        let result = await GlobalJsonRPCService.instance.httpGet(ethscgethistoryurl);
-        return result.result as EthTransaction[];
-    } catch (e) {
-        Logger.error('wallet', 'getETHSCTransactions error:', e)
-    }
-    return null;
-  }
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
     let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(
@@ -99,7 +60,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
       txid);
     if (!result) {
       // Remove error transaction.
-      await this.removeInvalidTransaction(txid);
+      // TODO await this.removeInvalidTransaction(txid);
     }
     return result;
   }

@@ -4,16 +4,21 @@ import { HECOChainSubWallet } from "./heco.subwallet";
 import { StandardCoinName } from "../../Coin";
 import { Network } from "../../networks/network";
 import { StandardEVMSubWallet } from "../evm.subwallet";
-import { ERC20TokenInfo, EthTokenTransaction } from "../../evm.types";
+import { ERC20TokenInfo, EthTokenTransaction, EthTransaction } from "../../evm.types";
 import { HecoAPI, HecoApiType } from "./heco.api";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { Logger } from "src/app/logger";
+import { TransactionProvider } from "../../transaction.provider";
+import { HecoTransactionProvider } from "./providers/heco.transaction.provider";
 
 export class HecoNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: HECOChainSubWallet = null;
+  private transactionDiscoveryProvider: HecoTransactionProvider = null;
 
   constructor(masterWallet: MasterWallet, network: Network) {
     super(masterWallet, network);
+
+    this.transactionDiscoveryProvider = new HecoTransactionProvider();
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {
@@ -75,5 +80,9 @@ export class HecoNetworkWallet extends NetworkWallet {
     } catch (e) {
       Logger.error('wallet', 'getHRC20TokenTransferEvents error:', e)
     }
+  }
+
+  public getTransactionDiscoveryProvider(): TransactionProvider<EthTransaction> {
+    return this.transactionDiscoveryProvider;
   }
 }

@@ -28,13 +28,13 @@ export class HecoERC20SubWallet extends ERC20SubWallet {
     return "HRC20 Token";
   }
 
-  protected async getTransactionsByRpc() {
+  /* protected async getTransactionsByRpc() {
     let transactionList = await this.getHECOTransactions();
     if (transactionList) {
-      this.transactions = {totalcount:transactionList.length, txhistory:transactionList};
-      await this.saveTransactions(this.transactions.txhistory as EthTransaction[]);
+      this.paginatedTransactions = {totalcount:transactionList.length, txhistory:transactionList};
+      await this.saveTransactions(this.paginatedTransactions.txhistory as EthTransaction[]);
     }
-  }
+  } */
 
   //TODO: use page and offset.
   private async getHECOTransactions(page = 1, offset = 100): Promise<EthTransaction[]> {
