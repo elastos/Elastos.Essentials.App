@@ -58,18 +58,18 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    *
    * Must be called before any access to getTransactions().
    */
-  public abstract prepareTransactions(subWallet: AnySubWallet): Promise<void>;
+  //public abstract prepareTransactions(subWallet: AnySubWallet): Promise<void>;
 
   /**
    * Gets the transactions as available currency in the local model, without any fetch.
    */
-  public abstract getTransactions(subWallet: SubWallet<TransactionType>, startIndex?: number): TransactionType[];
+  //public abstract getTransactions(subWallet: SubWallet<TransactionType>, startIndex?: number): TransactionType[];
 
   /**
    * Tells if there are more transactions that can be fetched, for example when some APIs return paginated
    * results. If this information is unknown, the implementation should return false.
    */
-  public abstract canFetchMoreTransactions(subWallet: SubWallet<TransactionType>): boolean;
+  //public abstract canFetchMoreTransactions(subWallet: SubWallet<TransactionType>): boolean;
 
   /**
    * Used by the UI to either (for instance):
@@ -79,7 +79,25 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    *
    * If afterTransaction is not provided, the most recent transactions are fetched.
    */
-  public abstract forcedFetchTransactions(subWallet: SubWallet<TransactionType>, afterTransaction?: TransactionType);
+  //public abstract forcedFetchTransactions(subWallet: SubWallet<TransactionType>, afterTransaction?: TransactionType);
+
+  protected abstract getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider;
+
+  public getTransactions(subWallet: SubWallet<GenericTransaction>, startIndex = 0): TransactionType[] {
+    return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet, startIndex);
+  }
+
+  public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
+    return this.getSubWalletTransactionProvider(subWallet).canFetchMoreTransactions(subWallet);
+  }
+
+  public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: GenericTransaction) {
+    return this.getSubWalletTransactionProvider(subWallet).forcedFetchTransactions(subWallet, afterTransaction);
+  }
+
+  public prepareTransactions(subWallet: AnySubWallet): Promise<void> {
+    return this.getSubWalletTransactionProvider(subWallet).prepareTransactions(subWallet);
+  }
 
   /**
    * Subject that informs listeners whenever the transactions list gets updated.
@@ -88,6 +106,23 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     if (!this._transactionsListChanged.has(coinID))
       this._transactionsListChanged.set(coinID, new BehaviorSubject(null));
     return this._transactionsListChanged.get(coinID);
+  }
+
+  /**
+   * Starts a task right now and repeats it X milliseconds after its completion.
+   */
+  protected refreshEvery(repeatingTask: ()=>Promise<void>, repeatMs: number) {
+    void this.callAndRearmTask(repeatingTask, repeatMs);
+  }
+
+  private async callAndRearmTask(repeatingTask: ()=>Promise<void>, repeatMs: number): Promise<void> {
+    await repeatingTask();
+
+    // Only restart a timer after all current operations are complete. We don't want to use an internal
+    // that would create many slow updates in parrallel.
+    setTimeout(() => {
+      void this.callAndRearmTask(repeatingTask, repeatMs);
+    }, repeatMs);
   }
 }
 
