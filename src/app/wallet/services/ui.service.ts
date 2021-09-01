@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SubWallet } from '../model/wallets/subwallet';
+import { AnySubWallet, SubWallet } from '../model/wallets/subwallet';
 import { StandardCoinName } from '../model/Coin';
 import * as moment from 'moment';
 import BigNumber from 'bignumber.js';
@@ -29,7 +29,7 @@ export class UiService {
     }
   }
 
-  getSubwalletTitle(subwallet: SubWallet): string {
+  getSubwalletTitle(subwallet: AnySubWallet): string {
     if (!subwallet) {
       return '';
     }
@@ -37,7 +37,7 @@ export class UiService {
     return subwallet.getFriendlyName();
   }
 
-  getSubwalletSubtitle(subwallet: SubWallet): string {
+  getSubwalletSubtitle(subwallet: AnySubWallet): string {
     if (!subwallet) {
       return '';
     }

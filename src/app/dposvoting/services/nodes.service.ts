@@ -287,8 +287,8 @@ export class NodesService {
         }
 
         this.dposInfo.txConfirm = true;
-        await this.voteService.sourceSubwallet.getTransactionsByRpc();
-        let txhistory = this.voteService.sourceSubwallet.transactions.txhistory;
+        // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
+        let txhistory = this.voteService.sourceSubwallet.getTransactions();
         for (let i in txhistory) {
             if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
                 if (this.dposInfo.state == 'Unregistered') {

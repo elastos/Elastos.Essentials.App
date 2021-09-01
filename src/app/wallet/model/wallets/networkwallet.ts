@@ -16,6 +16,7 @@ import { StandardEVMSubWallet } from './evm.subwallet';
 import { Subject } from 'rxjs';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { TransactionProvider } from '../transaction.provider';
 
 export class ExtendedNetworkWalletInfo {
     /** List of serialized subwallets added earlier to this network wallet */
@@ -32,12 +33,12 @@ export abstract class NetworkWallet {
     public id: string = null;
 
     public subWallets: {
-        [k: string]: SubWallet
+        [k: string]: SubWallet<any>
     } = {};
 
     public nfts: NFT[] = [];
 
-    public subWalletsListChange = new Subject<SubWallet>(); // Subwallet added or created
+    public subWalletsListChange = new Subject<SubWallet<any>>(); // Subwallet added or created
 
     constructor(
         public masterWallet: MasterWallet,
@@ -60,7 +61,10 @@ export abstract class NetworkWallet {
         for (let subWallet of this.getSubWallets()) {
             void subWallet.startBackgroundUpdates();
         }
-        runDelayed(() => this.updateERCTokenList(), 5000);
+
+        runDelayed(() => this.updateERCTokenList(), 5000); // TODO @zhiming: replace this with the discovery provider
+        this.getTransactionDiscoveryProvider().start();
+
         return;
     }
 
@@ -103,7 +107,7 @@ export abstract class NetworkWallet {
     /**
      * Returns the list of all subwallets except the excluded one.
      */
-    public subWalletsWithExcludedCoin(excludedCoinName: CoinID, type: CoinType = null): SubWallet[] {
+    public subWalletsWithExcludedCoin(excludedCoinName: CoinID, type: CoinType = null): SubWallet<any>[] {
         // Hide the id chain, do not use the id chain any more.
         return Object.values(this.subWallets).filter((sw) => {
             return (sw.id !== excludedCoinName) && (sw.id !== StandardCoinName.IDChain) && (type !== null ? sw.type === type : true);
@@ -157,7 +161,7 @@ export abstract class NetworkWallet {
     /**
      * Convenient method to access subwallets as an array alphabetically.
      */
-    public getSubWallets(): SubWallet[] {
+    public getSubWallets(): SubWallet<any>[] {
         return Object.values(this.subWallets).sort((a, b) => {
             if (a.type == CoinType.STANDARD && (b.type == CoinType.STANDARD)) return 0;
             if (a.type == CoinType.STANDARD) return -1;
@@ -167,14 +171,14 @@ export abstract class NetworkWallet {
         );
     }
 
-    public getSubWallet(id: CoinID): SubWallet {
+    public getSubWallet(id: CoinID): SubWallet<any> {
         return this.subWallets[id];
     }
 
     /**
      * Returns the list of all subwallets by CoinType
      */
-    public getSubWalletsByType(type: CoinType): SubWallet[] {
+    public getSubWalletsByType(type: CoinType): SubWallet<any>[] {
         return Object.values(this.subWallets).filter((sw) => {
             return (sw.type === type);
         });
@@ -187,6 +191,7 @@ export abstract class NetworkWallet {
 
     /**
      * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
+     * TODO: this method should me merged into the new TransactionProviders and generate events when new tokens are found
      */
     public async updateERCTokenList() {
         Logger.log("wallet", "Updating ERC tokens list for network wallet", this);
@@ -358,4 +363,6 @@ export abstract class NetworkWallet {
         };
         void GlobalNotificationsService.instance.sendNotification(notification);
     }
+
+    public abstract getTransactionDiscoveryProvider(): TransactionProvider<any>;
 }

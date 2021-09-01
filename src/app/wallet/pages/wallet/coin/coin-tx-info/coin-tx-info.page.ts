@@ -8,7 +8,7 @@ import { StandardCoinName } from '../../../../model/Coin';
 import { TransactionDirection, TransactionType, TransactionInfo, TransactionStatus } from '../../../../model/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
-import { SubWallet } from '../../../../model/wallets/subwallet';
+import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
 import { ElastosEVMSubWallet } from '../../../../model/wallets/elastos/elastos.evm.subwallet';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -39,7 +39,7 @@ export class CoinTxInfoPage implements OnInit {
     private networkWallet: NetworkWallet = null;
     private mainTokenSymbol = '';
     public elastosChainCode = '';
-    public subWallet: SubWallet = null;
+    public subWallet: AnySubWallet = null;
     public transactionInfo: TransactionInfo;
     private blockchain_url = Config.BLOCKCHAIN_URL;
     private idchain_url = Config.IDCHAIN_URL;

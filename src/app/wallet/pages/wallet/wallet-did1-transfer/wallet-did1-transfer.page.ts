@@ -27,7 +27,7 @@ import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
 import { TransferType, Transfer } from '../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../model/Coin';
-import { SubWallet } from '../../../model/wallets/subwallet';
+import { AnySubWallet, SubWallet } from '../../../model/wallets/subwallet';
 import { TxConfirmComponent } from '../../../components/tx-confirm/tx-confirm.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../services/currency.service';
@@ -66,8 +66,8 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
     public amount: number; // Here we can use JS "number" type, for now we consider we will never transfer a number that is larger than JS's MAX INT.
 
     // Display recharge wallets
-    public fromSubWallet: SubWallet;
-    public toSubWallet: SubWallet = null;
+    public fromSubWallet: AnySubWallet;
+    public toSubWallet: AnySubWallet = null;
 
     // Submit transaction
     public transaction: any;
@@ -275,7 +275,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
     }
 
-    isStandardSubwallet(subWallet: SubWallet) {
+    isStandardSubwallet(subWallet: AnySubWallet) {
         return subWallet instanceof StandardSubWallet;
     }
 

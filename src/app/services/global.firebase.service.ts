@@ -33,7 +33,7 @@ export class GlobalFirebaseService {
                 this.token.next(token);
             }).catch(err => {
                 if (new String(err).startsWith("SERVICE_NOT_AVAILABLE"))
-                    Logger.warn("firebase", "Firebase was unable to renew the push notification token. Push notifications won't be received", err);
+                    Logger.warn("firebase", "Firebase was unable to renew the push notification token. Push notifications won't be received. Original error:", err);
             });
 
             this.firebase.onMessageReceived().subscribe(msg => {

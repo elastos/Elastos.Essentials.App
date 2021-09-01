@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { RawTransactionType, TransactionDirection, TransactionHistory, TransactionInfo, TransactionType } from '../../transaction.types';
+import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo, TransactionType } from '../../transaction.types';
 import { StandardCoinName } from '../../Coin';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
 import { NetworkWallet } from '../networkwallet';
@@ -10,12 +10,10 @@ import { NetworkWallet } from '../networkwallet';
  */
 export class IDChainSubWallet extends MainAndIDChainSubWallet {
     constructor(networkWallet: NetworkWallet) {
-        super(networkWallet.masterWallet, StandardCoinName.IDChain);
+        super(networkWallet, StandardCoinName.IDChain);
     }
 
-    protected async initialize() {
-        await this.loadTransactionsFromCache();
-
+    protected initialize() {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
             if (!this.masterWallet.account.SingleAddress) {
@@ -48,7 +46,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
     // Override
     // Don't show the old IDChain subwallet if balance is 0.
     public shouldShowOnHomeScreen(): boolean {
-        return this.balance && !this.balance.eq(0);
+        return this.balance && !this.balance.isNaN() && !this.balance.eq(0);
     }
 
     checkIDChainToBeDestroy() {
@@ -59,7 +57,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         }
     }
 
-    public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
+    public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
         let transactionInfo = await super.getTransactionInfo(transaction, translate);
         switch (transaction.type) {
             case TransactionDirection.MOVED:
@@ -72,7 +70,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         return transactionInfo;
     }
 
-    protected async getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string> {
+    protected async getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string> {
         let transactionName = await super.getTransactionName(transaction, translate);
 
         // Use naming from super class, but override a few cases
@@ -87,7 +85,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         return transactionName;
     }
 
-    protected async getTransactionIconPath(transaction: TransactionHistory): Promise<string> {
+    protected async getTransactionIconPath(transaction: ElastosTransaction): Promise<string> {
         let icon = await super.getTransactionIconPath(transaction);
 
         // Use icon from super class, but override a few cases

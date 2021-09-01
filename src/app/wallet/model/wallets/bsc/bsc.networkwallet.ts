@@ -5,6 +5,8 @@ import { Network } from "../../networks/network";
 import { StandardEVMSubWallet } from "../evm.subwallet";
 import { ERC20TokenInfo } from "../../evm.types";
 import { BscChainSubWallet } from "./bsc.subwallet";
+import { TransactionProvider } from "../../transaction.provider";
+import { GenericTransaction } from "../../transaction.types";
 
 export class BscNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: BscChainSubWallet = null;
@@ -29,5 +31,9 @@ export class BscNetworkWallet extends NetworkWallet {
 
   public async getERCTokensList(): Promise<ERC20TokenInfo[]> {
     return await []; // Not yet implemented
+  }
+
+  public getTransactionDiscoveryProvider(): TransactionProvider<GenericTransaction> {
+    throw new Error("BSC getTransactionDiscoveryProvider() - Method not implemented.");
   }
 }

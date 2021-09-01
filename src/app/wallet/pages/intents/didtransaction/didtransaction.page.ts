@@ -34,7 +34,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/eid.subwallet';
+import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/eid.evm.subwallet';
 
 
 @Component({

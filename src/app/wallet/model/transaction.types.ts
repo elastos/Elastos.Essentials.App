@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { JSONObject } from 'src/app/model/json';
 
 export enum TransactionStatus {
     CONFIRMED = 'confirmed',
@@ -145,8 +146,15 @@ export enum RawTransactionType {
 
 // ****************************************
 
+// Base transaction type for all networks, all chains
+export type GenericTransaction = JSONObject & {
+  // Transactions should be cacheable in a time based cache and therefore need to implement the below items
+  //cacheKey: string;       
+  //cacheTimeValue: number;
+}
+
 // Transactions from rpc
-export type TransactionHistory = {
+export type ElastosTransaction = GenericTransaction & {
     address: string;
     fee: string;
     height: number;
@@ -162,13 +170,16 @@ export type TransactionHistory = {
     votecategory: VoteCategory;
 }
 
-
+export type PaginatedTransactions<T extends GenericTransaction> = {
+  total: number;
+  transactions: T[]
+}
 
 // Raw list of transactions as received from the rpc.
-export type AllTransactionsHistory = {
+export type ElastosPaginatedTransactions = {
     totalcount?: number,
     MaxCount?: number,// TODO
-    txhistory: TransactionHistory[]
+    txhistory: ElastosTransaction[]
 };
 
 export type attribute = {

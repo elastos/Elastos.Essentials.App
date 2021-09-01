@@ -1,11 +1,13 @@
 import { MasterWallet } from './masterwallet';
+import { NetworkWallet } from './networkwallet';
 import { CoinType, CoinID, StandardCoinName } from '../coin';
-import { AllTransactionsHistory, RawTransactionPublishResult, TransactionHistory, TransactionInfo, TransactionStatus } from '../transaction.types';
+import { ElastosPaginatedTransactions, RawTransactionPublishResult, PaginatedTransactions, ElastosTransaction, TransactionInfo, TransactionStatus, GenericTransaction } from '../transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
+import { Subject } from 'rxjs';
 
 /**
  * Subwallet representation ready to save to local storage for persistance.
@@ -20,7 +22,7 @@ export class SerializedSubWallet {
      * and the balance type of subwallet is bigNumber,
      * It needs to be converted to string and then saved to localstorage.
      */
-    public static fromSubWallet(subWallet: SubWallet): SerializedSubWallet {
+    public static fromSubWallet(subWallet: SubWallet<any>): SerializedSubWallet {
         const serializedSubWallet = new SerializedSubWallet();
         serializedSubWallet.type = subWallet.type;
         serializedSubWallet.id = subWallet.id as StandardCoinName;
@@ -28,7 +30,11 @@ export class SerializedSubWallet {
     }
 }
 
-export abstract class SubWallet {
+// Convenient type to avoid adding SubWallet<any> everywhere.
+export type AnySubWallet = SubWallet<any>;
+
+export abstract class SubWallet<TransactionType extends GenericTransaction> {
+    public masterWallet: MasterWallet;
     public id: CoinID = null;
     public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
     public lastBlockTime: string = null;
@@ -37,27 +43,22 @@ export abstract class SubWallet {
     public balanceKeyInCache = '';
 
     public loadTxDataFromCache = true;
-    public transactions: AllTransactionsHistory = null;
-    public transactionsCache: TimeBasedPersistentCache<any> = null;
-    public transactionKeyInCache = '';
-
     public subwalletTransactionStatusID = '';
 
-    constructor(protected masterWallet: MasterWallet, id: CoinID, public type: CoinType) {
-      this.masterWallet = masterWallet;
+    constructor(public networkWallet: NetworkWallet, id: CoinID, public type: CoinType) {
+      this.masterWallet = networkWallet.masterWallet;
       this.id = id;
       this.type = type;
 
       this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
-      this.transactionKeyInCache = this.masterWallet.id + '-' + this.id + '-tx';
       this.subwalletTransactionStatusID = this.masterWallet.id + '-' + this.id;
     }
 
     /**
-     * Starts updates in background. 
-     * All the initializations here are not mandatory during initializations and can deliver 
+     * Starts updates in background.
+     * All the initializations here are not mandatory during initializations and can deliver
      * asynchronous content at any time.
-     * 
+     *
      * This method can be overriden by subwallet implementations.
      */
     public startBackgroundUpdates(): Promise<void> {
@@ -82,24 +83,6 @@ export abstract class SubWallet {
       await this.balanceCache.save();
     }
 
-    public async loadTransactionsFromCache() {
-      this.transactionsCache = await TimeBasedPersistentCache.loadOrCreate(this.transactionKeyInCache);
-      if (this.transactionsCache.size() !== 0) {
-        if (this.transactions == null) {
-          // init
-          this.transactions = {totalcount:0, txhistory:[]};
-        }
-        this.transactions.totalcount = this.transactionsCache.size()
-        let items = this.transactionsCache.values();
-        for (let i = 0, len = this.transactions.totalcount; i < len; i++) {
-          this.transactions.txhistory.push(items[i].data);
-        }
-        this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.transactions.txhistory.length)
-      }
-      return null;
-    }
-
-
     /**
      * If we get the transactions from cache, then we need update the transactions in 3s.
      */
@@ -107,10 +90,6 @@ export abstract class SubWallet {
         return this.loadTxDataFromCache;
     }
 
-    /**
-     * Save the transctions list to cache.
-     */
-    protected abstract saveTransactions(transactionsList: TransactionHistory[]);
 
     /**
      * From a raw status, returns a UI readable string status.
@@ -134,18 +113,12 @@ export abstract class SubWallet {
     /**
      * From a given transaction return a UI displayable transaction title.
      */
-    protected abstract getTransactionName(transaction: TransactionHistory, translate: TranslateService): Promise<string>;
+    protected abstract getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string>;
 
     /**
      * From a given transaction return a UI displayable transaction icon that illustrates the transaction operation.
      */
-    protected abstract getTransactionIconPath(transaction: TransactionHistory): Promise<string>;
-
-    /**
-     * Fetches the transactions using the right RPC APIs and converts data into a common transactions
-     * list format shared by all EVM subwallets.
-     */
-    protected abstract getTransactionsByRpc(timestamp?: number): void;
+    protected abstract getTransactionIconPath(transaction: ElastosTransaction): Promise<string>;
 
     /**
      * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
@@ -153,8 +126,6 @@ export abstract class SubWallet {
     public async destroy(): Promise<void> {
         if (this.balanceCache)
           await this.balanceCache.delete();
-        if (this.transactionsCache)
-          await this.transactionsCache.delete();
         return Promise.resolve();
     }
 
@@ -224,11 +195,40 @@ export abstract class SubWallet {
     public abstract isBalanceEnough(amount: BigNumber): boolean;
 
     /**
+     * Method that must be called by the UI before accessing subwallet transactions.
+     * Typically, this method loads the transaction cache for better UI reactivity right after.
+     */
+    public prepareTransactions(): Promise<void> {
+      return this.networkWallet.getTransactionDiscoveryProvider().prepareTransactions(this);
+    }
+
+    /**
      * Get a partial list of transactions, from the given index.
      * TODO: The "AllTransactions" type is very specific to SPVSDK. We will maybe have to change this type to a common type
      * with ERC20 "transaction" type when we have more info about it.
      */
-    public abstract getTransactions(startIndex: number): Promise<AllTransactionsHistory>;
+    public getTransactions(startIndex = 0): TransactionType[] {
+      return this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this, startIndex);
+    }
+
+    public getTransactionsCacheKey(): string {
+      return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-transactions";
+    }
+
+    public abstract getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo>;
+
+    /**
+     * Fetches the transactions using the right RPC APIs and converts data into a common transactions
+     * list format shared by all EVM subwallets.
+     */
+    //public abstract fetchTransactions(startingAt?: number): Promise<GenericTransaction[]>;
+
+    //public abstract canFetchMoreTransactions(): boolean;
+
+    /**
+     * Save the transctions list to cache.
+     */
+    //public abstract saveTransactions(transactions: GenericTransaction[]);
 
     /**
      * Method called by the wallet home screen to known if the subwallet should appear in the list or not.
@@ -239,45 +239,16 @@ export abstract class SubWallet {
       return true;
     }
 
-    /**
-     * Based on a raw transaction object (from the SPV SDK or API), returns a higher level
-     * transaction info object ready to use on UI.
-     *
-     * Can be overriden to customize some fields.
-     */
-    public async getTransactionInfo(transaction: TransactionHistory, translate: TranslateService): Promise<TransactionInfo> {
-        const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
-        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
-
-        const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(-1), // Defined by inherited classes
-            confirmStatus: -1, // Defined by inherited classes
-            datetime,
-            direction: transaction.type,
-            fee: transaction.fee,
-            height: transaction.height,
-            memo: this.getMemoString(transaction.memo),
-            name: await this.getTransactionName(transaction, translate),
-            payStatusIcon: await this.getTransactionIconPath(transaction),
-            status: transaction.Status,
-            statusName: this.getTransactionStatusName(transaction.Status, translate),
-            symbol: '', // Defined by inherited classes
-            from: null,
-            to: transaction.address,
-            timestamp,
-            txid: null, // Defined by inherited classes
-            type: null, // Defined by inherited classes
-            isCrossChain: false, // Defined by inherited classes
-        };
-        return transactionInfo;
-    }
-
-    private getMemoString(memo: string) {
+    protected getMemoString(memo: string) {
       if (memo.startsWith('type:text,msg:')) {
         return memo.substring(14);
       } else {
         return memo;
       }
+    }
+
+    public transactionsListChanged(): Subject<void> {
+      return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.id);
     }
 
     // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;
