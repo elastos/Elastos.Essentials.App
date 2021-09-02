@@ -3,9 +3,8 @@ import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { ETHTransactionComponent } from '../components/eth-transaction/eth-transaction.component';
-import { ETHTransactionStatus } from '../model/evm.types';
+import { EthTransaction, ETHTransactionStatus } from '../model/evm.types';
 import { RawTransactionPublishResult } from '../model/providers/transaction.types';
-import { ElastosEVMSubWallet } from '../model/wallets/elastos/elastos.evm.subwallet';
 import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
 import { Transfer } from './cointransfer.service';
 
@@ -43,7 +42,7 @@ class ETHTransactionManager {
         this.checkTimes = 0;
     }
 
-    public async publishTransaction(subwallet: StandardEVMSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false) {
+    public async publishTransaction(subwallet: StandardEVMSubWallet<EthTransaction>, transaction: string, transfer: Transfer, showBlockingLoader = false) {
       if (showBlockingLoader) {
         await this.displayPublicationLoader();
       }
@@ -90,7 +89,7 @@ class ETHTransactionManager {
       }
     }
 
-    private async checkPublicationStatusAndUpdate(subwallet: StandardEVMSubWallet, txid: string): Promise<void> {
+    private async checkPublicationStatusAndUpdate(subwallet: StandardEVMSubWallet<EthTransaction>, txid: string): Promise<void> {
       let result = await subwallet.getTransactionDetails(txid);
       Logger.log('wallet', 'checkPublicationStatusAndUpdate ', result)
       if (result.blockHash) {
@@ -170,7 +169,7 @@ export class ETHTransactionService {
         this.manager.resetStatus();
     }
 
-    public publishTransaction(subwallet: StandardEVMSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false): Promise<void> {
+    public publishTransaction(subwallet: StandardEVMSubWallet<EthTransaction>, transaction: string, transfer: Transfer, showBlockingLoader = false): Promise<void> {
         return this.manager.publishTransaction(subwallet, transaction, transfer, showBlockingLoader);
     }
 }

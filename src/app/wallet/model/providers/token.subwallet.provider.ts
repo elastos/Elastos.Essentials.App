@@ -4,13 +4,15 @@ import { EthTransaction } from "../evm.types";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { StandardEVMSubWallet } from "../wallets/evm.subwallet";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
-import { ProviderTransactionInfo, SubWalletTransactionProvider, TransactionProvider } from "./transaction.provider";
+import { ProviderTransactionInfo } from "./providertransactioninfo";
+import { TransactionProvider } from "./transaction.provider";
+import { SubWalletTransactionProvider } from "./subwallet.provider";
 
 /**
  * Root class for all EVM compatible chains to handle ERC20 tokens, as they use the same endpoints to get the list
  * of transactions.
  */
-export abstract class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWallet> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
+export abstract class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWallet<EthTransaction>> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, protected rpcApiUrl: string) {
     super(provider, subWallet);
   }
@@ -19,9 +21,13 @@ export abstract class EVMSubWalletTokenProvider<SubWalletType extends StandardEV
     return {
       cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + transaction.contractAddress + "-transactions",
       cacheEntryKey: transaction.hash,
-      cacheTimeValue: transaction.time,
+      cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: transaction.contractAddress
     };
+  }
+
+  public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
+    throw new Error("canFetchMoreTransactions(): Method not implemented.");
   }
 
   public async fetchTransactions(erc20SubWallet: ERC20SubWallet): Promise<void> {

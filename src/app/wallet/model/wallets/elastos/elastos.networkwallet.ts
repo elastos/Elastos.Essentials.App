@@ -7,7 +7,7 @@ import { Network } from "../../networks/network";
 import { IDChainSubWallet } from "./idchain.subwallet";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardEVMSubWallet } from "../evm.subwallet";
-import { ERC20TokenInfo } from "../../evm.types";
+import { ERC20TokenInfo, EthTransaction } from "../../evm.types";
 import { EscSubWallet } from "./esc.evm.subwallet";
 import { EidSubWallet } from "./eid.evm.subwallet";
 import { Logger } from "src/app/logger";
@@ -18,7 +18,7 @@ import { ElastosTransaction } from "../../providers/transaction.types";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
-  
+
   constructor(masterWallet: MasterWallet, network: Network) {
     super(masterWallet, network);
 
@@ -43,7 +43,7 @@ export class ElastosNetworkWallet extends NetworkWallet {
     Logger.log("wallet", "Elastos standard subwallets preparation completed");
   }
 
-  public getMainEvmSubWallet(): StandardEVMSubWallet {
+  public getMainEvmSubWallet(): StandardEVMSubWallet<EthTransaction> {
     return this.mainTokenSubWallet;
   }
 

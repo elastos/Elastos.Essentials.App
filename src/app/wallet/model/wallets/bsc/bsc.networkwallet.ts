@@ -3,7 +3,7 @@ import { NetworkWallet } from "../networkwallet";
 import { StandardCoinName } from "../../Coin";
 import { Network } from "../../networks/network";
 import { StandardEVMSubWallet } from "../evm.subwallet";
-import { ERC20TokenInfo } from "../../evm.types";
+import { ERC20TokenInfo, EthTransaction } from "../../evm.types";
 import { BscChainSubWallet } from "./bsc.subwallet";
 import { TransactionProvider } from "../../providers/transaction.provider";
 import { GenericTransaction } from "../../providers/transaction.types";
@@ -28,7 +28,7 @@ export class BscNetworkWallet extends NetworkWallet {
     return 'BNB';
   }
 
-  public getMainEvmSubWallet(): StandardEVMSubWallet {
+  public getMainEvmSubWallet(): StandardEVMSubWallet<EthTransaction> {
     return this.mainTokenSubWallet;
   }
 

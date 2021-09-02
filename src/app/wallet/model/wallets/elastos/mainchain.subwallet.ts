@@ -4,6 +4,7 @@ import { StandardCoinName } from '../../Coin';
 import { MasterWallet } from '../masterwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
 import { NetworkWallet } from '../networkwallet';
+import { ElastosTransactionsHelper } from './transactions.helper';
 
 /**
  * Specialized standard sub wallet for ELA mainchain.
@@ -87,7 +88,7 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
             }
         }
 
-        return super.getTransactionName(transaction, translate);
+        return ElastosTransactionsHelper.getTransactionName(transaction, translate);
     }
 
     /**

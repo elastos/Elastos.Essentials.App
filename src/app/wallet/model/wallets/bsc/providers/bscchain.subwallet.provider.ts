@@ -10,8 +10,4 @@ export class BSCSubWalletProvider extends EVMSubWalletProvider<BscChainSubWallet
     const rpcApiUrl = BscAPI.getApiUrl(BscApiType.ACCOUNT_RPC);
     super(provider, subWallet, rpcApiUrl);
   }
-
-  public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction) {
-    // TODO 
-  }
 }

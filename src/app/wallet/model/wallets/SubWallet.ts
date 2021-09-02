@@ -1,11 +1,10 @@
 import { MasterWallet } from './masterwallet';
 import { NetworkWallet } from './networkwallet';
 import { CoinType, CoinID, StandardCoinName } from '../coin';
-import { ElastosPaginatedTransactions, RawTransactionPublishResult, PaginatedTransactions, ElastosTransaction, TransactionInfo, TransactionStatus, GenericTransaction } from '../providers/transaction.types';
+import { RawTransactionPublishResult, TransactionInfo, TransactionStatus, GenericTransaction } from '../providers/transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import moment from 'moment';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 import { Subject } from 'rxjs';
 
@@ -31,7 +30,7 @@ export class SerializedSubWallet {
 }
 
 // Convenient type to avoid adding SubWallet<any> everywhere.
-export type AnySubWallet = SubWallet<any>;
+export type AnySubWallet = SubWallet<GenericTransaction>;
 
 export abstract class SubWallet<TransactionType extends GenericTransaction> {
     public masterWallet: MasterWallet;
@@ -70,6 +69,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
         return SerializedSubWallet.fromSubWallet(this);
     }
 
+    public isStandardSubWallet(): boolean {
+      return false;
+    }
+
     private async loadBalanceFromCache() {
       this.balanceCache = await TimeBasedPersistentCache.loadOrCreate(this.balanceKeyInCache);
       if (this.balanceCache.size() !== 0) {
@@ -90,35 +93,20 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
         return this.loadTxDataFromCache;
     }
 
-
-    /**
-     * From a raw status, returns a UI readable string status.
-     */
-    public getTransactionStatusName(status: TransactionStatus, translate: TranslateService): string {
-        let statusName = null;
-        switch (status) {
-            case TransactionStatus.CONFIRMED:
-                statusName = translate.instant("wallet.coin-transaction-status-confirmed");
-                break;
-            case TransactionStatus.PENDING:
-                statusName = translate.instant("wallet.coin-transaction-status-pending");
-                break;
-            case TransactionStatus.UNCONFIRMED:
-                statusName = translate.instant("wallet.coin-transaction-status-unconfirmed");
-                break;
-        }
-        return statusName;
-    }
-
     /**
      * From a given transaction return a UI displayable transaction title.
      */
-    protected abstract getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string>;
-
+    protected abstract getTransactionName(transaction: TransactionType, translate: TranslateService): Promise<string>;
     /**
      * From a given transaction return a UI displayable transaction icon that illustrates the transaction operation.
      */
-    protected abstract getTransactionIconPath(transaction: ElastosTransaction): Promise<string>;
+    protected async getTransactionIconPath(transaction: TransactionType): Promise<string> {
+      return await ""; 
+    }
+
+    public async getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo> {
+      return await null;
+    }
 
     /**
      * Inheritable method to do some cleanup when a subwallet is removed/destroyed from a master wallet
@@ -203,26 +191,49 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     }
 
     /**
-     * Get a partial list of transactions, from the given index.
-     * TODO: The "AllTransactions" type is very specific to SPVSDK. We will maybe have to change this type to a common type
-     * with ERC20 "transaction" type when we have more info about it.
+     * Get the list of transactions currently in local memory cache.
      */
-    public getTransactions(startIndex = 0): TransactionType[] {
-      return this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this, startIndex);
+    public getTransactions(): TransactionType[] {
+      return this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
     }
+
+    /**
+     * Immediatelly fetch the newest transactions, and repeatingly fetch the newest transactions
+     * again until this is stopped.
+     */
+    /* public startNewTransactionsFetchLoop() {
+      return this.networkWallet.getTransactionDiscoveryProvider().startNewTransactionsFetchLoop(this);
+    } */
+
+    /**
+     * Stops a fetching loop
+     */
+    /* public stopNewTransactionsFetchLoop() {
+      return this.networkWallet.getTransactionDiscoveryProvider().startNewTransactionsFetchLoop(this);
+    } */
 
     /**
      * Request a network call to fetch the latest transactions for this subwallet.
      */
-    public forceFetchTransactions() {
-      this.networkWallet.getTransactionDiscoveryProvider().forcedFetchTransactions(this);
+    public fetchNewestTransactions() {
+      return this.networkWallet.getTransactionDiscoveryProvider().fetchNewestTransactions(this);
+    }
+
+    public canFetchMoreTransactions(): boolean {
+      return this.networkWallet.getTransactionDiscoveryProvider().canFetchMoreTransactions(this);
+    }
+
+    /**
+     * Request a network call to fetch the transactions after the given transaction.
+     * If afterTransaction is not passed, we use the last know cached transaction as the last one.
+     */
+    public fetchMoreTransactions(afterTransaction?: TransactionType) {
+      this.networkWallet.getTransactionDiscoveryProvider().fetchMoreTransactions(this, afterTransaction);
     }
 
     public getTransactionsCacheKey(): string {
       return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-transactions";
     }
-
-    public abstract getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo>;
 
     /**
      * Fetches the transactions using the right RPC APIs and converts data into a common transactions
@@ -244,14 +255,6 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
      */
     public shouldShowOnHomeScreen(): boolean {
       return true;
-    }
-
-    protected getMemoString(memo: string) {
-      if (memo.startsWith('type:text,msg:')) {
-        return memo.substring(14);
-      } else {
-        return memo;
-      }
     }
 
     public transactionsListChanged(): Subject<void> {

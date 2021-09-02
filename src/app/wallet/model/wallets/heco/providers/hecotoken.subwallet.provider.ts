@@ -3,11 +3,12 @@ import { StandardCoinName } from "../../../Coin";
 import { EthTransaction } from "../../../evm.types";
 import { EVMSubWalletProvider } from "../../../providers/evm.subwallet.provider";
 import { EVMSubWalletTokenProvider } from "../../../providers/token.subwallet.provider";
-import { ProviderTransactionInfo, SubWalletTransactionProvider, TransactionProvider } from "../../../providers/transaction.provider";
+import { TransactionProvider } from "../../../providers/transaction.provider";
 import { AnySubWallet } from "../../subwallet";
 import { HecoAPI, HecoApiType } from "../heco.api";
 import { HecoERC20SubWallet } from "../heco.erc20.subwallet";
 import { HECOChainSubWallet } from "../heco.subwallet";
+import { ProviderTransactionInfo } from "../../../providers/providertransactioninfo";
 
 export class HecoTokenSubWalletProvider extends EVMSubWalletTokenProvider<HECOChainSubWallet> {
   constructor(provider: TransactionProvider<any>, subWallet: HECOChainSubWallet) {

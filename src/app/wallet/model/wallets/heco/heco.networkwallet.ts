@@ -10,6 +10,7 @@ import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { Logger } from "src/app/logger";
 import { TransactionProvider } from "../../providers/transaction.provider";
 import { HecoTransactionProvider } from "./providers/heco.transaction.provider";
+import { TransactionType } from "../../providers/transaction.types";
 
 export class HecoNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: HECOChainSubWallet = null;
@@ -30,7 +31,7 @@ export class HecoNetworkWallet extends NetworkWallet {
     return 'HT';
   }
 
-  public getMainEvmSubWallet(): StandardEVMSubWallet {
+  public getMainEvmSubWallet(): StandardEVMSubWallet<EthTransaction> {
     return this.mainTokenSubWallet;
   }
 

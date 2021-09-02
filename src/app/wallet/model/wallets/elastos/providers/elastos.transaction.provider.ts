@@ -1,6 +1,6 @@
 import { StandardCoinName, } from "../../../Coin";
 import { ElastosTransaction, GenericTransaction } from "../../../providers/transaction.types";
-import { TransactionProvider, AnySubWalletTransactionProvider } from "../../../providers/transaction.provider";
+import { TransactionProvider } from "../../../providers/transaction.provider";
 import { NetworkWallet } from "../../networkwallet";
 import { AnySubWallet, SubWallet } from "../../subwallet";
 import { EidSubWallet } from "../eid.evm.subwallet";
@@ -8,10 +8,11 @@ import { EscSubWallet } from "../esc.evm.subwallet";
 import { IDChainSubWallet } from "../idchain.subwallet";
 import { MainchainSubWallet } from "../mainchain.subwallet";
 import { ElastosERC20SubWallet } from "../elastos.erc20.subwallet";
-import { MainchainProvider } from "./mainchain.transaction.provider";
-import { EscProvider } from "./esc.transaction.provider";
-import { TokenProvider } from "./token.transaction.provider";
-import { EidProvider } from "./eid.transaction.provider";
+import { ElastosMainchainSubWalletProvider } from "./mainchain.subwallet.provider";
+import { ElastosEscSubWalletProvider } from "./esc.subwallet.provider";
+import { ElastosTokenSubWalletProvider } from "./token.subwallet.provider";
+import { ElastosEidSubWalletProvider } from "./eid.subwallet.provider";
+import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
 
 export class ElastosTransactionProvider extends TransactionProvider<ElastosTransaction> {
   private elaSubWallet: MainchainSubWallet;
@@ -19,10 +20,10 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
   private escSubWallet: EscSubWallet;
   private eidSubWallet: EidSubWallet;
 
-  private mainChainProvider: MainchainProvider;
-  private escProvider: EscProvider;
-  private eidProvider: EscProvider;
-  private tokenProvider: TokenProvider;
+  private mainChainProvider: ElastosMainchainSubWalletProvider;
+  private escProvider: ElastosEscSubWalletProvider;
+  private eidProvider: ElastosEscSubWalletProvider;
+  private tokenProvider: ElastosTokenSubWalletProvider;
 
   public async start(): Promise<void> {
     this.elaSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as MainchainSubWallet;
@@ -30,23 +31,23 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
     this.escSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as EscSubWallet;
     this.eidSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHDID) as EidSubWallet;
 
-    this.mainChainProvider = new MainchainProvider(this, this.elaSubWallet);
+    this.mainChainProvider = new ElastosMainchainSubWalletProvider(this, this.elaSubWallet);
     await this.mainChainProvider.initialize();
 
-    this.escProvider = new EscProvider(this, this.escSubWallet);
+    this.escProvider = new ElastosEscSubWalletProvider(this, this.escSubWallet);
     await this.escProvider.initialize();
 
-    this.eidProvider = new EidProvider(this, this.eidSubWallet);
+    this.eidProvider = new ElastosEidSubWalletProvider(this, this.eidSubWallet);
     await this.eidProvider.initialize();
 
-    this.tokenProvider = new TokenProvider(this, this.escSubWallet);
+    this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
     await this.tokenProvider.initialize();
 
-    this.refreshEvery(() => this.mainChainProvider.fetchTransactions(), 30000);
+    //this.refreshEvery(() => this.mainChainProvider.fetchTransactions(), 30000);
     // TODO this.idChainProvider.fetchTransactions(),
-    this.refreshEvery(() => this.escProvider.fetchTransactions(), 30000);
-    this.refreshEvery(() => this.eidProvider.fetchTransactions(), 30000);
-    this.refreshEvery(() => this.tokenProvider.fetchTransactions(), 30000);
+    //this.refreshEvery(() => this.escProvider.fetchTransactions(), 30000);
+    //this.refreshEvery(() => this.eidProvider.fetchTransactions(), 30000);
+    //this.refreshEvery(() => this.tokenProvider.fetchTransactions(), 30000);
   }
 
   public stop(): Promise<void> {

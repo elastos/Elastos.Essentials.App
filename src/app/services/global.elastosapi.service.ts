@@ -549,10 +549,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
         let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
         let resultItems = result.result as EthTokenTransaction[];
-        resultItems.forEach(item => {
-            item.cacheKey = item.hash;
-            item.cacheTimeValue = parseInt(item.timeStamp);
-        })
+        
         return resultItems;
     }
 

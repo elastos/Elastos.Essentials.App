@@ -232,7 +232,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     async updateCurrentWalletInfo() {
         await this.networkWallet.update();
-        await this.networkWallet.updateERCTokenList();
         this.currencyService.fetch();
     }
 
