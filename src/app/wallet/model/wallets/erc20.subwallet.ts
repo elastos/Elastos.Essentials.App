@@ -337,6 +337,9 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg:string = null): Promise<any> {
+        if (amount === -1) {//-1: send all.
+          amount = this.balance.toNumber();
+        }
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });

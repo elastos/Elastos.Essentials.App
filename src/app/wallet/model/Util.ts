@@ -236,6 +236,8 @@ export class Util {
         if (decimalBalance.gt(0.001)) {
           const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, 5);
           return fixedDecimalBalance;
+        } else if (decimalBalance.isZero()) {
+          return '';
         } else {
           return '000';
         }
