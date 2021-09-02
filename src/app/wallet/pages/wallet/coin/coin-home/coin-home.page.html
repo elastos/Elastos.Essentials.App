@@ -116,7 +116,7 @@
                 <img src="assets/wallet/icons/warning.svg" />
                 <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
             </div>
-            <div class="more" (click)="clickMore()" *ngIf="isShowMore">
+            <div class="more" (click)="clickMore()" *ngIf="canShowMore">
                 {{ 'wallet.click-to-load-more' | translate }}
             </div>
         </ion-grid>

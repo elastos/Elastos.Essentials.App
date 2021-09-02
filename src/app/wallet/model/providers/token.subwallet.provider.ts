@@ -27,11 +27,17 @@ export abstract class EVMSubWalletTokenProvider<SubWalletType extends StandardEV
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
-    throw new Error("canFetchMoreTransactions(): Method not implemented.");
+    console.log("DEBUG token canFetchMoreTransactions");
+    return true; // TMP
   }
 
-  public async fetchTransactions(erc20SubWallet: ERC20SubWallet): Promise<void> {
+  public async fetchTransactions(erc20SubWallet: ERC20SubWallet, afterTransaction?: EthTransaction): Promise<void> {
+    if (afterTransaction)
+      throw new Error("token fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
+
     await this.prepareTransactions(this.subWallet);
+
+    console.log("DEBUG token provider fetchTransactions");
 
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
     const accountAddress = await this.subWallet.createAddress();

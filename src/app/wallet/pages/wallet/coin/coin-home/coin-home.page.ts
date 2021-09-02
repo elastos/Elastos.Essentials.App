@@ -65,7 +65,6 @@ export class CoinHomePage implements OnInit {
     // Total transactions today
     public todaysTransactions = 0;
     //private MaxCount = 0;
-    private pageNo = 0;
     private start = 0;
 
     // Helpers
@@ -159,6 +158,7 @@ export class CoinHomePage implements OnInit {
             await this.subWallet.prepareTransactions();
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe(async () => {
+                console.log("DEBUG coinhome transactionsListChanged()");
                 this.transactions = this.subWallet.getTransactions();
                 await this.updateTransactions();
                 this.loadingTX = false;
@@ -169,7 +169,6 @@ export class CoinHomePage implements OnInit {
     }
 
     async updateTransactions() {
-        this.pageNo = 0;
         this.start = 0;
         //this.MaxCount = 0;
         this.transferList = [];
@@ -214,9 +213,12 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
+        console.log("DEBUG coinhome getAllTx()");
+
         let transactions = await this.subWallet.getTransactions();
         if (!transactions) {
           Logger.log('wallet', "Can not get transaction");
+          this.canShowMore = false;
           return;
         }
         this.transactionsLoaded = true;
@@ -226,19 +228,20 @@ export class CoinHomePage implements OnInit {
         //this.MaxCount = allTransactions.total;
         //this.MaxCount = transactions.length;
 
-        if (this.start >= this.transactions.length) {
-            if (this.subWallet.canFetchMoreTransactions())
-                this.canShowMore = true;
-            else
-                this.canShowMore = false;
-            return;
-        } else {
+        //if (this.start >= this.transactions.length) {
+        console.log("DEBUG coinhome getAllTx() A");
+        if (this.subWallet.canFetchMoreTransactions()) {
+            console.log("DEBUG coinhome can fetch more");
             this.canShowMore = true;
         }
-        if (!transactions) {
+        else {
+            console.log("DEBUG coinhome can NOT fetch more");
             this.canShowMore = false;
-            return;
         }
+        /* } else {
+            console.log("DEBUG coinhome getAllTx() B");
+            this.canShowMore = true;
+        } */
 
         /* TODO - "can fetch more" to be called on the subwalelt -> transactions provider if (this.MaxCount <= 20) {
             this.canShowMore = false;
@@ -304,8 +307,9 @@ export class CoinHomePage implements OnInit {
 
     clickMore() {
         this.restartUpdateInterval();
-        this.pageNo++;
-        this.start = this.pageNo * 20;
+        this.start = this.transactions.length;
+        console.log("DEBUG coinhome clickmore this.start=",this.start);
+
         this.canShowMore = false; // Will be updated again next time we get new transactions
 
         this.subWallet.fetchMoreTransactions();
