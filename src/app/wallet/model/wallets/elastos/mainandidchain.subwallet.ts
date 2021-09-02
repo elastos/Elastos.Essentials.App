@@ -1,6 +1,6 @@
 import { StandardSubWallet } from '../standard.subwallet';
 import BigNumber from 'bignumber.js';
-import { ElastosPaginatedTransactions, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType, PaginatedTransactions, GenericTransaction } from '../../transaction.types';
+import { ElastosPaginatedTransactions, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType, PaginatedTransactions, GenericTransaction } from '../../providers/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../../Coin';
 import { MasterWallet } from '../masterwallet';

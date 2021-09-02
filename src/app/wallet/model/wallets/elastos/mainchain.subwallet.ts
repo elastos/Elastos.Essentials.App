@@ -1,4 +1,4 @@
-import {  ElastosTransaction, RawTransactionType, TransactionDirection } from '../../transaction.types';
+import {  ElastosTransaction, RawTransactionType, TransactionDirection } from '../../providers/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
 import { StandardCoinName } from '../../Coin';
 import { MasterWallet } from '../masterwallet';

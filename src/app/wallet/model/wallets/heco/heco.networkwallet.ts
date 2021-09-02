@@ -8,17 +8,16 @@ import { ERC20TokenInfo, EthTokenTransaction, EthTransaction } from "../../evm.t
 import { HecoAPI, HecoApiType } from "./heco.api";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { Logger } from "src/app/logger";
-import { TransactionProvider } from "../../transaction.provider";
+import { TransactionProvider } from "../../providers/transaction.provider";
 import { HecoTransactionProvider } from "./providers/heco.transaction.provider";
 
 export class HecoNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: HECOChainSubWallet = null;
-  private transactionDiscoveryProvider: HecoTransactionProvider = null;
 
   constructor(masterWallet: MasterWallet, network: Network) {
     super(masterWallet, network);
 
-    this.transactionDiscoveryProvider = new HecoTransactionProvider();
+    this.transactionDiscoveryProvider = new HecoTransactionProvider(this);
   }
 
   protected async prepareStandardSubWallets(): Promise<void> {

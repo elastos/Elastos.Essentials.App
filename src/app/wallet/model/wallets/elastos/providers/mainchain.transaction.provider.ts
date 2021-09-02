@@ -1,8 +1,8 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../../Coin";
-import { ProviderTransactionInfo } from "../../../transaction.provider";
-import { ElastosTransaction, PaginatedTransactions, TransactionDirection, TransactionStatus } from "../../../transaction.types";
+import { ProviderTransactionInfo } from "../../../providers/transaction.provider";
+import { ElastosTransaction, PaginatedTransactions, TransactionDirection, TransactionStatus } from "../../../providers/transaction.types";
 import { AnySubWallet } from "../../subwallet";
 import { MainchainSubWallet } from "../mainchain.subwallet";
 import { WalletHelper } from "../wallet.helper";

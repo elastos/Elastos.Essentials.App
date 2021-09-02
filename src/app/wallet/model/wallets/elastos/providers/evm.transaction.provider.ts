@@ -2,8 +2,8 @@ import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { EthTransaction } from "../../../evm.types";
-import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../transaction.provider";
-import { PaginatedTransactions } from "../../../transaction.types";
+import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../providers/transaction.provider";
+import { PaginatedTransactions } from "../../../providers/transaction.types";
 import { ElastosEVMSubWallet } from "../elastos.evm.subwallet";
 
 // ESC, EID

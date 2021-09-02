@@ -16,13 +16,13 @@ import { StandardEVMSubWallet } from './evm.subwallet';
 import { Subject } from 'rxjs';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { TransactionProvider } from '../transaction.provider';
+import { TransactionProvider } from '../providers/transaction.provider';
 
 export class ExtendedNetworkWalletInfo {
     /** List of serialized subwallets added earlier to this network wallet */
     subWallets: SerializedSubWallet[] = [];
-     /** List of serialized NFTs added earlier to this master wallet */
-     nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
+    /** List of serialized NFTs added earlier to this master wallet */
+    nfts: SerializedNFT[] = []; // TODO: Save each NFT's list of tokens in another storage item.
 }
 
 /**
@@ -31,6 +31,7 @@ export class ExtendedNetworkWalletInfo {
  */
 export abstract class NetworkWallet {
     public id: string = null;
+    protected transactionDiscoveryProvider: TransactionProvider<any> = null;
 
     public subWallets: {
         [k: string]: SubWallet<any>
@@ -219,8 +220,8 @@ export abstract class NetworkWallet {
                                 const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
                                 newCoinList.push(token.symbol);
                                 if (await this.network.addCustomERC20Coin(newCoin)) {
-                                  // Find new coin.
-                                  newCoinList.push(token.symbol);
+                                    // Find new coin.
+                                    newCoinList.push(token.symbol);
                                 }
                             }
                         } catch (e) {
@@ -349,20 +350,22 @@ export abstract class NetworkWallet {
     private sendNotification(newCoinList: string[]) {
         let message = "";
         if (newCoinList.length === 1) {
-          message = this.masterWallet.walletManager.translate.instant('wallet.find-new-token-msg', { network: this.network.name, token: newCoinList[0]});
+            message = this.masterWallet.walletManager.translate.instant('wallet.find-new-token-msg', { network: this.network.name, token: newCoinList[0] });
         } else {
-          message = this.masterWallet.walletManager.translate.instant('wallet.find-new-tokens-msg', { network: this.network.name, count: newCoinList.length});
+            message = this.masterWallet.walletManager.translate.instant('wallet.find-new-tokens-msg', { network: this.network.name, count: newCoinList.length });
         }
 
         const notification = {
-          app: App.WALLET,
-          key: 'newtokens',
-          title: this.masterWallet.walletManager.translate.instant('wallet.find-new-token'),
-          message: message,
-          url: '/wallet/coin-list'
+            app: App.WALLET,
+            key: 'newtokens',
+            title: this.masterWallet.walletManager.translate.instant('wallet.find-new-token'),
+            message: message,
+            url: '/wallet/coin-list'
         };
         void GlobalNotificationsService.instance.sendNotification(notification);
     }
 
-    public abstract getTransactionDiscoveryProvider(): TransactionProvider<any>;
+    public getTransactionDiscoveryProvider(): TransactionProvider<any> {
+        return this.transactionDiscoveryProvider;
+    }
 }

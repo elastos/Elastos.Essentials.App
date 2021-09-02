@@ -24,8 +24,4 @@ export class BscERC20SubWallet extends ERC20SubWallet {
   public getDisplayableERC20TokenInfo(): string {
     return "BEP20 Token";
   }
-
-  protected async getTransactionsByRpc() {
-    // Do nothing for now - Not implemented / Not sure we can get this for bsc.
-  }
 }

@@ -1,4 +1,4 @@
-import { TransactionDirection, ElastosTransaction } from "./transaction.types";
+import { TransactionDirection, ElastosTransaction } from "./providers/transaction.types";
 
 // Returned from rpc
 export type EthTransaction = ElastosTransaction & {

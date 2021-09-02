@@ -11,7 +11,7 @@ import { NetworkWallet } from './networkwallet';
 import { StandardSubWallet } from './standard.subwallet';
 import { StandardCoinName } from '../Coin';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, SignedETHSCTransaction } from '../evm.types';
-import { ElastosPaginatedTransactions, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType } from '../transaction.types';
+import { ElastosPaginatedTransactions, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType } from '../providers/transaction.types';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
 /**

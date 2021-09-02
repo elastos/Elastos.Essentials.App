@@ -5,7 +5,7 @@ import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../Coin';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { ElastosPaginatedTransactions, GenericTransaction, RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../transaction.types';
+import { ElastosPaginatedTransactions, GenericTransaction, RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
 import moment from 'moment';
@@ -80,7 +80,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
         return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.elastosChainCode);
     }
 
-    protected async getTokenAccountAddress(): Promise<string> {
+    public async getTokenAccountAddress(): Promise<string> {
         if (!this.tokenAddress) {
             this.tokenAddress = (await this.createAddress()).toLowerCase();
         }

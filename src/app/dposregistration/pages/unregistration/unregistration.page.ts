@@ -14,7 +14,7 @@ import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { Utxo, UtxoType } from 'src/app/wallet/model/transaction.types';
+import { Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/dposvoting/services/nodes.service';

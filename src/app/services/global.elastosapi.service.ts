@@ -9,7 +9,7 @@ import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalLanguageService } from './global.language.service';
 import { StandardCoinName } from '../wallet/model/Coin';
-import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/transaction.types';
+import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/providers/transaction.types';
 import { ProducersSearchResponse } from '../dposvoting/model/nodes.model';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';

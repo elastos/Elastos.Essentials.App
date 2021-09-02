@@ -12,13 +12,12 @@ import { EscSubWallet } from "./esc.evm.subwallet";
 import { EidSubWallet } from "./eid.evm.subwallet";
 import { Logger } from "src/app/logger";
 import { ElastosTransactionProvider } from "./providers/elastos.transaction.provider";
-import { TransactionProvider } from "../../transaction.provider";
+import { TransactionProvider } from "../../providers/transaction.provider";
 import { WalletHelper } from "./wallet.helper";
-import { ElastosTransaction } from "../../transaction.types";
+import { ElastosTransaction } from "../../providers/transaction.types";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
-  private transactionDiscoveryProvider: ElastosTransactionProvider = null;
   
   constructor(masterWallet: MasterWallet, network: Network) {
     super(masterWallet, network);
@@ -77,9 +76,5 @@ export class ElastosNetworkWallet extends NetworkWallet {
     const address = await tokenSubWallet.getTokenAddress();
     let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);
     return tokenList;
-  }
-
-  public getTransactionDiscoveryProvider(): TransactionProvider<ElastosTransaction> {
-    return this.transactionDiscoveryProvider;
   }
 }

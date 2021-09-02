@@ -2,7 +2,7 @@ import { StandardSubWallet } from '../standard.subwallet';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../../config/Config';
 import Web3 from 'web3';
-import { ElastosPaginatedTransactions, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType } from '../../transaction.types';
+import { ElastosPaginatedTransactions, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType } from '../../providers/transaction.types';
 import { StandardCoinName } from '../../Coin';
 import { Logger } from 'src/app/logger';
 import { NetworkWallet } from '../networkwallet';

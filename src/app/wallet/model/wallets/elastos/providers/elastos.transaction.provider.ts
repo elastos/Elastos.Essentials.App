@@ -1,6 +1,6 @@
 import { StandardCoinName, } from "../../../Coin";
-import { ElastosTransaction, GenericTransaction } from "../../../transaction.types";
-import { TransactionProvider, AnySubWalletTransactionProvider } from "../../../transaction.provider";
+import { ElastosTransaction, GenericTransaction } from "../../../providers/transaction.types";
+import { TransactionProvider, AnySubWalletTransactionProvider } from "../../../providers/transaction.provider";
 import { NetworkWallet } from "../../networkwallet";
 import { AnySubWallet, SubWallet } from "../../subwallet";
 import { EidSubWallet } from "../eid.evm.subwallet";
@@ -23,10 +23,6 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
   private escProvider: EscProvider;
   private eidProvider: EscProvider;
   private tokenProvider: TokenProvider;
-
-  constructor(private networkWallet: NetworkWallet) {
-    super();
-  }
 
   public async start(): Promise<void> {
     this.elaSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA) as MainchainSubWallet;

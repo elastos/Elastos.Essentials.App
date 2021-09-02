@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/wallet/services/auth.service';
 import BigNumber from 'bignumber.js';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { Utxo, UtxoType } from 'src/app/wallet/model/transaction.types';
+import { Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Util } from 'src/app/model/util';

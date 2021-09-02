@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { ETHTransactionComponent } from '../components/eth-transaction/eth-transaction.component';
 import { ETHTransactionStatus } from '../model/evm.types';
-import { RawTransactionPublishResult } from '../model/transaction.types';
+import { RawTransactionPublishResult } from '../model/providers/transaction.types';
 import { ElastosEVMSubWallet } from '../model/wallets/elastos/elastos.evm.subwallet';
 import { StandardEVMSubWallet } from '../model/wallets/evm.subwallet';
 import { Transfer } from './cointransfer.service';
