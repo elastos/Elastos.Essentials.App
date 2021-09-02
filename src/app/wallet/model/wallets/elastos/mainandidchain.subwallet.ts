@@ -1,4 +1,3 @@
-import { StandardSubWallet } from '../standard.subwallet';
 import BigNumber from 'bignumber.js';
 import { ElastosPaginatedTransactions, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType, PaginatedTransactions, GenericTransaction } from '../../providers/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,6 +13,9 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { NetworkWallet } from '../networkwallet';
+import { SubWallet } from '../subwallet';
+import { StandardSubWallet } from '../standard.subwallet';
+import { ElastosTransactionsHelper } from './transactions.helper';
 
 
 const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
@@ -23,7 +25,7 @@ const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, Vote
  * Most code between these 2 chains is common, while ETH is quite different. This is the reason why this
  * specialized class exists.
  */
-export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
+export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosTransaction> {
     private TRANSACTION_LIMIT = 50;
 
     // voting
@@ -57,8 +59,15 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
     }
 
     public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
-        const transactionInfo = await super.getTransactionInfo(transaction, translate);
-        transactionInfo.amount = new BigNumber(transaction.value, 10);//.dividedBy(Config.SELAAsBigNumber);
+        console.log("DEBUG getTransactionInfo", transaction)
+
+        const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
+        const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
+
+        let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction, translate);
+        transactionInfo.amount = new BigNumber(transaction.value, 10), //.dividedBy(Config.SELAAsBigNumber);
+        transactionInfo.symbol = '';
+        transactionInfo.isCrossChain = false;
         transactionInfo.txid = transaction.txid;
 
         let senderAddresses = this.getSenderAddress(transaction);
@@ -86,7 +95,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet {
             break;
         }
 
-        return transactionInfo;
+        return await transactionInfo;
     }
 
     private getSenderAddress(transaction: ElastosTransaction): string[] {

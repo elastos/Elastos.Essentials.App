@@ -1,6 +1,7 @@
 import { StandardCoinName } from "../../../Coin";
 import { EthTransaction } from "../../../evm.types";
-import { AnySubWalletTransactionProvider, TransactionProvider } from "../../../providers/transaction.provider";
+import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
+import { TransactionProvider } from "../../../providers/transaction.provider";
 import { AnySubWallet} from "../../subwallet";
 import { BscERC20SubWallet } from "../bsc.erc20.subwallet";
 import { BscChainSubWallet } from "../bsc.subwallet";
@@ -21,11 +22,11 @@ export class BSCTransactionProvider extends TransactionProvider<EthTransaction> 
     this.tokenProvider = new BscTokenSubWalletProvider(this, this.mainSubWallet);
     await this.tokenProvider.initialize();
 
-    this.refreshEvery(() => this.mainProvider.fetchTransactions(), 30000);
+    //this.refreshEvery(() => this.mainProvider.fetchTransactions(), 30000);
 
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
-    this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
+    //this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
   }
 
   public stop(): Promise<void> {

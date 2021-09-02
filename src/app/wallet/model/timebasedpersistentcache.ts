@@ -25,7 +25,7 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    * @param name Name used to uniquely identify this cache on disk.
    * @param maxItemsOnDisk Maximum number of items that are saved to disk. Older items are deleted.
    */
-  constructor(public name: string, private maxItemsOnDisk = 100) {}
+  constructor(public name: string, private maxItemsOnDisk = 3 /* TODO 100 - TMP DEBUG */) {}
 
   /**
    * Returns a cache with data already loaded from disk if any, or an empty cache otherwise.

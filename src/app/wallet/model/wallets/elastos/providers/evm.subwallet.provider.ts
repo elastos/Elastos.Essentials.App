@@ -2,23 +2,26 @@ import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { EthTransaction } from "../../../evm.types";
-import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../providers/transaction.provider";
-import { PaginatedTransactions } from "../../../providers/transaction.types";
+import { ProviderTransactionInfo } from "../../../providers/providertransactioninfo";
+import { SubWalletTransactionProvider } from "../../../providers/subwallet.provider";
 import { AnySubWallet } from "../../subwallet";
 import { ElastosEVMSubWallet } from "../elastos.evm.subwallet";
 
 // ESC, EID
-export class EvmProvider extends SubWalletTransactionProvider<ElastosEVMSubWallet, EthTransaction> {
+export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<ElastosEVMSubWallet, EthTransaction> {
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
     return {
       cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + this.subWallet.id + "-transactions",
       cacheEntryKey: transaction.hash,
-      cacheTimeValue: transaction.time,
+      cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: this.subWallet.id
     };
   }
 
-  public async fetchTransactions(): Promise<void> {
+  public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
+    if (afterTransaction)
+      throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
+
     await this.prepareTransactions(this.subWallet);
 
     let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForMisc(this.subWallet.id);
@@ -48,7 +51,7 @@ export class EvmProvider extends SubWalletTransactionProvider<ElastosEVMSubWalle
     }
   }
 
-  public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction) {
-    // TODO 
+  public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
+    throw new Error("Method not implemented.");
   }
 }

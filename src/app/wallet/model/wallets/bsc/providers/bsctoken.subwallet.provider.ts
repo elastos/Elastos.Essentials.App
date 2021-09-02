@@ -16,8 +16,4 @@ export class BscTokenSubWalletProvider extends EVMSubWalletTokenProvider<BscChai
     // TOOD: fetch the api that gets all tokens transactions
     return;
   }
-
-  public forcedFetchTransactions(subWallet: BscERC20SubWallet, afterTransaction?: EthTransaction) {
-    // TODO: fetch ERC20 token transactions of the given BscERC20SubWallet subWallet
-  }
 }

@@ -32,7 +32,7 @@ import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
-import { TransactionInfo } from '../../../../model/providers/transaction.types';
+import { GenericTransaction, TransactionInfo } from '../../../../model/providers/transaction.types';
 import * as moment from 'moment';
 import { CurrencyService } from '../../../../services/currency.service';
 import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
@@ -60,10 +60,11 @@ export class CoinHomePage implements OnInit {
     public elastosChainCode: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
     public transactionsLoaded = false;
+    private transactions: GenericTransaction[] = []; // raw transactions received from the providers / cache
 
     // Total transactions today
     public todaysTransactions = 0;
-    private MaxCount = 0;
+    //private MaxCount = 0;
     private pageNo = 0;
     private start = 0;
 
@@ -76,7 +77,7 @@ export class CoinHomePage implements OnInit {
 
     private syncSubscription: Subscription = null;
     private syncCompletedSubscription: Subscription = null;
-    private transactionStatusSubscription: Subscription = null;
+    private transactionListChangedSubscription: Subscription = null;
 
     private updateInterval = null;
     private updateTmeout = null;
@@ -124,9 +125,9 @@ export class CoinHomePage implements OnInit {
           this.syncCompletedSubscription.unsubscribe();
           this.syncCompletedSubscription = null;
         }
-        if (this.transactionStatusSubscription) {
-          this.transactionStatusSubscription.unsubscribe();
-          this.transactionStatusSubscription = null;
+        if (this.transactionListChangedSubscription) {
+          this.transactionListChangedSubscription.unsubscribe();
+          this.transactionListChangedSubscription = null;
         }
     }
 
@@ -150,42 +151,27 @@ export class CoinHomePage implements OnInit {
     ngOnInit() {
     }
 
-    initData() {
-        /* if (!this.transactionStatusSubscription) {
+    async initData(refreshing = false) {
+        this.loadingTX = true;
+
+        if (!refreshing) {
+            // First initialization
+            await this.subWallet.prepareTransactions();
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            this.transactionStatusSubscription = this.walletManager.subwalletTransactionStatus.get(this.subWallet.subwalletTransactionStatusID).subscribe(async (count) => {
-              if (count >= 0) {
+            this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe(async () => {
+                this.transactions = this.subWallet.getTransactions();
                 await this.updateTransactions();
                 this.loadingTX = false;
-              }
-          });
-        } */
+            });
+        }
 
-        /* if (!this.updateTmeout) {
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          this.updateTmeout = setTimeout(async () => {
-            await this.updateTransactions();
-            if (this.subWallet.isLoadTxDataFromCache()) {
-              this.loadingTX = true;
-              await this.updateWalletInfo();
-            }
-            this.startUpdateInterval();
-          }, this.fromWalletHome ? 200 : 10000);
-        } */
-
-        this.loadingTX = true;
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.subWallet.transactionsListChanged().subscribe(async () => {
-            await this.updateTransactions();
-            this.loadingTX = false;
-        });
-        this.subWallet.forceFetchTransactions();
+        this.subWallet.fetchNewestTransactions();
     }
 
     async updateTransactions() {
         this.pageNo = 0;
         this.start = 0;
-        this.MaxCount = 0;
+        //this.MaxCount = 0;
         this.transferList = [];
         this.todaysTransactions = 0;
         await this.getAllTx();
@@ -228,7 +214,7 @@ export class CoinHomePage implements OnInit {
     }
 
     async getAllTx() {
-        let transactions = await this.subWallet.getTransactions(this.start);
+        let transactions = await this.subWallet.getTransactions();
         if (!transactions) {
           Logger.log('wallet', "Can not get transaction");
           return;
@@ -238,10 +224,13 @@ export class CoinHomePage implements OnInit {
 
         //const transactions = allTransactions.transactions;
         //this.MaxCount = allTransactions.total;
-        this.MaxCount = transactions.length;
+        //this.MaxCount = transactions.length;
 
-        if (this.start >= this.MaxCount) {
-            this.canShowMore = false;
+        if (this.start >= this.transactions.length) {
+            if (this.subWallet.canFetchMoreTransactions())
+                this.canShowMore = true;
+            else
+                this.canShowMore = false;
             return;
         } else {
             this.canShowMore = true;
@@ -317,12 +306,9 @@ export class CoinHomePage implements OnInit {
         this.restartUpdateInterval();
         this.pageNo++;
         this.start = this.pageNo * 20;
-        if (this.start >= this.MaxCount) {
-            this.canShowMore = false;
-            return;
-        }
-        this.canShowMore = true;
-        void this.getAllTx();
+        this.canShowMore = false; // Will be updated again next time we get new transactions
+
+        this.subWallet.fetchMoreTransactions();
     }
 
     async doRefresh(event): Promise<void> {
@@ -331,7 +317,7 @@ export class CoinHomePage implements OnInit {
             await this.storage.setVisit(true);
         }
 
-        this.initData();
+        void this.initData(true);
         this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();

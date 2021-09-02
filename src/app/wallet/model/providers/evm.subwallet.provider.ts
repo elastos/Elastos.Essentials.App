@@ -2,7 +2,9 @@ import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { EthTransaction } from "../evm.types";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
-import { ProviderTransactionInfo, SubWalletTransactionProvider, TransactionProvider } from "./transaction.provider";
+import { TransactionProvider } from "./transaction.provider";
+import { ProviderTransactionInfo } from "./providertransactioninfo";
+import { SubWalletTransactionProvider } from "./subwallet.provider";
 
 /**
  * Root class for all EVM compatible chains, as they use the same endpoints to get the list
@@ -17,21 +19,31 @@ export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> e
     return {
       cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + this.subWallet.id + "-transactions",
       cacheEntryKey: transaction.hash,
-      cacheTimeValue: transaction.time,
+      cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: this.subWallet.id
     };
   }
 
-  public async fetchTransactions(): Promise<void> {
+  public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
+    throw new Error("canFetchMoreTransactions(): Method not implemented.");
+  }
+
+  public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
+    if (afterTransaction)
+      throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
+
     await this.prepareTransactions(this.subWallet);
 
     const accountAddress = await this.subWallet.createAddress();
 
-    let maxResults = 20;
-    let txListUrl = this.rpcApiUrl + '/api?module=account&action=txlist&&offset='+maxResults+'sort=desc&address=' + accountAddress;
+    let maxResults = 8;
+    let txListUrl = this.rpcApiUrl + '/api?module=account&action=txlist&page=1&offset='+maxResults+'&sort=desc&address=' + accountAddress;
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
       let transactions = result.result as EthTransaction[];
+
+      console.log("DEBUG fetchTransactions fetched",transactions.length,"entries");
+
       await this.saveTransactions(transactions);
     } catch (e) {
       Logger.error('wallet', 'EVMSubWalletProvider fetchTransactions error:', e)

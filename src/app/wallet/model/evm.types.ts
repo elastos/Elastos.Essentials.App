@@ -1,7 +1,8 @@
-import { TransactionDirection, ElastosTransaction } from "./providers/transaction.types";
+import { TransferType } from "../services/cointransfer.service";
+import { TransactionDirection, ElastosTransaction, GenericTransaction } from "./providers/transaction.types";
 
-// Returned from rpc
-export type EthTransaction = ElastosTransaction & {
+export type EthTransaction = GenericTransaction & {
+  // Returned from rpc
   blockHash: string;
   blockNumber: string;
   confirmations: string;
@@ -18,11 +19,17 @@ export type EthTransaction = ElastosTransaction & {
   timeStamp: string;
   to: string;
   transactionIndex: string;
-  transferType: string;
+  txreceipt_status: string;
+  value: string;
 
+  // Computed
   Direction: TransactionDirection;
   isERC20TokenTransfer: boolean,
 };
+
+export type ElastosSCEthTransaction = EthTransaction & {
+  transferType: TransferType;
+}
 
 /**
  * Signed ETHSC transaction
@@ -60,8 +67,6 @@ export type ERC20TokenTransactionInfo = {
   contractAddress: string;
   balance: string;
 }
-
-
 
 // For speedup eth transaction.
 export enum ETHTransactionStatus {

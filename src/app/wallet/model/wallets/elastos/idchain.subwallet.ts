@@ -3,6 +3,7 @@ import { ElastosTransaction, RawTransactionType, TransactionDirection, Transacti
 import { StandardCoinName } from '../../Coin';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';
 import { NetworkWallet } from '../networkwallet';
+import { ElastosTransactionsHelper } from './transactions.helper';
 
 /**
  * Specialized standard sub wallet for the ID sidechain.
@@ -71,7 +72,7 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
     }
 
     protected async getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string> {
-        let transactionName = await super.getTransactionName(transaction, translate);
+        let transactionName = await ElastosTransactionsHelper.getTransactionName(transaction, translate);
 
         // Use naming from super class, but override a few cases
         switch (transaction.type) {

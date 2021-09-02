@@ -1,14 +1,14 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../../Coin";
-import { ProviderTransactionInfo } from "../../../providers/transaction.provider";
 import { ElastosTransaction, PaginatedTransactions, TransactionDirection, TransactionStatus } from "../../../providers/transaction.types";
 import { AnySubWallet } from "../../subwallet";
 import { MainchainSubWallet } from "../mainchain.subwallet";
 import { WalletHelper } from "../wallet.helper";
-import { MainAndDIDChainProvider } from "./mainandidchain.transaction.provider";
+import { ElastosMainAndDIDChainSubWalletProvider } from "./mainandidchain.subwallet.provider";
+import { ProviderTransactionInfo } from "../../../providers/providertransactioninfo";
 
-export class MainchainProvider extends MainAndDIDChainProvider<MainchainSubWallet> {
+export class ElastosMainchainSubWalletProvider extends ElastosMainAndDIDChainSubWalletProvider<MainchainSubWallet> {
   private TRANSACTION_LIMIT = 50;// for rpc
   private needtoLoadMoreAddresses: string[] = [];
   // Maybe there are lots of transactions and we need to merge the transactions for multi address wallet,
@@ -21,8 +21,13 @@ export class MainchainProvider extends MainAndDIDChainProvider<MainchainSubWalle
    * @param timestamp get the transactions after the timestamp
    * @returns
    */
-  async fetchTransactions(startingAt = 0): Promise<void> {
+   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: ElastosTransaction): Promise<void> {
+    if (afterTransaction)
+      throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
+
     await this.prepareTransactions(this.subWallet);
+
+    let startingAt = 0; // TODO: COMPUTE startingAt from "afterTransaction"
 
     // TODO this.getTransactionsTime = moment().valueOf();
     let txList = await WalletHelper.getTransactionByAddress(this.subWallet, false, startingAt);
@@ -136,8 +141,7 @@ export class MainchainProvider extends MainAndDIDChainProvider<MainchainSubWalle
     //console.log("DEBUG mergeTransactionListAndSort txList after merge=", txList);
 
     // sort by block height
-    // TODO: FIX THIS 0->99999. Do we really want to manually sort many results every time ??
-    let transactions = this.getTransactions(this.subWallet, 0, 99999).sort(function (t1, t2) {
+    let transactions = this.getTransactions(this.subWallet).sort(function (t1, t2) {
       // The height is 0 if the transaction is pending.
       if (t2.height === 0) return 1;
       if (t1.height === 0) return -1;
@@ -150,8 +154,7 @@ export class MainchainProvider extends MainAndDIDChainProvider<MainchainSubWalle
   }
 
   private getLastConfirmedTransactionTimestamp() {
-    // TODO: FIX THIS 0->99999. Do we really want to manually sort many results every time ??
-    let transactions = this.getTransactions(this.subWallet, 0, 99999);
+    let transactions = this.getTransactions(this.subWallet);
     for (let i = 0, len = transactions.length; i < len; i++) {
       if (transactions[i].Status === TransactionStatus.CONFIRMED) {
         // the transactions list is sorted by block height.

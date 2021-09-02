@@ -52,7 +52,7 @@ export class EscTransactionPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private networkWallet: NetworkWallet = null;
-    private evmSubWallet: StandardEVMSubWallet = null;
+    private evmSubWallet: StandardEVMSubWallet<any> = null;
     private intentTransfer: IntentTransfer;
     private walletInfo = {};
     public balance: BigNumber; // ELA

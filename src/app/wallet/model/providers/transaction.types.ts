@@ -147,10 +147,7 @@ export enum RawTransactionType {
 // ****************************************
 
 // Base transaction type for all networks, all chains
-export type GenericTransaction = JSONObject & {
-  // Transactions should be cacheable in a time based cache and therefore need to implement the below items
-  //cacheKey: string;       
-  //cacheTimeValue: number;
+export type GenericTransaction = {
 }
 
 // Transactions from rpc

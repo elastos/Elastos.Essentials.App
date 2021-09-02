@@ -15,7 +15,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 /**
  * Specialized standard sub wallet for the Binance chain.
  */
-export class BscChainSubWallet extends StandardEVMSubWallet {
+export class BscChainSubWallet extends StandardEVMSubWallet<EthTransaction> {
   constructor(networkWallet: NetworkWallet) {
     super(networkWallet, StandardCoinName.ETHBSC, BscAPI.getApiUrl(BscApiType.RPC));
 

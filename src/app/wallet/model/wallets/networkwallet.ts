@@ -1,12 +1,11 @@
 import { SubWallet, SerializedSubWallet } from './subwallet';
-import { StandardSubWallet } from './standard.subwallet';
 import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../Coin';
 import BigNumber from 'bignumber.js';
 import { Config } from '../../config/Config';
 import { Logger } from 'src/app/logger';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { MasterWallet } from './masterwallet';
-import { ERC20TokenInfo } from '../evm.types';
+import { ERC20TokenInfo, EthTransaction } from '../evm.types';
 import { SubWalletBuilder } from './subwalletbuilder';
 import { LocalStorage } from '../../services/storage.service';
 import { Network } from '../networks/network';
@@ -17,6 +16,7 @@ import { Subject } from 'rxjs';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { TransactionProvider } from '../providers/transaction.provider';
+import { GenericTransaction, TransactionType } from '../providers/transaction.types';
 
 export class ExtendedNetworkWalletInfo {
     /** List of serialized subwallets added earlier to this network wallet */
@@ -63,7 +63,6 @@ export abstract class NetworkWallet {
             void subWallet.startBackgroundUpdates();
         }
 
-        runDelayed(() => this.updateERCTokenList(), 5000); // TODO @zhiming: replace this with the discovery provider
         this.getTransactionDiscoveryProvider().start();
 
         return;
@@ -75,7 +74,7 @@ export abstract class NetworkWallet {
         // and canno't be stacked on top of ELA as we don't have a exchange rate for now.
         let balance = new BigNumber(0);
         for (let subWallet of Object.values(this.subWallets)) {
-            if (subWallet instanceof StandardSubWallet) {
+            if (subWallet.isStandardSubWallet()) {
                 if (!subWallet.balance.isNaN()) {
                     balance = balance.plus(subWallet.balance);
                 }
@@ -125,7 +124,7 @@ export abstract class NetworkWallet {
      * Returns the main subwallet inside this network wallet, responsible for refreshing the list of
      * ERC20 tokens, NFTs, etc. For elastos, this is the ESC sidechain (no EID support for now).
      */
-    public abstract getMainEvmSubWallet(): StandardEVMSubWallet;
+    public abstract getMainEvmSubWallet(): StandardEVMSubWallet<EthTransaction>;
 
     /**
      * Adds a new subwallet to this network wallet, based on a given coin type.

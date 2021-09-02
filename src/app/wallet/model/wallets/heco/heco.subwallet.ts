@@ -8,7 +8,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 /**
  * Specialized standard sub wallet for the HECO sidechain.
  */
-export class HECOChainSubWallet extends StandardEVMSubWallet {
+export class HECOChainSubWallet extends StandardEVMSubWallet<EthTransaction> {
   constructor(networkWallet: NetworkWallet) {
     super(networkWallet, StandardCoinName.ETHHECO, HecoAPI.getApiUrl(HecoApiType.RPC));
 

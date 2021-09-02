@@ -1,9 +1,8 @@
-import { Subject } from "rxjs";
-import { StandardCoinName, TokenAddress } from "../../../Coin";
+import { StandardCoinName } from "../../../Coin";
 import { EthTransaction } from "../../../evm.types";
-import { AnySubWalletTransactionProvider, NewToken, NewTransaction, TransactionProvider } from "../../../providers/transaction.provider";
-import { GenericTransaction, PaginatedTransactions } from "../../../providers/transaction.types";
-import { AnySubWallet, SubWallet } from "../../subwallet";
+import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
+import { TransactionProvider } from "../../../providers/transaction.provider";
+import { AnySubWallet } from "../../subwallet";
 import { HecoERC20SubWallet } from "../heco.erc20.subwallet";
 import { HECOChainSubWallet } from "../heco.subwallet";
 import { HecoChainSubWalletProvider } from "./hecochain.subwallet.provider";
@@ -23,11 +22,11 @@ export class HecoTransactionProvider extends TransactionProvider<EthTransaction>
     this.tokenProvider = new HecoTokenSubWalletProvider(this, this.mainSubWallet);
     await this.tokenProvider.initialize();
 
-    this.refreshEvery(() => this.mainProvider.fetchTransactions(), 30000);
+    //this.refreshEvery(() => this.mainProvider.fetchTransactions(), 30000);
 
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
-    this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
+    //this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
   }
 
   public stop(): Promise<void> {

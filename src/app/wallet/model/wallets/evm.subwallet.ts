@@ -8,16 +8,17 @@ import moment from 'moment';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { ERC20SubWallet } from './erc20.subwallet';
 import { NetworkWallet } from './networkwallet';
-import { StandardSubWallet } from './standard.subwallet';
-import { StandardCoinName } from '../Coin';
+import { CoinType, StandardCoinName } from '../Coin';
 import { ERC20TokenInfo, EthTransaction, ERC20TokenTransactionInfo, ETHSCTransferType, EthTokenTransaction, SignedETHSCTransaction } from '../evm.types';
-import { ElastosPaginatedTransactions, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType } from '../providers/transaction.types';
+import { ElastosPaginatedTransactions, TransactionInfo, TransactionStatus, TransactionDirection, TransactionType, GenericTransaction } from '../providers/transaction.types';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { SubWallet } from './subwallet';
+import { StandardSubWallet } from './standard.subwallet';
 
 /**
  * Specialized standard sub wallet for EVM compatible chains (elastos EID, elastos ESC, heco, etc)
  */
-export abstract class StandardEVMSubWallet extends StandardSubWallet {
+export abstract class StandardEVMSubWallet<TransactionType extends EthTransaction> extends StandardSubWallet<TransactionType> {
     protected ethscAddress: string = null;
     protected withdrawContractAddress: string = null;
     protected publishdidContractAddress: string = null;
@@ -84,26 +85,10 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
         return this.ethscAddress;
     }
 
-    /* public async getTransactions(startIndex: number): Promise<ElastosPaginatedTransactions> {
-      if (this.paginatedTransactions == null) {
-        await this.getTransactionsByRpc();
-        this.loadTxDataFromCache = false;
-      } else {
-        this.loadTxDataFromCache = true;
-      }
-
-      if (this.paginatedTransactions) {
-        // For performance, only return 20 transactions.
-        let newTxList:ElastosPaginatedTransactions = {
-            totalcount: this.paginatedTransactions.totalcount,
-            txhistory :this.paginatedTransactions.txhistory.slice(startIndex, startIndex + 20),
-        }
-        return newTxList;
-      }
-      else {
-        return null;
-      }
-    } */
+    public async createAddress(): Promise<string> {
+      // Create on ETH always returns the same unique address.
+      return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.id);
+    }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
       let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
@@ -151,8 +136,8 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
             memo: '',
             name: await this.getTransactionName(transaction, translate),
             payStatusIcon: await this.getTransactionIconPath(transaction),
-            status: transaction.Status,
-            statusName: this.getTransactionStatusName(transaction.Status, translate),
+            status: TransactionStatus.UNCONFIRMED, // TODO @zhiming: was: transaction.Status,
+            statusName: "TODO", // TODO @zhiming: was: this.getTransactionStatusName(transaction.Status, translate),
             symbol: '',
             from: transaction.from,
             to: isERC20TokenTransfer ? erc20TokenTransactionInfo.to : transaction.to,
@@ -188,10 +173,10 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
             transactionInfo.symbol = '';
         }
 
-        // TODO improve it
-        if ((transaction.transferType === ETHSCTransferType.DEPOSIT) || (transactionInfo.name === "wallet.coin-dir-to-mainchain")) {
+        // TODO : Move to getTransactionInfo of elastos evm
+        /* TODO @zhiming: was: if ((transaction.transferType === ETHSCTransferType.DEPOSIT) || (transactionInfo.name === "wallet.coin-dir-to-mainchain")) {
           transactionInfo.isCrossChain = true;
-        }
+        } */
 
         return transactionInfo;
     }
@@ -200,11 +185,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
         const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
-                if (transaction.transferType === ETHSCTransferType.DEPOSIT) {
-                  return "wallet.coin-dir-from-mainchain";
-                } else {
-                  return "wallet.coin-op-received-token";
-                }
+                return "wallet.coin-op-received-token";
             case TransactionDirection.SENT:
                 return this.getETHSCTransactionContractType(transaction, translate);
         }
@@ -409,15 +390,7 @@ export abstract class StandardEVMSubWallet extends StandardSubWallet {
       return -1;
     }
 
-    /* public async saveTransactions(transactionsList: EthTransaction[]) {
-      for (let i = 0, len = transactionsList.length; i < len; i++) {
-        this.transactionsCache.set(transactionsList[i].hash, transactionsList[i], parseInt(transactionsList[i].timeStamp));
-      }
-      this.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length)
-      await this.transactionsCache.save();
-    }
-
-    protected async removeInvalidTransaction(hash: string) {
+    /*protected async removeInvalidTransaction(hash: string) {
       let existingIndex = (this.paginatedTransactions.txhistory as EthTransaction[]).findIndex(i => i.hash == hash);
       if (existingIndex >= 0) {
         Logger.warn('wallet', 'Find invalid transaction, remove it ', hash);
