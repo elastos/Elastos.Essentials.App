@@ -4,6 +4,7 @@ import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { EthTransaction } from "../../../evm.types";
 import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../providers/transaction.provider";
 import { PaginatedTransactions } from "../../../providers/transaction.types";
+import { AnySubWallet } from "../../subwallet";
 import { ElastosEVMSubWallet } from "../elastos.evm.subwallet";
 
 // ESC, EID
@@ -45,5 +46,9 @@ export class EvmProvider extends SubWalletTransactionProvider<ElastosEVMSubWalle
     } catch (e) {
       Logger.error('wallet', 'Elastos EVM provider fetchTransactions error:', e)
     }
+  }
+
+  public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction) {
+    // TODO 
   }
 }

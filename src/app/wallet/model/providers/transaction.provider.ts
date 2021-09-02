@@ -83,8 +83,8 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
   protected abstract getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider;
 
-  public getTransactions(subWallet: SubWallet<GenericTransaction>, startIndex = 0): TransactionType[] {
-    return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet, startIndex);
+  public getTransactions(subWallet: SubWallet<GenericTransaction>, startIndex = 0, maxItems = 20): TransactionType[] {
+    return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet, startIndex, maxItems);
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
@@ -148,12 +148,12 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
     await this.getCache(subWallet.getTransactionsCacheKey());
   }
 
-  public getTransactions(subWallet: AnySubWallet, startIndex = 0): TransactionType[] {
+  public getTransactions(subWallet: AnySubWallet, startIndex: number, maxItems: number): TransactionType[] {
     let cacheKey = subWallet.getTransactionsCacheKey();
     if (!this.transactionsCache.has(cacheKey))
       throw new Error("prepareTransactions() must be called before accessing getTransactions()");
 
-    return this.transactionsCache.get(cacheKey).values().map(cacheEntry => cacheEntry.data);
+    return this.transactionsCache.get(cacheKey).values().slice(startIndex, startIndex+maxItems).map(cacheEntry => cacheEntry.data);
     //return this.getPaginatedTransactions(cacheKey);
   }
 
@@ -245,11 +245,5 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
     return false;
   }
 
-  // Should be overriden by providers that can really fetch more
-  public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: GenericTransaction) {
-    if (!this.canFetchMoreTransactions(subWallet))
-      throw new Error("forcedFetchTransactions() cannot be called because no more transactions can be fetched");
-
-    // TODO
-  }
+  public abstract forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: GenericTransaction);
 }

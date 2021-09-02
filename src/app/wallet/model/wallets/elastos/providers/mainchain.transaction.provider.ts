@@ -136,7 +136,8 @@ export class MainchainProvider extends MainAndDIDChainProvider<MainchainSubWalle
     //console.log("DEBUG mergeTransactionListAndSort txList after merge=", txList);
 
     // sort by block height
-    let transactions = this.getTransactions(this.subWallet).sort(function (t1, t2) {
+    // TODO: FIX THIS 0->99999. Do we really want to manually sort many results every time ??
+    let transactions = this.getTransactions(this.subWallet, 0, 99999).sort(function (t1, t2) {
       // The height is 0 if the transaction is pending.
       if (t2.height === 0) return 1;
       if (t1.height === 0) return -1;
@@ -148,9 +149,9 @@ export class MainchainProvider extends MainAndDIDChainProvider<MainchainSubWalle
     await this.saveTransactions(transactions);
   }
 
-
   private getLastConfirmedTransactionTimestamp() {
-    let transactions = this.getTransactions(this.subWallet);
+    // TODO: FIX THIS 0->99999. Do we really want to manually sort many results every time ??
+    let transactions = this.getTransactions(this.subWallet, 0, 99999);
     for (let i = 0, len = transactions.length; i < len; i++) {
       if (transactions[i].Status === TransactionStatus.CONFIRMED) {
         // the transactions list is sorted by block height.

@@ -2,6 +2,7 @@ import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.serv
 import { StandardCoinName } from "../../../Coin";
 import { EthTransaction } from "../../../evm.types";
 import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../providers/transaction.provider";
+import { AnySubWallet } from "../../subwallet";
 import { EscSubWallet } from "../esc.evm.subwallet";
 
 export class TokenProvider extends SubWalletTransactionProvider<EscSubWallet, EthTransaction> {
@@ -22,11 +23,11 @@ export class TokenProvider extends SubWalletTransactionProvider<EscSubWallet, Et
 
     let ethTokenTransactions = await GlobalElastosAPIService.instance.getERC20TokenTransactions(StandardCoinName.ETHSC, tokenAccountAddress);
     if (ethTokenTransactions) {
-      /* this.paginatedTransactions.set(this.subWallet.getTransactionsCacheKey(), {
-        total: ethTokenTransactions.length,
-        transactions: ethTokenTransactions
-      }); */
       await this.saveTransactions(ethTokenTransactions);
     }
+  }
+
+  public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction) {
+    // TODO 
   }
 }
