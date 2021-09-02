@@ -1,7 +1,7 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../../Coin";
 import { EthTransaction } from "../../../evm.types";
-import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../transaction.provider";
+import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../providers/transaction.provider";
 import { EscSubWallet } from "../esc.evm.subwallet";
 
 export class TokenProvider extends SubWalletTransactionProvider<EscSubWallet, EthTransaction> {

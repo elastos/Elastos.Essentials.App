@@ -17,7 +17,7 @@ import { Util } from 'src/app/model/util';
 import { App } from 'src/app/model/app.enum';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { PopupProvider } from 'src/app/services/global.popup.service';
-import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/transaction.types';
+import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/providers/transaction.types';
 import { Events } from 'src/app/services/events.service';
 
 

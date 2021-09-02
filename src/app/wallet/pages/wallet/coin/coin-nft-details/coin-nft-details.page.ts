@@ -32,7 +32,7 @@ import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { StandardCoinName, CoinType } from '../../../../model/Coin';
 import { SubWallet } from '../../../../model/wallets/subwallet';
-import { TransactionInfo } from '../../../../model/transaction.types';
+import { TransactionInfo } from '../../../../model/providers/transaction.types';
 import * as moment from 'moment';
 import { CurrencyService } from '../../../../services/currency.service';
 import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';

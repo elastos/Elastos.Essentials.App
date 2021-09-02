@@ -1,5 +1,5 @@
-import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../transaction.provider";
-import { ElastosTransaction } from "../../../transaction.types";
+import { ProviderTransactionInfo, SubWalletTransactionProvider } from "../../../providers/transaction.provider";
+import { ElastosTransaction } from "../../../providers/transaction.types";
 import { SubWallet } from "../../subwallet";
 
 export abstract class MainAndDIDChainProvider<SubWalletType extends SubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {

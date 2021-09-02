@@ -1,7 +1,7 @@
 import { MasterWallet } from './masterwallet';
 import { SubWallet } from './subwallet';
 import { CoinType, StandardCoinName } from '../Coin';
-import { RawTransactionPublishResult, RawTransactionType, TransactionDirection, ElastosTransaction, TransactionInfo } from '../transaction.types';
+import { RawTransactionPublishResult, RawTransactionType, TransactionDirection, ElastosTransaction, TransactionInfo } from '../providers/transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import { Config } from '../../config/Config';
 import BigNumber from 'bignumber.js';

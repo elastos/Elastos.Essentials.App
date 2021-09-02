@@ -5,7 +5,7 @@ import { Native } from '../../../../services/native.service';
 import { Util } from '../../../../model/util';
 import { WalletService } from '../../../../services/wallet.service';
 import { StandardCoinName } from '../../../../model/Coin';
-import { TransactionDirection, TransactionType, TransactionInfo, TransactionStatus } from '../../../../model/transaction.types';
+import { TransactionDirection, TransactionType, TransactionInfo, TransactionStatus } from '../../../../model/providers/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';

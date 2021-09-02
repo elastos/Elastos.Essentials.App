@@ -1,7 +1,7 @@
 import { MasterWallet } from './masterwallet';
 import { NetworkWallet } from './networkwallet';
 import { CoinType, CoinID, StandardCoinName } from '../coin';
-import { ElastosPaginatedTransactions, RawTransactionPublishResult, PaginatedTransactions, ElastosTransaction, TransactionInfo, TransactionStatus, GenericTransaction } from '../transaction.types';
+import { ElastosPaginatedTransactions, RawTransactionPublishResult, PaginatedTransactions, ElastosTransaction, TransactionInfo, TransactionStatus, GenericTransaction } from '../providers/transaction.types';
 import { Transfer } from '../../services/cointransfer.service';
 import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
@@ -209,6 +209,13 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
      */
     public getTransactions(startIndex = 0): TransactionType[] {
       return this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this, startIndex);
+    }
+
+    /**
+     * Request a network call to fetch the latest transactions for this subwallet.
+     */
+    public forceFetchTransactions() {
+      this.networkWallet.getTransactionDiscoveryProvider().forcedFetchTransactions(this);
     }
 
     public getTransactionsCacheKey(): string {

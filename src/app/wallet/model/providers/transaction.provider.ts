@@ -1,10 +1,10 @@
 import { Console } from "console";
 import { BehaviorSubject, Subject } from "rxjs";
-import { StandardCoinName, TokenAddress, TokenType } from "./Coin";
-import { TimeBasedPersistentCache } from "./timebasedpersistentcache";
+import { StandardCoinName, TokenAddress, TokenType } from "../Coin";
+import { TimeBasedPersistentCache } from "../timebasedpersistentcache";
 import { GenericTransaction, PaginatedTransactions } from "./transaction.types";
-import { NetworkWallet } from "./wallets/networkwallet";
-import { AnySubWallet, SubWallet } from "./wallets/subwallet";
+import { NetworkWallet } from "../wallets/networkwallet";
+import { AnySubWallet, SubWallet } from "../wallets/subwallet";
 
 export type NewTransaction = {
   // TODO
@@ -35,7 +35,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   public newTransactionReceived: Map<StandardCoinName | TokenAddress, Subject<NewTransaction>>; // Transactions seen for the first time - not emitted the very first time (after wallet import - initial fetch)
   protected newTokenReceived: Subject<NewToken>; // erc 20 + erc 721 tokens that are seen for the first time.
 
-  constructor() {
+  constructor(protected networkWallet: NetworkWallet) {
     this._transactionsListChanged = new Map();
     this.newTransactionReceived = new Map();
     this.newTokenReceived = new Subject();
@@ -209,6 +209,9 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
   protected async saveTransactions(newTransactions: TransactionType[]): Promise<void> {
     //console.log("DEBUG saveTransactions newTransactions=", newTransactions);
 
+    if (!newTransactions) 
+      return;
+
     let modifiedCaches: Map<string, TimeBasedPersistentCache<any>> = new Map();
     let modifiedTransactionListsSubjects: Map<string, string> = new Map();
 
@@ -246,5 +249,7 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
   public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: GenericTransaction) {
     if (!this.canFetchMoreTransactions(subWallet))
       throw new Error("forcedFetchTransactions() cannot be called because no more transactions can be fetched");
+
+    // TODO
   }
 }
