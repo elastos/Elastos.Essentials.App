@@ -5,7 +5,7 @@ import { AnySubWallet, SubWallet } from "../wallets/subwallet";
 import { ProviderTransactionInfo, SubWalletTransactionProvider, TransactionProvider } from "./transaction.provider";
 
 /**
- * Root class for all EVM compatible chains, as they use the same endpoints to get the list 
+ * Root class for all EVM compatible chains, as they use the same endpoints to get the list
  * of transactions.
  */
 export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
@@ -27,7 +27,8 @@ export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> e
 
     const accountAddress = await this.subWallet.createAddress();
 
-    let txListUrl = this.rpcApiUrl + '/api?module=account&action=txlist&address=' + accountAddress;
+    let maxResults = 20;
+    let txListUrl = this.rpcApiUrl + '/api?module=account&action=txlist&&offset='+maxResults+'sort=desc&address=' + accountAddress;
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
       let transactions = result.result as EthTransaction[];
