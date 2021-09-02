@@ -189,7 +189,12 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     public async createDepositTransaction(toElastosChainCode: StandardCoinName, toAddress: string, amount: number, memo = ""): Promise<string> {
-        let toAmount = this.accMul(amount, Config.SELA);
+        let toAmount = 0;
+        if (amount == -1) {
+            toAmount = Math.floor(this.balance.minus(20000).toNumber());
+        } else {
+            toAmount = this.accMul(amount, Config.SELA);
+        }
         Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
         let utxo = await this.getAvailableUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
         if (!utxo) return;
