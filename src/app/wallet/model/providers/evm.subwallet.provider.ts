@@ -25,19 +25,29 @@ export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> e
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
-    throw new Error("canFetchMoreTransactions(): Method not implemented.");
+    console.log("DEBUG EVM canFetchMoreTransactions");
+    return true; // TMP
   }
 
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    if (afterTransaction)
-      throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
-
     await this.prepareTransactions(this.subWallet);
 
     const accountAddress = await this.subWallet.createAddress();
 
-    let maxResults = 8;
-    let txListUrl = this.rpcApiUrl + '/api?module=account&action=txlist&page=1&offset='+maxResults+'&sort=desc&address=' + accountAddress;
+    const MAX_RESULTS = 8; // TODO: increase after dev complete
+
+    let page = 1;
+    // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
+    if (afterTransaction) {
+      let afterTransactionIndex = this.getTransactions(subWallet).findIndex(t => t.hash === afterTransaction.hash);
+      if (afterTransactionIndex) { // Just in case, should always be true but...
+        // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
+        // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
+        page = 1 + Math.floor((afterTransactionIndex+1) / MAX_RESULTS);
+      }
+    }
+
+    let txListUrl = this.rpcApiUrl + '/api?module=account&action=txlist&page='+page+'&offset='+MAX_RESULTS+'&sort=desc&address=' + accountAddress;
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
       let transactions = result.result as EthTransaction[];
