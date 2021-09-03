@@ -1,10 +1,10 @@
 import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { EthTransaction } from "../evm.types";
-import { AnySubWallet, SubWallet } from "../wallets/subwallet";
-import { TransactionProvider } from "./transaction.provider";
+import { AnySubWallet } from "../wallets/subwallet";
 import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { SubWalletTransactionProvider } from "./subwallet.provider";
+import { TransactionProvider } from "./transaction.provider";
 
 const MAX_RESULTS_PER_FETCH = 8; // TODO: increase after dev complete
 
@@ -44,14 +44,14 @@ export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> e
       if (afterTransactionIndex) { // Just in case, should always be true but...
         // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
         // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
-        page = 1 + Math.floor((afterTransactionIndex+1) / MAX_RESULTS_PER_FETCH);
+        page = 1 + Math.floor((afterTransactionIndex + 1) / MAX_RESULTS_PER_FETCH);
       }
     }
 
     let txListUrl = this.rpcApiUrl + '/api?module=account';
     txListUrl += '&action=txlist';
-    txListUrl += '&page='+page;
-    txListUrl += '&offset='+MAX_RESULTS_PER_FETCH;
+    txListUrl += '&page=' + page;
+    txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;
     txListUrl += '&sort=desc';
     txListUrl += '&address=' + accountAddress;
 

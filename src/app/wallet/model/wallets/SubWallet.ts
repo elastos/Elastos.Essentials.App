@@ -234,7 +234,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
      * If afterTransaction is not passed, we use the last know cached transaction as the last one.
      */
     public fetchMoreTransactions(afterTransaction?: TransactionType) {
-      this.networkWallet.getTransactionDiscoveryProvider().fetchMoreTransactions(this, afterTransaction);
+      return this.networkWallet.getTransactionDiscoveryProvider().fetchMoreTransactions(this, afterTransaction);
     }
 
     public getTransactionsCacheKey(): string {

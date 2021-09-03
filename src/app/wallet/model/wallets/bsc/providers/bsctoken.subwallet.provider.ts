@@ -1,9 +1,6 @@
-import { EthTransaction } from "../../../evm.types";
 import { EVMSubWalletTokenProvider } from "../../../providers/token.subwallet.provider";
 import { TransactionProvider } from "../../../providers/transaction.provider";
-import { AnySubWallet } from "../../subwallet";
 import { BscAPI, BscApiType } from "../bsc.api";
-import { BscERC20SubWallet } from "../bsc.erc20.subwallet";
 import { BscChainSubWallet } from "../bsc.subwallet";
 
 export class BscTokenSubWalletProvider extends EVMSubWalletTokenProvider<BscChainSubWallet> {

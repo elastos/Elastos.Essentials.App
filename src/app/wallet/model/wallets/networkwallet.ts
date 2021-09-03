@@ -1,22 +1,18 @@
-import { SubWallet, SerializedSubWallet } from './subwallet';
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from '../Coin';
 import BigNumber from 'bignumber.js';
-import { Config } from '../../config/Config';
-import { Logger } from 'src/app/logger';
-import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
-import { MasterWallet } from './masterwallet';
-import { ERC20TokenInfo, EthTransaction } from '../evm.types';
-import { SubWalletBuilder } from './subwalletbuilder';
-import { LocalStorage } from '../../services/storage.service';
-import { Network } from '../networks/network';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
-import { GlobalNetworksService } from 'src/app/services/global.networks.service';
-import { StandardEVMSubWallet } from './evm.subwallet';
 import { Subject } from 'rxjs';
-import { App } from 'src/app/model/app.enum';
-import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { Logger } from 'src/app/logger';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { Config } from '../../config/Config';
+import { LocalStorage } from '../../services/storage.service';
+import { Coin, CoinID, CoinType, StandardCoinName } from '../Coin';
+import { EthTransaction } from '../evm.types';
+import { Network } from '../networks/network';
+import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { TransactionProvider } from '../providers/transaction.provider';
-import { GenericTransaction, TransactionType } from '../providers/transaction.types';
+import { StandardEVMSubWallet } from './evm.subwallet';
+import { MasterWallet } from './masterwallet';
+import { SerializedSubWallet, SubWallet } from './subwallet';
+import { SubWalletBuilder } from './subwalletbuilder';
 
 export class ExtendedNetworkWalletInfo {
     /** List of serialized subwallets added earlier to this network wallet */
@@ -185,72 +181,6 @@ export abstract class NetworkWallet {
     }
 
     /**
-     * Discovers and returns a list of ERC tokens bound to this wallet address
-     */
-    public abstract getERCTokensList(): Promise<ERC20TokenInfo[]>;
-
-    /**
-     * Get all the tokens (ERC 20, 721, 1155), and create the subwallet.
-     * TODO: this method should me merged into the new TransactionProviders and generate events when new tokens are found
-     */
-    public async updateERCTokenList() {
-        Logger.log("wallet", "Updating ERC tokens list for network wallet", this);
-        let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
-
-        const ercTokenList = await this.getERCTokensList();
-        Logger.log("wallet", "Received ERC tokens list:", ercTokenList);
-        if (ercTokenList == null)
-            return;
-
-        let newCoinList = [];
-
-        // For each ERC token discovered by the wallet SDK, we check its type and handle it.
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        ercTokenList.forEach(async (token: ERC20TokenInfo) => {
-            if (token.type === "ERC-20") {
-                if (token.symbol && token.name) {
-                    if (!this.subWallets[token.symbol] && !this.network.isCoinDeleted(token.contractAddress)) {
-                        try {
-                            // Check if we already know this token globally. If so, we add it as a new subwallet
-                            // to this master wallet. Otherwise we add the new token to the global list first then
-                            // add a subwallet as well.
-                            const erc20Coin = this.network.getERC20CoinByContractAddress(token.contractAddress);
-                            if (!erc20Coin) {
-                                const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
-                                newCoinList.push(token.symbol);
-                                if (await this.network.addCustomERC20Coin(newCoin)) {
-                                    // Find new coin.
-                                    newCoinList.push(token.symbol);
-                                }
-                            }
-                        } catch (e) {
-                            Logger.log("wallet", 'updateERC20TokenList exception:', e);
-                        }
-                    }
-                } else {
-                    Logger.warn('wallet', 'Token has no name or symbol:', token);
-                }
-            }
-            else if (token.type === "ERC-721") {
-                if (!this.containsNFT(token.contractAddress)) {
-                    await this.createNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance));
-                }
-            }
-            else if (token.type === "ERC-1155") {
-                Logger.warn('wallet', 'ERC1155 NFTs not yet implemented', token);
-            }
-            else {
-                Logger.warn('wallet', 'Unhandled token type:', token);
-            }
-        });
-
-        // Find new coin
-        if (newCoinList.length > 0) {
-            this.sendNotification(newCoinList);
-        }
-    }
-
-    /**
      * Tells if this master wallet contains a NFT information, based on the NFT's contract address.
      */
     public containsNFT(contractAddress: string): boolean {
@@ -344,24 +274,6 @@ export abstract class NetworkWallet {
                 }
             }
         }
-    }
-
-    private sendNotification(newCoinList: string[]) {
-        let message = "";
-        if (newCoinList.length === 1) {
-            message = this.masterWallet.walletManager.translate.instant('wallet.find-new-token-msg', { network: this.network.name, token: newCoinList[0] });
-        } else {
-            message = this.masterWallet.walletManager.translate.instant('wallet.find-new-tokens-msg', { network: this.network.name, count: newCoinList.length });
-        }
-
-        const notification = {
-            app: App.WALLET,
-            key: 'newtokens',
-            title: this.masterWallet.walletManager.translate.instant('wallet.find-new-token'),
-            message: message,
-            url: '/wallet/coin-list'
-        };
-        void GlobalNotificationsService.instance.sendNotification(notification);
     }
 
     public getTransactionDiscoveryProvider(): TransactionProvider<any> {

@@ -1,16 +1,11 @@
-import { StandardSubWallet } from '../standard.subwallet';
-import BigNumber from 'bignumber.js';
-import { Config } from '../../../config/Config';
-import Web3 from 'web3';
-import { ElastosPaginatedTransactions, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType } from '../../providers/transaction.types';
-import { StandardCoinName } from '../../Coin';
 import { Logger } from 'src/app/logger';
-import { NetworkWallet } from '../networkwallet';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { StandardCoinName } from '../../Coin';
 import { EthTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
+import { NetworkWallet } from '../networkwallet';
 import { BscAPI, BscApiType } from './bsc.api';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 
 /**
  * Specialized standard sub wallet for the Binance chain.

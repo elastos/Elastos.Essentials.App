@@ -1,18 +1,17 @@
-import { StandardCoinName, } from "../../../Coin";
-import { ElastosTransaction, GenericTransaction } from "../../../providers/transaction.types";
+import { StandardCoinName } from "../../../Coin";
+import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
 import { TransactionProvider } from "../../../providers/transaction.provider";
-import { NetworkWallet } from "../../networkwallet";
-import { AnySubWallet, SubWallet } from "../../subwallet";
+import { ElastosTransaction } from "../../../providers/transaction.types";
+import { AnySubWallet } from "../../subwallet";
 import { EidSubWallet } from "../eid.evm.subwallet";
+import { ElastosERC20SubWallet } from "../elastos.erc20.subwallet";
 import { EscSubWallet } from "../esc.evm.subwallet";
 import { IDChainSubWallet } from "../idchain.subwallet";
 import { MainchainSubWallet } from "../mainchain.subwallet";
-import { ElastosERC20SubWallet } from "../elastos.erc20.subwallet";
-import { ElastosMainAndOldIDChainSubWalletProvider } from "./mainandidchain.subwallet.provider";
-import { ElastosEscSubWalletProvider } from "./esc.subwallet.provider";
-import { ElastosTokenSubWalletProvider } from "./token.subwallet.provider";
 import { ElastosEidSubWalletProvider } from "./eid.subwallet.provider";
-import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
+import { ElastosEscSubWalletProvider } from "./esc.subwallet.provider";
+import { ElastosMainAndOldIDChainSubWalletProvider } from "./mainandidchain.subwallet.provider";
+import { ElastosTokenSubWalletProvider } from "./token.subwallet.provider";
 
 export class ElastosTransactionProvider extends TransactionProvider<ElastosTransaction> {
   private elaSubWallet: MainchainSubWallet;
@@ -52,6 +51,10 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
     //this.refreshEvery(() => this.escProvider.fetchTransactions(), 30000);
     //this.refreshEvery(() => this.eidProvider.fetchTransactions(), 30000);
     //this.refreshEvery(() => this.tokenProvider.fetchTransactions(), 30000);
+
+    // Discover new transactions globally for all tokens at once, in order to notify user
+    // of NEW tokens received, and NEW payments received for existing tokens.
+    this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);
   }
 
   public stop(): Promise<void> {

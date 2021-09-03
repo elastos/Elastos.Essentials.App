@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { Logger } from '../logger';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
-import { GlobalJsonRPCService } from './global.jsonrpc.service';
-import { GlobalNetworksService } from './global.networks.service';
-import { GlobalPreferencesService } from './global.preferences.service';
-import { GlobalService, GlobalServiceManager } from './global.service.manager';
-import { GlobalLanguageService } from './global.language.service';
-import { StandardCoinName } from '../wallet/model/Coin';
-import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/providers/transaction.types';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ProducersSearchResponse } from '../dposvoting/model/nodes.model';
+import { Logger } from '../logger';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
-import { EthTokenTransaction, ERC20TokenInfo } from '../wallet/model/evm.types';
+import { StandardCoinName } from '../wallet/model/Coin';
+import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
+import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/providers/transaction.types';
+import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
+import { GlobalJsonRPCService } from './global.jsonrpc.service';
+import { GlobalLanguageService } from './global.language.service';
+import { GlobalNetworksService } from './global.networks.service';
+import { GlobalPreferencesService } from './global.preferences.service';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -471,7 +471,7 @@ export class GlobalElastosAPIService extends GlobalService {
                 throw new Error('Elastos API: Browser api can not support ' + elastosChainCode);
         }
         return apiUrlType;
-      }
+    }
 
     // ETHSC:Get the real target address for the send transaction from ethsc to mainchain.
     public async getETHSCWithdrawTargetAddress(blockHeight: number, txHash: string) {
@@ -496,7 +496,7 @@ export class GlobalElastosAPIService extends GlobalService {
         return '';
     }
 
-    public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<{result: ElastosPaginatedTransactions}[]> {
+    public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<{ result: ElastosPaginatedTransactions }[]> {
         const paramArray = [];
         let index = 0;
 
@@ -549,17 +549,17 @@ export class GlobalElastosAPIService extends GlobalService {
 
         let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
         let resultItems = result.result as EthTokenTransaction[];
-        
+
         return resultItems;
     }
 
-    public async getERC20TokenList(elastosChainCode: StandardCoinName, address: string): Promise<ERC20TokenInfo[]> {
+    public async getERC20TokenList(elastosChainCode: StandardCoinName, address: string): Promise<ERCTokenInfo[]> {
         let apiurltype = this.getApiUrlTypeForBrowser(elastosChainCode);
         const rpcApiUrl = this.getApiUrl(apiurltype);
         const ethscgetTokenListUrl = rpcApiUrl + '/api/?module=account&action=tokenlist&address=' + address;
 
         let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
-        return result.result as ERC20TokenInfo[];
+        return result.result as ERCTokenInfo[];
     }
 
     // return all utxo by address
@@ -620,7 +620,7 @@ export class GlobalElastosAPIService extends GlobalService {
         const param = {
             method: 'listproducers',
             params: {
-              state: state
+                state: state
             },
         };
 
@@ -636,45 +636,45 @@ export class GlobalElastosAPIService extends GlobalService {
 
     //crc
     public async getCRrelatedStage() {
-      const param = {
-          method: 'getcrrelatedstage',
-      };
+        const param = {
+            method: 'getcrrelatedstage',
+        };
 
-      const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
-      let result = null;
-      try {
-          result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-      } catch (e) {
-      }
-      return result;
+        let result = null;
+        try {
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        } catch (e) {
+        }
+        return result;
     }
 
     public async fetchCRcouncil(index = 0): Promise<CRCouncilSearchResponse> {
-      const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
 
-      let crfetchCRCurl = rpcApiUrl + '/api/council/list/';
-      if (index > 0) {
-        crfetchCRCurl += index
-      }
-      try {
-          let result = await this.globalJsonRPCService.httpGet(crfetchCRCurl);
-          return result;
-      } catch (e) {
-        Logger.error('wallet', 'fetchProposals error:', e)
-      }
-      return null;
+        let crfetchCRCurl = rpcApiUrl + '/api/council/list/';
+        if (index > 0) {
+            crfetchCRCurl += index
+        }
+        try {
+            let result = await this.globalJsonRPCService.httpGet(crfetchCRCurl);
+            return result;
+        } catch (e) {
+            Logger.error('wallet', 'fetchProposals error:', e)
+        }
+        return null;
     }
 
     public async fetchProposals(status: CRProposalStatus): Promise<CRProposalsSearchResponse> {
-      const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
-      const crfetchproposalsurl = rpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
-      try {
-          let result = await this.globalJsonRPCService.httpGet(crfetchproposalsurl);
-          return result;
-      } catch (e) {
-        Logger.error('wallet', 'fetchProposals error:', e)
-      }
-      return null;
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
+        const crfetchproposalsurl = rpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
+        try {
+            let result = await this.globalJsonRPCService.httpGet(crfetchproposalsurl);
+            return result;
+        } catch (e) {
+            Logger.error('wallet', 'fetchProposals error:', e)
+        }
+        return null;
     }
 }

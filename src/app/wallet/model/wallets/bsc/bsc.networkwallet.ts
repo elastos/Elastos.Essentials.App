@@ -1,12 +1,10 @@
-import { MasterWallet } from "../masterwallet";
-import { NetworkWallet } from "../networkwallet";
 import { StandardCoinName } from "../../Coin";
+import { EthTransaction } from "../../evm.types";
 import { Network } from "../../networks/network";
 import { StandardEVMSubWallet } from "../evm.subwallet";
-import { ERC20TokenInfo, EthTransaction } from "../../evm.types";
+import { MasterWallet } from "../masterwallet";
+import { NetworkWallet } from "../networkwallet";
 import { BscChainSubWallet } from "./bsc.subwallet";
-import { TransactionProvider } from "../../providers/transaction.provider";
-import { GenericTransaction } from "../../providers/transaction.types";
 import { BSCTransactionProvider } from "./providers/bsc.transaction.provider";
 
 export class BscNetworkWallet extends NetworkWallet {
@@ -30,9 +28,5 @@ export class BscNetworkWallet extends NetworkWallet {
 
   public getMainEvmSubWallet(): StandardEVMSubWallet<EthTransaction> {
     return this.mainTokenSubWallet;
-  }
-
-  public async getERCTokensList(): Promise<ERC20TokenInfo[]> {
-    return await []; // Not yet implemented
   }
 }

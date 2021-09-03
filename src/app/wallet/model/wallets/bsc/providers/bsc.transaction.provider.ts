@@ -2,7 +2,7 @@ import { StandardCoinName } from "../../../Coin";
 import { EthTransaction } from "../../../evm.types";
 import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
 import { TransactionProvider } from "../../../providers/transaction.provider";
-import { AnySubWallet} from "../../subwallet";
+import { AnySubWallet } from "../../subwallet";
 import { BscERC20SubWallet } from "../bsc.erc20.subwallet";
 import { BscChainSubWallet } from "../bsc.subwallet";
 import { BSCSubWalletProvider } from "./bscchain.subwallet.provider";

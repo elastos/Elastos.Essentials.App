@@ -1,5 +1,6 @@
 import { TransferType } from "../services/cointransfer.service";
-import { TransactionDirection, ElastosTransaction, GenericTransaction } from "./providers/transaction.types";
+import { TokenType } from "./Coin";
+import { GenericTransaction, TransactionDirection } from "./providers/transaction.types";
 
 export type EthTransaction = GenericTransaction & {
   // Returned from rpc
@@ -34,7 +35,7 @@ export type ElastosSCEthTransaction = EthTransaction & {
 /**
  * Signed ETHSC transaction
  */
- export type SignedETHSCTransaction = {
+export type SignedETHSCTransaction = {
   Fee: string,
   Hash: string,
   TxSigned: string,
@@ -59,8 +60,8 @@ export type ERC20TokenTransactionInfo = {
 /**
  * Information about ERC20 Token
  */
- export type ERC20TokenInfo = {
-  type: string;
+export type ERCTokenInfo = {
+  type: TokenType;
   symbol: string;
   name: string;
   decimals: string;
