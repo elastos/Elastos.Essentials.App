@@ -1,19 +1,17 @@
-import BigNumber from 'bignumber.js';
-import { ElastosPaginatedTransactions, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, ElastosTransaction, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType, PaginatedTransactions, GenericTransaction } from '../../providers/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
-import { StandardCoinName } from '../../Coin';
-import { MasterWallet } from '../masterwallet';
-import { Logger } from 'src/app/logger';
-import { Config } from '../../../config/Config';
-import { Util } from '../../util';
-import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
-import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
+import BigNumber from 'bignumber.js';
 import moment from 'moment';
+import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { Config } from '../../../config/Config';
+import { StandardCoinName } from '../../Coin';
+import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
+import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../providers/transaction.types';
+import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
+import { Util } from '../../util';
 import { NetworkWallet } from '../networkwallet';
-import { SubWallet } from '../subwallet';
 import { StandardSubWallet } from '../standard.subwallet';
 import { ElastosTransactionsHelper } from './transactions.helper';
 
@@ -41,6 +39,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
         super(networkWallet, id);
+    }
+
+    public supportsCrossChainTransfers(): boolean {
+        return true;
     }
 
     public async startBackgroundUpdates(): Promise<void> {

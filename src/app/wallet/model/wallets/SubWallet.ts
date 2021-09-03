@@ -1,12 +1,12 @@
+import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
+import { Subject } from 'rxjs';
+import { Transfer } from '../../services/cointransfer.service';
+import { CoinID, CoinType, StandardCoinName } from '../coin';
+import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../providers/transaction.types';
+import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 import { MasterWallet } from './masterwallet';
 import { NetworkWallet } from './networkwallet';
-import { CoinType, CoinID, StandardCoinName } from '../coin';
-import { RawTransactionPublishResult, TransactionInfo, TransactionStatus, GenericTransaction } from '../providers/transaction.types';
-import { Transfer } from '../../services/cointransfer.service';
-import BigNumber from 'bignumber.js';
-import { TranslateService } from '@ngx-translate/core';
-import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
-import { Subject } from 'rxjs';
 
 /**
  * Subwallet representation ready to save to local storage for persistance.
@@ -79,6 +79,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
       return false;
     }
 
+    public supportsCrossChainTransfers(): boolean {
+        return false;
+    }
+
     private async loadBalanceFromCache() {
       this.balanceCache = await TimeBasedPersistentCache.loadOrCreate(this.balanceKeyInCache);
       if (this.balanceCache.size() !== 0) {
@@ -107,7 +111,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
      * From a given transaction return a UI displayable transaction icon that illustrates the transaction operation.
      */
     protected async getTransactionIconPath(transaction: TransactionType): Promise<string> {
-      return await ""; 
+        return await "";
     }
 
     public async getTransactionInfo(transaction: TransactionType, translate: TranslateService): Promise<TransactionInfo> {
