@@ -1,4 +1,3 @@
-import { Logger } from "src/app/logger";
 
 export type CoinID = string; // ELA, IDChain, ERC1, ERC2...
 
@@ -13,7 +12,7 @@ export enum StandardCoinName {
     ETHSC = 'ETHSC',
     ETHDID = 'ETHDID',
     ETHHECO = 'ETHHECO',
-    ETHBSC= 'ETHBSC',
+    ETHBSC = 'ETHBSC',
 }
 
 export namespace StandardCoinName {
@@ -25,7 +24,8 @@ export namespace StandardCoinName {
 export type TokenAddress = string; // EVM address of the token contract
 export enum TokenType {
     ERC_20 = "ERC-20",
-    ERC_721 = "ERC-721"
+    ERC_721 = "ERC-721",
+    ERC_1155 = "ERC-1155"
 }
 
 export class Coin {
@@ -36,7 +36,7 @@ export class Coin {
         private description: string,
         private removable: boolean,
         public networkTemplate: string,
-    ) {}
+    ) { }
 
     public getType(): CoinType {
         return this.type;
@@ -64,7 +64,7 @@ export class StandardCoin extends Coin {
         // Null network means that the coin is available on all networks
         let removable = false;
         if (id === StandardCoinName.IDChain) {
-          removable = true;
+            removable = true;
         }
         super(CoinType.STANDARD, id, name, description, removable, null);
     }

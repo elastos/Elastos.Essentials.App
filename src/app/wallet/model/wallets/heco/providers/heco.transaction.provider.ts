@@ -26,7 +26,7 @@ export class HecoTransactionProvider extends TransactionProvider<EthTransaction>
 
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
-    //this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
+    this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
   }
 
   public stop(): Promise<void> {

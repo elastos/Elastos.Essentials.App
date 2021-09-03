@@ -1,12 +1,8 @@
-import { Console } from "console";
-import { BehaviorSubject, Subject } from "rxjs";
-import { StandardCoinName, TokenAddress, TokenType } from "../Coin";
 import { TimeBasedPersistentCache } from "../timebasedpersistentcache";
-import { GenericTransaction, PaginatedTransactions } from "./transaction.types";
-import { NetworkWallet } from "../wallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
-import { TransactionProvider } from "./transaction.provider";
 import { ProviderTransactionInfo } from "./providertransactioninfo";
+import { TransactionProvider } from "./transaction.provider";
+import { GenericTransaction } from "./transaction.types";
 
 export type AnySubWalletTransactionProvider = SubWalletTransactionProvider<any, any>;
 
@@ -18,9 +14,6 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
   // Disk cache for fast/offline display of transactions when entering a screen.
   // Always contains only the N most recent transactions
   protected transactionsCache: Map<string, TimeBasedPersistentCache<TransactionType>>;
-  // Memory list of transactions that mixes transactions from the cache and also fetched transactions
-  // (ex: during user screen scrolling)
-  //protected transactions: Map<string, TransactionType[]> = null;
   private transactionsPrepared = false;
 
   constructor(protected provider: TransactionProvider<any>, protected subWallet: SubWalletType) {
@@ -55,34 +48,12 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
       return this.transactionsCache.get(cacheKey);
 
     let cache = await TimeBasedPersistentCache.loadOrCreate<TransactionType>(cacheKey);
-    //this.loadTransactionsFromCache(cache);
     this.transactionsCache.set(cacheKey, cache);
 
-    console.log("DEBUG loaded cache",cacheKey,"contains", cache.size(),"entries");
+    //console.log("DEBUG loaded cache",cacheKey,"contains", cache.size(),"entries");
 
     return cache;
   }
-
-  /* private loadTransactionsFromCache(cache: TimeBasedPersistentCache<any>) {
-    if (cache.size() !== 0) {
-      let transactions = this.getTransactionsSafe(cache.name);
-
-      console.log("DEBUG loadTransactionsFromCache", cache.values());
-
-      let cachedTransactions = cache.values();
-      for (let i = 0; i < cachedTransactions.length; i++) {
-        transactions.push(cachedTransactions[i].data);
-      }
-    }
-  } */
-
-  /* protected mergeTransactions(cacheKey: string, newTransactions: TransactionType[]) {
-    //let currentPaginatedTransactions = this.getPaginatedTransactions(cacheKey);
-    //currentPaginatedTransactions.total = newTransactions.total; // Assume the newly fetched data returns the most up-to-date total
-    newTransactions.transactions.forEach(t => {
-      this.getProviderTransactionInfo(t).
-    });
-  } */
 
   protected async saveTransactions(newTransactions: TransactionType[]): Promise<void> {
     //console.log("DEBUG saveTransactions newTransactions=", newTransactions);
@@ -92,9 +63,6 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
 
     let modifiedCaches: Map<string, TimeBasedPersistentCache<any>> = new Map();
     let modifiedTransactionListsSubjects: Map<string, string> = new Map();
-
-    //let currentPaginatedTransactions = this.getPaginatedTransactions(cacheKey);
-    //currentPaginatedTransactions.total = newTransactions.total; // Assume the newly fetched data returns the most up-to-date total
 
     for (let i = 0; i < newTransactions.length; i++) {
       let providerTransactionInfo = this.getProviderTransactionInfo(newTransactions[i]);
@@ -117,71 +85,6 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
       this.provider.transactionsListChanged(subjectKey).next();
     }
   }
-
-  /**
-   * Saves the new transactions to the relevant current paginated transactions and cache.
-   *
-   * NOTE: The same transactions list can contain transactions for different subjects. Ex: when ERC20
-   * token transactions are mixed.
-   */
-  /* protected async saveTransactions(newTransactions: TransactionType[]): Promise<void> {
-    //console.log("DEBUG saveTransactions newTransactions=", newTransactions);
-
-    if (!newTransactions)
-      return;
-
-    let modifiedCaches: Map<string, TimeBasedPersistentCache<any>> = new Map();
-    let modifiedTransactionListsSubjects: Map<string, string> = new Map();
-
-    // Split new transactions (ex: ERC20) into groups of transactions that belong to the same
-    // cache (ex: same ERC20 token)
-    let transactionFamilies = new Map<string, TransactionType[]>();
-    newTransactions.forEach(t => {
-      let providerTransactionInfo = this.getProviderTransactionInfo(t);
-      if (!transactionFamilies.has(providerTransactionInfo.cacheKey))
-        transactionFamilies.set(providerTransactionInfo.cacheKey, []);
-
-      transactionFamilies.get(providerTransactionInfo.cacheKey).push(t);
-    });
-
-    let familiesEntries = Array.from(transactionFamilies.entries());
-    for (let j = 0; j < familiesEntries.length; j++) {
-      let transactionFamily = familiesEntries[j];
-      let cache = await this.getCache(transactionFamily[0]); // cache key
-
-      for (let i = 0; i < transactionFamily[1].length; i++) {
-        let familyTransactions = transactionFamily[1]; // Transactions list for this family
-        let transaction = familyTransactions[i];
-        let providerTransactionInfo = this.getProviderTransactionInfo(transaction);
-
-        cache.set(providerTransactionInfo.cacheEntryKey, transaction, providerTransactionInfo.cacheTimeValue);
-
-        // NOTE: SLOW if many transactions
-        let transactions = this.getTransactionsSafe(providerTransactionInfo.cacheKey);
-        let existingTransactionIndex = transactions.findIndex(t => {
-          let checkedTransactionInfo = this.getProviderTransactionInfo(t);
-          return checkedTransactionInfo.cacheEntryKey === providerTransactionInfo.cacheEntryKey;
-        });
-        if (!existingTransactionIndex) {
-
-        }
-
-        modifiedCaches.set(providerTransactionInfo.cacheKey, cache); // Same key, same cache, but we want to save each cache only once
-        modifiedTransactionListsSubjects.set(providerTransactionInfo.subjectKey, providerTransactionInfo.subjectKey); // unique list of subject keys to notify in the end
-      }
-
-      for (let cache of modifiedCaches.values()) {
-        //console.log("DEBUG saveTransactions saving cache:", cache);
-        await cache.save();
-      }
-
-      // Notifies respective listeners that some new transactions that they are interested in have arrived.
-      for (let subjectKey of modifiedTransactionListsSubjects.values()) {
-        //console.log("DEBUG saveTransactions notifying transactions list subject:", subjectKey);
-        this.provider.transactionsListChanged(subjectKey).next();
-      }
-    });
-  } */
 
   /**
    * Tells whether there are more transactions to fetch after the ones that we already

@@ -1,20 +1,17 @@
+import { Logger } from "src/app/logger";
 import { StandardCoinName } from "../../Coin";
+import { EthTransaction } from "../../evm.types";
+import { Network } from "../../networks/network";
+import { StandardEVMSubWallet } from "../evm.subwallet";
 import { MasterWallet } from "../masterwallet";
 import { NetworkWallet } from "../networkwallet";
-import { MainchainSubWallet } from "./mainchain.subwallet";
-import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
-import { Network } from "../../networks/network";
-import { IDChainSubWallet } from "./idchain.subwallet";
-import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
-import { StandardEVMSubWallet } from "../evm.subwallet";
-import { ERC20TokenInfo, EthTransaction } from "../../evm.types";
-import { EscSubWallet } from "./esc.evm.subwallet";
 import { EidSubWallet } from "./eid.evm.subwallet";
-import { Logger } from "src/app/logger";
+import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
+import { EscSubWallet } from "./esc.evm.subwallet";
+import { IDChainSubWallet } from "./idchain.subwallet";
+import { MainchainSubWallet } from "./mainchain.subwallet";
 import { ElastosTransactionProvider } from "./providers/elastos.transaction.provider";
-import { TransactionProvider } from "../../providers/transaction.provider";
 import { WalletHelper } from "./wallet.helper";
-import { ElastosTransaction } from "../../providers/transaction.types";
 
 export class ElastosNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
@@ -51,7 +48,7 @@ export class ElastosNetworkWallet extends NetworkWallet {
    * Tells whether this wallet currently has many addresses in use or not.
    */
   public async multipleAddressesInUse(): Promise<boolean> {
-    let mainchainSubwallet : MainchainSubWallet = this.subWallets[StandardCoinName.ELA] as MainchainSubWallet;
+    let mainchainSubwallet: MainchainSubWallet = this.subWallets[StandardCoinName.ELA] as MainchainSubWallet;
     let txListsInternal = await WalletHelper.getTransactionByAddress(mainchainSubwallet, true, 0);
     if (txListsInternal.length > 1) {
       return true;
@@ -66,15 +63,5 @@ export class ElastosNetworkWallet extends NetworkWallet {
 
   public getDisplayTokenName(): string {
     return 'ELA';
-  }
-
-  /**
-   * For now, the elastos network gets tokens only from the ESC chain, not from EID.
-   */
-  public async getERCTokensList(): Promise<ERC20TokenInfo[]> {
-    let tokenSubWallet = this.getMainEvmSubWallet();
-    const address = await tokenSubWallet.getTokenAddress();
-    let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);
-    return tokenList;
   }
 }

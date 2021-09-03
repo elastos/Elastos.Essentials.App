@@ -1,10 +1,10 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../../Coin";
 import { EthTransaction } from "../../../evm.types";
-import { AnySubWallet } from "../../subwallet";
-import { EscSubWallet } from "../esc.evm.subwallet";
 import { ProviderTransactionInfo } from "../../../providers/providertransactioninfo";
 import { SubWalletTransactionProvider } from "../../../providers/subwallet.provider";
+import { AnySubWallet } from "../../subwallet";
+import { EscSubWallet } from "../esc.evm.subwallet";
 
 export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<EscSubWallet, EthTransaction> {
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
@@ -14,6 +14,18 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
       cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: transaction.contractAddress
     };
+  }
+
+  /**
+   * For now, the elastos network gets tokens only from the ESC chain, not from EID.
+   */
+  public async discoverTokens(): Promise<void> {
+    let tokenSubWallet = this.subWallet;
+    const address = await tokenSubWallet.getTokenAddress();
+    let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);
+
+    // Let the provider know what we have found
+    this.provider.onTokenInfoFound(tokenList);
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {

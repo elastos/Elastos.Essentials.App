@@ -1,13 +1,16 @@
-import { Console } from "console";
 import { BehaviorSubject, Subject } from "rxjs";
-import { StandardCoinName, TokenAddress, TokenType } from "../Coin";
-import { TimeBasedPersistentCache } from "../timebasedpersistentcache";
-import { GenericTransaction, PaginatedTransactions } from "./transaction.types";
+import { Logger } from "src/app/logger";
+import { App } from "src/app/model/app.enum";
+import { GlobalLanguageService } from "src/app/services/global.language.service";
+import { GlobalNetworksService } from "src/app/services/global.networks.service";
+import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
+import { ERC20Coin, StandardCoinName, TokenAddress, TokenType } from "../Coin";
+import { ERCTokenInfo } from "../evm.types";
+import { NFTType } from "../nfts/nft";
 import { NetworkWallet } from "../wallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
-import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
-import { Logger } from "src/app/logger";
+import { GenericTransaction } from "./transaction.types";
 
 export type NewTransaction = {
   // TODO
@@ -47,7 +50,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   protected _transactionFetchStatusChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<boolean>>;
   // TODO: make protected like _transactionsListChanged
   public newTransactionReceived: Map<StandardCoinName | TokenAddress, Subject<NewTransaction>>; // Transactions seen for the first time - not emitted the very first time (after wallet import - initial fetch)
-  protected newTokenReceived: Subject<NewToken>; // erc 20 + erc 721 tokens that are seen for the first time.
+  public newTokenReceived: Subject<ERCTokenInfo>; // erc 20 + erc 721 tokens that are seen for the first time.
 
   constructor(protected networkWallet: NetworkWallet) {
     this._transactionsListChanged = new Map();
@@ -114,7 +117,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     if (!afterTransaction) {
       // Compute the current last transaction to start fetching after that one.
       let currentTransactions = this.getTransactions(subWallet);
-      afterTransaction = currentTransactions[currentTransactions.length-1];
+      afterTransaction = currentTransactions[currentTransactions.length - 1];
     }
 
     // Fetching
@@ -143,7 +146,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   /**
    * Subject that informs listeners whether transactions are being fetched or not
    */
-   public transactionsFetchStatusChanged(coinID: StandardCoinName | TokenAddress): BehaviorSubject<boolean> {
+  public transactionsFetchStatusChanged(coinID: StandardCoinName | TokenAddress): BehaviorSubject<boolean> {
     if (!this._transactionFetchStatusChanged.has(coinID))
       this._transactionFetchStatusChanged.set(coinID, new BehaviorSubject(false));
     return this._transactionFetchStatusChanged.get(coinID);
@@ -152,11 +155,11 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   /**
    * Starts a task right now and repeats it X milliseconds after its completion.
    */
-  protected refreshEvery(repeatingTask: ()=>Promise<void>, repeatMs: number) {
+  protected refreshEvery(repeatingTask: () => Promise<void>, repeatMs: number) {
     void this.callAndRearmTask(repeatingTask, repeatMs);
   }
 
-  private async callAndRearmTask(repeatingTask: ()=>Promise<void>, repeatMs: number): Promise<void> {
+  private async callAndRearmTask(repeatingTask: () => Promise<void>, repeatMs: number): Promise<void> {
     await repeatingTask();
 
     // Only restart a timer after all current operations are complete. We don't want to use an internal
@@ -164,5 +167,94 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     setTimeout(() => {
       void this.callAndRearmTask(repeatingTask, repeatMs);
     }, repeatMs);
+  }
+
+  /**
+   * Internal method called by providers / subwallet providers when they get an info about discovered tokens.
+   * This method can be called for previously discovered tokens or for new tokens, no need to manually
+   * do a preliminary filter.
+   *
+   * This method will add new coins to the coin list and notify user that new tokens have arrived if needed.
+   */
+  public onTokenInfoFound(tokens: ERCTokenInfo[]) {
+    let newAllCoinsList: ERCTokenInfo[] = [];
+    let newERC20CoinsList: string[] = [];
+    let newERC721CoinsList: string[] = [];
+
+    let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+
+    // For each ERC token discovered by the wallet SDK, we check its type and handle it.
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    tokens.forEach(async (token: ERCTokenInfo) => {
+      if (token.type === "ERC-20") {
+        if (token.symbol && token.name) {
+          if (!this.networkWallet.getSubWallet(token.symbol) && !this.networkWallet.network.isCoinDeleted(token.contractAddress)) {
+            try {
+              // Check if we already know this token globally. If so, we add it as a new subwallet
+              // to this master wallet. Otherwise we add the new token to the global list first then
+              // add a subwallet as well.
+              const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(token.contractAddress);
+              if (!erc20Coin) {
+                const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
+                newERC20CoinsList.push(token.symbol);
+                newAllCoinsList.push(token);
+                if (await this.networkWallet.network.addCustomERC20Coin(newCoin)) {
+                  // Find new coin.
+                  newERC20CoinsList.push(token.symbol);
+                }
+              }
+            } catch (e) {
+              Logger.log("wallet", 'updateERC20TokenList exception:', e);
+            }
+          }
+        } else {
+          Logger.warn('wallet', 'Token has no name or symbol:', token);
+        }
+      }
+      else if (token.type === "ERC-721") {
+        if (!this.networkWallet.containsNFT(token.contractAddress)) {
+          await this.networkWallet.createNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance));
+          // TODO: let user know, should be a different notification than for ERC20 and the click
+          // should bring to wallet home, not to coins list
+        }
+      }
+      else if (token.type === "ERC-1155") {
+        Logger.warn('wallet', 'ERC1155 NFTs not yet implemented', token);
+      }
+      else {
+        Logger.warn('wallet', 'Unhandled token type:', token);
+      }
+    });
+
+    // Found new coins - notify user
+    if (newERC20CoinsList.length > 0) {
+      this.sendTokenDiscoveredNotification(newERC20CoinsList);
+    }
+
+    // Emit the new token event for other listeners
+    newAllCoinsList.map(coin => {
+      this.newTokenReceived.next(coin);
+    });
+  }
+
+  /**
+   * Lets user know that new tokens have been found, through a in-app notification.
+   */
+  private sendTokenDiscoveredNotification(newCoinList: string[]) {
+    let message = "";
+    if (newCoinList.length === 1) {
+      message = GlobalLanguageService.instance.translate('wallet.find-new-token-msg', { network: this.networkWallet.network.name, token: newCoinList[0] });
+    } else {
+      message = GlobalLanguageService.instance.translate('wallet.find-new-tokens-msg', { network: this.networkWallet.network.name, count: newCoinList.length });
+    }
+
+    const notification = {
+      app: App.WALLET,
+      key: 'newtokens',
+      title: GlobalLanguageService.instance.translate('wallet.find-new-token'),
+      message: message,
+      url: '/wallet/coin-list'
+    };
+    void GlobalNotificationsService.instance.sendNotification(notification);
   }
 }

@@ -1,7 +1,5 @@
-import { EthTransaction } from "../../../evm.types";
 import { EVMSubWalletProvider } from "../../../providers/evm.subwallet.provider";
 import { TransactionProvider } from "../../../providers/transaction.provider";
-import { AnySubWallet } from "../../subwallet";
 import { BscAPI, BscApiType } from "../bsc.api";
 import { BscChainSubWallet } from "../bsc.subwallet";
 
