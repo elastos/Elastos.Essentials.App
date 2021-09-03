@@ -8,7 +8,7 @@ import { EscSubWallet } from "../esc.evm.subwallet";
 import { IDChainSubWallet } from "../idchain.subwallet";
 import { MainchainSubWallet } from "../mainchain.subwallet";
 import { ElastosERC20SubWallet } from "../elastos.erc20.subwallet";
-import { ElastosMainchainSubWalletProvider } from "./mainchain.subwallet.provider";
+import { ElastosMainAndOldIDChainSubWalletProvider } from "./mainandidchain.subwallet.provider";
 import { ElastosEscSubWalletProvider } from "./esc.subwallet.provider";
 import { ElastosTokenSubWalletProvider } from "./token.subwallet.provider";
 import { ElastosEidSubWalletProvider } from "./eid.subwallet.provider";
@@ -20,7 +20,8 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
   private escSubWallet: EscSubWallet;
   private eidSubWallet: EidSubWallet;
 
-  private mainChainProvider: ElastosMainchainSubWalletProvider;
+  private mainChainProvider: ElastosMainAndOldIDChainSubWalletProvider<MainchainSubWallet>;
+  private oldIdChainProvider: ElastosMainAndOldIDChainSubWalletProvider<IDChainSubWallet>;
   private escProvider: ElastosEscSubWalletProvider;
   private eidProvider: ElastosEscSubWalletProvider;
   private tokenProvider: ElastosTokenSubWalletProvider;
@@ -31,8 +32,11 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
     this.escSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as EscSubWallet;
     this.eidSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHDID) as EidSubWallet;
 
-    this.mainChainProvider = new ElastosMainchainSubWalletProvider(this, this.elaSubWallet);
+    this.mainChainProvider = new ElastosMainAndOldIDChainSubWalletProvider(this, this.elaSubWallet);
     await this.mainChainProvider.initialize();
+
+    this.oldIdChainProvider = new ElastosMainAndOldIDChainSubWalletProvider(this, this.oldIdSubWallet);
+    await this.oldIdChainProvider.initialize();
 
     this.escProvider = new ElastosEscSubWalletProvider(this, this.escSubWallet);
     await this.escProvider.initialize();
@@ -58,6 +62,8 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
     if (subWallet instanceof MainchainSubWallet)
       return this.mainChainProvider;
+    if (subWallet instanceof IDChainSubWallet)
+      return this.oldIdChainProvider;
     else if (subWallet instanceof EscSubWallet)
       return this.escProvider;
     else if (subWallet instanceof EidSubWallet)
