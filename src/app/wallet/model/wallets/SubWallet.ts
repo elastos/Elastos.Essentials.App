@@ -39,7 +39,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     public lastBlockTime: string = null;
 
     public balanceCache: TimeBasedPersistentCache<any> = null;
-    public balanceKeyInCache = '';
+    public balanceKeyInCache = null;
 
     public loadTxDataFromCache = true;
     public subwalletTransactionStatusID = '';
@@ -49,7 +49,6 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
       this.id = id;
       this.type = type;
 
-      this.balanceKeyInCache = this.masterWallet.id + '-' + this.id + '-balance';
       this.subwalletTransactionStatusID = this.masterWallet.id + '-' + this.id;
     }
 
@@ -84,6 +83,9 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     }
 
     private async loadBalanceFromCache() {
+      if (!this.balanceKeyInCache) {
+          this.balanceKeyInCache = this.masterWallet.id + '-' + this.getUniqueIdentifierOnNetwork() + '-balance';
+      }
       this.balanceCache = await TimeBasedPersistentCache.loadOrCreate(this.balanceKeyInCache);
       if (this.balanceCache.size() !== 0) {
           this.balance = new BigNumber(this.balanceCache.values()[0].data);
