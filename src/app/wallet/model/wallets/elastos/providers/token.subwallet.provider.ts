@@ -17,7 +17,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
-    throw new Error("canFetchMoreTransactions(): Method not implemented.");
+    return true; // TODO
   }
 
   // All ERC20 transactions fetched at once

@@ -52,6 +52,6 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
-    throw new Error("Method not implemented.");
+    return true; //TODO
   }
 }
