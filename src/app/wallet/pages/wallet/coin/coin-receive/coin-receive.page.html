@@ -5,7 +5,7 @@
         <div *ngIf="qrcode" class="qrcode-container">
             <qrcode [qrdata]="qrcode" [size]="150"></qrcode>
         </div>
-        <h1>{{ 'wallet.coin-receive-ela-address' | translate: { coinName: elastosChainCode } }}</h1>
+        <h1>{{ 'wallet.coin-receive-ela-address' | translate: { coinName: tokenName } }}</h1>
         <h2 *ngIf="qrcode" (click)="copyAddress()">
             {{ qrcode.slice(0,20) }}<br>{{ qrcode.slice(20,50) }}
         </h2>
