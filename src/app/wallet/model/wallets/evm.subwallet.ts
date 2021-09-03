@@ -45,37 +45,7 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
 
     return;
   }
-  /*
-      // Get txpool information.
-      private gettxpoolinfo() {
-        this.web3.eth.extend({
-          property: 'txpool',
-          methods: [{
-            name: 'content',
-            call: 'txpool_content'
-          },{
-            name: 'inspect',
-            call: 'txpool_inspect'
-          },{
-            name: 'status',
-            call: 'txpool_status'
-          }]
-        });
-        this.web3.eth.txpool.status().then( (result) => {
-          Logger.log('wallet', 'txpool status:', this.id, result)
-        })
-        .catch( (error) => {
-          Logger.error('wallet', 'txpool status error:', error)
-        })
-  
-        this.web3.eth.txpool.content().then( (result) => {
-          Logger.log('wallet', 'txpool content:', this.id, result)
-        })
-        .catch( (error) => {
-          Logger.error('wallet', 'txpool content error:', error)
-        })
-      }
-  */
+
   public async getTokenAddress(): Promise<string> {
     if (!this.ethscAddress) {
       this.ethscAddress = (await this.createAddress()).toLowerCase();
@@ -306,7 +276,23 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
     return this.balance.gt(amount);
   }
 
-  public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPrice: string = null, gasLimit: string = null): Promise<string> {
+  public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null): Promise<string> {
+    let gasPrice = gasPriceArg;
+    if (gasPrice === null) {
+      gasPrice = await this.getGasPrice();
+    }
+    if (amount === -1) {//-1: send all.
+      let estimateGas = await this.estimateGasForPaymentTransaction(toAddress, '0x186a0111');
+      if (estimateGas === -1) {
+        Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
+        return null;
+      }
+      let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
+      //TODO remove Config.SELAAsBigNumber
+      amount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
+      if (amount <= 0) return null;
+    }
+
     let nonce = await this.getNonce();
     Logger.log('wallet', 'createPaymentTransaction amount:', amount, ' nonce:', nonce)
     return this.masterWallet.walletManager.spvBridge.createTransfer(
@@ -384,6 +370,18 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
     }
     catch (err) {
       Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
+    }
+    return -1;
+  }
+
+  // value is hexadecimal string, eg: "0x1000"
+  private async estimateGasForPaymentTransaction(to: string, value: string) {
+    try {
+      const address = await this.getTokenAddress();
+      return await GlobalEthereumRPCService.instance.eth_estimateGas(this.rpcApiUrl, address, to, value);
+    }
+    catch (err) {
+      Logger.error('wallet', 'estimateGasForPaymentTransaction failed, ', this.id, ' error:', err);
     }
     return -1;
   }
