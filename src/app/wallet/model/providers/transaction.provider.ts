@@ -40,13 +40,17 @@ export type NewToken = {
  *    to fetch more and we will get the new transactions as event.
  */
 export abstract class TransactionProvider<TransactionType extends GenericTransaction> {
-  protected _transactionsListChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<void>>; // When loading from cache initially, or fetching new transactions from RPC
+  // When loading from cache initially, or fetching new transactions from RPC
+  protected _transactionsListChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<void>>; 
+  // Whether a fetch (real network fetch, not from cache) is in progress or not
+  protected _transactionFetchStatusChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<boolean>>; 
   // TODO: make protected like _transactionsListChanged
   public newTransactionReceived: Map<StandardCoinName | TokenAddress, Subject<NewTransaction>>; // Transactions seen for the first time - not emitted the very first time (after wallet import - initial fetch)
   protected newTokenReceived: Subject<NewToken>; // erc 20 + erc 721 tokens that are seen for the first time.
 
   constructor(protected networkWallet: NetworkWallet) {
     this._transactionsListChanged = new Map();
+    this._transactionFetchStatusChanged = new Map();
     this.newTransactionReceived = new Map();
     this.newTokenReceived = new Subject();
   }
@@ -72,18 +76,22 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     return this.getSubWalletTransactionProvider(subWallet).canFetchMoreTransactions(subWallet);
   }
 
-  public fetchNewestTransactions(subWallet: AnySubWallet) {
-    return this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
+  public async fetchNewestTransactions(subWallet: AnySubWallet) {
+    this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(true);
+    await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
+    this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
   }
 
-  public fetchMoreTransactions(subWallet: AnySubWallet, afterTransaction?: TransactionType) {
+  public async fetchMoreTransactions(subWallet: AnySubWallet, afterTransaction?: TransactionType) {
     if (!afterTransaction) {
       // Compute the current last transaction to start fetching after that one.
       let currentTransactions = this.getTransactions(subWallet);
       afterTransaction = currentTransactions[currentTransactions.length-1];
     }
 
-    return this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet, afterTransaction);
+    this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(true);
+    await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet, afterTransaction);
+    this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
   }
 
   public prepareTransactions(subWallet: AnySubWallet): Promise<void> {
@@ -97,6 +105,15 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     if (!this._transactionsListChanged.has(coinID))
       this._transactionsListChanged.set(coinID, new BehaviorSubject(null));
     return this._transactionsListChanged.get(coinID);
+  }
+
+  /**
+   * Subject that informs listeners whether transactions are being fetched or not
+   */
+   public transactionsFetchStatusChanged(coinID: StandardCoinName | TokenAddress): BehaviorSubject<boolean> {
+    if (!this._transactionFetchStatusChanged.has(coinID))
+      this._transactionFetchStatusChanged.set(coinID, new BehaviorSubject(false));
+    return this._transactionFetchStatusChanged.get(coinID);
   }
 
   /**

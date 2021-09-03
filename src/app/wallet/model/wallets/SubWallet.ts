@@ -54,6 +54,12 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     }
 
     /**
+     * Identifier that make this subwallet unique inside its own network.
+     * For standard wallets, this is the coin ID. For ERC20 tokens, this is the contract address.
+     */
+    public abstract getUniqueIdentifierOnNetwork(): string;
+
+    /**
      * Starts updates in background.
      * All the initializations here are not mandatory during initializations and can deliver
      * asynchronous content at any time.
@@ -259,6 +265,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
 
     public transactionsListChanged(): Subject<void> {
       return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.id);
+    }
+
+    public transactionsFetchStatusChanged(): Subject<boolean> {
+      return this.networkWallet.getTransactionDiscoveryProvider().transactionsFetchStatusChanged(this.id);
     }
 
     // public abstract getTransactionDetails(txid: string): Promise<TransactionDetail>;

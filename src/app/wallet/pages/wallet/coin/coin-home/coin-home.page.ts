@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Config } from '../../../../config/Config';
 import { Native } from '../../../../services/native.service';
@@ -45,6 +45,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 
 @Component({
     selector: 'app-coin-home',
@@ -53,6 +54,7 @@ import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 })
 export class CoinHomePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+    @ViewChild('fetchmoretrigger', { static: true }) fetchMoreTrigger: ElementRef;
 
     public masterWalletInfo = '';
     public networkWallet: NetworkWallet = null;
@@ -72,16 +74,20 @@ export class CoinHomePage implements OnInit {
     public SELA = Config.SELA;
     public CoinType = CoinType;
 
-    public canShowMore = false;
+    public canFetchMore = true;
+    public shouldShowLoadingSpinner = false;
+    // Observer that detects when the "fetch more trigger" UI item crosses the ion-content, which means we
+    // are at the bottom of the list.
+    private fetchMoreTriggerObserver: IntersectionObserver;
 
     private syncSubscription: Subscription = null;
     private syncCompletedSubscription: Subscription = null;
     private transactionListChangedSubscription: Subscription = null;
+    private transactionFetchStatusChangedSubscription: Subscription = null;
 
     private updateInterval = null;
     private updateTmeout = null;
 
-    public loadingTX = false;
     private fromWalletHome = true;
 
     constructor(
@@ -91,6 +97,7 @@ export class CoinHomePage implements OnInit {
         private coinTransferService: CoinTransferService,
         public native: Native,
         public events: Events,
+        private zone: NgZone,
         public popupProvider: PopupProvider,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
@@ -100,33 +107,70 @@ export class CoinHomePage implements OnInit {
         this.init();
     }
 
-    ionViewWillEnter() {
+    ngAfterViewInit() {
+        const options: IntersectionObserverInit = {
+            root: this.fetchMoreTrigger.nativeElement.closest('ion-content')
+        };
+        this.fetchMoreTriggerObserver = new IntersectionObserver((data: IntersectionObserverEntry[]): IntersectionObserverCallback => {
+            if (data[0].isIntersecting) {
+                this.fetchMoreTransactions();
+                //this.observer.disconnect();
+                return;
+            }
+        }, options);
+        this.fetchMoreTriggerObserver.observe(this.fetchMoreTrigger.nativeElement);
+    }
+
+    async ionViewWillEnter() {
         this.coinTransferService.elastosChainCode = this.elastosChainCode;
         this.titleBar.setTitle(this.translate.instant('wallet.coin-transactions'));
         void this.initData();
+
+        // First initialization
+        await this.subWallet.prepareTransactions();
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe(() => {
+            this.transactions = this.subWallet.getTransactions();
+
+            void this.zone.run(async () => {
+                await this.updateTransactions();
+            });
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.transactionFetchStatusChangedSubscription = this.subWallet.transactionsFetchStatusChanged().subscribe(isFetching => {
+            this.zone.run(() => {
+                this.shouldShowLoadingSpinner = isFetching;
+            });
+        });
     }
 
     ionViewDidLeave() {
         this.fromWalletHome = false;
         if (this.updateInterval) {
-          clearInterval(this.updateInterval);
-          this.updateInterval = null;
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
         }
         if (this.updateTmeout) {
-          clearTimeout(this.updateTmeout);
-          this.updateTmeout = null;
+            clearTimeout(this.updateTmeout);
+            this.updateTmeout = null;
         }
         if (this.syncSubscription) {
-          this.syncSubscription.unsubscribe();
-          this.syncSubscription = null;
+            this.syncSubscription.unsubscribe();
+            this.syncSubscription = null;
         }
         if (this.syncCompletedSubscription) {
-          this.syncCompletedSubscription.unsubscribe();
-          this.syncCompletedSubscription = null;
+            this.syncCompletedSubscription.unsubscribe();
+            this.syncCompletedSubscription = null;
         }
         if (this.transactionListChangedSubscription) {
-          this.transactionListChangedSubscription.unsubscribe();
-          this.transactionListChangedSubscription = null;
+            this.transactionListChangedSubscription.unsubscribe();
+            this.transactionListChangedSubscription = null;
+        }
+        if (this.transactionFetchStatusChangedSubscription) {
+            this.transactionFetchStatusChangedSubscription.unsubscribe();
+            this.transactionFetchStatusChangedSubscription = null;
         }
     }
 
@@ -150,21 +194,8 @@ export class CoinHomePage implements OnInit {
     ngOnInit() {
     }
 
-    async initData(refreshing = false) {
-        this.loadingTX = true;
-
-        if (!refreshing) {
-            // First initialization
-            await this.subWallet.prepareTransactions();
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe(async () => {
-                console.log("DEBUG coinhome transactionsListChanged()");
-                this.transactions = this.subWallet.getTransactions();
-                await this.updateTransactions();
-                this.loadingTX = false;
-            });
-        }
-
+    initData(refreshing = false) {
+        this.shouldShowLoadingSpinner = true;
         this.subWallet.fetchNewestTransactions();
     }
 
@@ -177,23 +208,22 @@ export class CoinHomePage implements OnInit {
     }
 
     async updateWalletInfo() {
-      // Update balance and get the latest transactions.
-      await this.subWallet.update();
+        // Update balance and get the latest transactions.
+        await this.subWallet.update();
     }
 
     startUpdateInterval() {
-      if (this.updateInterval === null) {
-        this.updateInterval = setInterval(() => {
-          this.loadingTX = true;
-          void this.updateWalletInfo();
-        }, 30000);// 30s
-      }
+        if (this.updateInterval === null) {
+            this.updateInterval = setInterval(() => {
+                void this.updateWalletInfo();
+            }, 30000);// 30s
+        }
     }
 
     restartUpdateInterval() {
-      clearInterval(this.updateInterval);
-      this.updateInterval = null;
-      this.startUpdateInterval();
+        clearInterval(this.updateInterval);
+        this.updateInterval = null;
+        this.startUpdateInterval();
     }
 
     chainIsELA(): boolean {
@@ -209,17 +239,15 @@ export class CoinHomePage implements OnInit {
     }
 
     chainIsERC20(): boolean {
-      return this.subWallet instanceof ERC20SubWallet;
+        return this.subWallet instanceof ERC20SubWallet;
     }
 
     async getAllTx() {
-        console.log("DEBUG coinhome getAllTx()");
-
         let transactions = await this.subWallet.getTransactions();
         if (!transactions) {
-          Logger.log('wallet', "Can not get transaction");
-          this.canShowMore = false;
-          return;
+            Logger.log('wallet', "Can not get transaction");
+            this.canFetchMore = false;
+            return;
         }
         this.transactionsLoaded = true;
         Logger.log('wallet', "Got all transactions: ", transactions);
@@ -229,14 +257,13 @@ export class CoinHomePage implements OnInit {
         //this.MaxCount = transactions.length;
 
         //if (this.start >= this.transactions.length) {
-        console.log("DEBUG coinhome getAllTx() A");
         if (this.subWallet.canFetchMoreTransactions()) {
             console.log("DEBUG coinhome can fetch more");
-            this.canShowMore = true;
+            this.canFetchMore = true;
         }
         else {
             console.log("DEBUG coinhome can NOT fetch more");
-            this.canShowMore = false;
+            this.canFetchMore = false;
         }
         /* } else {
             console.log("DEBUG coinhome getAllTx() B");
@@ -305,14 +332,12 @@ export class CoinHomePage implements OnInit {
         this.native.go('/wallet/coin-transfer');
     }
 
-    clickMore() {
+    fetchMoreTransactions() {
         this.restartUpdateInterval();
         this.start = this.transactions.length;
-        console.log("DEBUG coinhome clickmore this.start=",this.start);
 
-        this.canShowMore = false; // Will be updated again next time we get new transactions
-
-        this.subWallet.fetchMoreTransactions();
+        // Give time for the spinner to show.
+        runDelayed(() => this.subWallet.fetchMoreTransactions(), 100);
     }
 
     async doRefresh(event): Promise<void> {
@@ -335,7 +360,7 @@ export class CoinHomePage implements OnInit {
     checkUTXOCount() {
         // Check UTXOs only for SPV based coins.
         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
-          // TODO
+            // TODO
             // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
             //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.elastosChainCode, 0, 1, '');
             //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
@@ -353,7 +378,7 @@ export class CoinHomePage implements OnInit {
     }
 
     async createConsolidateTransaction() {
-      // TODO
+        // TODO
         // let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.elastosChainCode, '');
         // Logger.log('wallet', 'coin-home.page createConsolidateTransaction');
         // const transfer = new Transfer();
