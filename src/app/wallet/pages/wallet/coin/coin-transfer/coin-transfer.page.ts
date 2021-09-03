@@ -20,44 +20,43 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ModalController, PopoverController } from '@ionic/angular';
-import { Config } from '../../../../config/Config';
-import { Native } from '../../../../services/native.service';
-import { Util } from '../../../../model/util';
-import { WalletService } from '../../../../services/wallet.service';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { CoinTransferService, TransferType, Transfer } from '../../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
-import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { HttpClient } from '@angular/common/http';
-import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
-import { TranslateService } from '@ngx-translate/core';
-import { CurrencyService } from '../../../../services/currency.service';
-import { UiService } from '../../../../services/ui.service';
-import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
-import BigNumber from 'bignumber.js';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
-import { ContactsService } from '../../../../services/contacts.service';
-import { ContactsComponent } from '../../../../components/contacts/contacts.component';
-import { MainAndIDChainSubWallet } from '../../../../model/wallets/elastos/mainandidchain.subwallet';
+import { ModalController, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
-import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
-import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
+import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ETHTransactionStatus } from 'src/app/wallet/model/evm.types';
+import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
+import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
+import { ContactsComponent } from '../../../../components/contacts/contacts.component';
+import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
+import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
+import { Config } from '../../../../config/Config';
+import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
+import { CoinType, StandardCoinName } from '../../../../model/Coin';
+import { Util } from '../../../../model/util';
+import { MainAndIDChainSubWallet } from '../../../../model/wallets/elastos/mainandidchain.subwallet';
+import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
+import { AnySubWallet } from '../../../../model/wallets/subwallet';
+import { CoinTransferService, Transfer, TransferType } from '../../../../services/cointransfer.service';
+import { ContactsService } from '../../../../services/contacts.service';
+import { CurrencyService } from '../../../../services/currency.service';
+import { Native } from '../../../../services/native.service';
+import { UiService } from '../../../../services/ui.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 
 @Component({
@@ -484,14 +483,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     supportsMaxTransfer() {
-        // Only the payment transaction of ELA and IDChain support send all balance.
-        // TODO: what should to do with ETHSC and ERC20 Token?
-        if ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) {
-            if ((this.transferType === TransferType.SEND) || (this.amountCanBeEditedInPayIntent && (this.transferType === TransferType.PAY))) {
-                return true;
-            }
-        }
-        return false;
+        // TODO: withdraw transaction
+        return true;
     }
 
     setMaxTransfer() {
