@@ -120,4 +120,18 @@ export class GlobalEthereumRPCService {
 
         return this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
     }
+
+    public async eth_estimateGas(rpcApiUrl: string, from: string, to: string, value: string): Promise<any> {
+      const param = {
+          method: 'eth_estimateGas',
+          params: [{
+            from,
+            to,
+            value
+          }],
+          id: '1'
+      };
+      let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+      return parseInt(result);
+    }
 }
