@@ -7,6 +7,7 @@ import { NetworkWallet } from "../wallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
 import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
+import { Logger } from "src/app/logger";
 
 export type NewTransaction = {
   // TODO
@@ -41,9 +42,9 @@ export type NewToken = {
  */
 export abstract class TransactionProvider<TransactionType extends GenericTransaction> {
   // When loading from cache initially, or fetching new transactions from RPC
-  protected _transactionsListChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<void>>; 
+  protected _transactionsListChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<void>>;
   // Whether a fetch (real network fetch, not from cache) is in progress or not
-  protected _transactionFetchStatusChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<boolean>>; 
+  protected _transactionFetchStatusChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<boolean>>;
   // TODO: make protected like _transactionsListChanged
   public newTransactionReceived: Map<StandardCoinName | TokenAddress, Subject<NewTransaction>>; // Transactions seen for the first time - not emitted the very first time (after wallet import - initial fetch)
   protected newTokenReceived: Subject<NewToken>; // erc 20 + erc 721 tokens that are seen for the first time.
@@ -68,6 +69,9 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
   protected abstract getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider;
 
+  /**
+   * Returns transactions currently in cache.
+   */
   public getTransactions(subWallet: SubWallet<GenericTransaction>): TransactionType[] {
     return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet);
   }
@@ -76,21 +80,50 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     return this.getSubWalletTransactionProvider(subWallet).canFetchMoreTransactions(subWallet);
   }
 
+  /**
+   * Fetch the most recent transactions from network.
+   */
   public async fetchNewestTransactions(subWallet: AnySubWallet) {
+    // Make sure to not fetch when we are already fetching
+    if (this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).value === true) {
+      Logger.warn("wallet", "fetchNewestTransactions() skipped. Transactions fetch already in progress");
+      return;
+    }
+
+    // Fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(true);
+
+    // Fetch
     await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet);
+
+    // Not fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
   }
 
+  /**
+   * Fetch more transactions after the given transaction. If afterTransactions is not given,
+   * the currently last transaction in the cache is used to fetch more after it.
+   */
   public async fetchMoreTransactions(subWallet: AnySubWallet, afterTransaction?: TransactionType) {
+    // Make sure to not fetch when we are already fetching
+    if (this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).value === true) {
+      Logger.warn("wallet", "fetchMoreTransactions() skipped. Transactions fetch already in progress");
+      return;
+    }
+
     if (!afterTransaction) {
       // Compute the current last transaction to start fetching after that one.
       let currentTransactions = this.getTransactions(subWallet);
       afterTransaction = currentTransactions[currentTransactions.length-1];
     }
 
+    // Fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(true);
+
+    // Fetch
     await this.getSubWalletTransactionProvider(subWallet).fetchTransactions(subWallet, afterTransaction);
+
+    // Not fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
   }
 
