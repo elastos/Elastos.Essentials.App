@@ -1,14 +1,11 @@
-import { Config } from '../../../config/Config';
-import { StandardCoinName } from '../../Coin';
 import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { NetworkWallet } from '../networkwallet';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { Config } from '../../../config/Config';
+import { StandardCoinName } from '../../Coin';
 import { EthTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
-import { TranslateService } from '@ngx-translate/core';
-import { ElastosTransaction, TransactionDirection, RawTransactionType } from '../../providers/transaction.types';
+import { NetworkWallet } from '../networkwallet';
 
 /**
  * Specialized standard sub wallet for the ETH sidechain.
@@ -20,6 +17,10 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet<EthTransaction> {
 
     void this.initialize();
   }
+
+    public supportsCrossChainTransfers(): boolean {
+        return true;
+    }
 
   public getMainIcon(): string {
     switch (this.id) {
@@ -190,6 +191,26 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet<EthTransaction> {
       gasPrice = await this.getGasPrice();
     }
     // const gasPrice = '1000000000';
+
+    //   if (toAmount === -1) {
+    //       // const estimateAmount = this.web3.utils.toWei(this.balance.toString());
+    //       const estimateAmount = this.web3.utils.toWei('1');
+
+    //       const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
+    //       let estimateGas = 0;
+    //       try {
+    //           // Estimate gas cost
+    //           estimateGas = await method.estimateGas();
+    //           Logger.warn('wallet', '----estimateGas:', estimateGas)
+    //       } catch (error) {
+    //           Logger.log('wallet', 'estimateGas error:', error);
+    //       }
+    //       Logger.warn('wallet', '----estimateGas:', estimateGas)
+
+    //       let maxSendAmount = estimateAmount - estimateGas * parseInt(gasPrice);
+    //       Logger.warn('wallet', '----maxSendAmount:', maxSendAmount)
+
+    //   }
     const toAmountSend = this.web3.utils.toWei(toAmount.toString());
 
     const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
@@ -200,12 +221,13 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet<EthTransaction> {
     }
     // TODO: The value from estimateGas is too small sometimes (eg 22384) for withdraw transaction.
     // Maybe it is the bug of node?
-    // try {
-    //     // Estimate gas cost
-    //     gasLimit = await method.estimateGas();
-    // } catch (error) {
-    //     Logger.log('wallet', 'estimateGas error:', error);
-    // }
+    //   try {
+    //       // Estimate gas cost
+    //       let estimateGas = await method.estimateGas();
+    //       Logger.warn('wallet', '----estimateGas:', estimateGas)
+    //   } catch (error) {
+    //       Logger.log('wallet', 'estimateGas error:', error);
+    //   }
     const data = method.encodeABI();
     let nonce = await this.getNonce();
     Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);

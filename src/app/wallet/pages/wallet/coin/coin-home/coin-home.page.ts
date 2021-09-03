@@ -22,30 +22,28 @@
 
 import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Config } from '../../../../config/Config';
-import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
-import { Util } from '../../../../model/util';
-import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
-import { GenericTransaction, TransactionInfo } from '../../../../model/providers/transaction.types';
 import * as moment from 'moment';
-import { CurrencyService } from '../../../../services/currency.service';
-import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
-import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
-import { UiService } from '../../../../services/ui.service';
-import { LocalStorage } from '../../../../services/storage.service';
 import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { Config } from '../../../../config/Config';
+import { CoinType, StandardCoinName } from '../../../../model/Coin';
+import { GenericTransaction, TransactionInfo } from '../../../../model/providers/transaction.types';
+import { Util } from '../../../../model/util';
+import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
+import { AnySubWallet } from '../../../../model/wallets/subwallet';
+import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
+import { CurrencyService } from '../../../../services/currency.service';
+import { Native } from '../../../../services/native.service';
+import { PopupProvider } from '../../../../services/popup.service';
+import { LocalStorage } from '../../../../services/storage.service';
+import { UiService } from '../../../../services/ui.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 @Component({
     selector: 'app-coin-home',
@@ -427,11 +425,7 @@ export class CoinHomePage implements OnInit {
     }
 
     coinCanBeTransferred() {
-        // Standard ELA coins can be transferred; ERC20 coins can't
-        if (this.subWallet instanceof StandardSubWallet)
-            return true;
-        else
-            return false;
+        return this.subWallet.supportsCrossChainTransfers();
     }
 
     /**
