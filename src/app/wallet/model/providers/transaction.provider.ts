@@ -4,22 +4,13 @@ import { App } from "src/app/model/app.enum";
 import { GlobalLanguageService } from "src/app/services/global.language.service";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
-import { ERC20Coin, StandardCoinName, TokenAddress, TokenType } from "../Coin";
+import { ERC20Coin, StandardCoinName, TokenAddress } from "../Coin";
 import { ERCTokenInfo } from "../evm.types";
 import { NFTType } from "../nfts/nft";
 import { NetworkWallet } from "../wallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../wallets/subwallet";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
 import { GenericTransaction } from "./transaction.types";
-
-export type NewTransaction = {
-  // TODO
-}
-
-export type NewToken = {
-  type: TokenType;
-  // TODO
-}
 
 /**
  * Class that allows networks to fetch and refresh transactions in background, or when the UI needs more.
@@ -30,11 +21,13 @@ export type NewToken = {
  *    - So that we can notify users of:
  *      - Newly received transactions for subwallets that are visible
  *      - Newly received ERC20 tokens or NFTs
- * - Transactions caches are used only as a display cache to be able to view some transactions offline or just
+ * - Transactions caches are used as a display cache to be able to view some transactions offline or just
  *   after entering the transactions list.
- * - Transaction providers maintain a list of transactions that are:
- *    - First, filled by the disk cache
- *    - Then, filled by more fetches (and sorted by date) either when UI requests it, or by some background tasks
+ *    - The cache is loaded from disk
+ *    - The cache maintains at most 100 transactions on disk (the most recent)
+ *    - The cache can contain many transactions in memory (orders by time value)
+ *    - UI relies on this cache for display.
+ *    - Caches are filled by more fetches (and sorted by date) either when UI requests it, or by some background tasks
  * - When user enters the transactions list:
  *    - We first display the cache (ex: all of 100 items, no pagination, provided by the provider after loading from the cache)
  *    - We request to fetch the latest transactions for the subwallet.
@@ -49,14 +42,17 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   // Whether a fetch (real network fetch, not from cache) is in progress or not
   protected _transactionFetchStatusChanged: Map<StandardCoinName | TokenAddress, BehaviorSubject<boolean>>;
   // TODO: make protected like _transactionsListChanged
-  public newTransactionReceived: Map<StandardCoinName | TokenAddress, Subject<NewTransaction>>; // Transactions seen for the first time - not emitted the very first time (after wallet import - initial fetch)
+  // TODO public newTransactionReceived: Map<StandardCoinName | TokenAddress, Subject<NewTransaction>>; // Transactions seen for the first time - not emitted the very first time (after wallet import - initial fetch)
   public newTokenReceived: Subject<ERCTokenInfo>; // erc 20 + erc 721 tokens that are seen for the first time.
+  // List of running timers
+  private runningTasks: Map<any, void>;
 
   constructor(protected networkWallet: NetworkWallet) {
     this._transactionsListChanged = new Map();
     this._transactionFetchStatusChanged = new Map();
-    this.newTransactionReceived = new Map();
+    // TODO this.newTransactionReceived = new Map();
     this.newTokenReceived = new Subject();
+    this.runningTasks = new Map();
   }
 
   /**
@@ -67,8 +63,18 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   /**
    * Stops the provider. For instance, when the network is changed.
    * At this time, transactions should stop to be refreshed.
+   *
+   * May be overriden by child classes
    */
-  public abstract stop(): Promise<void>;
+  public stop(): Promise<void> {
+    // Stop all timers / refresh tasks
+    for (let tasksTimeoutHandles of Array.from(this.runningTasks.keys())) {
+      this.runningTasks.delete(tasksTimeoutHandles);
+      clearTimeout(tasksTimeoutHandles);
+    }
+
+    return;
+  }
 
   protected abstract getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider;
 
@@ -164,9 +170,11 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     // Only restart a timer after all current operations are complete. We don't want to use an internal
     // that would create many slow updates in parrallel.
-    setTimeout(() => {
+    let timeoutHandle = setTimeout(() => {
+      this.runningTasks.delete(timeoutHandle);
       void this.callAndRearmTask(repeatingTask, repeatMs);
     }, repeatMs);
+    this.runningTasks.set(timeoutHandle);
   }
 
   /**

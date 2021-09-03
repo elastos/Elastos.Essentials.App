@@ -53,22 +53,20 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
             if (!this.masterWallet.account.SingleAddress) {
-              await this.checkAddresses(true);
-              await this.checkAddresses(false);
+                await this.checkAddresses(true);
+                await this.checkAddresses(false);
             }
             await this.updateBalance();
         }, 1000);
     }
 
     public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
-        console.log("DEBUG getTransactionInfo", transaction)
-
         const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
         let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction, translate);
         transactionInfo.amount = new BigNumber(transaction.value, 10), //.dividedBy(Config.SELAAsBigNumber);
-        transactionInfo.symbol = '';
+            transactionInfo.symbol = '';
         transactionInfo.isCrossChain = false;
         transactionInfo.txid = transaction.txid;
 
@@ -88,31 +86,31 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
 
         switch (transaction.txtype) {
-          case RawTransactionType.RechargeToSideChain:
-          case RawTransactionType.WithdrawFromSideChain:
-          case RawTransactionType.TransferCrossChainAsset:
-            transactionInfo.isCrossChain = true;
-            break;
-          default:
-            break;
+            case RawTransactionType.RechargeToSideChain:
+            case RawTransactionType.WithdrawFromSideChain:
+            case RawTransactionType.TransferCrossChainAsset:
+                transactionInfo.isCrossChain = true;
+                break;
+            default:
+                break;
         }
 
         return await transactionInfo;
     }
 
     private getSenderAddress(transaction: ElastosTransaction): string[] {
-      if (transaction.type === TransactionDirection.RECEIVED) {
-        if (!transaction.inputs) {
-          return null;
+        if (transaction.type === TransactionDirection.RECEIVED) {
+            if (!transaction.inputs) {
+                return null;
+            }
+            let senderAddress = [];
+            for (let i = 0, len = transaction.inputs.length; i < len; i++) {
+                senderAddress.push(transaction.inputs[i])
+            }
+            return senderAddress.length > 0 ? senderAddress : null;
+        } else {
+            return null;
         }
-        let senderAddress = [];
-        for (let i = 0, len = transaction.inputs.length; i < len; i++) {
-          senderAddress.push(transaction.inputs[i])
-        }
-        return senderAddress.length > 0 ? senderAddress : null;
-      } else {
-        return null;
-      }
     }
 
     public async update() {
@@ -130,10 +128,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     public async hasPendingBalance() {
         let pendingTx = await this.getPendingTransaction();
         if (pendingTx.length === 0) {
-          return false;
+            return false;
         }
         else {
-          return true;
+            return true;
         }
     }
 
@@ -146,7 +144,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     // Ignore gasPrice and gasLimit.
-    public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit:string = null): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo = "", gasPrice: string = null, gasLimit: string = null): Promise<string> {
         let toAmount = 0;
         if (amount == -1) {
             toAmount = Math.floor(this.balance.minus(10000).toNumber());
@@ -203,18 +201,18 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
         let lockAddres = '';
         switch (toElastosChainCode) {
-          case StandardCoinName.IDChain:
-            lockAddres = Config.IDCHAIN_DEPOSIT_ADDRESS;
-          break;
-          case StandardCoinName.ETHSC:
-            lockAddres = Config.ETHSC_DEPOSIT_ADDRESS;
-          break;
-          case StandardCoinName.ETHDID:
-            lockAddres = Config.ETHDID_DEPOSIT_ADDRESS;
-          break;
-          default:
-            Logger.error('wallet', 'createDepositTransaction not support ', toElastosChainCode);
-            return null;
+            case StandardCoinName.IDChain:
+                lockAddres = Config.IDCHAIN_DEPOSIT_ADDRESS;
+                break;
+            case StandardCoinName.ETHSC:
+                lockAddres = Config.ETHSC_DEPOSIT_ADDRESS;
+                break;
+            case StandardCoinName.ETHDID:
+                lockAddres = Config.ETHDID_DEPOSIT_ADDRESS;
+                break;
+            default:
+                Logger.error('wallet', 'createDepositTransaction not support ', toElastosChainCode);
+                return null;
         }
 
         return this.masterWallet.walletManager.spvBridge.createDepositTransaction(
@@ -282,7 +280,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         const param = {
             method: 'sendrawtransaction',
             params: [
-              payload
+                payload
             ],
         };
 
@@ -540,18 +538,18 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
         try {
             do {
-              let addressArray = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, internal);
-              addressArrayUsed = []
-              const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
-              if (txRawList && txRawList.length > 0) {
-                  for (let i = 0, len = txRawList.length; i < len; i++) {
-                      addressArrayUsed.push(txRawList[i].result.txhistory[0].address);
-                  }
-              }
+                let addressArray = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, internal);
+                addressArrayUsed = []
+                const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
+                if (txRawList && txRawList.length > 0) {
+                    for (let i = 0, len = txRawList.length; i < len; i++) {
+                        addressArrayUsed.push(txRawList[i].result.txhistory[0].address);
+                    }
+                }
 
-              if (addressArrayUsed.length > 0) {
-                await this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
-              }
+                if (addressArrayUsed.length > 0) {
+                    await this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
+                }
             } while (addressArrayUsed.length > 0);
         } catch (e) {
             Logger.error("wallet", 'checkAddresses exception:', e);
@@ -561,57 +559,57 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     private async getPendingTransaction() {
         return await [];
-      /* TODO const twoMinutesago = moment().add(-2, 'minutes').valueOf();
-      // It takes several seconds for getTransactionByRPC.
-      if ((this.paginatedTransactions === null) || (this.getTransactionsTime < twoMinutesago)) {
-        // Update transactions to get the pending transactions.
-        await this.getTransactionsByRpc(this.timestampEnd);
-      }
-
-      let pendingTransactions = [];
-      for (let i = 0, len = this.paginatedTransactions.txhistory.length; i < len; i++) {
-        if (this.paginatedTransactions.txhistory[i].Status !== TransactionStatus.CONFIRMED) {
-          pendingTransactions.push(this.paginatedTransactions.txhistory[i].txid);
-        } else {
-          // the transactions list is sorted by block height.
-          break;
+        /* TODO const twoMinutesago = moment().add(-2, 'minutes').valueOf();
+        // It takes several seconds for getTransactionByRPC.
+        if ((this.paginatedTransactions === null) || (this.getTransactionsTime < twoMinutesago)) {
+          // Update transactions to get the pending transactions.
+          await this.getTransactionsByRpc(this.timestampEnd);
         }
-      }
-      Logger.log('wallet', 'Pending Transactions:', pendingTransactions);
-      return pendingTransactions; */
+
+        let pendingTransactions = [];
+        for (let i = 0, len = this.paginatedTransactions.txhistory.length; i < len; i++) {
+          if (this.paginatedTransactions.txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+            pendingTransactions.push(this.paginatedTransactions.txhistory[i].txid);
+          } else {
+            // the transactions list is sorted by block height.
+            break;
+          }
+        }
+        Logger.log('wallet', 'Pending Transactions:', pendingTransactions);
+        return pendingTransactions; */
     }
 
     private async getUTXOUsedInPendingTransaction() {
-      let pendingTx = await this.getPendingTransaction();
-      if (pendingTx.length === 0) return [];
+        let pendingTx = await this.getPendingTransaction();
+        if (pendingTx.length === 0) return [];
 
-      let txList = await this.getrawtransaction(this.id as StandardCoinName, pendingTx);
-      let usedUTXO = [];
-      for (let i = 0, len = txList.length; i < len; i++) {
-        let vinLen = 0;
-        if (txList[i].result && txList[i].result.vin) {
-          vinLen = txList[i].result.vin.length;
+        let txList = await this.getrawtransaction(this.id as StandardCoinName, pendingTx);
+        let usedUTXO = [];
+        for (let i = 0, len = txList.length; i < len; i++) {
+            let vinLen = 0;
+            if (txList[i].result && txList[i].result.vin) {
+                vinLen = txList[i].result.vin.length;
+            }
+            for (let j = 0; j < vinLen; j++) {
+                usedUTXO.push(txList[i].result.vin[j].txid);
+            }
         }
-        for (let j = 0; j < vinLen; j++) {
-          usedUTXO.push(txList[i].result.vin[j].txid);
-        }
-      }
-      return usedUTXO;
+        return usedUTXO;
     }
 
     public async getrawtransaction(elastosChainCode: StandardCoinName, txidArray: string[]): Promise<any[]> {
         const paramArray = [];
         for (let i = 0, len = txidArray.length; i < len; i++) {
-          const txid = txidArray[i];
-          const param = {
-              method: 'getrawtransaction',
-              params: {
-                txid,
-                verbose : true
-              },
-              id: i.toString()
-          };
-          paramArray.push(param);
+            const txid = txidArray[i];
+            const param = {
+                method: 'getrawtransaction',
+                params: {
+                    txid,
+                    verbose: true
+                },
+                id: i.toString()
+            };
+            paramArray.push(param);
         }
 
         let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(elastosChainCode);
@@ -654,16 +652,16 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
 
         if (utxoArray === null) {
-          Logger.warn('wallet', 'Can not find utxo!')
-          return null;
+            Logger.warn('wallet', 'Can not find utxo!')
+            return null;
         }
 
         // Remove the utxo that used in pending transactions.
         let usedUTXOs = await this.getUTXOUsedInPendingTransaction();
         for (let i = utxoArray.length - 1; i >= 0; i--) {
-          if (usedUTXOs.indexOf(utxoArray[i].txid) >= 0) {
-              utxoArray.splice(i, 1);
-          }
+            if (usedUTXOs.indexOf(utxoArray[i].txid) >= 0) {
+                utxoArray.splice(i, 1);
+            }
         }
 
         let utxoArrayForSDK = [];
@@ -695,11 +693,11 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         }
 
         if (!getEnoughUTXO) {
-          //TODO. Maybe the coinbase utxo is not avaliable? or popup the prompt?
-          //return all the utxo.
-          return utxoArrayForSDK;
+            //TODO. Maybe the coinbase utxo is not avaliable? or popup the prompt?
+            //return all the utxo.
+            return utxoArrayForSDK;
         } else {
-          return utxoArrayForSDK;
+            return utxoArrayForSDK;
         }
     }
 
@@ -727,7 +725,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         if (this.votingUtxoArray && (this.votingUtxoArray.length > 0)) {
             let detail = await this.getTransactionDetails(this.votingUtxoArray[0].txid);
             if (detail) {
-              return detail.vout[0].payload.contents;
+                return detail.vout[0].payload.contents;
             }
         }
         return null;
@@ -779,24 +777,24 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         if (!this.masterWallet.account.SingleAddress) {
             balance = await this.getBalanceByAddress(true);
             if (balance == null) {
-              return;
+                return;
             }
             totalBalance = totalBalance.plus(balance);
         }
 
         balance = await this.getBalanceByAddress(false);
         if (balance == null) {
-          return;
+            return;
         }
         totalBalance = totalBalance.plus(balance);
 
         if (this.id == StandardCoinName.ELA) {
-          // Coinbase reward, eg. dpos
-          balance = await this.getBalanceByOwnerAddress();
-          if (balance == null) {
-            return;
-          }
-          totalBalance = totalBalance.plus(balance);
+            // Coinbase reward, eg. dpos
+            balance = await this.getBalanceByOwnerAddress();
+            if (balance == null) {
+                return;
+            }
+            totalBalance = totalBalance.plus(balance);
         }
 
         this.balance = totalBalance;
@@ -807,29 +805,29 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     public async getOwnerAddress(): Promise<string> {
         if (!this.ownerAddress) {
-          this.ownerAddress = await this.masterWallet.walletManager.spvBridge.getOwnerAddress(
-            this.masterWallet.id, this.id);
+            this.ownerAddress = await this.masterWallet.walletManager.spvBridge.getOwnerAddress(
+                this.masterWallet.id, this.id);
         }
         return this.ownerAddress;
-      }
+    }
 
     private async getBalanceByOwnerAddress() {
-      if (this.id != StandardCoinName.ELA) return;
+        if (this.id != StandardCoinName.ELA) return;
 
-      let ownerAddress = await this.getOwnerAddress();
-      let addressArray = [ownerAddress];
-      try {
-          const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray);
-          if (balance === null) {
-            Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
-            return null
-          }
-          Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
-          return balance;
-      } catch (e) {
-          Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
-          throw e;
-      }
+        let ownerAddress = await this.getOwnerAddress();
+        let addressArray = [ownerAddress];
+        try {
+            const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray);
+            if (balance === null) {
+                Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
+                return null
+            }
+            Logger.log("wallet", 'getBalanceByOwnerAddress balance:', balance.toString());
+            return balance;
+        } catch (e) {
+            Logger.error("wallet", 'jsonRPCService.getBalanceByAddress exception:', e);
+            throw e;
+        }
     }
 
     private async getBalanceByAddress(internalAddress: boolean) {
@@ -850,8 +848,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             try {
                 const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray.Addresses);
                 if (balance === null) {
-                  Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
-                  return null
+                    Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
+                    return null
                 }
                 totalBalance = totalBalance.plus(balance);
             } catch (e) {
@@ -870,7 +868,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(elastosChainCode);
         const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
         if (rpcApiUrl === null) {
-          return null;
+            return null;
         }
 
         let balanceOfSELA = new BigNumber(0);
@@ -908,11 +906,11 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     async getTransactionDetails(txid: string): Promise<TransactionDetail> {
         let details = await this.getrawtransaction(this.id as StandardCoinName, [txid]);
         if (details && details[0].result) {
-          return details[0].result;
+            return details[0].result;
         } else {
-          // Remove error transaction.
-          // TODO await this.removeInvalidTransaction(txid);
-          return null;
+            // Remove error transaction.
+            // TODO await this.removeInvalidTransaction(txid);
+            return null;
         }
     }
 
@@ -960,7 +958,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         if (!this.masterWallet.account.SingleAddress) {
             let utxos = await this.getAllUtxoByAddress(true, type);
             if (utxos && utxos.length > 0) {
-                if(utxoArray)
+                if (utxoArray)
                     utxoArray = [...utxoArray, ...utxos];
                 else
                     utxoArray = utxos;
@@ -1004,9 +1002,9 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             }
             // The ownerAddress is different with the external address even in single address wallet.
             if ((startIndex === 0) && !internalAddress && (this.id === StandardCoinName.ELA)) {
-              // OwnerAddress: for register dpos node, CRC.
-              const ownerAddress = await this.getOwnerAddress();
-              addressArray.Addresses.push(ownerAddress);
+                // OwnerAddress: for register dpos node, CRC.
+                const ownerAddress = await this.getOwnerAddress();
+                addressArray.Addresses.push(ownerAddress);
             }
 
             startIndex += addressArray.Addresses.length;
@@ -1014,7 +1012,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             try {
                 let utxos = await GlobalElastosAPIService.instance.getAllUtxoByAddress(this.id as StandardCoinName, addressArray.Addresses, type);
                 if (utxos && utxos.length > 0) {
-                    if(utxoArray)
+                    if (utxoArray)
                         utxoArray = [...utxoArray, ...utxos];
                     else
                         utxoArray = utxos;

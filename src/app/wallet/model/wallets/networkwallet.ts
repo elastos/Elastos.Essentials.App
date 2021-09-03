@@ -64,6 +64,15 @@ export abstract class NetworkWallet {
         return;
     }
 
+    /**
+     * Stops network wallet and subwallets updates that are running in background.
+     * This method call should be awaited to make sure every running task is stopped before
+     * switching to another user or network for instance.
+     */
+    public async stopBackgroundUpdates(): Promise<void> {
+        await this.getTransactionDiscoveryProvider().stop();
+    }
+
     public getDisplayBalance(): BigNumber {
         // Sum all subwallets balances to get the master wallet total balance
         // Only standard ELA wallets are summed up as ERC20 wallets amounts use their own currency
