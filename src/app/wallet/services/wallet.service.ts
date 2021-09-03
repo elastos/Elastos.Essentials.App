@@ -23,42 +23,42 @@
 import { Injectable, NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-
+import { BehaviorSubject } from 'rxjs';
+import { Logger } from 'src/app/logger';
+import { JSONObject } from 'src/app/model/json';
+import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { Network } from '../model/networks/network';
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
+import { WalletAccount, WalletAccountType } from '../model/WalletAccount';
 import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
-import { WalletAccountType, WalletAccount } from '../model/WalletAccount';
-import { PopupProvider } from './popup.service';
-import { Native } from './native.service';
-import { LocalStorage } from './storage.service';
+import { NetworkWallet } from '../model/wallets/networkwallet';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
 import { ERC721Service } from './erc721.service';
-import { BehaviorSubject } from 'rxjs';
-import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
-import { NetworkWallet } from '../model/wallets/networkwallet';
-import { JSONObject } from 'src/app/model/json';
-import { Network } from '../model/networks/network';
+import { PopupProvider } from './popup.service';
+import { LocalStorage } from './storage.service';
+
 
 class SubwalletTransactionStatus {
-  private subwalletSubjects = new Map<string, BehaviorSubject<number>>();
+    private subwalletSubjects = new Map<string, BehaviorSubject<number>>();
 
-  public get(subwalletSubjectId: string): BehaviorSubject<number> {
-    if (!this.subwalletSubjects.has(subwalletSubjectId)) {
-      let subject = new BehaviorSubject<number>(-1);
-      this.subwalletSubjects.set(subwalletSubjectId, subject);
+    public get(subwalletSubjectId: string): BehaviorSubject<number> {
+        if (!this.subwalletSubjects.has(subwalletSubjectId)) {
+            let subject = new BehaviorSubject<number>(-1);
+            this.subwalletSubjects.set(subwalletSubjectId, subject);
+        }
+        return this.subwalletSubjects.get(subwalletSubjectId);
     }
-    return this.subwalletSubjects.get(subwalletSubjectId);
-  }
 
-  public set(subwalletSubjectId: string, count: number) {
-    // Create the subject if needed, and emit an update event.
-    this.get(subwalletSubjectId).next(count);
-  }
+    public set(subwalletSubjectId: string, count: number) {
+        // Create the subject if needed, and emit an update event.
+        this.get(subwalletSubjectId).next(count);
+    }
 }
 
 export enum WalletStateOperation {
@@ -71,7 +71,7 @@ export enum WalletStateOperation {
 }
 
 // {'ELA':{}, 'ETHSC': {chainid ... }, etc}
-export type SPVNetworkConfig = {[networkName: string]:JSONObject};
+export type SPVNetworkConfig = { [networkName: string]: JSONObject };
 
 @Injectable({
     providedIn: 'root'
@@ -85,7 +85,7 @@ export class WalletService {
         [index: string]: MasterWallet
     } = {};
 
-    private  networkWallets: {
+    private networkWallets: {
         [index: string]: NetworkWallet
     } = {};
 
@@ -151,7 +151,10 @@ export class WalletService {
     }
 
     async stop() {
-      await this.spvBridge.destroy();
+        Logger.log('wallet', "Wallet service is stopping");
+        await this.spvBridge.destroy();
+
+        await this.terminateActiveNetworkWallets();
     }
 
     private async initWallets(): Promise<boolean> {
@@ -177,13 +180,13 @@ export class WalletService {
                 return false;
             }
 
-            Logger.log('wallet', "Got "+idList.length+" wallets from the SPVSDK");
+            Logger.log('wallet', "Got " + idList.length + " wallets from the SPVSDK");
 
             // Rebuild our local model for all wallets returned by the SPV SDK.
             for (let i = 0; i < idList.length; i++) {
                 const masterId = idList[i];
 
-                Logger.log('wallet', "Rebuilding local model for wallet id "+masterId);
+                Logger.log('wallet', "Rebuilding local model for wallet id " + masterId);
 
                 // Try to retrieve locally storage extended info about this wallet
                 if (!(await MasterWallet.extendedInfoExistsForMasterId(masterId))) {
@@ -218,6 +221,9 @@ export class WalletService {
      * for each master wallet.
      */
     private async onActiveNetworkChanged(activatedNetwork: Network): Promise<void> {
+        // Terminate all the active network wallets
+        await this.terminateActiveNetworkWallets();
+
         if (activatedNetwork) {
             Logger.log('wallet', 'Initializing network master wallet for active network:', activatedNetwork);
 
@@ -232,6 +238,12 @@ export class WalletService {
                     this.activeNetworkWallet.next(networkWallet);
                 }
             }
+        }
+    }
+
+    private async terminateActiveNetworkWallets(): Promise<void> {
+        for (let networkWallet of this.getNetworkWalletsList()) {
+            await networkWallet.stopBackgroundUpdates();
         }
     }
 
@@ -256,9 +268,9 @@ export class WalletService {
 
     public getActiveMasterWallet() {
         if (this.activeMasterWalletId) {
-          return this.masterWallets[this.activeMasterWalletId];
+            return this.masterWallets[this.activeMasterWalletId];
         } else {
-          return null;
+            return null;
         }
     }
 
@@ -269,11 +281,11 @@ export class WalletService {
     }
 
     public async setActiveMasterWallet(masterId: WalletID): Promise<void> {
-      Logger.log('wallet', 'Requested to set active master wallet to:', masterId);
-      if (masterId && (this.masterWallets[masterId])) {
-          this.activeMasterWalletId = masterId;
-          await this.localStorage.saveCurMasterId(this.networkTemplate, { masterId: masterId });
-      }
+        Logger.log('wallet', 'Requested to set active master wallet to:', masterId);
+        if (masterId && (this.masterWallets[masterId])) {
+            this.activeMasterWalletId = masterId;
+            await this.localStorage.saveCurMasterId(this.networkTemplate, { masterId: masterId });
+        }
     }
 
     public getMasterWallet(masterId: WalletID): MasterWallet {
@@ -327,10 +339,10 @@ export class WalletService {
             // Compatible with older versions.
             let walletList = this.getMasterWalletsList();
             if (walletList.length > 0) {
-              await this.setActiveMasterWallet(walletList[0].id);
-              return walletList[0].id;
+                await this.setActiveMasterWallet(walletList[0].id);
+                return walletList[0].id;
             } else {
-              return null;
+                return null;
             }
         }
     }
@@ -371,7 +383,7 @@ export class WalletService {
      * After creates a new master wallet both in the SPV SDK and in our local model, using a given mnemonic.
      * Go to wallet home page
      */
-     public async importMasterWalletWithMnemonic(
+    public async importMasterWalletWithMnemonic(
         masterId: WalletID,
         walletName: string,
         mnemonicStr: string,
@@ -456,17 +468,17 @@ export class WalletService {
         // If it is detected that this is a single address wallet, then the multi address wallet will be deleted.
         // In this case, we do not need to triggle event and delete password.
         if (triggerEvent) {
-          // Notify some listeners
-          this.events.publish("masterwallet:destroyed", id);
+            // Notify some listeners
+            this.events.publish("masterwallet:destroyed", id);
 
-          if (Object.values(this.networkWallets).length > 0) {
-              let networkWalletList = this.getNetworkWalletsList();
-              await this.setActiveNetworkWallet(networkWalletList[0]);
-              this.native.setRootRouter("/wallet/wallet-home");
-          } else {
-              this.activeNetworkWallet.next(null);
-              this.goToLauncherScreen();
-          }
+            if (Object.values(this.networkWallets).length > 0) {
+                let networkWalletList = this.getNetworkWalletsList();
+                await this.setActiveNetworkWallet(networkWalletList[0]);
+                this.native.setRootRouter("/wallet/wallet-home");
+            } else {
+                this.activeNetworkWallet.next(null);
+                this.goToLauncherScreen();
+            }
         }
     }
 

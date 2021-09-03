@@ -57,11 +57,6 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
     this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);
   }
 
-  public stop(): Promise<void> {
-    // TODO
-    return;
-  }
-
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
     if (subWallet instanceof MainchainSubWallet)
       return this.mainChainProvider;

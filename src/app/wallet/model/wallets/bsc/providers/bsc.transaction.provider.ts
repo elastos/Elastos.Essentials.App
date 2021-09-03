@@ -29,10 +29,6 @@ export class BSCTransactionProvider extends TransactionProvider<EthTransaction> 
     //this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);
   }
 
-  public stop(): Promise<void> {
-    return;
-  }
-
   protected getSubWalletTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
     if (subWallet instanceof BscChainSubWallet)
       return this.mainProvider;
