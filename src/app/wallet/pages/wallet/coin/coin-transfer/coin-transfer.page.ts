@@ -69,6 +69,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public networkWallet: NetworkWallet;
+    public tokensymbol = '';
 
     // Define transfer type
     public transferType: TransferType;
@@ -192,6 +193,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
         this.transferType = this.coinTransferService.transferType;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
+        this.tokensymbol = this.networkWallet.getDisplayTokenName();
 
         this.fromSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
 
