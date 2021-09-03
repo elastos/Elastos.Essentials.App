@@ -75,6 +75,10 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
         runDelayed(() => this.updateBalance(), 5000);
     }
 
+    public getUniqueIdentifierOnNetwork(): string {
+        return this.coin.getContractAddress();
+    }
+
     public async createAddress(): Promise<string> {
         // Create on ETH always returns the same unique address.
         return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.elastosChainCode);

@@ -16,6 +16,10 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
         super(networkWallet, id, CoinType.STANDARD);
     }
 
+    public getUniqueIdentifierOnNetwork(): string {
+        return this.id;
+    }
+
     public async destroy() {
         try {
           await this.masterWallet.walletManager.spvBridge.destroySubWallet(this.masterWallet.id, this.id);

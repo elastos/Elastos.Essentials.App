@@ -83,9 +83,9 @@
                 <ion-col class="title-col" size="12">
                     <h1>{{ 'wallet.coin-transactions' | translate }}</h1>
                 </ion-col>
-                <ion-col *ngIf="loadingTX" class="spinner-col" size="12">
+                <!-- <ion-col *ngIf="shouldShowLoadingSpinner" class="spinner-col" size="12">
                     <ion-spinner name="dots"></ion-spinner>
-                </ion-col>
+                </ion-col> -->
             </ion-row>
 
             <div *ngIf="transferList.length > 0">
@@ -116,9 +116,14 @@
                 <img src="assets/wallet/icons/warning.svg" />
                 <h1>{{ 'wallet.coin-no-transactions' | translate }}</h1>
             </div>
-            <div class="more" (click)="clickMore()" *ngIf="canShowMore">
-                {{ 'wallet.click-to-load-more' | translate }}
-            </div>
+
+            <!-- Used to detect when user reaches the screen bottom to load more transactions -->
+            <div #fetchmoretrigger></div>
+            <ion-row class="list-title-row" *ngIf="canFetchMore && shouldShowLoadingSpinner">
+                <ion-col class="spinner-col" size="12">
+                    <ion-spinner id="fetching-more-spinner" name="dots"></ion-spinner>
+                </ion-col>
+            </ion-row>
         </ion-grid>
     </ion-content>
 </ion-content>
