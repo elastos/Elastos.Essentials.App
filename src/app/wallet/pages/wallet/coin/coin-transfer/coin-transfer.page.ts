@@ -193,9 +193,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
         this.transferType = this.coinTransferService.transferType;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
-        this.tokensymbol = this.networkWallet.getDisplayTokenName();
 
         this.fromSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
+        this.tokensymbol = this.fromSubWallet.getDisplayTokenName();
 
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.elastosChainCode].getDisplayBalance());
 

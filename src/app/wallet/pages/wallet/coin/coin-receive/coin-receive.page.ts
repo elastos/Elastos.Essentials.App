@@ -1,17 +1,16 @@
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { WalletService } from '../../../../services/wallet.service';
-import { Native } from '../../../../services/native.service';
-import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { StandardCoinName } from '../../../../model/Coin';
 import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { StandardCoinName } from '../../../../model/Coin';
+import { CoinTransferService } from '../../../../services/cointransfer.service';
+import { Native } from '../../../../services/native.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 @Component({
     selector: 'app-coin-receive',
@@ -24,6 +23,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     public networkWallet: NetworkWallet = null;
     private masterWalletId = '1';
     public elastosChainCode: string;
+    public tokenName = '';
     public qrcode: string = null;
     public isSingleAddress = false;
     private selectSubscription: Subscription = null;
@@ -45,7 +45,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("wallet.coin-receive-title", { coinName: this.elastosChainCode}));
+        this.titleBar.setTitle(this.translate.instant("wallet.coin-receive-title", { coinName: this.tokenName }));
     }
 
     ngOnDestroy() {
@@ -58,6 +58,8 @@ export class CoinReceivePage implements OnInit, OnDestroy {
         this.masterWalletId = this.coinTransferService.masterWalletId;
         this.elastosChainCode = this.coinTransferService.elastosChainCode;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
+        const subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
+        this.tokenName = subWallet.getDisplayTokenName();
 
         await this.getAddress();
         this.isSingleAddressSubwallet();
