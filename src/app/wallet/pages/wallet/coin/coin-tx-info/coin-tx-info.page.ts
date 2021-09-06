@@ -1,24 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Config } from '../../../../config/Config';
-import { Native } from '../../../../services/native.service';
-import { Util } from '../../../../model/util';
-import { WalletService } from '../../../../services/wallet.service';
-import { StandardCoinName } from '../../../../model/Coin';
-import { TransactionDirection, TransactionType, TransactionInfo, TransactionStatus } from '../../../../model/providers/transaction.types';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
-import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
-import { ElastosEVMSubWallet } from '../../../../model/wallets/elastos/elastos.evm.subwallet';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { EthTransaction } from 'src/app/wallet/model/evm.types';
 import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { EthTransaction } from 'src/app/wallet/model/evm.types';
-import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { Config } from '../../../../config/Config';
+import { StandardCoinName } from '../../../../model/Coin';
+import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../../model/providers/transaction.types';
+import { Util } from '../../../../model/util';
+import { ElastosEVMSubWallet } from '../../../../model/wallets/elastos/elastos.evm.subwallet';
+import { AnySubWallet } from '../../../../model/wallets/subwallet';
+import { Native } from '../../../../services/native.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 class TransactionDetail {
     type: string;
@@ -127,20 +127,20 @@ export class CoinTxInfoPage implements OnInit {
 
             const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
-              this.transactionInfo.confirmStatus = transaction.confirmations;
-              // If the fee is too small, then amount doesn't subtract fee
-              // if (transaction.Fee > 10000000000) {
-              //   this.amount = this.amount.minus(this.payFee);
-              // }
+                this.transactionInfo.confirmStatus = transaction.confirmations;
+                // If the fee is too small, then amount doesn't subtract fee
+                // if (transaction.Fee > 10000000000) {
+                //   this.amount = this.amount.minus(this.payFee);
+                // }
 
-              // Tx is ETH - Define amount, fee, total cost and address
-              if (this.direction === TransactionDirection.SENT) {
-                // Address: sender address or receiver address
-                this.targetAddress = await (this.subWallet as MainAndIDChainSubWallet).getRealAddressInCrosschainTx(transaction);
+                // Tx is ETH - Define amount, fee, total cost and address
+                if (this.direction === TransactionDirection.SENT) {
+                    // Address: sender address or receiver address
+                    this.targetAddress = await (this.subWallet as MainAndIDChainSubWallet).getRealAddressInCrosschainTx(transaction);
 
-              } else if (this.direction === TransactionDirection.RECEIVED) {
-                // TODO: show all the inputs and outputs.
-              }
+                } else if (this.direction === TransactionDirection.RECEIVED) {
+                    // TODO: show all the inputs and outputs.
+                }
             }
         } else {
             // Amount
@@ -164,7 +164,7 @@ export class CoinTxInfoPage implements OnInit {
                 // TODO: We can remove invalid transaction when get the transactions list?
                 // For erc20, we use getTransactionDetails to check whether the transaction is valid.
                 if (this.status !== TransactionStatus.CONFIRMED) {
-                  const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
+                    const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 }
 
                 // if (this.direction === TransactionDirection.RECEIVED) {
@@ -235,38 +235,38 @@ export class CoinTxInfoPage implements OnInit {
         if (this.direction !== TransactionDirection.RECEIVED) {
             // For ERC20 Token Transfer
             if ((this.elastosChainCode === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
-              if (this.transactionInfo.erc20TokenValue) {
-                this.txDetails.unshift(
-                  {
-                      type: 'tokenAmount',
-                      title: 'wallet.tx-info-erc20-amount',
-                      value: this.transactionInfo.erc20TokenValue,
-                      show: true,
-                  },
-                );
-              }
+                if (this.transactionInfo.erc20TokenValue) {
+                    this.txDetails.unshift(
+                        {
+                            type: 'tokenAmount',
+                            title: 'wallet.tx-info-erc20-amount',
+                            value: this.transactionInfo.erc20TokenValue,
+                            show: true,
+                        },
+                    );
+                }
 
-              if (this.transactionInfo.erc20TokenSymbol) {
-                this.txDetails.unshift(
-                  {
-                      type: 'tokenSymbol',
-                      title: 'wallet.erc-20-token',
-                      value: this.transactionInfo.erc20TokenSymbol,
-                      show: true,
-                  },
-                );
-              }
+                if (this.transactionInfo.erc20TokenSymbol) {
+                    this.txDetails.unshift(
+                        {
+                            type: 'tokenSymbol',
+                            title: 'wallet.erc-20-token',
+                            value: this.transactionInfo.erc20TokenSymbol,
+                            show: true,
+                        },
+                    );
+                }
 
-              if (this.transactionInfo.erc20TokenContractAddress) {
-                this.txDetails.unshift(
-                    {
-                        type: 'contractAddress',
-                        title: 'wallet.tx-info-token-address',
-                        value: this.transactionInfo.erc20TokenContractAddress,
-                        show: true,
-                    },
-                );
-              }
+                if (this.transactionInfo.erc20TokenContractAddress) {
+                    this.txDetails.unshift(
+                        {
+                            type: 'contractAddress',
+                            title: 'wallet.tx-info-token-address',
+                            value: this.transactionInfo.erc20TokenContractAddress,
+                            show: true,
+                        },
+                    );
+                }
             }
 
             this.txDetails.unshift(
@@ -288,27 +288,27 @@ export class CoinTxInfoPage implements OnInit {
             // Sending address
             // TODO: It is the transaction to create a token if the from address is "0x0000000000000000000000000000000000000000".
             if (this.fromAddress && this.fromAddress !== "0x0000000000000000000000000000000000000000") {
-              // TODO: We should show all the inputs and outputs for ELA main chain.
-              this.txDetails.unshift(
-                  {
-                      type: 'address',
-                      title: 'wallet.tx-info-sender-address',
-                      value: this.fromAddress,
-                      show: true,
-                  })
-            }
-
-            if (this.targetAddress) {
-              // Only show the receiving address for multiable address wallet.
-              if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.networkWallet.masterWallet.account.SingleAddress) {
+                // TODO: We should show all the inputs and outputs for ELA main chain.
                 this.txDetails.unshift(
                     {
                         type: 'address',
-                        title: 'wallet.tx-info-receiver-address',
-                        value: this.targetAddress,
+                        title: 'wallet.tx-info-sender-address',
+                        value: this.fromAddress,
                         show: true,
                     })
-              }
+            }
+
+            if (this.targetAddress) {
+                // Only show the receiving address for multiable address wallet.
+                if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.networkWallet.masterWallet.account.SingleAddress) {
+                    this.txDetails.unshift(
+                        {
+                            type: 'address',
+                            title: 'wallet.tx-info-receiver-address',
+                            value: this.targetAddress,
+                            show: true,
+                        })
+                }
             }
         }
     }

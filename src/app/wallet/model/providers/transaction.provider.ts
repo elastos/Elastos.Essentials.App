@@ -81,7 +81,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   /**
    * Returns transactions currently in cache.
    */
-  public getTransactions(subWallet: SubWallet<GenericTransaction>): TransactionType[] {
+  public getTransactions(subWallet: SubWallet<GenericTransaction>): Promise<TransactionType[]> {
     return this.getSubWalletTransactionProvider(subWallet).getTransactions(subWallet);
   }
 
@@ -122,7 +122,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     if (!afterTransaction) {
       // Compute the current last transaction to start fetching after that one.
-      let currentTransactions = this.getTransactions(subWallet);
+      let currentTransactions = await this.getTransactions(subWallet);
       afterTransaction = currentTransactions[currentTransactions.length - 1];
     }
 
@@ -136,9 +136,9 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
   }
 
-  public prepareTransactions(subWallet: AnySubWallet): Promise<void> {
+  /* public prepareTransactions(subWallet: AnySubWallet): Promise<void> {
     return this.getSubWalletTransactionProvider(subWallet).prepareTransactions(subWallet);
-  }
+  } */
 
   /**
    * Subject that informs listeners whenever the transactions list gets updated.

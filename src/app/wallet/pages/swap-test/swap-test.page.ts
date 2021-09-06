@@ -1,25 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { WalletService } from '../../services/wallet.service';
-import { Native } from '../../services/native.service';
-import Web3 from 'web3';
-import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
-import { StandardCoinName } from '../../model/Coin';
-import { MasterWallet } from '../../model/wallets/masterwallet';
-import { ChainId, Currency, CurrencyAmount, JSBI, Pair, Percent, Route, Router, Token, TokenAmount, Trade, WETH, ETHER, Fetcher, TradeType } from '@uniswap/sdk';
-import { TranslateService } from '@ngx-translate/core';
-import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
-import { LocalStorage } from '../../services/storage.service';
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
+import { ChainId, Currency, CurrencyAmount, Fetcher, JSBI, Percent, Route, Router, Token, Trade, WETH } from '@uniswap/sdk';
+import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
 import { BigNumber } from 'bignumber.js';
-import { ElastosEVMSubWallet } from '../../model/wallets/elastos/elastos.evm.subwallet';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import Web3 from 'web3';
+import { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
+import { StandardCoinName } from '../../model/Coin';
+import { ElastosEVMSubWallet } from '../../model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from '../../model/wallets/networkwallet';
+import { CoinTransferService, Transfer } from '../../services/cointransfer.service';
+import { Native } from '../../services/native.service';
+import { LocalStorage } from '../../services/storage.service';
+import { WalletService } from '../../services/wallet.service';
 
 const BIPS_BASE = JSBI.BigInt(10000) // Fixed, don't touch
 const INITIAL_ALLOWED_SLIPPAGE = 50 // 0.5% price slippage allowed. If more than this (price changed a lot between 2 blocks), transaction will be cancelled
@@ -129,7 +125,7 @@ export class SwapTestPage implements OnInit {
      */
     doSwap(): Promise<void> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise<void>(async (resolve)=>{
+        return new Promise<void>(async (resolve) => {
             let provider = new InternalWeb3Provider(this.walletManager, this.networkWallet);
             let web3 = new Web3(provider);
             let routerContract = new web3.eth.Contract(IUniswapV2Router02ABI as any, "0x1FF9598aBCBbC2F3A9B15261403459215b352e2b");
@@ -201,11 +197,11 @@ export class SwapTestPage implements OnInit {
                     //Logger.log('wallet', "receipt", receipt);
                 })
                 .on('confirmation', (confirmationNumber, receipt) => {
-                    this.status.push("Got transaction confirmation:"+confirmationNumber);
+                    this.status.push("Got transaction confirmation:" + confirmationNumber);
                     resolve();
                 })
                 .on('error', (error, receipt) => {
-                    this.status.push("Transaction error:"+error);
+                    this.status.push("Transaction error:" + error);
                     resolve();
                 });
         });

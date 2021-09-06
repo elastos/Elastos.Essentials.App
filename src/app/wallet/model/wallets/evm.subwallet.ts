@@ -16,7 +16,7 @@ import { StandardSubWallet } from './standard.subwallet';
 /**
  * Specialized standard sub wallet for EVM compatible chains (elastos EID, elastos ESC, heco, etc)
  */
-export abstract class StandardEVMSubWallet<TransactionType extends EthTransaction> extends StandardSubWallet<TransactionType> {
+export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   protected ethscAddress: string = null;
   protected withdrawContractAddress: string = null;
   protected publishdidContractAddress: string = null;
@@ -25,7 +25,12 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
 
   protected tokenList: ERCTokenInfo[] = null;
 
-  constructor(networkWallet: NetworkWallet, id: StandardCoinName, public rpcApiUrl: string) {
+  constructor(
+    networkWallet: NetworkWallet,
+    id: string,
+    public rpcApiUrl: string,
+    protected friendlyName: string
+  ) {
     super(networkWallet, id);
 
     void this.initialize();
@@ -44,6 +49,22 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
     }, 2000);
 
     return;
+  }
+
+  public getMainIcon(): string {
+    return this.networkWallet.network.logo;
+  }
+
+  public getSecondaryIcon(): string {
+    return null
+  }
+
+  public getFriendlyName(): string {
+    return this.friendlyName;
+  }
+
+  public getDisplayTokenName(): string {
+    return this.networkWallet.network.getMainTokenSymbol();
   }
 
   public async getTokenAddress(): Promise<string> {
@@ -91,7 +112,7 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
     transaction.isERC20TokenTransfer = isERC20TokenTransfer;
     let erc20TokenTransactionInfo: ERC20TokenTransactionInfo = null;
     if (isERC20TokenTransfer) {
-      erc20TokenTransactionInfo = this.getERC20TokenTransactionInfo(transaction)
+      erc20TokenTransactionInfo = await this.getERC20TokenTransactionInfo(transaction)
     }
 
     const transactionInfo: TransactionInfo = {
@@ -190,7 +211,7 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
     return false;
   }
 
-  protected getERC20TokenTransactionInfo(transaction: EthTransaction): ERC20TokenTransactionInfo {
+  protected async getERC20TokenTransactionInfo(transaction: EthTransaction): Promise<ERC20TokenTransactionInfo> {
     let contractAddress = transaction.to;
     let toAddress = null, erc20TokenSymbol = null, erc20TokenValue = null;
     const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(contractAddress);
@@ -199,7 +220,7 @@ export abstract class StandardEVMSubWallet<TransactionType extends EthTransactio
       // Get transaction from erc20 token subwallet.
       let erc20Subwallet: ERC20SubWallet = (this.networkWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet);
       if (erc20Subwallet) {
-        let erc20Tansaction: EthTokenTransaction = erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
+        let erc20Tansaction: EthTokenTransaction = await erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
         if (erc20Tansaction) {
           toAddress = erc20Tansaction.to;
           erc20TokenValue = erc20Subwallet.getDisplayValue(erc20Tansaction.value).toString();

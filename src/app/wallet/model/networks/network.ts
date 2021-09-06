@@ -1,11 +1,9 @@
 import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
-import { GlobalPreferencesService } from "src/app/services/global.preferences.service";
-import { WalletNetworkService } from "../../services/network.service";
 import { LocalStorage } from "../../services/storage.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
-import { Coin, CoinID, CoinType, ERC20Coin, StandardCoinName } from "../Coin";
+import { Coin, CoinID, CoinType, ERC20Coin } from "../Coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";
@@ -61,6 +59,10 @@ export abstract class Network {
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string);
 
+  // Ex: ETHHECO, ETHSC, etc
+  public getEVMSPVConfigName(): string {
+    return "ETH" + this.key.toUpperCase();
+  }
 
   private async refreshCoins() {
     Logger.log("wallet", "Coin service - refreshing available coins");

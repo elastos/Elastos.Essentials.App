@@ -1,13 +1,13 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../Coin";
-import { PaginatedTransactions, ElastosTransaction, ElastosPaginatedTransactions } from "../../providers/transaction.types";
+import { ElastosTransaction, PaginatedTransactions } from "../../providers/transaction.types";
 import { SubWallet } from "../subwallet";
 
 export class WalletHelper {
   public static async getOwnerAddress(subWallet: SubWallet<any>): Promise<string> {
-      return await subWallet.masterWallet.walletManager.spvBridge.getOwnerAddress(
-        subWallet.masterWallet.id, subWallet.id);
+    return await subWallet.masterWallet.walletManager.spvBridge.getOwnerAddress(
+      subWallet.masterWallet.id, subWallet.id);
   }
 
   public static async getTransactionByAddress(subWallet: SubWallet<any>, internalAddress: boolean, transactionLimit: number, timestamp = 0): Promise<PaginatedTransactions<ElastosTransaction>[]> {

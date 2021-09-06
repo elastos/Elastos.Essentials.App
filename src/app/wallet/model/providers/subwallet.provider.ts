@@ -14,7 +14,6 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
   // Disk cache for fast/offline display of transactions when entering a screen.
   // Always contains only the N most recent transactions
   protected transactionsCache: Map<string, TimeBasedPersistentCache<TransactionType>>;
-  private transactionsPrepared = false;
 
   constructor(protected provider: TransactionProvider<any>, protected subWallet: SubWalletType) {
   }
@@ -26,14 +25,13 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends SubWall
   }
 
   public async prepareTransactions(subWallet: AnySubWallet): Promise<void> {
-    if (!this.transactionsPrepared) {
-      // Create the cache for preload transactions
-      await this.getCache(subWallet.getTransactionsCacheKey());
-      this.transactionsPrepared = true;
-    }
+    // Create the cache for preload transactions
+    await this.getCache(subWallet.getTransactionsCacheKey());
   }
 
-  public getTransactions(subWallet: AnySubWallet): TransactionType[] {
+  public async getTransactions(subWallet: AnySubWallet): Promise<TransactionType[]> {
+    await this.prepareTransactions(subWallet);
+
     let cacheKey = subWallet.getTransactionsCacheKey();
     if (!this.transactionsCache.has(cacheKey))
       throw new Error("prepareTransactions() must be called before accessing getTransactions()");

@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WalletService } from '../../../services/wallet.service';
-import { CoinTransferService } from '../../../services/cointransfer.service';
-import { UiService } from '../../../services/ui.service';
-import { StandardCoinName, CoinType } from '../../../model/Coin';
-import { TranslateService } from '@ngx-translate/core';
-import { CurrencyService } from '../../../services/currency.service';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
-import { Native } from '../../../services/native.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Util } from 'src/app/wallet/model/util';
+import { CoinType, StandardCoinName } from '../../../model/Coin';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { CoinTransferService } from '../../../services/cointransfer.service';
+import { CurrencyService } from '../../../services/currency.service';
+import { Native } from '../../../services/native.service';
+import { UiService } from '../../../services/ui.service';
+import { WalletService } from '../../../services/wallet.service';
 
 
 @Component({
@@ -40,7 +40,7 @@ export class SelectSubwalletPage implements OnInit {
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
-        this.nextScreen = navigation.extras.state.nextScreen;
+      this.nextScreen = navigation.extras.state.nextScreen;
     }
   }
 
@@ -63,8 +63,8 @@ export class SelectSubwalletPage implements OnInit {
   async cancelOperation() {
     const intentParams = this.coinTransferService.intentTransfer;
     await this.globalIntentService.sendIntentResponse(
-        { txid: null, status: 'cancelled' },
-        intentParams.intentId
+      { txid: null, status: 'cancelled' },
+      intentParams.intentId
     );
   }
 }

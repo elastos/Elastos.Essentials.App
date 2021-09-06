@@ -10,17 +10,18 @@ import { NetworkWallet } from '../networkwallet';
 /**
  * Specialized standard sub wallet for the ETH sidechain.
  */
-export class ElastosEVMSubWallet extends StandardEVMSubWallet<EthTransaction> {
+export class ElastosEVMSubWallet extends StandardEVMSubWallet {
   constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
     let rpcApiUrl = GlobalElastosAPIService.instance.getApiUrlForChainCode(id);
-    super(networkWallet, id, rpcApiUrl);
+
+    super(networkWallet, id, rpcApiUrl, ElastosEVMSubWallet.getFriendlyName(id));
 
     void this.initialize();
   }
 
-    public supportsCrossChainTransfers(): boolean {
-        return true;
-    }
+  public supportsCrossChainTransfers(): boolean {
+    return true;
+  }
 
   public getMainIcon(): string {
     switch (this.id) {
@@ -37,13 +38,17 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet<EthTransaction> {
     return null;
   }
 
-  public getFriendlyName(): string {
-    if (this.id === StandardCoinName.ETHSC)
+  public static getFriendlyName(coinId: string): string {
+    if (coinId === StandardCoinName.ETHSC)
       return "Smart Chain";
-    else if (this.id === StandardCoinName.ETHDID)
+    else if (coinId === StandardCoinName.ETHDID)
       return "Identity Chain";
     else
       return "";
+  }
+
+  public getFriendlyName(): string {
+    return ElastosEVMSubWallet.getFriendlyName(this.id);
   }
 
   public getDisplayTokenName(): string {
@@ -138,31 +143,31 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet<EthTransaction> {
     return await transactionName;
   } */
 
- /*  protected async getTransactionIconPath(transaction: ElastosTransaction): Promise<string> {
-    if (transaction.type === TransactionDirection.RECEIVED) {
-      switch (transaction.txtype) {
-        case RawTransactionType.RechargeToSideChain:
-        case RawTransactionType.WithdrawFromSideChain:
-        case RawTransactionType.TransferCrossChainAsset:
-          return await './assets/wallet/buttons/transfer.png';
-        default:
-          return await './assets/wallet/buttons/receive.png';
-      }
-    } else if (transaction.type === TransactionDirection.SENT) {
-      switch (transaction.txtype) {
-        case RawTransactionType.RechargeToSideChain:
-        case RawTransactionType.WithdrawFromSideChain:
-        case RawTransactionType.TransferCrossChainAsset:
-          return await './assets/wallet/buttons/transfer.png';
-        default:
-          return await './assets/wallet/buttons/send.png';
-      }
-    } else if (transaction.type === TransactionDirection.MOVED) {
-      return await './assets/wallet/buttons/transfer.png';
-    }
-
-    return null;
-  } */
+  /*  protected async getTransactionIconPath(transaction: ElastosTransaction): Promise<string> {
+     if (transaction.type === TransactionDirection.RECEIVED) {
+       switch (transaction.txtype) {
+         case RawTransactionType.RechargeToSideChain:
+         case RawTransactionType.WithdrawFromSideChain:
+         case RawTransactionType.TransferCrossChainAsset:
+           return await './assets/wallet/buttons/transfer.png';
+         default:
+           return await './assets/wallet/buttons/receive.png';
+       }
+     } else if (transaction.type === TransactionDirection.SENT) {
+       switch (transaction.txtype) {
+         case RawTransactionType.RechargeToSideChain:
+         case RawTransactionType.WithdrawFromSideChain:
+         case RawTransactionType.TransferCrossChainAsset:
+           return await './assets/wallet/buttons/transfer.png';
+         default:
+           return await './assets/wallet/buttons/send.png';
+       }
+     } else if (transaction.type === TransactionDirection.MOVED) {
+       return await './assets/wallet/buttons/transfer.png';
+     }
+ 
+     return null;
+   } */
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
     let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(

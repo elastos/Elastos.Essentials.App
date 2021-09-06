@@ -20,9 +20,13 @@ import { GlobalWalletConnectService } from 'src/app/services/global.walletconnec
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { WalletService, WalletStateOperation } from 'src/app/wallet/services/wallet.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { OptionsComponent } from '../../components/options/options.component';
 import { AppmanagerService } from '../../services/appmanager.service';
 import { DIDManagerService } from '../../services/didmanager.service';
+import { NotificationsPage } from '../notifications/notifications.page';
+
+
 
 @Component({
   selector: 'app-home',
@@ -85,29 +89,29 @@ export class HomePage implements OnInit {
 
   async ionViewWillEnter() {
     Logger.log("launcher", "Launcher home screen will enter");
-   /*  setTimeout(()=>{
-      const notification = {
-        key: 'storagePlanExpiring',
-        title: 'Storage Plan Expiring',
-        message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
-        app: App.WALLET
-      };
-      this.globalNotifications.sendNotification(notification);
-    }, 2000); */
+    /*  setTimeout(()=>{
+       const notification = {
+         key: 'storagePlanExpiring',
+         title: 'Storage Plan Expiring',
+         message: 'You have a storage plan expiring soon. Please renew your plan before the expiration time.',
+         app: App.WALLET
+       };
+       this.globalNotifications.sendNotification(notification);
+     }, 2000); */
 
     this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "notifications",
-      iconPath:  BuiltInIcon.NOTIFICATIONS
+      iconPath: BuiltInIcon.NOTIFICATIONS
     });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if(icon.key === 'notifications') {
+      if (icon.key === 'notifications') {
         void this.showNotifications();
       }
     });
 
-    if(this.theme.darkMode) {
+    if (this.theme.darkMode) {
       this.titleBar.setTheme('#121212', TitleBarForegroundMode.LIGHT);
     } else {
       this.titleBar.setTheme('#F5F5FD', TitleBarForegroundMode.DARK);
@@ -120,13 +124,13 @@ export class HomePage implements OnInit {
         switch (template) {
           case MAINNET_TEMPLATE:
             this.titleBar.setTitle(this.translate.instant('common.elastos-essentials'));
-          break;
+            break;
           case TESTNET_TEMPLATE:
             this.titleBar.setTitle('TEST NET Active');
-          break;
+            break;
           case 'LRW':
             this.titleBar.setTitle('CR Private Net Active');
-          break;
+            break;
         }
       });
     }
@@ -140,7 +144,7 @@ export class HomePage implements OnInit {
     });
 
     this.networkWalletSub = this.walletService.activeNetworkWallet.subscribe(networkWallet => {
-        this.updateWidgetMainWallet();
+      this.updateWidgetMainWallet();
     });
 
     this.activeNetworkSub = this.walletNetworkService.activeNetwork.subscribe(networkName => {
@@ -152,7 +156,7 @@ export class HomePage implements OnInit {
       if (vaultStatus && vaultStatus.publishedInfo && vaultStatus.publishedInfo.vaultAddress && vaultStatus.publishedInfo.activePricingPlan) {
 
         let usedStorageGb = (vaultStatus.publishedInfo.activePricingPlan.getCurrentDatabaseStorageUsed() + vaultStatus.publishedInfo.activePricingPlan.getCurrentFileStorageUsed()) / 1000;
-        let maxStorageGb = vaultStatus.publishedInfo.activePricingPlan.getMaxStorage()/1000;
+        let maxStorageGb = vaultStatus.publishedInfo.activePricingPlan.getMaxStorage() / 1000;
 
         this.hiveVaultStorageStats = {
           usedStorage: usedStorageGb.toFixed(2),
@@ -232,9 +236,9 @@ export class HomePage implements OnInit {
 
   async showNotifications() {
     this.modal = await this.modalCtrl.create({
-        component: NotificationsPage,
-        cssClass: 'running-modal',
-        mode: 'ios',
+      component: NotificationsPage,
+      cssClass: 'running-modal',
+      mode: 'ios',
     });
     this.modal.onDidDismiss().then(() => { this.modal = null; });
     await this.modal.present();

@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
-import { UiService } from './ui.service';
+import { Subscription } from 'rxjs';
+import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
+import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { BSCNetwork } from '../model/networks/bsc/bsc.network';
+import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
+import { FusionNetwork } from '../model/networks/fusion/fusion.network';
+import { HECONetwork } from '../model/networks/heco/heco.network';
+import { Network } from '../model/networks/network';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
+import { ETHTransactionService } from './ethtransaction.service';
 import { IntentService } from './intent.service';
 import { NavService } from './nav.service';
-import { WalletService } from './wallet.service';
-import { Logger } from 'src/app/logger';
-import { IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { WalletPrefsService } from './pref.service';
-import { Subscription } from 'rxjs';
-import { Events } from 'src/app/services/events.service';
-import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
-import { ETHTransactionService } from './ethtransaction.service';
 import { WalletNetworkService } from './network.service';
-import { ElastosNetwork } from '../model/networks/elastos.network';
-import { HECONetwork } from '../model/networks/heco.network';
-import { BSCNetwork } from '../model/networks/bsc.network';
-import { Network } from '../model/networks/network';
+import { WalletPrefsService } from './pref.service';
+import { UiService } from './ui.service';
+import { WalletService } from './wallet.service';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new ElastosNetwork(), true);
     await this.createAndRegisterNetwork(new HECONetwork());
     await this.createAndRegisterNetwork(new BSCNetwork());
+    await this.createAndRegisterNetwork(new FusionNetwork());
 
     // Do not await.
     void this.currencyService.init();

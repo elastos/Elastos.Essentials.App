@@ -20,21 +20,20 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { StandardCoinName } from '../../../model/Coin';
+import { WalletAccount, WalletAccountType } from '../../../model/WalletAccount';
+import { AuthService } from '../../../services/auth.service';
+import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
-import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
-import { WalletAccount, WalletAccountType } from '../../../model/WalletAccount';
-import { StandardCoinName } from '../../../model/Coin';
-import { AuthService } from '../../../services/auth.service';
-import BigNumber from 'bignumber.js';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TranslateService } from '@ngx-translate/core';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 
 
 @Component({
@@ -78,7 +77,7 @@ export class CRMemberRegisterPage implements OnInit {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setNavigationMode(null);
+        this.titleBar.setNavigationMode(null);
     }
 
     ionViewDidEnter() {

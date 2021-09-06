@@ -1,21 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Config } from '../../../config/Config';
-import { WalletService } from '../../../services/wallet.service';
-import { WalletAccessService } from '../../../services/walletaccess.service';
-import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
-import { StandardCoinName } from '../../../model/Coin';
-import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
-import { UiService } from '../../../services/ui.service';
-import { IntentTransfer } from '../../../services/cointransfer.service';
 import { Router } from '@angular/router';
-import { Util } from '../../../model/util';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Config } from '../../../config/Config';
+import { StandardCoinName } from '../../../model/Coin';
+import { Util } from '../../../model/util';
+import { IntentTransfer } from '../../../services/cointransfer.service';
+import { Native } from '../../../services/native.service';
+import { PopupProvider } from '../../../services/popup.service';
+import { UiService } from '../../../services/ui.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletAccessService } from '../../../services/walletaccess.service';
 
 
 type ClaimRequest = {
@@ -30,7 +29,7 @@ type ClaimRequest = {
     styleUrls: ['./access.page.scss'],
 })
 export class AccessPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public Config = Config;
     public intentTransfer: IntentTransfer;
@@ -128,22 +127,22 @@ export class AccessPage implements OnInit {
     }
 
     getClaimTitle(key) {
-      let value = '';
-      switch (key) {
-        case 'elaaddress':
-            value = 'wallet.elaaddress';
-            break;
-        case 'elaamount':
-            value = 'wallet.elaamount';
-            break;
-        case 'ethaddress':
-            value = 'wallet.ethaddress';
-            break;
-        default:
-            Logger.log('wallet', 'Not support ', key);
-            break;
-      }
-      return value;
+        let value = '';
+        switch (key) {
+            case 'elaaddress':
+                value = 'wallet.elaaddress';
+                break;
+            case 'elaamount':
+                value = 'wallet.elaamount';
+                break;
+            case 'ethaddress':
+                value = 'wallet.ethaddress';
+                break;
+            default:
+                Logger.log('wallet', 'Not support ', key);
+                break;
+        }
+        return value;
     }
 
     createAddress(elastosChainCode: string) {
@@ -186,7 +185,7 @@ export class AccessPage implements OnInit {
         } else {
             const selectedClaim = this.buildDeliverableList();
             await this.globalIntentService.sendIntentResponse(
-                    {walletinfo: selectedClaim}, this.intentTransfer.intentId);
+                { walletinfo: selectedClaim }, this.intentTransfer.intentId);
         }
     }
 }

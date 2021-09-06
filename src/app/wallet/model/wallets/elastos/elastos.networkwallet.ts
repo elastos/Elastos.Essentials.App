@@ -1,6 +1,5 @@
 import { Logger } from "src/app/logger";
 import { StandardCoinName } from "../../Coin";
-import { EthTransaction } from "../../evm.types";
 import { Network } from "../../networks/network";
 import { StandardEVMSubWallet } from "../evm.subwallet";
 import { MasterWallet } from "../masterwallet";
@@ -17,7 +16,7 @@ export class ElastosNetworkWallet extends NetworkWallet {
   private mainTokenSubWallet: ElastosEVMSubWallet = null;
 
   constructor(masterWallet: MasterWallet, network: Network) {
-    super(masterWallet, network);
+    super(masterWallet, network, "ELA");
 
     this.transactionDiscoveryProvider = new ElastosTransactionProvider(this);
   }
@@ -40,7 +39,7 @@ export class ElastosNetworkWallet extends NetworkWallet {
     Logger.log("wallet", "Elastos standard subwallets preparation completed");
   }
 
-  public getMainEvmSubWallet(): StandardEVMSubWallet<EthTransaction> {
+  public getMainEvmSubWallet(): StandardEVMSubWallet {
     return this.mainTokenSubWallet;
   }
 

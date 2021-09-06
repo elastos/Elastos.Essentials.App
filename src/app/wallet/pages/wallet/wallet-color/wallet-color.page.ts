@@ -1,12 +1,12 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet, Theme } from '../../../model/wallets/masterwallet';
-import { WalletService } from '../../../services/wallet.service';
-import { WalletEditionService } from '../../../services/walletedition.service';
-import { Native } from '../../../services/native.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { MasterWallet, Theme } from '../../../model/wallets/masterwallet';
+import { Native } from '../../../services/native.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletEditionService } from '../../../services/walletedition.service';
 
 @Component({
   selector: 'app-wallet-color',

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { AnySubWallet, SubWallet } from '../model/wallets/subwallet';
-import { StandardCoinName } from '../model/Coin';
-import * as moment from 'moment';
 import BigNumber from 'bignumber.js';
+import * as moment from 'moment';
+import { AnySubWallet } from '../model/wallets/subwallet';
 import { LocalStorage } from './storage.service';
 
 @Injectable({
@@ -50,24 +49,24 @@ export class UiService {
    */
   getFixedBalance(balance: BigNumber): string {
     try {
-        // let balance = new BigNumber("172400");
-        if (balance.isZero()) {
-          return String(0);
-        } else if (balance.isNaN()) {
-          return String('...');
-        } else if (balance.isLessThan(100)) {
-          return balance.decimalPlaces(6).toString();
-        } else if (balance.isGreaterThanOrEqualTo(100) && balance.isLessThan(1000)) {
-          return balance.decimalPlaces(4).toString();
-        } else if (balance.isGreaterThanOrEqualTo(1000) && balance.isLessThan(10000)) {
-          return balance.decimalPlaces(2).toString();
-        } else {
-          return balance.dividedBy(1000).toFixed(0) + 'k';
-        }
-    } catch (e) {
-        // The old wallet use number for balance, and save the wallet info to localstorage.
-        // So the balance form localstorage maybe isn't bigNumber.
+      // let balance = new BigNumber("172400");
+      if (balance.isZero()) {
         return String(0);
+      } else if (balance.isNaN()) {
+        return String('...');
+      } else if (balance.isLessThan(100)) {
+        return balance.decimalPlaces(6).toString();
+      } else if (balance.isGreaterThanOrEqualTo(100) && balance.isLessThan(1000)) {
+        return balance.decimalPlaces(4).toString();
+      } else if (balance.isGreaterThanOrEqualTo(1000) && balance.isLessThan(10000)) {
+        return balance.decimalPlaces(2).toString();
+      } else {
+        return balance.dividedBy(1000).toFixed(0) + 'k';
+      }
+    } catch (e) {
+      // The old wallet use number for balance, and save the wallet info to localstorage.
+      // So the balance form localstorage maybe isn't bigNumber.
+      return String(0);
     }
   }
 

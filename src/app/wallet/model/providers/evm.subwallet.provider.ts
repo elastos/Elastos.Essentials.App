@@ -12,10 +12,10 @@ const MAX_RESULTS_PER_FETCH = 8; // TODO: increase after dev complete
  * Root class for all EVM compatible chains, as they use the same endpoints to get the list
  * of transactions.
  */
-export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
+export class EVMSubWalletProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   private canFetchMore = true;
 
-  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, protected rpcApiUrl: string) {
+  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, protected rpcApiUrl: string, protected accountApiUrl: string) {
     super(provider, subWallet);
   }
 
@@ -33,14 +33,12 @@ export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> e
   }
 
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-    await this.prepareTransactions(this.subWallet);
-
     const accountAddress = await this.subWallet.createAddress();
 
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
     if (afterTransaction) {
-      let afterTransactionIndex = this.getTransactions(subWallet).findIndex(t => t.hash === afterTransaction.hash);
+      let afterTransactionIndex = (await this.getTransactions(subWallet)).findIndex(t => t.hash === afterTransaction.hash);
       if (afterTransactionIndex) { // Just in case, should always be true but...
         // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
         // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
@@ -48,7 +46,7 @@ export abstract class EVMSubWalletProvider<SubWalletType extends AnySubWallet> e
       }
     }
 
-    let txListUrl = this.rpcApiUrl + '/api?module=account';
+    let txListUrl = this.accountApiUrl + '/api?module=account';
     txListUrl += '&action=txlist';
     txListUrl += '&page=' + page;
     txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;

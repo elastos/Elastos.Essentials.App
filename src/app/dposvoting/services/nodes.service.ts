@@ -1,24 +1,24 @@
 import { Injectable, NgZone } from '@angular/core';
-
-import { DPosNode } from '../model/nodes.model';
-import { Vote } from '../model/history.model';
-import { Mainchain, Voters, Price, Block } from '../model/stats.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Util } from 'src/app/model/util';
 import { App } from 'src/app/model/app.enum';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { PopupProvider } from 'src/app/services/global.popup.service';
-import { TransactionStatus, RawTransactionType } from 'src/app/wallet/model/providers/transaction.types';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { PopupProvider } from 'src/app/services/global.popup.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/providers/transaction.types';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { Vote } from '../model/history.model';
+import { DPosNode } from '../model/nodes.model';
+import { Block, Mainchain, Price, Voters } from '../model/stats.model';
+
 
 
 export type DPoSRegistrationInfo = {
@@ -288,7 +288,7 @@ export class NodesService {
 
         this.dposInfo.txConfirm = true;
         // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
-        let txhistory = this.voteService.sourceSubwallet.getTransactions();
+        let txhistory = await this.voteService.sourceSubwallet.getTransactions();
         for (let i in txhistory) {
             if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
                 if (this.dposInfo.state == 'Unregistered') {

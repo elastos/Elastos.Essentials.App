@@ -1,24 +1,24 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { Config } from '../../../../config/Config';
-import { LocalStorage } from '../../../../services/storage.service';
-import { Native } from '../../../../services/native.service';
-import { PopupProvider} from '../../../../services/popup.service';
-import { WalletService } from '../../../../services/wallet.service';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
-import { WalletEditionService } from '../../../../services/walletedition.service';
-import { Util } from '../../../../model/util';
 import { TranslateService } from '@ngx-translate/core';
-import { UiService } from '../../../../services/ui.service';
-import { CurrencyService } from '../../../../services/currency.service';
 import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Config } from '../../../../config/Config';
+import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
+import { Util } from '../../../../model/util';
+import { MasterWallet } from '../../../../model/wallets/masterwallet';
+import { CurrencyService } from '../../../../services/currency.service';
+import { Native } from '../../../../services/native.service';
+import { PopupProvider } from '../../../../services/popup.service';
+import { LocalStorage } from '../../../../services/storage.service';
+import { UiService } from '../../../../services/ui.service';
+import { WalletService } from '../../../../services/wallet.service';
+import { WalletEditionService } from '../../../../services/walletedition.service';
 
 type EditableCoinInfo = {
     coin: Coin,
@@ -78,10 +78,10 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     unsubscribe(subscription: Subscription) {
-      if (subscription) {
-        subscription.unsubscribe();
-        subscription = null;
-      }
+        if (subscription) {
+            subscription.unsubscribe();
+            subscription = null;
+        }
     }
 
     ngOnDestroy() {
@@ -155,9 +155,9 @@ export class CoinListPage implements OnInit, OnDestroy {
             const coinID = availableCoin.getID();
             // Do not show IDChain in coin list.
             if (coinID !== StandardCoinName.IDChain) {
-              let isOpen = (coinID in this.networkWallet.subWallets);
-              //Logger.log('wallet', availableCoin, "isOpen?", isOpen);
-              this.coinList.push({ coin: availableCoin, isOpen: isOpen });
+                let isOpen = (coinID in this.networkWallet.subWallets);
+                //Logger.log('wallet', availableCoin, "isOpen?", isOpen);
+                this.coinList.push({ coin: availableCoin, isOpen: isOpen });
             }
         }
         Logger.log('wallet', 'coin list', this.coinList);

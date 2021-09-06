@@ -1,19 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WalletService } from '../../../services/wallet.service';
-import { Native } from '../../../services/native.service';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
-import { WalletEditionService } from '../../../services/walletedition.service';
-import { Util } from '../../../model/util';
-import { Config } from '../../../config/Config';
-import { TranslateService } from '@ngx-translate/core';
-import { WalletAccessService } from '../../../services/walletaccess.service';
 import { Router } from '@angular/router';
-import { CurrencyService } from '../../../services/currency.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Config } from '../../../config/Config';
+import { Util } from '../../../model/util';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { CurrencyService } from '../../../services/currency.service';
+import { Native } from '../../../services/native.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletAccessService } from '../../../services/walletaccess.service';
+import { WalletEditionService } from '../../../services/walletedition.service';
 
 
 @Component({
@@ -81,6 +81,6 @@ export class WalletManagerPage implements OnInit {
     }
 
     getWalletIndex(masterWallet: MasterWallet): number {
-       return this.walletManager.getMasterWalletsList().indexOf(masterWallet);
+        return this.walletManager.getMasterWalletsList().indexOf(masterWallet);
     }
 }

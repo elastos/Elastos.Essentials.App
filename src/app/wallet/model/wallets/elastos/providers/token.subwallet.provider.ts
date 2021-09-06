@@ -37,8 +37,6 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     if (afterTransaction)
       throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
 
-    await this.prepareTransactions(this.subWallet);
-
     const tokenAccountAddress = await this.subWallet.createAddress();
 
     let ethTokenTransactions = await GlobalElastosAPIService.instance.getERC20TokenTransactions(StandardCoinName.ETHSC, tokenAccountAddress);

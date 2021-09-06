@@ -20,31 +20,29 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Config } from '../../../config/Config';
-import { Native } from '../../../services/native.service';
-import { WalletService } from '../../../services/wallet.service';
-import { TransferType, Transfer } from '../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../model/Coin';
-import { AnySubWallet, SubWallet } from '../../../model/wallets/subwallet';
-import { TxConfirmComponent } from '../../../components/tx-confirm/tx-confirm.component';
-import { TranslateService } from '@ngx-translate/core';
-import { CurrencyService } from '../../../services/currency.service';
-import { UiService } from '../../../services/ui.service';
-import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
-import BigNumber from 'bignumber.js';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { TxSuccessComponent } from '../../../components/tx-success/tx-success.component';
-import { MainAndIDChainSubWallet } from '../../../model/wallets/elastos/mainandidchain.subwallet';
-import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
+import { TxConfirmComponent } from '../../../components/tx-confirm/tx-confirm.component';
+import { TxSuccessComponent } from '../../../components/tx-success/tx-success.component';
+import { Config } from '../../../config/Config';
+import { CoinType, StandardCoinName } from '../../../model/Coin';
+import { MainAndIDChainSubWallet } from '../../../model/wallets/elastos/mainandidchain.subwallet';
+import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
+import { AnySubWallet } from '../../../model/wallets/subwallet';
+import { Transfer, TransferType } from '../../../services/cointransfer.service';
+import { CurrencyService } from '../../../services/currency.service';
+import { Native } from '../../../services/native.service';
+import { UiService } from '../../../services/ui.service';
+import { WalletService } from '../../../services/wallet.service';
 
 /**
  * This screen is a legacy support to let users who have funds on DID 1 migrate them back to mainchain.
@@ -128,7 +126,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.elastosChainCode].getDisplayBalance());
 
         // Setup page display
-        this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", {coinName: this.elastosChainCode}));
+        this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", { coinName: this.elastosChainCode }));
         this.toSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA);
 
         // Setup params for withdraw transaction
@@ -156,19 +154,19 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         );
 
         if (rawTx) {
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.networkWallet.id,
-              elastosChainCode: this.elastosChainCode,
-              rawTransaction: rawTx,
-              payPassword: '',
-              action: null,
-              intentId: null,
-          });
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.networkWallet.id,
+                elastosChainCode: this.elastosChainCode,
+                rawTransaction: rawTx,
+                payPassword: '',
+                action: null,
+                intentId: null,
+            });
 
-          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-          if (result.published)
-              void this.showSuccess();
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+            if (result.published)
+                void this.showSuccess();
         }
     }
 
@@ -213,7 +211,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
             case StandardCoinName.ETHSC:
                 break;
             default:
-              elastosChainCodeTemp = StandardCoinName.ETHSC;
+                elastosChainCodeTemp = StandardCoinName.ETHSC;
                 break;
         }
 
@@ -293,7 +291,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
 
     keyboardIsVisible() {
         this.zone.run(() => {
-            if(this.keyboard.isVisible) {
+            if (this.keyboard.isVisible) {
                 return true;
             } else {
                 return false;

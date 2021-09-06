@@ -1,19 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Native } from '../../../../services/native.service';
 import { ActivatedRoute } from '@angular/router';
-import { WalletService } from '../../../../services/wallet.service';
-import { AnySubWallet, SubWallet } from '../../../../model/wallets/subwallet';
-import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { CoinTransferService } from '../../../../services/cointransfer.service';
-import { Util } from '../../../../model/util';
-import { Config } from '../../../../config/Config';
 import { TranslateService } from '@ngx-translate/core';
-import { CurrencyService } from '../../../../services/currency.service';
-import { UiService } from '../../../../services/ui.service';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Config } from '../../../../config/Config';
+import { CoinType } from '../../../../model/Coin';
+import { Util } from '../../../../model/util';
+import { AnySubWallet } from '../../../../model/wallets/subwallet';
+import { CoinTransferService } from '../../../../services/cointransfer.service';
+import { CurrencyService } from '../../../../services/currency.service';
+import { Native } from '../../../../services/native.service';
+import { UiService } from '../../../../services/ui.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 @Component({
     selector: 'app-coin-select',

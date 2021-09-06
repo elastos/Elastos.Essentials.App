@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { WalletID, ExtendedMasterWalletInfo } from '../model/wallets/masterwallet';
+import { ExtendedMasterWalletInfo, WalletID } from '../model/wallets/masterwallet';
 import { ExtendedNetworkWalletInfo } from '../model/wallets/networkwallet';
 import { Contact } from './contacts.service';
 
@@ -43,7 +43,7 @@ export class LocalStorage {
         if (val === null)
             return null; // Key not found in setting
         else {
-            if (typeof(val) === "string") {
+            if (typeof (val) === "string") {
                 try {
                     val = JSON.parse(val);
                 }
@@ -78,25 +78,25 @@ export class LocalStorage {
      * Ex: wallet name given by the user.
      */
     public setExtendedMasterWalletInfo(masterId: WalletID, extendedInfo: ExtendedMasterWalletInfo): Promise<void> {
-        let key = "extended-wallet-infos-"+masterId;
+        let key = "extended-wallet-infos-" + masterId;
         return this.set(key, JSON.stringify(extendedInfo));
     }
 
     public async getExtendedMasterWalletInfo(masterId: WalletID): Promise<ExtendedMasterWalletInfo> {
-        let key = "extended-wallet-infos-"+masterId;
+        let key = "extended-wallet-infos-" + masterId;
         return await this.get(key);
     }
 
     /**
      * Additional network wallet info, i.e. the list of visible ERC coins.
      */
-     public setExtendedNetworkWalletInfo(masterId: WalletID, networkTemplate: string, networkName: string, extendedInfo: ExtendedNetworkWalletInfo): Promise<void> {
-        let key = "extended-network-wallet-info-"+masterId+"-"+networkName;
+    public setExtendedNetworkWalletInfo(masterId: WalletID, networkTemplate: string, networkName: string, extendedInfo: ExtendedNetworkWalletInfo): Promise<void> {
+        let key = "extended-network-wallet-info-" + masterId + "-" + networkName;
         return this.set(key, JSON.stringify(extendedInfo));
     }
 
     public async getExtendedNetworWalletInfo(masterId: WalletID, networkTemplate: string, networkName: string): Promise<ExtendedNetworkWalletInfo> {
-        let key = "extended-network-wallet-info-"+masterId+"-"+networkName;
+        let key = "extended-network-wallet-info-" + masterId + "-" + networkName;
         return await this.get(key);
     }
 
@@ -111,7 +111,7 @@ export class LocalStorage {
 
     public setCurrency(value: string) {
         return this.set("currency", JSON.stringify(value)).then(() => {
-          Logger.log('wallet', 'Currency stored');
+            Logger.log('wallet', 'Currency stored');
         });
     }
 
@@ -135,7 +135,7 @@ export class LocalStorage {
 
     public setPrice(symbol: string, price: number) {
         return this.set(symbol, JSON.stringify(price)).then(() => {
-          // Logger.log('wallet', 'Ela price stored');
+            // Logger.log('wallet', 'Ela price stored');
         });
     }
 

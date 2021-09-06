@@ -1,24 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { LocalStorage } from '../../../services/storage.service';
-import { PopupProvider } from "../../../services/popup.service";
-import { WalletService } from '../../../services/wallet.service';
-import { Native } from '../../../services/native.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Util } from '../../../model/util';
-import { Config } from '../../../config/Config';
-import { WalletEditionService } from '../../../services/walletedition.service';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { CurrencyService } from '../../../services/currency.service';
-import { AuthService } from '../../../services/auth.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { PopoverController } from '@ionic/angular';
-import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Config } from '../../../config/Config';
+import { Util } from '../../../model/util';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
+import { AuthService } from '../../../services/auth.service';
+import { CurrencyService } from '../../../services/currency.service';
+import { Native } from '../../../services/native.service';
+import { PopupProvider } from "../../../services/popup.service";
+import { LocalStorage } from '../../../services/storage.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletEditionService } from '../../../services/walletedition.service';
 
 @Component({
     selector: 'app-wallet-settings',
@@ -86,14 +86,14 @@ export class WalletSettingsPage implements OnInit {
             icon: '/assets/wallet/settings/trash.svg',
             iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
         },
-  /*       {
-            type: 'wallet-swap',
-            route: "/wallet/swap-test",
-            title: this.translate.instant("SWAP TEST"),
-            subtitle: this.translate.instant("This is a temporary screen"),
-            icon: '/assets/wallet/settings/trash.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
-        }, */
+        /*       {
+                  type: 'wallet-swap',
+                  route: "/wallet/swap-test",
+                  title: this.translate.instant("SWAP TEST"),
+                  subtitle: this.translate.instant("This is a temporary screen"),
+                  icon: '/assets/wallet/settings/trash.svg',
+                  iconDarkmode: '/assets/wallet/settings/darkmode/trash.svg'
+              }, */
     ];
 
     constructor(
@@ -159,7 +159,7 @@ export class WalletSettingsPage implements OnInit {
         try {
             const payPassword = await this.authService.getWalletPassword(this.masterWalletId, true, true);
             if (payPassword) {
-               void this.showDeletePrompt();
+                void this.showDeletePrompt();
             }
         } catch (e) {
             Logger.error('wallet', 'onDelete getWalletPassword error:' + e);
@@ -209,9 +209,9 @@ export class WalletSettingsPage implements OnInit {
         this.readonly = ret["InnerType"] || "";
     }
 
-  /*   public goToSetting(item) {
-        item.route !== null ? this.native.go(item.route) : this.onDelete();
-    } */
+    /*   public goToSetting(item) {
+          item.route !== null ? this.native.go(item.route) : this.onDelete();
+      } */
 
     public goToSetting(item) {
         if (item.type === 'wallet-export') {

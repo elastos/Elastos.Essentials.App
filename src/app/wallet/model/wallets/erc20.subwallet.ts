@@ -1,24 +1,24 @@
-import Web3 from 'web3';
-
-import { SubWallet, SerializedSubWallet } from './subwallet';
-import { CoinType, CoinID, Coin, ERC20Coin, StandardCoinName } from '../Coin';
-import { Transfer } from '../../services/cointransfer.service';
-import BigNumber from 'bignumber.js';
 import { TranslateService } from '@ngx-translate/core';
-import { ElastosPaginatedTransactions, GenericTransaction, RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
-import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
-import { Logger } from 'src/app/logger';
+import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { Config } from '../../config/Config';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { NetworkWallet } from './networkwallet';
-import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
-import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { Subject } from 'rxjs';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { Logger } from 'src/app/logger';
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import Web3 from 'web3';
+import { Config } from '../../config/Config';
+import { Transfer } from '../../services/cointransfer.service';
+import { Coin, CoinID, CoinType, ERC20Coin } from '../Coin';
+import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
+import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
+import { NetworkWallet } from './networkwallet';
+import { SerializedSubWallet, SubWallet } from './subwallet';
 
-export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
+
+export class ERC20SubWallet extends SubWallet<EthTransaction> {
     /** Coin related to this wallet */
     public coin: ERC20Coin;
     /** Web3 variables to call smart contracts */
@@ -29,7 +29,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     private tokenAddress = '';
 
-    protected elastosChainCode : StandardCoinName = null;
+    protected spvConfigEVMCode: string = null; // Ex: ETHHECO, ETHSC
 
     public static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
@@ -53,9 +53,15 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
         }
     }
 
-    constructor(public networkWallet: NetworkWallet, id: CoinID, private rpcApiUrl: string) {
+    constructor(
+        public networkWallet: NetworkWallet,
+        id: CoinID,
+        private rpcApiUrl: string,
+        protected displayableERC20TokenInfo: string // Ex: "HRC20 Token"
+    ) {
         super(networkWallet, id, CoinType.ERC20);
 
+        this.spvConfigEVMCode = this.networkWallet.network.getEVMSPVConfigName();
         void this.initialize();
     }
 
@@ -66,7 +72,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
         this.web3 = new Web3(trinityWeb3Provider);
 
         // Standard ERC20 contract ABI
-        this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
+        this.erc20ABI = require("../../../../assets/wallet/ethereum/StandardErc20ABI.json");
 
         // First retrieve the number of decimals used by this token. this is needed for a good display,
         // as we need to convert the balance integer using the number of decimals.
@@ -81,7 +87,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     public async createAddress(): Promise<string> {
         // Create on ETH always returns the same unique address.
-        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.elastosChainCode);
+        return await this.masterWallet.walletManager.spvBridge.createAddress(this.masterWallet.id, this.spvConfigEVMCode);
     }
 
     public async getTokenAccountAddress(): Promise<string> {
@@ -150,7 +156,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     // The resurn value is devided by the number of decimals used by the token.
     public getDisplayValue(amount: string): BigNumber {
-      return new BigNumber(amount).dividedBy(this.tokenAmountMulipleTimes);
+        return new BigNumber(amount).dividedBy(this.tokenAmountMulipleTimes);
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
@@ -159,11 +165,21 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
         return null;
     }
 
+    public getMainIcon(): string {
+        return this.networkWallet.network.logo;
+    }
+
+    public getSecondaryIcon(): string {
+        return "assets/wallet/coins/eth-purple.svg";
+    }
+
     /**
      * Returns the info string to show to describe the type of ERC20 tokens held by this subwallet.
      * i.e.: "Elastos ERC20 token"
      */
-    public abstract getDisplayableERC20TokenInfo(): string;
+    public getDisplayableERC20TokenInfo(): string {
+        return this.displayableERC20TokenInfo;
+    }
 
     /**
      * Check whether the balance is enough.
@@ -184,7 +200,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public async update() {
-      await this.updateBalance();
+        await this.updateBalance();
     }
 
     public async updateBalance() {
@@ -203,7 +219,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
             // The returned balance is an int. Need to devide by the number of decimals used by the token.
             this.balance = new BigNumber(balanceEla).dividedBy(this.tokenAmountMulipleTimes);
             await this.saveBalanceToCache();
-            Logger.log('wallet', this.id+": raw balance:", balanceEla, " Converted balance: ", this.balance);
+            Logger.log('wallet', this.id + ": raw balance:", balanceEla, " Converted balance: ", this.balance);
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
         }
@@ -211,7 +227,7 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     public getTransactionsCacheKey(): string {
         return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.coin.getContractAddress() + "-transactions";
-      }
+    }
 
     /* public async getTransactions(startIndex: number): Promise<ElastosPaginatedTransactions> {
         if (this.paginatedTransactions == null) {
@@ -233,24 +249,24 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
         }
     } */
 
-    public getTransactionByHash(hash: string) : EthTransaction {
-        let transactions = this.getTransactions();
-      if (transactions) {
-        let existingIndex = (transactions as EthTransaction[]).findIndex(i => i.hash == hash);
-        if (existingIndex >= 0) {
-          return transactions[existingIndex] as EthTransaction;
+    public async getTransactionByHash(hash: string): Promise<EthTransaction> {
+        let transactions = await this.getTransactions();
+        if (transactions) {
+            let existingIndex = (transactions as EthTransaction[]).findIndex(i => i.hash == hash);
+            if (existingIndex >= 0) {
+                return transactions[existingIndex] as EthTransaction;
+            }
         }
-      }
-      return null;
+        return null;
     }
 
     public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-      let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
-      if (!result) {
-        // Remove error transaction.
-        // TODO await this.removeInvalidTransaction(txid);
-      }
-      return result;
+        let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.rpcApiUrl, txid);
+        if (!result) {
+            // Remove error transaction.
+            // TODO await this.removeInvalidTransaction(txid);
+        }
+        return result;
     }
 
     public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
@@ -340,16 +356,16 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
         return Promise.resolve([]);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg:string = null): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null): Promise<any> {
         if (amount === -1) {//-1: send all.
-          amount = this.balance.toNumber();
+            amount = this.balance.toNumber();
         }
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
         let gasPrice = gasPriceArg;
         if (gasPrice == null) {
-          gasPrice = await this.web3.eth.getGasPrice();
+            gasPrice = await this.web3.eth.getGasPrice();
         }
 
         Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
@@ -362,90 +378,90 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         let gasLimit = gasLimitArg;
         if (gasLimit == null) {
-          gasLimit = '100000';
-          try {
-              // Estimate gas cost
-              gasLimit = await method.estimateGas();
-          } catch (error) {
-              Logger.log('wallet', 'estimateGas error:', error);
-          }
+            gasLimit = '100000';
+            try {
+                // Estimate gas cost
+                gasLimit = await method.estimateGas();
+            } catch (error) {
+                Logger.log('wallet', 'estimateGas error:', error);
+            }
         }
 
         let nonce = await this.getNonce();
         const rawTx =
-        await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
-            this.masterWallet.id,
-            this.elastosChainCode,
-            contractAddress,
-            '0',
-            0, // WEI
-            gasPrice,
-            0, // WEI
-            gasLimit.toString(),
-            method.encodeABI(),
-            nonce
-        );
+            await this.masterWallet.walletManager.spvBridge.createTransferGeneric(
+                this.masterWallet.id,
+                this.spvConfigEVMCode,
+                contractAddress,
+                '0',
+                0, // WEI
+                gasPrice,
+                0, // WEI
+                gasLimit.toString(),
+                method.encodeABI(),
+                nonce
+            );
         return rawTx;
     }
 
     public async publishTransaction(transaction: string): Promise<string> {
-      let obj = JSON.parse(transaction) as SignedETHSCTransaction;
-      let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
-      return txid;
+        let obj = JSON.parse(transaction) as SignedETHSCTransaction;
+        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(this.rpcApiUrl, obj.TxSigned);
+        return txid;
     }
 
     public signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult> {
         Logger.log('wallet', "ERC20 signAndSendRawTransaction transaction:", transaction, transfer);
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise(async (resolve)=>{
+        return new Promise(async (resolve) => {
             try {
-              const password = await this.masterWallet.walletManager.openPayModal(transfer);
-              if (!password) {
-                  Logger.log('wallet', "No password received. Cancelling");
-                  resolve({
-                      published: false,
-                      txid: null,
-                      status: 'cancelled'
-                  });
-                  return;
-              }
+                const password = await this.masterWallet.walletManager.openPayModal(transfer);
+                if (!password) {
+                    Logger.log('wallet', "No password received. Cancelling");
+                    resolve({
+                        published: false,
+                        txid: null,
+                        status: 'cancelled'
+                    });
+                    return;
+                }
 
-              Logger.log('wallet', "Password retrieved. Now signing the transaction.");
+                Logger.log('wallet', "Password retrieved. Now signing the transaction.");
 
-              const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
-                  this.masterWallet.id,
-                  this.elastosChainCode,
-                  transaction,
-                  password
-              );
+                const signedTx = await this.masterWallet.walletManager.spvBridge.signTransaction(
+                    this.masterWallet.id,
+                    this.spvConfigEVMCode,
+                    transaction,
+                    password
+                );
 
-              Logger.log('wallet', "Transaction signed. Now publishing.", this);
+                Logger.log('wallet', "Transaction signed. Now publishing.", this);
 
-              const txid = await this.publishTransaction(signedTx);
-              Logger.log('wallet', "Published transaction id:", txid);
+                const txid = await this.publishTransaction(signedTx);
+                Logger.log('wallet', "Published transaction id:", txid);
 
-              let published = true;
-              let status = 'published';
-              if (!txid || txid.length == 0) {
-                published = false;
-                status = 'error';
-              }
-              resolve({
-                  published,
-                  status,
-                  txid
-              });
+                let published = true;
+                let status = 'published';
+                if (!txid || txid.length == 0) {
+                    published = false;
+                    status = 'error';
+                }
+                resolve({
+                    published,
+                    status,
+                    txid
+                });
             }
             catch (err) {
-              await this.masterWallet.walletManager.native.hideLoading();
-              Logger.error("wallet", "Publish error:", err);
-              resolve({
-                published: false,
-                txid: null,
-                status: 'error',
-                code: err.code,
-                message: err.message,
-              });
+                await this.masterWallet.walletManager.native.hideLoading();
+                Logger.error("wallet", "Publish error:", err);
+                resolve({
+                    published: false,
+                    txid: null,
+                    status: 'error',
+                    code: err.code,
+                    message: err.message,
+                });
             }
         });
     }
@@ -453,21 +469,21 @@ export abstract class ERC20SubWallet extends SubWallet<EthTransaction> {
     /**
      * Returns the current gas price on chain.
      */
-     public async getGasPrice(): Promise<string> {
-      const gasPrice = await this.web3.eth.getGasPrice();
-      Logger.log('wallet', "GAS PRICE: ", gasPrice)
-      return gasPrice;
+    public async getGasPrice(): Promise<string> {
+        const gasPrice = await this.web3.eth.getGasPrice();
+        Logger.log('wallet', "GAS PRICE: ", gasPrice)
+        return gasPrice;
     }
 
     private async getNonce() {
-      const address = await this.getTokenAccountAddress();
-      try {
-        return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address);
-      }
-      catch (err) {
-        Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
-      }
-      return -1;
+        const address = await this.getTokenAccountAddress();
+        try {
+            return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address);
+        }
+        catch (err) {
+            Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
+        }
+        return -1;
     }
 
     /* public async saveTransactions(transactionsList: EthTransaction[]): Promise<void> {
