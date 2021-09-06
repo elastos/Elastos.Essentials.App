@@ -13,7 +13,7 @@ type FusionTransaction = {
 
 export class FusionEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVMSubWallet> {
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
-    return true; // TODO
+    return false; // TODO
   }
 
   // https://github.com/FUSIONFoundation/web3-fusion-extend/tree/master/examples/blockexplorerapi
@@ -49,13 +49,15 @@ export class FusionEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVM
 
       let transactions = result.result as FusionTransaction[];
 
-      if (!transactions || transactions.length == 0)
+      if (!transactions || transactions.length == 0) {
+        return;
+      }
 
-        if (transactions.length < MAX_RESULTS_PER_FETCH) {
-          // Got less results than expected: we are at the end of what we can fetch. remember this
-          // (in memory only)
-          // TODO this.canFetchMore = false;
-        }
+      if (transactions.length < MAX_RESULTS_PER_FETCH) {
+        // Got less results than expected: we are at the end of what we can fetch. remember this
+        // (in memory only)
+        // TODO this.canFetchMore = false;
+      }
 
       // TODO await this.saveTransactions(transactions);
     } catch (e) {

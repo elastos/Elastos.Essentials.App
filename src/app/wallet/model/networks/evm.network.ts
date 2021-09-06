@@ -60,7 +60,7 @@ export class EVMNetwork extends Network {
   public getMainChainID(networkTemplate?: string): number {
     let usedNetworkTemplate = networkTemplate ?? GlobalNetworksService.instance.activeNetworkTemplate.value;
     if (usedNetworkTemplate in this.networkTemplateConfigs)
-      return this.networkTemplateConfigs[networkTemplate].chainID;
+      return this.networkTemplateConfigs[usedNetworkTemplate].chainID;
     else
       return -1;
   }
