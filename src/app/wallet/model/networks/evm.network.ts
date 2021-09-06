@@ -14,7 +14,7 @@ export class EVMNetwork extends Network {
     public logo: string, // Path to the network icon
     protected mainTokenSymbol: string, // Symbol of the main EVM token: Ex: HT, BSC...
     protected mainTokenFriendlyName: string, // Ex: Huobi Token
-    public mainRpcUrlApi: string, // TODO: move into networkTemplateConfigs or flatten networkTemplateConfigs only for the active network template 
+    public mainRpcUrlApi: string, // TODO: move into networkTemplateConfigs or flatten networkTemplateConfigs only for the active network template
     public accountRpcUrlApi: string, // TODO: move into networkTemplateConfigs or flatten networkTemplateConfigs only for the active network template
     // Mapping of template -> information
     protected networkTemplateConfigs: {
@@ -59,7 +59,7 @@ export class EVMNetwork extends Network {
 
   public getMainChainID(networkTemplate?: string): number {
     let usedNetworkTemplate = networkTemplate ?? GlobalNetworksService.instance.activeNetworkTemplate.value;
-    if (networkTemplate in this.networkTemplateConfigs)
+    if (usedNetworkTemplate in this.networkTemplateConfigs)
       return this.networkTemplateConfigs[networkTemplate].chainID;
     else
       return -1;

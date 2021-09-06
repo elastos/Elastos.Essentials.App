@@ -42,12 +42,16 @@ export abstract class NetworkWallet {
         public displayToken: string // Ex: "HT", "BSC"
     ) {
         this.id = masterWallet.id;
+
+        this.transactionDiscoveryProvider = this.createTransactionDiscoveryProvider();
     }
 
     public async initialize(): Promise<void> {
         await this.prepareStandardSubWallets();
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
     }
+
+    protected abstract createTransactionDiscoveryProvider(): TransactionProvider<any>;
 
     /**
      * Starts network wallet and subwallets updates in background.
