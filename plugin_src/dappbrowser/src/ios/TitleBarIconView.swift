@@ -25,7 +25,7 @@ import Foundation
 public class TitleBarIconView: UIView {
     // UI
     @IBOutlet var iconView: AdvancedButton!
-    @IBOutlet weak var badgeView: UIImageView!
+//    @IBOutlet weak var badgeView: UIImageView!
 
     private var onClickListener: (()->Void)? = nil
 
@@ -46,7 +46,7 @@ public class TitleBarIconView: UIView {
     }
 
     private func setup() {
-        setBadgeCount(0)
+//        setBadgeCount(0)
     }
 
     /*public func setPaddingDp(int dpPadding) {
@@ -78,15 +78,15 @@ public class TitleBarIconView: UIView {
         onClickListener?()
     }
 
-    /**
-     * For now, just a on/off toggle, no real count used.
-     */
-    public func setBadgeCount(_ count: Int) {
-        if (count == 0) {
-            badgeView.isHidden = true
-        }
-        else {
-            badgeView.isHidden = false
-        }
-    }
+//    /**
+//     * For now, just a on/off toggle, no real count used.
+//     */
+//    public func setBadgeCount(_ count: Int) {
+//        if (count == 0) {
+//            badgeView.isHidden = true
+//        }
+//        else {
+//            badgeView.isHidden = false
+//        }
+//    }
 }

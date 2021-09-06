@@ -220,14 +220,14 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
 
     @IBOutlet weak var btnOuterLeft: TitleBarIconView!
     @IBOutlet weak var btnInnerLeft: TitleBarIconView!
-    @IBOutlet weak var btnInnerRight: TitleBarIconView!
+//    @IBOutlet weak var btnInnerRight: TitleBarIconView!
     @IBOutlet weak var btnOuterRight: TitleBarIconView!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var animationHintLabel: UILabel!
-    @IBOutlet weak var txtUrl: UITextField!
+//    @IBOutlet weak var animationHintLabel: UILabel!
+    @IBOutlet weak var txtUrl: UrlEditText!
 
-    @IBOutlet weak var progressBarBackground: UIView!
-    @IBOutlet weak var progressBar: UIView!
+//    @IBOutlet weak var progressBarBackground: UIView!
+//    @IBOutlet weak var progressBar: UIView!
 
     var gradientLayer: CAGradientLayer? = nil
     var darkMode: Bool = false;
@@ -250,9 +250,9 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
             self.handleInnerLeftClicked()
         }
 
-        btnInnerRight.setOnClickListener() {
-            self.handleInnerRightClicked()
-        }
+//        btnInnerRight.setOnClickListener() {
+//            self.handleInnerRightClicked()
+//        }
 
         btnOuterRight.setOnClickListener() {
             self.handleOuterRightClicked()
@@ -268,10 +268,15 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         activityHintTexts[.UPLOAD] = nil
         activityHintTexts[.OTHER] = nil
 
-        setAnimationHintText(nil)
+//        setAnimationHintText(nil)
 
         txtUrl.delegate = self;
         txtUrl.keyboardType = UIKeyboardType.URL;
+        txtUrl.clearButtonMode = .whileEditing
+
+        
+//        txtUrl.layer.borderWidth = 5.0;
+//        txtUrl.borderStyle = UITextField.BorderStyle.none;
 
         updateIcons()
     }
@@ -373,13 +378,13 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         // Increase reference count for this progress animation type
         activityCounters[activityType] = activityCounters[activityType]! + 1
         activityHintTexts[activityType] = hintText
-        updateAnimation(activityType: activityType)
+//        updateAnimation(activityType: activityType)
     }
 
     public func hideActivityIndicator(activityType: TitleBarActivityType) {
         // Decrease reference count for this progress animation type
         activityCounters[activityType] = max(0, activityCounters[activityType]! - 1)
-        updateAnimation(activityType: activityType)
+//        updateAnimation(activityType: activityType)
     }
 
     @objc public func setTitle(_ title: String?) {
@@ -431,15 +436,15 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
             color = UIColor.init(hex: "#000000")!
         }
         else {
-            color = UIColor.init(hex: "#FFFFFF")!
+            color = UIColor.init(hex: "#F5F7FE")!
         }
 
         titleLabel.textColor = color
-        animationHintLabel.textColor = color
+//        animationHintLabel.textColor = color
 
         btnOuterLeft.iconView.leftImageColor = color
         btnInnerLeft.iconView.leftImageColor = color
-        btnInnerRight.iconView.leftImageColor = color
+//        btnInnerRight.iconView.leftImageColor = color
         btnOuterRight.iconView.leftImageColor = color
 
         notifyColorChangedListeners()
@@ -472,29 +477,29 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         updateIcons()
     }
 
-    public func setBadgeCount(iconSlot: TitleBarIconSlot, badgeCount: Int) {
-        switch (iconSlot) {
-        case .OUTER_LEFT:
-            if !currentNavigationIconIsVisible {
-                btnOuterLeft.setBadgeCount(badgeCount)
-            }
-            break;
-        case .INNER_LEFT:
-            btnInnerLeft.setBadgeCount(badgeCount);
-            break;
-        case .INNER_RIGHT:
-            btnInnerRight.setBadgeCount(badgeCount);
-            break;
-        case .OUTER_RIGHT:
-            if emptyMenuItems() {
-                btnOuterRight.setBadgeCount(badgeCount)
-            }
-            break;
-        default:
-            // Nothing to do, wrong info received
-            break
-        }
-    }
+//    public func setBadgeCount(iconSlot: TitleBarIconSlot, badgeCount: Int) {
+//        switch (iconSlot) {
+//        case .OUTER_LEFT:
+//            if !currentNavigationIconIsVisible {
+//                btnOuterLeft.setBadgeCount(badgeCount)
+//            }
+//            break;
+//        case .INNER_LEFT:
+//            btnInnerLeft.setBadgeCount(badgeCount);
+//            break;
+//        case .INNER_RIGHT:
+//            btnInnerRight.setBadgeCount(badgeCount);
+//            break;
+//        case .OUTER_RIGHT:
+//            if emptyMenuItems() {
+//                btnOuterRight.setBadgeCount(badgeCount)
+//            }
+//            break;
+//        default:
+//            // Nothing to do, wrong info received
+//            break
+//        }
+//    }
 
     public func addOnItemClickedListener(functionString: String, _ listener: @escaping OnIconClickedListener) {
         self.onIconClickedListenerMap[functionString] = listener
@@ -515,31 +520,34 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
      */
     private func updateIcons() {
         // Adjust icon sizes
-        btnOuterLeft.iconView.leftImageWidth = 20
-        btnOuterLeft.iconView.leftImageHeight = 20
-        btnOuterLeft.iconView.spacingLeading = 10
-        btnInnerLeft.iconView.leftImageWidth = 20
-        btnInnerLeft.iconView.leftImageHeight = 20
-        btnInnerLeft.iconView.spacingLeading = 10
-        btnInnerRight.iconView.leftImageWidth = 20
-        btnInnerRight.iconView.leftImageHeight = 20
-        btnInnerRight.iconView.spacingLeading = 10
-        btnOuterRight.iconView.leftImageWidth = 20
-        btnOuterRight.iconView.leftImageHeight = 20
-        btnOuterRight.iconView.spacingLeading = 10
+        let imageWidth: CGFloat = 24;
+        let imageHeight: CGFloat = 24;
+        let spacingLeading: CGFloat = 24;
+        btnOuterLeft.iconView.leftImageWidth = imageWidth
+        btnOuterLeft.iconView.leftImageHeight = imageHeight
+//        btnOuterLeft.iconView.spacingLeading = 10
+        btnInnerLeft.iconView.leftImageWidth = imageWidth
+        btnInnerLeft.iconView.leftImageHeight = imageHeight
+//        btnInnerLeft.iconView.spacingLeading = 10
+//        btnInnerRight.iconView.leftImageWidth = 24
+//        btnInnerRight.iconView.leftImageHeight = 24
+//      btnInnerRight.iconView.spacingLeading = 10
+        btnOuterRight.iconView.leftImageWidth = imageWidth
+        btnOuterRight.iconView.leftImageHeight = imageHeight
+//        btnOuterRight.iconView.spacingLeading = 10
 
-        if (darkMode) {
-            _ = setBackgroundColor("#FFFFFF")
-            setForegroundMode(.LIGHT)
-        }
-        else {
-            _ = setBackgroundColor("#000000")
-            setForegroundMode(.DARK)
-        }
-
+        _ = setBackgroundColor(darkMode ?  "#000000" : "#F5F7FE")
+        setForegroundMode(darkMode ? .LIGHT : .DARK)
+        
         btnOuterLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_elastos_darkmode" : "ic_elastos");
         btnInnerLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_back_darkmode" : "ic_back");
         btnOuterRight.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_vertical_menu_darkmode" : "ic_vertical_menu");
+        
+        txtUrl.textColor = UIColor.init(hex: darkMode ? "#FFFFFF" : "#000000")!
+        txtUrl.backgroundColor = UIColor.init(hex: darkMode ? "#212021" : "#FFFFFF")!
+        txtUrl.layer.borderColor = UIColor.init(hex: darkMode ? "#212021" : "#FFFFFF")!.cgColor
+        txtUrl.layer.borderWidth = 0;
+        txtUrl.frame.size.height = 38;
 
 //        // Navigation icon / Outer left
 //        if (currentNavigationIconIsVisible) {
@@ -738,86 +746,86 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         }
     }
 
-    private func setAnimationHintText(_ text: String?) {
-        if (text == nil) {
-            animationHintLabel.isHidden = true
-        }
-        else {
-            animationHintLabel.isHidden = false
-            animationHintLabel.text = text
-        }
-    }
+//    private func setAnimationHintText(_ text: String?) {
+//        if (text == nil) {
+//            animationHintLabel.isHidden = true
+//        }
+//        else {
+//            animationHintLabel.isHidden = false
+//            animationHintLabel.text = text
+//        }
+//    }
 
-    /**
-     * Based on the counters for each activity, determines which activity type has the priority and plays the appropriate animation.
-     * If no more animation, the animation is stopped
-     */
-    private func updateAnimation(activityType: TitleBarActivityType) {
-        // Check if an animation should be launched, and which one
-        var backgroundColor: String? = nil
-        if (activityCounters[.LAUNCH] ?? 0) > 0 {
-            if darkModeUsed() {
-                backgroundColor = "#FFFFFF"
-            }
-            else {
-                backgroundColor = "#444444"
-            }
-            setAnimationHintText(activityHintTexts[.LAUNCH, default: ""])
-        }
-        else if (activityCounters[.DOWNLOAD] ?? 0) > 0
-            || (activityCounters[.UPLOAD] ?? 0) > 0 {
-            backgroundColor = "#ffde6e"
-            if (activityCounters[.DOWNLOAD] ?? 0) > 0 {
-                setAnimationHintText(activityHintTexts[.DOWNLOAD, default: ""])
-            }
-            else {
-                setAnimationHintText(activityHintTexts[.UPLOAD, default: ""])
-            }
-        }
-        else if (activityCounters[.OTHER] ?? 0) > 0 {
-            backgroundColor = "#20e3d2"
-            setAnimationHintText(activityHintTexts[.OTHER, default: ""])
-        }
-        else {
-            setAnimationHintText(nil)
-        }
+//    /**
+//     * Based on the counters for each activity, determines which activity type has the priority and plays the appropriate animation.
+//     * If no more animation, the animation is stopped
+//     */
+//    private func updateAnimation(activityType: TitleBarActivityType) {
+//        // Check if an animation should be launched, and which one
+//        var backgroundColor: String? = nil
+//        if (activityCounters[.LAUNCH] ?? 0) > 0 {
+//            if darkModeUsed() {
+//                backgroundColor = "#FFFFFF"
+//            }
+//            else {
+//                backgroundColor = "#444444"
+//            }
+//            setAnimationHintText(activityHintTexts[.LAUNCH, default: ""])
+//        }
+//        else if (activityCounters[.DOWNLOAD] ?? 0) > 0
+//            || (activityCounters[.UPLOAD] ?? 0) > 0 {
+//            backgroundColor = "#ffde6e"
+//            if (activityCounters[.DOWNLOAD] ?? 0) > 0 {
+//                setAnimationHintText(activityHintTexts[.DOWNLOAD, default: ""])
+//            }
+//            else {
+//                setAnimationHintText(activityHintTexts[.UPLOAD, default: ""])
+//            }
+//        }
+//        else if (activityCounters[.OTHER] ?? 0) > 0 {
+//            backgroundColor = "#20e3d2"
+//            setAnimationHintText(activityHintTexts[.OTHER, default: ""])
+//        }
+//        else {
+//            setAnimationHintText(nil)
+//        }
+//
+//        if (backgroundColor != nil) {
+//            progressBar.isHidden = false
+//            progressBar.backgroundColor = UIColor.init(hex: backgroundColor!)
+//
+//            // Only start a new animation if we are the first animation to start.
+//            if onGoingProgressActivityCount() == 1 {
+//                animateProgressBarIn()
+//            }
+//        }
+//        else {
+//            progressBar.isHidden = true
+//        }
+//    }
 
-        if (backgroundColor != nil) {
-            progressBar.isHidden = false
-            progressBar.backgroundColor = UIColor.init(hex: backgroundColor!)
+//    private func animateProgressBarIn() {
+//        let onGoingProgressAnimation = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut, animations: {
+//            self.progressBar.alpha = 1.0
+//        })
+//        onGoingProgressAnimation.addCompletion { _ in
+//            if self.stillHasOnGoingProgressActivity() {
+//                self.animateProgressBarOut()
+//            }
+//        }
+//        onGoingProgressAnimation.startAnimation()
+//    }
 
-            // Only start a new animation if we are the first animation to start.
-            if onGoingProgressActivityCount() == 1 {
-                animateProgressBarIn()
-            }
-        }
-        else {
-            progressBar.isHidden = true
-        }
-    }
-
-    private func animateProgressBarIn() {
-        let onGoingProgressAnimation = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut, animations: {
-            self.progressBar.alpha = 1.0
-        })
-        onGoingProgressAnimation.addCompletion { _ in
-            if self.stillHasOnGoingProgressActivity() {
-                self.animateProgressBarOut()
-            }
-        }
-        onGoingProgressAnimation.startAnimation()
-    }
-
-    private func animateProgressBarOut() {
-        let onGoingProgressAnimation = UIViewPropertyAnimator(duration: 1.0, curve: .easeOut, animations: {
-            self.progressBar.alpha = 0.0
-        })
-
-        onGoingProgressAnimation.addCompletion { _ in
-            if self.stillHasOnGoingProgressActivity() {
-                self.animateProgressBarIn()
-            }
-        }
-        onGoingProgressAnimation.startAnimation()
-    }
+//    private func animateProgressBarOut() {
+//        let onGoingProgressAnimation = UIViewPropertyAnimator(duration: 1.0, curve: .easeOut, animations: {
+//            self.progressBar.alpha = 0.0
+//        })
+//
+//        onGoingProgressAnimation.addCompletion { _ in
+//            if self.stillHasOnGoingProgressActivity() {
+//                self.animateProgressBarIn()
+//            }
+//        }
+//        onGoingProgressAnimation.startAnimation()
+//    }
 }

@@ -165,19 +165,19 @@ class TitleBarPlugin : CDVPlugin {
         self.success(command)
     }
 
-    @objc func setBadgeCount(_ command: CDVInvokedUrlCommand) {
-        let iconSlotAsInt = command.arguments[0] as? Int ?? TitleBarIconSlot.INNER_LEFT.rawValue
-        let badgeValue = command.arguments[1] as? Int ?? 0
-
-        guard let iconSlot = TitleBarIconSlot(rawValue: iconSlotAsInt) else {
-            self.error(command, "Invalid icon slot value")
-            return
-        }
-
-        getTitleBar()?.setBadgeCount(iconSlot: iconSlot, badgeCount: badgeValue)
-
-        self.success(command)
-    }
+//    @objc func setBadgeCount(_ command: CDVInvokedUrlCommand) {
+//        let iconSlotAsInt = command.arguments[0] as? Int ?? TitleBarIconSlot.INNER_LEFT.rawValue
+//        let badgeValue = command.arguments[1] as? Int ?? 0
+//
+//        guard let iconSlot = TitleBarIconSlot(rawValue: iconSlotAsInt) else {
+//            self.error(command, "Invalid icon slot value")
+//            return
+//        }
+//
+//        getTitleBar()?.setBadgeCount(iconSlot: iconSlot, badgeCount: badgeValue)
+//
+//        self.success(command)
+//    }
 
     @objc func setupMenuItems(_ command: CDVInvokedUrlCommand) {
         let menuItemsJson = command.arguments[0] as? [Dictionary<String, String>]
