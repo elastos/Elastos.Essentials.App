@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,7 +38,7 @@ public class TitleBar extends FrameLayout {
     }
 
     // UI
-    View progressBar;
+    public ProgressBar progressBar;
     public TitleBarIconView btnOuterLeft = null;
     public TitleBarIconView btnInnerLeft = null;
     TitleBarIconView btnInnerRight = null;

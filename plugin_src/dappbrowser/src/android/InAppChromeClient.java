@@ -40,10 +40,12 @@ public class InAppChromeClient extends WebChromeClient {
     private CordovaWebView webView;
     private String LOG_TAG = "InAppChromeClient";
     private long MAX_QUOTA = 100 * 1024 * 1024;
+    private TitleBar titleBar;
 
-    public InAppChromeClient(CordovaWebView webView) {
+    public InAppChromeClient(CordovaWebView webView, TitleBar titleBar) {
         super();
         this.webView = webView;
+        this.titleBar = titleBar;
     }
     /**
      * Handle database quota exceeded notification.
@@ -179,4 +181,10 @@ public class InAppChromeClient extends WebChromeClient {
 
         return true;
     }
+
+    @Override
+    public void onProgressChanged(WebView view, int newProgress) {
+        titleBar.progressBar.setProgress(newProgress, true);
+    }
+
 }

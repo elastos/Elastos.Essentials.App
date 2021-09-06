@@ -12,7 +12,7 @@ import { Logger } from 'src/app/logger';
     styleUrls: ['./titlebar.component.scss'],
 })
 export class BrowserTitleBarComponent {
-    public _url: string;
+    public _url: string = "bing.com";
 
     @Input()
     set url(url: string) {

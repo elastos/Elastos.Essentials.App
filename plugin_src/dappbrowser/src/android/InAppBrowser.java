@@ -54,6 +54,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -952,7 +953,7 @@ public class InAppBrowser extends CordovaPlugin {
 //                inAppWebView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 //                inAppWebView.setId(Integer.valueOf(6));
                 // File Chooser Implemented ChromeClient
-                inAppWebView.setWebChromeClient(new InAppChromeClient(thatWebView) {
+                inAppWebView.setWebChromeClient(new InAppChromeClient(thatWebView, toolbar) {
                     public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
                     {
                         LOG.d(LOG_TAG, "File Chooser 5.0+");
@@ -972,7 +973,7 @@ public class InAppBrowser extends CordovaPlugin {
                         return true;
                     }
                 });
-                currentClient = new InAppBrowserClient(thatWebView, edittext, beforeload);
+                currentClient = new InAppBrowserClient(thatWebView, toolbar, beforeload);
                 inAppWebView.setWebViewClient(currentClient);
                 WebSettings settings = inAppWebView.getSettings();
                 settings.setJavaScriptEnabled(true);
@@ -1140,16 +1141,18 @@ public class InAppBrowser extends CordovaPlugin {
         CordovaWebView webView;
         String beforeload;
         boolean waitForBeforeload;
+        ProgressBar progressBar;
 
         /**
          * Constructor.
          *
          * @param webView
-         * @param mEditText
+         * @param titleBar
          */
-        public InAppBrowserClient(CordovaWebView webView, EditText mEditText, String beforeload) {
+        public InAppBrowserClient(CordovaWebView webView, TitleBar titleBar, String beforeload) {
             this.webView = webView;
-            this.edittext = mEditText;
+            this.edittext = titleBar.editUrl;
+            this.progressBar = titleBar.progressBar;
             this.beforeload = beforeload;
             this.waitForBeforeload = beforeload != null;
         }
@@ -1377,6 +1380,7 @@ public class InAppBrowser extends CordovaPlugin {
                 obj.put("type", LOAD_START_EVENT);
                 obj.put("url", newloc);
                 sendUpdate(obj, true);
+                progressBar.setVisibility(View.VISIBLE);
             } catch (JSONException ex) {
                 LOG.e(LOG_TAG, "URI passed in has caused a JSON error.");
             }
@@ -1394,6 +1398,8 @@ public class InAppBrowser extends CordovaPlugin {
             // https://issues.apache.org/jira/browse/CB-11248
             view.clearFocus();
             view.requestFocus();
+
+            progressBar.setVisibility(View.GONE);
 
             try {
                 JSONObject obj = new JSONObject();
