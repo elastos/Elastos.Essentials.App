@@ -22,7 +22,7 @@
         <div class="network-container" *ngIf="!showWalletSelection" [class.dark-network-container]="theme.darkMode"
             [class.networkOptions-container]="showNetworkOptions">
             <ion-row *ngIf="!showNetworkOptions" class="displayed-network" (click)="showNetworkOptions = true">
-                <ion-col offset="3" size="4">
+                <ion-col offset="2" size="7">
                     <img [src]="currentNetwork.logo">
                     <ion-label>{{ currentNetwork.name }}</ion-label>
                 </ion-col>
@@ -112,7 +112,8 @@
                             <h1>{{ networkWallet.masterWallet.name }}</h1>
                         </ion-col>
                         <ion-col size="4" class="right-col">
-                            <img src="assets/wallet/icons/change-wallet.svg" *ngIf="getPotentialActiveWallets().length > 1" (click)="toggleActiveWalletSelection()">
+                            <img src="assets/wallet/icons/change-wallet.svg"
+                                *ngIf="getPotentialActiveWallets().length > 1" (click)="toggleActiveWalletSelection()">
                             <img src="assets/wallet/icons/dots.svg" (click)="goToWalletSettings(networkWallet)">
                         </ion-col>
                     </ion-row>
@@ -121,8 +122,9 @@
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             Util.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
                                 *ngIf="!networkWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
-                            <span class="decimals">{{ Util.getDecimalBalance(networkWallet.getDisplayBalance()) }}</span>
-                            <span class="ela">{{  networkWallet.getDisplayTokenName() }}</span>
+                            <span class="decimals">{{ Util.getDecimalBalance(networkWallet.getDisplayBalance())
+                                }}</span>
+                            <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
                         </h4>
                         <h4 *ngIf="currencyService.useCurrency">{{
                             Util.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
@@ -170,7 +172,8 @@
 
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
-                    <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{ subWallet.getDisplayableERC20TokenInfo() }}</span>
+                    <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
+                        subWallet.getDisplayableERC20TokenInfo() }}</span>
                 </ion-col>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
@@ -180,7 +183,8 @@
                     <h1>{{ 'wallet.collectibles' | translate }}</h1>
                 </ion-col>
             </ion-row>
-            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode" *ngFor="let nft of networkWallet.getNFTs()" (click)="goNFTHome(networkWallet, nft)">
+            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+                *ngFor="let nft of networkWallet.getNFTs()" (click)="goNFTHome(networkWallet, nft)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">
                         <img [src]="networkWallet.getMainEvmSubWallet().getMainIcon()">

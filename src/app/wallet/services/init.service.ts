@@ -4,6 +4,7 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { ArbitrumNetwork } from '../model/networks/arbitrum/arbitrum.network';
 import { BSCNetwork } from '../model/networks/bsc/bsc.network';
 import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
 import { FusionNetwork } from '../model/networks/fusion/fusion.network';
@@ -58,6 +59,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new HECONetwork());
     await this.createAndRegisterNetwork(new BSCNetwork());
     await this.createAndRegisterNetwork(new FusionNetwork());
+    await this.createAndRegisterNetwork(new ArbitrumNetwork());
 
     // Do not await.
     void this.currencyService.init();
