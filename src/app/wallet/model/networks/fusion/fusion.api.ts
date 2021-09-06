@@ -10,7 +10,7 @@ export class FusionAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case FusionApiType.RPC: return 'https://api.fusionnetwork.io';
+          case FusionApiType.RPC: return 'https://mainnet.anyswap.exchange';
           default:
             throw new Error("Fusion API - Unknown api type " + type);
         }

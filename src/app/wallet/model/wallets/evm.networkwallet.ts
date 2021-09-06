@@ -1,5 +1,6 @@
 import { EVMNetwork } from '../networks/evm.network';
 import { EVMTransactionProvider } from '../providers/evm.transaction.provider';
+import { TransactionProvider } from '../providers/transaction.provider';
 import { StandardEVMSubWallet } from './evm.subwallet';
 import { MasterWallet } from './masterwallet';
 import { NetworkWallet } from './networkwallet';
@@ -17,8 +18,10 @@ export class EVMNetworkWallet extends NetworkWallet {
         public mainSubWalletFriendlyName: string // Ex: "Huobi Token"
     ) {
         super(masterWallet, network, displayToken);
+    }
 
-        this.transactionDiscoveryProvider = new EVMTransactionProvider(this);
+    protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
+        return new EVMTransactionProvider(this);
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {
