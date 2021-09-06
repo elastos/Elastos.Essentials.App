@@ -229,6 +229,8 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
 //    @IBOutlet weak var progressBarBackground: UIView!
 //    @IBOutlet weak var progressBar: UIView!
 
+    @IBOutlet weak var progressBar: UIProgressView!
+
     var gradientLayer: CAGradientLayer? = nil
     var darkMode: Bool = false;
 
@@ -274,7 +276,10 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         txtUrl.keyboardType = UIKeyboardType.URL;
         txtUrl.clearButtonMode = .whileEditing
 
-        
+        // progressBar.frame.size.height = 2;
+        progressBar.progressTintColor = UIColor.systemBlue;
+//        progressBar.trackTintColor = UIColor.white;
+
 //        txtUrl.layer.borderWidth = 5.0;
 //        txtUrl.borderStyle = UITextField.BorderStyle.none;
 
@@ -538,11 +543,11 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
 
         _ = setBackgroundColor(darkMode ?  "#000000" : "#F5F7FE")
         setForegroundMode(darkMode ? .LIGHT : .DARK)
-        
+
         btnOuterLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_elastos_darkmode" : "ic_elastos");
         btnInnerLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_back_darkmode" : "ic_back");
         btnOuterRight.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_vertical_menu_darkmode" : "ic_vertical_menu");
-        
+
         txtUrl.textColor = UIColor.init(hex: darkMode ? "#FFFFFF" : "#000000")!
         txtUrl.backgroundColor = UIColor.init(hex: darkMode ? "#212021" : "#FFFFFF")!
         txtUrl.layer.borderColor = UIColor.init(hex: darkMode ? "#212021" : "#FFFFFF")!.cgColor

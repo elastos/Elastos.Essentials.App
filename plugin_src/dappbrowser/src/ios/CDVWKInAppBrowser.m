@@ -735,6 +735,13 @@ BOOL isExiting = FALSE;
 
 -(void)dealloc {
     //NSLog(@"dealloc");
+    if ([self isViewLoaded]) {
+            [self.webView removeObserver:self forKeyPath:NSStringFromSelector(@selector(estimatedProgress))];
+        }
+
+    // if you have set either WKWebView delegate also set these to nil here
+    [self.webView setNavigationDelegate:nil];
+    [self.webView setUIDelegate:nil];
 }
 
 - (void)createViews
@@ -792,6 +799,9 @@ BOOL isExiting = FALSE;
 
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
+    
+    //Add self as an observer of estimatedProgress
+    [self.webView addObserver:self forKeyPath:NSStringFromSelector(@selector(estimatedProgress)) options:NSKeyValueObservingOptionNew context:NULL];
 
 
     self.webView.navigationDelegate = self;
@@ -855,6 +865,8 @@ BOOL isExiting = FALSE;
     else {
         [toolbar setUrl: self.currentURL.absoluteString];
     }
+    
+    self.progressView = toolbar.progressBar;
 //    self.toolbar.alpha = 1.000;
 //    self.toolbar.autoresizesSubviews = YES;
 //    self.toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
@@ -938,6 +950,24 @@ BOOL isExiting = FALSE;
     [self.view addSubview:self.toolbar];
 //    [self.view addSubview:self.addressLabel];
     [self.view addSubview:self.spinner];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:NSStringFromSelector(@selector(estimatedProgress))] && object == self.webView) {
+        [self.progressView setAlpha:1.0f];
+        [self.progressView setProgress:self.webView.estimatedProgress animated:YES];
+
+        if(self.webView.estimatedProgress >= 1.0f) {
+            [UIView animateWithDuration:0.3 delay:0.3 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                [self.progressView setAlpha:0.0f];
+            } completion:^(BOOL finished) {
+                [self.progressView setProgress:0.0f animated:NO];
+            }];
+        }
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (id)settingForKey:(NSString*)key
