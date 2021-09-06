@@ -5,7 +5,6 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { Config } from '../../config/Config';
 import { LocalStorage } from '../../services/storage.service';
 import { Coin, CoinID, CoinType, StandardCoinName } from '../Coin';
-import { EthTransaction } from '../evm.types';
 import { Network } from '../networks/network';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { TransactionProvider } from '../providers/transaction.provider';
@@ -39,7 +38,8 @@ export abstract class NetworkWallet {
 
     constructor(
         public masterWallet: MasterWallet,
-        public network: Network
+        public network: Network,
+        public displayToken: string // Ex: "HT", "BSC"
     ) {
         this.id = masterWallet.id;
     }
@@ -129,7 +129,7 @@ export abstract class NetworkWallet {
      * Returns the main subwallet inside this network wallet, responsible for refreshing the list of
      * ERC20 tokens, NFTs, etc. For elastos, this is the ESC sidechain (no EID support for now).
      */
-    public abstract getMainEvmSubWallet(): StandardEVMSubWallet<EthTransaction>;
+    public abstract getMainEvmSubWallet(): StandardEVMSubWallet;
 
     /**
      * Adds a new subwallet to this network wallet, based on a given coin type.

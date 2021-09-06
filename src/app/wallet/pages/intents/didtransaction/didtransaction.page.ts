@@ -20,21 +20,20 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/eid.evm.subwallet';
+import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
-import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
-import { TranslateService } from '@ngx-translate/core';
-import BigNumber from 'bignumber.js';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { Logger } from 'src/app/logger';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/eid.evm.subwallet';
 
 
 @Component({
@@ -43,7 +42,7 @@ import { EidSubWallet } from 'src/app/wallet/model/wallets/elastos/eid.evm.subwa
     styleUrls: ['./didtransaction.page.scss'],
 })
 export class DidTransactionPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private networkWallet: NetworkWallet;
     private sourceSubwallet: ElastosEVMSubWallet;
@@ -74,10 +73,10 @@ export class DidTransactionPage implements OnInit {
     }
 
     ionViewDidEnter() {
-      if (this.walletInfo["Type"] === "Multi-Sign") {
-          // TODO: reject didtransaction if multi sign (show error popup)
-          void this.cancelOperation();
-      }
+        if (this.walletInfo["Type"] === "Multi-Sign") {
+            // TODO: reject didtransaction if multi sign (show error popup)
+            void this.cancelOperation();
+        }
     }
 
     init() {
@@ -122,28 +121,28 @@ export class DidTransactionPage implements OnInit {
         Logger.log('wallet', 'Calling createIdTransaction()');
 
         const rawTx = await (this.sourceSubwallet as EidSubWallet).createIDTransaction(
-              JSON.stringify(this.coinTransferService.didrequest),
+            JSON.stringify(this.coinTransferService.didrequest),
         );
 
         if (rawTx) {
-          Logger.log('wallet', 'Created raw DID transaction');
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.networkWallet.id,
-              elastosChainCode: this.elastosChainCode,
-              rawTransaction: rawTx,
-              payPassword: '',
-              action: this.intentTransfer.action,
-              intentId: this.intentTransfer.intentId,
-          });
+            Logger.log('wallet', 'Created raw DID transaction');
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.networkWallet.id,
+                elastosChainCode: this.elastosChainCode,
+                rawTransaction: rawTx,
+                payPassword: '',
+                action: this.intentTransfer.action,
+                intentId: this.intentTransfer.intentId,
+            });
 
-          const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         } else {
-          await this.globalIntentService.sendIntentResponse(
-            { txid: null, status: 'error' },
-            this.intentTransfer.intentId
-          );
+            await this.globalIntentService.sendIntentResponse(
+                { txid: null, status: 'error' },
+                this.intentTransfer.intentId
+            );
         }
     }
 }

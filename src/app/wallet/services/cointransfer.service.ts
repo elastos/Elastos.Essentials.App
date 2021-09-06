@@ -47,7 +47,7 @@ export class Transfer {
     toAddress = '';
     publicKeys: any;
     didrequest: string;
-   // type: string = 'payment-confirm';
+    // type: string = 'payment-confirm';
     toElastosChainCode: string;
     currency: string; // pay
     rate: number;

@@ -20,34 +20,24 @@
  * SOFTWARE.
  */
 
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Config } from '../../../../config/Config';
-import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
-import { Util } from '../../../../model/util';
-import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/subwallet';
-import { TransactionInfo } from '../../../../model/providers/transaction.types';
-import * as moment from 'moment';
-import { CurrencyService } from '../../../../services/currency.service';
-import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
-import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
-import { UiService } from '../../../../services/ui.service';
-import { LocalStorage } from '../../../../services/storage.service';
-import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { NFT, NFTType } from 'src/app/wallet/model/nfts/nft';
-import { ERC721Service } from 'src/app/wallet/services/erc721.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ERC721Service } from 'src/app/wallet/services/erc721.service';
+import { Util } from '../../../../model/util';
+import { CurrencyService } from '../../../../services/currency.service';
+import { Native } from '../../../../services/native.service';
+import { PopupProvider } from '../../../../services/popup.service';
+import { LocalStorage } from '../../../../services/storage.service';
+import { UiService } from '../../../../services/ui.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 @Component({
     selector: 'app-coin-nft-details',
@@ -115,7 +105,7 @@ export class CoinNFTDetailsPage implements OnInit {
         if (this.asset.id.length < 15)
             return this.asset.id;
 
-        return this.asset.id.substr(0, 15)+"...";
+        return this.asset.id.substr(0, 15) + "...";
     }
 
     public hasRealAssetIcon(): boolean {

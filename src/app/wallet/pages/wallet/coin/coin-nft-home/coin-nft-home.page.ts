@@ -22,32 +22,27 @@
 
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Config } from '../../../../config/Config';
-import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
-import { Util } from '../../../../model/util';
-import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { MasterWallet } from '../../../../model/wallets/masterwallet';
-import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
-import { StandardCoinName, CoinType } from '../../../../model/Coin';
-import { SubWallet } from '../../../../model/wallets/subwallet';
-import { TransactionInfo } from '../../../../model/providers/transaction.types';
 import * as moment from 'moment';
-import { CurrencyService } from '../../../../services/currency.service';
-import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
-import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
-import { UiService } from '../../../../services/ui.service';
-import { LocalStorage } from '../../../../services/storage.service';
-import { Subscription } from 'rxjs';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { NFT, NFTType } from 'src/app/wallet/model/nfts/nft';
-import { ERC721Service } from 'src/app/wallet/services/erc721.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { ERC721Service } from 'src/app/wallet/services/erc721.service';
+import { Config } from '../../../../config/Config';
+import { CoinType } from '../../../../model/Coin';
+import { TransactionInfo } from '../../../../model/providers/transaction.types';
+import { Util } from '../../../../model/util';
+import { CoinTransferService } from '../../../../services/cointransfer.service';
+import { CurrencyService } from '../../../../services/currency.service';
+import { Native } from '../../../../services/native.service';
+import { PopupProvider } from '../../../../services/popup.service';
+import { LocalStorage } from '../../../../services/storage.service';
+import { UiService } from '../../../../services/ui.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 @Component({
     selector: 'app-coin-nft-home',
@@ -106,8 +101,8 @@ export class CoinNFTHomePage implements OnInit {
 
     ionViewDidLeave() {
         if (this.updateInterval) {
-          clearInterval(this.updateInterval);
-          this.updateInterval = null;
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
         }
     }
 
@@ -148,17 +143,17 @@ export class CoinNFTHomePage implements OnInit {
     }
 
     startUpdateInterval() {
-      if (this.updateInterval === null) {
-        this.updateInterval = setInterval(() => {
-          void this.initData();
-        }, 30000);// 30s
-      }
+        if (this.updateInterval === null) {
+            this.updateInterval = setInterval(() => {
+                void this.initData();
+            }, 30000);// 30s
+        }
     }
 
     restartUpdateInterval() {
-      clearInterval(this.updateInterval);
-      this.updateInterval = null;
-      this.startUpdateInterval();
+        clearInterval(this.updateInterval);
+        this.updateInterval = null;
+        this.startUpdateInterval();
     }
 
     async refreshAssets() {
@@ -175,7 +170,7 @@ export class CoinNFTHomePage implements OnInit {
         if (asset.id.length < 15)
             return asset.id;
 
-        return asset.id.substr(0, 15)+"...";
+        return asset.id.substr(0, 15) + "...";
     }
 
     public hasRealAssetIcon(asset: NFTAsset): boolean {
@@ -301,25 +296,25 @@ export class CoinNFTHomePage implements OnInit {
         return this.transferList.findIndex(e => e.txid === txid);
     }
 
-   /*  async checkUTXOCount() {
-        // Check UTXOs only for SPV based coins.
-        if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
-          // TODO
-            // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
-            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.elastosChainCode, 0, 1, '');
-            //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
-            //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
-            //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
-            //         let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'wallet.text-consolidate-note')
-            //         if (ret) {
-            //             await this.createConsolidateTransaction();
-            //         }
-            //     }
-
-            //     this.walletManager.needToCheckUTXOCountForConsolidation = false;
-            // }
-        }
-    } */
+    /*  async checkUTXOCount() {
+         // Check UTXOs only for SPV based coins.
+         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
+           // TODO
+             // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
+             //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.elastosChainCode, 0, 1, '');
+             //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
+             //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
+             //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
+             //         let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt', UTXOsCount, 'wallet.text-consolidate-note')
+             //         if (ret) {
+             //             await this.createConsolidateTransaction();
+             //         }
+             //     }
+ 
+             //     this.walletManager.needToCheckUTXOCountForConsolidation = false;
+             // }
+         }
+     } */
 
     countAsDailyTransactionIfNeeded(timestamp: number) {
         const today = moment(new Date());

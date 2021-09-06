@@ -119,17 +119,14 @@ export class CoinHomePage implements OnInit {
         this.fetchMoreTriggerObserver.observe(this.fetchMoreTrigger.nativeElement);
     }
 
-    async ionViewWillEnter() {
+    ionViewWillEnter() {
         this.coinTransferService.elastosChainCode = this.elastosChainCode;
         this.titleBar.setTitle(this.translate.instant('wallet.coin-transactions'));
         void this.initData();
 
-        // First initialization
-        await this.subWallet.prepareTransactions();
-
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe(() => {
-            this.transactions = this.subWallet.getTransactions();
+        this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe(async () => {
+            this.transactions = await this.subWallet.getTransactions();
 
             void this.zone.run(async () => {
                 await this.updateTransactions();

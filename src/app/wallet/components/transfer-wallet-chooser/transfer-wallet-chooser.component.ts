@@ -1,20 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WalletService } from '../../services/wallet.service';
-import { UiService } from '../../services/ui.service';
-import { StandardCoinName, CoinType } from '../../model/Coin';
-import { TranslateService } from '@ngx-translate/core';
-import { CurrencyService } from '../../services/currency.service';
-import { MasterWallet } from '../../model/wallets/masterwallet';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Logger } from 'src/app/logger';
 import { ModalController, NavParams } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { CoinType, StandardCoinName } from '../../model/Coin';
 import { NetworkWallet } from '../../model/wallets/networkwallet';
+import { CurrencyService } from '../../services/currency.service';
+import { UiService } from '../../services/ui.service';
+import { WalletService } from '../../services/wallet.service';
 
 export type WalletChooserComponentOptions = {
-    sourceWallet: NetworkWallet; // Master wallet from which funds will be transfered
-    elastosChainCode: StandardCoinName; // Target chain ID, used to display available balance for each wallet
-    excludeWalletId?: string; // Optional wallet to not show in the list of selectable wallets
+  sourceWallet: NetworkWallet; // Master wallet from which funds will be transfered
+  elastosChainCode: StandardCoinName; // Target chain ID, used to display available balance for each wallet
+  excludeWalletId?: string; // Optional wallet to not show in the list of selectable wallets
 }
 
 @Component({

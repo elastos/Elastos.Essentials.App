@@ -163,9 +163,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-      if (this.intentId) {
-        this.titleBar.setNavigationMode(null);
-      }
+        if (this.intentId) {
+            this.titleBar.setNavigationMode(null);
+        }
     }
 
     ionViewWillLeave() {
@@ -200,55 +200,55 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.elastosChainCode].getDisplayBalance());
 
         if ((this.elastosChainCode !== StandardCoinName.ELA) && (this.elastosChainCode !== StandardCoinName.IDChain)) {
-          this.isEthsubwallet = true;
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status)=>{
-            Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
-            switch (status.status) {
-              case ETHTransactionStatus.PACKED:
-                this.walletManager.native.setRootRouter('/wallet/wallet-home');
-                if (this.intentId) {
-                  let result = {
-                    published: true,
-                    txid: status.txId,
-                    status: 'published'
-                  }
-                  await this.globalIntentService.sendIntentResponse(result, this.intentId);
+            this.isEthsubwallet = true;
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe(async (status) => {
+                Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
+                switch (status.status) {
+                    case ETHTransactionStatus.PACKED:
+                        this.walletManager.native.setRootRouter('/wallet/wallet-home');
+                        if (this.intentId) {
+                            let result = {
+                                published: true,
+                                txid: status.txId,
+                                status: 'published'
+                            }
+                            await this.globalIntentService.sendIntentResponse(result, this.intentId);
+                        }
+                        break;
+                    case ETHTransactionStatus.CANCEL:
+                        if (this.intentId) {
+                            let result = {
+                                published: false,
+                                txid: null,
+                                status: 'cancelled'
+                            }
+                            await this.globalIntentService.sendIntentResponse(result, this.intentId);
+                        }
+                        break;
                 }
-                break;
-              case ETHTransactionStatus.CANCEL:
-                if (this.intentId) {
-                  let result = {
-                    published: false,
-                    txid: null,
-                    status: 'cancelled'
-                  }
-                  await this.globalIntentService.sendIntentResponse(result, this.intentId);
-                }
-                break;
-            }
-          });
+            });
 
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status)=>{
-            Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
-            if (status) {
-              this.gasPrice = status.gasPrice;
-              this.gasLimit = status.gasLimit;
-              // Do Transaction
-              void await this.transaction();
-              // Reset gas price.
-              this.gasPrice = null;
-              this.gasLimit = null;
-            }
-          });
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            this.ethTransactionSpeedupSub = ETHTransactionService.instance.ethTransactionSpeedup.subscribe(async (status) => {
+                Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
+                if (status) {
+                    this.gasPrice = status.gasPrice;
+                    this.gasLimit = status.gasLimit;
+                    // Do Transaction
+                    void await this.transaction();
+                    // Reset gas price.
+                    this.gasPrice = null;
+                    this.gasLimit = null;
+                }
+            });
         }
 
         switch (this.transferType) {
             // For Recharge Transfer
             case TransferType.RECHARGE:
                 // Setup page display
-                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", {coinName: this.coinTransferService.toElastosChainCode}));
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", { coinName: this.coinTransferService.toElastosChainCode }));
                 this.toSubWallet = this.networkWallet.getSubWallet(this.coinTransferService.toElastosChainCode);
 
                 // Setup params for recharge transaction
@@ -328,37 +328,37 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         );
         await this.native.hideLoading();
         if (rawTx) {
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.networkWallet.id,
-              elastosChainCode: this.elastosChainCode,
-              rawTransaction: rawTx,
-              action: this.action,
-              intentId: this.intentId
-          });
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.networkWallet.id,
+                elastosChainCode: this.elastosChainCode,
+                rawTransaction: rawTx,
+                action: this.action,
+                intentId: this.intentId
+            });
 
-          if (this.isEthsubwallet) {
-            try {
-              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
+            if (this.isEthsubwallet) {
+                try {
+                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
+                }
+                catch (err) {
+                    Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
+                }
+            } else {
+                const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+                if (result.published)
+                    void this.showSuccess();
+                if (transfer.intentId) {
+                    await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+                }
             }
-            catch (err) {
-              Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
-            }
-          } else {
-            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-            if (result.published)
-                void this.showSuccess();
-            if (transfer.intentId) {
-              await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
-            }
-          }
         } else {
-          if (this.intentId) {
-            await this.globalIntentService.sendIntentResponse(
-              { txid: null, status: 'error' },
-              this.intentId
-            );
-          }
+            if (this.intentId) {
+                await this.globalIntentService.sendIntentResponse(
+                    { txid: null, status: 'error' },
+                    this.intentId
+                );
+            }
         }
     }
 
@@ -379,19 +379,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         await this.native.hideLoading();
 
         if (rawTx) {
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.networkWallet.id,
-              elastosChainCode: this.elastosChainCode,
-              rawTransaction: rawTx,
-              payPassword: '',
-              action: null,
-              intentId: null,
-          });
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.networkWallet.id,
+                elastosChainCode: this.elastosChainCode,
+                rawTransaction: rawTx,
+                payPassword: '',
+                action: null,
+                intentId: null,
+            });
 
-          const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-          if (result.published)
-              void this.showSuccess();
+            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+            if (result.published)
+                void this.showSuccess();
         }
     }
 
@@ -408,76 +408,76 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         );
 
         if (rawTx) {
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.networkWallet.id,
-              elastosChainCode: this.elastosChainCode,
-              rawTransaction: rawTx,
-              payPassword: '',
-              action: null,
-              intentId: null,
-          });
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.networkWallet.id,
+                elastosChainCode: this.elastosChainCode,
+                rawTransaction: rawTx,
+                payPassword: '',
+                action: null,
+                intentId: null,
+            });
 
-          if (this.isEthsubwallet) {
-            try {
-              await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
+            if (this.isEthsubwallet) {
+                try {
+                    await this.ethTransactionService.publishTransaction(this.fromSubWallet as ElastosEVMSubWallet, rawTx, transfer, true)
+                }
+                catch (err) {
+                    Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
+                }
+            } else {
+                const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
+                if (result.published)
+                    void this.showSuccess();
             }
-            catch (err) {
-              Logger.error('wallet', 'coin-transfer publishTransaction error:', err)
-            }
-          } else {
-            const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
-            if (result.published)
-                void this.showSuccess();
-          }
         }
     }
 
     async showOptions(ev: any) {
-      this.popover = await this.popoverCtrl.create({
-        mode: 'ios',
-        component: OptionsComponent,
-        componentProps: {
-          showContacts: this.showContactsOption,
-          showCryptonames: this.showCryptonamesOption,
-        },
-        cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'options-component-dark',
-        event: ev,
-        translucent: false
-      });
-      this.popover.onWillDismiss().then((ret) => {
-        this.popover = null;
-        void this.doActionAccordingToOptions(ret.data);
-      });
-      return await this.popover.present();
+        this.popover = await this.popoverCtrl.create({
+            mode: 'ios',
+            component: OptionsComponent,
+            componentProps: {
+                showContacts: this.showContactsOption,
+                showCryptonames: this.showCryptonamesOption,
+            },
+            cssClass: this.theme.activeTheme.value == AppTheme.LIGHT ? 'options-component' : 'options-component-dark',
+            event: ev,
+            translucent: false
+        });
+        this.popover.onWillDismiss().then((ret) => {
+            this.popover = null;
+            void this.doActionAccordingToOptions(ret.data);
+        });
+        return await this.popover.present();
     }
 
     async doActionAccordingToOptions(ret: OptionsType) {
-      switch (ret) {
-        case OptionsType.CONTACTS:
-          void this.openContacts();
-          break;
-        case OptionsType.CRYPTONAMES:
-          void this.showCryptonames();
-          break;
-        case OptionsType.Paste:
-          await this.pasteFromClipboard();
-          break;
-        case OptionsType.SCAN:
-          this.goScan();
-          break;
-      }
+        switch (ret) {
+            case OptionsType.CONTACTS:
+                void this.openContacts();
+                break;
+            case OptionsType.CRYPTONAMES:
+                void this.showCryptonames();
+                break;
+            case OptionsType.Paste:
+                await this.pasteFromClipboard();
+                break;
+            case OptionsType.SCAN:
+                this.goScan();
+                break;
+        }
     }
 
     async pasteFromClipboard() {
-      this.toAddress = await this.native.pasteFromClipboard();
+        this.toAddress = await this.native.pasteFromClipboard();
 
-      const toelastosChainCode = this.toSubWallet ? this.toSubWallet.id : this.elastosChainCode;
-      const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toelastosChainCode, this.toAddress);
-      if (!isAddressValid) {
-          this.native.toast_trans('wallet.not-a-valid-address');
-          return;
-      }
+        const toelastosChainCode = this.toSubWallet ? this.toSubWallet.id : this.elastosChainCode;
+        const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toelastosChainCode, this.toAddress);
+        if (!isAddressValid) {
+            this.native.toast_trans('wallet.not-a-valid-address');
+            return;
+        }
     }
 
     goScan() {
@@ -597,11 +597,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             case StandardCoinName.ELA:
             case StandardCoinName.IDChain:
             case StandardCoinName.ETHSC:
-            // TODO : Open it after spvsdk fix the isSubWalletAddressValid bug.
-            // case StandardCoinName.ETHDID:
+                // TODO : Open it after spvsdk fix the isSubWalletAddressValid bug.
+                // case StandardCoinName.ETHDID:
                 break;
             default:
-              elastosChainCodeTemp = StandardCoinName.ETHSC;
+                elastosChainCodeTemp = StandardCoinName.ETHSC;
                 break;
         }
 
@@ -715,7 +715,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         const targetContact = this.contactsService.contacts.find((contact) => contact.address === suggestedAddress.address);
         if (!targetContact) {
             this.contactsService.contacts.push({
-                cryptoname:  this.addressName,
+                cryptoname: this.addressName,
                 address: this.toAddress
             });
 
@@ -757,17 +757,17 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         let res = await this.globalIntentService.sendIntent(
             "https://contact.elastos.net/pickfriend",
             {
-              singleSelection: true,
-              filter: {
-                credentialType: "elaAddress"
-              }
-        });
+                singleSelection: true,
+                filter: {
+                    credentialType: "elaAddress"
+                }
+            });
         Logger.log('wallet', 'pickfriend intent res', res);
         if (res.result.friends && res.result.friends[0]) {
-          this.zone.run(() => {
-              this.toAddress = res.result.friends[0].credentials.elaAddress;
-              this.addressName = res.result.friends[0].credentials.name;
-          });
+            this.zone.run(() => {
+                this.toAddress = res.result.friends[0].credentials.elaAddress;
+                this.addressName = res.result.friends[0].credentials.name;
+            });
         }
     }
 
@@ -817,7 +817,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     keyboardIsVisible() {
         this.zone.run(() => {
-            if(this.keyboard.isVisible) {
+            if (this.keyboard.isVisible) {
                 return true;
             } else {
                 return false;

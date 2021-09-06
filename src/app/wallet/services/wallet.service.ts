@@ -33,7 +33,7 @@ import { GlobalPreferencesService } from 'src/app/services/global.preferences.se
 import { Network } from '../model/networks/network';
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
 import { WalletAccount, WalletAccountType } from '../model/WalletAccount';
-import { MasterWallet, WalletID } from '../model/wallets/MasterWallet';
+import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
 import { NetworkWallet } from '../model/wallets/networkwallet';
 import { AuthService } from './auth.service';
 import { Transfer } from './cointransfer.service';

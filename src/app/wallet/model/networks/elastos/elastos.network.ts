@@ -1,13 +1,13 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { SPVNetworkConfig } from "../../services/wallet.service";
-import { CoinID, ERC20Coin, StandardCoinName } from "../Coin";
-import { ElastosERC20SubWallet } from "../wallets/elastos/elastos.erc20.subwallet";
-import { ElastosNetworkWallet } from "../wallets/elastos/elastos.networkwallet";
-import { ERC20SubWallet } from "../wallets/erc20.subwallet";
-import { MasterWallet } from "../wallets/masterwallet";
-import { NetworkWallet } from "../wallets/networkwallet";
-import { Network } from "./network";
+import { SPVNetworkConfig } from "../../../services/wallet.service";
+import { CoinID, ERC20Coin, StandardCoinName } from "../../Coin";
+import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
+import { ElastosNetworkWallet } from "../../wallets/elastos/elastos.networkwallet";
+import { ERC20SubWallet } from "../../wallets/erc20.subwallet";
+import { MasterWallet } from "../../wallets/masterwallet";
+import { NetworkWallet } from "../../wallets/networkwallet";
+import { Network } from "../network";
 
 export class ElastosNetwork extends Network {
   constructor() {
@@ -67,31 +67,31 @@ export class ElastosNetwork extends Network {
 
     switch (networkTemplate) {
       case (MAINNET_TEMPLATE):
-        onGoingConfig['ETHSC'] = {ChainID: 20, NetworkID: 20};
-        onGoingConfig['ETHDID'] = {ChainID: 22, NetworkID: 22};
+        onGoingConfig['ETHSC'] = { ChainID: 20, NetworkID: 20 };
+        onGoingConfig['ETHDID'] = { ChainID: 22, NetworkID: 22 };
         return;
       case (TESTNET_TEMPLATE):
-        onGoingConfig['ETHSC'] = {ChainID: 21, NetworkID: 21};
-        onGoingConfig['ETHDID'] = {ChainID: 23, NetworkID: 23};
+        onGoingConfig['ETHSC'] = { ChainID: 21, NetworkID: 21 };
+        onGoingConfig['ETHDID'] = { ChainID: 23, NetworkID: 23 };
         return;
       case 'LRW':
         onGoingConfig['ELA'] = {
-          "ChainParameters":{
-            "MagicNumber":20200501,
-            "StandardPort":40008,
-            "DNSSeeds":["longrunweather.com"],
-            "CheckPoints":[[0,"d8d33c8a0a632ecc418bd7f09cd315dfc46a7e3e98e48c50c70a253e6062c257",1513936800,486801407]]
+          "ChainParameters": {
+            "MagicNumber": 20200501,
+            "StandardPort": 40008,
+            "DNSSeeds": ["longrunweather.com"],
+            "CheckPoints": [[0, "d8d33c8a0a632ecc418bd7f09cd315dfc46a7e3e98e48c50c70a253e6062c257", 1513936800, 486801407]]
           }
         };
         onGoingConfig["IDChain"] = {
-          "ChainParameters":{
-            "MagicNumber":20200503,
-            "StandardPort":41008,
-            "DNSSeeds":["longrunweather.com"],
-            "CheckPoints":[[0,"56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3",1530360000,486801407]]
+          "ChainParameters": {
+            "MagicNumber": 20200503,
+            "StandardPort": 41008,
+            "DNSSeeds": ["longrunweather.com"],
+            "CheckPoints": [[0, "56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3", 1530360000, 486801407]]
           }
         };
-        onGoingConfig['ETHDID'] = {ChainID: 24, NetworkID: 24};
+        onGoingConfig['ETHDID'] = { ChainID: 24, NetworkID: 24 };
         return;
     }
   }

@@ -1,16 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Util } from '../../../model/util';
+import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
-import { ActivatedRoute } from '@angular/router';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
-import { MasterWallet } from '../../../model/wallets/masterwallet';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { Logger } from 'src/app/logger';
-import { Events } from 'src/app/services/events.service';
 
 @Component({
     selector: 'app-wallet-edit-name',

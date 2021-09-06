@@ -1,24 +1,24 @@
- /*
- * Copyright (c) 2021 Elastos Foundation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+/*
+* Copyright (c) 2021 Elastos Foundation
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
@@ -54,7 +54,7 @@ import { WalletEditionService } from '../../../services/walletedition.service';
 })
 export class WalletHomePage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    @ViewChild('slider', {static: false}) slider: IonSlides;
+    @ViewChild('slider', { static: false }) slider: IonSlides;
 
     public masterWallet: MasterWallet = null;
     public networkWallet: NetworkWallet = null;
@@ -100,15 +100,15 @@ export class WalletHomePage implements OnInit, OnDestroy {
     ngOnInit() {
         this.showRefresher();
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe((activeNetworkWallet) => {
-          if (activeNetworkWallet) {
-            this.networkWallet = activeNetworkWallet;
-            this.refreshSubWalletsList();
-
-            // Know when a subwallet is added or removed, to refresh our list
-            this.subWalletsListChangeSubscription = this.networkWallet.subWalletsListChange.subscribe(() => {
+            if (activeNetworkWallet) {
+                this.networkWallet = activeNetworkWallet;
                 this.refreshSubWalletsList();
-            });
-          }
+
+                // Know when a subwallet is added or removed, to refresh our list
+                this.subWalletsListChangeSubscription = this.networkWallet.subWalletsListChange.subscribe(() => {
+                    this.refreshSubWalletsList();
+                });
+            }
         });
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
             this.currentNetwork = activeNetwork;
@@ -139,7 +139,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             iconPath: BuiltInIcon.SETTINGS
         });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            if(icon.key === 'settings') {
+            if (icon.key === 'settings') {
                 this.native.go('/wallet/settings');
             }
         });
@@ -157,8 +157,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     ionViewWillLeave() {
         if (this.updateInterval) {
-          clearInterval(this.updateInterval);
-          this.updateInterval = null;
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
         }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
         if (this.native.popup) {
@@ -202,7 +202,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     goSelectMasterWallet() {
-      this.native.go("/wallet/wallet-manager");
+        this.native.go("/wallet/wallet-manager");
     }
 
     public getPotentialActiveWallets(): NetworkWallet[] {
@@ -236,17 +236,17 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     startUpdateInterval() {
-      if (this.updateInterval === null) {
-        this.updateInterval = setInterval(() => {
-          void this.updateCurrentWalletInfo();
-        }, 30000);// 30s
-      }
+        if (this.updateInterval === null) {
+            this.updateInterval = setInterval(() => {
+                void this.updateCurrentWalletInfo();
+            }, 30000);// 30s
+        }
     }
 
     restartUpdateInterval() {
-      clearInterval(this.updateInterval);
-      this.updateInterval = null;
-      this.startUpdateInterval();
+        clearInterval(this.updateInterval);
+        this.updateInterval = null;
+        this.startUpdateInterval();
     }
 
     async doRefresh(event) {

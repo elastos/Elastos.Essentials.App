@@ -16,7 +16,7 @@ export class HecoAPI {
           case HecoApiType.BROWSER_RPC: return 'https://scan.hecochain.com';
           case HecoApiType.ACCOUNT_RPC: return 'https://api.hecoinfo.com';
           default:
-            throw new Error("Heco API - Unknown api type "+type);
+            throw new Error("Heco API - Unknown api type " + type);
         }
       case TESTNET_TEMPLATE:
         switch (type) {
@@ -24,10 +24,10 @@ export class HecoAPI {
           case HecoApiType.BROWSER_RPC: return 'https://testnet.hecoinfo.com';
           case HecoApiType.ACCOUNT_RPC: return 'https://api-testnet.hecoinfo.com';
           default:
-            throw new Error("Heco API - Unknown api type "+type);
+            throw new Error("Heco API - Unknown api type " + type);
         }
       default:
-        throw new Error("Heco API not supported for network template "+networkTemplate);
+        throw new Error("Heco API not supported for network template " + networkTemplate);
     }
   }
 }

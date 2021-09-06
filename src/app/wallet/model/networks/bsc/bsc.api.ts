@@ -12,22 +12,22 @@ export class BscAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case BscApiType.RPC: return 'https://bsc-dataseed.binance.org/';
+          case BscApiType.RPC: return 'https://bsc-dataseed.binance.org';
           //case BscApiType.BROWSER_RPC: return 'https://bscscan.com';
           case BscApiType.ACCOUNT_RPC: return 'https://api.bscscan.com';
           default:
-            throw new Error("Bsc API - Unknown api type "+type);
+            throw new Error("Bsc API - Unknown api type " + type);
         }
-       case TESTNET_TEMPLATE:
+      case TESTNET_TEMPLATE:
         switch (type) {
-          case BscApiType.RPC: return 'https://data-seed-prebsc-1-s1.binance.org:8545/';
+          case BscApiType.RPC: return 'https://data-seed-prebsc-1-s1.binance.org:8545';
           // case BscApiType.BROWSER_RPC: return 'https://testnet.bscscan.com';
           case BscApiType.ACCOUNT_RPC: return 'https://api-testnet.bscscan.com';
           default:
-            throw new Error("Bsc API - Unknown api type "+type);
+            throw new Error("Bsc API - Unknown api type " + type);
         }
       default:
-        throw new Error("Bsc API not supported for network template "+networkTemplate);
+        throw new Error("Bsc API not supported for network template " + networkTemplate);
     }
   }
 }

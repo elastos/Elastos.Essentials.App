@@ -22,8 +22,6 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
     if (afterTransaction)
       throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
 
-    await this.prepareTransactions(this.subWallet);
-
     let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForMisc(this.subWallet.id);
     const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
     if (rpcApiUrl === null) {

@@ -1,24 +1,24 @@
-import { Native } from './native.service';
-import { Util } from '../model/util';
-import { StandardCoinName } from '../model/Coin';
 import { Injectable } from '@angular/core';
-import { CoinTransferService, TransferType } from './cointransfer.service';
-import { WalletAccessService } from './walletaccess.service';
-import { WalletService } from './wallet.service';
-import { MasterWallet } from '../model/wallets/masterwallet';
-import { WalletEditionService } from './walletedition.service';
-import { PopupProvider } from './popup.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
 import { Subscription } from 'rxjs';
+import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { AddERCTokenRequestParams } from '../model/adderctokenrequest';
+import { StandardCoinName } from '../model/Coin';
+import { Util } from '../model/util';
+import { MasterWallet } from '../model/wallets/masterwallet';
+import { CoinTransferService, TransferType } from './cointransfer.service';
+import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
+import { PopupProvider } from './popup.service';
+import { WalletService } from './wallet.service';
+import { WalletAccessService } from './walletaccess.service';
+import { WalletEditionService } from './walletedition.service';
 
 export enum ScanType {
-  Address     = 1,
-  Publickey   = 2,
-  PrivateKey  = 3,
+    Address = 1,
+    Publickey = 2,
+    PrivateKey = 3,
 }
 
 
@@ -64,10 +64,10 @@ export class IntentService {
     }
 
     removeIntentListener() {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-        this.subscription = null;
-      }
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+            this.subscription = null;
+        }
     }
 
     async onReceiveIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
@@ -81,9 +81,9 @@ export class IntentService {
             if (toCreateWallet) {
                 // TODO
                 // Should call sendIntentResponse?
-            }  else {
+            } else {
                 // sendIntentResponse will exit current context, so must call setRootRouter('/wallet/launcher') first.
-                await this.globalIntentService.sendIntentResponse({message: 'No active master wallet!', status: 'error'}, intent.intentId);
+                await this.globalIntentService.sendIntentResponse({ message: 'No active master wallet!', status: 'error' }, intent.intentId);
             }
             return false;
         }
@@ -117,8 +117,8 @@ export class IntentService {
      * Compatibility. Some intent from External app maybe use string
      * @param param
      */
-    private getNumberFromParam(param) : number{
-        if (typeof param === 'string')  {
+    private getNumberFromParam(param): number {
+        if (typeof param === 'string') {
             return parseFloat(param);
         } else {
             return param;
@@ -237,9 +237,9 @@ export class IntentService {
         }
 
         // if (intentRequiresWalletSelection) {
-            this.coinTransferService.masterWalletId = this.activeWallet.id;
-            this.coinTransferService.walletInfo = this.activeWallet.account;
-            this.native.setRootRouter(this.nextScreen, navigationState);
+        this.coinTransferService.masterWalletId = this.activeWallet.id;
+        this.coinTransferService.walletInfo = this.activeWallet.account;
+        this.native.setRootRouter(this.nextScreen, navigationState);
         // }
         // else {
         //     this.native.setRootRouter(this.nextScreen, navigationState);
@@ -266,8 +266,8 @@ export class IntentService {
         };
         this.walletAccessService.requestFields = intent.params.reqfields || intent.params;
         // if (this.walletList.length === 1) {
-            this.walletAccessService.masterWalletId = this.activeWallet.id;
-            this.native.setRootRouter('/wallet/intents/access', { rootPage: true});
+        this.walletAccessService.masterWalletId = this.activeWallet.id;
+        this.native.setRootRouter('/wallet/intents/access', { rootPage: true });
         // } else {
         //     this.native.setRootRouter(
         //         '/wallet/wallet-manager',
@@ -302,11 +302,11 @@ export class IntentService {
             let digest = await this.walletManager.spvBridge.proposalOwnerDigest(masterWalletID, StandardCoinName.ELA, intent.params.proposal);
 
             // This is a silent intent, app will close right after calling sendIntentresponse()
-            await this.globalIntentService.sendIntentResponse({digest: digest}, intent.intentId);
+            await this.globalIntentService.sendIntentResponse({ digest: digest }, intent.intentId);
         }
         else {
             // This is a silent intent, app will close right after calling sendIntentresponse()
-            await this.globalIntentService.sendIntentResponse({message: "Missing proposal input parameter in the intent", status: 'error'}, intent.intentId);
+            await this.globalIntentService.sendIntentResponse({ message: "Missing proposal input parameter in the intent", status: 'error' }, intent.intentId);
         }
     }
 
@@ -347,26 +347,26 @@ export class IntentService {
     }
 
     async scan(type: ScanType) {
-      let res = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
-      let content: string = res.result.scannedContent;
+        let res = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+        let content: string = res.result.scannedContent;
 
-      // Some address star with "xxx:", eg "etherum:"
-      const index = content.indexOf(':');
-      if (index !== -1) {
-          content = content.substring(index + 1);
-      }
-      Logger.log('Wallet', 'Got scan result:', content);
+        // Some address star with "xxx:", eg "etherum:"
+        const index = content.indexOf(':');
+        if (index !== -1) {
+            content = content.substring(index + 1);
+        }
+        Logger.log('Wallet', 'Got scan result:', content);
 
-      switch (type) {
-          case ScanType.Address:
-              this.events.publish('address:update', content);
-              break;
-          case ScanType.Publickey:
-              this.events.publish('publickey:update', content);
-              break;
-          case ScanType.PrivateKey:
-              this.events.publish('privatekey:update', content);
-              break;
-      }
+        switch (type) {
+            case ScanType.Address:
+                this.events.publish('address:update', content);
+                break;
+            case ScanType.Publickey:
+                this.events.publish('publickey:update', content);
+                break;
+            case ScanType.PrivateKey:
+                this.events.publish('privatekey:update', content);
+                break;
+        }
     }
 }

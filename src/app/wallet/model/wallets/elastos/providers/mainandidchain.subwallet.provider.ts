@@ -1,12 +1,11 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardCoinName } from "../../../Coin";
-import { ElastosTransaction, PaginatedTransactions, TransactionDirection, TransactionStatus } from "../../../providers/transaction.types";
-import { AnySubWallet, SubWallet } from "../../subwallet";
-import { MainchainSubWallet } from "../mainchain.subwallet";
-import { WalletHelper } from "../wallet.helper";
 import { ProviderTransactionInfo } from "../../../providers/providertransactioninfo";
 import { SubWalletTransactionProvider } from "../../../providers/subwallet.provider";
+import { ElastosTransaction, PaginatedTransactions, TransactionDirection, TransactionStatus } from "../../../providers/transaction.types";
+import { AnySubWallet, SubWallet } from "../../subwallet";
+import { WalletHelper } from "../wallet.helper";
 
 export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends SubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {
   private TRANSACTION_LIMIT = 50;// for rpc
@@ -31,7 +30,7 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
    * @param timestamp get the transactions after the timestamp
    * @returns
    */
-   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: ElastosTransaction): Promise<void> {
+  public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: ElastosTransaction): Promise<void> {
     if (afterTransaction)
       throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
 
@@ -41,8 +40,6 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     }
 
     console.log("DEBUG mainandidchain provider fetch", subWallet);
-
-    await this.prepareTransactions(this.subWallet);
 
     let startingAt = 0; // TODO: COMPUTE startingAt from "afterTransaction"
 
@@ -171,11 +168,11 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
 
     //console.log("DEBUG MainchainProvider mergeTransactionListAndSort transactions=", transactions);
 
-    this.timestampEnd = this.getLastConfirmedTransactionTimestamp();
+    this.timestampEnd = await this.getLastConfirmedTransactionTimestamp();
   }
 
-  private getLastConfirmedTransactionTimestamp() {
-    let transactions = this.getTransactions(this.subWallet);
+  private async getLastConfirmedTransactionTimestamp(): Promise<number> {
+    let transactions = await this.getTransactions(this.subWallet);
     for (let i = 0, len = transactions.length; i < len; i++) {
       if (transactions[i].Status === TransactionStatus.CONFIRMED) {
         // the transactions list is sorted by block height.
