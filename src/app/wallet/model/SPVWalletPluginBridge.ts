@@ -1,13 +1,13 @@
-import { Util } from './util';
+import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { Config } from '../config/Config';
 import { Native } from '../services/native.service';
 import { PopupProvider } from '../services/popup.service';
-import { Config } from '../config/Config';
 import { StandardCoinName } from './Coin';
-import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { Events } from 'src/app/services/events.service';
+import { Util } from './util';
 import { WalletAccountType } from './WalletAccount';
-import { GlobalLanguageService } from 'src/app/services/global.language.service';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -516,6 +516,9 @@ export class SPVWalletPluginBridge {
         toAddress: string,
         amount: string,
         amountUnit: number,
+        gasPrice: string,
+        gasPriceUnit: number,
+        gasLimit: string,
         nonce: number
     ): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -526,6 +529,9 @@ export class SPVWalletPluginBridge {
                     toAddress,
                     amount,
                     amountUnit,
+                    Util.getDecimalString(gasPrice),
+                    gasPriceUnit,
+                    Util.getDecimalString(gasLimit),
                     nonce
                 ],
                 (ret) => { resolve(ret); },

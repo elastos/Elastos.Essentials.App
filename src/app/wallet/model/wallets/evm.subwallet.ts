@@ -303,12 +303,17 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
     }
+    let gasLimit = gasLimitArg;
+    if (gasLimit === null) {
+      gasLimit = '100000';
+    }
     if (amount === -1) {//-1: send all.
       let estimateGas = await this.estimateGasForPaymentTransaction(toAddress, '0x186a0111');
       if (estimateGas === -1) {
         Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
         return null;
       }
+      gasLimit = estimateGas.toString();
       let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
       //TODO remove Config.SELAAsBigNumber
       amount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
@@ -323,6 +328,9 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       toAddress,
       amount.toString(),
       6, // ETHER_ETHER
+      gasPrice,
+      0, // WEI
+      gasLimit,
       nonce
     );
   }
