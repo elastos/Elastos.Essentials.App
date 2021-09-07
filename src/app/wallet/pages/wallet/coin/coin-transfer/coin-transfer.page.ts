@@ -485,14 +485,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     supportsMaxTransfer() {
-        // TODO: withdraw transaction
         return true;
     }
 
     setMaxTransfer() {
         this.zone.run(() => {
             this.sendMax = true;
-            // -1 means send max in spvsdk.
+            // -1 means send all.
             this.amount = -1;
         });
     }
@@ -514,15 +513,16 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     valuesValid(): boolean {
         if (this.sendMax) return true;
 
+        const amountBignumber = new BigNumber(this.amount)
         if (Util.isNull(this.amount)) {
             return false;
         } else if (!Util.number(this.amount)) {
             return false;
         } else if (this.amount <= 0) {
             return false;
-        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isBalanceEnough(new BigNumber(this.amount))) {
+        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isBalanceEnough(amountBignumber)) {
             return false;
-        } else if (this.amount.toString().indexOf('.') > -1 && this.amount.toString().split(".")[1].length > 8) {
+        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isAmountValid(amountBignumber)) {
             return false;
         } else {
             return true;
@@ -531,6 +531,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // For starting tx
     valuesReady(showToast = true): boolean {
+        const amountBignumber = new BigNumber(this.amount)
         let valuesValid = false;
         if (Util.isNull(this.amount)) {
             if (showToast) this.native.toast_trans('wallet.amount-null');
@@ -538,9 +539,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else if (this.amount <= 0) {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
-        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isBalanceEnough(new BigNumber(this.amount))) {
+        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isBalanceEnough(amountBignumber)) {
             if (showToast) this.native.toast_trans('wallet.insufficient-balance');
-        } else if (this.amount.toString().indexOf('.') > -1 && this.amount.toString().split(".")[1].length > 8) {
+        } else if (!this.networkWallet.subWallets[this.elastosChainCode].isAmountValid(amountBignumber)) {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else {
             if (this.fromSubWallet.type === CoinType.ERC20) {
