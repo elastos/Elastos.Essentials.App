@@ -24,7 +24,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
 
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
     return {
-      cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + transaction.contractAddress + "-transactions",
+      cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + transaction.contractAddress.toLowerCase() + "-transactions",
       cacheEntryKey: transaction.hash,
       cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: transaction.contractAddress

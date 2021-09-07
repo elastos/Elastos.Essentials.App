@@ -225,7 +225,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getTransactionsCacheKey(): string {
-        return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.coin.getContractAddress() + "-transactions";
+        return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.coin.getContractAddress().toLowerCase() + "-transactions";
     }
 
     /* public async getTransactions(startIndex: number): Promise<ElastosPaginatedTransactions> {

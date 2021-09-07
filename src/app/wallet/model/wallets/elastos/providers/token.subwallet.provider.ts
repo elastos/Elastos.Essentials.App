@@ -9,7 +9,7 @@ import { EscSubWallet } from "../esc.evm.subwallet";
 export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<EscSubWallet, EthTransaction> {
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
     return {
-      cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + transaction.contractAddress + "-transactions",
+      cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + transaction.contractAddress.toLowerCase() + "-transactions",
       cacheEntryKey: transaction.hash,
       cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: transaction.contractAddress
