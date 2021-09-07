@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
@@ -165,7 +166,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
      } else if (transaction.type === TransactionDirection.MOVED) {
        return await './assets/wallet/buttons/transfer.png';
      }
- 
+
      return null;
    } */
 
@@ -187,6 +188,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     return this.withdrawContractAddress;
   }
 
+
   public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const contractAbi = require("../../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
@@ -195,48 +197,57 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
     }
-    // const gasPrice = '1000000000';
-
-    //   if (toAmount === -1) {
-    //       // const estimateAmount = this.web3.utils.toWei(this.balance.toString());
-    //       const estimateAmount = this.web3.utils.toWei('1');
-
-    //       const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
-    //       let estimateGas = 0;
-    //       try {
-    //           // Estimate gas cost
-    //           estimateGas = await method.estimateGas();
-    //           Logger.warn('wallet', '----estimateGas:', estimateGas)
-    //       } catch (error) {
-    //           Logger.log('wallet', 'estimateGas error:', error);
-    //       }
-    //       Logger.warn('wallet', '----estimateGas:', estimateGas)
-
-    //       let maxSendAmount = estimateAmount - estimateGas * parseInt(gasPrice);
-    //       Logger.warn('wallet', '----maxSendAmount:', maxSendAmount)
-
-    //   }
-    const toAmountSend = this.web3.utils.toWei(toAmount.toString());
-
-    const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
 
     let gasLimit = gasLimitArg;
     if (gasLimit === null) {
       gasLimit = '100000';
     }
-    // TODO: The value from estimateGas is too small sometimes (eg 22384) for withdraw transaction.
-    // Maybe it is the bug of node?
-    //   try {
-    //       // Estimate gas cost
-    //       let estimateGas = await method.estimateGas();
-    //       Logger.warn('wallet', '----estimateGas:', estimateGas)
-    //   } catch (error) {
-    //       Logger.log('wallet', 'estimateGas error:', error);
-    //   }
+
+    // Contract:
+    //   unction receivePayload(string _addr, uint256 _amount, uint256 _fee) public payable {
+    //     require(msg.value == _amount);
+    //     require(_fee >= 100000000000000 && _fee % 10000000000 == 0);
+    //     require(_amount % 10000000000 == 0 && _amount.sub(_fee) >= _fee);
+    //     emit PayloadReceived(_addr, _amount, _amount.sub(_fee), msg.sender);
+    //     emit EtherDeposited(msg.sender, msg.value, address(0));
+    // }
+    // condition: _amount % 10000000000 == 0 && _amount.sub(_fee) >= _fee
+    if (toAmount === -1) {
+        const estimateAmount = this.web3.utils.toWei(this.balance.toString());
+        const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
+        let estimateGas = 0;
+        try {
+            // Can not use method.estimateGas(), must set the "value"
+            let tx = {
+                data:method.encodeABI(),
+                to:this.withdrawContractAddress,
+                value:estimateAmount,
+            }
+            estimateGas = await this.web3.eth.estimateGas(tx);
+        } catch (error) {
+            Logger.error('wallet', 'estimateGas error:', error);
+            estimateGas = 28100; //In case of
+        }
+
+        gasLimit = estimateGas.toString();
+
+        let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
+        //TODO remove Config.SELAAsBigNumber
+        toAmount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
+        if (toAmount <= 0) return null;
+    }
+
+    // _amount % 10000000000 == 0
+    const amountTemp = toAmount.toFixed(9);
+    const fixedAmount = amountTemp.substring(0, amountTemp.lastIndexOf('.') + 9)
+    // TODO fixedAmount >= 0.0002 (_amount.sub(_fee) >= _fee)
+
+    const toAmountSend = this.web3.utils.toWei(fixedAmount.toString());
+    const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
+
     const data = method.encodeABI();
     let nonce = await this.getNonce();
     Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
-
     return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
       this.masterWallet.id,
       this.id,

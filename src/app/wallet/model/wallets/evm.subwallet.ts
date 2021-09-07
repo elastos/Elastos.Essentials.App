@@ -38,6 +38,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
 
   protected initialize() {
     this.initWeb3();
+    this.tokenDecimals = 18;
     // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
   }
 
@@ -140,7 +141,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     };
 
     transactionInfo.amount = new BigNumber(transaction.value).dividedBy(Config.WEI);
-    transactionInfo.fee = new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI).toString();
+    transactionInfo.fee = new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI).toString();
 
     if (transactionInfo.confirmStatus !== 0) {
       transactionInfo.status = TransactionStatus.CONFIRMED;

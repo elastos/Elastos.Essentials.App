@@ -35,6 +35,7 @@ export type AnySubWallet = SubWallet<GenericTransaction>;
 export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public masterWallet: MasterWallet;
   public id: CoinID = null;
+  public tokenDecimals: number;
   public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
   public lastBlockTime: string = null;
 
@@ -193,6 +194,19 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
    * For SPV subwallets, this method should be called only after wallet is synced.
    */
   public abstract isBalanceEnough(amount: BigNumber): boolean;
+
+  /**
+   * Check whether the amount is valid.
+   * @param amount unit is ETHER
+   */
+  public isAmountValid(amount: BigNumber) {
+    let amountString = amount.toString();
+    if (amountString.indexOf('.') > -1 && amountString.split(".")[1].length > this.tokenDecimals) {
+      return false;
+    } else {
+      return true;
+    }
+ }
 
   /**
    * Method that must be called by the UI before accessing subwallet transactions.

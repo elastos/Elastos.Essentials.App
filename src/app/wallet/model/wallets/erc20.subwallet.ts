@@ -24,7 +24,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     /** Web3 variables to call smart contracts */
     protected web3: Web3;
     private erc20ABI: any;
-    private tokenDecimals: number;
     private tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
 
     private tokenAddress = '';
@@ -299,7 +298,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         // Use Config.WEI: because the gas is ETHSC.
         // transactionInfo.fee = (this.tokenDecimals > 0 ? new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI) : transaction.gas).toString();
-        transactionInfo.fee = (new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toString();
+        transactionInfo.fee = (new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toString();
 
         if (transactionInfo.confirmStatus !== 0) {
             transactionInfo.status = TransactionStatus.CONFIRMED;

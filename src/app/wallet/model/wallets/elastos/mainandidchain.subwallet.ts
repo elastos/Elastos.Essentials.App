@@ -39,6 +39,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
 
     constructor(networkWallet: NetworkWallet, id: StandardCoinName) {
         super(networkWallet, id);
+
+        this.tokenDecimals = 8;
     }
 
     public supportsCrossChainTransfers(): boolean {
