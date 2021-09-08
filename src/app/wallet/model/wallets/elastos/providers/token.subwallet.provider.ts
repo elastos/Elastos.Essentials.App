@@ -9,10 +9,10 @@ import { ERC20SubWallet } from "../../erc20.subwallet";
 import { AnySubWallet } from "../../subwallet";
 import { EscSubWallet } from "../esc.evm.subwallet";
 
-const MAX_RESULTS_PER_FETCH = 100; // TODO: increase after dev complete
+const MAX_RESULTS_PER_FETCH = 30
 
 export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<EscSubWallet, EthTransaction> {
-  private canFetchMore = false;
+  private canFetchMore = true;
 
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
     return {
@@ -43,7 +43,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
     if (afterTransaction) {
-      let afterTransactionIndex = (await this.getTransactions(this.subWallet)).findIndex(t => t.hash === afterTransaction.hash);
+      let afterTransactionIndex = (await this.getTransactions(erc20SubWallet)).findIndex(t => t.hash === afterTransaction.hash);
       if (afterTransactionIndex) { // Just in case, should always be true but...
         // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
         // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
@@ -72,6 +72,8 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
         // Got less results than expected: we are at the end of what we can fetch. remember this
         // (in memory only)
         this.canFetchMore = false;
+      } else {
+        this.canFetchMore = true;
       }
 
       await this.saveTransactions(transactions);

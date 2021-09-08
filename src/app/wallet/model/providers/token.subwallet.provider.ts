@@ -9,7 +9,7 @@ import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { SubWalletTransactionProvider } from "./subwallet.provider";
 import { TransactionProvider } from "./transaction.provider";
 
-const MAX_RESULTS_PER_FETCH = 8; // TODO: increase after dev complete
+const MAX_RESULTS_PER_FETCH = 30
 
 /**
  * Root class for all EVM compatible chains to handle ERC20 tokens, as they use the same endpoints to get the list
@@ -39,7 +39,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
     if (afterTransaction) {
-      let afterTransactionIndex = (await this.getTransactions(this.subWallet)).findIndex(t => t.hash === afterTransaction.hash);
+      let afterTransactionIndex = (await this.getTransactions(erc20SubWallet)).findIndex(t => t.hash === afterTransaction.hash);
       if (afterTransactionIndex) { // Just in case, should always be true but...
         // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
         // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
@@ -50,7 +50,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
     const accountAddress = await this.subWallet.createAddress();
     let txListUrl = this.accountApiUrl + '/api?module=account';
-    txListUrl += '&action=txlist';
+    txListUrl += '&action=tokentx';
     txListUrl += '&page=' + page;
     txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;
     txListUrl += '&sort=desc';
@@ -65,6 +65,8 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
         // Got less results than expected: we are at the end of what we can fetch. remember this
         // (in memory only)
         this.canFetchMore = false;
+      } else {
+        this.canFetchMore = true;
       }
 
       await this.saveTransactions(transactions);

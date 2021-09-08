@@ -6,7 +6,7 @@ import { ProviderTransactionInfo } from "./providertransactioninfo";
 import { SubWalletTransactionProvider } from "./subwallet.provider";
 import { TransactionProvider } from "./transaction.provider";
 
-const MAX_RESULTS_PER_FETCH = 8; // TODO: increase after dev complete
+const MAX_RESULTS_PER_FETCH = 30;
 
 /**
  * Root class for all EVM compatible chains, as they use the same endpoints to get the list

@@ -44,8 +44,10 @@ export abstract class Network {
 
   /**
    * Creates the right ERC20 sub wallet instance for this network.
+   * If startBackgroundUpdates is true some initializations such as getting balance or transactions are launched in background.
+   * Otherwise, startBackgroundUpdates() has to be called manually later on the network wallet.
    */
-  public abstract createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID): ERC20SubWallet;
+  public abstract createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates?: boolean): ERC20SubWallet;
 
   public abstract getMainEvmRpcApiUrl(): string;
 

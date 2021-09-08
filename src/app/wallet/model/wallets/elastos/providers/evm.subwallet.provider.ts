@@ -7,7 +7,7 @@ import { SubWalletTransactionProvider } from "../../../providers/subwallet.provi
 import { AnySubWallet } from "../../subwallet";
 import { ElastosEVMSubWallet } from "../elastos.evm.subwallet";
 
-const MAX_RESULTS_PER_FETCH = 100; // TODO: increase after dev complete
+const MAX_RESULTS_PER_FETCH = 30
 
 // ESC, EID
 export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<ElastosEVMSubWallet, EthTransaction> {
@@ -21,39 +21,6 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
       subjectKey: this.subWallet.id
     };
   }
-
-// TODO Remove it (get transactions by misc server)
-//   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
-//     if (afterTransaction)
-//       throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
-
-//     let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForMisc(this.subWallet.id);
-//     const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
-//     if (rpcApiUrl === null) {
-//       return null;
-//     }
-//     let ethscgethistoryurl = null;
-//     // Misc api
-//     // const ethscgethistoryurl = miscApiUrl + '/api/1/eth/history?address=' + address '&begBlockNumber=' + begBlockNumber
-//     // + '&endBlockNumber=' + endBlockNumber + '&sort=desc';
-//     let address = await this.subWallet.createAddress();
-//     ethscgethistoryurl = rpcApiUrl + '/api/1/eth/history?address=' + address;
-//     Logger.warn('wallet', '----ElastosEvmSubWalletProvider fetchTransactions ', ethscgethistoryurl)
-//     try {
-//       let result = await GlobalJsonRPCService.instance.httpGet(ethscgethistoryurl);
-//       let transactions = result.result as EthTransaction[];
-
-//       // We can't "fetch more". What we get from the api if what we will always have (whole list) - for now.
-//       /* let paginatedTransactions: PaginatedTransactions<EthTransaction> = {
-//         total: transactions.length,
-//         transactions: transactions.reverse()
-//       }; */
-//       await this.saveTransactions(transactions);
-
-//     } catch (e) {
-//       Logger.error('wallet', 'Elastos EVM provider fetchTransactions error:', e)
-//     }
-//   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return this.canFetchMore;
@@ -86,8 +53,7 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
       let transactions = result.result as EthTransaction[];
-      Logger.warn('wallet', '----txListUrl:', txListUrl)
-      Logger.warn('wallet', '----transactions:', transactions)
+
       if (transactions.length < MAX_RESULTS_PER_FETCH) {
         // Got less results than expected: we are at the end of what we can fetch. remember this
         // (in memory only)
@@ -96,7 +62,7 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
 
       await this.saveTransactions(transactions);
     } catch (e) {
-      Logger.error('wallet', 'EVMSubWalletProvider fetchTransactions error:', e)
+      Logger.error('wallet', 'ElastosEvmSubWalletProvider fetchTransactions error:', e)
     }
     return null;
   }
