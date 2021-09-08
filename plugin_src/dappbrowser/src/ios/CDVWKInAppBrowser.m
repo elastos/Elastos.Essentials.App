@@ -318,6 +318,12 @@ static CDVWKInAppBrowser* instance = nil;
             if(!initHidden || osVersion < 11){
                 [self->tmpWindow makeKeyAndVisible];
             }
+//TODO:: make animator work
+//            [nav setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+//            nav.modalPresentationStyle = UIModalPresentationCustom;
+//            SlideAnimator* slideAnimator = [[SlideAnimator alloc] init];
+//            nav.transitioningDelegate = slideAnimator;
+
             [tmpController presentViewController:nav animated:!noAnimate completion:nil];
         }
     });
@@ -799,7 +805,7 @@ BOOL isExiting = FALSE;
 
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
-    
+
     //Add self as an observer of estimatedProgress
     [self.webView addObserver:self forKeyPath:NSStringFromSelector(@selector(estimatedProgress)) options:NSKeyValueObservingOptionNew context:NULL];
 
@@ -865,7 +871,7 @@ BOOL isExiting = FALSE;
     else {
         [toolbar setUrl: self.currentURL.absoluteString];
     }
-    
+
     self.progressView = toolbar.progressBar;
 //    self.toolbar.alpha = 1.000;
 //    self.toolbar.autoresizesSubviews = YES;
