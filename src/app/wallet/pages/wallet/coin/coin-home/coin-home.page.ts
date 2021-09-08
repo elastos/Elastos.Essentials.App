@@ -86,8 +86,6 @@ export class CoinHomePage implements OnInit {
     private updateInterval = null;
     private updateTmeout = null;
 
-    private fromWalletHome = true;
-
     constructor(
         public router: Router,
         public walletManager: WalletService,
@@ -125,8 +123,8 @@ export class CoinHomePage implements OnInit {
         void this.initData();
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe(async () => {
-            this.transactions = await this.subWallet.getTransactions();
+        this.transactionListChangedSubscription = this.subWallet.transactionsListChanged().subscribe((value) => {
+            if (value === null) return; // null is the initial value.
 
             void this.zone.run(async () => {
                 await this.updateTransactions();
@@ -142,7 +140,6 @@ export class CoinHomePage implements OnInit {
     }
 
     ionViewDidLeave() {
-        this.fromWalletHome = false;
         if (this.updateInterval) {
             clearInterval(this.updateInterval);
             this.updateInterval = null;
