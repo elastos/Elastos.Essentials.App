@@ -43,7 +43,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         }
         const coin = networkWallet.network.getCoinByID(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
-            const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id);
+            const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id, false);
             // subWallet.initFromSerializedSubWallet(serializedSubWallet);
             return subWallet;
         } else {
@@ -81,7 +81,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getUniqueIdentifierOnNetwork(): string {
-        return this.coin.getContractAddress();
+        return this.coin.getContractAddress().toLowerCase();
     }
 
     public async createAddress(): Promise<string> {
@@ -113,7 +113,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public transactionsListChanged(): Subject<void> {
-        return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.coin.getContractAddress());
+        return this.networkWallet.getTransactionDiscoveryProvider().transactionsListChanged(this.coin.getContractAddress().toLowerCase());
     }
 
     /**
