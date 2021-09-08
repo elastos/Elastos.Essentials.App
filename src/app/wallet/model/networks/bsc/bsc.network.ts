@@ -1,3 +1,5 @@
+import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { ERC20Coin } from "../../Coin";
 import { EVMNetwork } from "../evm.network";
 import { BscAPI, BscApiType } from "./bsc.api";
 
@@ -15,6 +17,9 @@ export class BSCNetwork extends EVMNetwork {
         "MainNet": {
           chainID: 56,
           builtInCoins: [
+            new ERC20Coin("ETH", "ETH", "Binance ETH", "0x2170ed0880ac9a755fd29b2688956bd959f933f8", MAINNET_TEMPLATE, false),
+            new ERC20Coin("ADA", "ADA", "Binance ADA", "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47", MAINNET_TEMPLATE, false),
+            new ERC20Coin("USDT", "USDT", "Binance USDT", "0x55d398326f99059ff775485246999027b3197955", MAINNET_TEMPLATE, false)
           ]
         },
         "TestNet": {
