@@ -1,21 +1,21 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Logger } from '../logger';
 import WalletConnect from "@walletconnect/client";
-import { GlobalNavService } from './global.nav.service';
-import { GlobalPreferencesService } from './global.preferences.service';
-import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
-import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
-import { GlobalIntentService } from './global.intent.service';
-import { GlobalStorageService } from './global.storage.service';
-import { GlobalNativeService } from './global.native.service';
-import { GlobalService, GlobalServiceManager } from './global.service.manager';
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { WalletManager } from '../wallet/services/wallet.service';
-import { MasterWallet } from '../wallet/model/wallets/MasterWallet';
+import { runDelayed } from '../helpers/sleep.helper';
+import { Logger } from '../logger';
+import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { StandardCoinName } from '../wallet/model/Coin';
 import { ETHChainSubWallet } from '../wallet/model/wallets/ETHChainSubWallet';
-import { runDelayed } from '../helpers/sleep.helper';
+import { MasterWallet } from '../wallet/model/wallets/MasterWallet';
+import { WalletManager } from '../wallet/services/wallet.service';
+import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
+import { GlobalIntentService } from './global.intent.service';
+import { GlobalNativeService } from './global.native.service';
+import { GlobalNavService } from './global.nav.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
+import { GlobalPreferencesService } from './global.preferences.service';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
+import { GlobalStorageService } from './global.storage.service';
 
 /**
  * Indicates from where a request to initiate a new WC session came from
@@ -55,16 +55,29 @@ export class GlobalWalletConnectService extends GlobalService {
   init() {
     GlobalServiceManager.getInstance().registerService(this);
 
-    this.intents.intentListener.subscribe((receivedIntent)=>{
+    this.intents.intentListener.subscribe((receivedIntent) => {
       if (!receivedIntent)
         return;
 
+      // Android receives the raw url.
+      // iOS receives a https://essentials.elastos.net/wc?uri=wc:xxxx
       if (receivedIntent.action === "rawurl") {
-        if (receivedIntent.params && receivedIntent.params.url) {
+        if (receivedIntent.params && receivedIntent.params.url) { // NOTE: urL
           // Make sure this raw url coming from outside is for us
           let rawUrl: string = receivedIntent.params.url;
           if (this.canHandleUri(rawUrl)) {
-            this.zone.run(()=>{
+            this.zone.run(() => {
+              void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT);
+            });
+          }
+        }
+      }
+      else if (receivedIntent.action === "https://essentials.elastos.net/wc") {
+        if (receivedIntent.params && receivedIntent.params.uri) { // NOTE: urI
+          // Make sure this raw url coming from outside is for us
+          let rawUrl: string = receivedIntent.params.uri;
+          if (this.canHandleUri(rawUrl)) {
+            this.zone.run(() => {
               void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT);
             });
           }
@@ -145,7 +158,7 @@ export class GlobalWalletConnectService extends GlobalService {
    */
   public handleWCURIRequest(uri: string, source: WalletConnectSessionRequestSource) {
     if (!this.canHandleUri(uri))
-      throw new Error("Invalid WalletConnect URL: "+uri);
+      throw new Error("Invalid WalletConnect URL: " + uri);
 
     Logger.log("walletconnect", "Handling uri request", uri, source);
 
@@ -163,7 +176,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let connector = new WalletConnect(
       {
         uri: uri,
-        storageId: ""+Math.random(), // Using a different storage ID for every sessions seems to be necessary to deal with cache/multi-sessions issues
+        storageId: "" + Math.random(), // Using a different storage ID for every sessions seems to be necessary to deal with cache/multi-sessions issues
         clientMeta: {
           description: "Elastos Essentials",
           url: "https://www.elastos.org",
@@ -262,7 +275,7 @@ export class GlobalWalletConnectService extends GlobalService {
   /**
    * Method that filters some disconnection events to not show a "sessions disconnected" popup in some cases.
    */
-  private shouldShowDisconnectionInfo(disconnectionPayload: {event: string, params: {message:string}[]}) {
+  private shouldShowDisconnectionInfo(disconnectionPayload: { event: string, params: { message: string }[] }) {
     // Unhandled payload type - show the disconnection.
     if (!disconnectionPayload || !disconnectionPayload.params || disconnectionPayload.params.length == 0)
       return true;
@@ -282,7 +295,7 @@ export class GlobalWalletConnectService extends GlobalService {
   public async killAllSessions(): Promise<void> {
     let sessions = await this.loadSessions();
 
-    Logger.log("walletconnect", "Killing "+sessions.length+" sessions from persistent storage", sessions);
+    Logger.log("walletconnect", "Killing " + sessions.length + " sessions from persistent storage", sessions);
     // Kill stored connections
     for (let session of sessions) {
       let connector = new WalletConnect({
@@ -324,7 +337,7 @@ export class GlobalWalletConnectService extends GlobalService {
   }
   */
   private handleSessionRequest(connector: WalletConnect, request: SessionRequestParams): Promise<void> {
-    void this.zone.run(async ()=>{
+    void this.zone.run(async () => {
       // Hide "prepare to connect" first
       await this.nav.exitCurrentContext(false);
       // User UI prompt
@@ -364,8 +377,8 @@ export class GlobalWalletConnectService extends GlobalService {
         let response: {
           action: string,
           result: {
-              txid: string,
-              status: "published" | "cancelled"
+            txid: string,
+            status: "published" | "cancelled"
           }
         } = await this.intent.sendIntent("https://wallet.elastos.net/esctransaction", {
           payload: request
@@ -415,7 +428,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let response: {
       action: string,
       result: {
-          added: boolean
+        added: boolean
       }
     } = await this.intent.sendIntent("https://wallet.elastos.net/adderctoken", params);
 
@@ -469,7 +482,7 @@ export class GlobalWalletConnectService extends GlobalService {
       this.native.genericToast("settings.wallet-connect-error", 2000);
 
       if (await this.prefs.developerModeEnabled(GlobalDIDSessionsService.signedInDIDString))
-        this.native.genericToast("settings.raw-request"+intentUrl, 2000);
+        this.native.genericToast("settings.raw-request" + intentUrl, 2000);
     }
   }
 
@@ -560,7 +573,7 @@ export class GlobalWalletConnectService extends GlobalService {
   private async restoreSessions() {
     let sessions = await this.loadSessions();
 
-    Logger.log("walletconnect", "Restoring "+sessions.length+" sessions from persistent storage", sessions);
+    Logger.log("walletconnect", "Restoring " + sessions.length + " sessions from persistent storage", sessions);
     for (let session of sessions) {
       let connector = new WalletConnect({
         session: session
@@ -586,7 +599,7 @@ export class GlobalWalletConnectService extends GlobalService {
     let sessions = await this.loadSessions();
 
     // Replace session if existing, add if new.
-    let existingSessionIndex = sessions.findIndex(s=>s.key === session.key);
+    let existingSessionIndex = sessions.findIndex(s => s.key === session.key);
     if (existingSessionIndex < 0)
       sessions.push(session); // add new
     else
@@ -598,7 +611,7 @@ export class GlobalWalletConnectService extends GlobalService {
   private async deleteSession(session: WalletConnectSession) {
     let sessions = await this.loadSessions();
 
-    let existingSessionIndex = sessions.findIndex(s=>s.key === session.key);
+    let existingSessionIndex = sessions.findIndex(s => s.key === session.key);
     if (existingSessionIndex >= 0)
       sessions.splice(existingSessionIndex, 1);
 
