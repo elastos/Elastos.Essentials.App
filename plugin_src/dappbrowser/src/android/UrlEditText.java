@@ -49,7 +49,7 @@ public class UrlEditText extends EditText {
 
 			@Override
 			public void onTextChanged(CharSequence paramCharSequence, int paramInt1, int paramInt2, int paramInt3) {
-				UrlEditText.this.setEditTextDrawable();
+//				UrlEditText.this.setEditTextDrawable();
 			}
 		});
 	}
@@ -69,7 +69,6 @@ public class UrlEditText extends EditText {
 		this.rBounds = null;
 
 	}
-
 
 	@Override
 	public boolean onTouchEvent(MotionEvent paramMotionEvent) {
@@ -96,7 +95,7 @@ public class UrlEditText extends EditText {
 		this.setTextColor(Color.parseColor(darkMode ? "#FFFFFF" : "#000000" ));
 		GradientDrawable bgShape = (GradientDrawable) this.getBackground();
 		bgShape.setColor(Color.parseColor(darkMode ? "#212021" : "#FFFFFF" ));
-		this.setCompoundDrawablesWithIntrinsicBounds(0, 0, darkMode ? R.drawable.ic_clear_input_darkmode : R.drawable.ic_clear_input, 0);
+//		this.setCompoundDrawablesWithIntrinsicBounds(0, 0, darkMode ? R.drawable.ic_clear_input_darkmode : R.drawable.ic_clear_input, 0);
 //		this.setCompoundDrawablePadding(10);
 	}
 }

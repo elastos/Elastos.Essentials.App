@@ -537,8 +537,8 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
 //        btnInnerRight.iconView.leftImageWidth = 24
 //        btnInnerRight.iconView.leftImageHeight = 24
 //      btnInnerRight.iconView.spacingLeading = 10
-        btnOuterRight.iconView.leftImageWidth = imageWidth
-        btnOuterRight.iconView.leftImageHeight = imageHeight
+//        btnOuterRight.iconView.leftImageWidth = imageWidth
+//        btnOuterRight.iconView.leftImageHeight = imageHeight
 //        btnOuterRight.iconView.spacingLeading = 10
 
         _ = setBackgroundColor(darkMode ?  "#000000" : "#F5F7FE")
@@ -546,7 +546,7 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
 
         btnOuterLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_elastos_darkmode" : "ic_elastos");
         btnInnerLeft.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_back_darkmode" : "ic_back");
-        btnOuterRight.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_vertical_menu_darkmode" : "ic_vertical_menu");
+//        btnOuterRight.iconView.leftImageSrc = UIImage(named: darkMode ?  "ic_vertical_menu_darkmode" : "ic_vertical_menu");
 
         txtUrl.textColor = UIColor.init(hex: darkMode ? "#FFFFFF" : "#000000")!
         txtUrl.backgroundColor = UIColor.init(hex: darkMode ? "#212021" : "#FFFFFF")!

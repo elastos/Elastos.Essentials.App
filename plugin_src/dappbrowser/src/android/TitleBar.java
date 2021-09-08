@@ -102,10 +102,10 @@ public class TitleBar extends FrameLayout {
         btnInnerLeft = findViewById(R.id.btnInnerLeft);
 
         // btnInnerRight = findViewById(R.id.btnInnerRight);
-        btnOuterRight = findViewById(R.id.btnOuterRight);
+//        btnOuterRight = findViewById(R.id.btnOuterRight);
         tvTitle = findViewById(R.id.tvTitle);
         flRoot = findViewById(R.id.flRoot);
-        tvAnimationHint = findViewById(R.id.tvAnimationHint);
+//        tvAnimationHint = findViewById(R.id.tvAnimationHint);
 
         editUrl = findViewById(R.id.txtUrl);
 
@@ -121,9 +121,9 @@ public class TitleBar extends FrameLayout {
         // handleInnerRightClicked();
         // });
 
-        btnOuterRight.setOnClickListener(v -> {
-            handleOuterRightClicked();
-        });
+//        btnOuterRight.setOnClickListener(v -> {
+//            handleOuterRightClicked();
+//        });
 
 //        btnOuterLeft.setPaddingDp(12);
 //        btnInnerLeft.setPaddingDp(12);
@@ -278,11 +278,11 @@ public class TitleBar extends FrameLayout {
         }
 
         tvTitle.setTextColor(color);
-        tvAnimationHint.setTextColor(color);
+//        tvAnimationHint.setTextColor(color);
         btnOuterLeft.setColorFilter(color);
         btnInnerLeft.setColorFilter(color);
         // btnInnerRight.setColorFilter(color);
-        btnOuterRight.setColorFilter(color);
+//        btnOuterRight.setColorFilter(color);
     }
 
     public void setNavigationMode(TitleBarNavigationMode navigationMode) {
@@ -330,10 +330,10 @@ public class TitleBar extends FrameLayout {
             // case INNER_RIGHT:
             // btnInnerRight.setBadgeCount(badgeCount);
             // break;
-            case OUTER_RIGHT:
-                if (emptyMenuItems())
-                    btnOuterRight.setBadgeCount(badgeCount);
-                break;
+//            case OUTER_RIGHT:
+//                if (emptyMenuItems())
+//                    btnOuterRight.setBadgeCount(badgeCount);
+//                break;
             default:
                 // Nothing to do, wrong info received
         }
@@ -371,8 +371,8 @@ public class TitleBar extends FrameLayout {
         btnOuterLeft.setVisibility(View.VISIBLE);
         btnInnerLeft.setImageResource(darkMode ? R.drawable.ic_back_darkmode : R.drawable.ic_back);
         btnInnerLeft.setVisibility(View.VISIBLE);
-        btnOuterRight.setImageResource(darkMode ? R.drawable.ic_vertical_menu_darkmode : R.drawable.ic_vertical_menu);
-        btnOuterRight.setVisibility(View.VISIBLE);
+//        btnOuterRight.setImageResource(darkMode ? R.drawable.ic_vertical_menu_darkmode : R.drawable.ic_vertical_menu);
+//        btnOuterRight.setVisibility(View.VISIBLE);
 
         // // Navigation icon / Outer left
         // if (currentNavigationIconIsVisible) {
@@ -558,12 +558,12 @@ public class TitleBar extends FrameLayout {
     }
 
     private void setAnimationHintText(String text) {
-        if (text == null) {
-            tvAnimationHint.setVisibility(View.GONE);
-        } else {
-            tvAnimationHint.setVisibility(View.VISIBLE);
-            tvAnimationHint.setText(text);
-        }
+//        if (text == null) {
+//            tvAnimationHint.setVisibility(View.GONE);
+//        } else {
+//            tvAnimationHint.setVisibility(View.VISIBLE);
+//            tvAnimationHint.setText(text);
+//        }
     }
 
     /**
