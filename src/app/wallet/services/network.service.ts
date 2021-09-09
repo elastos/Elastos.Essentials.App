@@ -21,6 +21,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Network } from '../model/networks/network';
@@ -40,12 +41,11 @@ export class WalletNetworkService {
 
     private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
 
-    constructor(private localStorage: LocalStorage)
-    {
-      WalletNetworkService.instance = this;
+    constructor(private localStorage: LocalStorage, private modalCtrl: ModalController) {
+        WalletNetworkService.instance = this;
     }
 
-    public init() {}
+    public init() { }
 
     /**
      * Appends a usable network to the list. We let networks register themselves, we don't
@@ -102,6 +102,13 @@ export class WalletNetworkService {
         return this.networks.find(n => n.key === key);
     }
 
+    public getActiveNetworkIndex(): number {
+        return this.networks.findIndex(n => {
+            console.log("getActiveNetworkIndex ", this.activeNetwork.value.key, n.key);
+            return n.key === this.activeNetwork.value.key
+        });
+    }
+
     /**
      * Tells if the currently active network is the elastos network.
      */
@@ -109,3 +116,5 @@ export class WalletNetworkService {
         return this.activeNetwork.value.key === "elastos";
     }
 }
+
+

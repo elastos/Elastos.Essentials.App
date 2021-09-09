@@ -19,9 +19,8 @@
         </ion-col>
     </ion-row> -->
 
-        <div class="network-container" *ngIf="!showWalletSelection" [class.dark-network-container]="theme.darkMode"
-            [class.networkOptions-container]="showNetworkOptions">
-            <ion-row *ngIf="!showNetworkOptions" class="displayed-network" (click)="showNetworkOptions = true">
+        <div class="network-container" [class.dark-network-container]="theme.darkMode">
+            <ion-row class="displayed-network" (click)="pickNetNetwork()">
                 <ion-col offset="2" size="7">
                     <img [src]="currentNetwork.logo">
                     <ion-label>{{ currentNetwork.name }}</ion-label>
@@ -31,30 +30,6 @@
                         [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'">
                 </ion-col>
             </ion-row>
-
-            <div *ngIf="showNetworkOptions" class="network-options" (click)="showNetworkOptions = false">
-                <ion-row class="header-row">
-                    <ion-col size="12">
-                        <ion-label>
-                            <h1>{{ 'wallet.networks' | translate }}</h1>
-                            <p>{{ 'wallet.choose-active-network' | translate }}</p>
-                        </ion-label>
-                        <img class="arrow-icon"
-                            [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'">
-                    </ion-col>
-                </ion-row>
-                <ion-row *ngFor="let network of networkService.getAvailableNetworks()" class="network-row"
-                    [class.selected-network]="network.key === currentNetwork.key"
-                    (click)="selectActiveNetwork(network)">
-                    <ion-col size="10" class="left-col">
-                        <img [src]="network.logo">
-                        <h1>{{ network.name }}</h1>
-                    </ion-col>
-                    <ion-col size="2" class="right-col">
-                        <ion-icon name="checkmark"></ion-icon>
-                    </ion-col>
-                </ion-row>
-            </div>
         </div>
 
         <div class="wallet-container" *ngIf="showWalletSelection" [class.dark-wallet-container]="theme.darkMode"
@@ -112,7 +87,7 @@
                             <h1>{{ networkWallet.masterWallet.name }}</h1>
                         </ion-col>
                         <ion-col size="4" class="right-col">
-                            <img src="assets/wallet/icons/change-wallet.svg"
+                            <img src="assets/wallet/icons/darkmode/change-wallet.svg"
                                 *ngIf="getPotentialActiveWallets().length > 1" (click)="toggleActiveWalletSelection()">
                             <img src="assets/wallet/icons/dots.svg" (click)="goToWalletSettings(networkWallet)">
                         </ion-col>

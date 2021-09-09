@@ -32,6 +32,8 @@ export const en = {
         'backup-button': 'Backup Now',
         'active-wallet-connect-sessions': 'Active wallet connect sessions',
         'active-network': 'Active network',
+        'active-wallet': 'Active wallet',
+        'touch-to-create-wallet': 'Touch here to create a wallet',
 
         /********** Onboard Page **********/
 

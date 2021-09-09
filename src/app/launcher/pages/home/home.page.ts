@@ -1,8 +1,9 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { IonSlides, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import WalletConnect from '@walletconnect/client';
+import BigNumber from 'bignumber.js';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -18,8 +19,12 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { Network } from 'src/app/wallet/model/networks/network';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Util } from 'src/app/wallet/model/util';
+import { CurrencyService } from 'src/app/wallet/services/currency.service';
+import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
+import { UiService } from 'src/app/wallet/services/ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { OptionsComponent } from '../../components/options/options.component';
 import { AppmanagerService } from '../../services/appmanager.service';
@@ -36,6 +41,9 @@ import { NotificationsPage } from '../notifications/notifications.page';
 
 export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild('walletsSlider') walletsSlider: IonSlides;
+
+  public Util = Util;
 
   private popover: any = null;
   private modal: any = null;
@@ -48,11 +56,7 @@ export class HomePage implements OnInit {
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
 
   // Widget data
-  private mainWallet: NetworkWallet = null;
-  public mainWalletName = "";
   public activeNetwork: Network = null;
-  public mainWalletELABalance: string = null; // Balance to display under the wallet menu item.
-  public mainWalletDiaplayTokenName: string = null;
   public hiveVaultLinked = false;
   public hiveVaultStorageStats: {
     usedStorage: string; // Used storage, formatted for display, in GB
@@ -61,6 +65,12 @@ export class HomePage implements OnInit {
     percentUsage: string; // usedStorage / maxStorage ratio, 0-100% string
   } = null;
   public walletConnectConnectors: WalletConnect[] = [];
+
+  public walletsSlideOpts = {
+    initialSlide: 0,
+    speed: 200,
+    spaceBetween: 10
+  };
 
   constructor(
     public toastCtrl: ToastController,
@@ -77,6 +87,10 @@ export class HomePage implements OnInit {
     private appBackGroundService: GlobalAppBackgroundService,
     private walletService: WalletService,
     private walletNetworkService: WalletNetworkService,
+    private walletNetworkUIService: WalletNetworkUIService,
+    public walletUIService: UiService,
+    private walletInitService: WalletInitService,
+    public currencyService: CurrencyService,
     private globalNetworksService: GlobalNetworksService,
     private globalHiveService: GlobalHiveService,
     private globalWalletConnectService: GlobalWalletConnectService,
@@ -184,6 +198,11 @@ export class HomePage implements OnInit {
     this.globalStartupService.setStartupScreenReady();
 
     Logger.log("launcher", "Launcher home screen did enter completed");
+
+    /* console.log("TEST")
+    this.ionSlides.changes.subscribe((comps: QueryList<IonSlide>) => {
+      console.log("comps", comps);
+    }); */
   }
 
   ionViewWillLeave() {
@@ -215,22 +234,19 @@ export class HomePage implements OnInit {
   }
 
   private updateWidgetMainWallet() {
+    // Deprecated
     let activeWallet = this.walletService.activeNetworkWallet.value;
-    // We need to have at least one existing wallet to display something.
     if (activeWallet) {
-      // Simple widget for now: display the main balance of the first wallet we find.
-      this.mainWallet = activeWallet;
-      this.mainWalletName = activeWallet.masterWallet.name;
-      this.mainWalletELABalance = activeWallet.getDisplayBalance().toFixed(2);
       this.activeNetwork = this.walletNetworkService.activeNetwork.value;
-      this.mainWalletDiaplayTokenName = activeWallet.getDisplayTokenName();
     }
     else {
-      this.mainWallet = null;
-      this.mainWalletName = "";
-      this.mainWalletELABalance = null;
       this.activeNetwork = null;
-      this.mainWalletDiaplayTokenName = null;
+    }
+
+    // Select the active wallet in the wallets slides
+    let activeWalletIndex = this.walletService.getActiveNetworkWalletIndex();
+    if (activeWalletIndex != -1) { // Happens if no wallet
+      void this.walletsSlider.slideTo(activeWalletIndex, 0);
     }
   }
 
@@ -300,5 +316,23 @@ export class HomePage implements OnInit {
     return this.walletConnectConnectors.filter(c => {
       return c.peerMeta && c.peerMeta.icons && c.peerMeta.icons.length > 0;
     }).length > 0;
+  }
+
+  public openWallet() {
+    this.walletInitService.start()
+  }
+
+  public async onWalletWidgetSlideChanged() {
+    let activeIndex = await this.walletsSlider.getActiveIndex();
+    let newlyActiveWallet = this.walletService.getNetworkWalletsList()[activeIndex];
+    void this.walletService.setActiveNetworkWallet(newlyActiveWallet);
+  }
+
+  public pickNetwork() {
+    void this.walletNetworkUIService.chooseActiveNetwork();
+  }
+
+  public getFriendlyBalance(balance: BigNumber): string {
+    return balance.decimalPlaces(4).toString();
   }
 }

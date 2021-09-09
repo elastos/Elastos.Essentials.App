@@ -1,30 +1,29 @@
 import { Injectable, NgZone } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { PopoverController, MenuController, ModalController } from '@ionic/angular';
-
-import { DIDManagerService } from './didmanager.service';
-
-import { NotificationsPage } from '../pages/notifications/notifications.page';
-import { TipsPage } from '../pages/tips/tips.page';
-
-import { Tip } from '../model/tip.model';
-
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { GlobalLanguageService } from 'src/app/services/global.language.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { Logger } from 'src/app/logger';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
-import { WalletInitService } from 'src/app/wallet/services/init.service';
-import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
+import { MenuController, ModalController, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { Events } from 'src/app/services/events.service';
-import { App } from "src/app/model/app.enum";
 import { ContactsInitService } from 'src/app/contacts/services/init.service';
 import { CRCouncilVotingInitService } from 'src/app/crcouncilvoting/services/init.service';
+import { DPoSVotingInitService } from 'src/app/dposvoting/services/init.service';
+import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
+import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
+import { Events } from 'src/app/services/events.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { WalletInitService } from 'src/app/wallet/services/init.service';
+import { Tip } from '../model/tip.model';
+import { NotificationsPage } from '../pages/notifications/notifications.page';
+import { TipsPage } from '../pages/tips/tips.page';
+import { DIDManagerService } from './didmanager.service';
+
+
+
+
 
 type RunnableApp = {
     id: string;
@@ -82,7 +81,7 @@ export class AppmanagerService {
         private walletInitService: WalletInitService,
         private crcouncilVotingInitService: CRCouncilVotingInitService,
         private contactsInitService: ContactsInitService
-    ) {}
+    ) { }
 
     public init() {
         Logger.log("Launcher", 'App manager service is initializing');
@@ -131,7 +130,7 @@ export class AppmanagerService {
             {
                 type: 'launcher.main',
                 apps: [
-                    {
+                    /* {
                         id: 'wallet',
                         name: this.translate.instant('launcher.app-wallet'),
                         routerContext: App.WALLET,
@@ -140,7 +139,7 @@ export class AppmanagerService {
                         hasWidget: true,
                         // routerPath: '/wallet/wallet-home'
                         startCall: () => this.walletInitService.start()
-                    },
+                    }, */
                     {
                         id: 'identity',
                         routerContext: App.IDENTITY,

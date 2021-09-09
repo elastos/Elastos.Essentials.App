@@ -192,7 +192,6 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
 
     // For each ERC token discovered by the wallet SDK, we check its type and handle it.
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     tokens.forEach(async (token: ERCTokenInfo) => {
       if (token.type === "ERC-20") {
         if (token.symbol && token.name) {
