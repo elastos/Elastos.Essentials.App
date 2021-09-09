@@ -1,13 +1,13 @@
-import { Injectable, NgZone } from "@angular/core";
-import { DIDService } from "./did.service";
-import { Native } from "./native";
-import { DID } from "../model/did.model";
-import { DIDSyncService } from "./didsync.service";
+import { Injectable } from "@angular/core";
 import { isNil } from "lodash-es";
-import { DIDDocument } from "../model/diddocument.model";
-
 import * as moment from 'moment';
 import { Logger } from "src/app/logger";
+import { DID } from "../model/did.model";
+import { DIDDocument } from "../model/diddocument.model";
+import { DIDService } from "./did.service";
+import { DIDSyncService } from "./didsync.service";
+import { Native } from "./native";
+
 
 export interface ExpiredItem {
     id: string,
@@ -37,20 +37,19 @@ export class ExpirationService {
         if (didExpirationItem !== null && didExpirationItem.daysToExpire <= maxDaysToExpire)
             expiredItems.push(didExpirationItem)
 
-
         //Get all Verifiable Credentials and verify if is about to expire.
         let credentials: DIDPlugin.VerifiableCredential[] = didDocument.getCredentials()
-        await credentials.forEach(async (credential) =>{
+        for (let index = 0; index < credentials.length; index++) {
             //verify if credential is not self proclaimed and is about to expire
-            let credentialExpiredItem = this.verifyCredentialExpiration(did.getDIDString(), credential, maxDaysToExpire)
+            let credentialExpiredItem = this.verifyCredentialExpiration(did.getDIDString(), credentials[index], maxDaysToExpire)
             if (credentialExpiredItem !== null && credentialExpiredItem.daysToExpire <= maxDaysToExpire)
                 expiredItems.push(credentialExpiredItem);
 
             //Verify if credential have an issuer and the issuer DID is about to expire
-            let issuerDIDExpiredItem = await this.verifyIssuerDIDExpiration(did.getDIDString(), credential, maxDaysToExpire)
+            let issuerDIDExpiredItem = await this.verifyIssuerDIDExpiration(did.getDIDString(), credentials[index], maxDaysToExpire)
             if (issuerDIDExpiredItem !== null && issuerDIDExpiredItem.daysToExpire <= maxDaysToExpire)
                 expiredItems.push(issuerDIDExpiredItem);
-        })
+        }
         return expiredItems
     }
 
