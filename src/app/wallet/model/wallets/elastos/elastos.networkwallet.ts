@@ -51,11 +51,11 @@ export class ElastosNetworkWallet extends NetworkWallet {
    */
   public async multipleAddressesInUse(): Promise<boolean> {
     let mainchainSubwallet: MainchainSubWallet = this.subWallets[StandardCoinName.ELA] as MainchainSubWallet;
-    let txListsInternal = await WalletHelper.getTransactionByAddress(mainchainSubwallet, true, 0);
+    let txListsInternal = await WalletHelper.getTransactionByAddress(mainchainSubwallet, true, 2);
     if (txListsInternal.length > 1) {
       return true;
     }
-    let txListsExternal = await WalletHelper.getTransactionByAddress(mainchainSubwallet, false, 0);
+    let txListsExternal = await WalletHelper.getTransactionByAddress(mainchainSubwallet, false, 2);
     if (txListsExternal.length > 1) {
       return true;
     }
