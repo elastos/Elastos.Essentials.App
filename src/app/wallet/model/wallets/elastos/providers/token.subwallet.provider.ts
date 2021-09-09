@@ -32,7 +32,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);
 
     // Let the provider know what we have found
-    this.provider.onTokenInfoFound(tokenList);
+    await this.provider.onTokenInfoFound(tokenList);
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {

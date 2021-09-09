@@ -184,15 +184,15 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    *
    * This method will add new coins to the coin list and notify user that new tokens have arrived if needed.
    */
-  public onTokenInfoFound(tokens: ERCTokenInfo[]) {
+  public async onTokenInfoFound(tokens: ERCTokenInfo[]) {
     let newAllCoinsList: ERCTokenInfo[] = [];
     let newERC20CoinsList: string[] = [];
     let newERC721CoinsList: string[] = [];
 
     let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
-
     // For each ERC token discovered by the wallet SDK, we check its type and handle it.
-    tokens.forEach(async (token: ERCTokenInfo) => {
+    for (let index = 0; index < tokens.length; index++) {
+      const token = tokens[index];
       if (token.type === "ERC-20") {
         if (token.symbol && token.name) {
           if (!this.networkWallet.getSubWallet(token.symbol) && !this.networkWallet.network.isCoinDeleted(token.contractAddress)) {
@@ -203,11 +203,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
               const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(token.contractAddress);
               if (!erc20Coin) {
                 const newCoin = new ERC20Coin(token.symbol, token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
-                newERC20CoinsList.push(token.symbol);
-                newAllCoinsList.push(token);
                 if (await this.networkWallet.network.addCustomERC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);
+                  newAllCoinsList.push(token);
                 }
               }
             } catch (e) {
@@ -231,7 +230,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
       else {
         Logger.warn('wallet', 'Unhandled token type:', token);
       }
-    });
+    }
 
     // Found new coins - notify user
     if (newERC20CoinsList.length > 0) {

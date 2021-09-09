@@ -80,7 +80,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
     let tokens = await this.getERCTokensFromTransferEvents(tokenTransactions);
 
     // Let the provider know what we have found
-    this.provider.onTokenInfoFound(tokens);
+    await this.provider.onTokenInfoFound(tokens);
   }
 
   /**
