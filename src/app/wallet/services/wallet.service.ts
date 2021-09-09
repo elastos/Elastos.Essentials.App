@@ -155,6 +155,8 @@ export class WalletService {
         await this.spvBridge.destroy();
 
         await this.terminateActiveNetworkWallets();
+
+        this.networkService.resetPriorityNetworkChangeCallback();
     }
 
     private async initWallets(): Promise<boolean> {

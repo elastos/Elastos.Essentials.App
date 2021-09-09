@@ -78,6 +78,10 @@ export class WalletNetworkService {
         this.priorityNetworkChangeCallback = callback;
     }
 
+    public resetPriorityNetworkChangeCallback() {
+      this.priorityNetworkChangeCallback = null;
+    }
+
     public async setActiveNetwork(network: Network) {
         Logger.log("wallet", "Setting active network to", network);
 
