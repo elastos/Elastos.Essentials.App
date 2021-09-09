@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { ArbitrumNetwork } from '../model/networks/arbitrum/arbitrum.network';
 import { BSCNetwork } from '../model/networks/bsc/bsc.network';
@@ -38,6 +39,7 @@ export class WalletInitService extends GlobalService {
     private prefs: WalletPrefsService,
     private uiService: UiService,
     private networkService: WalletNetworkService,
+    private globalNetworksService: GlobalNetworksService,
     private ethTransactionService: ETHTransactionService,
   ) {
     super();
@@ -83,6 +85,17 @@ export class WalletInitService extends GlobalService {
   }
 
   private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
+    if (!network) {
+      Logger.warn("wallet", "Not adding undefined network");
+      return;
+    }
+
+    let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
+    if (!network.canSupportNetworkTemplate(networkTemplate)) {
+      Logger.warn("wallet", "Not adding network", network.name, "as it does not support current network template");
+      return;
+    }
+
     await network.init();
     await this.networkService.registerNetwork(network, isDefault);
   }

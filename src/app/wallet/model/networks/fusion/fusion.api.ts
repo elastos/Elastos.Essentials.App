@@ -1,3 +1,4 @@
+import { Logger } from "src/app/logger";
 import { GlobalNetworksService, MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum FusionApiType {
@@ -15,7 +16,8 @@ export class FusionAPI {
             throw new Error("Fusion API - Unknown api type " + type);
         }
       default:
-        throw new Error("Fusion API not supported for network template " + networkTemplate);
+        Logger.log("wallet", "Fusion API not supported for network template " + networkTemplate);
+        return null;
     }
   }
 }
