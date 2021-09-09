@@ -79,6 +79,7 @@ export class ERC20Coin extends Coin {
         private erc20ContractAddress: string,
         networkTemplate: string,
         private isCustom: boolean,
+        public initiallyShowInWallet = false // Whether to show this coin as subwallet when a wallet is cfirst used by the user
     ) {
         super(CoinType.ERC20, id, name, description, true, networkTemplate);
     }
