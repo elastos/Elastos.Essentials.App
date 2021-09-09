@@ -93,7 +93,7 @@ export abstract class NetworkWallet {
         if (existingExtendedInfo)
             return; // Not the first time, don't re-add coins that user may have disabled.
 
-        let builtInCoins = this.network.getBuiltInERC20Coins(activeNetworkTemplate);
+        let builtInCoins = this.network.getBuiltInERC20Coins();
         for (let i = 0; i < builtInCoins.length; i++) {
             let coin = builtInCoins[i];
             if (coin.initiallyShowInWallet) {

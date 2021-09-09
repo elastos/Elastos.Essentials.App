@@ -77,10 +77,12 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
 
   public async fetchAllTokensTransactions(): Promise<void> {
     let tokenTransactions = await this.getERC20TokenTransferEvents(0);
-    let tokens = await this.getERCTokensFromTransferEvents(tokenTransactions);
+    if (tokenTransactions) {
+      let tokens = await this.getERCTokensFromTransferEvents(tokenTransactions);
 
-    // Let the provider know what we have found
-    await this.provider.onTokenInfoFound(tokens);
+      // Let the provider know what we have found
+      await this.provider.onTokenInfoFound(tokens);
+    }
   }
 
   /**

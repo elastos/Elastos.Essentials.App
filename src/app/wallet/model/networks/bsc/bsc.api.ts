@@ -1,4 +1,4 @@
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum BscApiType {
   ACCOUNT_RPC,
@@ -7,8 +7,7 @@ export enum BscApiType {
 
 // https://docs.binance.org/smart-chain/developer/rpc.html
 export class BscAPI {
-  public static getApiUrl(type: BscApiType): string {
-    let networkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+  public static getApiUrl(type: BscApiType, networkTemplate: string): string {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {

@@ -1,4 +1,3 @@
-import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
 import { CoinID, ERC20Coin } from "../Coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
@@ -16,19 +15,15 @@ export class EVMNetwork extends Network {
     protected mainTokenFriendlyName: string, // Ex: Huobi Token
     public mainRpcUrlApi: string, // TODO: move into networkTemplateConfigs or flatten networkTemplateConfigs only for the active network template
     public accountRpcUrlApi: string, // TODO: move into networkTemplateConfigs or flatten networkTemplateConfigs only for the active network template
-    // Mapping of template -> information
-    protected networkTemplateConfigs: {
-      [networkTemplate: string]: {
-        chainID: number,
-        builtInCoins?: ERC20Coin[]
-      }
-    },
+    networkTemplateAvailability: string, // For which network tempalte is this network available
+    protected chainID: number,
+    protected builtInCoins?: ERC20Coin[],
   ) {
     super(key, name, logo);
   }
 
-  public getBuiltInERC20Coins(networkTemplate: string): ERC20Coin[] {
-    return this.networkTemplateConfigs[networkTemplate].builtInCoins || [];
+  public getBuiltInERC20Coins(): ERC20Coin[] {
+    return this.builtInCoins || [];
   }
 
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
@@ -59,11 +54,7 @@ export class EVMNetwork extends Network {
   }
 
   public getMainChainID(networkTemplate?: string): number {
-    let usedNetworkTemplate = networkTemplate ?? GlobalNetworksService.instance.activeNetworkTemplate.value;
-    if (usedNetworkTemplate in this.networkTemplateConfigs)
-      return this.networkTemplateConfigs[usedNetworkTemplate].chainID;
-    else
-      return -1;
+    return this.chainID;
   }
 
   public updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig, networkTemplate: string) {

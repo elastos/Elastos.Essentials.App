@@ -1,4 +1,4 @@
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum ArbitrumApiType {
   RPC,
@@ -6,8 +6,7 @@ export enum ArbitrumApiType {
 }
 
 export class ArbitrumAPI {
-  public static getApiUrl(type: ArbitrumApiType): string {
-    let networkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+  public static getApiUrl(type: ArbitrumApiType, networkTemplate: string): string {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
