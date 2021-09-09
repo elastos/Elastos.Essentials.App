@@ -30,6 +30,14 @@ export abstract class Network {
   }
 
   /**
+   * Whether the network supports the given network template. True by default,
+   * but some network can override this to return false for some templates.
+   */
+  public canSupportNetworkTemplate(networkTemplate: string): boolean {
+    return true;
+  }
+
+  /**
    * Returns a list of available ERC20 coins that we trust for this network, and that user will be able to
    * display on this wallet or not.
    */

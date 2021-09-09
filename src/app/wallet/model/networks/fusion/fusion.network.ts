@@ -35,6 +35,10 @@ export class FusionNetwork extends EVMNetwork {
     );
   }
 
+  public canSupportNetworkTemplate(networkTemplate: string): boolean {
+    return networkTemplate === MAINNET_TEMPLATE;
+  }
+
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
     let wallet = new FusionNetworkWallet(masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
     await wallet.initialize();
