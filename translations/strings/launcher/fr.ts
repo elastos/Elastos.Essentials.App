@@ -32,6 +32,8 @@ export const fr = {
         'backup-button': 'Continuer',
         'active-wallet-connect-sessions': 'Sessions Wallet Connect actives',
         'active-network': 'Réseau actif',
+        'active-wallet': 'Portef. Actif',
+        'touch-to-create-wallet': 'Toucher pour créer un portefeuille',
 
         /********** Onboard Page **********/
 

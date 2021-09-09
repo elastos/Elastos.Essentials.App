@@ -32,6 +32,8 @@ export const zh = {
         'backup-button': '立即备份',
         'active-wallet-connect-sessions': '活跃的钱包连接会话',
         'active-network': '网络',
+        'active-wallet': 'Active wallet',
+        'touch-to-create-wallet': 'Touch here to create a wallet',
 
         /********** Onboard Page **********/
 

@@ -298,6 +298,13 @@ export class WalletService {
         return this.activeNetworkWallet.value;
     }
 
+    public getActiveNetworkWalletIndex(): number {
+        return this.getNetworkWalletsList().findIndex(w => {
+            console.log("getActiveNetworkWalletIndex ", this.activeNetworkWallet.value.id, w.id);
+            return w.id === this.activeNetworkWallet.value.id
+        });
+    }
+
     public getNetworkWalletFromMasterWalletId(masterId: WalletID): NetworkWallet {
         return Object.values(this.networkWallets).find(w => w.id === masterId);
     }

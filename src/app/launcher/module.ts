@@ -1,17 +1,18 @@
-import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { TranslateModule } from '@ngx-translate/core';
-
-import { LauncherRoutingModule, EmptyPage } from './routing';
-import { TipsPage } from './pages/tips/tips.page';
-import { NotificationsPage } from './pages/notifications/notifications.page';
-
-import { ComponentsModule } from './components/components.module';
 import { CommonModule } from '@angular/common';
-import { HomePage } from './pages/home/home.page';
+import { HttpClientModule } from '@angular/common/http';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentsModule as WalletComponentsModule } from '../wallet/components/components.module';
+import { ComponentsModule } from './components/components.module';
+import { HomePage } from './pages/home/home.page';
+import { NotificationsPage } from './pages/notifications/notifications.page';
 import { OnboardPage } from './pages/onboard/onboard.page';
+import { TipsPage } from './pages/tips/tips.page';
+import { EmptyPage, LauncherRoutingModule } from './routing';
+
+
 
 @NgModule({
   declarations: [
@@ -30,11 +31,13 @@ import { OnboardPage } from './pages/onboard/onboard.page';
   ],
   imports: [
     CommonModule,
+    IonicModule,
     HttpClientModule,
     SharedComponentsModule,
     ComponentsModule,
     TranslateModule,
-    LauncherRoutingModule
+    LauncherRoutingModule,
+    WalletComponentsModule
   ],
   providers: [
     //LauncherService

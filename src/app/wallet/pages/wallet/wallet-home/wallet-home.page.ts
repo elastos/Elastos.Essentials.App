@@ -32,6 +32,7 @@ import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { Config } from '../../../config/Config';
 import { CoinType } from '../../../model/Coin';
 import { Util } from '../../../model/Util';
@@ -92,6 +93,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         public currencyService: CurrencyService,
         public theme: GlobalThemeService,
         public uiService: UiService,
+        private walletNetworkUIService: WalletNetworkUIService,
         private storage: LocalStorage,
         private globalStartupService: GlobalStartupService
     ) {
@@ -286,5 +288,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
             masterWalletId: networkWallet.masterWallet.id,
             contractAddress: nft.contractAddress
         });
+    }
+
+    public pickNetNetwork() {
+        void this.walletNetworkUIService.chooseActiveNetwork();
     }
 }
