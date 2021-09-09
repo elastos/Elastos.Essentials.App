@@ -18,6 +18,8 @@ import { FusionMainNetNetwork } from '../model/networks/fusion/fusion.mainnet.ne
 import { HECOMainNetNetwork } from '../model/networks/heco/heco.mainnet.network';
 import { HECOTestNetNetwork } from '../model/networks/heco/heco.testnet.network';
 import { Network } from '../model/networks/network';
+import { PolygonMainNetNetwork } from '../model/networks/polygon/polygon.mainnet.network';
+import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet.network';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { ETHTransactionService } from './ethtransaction.service';
@@ -97,6 +99,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new BSCMainNetNetwork());
         await this.createAndRegisterNetwork(new FusionMainNetNetwork());
         await this.createAndRegisterNetwork(new ArbitrumMainNetNetwork());
+        await this.createAndRegisterNetwork(new PolygonMainNetNetwork());
         return;
       case TESTNET_TEMPLATE:
         await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), true);
@@ -104,6 +107,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new HECOTestNetNetwork());
         await this.createAndRegisterNetwork(new BSCTestNetNetwork());
         await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
+        await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
         return;
       case "LRW":
         await this.createAndRegisterNetwork(new ElastosLRWNetwork(), true);
