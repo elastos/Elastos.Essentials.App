@@ -1,15 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { UXService } from '../../services/ux.service';
-import { Util } from '../../services/util';
-import { IdentityService } from '../../services/identity.service';
-import { DID } from '../../model/did.model';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
+import { DID } from '../../model/did.model';
+import { IdentityService } from '../../services/identity.service';
+import { UXService } from '../../services/ux.service';
 
 @Component({
   selector: 'app-chooseimporteddid',

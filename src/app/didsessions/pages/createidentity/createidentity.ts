@@ -1,18 +1,18 @@
 import { Component, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { IonSlides, Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { Router } from '@angular/router';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { IonSlides, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { DrawerState } from 'ion-bottom-drawer';
-
-import { Util } from 'src/app/didsessions/services/util';
-import { Styling } from 'src/app/didsessions/services/styling';
-import { IdentityService } from 'src/app/didsessions/services/identity.service';
-import { UXService } from 'src/app/didsessions/services/ux.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { IdentityService } from 'src/app/didsessions/services/identity.service';
+import { Styling } from 'src/app/didsessions/services/styling';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+
 
 @Component({
   selector: 'page-createidentity',
@@ -31,14 +31,14 @@ export class CreateIdentityPage {
     init: false
   };
 
-  public isfirst: boolean = true;
+  public isfirst = true;
   public styling = Styling;
 
   public passwordSheetState = DrawerState.Bottom;
   public passwordSheetMinHeight = 0;
   public passwordSheetDockedHeight = 350;
-  public password: string = "";
-  public passwordConfirmation: string = "";
+  public password = "";
+  public passwordConfirmation = "";
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 

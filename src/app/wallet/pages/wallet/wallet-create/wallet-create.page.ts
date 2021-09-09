@@ -1,16 +1,17 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Util } from "../../../model/util";
-import { Native } from '../../../services/native.service';
-import { Config } from '../../../config/Config';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { WalletService } from '../../../services/wallet.service';
-import { WalletCreationService, NewWallet } from '../../../services/walletcreation.service';
-import { TranslateService } from '@ngx-translate/core';
-import { UiService } from '../../../services/ui.service';
 import { IonInput } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { Config } from '../../../config/Config';
+import { Native } from '../../../services/native.service';
+import { UiService } from '../../../services/ui.service';
+import { WalletService } from '../../../services/wallet.service';
+import { NewWallet, WalletCreationService } from '../../../services/walletcreation.service';
 
 @Component({
     selector: 'app-wallet-create',
@@ -21,7 +22,7 @@ export class WalletCreatePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('input', {static: false}) input: IonInput;
 
-    public useMenmonicPassphrase = true;
+    public useMenmonicPassphrase = false;
     public wallet = {
         name: '',
         singleAddress: false,
@@ -72,7 +73,7 @@ export class WalletCreatePage implements OnInit {
             this.native.toast_trans("wallet.text-wallet-name-validator-enter-name");
             return;
         }
-        if (Util.isWalletName(this.wallet.name)) {
+        if (WalletUtil.isInvalidWalletName(this.wallet.name)) {
             this.native.toast_trans("wallet.text-wallet-name-validator-not-valid-name");
             return;
         }

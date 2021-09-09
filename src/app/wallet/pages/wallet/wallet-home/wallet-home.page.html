@@ -95,18 +95,18 @@
                     <h3>{{ 'wallet.total-amount' | translate }}</h3>
                     <div (click)="currencyService.toggleCurrencyDisplay()">
                         <h4 *ngIf="!currencyService.useCurrency">{{
-                            Util.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
-                                *ngIf="!networkWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
-                            <span class="decimals">{{ Util.getDecimalBalance(networkWallet.getDisplayBalance())
+                            WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
+                              *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
+                            <span class="decimals">{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())
                                 }}</span>
                             <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
                         </h4>
                         <h4 *ngIf="currencyService.useCurrency">{{
-                            Util.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
+                            WalletUtil.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
                             }}<span class="dot"
-                                *ngIf="!networkWallet.getDisplayBalance().isZero() && Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))">.</span>
+                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))">.</span>
                             <span class="decimals">{{
-                                Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
+                                WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
                                 }}</span>
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>

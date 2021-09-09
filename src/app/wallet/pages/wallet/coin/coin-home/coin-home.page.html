@@ -34,19 +34,19 @@
                     <h3>{{ 'wallet.coin-balance' | translate }}</h3>
                     <div (click)="!chainIsERC20() ? currencyService.toggleCurrencyDisplay() : null">
                         <h4 *ngIf="!currencyService.useCurrency || chainIsERC20()">{{
-                            Util.getWholeBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()) }}<span
+                            WalletUtil.getWholeBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()) }}<span
                                 class="dot"
-                                *ngIf="!networkWallet.subWallets[elastosChainCode].getDisplayBalance().isZero() && !networkWallet.subWallets[elastosChainCode].getDisplayBalance().isNaN() && Util.getDecimalBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance())">.</span>
+                                *ngIf="!networkWallet.subWallets[elastosChainCode].getDisplayBalance().isZero() && !networkWallet.subWallets[elastosChainCode].getDisplayBalance().isNaN() && WalletUtil.getDecimalBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance())">.</span>
                             <span class="decimals">{{
-                                Util.getDecimalBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()) }}</span>
+                                WalletUtil.getDecimalBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()) }}</span>
                             <span class="ela"> {{ getCoinBalanceCurrency() }}</span>
                         </h4>
                         <h4 *ngIf="currencyService.useCurrency && !chainIsERC20()">{{
-                            Util.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()))
+                            WalletUtil.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()))
                             }}<span class="dot"
-                                *ngIf="!networkWallet.subWallets[elastosChainCode].getDisplayBalance().isZero() && !networkWallet.subWallets[elastosChainCode].getDisplayBalance().isNaN() && Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()))">.</span>
+                                *ngIf="!networkWallet.subWallets[elastosChainCode].getDisplayBalance().isZero() && !networkWallet.subWallets[elastosChainCode].getDisplayBalance().isNaN() && WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()))">.</span>
                             <span class="decimals">{{
-                                Util.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()))
+                                WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()))
                                 }}</span>
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>

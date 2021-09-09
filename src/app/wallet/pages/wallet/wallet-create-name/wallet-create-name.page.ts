@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Native } from '../../../services/native.service';
-import { Config } from '../../../config/Config';
-import { Util } from '../../../model/util';
 import { ActivatedRoute } from '@angular/router';
+import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { Native } from '../../../services/native.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
-import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-wallet-create-name',
@@ -41,7 +41,7 @@ export class WalletCreateNamePage implements OnInit {
             return false;
         }
 
-        if (Util.isWalletName(this.name)) {
+        if (WalletUtil.isInvalidWalletName(this.name)) {
             this.native.toast_trans("wallet.text-wallet-name-validator-not-valid-name");
             return;
         }
@@ -53,5 +53,4 @@ export class WalletCreateNamePage implements OnInit {
 
         return true;
     }
-
 }

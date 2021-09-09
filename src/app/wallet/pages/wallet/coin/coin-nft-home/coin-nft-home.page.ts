@@ -26,6 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
@@ -35,7 +36,6 @@ import { ERC721Service } from 'src/app/wallet/services/erc721.service';
 import { Config } from '../../../../config/Config';
 import { CoinType } from '../../../../model/Coin';
 import { TransactionInfo } from '../../../../model/providers/transaction.types';
-import { Util } from '../../../../model/util';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -67,7 +67,6 @@ export class CoinNFTHomePage implements OnInit {
     private start = 0;
 
     // Helpers
-    public Util = Util;
     public SELA = Config.SELA;
     public CoinType = CoinType;
 
@@ -310,7 +309,7 @@ export class CoinNFTHomePage implements OnInit {
              //             await this.createConsolidateTransaction();
              //         }
              //     }
- 
+
              //     this.walletManager.needToCheckUTXOCountForConsolidation = false;
              // }
          }

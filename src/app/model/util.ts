@@ -1,5 +1,6 @@
 
 import { Injectable } from '@angular/core';
+import moment from 'moment';
 
 @Injectable()
 export class Util {
@@ -36,20 +37,70 @@ export class Util {
     static english(text): boolean {
         var pattern = new RegExp("[A-Za-z]+");
         return pattern.test(text);
-    };
+    }
 
     static chinese(text): boolean {
         var pattern = new RegExp("[\u4E00-\u9FA5]+");
         return pattern.test(text);
-    };
+    }
 
     static japanese(text): boolean {
         var pattern = new RegExp("[\u0800-\u4e00]+");
         return pattern.test(text);
-    };
+    }
+
+    /*E-mail*/
+    static email(text): boolean {
+        const email = /^[a-zA-Z0-9.!#$%&*+=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+        return email.test(text);
+    }
+
+    static phone(text): boolean {
+        const mPattern = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
+        return mPattern.test(text);
+    }
+
+    static username(text): boolean {
+        var uPattern = /^[a-zA-Z0-9_-]{4,16}$/;
+        return uPattern.test(text);
+    }
+
+    static password(text): boolean {
+        if (text.length < 8) {
+            return false;
+        }
+        return true;
+        //var pPattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+        //return pPattern.test(text);
+
+    }
+
+    static number(text): boolean {
+        // var numPattern = /^(([1-9]\d*)|0)(\.\d{1,2})?$"/;
+        // var numPattern = /^-?\d*\.?\d+$/;
+        var numPattern = /^(([1-9]\d*)|\d)(\.\d{1,9})?$/;
+        return numPattern.test(text);
+    }
+
+    public static isCardNo(card: string): boolean {
+        if (!(/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(card))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static isBankCard(bankCard: string): boolean {
+        var regex = /^(998801|998802|622525|622526|435744|435745|483536|528020|526855|622156|622155|356869|531659|622157|627066|627067|627068|627069|622588)\d{10}$/;
+        if (!regex.test(bankCard)) {
+            return true;
+        }
+        return false;
+    }
 
     public static isEmptyObject(obj): boolean {
         for (let key in obj) {
+            // eslint-disable-next-line no-prototype-builtins
             if (obj.hasOwnProperty(key)) {
                 return false;
             }
@@ -68,7 +119,7 @@ export class Util {
         let newObj;
 
         if (Obj instanceof (Array)) {
-            newObj = new Array();
+            newObj = [];
         } else {
             newObj = new Object();
         }
@@ -96,6 +147,10 @@ export class Util {
         return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
     }
 
+    static dateFormat(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
+        return moment(date).format(format);
+    }
+
     public static timestampToDateTime(timestamp = Date.now(), format = 'yyyy-MM-dd HH:mm:ss') {
         if (isNaN(timestamp)) {
             return '';
@@ -120,6 +175,35 @@ export class Util {
             .replace('HH', hour > 9 ? hour.toString() :`0${hour}`)
             .replace('mm', minute > 9 ? minute.toString() : `0${minute}`)
             .replace('ss', second > 9 ? second.toString() : `0${second}`);
+    }
+
+    public static getTimestamp(): number {
+        var timestamp = (new Date()).valueOf();
+        return timestamp;
+    }
+
+    /**
+     * Converts a base-10 or base-16 string representation of a number (ex: "140" or "0xA45F" into
+     * a base-10 string representation (ex: "140"->"140", "0xA45F"->"42079")
+     */
+     public static getDecimalString(numberString: string) {
+        if (numberString.startsWith('0x')) {
+            return parseInt(numberString, 16).toString();
+        } else {
+            return numberString;
+        }
+    }
+
+    /**
+     * Reverse txid, eg. '65c1af8a' => '8aafc165'.
+     * For get address in cross chain transaction.
+     */
+    public static reversetxid(txid) {
+      let newtxid = ''
+      for (let i = txid.length - 2; i >= 0; i -= 2) {
+        newtxid += txid.substring(i, i + 2);
+      }
+      return newtxid
     }
 
 }

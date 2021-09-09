@@ -21,11 +21,10 @@
  */
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Util } from '../../model/util';
 import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Native } from '../../services/native.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
     selector: 'app-settings',
@@ -70,8 +69,6 @@ export class SettingsPage implements OnInit {
             type: 'currency-select'
         },
     ];
-
-    public Util = Util;
 
     constructor(
         public theme: GlobalThemeService,

@@ -1,4 +1,5 @@
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
@@ -6,7 +7,6 @@ import { Config } from '../config/Config';
 import { Native } from '../services/native.service';
 import { PopupProvider } from '../services/popup.service';
 import { StandardCoinName } from './Coin';
-import { Util } from './util';
 import { WalletAccountType } from './WalletAccount';
 
 declare let walletManager: WalletPlugin.WalletManager;

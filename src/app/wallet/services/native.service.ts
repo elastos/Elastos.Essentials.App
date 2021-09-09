@@ -22,11 +22,11 @@
 
 import { Injectable, NgZone } from '@angular/core';
 import { LoadingController, PopoverController } from '@ionic/angular';
-import { HelpComponent } from '../components/help/help.component';
+import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Logger } from 'src/app/logger';
-import { App } from "src/app/model/app.enum"
+import { HelpComponent } from '../components/help/help.component';
 
 @Injectable()
 export class Native {
@@ -43,11 +43,11 @@ export class Native {
         private globalNav: GlobalNavService,
     ) {}
 
-    public toast(msg: string = '操作完成', duration: number = 2000): void {
+    public toast(msg = '操作完成', duration = 2000): void {
         this.globalNative.genericToast(msg, duration);
     }
 
-    public toast_trans(msg: string = '', duration: number = 2000): void {
+    public toast_trans(msg = '', duration = 2000): void {
         this.globalNative.genericToast(msg, duration);
     }
 
@@ -62,13 +62,13 @@ export class Native {
     public go(page: string, options: any = {}) {
         Logger.log("wallet", "Navigating to:", page);
         this.zone.run(() => {
-            this.hideLoading();
-            this.globalNav.navigateTo(App.WALLET, page, { state: options });
+            void this.hideLoading();
+            void this.globalNav.navigateTo(App.WALLET, page, { state: options });
         });
     }
 
     public pop() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     public openUrl(url: string) {
@@ -78,30 +78,12 @@ export class Native {
     public setRootRouter(page: any,  options: any = {}) {
         Logger.log("wallet", "Setting root router path to:", page);
         this.zone.run(() => {
-            this.hideLoading();
-            this.globalNav.navigateRoot(App.WALLET, page, { state: options });
+            void this.hideLoading();
+            void this.globalNav.navigateRoot(App.WALLET, page, { state: options });
         });
     }
 
-    public clone(myObj) {
-        if (typeof (myObj) != 'object') return myObj;
-        if (myObj == null) return myObj;
-
-        let myNewObj;
-
-        if (myObj instanceof (Array)) {
-            myNewObj = new Array();
-        } else {
-            myNewObj = new Object();
-        }
-
-        for (let i in myObj)
-            myNewObj[i] = this.clone(myObj[i]);
-
-        return myNewObj;
-    }
-
-    public async showLoading(content: string = ''): Promise<void> {
+    public async showLoading(content = ''): Promise<void> {
         if (this.loadingCtrlCreating) {// Just in case.
             Logger.log("wallet", 'loadingCtrl is preparing, skip')
             return;
@@ -116,7 +98,7 @@ export class Native {
             cssClass: 'wallet-loader',
             message: content
         });
-        this.loader.onWillDismiss().then(() => {
+        void this.loader.onWillDismiss().then(() => {
             this.loader = null;
         });
 

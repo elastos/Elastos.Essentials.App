@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AuthService } from '../../../services/auth.service';
-import { Native } from '../../../services/native.service';
-import { Util } from "../../../model/util";
 import { TranslateService } from '@ngx-translate/core';
-import { WalletService } from '../../../services/wallet.service';
-import { WalletCreationService } from '../../../services/walletcreation.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { AuthService } from '../../../services/auth.service';
+import { Native } from '../../../services/native.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletCreationService } from '../../../services/walletcreation.service';
 
 @Component({
   selector: 'app-wallet-advanced-import',

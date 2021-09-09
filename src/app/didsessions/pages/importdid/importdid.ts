@@ -2,18 +2,18 @@ import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonInput, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-
-import { Util } from '../../services/util';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { MnemonicPassCheckComponent } from 'src/app/didsessions/components/mnemonicpasscheck/mnemonicpasscheck.component';
-import { UXService } from 'src/app/didsessions/services/ux.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { PopupProvider } from 'src/app/didsessions/services/popup';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDMnemonicHelper } from '../../helpers/didmnemonic.helper';
+
 
 /**
  * Import algorithm:

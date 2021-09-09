@@ -1,38 +1,33 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
+import { AlertController, IonInput, ModalController, Platform } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-import { IonInput, ModalController, AlertController, Platform } from "@ionic/angular";
-
-import { Native } from "../../services/native";
-import { Util } from "../../services/util";
-import { DIDService } from "../../services/did.service";
-import { AuthService } from "../../services/auth.service";
-import { ProfileService } from "../../services/profile.service";
-
-import { area } from "../../../../assets/identity/area/area";
-
-import { BasicCredentialEntry } from "../../model/basiccredentialentry.model";
-import { Profile } from "../../model/profile.model";
-import { CountryCodeInfo } from "../../model/countrycodeinfo";
-
-import { ProfileEntryPickerPage } from "../profileentrypicker/profileentrypicker";
-import { PictureComponent } from "../../components/picture/picture.component";
-import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { PopupProvider } from "../../services/popup";
-import { DIDURL } from "../../model/didurl.model";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from "src/app/components/titlebar/titlebar.types";
+import { GlobalConfig } from "src/app/config/globalconfig";
+import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
 import { GlobalHiveService } from "src/app/services/global.hive.service";
-import { GlobalConfig } from "src/app/config/globalconfig";
 import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
-import { BASE64 } from "src/app/model/base64";
-import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
+import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { area } from "../../../../assets/identity/area/area";
+import { PictureComponent } from "../../components/picture/picture.component";
+import { BasicCredentialEntry } from "../../model/basiccredentialentry.model";
+import { CountryCodeInfo } from "../../model/countrycodeinfo";
+import { DIDURL } from "../../model/didurl.model";
+import { Profile } from "../../model/profile.model";
+import { VerifiableCredential } from "../../model/verifiablecredential.model";
+import { AuthService } from "../../services/auth.service";
+import { DIDService } from "../../services/did.service";
+import { Native } from "../../services/native";
+import { PopupProvider } from "../../services/popup";
+import { ProfileService } from "../../services/profile.service";
+import { ProfileEntryPickerPage } from "../profileentrypicker/profileentrypicker";
+
 
 declare const hiveManager: HivePlugin.HiveManager;
 

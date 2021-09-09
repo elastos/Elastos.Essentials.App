@@ -1,22 +1,22 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Native } from '../../../../services/native.service';
-import { LocalStorage } from '../../../../services/storage.service';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WalletService } from '../../../../services/wallet.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ERC20Coin } from '../../../../model/Coin';
-import { PopupProvider } from '../../../../services/popup.service';
-import { ERC20CoinService } from '../../../../services/erc20coin.service';
-import { Util } from '../../../../model/util';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, BuiltInIcon } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
-import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
+import { ERC20Coin } from '../../../../model/Coin';
+import { ERC20CoinService } from '../../../../services/erc20coin.service';
+import { Native } from '../../../../services/native.service';
+import { PopupProvider } from '../../../../services/popup.service';
+import { LocalStorage } from '../../../../services/storage.service';
+import { WalletService } from '../../../../services/wallet.service';
 
 
 @Component({
@@ -38,8 +38,6 @@ export class CoinAddERC20Page implements OnInit {
 
     public coinInfoFetched = false;
     public fetchingCoinInfo = false;
-
-    public Util = Util;
 
     private intentMode = false;
     private rootPage = false;

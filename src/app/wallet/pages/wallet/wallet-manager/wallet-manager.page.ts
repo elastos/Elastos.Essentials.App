@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../config/Config';
-import { Util } from '../../../model/util';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
@@ -24,7 +25,7 @@ import { WalletEditionService } from '../../../services/walletedition.service';
 export class WalletManagerPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public Util = Util;
+    public WalletUtil = WalletUtil;
     public SELA = Config.SELA;
 
     public forIntent = false;

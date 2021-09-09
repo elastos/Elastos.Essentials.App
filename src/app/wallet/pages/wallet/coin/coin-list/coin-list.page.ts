@@ -7,10 +7,10 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
 import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
-import { Util } from '../../../../model/util';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -18,7 +18,6 @@ import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { WalletEditionService } from '../../../../services/walletedition.service';
 
 type EditableCoinInfo = {
     coin: Coin,
@@ -43,7 +42,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     currentCoin: any;
 
     // Helpers
-    public Util = Util;
+    public WalletUtil = WalletUtil;
     public SELA = Config.SELA;
     public CoinType = CoinType;
 
@@ -58,7 +57,6 @@ export class CoinListPage implements OnInit, OnDestroy {
     constructor(
         public walletManager: WalletService,
         public popupProvider: PopupProvider,
-        private walletEditionService: WalletEditionService,
         public native: Native,
         public localStorage: LocalStorage,
         public modalCtrl: ModalController,
@@ -115,7 +113,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async switchCoin(item: EditableCoinInfo, open: boolean) {
         item.isOpen = open;
-        Logger.log('wallet', item);
+        Logger.log('wallet', 'switchCoin:', item);
 
         this.currentCoin = item;
         await this.native.showLoading(this.translate.instant('common.please-wait'));

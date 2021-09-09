@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ERC20Coin } from '../../../../model/Coin';
-import { Util } from '../../../../model/util';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
@@ -28,8 +28,6 @@ export class CoinErc20DetailsPage implements OnInit {
   public coin: ERC20Coin;
   public contractAddress = '1234';
   public canDelete = false;
-
-  public Util = Util;
 
   constructor(
     public theme: GlobalThemeService,

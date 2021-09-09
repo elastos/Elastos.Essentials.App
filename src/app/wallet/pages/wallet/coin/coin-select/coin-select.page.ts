@@ -6,7 +6,6 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
 import { CoinType } from '../../../../model/Coin';
-import { Util } from '../../../../model/util';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
@@ -28,7 +27,6 @@ export class CoinSelectPage implements OnInit {
     public subWallets: AnySubWallet[] = [];
 
     // Helpers
-    public Util = Util;
     private SELA = Config.SELA;
     public CoinType = CoinType;
 

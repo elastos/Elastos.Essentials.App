@@ -1,17 +1,17 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Native } from '../../../../services/native.service';
-import { Util } from "../../../../model/util";
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonSlides, ModalController, IonInput } from '@ionic/angular';
-import { WalletService } from '../../../../services/wallet.service';
-import { AuthService } from '../../../../services/auth.service';
-import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { IonInput, IonSlides, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { AuthService } from '../../../../services/auth.service';
+import { Native } from '../../../../services/native.service';
+import { WalletService } from '../../../../services/wallet.service';
+import { WalletCreationService } from '../../../../services/walletcreation.service';
 
 @Component({
     selector: 'app-mnemonic-write',
@@ -48,7 +48,7 @@ export class MnemonicWritePage implements OnInit {
         private translate: TranslateService,
         public keyboard: Keyboard
     ) {
-        this.mnemonicStr = this.native.clone(this.walletCreationService.mnemonicStr);
+        this.mnemonicStr = Util.clone(this.walletCreationService.mnemonicStr);
     }
 
     ngOnInit() {

@@ -8,9 +8,9 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../config/Config';
-import { Util } from '../../../model/util';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { AuthService } from '../../../services/auth.service';
 import { CurrencyService } from '../../../services/currency.service';
@@ -42,7 +42,7 @@ export class WalletSettingsPage implements OnInit {
     public popover: any = null;
 
     // Helpers
-    public Util = Util;
+    public WalletUtil = WalletUtil;
     public SELA = Config.SELA;
 
     public settings = [

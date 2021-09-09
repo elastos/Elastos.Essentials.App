@@ -2,9 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Util } from '../../../model/util';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
@@ -49,7 +50,7 @@ export class WalletEditNamePage implements OnInit {
             return;
         }
 
-        if (Util.isWalletName(this.walletname)) {
+        if (WalletUtil.isInvalidWalletName(this.walletname)) {
             this.native.toast_trans("wallet.text-wallet-name-validator-not-valid-name");
             return;
         }
