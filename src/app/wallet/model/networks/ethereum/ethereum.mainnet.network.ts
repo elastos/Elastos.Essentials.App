@@ -8,7 +8,7 @@ export class EthereumMainNetNetwork extends EVMNetwork {
   constructor() {
     super(
       "ethereum",
-      "ETH",
+      "Ethereum",
       "assets/wallet/networks/ethereum.png",
       "ETH",
       "ETH",
