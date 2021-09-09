@@ -47,7 +47,13 @@ export abstract class NetworkWallet {
     }
 
     public async initialize(): Promise<void> {
+        // Prepare standard coin(s)
         await this.prepareStandardSubWallets();
+
+        // First time we use this wallet? Add some default useful ERC20 coins
+        await this.checkFirstTimeUseAddCoins();
+
+        // Prepare ERC20, NFT subwallets and other info
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
     }
 
@@ -75,6 +81,25 @@ export abstract class NetworkWallet {
      */
     public async stopBackgroundUpdates(): Promise<void> {
         await this.getTransactionDiscoveryProvider().stop();
+    }
+
+    /**
+     * If this is the first time we use this network wallet (no network info exists), then we add
+     * some default built in ERC20 coins for convenience.
+     */
+    private async checkFirstTimeUseAddCoins(): Promise<void> {
+        let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+        let existingExtendedInfo = await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, activeNetworkTemplate, this.network.key);
+        if (existingExtendedInfo)
+            return; // Not the first time, don't re-add coins that user may have disabled.
+
+        let builtInCoins = this.network.getBuiltInERC20Coins(activeNetworkTemplate);
+        for (let i = 0; i < builtInCoins.length; i++) {
+            let coin = builtInCoins[i];
+            if (coin.initiallyShowInWallet) {
+                await this.createNonStandardSubWallet(coin);
+            }
+        }
     }
 
     public getDisplayBalance(): BigNumber {
