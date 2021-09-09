@@ -3,14 +3,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { App } from 'src/app/model/app.enum';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { Util } from 'src/app/wallet/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 
 
 @Component({

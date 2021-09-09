@@ -1,17 +1,17 @@
-import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
-import { WalletService } from '../../../services/wallet.service';
-import { Native } from '../../../services/native.service';
-import { LocalStorage } from '../../../services/storage.service';
-import { Util } from "../../../model/util";
-import { PopupProvider } from '../../../services/popup.service';
-import { WalletCreationService } from '../../../services/walletcreation.service';
-import { AuthService } from '../../../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { AuthService } from '../../../services/auth.service';
+import { Native } from '../../../services/native.service';
+import { PopupProvider } from '../../../services/popup.service';
+import { LocalStorage } from '../../../services/storage.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletCreationService } from '../../../services/walletcreation.service';
 
 export enum MnemonicLanguage {
   CHINESE_SIMPLIFIED,

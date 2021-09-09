@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isString } from 'lodash-es';
 import { Logger } from 'src/app/logger';
+import { App } from "src/app/model/app.enum";
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
 
 @Injectable({
     providedIn: 'root'
@@ -76,35 +76,12 @@ export class Native {
       this.mnemonicLang = lang;
   }
 
-  public clone(Obj) {
-      if (typeof (Obj) != 'object') return Obj;
-      if (Obj == null) return Obj;
-
-      let newObj;
-
-      if (Obj instanceof (Array)) {
-          newObj = [];
-      } else {
-          newObj = new Object();
-      }
-
-      for (let i in Obj)
-          newObj[i] = this.clone(Obj[i]);
-
-      return newObj;
-  }
-
-
   public async showLoading(content = 'common.please-wait') {
     await this.native.showLoading(content);
   }
 
   public async hideLoading() {
     await this.native.hideLoading();
-  }
-
-  public getTimestamp() {
-      return new Date().getTime().toString();
   }
 }
 

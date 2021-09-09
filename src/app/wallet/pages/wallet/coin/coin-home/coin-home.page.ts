@@ -28,13 +28,14 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../../model/Coin';
 import { GenericTransaction, TransactionInfo } from '../../../../model/providers/transaction.types';
-import { Util } from '../../../../model/util';
 import { ERC20SubWallet } from '../../../../model/wallets/erc20.subwallet';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
@@ -68,7 +69,7 @@ export class CoinHomePage implements OnInit {
     private start = 0;
 
     // Helpers
-    public Util = Util;
+    public WalletUtil = WalletUtil;
     public SELA = Config.SELA;
     public CoinType = CoinType;
 
@@ -177,7 +178,7 @@ export class CoinHomePage implements OnInit {
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.elastosChainCode = this.elastosChainCode;
-            this.coinTransferService.walletInfo = this.native.clone(this.networkWallet.masterWallet.account);
+            this.coinTransferService.walletInfo = Util.clone(this.networkWallet.masterWallet.account);
 
             this.subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
         }

@@ -30,12 +30,12 @@ import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { Config } from '../../../config/Config';
 import { CoinType } from '../../../model/Coin';
-import { Util } from '../../../model/Util';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
 import { AnySubWallet } from '../../../model/wallets/subwallet';
@@ -66,7 +66,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     private subWalletsListChangeSubscription: Subscription = null;
 
     // Helpers
-    public Util = Util;
+    public WalletUtil = WalletUtil;
     public CoinType = CoinType;
     public SELA = Config.SELA;
 

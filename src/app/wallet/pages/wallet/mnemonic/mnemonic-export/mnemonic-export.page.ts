@@ -1,19 +1,19 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../../services/auth.service';
-import { Native } from '../../../../services/native.service';
-import { Util } from '../../../../model/util';
-import { WalletService } from '../../../../services/wallet.service';
-import { WalletEditionService } from '../../../../services/walletedition.service';
 import { TranslateService } from '@ngx-translate/core';
-import { IntentTransfer } from '../../../../services/cointransfer.service';
-import { WalletAccessService } from '../../../../services/walletaccess.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AuthService } from '../../../../services/auth.service';
+import { IntentTransfer } from '../../../../services/cointransfer.service';
+import { Native } from '../../../../services/native.service';
+import { WalletService } from '../../../../services/wallet.service';
+import { WalletAccessService } from '../../../../services/walletaccess.service';
+import { WalletEditionService } from '../../../../services/walletedition.service';
 
 @Component({
     selector: 'app-mnemonic-export',

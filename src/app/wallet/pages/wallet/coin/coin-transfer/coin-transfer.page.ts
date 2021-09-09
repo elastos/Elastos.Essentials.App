@@ -31,6 +31,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -47,7 +48,6 @@ import { TxSuccessComponent } from '../../../../components/tx-success/tx-success
 import { Config } from '../../../../config/Config';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
 import { CoinType, StandardCoinName } from '../../../../model/Coin';
-import { Util } from '../../../../model/util';
 import { MainAndIDChainSubWallet } from '../../../../model/wallets/elastos/mainandidchain.subwallet';
 import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';

@@ -1,16 +1,16 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { NavParams, IonSlides } from '@ionic/angular';
-import { Native } from '../../../../services/native.service';
-import { WalletService } from '../../../../services/wallet.service';
-import { Util } from '../../../../model/util';
-import { LocalStorage } from '../../../../services/storage.service';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { WalletCreationService, SelectableMnemonic } from '../../../../services/walletcreation.service';
+import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
+import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
+import { Native } from '../../../../services/native.service';
+import { LocalStorage } from '../../../../services/storage.service';
+import { WalletService } from '../../../../services/wallet.service';
+import { SelectableMnemonic, WalletCreationService } from '../../../../services/walletcreation.service';
 
 @Component({
     selector: 'app-mnemonic-create',

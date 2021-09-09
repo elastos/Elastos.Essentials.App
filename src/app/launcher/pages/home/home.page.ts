@@ -19,7 +19,6 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { Network } from 'src/app/wallet/model/networks/network';
-import { Util } from 'src/app/wallet/model/util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -42,8 +41,6 @@ import { NotificationsPage } from '../notifications/notifications.page';
 export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('walletsSlider') walletsSlider: IonSlides;
-
-  public Util = Util;
 
   private popover: any = null;
   private modal: any = null;
@@ -85,8 +82,8 @@ export class HomePage implements OnInit {
     private modalCtrl: ModalController,
     private zone: NgZone,
     private appBackGroundService: GlobalAppBackgroundService,
-    private walletService: WalletService,
-    private walletNetworkService: WalletNetworkService,
+    public walletService: WalletService,
+    public walletNetworkService: WalletNetworkService,
     private walletNetworkUIService: WalletNetworkUIService,
     public walletUIService: UiService,
     private walletInitService: WalletInitService,

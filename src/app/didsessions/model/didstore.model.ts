@@ -1,9 +1,8 @@
-import { DID } from './did.model';
-import { DIDHelper } from '../helpers/did.helper';
-import { NewIdentity } from './newidentity';
-import { DIDURL } from './didurl.model';
-import { Util } from '../services/util';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
+import { DIDHelper } from '../helpers/did.helper';
+import { DID } from './did.model';
+import { NewIdentity } from './newidentity';
 
 declare let didManager: DIDPlugin.DIDManager;
 

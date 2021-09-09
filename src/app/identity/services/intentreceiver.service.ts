@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Native } from './native';
-
-import { Util } from './util';
-import { PopupProvider } from './popup';
-import { AppIDService } from './appid.service';
-import { UXService } from './ux.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Logger } from 'src/app/logger';
-import { IdentityIntent, AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent, CredImportIdentityIntent } from '../model/identity.intents';
+import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent } from '../model/identity.intents';
+import { AppIDService } from './appid.service';
+import { Native } from './native';
+import { PopupProvider } from './popup';
+import { UXService } from './ux.service';
+
 
 
 @Injectable({

@@ -1,13 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Util } from 'src/app/model/util';
+import { Events } from 'src/app/services/events.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { Util } from '../../../../model/util';
-import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Events } from 'src/app/services/events.service';
 
 const AddressCount = 20;
 
