@@ -8,7 +8,7 @@ import { AnySubWallet, SubWallet } from "../../subwallet";
 import { WalletHelper } from "../wallet.helper";
 
 export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends SubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {
-  private TRANSACTION_LIMIT = 50;// for rpc
+  private TRANSACTION_LIMIT = 20;
   private needtoLoadMoreAddresses: string[] = [];
   private alreadyTriedToFetchMore = false;
   // Maybe there are lots of transactions and we need to merge the transactions for multi address wallet,
@@ -31,33 +31,30 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
    * @returns
    */
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: ElastosTransaction): Promise<void> {
-    if (afterTransaction)
-      throw new Error("fetchTransactions() with afterTransaction: NOT YET IMPLEMENTED");
-
-    if (!afterTransaction) {
+    if (afterTransaction) {
+      let page = 1;
+      let afterTransactionIndex = (await this.getTransactions(subWallet)).findIndex(t => t.txid === afterTransaction.txid);
+      if (afterTransactionIndex) { // Just in case, should always be true but...
+        // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
+        // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
+        page = 1 + Math.floor((afterTransactionIndex + 1) / this.TRANSACTION_LIMIT);
+      }
+      this.fetchMoreMainChainTransactions(page);
+    } else {
       // Forcing to fetch from 0, so we reset the canfetchmore flag
       this.alreadyTriedToFetchMore = false;
-    }
 
-    console.log("DEBUG mainandidchain provider fetch", subWallet);
+      let txList = await WalletHelper.getTransactionByAddress(this.subWallet, false, this.TRANSACTION_LIMIT);
 
-    let startingAt = 0; // TODO: COMPUTE startingAt from "afterTransaction"
-
-    // TODO this.getTransactionsTime = moment().valueOf();
-    let txList = await WalletHelper.getTransactionByAddress(this.subWallet, false, startingAt);
-
-    console.log("DEBUG MainchainProvider fetchTransactions txList=", txList);
-
-    // The Single Address Wallet should use the external address.
-    if (!this.subWallet.masterWallet.account.SingleAddress) {
-      let txListInternal = await WalletHelper.getTransactionByAddress(this.subWallet, true, startingAt);
-      if (txListInternal && txListInternal.length > 0) {
-        txList = [...txList, ...txListInternal];
+      // The Single Address Wallet should use the external address.
+      if (!this.subWallet.masterWallet.account.SingleAddress) {
+        let txListInternal = await WalletHelper.getTransactionByAddress(this.subWallet, true, this.TRANSACTION_LIMIT);
+        if (txListInternal && txListInternal.length > 0) {
+          txList = [...txList, ...txListInternal];
+        }
       }
-    }
 
-    // TODO: get the addresses that need to load more transactions.
-    if (startingAt === 0) {
+      // Get the addresses that need to load more transactions.
       this.needtoLoadMoreAddresses = []
       for (let i = 0, len = txList.length; i < len; i++) {
         if (txList[i].total > this.TRANSACTION_LIMIT) {
@@ -71,35 +68,29 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
         }
       }
       // Logger.warn("wallet", 'this.needtoLoadMoreAddresses:', this.needtoLoadMoreAddresses);
-    }
 
-    /* if (this.paginatedTransactions == null) {
-      // init
-      console.log("DEBUG fetchTransactions - setting paginatedTransactions of",this.subWallet.id,"to empty content");
-      this.paginatedTransactions.set(this.subWallet.getTransactionsCacheKey(), {
-        total: 0,
-        transactions: []
-      });
-    } */
+      /* if (this.paginatedTransactions == null) {
+        // init
+        console.log("DEBUG fetchTransactions - setting paginatedTransactions of",this.subWallet.id,"to empty content");
+        this.paginatedTransactions.set(this.subWallet.getTransactionsCacheKey(), {
+          total: 0,
+          transactions: []
+        });
+      } */
 
-    console.log("DEBUG MainchainProvider fetchTransactions txList before merge=", txList);
+      // console.log("DEBUG MainchainProvider fetchTransactions txList before merge=", txList);
 
-    if (txList.length > 0) {
-      await this.mergeTransactionListAndSort(txList);
-    } else {
-      // Notify the page to show the right time of the transactions even no new transaction.
-      // TODO this.subWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length);
+      if (txList.length > 0) {
+        await this.mergeTransactionListAndSort(txList);
+      } else {
+        // Notify the page to show the right time of the transactions even no new transaction.
+        // TODO this.subWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length);
+      }
     }
   }
 
   public canFetchMoreTransactions(subWallet: AnySubWallet): boolean {
     return (!this.alreadyTriedToFetchMore || this.needtoLoadMoreAddresses.length > 0);
-  }
-
-  public forcedFetchTransactions(subWallet: AnySubWallet, afterTransaction?: ElastosTransaction) {
-    // TODO zhiming: use "afterTransaction" instead of "startingAt", and make a single code (no duplicate)
-    // for default fetchTransactions() and forcedFetchTransactions()
-    // this.fetchTransactions(afterTransaction);
   }
 
   // Call this when load more transactions.
@@ -118,16 +109,17 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     let txList: PaginatedTransactions<ElastosTransaction>[] = [];
     try {
       const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.subWallet.id as StandardCoinName, this.needtoLoadMoreAddresses,
-        this.TRANSACTION_LIMIT, skipTxCount, 0) as any[]; // TODO: NOT ANY, USE RIGHT TYPE
-
-      //console.log("DEBUG fetchMoreMainChainTransactions txRawList=", txRawList);
+        this.TRANSACTION_LIMIT, skipTxCount, 0);
 
       this.needtoLoadMoreAddresses = [];
       this.timestampEnd = this.timestampStart;
       this.timestampStart = 0;
       if (txRawList && txRawList.length > 0) {
         for (let i = 0, len = txRawList.length; i < len; i++) {
-          txList.push(txRawList[i].result);
+          txList.push({
+            total: txRawList[i].result.totalcount,
+            transactions: txRawList[i].result.txhistory
+          });
           if (txRawList[i].result.totalcount > nextLimit) {
             let len = txList[i].transactions.length;
             let timestamp = txList[i].transactions[len - 1].time;
@@ -156,8 +148,6 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     // If all the output is the address of this wallet, then this transaction direction is 'MOVED'
     await this.mergeTransactionList(txList);
 
-    //console.log("DEBUG mergeTransactionListAndSort txList after merge=", txList);
-
     // sort by block height
     /* NOT NEEDED ANY MORE - THE CACHE WILL SORT BY TIME VALUE - let transactions = this.getTransactions(this.subWallet).sort(function (t1, t2) {
       // The height is 0 if the transaction is pending.
@@ -165,8 +155,6 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
       if (t1.height === 0) return -1;
       return t2.height - t1.height;
     }); */
-
-    //console.log("DEBUG MainchainProvider mergeTransactionListAndSort transactions=", transactions);
 
     this.timestampEnd = await this.getLastConfirmedTransactionTimestamp();
   }
@@ -249,12 +237,6 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
         paginatedTransactions.transactions[existingIndex] = transactions[i];
       }
     } */
-
-    // TODO: ALL BROKEN
-
-    // TODO to improve : "+ 100": just mean we don't load all the transactions.
-    // TODO this.needtoLoadMoreAddresses.length === 0 ? paginatedTransactions.total = paginatedTransactions.transactions.length :
-    // TODO paginatedTransactions.total = paginatedTransactions.transactions.length + 100;
 
     await this.saveTransactions(transactions);
   }
