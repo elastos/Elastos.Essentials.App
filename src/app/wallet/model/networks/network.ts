@@ -1,6 +1,5 @@
 import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
-import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LocalStorage } from "../../services/storage.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
 import { Coin, CoinID, CoinType, ERC20Coin } from "../Coin";
@@ -12,8 +11,6 @@ export abstract class Network {
   private availableCoins: Coin[] = null;
   private deletedERC20Coins: ERC20Coin[] = [];
 
-  private activeNetworkTemplate: string;
-
   public onCoinAdded: Subject<string> = new Subject(); // Event - when a coin is added - provides the coin ID
   public onCoinDeleted: Subject<string> = new Subject(); // Event - when a coin is added - provides the coin ID
 
@@ -22,7 +19,6 @@ export abstract class Network {
     public name: string, // Human readable network name - Elastos, HECO
     public logo: string // Path to the network icon
   ) {
-    this.activeNetworkTemplate = GlobalNetworksService.instance.getActiveNetworkTemplate();
   }
 
   public async init(): Promise<void> {
@@ -30,18 +26,10 @@ export abstract class Network {
   }
 
   /**
-   * Whether the network supports the given network template. True by default,
-   * but some network can override this to return false for some templates.
-   */
-  public canSupportNetworkTemplate(networkTemplate: string): boolean {
-    return true;
-  }
-
-  /**
    * Returns a list of available ERC20 coins that we trust for this network, and that user will be able to
    * display on this wallet or not.
    */
-  public abstract getBuiltInERC20Coins(networkTemplate: string): ERC20Coin[];
+  public abstract getBuiltInERC20Coins(): ERC20Coin[];
 
   /**
    * Creates a network wallet for the given master wallet.
@@ -80,7 +68,7 @@ export abstract class Network {
     this.availableCoins = [];
 
     // Add default ERC20 tokens built-in essentials
-    this.availableCoins = this.getBuiltInERC20Coins(this.activeNetworkTemplate);
+    this.availableCoins = this.getBuiltInERC20Coins();
 
     // Add custom ERC20 tokens, manually added by the user or discovered
     this.availableCoins = [...this.availableCoins, ...await this.getCustomERC20Coins()];
@@ -93,15 +81,13 @@ export abstract class Network {
 
   public getAvailableCoins(): Coin[] {
     // Return only coins that are usable on the active network.
-    return this.availableCoins.filter(c => {
-      return c.networkTemplate == null || c.networkTemplate === this.activeNetworkTemplate;
-    });
+    return this.availableCoins;
   }
 
   public getAvailableERC20Coins(): ERC20Coin[] {
     // Return only ERC20 coins that are usable on the active network.
     return this.availableCoins.filter(c => {
-      return (c.networkTemplate == null || c.networkTemplate === this.activeNetworkTemplate) && (c.getType() === CoinType.ERC20);
+      return (c.getType() === CoinType.ERC20);
     }) as ERC20Coin[];
   }
 

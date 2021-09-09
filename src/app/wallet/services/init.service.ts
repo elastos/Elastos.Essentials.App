@@ -3,13 +3,20 @@ import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
-import { ArbitrumNetwork } from '../model/networks/arbitrum/arbitrum.network';
-import { BSCNetwork } from '../model/networks/bsc/bsc.network';
-import { ElastosNetwork } from '../model/networks/elastos/elastos.network';
-import { FusionNetwork } from '../model/networks/fusion/fusion.network';
-import { HECONetwork } from '../model/networks/heco/heco.network';
+import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/arbitrum.mainnet.network';
+import { ArbitrumTestNetNetwork } from '../model/networks/arbitrum/arbitrum.testnet.network';
+import { BSCMainNetNetwork } from '../model/networks/bsc/bsc.mainnet.network';
+import { BSCTestNetNetwork } from '../model/networks/bsc/bsc.testnet.network';
+import { ElastosLRWNetwork } from '../model/networks/elastos/elastos.lrw.network';
+import { ElastosMainNetNetwork } from '../model/networks/elastos/elastos.mainnet.network';
+import { ElastosTestNetNetwork } from '../model/networks/elastos/elastos.testnet.network';
+import { EthereumMainNetNetwork } from '../model/networks/ethereum/ethereum.mainnet.network';
+import { EthereumRopstenNetwork } from '../model/networks/ethereum/ethereum.ropsten.network';
+import { FusionMainNetNetwork } from '../model/networks/fusion/fusion.mainnet.network';
+import { HECOMainNetNetwork } from '../model/networks/heco/heco.mainnet.network';
+import { HECOTestNetNetwork } from '../model/networks/heco/heco.testnet.network';
 import { Network } from '../model/networks/network';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
@@ -57,11 +64,7 @@ export class WalletInitService extends GlobalService {
 
     // Networks init + registration
     await this.networkService.init();
-    await this.createAndRegisterNetwork(new ElastosNetwork(), true);
-    await this.createAndRegisterNetwork(new HECONetwork());
-    await this.createAndRegisterNetwork(new BSCNetwork());
-    await this.createAndRegisterNetwork(new FusionNetwork());
-    await this.createAndRegisterNetwork(new ArbitrumNetwork());
+    await this.registerNetworks();
 
     // Do not await.
     void this.currencyService.init();
@@ -84,18 +87,30 @@ export class WalletInitService extends GlobalService {
     await this.stop();
   }
 
-  private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
-    if (!network) {
-      Logger.warn("wallet", "Not adding undefined network");
-      return;
-    }
-
+  private async registerNetworks(): Promise<void> {
     let networkTemplate = this.globalNetworksService.activeNetworkTemplate.value;
-    if (!network.canSupportNetworkTemplate(networkTemplate)) {
-      Logger.warn("wallet", "Not adding network", network.name, "as it does not support current network template");
-      return;
+    switch (networkTemplate) {
+      case MAINNET_TEMPLATE:
+        await this.createAndRegisterNetwork(new ElastosMainNetNetwork(), true);
+        await this.createAndRegisterNetwork(new EthereumMainNetNetwork());
+        await this.createAndRegisterNetwork(new HECOMainNetNetwork());
+        await this.createAndRegisterNetwork(new BSCMainNetNetwork());
+        await this.createAndRegisterNetwork(new FusionMainNetNetwork());
+        await this.createAndRegisterNetwork(new ArbitrumMainNetNetwork());
+        return;
+      case TESTNET_TEMPLATE:
+        await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), true);
+        await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
+        await this.createAndRegisterNetwork(new HECOTestNetNetwork());
+        await this.createAndRegisterNetwork(new BSCTestNetNetwork());
+        await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
+        return;
+      case "LRW":
+        await this.createAndRegisterNetwork(new ElastosLRWNetwork(), true);
     }
+  }
 
+  private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
     await network.init();
     await this.networkService.registerNetwork(network, isDefault);
   }

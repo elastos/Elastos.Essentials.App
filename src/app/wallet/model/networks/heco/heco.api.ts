@@ -1,4 +1,4 @@
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum HecoApiType {
   RPC,
@@ -7,8 +7,7 @@ export enum HecoApiType {
 }
 
 export class HecoAPI {
-  public static getApiUrl(type: HecoApiType): string {
-    let networkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+  public static getApiUrl(type: HecoApiType, networkTemplate: string): string {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
