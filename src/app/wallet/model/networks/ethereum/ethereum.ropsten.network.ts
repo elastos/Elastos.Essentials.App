@@ -7,7 +7,7 @@ export class EthereumRopstenNetwork extends EVMNetwork {
   constructor() {
     super(
       "ethereum",
-      "ETH Ropsten",
+      "Ethereum Ropsten",
       "assets/wallet/networks/ethereum.png",
       "ETH",
       "ETH",
