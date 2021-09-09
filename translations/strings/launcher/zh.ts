@@ -32,8 +32,8 @@ export const zh = {
         'backup-button': '立即备份',
         'active-wallet-connect-sessions': '活跃的钱包连接会话',
         'active-network': '网络',
-        'active-wallet': 'Active wallet',
-        'touch-to-create-wallet': 'Touch here to create a wallet',
+        'active-wallet': '活动钱包',
+        'touch-to-create-wallet': '点击创建新钱包',
 
         /********** Onboard Page **********/
 
@@ -60,7 +60,7 @@ export const zh = {
         'app-crproposal-description': '参与社区运营共治',
         'app-dev-tools': '开发者工具',
         'app-browser': 'Discover dApps',
-        'app-browser-description': 'Discover dApps that you can use with Essentials',
+        'app-browser-description': '探索可在Essentials里使用的DAPP',
         'app-dpos-registration': 'DPoS 参选',
         'app-dpos-registration-description': 'DPoS 参选管理',
         'app-crcouncil-registration': 'CR 委员参选',
