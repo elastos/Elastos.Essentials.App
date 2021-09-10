@@ -69,6 +69,7 @@ export class DAppBrowser {
             enableViewportScale: "no",
             hideurlbar: "no",
             fullscreen: "no",
+            zoom: "no",
             darkMode: iabClient.theme.darkMode ? "yes" : "no",
             //clearcache: "yes",
             //cleardata: "yes",
