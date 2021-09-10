@@ -37,7 +37,7 @@ export const en = {
         'eth-insuff-balance': 'You must have enough ETHSC for gas fees in order to send Elastos ERC20 tokens',
         "sync-completed": "Sync completed",
         "not-a-valid-address": "Not a valid address",
-        "transaction-pending" : "There is already an on going transaction. Please wait for the transaction to be confirmed.",
+        "transaction-pending": "There is already an on going transaction. Please wait for the transaction to be confirmed.",
         "share-erc20-token": "Check out this Elastos ERC20 Token",
 
         /************
@@ -310,7 +310,7 @@ export const en = {
         "coin-adderc20-name": 'Token Name',
         "coin-adderc20-symbol": 'Token Symbol',
         "coin-adderc20-not-a-erc20-contract": "The provided ERC20 token address is not valid.",
-        "coin-adderc20-invalid-contract-or-network-error" : "The provided ERC20 token address is not valid or there is a network error.",
+        "coin-adderc20-invalid-contract-or-network-error": "The provided ERC20 token address is not valid or there is a network error.",
         'coin-adderc20-alreadyadded': 'Token already added',
         'coin-adderc20-not-found': "The token address can't be found, please check it!",
 
@@ -352,7 +352,7 @@ export const en = {
         * Voting Common *
         ********************/
         "vote-you-are-voting": "You are Voting!",
-        "vote-transaction-fees": "0.0001 ELA transfaction fee will be charged",
+        "vote-transaction-fees": "0.0001 ELA transaction fee will be charged",
         "vote-revote": "Don't forget to re-vote when you spend any ELA from your main ELA wallet",
 
         /*******************
