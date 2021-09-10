@@ -1,20 +1,20 @@
 import { Component, ViewChild } from '@angular/core';
-import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { Config } from 'src/app/wallet/config/Config';
+import { VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { WalletAccountType } from 'src/app/wallet/model/walletaccount';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletAccountType } from 'src/app/wallet/model/WalletAccount';
-import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
-import { Config } from 'src/app/wallet/config/Config';
-import { Util } from 'src/app/model/util';
-import { App } from 'src/app/model/app.enum';
-import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 
 type VoteForProposalCommand = CRWebsiteCommand & {
     data: {

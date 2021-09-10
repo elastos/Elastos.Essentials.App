@@ -4,7 +4,7 @@ import { InAppBrowser, InAppBrowserObject } from "@ionic-native/in-app-browser/n
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { StandardCoinName } from "src/app/wallet/model/Coin";
+import { StandardCoinName } from "src/app/wallet/model/coin";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 
 type IABMessage = {

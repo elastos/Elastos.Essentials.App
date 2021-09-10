@@ -12,7 +12,7 @@ import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { StandardCoinName } from '../../wallet/model/coin';
-import { WalletAccount, WalletAccountType } from '../../wallet/model/WalletAccount';
+import { WalletAccount, WalletAccountType } from '../../wallet/model/walletaccount';
 import { Native } from '../../wallet/services/native.service';
 import { WalletService } from '../../wallet/services/wallet.service';
 

@@ -28,7 +28,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { StandardCoinName } from '../../../model/coin';
-import { WalletAccount, WalletAccountType } from '../../../model/WalletAccount';
+import { WalletAccount, WalletAccountType } from '../../../model/walletaccount';
 import { AuthService } from '../../../services/auth.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';

@@ -7,7 +7,7 @@ import { Config } from '../config/Config';
 import { Native } from '../services/native.service';
 import { PopupProvider } from '../services/popup.service';
 import { StandardCoinName } from './coin';
-import { WalletAccountType } from './WalletAccount';
+import { WalletAccountType } from './walletaccount';
 
 declare let walletManager: WalletPlugin.WalletManager;
 

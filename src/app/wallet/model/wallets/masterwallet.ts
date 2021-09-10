@@ -1,8 +1,8 @@
-import { WalletAccount, WalletAccountType } from '../WalletAccount';
-import { WalletService } from '../../services/wallet.service';
 import { Logger } from 'src/app/logger';
 import { ERC721Service } from '../../services/erc721.service';
 import { LocalStorage } from '../../services/storage.service';
+import { WalletService } from '../../services/wallet.service';
+import { WalletAccount, WalletAccountType } from '../walletaccount';
 
 export type WalletID = string;
 

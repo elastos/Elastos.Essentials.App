@@ -32,7 +32,7 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { Network } from '../model/networks/network';
 import { SPVWalletPluginBridge } from '../model/SPVWalletPluginBridge';
-import { WalletAccount, WalletAccountType } from '../model/WalletAccount';
+import { WalletAccount, WalletAccountType } from '../model/walletaccount';
 import { MasterWallet, WalletID } from '../model/wallets/masterwallet';
 import { NetworkWallet } from '../model/wallets/networkwallet';
 import { AuthService } from './auth.service';
