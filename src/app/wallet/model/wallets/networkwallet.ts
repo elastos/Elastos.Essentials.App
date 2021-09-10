@@ -4,7 +4,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { Config } from '../../config/Config';
 import { LocalStorage } from '../../services/storage.service';
-import { Coin, CoinID, CoinType, StandardCoinName } from '../Coin';
+import { Coin, CoinID, CoinType, StandardCoinName } from '../coin';
 import { Network } from '../networks/network';
 import { NFT, NFTType, SerializedNFT } from '../nfts/nft';
 import { TransactionProvider } from '../providers/transaction.provider';

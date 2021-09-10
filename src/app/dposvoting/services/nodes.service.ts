@@ -12,7 +12,7 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { PopupProvider } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/providers/transaction.types';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Vote } from '../model/history.model';

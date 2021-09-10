@@ -1,20 +1,15 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import { DeveloperService } from '../../../services/developer.service';
-import { TranslateService } from '@ngx-translate/core';
-import { SettingsService } from '../../../services/settings.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from "src/app/model/app.enum"
 import { ActivatedRoute } from '@angular/router';
-import { Logger } from 'src/app/logger';
-import { SessionRequestParams } from 'src/app/model/walletconnect/types';
+import { Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalWalletConnectService, WalletConnectSessionRequestSource } from 'src/app/services/global.walletconnect.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { Coin, StandardCoinName } from 'src/app/wallet/model/Coin';
-import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elastos.evm.subwallet';
-import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { Platform } from '@ionic/angular';
+import { DeveloperService } from '../../../services/developer.service';
+import { SettingsService } from '../../../services/settings.service';
 
 @Component({
   selector: 'app-preparetoconnect',
@@ -59,7 +54,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
     // receive any "session_request" event.
     this.suggestToResetSession = false;
     this.watchdogTimer = setTimeout(() => {
-      this.zone.run(()=>{
+      this.zone.run(() => {
         this.suggestToResetSession = true;
       });
     }, 10000);

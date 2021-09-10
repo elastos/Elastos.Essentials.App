@@ -1,20 +1,20 @@
 import { Component, ViewChild } from '@angular/core';
-import { PopupService } from '../../../services/popup.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { Util } from 'src/app/model/util';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
 import { CROperationsService, CRWebsiteCommand } from 'src/app/crproposalvoting/services/croperations.service';
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
-import { App } from 'src/app/model/app.enum';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { PopupService } from '../../../services/popup.service';
 
 type ReviewProposalCommand = CRWebsiteCommand & {
     data: {

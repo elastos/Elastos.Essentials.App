@@ -28,6 +28,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { CoinType } from 'src/app/wallet/model/coin';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -35,7 +36,6 @@ import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { Config } from '../../../config/Config';
-import { CoinType } from '../../../model/Coin';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
 import { AnySubWallet } from '../../../model/wallets/subwallet';

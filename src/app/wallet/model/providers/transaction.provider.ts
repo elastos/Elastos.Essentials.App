@@ -4,7 +4,7 @@ import { App } from "src/app/model/app.enum";
 import { GlobalLanguageService } from "src/app/services/global.language.service";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
-import { ERC20Coin, StandardCoinName, TokenAddress } from "../Coin";
+import { ERC20Coin, StandardCoinName, TokenAddress } from "../coin";
 import { ERCTokenInfo } from "../evm.types";
 import { NFTType } from "../nfts/nft";
 import { NetworkWallet } from "../wallets/networkwallet";

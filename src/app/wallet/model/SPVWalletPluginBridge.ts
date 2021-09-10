@@ -6,7 +6,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { Config } from '../config/Config';
 import { Native } from '../services/native.service';
 import { PopupProvider } from '../services/popup.service';
-import { StandardCoinName } from './Coin';
+import { StandardCoinName } from './coin';
 import { WalletAccountType } from './WalletAccount';
 
 declare let walletManager: WalletPlugin.WalletManager;
@@ -66,12 +66,12 @@ export type CRProposalVoteInfo = VoteInfo & {
 };
 
 export type Candidates = {
-  [k: string]: string // "iYMVuGs1FscpgmghSzg243R6PzPiszrgj7": "100000000",
+    [k: string]: string // "iYMVuGs1FscpgmghSzg243R6PzPiszrgj7": "100000000",
 };
 
 export type VoteContent = {
-  Type: VoteType,
-  Candidates: Candidates,
+    Type: VoteType,
+    Candidates: Candidates,
 };
 
 export type AllAddresses = {
@@ -89,42 +89,42 @@ export class SPVWalletPluginBridge {
     }
 
     public setNetwork(netType: string, config: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-             walletManager.setNetwork([netType, config],
+        return new Promise((resolve, reject) => {
+            walletManager.setNetwork([netType, config],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("setNetwork", err, reject);  });
+                (err) => { void this.handleError("setNetwork", err, reject); });
         });
     }
 
     public setLogLevel(loglevel: string): Promise<void> {
-      return new Promise((resolve, reject)=>{
-           walletManager.setLogLevel([loglevel],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("setLogLevel", err, reject);  });
-      });
-  }
+        return new Promise((resolve, reject) => {
+            walletManager.setLogLevel([loglevel],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("setLogLevel", err, reject); });
+        });
+    }
 
     public init(rootPath: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
-             walletManager.init([rootPath],
+        return new Promise((resolve, reject) => {
+            walletManager.init([rootPath],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("init", err, reject);  });
+                (err) => { void this.handleError("init", err, reject); });
         });
     }
 
     public destroy(): Promise<void> {
-      return new Promise((resolve, reject)=>{
-           walletManager.destroy([],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("destroy", err, reject);  });
-      });
+        return new Promise((resolve, reject) => {
+            walletManager.destroy([],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("destroy", err, reject); });
+        });
     }
 
     public generateMnemonic(language: string): Promise<string> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.generateMnemonic([language],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("generateMnemonic", err, reject);  });
+                (err) => { void this.handleError("generateMnemonic", err, reject); });
         });
     }
 
@@ -217,71 +217,71 @@ export class SPVWalletPluginBridge {
     }
 
     getAllMasterWallets(): Promise<string[]> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             Logger.log("wallet", "Getting all master wallets");
 
             walletManager.getAllMasterWallets([],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getAllMasterWallets", err, reject);  });
+                (err) => { void this.handleError("getAllMasterWallets", err, reject); });
         });
     }
 
     destroyWallet(masterWalletId: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.destroyWallet([masterWalletId],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("destroyWallet", err, reject);  });
+                (err) => { void this.handleError("destroyWallet", err, reject); });
         });
     }
 
     getVersion(): Promise<string> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.getVersion([],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getVersion", err, reject);  });
+                (err) => { void this.handleError("getVersion", err, reject); });
         });
     }
 
     getMasterWalletBasicInfo(masterWalletId: string): Promise<MasterWalletBasicInfo> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.getMasterWalletBasicInfo([masterWalletId],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getMasterWalletBasicInfo", err, reject);  });
+                (err) => { void this.handleError("getMasterWalletBasicInfo", err, reject); });
         });
     }
 
     getAllSubWallets(masterWalletId: string): Promise<StandardCoinName[]> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.getAllSubWallets([masterWalletId],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getAllSubWallets", err, reject);  });
+                (err) => { void this.handleError("getAllSubWallets", err, reject); });
         });
     }
 
     createSubWallet(masterWalletId: string, elastosChainCode: string): Promise<any> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.createSubWallet([masterWalletId, elastosChainCode],
                 (ret) => {
                     Logger.log("wallet", "Created subwallet in SPVSDK, wallet ID:", masterWalletId, "Chain code:", elastosChainCode);
                     resolve(ret);
                 },
-                (err) => { void this.handleError("createSubWallet", err, reject);  });
+                (err) => { void this.handleError("createSubWallet", err, reject); });
         });
     }
 
     exportWalletWithKeystore(masterWalletId: string, backupPassWord: string, payPassword: string): Promise<any> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.exportWalletWithKeystore([masterWalletId, backupPassWord, payPassword],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("exportWalletWithKeystore", err, reject);  });
+                (err) => { void this.handleError("exportWalletWithKeystore", err, reject); });
         });
     }
 
     exportWalletWithMnemonic(masterWalletId: string, payPassWord: string): Promise<any> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.exportWalletWithMnemonic([masterWalletId, payPassWord],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("exportWalletWithMnemonic", err, reject);  });
+                (err) => { void this.handleError("exportWalletWithMnemonic", err, reject); });
         });
     }
 
@@ -294,67 +294,67 @@ export class SPVWalletPluginBridge {
     // }
 
     verifyPassPhrase(masterWalletId: string, passphrase: string, payPassword: string): Promise<void> {
-      return new Promise((resolve, reject)=>{
-          walletManager.verifyPassPhrase([masterWalletId, passphrase, payPassword],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("verifyPassPhrase", err, reject);  });
-      });
+        return new Promise((resolve, reject) => {
+            walletManager.verifyPassPhrase([masterWalletId, passphrase, payPassword],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("verifyPassPhrase", err, reject); });
+        });
     }
 
     verifyPayPassword(masterWalletId: string, payPassword: string): Promise<void> {
-      return new Promise((resolve, reject)=>{
-          walletManager.verifyPayPassword([masterWalletId, payPassword],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("verifyPayPassword", err, reject);  });
-      });
+        return new Promise((resolve, reject) => {
+            walletManager.verifyPayPassword([masterWalletId, payPassword],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("verifyPayPassword", err, reject); });
+        });
     }
 
 
     destroySubWallet(masterWalletId: string, elastosChainCode: string): Promise<any> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.destroySubWallet([masterWalletId, elastosChainCode],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("destroySubWallet", err, reject);  });
+                (err) => { void this.handleError("destroySubWallet", err, reject); });
         });
     }
 
     getPubKeyInfo(masterWalletId: string): Promise<void> {
-      return new Promise((resolve, reject)=>{
-          walletManager.getPubKeyInfo([masterWalletId],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("getPubKeyInfo", err, reject);  });
-      });
+        return new Promise((resolve, reject) => {
+            walletManager.getPubKeyInfo([masterWalletId],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("getPubKeyInfo", err, reject); });
+        });
     }
 
     isAddressValid(masterWalletId: string, address: string): Promise<boolean> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.isAddressValid([masterWalletId, address],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("isAddressValid", err, reject);  });
+                (err) => { void this.handleError("isAddressValid", err, reject); });
         });
     }
 
     isSubWalletAddressValid(masterWalletId: string, elastosChainCode: string, address: string): Promise<boolean> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.isSubWalletAddressValid([masterWalletId, elastosChainCode, address],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("isSubWalletAddressValid", err, reject);  });
+                (err) => { void this.handleError("isSubWalletAddressValid", err, reject); });
         });
     }
 
     getSupportedChains(masterWalletId: string): Promise<string[]> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.getSupportedChains([masterWalletId],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getSupportedChains", err, reject);  });
+                (err) => { void this.handleError("getSupportedChains", err, reject); });
         });
     }
 
     changePassword(masterWalletId: string, oldPassword: string, newPassword: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             walletManager.changePassword([masterWalletId, oldPassword, newPassword],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("changePassword", err, reject);  });
+                (err) => { void this.handleError("changePassword", err, reject); });
         });
     }
 
@@ -362,7 +362,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createAddress([masterWalletId, elastosChainCode],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createAddress", err, reject);  });
+                (err) => { void this.handleError("createAddress", err, reject); });
         });
     }
 
@@ -370,7 +370,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.getAllAddress([masterWalletId, elastosChainCode, start, count, internal],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getAllAddresses", err, reject);  });
+                (err) => { void this.handleError("getAllAddresses", err, reject); });
         });
     }
 
@@ -378,7 +378,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.getLastAddresses([masterWalletId, elastosChainCode, internal],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getLastAddresses", err, reject);  });
+                (err) => { void this.handleError("getLastAddresses", err, reject); });
         });
     }
 
@@ -386,7 +386,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.updateUsedAddress([masterWalletId, elastosChainCode, usedAddress],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("updateUsedAddress", err, reject);  });
+                (err) => { void this.handleError("updateUsedAddress", err, reject); });
         });
     }
 
@@ -394,7 +394,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.getAllPublicKeys([masterWalletId, elastosChainCode, start, count],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getAllPublicKeys", err, reject);  });
+                (err) => { void this.handleError("getAllPublicKeys", err, reject); });
         });
     }
 
@@ -413,7 +413,7 @@ export class SPVWalletPluginBridge {
                     payPassword
                 ],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("signTransaction", err, reject);  });
+                (err) => { void this.handleError("signTransaction", err, reject); });
         });
     }
 
@@ -430,7 +430,7 @@ export class SPVWalletPluginBridge {
                     tx,
                 ],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getTransactionSignedInfo", err, reject);  });
+                (err) => { void this.handleError("getTransactionSignedInfo", err, reject); });
         });
     }
 
@@ -447,16 +447,16 @@ export class SPVWalletPluginBridge {
                     tx,
                 ],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("convertToRawTransaction", err, reject);  });
+                (err) => { void this.handleError("convertToRawTransaction", err, reject); });
         });
     }
 
     createWithdrawTransaction(masterWalletId: string, elastosChainCode: string, inputs: string, amount: string
         , mainchainAddress: string, fee: string, memo: string): Promise<string> {
-            return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             walletManager.createWithdrawTransaction([masterWalletId, elastosChainCode, inputs, amount, mainchainAddress, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createWithdrawTransaction", err, reject);  });
+                (err) => { void this.handleError("createWithdrawTransaction", err, reject); });
         });
     }
 
@@ -466,7 +466,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createIdTransaction([masterWalletId, elastosChainCode, inputs, payloadJson, memo, fee],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createIdTransaction", err, reject);  });
+                (err) => { void this.handleError("createIdTransaction", err, reject); });
         });
     }
 
@@ -474,7 +474,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.didSign([masterWalletId, did, message, payPassword],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("didSign", err, reject);  });
+                (err) => { void this.handleError("didSign", err, reject); });
         });
     }
 
@@ -482,7 +482,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.didSignDigest([masterWalletId, did, digest, payPassword],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("didSignDigest", err, reject);  });
+                (err) => { void this.handleError("didSignDigest", err, reject); });
         });
     }
 
@@ -522,7 +522,7 @@ export class SPVWalletPluginBridge {
         nonce: number
     ): Promise<any> {
         return new Promise((resolve, reject) => {
-             walletManager.createTransfer(
+            walletManager.createTransfer(
                 [
                     masterWalletId,
                     elastosChainCode,
@@ -552,7 +552,7 @@ export class SPVWalletPluginBridge {
         nonce: number
     ): Promise<any> {
         return new Promise((resolve, reject) => {
-             walletManager.createTransferGeneric(
+            walletManager.createTransferGeneric(
                 [
                     masterWalletId,
                     chainCode,
@@ -611,7 +611,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createCancelProducerTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createCancelProducerTransaction", err, reject);  });
+                (err) => { void this.handleError("createCancelProducerTransaction", err, reject); });
         });
     }
 
@@ -619,7 +619,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createRegisterProducerTransaction([masterWalletId, elastosChainCode, input, payloadJson, amount, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createRegisterProducerTransaction", err, reject);  });
+                (err) => { void this.handleError("createRegisterProducerTransaction", err, reject); });
         });
     }
 
@@ -627,7 +627,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.generateProducerPayload([masterWalletId, elastosChainCode, publicKey, nodePublicKey, nickname, url, IPAddress, location, payPasswd],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("generateProducerPayload", err, reject);  });
+                (err) => { void this.handleError("generateProducerPayload", err, reject); });
         });
     }
 
@@ -635,7 +635,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.generateCancelProducerPayload([masterWalletId, elastosChainCode, publicKey, payPasswd],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("generateCancelProducerPayload", err, reject);  });
+                (err) => { void this.handleError("generateCancelProducerPayload", err, reject); });
         });
     }
 
@@ -643,7 +643,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createRetrieveDepositTransaction([masterWalletId, elastosChainCode, input, amount, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createRetrieveDepositTransaction", err, reject);  });
+                (err) => { void this.handleError("createRetrieveDepositTransaction", err, reject); });
         });
     }
 
@@ -651,7 +651,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createUpdateProducerTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createUpdateProducerTransaction", err, reject);  });
+                (err) => { void this.handleError("createUpdateProducerTransaction", err, reject); });
         });
     }
 
@@ -659,33 +659,33 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.getOwnerPublicKey([masterWalletId, elastosChainCode],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getOwnerPublicKey", err, reject);  });
+                (err) => { void this.handleError("getOwnerPublicKey", err, reject); });
         });
     }
 
     getOwnerAddress(masterWalletId: string, elastosChainCode: string): Promise<string> {
-      return new Promise((resolve, reject) => {
-          walletManager.getOwnerAddress([masterWalletId, elastosChainCode],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("getOwnerAddress", err, reject);  });
-      });
+        return new Promise((resolve, reject) => {
+            walletManager.getOwnerAddress([masterWalletId, elastosChainCode],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("getOwnerAddress", err, reject); });
+        });
     }
 
     getOwnerDepositAddress(masterWalletId: string, elastosChainCode: string): Promise<string> {
-      return new Promise((resolve, reject) => {
-          walletManager.getOwnerDepositAddress([masterWalletId, elastosChainCode],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("getOwnerDepositAddress", err, reject);  });
-      });
+        return new Promise((resolve, reject) => {
+            walletManager.getOwnerDepositAddress([masterWalletId, elastosChainCode],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("getOwnerDepositAddress", err, reject); });
+        });
     }
 
     // CR
     getCRDepositAddress(masterWalletId: string, elastosChainCode: string): Promise<string> {
-      return new Promise((resolve, reject) => {
-          walletManager.getCRDepositAddress([masterWalletId, elastosChainCode],
-              (ret) => { resolve(ret); },
-              (err) => { void this.handleError("getCRDepositAddress", err, reject);  });
-      });
+        return new Promise((resolve, reject) => {
+            walletManager.getCRDepositAddress([masterWalletId, elastosChainCode],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("getCRDepositAddress", err, reject); });
+        });
     }
 
     generateCRInfoPayload(masterWalletId: string, elastosChainCode: string, publicKey: string,
@@ -693,7 +693,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.generateCRInfoPayload([masterWalletId, elastosChainCode, publicKey, did, nickname, url, location],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("generateCRInfoPayload", err, reject);  });
+                (err) => { void this.handleError("generateCRInfoPayload", err, reject); });
         });
     }
 
@@ -701,7 +701,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.generateUnregisterCRPayload([masterWalletId, elastosChainCode, CID],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("generateUnregisterCRPayload", err, reject);  });
+                (err) => { void this.handleError("generateUnregisterCRPayload", err, reject); });
         });
     }
 
@@ -709,7 +709,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createRegisterCRTransaction([masterWalletId, elastosChainCode, input, payloadJson, amount, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createRegisterCRTransaction", err, reject);  });
+                (err) => { void this.handleError("createRegisterCRTransaction", err, reject); });
         });
     }
 
@@ -717,7 +717,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createUpdateCRTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createUpdateCRTransaction", err, reject);  });
+                (err) => { void this.handleError("createUpdateCRTransaction", err, reject); });
         });
     }
 
@@ -725,7 +725,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createUnregisterCRTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createUnregisterCRTransaction", err, reject);  });
+                (err) => { void this.handleError("createUnregisterCRTransaction", err, reject); });
         });
     }
 
@@ -733,7 +733,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createRetrieveCRDepositTransaction([masterWalletId, elastosChainCode, input, amount, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createRetrieveCRDepositTransaction", err, reject);  });
+                (err) => { void this.handleError("createRetrieveCRDepositTransaction", err, reject); });
         });
     }
 
@@ -741,7 +741,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createVoteTransaction([masterWalletId, elastosChainCode, inputs, voteContents, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createVoteTransaction", err, reject);  });
+                (err) => { void this.handleError("createVoteTransaction", err, reject); });
         });
     }
 
@@ -749,7 +749,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.CRCouncilMemberClaimNodeDigest([masterWalletId, elastosChainCode, payload],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("CRCouncilMemberClaimNodeDigest", err, reject);  });
+                (err) => { void this.handleError("CRCouncilMemberClaimNodeDigest", err, reject); });
         });
     }
 
@@ -757,7 +757,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createCRCouncilMemberClaimNodeTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createCRCouncilMemberClaimNodeTransaction", err, reject);  });
+                (err) => { void this.handleError("createCRCouncilMemberClaimNodeTransaction", err, reject); });
         });
     }
 
@@ -767,7 +767,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.proposalOwnerDigest([masterWalletId, elastosChainCode, payload],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("proposalOwnerDigest", err, reject);  });
+                (err) => { void this.handleError("proposalOwnerDigest", err, reject); });
         });
     }
 
@@ -775,15 +775,15 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.proposalCRCouncilMemberDigest([masterWalletId, elastosChainCode, payload],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("proposalCRCouncilMemberDigest", err, reject);  });
+                (err) => { void this.handleError("proposalCRCouncilMemberDigest", err, reject); });
         });
     }
 
-    createProposalTransaction(masterWalletId: string, elastosChainCode: string, input:string, payload: string, fee: string, memo: string): Promise<string> {
+    createProposalTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
             walletManager.createProposalTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createProposalTransaction", err, reject);  });
+                (err) => { void this.handleError("createProposalTransaction", err, reject); });
         });
     }
 
@@ -791,7 +791,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.proposalReviewDigest([masterWalletId, elastosChainCode, payload],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("proposalReviewDigest", err, reject);  });
+                (err) => { void this.handleError("proposalReviewDigest", err, reject); });
         });
     }
 
@@ -799,7 +799,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createProposalReviewTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createProposalReviewTransaction", err, reject);  });
+                (err) => { void this.handleError("createProposalReviewTransaction", err, reject); });
         });
     }
 
@@ -807,7 +807,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.proposalTrackingOwnerDigest([masterWalletId, elastosChainCode, payload],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("proposalTrackingOwnerDigest", err, reject);  });
+                (err) => { void this.handleError("proposalTrackingOwnerDigest", err, reject); });
         });
     }
 
@@ -815,7 +815,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.proposalTrackingNewOwnerDigest([masterWalletId, elastosChainCode, payload],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("proposalTrackingNewOwnerDigest", err, reject);  });
+                (err) => { void this.handleError("proposalTrackingNewOwnerDigest", err, reject); });
         });
     }
 
@@ -823,7 +823,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.proposalTrackingSecretaryDigest([masterWalletId, elastosChainCode, payload],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("proposalTrackingSecretaryDigest", err, reject);  });
+                (err) => { void this.handleError("proposalTrackingSecretaryDigest", err, reject); });
         });
     }
 
@@ -831,7 +831,7 @@ export class SPVWalletPluginBridge {
         return new Promise((resolve, reject) => {
             walletManager.createProposalTrackingTransaction([masterWalletId, elastosChainCode, input, SecretaryGeneralSignedPayload, fee, memo],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("createProposalTrackingTransaction", err, reject);  });
+                (err) => { void this.handleError("createProposalTrackingTransaction", err, reject); });
         });
     }
 
@@ -918,7 +918,7 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createProposalWithdrawTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string,memo: string): Promise<string> {
+    createProposalWithdrawTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
             walletManager.createProposalWithdrawTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
@@ -935,13 +935,13 @@ export class SPVWalletPluginBridge {
     // TODO: Replace this to improve the error object (exception, message) only, not
     // show any popup or send message. Each method should handle that case by case
     // TODO: replace hardcoded error code with enum: http://elastos.ela.spv.cpp/SDK/Common/ErrorChecker.h
-    async handleError(caller: string, err: any, promiseRejectHandler: (reason?: any)=>void) {
+    async handleError(caller: string, err: any, promiseRejectHandler: (reason?: any) => void) {
         await this.native.hideLoading();
 
         // The error has caught, Senty should not capture this exception
         err.caller = caller;
         err.type = 'skipsentry';
-        err.description = GlobalLanguageService.instance.translate("wallet.error-"+err["code"]);
+        err.description = GlobalLanguageService.instance.translate("wallet.error-" + err["code"]);
 
         if (GlobalDIDSessionsService.signedInDIDString == null) {
             // Sign out

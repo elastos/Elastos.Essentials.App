@@ -1,5 +1,5 @@
 import { SPVNetworkConfig } from "../../../services/wallet.service";
-import { ERC20Coin } from "../../Coin";
+import { ERC20Coin } from "../../coin";
 import { ElastosNetworkBase } from "./elastos.base.network";
 
 export class ElastosLRWNetwork extends ElastosNetworkBase {

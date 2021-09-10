@@ -1,22 +1,21 @@
-import { Native } from '../../wallet/services/native.service';
-import { StandardCoinName } from '../../wallet/model/Coin';
 import { Injectable } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
+import { SwitchNetworkToElastosComponent } from 'src/app/components/switch-network-to-elastos/switch-network-to-elastos.component';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { PopupProvider } from 'src/app/services/global.popup.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { Transfer } from 'src/app/wallet/services/cointransfer.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { StandardCoinName } from '../../wallet/model/coin';
+import { WalletAccount, WalletAccountType } from '../../wallet/model/WalletAccount';
+import { Native } from '../../wallet/services/native.service';
 import { WalletService } from '../../wallet/services/wallet.service';
 
-import { Logger } from 'src/app/logger';
-import { WalletAccount, WalletAccountType } from '../../wallet/model/WalletAccount';
-import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Transfer } from 'src/app/wallet/services/cointransfer.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
-import { PopupProvider } from 'src/app/services/global.popup.service';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ModalController } from '@ionic/angular';
-import { SwitchNetworkToElastosComponent } from 'src/app/components/switch-network-to-elastos/switch-network-to-elastos.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { sleep } from 'src/app/helpers/sleep.helper';
 
 @Injectable({
     providedIn: 'root'
@@ -152,7 +151,7 @@ export class VoteService {
                 cssClass: !this.theme.darkMode ? "switch-network-component switch-network-component-base" : 'switch-network-component-dark switch-network-component-base'
             });
 
-            void modal.onDidDismiss().then((response: {data?: boolean}) => {
+            void modal.onDidDismiss().then((response: { data?: boolean }) => {
                 resolve(!!response.data); // true or undefined
             });
 

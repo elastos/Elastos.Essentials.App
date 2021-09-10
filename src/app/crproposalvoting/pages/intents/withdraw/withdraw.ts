@@ -1,20 +1,20 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { Config } from 'src/app/wallet/config/Config';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { Util } from 'src/app/model/util';
-import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
-import { App } from 'src/app/model/app.enum';
-import { Config } from 'src/app/wallet/config/Config';
 
 type WithdrawCommand = CRWebsiteCommand & {
     data: {

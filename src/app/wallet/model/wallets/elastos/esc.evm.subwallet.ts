@@ -1,5 +1,5 @@
 import { Config } from "src/app/wallet/config/Config";
-import { StandardCoinName } from "../../Coin";
+import { StandardCoinName } from "../../coin";
 import { NetworkWallet } from "../networkwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 

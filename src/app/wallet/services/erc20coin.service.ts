@@ -21,12 +21,12 @@
  */
 
 import { Injectable } from '@angular/core';
-import Web3 from 'web3';
-import { ERC20Coin } from '../model/Coin';
-import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Logger } from 'src/app/logger';
-import { WalletPrefsService } from './pref.service';
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
+import Web3 from 'web3';
+import { ERC20Coin } from '../model/coin';
 import { WalletNetworkService } from './network.service';
+import { WalletPrefsService } from './pref.service';
 
 @Injectable({
     providedIn: 'root'

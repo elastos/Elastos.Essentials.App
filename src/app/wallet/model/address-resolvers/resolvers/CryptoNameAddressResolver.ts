@@ -1,9 +1,9 @@
-import { Resolver } from "./Resolver"
-import { Address } from '../addresses/Address';
-import { CoinID, StandardCoinName } from '../../Coin';
-import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
 import { HttpClient } from '@angular/common/http';
 import { Logger } from "src/app/logger";
+import { CoinID, StandardCoinName } from '../../coin';
+import { Address } from '../addresses/Address';
+import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
+import { Resolver } from "./Resolver";
 
 export class CryptoNameResolver extends Resolver {
     constructor(private http: HttpClient) {
@@ -14,10 +14,10 @@ export class CryptoNameResolver extends Resolver {
         let addresses: Address[] = [];
 
         if (coin == StandardCoinName.ELA) {
-            Logger.log('wallet', "Searching name "+name+" on cryptoname...");
+            Logger.log('wallet', "Searching name " + name + " on cryptoname...");
 
             try {
-                var url = "https://"+name+".elastos.name/ela.address";
+                var url = "https://" + name + ".elastos.name/ela.address";
                 let address = await this.http.get(url, {
                     responseType: "text"
                 }).toPromise();
@@ -26,7 +26,7 @@ export class CryptoNameResolver extends Resolver {
                     addresses.push(new CryptoNameAddress(name, address));
                 }
             }
-            catch(err) {
+            catch (err) {
                 // Name not found will throw an error, so we just return nothing.
             }
         }

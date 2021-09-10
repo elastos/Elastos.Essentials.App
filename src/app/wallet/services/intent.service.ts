@@ -5,7 +5,7 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { AddERCTokenRequestParams } from '../model/adderctokenrequest';
-import { StandardCoinName } from '../model/Coin';
+import { StandardCoinName } from '../model/coin';
 import { MasterWallet } from '../model/wallets/masterwallet';
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { Native } from './native.service';

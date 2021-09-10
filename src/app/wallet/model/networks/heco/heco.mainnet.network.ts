@@ -1,5 +1,5 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { ERC20Coin } from "../../Coin";
+import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
 import { HecoAPI, HecoApiType } from "./heco.api";
 

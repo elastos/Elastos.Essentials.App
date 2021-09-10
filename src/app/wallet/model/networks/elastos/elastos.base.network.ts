@@ -1,6 +1,6 @@
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
-import { CoinID, StandardCoinName } from "../../Coin";
+import { CoinID, StandardCoinName } from "../../coin";
 import { ElastosERC20SubWallet } from "../../wallets/elastos/elastos.erc20.subwallet";
 import { ElastosNetworkWallet } from "../../wallets/elastos/elastos.networkwallet";
 import { ERC20SubWallet } from "../../wallets/erc20.subwallet";

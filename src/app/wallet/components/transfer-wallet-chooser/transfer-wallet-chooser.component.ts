@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { CoinType, StandardCoinName } from '../../model/Coin';
+import { CoinType, StandardCoinName } from '../../model/coin';
 import { NetworkWallet } from '../../model/wallets/networkwallet';
 import { CurrencyService } from '../../services/currency.service';
 import { UiService } from '../../services/ui.service';

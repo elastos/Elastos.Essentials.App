@@ -1,22 +1,22 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { areaList } from 'src/app/model/area.list';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { AuthService } from 'src/app/wallet/services/auth.service';
-import BigNumber from 'bignumber.js';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
 import { App } from 'src/app/model/app.enum';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { areaList } from 'src/app/model/area.list';
 import { Util } from 'src/app/model/util';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
+import { AuthService } from 'src/app/wallet/services/auth.service';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 
 
 type CRRegistrationInfo = {
@@ -50,7 +50,7 @@ export class CRCouncilRegistrationPage implements OnInit {
     public crInfo: CRRegistrationInfo = {
         nickname: "test",
         location: 86,
-        url:'http://test.com',
+        url: 'http://test.com',
         state: "Unregistered",
         did: "",
     };
@@ -205,8 +205,8 @@ export class CRCouncilRegistrationPage implements OnInit {
             return;
         }
 
-    // payload.Signature = await this.walletManager.spvBridge.didSignDigest(this.masterWallet.id,
-    //         this.transfer.did, digest, payPassword);
+        // payload.Signature = await this.walletManager.spvBridge.didSignDigest(this.masterWallet.id,
+        //         this.transfer.did, digest, payPassword);
 
         const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWalletId, StandardCoinName.ELA,
             this.crPublicKey, this.crInfo.did, this.crInfo.nickname, this.crInfo.url, this.crInfo.location);

@@ -1,5 +1,5 @@
 import { Logger } from "src/app/logger";
-import { StandardCoinName } from "../../Coin";
+import { StandardCoinName } from "../../coin";
 import { Network } from "../../networks/network";
 import { TransactionProvider } from "../../providers/transaction.provider";
 import { StandardEVMSubWallet } from "../evm.subwallet";

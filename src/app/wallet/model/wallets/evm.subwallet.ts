@@ -6,7 +6,7 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import Web3 from 'web3';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
 import { Config } from '../../config/Config';
-import { StandardCoinName } from '../Coin';
+import { StandardCoinName } from '../coin';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
 import { ERC20SubWallet } from './erc20.subwallet';
