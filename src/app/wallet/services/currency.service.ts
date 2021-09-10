@@ -1,16 +1,44 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { LocalStorage } from './storage.service';
+import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
-import { Logger } from 'src/app/logger';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { Logger } from 'src/app/logger';
 import { WalletNetworkService } from './network.service';
+import { LocalStorage } from './storage.service';
 
 type Currency = {
   symbol: string;
   name: string;
   price: number;
   icon: string;
+};
+
+type TokenStats = {
+  "24h_volume_btc": string;
+  "24h_volume_cny": string;
+  "24h_volume_usd": string;
+  available_supply: string;
+  id: string;
+  last_updated: string;
+  local_system_time: string;
+  market_cap_btc: string;
+  market_cap_cny: string;
+  market_cap_usd: string;
+  max_supply: string;
+  name: string;
+  num_market_pairs: string;
+  percent_change_1h: string;
+  percent_change_7d: string;
+  percent_change_24h: string;
+  platform_symbol: string;
+  platform_token_address: string;
+  price_btc: string;
+  price_cny: string;
+  price_usd: string;
+  rank: string;
+  symbol: string;
+  total_supply: string;
+  _id: string;
 };
 
 @Injectable({
@@ -22,7 +50,7 @@ export class CurrencyService {
   private stopService = false;
 
   private tokenSymbol = 'ELA';
-  public tokenStats: any;
+  public tokenStats: TokenStats;
 
   // Use currency as main wallet total amount
   public useCurrency = false;
@@ -118,13 +146,15 @@ export class CurrencyService {
 
   fetch() {
     // TODO: Get price by token name.
-    this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=600').subscribe((res) => {
+    this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=600').subscribe((res: TokenStats[]) => {
       // Logger.log('wallet', 'Got CMC response', res);
       if (res) {
         this.tokenStats = res.find((coin) => coin.symbol === this.tokenSymbol);
         if (this.tokenStats) {
           Logger.log('wallet', 'CMC TOKEN stats', this.tokenStats);
           void this.addPriceToCurrency();
+        } else {
+          this.resetCurrencyPrice();
         }
       }
     }, (err) => {
@@ -148,6 +178,12 @@ export class CurrencyService {
       }
     });
     Logger.log('wallet', 'Currency ELA prices updated', this.currencies);
+  }
+
+  resetCurrencyPrice() {
+    this.currencies.map((currency) => {
+      currency.price = 0;
+    })
   }
 
   /**

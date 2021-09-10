@@ -133,8 +133,8 @@ export class LocalStorage {
         return pref;
     }
 
-    public setPrice(symbol: string, price: number) {
-        return this.set(symbol, JSON.stringify(price)).then(() => {
+    public setPrice(symbol: string, price: string) {
+        return this.set(symbol, price).then(() => {
             // Logger.log('wallet', 'Ela price stored');
         });
     }
