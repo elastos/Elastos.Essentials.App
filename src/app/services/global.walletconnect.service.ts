@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
-import { NetworkWallet } from '../wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from '../wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';

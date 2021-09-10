@@ -32,7 +32,7 @@ import { CoinType } from 'src/app/wallet/model/coin';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NFT } from 'src/app/wallet/model/nfts/nft';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/NetworkWallet';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { Config } from '../../../config/Config';
