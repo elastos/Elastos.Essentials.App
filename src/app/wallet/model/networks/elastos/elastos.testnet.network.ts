@@ -1,6 +1,6 @@
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
-import { ERC20Coin } from "../../Coin";
+import { ERC20Coin } from "../../coin";
 import { ElastosNetworkBase } from "./elastos.base.network";
 
 export class ElastosTestNetNetwork extends ElastosNetworkBase {

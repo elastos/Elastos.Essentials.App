@@ -206,7 +206,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     } else {
       return true;
     }
- }
+  }
 
   /**
    * Method that must be called by the UI before accessing subwallet transactions.

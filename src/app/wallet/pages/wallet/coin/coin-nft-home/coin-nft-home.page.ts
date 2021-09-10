@@ -34,7 +34,7 @@ import { NFTAsset } from 'src/app/wallet/model/nfts/nftasset';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ERC721Service } from 'src/app/wallet/services/erc721.service';
 import { Config } from '../../../../config/Config';
-import { CoinType } from '../../../../model/Coin';
+import { CoinType } from '../../../../model/coin';
 import { TransactionInfo } from '../../../../model/providers/transaction.types';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';

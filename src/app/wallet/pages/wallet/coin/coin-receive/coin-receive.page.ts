@@ -7,7 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { StandardCoinName } from '../../../../model/Coin';
+import { StandardCoinName } from '../../../../model/coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -90,7 +90,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
             });
             this.selectSubscription.unsubscribe();
             this.selectSubscription = null;
-          });
+        });
         this.native.go(
             '/wallet/coin-address',
             {

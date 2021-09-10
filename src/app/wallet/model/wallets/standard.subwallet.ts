@@ -3,7 +3,7 @@ import { Logger } from 'src/app/logger';
 import { Config } from '../../config/Config';
 import { Transfer } from '../../services/cointransfer.service';
 import { CurrencyService } from '../../services/currency.service';
-import { CoinType } from '../Coin';
+import { CoinType } from '../coin';
 import { GenericTransaction, RawTransactionPublishResult } from '../providers/transaction.types';
 import { NetworkWallet } from './networkwallet';
 import { SubWallet } from './subwallet';

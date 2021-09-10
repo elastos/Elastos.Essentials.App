@@ -9,7 +9,7 @@ import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import Web3 from 'web3';
 import { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
-import { StandardCoinName } from '../../model/Coin';
+import { StandardCoinName } from '../../model/coin';
 import { ElastosEVMSubWallet } from '../../model/wallets/elastos/elastos.evm.subwallet';
 import { NetworkWallet } from '../../model/wallets/networkwallet';
 import { CoinTransferService, Transfer } from '../../services/cointransfer.service';

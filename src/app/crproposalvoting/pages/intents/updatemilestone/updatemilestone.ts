@@ -1,19 +1,18 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
-import { ProposalService } from '../../../services/proposal.service';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { Util } from 'src/app/model/util';
-import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ProposalService } from '../../../services/proposal.service';
 
 type UpdateMilestoneCommand = CRWebsiteCommand & {
     data: {

@@ -10,7 +10,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
-import { Coin, CoinType, StandardCoinName } from '../../../../model/Coin';
+import { Coin, CoinType, StandardCoinName } from '../../../../model/coin';
 import { MasterWallet } from '../../../../model/wallets/masterwallet';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';

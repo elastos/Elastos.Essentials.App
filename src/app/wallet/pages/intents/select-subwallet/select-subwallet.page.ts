@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { CoinType, StandardCoinName } from '../../../model/Coin';
+import { CoinType, StandardCoinName } from '../../../model/coin';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { CurrencyService } from '../../../services/currency.service';

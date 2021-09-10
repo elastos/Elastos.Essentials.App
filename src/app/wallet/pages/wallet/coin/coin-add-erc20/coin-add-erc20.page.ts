@@ -11,7 +11,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AddERCTokenRequestParams } from 'src/app/wallet/model/adderctokenrequest';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
-import { ERC20Coin } from '../../../../model/Coin';
+import { ERC20Coin } from '../../../../model/coin';
 import { ERC20CoinService } from '../../../../services/erc20coin.service';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';
@@ -80,7 +80,7 @@ export class CoinAddERC20Page implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.coin-adderc20-title"));
         if (this.intentMode) {
-          this.titleBar.setNavigationMode(null);
+            this.titleBar.setNavigationMode(null);
         }
         if (this.rootPage) {
             this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
@@ -105,7 +105,7 @@ export class CoinAddERC20Page implements OnInit {
      * Opens the scanner to get the coin address
      */
     async scanCoinAddress() {
-        let res: { result: { scannedContent: string }} = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
+        let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent('https://scanner.elastos.net/scanqrcode', {});
         if (res && res.result && res.result.scannedContent) {
             this.coinAddress = res.result.scannedContent;
             Logger.log('wallet', 'Got scanned content:', this.coinAddress);
@@ -120,12 +120,12 @@ export class CoinAddERC20Page implements OnInit {
                 void this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
                 this.coinAddress = '';
             } else {
-              /*   if (this.coinAlreadyAdded(this.coinAddress)) {
-                    this.native.toast_trans('coin-adderc20-alreadyadded');
-                    this.coinAddress = '';
-                } else {
-                    this.tryFetchingCoinByAddress(this.coinAddress);
-                } */
+                /*   if (this.coinAlreadyAdded(this.coinAddress)) {
+                      this.native.toast_trans('coin-adderc20-alreadyadded');
+                      this.coinAddress = '';
+                  } else {
+                      this.tryFetchingCoinByAddress(this.coinAddress);
+                  } */
 
                 void this.tryFetchingCoinByAddress(this.coinAddress);
             }
@@ -153,14 +153,14 @@ export class CoinAddERC20Page implements OnInit {
             try {
                 const contractCode = await this.erc20CoinService.isContractAddress(address);
                 if (!contractCode) {
-                    Logger.log('wallet', "Contract at "+address+" does not exist");
+                    Logger.log('wallet', "Contract at " + address + " does not exist");
                     this.fetchingCoinInfo = false;
                     this.native.toast_trans('wallet.coin-adderc20-not-found');
                 } else {
                     Logger.log('wallet', "Found contract at address " + address);
                     const coinInfo = await this.erc20CoinService.getCoinInfo(address, null /* ethAccountAddress */);
 
-                    if(coinInfo) {
+                    if (coinInfo) {
                         this.coinName = coinInfo.coinName;
                         Logger.log('wallet', "Coin name", this.coinName);
 
@@ -193,18 +193,18 @@ export class CoinAddERC20Page implements OnInit {
     async addCoin() {
         if (this.coinAlreadyAdded(this.coinAddress)) {
             this.native.toast_trans('wallet.coin-adderc20-alreadyadded');
-        }  else {
+        } else {
             const activeNetworkTemplate = this.prefs.getNetworkTemplate();
             const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetworkTemplate, true);
             await this.networkWallet.network.addCustomERC20Coin(newCoin);
 
-             // Coin added - go back to the previous screen
+            // Coin added - go back to the previous screen
             if (this.intentMode) {
-               /*  await this.globalIntentService.sendIntentResponse(
-                    this.walletEditionService.intentTransfer.action,
-                    { message: this.coinName + ' added successfully', status: 'success' },
-                    this.walletEditionService.intentTransfer.intentId
-                ); */
+                /*  await this.globalIntentService.sendIntentResponse(
+                     this.walletEditionService.intentTransfer.action,
+                     { message: this.coinName + ' added successfully', status: 'success' },
+                     this.walletEditionService.intentTransfer.intentId
+                 ); */
 
                 this.native.setRootRouter("/wallet/wallet-home");
             } else {

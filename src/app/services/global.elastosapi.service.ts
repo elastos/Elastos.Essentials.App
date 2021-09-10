@@ -6,7 +6,7 @@ import { Logger } from '../logger';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
-import { StandardCoinName } from '../wallet/model/Coin';
+import { StandardCoinName } from '../wallet/model/coin';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/evm.types';
 import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/providers/transaction.types';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';

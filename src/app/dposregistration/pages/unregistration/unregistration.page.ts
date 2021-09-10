@@ -1,24 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { areaList } from 'src/app/model/area.list';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { AuthService } from 'src/app/wallet/services/auth.service';
-import BigNumber from 'bignumber.js';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { App } from 'src/app/model/app.enum';
-import { Util } from 'src/app/model/util';
-import { Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/dposvoting/services/nodes.service';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { areaList } from 'src/app/model/area.list';
+import { Util } from 'src/app/model/util';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { Utxo, UtxoType } from 'src/app/wallet/model/providers/transaction.types';
+import { AuthService } from 'src/app/wallet/services/auth.service';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 
 type DPoSTransactionInfo = {
     Status?: string;
@@ -94,7 +94,7 @@ export class DPosUnRegistrationPage implements OnInit {
     }
 
     ionViewWillLeave() {
-      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     async ionViewWillEnter() {
@@ -132,8 +132,8 @@ export class DPosUnRegistrationPage implements OnInit {
             case 'Active':
                 this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT }); // Replace ela logo with close icon
-                    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                        void this.goToUpdate();
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.goToUpdate();
                 });
                 break;
 

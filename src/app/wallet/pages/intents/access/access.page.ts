@@ -8,7 +8,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../config/Config';
-import { StandardCoinName } from '../../../model/Coin';
+import { StandardCoinName } from '../../../model/coin';
 import { IntentTransfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';

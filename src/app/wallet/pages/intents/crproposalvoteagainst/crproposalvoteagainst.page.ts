@@ -20,25 +20,24 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { VoteContent, VoteType } from '../../../model/SPVWalletPluginBridge';
+import { WalletAccountType } from '../../../model/WalletAccount';
+import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
+import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
-import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
-import { WalletAccountType } from '../../../model/WalletAccount';
-import { StandardCoinName } from '../../../model/Coin';
-import { VoteType, CRProposalVoteInfo, VoteContent } from '../../../model/SPVWalletPluginBridge';
-import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
-  selector: 'app-crproposalvoteagainst',
-  templateUrl: './crproposalvoteagainst.page.html',
-  styleUrls: ['./crproposalvoteagainst.page.scss'],
+    selector: 'app-crproposalvoteagainst',
+    templateUrl: './crproposalvoteagainst.page.html',
+    styleUrls: ['./crproposalvoteagainst.page.scss'],
 })
 export class CRProposalVoteAgainstPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -52,12 +51,12 @@ export class CRProposalVoteAgainstPage implements OnInit {
     balance: string; // Balance in SELA
 
     constructor(public walletManager: WalletService,
-                private coinTransferService: CoinTransferService,
-                private globalIntentService: GlobalIntentService,
-                public translate: TranslateService,
-                public native: Native,
-                public zone: NgZone,
-                public popupProvider: PopupProvider) {
+        private coinTransferService: CoinTransferService,
+        private globalIntentService: GlobalIntentService,
+        public translate: TranslateService,
+        public native: Native,
+        public zone: NgZone,
+        public popupProvider: PopupProvider) {
         this.init();
     }
 
@@ -65,8 +64,8 @@ export class CRProposalVoteAgainstPage implements OnInit {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setNavigationMode(null);
-  }
+        this.titleBar.setNavigationMode(null);
+    }
 
     ionViewDidEnter() {
         // TODO
@@ -120,7 +119,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
     /**
      * Balance needs to be greater than 0.0002ELA (or 0.1?).
      */
-     votingFees(): number {
+    votingFees(): number {
         return 20000; // SELA: 0.0002ELA
     }
 
@@ -134,8 +133,8 @@ export class CRProposalVoteAgainstPage implements OnInit {
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
-          Type: VoteType.CRCProposal,
-          Candidates: votes
+            Type: VoteType.CRCProposal,
+            Candidates: votes
         }
 
         const voteContent = [crVoteContent];
@@ -146,23 +145,23 @@ export class CRProposalVoteAgainstPage implements OnInit {
         );
         await this.native.hideLoading();
         if (rawTx) {
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.masterWalletId,
-              elastosChainCode: this.elastosChainCode,
-              rawTransaction: rawTx,
-              payPassword: '',
-              action: this.intentTransfer.action,
-              intentId: this.intentTransfer.intentId,
-          });
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.masterWalletId,
+                elastosChainCode: this.elastosChainCode,
+                rawTransaction: rawTx,
+                payPassword: '',
+                action: this.intentTransfer.action,
+                intentId: this.intentTransfer.intentId,
+            });
 
-          const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         } else {
-          await this.globalIntentService.sendIntentResponse(
-            { txid: null, status: 'error' },
-            this.intentTransfer.intentId
-          );
+            await this.globalIntentService.sendIntentResponse(
+                { txid: null, status: 'error' },
+                this.intentTransfer.intentId
+            );
         }
     }
 }

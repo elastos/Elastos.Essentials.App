@@ -7,7 +7,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { ERC20Coin } from '../../../../model/Coin';
+import { ERC20Coin } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { Native } from '../../../../services/native.service';
 import { PopupProvider } from '../../../../services/popup.service';

@@ -11,7 +11,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import Web3 from 'web3';
 import { Config } from '../../config/Config';
 import { Transfer } from '../../services/cointransfer.service';
-import { Coin, CoinID, CoinType, ERC20Coin } from '../Coin';
+import { Coin, CoinID, CoinType, ERC20Coin } from '../coin';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
 import { NetworkWallet } from './networkwallet';

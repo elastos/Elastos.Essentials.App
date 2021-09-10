@@ -1,19 +1,18 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
-import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import BigNumber from 'bignumber.js';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { ActivatedRoute } from '@angular/router';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Util } from 'src/app/model/util';
 import { PopupService } from 'src/app/crproposalvoting/services/popup.service';
+import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { PopupProvider } from 'src/app/wallet/services/popup.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 
 
 @Component({
@@ -39,8 +38,8 @@ export class CRNodePage implements OnInit {
         private zone: NgZone,
         private popup: PopupService,
     ) {
-        this.route.queryParams.subscribe(async (data: { crmember: any}) => {
-            this.zone.run(async () => {
+        this.route.queryParams.subscribe((data: { crmember: any }) => {
+            this.zone.run(() => {
                 this.crmemberInfo = data.crmember;
                 this.nodePublicKey = this.crmemberInfo.dpospublickey;
             });
@@ -51,7 +50,7 @@ export class CRNodePage implements OnInit {
         Logger.log("CRNodePage", "ngOnInit")
     }
 
-    async ionViewWillEnter() {
+    ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilmanager.crnode-manager'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
     }

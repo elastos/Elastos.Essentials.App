@@ -1,5 +1,5 @@
 import { TransferType } from "../services/cointransfer.service";
-import { TokenType } from "./Coin";
+import { TokenType } from "./coin";
 import { GenericTransaction, TransactionDirection } from "./providers/transaction.types";
 
 export type EthTransaction = GenericTransaction & {

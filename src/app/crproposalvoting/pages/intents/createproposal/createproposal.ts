@@ -1,22 +1,21 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
-import { ProposalService } from '../../../services/proposal.service';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { Config } from 'src/app/wallet/config/Config';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { SuggestionDetails } from '../../../model/suggestion-details';
 import { CreateSuggestionBudget, CROperationsService, CRWebsiteCommand } from '../../../services/croperations.service';
 import { PopupService } from '../../../services/popup.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { Util } from 'src/app/model/util';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { App } from 'src/app/model/app.enum';
-import { Config } from 'src/app/wallet/config/Config';
+import { ProposalService } from '../../../services/proposal.service';
 
 
 export type CreateProposalCommand = CRWebsiteCommand & {
@@ -53,8 +52,8 @@ export class CreateProposalPage {
     public suggestionDetails: SuggestionDetails;
     private createProposalCommand: CreateProposalCommand;
     public signingAndSendingProposalResponse = false;
-    public creationDate: string = "";
-    public buggetAmount: number = 0;
+    public creationDate = "";
+    public buggetAmount = 0;
     public Config = Config;
     public proposaltype: string;
 
@@ -100,11 +99,11 @@ export class CreateProposalPage {
     }
 
     cancel() {
-        this.globalNav.navigateBack();
+        void this.globalNav.navigateBack();
     }
 
     private getPayload(): any {
-        switch(this.createProposalCommand.data.proposaltype) {
+        switch (this.createProposalCommand.data.proposaltype) {
             case "normal":
                 return this.getNormalPayload();
             case "changeproposalowner":
@@ -119,7 +118,7 @@ export class CreateProposalPage {
     }
 
     private async digestFunction(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
-        switch(this.createProposalCommand.data.proposaltype) {
+        switch (this.createProposalCommand.data.proposaltype) {
             case "normal":
                 return await this.walletManager.spvBridge.proposalCRCouncilMemberDigest(masterWalletId, elastosChainCode, payload);
             case "changeproposalowner":
@@ -134,7 +133,7 @@ export class CreateProposalPage {
     }
 
     private async creatTransactionFunction(payload: string, memo: string): Promise<string> {
-        switch(this.createProposalCommand.data.proposaltype) {
+        switch (this.createProposalCommand.data.proposaltype) {
             case "normal":
                 return await this.voteService.sourceSubwallet.createProposalTransaction(payload, memo);
             case "changeproposalowner":

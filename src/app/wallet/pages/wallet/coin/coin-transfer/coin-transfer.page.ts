@@ -47,7 +47,7 @@ import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm
 import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
 import { Config } from '../../../../config/Config';
 import * as CryptoAddressResolvers from '../../../../model/address-resolvers';
-import { CoinType, StandardCoinName } from '../../../../model/Coin';
+import { CoinType, StandardCoinName } from '../../../../model/coin';
 import { MainAndIDChainSubWallet } from '../../../../model/wallets/elastos/mainandidchain.subwallet';
 import { StandardSubWallet } from '../../../../model/wallets/standard.subwallet';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';

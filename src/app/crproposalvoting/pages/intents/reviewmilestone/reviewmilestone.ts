@@ -1,20 +1,19 @@
 import { Component, ViewChild } from '@angular/core';
-import { PopupService } from '../../../services/popup.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { VoteService } from 'src/app/vote/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { StandardCoinName } from 'src/app/wallet/model/Coin';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { Util } from 'src/app/model/util';
-import { CROperationsService, CRWebsiteCommand } from 'src/app/crproposalvoting/services/croperations.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ProposalDetails } from 'src/app/crproposalvoting/model/proposal-details';
+import { CROperationsService, CRWebsiteCommand } from 'src/app/crproposalvoting/services/croperations.service';
 import { ProposalService } from 'src/app/crproposalvoting/services/proposal.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from 'src/app/vote/services/vote.service';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { PopupService } from '../../../services/popup.service';
 
 type ReviewMilestoneCommand = CRWebsiteCommand & {
     data: {
@@ -132,7 +131,7 @@ export class ReviewMilestonePage {
             OwnerPublicKey: command.data.ownerpubkey,
             OwnerSignature: command.data.ownersignature,
             // OwnerSignature: "f5df8e6d725715af38087ced2d8a537f27632f1fee1e2509022ce9a5cbeb4e7ab3ee708c6af602e6785eb2a2016d7c0a4ff6c6192e42593841e145c717555492",
-            NewOwnerPublicKey:"",
+            NewOwnerPublicKey: "",
             NewOwnerSignature: "",
             SecretaryGeneralOpinionHash: command.data.secretaryopinionhash,
             // SecretaryGeneralOpinionData: "",

@@ -1,4 +1,4 @@
-import { StandardCoinName } from "../../../Coin";
+import { StandardCoinName } from "../../../coin";
 import { AnySubWalletTransactionProvider } from "../../../providers/subwallet.provider";
 import { TransactionProvider } from "../../../providers/transaction.provider";
 import { ElastosTransaction } from "../../../providers/transaction.types";

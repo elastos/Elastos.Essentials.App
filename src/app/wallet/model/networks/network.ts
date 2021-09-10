@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { LocalStorage } from "../../services/storage.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
-import { Coin, CoinID, CoinType, ERC20Coin } from "../Coin";
+import { Coin, CoinID, CoinType, ERC20Coin } from "../coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";

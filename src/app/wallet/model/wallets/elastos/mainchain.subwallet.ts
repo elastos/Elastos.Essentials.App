@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { StandardCoinName } from '../../Coin';
+import { StandardCoinName } from '../../coin';
 import { ElastosTransaction, RawTransactionType, TransactionDirection } from '../../providers/transaction.types';
 import { NetworkWallet } from '../networkwallet';
 import { MainAndIDChainSubWallet } from './mainandidchain.subwallet';

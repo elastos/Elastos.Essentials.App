@@ -1,5 +1,5 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { ERC20Coin } from "../../Coin";
+import { ERC20Coin } from "../../coin";
 import { FusionNetworkWallet } from "../../wallets/fusion/fusion.network.wallet";
 import { MasterWallet } from "../../wallets/masterwallet";
 import { NetworkWallet } from "../../wallets/networkwallet";

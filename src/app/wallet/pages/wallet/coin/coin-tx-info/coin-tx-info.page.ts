@@ -13,7 +13,7 @@ import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/ma
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
-import { StandardCoinName } from '../../../../model/Coin';
+import { StandardCoinName } from '../../../../model/coin';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../../model/providers/transaction.types';
 import { ElastosEVMSubWallet } from '../../../../model/wallets/elastos/elastos.evm.subwallet';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';

@@ -20,16 +20,14 @@
  * SOFTWARE.
  */
 
-import { Injectable } from '@angular/core';
-import Web3 from 'web3';
-import { ERC20Coin } from '../model/Coin';
-import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
-import { Logger } from 'src/app/logger';
-import { WalletPrefsService } from './pref.service';
-import { NFTAsset } from '../model/nfts/nftasset';
 import { HttpClient } from '@angular/common/http';
-import { ElastosApiUrlType } from 'src/app/services/global.elastosapi.service';
+import { Injectable } from '@angular/core';
+import { Logger } from 'src/app/logger';
+import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
+import Web3 from 'web3';
+import { NFTAsset } from '../model/nfts/nftasset';
 import { WalletNetworkService } from './network.service';
+import { WalletPrefsService } from './pref.service';
 
 export type ERC721ResolvedInfo = {
     /** Main NFT name, if set, or "" */
@@ -135,7 +133,7 @@ export class ERC721Service {
             }
             catch (e) {
                 // Method not implemented. Try the standard enumeration (ERC721Enumerable)
-                for (let i=0; i<assetsNumber; i++) {
+                for (let i = 0; i < assetsNumber; i++) {
                     const tokenID = await erc721Contract.methods.tokenOfOwnerByIndex(accountAddress, i).call();
                     assetsCouldBeRetrieved = true;
                     tokenIDs.push(tokenID);
@@ -143,34 +141,34 @@ export class ERC721Service {
             }
             console.log("tokenIDs", tokenIDs, assetsCouldBeRetrieved);
 
-            for (let i=0; i<tokenIDs.length; i++) {
+            for (let i = 0; i < tokenIDs.length; i++) {
                 let tokenID = tokenIDs[i];
 
                 let asset = new NFTAsset();
                 asset.id = tokenID;
 
                 // Now try to get more information about this asset - ERC721Metadata / tokenURI()
-               let tokenURI: string = null;
-               try {
-                tokenURI = await erc721Contract.methods.tokenURI(tokenID).call();
-               }
-               catch (e) {
-                   // Inexisting method, contract not adhering to the metadata interface?
-                   // Try the legacy tokenMetadata() implemented by some contracts
-                   try {
-                    tokenURI = await erc721Contract.methods.tokenMetadata(tokenID).call();
-                   }
-                   catch (e) {
-                    // Still nothing? That's ok, we'll display placeholder values.
-                    // Silent catch
-                   }
-               }
+                let tokenURI: string = null;
+                try {
+                    tokenURI = await erc721Contract.methods.tokenURI(tokenID).call();
+                }
+                catch (e) {
+                    // Inexisting method, contract not adhering to the metadata interface?
+                    // Try the legacy tokenMetadata() implemented by some contracts
+                    try {
+                        tokenURI = await erc721Contract.methods.tokenMetadata(tokenID).call();
+                    }
+                    catch (e) {
+                        // Still nothing? That's ok, we'll display placeholder values.
+                        // Silent catch
+                    }
+                }
 
-               if (tokenURI) {
-                   await this.extractAssetMetadata(asset, tokenURI);
-               }
+                if (tokenURI) {
+                    await this.extractAssetMetadata(asset, tokenURI);
+                }
 
-               assets.push(asset);
+                assets.push(asset);
             }
         }
         catch (e) {

@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Config } from '../../../../config/Config';
-import { CoinType } from '../../../../model/Coin';
+import { CoinType } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/wallets/subwallet';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';

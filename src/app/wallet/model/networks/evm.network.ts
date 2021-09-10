@@ -1,5 +1,5 @@
 import { SPVNetworkConfig } from "../../services/wallet.service";
-import { CoinID, ERC20Coin } from "../Coin";
+import { CoinID, ERC20Coin } from "../coin";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { EVMNetworkWallet } from "../wallets/evm.networkwallet";
 import { MasterWallet } from "../wallets/masterwallet";

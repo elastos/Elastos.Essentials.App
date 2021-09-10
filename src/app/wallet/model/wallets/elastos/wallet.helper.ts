@@ -1,6 +1,6 @@
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
-import { StandardCoinName } from "../../Coin";
+import { StandardCoinName } from "../../coin";
 import { ElastosTransaction, PaginatedTransactions } from "../../providers/transaction.types";
 import { SubWallet } from "../subwallet";
 

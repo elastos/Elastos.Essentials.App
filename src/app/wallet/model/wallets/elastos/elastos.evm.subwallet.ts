@@ -3,7 +3,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { Config } from '../../../config/Config';
-import { StandardCoinName } from '../../Coin';
+import { StandardCoinName } from '../../coin';
 import { EthTransaction } from '../../evm.types';
 import { StandardEVMSubWallet } from '../evm.subwallet';
 import { NetworkWallet } from '../networkwallet';
@@ -213,28 +213,28 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     // }
     // condition: _amount % 10000000000 == 0 && _amount.sub(_fee) >= _fee
     if (toAmount === -1) {
-        const estimateAmount = this.web3.utils.toWei(this.balance.toString());
-        const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
-        let estimateGas = 0;
-        try {
-            // Can not use method.estimateGas(), must set the "value"
-            let tx = {
-                data:method.encodeABI(),
-                to:this.withdrawContractAddress,
-                value:estimateAmount,
-            }
-            estimateGas = await this.web3.eth.estimateGas(tx);
-        } catch (error) {
-            Logger.error('wallet', 'estimateGas error:', error);
-            estimateGas = 28100; //In case of
+      const estimateAmount = this.web3.utils.toWei(this.balance.toString());
+      const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
+      let estimateGas = 0;
+      try {
+        // Can not use method.estimateGas(), must set the "value"
+        let tx = {
+          data: method.encodeABI(),
+          to: this.withdrawContractAddress,
+          value: estimateAmount,
         }
+        estimateGas = await this.web3.eth.estimateGas(tx);
+      } catch (error) {
+        Logger.error('wallet', 'estimateGas error:', error);
+        estimateGas = 28100; //In case of
+      }
 
-        gasLimit = estimateGas.toString();
+      gasLimit = estimateGas.toString();
 
-        let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
-        //TODO remove Config.SELAAsBigNumber
-        toAmount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
-        if (toAmount <= 0) return null;
+      let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
+      //TODO remove Config.SELAAsBigNumber
+      toAmount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
+      if (toAmount <= 0) return null;
     }
 
     // _amount % 10000000000 == 0

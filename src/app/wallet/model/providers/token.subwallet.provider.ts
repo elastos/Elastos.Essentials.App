@@ -1,6 +1,6 @@
 import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
-import { TokenType } from "../Coin";
+import { TokenType } from "../coin";
 import { ERCTokenInfo, EthTokenTransaction, EthTransaction } from "../evm.types";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { StandardEVMSubWallet } from "../wallets/evm.subwallet";
