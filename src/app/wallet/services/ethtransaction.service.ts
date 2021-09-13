@@ -50,8 +50,8 @@ class ETHTransactionManager {
     try {
       let result = await subwallet.signAndSendRawTransaction(transaction, transfer, false);
       Logger.log('wallet', 'publishTransaction ', result)
-      const isPuiblishOnging = await this.CheckPulbishing(result)
-      if (!isPuiblishOnging) {
+      const isPublishingOnGoing = await this.CheckPublishing(result)
+      if (!isPublishingOnGoing) {
         Logger.warn('wallet', 'publishTransaction error')
 
         let defaultGasprice = await subwallet.getGasPrice();
@@ -86,7 +86,7 @@ class ETHTransactionManager {
     }
   }
 
-  private async CheckPulbishing(result: RawTransactionPublishResult) {
+  private async CheckPublishing(result: RawTransactionPublishResult) {
     if (result.message) {
         if (result.message.includes('insufficient funds for gas * price + value')) {
             await this.modalCtrl.dismiss();
