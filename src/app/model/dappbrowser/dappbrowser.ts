@@ -60,6 +60,9 @@ export class DAppBrowser {
         // Get the active netwok chain ID
         let activeChainID = WalletService.instance.activeNetworkWallet.value.network.getMainChainID();
 
+        // Get the active network RPC URL
+        let rpcUrl = WalletService.instance.activeNetworkWallet.value.network.getMainEvmRpcApiUrl();
+
         Logger.log("dappbrowser", "title", title);
 
         var options: any = {
@@ -99,6 +102,7 @@ export class DAppBrowser {
                 \
                 window.ethereum.setChainId("+ activeChainID + "); \
                 window.ethereum.setAddress('"+ dappBrowser.userAddress + "');\
+                window.ethereum.setRPCApiEndpoint("+ activeChainID + ", '" + rpcUrl + "');\
             "});
 
             // Inject the Elastos connectivity connector

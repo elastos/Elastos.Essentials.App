@@ -2927,13 +2927,6 @@
       }
   }
 
-  // TODO: MAKE THIS DYNAMIC, REGISTERED BY ESSENTIALS CHAINID+URL
-  const rpcUrls = {
-      // TODO: add others
-      20: "https://api.trinity-tech.cn/eth",
-      21: "https://api-testnet.trinity-tech.cn/eth",
-      128: "https://http-mainnet.hecochain.com" // HECO mainnet
-  };
   /**
    * Internal web3 provider injected into Elastos Essentials' in app browser dApps and bridging
    * requests from dApps to Essentials (send transaction, etc).
@@ -2949,6 +2942,9 @@
           this.callbacks = new Map();
           this.wrapResults = new Map();
           this.chainId = 20;
+          this.rpcUrls = {
+          // List of chainId -> rpcUrl set by Essentials.
+          };
           console.log("Creating an Essentials InAppBrowserWeb3Provider");
           this.emitConnect(this.chainId);
       }
@@ -2980,8 +2976,24 @@
             }
           } */
       }
+      // Backward compatibility with some dapps.
+      get selectedAddress() {
+          return this.address;
+      }
+      setRPCApiEndpoint(chainId, rpcUrl) {
+          this.rpcUrls[chainId] = rpcUrl;
+      }
+      getRPCApiEndpoint() {
+          if (!(this.chainId in this.rpcUrls))
+              throw new Error("RPC URL not set for chain ID" + this.chainId);
+          return this.rpcUrls[this.chainId];
+      }
       isConnected() {
           return true;
+      }
+      enable() {
+          // Nothing to do - already active
+          return Promise.resolve();
       }
       request(payload) {
           // 'this' points to window in methods like web3.eth.getAccounts()
@@ -3248,9 +3260,6 @@
               callback(error instanceof Error ? error : new Error(error), null);
               this.callbacks.delete(id);
           }
-      }
-      getRPCApiEndpoint() {
-          return rpcUrls[this.chainId];
       }
       async callJsonRPC(payload) {
           return new Promise(async (resolve, reject) => {
