@@ -1,4 +1,6 @@
 import { Logger } from "src/app/logger";
+import { GlobalNetworksService } from "src/app/services/global.networks.service";
+import { SPVNetworkConfig } from "src/app/wallet/services/wallet.service";
 import { StandardCoinName } from "../../coin";
 import { Network } from "../../networks/network";
 import { TransactionProvider } from "../../providers/transaction.provider";
@@ -30,14 +32,23 @@ export class ElastosNetworkWallet extends NetworkWallet {
     Logger.log("wallet", "Registering Elastos standard subwallets to the SPVSDK");
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ELA);
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.IDChain);
-    await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
+    // await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
     await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHDID);
 
     Logger.log("wallet", "Creating Elastos standard subwallets");
     this.subWallets[StandardCoinName.ELA] = new MainchainSubWallet(this);
-    this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
     this.subWallets[StandardCoinName.IDChain] = new IDChainSubWallet(this);
+    // this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
     this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
+
+    // TODO: No ETHSC in LRW
+    // Remove it if there is ETHSC in LRW.
+    let networkConfig: SPVNetworkConfig = {};
+    this.network.updateSPVNetworkConfig(networkConfig, GlobalNetworksService.instance.getActiveNetworkTemplate())
+    if (networkConfig['ETHSC']) {
+      await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, StandardCoinName.ETHSC);
+      this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
+    }
 
     Logger.log("wallet", "Elastos standard subwallets preparation completed");
   }
