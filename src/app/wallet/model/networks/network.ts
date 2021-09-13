@@ -1,5 +1,6 @@
 import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
+import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LocalStorage } from "../../services/storage.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
 import { Coin, CoinID, CoinType, ERC20Coin } from "../coin";
@@ -14,6 +15,8 @@ export abstract class Network {
   public onCoinAdded: Subject<string> = new Subject(); // Event - when a coin is added - provides the coin ID
   public onCoinDeleted: Subject<string> = new Subject(); // Event - when a coin is added - provides the coin ID
 
+  private localStorageKey = ''
+
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
@@ -23,6 +26,8 @@ export abstract class Network {
 
   public async init(): Promise<void> {
     await this.refreshCoins();
+    const activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
+    this.localStorageKey = this.key + '-' + activeNetworkTemplate;
   }
 
   /**
@@ -135,10 +140,10 @@ export abstract class Network {
     this.availableCoins.push(erc20Coin);
 
     // Save to permanent storage
-    await LocalStorage.instance.set("custom-erc20-coins-" + this.key, existingCoins);
+    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, existingCoins);
 
     this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase());
-    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.key, this.deletedERC20Coins);
+    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, this.deletedERC20Coins);
 
     this.onCoinAdded.next(erc20Coin.getID());
 
@@ -149,17 +154,17 @@ export abstract class Network {
     this.availableCoins = this.availableCoins.filter((coin) => coin.getID() !== erc20Coin.getID());
     let allCustomERC20Coins = await this.getCustomERC20Coins();
     allCustomERC20Coins = allCustomERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== erc20Coin.getContractAddress().toLowerCase());
-    await LocalStorage.instance.set("custom-erc20-coins-" + this.key, allCustomERC20Coins);
+    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, allCustomERC20Coins);
     Logger.log('wallet', 'availableCoins after deleting', this.availableCoins);
 
     this.deletedERC20Coins.push(erc20Coin);
-    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.key, this.deletedERC20Coins);
+    await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, this.deletedERC20Coins);
 
     this.onCoinDeleted.next(erc20Coin.getID());
   }
 
   public async getCustomERC20Coins(): Promise<ERC20Coin[]> {
-    const rawCoinList = await LocalStorage.instance.get("custom-erc20-coins-" + this.key);
+    const rawCoinList = await LocalStorage.instance.get("custom-erc20-coins-" + this.localStorageKey);
     if (!rawCoinList) {
       return [];
     }
