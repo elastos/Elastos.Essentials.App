@@ -52,6 +52,17 @@ class ETHTransactionManager {
       Logger.log('wallet', 'publishTransaction ', result)
       const isPuiblishOnging = await this.CheckPulbishing(result)
       if (!isPuiblishOnging) {
+        Logger.warn('wallet', 'publishTransaction error')
+
+        let defaultGasprice = await subwallet.getGasPrice();
+        let status: ETHTransactionStatusInfo = {
+          chainId: subwallet.id,
+          gasPrice: defaultGasprice,
+          gasLimit: this.defaultGasLimit,
+          status: ETHTransactionStatus.UNPACKED,
+          txId: null
+        }
+        void this.emitEthTransactionStatusChange(status);
         return;
       }
       if (this.needToSpeedup(result)) {
