@@ -101,7 +101,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       return null;
     }
 
-    console.log("tx", transaction);
+    // console.log("tx", transaction);
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds

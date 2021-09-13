@@ -30,8 +30,6 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     private votingAmountSELA = 0; // ELA
     private votingUtxoArray: Utxo[] = null;
 
-    private loadMoreTimes = 0;
-
     private getTransactionsTime = 0;
     private ownerAddress: string = null;
 

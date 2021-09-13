@@ -39,7 +39,7 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
         // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
         page = 1 + Math.floor((afterTransactionIndex + 1) / this.TRANSACTION_LIMIT);
       }
-      this.fetchMoreMainChainTransactions(page);
+      await this.fetchMoreMainChainTransactions(page);
     } else {
       // Forcing to fetch from 0, so we reset the canfetchmore flag
       this.alreadyTriedToFetchMore = false;
@@ -288,7 +288,7 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
     // update value
     for (let i = 0, len = sendTx.length; i < len; i++) {
       sentValue += parseFloat(sendTx[i].value);
-      sentInputs.push(sendTx[i].inputs);
+      sentInputs = [...sentInputs, ...sendTx[i].inputs];
 
       for (let j = 0; j < sendTx[i].outputs.length; j++) {
         if (sentOutputs.indexOf(sendTx[i].outputs[j]) < 0) {
@@ -299,17 +299,15 @@ export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends Sub
 
     // If all the outputs address belong to this wallet, then this transactions is move transaction.
     for (let i = sentOutputs.length - 1; i >= 0; i--) {
-      if (recvAddress.indexOf(sentOutputs[i]) < 0) {
+      if ((recvAddress.indexOf(sentOutputs[i]) < 0) && (sentInputs.indexOf(sentOutputs[i]) < 0)) {
         isMoveTransaction = false;
-        // break;
       } else {
-        // This address belongs to this wallet, so remove it.
-        sentOutputs.splice(i, 1);
+        // This address belongs to this wallet.
+        // sentOutputs.splice(i, 1);
       }
     }
 
     // TODO: Need to update sent outputs, remove the received address.
-
 
     let value, type = 'sent';
     if (isMoveTransaction) {

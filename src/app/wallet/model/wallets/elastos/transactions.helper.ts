@@ -2,7 +2,7 @@ import { TranslateService } from "@ngx-translate/core";
 import BigNumber from "bignumber.js";
 import moment from "moment";
 import { Config } from "src/app/wallet/config/Config";
-import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo, TransactionType } from "../../providers/transaction.types";
+import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo } from "../../providers/transaction.types";
 import { TransactionsHelper } from "../../transactions.helper";
 
 export class ElastosTransactionsHelper {
@@ -135,7 +135,12 @@ export class ElastosTransactionsHelper {
         }
         break;
       case TransactionDirection.MOVED:
-        transactionName = "wallet.coin-op-transfered-token";
+        if (transaction.votecategory !== 0) {
+          // TODO: show different icon for different vote?
+          transactionName = "wallet.coin-op-vote";
+        } else {
+          transactionName = "wallet.coin-op-transfered-token";
+        }
         break;
     }
     return transactionName;
