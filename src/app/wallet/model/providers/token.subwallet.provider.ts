@@ -105,7 +105,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
         ercTokens.push(token);
       }
     }
-    Logger.log('wallet', ' ERC20 Tokens:', ercTokens)
+    //Logger.log('wallet', ' ERC20 Tokens:', ercTokens)
     return ercTokens;
   }
 

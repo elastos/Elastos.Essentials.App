@@ -1,6 +1,8 @@
 @import "src/app/components/titlebar/titlebar.component.scss";
 
 :host {
+    background: var(--ion-background-color, #fff);
+
     .lightContainer {
         ion-col {
             ion-input {
@@ -53,7 +55,6 @@
                     --padding-end: 10px;
                 }
             }
-
         }
     }
 }

@@ -57,6 +57,9 @@ export class DAppBrowser {
         let subwallet = WalletService.instance.getActiveNetworkWallet().getMainEvmSubWallet();
         dappBrowser.userAddress = await subwallet.createAddress();
 
+        // Get the active netwok chain ID
+        let activeChainID = WalletService.instance.activeNetworkWallet.value.network.getMainChainID();
+
         Logger.log("dappbrowser", "title", title);
 
         var options: any = {
@@ -94,7 +97,7 @@ export class DAppBrowser {
                 };\
                 console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3); \
                 \
-                window.ethereum.setChainId(20); \
+                window.ethereum.setChainId("+ activeChainID + "); \
                 window.ethereum.setAddress('"+ dappBrowser.userAddress + "');\
             "});
 
