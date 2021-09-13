@@ -4,7 +4,6 @@ import { InAppBrowser, InAppBrowserObject } from "@ionic-native/in-app-browser/n
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { StandardCoinName } from "src/app/wallet/model/coin";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 
 type IABMessage = {
@@ -55,7 +54,7 @@ export class DAppBrowser {
         let elastosConnectorCode = await iabClient.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
 
         // Get the active wallet address
-        let subwallet = WalletService.instance.getActiveNetworkWallet().getSubWallet(StandardCoinName.ETHSC);
+        let subwallet = WalletService.instance.getActiveNetworkWallet().getMainEvmSubWallet();
         dappBrowser.userAddress = await subwallet.createAddress();
 
         Logger.log("dappbrowser", "title", title);
@@ -218,38 +217,38 @@ export class DAppBrowser {
         }
     }
 
-  /**
-   * Sends a request response from Essentials to the calling web app (web3).
-   */
-  private sendWeb3IABResponse(id: number, result: any) {
-    let stringifiedResult = JSON.stringify(result);
-    let code = 'window.ethereum.sendResponse(' + id + ', ' + stringifiedResult + ')';
-    console.log("stringifiedResult", stringifiedResult, "code", code);
+    /**
+     * Sends a request response from Essentials to the calling web app (web3).
+     */
+    private sendWeb3IABResponse(id: number, result: any) {
+        let stringifiedResult = JSON.stringify(result);
+        let code = 'window.ethereum.sendResponse(' + id + ', ' + stringifiedResult + ')';
+        console.log("stringifiedResult", stringifiedResult, "code", code);
 
-    void this.browser.executeScript({
-      code: code
-    });
-  }
+        void this.browser.executeScript({
+            code: code
+        });
+    }
 
-  private sendElastosConnectorIABResponse(id: number, result: any) {
-    let stringifiedResult = JSON.stringify(result);
-    let code = 'window.elastos.sendResponse(' + id + ', ' + stringifiedResult + ')';
-    console.log("stringifiedResult", stringifiedResult, "code", code);
+    private sendElastosConnectorIABResponse(id: number, result: any) {
+        let stringifiedResult = JSON.stringify(result);
+        let code = 'window.elastos.sendResponse(' + id + ', ' + stringifiedResult + ')';
+        console.log("stringifiedResult", stringifiedResult, "code", code);
 
-    void this.browser.executeScript({
-      code: code
-    });
-  }
+        void this.browser.executeScript({
+            code: code
+        });
+    }
 
-  private sendElastosConnectorIABError(id: number, error: Error | string) {
-    Logger.log("dappbrowser", "Sending elastos error", error);
+    private sendElastosConnectorIABError(id: number, error: Error | string) {
+        Logger.log("dappbrowser", "Sending elastos error", error);
 
-    let stringifiedError = typeof error == "string" ? error : new String(error);
-    let code = 'window.elastos.sendError(' + id + ', "' + stringifiedError + '")';
-    console.log("stringifiedError", stringifiedError, "code", code);
+        let stringifiedError = typeof error == "string" ? error : new String(error);
+        let code = 'window.elastos.sendError(' + id + ', "' + stringifiedError + '")';
+        console.log("stringifiedError", stringifiedError, "code", code);
 
-    void this.browser.executeScript({
-      code: code
-    });
-  }
+        void this.browser.executeScript({
+            code: code
+        });
+    }
 }

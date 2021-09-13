@@ -37,6 +37,12 @@ export class HomePage implements InAppBrowserClient {
             url: 'https://glidefinance.io/'
         },
         {
+            icon: '/assets/browser/dapps/filda.png',
+            title: 'FilDA',
+            description: 'HECO-based lending and borrowing, with ELA support',
+            url: 'https://filda.io/'
+        },
+        {
             icon: '/assets/browser/dapps/tokswap.png',
             title: 'TokSwap',
             description: 'Swap your tokens on the Elastos blockchain',
@@ -62,7 +68,7 @@ export class HomePage implements InAppBrowserClient {
         },
     ];
 
-    public iabRunning: boolean = false;
+    public iabRunning = false;
 
     constructor(
         public translate: TranslateService,
@@ -96,7 +102,7 @@ export class HomePage implements InAppBrowserClient {
         }
     }
 
-    private async iabOpen(url: string, title?: string): Promise<DAppBrowser> {
+    private iabOpen(url: string, title?: string): Promise<DAppBrowser> {
         this.iabRunning = true;
         return DAppBrowser.open(this, url, title);
     }
@@ -106,41 +112,41 @@ export class HomePage implements InAppBrowserClient {
             this.iabRunning = false;
         });
         if (data.mode) {
-            this.nav.goToLauncher();
+            void this.nav.goToLauncher();
         }
     }
 
-        /* public browserMdexTest() {
-          let browser = DAppBrowser.open("https://mdex.me", this.iab, this.httpClient);
-        }
-
-        public browserFildaTest() {
-          let browser = DAppBrowser.open("https://filda.io", this.iab, this.httpClient);
-        }
-
-        public browserCredaTest() {
-          let browser = DAppBrowser.open("https://beta.creda.app", this.iab, this.httpClient);
-        }
-
-        public browserElavateTest() {
-          //let browser = DAppBrowser.open("https://elavate.exchange/", this.iab, this.httpClient);
-          let browser = DAppBrowser.open("http://192.168.31.114:3000/", this.iab, this.httpClient);
-        }
-
-        public browserPilotTest() {
-          let browser = DAppBrowser.open("https://p.td/", this.iab, this.httpClient);
-        }
-
-        public browserTokswapTest() {
-          let browser = DAppBrowser.open("https://tokswap.net/", this.iab, this.httpClient);
-        }
-
-        public browserTokbridgeTest() {
-          let browser = DAppBrowser.open("https://tokbridge.net/", this.iab, this.httpClient);
-        }
-
-        public browserOtherTest() {
-          let browser = DAppBrowser.open("http://192.168.31.114:8101", this.iab, this.httpClient);
-          //let browser = DAppBrowser.open("https://o3swap.com/vault", this.iab, this.httpClient);
-        } */
+    /* public browserMdexTest() {
+      let browser = DAppBrowser.open("https://mdex.me", this.iab, this.httpClient);
     }
+
+    public browserFildaTest() {
+      let browser = DAppBrowser.open("https://filda.io", this.iab, this.httpClient);
+    }
+
+    public browserCredaTest() {
+      let browser = DAppBrowser.open("https://beta.creda.app", this.iab, this.httpClient);
+    }
+
+    public browserElavateTest() {
+      //let browser = DAppBrowser.open("https://elavate.exchange/", this.iab, this.httpClient);
+      let browser = DAppBrowser.open("http://192.168.31.114:3000/", this.iab, this.httpClient);
+    }
+
+    public browserPilotTest() {
+      let browser = DAppBrowser.open("https://p.td/", this.iab, this.httpClient);
+    }
+
+    public browserTokswapTest() {
+      let browser = DAppBrowser.open("https://tokswap.net/", this.iab, this.httpClient);
+    }
+
+    public browserTokbridgeTest() {
+      let browser = DAppBrowser.open("https://tokbridge.net/", this.iab, this.httpClient);
+    }
+
+    public browserOtherTest() {
+      let browser = DAppBrowser.open("http://192.168.31.114:8101", this.iab, this.httpClient);
+      //let browser = DAppBrowser.open("https://o3swap.com/vault", this.iab, this.httpClient);
+    } */
+}
