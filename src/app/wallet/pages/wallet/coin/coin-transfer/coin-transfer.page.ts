@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
@@ -139,7 +138,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         public native: Native,
         public events: Events,
         public zone: NgZone,
-        private http: HttpClient,
         public theme: GlobalThemeService,
         private translate: TranslateService,
         public currencyService: CurrencyService,
@@ -519,9 +517,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.sendMax) return true;
 
         const amountBignumber = new BigNumber(this.amount)
-        if (Util.isNull(this.amount)) {
-            return false;
-        } else if (!Util.number(this.amount)) {
+        if (Util.isNull(this.amount)) { // if this.amount is not null, then it is number.
             return false;
         } else if (this.amount <= 0) {
             return false;
@@ -538,10 +534,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     valuesReady(showToast = true): boolean {
         const amountBignumber = new BigNumber(this.amount)
         let valuesValid = false;
-        if (Util.isNull(this.amount)) {
+        if (Util.isNull(this.amount)) { // if this.amount is not null, then it is number.
             if (showToast) this.native.toast_trans('wallet.amount-null');
-        } else if (!Util.number(this.amount)) {
-            if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else if (this.amount <= 0) {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else if (!this.networkWallet.subWallets[this.elastosChainCode].isBalanceEnough(amountBignumber)) {
