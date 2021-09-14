@@ -53,4 +53,13 @@ export class WalletUtil {
           return '000';
         }
     }
+
+    public static getAmountWithoutScientificNotation (amount: BigNumber | number, precision: number): string {
+      let amountString = amount.toString();
+      if (amountString.indexOf('e') != -1) {
+        return amount.toFixed(precision).replace(/0*$/g,"");
+      } else {
+        return amountString
+      }
+    }
 }

@@ -11,8 +11,7 @@
   <h4>{{ txInfo.transferTo }}</h4>
 
   <h3>{{ 'wallet.amount' | translate }}:</h3>
-  <h4 *ngIf="txInfo.amount === -1">{{ 'wallet.transfer-all' | translate }}</h4>
-  <h4 *ngIf="txInfo.amount !== -1">{{ txInfo.amount }}</h4>
+  <h4>{{ displayAmount }}</h4>
 
   <h3 *ngIf="txInfo.memo">{{ 'wallet.tx-info-memo' | translate }}:</h3>
   <h4 *ngIf="txInfo.memo">{{ txInfo.memo }}</h4>

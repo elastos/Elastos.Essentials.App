@@ -12,7 +12,7 @@
                 <img [src]="payStatusIcon">
             </div>
             <ion-card-title>{{ transactionInfo.name | translate }}</ion-card-title>
-            <ion-card-subtitle>{{ symbol }}{{ amount }}</ion-card-subtitle>
+            <ion-card-subtitle>{{ symbol }}{{ displayAmount }}</ion-card-subtitle>
             <p
                 [class.complete]="status === 'confirmed'"
                 [class.pending]="status === 'pending'"

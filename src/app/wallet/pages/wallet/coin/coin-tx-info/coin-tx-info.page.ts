@@ -9,6 +9,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { EthTransaction } from 'src/app/wallet/model/evm.types';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -50,6 +51,7 @@ export class CoinTxInfoPage implements OnInit {
     public direction = '';
     public symbol = '';
     public amount: BigNumber;
+    public displayAmount = '';
     public status = '';
     public statusName = '';
     public memo = '';
@@ -114,6 +116,7 @@ export class CoinTxInfoPage implements OnInit {
             this.height = this.transactionInfo.height;
             this.targetAddress = this.transactionInfo.to;
             this.fromAddress = this.transactionInfo.from;
+            this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals);
 
             void this.getTransactionDetails();
         }
@@ -143,8 +146,6 @@ export class CoinTxInfoPage implements OnInit {
                 }
             }
         } else {
-            // Amount
-            this.amount = this.transactionInfo.amount.isInteger() ? this.transactionInfo.amount.integerValue() : this.transactionInfo.amount.decimalPlaces(6);
             // Pay Fee
             const newPayFee = new BigNumber(this.transactionInfo.fee);
             this.payFee = newPayFee.toNumber();

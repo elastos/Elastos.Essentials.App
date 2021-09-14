@@ -619,6 +619,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             transferFrom: this.elastosChainCode,
             transferTo: this.transferType === TransferType.RECHARGE ? this.coinTransferService.toElastosChainCode : this.toAddress,
             amount: this.amount,
+            precision: this.fromSubWallet.tokenDecimals,
             memo: this.memo ? this.memo : null,
         };
 

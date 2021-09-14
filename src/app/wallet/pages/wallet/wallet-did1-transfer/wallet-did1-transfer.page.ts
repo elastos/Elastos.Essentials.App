@@ -229,6 +229,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
             transferFrom: this.elastosChainCode,
             transferTo: this.toAddress,
             amount: this.amount,
+            precision: this.fromSubWallet.tokenDecimals,
             memo: null,
         };
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { Logger } from 'src/app/logger';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -10,7 +10,7 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
   providedIn: 'root'
 })
 export class SettingsService {
-  public version: string = '';
+  public version = '';
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -18,7 +18,7 @@ export class SettingsService {
     private appVersion: AppVersion,
   ) { }
 
-  async init() {
+  init() {
     this.getRuntimeVersion();
   }
 
@@ -40,7 +40,7 @@ export class SettingsService {
   }
 
   display_err(err) {
-    this.native.genericAlert(err);
+    void this.native.genericAlert(err);
   }
 
   getRuntimeVersion() {
