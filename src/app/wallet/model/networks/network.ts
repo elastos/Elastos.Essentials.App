@@ -25,9 +25,9 @@ export abstract class Network {
   }
 
   public async init(): Promise<void> {
-    await this.refreshCoins();
     const activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
     this.localStorageKey = this.key + '-' + activeNetworkTemplate;
+    await this.refreshCoins();
   }
 
   /**
