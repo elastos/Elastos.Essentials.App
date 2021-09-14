@@ -68,6 +68,14 @@ export class SettingsPage implements OnInit {
             iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg',
             type: 'currency-select'
         },
+        {
+            route: "/wallet/settings/custom-networks",
+            title: this.translate.instant("wallet.settings-custom-networks"),
+            subtitle: this.translate.instant("wallet.settings-custom-networks-subtitle"),
+            icon: '/assets/wallet/settings/dollar.svg',
+            iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg',
+            type: 'custom-networks'
+        },
     ];
 
     constructor(
@@ -81,7 +89,7 @@ export class SettingsPage implements OnInit {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setTitle(this.translate.instant("wallet.settings-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.settings-title"));
     }
 
     go(item) {

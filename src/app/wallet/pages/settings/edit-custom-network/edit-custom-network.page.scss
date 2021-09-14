@@ -1,0 +1,31 @@
+@import "src/app/wallet/root.scss";
+
+.container {
+  min-height: 100%;
+  padding: 20px;
+
+  ion-input {
+    height: inherit;
+  }
+
+  .item-row {
+    border-radius: 7px;
+    border: solid 1px #626262;
+    margin-top: 3px;
+    margin-bottom: 30px;
+  }
+}
+
+.dark-container {
+  .item-row {
+    background: #2c2c2c;
+  }
+}
+
+ion-footer {
+  flex-direction: row;
+
+  .cancel {
+    --background: linear-gradient(to bottom, #3c3c3c, #2c2c2c);
+  }
+}

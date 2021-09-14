@@ -1,0 +1,29 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <ion-row class="main-title-row">
+            <ion-col size="12">
+                <p>Manage your own EVM compatible networks.</p>
+            </ion-col>
+        </ion-row>
+        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+            *ngFor="let customNetworkEntry of customNetworkEntries" (click)="editCustomNetwork(customNetworkEntry)">
+            <ion-col size="2" class="left-col">
+                <img [src]="customNetworkEntry.colorScheme">
+            </ion-col>
+            <ion-col size="8" class="middle-col">
+                <h1>{{ customNetworkEntry.name }}</h1>
+                <p>xxxx</p>
+            </ion-col>
+            <!-- <ion-col size="2" class="right-col">
+                <ion-icon *ngIf="currencyService.selectedCurrency.symbol === currency.symbol" name="checkmark"
+                    mode="ios"></ion-icon>
+            </ion-col> -->
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+
+<ion-footer>
+    <ion-button class="confirm" color="secondary" (click)="addCustomNetwork()">+ Add custom network</ion-button>
+</ion-footer>
