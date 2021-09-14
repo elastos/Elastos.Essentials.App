@@ -24,7 +24,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { IonContent, ModalController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
@@ -42,6 +42,7 @@ import { ElastosEVMSubWallet } from 'src/app/wallet/model/wallets/elastos/elasto
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { ETHTransactionService } from 'src/app/wallet/services/ethtransaction.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
+import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
@@ -67,6 +68,7 @@ import { WalletService } from '../../../../services/wallet.service';
 })
 export class CoinTransferPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+    @ViewChild(IonContent) contentArea: IonContent;
 
     public networkWallet: NetworkWallet;
     public tokensymbol = '';
@@ -148,6 +150,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private contactsService: ContactsService,
         private modalCtrl: ModalController,
         private popoverCtrl: PopoverController,
+        private nameResolvingService: NameResolvingService,
         private ethTransactionService: ETHTransactionService
     ) {
     }
@@ -284,6 +287,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
                 if (this.elastosChainCode === StandardCoinName.ELA) {
                     // Always show contacts app key
+                    // NOTE: picking a contact works only for elastos mainchain for now, until we get a better
+                    // standardization for credential types that could store wallet addresses.
                     this.setContactsKeyVisibility(true);
 
                     // Only show cryptonames key if user has previously used crypto names
@@ -672,7 +677,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
      * Callback called whenever the "send to" address changes.
      * At that time, we cantry to call some APIs to retrieve an address by
      */
-    async onSendToAddressInput(enteredText: string) {
+    onSendToAddressInput(enteredText: string) {
         this.suggestedAddresses = [];
         this.addressName = null;
 
@@ -688,16 +693,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         // Cryptoname
         if (enteredText.length >= 3) {
-            // For now, handle only ELA addresses for cryptoname
-            if (this.elastosChainCode !== StandardCoinName.ELA) {
-                return;
-            } else {
-                const lowerCaseText = enteredText.toLowerCase();
-                const cryptoNameResolver = new CryptoAddressResolvers.CryptoNameResolver(this.http);
-                const results = await cryptoNameResolver.resolve(lowerCaseText, StandardCoinName.ELA);
-                Logger.log('wallet', "cryptoname results", results);
+            const lowerCaseText = enteredText.toLowerCase();
+            // eslint-disable-next-line no-async-foreach/no-async-foreach, @typescript-eslint/no-misused-promises
+            this.nameResolvingService.getResolvers().forEach(async resolver => {
+                // resolvers can answer at any time, asynchronously
+                const results = await resolver.resolve(lowerCaseText, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
+                Logger.log('wallet', "Name resolver got results from", resolver.getName(), results);
                 this.suggestedAddresses = this.suggestedAddresses.concat(results);
-            }
+
+                if (this.suggestedAddresses.length > 0) {
+                    // Scroll screen to bottom to let the suggested resolved name appear on screen
+                    void this.contentArea.scrollToBottom(500);
+                }
+            });
         }
     }
 

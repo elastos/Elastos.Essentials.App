@@ -1,6 +1,7 @@
-import { CoinID } from '../../coin';
+import { AnySubWallet } from '../../wallets/subwallet';
 import { Address } from "../addresses/Address";
 
 export abstract class Resolver {
-    public abstract resolve(name: string, coin: CoinID): Promise<Address[]>
+    public abstract getName(): string;
+    public abstract resolve(name: string, subWallet: AnySubWallet): Promise<Address[]>
 }

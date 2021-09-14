@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
@@ -5,6 +6,7 @@ import { Events } from 'src/app/services/events.service';
 import { IdentityEntry } from 'src/app/services/global.didsessions.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { CryptoNameResolver } from '../model/address-resolvers';
 import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/arbitrum.mainnet.network';
 import { ArbitrumTestNetNetwork } from '../model/networks/arbitrum/arbitrum.testnet.network';
 import { BSCMainNetNetwork } from '../model/networks/bsc/bsc.mainnet.network';
@@ -24,6 +26,7 @@ import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { ETHTransactionService } from './ethtransaction.service';
 import { IntentService } from './intent.service';
+import { NameResolvingService } from './nameresolving.service';
 import { NavService } from './nav.service';
 import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
@@ -47,9 +50,11 @@ export class WalletInitService extends GlobalService {
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
+    private nameResolvingService: NameResolvingService,
     private networkService: WalletNetworkService,
     private globalNetworksService: GlobalNetworksService,
     private ethTransactionService: ETHTransactionService,
+    private httpClient: HttpClient
   ) {
     super();
   }
@@ -67,6 +72,9 @@ export class WalletInitService extends GlobalService {
     // Networks init + registration
     await this.networkService.init();
     await this.registerNetworks();
+
+    // Register name resolvers
+    this.registerNameResolvers();
 
     // Do not await.
     void this.currencyService.init();
@@ -117,6 +125,10 @@ export class WalletInitService extends GlobalService {
   private async createAndRegisterNetwork(network: Network, isDefault = false): Promise<void> {
     await network.init();
     await this.networkService.registerNetwork(network, isDefault);
+  }
+
+  private registerNameResolvers() {
+    this.nameResolvingService.registernameResolver(new CryptoNameResolver(this.httpClient));
   }
 
   public async stop(): Promise<void> {

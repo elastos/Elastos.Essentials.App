@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Logger } from "src/app/logger";
-import { CoinID, StandardCoinName } from '../../coin';
+import { StandardCoinName } from '../../coin';
+import { AnySubWallet } from '../../wallets/subwallet';
 import { Address } from '../addresses/Address';
 import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
 import { Resolver } from "./Resolver";
@@ -10,10 +11,15 @@ export class CryptoNameResolver extends Resolver {
         super();
     }
 
-    public async resolve(name: string, coin: CoinID): Promise<Address[]> {
+    public getName(): string {
+        return "CryptoName";
+    }
+
+    public async resolve(name: string, subWallet: AnySubWallet): Promise<Address[]> {
         let addresses: Address[] = [];
 
-        if (coin == StandardCoinName.ELA) {
+        // Cryptoname can resolve only from ELA mainchain
+        if (subWallet.isStandardSubWallet() && subWallet.id === StandardCoinName.ELA) {
             Logger.log('wallet', "Searching name " + name + " on cryptoname...");
 
             try {

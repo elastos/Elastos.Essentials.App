@@ -1,11 +1,12 @@
-<ion-content>
+<ion-content #contentArea>
     <app-titlebar></app-titlebar>
 
     <div *ngIf="transferType !== 3" class="container" [class.dark-container]="theme.darkMode">
 
         <!------------------ RECHARGE ------------------>
 
-        <ion-grid *ngIf="transferType === 1 || transferType === 4" class="recharge-container" [class.recharge-dark-container]="theme.darkMode" [class.blur]="native.popup">
+        <ion-grid *ngIf="transferType === 1 || transferType === 4" class="recharge-container"
+            [class.recharge-dark-container]="theme.darkMode" [class.blur]="native.popup">
             <ion-row class="main-title-row">
                 <ion-col size="12">
                     <p>{{ 'wallet.transfer-from' | translate }}</p>
@@ -57,19 +58,11 @@
             </ion-row>
             <ion-row class="input-row">
                 <ion-col size="12">
-                    <ion-input
-                        *ngIf="!sendMax"
-                        type="number"
-                        name="amount"
-                        ngDefaultControl
-                        placeholder="{{ 'wallet.amount' | translate }}"
-                        [(ngModel)]="amount"
-                    ></ion-input>
-                    <ion-input
-                        *ngIf="sendMax"
+                    <ion-input *ngIf="!sendMax" type="number" name="amount" ngDefaultControl
+                        placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="amount"></ion-input>
+                    <ion-input *ngIf="sendMax"
                         [value]="networkWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)"
-                        (ionChange)="resetAmountInput()"
-                    ></ion-input>
+                        (ionChange)="resetAmountInput()"></ion-input>
                     <p *ngIf="supportsMaxTransfer()" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
                 </ion-col>
             </ion-row>
@@ -77,8 +70,10 @@
 
         <!------------------ SEND ------------------>
 
-        <ion-grid *ngIf="transferType === 2" class="send-container" [class.send-dark-container]="theme.darkMode" [class.blur]="native.popup">
-            <img class="header-img" [src]="!theme.darkMode ? this.networkWallet.network.logo : this.networkWallet.network.logo"/>
+        <ion-grid *ngIf="transferType === 2" class="send-container" [class.send-dark-container]="theme.darkMode"
+            [class.blur]="native.popup">
+            <img class="header-img"
+                [src]="!theme.darkMode ? this.networkWallet.network.logo : this.networkWallet.network.logo" />
 
             <h1>{{ 'wallet.enter-amount' | translate }}</h1>
             <ion-row class="item-row">
@@ -87,51 +82,41 @@
                     <p *ngIf="isStandardSubwallet(fromSubWallet)">{{ currencyService.selectedCurrency.symbol }}</p>
                 </ion-col>
                 <ion-col size="6" class="right-col">
-                    <ion-input
-                        *ngIf="!sendMax"
-                        class="amount-input"
-                        type="number"
-                        name="amount"
-                        ngDefaultControl
-                        placeholder="{{ 'wallet.amount' | translate }}"
-                        [(ngModel)]="amount"
-                    ></ion-input>
-                    <ion-input
-                        *ngIf="sendMax"
-                        class="amount-input"
+                    <ion-input *ngIf="!sendMax" class="amount-input" type="number" name="amount" ngDefaultControl
+                        placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="amount"></ion-input>
+                    <ion-input *ngIf="sendMax" class="amount-input"
                         [value]="networkWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)"
-                        (ionChange)="resetAmountInput()"
-                    ></ion-input>
+                        (ionChange)="resetAmountInput()"></ion-input>
                     <p *ngIf="amount && !sendMax">
                         {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(amount)) }}
                     </p>
                     <p *ngIf="sendMax">
-                        {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.networkWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6))) }}
+                        {{
+                        fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.networkWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)))
+                        }}
                     </p>
                 </ion-col>
             </ion-row>
 
             <ion-row class="balance-row">
-                <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
-                <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}:  <strong>{{ uiService.getFixedBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()) }}</strong></p>
+                <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}
+                </p>
+                <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}: <strong>{{
+                        uiService.getFixedBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance())
+                        }}</strong></p>
             </ion-row>
 
             <h1>{{ 'wallet.send-to' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="11">
-                    <ion-input
-                        type="text"
-                        clearInput
-                        placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
-                        [(ngModel)]="toAddress"
-                        name="toAddress"
-                        ngDefaultControl
-                        (input)='onSendToAddressInput($event.target.value)'
-                    >
+                    <ion-input type="text" clearInput placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
+                        [(ngModel)]="toAddress" name="toAddress" ngDefaultControl
+                        (input)='onSendToAddressInput($event.target.value)'>
                     </ion-input>
                 </ion-col>
                 <ion-col size="1" class="right-col" (click)="showOptions($event)">
-                  <img [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
+                    <img
+                        [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
                 </ion-col>
             </ion-row>
 
@@ -144,7 +129,8 @@
             </ion-row>
 
             <ion-row *ngIf="suggestedAddresses.length > 0" class="cryptoname-row">
-                <ion-col size="12" *ngFor="let suggestedAddress of suggestedAddresses" (click)="selectSuggestedAddress(suggestedAddress)">
+                <ion-col size="12" *ngFor="let suggestedAddress of suggestedAddresses"
+                    (click)="selectSuggestedAddress(suggestedAddress)">
                     <span>{{ suggestedAddress.getDisplayName() }}</span>
                     <ion-icon mode="ios" name="add"></ion-icon>
                 </ion-col>
@@ -152,20 +138,14 @@
 
             <h1 *ngIf="!isEthsubwallet && suggestedAddresses.length === 0" (click)="hideMemo = !hideMemo">
                 {{ 'wallet.advanced-options' | translate }}
-                <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'" [class.rotate]="!hideMemo">
+                <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'"
+                    [class.rotate]="!hideMemo">
             </h1>
             <ion-row *ngIf="!hideMemo && suggestedAddresses.length === 0" class="item-row memo-row">
                 <ion-col size="12" class="left-col">
-                    <ion-input
-                        type="text"
-                        clearInput
-                        name="memo"
-                        ngDefaultControl
-                        placeholder="{{ 'wallet.tx-info-memo' | translate }}"
-                        [(ngModel)]="memo"
-                        (ionFocus)="showKeyboard()"
-                        (ionBlur)="hideKeyboard()"
-                    >
+                    <ion-input type="text" clearInput name="memo" ngDefaultControl
+                        placeholder="{{ 'wallet.tx-info-memo' | translate }}" [(ngModel)]="memo"
+                        (ionFocus)="showKeyboard()" (ionBlur)="hideKeyboard()">
                     </ion-input>
                 </ion-col>
             </ion-row>
@@ -173,10 +153,8 @@
 
         <!------------------ SEND AND RECHARGE BUTTON ------------------>
 
-        <div
-            *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3"
-            class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode"
-        >
+        <div *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3" class="footer-container ion-no-border"
+            [class.dark-footer]="theme.darkMode">
             <ion-row class="btn-container">
                 <ion-button color="primary" [disabled]="!valuesValid()" (click)="goTransaction()">
                     <ion-label>{{ getButtonLabel() | translate }}</ion-label>
@@ -214,13 +192,8 @@
                     <p *ngIf="isStandardSubwallet(fromSubWallet)">{{ currencyService.selectedCurrency.symbol }}</p>
                 </ion-col>
                 <ion-col size="6" class="right-col">
-                    <ion-input  [disabled]="!amountCanBeEditedInPayIntent"
-                        class="amount-input"
-                        type="number"
-                        placeholder="0"
-                        name="amount3" ngDefaultControl
-                        [(ngModel)]="amount"
-                    >
+                    <ion-input [disabled]="!amountCanBeEditedInPayIntent" class="amount-input" type="number"
+                        placeholder="0" name="amount3" ngDefaultControl [(ngModel)]="amount">
                     </ion-input>
                     <p *ngIf="amount && isStandardSubwallet(fromSubWallet)">
                         {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(amount)) }}
@@ -229,7 +202,9 @@
             </ion-row>
         </div>
         <div>
-            <p>{{ 'wallet.balance' | translate }}:  <strong>{{ uiService.getFixedBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance()) }}</strong></p>
+            <p>{{ 'wallet.balance' | translate }}: <strong>{{
+                    uiService.getFixedBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance())
+                    }}</strong></p>
         </div>
 
         <div class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode">

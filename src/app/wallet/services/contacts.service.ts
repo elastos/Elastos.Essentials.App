@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import * as CryptoAddressResolvers from '../model/address-resolvers';
-import { StandardCoinName } from '../model/coin';
 import { LocalStorage } from './storage.service';
 
 export type Contact = {
@@ -47,7 +46,7 @@ export class ContactsService {
               contact.cryptoname = contact.cryptoname.replace('CryptoName: ', '')
               needUpdate = true;
             }
-            const results: CryptoAddressResolvers.Address[] = await cryptoNameResolver.resolve(contact.cryptoname, StandardCoinName.ELA);
+            const results: CryptoAddressResolvers.Address[] = await cryptoNameResolver.resolve(contact.cryptoname, null /* TODO */ /* StandardCoinName.ELA */);
             contactsChecked++;
             if (results && results[0]) {
               contact.address = results[0].address;
