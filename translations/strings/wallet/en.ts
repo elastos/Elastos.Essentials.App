@@ -78,6 +78,8 @@ export const en = {
         "settings-my-wallets-subtitle": "Backup wallets and access their individual settings",
         "settings-currency": "Currency",
         "settings-currency-subtitle": "Select the default currency",
+        "settings-custom-networks": "Custom Networks",
+        "settings-custom-networks-subtitle": "Add and edit your custom networks here",
 
         /***********************
         * Select-Currency Page *
@@ -313,6 +315,27 @@ export const en = {
         "coin-adderc20-invalid-contract-or-network-error": "The provided ERC20 token address is not valid or there is a network error.",
         'coin-adderc20-alreadyadded': 'Token already added',
         'coin-adderc20-not-found': "The token address can't be found, please check it!",
+
+        /***********************
+        * Custom networks Page *
+        ************************/
+        'custom-networks-title': 'Custom networks',
+        'add-custom-network-title': 'Add custom network',
+        'edit-custom-network-title': 'Edit custom network',
+        'custom-networks-intro': 'Manage your own EVM compatible networks.',
+        'add-custom-network': '+ Add custom network',
+        'network-name': 'Name',
+        'network-rpc-url': 'RPC URL',
+        'network-account-rpc-url': 'Account RPC URL (optional)',
+        'network-chain-id': 'Chain ID',
+        'network-token-symbol': 'Token Symbol (optional)',
+        'checking-rpc-url': 'Checking RPC URL',
+        'checking-account-rpc-url': 'Checking account RPC URL',
+        'wrong-rpc-url': 'The RPC URL could not be reached and could be wrong, please check it.',
+        'wrong-account-rpc-url': 'The account RPC URL could not be reached and could be wrong, please check it.',
+        'cant-delete-active-network': 'The active network can\'t be deleted. Please first change the current network.',
+        'delete-network-prompt-title': 'Delete network ?',
+        'delete-network-prompt-text': 'Do you really want to delete this network ?',
 
         /********************************************** Intent Screens ***********************************************/
 

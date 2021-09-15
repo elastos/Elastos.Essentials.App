@@ -64,16 +64,16 @@ export class SettingsPage implements OnInit {
             route: "/wallet/settings/currency-select",
             title: this.translate.instant("wallet.settings-currency"),
             subtitle: this.translate.instant("wallet.settings-currency-subtitle"),
-            icon: '/assets/wallet/settings/dollar.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg',
+            icon: '/assets/wallet/settings/currency.svg',
+            iconDarkmode: '/assets/wallet/settings/darkmode/currency.svg',
             type: 'currency-select'
         },
         {
             route: "/wallet/settings/custom-networks",
             title: this.translate.instant("wallet.settings-custom-networks"),
             subtitle: this.translate.instant("wallet.settings-custom-networks-subtitle"),
-            icon: '/assets/wallet/settings/dollar.svg',
-            iconDarkmode: '/assets/wallet/settings/darkmode/dollar.svg',
+            icon: '/assets/wallet/settings/custom-networks.svg',
+            iconDarkmode: '/assets/wallet/settings/darkmode/custom-networks.svg',
             type: 'custom-networks'
         },
     ];

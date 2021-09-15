@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { CustomNetworkService } from 'src/app/wallet/services/customnetwork.service';
 import { Native } from 'src/app/wallet/services/native.service';
 import { CustomNetworkDiskEntry, WalletNetworkService } from 'src/app/wallet/services/network.service';
 
@@ -19,13 +20,14 @@ export class CustomNetworksPage implements OnInit {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     public networkService: WalletNetworkService,
+    private customNetworksService: CustomNetworkService,
     private native: Native
   ) { }
 
   ngOnInit() {
     this.networkService.networksList.subscribe(_ => {
       // Refresh custom network entr
-      this.customNetworkEntries = this.networkService.getCustomNetworkEntries();
+      this.customNetworkEntries = this.customNetworksService.getCustomNetworkEntries();
     });
   }
 

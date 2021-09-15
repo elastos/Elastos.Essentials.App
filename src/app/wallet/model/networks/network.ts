@@ -86,14 +86,14 @@ export abstract class Network {
 
   public getAvailableCoins(): Coin[] {
     // Return only coins that are usable on the active network.
-    return this.availableCoins;
+    return this.availableCoins || [];
   }
 
   public getAvailableERC20Coins(): ERC20Coin[] {
     // Return only ERC20 coins that are usable on the active network.
-    return this.availableCoins.filter(c => {
+    return this.getAvailableCoins().filter(c => {
       return (c.getType() === CoinType.ERC20);
-    }) as ERC20Coin[];
+    }) as ERC20Coin[] || [];
   }
 
   public getCoinByID(id: CoinID): Coin {

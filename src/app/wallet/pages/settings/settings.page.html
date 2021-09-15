@@ -6,16 +6,18 @@
                 <p>{{ 'wallet.settings-general' | translate }}</p>
             </ion-col>
         </ion-row>
-        <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode" *ngFor="let item of settings" detail (click)="go(item)">
+        <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode"
+            *ngFor="let item of settings" detail (click)="go(item)">
             <ion-col size="1.25" class="left-col">
-                <img [src]="!theme.darkMode ? item.icon : item.iconDarkmode"/>
+                <img [src]="!theme.darkMode ? item.icon : item.iconDarkmode" />
             </ion-col>
             <ion-col size="9.5" class="middle-col">
                 <h1>{{ item.title }}</h1>
                 <p>{{ item.subtitle }}</p>
             </ion-col>
             <ion-col size="1.25" class="right-col">
-                <img [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'"/>
+                <img
+                    [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'" />
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>

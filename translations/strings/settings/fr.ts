@@ -12,7 +12,7 @@ export const fr = {
         'developer-setting': 'Options pour développeurs',
         'display-setting': 'Thème',
         'dev-mode': 'Mode développeur',
-        'passwordmanager-setting':'Gestion des mots de passe',
+        'passwordmanager-setting': 'Gestion des mots de passe',
         'wallet-setting': 'Mon portefeuille',
         'wallet-connect-sessions-setting': 'Sessions Wallet Connect',
         'privacy-setting': 'Vie privée',
@@ -34,7 +34,7 @@ export const fr = {
         'dark': 'SOMBRE',
         'light': 'CLAIR',
         'log-out': 'Changer d\'utilisateur',
-        'help':'Aide',
+        'help': 'Aide',
 
         /********** About Page **********/
         'version': 'Version',
@@ -61,7 +61,7 @@ export const fr = {
         'reg-net': 'Réseau de régression',
         'priv-net': 'Réseau privé',
         'lrw-net': 'Réseau LongRunWeather',
-        'switch-network-prompt' : 'L\'application doît redémarrer après avoir modifié le réseau',
+        'restart-prompt-info': 'L\'application va redémarrer suite à ce changement',
         'restart-app': 'Rédémarrer l\'Application',
 
         /********** Wallet Connect Page **********/
@@ -91,12 +91,12 @@ export const fr = {
 
         /********** Startup Screen Page **********/
         'startupscreen': 'Ecran de démarrage',
-        'startupscreen-home-title':'Accueil Essentials',
-        'startupscreen-home-description':'Ecran par défaut avec toutes les fonctionnalités et les widgets.',
-        'startupscreen-wallets-title':'Portefeuilles',
-        'startupscreen-wallets-description':'Affiche votre portefeuille actif par défaut. Si vos fonds sont votre priorité.',
-        'startupscreen-dapps-title':'Portail de DApps',
-        'startupscreen-dapps-description':'Vous ne pouvez pas vous passer de naviguer sur des dApps? Ce mode est pour vous.',
+        'startupscreen-home-title': 'Accueil Essentials',
+        'startupscreen-home-description': 'Ecran par défaut avec toutes les fonctionnalités et les widgets.',
+        'startupscreen-wallets-title': 'Portefeuilles',
+        'startupscreen-wallets-description': 'Affiche votre portefeuille actif par défaut. Si vos fonds sont votre priorité.',
+        'startupscreen-dapps-title': 'Portail de DApps',
+        'startupscreen-dapps-description': 'Vous ne pouvez pas vous passer de naviguer sur des dApps? Ce mode est pour vous.',
 
         /*********** Privacy page **********/
         'privacy': 'Vie privée',

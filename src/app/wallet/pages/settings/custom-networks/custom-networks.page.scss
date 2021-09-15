@@ -1,8 +1,9 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .container {
   min-height: 100%;
   padding: 20px;
+  padding-bottom: 50px; // For the footer
 
   .main-title-row {
     margin-bottom: 10px;
@@ -20,23 +21,57 @@
     }
   }
 
-  .subwallet-row {    
+  .network-row {
+    margin-bottom: 10px;
+    padding: 5px;
+    background: white;
+    border-radius: 7px;
+
+    .left-col {
+      align-self: center;
+      text-align: center;
+
+      .logo {
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+      }
+    }
+
+    .middle-col {
+      font-size: 16px;
+      font-weight: 600;
+      align-self: center;
+    }
+
     .right-col {
       justify-content: center;
-  
+      align-self: center;
+
       ion-icon {
         width: 25px;
         height: 25px;
       }
     }
   }
+
+  .footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 }
 
 .dark-container {
   .main-title-row {
     p {
-      color: #9D9D9D;
+      color: #9d9d9d;
       opacity: 1;
     }
+  }
+
+  .network-row {
+    background: #2c2c2c;
   }
 }

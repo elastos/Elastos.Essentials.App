@@ -24,10 +24,12 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { Events } from 'src/app/services/events.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { CustomNetwork } from '../model/networks/customnetwork';
 import { Network } from '../model/networks/network';
+import { Native } from './native.service';
+import { PopupProvider } from './popup.service';
 import { LocalStorage } from './storage.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
@@ -36,10 +38,11 @@ export type CustomNetworkDiskEntry = {
     key: string; // Ex: "randomKey"
     name: string; // Ex: "My network"
     rpcUrl: string; // Ex: "https://my.net.work/rpc"
+    accountRpcUrl: string; // Standard account/scan url to query transactions list, tokens...
     chainId: string; // Ex: "12345"
     networkTemplate: string; // Ex: "MainNet"
     mainCurrencySymbol: string; // Ex: "HT"
-    colorScheme: string; // "purple", "green", etc
+    colorScheme: string; // Ex: #9A67EB
 }
 
 @Injectable({
@@ -58,12 +61,18 @@ export class WalletNetworkService {
 
     private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
 
-    constructor(private localStorage: LocalStorage, private globalStorage: GlobalStorageService, private modalCtrl: ModalController) {
+    constructor(
+        public events: Events,
+        public native: Native,
+        public popupProvider: PopupProvider,
+        private localStorage: LocalStorage,
+        private globalStorage: GlobalStorageService,
+        private globalNavService: GlobalNavService,
+        private modalCtrl: ModalController) {
         WalletNetworkService.instance = this;
     }
 
     public async init() {
-        await this.initializeCustomNetworks();
     }
 
     /**
@@ -83,6 +92,14 @@ export class WalletNetworkService {
             Logger.log("wallet", "WalletNetworkService - Reloading network:", savedNetwork);
             await this.notifyNetworkChange(savedNetwork);
         }
+    }
+
+    /**
+     * Used to remove a custom network from the network instances, when deleting it.
+     */
+    public removeNetworkByKey(networkKey: string) {
+        this.networks.splice(this.networks.findIndex(n => n.key === networkKey), 1);
+        this.networksList.next(this.networks);
     }
 
     public getAvailableNetworks(): Network[] {
@@ -137,58 +154,6 @@ export class WalletNetworkService {
      */
     public isActiveNetworkElastos(): boolean {
         return this.activeNetwork.value.key === "elastos";
-    }
-
-    /**
-     * Loads saved custom networks from disk and initialized them.
-     */
-    private async initializeCustomNetworks(): Promise<void> {
-        // Load previously saved entries from disk
-        this.customNetworkDiskEntries = await this.globalStorage.getSetting<CustomNetworkDiskEntry[]>(GlobalDIDSessionsService.signedInDIDString, "wallet", "customnetworks", []);
-
-        // For each disk entry, re-initialize a real network
-        for (let entry of this.customNetworkDiskEntries) {
-            let network = new CustomNetwork(
-                entry.key,
-                entry.name,
-                null, // No "logo"
-                entry.mainCurrencySymbol,
-                entry.mainCurrencySymbol,
-                entry.rpcUrl,
-                null, // No "account" url
-                entry.networkTemplate,
-                parseInt(entry.chainId)
-            );
-
-            // Add this new instance to the global list of networks
-            this.networks.push(network);
-        }
-    }
-
-    /**
-     * Adds a new, or updates an existing custom network.
-     */
-    public async upsertCustomNetwork(networkDiskEntry: CustomNetworkDiskEntry): Promise<void> {
-        let existingEntryIndex = this.customNetworkDiskEntries.findIndex(n => networkDiskEntry.key === n.key);
-        if (existingEntryIndex === -1) {
-            // Not existing yet, add it
-            Logger.log("wallet", "Inserting a new custom network entry", networkDiskEntry);
-            this.customNetworkDiskEntries.push(networkDiskEntry);
-        }
-        else {
-            // Existing, update
-            Logger.log("wallet", "Updating existing custom network entry", networkDiskEntry);
-            this.customNetworkDiskEntries[existingEntryIndex] = networkDiskEntry;
-        }
-
-        await this.globalStorage.setSetting<CustomNetworkDiskEntry[]>(GlobalDIDSessionsService.signedInDIDString, "wallet", "customnetworks", this.customNetworkDiskEntries);
-
-        // Notify a change in networks list
-        this.networksList.next(this.networks);
-    }
-
-    public getCustomNetworkEntries(): CustomNetworkDiskEntry[] {
-        return this.customNetworkDiskEntries;
     }
 }
 

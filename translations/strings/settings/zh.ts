@@ -10,7 +10,7 @@ export const zh = {
           'capsule-setting': '胶囊管理',
           'about-setting': '关于Essentials',
           'developer-setting': '开发者选项',
-          'passwordmanager-setting':'密码管理器',
+          'passwordmanager-setting': '密码管理器',
           'wallet-setting': '我的钱包',
           'display-setting': '主题',
           'dev-mode': '开发者模式',
@@ -34,7 +34,7 @@ export const zh = {
           'dark': '深',
           'light': '浅',
           'log-out': '注销',
-          'help':'帮助',
+          'help': '帮助',
 
           /********** About Page **********/
           'version': '版本号',
@@ -61,7 +61,7 @@ export const zh = {
           'reg-net': 'Regression net',
           'priv-net': 'Private Net',
           'lrw-net': 'LongRunWeather Net',
-          'switch-network-prompt' : '切换网络后需要重启应用',
+          'restart-prompt-info': 'This operation requires to restart',
           'restart-app': '重启应用',
 
           /********** Wallet Connect Page **********/
@@ -91,12 +91,12 @@ export const zh = {
 
           /********** Startup Screen Page **********/
           'startupscreen': '启动页面',
-          'startupscreen-home-title':'Essentials主页面',
-          'startupscreen-home-description':'显示所有功能和小工具的默认主屏幕',
-          'startupscreen-wallets-title':'钱包',
-          'startupscreen-wallets-description':'默认显示您的活动钱包，如果您特别关心资产',
-          'startupscreen-dapps-title':'DApps入口',
-          'startupscreen-dapps-description':'你需要整天浏览 dApp 吗？那这种模式适合你',
+          'startupscreen-home-title': 'Essentials主页面',
+          'startupscreen-home-description': '显示所有功能和小工具的默认主屏幕',
+          'startupscreen-wallets-title': '钱包',
+          'startupscreen-wallets-description': '默认显示您的活动钱包，如果您特别关心资产',
+          'startupscreen-dapps-title': 'DApps入口',
+          'startupscreen-dapps-description': '你需要整天浏览 dApp 吗？那这种模式适合你',
 
           /*********** Privacy page **********/
           'privacy': '隐私',

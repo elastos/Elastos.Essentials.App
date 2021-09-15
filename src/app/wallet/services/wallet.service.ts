@@ -167,7 +167,6 @@ export class WalletService {
 
             // Update the SPV SDK with the right network configuration
             await this.prepareSPVNetworkConfiguration();
-            console.log("AFTER PREPARE");
 
             let signedInEntry = await this.didSessions.getSignedInIdentity();
             let rootPath = signedInEntry.didStoragePath;
@@ -231,13 +230,24 @@ export class WalletService {
 
             for (let masterWallet of this.getMasterWalletsList()) {
                 Logger.log("wallet", "Creating network wallet for master wallet:", masterWallet);
-                let networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
-                this.networkWallets[masterWallet.id] = networkWallet;
 
-                // Notify that this network wallet is the active one
-                if (masterWallet.id === this.activeMasterWalletId) {
-                    Logger.log("wallet", "Setting the network walelt as active one:", networkWallet);
-                    this.activeNetworkWallet.next(networkWallet);
+                let networkWallet: NetworkWallet = null;
+                try {
+                    networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
+                    if (networkWallet)
+                        this.networkWallets[masterWallet.id] = networkWallet;
+                }
+                catch (err) {
+                    Logger.error("wallet", "Failed to create network wallet for master wallet", masterWallet, err);
+                }
+                finally {
+                    // Notify that this network wallet is the active one.
+                    // If the network wallet creation failed for any reason, we still want to set the active network
+                    // to "null" to not get an ankward situation with a new network and the old network wallet.
+                    if (masterWallet.id === this.activeMasterWalletId) {
+                        Logger.log("wallet", "Setting the network wallet as active one:", networkWallet);
+                        this.activeNetworkWallet.next(networkWallet);
+                    }
                 }
             }
         }
@@ -263,7 +273,7 @@ export class WalletService {
             network.updateSPVNetworkConfig(networkConfig, this.networkTemplate);
         }
 
-        Logger.log('wallet', "Setting network to ", this.networkTemplate, networkConfig);
+        Logger.log('wallet', "Setting network config to ", this.networkTemplate, networkConfig);
         await this.spvBridge.setNetwork(spvsdkNetwork, JSON.stringify(networkConfig));
         // await this.spvBridge.setLogLevel(WalletPlugin.LogType.DEBUG);
     }
@@ -301,6 +311,9 @@ export class WalletService {
     }
 
     public getActiveNetworkWalletIndex(): number {
+        if (!this.activeNetworkWallet.value)
+            return -1;
+
         return this.getNetworkWalletsList().findIndex(w => {
             return w.id === this.activeNetworkWallet.value.id
         });

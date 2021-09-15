@@ -2,7 +2,7 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <!-- Network name -->
-        <div class="item-label">Name</div>
+        <div class="item-label">{{ 'wallet.network-name' | translate }}</div>
         <ion-row class="item-row">
             <ion-col size="12">
                 <ion-input type="text" clearInput placeholder="My custom network" [(ngModel)]="editedNetworkEntry.name"
@@ -12,7 +12,7 @@
         </ion-row>
 
         <!-- RPC URL -->
-        <div class="item-label">RPC URL</div>
+        <div class="item-label">{{ 'wallet.network-rpc-url' | translate }}</div>
         <ion-row class="item-row">
             <ion-col size="12">
                 <ion-input type="text" clearInput placeholder="https://" [(ngModel)]="editedNetworkEntry.rpcUrl"
@@ -21,8 +21,18 @@
             </ion-col>
         </ion-row>
 
+        <!-- Account RPC URL -->
+        <div class="item-label">{{ 'wallet.network-account-rpc-url' | translate }}</div>
+        <ion-row class="item-row">
+            <ion-col size="12">
+                <ion-input type="text" clearInput placeholder="https://" [(ngModel)]="editedNetworkEntry.accountRpcUrl"
+                    name="accountRpcUrl">
+                </ion-input>
+            </ion-col>
+        </ion-row>
+
         <!-- Chain ID -->
-        <div class="item-label">Chain ID</div>
+        <div class="item-label">{{ 'wallet.network-chain-id' | translate }}</div>
         <ion-row class="item-row">
             <ion-col size="12">
                 <ion-input type="number" clearInput placeholder="128" [(ngModel)]="editedNetworkEntry.chainId"
@@ -32,7 +42,7 @@
         </ion-row>
 
         <!-- Currency symbol -->
-        <div class="item-label">Token symbol (optional)</div>
+        <div class="item-label">{{ 'wallet.network-token-symbol' | translate }}</div>
         <ion-row class="item-row">
             <ion-col size="12">
                 <ion-input type="text" clearInput placeholder="ETH" [(ngModel)]="editedNetworkEntry.mainCurrencySymbol"
@@ -41,19 +51,21 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-</ion-content>
 
-<ion-footer>
-    <ion-grid>
-        <ion-row>
-            <ion-col size="6">
-                <ion-button class="cancel" *ngIf="!editionMode" (click)="cancel()">Cancel</ion-button>
-                <ion-button class="cancel" *ngIf="editionMode" (click)="delete()">Delete</ion-button>
-            </ion-col>
-            <ion-col size="6">
-                <ion-button class="confirm" color="secondary" (click)="saveChanges()" [disabled]="!canSave()">Save
-                    changes</ion-button>
-            </ion-col>
-        </ion-row>
-    </ion-grid>
-</ion-footer>
+    <div class="footer" [class.dark-container]="theme.darkMode">
+        <ion-grid>
+            <ion-row>
+                <ion-col size="6">
+                    <ion-button class="cancel" *ngIf="!editionMode" (click)="cancel()">{{ 'common.cancel' | translate }}
+                    </ion-button>
+                    <ion-button class="cancel" *ngIf="editionMode" (click)="delete()">{{ 'common.delete' | translate }}
+                    </ion-button>
+                </ion-col>
+                <ion-col size="6">
+                    <ion-button class="confirm" color="secondary" (click)="saveChanges()" [disabled]="!canSave()">{{
+                        'common.save-changes' | translate }}</ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+</ion-content>

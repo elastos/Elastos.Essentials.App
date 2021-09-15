@@ -29,6 +29,7 @@ export const en = {
         'copy': 'Copy',
         'dismiss': 'Dismiss',
         'vote-success': 'Votes successfully casted!',
+        'save-changes': 'Save changes',
 
         // Navigation
         'settings': 'Settings',

@@ -29,6 +29,7 @@ export const fr = {
         'copy': 'Copier',
         'dismiss': 'Annuler',
         'vote-success': 'Votes sauvegardés!',
+        'save-changes': 'Enregistrer',
 
         // Navigation
         'settings': 'Paramètres',

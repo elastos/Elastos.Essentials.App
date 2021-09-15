@@ -1,12 +1,11 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ToastController, LoadingController, PopoverController } from '@ionic/angular';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
-import { SettingsWarningComponent } from '../components/warning/warning.component';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 
 // TODO: config rpc for private net?
 type privateConfig = {
@@ -17,15 +16,14 @@ type privateConfig = {
 @Injectable({
   providedIn: 'root'
 })
-export class DeveloperService extends GlobalService  {
+export class DeveloperService extends GlobalService {
   constructor(
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
-    private popoverCtrl: PopoverController,
     private zone: NgZone,
     private prefs: GlobalPreferencesService,
     private globalNetworksService: GlobalNetworksService,
-    private splashScreen: SplashScreen,
+    private globalNavService: GlobalNavService
   ) {
     super();
   }
@@ -70,7 +68,7 @@ export class DeveloperService extends GlobalService  {
       this.selectedNetworkTemplate = networkTemplate;
       await this.globalNetworksService.setActiveNetworkTemplate(networkTemplate);
 
-      void this.showRestartPrompt();
+      void this.globalNavService.showRestartPrompt();
     }
   }
 
@@ -149,7 +147,7 @@ export class DeveloperService extends GlobalService  {
           text: 'Okay',
           handler: () => {
             void toast.dismiss();
-            if(this.loadingCtrl) {
+            if (this.loadingCtrl) {
               void this.loadingCtrl.dismiss();
             }
           }
@@ -169,32 +167,5 @@ export class DeveloperService extends GlobalService  {
     });
 
     return await loader.present();
-  }
-
-  async restartApp() {
-      // navigator["app"].exitApp();
-      this.splashScreen.show();
-      await GlobalServiceManager.getInstance().emitUserSignOut();
-      window.location.href = "/";
-  }
-
-  async showRestartPrompt() {
-    this.popover = await this.popoverCtrl.create({
-        mode: 'ios',
-        cssClass: 'wallet-warning-component',
-        component: SettingsWarningComponent,
-        translucent: false,
-        backdropDismiss: false,
-    });
-
-    this.popover.onWillDismiss().then(async (params) => {
-        this.popover = null;
-
-        if (params && params.data && params.data.confirm) {
-            await this.restartApp();
-        }
-    });
-
-    return await this.popover.present();
   }
 }
