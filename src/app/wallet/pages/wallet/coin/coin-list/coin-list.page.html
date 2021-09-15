@@ -73,6 +73,7 @@
                     *ngIf="item.coin.canBeRemoved()"
                     [(ngModel)]="item.isOpen"
                     (ngModelChange)="onSelect(item)"
+                    [disabled]="clickOngoing"
                 >
                 </ion-toggle>
             </ion-col>

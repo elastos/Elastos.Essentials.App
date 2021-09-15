@@ -46,6 +46,8 @@ export class CoinListPage implements OnInit, OnDestroy {
     public SELA = Config.SELA;
     public CoinType = CoinType;
 
+    public clickOngoing = false;
+
     private updateSubscription: Subscription = null;
     private destroySubscription: Subscription = null;
     private coinAddSubscription: Subscription = null;
@@ -163,24 +165,29 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async createSubWallet(coin: Coin) {
         try {
-            void this.native.hideLoading();
-
-            // Create the sub Wallet (ex: IDChain)
-            await this.networkWallet.createNonStandardSubWallet(coin);
+          // Create the sub Wallet (ex: IDChain)
+          await this.networkWallet.createNonStandardSubWallet(coin);
+          await this.native.hideLoading();
         } catch (error) {
             this.currentCoin["open"] = false; // TODO: currentCoin type
         }
     }
 
     async destroySubWallet(coin: Coin) {
-        void this.native.hideLoading();
-
-        await this.networkWallet.removeNonStandardSubWallet(coin);
+      await this.networkWallet.removeNonStandardSubWallet(coin);
+      await this.native.hideLoading();
     }
 
-    onSelect(item: EditableCoinInfo) {
+    async onSelect(item: EditableCoinInfo) {
         Logger.log('wallet', 'Toggle triggered!', item);
-        void this.switchCoin(item, item.isOpen);
+        this.clickOngoing = true;
+        try {
+          await this.switchCoin(item, item.isOpen);
+        }
+        catch (error) {
+
+        }
+        this.clickOngoing = false;
     }
 
     getCoinTitle(item: EditableCoinInfo) {
