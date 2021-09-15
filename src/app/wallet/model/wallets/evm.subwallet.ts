@@ -304,18 +304,20 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
     }
+
     let gasLimit = gasLimitArg;
     if (gasLimit === null) {
-      gasLimit = '100000';
-    }
-    if (amount === -1) {//-1: send all.
+      // gasLimit = '100000';
       let estimateGas = await this.estimateGasForPaymentTransaction(toAddress, '0x186a0111');
       if (estimateGas === -1) {
         Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
         return null;
       }
       gasLimit = estimateGas.toString();
-      let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
+    }
+
+    if (amount === -1) {//-1: send all.
+      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
       //TODO remove Config.SELAAsBigNumber
       amount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
       if (amount <= 0) return null;
@@ -337,6 +339,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   }
 
   public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string): Promise<string> {
+    // TODO: remove it, only elastos.evm.subwallet use this api.
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
     const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);
