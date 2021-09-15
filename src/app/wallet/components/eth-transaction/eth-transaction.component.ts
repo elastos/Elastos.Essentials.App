@@ -1,11 +1,11 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ModalController } from '@ionic/angular';
+import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
-import { ModalController } from '@ionic/angular';
-import { ETHTransactionSpeedup, ETHTransactionService, ETHTransactionStatusInfo } from '../../services/ethtransaction.service';
-import BigNumber from 'bignumber.js';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ETHTransactionStatus } from '../../model/evm.types';
+import { ETHTransactionService, ETHTransactionSpeedup, ETHTransactionStatusInfo } from '../../services/ethtransaction.service';
 
 @Component({
   selector: 'app-eth-transaction',
