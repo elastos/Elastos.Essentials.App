@@ -12,7 +12,7 @@ export const en = {
         'developer-setting': 'Developer Options',
         'display-setting': 'Change Theme',
         'dev-mode': 'Developer Mode',
-        'passwordmanager-setting':'Password Manager',
+        'passwordmanager-setting': 'Password Manager',
         'wallet-setting': 'My Wallet',
         'wallet-connect-sessions-setting': 'Wallet Connect Sessions',
         'privacy-setting': 'Privacy',
@@ -34,7 +34,7 @@ export const en = {
         'dark': 'DARK',
         'light': 'LIGHT',
         'log-out': 'Log Out',
-        'help':'Help',
+        'help': 'Help',
 
         /********** About Page **********/
         'version': 'Version',
@@ -61,7 +61,7 @@ export const en = {
         'reg-net': 'Regression net',
         'priv-net': 'Private Net',
         'lrw-net': 'LongRunWeather Net',
-        'switch-network-prompt' : 'Need to restart app after switching network',
+        'restart-prompt-info': 'This operation requires to restart',
         'restart-app': 'Restart Application',
 
         /********** Wallet Connect / Sessions Page **********/
@@ -91,12 +91,12 @@ export const en = {
 
         /********** Startup Screen Page **********/
         'startupscreen': 'Startup Screen',
-        'startupscreen-home-title':'Essentials Home',
-        'startupscreen-home-description':'Default home screen with all features and widgets.',
-        'startupscreen-wallets-title':'Wallets',
-        'startupscreen-wallets-description':'Shows your active wallet by default. If assets if what matters most for you.',
-        'startupscreen-dapps-title':'DApps Portal',
-        'startupscreen-dapps-description':'You can\'t stop browsing dApps all day long? This mode is for you.',
+        'startupscreen-home-title': 'Essentials Home',
+        'startupscreen-home-description': 'Default home screen with all features and widgets.',
+        'startupscreen-wallets-title': 'Wallets',
+        'startupscreen-wallets-description': 'Shows your active wallet by default. If assets if what matters most for you.',
+        'startupscreen-dapps-title': 'DApps Portal',
+        'startupscreen-dapps-description': 'You can\'t stop browsing dApps all day long? This mode is for you.',
 
         /*********** Privacy page **********/
         'privacy': 'Privacy',

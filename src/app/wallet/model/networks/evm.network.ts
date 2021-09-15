@@ -13,13 +13,26 @@ export class EVMNetwork extends Network {
     public logo: string, // Path to the network icon
     protected mainTokenSymbol: string, // Symbol of the main EVM token: Ex: HT, BSC...
     protected mainTokenFriendlyName: string, // Ex: Huobi Token
-    public mainRpcUrlApi: string, // TODO: move into networkTemplateConfigs or flatten networkTemplateConfigs only for the active network template
-    public accountRpcUrlApi: string, // TODO: move into networkTemplateConfigs or flatten networkTemplateConfigs only for the active network template
-    networkTemplateAvailability: string, // For which network tempalte is this network available
+    public mainRpcUrlApi: string,
+    public accountRpcUrlApi: string,
+    networkTemplateAvailability: string, // For which network template is this network available
     protected chainID: number,
     protected builtInCoins?: ERC20Coin[],
   ) {
     super(key, name, logo);
+  }
+
+  /**
+   * Live update of this network instance info. Used for example when a custom network info is modified 
+   * by the user.
+   */
+  public updateInfo(name: string, chainId: number, rpcUrl: string, accountRpcUrl: string, mainCurrencySymbol: string) {
+    this.name = name;
+    this.chainID = chainId;
+    this.mainRpcUrlApi = rpcUrl;
+    this.accountRpcUrlApi = accountRpcUrl;
+    this.mainTokenFriendlyName = mainCurrencySymbol;
+    this.mainTokenSymbol = mainCurrencySymbol;
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {

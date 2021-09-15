@@ -18,6 +18,9 @@ export class CryptoNameResolver extends Resolver {
     public async resolve(name: string, subWallet: AnySubWallet): Promise<Address[]> {
         let addresses: Address[] = [];
 
+        if (!subWallet)
+            return [];
+
         // Cryptoname can resolve only from ELA mainchain
         if (subWallet.isStandardSubWallet() && subWallet.id === StandardCoinName.ELA) {
             Logger.log('wallet', "Searching name " + name + " on cryptoname...");

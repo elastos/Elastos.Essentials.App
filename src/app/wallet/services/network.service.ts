@@ -24,10 +24,26 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { Events } from 'src/app/services/events.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Network } from '../model/networks/network';
+import { Native } from './native.service';
+import { PopupProvider } from './popup.service';
 import { LocalStorage } from './storage.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
+
+export type CustomNetworkDiskEntry = {
+    key: string; // Ex: "randomKey"
+    name: string; // Ex: "My network"
+    rpcUrl: string; // Ex: "https://my.net.work/rpc"
+    accountRpcUrl: string; // Standard account/scan url to query transactions list, tokens...
+    chainId: string; // Ex: "12345"
+    networkTemplate: string; // Ex: "MainNet"
+    mainCurrencySymbol: string; // Ex: "HT"
+    colorScheme: string; // Ex: #9A67EB
+}
 
 @Injectable({
     providedIn: 'root'
@@ -36,16 +52,28 @@ export class WalletNetworkService {
     public static instance: WalletNetworkService = null;
 
     private networks: Network[] = [];
+    private customNetworkDiskEntries: CustomNetworkDiskEntry[] = [];
 
     public activeNetwork = new BehaviorSubject<Network>(null);
 
+    /** Notifies whenever the networks list changes (custom networks added/removed) */
+    public networksList = new BehaviorSubject<Network[]>([]);
+
     private priorityNetworkChangeCallback?: PriorityNetworkChangeCallback = null;
 
-    constructor(private localStorage: LocalStorage, private modalCtrl: ModalController) {
+    constructor(
+        public events: Events,
+        public native: Native,
+        public popupProvider: PopupProvider,
+        private localStorage: LocalStorage,
+        private globalStorage: GlobalStorageService,
+        private globalNavService: GlobalNavService,
+        private modalCtrl: ModalController) {
         WalletNetworkService.instance = this;
     }
 
-    public init() { }
+    public async init() {
+    }
 
     /**
      * Appends a usable network to the list. We let networks register themselves, we don't
@@ -66,6 +94,14 @@ export class WalletNetworkService {
         }
     }
 
+    /**
+     * Used to remove a custom network from the network instances, when deleting it.
+     */
+    public removeNetworkByKey(networkKey: string) {
+        this.networks.splice(this.networks.findIndex(n => n.key === networkKey), 1);
+        this.networksList.next(this.networks);
+    }
+
     public getAvailableNetworks(): Network[] {
         return this.networks;
     }
@@ -79,7 +115,7 @@ export class WalletNetworkService {
     }
 
     public resetPriorityNetworkChangeCallback() {
-      this.priorityNetworkChangeCallback = null;
+        this.priorityNetworkChangeCallback = null;
     }
 
     public async setActiveNetwork(network: Network) {

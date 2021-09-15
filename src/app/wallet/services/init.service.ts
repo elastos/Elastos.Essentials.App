@@ -25,6 +25,7 @@ import { PolygonMainNetNetwork } from '../model/networks/polygon/polygon.mainnet
 import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet.network';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
+import { CustomNetworkService } from './customnetwork.service';
 import { ETHTransactionService } from './ethtransaction.service';
 import { IntentService } from './intent.service';
 import { NameResolvingService } from './nameresolving.service';
@@ -53,6 +54,7 @@ export class WalletInitService extends GlobalService {
     private uiService: UiService,
     private nameResolvingService: NameResolvingService,
     private networkService: WalletNetworkService,
+    private customNetworkService: CustomNetworkService,
     private globalNetworksService: GlobalNetworksService,
     private ethTransactionService: ETHTransactionService,
     private httpClient: HttpClient
@@ -72,6 +74,7 @@ export class WalletInitService extends GlobalService {
 
     // Networks init + registration
     await this.networkService.init();
+    await this.customNetworkService.init();
     await this.registerNetworks();
 
     // Register name resolvers

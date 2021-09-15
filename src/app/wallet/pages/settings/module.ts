@@ -6,10 +6,12 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { CurrencySelectPage } from './currency-select/currency-select.page';
+import { CustomNetworksPage } from './custom-networks/custom-networks.page';
+import { EditCustomNetworkPage } from './edit-custom-network/edit-custom-network.page';
 import { SettingsPage } from './settings.page';
 
 @NgModule({
-    declarations: [SettingsPage, CurrencySelectPage],
+    declarations: [SettingsPage, CurrencySelectPage, CustomNetworksPage, EditCustomNetworkPage],
     imports: [
         SharedComponentsModule,
         CommonModule,
@@ -18,10 +20,12 @@ import { SettingsPage } from './settings.page';
         TranslateModule,
         RouterModule.forChild([
             { path: '', component: SettingsPage },
-            { path: 'currency-select', component: CurrencySelectPage }
+            { path: 'currency-select', component: CurrencySelectPage },
+            { path: 'custom-networks', component: CustomNetworksPage },
+            { path: 'edit-custom-network', component: EditCustomNetworkPage },
         ])
     ],
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class SettingsModule {}
+export class SettingsModule { }

@@ -1,0 +1,18 @@
+<div class="container deleteContainer" [class.darkContainer]="theme.darkMode">
+  <ion-row class="header">
+    <img src="/assets/settings/default/warning.svg">
+    <h1 class="ion-padding-horizontal ion-text-center">{{ 'settings.restart-app' | translate }}</h1>
+  </ion-row>
+  <ion-row>
+    <ion-col class="message ion-padding">
+      <p class="ion-padding">
+        {{ 'settings.restart-prompt-info' | translate }}
+      </p>
+    </ion-col>
+  </ion-row>
+  <ion-row class="btn-row">
+    <ion-button color="primary" (click)="confirm()">
+      {{ 'common.confirm' | translate }}
+    </ion-button>
+  </ion-row>
+</div>

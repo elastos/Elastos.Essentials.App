@@ -38,7 +38,7 @@ export const fr = {
         'eth-insuff-balance': 'Vous n\'avez pas suffisamment d\'ELA/ETHSC pour payer cette transaction de jetons ERC20',
         "sync-completed": "Synchr. terminée",
         "not-a-valid-address": "Adresse invalide",
-        "transaction-pending" : "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
+        "transaction-pending": "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
         "share-erc20-token": "Adresse de jeton ERC20 partagée",
 
         /************
@@ -79,6 +79,8 @@ export const fr = {
         "settings-my-wallets-subtitle": "Sauvegardez vos portefeuilles et accédez à leurs paramètres",
         "settings-currency": "Devise",
         "settings-currency-subtitle": "Selectionnez la devise à afficher",
+        "settings-custom-networks": "Réseaux Personnalisés",
+        "settings-custom-networks-subtitle": "Ajoutez et modifiez vos réseaux personnalisés ici",
 
         /***********************
         * Select-Currency Page *
@@ -210,9 +212,9 @@ export const fr = {
         /***********************************
         * Network Switch Component *
         ************************************/
-         'network-switch-component-title': 'Changement de Réseau',
-         'network-switch-component-intro': 'Pour continuer, vous devez passez sur le réseau Elastos.',
-         'network-switch-component-confirm': 'Changer le réseau',
+        'network-switch-component-title': 'Changement de Réseau',
+        'network-switch-component-intro': 'Pour continuer, vous devez passez sur le réseau Elastos.',
+        'network-switch-component-confirm': 'Changer le réseau',
 
         /************************
         * Transaction Info Page *
@@ -311,9 +313,30 @@ export const fr = {
         "coin-adderc20-name": 'Nom du jeton',
         "coin-adderc20-symbol": 'Symbole',
         "coin-adderc20-not-a-erc20-contract": "Le contenu n'est pas une adresse de jeton ERC20 valide.",
-        "coin-adderc20-invalid-contract-or-network-error" : "Le contenu n'est pas une adresse de jeton ERC20 valide, ou erreur réseau.",
+        "coin-adderc20-invalid-contract-or-network-error": "Le contenu n'est pas une adresse de jeton ERC20 valide, ou erreur réseau.",
         'coin-adderc20-alreadyadded': 'Ce jeton est déjà dans la liste',
         'coin-adderc20-not-found': 'Impossible de trouver l\'adresse du jeton.',
+
+        /***********************
+        * Custom networks Page *
+        ************************/
+        'custom-networks-title': 'Réseaux personnalisés',
+        'add-custom-network-title': 'Ajouter un réseau',
+        'edit-custom-network-title': 'Modifier un réseau',
+        'custom-networks-intro': 'Gérez vos propres réseaux compatibles EVM (Ethereum) ici.',
+        'add-custom-network': '+ Nouveau Réseau',
+        'network-name': 'Nom',
+        'network-rpc-url': 'URL RPC',
+        'network-account-rpc-url': 'URL RPC de compte (optionnel)',
+        'network-chain-id': 'ID de chaîne',
+        'network-token-symbol': 'Symbol principal (optionnel)',
+        'checking-rpc-url': 'Vérification de l\'url en cours',
+        'checking-account-rpc-url': 'Vérification de l\'url de compte en cours',
+        'wrong-rpc-url': 'L\'url fournie n\'a pas pu être contactée et est peut-être erronée. Veuillez la vérifier.',
+        'wrong-account-rpc-url': 'L\'url de compte fournie n\'a pas pu être contactée et est peut-être erronée. Veuillez la vérifier.',
+        'cant-delete-active-network': 'Le réseau actif ne peut pas être supprimé. Veuillez d\'abord choisir un autre réseau.',
+        'delete-network-prompt-title': 'Supprimer le réseau ?',
+        'delete-network-prompt-text': 'Voulez-vous vraiment supprimer ce réseau ?',
 
         /********************************************** Intent Screens ***********************************************/
 

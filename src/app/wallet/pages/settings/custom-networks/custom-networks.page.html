@@ -1,0 +1,29 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <ion-row class="main-title-row">
+            <ion-col size="12">
+                <p>{{ 'wallet.custom-networks-intro' | translate }}</p>
+            </ion-col>
+        </ion-row>
+        <ion-row class="network-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+            *ngFor="let customNetworkEntry of customNetworkEntries" (click)="editCustomNetwork(customNetworkEntry)">
+            <ion-col size="2" class="left-col">
+                <div class="logo" [style.background]="customNetworkEntry.colorScheme || '#FFFFFF'"></div>
+            </ion-col>
+            <ion-col size="8.75" class="middle-col">
+                {{ customNetworkEntry.name }}
+            </ion-col>
+            <ion-col size="1.25" class="right-col">
+                <img
+                    [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'" />
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+    </ion-grid>
+
+    <div class="footer">
+        <ion-button class="confirm" color="secondary" (click)="addCustomNetwork()">{{ 'wallet.add-custom-network' |
+            translate }}</ion-button>
+    </div>
+</ion-content>

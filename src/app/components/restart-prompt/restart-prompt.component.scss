@@ -1,0 +1,82 @@
+.container {
+  height: 302px;
+  background: #fafaff;
+  border-radius: 12px;
+
+  .header {
+    height: 112px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      margin: 5px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #161740;
+    }
+  }
+
+  .message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fafaff;
+    height: 110px;
+    overflow: hidden;
+
+    p {
+      font-size: 14px;
+      text-align: center;
+      color: #161740;
+    }
+  }
+
+  .btn-row {
+    position: absolute;
+    bottom: 25px;
+    z-index: 100;
+    width: 100%;
+    padding: 0px 20px;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      --border-radius: 8px;
+    }
+  }
+}
+
+.darkContainer {
+  background: #2b2c49;
+
+  .header {
+    h1 {
+      color: #fdfeff;
+    }
+  }
+
+  .message {
+    background: #2b2c49;
+
+    p {
+      color: #fdfeff;
+    }
+  }
+
+  .btn-row {
+    .btn {
+      ion-label {
+        color: #fdfeff;
+      }
+    }
+  }
+}
+
+.deleteContainer {
+  border: 1.2px solid #fdd034;
+}

@@ -37,7 +37,7 @@ export const zh = {
         'eth-insuff-balance': '您必须有足够的ETHSC来支付gas费，才能发送Elastos ERC20代币',
         "sync-completed": "已完成同步",
         "not-a-valid-address": "地址无效",
-        "transaction-pending" : "前一个交易正在确认中，请等待此交易确认后再执行",
+        "transaction-pending": "前一个交易正在确认中，请等待此交易确认后再执行",
         "share-erc20-token": "查看这个Elastos ERC20币种",
 
         /************
@@ -78,6 +78,8 @@ export const zh = {
         "settings-my-wallets-subtitle": "管理、备份钱包及相关设置",
         "settings-currency": "货币",
         "settings-currency-subtitle": "选择默认的货币",
+        "settings-custom-networks": "Custom Networks",
+        "settings-custom-networks-subtitle": "Add and edit your custom networks here",
 
         /***********************
         * Select-Currency Page *
@@ -209,9 +211,9 @@ export const zh = {
         /***********************************
         * Network Switch Component *
         ************************************/
-         'network-switch-component-title': '网络切换',
-         'network-switch-component-intro': '您需要将当前网络切换到Elastos网络才能执行下一步操作。',
-         'network-switch-component-confirm': '切换网络',
+        'network-switch-component-title': '网络切换',
+        'network-switch-component-intro': '您需要将当前网络切换到Elastos网络才能执行下一步操作。',
+        'network-switch-component-confirm': '切换网络',
 
         /************************
         * Transaction Info Page *
@@ -310,9 +312,30 @@ export const zh = {
         "coin-adderc20-name": '币种名称',
         "coin-adderc20-symbol": '币种符号',
         "coin-adderc20-not-a-erc20-contract": "不是有效的 ERC20 币种地址",
-        "coin-adderc20-invalid-contract-or-network-error" : "不是有效的 ERC20 币种地址 或 网络错误",
+        "coin-adderc20-invalid-contract-or-network-error": "不是有效的 ERC20 币种地址 或 网络错误",
         'coin-adderc20-alreadyadded': '币种已经添加',
         'coin-adderc20-not-found': '此币种地址未注册，请检查您输入的币种地址',
+
+        /***********************
+        * Custom networks Page *
+        ************************/
+        'custom-networks-title': 'Custom networks',
+        'add-custom-network-title': 'Add custom network',
+        'edit-custom-network-title': 'Edit custom network',
+        'custom-networks-intro': 'Manage your own EVM compatible networks.',
+        'add-custom-network': '+ Add custom network',
+        'network-name': 'Name',
+        'network-rpc-url': 'RPC URL',
+        'network-account-rpc-url': 'Account RPC URL (optional)',
+        'network-chain-id': 'Chain ID',
+        'network-token-symbol': 'Token Symbol (optional)',
+        'checking-rpc-url': 'Checking RPC URL',
+        'checking-account-rpc-url': 'Checking account RPC URL',
+        'wrong-rpc-url': 'The RPC URL could not be reached and could be wrong, please check it.',
+        'wrong-account-rpc-url': 'The account RPC URL could not be reached and could be wrong, please check it.',
+        'cant-delete-active-network': 'The active network can\'t be deleted. Please first change the current network.',
+        'delete-network-prompt-title': 'Delete network ?',
+        'delete-network-prompt-text': 'Do you really want to delete this network ?',
 
         /********************************************** Intent Screens ***********************************************/
 

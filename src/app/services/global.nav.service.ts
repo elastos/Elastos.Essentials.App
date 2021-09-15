@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { NavController } from '@ionic/angular';
-import { Logger } from '../logger';
-import { App } from "src/app/model/app.enum"
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { NavController, PopoverController } from '@ionic/angular';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
+import { App } from "src/app/model/app.enum";
+import { RestartPromptComponent } from '../components/restart-prompt/restart-prompt.component';
+import { Logger } from '../logger';
+import { GlobalServiceManager } from './global.service.manager';
 
 export enum Direction {
     NONE = "none",
@@ -32,7 +35,7 @@ type NavigationStep = {
 }
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class GlobalNavService {
 
@@ -43,7 +46,9 @@ export class GlobalNavService {
     private navigationHistory: NavigationStep[] = [];
 
     constructor(
-      private navCtrl: NavController,
+        private navCtrl: NavController,
+        private splashScreen: SplashScreen,
+        private popoverCtrl: PopoverController
     ) {
         GlobalNavService.instance = this;
     }
@@ -56,8 +61,8 @@ export class GlobalNavService {
         let route = '';
 
         // Add a default route for apps by simply giving the context
-        if(!customRoute || customRoute == null) {
-            switch(context) {
+        if (!customRoute || customRoute == null) {
+            switch (context) {
                 case App.CONTACTS:
                     route = '/contacts/friends';
                     break;
@@ -84,10 +89,10 @@ export class GlobalNavService {
             route = customRoute;
         }
 
-        Logger.log("Nav", "Setting "+context+" navigation context root to: "+route);
+        Logger.log("Nav", "Setting " + context + " navigation context root to: " + route);
 
         while (this.canGoBack()) {
-            let lastStep = this.navigationHistory[this.navigationHistory.length-1];
+            let lastStep = this.navigationHistory[this.navigationHistory.length - 1];
             if ((lastStep.context != context)) {
                 break; // Found the previous context - stop unstacking.
             }
@@ -96,7 +101,7 @@ export class GlobalNavService {
             }
         }
 
-        this.navigationHistory.push({context, route, routerOptions});
+        this.navigationHistory.push({ context, route, routerOptions });
 
         // 2021.04.15 - BPI NOTE: Even if on our side we clear the history, we have to call navigateForward()
         // in angular so that the views are not destroyed when calling intent. If we call navigateRoot(), the ionic
@@ -123,7 +128,7 @@ export class GlobalNavService {
         };
         this.navigationHistory = [];
         this.navigationHistory.push(didSessionHome);
-        return this.navCtrl.navigateRoot(didSessionHome.route, {animationDirection: 'back'});
+        return this.navCtrl.navigateRoot(didSessionHome.route, { animationDirection: 'back' });
     }
 
     /**
@@ -141,7 +146,7 @@ export class GlobalNavService {
         this.navigationHistory.push(launcherHome);
 
         if (direction != Direction.NONE) // No animation - ex for the first arrival on the launcher home
-            return this.navCtrl.navigateRoot(launcherHome.route, {animationDirection: direction});
+            return this.navCtrl.navigateRoot(launcherHome.route, { animationDirection: direction });
         else
             return this.navCtrl.navigateRoot(launcherHome.route);
     }
@@ -149,7 +154,7 @@ export class GlobalNavService {
     public navigateTo(context: string, route: string, routerOptions?: NavigationOptions): Promise<boolean> {
         Logger.log("Nav", "Navigating to", route);
 
-        this.navigationHistory.push({context, route, routerOptions});
+        this.navigationHistory.push({ context, route, routerOptions });
         return this.navCtrl.navigateForward(route, routerOptions);
     }
 
@@ -162,7 +167,7 @@ export class GlobalNavService {
             throw new Error("Unable to navigate back. No more known route in stack");
 
         this.navigationHistory.pop();
-        let previousStep = this.navigationHistory[this.navigationHistory.length-1];
+        let previousStep = this.navigationHistory[this.navigationHistory.length - 1];
 
         Logger.log("Nav", "Navigating back to", previousStep.route);
         return this.navCtrl.navigateBack(previousStep.route, previousStep.routerOptions);
@@ -183,7 +188,7 @@ export class GlobalNavService {
     public async exitCurrentContext(navigate = true): Promise<void> {
         Logger.log("Nav", "Navigating out of current context");
 
-        let currentStep = this.navigationHistory[this.navigationHistory.length-1];
+        let currentStep = this.navigationHistory[this.navigationHistory.length - 1];
         this.navigationHistory.pop();
         if (!currentStep) {
             Logger.error("Nav", "Can't get the currentStep, this.navigationHistory:", this.navigationHistory);
@@ -191,7 +196,7 @@ export class GlobalNavService {
         }
         let startContext = currentStep.context;
         while (this.canGoBack()) {
-            currentStep = this.navigationHistory[this.navigationHistory.length-1];
+            currentStep = this.navigationHistory[this.navigationHistory.length - 1];
             if (currentStep.context == startContext)
                 this.navigationHistory.pop(); // Same context, unstack the step
             else {
@@ -214,5 +219,30 @@ export class GlobalNavService {
 
     public goToLauncher(): Promise<boolean> {
         return this.navigateHome(Direction.FORWARD);
+    }
+
+    public async restartApp() {
+        // navigator["app"].exitApp();
+        this.splashScreen.show();
+        await GlobalServiceManager.getInstance().emitUserSignOut();
+        window.location.href = "/";
+    }
+
+    public async showRestartPrompt() {
+        let popover = await this.popoverCtrl.create({
+            mode: 'ios',
+            cssClass: 'wallet-warning-component',
+            component: RestartPromptComponent,
+            translucent: false,
+            backdropDismiss: false, // Can't cancel by clicking outside
+        });
+
+        void popover.onWillDismiss().then(async (params) => {
+            if (params && params.data && params.data.confirm) {
+                await this.restartApp();
+            }
+        });
+
+        return await popover.present();
     }
 }

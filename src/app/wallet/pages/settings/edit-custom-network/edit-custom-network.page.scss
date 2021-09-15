@@ -1,0 +1,51 @@
+@import "src/app/wallet/root.scss";
+
+ion-content {
+  .footer {
+    display: flex;
+    flex-direction: row !important;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .cancel {
+      --background: #fff;
+      --background-activated: #fcfcfc;
+      color: #640fd4;
+      transition: all 0.3s ease;
+    }
+  }
+
+  .dark-container.footer {
+    .cancel {
+      --background: linear-gradient(to bottom, #3c3c3c, #2c2c2c);
+      --background-activated: linear-gradient(to bottom, #4c4c4c, #2c2c2c);
+      color: #fff;
+    }
+  }
+}
+
+.container {
+  min-height: 100%;
+  padding: 20px;
+  padding-bottom: 50px; // For the footer
+
+  ion-input {
+    height: inherit;
+  }
+
+  .item-row {
+    border-radius: 7px;
+    border: solid 1px #626262;
+    margin-top: 3px;
+    margin-bottom: 30px;
+    background: #f0f1ff;
+  }
+}
+
+.dark-container {
+  .item-row {
+    background: #2c2c2c;
+  }
+}
