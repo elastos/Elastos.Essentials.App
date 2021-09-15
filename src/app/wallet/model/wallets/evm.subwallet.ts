@@ -97,7 +97,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   }
 
   public async getTransactionInfo(transaction: EthTransaction, translate: TranslateService): Promise<TransactionInfo> {
-    if (transaction.isError && transaction.isError != '0') {
+    if (!transaction.blockHash || (transaction.isError && transaction.isError != '0')) {
       return null;
     }
 
