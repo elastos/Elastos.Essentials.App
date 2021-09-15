@@ -54,9 +54,13 @@ export class EVMSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
     txListUrl += '&address=' + accountAddress;
 
     try {
+      // Logger.warn('wallet', 'fetchTransactions txListUrl:', txListUrl)
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
       let transactions = result.result as EthTransaction[];
-
+      if (!(transactions instanceof Array)) {
+        Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions)
+        return null;
+      }
       if (transactions.length < MAX_RESULTS_PER_FETCH) {
         // Got less results than expected: we are at the end of what we can fetch. remember this
         // (in memory only)
