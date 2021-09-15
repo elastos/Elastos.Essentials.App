@@ -51,7 +51,7 @@ export class EditCustomNetworkPage implements OnInit {
         if (navigation.extras.state.customNetworkKey) {
           this.editionMode = true;
 
-          this.editedNetworkEntry = this.customNetworksService.getCustomNetworkEntries().find(n => n.key === navigation.extras.state.customNetworkKey);
+          this.editedNetworkEntry = Object.assign({}, this.customNetworksService.getCustomNetworkEntries().find(n => n.key === navigation.extras.state.customNetworkKey));
 
           //this.editedNetworkEntry.rpcUrl = "https://http-mainnet.hecochain.com" // TMP TEST
           //this.editedNetworkEntry.accountRpcUrl = "https://api.hecoinfo.com" // TMP TEST
