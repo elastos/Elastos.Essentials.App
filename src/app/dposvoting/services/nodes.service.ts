@@ -272,7 +272,7 @@ export class NodesService {
                     if (node.state === 'Active') {
                         this.activeNodes.push(node);
                     }
-                    if (vote != null && vote.keys.includes(node.ownerpublickey)) {
+                    if ((vote != null) && vote.keys.includes(node.ownerpublickey) && (node.state === 'Active')) {
                         node.isChecked = true;
                     }
                     this.getNodeIcon(node);
