@@ -109,8 +109,8 @@
             <h1>{{ 'wallet.send-to' | translate }}</h1>
             <ion-row class="item-row">
                 <ion-col size="11">
-                    <ion-input type="text" clearInput placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
-                        [(ngModel)]="toAddress" name="toAddress" ngDefaultControl
+                    <ion-input type="url" clearInput placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
+                        autocomplete="off" autocorrect="off" [(ngModel)]="toAddress" name="toAddress" ngDefaultControl
                         (input)='onSendToAddressInput($event.target.value)'>
                     </ion-input>
                 </ion-col>
@@ -223,31 +223,3 @@
     </div>
 
 </ion-content>
-
-<!------------------ RECHARGE AND SEND FOOTER ------------------>
-
-<!-- <ion-footer
-    *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3"
-    class="footer ion-no-border" [class.dark-footer]="theme.darkMode"
->
-
-</ion-footer>
- -->
-<!------------------ PAY INTENT FOOTER ------------------>
-
-<!-- <ion-footer
-    class="pay-footer ion-no-border" [class.dark-pay-footer]="theme.darkMode"
-    *ngIf="transferType === 3"
->
-    <p *ngIf="valuesReady()">{{ 'insufficient-balance' | translate }}</p>
-    <ion-row class="btn-row">
-        <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
-            <ion-label>{{ 'cancel' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-        <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="goTransaction()">
-            <ion-label>{{ 'confirm' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-    </ion-row>
-</ion-footer> -->
