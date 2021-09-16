@@ -96,7 +96,7 @@ export const zh = {
       'hive-title': '为应用程序准备一些存储空间',
       'hive-intro': '正在为您随机选取一个 Elastos Hive 存储提供商并创建存储空间。稍后您也可以将数据移动到其他地方。',
       'wallet-title': '创建默认钱包',
-      'wallet-intro': '使用与您的 DID 相同的纸质密钥来创建默认钱包。您可以选择使用它或删除它。',
+      'wallet-intro': '使用与您的 DID 相同的助记词来创建默认钱包。您可以选择继续使用或删除此钱包。',
       'done-title': '全部完成！',
       'done-intro': '您的身份现在已经完全准备好了，您可以开始使用 Elastos Essentials。'
     }

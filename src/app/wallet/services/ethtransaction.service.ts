@@ -43,13 +43,16 @@ class ETHTransactionManager {
   }
 
   public async publishTransaction(subwallet: StandardEVMSubWallet, transaction: string, transfer: Transfer, showBlockingLoader = false) {
-    if (showBlockingLoader) {
-      await this.displayPublicationLoader();
-    }
-
     try {
       let result = await subwallet.signAndSendRawTransaction(transaction, transfer, false);
       Logger.log('wallet', 'publishTransaction ', result)
+      if (!result.published) {
+        return;
+      }
+
+      if (showBlockingLoader) {
+        await this.displayPublicationLoader();
+      }
       const isPublishingOnGoing = await this.CheckPublishing(result)
       if (!isPublishingOnGoing) {
         Logger.warn('wallet', 'publishTransaction error')
