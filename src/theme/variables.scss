@@ -141,6 +141,10 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
       color: #565bdb;
     }
   }
+
+  ion-slides {
+    --bullet-background: #808080;
+  }
 }
 
 /*
@@ -272,6 +276,10 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
         }
       }
     }
+  }
+
+  ion-slides {
+    --bullet-background: #F5F5FD;
   }
 }
 
