@@ -33,7 +33,7 @@ export class IntentReceiverService {
     }
 
     init() {
-        this.globalIntentService.intentListener.subscribe((receivedIntent)=>{
+        this.globalIntentService.intentListener.subscribe((receivedIntent) => {
             if (!receivedIntent)
                 return;
 
@@ -116,6 +116,17 @@ export class IntentReceiverService {
                     void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
+            case "creddelete":
+                Logger.log('identity', "Received credential delete intent request");
+                if (this.checkCredDeleteIntentParams(intent)) {
+                    await this.uxService.loadIdentityAndShow(false);
+                    void this.native.setRootRouter("/identity/intents/creddeleterequest");
+                }
+                else {
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
             case "didsign":
                 Logger.log('identity', "Received didsign intent request");
                 if (this.checkSignIntentParams(intent)) {
@@ -123,25 +134,25 @@ export class IntentReceiverService {
                     void this.native.setRootRouter("/identity/intents/signrequest");
                 }
                 else {
-                    Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
+                    Logger.error('identity', "Missing or wrong intent parameters for " + intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
                     void this.showErrorAndExitFromIntent(intent);
                 }
                 break;
             case "signdigest":
-                    Logger.log('identity', "Received didsign intent request");
-                    if (this.checkSignIntentParams(intent)) {
-                        await this.uxService.loadIdentityAndShow(false);
-                        void this.native.setRootRouter("/identity/intents/signdigest");
-                    }
-                    else {
-                        Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
+                Logger.log('identity', "Received didsign intent request");
+                if (this.checkSignIntentParams(intent)) {
+                    await this.uxService.loadIdentityAndShow(false);
+                    void this.native.setRootRouter("/identity/intents/signdigest");
+                }
+                else {
+                    Logger.error('identity', "Missing or wrong intent parameters for " + intent.action);
 
-                        // Something wrong happened while trying to handle the intent: send intent response with error
-                        void this.showErrorAndExitFromIntent(intent);
-                    }
-                    break;
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
             case 'promptpublishdid':
                 // param is not required
                 await this.uxService.loadIdentityAndShow(false);
@@ -163,7 +174,7 @@ export class IntentReceiverService {
                     void this.native.setRootRouter("/identity/intents/regappprofilerequest");
                 }
                 else {
-                    Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
+                    Logger.error('identity', "Missing or wrong intent parameters for " + intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
                     void this.showErrorAndExitFromIntent(intent);
@@ -176,7 +187,7 @@ export class IntentReceiverService {
                     void this.native.setRootRouter("/identity/intents/sethiveproviderrequest");
                 }
                 else {
-                    Logger.error('identity', "Missing or wrong intent parameters for "+intent.action);
+                    Logger.error('identity', "Missing or wrong intent parameters for " + intent.action);
 
                     // Something wrong happened while trying to handle the intent: send intent response with error
                     void this.showErrorAndExitFromIntent(intent);
@@ -206,7 +217,7 @@ export class IntentReceiverService {
 
     async showErrorAndExitFromIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
         let errorMessage = "Sorry, there are invalid parameters in the request";
-        errorMessage += "\n\n"+JSON.stringify(intent.params);
+        errorMessage += "\n\n" + JSON.stringify(intent.params);
 
         await this.popup.ionicAlert("Action error", errorMessage, this.translate.instant("common.close"));
 
@@ -274,6 +285,23 @@ export class IntentReceiverService {
 
         if (Util.isEmptyObject(intent.params.appinstancedid)) {
             Logger.error('identity', "Invalid appidcredissue parameters received. Empty appinstancedid.", intent.params);
+            return false;
+        }
+
+        this.receivedIntent = intent;
+
+        return true;
+    }
+
+    private checkCredDeleteIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking creddelete intent parameters");
+        if (Util.isEmptyObject(intent.params)) {
+            Logger.error('identity', "Invalid creddelete parameters received. Empty parameters.", intent.params);
+            return false;
+        }
+
+        if (Util.isEmptyObject(intent.params.credentialsids)) {
+            Logger.error('identity', "Invalid creddelete parameters received. Empty credentialsids.", intent.params);
             return false;
         }
 
@@ -411,7 +439,7 @@ export class IntentReceiverService {
         if (!("didrequest" in intent.params))
             return false;
 
-        let didRequest = intent.params.didrequest as {header: any, payload: any, proof: {verificationMethod: string}};
+        let didRequest = intent.params.didrequest as { header: any, payload: any, proof: { verificationMethod: string } };
         if (!("proof" in didRequest) || !("verificationMethod" in didRequest.proof))
             return false;
 
@@ -422,7 +450,7 @@ export class IntentReceiverService {
         // NOTE: wallet's didtransaction VS did's didtransaction:
         // Wallet will show the wallet confirmation screen directly, to publish with the wallet.
         // This one (did) will use the publication service current settings, possibly redirecting to the wallet
-        let didRequest = intent.params.didrequest as {header: any, payload: any, proof: {verificationMethod: string}};
+        let didRequest = intent.params.didrequest as { header: any, payload: any, proof: { verificationMethod: string } };
         let didString = didRequest.proof.verificationMethod.substring(0, didRequest.proof.verificationMethod.indexOf("#"));
         Logger.log("identity", "Asking publication manager to handle did transaction", didString, didRequest);
         await this.globalPublicationService.resetStatus();

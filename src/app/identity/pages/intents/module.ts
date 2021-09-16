@@ -8,6 +8,7 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
 import { ComponentsModule } from '../../components/components.module';
 import { AppIdCredentialIssueRequestPage } from './appidcredentialissuerequest/appidcredentialissuerequest';
 import { CredentialAccessRequestPage } from './credentialaccessrequest/credentialaccessrequest';
+import { CredentialDeleteRequestPage } from './credentialdeleterequest/credentialdeleterequest';
 import { CredentialImportRequestPage } from './credentialimportrequest/credentialimportrequest';
 import { CredentialIssueRequestPage } from './credentialissuerequest/credentialissuerequest';
 import { RegisterApplicationProfileRequestPage } from './regappprofilerequest/regappprofilerequest';
@@ -25,6 +26,7 @@ import { SignRequestPage } from './signrequest/signrequest';
         SetHiveProviderRequestPage,
         SignRequestPage,
         SignDigestPage,
+        CredentialDeleteRequestPage
     ],
     imports: [
         SharedComponentsModule,
@@ -38,6 +40,7 @@ import { SignRequestPage } from './signrequest/signrequest';
             { path: 'credaccessrequest', component: CredentialAccessRequestPage },
             { path: 'credissuerequest', component: CredentialIssueRequestPage },
             { path: 'credimportrequest', component: CredentialImportRequestPage },
+            { path: 'creddeleterequest', component: CredentialDeleteRequestPage },
             { path: 'regappprofilerequest', component: RegisterApplicationProfileRequestPage },
             { path: 'sethiveproviderrequest', component: SetHiveProviderRequestPage },
             { path: 'signrequest', component: SignRequestPage },
@@ -47,4 +50,4 @@ import { SignRequestPage } from './signrequest/signrequest';
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class IntentsModule {}
+export class IntentsModule { }

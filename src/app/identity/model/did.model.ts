@@ -1,16 +1,16 @@
-import { Profile } from './profile.model';
-import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
-import { BasicCredentialsService } from '../services/basiccredentials.service';
-import { DIDDocument } from './diddocument.model';
-import { DIDURL } from './didurl.model';
-import { DIDHelper } from '../helpers/did.helper';
-import { DIDEvents } from '../services/events';
-import { VerifiableCredential } from './verifiablecredential.model';
-import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { AvatarCredentialSubject } from './avatarcredentialsubject';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
+import { DIDHelper } from '../helpers/did.helper';
+import { BasicCredentialsService } from '../services/basiccredentials.service';
+import { DIDEvents } from '../services/events';
+import { AvatarCredentialSubject } from './avatarcredentialsubject';
+import { DIDDocument } from './diddocument.model';
+import { DIDURL } from './didurl.model';
+import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
+import { Profile } from './profile.model';
+import { VerifiableCredential } from './verifiablecredential.model';
 
 export class DID {
     public credentials: VerifiableCredential[] = [];
@@ -136,7 +136,7 @@ export class DID {
             await this.deleteCredential(new DIDURL(existingCredential.pluginVerifiableCredential.getId()), false);
         }
 
-        await this.addRawCredential(vc, false );
+        await this.addRawCredential(vc, false);
 
         if (notifyChange) {
             if (existingCredential)
@@ -151,6 +151,7 @@ export class DID {
             return null;
 
         return this.credentials.find((c) => {
+            console.log("comparing cred ids", credentialId, c.pluginVerifiableCredential.getId())
             return credentialId.matches(c.pluginVerifiableCredential.getId());
         });
     }
@@ -265,7 +266,7 @@ export class DID {
                         // For now we only know how to save base64 avatars and hive urls. Other formats are unsupported
                         let base64ImageData: string = null;
                         if (avatar.type === "elastoshive") {
-                            let avatarCacheKey = this.getDIDString()+"-avatar";
+                            let avatarCacheKey = this.getDIDString() + "-avatar";
                             let hiveAssetUrl = avatar.data;
                             //console.log("DEBUG DID MODEL avatar.data", avatar.data);
                             // Theoretically, the avatar content is already resolved when we are here. Received as raw binary picture, not base64
@@ -280,19 +281,19 @@ export class DID {
                         }
 
                         if (base64ImageData) {
-                             // Save this new avatar in the did session plugin.
-                             let signedInEntry = await this.didSessions.getSignedInIdentity();
-                             signedInEntry.avatar = {
-                                 contentType: avatar["content-type"],
-                                 base64ImageData: base64ImageData
-                             }
-                             await this.didSessions.addIdentityEntry(signedInEntry);
+                            // Save this new avatar in the did session plugin.
+                            let signedInEntry = await this.didSessions.getSignedInIdentity();
+                            signedInEntry.avatar = {
+                                contentType: avatar["content-type"],
+                                base64ImageData: base64ImageData
+                            }
+                            await this.didSessions.addIdentityEntry(signedInEntry);
 
-                             // Let listeners know
-                             DIDEvents.instance.events.publish("did:avatarchanged");
+                            // Let listeners know
+                            DIDEvents.instance.events.publish("did:avatarchanged");
                         }
                         else {
-                            Logger.warn("identity", "Avatar type "+avatar.type+" is unknown. Not applying it to DID session");
+                            Logger.warn("identity", "Avatar type " + avatar.type + " is unknown. Not applying it to DID session");
                         }
                     }
                 }

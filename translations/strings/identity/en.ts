@@ -195,6 +195,13 @@ export const en = {
         'credimport-success': 'Great, the credential has been added to your DID profile.',
         'credimport-success-done': 'Done',
 
+        // page: creddelete
+        'credential-delete': 'Delete Credentials',
+        'creddelete-intro': 'You are going to delete the following credentials from your identity. This operation cannot be reverted.',
+        'creddelete-success-title': 'Credential(s) deleted',
+        'creddelete-success': 'Credentials have been deleted from your DID profile.',
+        'creddelete-success-done': 'Done',
+
         // page: sethiveprovider
         'sethiveprovider-title': 'Register Hive Provider',
         'sethiveprovider-app-id': 'App ID:',

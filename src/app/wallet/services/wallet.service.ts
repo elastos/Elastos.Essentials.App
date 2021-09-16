@@ -430,6 +430,10 @@ export class WalletService {
         singleAddress: boolean
     ) {
         Logger.log('wallet', "Importing new master wallet with mnemonic");
+
+        if (mnemonicPassword && mnemonicPassword.length > 0)
+            Logger.log('wallet', "A passphrase is being used");
+
         await this.spvBridge.importWalletWithMnemonic(masterId, mnemonicStr, mnemonicPassword, payPassword, singleAddress);
 
         const account: WalletAccount = {

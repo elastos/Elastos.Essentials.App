@@ -5,7 +5,8 @@
     <ion-row *ngIf="getSignedInIdentity()" class="id-row">
       <ion-col size="2.75" class="left-col" (click)="showMyIdentity()">
         <ion-avatar *ngIf="!getSignedInIdentity().avatar" class="noAvatar">
-          <img [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
+          <img
+            [src]="!theme.darkMode ? 'assets/launcher/default/default-avatar.svg' : 'assets/launcher/default/darkmode/default-avatar.svg'">
         </ion-avatar>
         <ion-avatar *ngIf="getSignedInIdentity().avatar" class="hasAvatar">
           <img
@@ -55,7 +56,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="wallets-row">
+    <ion-row class="wallets-row" *ngIf="walletNetworkService.activeNetwork.value">
       <ion-col size=12>
         <ion-row class="header-row">
           <ion-col size="6" class="title-col" (click)="openWallet()">

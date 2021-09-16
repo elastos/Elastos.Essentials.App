@@ -196,6 +196,13 @@ export const zh = {
         'credimport-success': '太好了，该凭证已添加到您的DID个人资料中。',
         'credimport-success-done': '完成',
 
+        // page: creddelete
+        'credential-delete': 'Delete Credentials',
+        'creddelete-intro': 'You are going to delete the following credentials from your identity. This operation cannot be reverted.',
+        'creddelete-success-title': 'Credential(s) deleted',
+        'creddelete-success': 'Credentials have been deleted from your DID profile.',
+        'creddelete-success-done': 'Done',
+
         // page: sethiveprovider
         'sethiveprovider-title': '注册 Hive 服务',
         'sethiveprovider-app-id': '应用ID：',

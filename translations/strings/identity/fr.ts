@@ -196,6 +196,13 @@ export const fr = {
         'credimport-success': 'Les informations ont été ajoutées à votre profil DID.',
         'credimport-success-done': 'Terminer',
 
+        // page: creddelete
+        'credential-delete': 'Suppression d\'informations',
+        'creddelete-intro': 'Vous allez supprimer les informations suivantes de votre identité. Cette opération n\'est pas réversible.',
+        'creddelete-success-title': 'Informations supprimées',
+        'creddelete-success': 'Les informations ont été supprimées de votre profil DID.',
+        'creddelete-success-done': 'Terminé',
+
         // page: sethiveprovider
         'sethiveprovider-title': 'Espace de stockage Hive',
         'sethiveprovider-app-id': 'Application:',

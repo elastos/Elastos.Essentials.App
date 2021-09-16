@@ -87,6 +87,15 @@ export type CredIssueIdentityIntent = IdentityIntent<CredIssueIdentityIntentPara
 }
 
 /**
+ * Cred delete
+ */
+export type CredDeleteIdentityIntentParams = IdentityIntentParams & {
+    credentialsids: string[], // Array of Verifiable Credentials IDs to be deleted (short or long form)
+}
+export type CredDeleteIdentityIntent = IdentityIntent<CredDeleteIdentityIntentParams> & {
+}
+
+/**
  * Sign
  */
 export type SignIdentityIntentParams = IdentityIntentParams & {
