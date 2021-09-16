@@ -9,7 +9,6 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { CryptoNameResolver } from '../model/address-resolvers';
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
 import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/arbitrum.mainnet.network';
-import { ArbitrumTestNetNetwork } from '../model/networks/arbitrum/arbitrum.testnet.network';
 import { BSCMainNetNetwork } from '../model/networks/bsc/bsc.mainnet.network';
 import { BSCTestNetNetwork } from '../model/networks/bsc/bsc.testnet.network';
 import { ElastosLRWNetwork } from '../model/networks/elastos/elastos.lrw.network';
@@ -118,7 +117,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new EthereumRopstenNetwork());
         await this.createAndRegisterNetwork(new HECOTestNetNetwork());
         await this.createAndRegisterNetwork(new BSCTestNetNetwork());
-        await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
+        // await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
         await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
         return;
       case "LRW":
