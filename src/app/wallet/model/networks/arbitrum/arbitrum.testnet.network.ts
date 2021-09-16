@@ -11,7 +11,7 @@ export class ArbitrumTestNetNetwork extends EVMNetwork {
       "AETH",
       "Arbitrum ETH",
       ArbitrumAPI.getApiUrl(ArbitrumApiType.RPC, TESTNET_TEMPLATE),
-      ArbitrumAPI.getApiUrl(ArbitrumApiType.ACCOUNT_RPC, TESTNET_TEMPLATE),
+      ArbitrumAPI.getApiUrl(ArbitrumApiType.EXPLORER, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
       421611
     );

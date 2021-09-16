@@ -12,7 +12,7 @@ export class EthereumRopstenNetwork extends EVMNetwork {
       "ETH",
       "ETH",
       EthereumAPI.getApiUrl(EthereumAPIType.RPC, "ropsten"),
-      EthereumAPI.getApiUrl(EthereumAPIType.ACCOUNT_RPC, "ropsten"),
+      EthereumAPI.getApiUrl(EthereumAPIType.EXPLORER, "ropsten"),
       TESTNET_TEMPLATE,
       3
     );

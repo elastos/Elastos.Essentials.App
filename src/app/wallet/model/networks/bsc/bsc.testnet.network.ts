@@ -11,7 +11,7 @@ export class BSCTestNetNetwork extends EVMNetwork {
       "BNB",
       "Binance Coin",
       BscAPI.getApiUrl(BscApiType.RPC, TESTNET_TEMPLATE),
-      BscAPI.getApiUrl(BscApiType.ACCOUNT_RPC, TESTNET_TEMPLATE),
+      BscAPI.getApiUrl(BscApiType.EXPLORER, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
       97
     );

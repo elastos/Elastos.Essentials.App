@@ -11,7 +11,7 @@ export class ArbitrumMainNetNetwork extends EVMNetwork {
       "AETH",
       "Arbitrum ETH",
       ArbitrumAPI.getApiUrl(ArbitrumApiType.RPC, MAINNET_TEMPLATE),
-      ArbitrumAPI.getApiUrl(ArbitrumApiType.ACCOUNT_RPC, MAINNET_TEMPLATE),
+      ArbitrumAPI.getApiUrl(ArbitrumApiType.EXPLORER, MAINNET_TEMPLATE),
       MAINNET_TEMPLATE,
       42161
     );

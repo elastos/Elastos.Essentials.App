@@ -122,12 +122,12 @@ export class GlobalElastosAPIService extends GlobalService {
                         idChainRPC: 'https://api.elastos.io/did',
                         eidChainRPC: 'https://api.elastos.io/eid',
                         eidMiscRPC: 'https://api.elastos.io/eid-misc',
-                        eidBrowserRPC: 'https://eid.elastos.io',
+                        eidBrowserRPC: 'https://eid.elastos.io/api',
                         eidOracleRPC: 'https://api.elastos.io/eid-oracle',
                         escRPC: 'https://api.elastos.io/eth',
                         escMiscRPC: 'https://api.elastos.io/misc',
                         escOracleRPC: 'https://api.elastos.io/oracle',
-                        escBrowserRPC: 'https://esc.elastos.io',
+                        escBrowserRPC: 'https://esc.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "TestNet": {
@@ -135,12 +135,12 @@ export class GlobalElastosAPIService extends GlobalService {
                         idChainRPC: 'https://api-testnet.elastos.io/did',
                         eidChainRPC: 'https://api-testnet.elastos.io/eid',
                         eidMiscRPC: 'https://api-testnet.elastos.io/eid-misc',
-                        eidBrowserRPC: 'https://eid-testnet.elastos.io',
+                        eidBrowserRPC: 'https://eid-testnet.elastos.io/api',
                         eidOracleRPC: 'https://api-testnet.elastos.io/eid-oracle',
                         escRPC: 'https://api-testnet.elastos.io/eth',
                         escOracleRPC: 'https://api-testnet.elastos.io/oracle',
                         escMiscRPC: 'https://api-testnet.elastos.io/misc',
-                        escBrowserRPC: 'https://eth-testnet.elastos.io',
+                        escBrowserRPC: 'https://eth-testnet.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {
@@ -168,12 +168,12 @@ export class GlobalElastosAPIService extends GlobalService {
                         idChainRPC: 'https://api.trinity-tech.cn/did',
                         eidChainRPC: 'https://api.trinity-tech.cn/eid',
                         eidMiscRPC: 'https://api.trinity-tech.cn/eid-misc',
-                        eidBrowserRPC: 'https://eid.elastos.io',
+                        eidBrowserRPC: 'https://eid.elastos.io/api',
                         eidOracleRPC: 'https://api.trinity-tech.cn/eid-oracle',
                         escRPC: 'https://api.trinity-tech.cn/eth',
                         escOracleRPC: 'https://api.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api.trinity-tech.cn/eth-misc',
-                        escBrowserRPC: 'https://esc.trinity-tech.cn/',
+                        escBrowserRPC: 'https://esc.trinity-tech.cn/api',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "TestNet": {
@@ -181,12 +181,12 @@ export class GlobalElastosAPIService extends GlobalService {
                         idChainRPC: 'https://api-testnet.trinity-tech.cn/did',
                         eidChainRPC: 'https://api-testnet.trinity-tech.cn/eid',
                         eidMiscRPC: 'https://api-testnet.trinity-tech.cn/eid-misc',
-                        eidBrowserRPC: 'https://eid-testnet.elastos.io',
+                        eidBrowserRPC: 'https://eid-testnet.elastos.io/api',
                         eidOracleRPC: 'https://api-testnet.trinity-tech.cn/eid-oracle',
                         escRPC: 'https://api-testnet.trinity-tech.cn/eth',
                         escOracleRPC: 'https://api-testnet.trinity-tech.cn/eth-oracle',
                         escMiscRPC: 'https://api-testnet.trinity-tech.cn/eth-misc',
-                        escBrowserRPC: 'https://esc-testnet.elastos.io/',
+                        escBrowserRPC: 'https://esc-testnet.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org'
                     },
                     "LRW": {

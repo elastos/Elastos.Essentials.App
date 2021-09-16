@@ -49,7 +49,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
 
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
     const accountAddress = await this.subWallet.createAddress();
-    let txListUrl = this.accountApiUrl + '/api?module=account';
+    let txListUrl = this.accountApiUrl + '?module=account';
     txListUrl += '&action=tokentx';
     txListUrl += '&page=' + page;
     txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;
@@ -112,7 +112,7 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
   private async getERC20TokenTransferEvents(startblock: number, endblock = 9999999999): Promise<EthTokenTransaction[]> {
     let tokenSubWallet = this.subWallet;
     const address = await tokenSubWallet.getTokenAddress();
-    let tokensEventUrl = this.accountApiUrl + '/api?module=account&action=tokentx&address=' + address
+    let tokensEventUrl = this.accountApiUrl + '?module=account&action=tokentx&address=' + address
       + '&startblock=' + startblock + '&endblock=' + endblock;
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl);

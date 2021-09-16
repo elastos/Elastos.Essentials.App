@@ -12,7 +12,7 @@ export class BSCMainNetNetwork extends EVMNetwork {
       "BNB",
       "Binance Coin",
       BscAPI.getApiUrl(BscApiType.RPC, MAINNET_TEMPLATE),
-      BscAPI.getApiUrl(BscApiType.ACCOUNT_RPC, MAINNET_TEMPLATE),
+      BscAPI.getApiUrl(BscApiType.EXPLORER, MAINNET_TEMPLATE),
       MAINNET_TEMPLATE,
       56,
       [

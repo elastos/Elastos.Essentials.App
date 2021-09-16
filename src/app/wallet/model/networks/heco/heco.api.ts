@@ -13,7 +13,7 @@ export class HecoAPI {
         switch (type) {
           case HecoApiType.RPC: return 'https://http-mainnet.hecochain.com';
           case HecoApiType.BROWSER_RPC: return 'https://scan.hecochain.com';
-          case HecoApiType.ACCOUNT_RPC: return 'https://api.hecoinfo.com';
+          case HecoApiType.ACCOUNT_RPC: return 'https://api.hecoinfo.com/api';
           default:
             throw new Error("Heco API - Unknown api type " + type);
         }
@@ -21,7 +21,7 @@ export class HecoAPI {
         switch (type) {
           case HecoApiType.RPC: return 'https://http-testnet.hecochain.com';
           case HecoApiType.BROWSER_RPC: return 'https://testnet.hecoinfo.com';
-          case HecoApiType.ACCOUNT_RPC: return 'https://api-testnet.hecoinfo.com';
+          case HecoApiType.ACCOUNT_RPC: return 'https://api-testnet.hecoinfo.com/api';
           default:
             throw new Error("Heco API - Unknown api type " + type);
         }

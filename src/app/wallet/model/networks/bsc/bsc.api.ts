@@ -1,7 +1,7 @@
 import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 
 export enum BscApiType {
-  ACCOUNT_RPC,
+  EXPLORER,
   RPC
 }
 
@@ -12,16 +12,14 @@ export class BscAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case BscApiType.RPC: return 'https://bsc-dataseed.binance.org';
-          //case BscApiType.BROWSER_RPC: return 'https://bscscan.com';
-          case BscApiType.ACCOUNT_RPC: return 'https://api.bscscan.com';
+          case BscApiType.EXPLORER: return 'https://api.bscscan.com/api';
           default:
             throw new Error("Bsc API - Unknown api type " + type);
         }
       case TESTNET_TEMPLATE:
         switch (type) {
           case BscApiType.RPC: return 'https://data-seed-prebsc-1-s1.binance.org:8545';
-          // case BscApiType.BROWSER_RPC: return 'https://testnet.bscscan.com';
-          case BscApiType.ACCOUNT_RPC: return 'https://api-testnet.bscscan.com';
+          case BscApiType.EXPLORER: return 'https://api-testnet.bscscan.com/api';
           default:
             throw new Error("Bsc API - Unknown api type " + type);
         }

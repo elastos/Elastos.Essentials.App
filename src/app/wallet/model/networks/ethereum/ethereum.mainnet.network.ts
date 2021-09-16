@@ -13,7 +13,7 @@ export class EthereumMainNetNetwork extends EVMNetwork {
       "ETH",
       "ETH",
       EthereumAPI.getApiUrl(EthereumAPIType.RPC, "mainnet"),
-      EthereumAPI.getApiUrl(EthereumAPIType.ACCOUNT_RPC, "mainnet"),
+      EthereumAPI.getApiUrl(EthereumAPIType.EXPLORER, "mainnet"),
       MAINNET_TEMPLATE,
       1,
       [

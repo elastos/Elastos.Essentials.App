@@ -43,7 +43,7 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
     let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(this.subWallet.id);
     const accountApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
 
-    let txListUrl = accountApiUrl + '/api?module=account';
+    let txListUrl = accountApiUrl + '?module=account';
     txListUrl += '&action=txlist';
     txListUrl += '&page=' + page;
     txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;

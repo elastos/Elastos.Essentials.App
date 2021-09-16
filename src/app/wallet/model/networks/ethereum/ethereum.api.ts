@@ -1,6 +1,6 @@
 
 export enum EthereumAPIType {
-  ACCOUNT_RPC,
+  EXPLORER,
   RPC
 }
 
@@ -10,14 +10,14 @@ export class EthereumAPI {
       case "mainnet":
         switch (type) {
           case EthereumAPIType.RPC: return 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
-          case EthereumAPIType.ACCOUNT_RPC: return 'https://api.etherscan.io';
+          case EthereumAPIType.EXPLORER: return 'https://api.etherscan.io/api';
           default:
             throw new Error("Ethereum API - Unknown api type " + type);
         }
       case "ropsten":
         switch (type) {
           case EthereumAPIType.RPC: return 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
-          case EthereumAPIType.ACCOUNT_RPC: return 'https://api-ropsten.etherscan.io';
+          case EthereumAPIType.EXPLORER: return 'https://api-ropsten.etherscan.io/api';
           default:
             throw new Error("Ethereum API - Unknown api type " + type);
         }

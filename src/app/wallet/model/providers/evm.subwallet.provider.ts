@@ -46,7 +46,7 @@ export class EVMSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
       }
     }
 
-    let txListUrl = this.accountApiUrl + '/api?module=account';
+    let txListUrl = this.accountApiUrl + '?module=account';
     txListUrl += '&action=txlist';
     txListUrl += '&page=' + page;
     txListUrl += '&offset=' + MAX_RESULTS_PER_FETCH;

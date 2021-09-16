@@ -145,7 +145,7 @@ export class EditCustomNetworkPage implements OnInit {
           })
         };
 
-        let testCallResult = await this.http.post(this.editedNetworkEntry.accountRpcUrl + "/api", JSON.stringify({}), httpOptions).toPromise();
+        let testCallResult = await this.http.post(this.editedNetworkEntry.accountRpcUrl, JSON.stringify({}), httpOptions).toPromise();
         if (testCallResult && "status" in testCallResult)
           accountRpcUrlIsReachable = true;
       }

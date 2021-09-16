@@ -2,7 +2,7 @@ import { MAINNET_TEMPLATE, TESTNET_TEMPLATE } from "src/app/services/global.netw
 
 export enum ArbitrumApiType {
   RPC,
-  ACCOUNT_RPC
+  EXPLORER
 }
 
 export class ArbitrumAPI {
@@ -11,14 +11,14 @@ export class ArbitrumAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case ArbitrumApiType.RPC: return 'https://arb1.arbitrum.io/rpc';
-          case ArbitrumApiType.ACCOUNT_RPC: return 'https://api.arbiscan.io';
+          case ArbitrumApiType.EXPLORER: return 'https://api.arbiscan.io/api';
           default:
             throw new Error("Arbitrum API - Unknown api type " + type);
         }
       case TESTNET_TEMPLATE:
         switch (type) {
           case ArbitrumApiType.RPC: return 'TODO';
-          case ArbitrumApiType.ACCOUNT_RPC: return 'TODO';
+          case ArbitrumApiType.EXPLORER: return 'TODO';
           default:
             throw new Error("Arbitrum API - Unknown api type " + type);
         }

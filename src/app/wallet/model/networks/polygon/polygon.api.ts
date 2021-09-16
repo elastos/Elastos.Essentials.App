@@ -12,14 +12,14 @@ export class PolygonAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case PolygonAPIType.RPC: return 'https://rpc-mainnet.maticvigil.com';
-          case PolygonAPIType.ACCOUNT_RPC: return 'https://api.polygonscan.com';
+          case PolygonAPIType.ACCOUNT_RPC: return 'https://api.polygonscan.com/api';
           default:
             throw new Error("Polygon API - Unknown api type " + type);
         }
       case TESTNET_TEMPLATE:
         switch (type) {
           case PolygonAPIType.RPC: return 'https://rpc-mumbai.maticvigil.com/';
-          case PolygonAPIType.ACCOUNT_RPC: return 'https://api-testnet.polygonscan.com';
+          case PolygonAPIType.ACCOUNT_RPC: return 'https://api-testnet.polygonscan.com/api';
           default:
             throw new Error("Polygon API - Unknown api type " + type);
         }
