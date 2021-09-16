@@ -59,6 +59,15 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
 
     // Sort the cache by time value. TBD: inefficient: better to directly insert at the right index.
     this.items.sort((a, b) => {
+      // timeValue == 0: the transaction is pending, waitting for confirm.
+      if (a.timeValue === 0) {
+        return -1;
+      }
+
+      if (b.timeValue === 0) {
+        return 1;
+      }
+
       if (a.timeValue > b.timeValue)
         return -1;
       else if (a.timeValue < b.timeValue)
