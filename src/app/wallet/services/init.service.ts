@@ -136,6 +136,7 @@ export class WalletInitService extends GlobalService {
     this.currencyService.stop();
     await this.walletManager.stop();
     await this.intentService.stop();
+    this.networkService.stop();
 
     if (this.subscription) {
       this.subscription.unsubscribe();

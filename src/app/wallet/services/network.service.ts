@@ -45,7 +45,13 @@ export class WalletNetworkService {
         WalletNetworkService.instance = this;
     }
 
-    public init() { }
+    public init() {
+      this.networks = [];
+    }
+
+    public stop() {
+      this.networks = [];
+    }
 
     /**
      * Appends a usable network to the list. We let networks register themselves, we don't
