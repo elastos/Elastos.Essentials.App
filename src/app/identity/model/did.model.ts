@@ -151,7 +151,6 @@ export class DID {
             return null;
 
         return this.credentials.find((c) => {
-            console.log("comparing cred ids", credentialId, c.pluginVerifiableCredential.getId())
             return credentialId.matches(c.pluginVerifiableCredential.getId());
         });
     }
