@@ -21,12 +21,9 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ModalController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { Network } from '../model/networks/network';
 import { Native } from './native.service';
 import { PopupProvider } from './popup.service';
@@ -65,14 +62,17 @@ export class WalletNetworkService {
         public events: Events,
         public native: Native,
         public popupProvider: PopupProvider,
-        private localStorage: LocalStorage,
-        private globalStorage: GlobalStorageService,
-        private globalNavService: GlobalNavService,
-        private modalCtrl: ModalController) {
+        private localStorage: LocalStorage)
+    {
         WalletNetworkService.instance = this;
     }
 
-    public async init() {
+    public init() {
+      this.networks = [];
+    }
+
+    public stop() {
+      this.networks = [];
     }
 
     /**
