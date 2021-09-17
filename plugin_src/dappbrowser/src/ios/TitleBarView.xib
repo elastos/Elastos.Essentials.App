@@ -12,7 +12,6 @@
                 <outlet property="btnInnerLeft" destination="eIU-Zx-Lj2" id="5Ic-FY-NYx"/>
                 <outlet property="btnOuterLeft" destination="NUJ-Jq-dWa" id="MWy-0D-Njh"/>
                 <outlet property="btnOuterRight" destination="9FO-hv-pCX" id="Mmb-At-8yv"/>
-                <outlet property="progressBar" destination="Yy9-op-ntE" id="5mh-Fe-mlh"/>
                 <outlet property="rootView" destination="iN0-l3-epB" id="3ly-uo-tmT"/>
                 <outlet property="titleLabel" destination="QgE-ZC-TrP" id="K05-2z-IfR"/>
                 <outlet property="txtUrl" destination="pT3-8g-BoB" id="PrL-gs-hWS"/>
@@ -57,26 +56,20 @@
                     <rect key="frame" x="333" y="0.0" width="50" height="50"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
-                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Yy9-op-ntE">
-                    <rect key="frame" x="0.0" y="46" width="392" height="4"/>
-                </progressView>
             </subviews>
             <color key="backgroundColor" red="0.28235294117647058" green="0.31372549019607843" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="gMt-fa-WuX" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="4iv-5f-VOg"/>
                 <constraint firstItem="pT3-8g-BoB" firstAttribute="leading" secondItem="eIU-Zx-Lj2" secondAttribute="trailing" constant="5" id="9YB-Zd-P8e"/>
-                <constraint firstItem="Yy9-op-ntE" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="FN5-RK-Jnz"/>
                 <constraint firstItem="gMt-fa-WuX" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="KwU-1k-B8c"/>
                 <constraint firstItem="QgE-ZC-TrP" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="LcP-GB-N1P"/>
                 <constraint firstItem="QgE-ZC-TrP" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="M9q-Yy-kAY"/>
                 <constraint firstItem="gMt-fa-WuX" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="5" id="TyE-aP-sW6"/>
-                <constraint firstItem="Yy9-op-ntE" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="Val-i6-CoL"/>
                 <constraint firstItem="9FO-hv-pCX" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" constant="-5" id="a2a-9e-K75"/>
                 <constraint firstItem="9FO-hv-pCX" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="gli-kD-eKS"/>
                 <constraint firstItem="pT3-8g-BoB" firstAttribute="trailing" secondItem="9FO-hv-pCX" secondAttribute="leading" constant="-5" id="nCH-Z6-EOs"/>
                 <constraint firstItem="pT3-8g-BoB" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="rpv-WS-wLg"/>
-                <constraint firstItem="Yy9-op-ntE" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="tb1-45-k4l"/>
                 <constraint firstItem="QgE-ZC-TrP" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="vIz-hT-SYn"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>

@@ -24,57 +24,42 @@ import UIKit
 import SwiftJWT
 
 @objc(DappViewController)
- class DappViewController : CDVViewController, TitleBarColorChangedListener {
+class DappViewController : UIViewController {
+    
     var modeExt: String? = nil;
     var userDefinedOrientation: UIInterfaceOrientation = .portrait
 
     @IBOutlet weak var titlebarContainer: UIView!
     @IBOutlet weak var webContainer: UIView!
     var titlebar: TitleBarView!
+    var webView: WKWebView!
     var webOriginFrame: CGRect?;
     var webLayoutView: UIView?;
 
+    var webViewHandler: WebViewHandler!
+
     @IBOutlet weak var titlebarHeightConstraint: NSLayoutConstraint!
 
-    convenience init() {
+    convenience init(_ webViewHandler: WebViewHandler) {
         self.init();
 
         // Apply theming for native popups
-        let darkMode = false;
-        UIStyling.prepare(useDarkMode: darkMode)
+//        let darkMode = false;
+//        UIStyling.prepare(useDarkMode: darkMode)
+
+        self.webViewHandler = webViewHandler;
     }
 
-    func onTitleBarColorChangedListener(backgroundColor: String, useLightContent: Bool) {
-        self.updateStatusBarBackgroundColor(backgroundColor: backgroundColor)
-        // AppManager.getShareInstance().mainViewController.notifyTitleBarColorChanged(useLightContent: useLightContent)
-    }
 
     override func loadView() {
         super.loadView()
         if let nib = Bundle.main.loadNibNamed("DappViewController", owner: self),
             let nibView = nib.first as? UIView {
             view = nibView
-            webOriginFrame = webContainer.frame;
-        }
-    }
-
-
-    override func newCordovaView(withFrame bounds: CGRect) ->UIView {
-        titlebar = TitleBarView(frame: titlebarContainer.frame)
-        titlebarContainer.addSubview(titlebar!)
-        self.addMatchParentConstraints(view: titlebar, parent: titlebarContainer)
-
-        titlebar.addColorChangedListener(self)
-
-        let webview = super.newCordovaView(withFrame: CGRect())
-        if (webview != nil) {
-            webContainer.addSubview(webview!)
-            self.addMatchParentConstraints(view: webview!, parent: webContainer)
         }
 
-        return webContainer
     }
-
+    
     func addMatchParentConstraints(view: UIView, parent: UIView) {
         parent.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: parent, attribute: .top, multiplier: 1.0, constant: 0.0))
         parent.addConstraint(NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: parent, attribute: .leading, multiplier: 1.0, constant: 0.0))
@@ -84,40 +69,23 @@ import SwiftJWT
         view.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    // func addSwipe(_ direction: UInt) {
-    //     let swipe = UISwipeGestureRecognizer(target:self, action:#selector(handleSwipes(_:)));
-    //     swipe.direction = UISwipeGestureRecognizer.Direction(rawValue: direction);
-    //     self.webView.addGestureRecognizer(swipe);
-    //     self.webView.scrollView.panGestureRecognizer.require(toFail: swipe);
-    // }
-
-    // @objc func handleSwipes(_ recognizer:UISwipeGestureRecognizer){
-    //     if (recognizer.direction == UISwipeGestureRecognizer.Direction.right) {
-    //         // BPI REMOVED titlebar!.clickBack();
-    //     }
-    //     else {
-    //         if titlebarHeightConstraint.constant == 0.0 {
-    //             // Show the hidden title bar and move the web container down
-    //             UIView.animate(withDuration: 0.3, animations: {
-    //                 self.titlebarHeightConstraint.constant = 45.0
-    //                 self.view.layoutIfNeeded()
-    //             }, completion: { _ in
-    //                 self.titlebarContainer.isHidden = false
-    //             })
-    //         }
-    //         else {
-    //             // Hide the visible title bar and move the web container up
-    //             titlebarContainer.isHidden = true
-    //             UIView.animate(withDuration: 0.3, animations: {
-    //                 self.titlebarHeightConstraint.constant = 0.0
-    //                 self.view.layoutIfNeeded()
-    //             })
-    //         }
-    //     }
-    // }
-
     override func viewDidLoad() {
         super.viewDidLoad();
+        
+        let a = self.view.frame;
+        let b = self.webViewHandler.getViewController().view.frame;
+        
+        
+        //Add titlebar
+        titlebar = TitleBarView(titlebarContainer.frame, self)
+        titlebarContainer.addSubview(titlebar!)
+        self.addMatchParentConstraints(view: titlebar, parent: titlebarContainer)
+        
+        //Add webview
+        let webView = self.webViewHandler.createViews(self.webContainer);
+        if (webView != nil) {
+            self.addMatchParentConstraints(view: webView!, parent: webContainer)
+        }
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -128,45 +96,21 @@ import SwiftJWT
         view.backgroundColor = UIColor.init(hex: backgroundColor)
     }
 
-    @objc func getTitlebar() -> TitleBarView {
-        return self.titlebar;
-    }
-
-    // func loadUrl(_ url: URL) {
-    //     //TODO:: it isn't work
-    //     self.webViewEngine.load(URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 20.0));
-    // }
-
-    func setReady() {
-
-    }
-
-    func isNativeApp() -> Bool {
-        return false;
-    }
-
-    public func saveCurrentOrientation(requestedOrientation: UIInterfaceOrientation) {
-        self.userDefinedOrientation = requestedOrientation
-    }
-
-    public func getCurrentOrientation() -> UIInterfaceOrientation {
-        return self.userDefinedOrientation
-    }
-
-//    public func saveCurrentScreenMode(screenMode: ScreenMode) {
-//        self.userDefinedScreenMode = screenMode
-//    }
-//
-//    public func getCurrentScreenMode() -> ScreenMode {
-//        return self.userDefinedScreenMode
-//    }
-
     public func setTitleBarVisibility(_ titleBarVisibility: TitleBarVisibility) {
         if titleBarVisibility == .visible {
-            self.titlebarHeightConstraint.constant = 48.0
+            self.titlebarHeightConstraint.constant = 50.0
         }
         else {
             self.titlebarHeightConstraint.constant = 0.0
         }
     }
+    
+    public func close(_ exitMode: String? = nil) {
+        self.webViewHandler.browserExit(exitMode);
+        
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
  }
+ 

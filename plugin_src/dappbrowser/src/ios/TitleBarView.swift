@@ -194,8 +194,7 @@ private class WeakListener {
 @objc(TitleBarView)
 class TitleBarView: UIToolbar, UITextFieldDelegate {
     // Model
-    weak var viewController: CDVWKInAppBrowserViewController?
-    weak var inAppBrowser: CDVWKInAppBrowser? = CDVWKInAppBrowser.getInstance() as? CDVWKInAppBrowser;
+    weak var viewController: DappViewController!
 
     var appId: String?
     var isLauncher = false
@@ -234,10 +233,10 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
     var gradientLayer: CAGradientLayer? = nil
     var darkMode: Bool = false;
 
-    init(_ frame: CGRect, _ appId: String) {
+    init(_ frame: CGRect, _ viewController: DappViewController) {
         super.init(frame: frame)
 
-        self.appId = appId
+        self.viewController = viewController;
 
         let view = loadViewFromNib();
 
@@ -277,7 +276,7 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         txtUrl.clearButtonMode = .whileEditing
 
         // progressBar.frame.size.height = 2;
-        progressBar.progressTintColor = UIColor.systemBlue;
+//        progressBar.progressTintColor = UIColor.systemBlue;
 //        progressBar.trackTintColor = UIColor.white;
 
 //        txtUrl.layer.borderWidth = 5.0;
@@ -286,9 +285,9 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         updateIcons()
     }
 
-    @objc override convenience init(frame: CGRect) {
-        self.init(frame, "")
-    }
+//    @objc override convenience init(frame: CGRect) {
+//        self.init(frame, nil)
+//    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -298,12 +297,12 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
         textField.resignFirstResponder()
         let url = URL(string: textField.text ?? "")
         if (url != nil) {
-            self.viewController?.navigate(to: url);
+            self.viewController.webViewHandler.navigate(to: url!);
         }
         return true
     }
 
-    @objc public func setViewController(_ viewController: CDVWKInAppBrowserViewController) {
+    @objc public func setViewController(_ viewController: DappViewController) {
         self.viewController = viewController;
     }
 
@@ -355,19 +354,19 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
     }
 
     private func goToLauncher() {
-        inAppBrowser!.setExitMode("goToLauncher");
-        self.viewController?.close();
+//        inAppBrowser!.setExitMode("goToLauncher");
+        self.viewController?.close("goToLauncher");
     }
 
-    private func toggleMenu() {
-        let menuView = TitleBarMenuView(titleBar: self, frame: CGRect.null, appId: appId!, menuItems: menuItems)
-
-        menuView.setOnMenuItemClickedListened() { menuItem in
-            self.handleIconClicked(icon: menuItem)
-        }
-
-        menuView.show(inRootView: self.viewController!.view)
-    }
+//    private func toggleMenu() {
+//        let menuView = TitleBarMenuView(titleBar: self, frame: CGRect.null, appId: appId!, menuItems: menuItems)
+//
+//        menuView.setOnMenuItemClickedListened() { menuItem in
+//            self.handleIconClicked(icon: menuItem)
+//        }
+//
+//        menuView.show(inRootView: self.viewController!.view)
+//    }
 
     public func showActivityIndicator(activityType: TitleBarActivityType, hintText: String?) {
 //        // Don't show activity indicators on ios/itunes
@@ -689,33 +688,16 @@ class TitleBarView: UIToolbar, UITextFieldDelegate {
     }
 
     private func handleOuterLeftClicked() {
-        if (currentNavigationIconIsVisible) {
-            // Action handled by runtime: minimize, or close
-            if (currentNavigationMode == .CLOSE) {
-                closeApp()
-            }
-            else {
-                // Default: HOME
-                goToLauncher()
-            }
-        }
-        else {
-            // Action handled by the app
-            handleIconClicked(icon: outerLeftIcon!)
-        }
+        // Default: HOME
+        goToLauncher()
     }
 
     private func handleInnerLeftClicked() {
-        if (currentNavigationIconIsVisible) {
-            if (self.viewController!.webView.canGoBack) {
-                self.viewController!.webView.goBack();
-            }
-            else {
-                closeApp();
-            }
+        if (self.viewController!.webView != nil && self.viewController!.webView.canGoBack) {
+            self.viewController!.webView.goBack();
         }
         else {
-            handleIconClicked(icon: innerLeftIcon!)
+            self.viewController?.close();
         }
     }
 

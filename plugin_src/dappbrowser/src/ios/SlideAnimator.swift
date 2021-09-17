@@ -33,6 +33,15 @@ class SlideAnimator: NSObject , UIViewControllerAnimatedTransitioning {
 
     let duration = 0.2
     var animationType: AnimationType?
+    
+    static var instance: SlideAnimator?;
+    
+    static func getInstance() -> SlideAnimator {
+        if (instance == nil) {
+            instance = SlideAnimator();
+        }
+        return instance!;
+    }
 
 
     @objc func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -41,30 +50,32 @@ class SlideAnimator: NSObject , UIViewControllerAnimatedTransitioning {
 
     @objc func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 
-        guard let _ = transitionContext.viewController(forKey: .from),
+        guard let fromVC = transitionContext.viewController(forKey: .from),
             let toVC = transitionContext.viewController(forKey: .to) else {
                 return
         }
 
         //
         var fromX: CGFloat, toX: CGFloat;
+        var animatorVC: UIViewController;
         if (animationType == .present) {
             fromX = UIScreen.main.bounds.size.width;
             toX = 0;
+            animatorVC = toVC;
         }
         else {
             fromX = 0;
             toX = UIScreen.main.bounds.size.width;
+            animatorVC = fromVC;
         }
 
-
         let containerView = transitionContext.containerView
-        containerView.addSubview(toVC.view)
+        containerView.addSubview(animatorVC.view)
         let duration = transitionDuration(using: transitionContext)
-        toVC.view.frame.origin.x =  fromX;
+        animatorVC.view.frame.origin.x =  fromX;
 
         UIView.animate(withDuration: duration, animations: {
-            toVC.view.frame.origin.x = toX;
+            animatorVC.view.frame.origin.x = toX;
         }) { (_) in
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
@@ -80,13 +91,8 @@ extension SlideAnimator: UIViewControllerTransitioningDelegate {
    }
 
     @objc func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-       self.animationType = AnimationType.dismiss
-       return self
-   }
-
-    @objc func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        self.transitionType = .navigation(operation)
+        self.animationType = AnimationType.dismiss;
         return self
-    }
+   }
 
 }

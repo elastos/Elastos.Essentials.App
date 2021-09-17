@@ -12,7 +12,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DappViewController">
             <connections>
                 <outlet property="titlebarContainer" destination="VbX-ux-MTA" id="Qz0-PN-tej"/>
-                <outlet property="titlebarHeightConstraint" destination="Q7i-Vt-LbD" id="NtH-xN-Md1"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
                 <outlet property="webContainer" destination="EJj-4f-Hee" id="QMR-kX-uUP"/>
             </connections>
@@ -22,14 +21,11 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VbX-ux-MTA">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="48"/>
+                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VbX-ux-MTA" userLabel="TitlebarContainer">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                     <color key="backgroundColor" systemColor="systemYellowColor"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="48" id="Q7i-Vt-LbD"/>
-                    </constraints>
                 </view>
-                <view contentMode="scaleToFill" restorationIdentifier="webKitView" translatesAutoresizingMaskIntoConstraints="NO" id="EJj-4f-Hee">
+                <view contentMode="scaleToFill" ambiguous="YES" restorationIdentifier="webKitView" translatesAutoresizingMaskIntoConstraints="NO" id="EJj-4f-Hee" userLabel="WebContainer">
                     <rect key="frame" x="0.0" y="48" width="375" height="619"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <accessibility key="accessibilityConfiguration" label="9:07">
