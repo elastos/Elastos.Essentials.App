@@ -408,7 +408,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     return -1;
   }
 
-  public async estimateGas(tx) {
+  public async estimateGas(tx): Promise<number> {
     let gasLimit= await this.web3.eth.estimateGas(tx);
     return gasLimit;
   }

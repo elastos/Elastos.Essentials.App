@@ -120,7 +120,8 @@ export class EscTransactionPage implements OnInit {
         to: this.coinTransferService.payloadParam.to
       }
       try {
-        this.gasLimit = await this.evmSubWallet.estimateGas(tx);
+        const gasLimit = await this.evmSubWallet.estimateGas(tx);
+        this.gasLimit = gasLimit.toString();
       }
       catch (err) {
         Logger.log("wallet", "Can not estimate the gaslimit, set default value 3000000");
