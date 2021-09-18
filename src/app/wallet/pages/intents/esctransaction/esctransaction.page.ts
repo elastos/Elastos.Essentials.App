@@ -104,13 +104,29 @@ export class EscTransactionPage implements OnInit {
     this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
+    await this.evmSubWallet.updateBalance()
     this.balance = await this.evmSubWallet.getDisplayBalance();
     this.gasPrice = this.coinTransferService.payloadParam.gasPrice;
     if (!this.gasPrice) {
       this.gasPrice = await this.evmSubWallet.getGasPrice();
     }
 
-    this.gasLimit = this.coinTransferService.payloadParam.gas || '200000';
+    if (this.coinTransferService.payloadParam.gas) {
+      this.gasLimit = this.coinTransferService.payloadParam.gas;
+    } else {
+      let tx = {
+        data: this.coinTransferService.payloadParam.data,
+        value: this.coinTransferService.payloadParam.value || "0",
+        to: this.coinTransferService.payloadParam.to
+      }
+      try {
+        this.gasLimit = await this.evmSubWallet.estimateGas(tx);
+      }
+      catch (err) {
+        Logger.log("wallet", "Can not estimate the gaslimit, set default value 3000000");
+        this.gasLimit = '3000000';
+      }
+    }
 
     Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
 

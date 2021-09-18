@@ -408,6 +408,11 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     return -1;
   }
 
+  public async estimateGas(tx) {
+    let gasLimit= await this.web3.eth.estimateGas(tx);
+    return gasLimit;
+  }
+
   // value is hexadecimal string, eg: "0x1000"
   private async estimateGasForPaymentTransaction(to: string, value: string) {
     try {
