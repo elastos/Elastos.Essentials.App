@@ -58,7 +58,7 @@ export class HomePage implements InAppBrowserClient {
             icon: '/assets/browser/dapps/creda.png',
             title: 'CreDa',
             description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
-            url: 'https://beta.creda.app/'
+            url: 'https://creda.app/'
         },
         {
             icon: '/assets/browser/dapps/cryptoname.png',
@@ -125,7 +125,7 @@ export class HomePage implements InAppBrowserClient {
     }
 
     public browserCredaTest() {
-      let browser = DAppBrowser.open("https://beta.creda.app", this.iab, this.httpClient);
+      let browser = DAppBrowser.open("https://creda.app", this.iab, this.httpClient);
     }
 
     public browserElavateTest() {
