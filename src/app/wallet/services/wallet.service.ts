@@ -124,6 +124,7 @@ export class WalletService {
     async init() {
         Logger.log('wallet', "Master manager is initializing");
         this.masterWallets = {};
+        this.networkWallets = {};
 
         this.spvBridge = new SPVWalletPluginBridge(this.native, this.events, this.popupProvider);
 
@@ -157,6 +158,9 @@ export class WalletService {
         await this.terminateActiveNetworkWallets();
 
         this.networkService.resetPriorityNetworkChangeCallback();
+
+        this.masterWallets = {};
+        this.networkWallets = {};
     }
 
     private async initWallets(): Promise<boolean> {
