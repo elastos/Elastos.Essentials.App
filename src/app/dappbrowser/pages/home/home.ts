@@ -82,6 +82,15 @@ export class HomePage implements InAppBrowserClient {
     }
 
     ionViewWillEnter() {
+      this.setTheme(this.theme.darkMode)
+    }
+
+    public setTheme(darkMode: boolean) {
+      if (darkMode) {
+        document.body.classList.add("dark");
+      } else {
+        document.body.classList.remove("dark");
+      }
     }
 
     ionViewDidEnter() {
