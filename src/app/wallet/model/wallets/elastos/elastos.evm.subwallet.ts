@@ -18,6 +18,9 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
     super(networkWallet, id, rpcApiUrl, ElastosEVMSubWallet.getFriendlyName(id));
 
     void this.initialize();
+
+    this.tokenDecimals = 18;
+    this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
   }
 
   public supportsCrossChainTransfers(): boolean {
@@ -232,8 +235,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
       gasLimit = estimateGas.toString();
 
       let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
-      //TODO remove Config.SELAAsBigNumber
-      toAmount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
+      toAmount = this.balance.minus(fee).toNumber();
       if (toAmount <= 0) return null;
     }
 

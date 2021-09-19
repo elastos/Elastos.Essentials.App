@@ -56,7 +56,7 @@ export class HomePage implements InAppBrowserClient {
         },
         {
             icon: '/assets/browser/dapps/creda.png',
-            title: 'CreDa',
+            title: 'CreDA',
             description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
             url: 'https://creda.app/'
         },

@@ -46,12 +46,6 @@ export class ElastosTransactionProvider extends TransactionProvider<ElastosTrans
     this.tokenProvider = new ElastosTokenSubWalletProvider(this, this.escSubWallet);
     await this.tokenProvider.initialize();
 
-    //this.refreshEvery(() => this.mainChainProvider.fetchTransactions(), 30000);
-    // TODO this.idChainProvider.fetchTransactions(),
-    //this.refreshEvery(() => this.escProvider.fetchTransactions(), 30000);
-    //this.refreshEvery(() => this.eidProvider.fetchTransactions(), 30000);
-    //this.refreshEvery(() => this.tokenProvider.fetchTransactions(), 30000);
-
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
     this.refreshEvery(() => this.tokenProvider.discoverTokens(), 30000);

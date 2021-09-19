@@ -1,45 +1,44 @@
-import { ErrorHandler, Injectable, NgModule } from '@angular/core';
-import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
+import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, Injectable, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
-
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { RouteReuseStrategy } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { IonicStorageModule } from '@ionic/storage';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { iosTransitionAnimation } from '@ionic/core/dist/collection/utils/transition/ios.transition';
-
-import { AppComponent } from './app.component';
-import { LauncherModule } from './launcher/module';
-import { AppRoutingModule } from './app-routing.module';
-import { SharedComponentsModule } from './components/sharedcomponents.module';
-import { BrowserModule } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { IonicStorageModule } from '@ionic/storage';
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import * as Sentry from '@sentry/browser';
+import { Integrations } from '@sentry/tracing';
+import { Observable } from 'rxjs';
 import { TranslationsLoader } from 'src/translationsloader';
-import { Logger } from './logger';
-import { WalletInitModule } from './wallet/init.module';
-import { HiveManagerInitModule } from './hivemanager/init.module';
-import { IdentityInitModule } from './identity/init.module';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { SharedComponentsModule } from './components/sharedcomponents.module';
 import { ContactsInitModule } from './contacts/init.module';
-import { DIDSessionsInitModule } from './didsessions/init.module';
-import { ScannerInitModule } from './scanner/init.module';
+import { CRCouncilManagerInitModule } from './crcouncilmanager/init.module';
 import { CRCouncilVotingInitModule } from './crcouncilvoting/init.module';
 import { CRProposalVotingInitModule } from './crproposalvoting/init.module';
-import { SettingsInitModule } from './settings/init.module';
-import { DPoSVotingInitModule } from './dposvoting/init.module';
 import { DeveloperToolsInitModule } from './developertools/init.module';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-
-import * as Sentry from '@sentry/browser';
-import { Integrations }  from '@sentry/tracing';
-import { GlobalNativeService } from './services/global.native.service';
+import { DIDSessionsInitModule } from './didsessions/init.module';
 import { DPoSRegistrationInitModule } from './dposregistration/init.module';
-import { CRCouncilManagerInitModule } from './crcouncilmanager/init.module';
+import { DPoSVotingInitModule } from './dposvoting/init.module';
+import { HiveManagerInitModule } from './hivemanager/init.module';
+import { IdentityInitModule } from './identity/init.module';
+import { LauncherModule } from './launcher/module';
+import { Logger } from './logger';
+import { ScannerInitModule } from './scanner/init.module';
+import { GlobalNativeService } from './services/global.native.service';
+import { SettingsInitModule } from './settings/init.module';
+import { WalletInitModule } from './wallet/init.module';
+
+
+
 
 
 Sentry.init({

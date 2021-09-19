@@ -33,7 +33,6 @@ export class Config {
     public static SELAAsBigNumber = new BigNumber(Config.SELA);
 
     public static WEI = 1000000000000000000; // 10 ^ 18
-    public static WEIAsBigNumber = new BigNumber(Config.WEI);
 
     public static IDCHAIN_URL = 'https://idchain.elastos.org/';
     public static BLOCKCHAIN_URL = 'https://blockchain.elastos.org/';

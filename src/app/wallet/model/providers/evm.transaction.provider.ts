@@ -26,8 +26,6 @@ export class EVMTransactionProvider extends TransactionProvider<EthTransaction> 
     this.tokenProvider = this.createEVMTokenSubWalletProvider();
     await this.tokenProvider.initialize();
 
-    //this.refreshEvery(() => this.mainProvider.fetchTransactions(), 30000);
-
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
     this.refreshEvery(() => this.tokenProvider.fetchAllTokensTransactions(), 30000);

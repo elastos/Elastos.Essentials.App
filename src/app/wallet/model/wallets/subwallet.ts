@@ -36,6 +36,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public masterWallet: MasterWallet;
   public id: CoinID = null;
   public tokenDecimals: number;
+  public tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
   public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
   public lastBlockTime: string = null;
 

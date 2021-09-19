@@ -39,6 +39,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         super(networkWallet, id);
 
         this.tokenDecimals = 8;
+        this.tokenAmountMulipleTimes = Config.SELAAsBigNumber;
     }
 
     public supportsCrossChainTransfers(): boolean {
@@ -65,7 +66,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         const datetime = timestamp === 0 ? translate.instant('wallet.coin-transaction-status-pending') : moment(new Date(timestamp)).startOf('minutes').fromNow();
 
         let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction, translate);
-        transactionInfo.amount = new BigNumber(transaction.value, 10), //.dividedBy(Config.SELAAsBigNumber);
+        transactionInfo.amount = new BigNumber(transaction.value, 10),
             transactionInfo.symbol = '';
         transactionInfo.isCrossChain = false;
         transactionInfo.txid = transaction.txid;
@@ -637,7 +638,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      *
      * @param amountSELA SELA
      */
-    private async getAvailableUtxo(amountSELA: number) {
+    protected async getAvailableUtxo(amountSELA: number) {
         let utxoArray: Utxo[] = null;
         if (this.id === StandardCoinName.ELA) {
             await this.getVotingUtxoByRPC();
@@ -892,7 +893,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             try {
                 const resultArray = await GlobalJsonRPCService.instance.httpPost(rpcApiUrl, paramArray);
                 for (const result of resultArray) {
-                    balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(Config.SELAAsBigNumber));
+                    balanceOfSELA = balanceOfSELA.plus(new BigNumber(result.result).multipliedBy(this.tokenAmountMulipleTimes));
                 }
                 alreadyGetBalance = true;
                 break;

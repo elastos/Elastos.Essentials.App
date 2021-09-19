@@ -560,7 +560,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.elastosChainCode === StandardCoinName.ELA || this.elastosChainCode === StandardCoinName.IDChain) {
             const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.elastosChainCode] as MainAndIDChainSubWallet;
             const isAvailableBalanceEnough =
-                await mainAndIDChainSubWallet.isAvailableBalanceEnough(new BigNumber(this.amount).multipliedBy(Config.SELAAsBigNumber));
+                await mainAndIDChainSubWallet.isAvailableBalanceEnough(new BigNumber(this.amount).multipliedBy(mainAndIDChainSubWallet.tokenAmountMulipleTimes));
 
             if (!isAvailableBalanceEnough) {
                 await this.native.toast_trans('wallet.transaction-pending');

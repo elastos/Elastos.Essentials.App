@@ -39,6 +39,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   protected initialize() {
     this.initWeb3();
     this.tokenDecimals = 18;
+    this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
     // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
   }
 
@@ -269,7 +270,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     const address = await this.getTokenAddress();
     try {
       const balanceString = await this.web3.eth.getBalance(address);
-      return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
+      return new BigNumber(balanceString);
     }
     catch (e) {
       Logger.error('wallet', 'getBalanceByWeb3 exception:', e);
@@ -318,8 +319,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
 
     if (amount === -1) {//-1: send all.
       let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
-      //TODO remove Config.SELAAsBigNumber
-      amount = this.balance.dividedBy(Config.SELAAsBigNumber).minus(fee).toNumber(); // WEI to SELA;
+      amount = this.balance.minus(fee).toNumber();
       if (amount <= 0) return null;
     }
 
@@ -338,48 +338,8 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     );
   }
 
-  public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string): Promise<string> {
-    // TODO: remove it, only elastos.evm.subwallet use this api.
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const contractAbi = require("../../../../assets/wallet/ethereum/ETHSCWithdrawABI.json");
-    const ethscWithdrawContract = new this.web3.eth.Contract(contractAbi, this.withdrawContractAddress);
-    let gasPrice = gasPriceArg;
-    if (gasPrice === null) {
-      gasPrice = await this.getGasPrice();
-    }
-    // const gasPrice = '1000000000';
-    const toAmountSend = this.web3.utils.toWei(toAmount.toString());
-
-    const method = ethscWithdrawContract.methods.receivePayload(toAddress, toAmountSend, Config.ETHSC_WITHDRAW_GASPRICE);
-
-    let gasLimit = gasLimitArg;
-    if (gasLimit === null) {
-      gasLimit = '100000';
-    }
-    // TODO: The value from estimateGas is too small sometimes (eg 22384) for withdraw transaction.
-    // Maybe it is the bug of node?
-    // try {
-    //     // Estimate gas cost
-    //     gasLimit = await method.estimateGas();
-    // } catch (error) {
-    //     Logger.log('wallet', 'estimateGas error:', error);
-    // }
-    const data = method.encodeABI();
-    let nonce = await this.getNonce();
-    Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
-
-    return this.masterWallet.walletManager.spvBridge.createTransferGeneric(
-      this.masterWallet.id,
-      this.id,
-      this.withdrawContractAddress,
-      toAmountSend,
-      0, // WEI
-      gasPrice,
-      0, // WEI
-      gasLimit,
-      data,
-      nonce
-    );
+  public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gssLimit: string): Promise<any> {
+    return Promise.resolve([]);
   }
 
   public async publishTransaction(transaction: string): Promise<string> {
@@ -406,6 +366,11 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
     }
     return -1;
+  }
+
+  public async estimateGas(tx): Promise<number> {
+    let gasLimit= await this.web3.eth.estimateGas(tx);
+    return gasLimit;
   }
 
   // value is hexadecimal string, eg: "0x1000"

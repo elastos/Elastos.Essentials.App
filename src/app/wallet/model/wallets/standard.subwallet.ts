@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
-import { Config } from '../../config/Config';
 import { Transfer } from '../../services/cointransfer.service';
 import { CurrencyService } from '../../services/currency.service';
 import { CoinType } from '../coin';
@@ -39,18 +38,17 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
         return this.getDisplayAmount(this.balance);
     }
 
-    // TODO remove it?
     public getDisplayAmount(amount: BigNumber): BigNumber {
-        return amount.dividedBy(Config.SELAAsBigNumber);
+        return amount.dividedBy(this.tokenAmountMulipleTimes);
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
         return CurrencyService.instance.getCurrencyBalance(value);
     }
 
-    // Check whether the balance is enough. amount unit is ELA
+    // Check whether the balance is enough. amount unit is ELA or WEI
     public isBalanceEnough(amount: BigNumber) {
-        return this.balance.gt(amount.multipliedBy(Config.SELAAsBigNumber));
+        return this.balance.gt(amount.multipliedBy(this.tokenAmountMulipleTimes));
     }
 
     public isStandardSubWallet(): boolean {

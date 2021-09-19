@@ -24,7 +24,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     /** Web3 variables to call smart contracts */
     protected web3: Web3;
     private erc20ABI: any;
-    private tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
 
     private tokenAddress = '';
 

@@ -60,7 +60,7 @@ export class GlobalEthereumRPCService {
         };
 
         let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-        return new BigNumber(balanceString).dividedBy(10000000000); // WEI to SELA;
+        return new BigNumber(balanceString);
     }
 
     public async getETHSCNonce(rpcApiUrl: string, address: string): Promise<number> {

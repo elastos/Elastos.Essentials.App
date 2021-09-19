@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
-import { Config } from '../../config/Config';
 import { LocalStorage } from '../../services/storage.service';
 import { Coin, CoinID, CoinType, StandardCoinName } from '../coin';
 import { Network } from '../networks/network';
@@ -110,12 +109,12 @@ export abstract class NetworkWallet {
         for (let subWallet of Object.values(this.subWallets)) {
             if (subWallet.isStandardSubWallet()) {
                 if (!subWallet.balance.isNaN()) {
-                    balance = balance.plus(subWallet.balance);
+                    balance = balance.plus(subWallet.balance.dividedBy(subWallet.tokenAmountMulipleTimes));
                 }
             }
         }
 
-        return balance.dividedBy(Config.SELAAsBigNumber);
+        return balance;
     }
 
     public abstract getDisplayTokenName(): string;
