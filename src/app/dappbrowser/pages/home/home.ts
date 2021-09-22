@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { DAppBrowser, IABExitData, InAppBrowserClient } from 'src/app/model/dappbrowser/dappbrowser';
@@ -23,50 +24,7 @@ type DAppMenuEntry = {
 export class HomePage implements InAppBrowserClient {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    public dApps: DAppMenuEntry[] = [
-        {
-            icon: '/assets/browser/dapps/profile.png',
-            title: 'Profile',
-            description: 'A better way to be online using Elastos DID',
-            url: 'https://profile.site/'
-        },
-        {
-            icon: '/assets/browser/dapps/glidefinance.svg',
-            title: 'Glide Finance',
-            description: 'Elastos ecosystem decentralized exchange',
-            url: 'https://glidefinance.io/'
-        },
-        {
-            icon: '/assets/browser/dapps/filda.png',
-            title: 'FilDA',
-            description: 'HECO-based lending and borrowing, with ELA support',
-            url: 'https://filda.io/'
-        },
-        {
-            icon: '/assets/browser/dapps/tokswap.png',
-            title: 'TokSwap',
-            description: 'Swap your tokens on the Elastos blockchain',
-            url: 'https://tokswap.net/'
-        },
-        {
-            icon: '/assets/browser/dapps/tokbridge.svg',
-            title: 'Shadow Tokens',
-            description: 'Bridge assets between Elastos and other chains',
-            url: 'https://tokbridge.net/'
-        },
-        {
-            icon: '/assets/browser/dapps/creda.png',
-            title: 'CreDA',
-            description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
-            url: 'https://creda.app/'
-        },
-        {
-            icon: '/assets/browser/dapps/cryptoname.png',
-            title: 'Cryptoname',
-            description: 'CryptoName is your passport to the crypto world',
-            url: 'https://cryptoname.org/'
-        },
-    ];
+    public dApps: DAppMenuEntry[] = [];
 
     public iabRunning = false;
 
@@ -77,8 +35,62 @@ export class HomePage implements InAppBrowserClient {
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
+        private platform: Platform,
         private globalStartupService: GlobalStartupService
     ) {
+      this.initDapps();
+    }
+
+    initDapps() {
+      // Only add builtin dapps for Android.
+      if (this.platform.platforms().indexOf('android') >= 0) {
+        this.dApps = [
+          {
+              icon: '/assets/browser/dapps/profile.png',
+              title: 'Profile',
+              description: 'A better way to be online using Elastos DID',
+              url: 'https://profile.site/'
+          },
+          {
+              icon: '/assets/browser/dapps/glidefinance.svg',
+              title: 'Glide Finance',
+              description: 'Elastos ecosystem decentralized exchange',
+              url: 'https://glidefinance.io/'
+          },
+          {
+              icon: '/assets/browser/dapps/filda.png',
+              title: 'FilDA',
+              description: 'HECO-based lending and borrowing, with ELA support',
+              url: 'https://filda.io/'
+          },
+          {
+              icon: '/assets/browser/dapps/tokswap.png',
+              title: 'TokSwap',
+              description: 'Swap your tokens on the Elastos blockchain',
+              url: 'https://tokswap.net/'
+          },
+          {
+              icon: '/assets/browser/dapps/tokbridge.svg',
+              title: 'Shadow Tokens',
+              description: 'Bridge assets between Elastos and other chains',
+              url: 'https://tokbridge.net/'
+          },
+          {
+              icon: '/assets/browser/dapps/creda.png',
+              title: 'CreDA',
+              description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
+              url: 'https://creda.app/'
+          },
+          {
+              icon: '/assets/browser/dapps/cryptoname.png',
+              title: 'Cryptoname',
+              description: 'CryptoName is your passport to the crypto world',
+              url: 'https://cryptoname.org/'
+          },
+        ];
+      } else {
+        this.dApps = [];
+      }
     }
 
     ionViewWillEnter() {
