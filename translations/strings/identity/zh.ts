@@ -197,11 +197,11 @@ export const zh = {
         'credimport-success-done': '完成',
 
         // page: creddelete
-        'credential-delete': 'Delete Credentials',
-        'creddelete-intro': 'You are going to delete the following credentials from your identity. This operation cannot be reverted.',
-        'creddelete-success-title': 'Credential(s) deleted',
-        'creddelete-success': 'Credentials have been deleted from your DID profile.',
-        'creddelete-success-done': 'Done',
+        'credential-delete': '删除凭证',
+        'creddelete-intro': '将从您的身份中删除以下凭据，此操作执行后无法撤销!',
+        'creddelete-success-title': '凭证已删除',
+        'creddelete-success': '已从您的DID资料中删除凭据',
+        'creddelete-success-done': '完成',
 
         // page: sethiveprovider
         'sethiveprovider-title': '注册 Hive 服务',

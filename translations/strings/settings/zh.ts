@@ -61,7 +61,7 @@ export const zh = {
           'reg-net': 'Regression net',
           'priv-net': 'Private Net',
           'lrw-net': 'LongRunWeather Net',
-          'restart-prompt-info': 'This operation requires to restart',
+          'restart-prompt-info': '此操作需要重启应用',
           'restart-app': '重启应用',
 
           /********** Wallet Connect Page **********/
