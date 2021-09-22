@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
+import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -296,7 +297,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         };
 
         // Use Config.WEI: because the gas is ETHSC.
-        // transactionInfo.fee = (this.tokenDecimals > 0 ? new BigNumber(transaction.gas).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI) : transaction.gas).toString();
         transactionInfo.fee = (new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toString();
 
         if (transactionInfo.confirmStatus !== 0) {
@@ -379,7 +379,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             gasLimit = '100000';
             try {
                 // Estimate gas cost
-                gasLimit = await method.estimateGas();
+                let gasTemp = await method.estimateGas();
+                gasLimit = Util.ceil(gasTemp).toString();
             } catch (error) {
                 Logger.log('wallet', 'estimateGas error:', error);
             }

@@ -26,6 +26,7 @@ import BigNumber from "bignumber.js";
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/ethtransactioninfoparser';
@@ -121,7 +122,7 @@ export class EscTransactionPage implements OnInit {
       }
       try {
         const gasLimit = await this.evmSubWallet.estimateGas(tx);
-        this.gasLimit = gasLimit.toString();
+        this.gasLimit = Util.ceil(gasLimit).toString();
       }
       catch (err) {
         Logger.log("wallet", "Can not estimate the gaslimit, set default value 3000000");

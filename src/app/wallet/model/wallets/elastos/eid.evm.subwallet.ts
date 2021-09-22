@@ -1,4 +1,5 @@
 import { Logger } from "src/app/logger";
+import { Util } from "src/app/model/util";
 import { Config } from "src/app/wallet/config/Config";
 import { StandardCoinName } from "../../coin";
 import { NetworkWallet } from "../networkwallet";
@@ -45,8 +46,8 @@ export class EidSubWallet extends ElastosEVMSubWallet {
     let gasLimit = 200000;
     try {
       // Estimate gas cost
-      gasLimit = await method.estimateGas();
-      Logger.log('wallet', 'estimateGas :', gasLimit);
+      let gasLimitTemp = await method.estimateGas();
+      gasLimit = Util.ceil(gasLimitTemp);
     } catch (error) {
       Logger.warn('wallet', 'estimateGas error:', error);
     }

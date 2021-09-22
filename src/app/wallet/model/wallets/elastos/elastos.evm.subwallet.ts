@@ -234,7 +234,7 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
 
       gasLimit = estimateGas.toString();
 
-      let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
+      let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(this.tokenAmountMulipleTimes);
       toAmount = this.balance.minus(fee).toNumber();
       if (toAmount <= 0) return null;
     }

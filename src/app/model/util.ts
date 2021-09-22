@@ -147,6 +147,21 @@ export class Util {
         return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
     }
 
+    // ceil(12345, 1000) => 13000
+    public static ceil(number: number, near = 0) {
+      if (near <= 0) {
+        // Auto ceil, keep 2 number, ceil(1234567, 0) => 1300000
+        let integerDigit = Math.ceil(number).toString().length;
+        if (integerDigit <= 2) {
+          return Math.ceil(number);
+        }
+        let newNear = Math.pow(10, integerDigit - 2);
+        return Math.ceil(number / newNear) * newNear;
+      } else {
+        return Math.ceil(number / near) * near;
+      }
+    }
+
     static dateFormat(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
         return moment(date).format(format);
     }

@@ -2,10 +2,10 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import Web3 from 'web3';
 import { EssentialsWeb3Provider } from "../../../model/essentialsweb3provider";
-import { Config } from '../../config/Config';
 import { StandardCoinName } from '../coin';
 import { ERC20TokenTransactionInfo, ERCTokenInfo, EthTokenTransaction, EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
@@ -142,8 +142,8 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
       erc20TokenContractAddress: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenContractAddress : null,
     };
 
-    transactionInfo.amount = new BigNumber(transaction.value).dividedBy(Config.WEI);
-    transactionInfo.fee = new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI).toString();
+    transactionInfo.amount = new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes);
+    transactionInfo.fee = new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(this.tokenAmountMulipleTimes).toString();
 
     if (transactionInfo.confirmStatus !== 0) {
       transactionInfo.status = TransactionStatus.CONFIRMED;
@@ -314,11 +314,15 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
         Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
         return null;
       }
-      gasLimit = estimateGas.toString();
+      if (amount === -1) {
+        gasLimit = estimateGas.toString();
+      } else {
+        gasLimit = Util.ceil(estimateGas).toString();
+      }
     }
 
     if (amount === -1) {//-1: send all.
-      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice)).dividedBy(Config.WEI);
+      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice)).dividedBy(this.tokenAmountMulipleTimes);
       amount = this.balance.minus(fee).toNumber();
       if (amount <= 0) return null;
     }
