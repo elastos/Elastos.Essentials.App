@@ -10,6 +10,7 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { EthTransaction } from 'src/app/wallet/model/evm.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { ElastosNetworkWallet } from 'src/app/wallet/model/wallets/elastos/elastos.networkwallet';
 import { MainAndIDChainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainandidchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -116,6 +117,7 @@ export class CoinTxInfoPage implements OnInit {
             this.height = this.transactionInfo.height;
             this.targetAddress = this.transactionInfo.to;
             this.fromAddress = this.transactionInfo.from;
+            this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
             this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals);
 
             void this.getTransactionDetails();
@@ -123,11 +125,8 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     async getTransactionDetails() {
-        // Tx is NOT ETH - Define total cost and address
-        if ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) {
-            // Pay Fee
-            this.payFee = new BigNumber(this.transactionInfo.fee).toNumber();
-
+        // TODO: To Improve
+        if ((this.networkWallet instanceof ElastosNetworkWallet) && ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain))) {
             const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
                 this.transactionInfo.confirmStatus = transaction.confirmations;
@@ -146,10 +145,6 @@ export class CoinTxInfoPage implements OnInit {
                 }
             }
         } else {
-            // Pay Fee
-            const newPayFee = new BigNumber(this.transactionInfo.fee);
-            this.payFee = newPayFee.toNumber();
-
             // Address
             if ((this.elastosChainCode === StandardCoinName.ETHSC) || (this.elastosChainCode === StandardCoinName.ETHDID)) {
                 const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
@@ -173,24 +168,6 @@ export class CoinTxInfoPage implements OnInit {
                 // }
             }
         }
-
-        // this.payType = "transaction-type-13";
-        // if ((this.type >= 0) && this.type <= 12) {
-        //     if (this.type === 10) {
-        //         if (this.elastosChainCode === StandardCoinName.IDChain) {
-        //             this.payType = "transaction-type-did";
-        //         } else {
-        //             this.payType = "transaction-type-10";
-        //         }
-        //     } else {
-        //         this.payType = "transaction-type-" + this.type;
-        //     }
-        // }
-
-        // // For vote transaction
-        // if (!Util.isNull(transaction.OutputPayload) && (transaction.OutputPayload.length > 0)) {
-        //     this.payType = "transaction-type-vote";
-        // }
 
         // Create array of displayable details for txs
         this.txDetails = [];
