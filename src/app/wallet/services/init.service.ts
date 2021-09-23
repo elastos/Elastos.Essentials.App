@@ -142,6 +142,7 @@ export class WalletInitService extends GlobalService {
     await this.walletManager.stop();
     await this.intentService.stop();
     this.networkService.stop();
+    this.nameResolvingService.reset();
 
     if (this.subscription) {
       this.subscription.unsubscribe();

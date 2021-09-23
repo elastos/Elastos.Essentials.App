@@ -22,8 +22,6 @@
 
 import { Injectable } from '@angular/core';
 import { Resolver } from '../model/address-resolvers/resolvers/Resolver';
-import { WalletNetworkService } from './network.service';
-import { WalletPrefsService } from './pref.service';
 
 @Injectable({
     providedIn: 'root'
@@ -38,7 +36,7 @@ export class NameResolvingService {
 
     private resolvers: Resolver[] = [];
 
-    constructor(private prefs: WalletPrefsService, private networkService: WalletNetworkService) {
+    constructor() {
         NameResolvingService.instance = this;
     }
 
@@ -48,5 +46,9 @@ export class NameResolvingService {
 
     public getResolvers(): Resolver[] {
         return this.resolvers;
+    }
+
+    public reset() {
+      this.resolvers = [];
     }
 }
