@@ -78,8 +78,8 @@ export const zh = {
         "settings-my-wallets-subtitle": "管理、备份钱包及相关设置",
         "settings-currency": "货币",
         "settings-currency-subtitle": "选择默认的货币",
-        "settings-custom-networks": "Custom Networks",
-        "settings-custom-networks-subtitle": "Add and edit your custom networks here",
+        "settings-custom-networks": "自定义网络",
+        "settings-custom-networks-subtitle": "在此添加或编辑自定义网络",
 
         /***********************
         * Select-Currency Page *
@@ -319,23 +319,23 @@ export const zh = {
         /***********************
         * Custom networks Page *
         ************************/
-        'custom-networks-title': 'Custom networks',
-        'add-custom-network-title': 'Add custom network',
-        'edit-custom-network-title': 'Edit custom network',
-        'custom-networks-intro': 'Manage your own EVM compatible networks.',
-        'add-custom-network': '+ Add custom network',
-        'network-name': 'Name',
+        'custom-networks-title': '自定义网络',
+        'add-custom-network-title': '添加自定义网络',
+        'edit-custom-network-title': '编辑自定义网络',
+        'custom-networks-intro': '管理兼容EVM的网络',
+        'add-custom-network': '+ 添加自定义网络',
+        'network-name': '名称',
         'network-rpc-url': 'RPC URL',
-        'network-account-rpc-url': 'Account RPC URL (optional)',
-        'network-chain-id': 'Chain ID',
-        'network-token-symbol': 'Token Symbol (optional)',
-        'checking-rpc-url': 'Checking RPC URL',
-        'checking-account-rpc-url': 'Checking account RPC URL',
-        'wrong-rpc-url': 'The RPC URL could not be reached and could be wrong, please check it.',
-        'wrong-account-rpc-url': 'The account RPC URL could not be reached and could be wrong, please check it.',
-        'cant-delete-active-network': 'The active network can\'t be deleted. Please first change the current network.',
-        'delete-network-prompt-title': 'Delete network ?',
-        'delete-network-prompt-text': 'Do you really want to delete this network ?',
+        'network-account-rpc-url': 'Account RPC URL (可选)',
+        'network-chain-id': '链 ID',
+        'network-token-symbol': '代币符号 (可选)',
+        'checking-rpc-url': '正在检查 RPC URL',
+        'checking-account-rpc-url': '正在检查 account RPC URL',
+        'wrong-rpc-url': 'RPC URL 无法访问，请检查！',
+        'wrong-account-rpc-url': 'Account RPC URL 无法访问，请检查！',
+        'cant-delete-active-network': '不能删除当前活动网络， 如需删除，请先切换到其他网络！',
+        'delete-network-prompt-title': '删除网络 ?',
+        'delete-network-prompt-text': '确定需要删除此网络 ?',
 
         /********************************************** Intent Screens ***********************************************/
 

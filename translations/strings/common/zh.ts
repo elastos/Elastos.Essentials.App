@@ -30,7 +30,7 @@ export const zh = {
         'copy': '拷贝',
         'dismiss': '忽略',
         'vote-success': '投票成功！',
-        'save-changes': 'Save changes',
+        'save-changes': '保存',
 
         // Navigation
         'settings': '设置',

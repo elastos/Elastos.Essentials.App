@@ -91,7 +91,7 @@ export const zh = {
 
         /********* Developer Tips *********/
         'tip-title-dev-getting-support': '在哪里可以找到开发人员支持？',
-        'tip-message-dev-getting-support': '请随时向我们的<b>电报群 https://t.me/elastosbrowser </b>咨询您的应用程序开发问题或者报告您使用过程中的问题。',
+        'tip-message-dev-getting-support': '请随时向我们的<b>电报群 https://t.me/elastosbrowser </b>咨询应用程序开发问题或者报告您使用过程中遇到的问题。',
     }
 
 };
