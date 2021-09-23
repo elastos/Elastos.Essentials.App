@@ -4,6 +4,7 @@ export const en = {
         /******************** Generic ********************/
         'accept': 'Accept',
         'accept-and-publish': 'Accept and Publish',
+        'delete-and-publish': 'Delete and Publish',
         'share-description': 'Share your Identity with others',
         'edit': 'Edit',
         'edit-description': 'Change, add and edit Identity profile',

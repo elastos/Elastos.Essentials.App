@@ -4,6 +4,7 @@ export const zh = {
         /******************** Generic ********************/
         'accept': '接受',
         'accept-and-publish': '接受并发布',
+        'delete-and-publish': 'Delete and Publish',
         'share-description': '分享您的身份',
         'edit': '编辑',
         'edit-description': '更改、添加和编辑档案',

@@ -1,19 +1,21 @@
-import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { IonicModule } from "@ionic/angular";
+import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { TranslateModule } from "@ngx-translate/core";;
-import { ShowQRCodeComponent } from "./showqrcode/showqrcode.component";
+import { IonicModule } from "@ionic/angular";
+import { TranslateModule } from "@ngx-translate/core";
 import { QRCodeModule } from "angularx-qrcode";
 import { PrintoptionsComponent } from "./printoptions/printoptions.component";
-import { SuccessComponent } from "./success/success.component";
+import { PublishDIDComponent } from "./publish-did/publish-did.component";
 import { PublishModeComponent } from "./publishmode/publishmode.component";
+import { ShowQRCodeComponent } from "./showqrcode/showqrcode.component";
+;
 
 @NgModule({
   declarations: [
     ShowQRCodeComponent,
     PrintoptionsComponent,
-    PublishModeComponent
+    PublishModeComponent,
+    PublishDIDComponent
   ],
   imports: [
     CommonModule,
@@ -25,8 +27,9 @@ import { PublishModeComponent } from "./publishmode/publishmode.component";
   exports: [
     ShowQRCodeComponent,
     PrintoptionsComponent,
-    PublishModeComponent
+    PublishModeComponent,
+    PublishDIDComponent
   ],
   providers: []
 })
-export class ComponentsModule {}
+export class ComponentsModule { }

@@ -1,28 +1,27 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ModalController, ActionSheetController } from "@ionic/angular";
+import { ActionSheetController, ModalController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-
-import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
-import { Profile } from "../../model/profile.model";
-import { DIDURL } from "../../model/didurl.model";
-import { DIDService } from "../../services/did.service";
-import { DIDSyncService } from "../../services/didsync.service";
-import { ProfileService } from "../../services/profile.service";
-import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { Native } from "../../services/native";
-import { DID } from "../../model/did.model";
-import { DIDDocument } from "../../model/diddocument.model";
-import { AuthService } from "../../services/auth.service";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { Logger } from "src/app/logger";
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
+import { DIDDocument } from "../../model/diddocument.model";
+import { DIDURL } from "../../model/didurl.model";
+import { Profile } from "../../model/profile.model";
+import { VerifiableCredential } from "../../model/verifiablecredential.model";
+import { AuthService } from "../../services/auth.service";
+import { DIDService } from "../../services/did.service";
+import { DIDSyncService } from "../../services/didsync.service";
+import { Native } from "../../services/native";
+import { ProfileService } from "../../services/profile.service";
+
 
 type IssuerDisplayEntry = {
   did: string;
@@ -56,7 +55,6 @@ export class MyProfilePage {
   private documentChangedSubscription: Subscription = null;
   private documentFetchedSubscription: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
-  private promptpublishdidSubscription: Subscription = null;
   private modifiedCredentialsSubscription: Subscription = null;
   private avatarSubscription: Subscription = null;
 
@@ -111,12 +109,6 @@ export class MyProfilePage {
       });
     });
 
-    this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
-      this.zone.run(() => {
-        void this.profileService.showWarning("publishIdentity", null);
-      });
-    });
-
     /* this.modifiedCredentialsSubscription = this.events.subscribe("credentials:modified", () => {
       this.zone.run(() => {
         Logger.log("identity", "Credentials have been modified, comparing local credentials with document ones");
@@ -141,7 +133,6 @@ export class MyProfilePage {
     this.unsubscribe(this.documentChangedSubscription);
     this.unsubscribe(this.documentFetchedSubscription);
     this.unsubscribe(this.credentialaddedSubscription);
-    this.unsubscribe(this.promptpublishdidSubscription);
     this.unsubscribe(this.modifiedCredentialsSubscription);
     this.unsubscribe(this.avatarSubscription);
   }

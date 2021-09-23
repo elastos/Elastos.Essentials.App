@@ -1,26 +1,25 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, NgZone, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ActionSheetController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-import { DIDURL } from "../../model/didurl.model";
+import { isNil } from "lodash-es";
+import * as moment from "moment";
+import { Subscription } from "rxjs";
+import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
+import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
+import { AuthService } from "src/app/identity/services/auth.service";
+import { Logger } from "src/app/logger";
+import { Events } from "src/app/services/events.service";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
+import { DIDDocument } from "../../model/diddocument.model";
+import { VerifiableCredential } from "../../model/verifiablecredential.model";
+import { BasicCredentialsService } from '../../services/basiccredentials.service';
 import { DIDService } from "../../services/did.service";
 import { DIDSyncService } from "../../services/didsync.service";
 import { ProfileService } from "../../services/profile.service";
-import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { HttpClient } from "@angular/common/http";
-import * as moment from "moment";
-import { DIDDocument } from "../../model/diddocument.model";
-import { BasicCredentialsService } from '../../services/basiccredentials.service';
-import { Subscription } from "rxjs";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { GlobalIntentService } from "src/app/services/global.intent.service";
-import { isNil } from "lodash-es";
-import { Logger } from "src/app/logger";
-import { Events } from "src/app/services/events.service";
-import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
-import { AuthService } from "src/app/identity/services/auth.service";
-import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 
 type IssuerDisplayEntry = {
   did: string;
@@ -58,7 +57,6 @@ export class CredentialDetailsPage implements OnInit {
   private publicationstatusSubscription: Subscription = null;
   private documentChangedSubscription: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
-  private promptpublishdidSubscription: Subscription = null;
   private onlineDIDDocumentStatusSub: Subscription = null;
 
   public displayableProperties: DisplayProperty[];
@@ -110,12 +108,6 @@ export class CredentialDetailsPage implements OnInit {
         this.init();
       });
     });
-
-    this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
-      this.zone.run(() => {
-        void this.profileService.showWarning("publishIdentity", null);
-      });
-    });
   }
 
   unsubscribe(subscription: Subscription) {
@@ -129,7 +121,6 @@ export class CredentialDetailsPage implements OnInit {
     this.unsubscribe(this.publicationstatusSubscription);
     this.unsubscribe(this.documentChangedSubscription);
     this.unsubscribe(this.credentialaddedSubscription);
-    this.unsubscribe(this.promptpublishdidSubscription);
     this.unsubscribe(this.onlineDIDDocumentStatusSub);
   }
 

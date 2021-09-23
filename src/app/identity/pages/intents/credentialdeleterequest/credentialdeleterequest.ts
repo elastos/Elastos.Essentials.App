@@ -6,6 +6,7 @@ import { DIDURL } from 'src/app/identity/model/didurl.model';
 import { CredDeleteIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { AuthService } from '../../../services/auth.service';
@@ -54,6 +55,7 @@ export class CredentialDeleteRequestPage {
   private credentials: VerifiableCredential[] = []; // Raw material
   displayableCredentials: ImportedCredential[] = []; // Displayable reworked matarial
   preliminaryChecksCompleted = false;
+  public forceToPublishCredentials = false; // Whether the did document should be published after deletion.
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
   constructor(
@@ -63,7 +65,8 @@ export class CredentialDeleteRequestPage {
     private appServices: UXService,
     private translate: TranslateService,
     public theme: GlobalThemeService,
-    private intentService: IntentReceiverService
+    private intentService: IntentReceiverService,
+    private globalPublicationService: GlobalPublicationService
   ) {
   }
 
@@ -119,6 +122,10 @@ export class CredentialDeleteRequestPage {
       void this.popupProvider.ionicAlert("Error", "Credential IDs given for deletion are not part of the currently active user's profile", "Close");
       await this.failingRequest();
       return;
+    }
+
+    if ("forceToPublishCredentials" in this.receivedIntent.params) {
+      this.forceToPublishCredentials = true;
     }
 
     this.preliminaryChecksCompleted = true; // Checks completed and everything is all right.
@@ -194,11 +201,39 @@ export class CredentialDeleteRequestPage {
         deletedCredentialsResult.push(credentialId.toString());
       }
 
-      this.finalizeRequest(deletedCredentialsResult);
+      if (!this.forceToPublishCredentials) {
+        // We don't need to publish - finalize the action
+        Logger.log("identity", "DID document doesn't have to be published, operation is complete");
+        this.finalizeRequest(deletedCredentialsResult);
+      }
+      else {
+        Logger.log("identity", "DID document has to be published, publishing");
+        void this.publishAndFinalize(deletedCredentialsResult);
+      }
     }, () => {
       // Cancelled
       this.accepting = false;
     });
+  }
+
+  private async publishAndFinalize(deletedCredentialsResult: string[]) {
+    let publicationStatus = this.globalPublicationService.publicationStatus.subscribe((status) => {
+      Logger.log("identity", "(delete credentials) DID publication status update for DID", status);
+      if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+        Logger.log("identity", "(delete credentials) DID publication complete");
+        publicationStatus.unsubscribe();
+        this.finalizeRequest(deletedCredentialsResult);
+      }
+      else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+        Logger.warn("identity", "(delete credentials) DID publication failure");
+        publicationStatus.unsubscribe();
+        // Publication failed but still, we return the imported credentials list because
+        // they were at least imported locally, we are not going to revert this.
+        this.finalizeRequest(deletedCredentialsResult);
+      }
+    });
+
+    await this.didService.getActiveDid().getDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
   }
 
   private finalizeRequest(deletedCredentialsIds: string[]) {

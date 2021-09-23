@@ -1,29 +1,27 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ActionSheetController, ModalController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-
-import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
-import { Profile } from "../../model/profile.model";
-import { DIDURL } from "../../model/didurl.model";
-import { UXService } from "../../services/ux.service";
-import { DIDService } from "../../services/did.service";
-import { DIDSyncService } from "../../services/didsync.service";
-import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { HttpClient } from "@angular/common/http";
-import { Native } from "../../services/native";
-import { DID } from "../../model/did.model";
-import { DIDDocument } from "../../model/diddocument.model";
-import { BasicCredentialsService } from '../../services/basiccredentials.service';
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
-import { GlobalThemeService } from "src/app/services/global.theme.service";
-import { ProfileService } from "../../services/profile.service";
+import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
 import { Logger } from "src/app/logger";
 import { Events } from "src/app/services/events.service";
-import { transparentPixelIconDataUrl } from "src/app/helpers/picture.helpers";
-import { BasicCredentialEntry } from "../../model/basiccredentialentry.model";
+import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
+import { DIDDocument } from "../../model/diddocument.model";
+import { DIDURL } from "../../model/didurl.model";
+import { Profile } from "../../model/profile.model";
+import { VerifiableCredential } from "../../model/verifiablecredential.model";
+import { BasicCredentialsService } from '../../services/basiccredentials.service';
+import { DIDService } from "../../services/did.service";
+import { DIDSyncService } from "../../services/didsync.service";
+import { Native } from "../../services/native";
+import { ProfileService } from "../../services/profile.service";
+import { UXService } from "../../services/ux.service";
+
 
 @Component({
   selector: "credentials-profile",
@@ -51,7 +49,6 @@ export class CredentialsPage {
   private documentChangedSubscription: Subscription = null;
   private onlineDIDDocumentStatusSub: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
-  private promptpublishdidSubscription: Subscription = null;
 
   constructor(
     private http: HttpClient,
@@ -96,12 +93,6 @@ export class CredentialsPage {
         this.init();
       });
     });
-
-    this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
-      this.zone.run(() => {
-        void this.profileService.showWarning("publishIdentity", null);
-      });
-    });
   }
 
   unsubscribe(subscription: Subscription) {
@@ -116,7 +107,6 @@ export class CredentialsPage {
     this.unsubscribe(this.publicationstatusSubscription);
     this.unsubscribe(this.documentChangedSubscription);
     this.unsubscribe(this.credentialaddedSubscription);
-    this.unsubscribe(this.promptpublishdidSubscription);
   }
 
   init(publishAvatar?: boolean) {
@@ -479,8 +469,8 @@ export class CredentialsPage {
       let types = item.credential.getTypes();
       let isVerified = !types.includes("SelfProclaimedCredential");
 
-     /*  if (this.segment == "verified" && isVerified) return true;
-      if (this.segment == "unverified" && !isVerified) return true; */
+      /*  if (this.segment == "verified" && isVerified) return true;
+       if (this.segment == "unverified" && !isVerified) return true; */
 
       let subjects = item.credential.getSubject();
 

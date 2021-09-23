@@ -4,6 +4,7 @@ export const fr = {
         /******************** Generic ********************/
         'accept': 'Accepter',
         'accept-and-publish': 'Accepter et Publier',
+        'delete-and-publish': 'Supprimer et Publier',
         'share-description': 'Partagez votre identité',
         'edit': 'Modifier',
         'edit-description': 'Modifiez et ajoutez des infos à votre profil',

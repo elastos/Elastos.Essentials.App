@@ -1,0 +1,97 @@
+@import "src/app/identity/root.scss";
+
+.container {
+  background: #ffffff;
+  border-radius: 12px;
+
+  .header {
+    height: 112px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      margin: 5px 0 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #161740;
+    }
+  }
+
+  .message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f8ff;
+    overflow: hidden;
+
+    p {
+      margin: 0px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      color: #161740;
+    }
+  }
+
+  .btn-row {
+    height: 80px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .btn {
+      width: 167px;
+      height: 41px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      background-color: #f8f8ff;
+
+      ion-label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #161740;
+      }
+    }
+  }
+}
+
+.darkContainer {
+  background: #47495a;
+
+  .header {
+    h1 {
+      color: #fdfeff;
+    }
+  }
+
+  .message {
+    background: #393A48;
+
+    p {
+      color: #fdfeff;
+    }
+  }
+
+  .btn-row {
+    .btn {
+      background: #393A48;
+
+      ion-label {
+        color: #fdfeff;
+      }
+    }
+  }
+}
+
+.deleteContainer {
+  border: 1.2px solid #f55555;
+}
+
+.publishContainer {
+  border: 1.2px solid #fdd034;
+}
+

@@ -1,26 +1,25 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ModalController, ActionSheetController } from "@ionic/angular";
+import { ActionSheetController, ModalController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-
-import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
-import { Profile } from "../../model/profile.model";
-import { DIDURL } from "../../model/didurl.model";
-import { UXService } from "../../services/ux.service";
-import { DIDService } from "../../services/did.service";
-import { DIDSyncService } from "../../services/didsync.service";
-import { ProfileService } from "../../services/profile.service";
-import { VerifiableCredential } from "../../model/verifiablecredential.model";
-import { HttpClient } from "@angular/common/http";
-import { Native } from "../../services/native";
-import { DID } from "../../model/did.model";
-import { DIDDocument } from "../../model/diddocument.model";
 import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { Logger } from "src/app/logger";
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Events } from "src/app/services/events.service";
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
+import { DIDDocument } from "../../model/diddocument.model";
+import { DIDURL } from "../../model/didurl.model";
+import { Profile } from "../../model/profile.model";
+import { VerifiableCredential } from "../../model/verifiablecredential.model";
+import { DIDService } from "../../services/did.service";
+import { DIDSyncService } from "../../services/didsync.service";
+import { Native } from "../../services/native";
+import { ProfileService } from "../../services/profile.service";
+import { UXService } from "../../services/ux.service";
+
 
 @Component({
   selector: "page-profile",
@@ -47,7 +46,6 @@ export class ProfilePage {
   private publicationstatusSubscription: Subscription = null;
   private documentChangedSubscription: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
-  private promptpublishdidSubscription: Subscription = null;
 
   private hiveVault: DIDPlugin.Service = null;
   public hiveIsloaded = false;
@@ -88,12 +86,6 @@ export class ProfilePage {
         this.init();
       });
     });
-
-    this.promptpublishdidSubscription = this.events.subscribe("did:promptpublishdid", () => {
-      this.zone.run(() => {
-        void this.profileService.showWarning("publishIdentity", null);
-      });
-    });
   }
 
   unsubscribe(subscription: Subscription) {
@@ -108,14 +100,13 @@ export class ProfilePage {
     this.unsubscribe(this.publicationstatusSubscription);
     this.unsubscribe(this.documentChangedSubscription);
     this.unsubscribe(this.credentialaddedSubscription);
-    this.unsubscribe(this.promptpublishdidSubscription);
   }
 
   initHive() {
     if (!this.profileService.publishedDIDDocument) {
-        // did is not published.
-        Logger.log("identity", 'profile initHive : did is not published.')
-        return;
+      // did is not published.
+      Logger.log("identity", 'profile initHive : did is not published.')
+      return;
     }
     var services = this.profileService.publishedDIDDocument.getServices();
 

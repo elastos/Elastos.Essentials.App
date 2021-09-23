@@ -1,21 +1,21 @@
 import { Injectable, NgZone } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
-import { LocalStorage } from "./localstorage";
-import { PopupProvider } from "./popup";
-import { Native } from "./native";
+import { BehaviorSubject } from "rxjs";
+import { runDelayed } from "src/app/helpers/sleep.helper";
+import { Logger } from "src/app/logger";
+import { Events } from "src/app/services/events.service";
+import { IdentityEntry } from "src/app/services/global.didsessions.service";
+import { DIDPublicationStatus, GlobalPublicationService } from "src/app/services/global.publication.service";
+import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
+import { DIDDocument } from "../model/diddocument.model";
 import {
   DIDDocumentPublishEvent
 } from "../model/eventtypes.model";
 import { DIDService } from "./did.service";
-import { DIDDocument } from "../model/diddocument.model";
-import { Logger } from "src/app/logger";
-import { Events } from "src/app/services/events.service";
-import { GlobalPublicationService, DIDPublicationStatus } from "src/app/services/global.publication.service";
-import { BehaviorSubject } from "rxjs";
-import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
-import { IdentityEntry } from "src/app/services/global.didsessions.service";
-import { runDelayed } from "src/app/helpers/sleep.helper";
+import { LocalStorage } from "./localstorage";
+import { Native } from "./native";
+import { PopupProvider } from "./popup";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -53,7 +53,7 @@ class OnlineDIDDocumentsStatus {
 
   public set(didString: string, checked: boolean, document: DIDDocument) {
     // Create the subject if needed, and emit an update event.
-    this.documentsSubjects.get(didString).next({checked, document});
+    this.documentsSubjects.get(didString).next({ checked, document });
   }
 }
 
@@ -115,7 +115,7 @@ export class DIDSyncService implements GlobalService {
 
     this.events.subscribe(
       "diddocument:onpublishpayload",
-      (payloadInfo: {payload: string, memo: string}) => {
+      (payloadInfo: { payload: string, memo: string }) => {
         void this.onDIDDocumentPublishPayloadCreated(payloadInfo.payload, payloadInfo.memo);
       }
     );
@@ -138,16 +138,12 @@ export class DIDSyncService implements GlobalService {
       await this.native.showLoading(this.translate.instant('common.please-wait'));
       await this.globalPublicationService.publishDIDFromStore(
         this.didService
-        .getActiveDidStore().getId(),
+          .getActiveDidStore().getId(),
         password,
         this.didService.getActiveDid().getDIDString(),
         true
-      )
-      /* await this.didService
-        .getActiveDidStore()
-        .getActiveDid()
-        .getDIDDocument()
-        .publish(password); */
+      );
+
       void this.native.hideLoading();
     } catch (err) {
       await this.native.hideLoading();

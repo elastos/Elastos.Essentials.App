@@ -1,17 +1,17 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { DIDService } from '../../../services/did.service';
-import { UXService } from '../../../services/ux.service';
-import { PopupProvider } from '../../../services/popup';
-import { AuthService } from '../../../services/auth.service';
-import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { CredImportIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { logger } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings';
+import { VerifiableCredential } from '../../../model/verifiablecredential.model';
+import { AuthService } from '../../../services/auth.service';
+import { DIDService } from '../../../services/did.service';
+import { PopupProvider } from '../../../services/popup';
+import { UXService } from '../../../services/ux.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -86,7 +86,8 @@ export class CredentialImportRequestPage {
     private appServices: UXService,
     private translate: TranslateService,
     public theme: GlobalThemeService,
-    private intentService: IntentReceiverService
+    private intentService: IntentReceiverService,
+    private globalPublicationService: GlobalPublicationService
   ) {
   }
 
@@ -131,7 +132,6 @@ export class CredentialImportRequestPage {
 
     if ("forceToPublishCredentials" in this.receivedIntent.params) {
       this.forceToPublishCredentials = true;
-      console.log("FORCE TO PUBLISH true?", this.receivedIntent.params.forceToPublishCredentials)
     }
 
     this.preliminaryChecksCompleted = true; // Checks completed and everything is all right.
@@ -200,7 +200,7 @@ export class CredentialImportRequestPage {
     // Save the credentials to user's DID.
     // NOTE: For now we save all credentials, we can't select them individually.
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    AuthService.instance.checkPasswordThenExecute(async ()=>{
+    AuthService.instance.checkPasswordThenExecute(async () => {
       let importedCredentialsResult: string[] = [];
       for (let displayableCredential of this.displayableCredentials) {
         Logger.log('Identity', "CredImportRequest - storing credential: ", displayableCredential.credential);
@@ -222,17 +222,37 @@ export class CredentialImportRequestPage {
       }
       else {
         Logger.log("identity", "Credentials have to be published, publishing");
-        await this.didService.getActiveDid().getDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
+        void this.publishAndFinalize(importedCredentialsResult);
       }
-    }, ()=>{
+    }, () => {
       // Cancelled
       this.accepting = false;
     });
   }
 
+  private async publishAndFinalize(importedCredentialsResult: string[]) {
+    let publicationStatus = this.globalPublicationService.publicationStatus.subscribe((status) => {
+      Logger.log("identity", "(import credentials) DID publication status update for DID", status);
+      if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+        Logger.log("identity", "(import credentials) DID publication complete");
+        publicationStatus.unsubscribe();
+        this.finalizeRequest(importedCredentialsResult);
+      }
+      else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+        Logger.warn("identity", "(import credentials) DID publication failure");
+        publicationStatus.unsubscribe();
+        // Publication failed but still, we return the imported credentials list because
+        // they were at least imported locally, we are not going to revert this.
+        this.finalizeRequest(importedCredentialsResult);
+      }
+    });
+
+    await this.didService.getActiveDid().getDIDDocument().publish(AuthService.instance.getCurrentUserPassword());
+  }
+
   private finalizeRequest(importedCredentials: string[]) {
-    void this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async ()=>{
-      Logger.log('Identity', "Sending credimport intent response for intent id "+this.receivedIntent.intentId)
+    void this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async () => {
+      Logger.log('Identity', "Sending credimport intent response for intent id " + this.receivedIntent.intentId)
       await this.appServices.sendIntentResponse("credimport", {
         importedcredentials: importedCredentials
       }, this.receivedIntent.intentId);

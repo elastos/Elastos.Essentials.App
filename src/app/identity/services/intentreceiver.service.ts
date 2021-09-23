@@ -10,6 +10,7 @@ import { AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntent,
 import { AppIDService } from './appid.service';
 import { Native } from './native';
 import { PopupProvider } from './popup';
+import { ProfileService } from './profile.service';
 import { UXService } from './ux.service';
 
 
@@ -28,6 +29,7 @@ export class IntentReceiverService {
         private appIDService: AppIDService,
         private uxService: UXService,
         private globalIntentService: GlobalIntentService,
+        private profileService: ProfileService,
         private globalPublicationService: GlobalPublicationService
     ) {
     }
@@ -154,10 +156,13 @@ export class IntentReceiverService {
                 }
                 break;
             case 'promptpublishdid':
-                // param is not required
-                await this.uxService.loadIdentityAndShow(false);
-                await this.native.setRootRouter('/identity/myprofile/home');
-                this.events.publish('did:promptpublishdid');
+                if (this.checkGenericIntentParams(intent)) {
+                    await this.handlePromptPublishDid();
+                }
+                else {
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
                 break;
             case 'didtransaction':
                 if (this.checkDIDTransactionIntentParams(intent)) {
@@ -471,5 +476,39 @@ export class IntentReceiverService {
             }
         });
         await this.globalPublicationService.publishDIDFromRequest(didString, didRequest, "", true);
+    }
+
+    private async handlePromptPublishDid() {
+        let publicationStatus = this.globalPublicationService.publicationStatus.subscribe((status) => {
+            Logger.log("identity", "(intent) DID publication status update for DID", status);
+            if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
+                Logger.log("identity", "(intent) DID publication complete, sending intent response");
+
+                publicationStatus.unsubscribe();
+                void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+                    txid: status.txId
+                }, this.receivedIntent.intentId);
+            }
+            else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
+                Logger.warn("identity", "(intent) DID publication failure, sending intent response");
+
+                publicationStatus.unsubscribe();
+                void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+                    txid: null
+                }, this.receivedIntent.intentId);
+            }
+        });
+
+        await this.uxService.loadIdentityAndShow(false);
+        await this.native.setRootRouter('/identity/myprofile/home');
+
+        let publicationStarted = await this.profileService.promptPublishDid(false);
+        if (!publicationStarted) {
+            Logger.warn("identity", "(intent) DID publication cancelled, sending intent response");
+            publicationStatus.unsubscribe();
+            void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+                txid: null
+            }, this.receivedIntent.intentId);
+        }
     }
 }

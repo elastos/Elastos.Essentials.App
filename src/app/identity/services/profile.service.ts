@@ -1,32 +1,33 @@
 import { Injectable, NgZone } from "@angular/core";
-import { Native } from "./native";
 import { PopoverController } from "@ionic/angular";
-import { AuthService } from "./auth.service";
-import { DIDSyncService } from "./didsync.service";
-import { DIDService } from "./did.service";
 import { TranslateService } from "@ngx-translate/core";
-import { WarningComponent } from "../components/warning/warning.component";
-import { DIDDocument } from "../model/diddocument.model";
-import { DIDURL } from "../model/didurl.model";
-import { BasicCredentialsService } from './basiccredentials.service';
-import { Profile } from "../model/profile.model";
-import { ContactNotifierService } from "src/app/services/contactnotifier.service";
-import { Logger } from "src/app/logger";
-import { GlobalIntentService } from "src/app/services/global.intent.service";
-import { Events } from "src/app/services/events.service";
-import { AvatarCredentialSubject } from "../model/avatarcredentialsubject";
-import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
+import deepEqual from 'deep-equal';
 import { BehaviorSubject, Subscription } from "rxjs";
-import { GlobalHiveService, VaultLinkStatusCheckState } from "src/app/services/global.hive.service";
-import { DIDEvents } from "./events";
-import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
-import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
-import { IdentityEntry } from "src/app/services/global.didsessions.service";
 import { Avatar } from "src/app/contacts/models/avatar";
 import { CredentialAvatar } from "src/app/didsessions/model/did.model";
+import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
+import { Logger } from "src/app/logger";
+import { ContactNotifierService } from "src/app/services/contactnotifier.service";
+import { Events } from "src/app/services/events.service";
+import { IdentityEntry } from "src/app/services/global.didsessions.service";
+import { GlobalHiveService, VaultLinkStatusCheckState } from "src/app/services/global.hive.service";
+import { GlobalHiveCacheService } from "src/app/services/global.hivecache.service";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
+import { PublishDIDComponent } from "../components/publish-did/publish-did.component";
+import { WarningComponent } from "../components/warning/warning.component";
+import { AvatarCredentialSubject } from "../model/avatarcredentialsubject";
 import { CredentialDisplayEntry } from "../model/credentialdisplayentry.model";
+import { DIDDocument } from "../model/diddocument.model";
+import { DIDURL } from "../model/didurl.model";
+import { Profile } from "../model/profile.model";
+import { AuthService } from "./auth.service";
+import { BasicCredentialsService } from './basiccredentials.service';
+import { DIDService } from "./did.service";
+import { DIDSyncService } from "./didsync.service";
+import { DIDEvents } from "./events";
+import { Native } from "./native";
 
-import deepEqual from 'deep-equal';
 
 type ProfileDisplayEntry = {
   credentialId: string; // related credential id
@@ -90,7 +91,7 @@ export class ProfileService extends GlobalService {
   private publishStatusFetched = false;
 
   // Store contollers
-  public popover: any = null; // Store generic popover
+  public popover: HTMLIonPopoverElement = null; // Store generic popover
   //public options: any = null; // Store options popover
 
   private avatarDataUrlSubject: BehaviorSubject<string> = null;
@@ -132,6 +133,12 @@ export class ProfileService extends GlobalService {
         Logger.log("identity", "User's hive vault is ready, fetching his avatar if any");
         this.getAvatarDataUrl();
       }
+    });
+
+    this.events.subscribe("did:promptpublishdid", () => {
+      this.zone.run(() => {
+        void this.promptPublishDid();
+      });
     });
   }
 
@@ -224,7 +231,7 @@ export class ProfileService extends GlobalService {
     // Sort credentials by title
     let rawCredentials = this.didService.getActiveDid().credentials;
     rawCredentials.sort((c1, c2) => {
-      if (c1.pluginVerifiableCredential.getFragment() >c2.pluginVerifiableCredential.getFragment())
+      if (c1.pluginVerifiableCredential.getFragment() > c2.pluginVerifiableCredential.getFragment())
         return 1;
       else
         return -1;
@@ -351,13 +358,13 @@ export class ProfileService extends GlobalService {
     });
     let currentDidDocument = this.didService.getActiveDid().getDIDDocument();
     if (credential) {
-      Logger.log("identity", "Changing visibility of "+key+" to visibility "+willingToBePubliclyVisible+" in profile service credentials");
+      Logger.log("identity", "Changing visibility of " + key + " to visibility " + willingToBePubliclyVisible + " in profile service credentials");
       credential.isVisible = willingToBePubliclyVisible;
       await this.updateDIDDocumentFromSelectionEntry(currentDidDocument, credential, password);
       this.events.publish("credentials:modified");
     }
     else {
-      Logger.log("identity", "Unable to change visibility of "+key+". Credential not found");
+      Logger.log("identity", "Unable to change visibility of " + key + ". Credential not found");
     }
   }
 
@@ -473,6 +480,7 @@ export class ProfileService extends GlobalService {
   }
 
   /********** Reveal Data Options **********/
+  // TODO: DONT USE THE SAME METHOD FOR SEVERAL ACTIONS - SPLIT THIS!
   async showWarning(warning: string, password: string) {
     Logger.log("identity", "Opening warning");
     this.popover = await this.popoverCtrl.create({
@@ -499,6 +507,42 @@ export class ProfileService extends GlobalService {
       await this.native.setRootRouter("/identity/myprofile/home");
     });
     return await this.popover.present();
+  }
+
+  /**
+   * Shows a dialog asking user to publish his DID or not. If confirmed, DID is published
+   * through the global publicaiton manager.
+   *
+   * The returned boolean tells if a publication was initiated or not (cancelled).
+   */
+  public promptPublishDid(navigateToProfileOnDismiss = true): Promise<boolean> {
+    return new Promise((resolve) => {
+      void this.zone.run(async () => {
+        Logger.log("identity", "Prompting to publish DID");
+        this.popover = await this.popoverCtrl.create({
+          mode: "ios",
+          cssClass: "identity-warning-component",
+          component: PublishDIDComponent,
+          componentProps: {},
+          translucent: false,
+        });
+        void this.popover.onWillDismiss().then(async (params) => {
+          if (params.data && params.data.confirmed === true) {
+            this.publishDIDDocumentReal();
+            resolve(true);
+          }
+          else {
+            // Cancelled
+            resolve(false);
+          }
+
+          this.popover = null;
+          if (navigateToProfileOnDismiss)
+            await this.native.setRootRouter("/identity/myprofile/home");
+        });
+        await this.popover.present();
+      });
+    });
   }
 
   /********************************************************************
@@ -573,7 +617,7 @@ export class ProfileService extends GlobalService {
     if (this.publishedDIDDocument) {
       // We already have a document
       let creds = this.publishedDIDDocument.getCredentials();
-      Logger.log("identity", "There are "+creds.length+" published credentials.", creds);
+      Logger.log("identity", "There are " + creds.length + " published credentials.", creds);
       return creds;
     }
     else {
