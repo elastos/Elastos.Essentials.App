@@ -1,19 +1,20 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { GlobalDIDSessionsService } from './global.didsessions.service';
-import { GlobalStorageService } from './global.storage.service';
-import { Logger } from '../logger';
+import { Injectable } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { DIDPublishingComponent } from '../components/did-publishing/did-publishing.component';
-import { ModalController } from '@ionic/angular';
-import { GlobalThemeService } from './global.theme.service';
-import { GlobalPreferencesService } from './global.preferences.service';
-import { GlobalIntentService } from './global.intent.service';
+import { Logger } from '../logger';
 import { JSONObject } from '../model/json';
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
-import { GlobalNativeService } from './global.native.service';
+import { GlobalDIDSessionsService } from './global.didsessions.service';
 import { ElastosApiUrlType, GlobalElastosAPIService } from './global.elastosapi.service';
+import { GlobalIntentService } from './global.intent.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
+import { GlobalNativeService } from './global.native.service';
+import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
+import { GlobalPreferencesService } from './global.preferences.service';
+import { GlobalStorageService } from './global.storage.service';
+import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
+import { GlobalThemeService } from './global.theme.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -317,7 +318,10 @@ type EIDChainResolveResponse = {
  */
 namespace WalletPublishing {
     export class WalletPublisher extends DIDPublisher {
-        constructor (private manager: DIDPublishingManager, private jsonRPC: GlobalJsonRPCService, private globalIntentService: GlobalIntentService) {
+        constructor (private manager: DIDPublishingManager,
+                    private jsonRPC: GlobalJsonRPCService,
+                    private globalIntentService: GlobalIntentService,
+                    private globalSwitchNetworkService: GlobalSwitchNetworkService) {
             super();
         }
 
@@ -326,6 +330,12 @@ namespace WalletPublishing {
 
         public async publishDID(didString: string, payloadObject: JSONObject, memo: string, showBlockingLoader = false): Promise<void> {
             Logger.log("publicationservice", "Publishing DID with wallet:", payloadObject);
+
+            // Make sure the active network is elastos, otherwise, ask user to change
+            const elastosNetwork = await this.globalSwitchNetworkService.switchNetworkToElastos();
+            if (!elastosNetwork) {
+              return;// Used has denied to switch network. Can't continue.
+            }
 
             let params = {
                 didrequest: payloadObject
@@ -459,7 +469,8 @@ class DIDPublishingManager {
         private modalCtrl: ModalController,
         private prefs: GlobalPreferencesService,
         private globalNetworksService: GlobalNetworksService,
-        private globalIntentService: GlobalIntentService) {}
+        private globalIntentService: GlobalIntentService,
+        private globalSwitchNetworkService: GlobalSwitchNetworkService) {}
 
     public async init(): Promise<void> {
         this.persistentInfo = await this.loadPersistentInfo();
@@ -474,7 +485,8 @@ class DIDPublishingManager {
         this.walletPublisher = new WalletPublishing.WalletPublisher(
             this,
             this.jsonRPC,
-            this.globalIntentService
+            this.globalIntentService,
+            this.globalSwitchNetworkService
         );
 
         await this.assistPublisher.init();
@@ -598,7 +610,8 @@ export class GlobalPublicationService {
         private prefs: GlobalPreferencesService,
         private globalNetworksService: GlobalNetworksService,
         private globalIntentService: GlobalIntentService,
-        private globalNativeService: GlobalNativeService
+        private globalNativeService: GlobalNativeService,
+        private globalSwitchNetworkService: GlobalSwitchNetworkService
     ) {
         GlobalPublicationService.instance = this;
 
@@ -611,7 +624,8 @@ export class GlobalPublicationService {
             this.modalCtrl,
             this.prefs,
             this.globalNetworksService,
-            this.globalIntentService);
+            this.globalIntentService,
+            this.globalSwitchNetworkService);
     }
 
     public async init(): Promise<void> {

@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
-import { ModalController } from '@ionic/angular';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
-import { SwitchNetworkToElastosComponent } from 'src/app/components/switch-network-to-elastos/switch-network-to-elastos.component';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { PopupProvider } from 'src/app/services/global.popup.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
-import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { StandardCoinName } from '../../wallet/model/coin';
 import { WalletAccount, WalletAccountType } from '../../wallet/model/walletaccount';
 import { Native } from '../../wallet/services/native.service';
@@ -42,10 +39,8 @@ export class VoteService {
         private walletManager: WalletService,
         public popupProvider: PopupProvider,
         private nav: GlobalNavService,
-        private modalCtrl: ModalController,
-        private theme: GlobalThemeService,
-        private walletNetworkService: WalletNetworkService,
         private globalIntentService: GlobalIntentService,
+        private globalSwitchNetworkService: GlobalSwitchNetworkService,
     ) {
         this.elastosChainCode = StandardCoinName.ELA;
     }
@@ -58,10 +53,9 @@ export class VoteService {
         this.clear();
 
         // Make sure the active network is elastos, otherwise, ask user to change
-        if (!this.walletNetworkService.isActiveNetworkElastos()) {
-            let networkHasBeenSwitched = await this.promptSwitchToElastosNetwork();
-            if (!networkHasBeenSwitched)
-                return; // Used has denied to switch network. Can't continue.
+        const elastosNetwork = await this.globalSwitchNetworkService.switchNetworkToElastos();
+        if (!elastosNetwork) {
+          return;// User has denied to switch network. Can't continue.
         }
 
         this.context = context;
@@ -139,23 +133,5 @@ export class VoteService {
         else {
             void this.nav.goToLauncher();
         }
-    }
-
-    private promptSwitchToElastosNetwork(): Promise<boolean> {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-        return new Promise(async resolve => {
-            const modal = await this.modalCtrl.create({
-                component: SwitchNetworkToElastosComponent,
-                componentProps: {},
-                backdropDismiss: true, // Closeable
-                cssClass: !this.theme.darkMode ? "switch-network-component switch-network-component-base" : 'switch-network-component-dark switch-network-component-base'
-            });
-
-            void modal.onDidDismiss().then((response: { data?: boolean }) => {
-                resolve(!!response.data); // true or undefined
-            });
-
-            void modal.present();
-        });
     }
 }

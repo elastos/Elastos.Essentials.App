@@ -1,8 +1,6 @@
 
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
-import { LocalStorage } from './storage.service';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 
@@ -12,7 +10,7 @@ declare let passwordManager: PasswordManagerPlugin.PasswordManager;
 export class AuthService {
     public static instance: AuthService = null;
 
-    constructor(private storage: LocalStorage, private native: GlobalNativeService) {
+    constructor() {
         AuthService.instance = this;
     }
 
@@ -44,7 +42,9 @@ export class AuthService {
         }
     }
 
+    // eslint-disable-next-line require-await
     public async getWalletPassword(walletId: string, showMasterPromptIfDatabaseLocked = true, forceShowMasterPrompt = false): Promise<string> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise(async (resolve, reject) => {
             try {
                 let options: PasswordManagerPlugin.GetPasswordInfoOptions = {
@@ -64,7 +64,7 @@ export class AuthService {
                 }
             }
             catch (e) {
-                Logger.error('wallet', e);
+                Logger.error('wallet', 'getWalletPassword error ', e);
                 // TODO: better handle various kind of errors
                 resolve(null);
             }
@@ -72,6 +72,7 @@ export class AuthService {
     }
 
     public deleteWalletPassword(walletId: string): Promise<string> {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise<string>(async (resolve, reject) => {
             try {
                 const resultInfo = await passwordManager.deletePasswordInfo("wallet-"+walletId) as PasswordManagerPlugin.BooleanWithReason;
