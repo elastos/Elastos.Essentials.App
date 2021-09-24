@@ -8,7 +8,7 @@ import { AnySubWallet, SubWallet } from "../../subwallet";
 import { WalletHelper } from "../wallet.helper";
 
 export class ElastosMainAndOldIDChainSubWalletProvider<SubWalletType extends SubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, ElastosTransaction> {
-  private TRANSACTION_LIMIT = 20;
+  private TRANSACTION_LIMIT = 50;
   private needtoLoadMoreAddresses: string[] = [];
   private alreadyTriedToFetchMore = false;
   // Maybe there are lots of transactions and we need to merge the transactions for multi address wallet,

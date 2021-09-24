@@ -23,9 +23,9 @@
             <ion-row class="main-title-row">
                 <ion-col size="12">
                     <h1>{{ getSubwalletTitle() }}</h1>
-                    <p *ngIf="todaysTransactions > 20">{{ 'wallet.coin-new-transactions-today' | translate:{ '20+':
-                        todaysTransactions} }}}</p>
-                    <p *ngIf="todaysTransactions <= 20">{{ 'wallet.coin-new-transactions-today' |
+                    <!-- <p *ngIf="todaysTransactions > 100">{{ 'wallet.coin-new-transactions-today' | translate:{ todaysTransactions: '100+'} }}
+                                        </p> -->
+                    <p>{{ 'wallet.coin-new-transactions-today' |
                         translate:{todaysTransactions: todaysTransactions} }}</p>
                 </ion-col>
             </ion-row>

@@ -24,6 +24,7 @@ import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core'
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
+import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
@@ -267,6 +268,7 @@ export class CoinHomePage implements OnInit {
             this.canShowMore = false;
         } */
 
+        const today = moment(new Date()).startOf('day');
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction, this.translate);
             if (!transactionInfo) {
@@ -279,9 +281,14 @@ export class CoinHomePage implements OnInit {
             }
 
             // Check if transaction was made today and increment our counter if so.
-            this.countAsDailyTransactionIfNeeded(transactionInfo.timestamp);
+            this.countAsDailyTransactionIfNeeded(today, transactionInfo.timestamp);
 
             this.transferList.push(transactionInfo);
+        }
+
+        //At least all transactions of today must be loaded.
+        if (this.todaysTransactions == transactions.length) {
+          this.fetchMoreTransactions();
         }
     }
 
@@ -387,9 +394,8 @@ export class CoinHomePage implements OnInit {
         // await this.subWallet.signAndSendRawTransaction(rawTx, transfer);
     }
 
-    countAsDailyTransactionIfNeeded(timestamp: number) {
-        const today = moment(new Date());
-        if (today.startOf('day').isSame(moment(timestamp).startOf('day'))) {
+    countAsDailyTransactionIfNeeded(today: Moment, timestamp: number) {
+        if (today.isSame(moment(timestamp).startOf('day'))) {
             this.todaysTransactions++;
         }
     }
