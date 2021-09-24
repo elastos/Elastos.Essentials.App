@@ -11,7 +11,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./titlebar.component.scss'],
 })
 export class BrowserTitleBarComponent {
-    public _url = "http://192.168.1.3:8101" // "https://eager-ardinghelli-95206e.netlify.app/bridge"; // TMP "";
+    public _url = "";
 
     @Input()
     set url(url: string) {
