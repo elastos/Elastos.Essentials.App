@@ -32,7 +32,7 @@ export type PersistentInfo = {
         publicationMedium: string, // assist, wallet
         publicationStatus: DIDPublicationStatus,
 
-        assist? : {
+        assist?: {
             publicationID: string; // Unique publication ID returned by the assist API after a successful publication request. This is NOT a blockchain transaction ID.
             txId?: string; // After publishing a DID request to assist we save the returned txid here.
         },
@@ -201,7 +201,7 @@ namespace AssistPublishing {
                 case TESTNET_TEMPLATE:
                     return assistAPIEndpoints.TestNet;
                 default:
-                    throw new Error("Assist service cannot be used to published on network "+activeNetworkTemplate);
+                    throw new Error("Assist service cannot be used to published on network " + activeNetworkTemplate);
             }
         }
 
@@ -318,10 +318,10 @@ type EIDChainResolveResponse = {
  */
 namespace WalletPublishing {
     export class WalletPublisher extends DIDPublisher {
-        constructor (private manager: DIDPublishingManager,
-                    private jsonRPC: GlobalJsonRPCService,
-                    private globalIntentService: GlobalIntentService,
-                    private globalSwitchNetworkService: GlobalSwitchNetworkService) {
+        constructor(private manager: DIDPublishingManager,
+            private jsonRPC: GlobalJsonRPCService,
+            private globalIntentService: GlobalIntentService,
+            private globalSwitchNetworkService: GlobalSwitchNetworkService) {
             super();
         }
 
@@ -332,9 +332,9 @@ namespace WalletPublishing {
             Logger.log("publicationservice", "Publishing DID with wallet:", payloadObject);
 
             // Make sure the active network is elastos, otherwise, ask user to change
-            const elastosNetwork = await this.globalSwitchNetworkService.switchNetworkToElastos();
+            const elastosNetwork = await this.globalSwitchNetworkService.promptSwitchToElastosNetworkIfDifferent();
             if (!elastosNetwork) {
-              return;// Used has denied to switch network. Can't continue.
+                return;// Used has denied to switch network. Can't continue.
             }
 
             let params = {
@@ -382,7 +382,7 @@ namespace WalletPublishing {
             catch (err) {
                 Logger.error('publicationservice', "Failed to send app manager didtransaction intent!", err);
                 this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.FAILED_TO_PUBLISH;
-                    await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
+                await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
             }
         }
 
@@ -406,9 +406,9 @@ namespace WalletPublishing {
                 Logger.log("publicationservice", "Checking transaction status on chain for txid " + this.manager.persistentInfo.did.wallet.txId);
 
                 let request: DIDResolveRequest = {
-                    jsonrpc:"2.0",
+                    jsonrpc: "2.0",
                     method: "did_resolveDID",
-                    params:[{
+                    params: [{
                         did: this.manager.persistentInfo.did.didString,
                         all: false
                     }],
@@ -423,7 +423,7 @@ namespace WalletPublishing {
                     if (response && response.transaction && response.transaction.length > 0) {
                         Logger.log("publicationservice", "we got a clear status from the EID resolving RPC api.");
 
-                        if ("0x"+response.transaction[0].txid === this.manager.persistentInfo.did.wallet.txId) {
+                        if ("0x" + response.transaction[0].txid === this.manager.persistentInfo.did.wallet.txId) {
                             Logger.log("publicationservice", "All good, we got the published txid in the resolved document (latest)");
                             this.manager.persistentInfo.did.publicationStatus = DIDPublicationStatus.PUBLISHED_AND_CONFIRMED;
                             await this.manager.savePersistentInfoAndEmitStatus(this.manager.persistentInfo);
@@ -470,7 +470,7 @@ class DIDPublishingManager {
         private prefs: GlobalPreferencesService,
         private globalNetworksService: GlobalNetworksService,
         private globalIntentService: GlobalIntentService,
-        private globalSwitchNetworkService: GlobalSwitchNetworkService) {}
+        private globalSwitchNetworkService: GlobalSwitchNetworkService) { }
 
     public async init(): Promise<void> {
         this.persistentInfo = await this.loadPersistentInfo();
@@ -671,7 +671,7 @@ export class GlobalPublicationService {
             }
             else {
                 // Weird, the DID we've just created could not be loaded... Let user know anyway
-                reject("Failed to load DID document for DID "+didString+" in store id "+didStore.getId());
+                reject("Failed to load DID document for DID " + didString + " in store id " + didStore.getId());
             }
         });
     }

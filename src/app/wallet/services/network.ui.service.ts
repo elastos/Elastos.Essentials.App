@@ -23,6 +23,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { NetworkChooserComponent, NetworkChooserComponentOptions } from '../components/network-chooser/network-chooser.component';
 import { WalletNetworkService } from './network.service';
 
@@ -32,9 +33,18 @@ export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
     providedIn: 'root'
 })
 export class WalletNetworkUIService {
-    constructor(private modalCtrl: ModalController, private networkService: WalletNetworkService) {
+    public static instance: WalletNetworkUIService = null;
+
+    constructor(
+        private modalCtrl: ModalController,
+        private networkService: WalletNetworkService,
+        private theme: GlobalThemeService) {
+        WalletNetworkUIService.instance = this;
     }
 
+    /**
+     * Lets user pick a network in the list of all available networks.
+     */
     async chooseActiveNetwork() {
         let options: NetworkChooserComponentOptions = {
             currentNetwork: this.networkService.activeNetwork.value

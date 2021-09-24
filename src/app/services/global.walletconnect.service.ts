@@ -3,8 +3,10 @@ import WalletConnect from "@walletconnect/client";
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
+import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { NetworkWallet } from '../wallet/model/wallets/networkwallet';
+import { EditCustomNetworkIntentResult } from '../wallet/pages/settings/edit-custom-network/edit-custom-network.page';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
 import { GlobalDIDSessionsService, IdentityEntry } from './global.didsessions.service';
@@ -16,6 +18,7 @@ import { GlobalNetworksService } from './global.networks.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
+import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
 
 /**
  * Indicates from where a request to initiate a new WC session came from
@@ -47,6 +50,7 @@ export class GlobalWalletConnectService extends GlobalService {
     private intent: GlobalIntentService,
     private intents: GlobalIntentService,
     private globalNetworksService: GlobalNetworksService,
+    private globalSwitchNetworkService: GlobalSwitchNetworkService,
     private walletNetworkService: WalletNetworkService,
     private walletManager: WalletService,
     private globalFirebaseService: GlobalFirebaseService,
@@ -395,6 +399,12 @@ export class GlobalWalletConnectService extends GlobalService {
     else if (request.method === "wallet_watchAsset") {
       await this.handleAddERCTokenRequest(connector, request);
     }
+    else if (request.method === "wallet_switchEthereumChain") {
+      await this.handleSwitchNetworkRequest(connector, request);
+    }
+    else if (request.method === "wallet_addEthereumChain") {
+      await this.handleAddNetworkRequest(connector, request);
+    }
     else {
       try {
         Logger.log("walletconnect", "Sending esctransaction intent", request);
@@ -468,6 +478,117 @@ export class GlobalWalletConnectService extends GlobalService {
         error: {
           code: -1,
           message: "Errored or cancelled"
+        }
+      });
+    }
+  }
+
+  /**
+   * Asks user to switch to another network as the client app needs it.
+   *
+   * EIP-3326
+   *
+   * If the error code (error.code) is 4902, then the requested chain has not been added
+   * and you have to request to add it via wallet_addEthereumChain.
+   */
+  private async handleSwitchNetworkRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    let switchParams: SwitchEthereumChainParameter = request.params[0];
+
+    let chainId = parseInt(switchParams.chainId);
+
+    let targetNetwork = this.walletNetworkService.getNetworkByChainId(chainId);
+    if (!targetNetwork) {
+      // We don't support this network
+      this.native.errToast("Network with chain ID " + switchParams.chainId + " is currently not supported");
+      connector.rejectRequest({
+        id: request.id,
+        error: {
+          code: 4902,
+          message: "Unsupported network"
+        }
+      });
+      return;
+    }
+    else {
+      // Do nothing if already on the right network
+      if (this.walletNetworkService.activeNetwork.value.getMainChainID() === chainId) {
+        Logger.log("walletconnect", "Already on the right network");
+        connector.approveRequest({
+          id: request.id,
+          result: {} // Successfully switched
+        });
+        return;
+      }
+
+      let networkSwitched = await this.globalSwitchNetworkService.promptSwitchToNetwork(targetNetwork);
+      if (networkSwitched) {
+        Logger.log("walletconnect", "Successfully switched to the new network");
+        connector.approveRequest({
+          id: request.id,
+          result: {} // Successfully switched
+        });
+      }
+      else {
+        Logger.log("walletconnect", "Network switch cancelled");
+        connector.rejectRequest({
+          id: request.id,
+          error: {
+            code: -1,
+            message: "Cancelled operation"
+          }
+        });
+      }
+    }
+  }
+
+  /**
+   * Asks user to add a custom network.
+   *
+   * EIP-3085
+   *
+   * For the rpcUrls and blockExplorerUrls arrays, at least one element is required, and only the first element will be used.
+   */
+  private async handleAddNetworkRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    // Check if this network already exists or not.
+    let addParams: AddEthereumChainParameter = request.params[0];
+    let chainId = parseInt(addParams.chainId);
+
+    let networkWasAdded = false;
+    let addedNetworkKey: string;
+    let existingNetwork = this.walletNetworkService.getNetworkByChainId(chainId);
+    if (!existingNetwork) {
+      // Network doesn't exist yet. Send an intent to the wallet and wait for the response.
+      let response: EditCustomNetworkIntentResult = await this.intent.sendIntent("https://wallet.elastos.net/addethereumchain", addParams);
+
+      if (response && response.networkAdded) {
+        networkWasAdded = true;
+        addedNetworkKey = response.networkKey;
+      }
+    }
+
+    // Not on this network, ask user to switch
+    if (this.walletNetworkService.activeNetwork.value.getMainChainID() !== chainId) {
+      let targetNetwork = existingNetwork;
+      if (!targetNetwork)
+        targetNetwork = this.walletNetworkService.getNetworkByKey(addedNetworkKey);
+
+      // Ask user to switch but we don't mind the result.
+      await this.globalSwitchNetworkService.promptSwitchToNetwork(targetNetwork);
+    }
+
+    if (networkWasAdded || existingNetwork) {
+      // Network added, or network already existed => success, no matter if user chosed to switch or not
+      connector.approveRequest({
+        id: request.id,
+        result: {} // Successfully added or existing
+      });
+    }
+    else {
+      connector.rejectRequest({
+        id: request.id,
+        error: {
+          code: -1,
+          message: "Network not added"
         }
       });
     }

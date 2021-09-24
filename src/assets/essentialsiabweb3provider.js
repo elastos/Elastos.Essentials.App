@@ -3098,6 +3098,8 @@
                       return this.eth_requestAccounts(payload);
                   case "wallet_watchAsset":
                       return this.wallet_watchAsset(payload);
+                  case "wallet_switchEthereumChain":
+                      return this.wallet_switchEthereumChain(payload);
                   case "wallet_addEthereumChain":
                       return this.wallet_addEthereumChain(payload);
                   case "eth_newFilter":
@@ -3174,29 +3176,32 @@
           }); */
       }
       eth_sendTransaction(payload) {
-          this.postMessage("signTransaction", payload.id, payload.params[0]);
+          this.postMessage("eth_sendTransaction", payload.id, payload.params[0]);
       }
       eth_requestAccounts(payload) {
-          this.postMessage("requestAccounts", payload.id, {});
+          this.postMessage("eth_requestAccounts", payload.id, {});
       }
       wallet_watchAsset(payload) {
           let options = payload.params.options;
-          this.postMessage("watchAsset", payload.id, {
+          this.postMessage("wallet_watchAsset", payload.id, {
               type: payload.type,
               contract: options.address,
               symbol: options.symbol,
               decimals: options.decimals || 0,
           });
       }
+      wallet_switchEthereumChain(payload) {
+          this.postMessage("wallet_switchEthereumChain", payload.id, payload.params[0]);
+      }
       wallet_addEthereumChain(payload) {
-          this.postMessage("addEthereumChain", payload.id, payload.params[0]);
+          this.postMessage("wallet_addEthereumChain", payload.id, payload.params[0]);
       }
       /**
        * Internal js -> native message handler
        */
       postMessage(handler, id, data) {
           //console.log("InAppBrowserWeb3Provider: postMessage", handler, id, data);
-          if (this.ready || handler === "requestAccounts") {
+          if (this.ready || handler === "eth_requestAccounts") {
               let object = {
                   id: id,
                   name: handler,

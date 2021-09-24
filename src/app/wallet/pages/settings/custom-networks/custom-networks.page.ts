@@ -5,6 +5,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CustomNetworkService } from 'src/app/wallet/services/customnetwork.service';
 import { Native } from 'src/app/wallet/services/native.service';
 import { CustomNetworkDiskEntry, WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { EditCustomNetworkRoutingParams } from '../edit-custom-network/edit-custom-network.page';
 
 @Component({
   selector: 'app-custom-networks',
@@ -36,12 +37,19 @@ export class CustomNetworksPage implements OnInit {
   }
 
   public addCustomNetwork() {
-    this.native.go("/wallet/settings/edit-custom-network");
+    let params: EditCustomNetworkRoutingParams = {
+      forEdition: false,
+      intentMode: false
+    };
+    this.native.go("/wallet/settings/edit-custom-network", params);
   }
 
   public editCustomNetwork(networkEntry: CustomNetworkDiskEntry) {
-    this.native.go("/wallet/settings/edit-custom-network", {
+    let params: EditCustomNetworkRoutingParams = {
+      forEdition: true,
+      intentMode: false,
       customNetworkKey: networkEntry.key
-    });
+    };
+    this.native.go("/wallet/settings/edit-custom-network", params);
   }
 }

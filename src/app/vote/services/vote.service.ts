@@ -8,6 +8,8 @@ import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwor
 import { MainchainSubWallet } from 'src/app/wallet/model/wallets/elastos/mainchain.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { StandardCoinName } from '../../wallet/model/coin';
 import { WalletAccount, WalletAccountType } from '../../wallet/model/walletaccount';
 import { Native } from '../../wallet/services/native.service';
@@ -39,6 +41,8 @@ export class VoteService {
         private walletManager: WalletService,
         public popupProvider: PopupProvider,
         private nav: GlobalNavService,
+        private walletNetworkService: WalletNetworkService,
+        private walletNetworkUIService: WalletNetworkUIService,
         private globalIntentService: GlobalIntentService,
         private globalSwitchNetworkService: GlobalSwitchNetworkService,
     ) {
@@ -53,9 +57,9 @@ export class VoteService {
         this.clear();
 
         // Make sure the active network is elastos, otherwise, ask user to change
-        const elastosNetwork = await this.globalSwitchNetworkService.switchNetworkToElastos();
+        const elastosNetwork = await this.globalSwitchNetworkService.promptSwitchToElastosNetworkIfDifferent();
         if (!elastosNetwork) {
-          return;// User has denied to switch network. Can't continue.
+            return;// User has denied to switch network. Can't continue.
         }
 
         this.context = context;

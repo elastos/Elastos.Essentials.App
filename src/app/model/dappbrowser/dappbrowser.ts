@@ -3,8 +3,12 @@ import { GetCredentialsQuery } from "@elastosfoundation/elastos-connectivity-sdk
 import { InAppBrowser, InAppBrowserObject } from "@ionic-native/in-app-browser/ngx";
 import { Logger } from "src/app/logger";
 import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { GlobalSwitchNetworkService } from "src/app/services/global.switchnetwork.service";
 import { GlobalThemeService } from "src/app/services/global.theme.service";
+import { EditCustomNetworkIntentResult } from "src/app/wallet/pages/settings/edit-custom-network/edit-custom-network.page";
+import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
+import { AddEthereumChainParameter, SwitchEthereumChainParameter } from "../ethereum/requestparams";
 
 type IABMessage = {
     type: "message";
@@ -144,14 +148,22 @@ export class DAppBrowser {
 
         switch (message.data.name) {
             // WEB3 PROVIDER
-            case "signTransaction":
+            case "eth_signTransaction":
                 this.browser.hide();
                 await this.handleSignTransaction(message);
                 this.browser.show();
                 break;
-            case "requestAccounts":
+            case "eth_requestAccounts":
                 // NOTE: for now, directly return user accounts without asking for permission
                 await this.handleRequestAccounts(message);
+                break;
+            case "wallet_switchEthereumChain":
+                Logger.log("dappbrowser", "Received switch ethereum chain request");
+                await this.handleSwitchEthereumChain(message);
+                break;
+            case "wallet_addEthereumChain":
+                Logger.log("dappbrowser", "Received add ethereum chain request");
+                await this.handleAddEthereumChain(message);
                 break;
 
             // ELASTOS CONNECTOR
@@ -201,6 +213,83 @@ export class DAppBrowser {
         return;
     }
 
+    private async handleSwitchEthereumChain(message: IABMessage): Promise<void> {
+        let switchParams: SwitchEthereumChainParameter = message.data.object;
+
+        let chainId = parseInt(switchParams.chainId);
+
+        let targetNetwork = WalletNetworkService.instance.getNetworkByChainId(chainId);
+        if (!targetNetwork) {
+            // We don't support this network
+            this.sendWeb3IABError(message.data.id, {
+                code: 4902,
+                message: "Unsupported network"
+            });
+            return;
+        }
+        else {
+            // Do nothing if already on the right network
+            if (WalletNetworkService.instance.activeNetwork.value.getMainChainID() === chainId) {
+                Logger.log("walletconnect", "Already on the right network");
+                this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
+                return;
+            }
+
+            let networkSwitched = await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+            if (networkSwitched) {
+                Logger.log("walletconnect", "Successfully switched to the new network");
+                this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
+            }
+            else {
+                Logger.log("walletconnect", "Network switch cancelled");
+                this.sendWeb3IABError(message.data.id, {
+                    code: -1,
+                    message: "Cancelled operation"
+                });
+            }
+        }
+    }
+
+    private async handleAddEthereumChain(message: IABMessage): Promise<void> {
+        // Check if this network already exists or not.
+        let addParams: AddEthereumChainParameter = message.data.object;
+        let chainId = parseInt(addParams.chainId);
+
+        let networkWasAdded = false;
+        let addedNetworkKey: string;
+        let existingNetwork = WalletNetworkService.instance.getNetworkByChainId(chainId);
+        if (!existingNetwork) {
+            // Network doesn't exist yet. Send an intent to the wallet and wait for the response.
+            let response: EditCustomNetworkIntentResult = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/addethereumchain", addParams);
+
+            if (response && response.networkAdded) {
+                networkWasAdded = true;
+                addedNetworkKey = response.networkKey;
+            }
+        }
+
+        // Not on this network, ask user to switch
+        if (WalletNetworkService.instance.activeNetwork.value.getMainChainID() !== chainId) {
+            let targetNetwork = existingNetwork;
+            if (!targetNetwork)
+                targetNetwork = WalletNetworkService.instance.getNetworkByKey(addedNetworkKey);
+
+            // Ask user to switch but we don't mind the result.
+            await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+        }
+
+        if (networkWasAdded || existingNetwork) {
+            // Network added, or network already existed => success, no matter if user chosed to switch or not
+            this.sendWeb3IABResponse(message.data.id, {}); // Successfully added or existing
+        }
+        else {
+            this.sendWeb3IABError(message.data.id, {
+                code: -1,
+                message: "Network not added"
+            });
+        }
+    }
+
     private async handleElastosGetCredentials(message: IABMessage): Promise<void> {
         try {
             let query = message.data.object as GetCredentialsQuery;
@@ -231,6 +320,16 @@ export class DAppBrowser {
         let stringifiedResult = JSON.stringify(result);
         let code = 'window.ethereum.sendResponse(' + id + ', ' + stringifiedResult + ')';
         console.log("stringifiedResult", stringifiedResult, "code", code);
+
+        void this.browser.executeScript({
+            code: code
+        });
+    }
+
+    private sendWeb3IABError(id: number, error: { code: number; message: string; }) {
+        let stringifiedError = JSON.stringify(error);
+        let code = 'window.ethereum.sendError(' + id + ', ' + stringifiedError + ')';
+        console.log("stringifiedError", stringifiedError, "code", code);
 
         void this.browser.executeScript({
             code: code

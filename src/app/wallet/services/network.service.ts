@@ -62,17 +62,16 @@ export class WalletNetworkService {
         public events: Events,
         public native: Native,
         public popupProvider: PopupProvider,
-        private localStorage: LocalStorage)
-    {
+        private localStorage: LocalStorage) {
         WalletNetworkService.instance = this;
     }
 
     public init() {
-      this.networks = [];
+        this.networks = [];
     }
 
     public stop() {
-      this.networks = [];
+        this.networks = [];
     }
 
     /**
@@ -140,6 +139,10 @@ export class WalletNetworkService {
 
     public getNetworkByKey(key: string): Network {
         return this.networks.find(n => n.key === key);
+    }
+
+    public getNetworkByChainId(chainId: number): Network {
+        return this.networks.find(n => n.getMainChainID() == chainId);
     }
 
     public getActiveNetworkIndex(): number {

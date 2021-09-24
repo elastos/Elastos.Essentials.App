@@ -7,6 +7,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { AddERCTokenRequestParams } from '../model/adderctokenrequest';
 import { StandardCoinName } from '../model/coin';
 import { MasterWallet } from '../model/wallets/masterwallet';
+import { EditCustomNetworkRoutingParams } from '../pages/settings/edit-custom-network/edit-custom-network.page';
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
@@ -91,6 +92,9 @@ export class IntentService {
         switch (this.getShortAction(intent.action)) {
             case 'adderctoken':
                 this.handleAddCoinIntent(intent);
+                break;
+            case 'addethereumchain':
+                this.handleAddEthereumChainIntent(intent);
                 break;
             case 'elawalletmnemonicaccess':
             case 'walletaccess':
@@ -256,6 +260,16 @@ export class IntentService {
         };
 
         this.native.setRootRouter("/wallet/coin-add-erc20", { ...params, forIntent: true });
+    }
+
+    handleAddEthereumChainIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        let params: EditCustomNetworkRoutingParams = {
+            forEdition: false,
+            intentMode: true,
+            intentId: intent.intentId,
+            preFilledRequest: intent.params
+        }
+        this.native.setRootRouter("/wallet/settings/edit-custom-network", params);
     }
 
     handleAccessIntent(intent: EssentialsIntentPlugin.ReceivedIntent) {

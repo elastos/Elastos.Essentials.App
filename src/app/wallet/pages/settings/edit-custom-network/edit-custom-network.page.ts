@@ -3,7 +3,8 @@ import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { Util } from 'src/app/model/util';
+import { AddEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
@@ -11,6 +12,19 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CustomNetworkService } from 'src/app/wallet/services/customnetwork.service';
 import { CustomNetworkDiskEntry, WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
+
+export type EditCustomNetworkRoutingParams = {
+  forEdition: boolean;
+  intentMode: boolean;
+  intentId?: number; // Received intent id - for intent mode only
+  customNetworkKey?: string; // Key of the edited network. Edition mode only
+  preFilledRequest?: AddEthereumChainParameter; // Request to add a new network by an external api with prefilled information (intent mode)
+}
+
+export type EditCustomNetworkIntentResult = {
+  networkAdded: boolean;
+  networkKey?: string;
+}
 
 @Component({
   selector: 'app-edit-custom-network',
@@ -25,6 +39,8 @@ export class EditCustomNetworkPage implements OnInit {
 
   // Logic
   public editionMode = false;
+  public intentMode = false;
+  public intentId: number;
 
   constructor(
     public theme: GlobalThemeService,
@@ -33,6 +49,7 @@ export class EditCustomNetworkPage implements OnInit {
     private globalNetworksService: GlobalNetworksService,
     private customNetworksService: CustomNetworkService,
     private router: Router,
+    private globalIntentService: GlobalIntentService,
     private native: GlobalNativeService,
     private globalNav: GlobalNavService,
     private http: HttpClient,
@@ -47,31 +64,49 @@ export class EditCustomNetworkPage implements OnInit {
   private init() {
     const navigation = this.router.getCurrentNavigation();
     this.zone.run(() => {
-      if (!Util.isEmptyObject(navigation.extras.state)) {
-        if (navigation.extras.state.customNetworkKey) {
-          this.editionMode = true;
+      let params = navigation.extras.state as EditCustomNetworkRoutingParams;
+      if (params.forEdition) {
+        this.editionMode = true;
 
-          this.editedNetworkEntry = Object.assign({}, this.customNetworksService.getCustomNetworkEntries().find(n => n.key === navigation.extras.state.customNetworkKey));
+        this.editedNetworkEntry = Object.assign({}, this.customNetworksService.getCustomNetworkEntries().find(n => n.key === navigation.extras.state.customNetworkKey));
 
-          //this.editedNetworkEntry.rpcUrl = "https://http-mainnet.hecochain.com" // TMP TEST
-          //this.editedNetworkEntry.accountRpcUrl = "https://api.hecoinfo.com" // TMP TEST
+        //this.editedNetworkEntry.rpcUrl = "https://http-mainnet.hecochain.com" // TMP TEST
+        //this.editedNetworkEntry.accountRpcUrl = "https://api.hecoinfo.com" // TMP TEST
 
-          return;
+        return;
+      }
+      else {
+        this.editionMode = false;
+        this.intentMode = params.intentMode;
+
+        if (!params.intentMode) {
+          // User mode, start with blank inputs
+          this.editedNetworkEntry = {
+            key: "custom" + Date.now(),
+            name: "",
+            rpcUrl: "",
+            accountRpcUrl: "",
+            chainId: "",
+            networkTemplate: this.globalNetworksService.activeNetworkTemplate.value,
+            mainCurrencySymbol: "",
+            colorScheme: '#9A67EB'
+          };
+        }
+        else {
+          // Intent mode - use prefilled data
+          this.intentId = params.intentId;
+          this.editedNetworkEntry = {
+            key: "custom" + Date.now(),
+            name: params.preFilledRequest.chainName,
+            rpcUrl: params.preFilledRequest.rpcUrls[0],
+            accountRpcUrl: "",
+            chainId: "" + parseInt(params.preFilledRequest.chainId), // Possiblity convert from hex before converting back to string
+            networkTemplate: this.globalNetworksService.activeNetworkTemplate.value,
+            mainCurrencySymbol: params.preFilledRequest.nativeCurrency.symbol,
+            colorScheme: '#9A67EB'
+          };
         }
       }
-
-      this.editionMode = false;
-      this.editedNetworkEntry = {
-        key: "custom" + Date.now(),
-        name: "",
-        rpcUrl: "",
-        accountRpcUrl: "",
-        chainId: "",
-        networkTemplate: this.globalNetworksService.activeNetworkTemplate.value,
-        mainCurrencySymbol: "",
-        colorScheme: '#9A67EB'
-      };
-
       //this.editedNetworkEntry.rpcUrl = "https://http-mainnet.hecochain.com" // TMP TEST
       //this.editedNetworkEntry.accountRpcUrl = "https://api.hecoinfo.com" // TMP TEST
     });
@@ -85,7 +120,15 @@ export class EditCustomNetworkPage implements OnInit {
   }
 
   cancel() {
-    void this.globalNav.navigateBack();
+    if (this.intentMode) {
+      let result: EditCustomNetworkIntentResult = {
+        networkAdded: false
+      };
+      void this.globalIntentService.sendIntentResponse(result, this.intentId);
+    }
+    else {
+      void this.globalNav.navigateBack();
+    }
   }
 
   async delete(): Promise<void> {
@@ -163,6 +206,16 @@ export class EditCustomNetworkPage implements OnInit {
 
     // Everything ok, save the network
     await this.customNetworksService.upsertCustomNetwork(this.editedNetworkEntry);
-    void this.globalNav.navigateBack();
+
+    if (this.intentMode) {
+      let result: EditCustomNetworkIntentResult = {
+        networkAdded: true,
+        networkKey: this.editedNetworkEntry.key
+      };
+      void this.globalIntentService.sendIntentResponse(result, this.intentId);
+    }
+    else {
+      void this.globalNav.navigateBack();
+    }
   }
 }

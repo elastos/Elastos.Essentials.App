@@ -213,7 +213,7 @@ export const fr = {
         * Network Switch Component *
         ************************************/
         'network-switch-component-title': 'Changement de Réseau',
-        'network-switch-component-intro': 'Pour continuer, vous devez passez sur le réseau Elastos.',
+        'network-switch-component-intro': 'Pour continuer, vous devez passer sur un réseau différent.',
         'network-switch-component-confirm': 'Changer le réseau',
 
         /************************
