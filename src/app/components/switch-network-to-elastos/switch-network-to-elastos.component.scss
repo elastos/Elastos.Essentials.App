@@ -1,5 +1,4 @@
 ion-grid {
-    height: 100%;
     padding: 10px 20px;
 
     ion-icon, ion-spinner {
@@ -40,6 +39,10 @@ ion-grid {
             img {
                 height: 40px;
                 max-width: 40px;
+            }
+
+            ion-label {
+              margin-top: 10px;
             }
         }
 

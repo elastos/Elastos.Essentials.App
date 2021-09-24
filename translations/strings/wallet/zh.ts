@@ -212,7 +212,7 @@ export const zh = {
         * Network Switch Component *
         ************************************/
         'network-switch-component-title': '网络切换',
-        'network-switch-component-intro': '您需要将当前网络切换到Elastos网络才能执行下一步操作。',
+        'network-switch-component-intro': '需要将当前网络切换到Elastos网络才能执行下一步操作！',
         'network-switch-component-confirm': '切换网络',
 
         /************************
