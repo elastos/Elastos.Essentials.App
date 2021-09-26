@@ -177,13 +177,16 @@ export class WalletSettingsPage implements OnInit {
             mode: 'ios',
             cssClass: 'wallet-warning-component',
             component: WarningComponent,
+            componentProps: {
+              warning: 'delete',
+            },
             translucent: false
         });
 
         this.popover.onWillDismiss().then(async (params) => {
             this.popover = null;
 
-            if (params && params.data && params.data.delete) {
+            if (params && params.data && params.data.confirm) {
                 await this.destroyWallet(this.masterWalletId);
             }
         });

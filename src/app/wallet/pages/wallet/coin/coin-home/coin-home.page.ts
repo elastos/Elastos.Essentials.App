@@ -22,6 +22,7 @@
 
 import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -31,7 +32,10 @@ import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { ERC20SubWallet } from 'src/app/wallet/model/wallets/erc20.subwallet';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
@@ -88,6 +92,8 @@ export class CoinHomePage implements OnInit {
     private updateInterval = null;
     private updateTmeout = null;
 
+    public popover: any = null;
+
     constructor(
         public router: Router,
         public walletManager: WalletService,
@@ -97,10 +103,13 @@ export class CoinHomePage implements OnInit {
         public events: Events,
         private zone: NgZone,
         public popupProvider: PopupProvider,
+        private popoverCtrl: PopoverController,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         public uiService: UiService,
-        private storage: LocalStorage
+        private storage: LocalStorage,
+        private globalNav: GlobalNavService,
+        private didSessions: GlobalDIDSessionsService
     ) {
         this.init();
     }
@@ -303,8 +312,39 @@ export class CoinHomePage implements OnInit {
         );
     }
 
-    receiveFunds() {
-        this.native.go('/wallet/coin-receive');
+    async receiveFunds() {
+        if (this.networkWallet.masterWallet.createdBySystem) {
+          const needsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
+          if (needsBackup) {
+            await this.showBackupPrompt()
+          }
+        } else {
+          this.native.go('/wallet/coin-receive');
+        }
+    }
+
+    async showBackupPrompt() {
+      this.popover = await this.popoverCtrl.create({
+          mode: 'ios',
+          cssClass: 'wallet-warning-component',
+          component: WarningComponent,
+          componentProps: {
+            warning: 'bakcup',
+          },
+          translucent: false
+      });
+
+      this.popover.onWillDismiss().then((params) => {
+          this.popover = null;
+
+          if (params && params.data && params.data.confirm) {
+            void this.globalNav.navigateTo("identitybackup", "/identity/backupdid");
+          } else {
+            this.native.go('/wallet/coin-receive');
+          }
+      });
+
+      return await this.popover.present();
     }
 
     sendFunds() {

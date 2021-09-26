@@ -2,13 +2,13 @@
 
   <ion-row class="header">
     <img src="/assets/didsessions/default/deleteWarning.svg">
-    <h1 class="ion-padding-horizontal ion-text-center">{{ 'wallet.delete-wallet-confirm-title' | translate }}</h1>
+    <h1 class="ion-padding-horizontal ion-text-center">{{ getDisplayableHeader() }}</h1>
   </ion-row>
 
   <ion-row>
     <ion-col class="message ion-padding">
       <p class="ion-padding">
-        {{ 'wallet.delete-wallet-confirm-subtitle' | translate }}
+        {{ getDisplayableMessage() }}
       </p>
     </ion-col>
   </ion-row>
@@ -23,5 +23,5 @@
       <ion-ripple-effect></ion-ripple-effect>
     </ion-col>
   </ion-row>
-  
+
 </div>
