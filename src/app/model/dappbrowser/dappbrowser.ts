@@ -148,9 +148,9 @@ export class DAppBrowser {
 
         switch (message.data.name) {
             // WEB3 PROVIDER
-            case "eth_signTransaction":
+            case "eth_sendTransaction":
                 this.browser.hide();
-                await this.handleSignTransaction(message);
+                await this.handleSendTransaction(message);
                 this.browser.show();
                 break;
             case "eth_requestAccounts":
@@ -181,7 +181,7 @@ export class DAppBrowser {
     /**
      * Executes a smart contract transaction then returns the result to the calling dApp.
      */
-    private async handleSignTransaction(message: IABMessage): Promise<void> {
+    private async handleSendTransaction(message: IABMessage): Promise<void> {
         let response: {
             action: string,
             result: {
