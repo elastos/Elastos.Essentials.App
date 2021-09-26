@@ -195,7 +195,7 @@ export class CoinAddERC20Page implements OnInit {
             this.native.toast_trans('wallet.coin-adderc20-alreadyadded');
         } else {
             const activeNetworkTemplate = this.prefs.getNetworkTemplate();
-            const newCoin = new ERC20Coin(this.coinSymbol, this.coinSymbol, this.coinName, this.coinAddress, activeNetworkTemplate, true);
+            const newCoin = new ERC20Coin(this.coinSymbol, this.coinName, this.coinAddress, activeNetworkTemplate, true);
             await this.networkWallet.network.addCustomERC20Coin(newCoin);
 
             // Coin added - go back to the previous screen

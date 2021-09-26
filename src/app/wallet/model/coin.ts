@@ -73,7 +73,6 @@ export class StandardCoin extends Coin {
 export class ERC20Coin extends Coin {
 
     constructor(
-        id: CoinID,
         name: string,
         description: string,
         private erc20ContractAddress: string,
@@ -81,7 +80,9 @@ export class ERC20Coin extends Coin {
         private isCustom: boolean,
         public initiallyShowInWallet = false // Whether to show this coin as subwallet when a wallet is cfirst used by the user
     ) {
-        super(CoinType.ERC20, id, name, description, true, networkTemplate);
+      // The id is tokenSymbol in version 2.2.0, but the tokenSymbol isn't unique.
+      // So we use contract address as id.
+      super(CoinType.ERC20, erc20ContractAddress, name, description, true, networkTemplate);
     }
 
     /**
@@ -97,7 +98,7 @@ export class ERC20Coin extends Coin {
     }
 
     static fromJson(jsonCoin: any): ERC20Coin {
-        let coin = new ERC20Coin(null, null, null, null, null, null);
+        let coin = new ERC20Coin(null, null, null, null, null);
         Object.assign(coin, jsonCoin);
         return coin;
     }
