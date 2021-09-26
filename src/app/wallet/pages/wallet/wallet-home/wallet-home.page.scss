@@ -1,4 +1,4 @@
-@import 'src/app/wallet/root.scss';
+@import "src/app/wallet/root.scss";
 
 .network-container {
     border-radius: 11px;
@@ -48,7 +48,8 @@
                     justify-content: center;
                     align-items: flex-start;
 
-                    h1, p {
+                    h1,
+                    p {
                         margin: 0;
                     }
 
@@ -110,9 +111,9 @@
                 justify-content: flex-end;
 
                 ion-icon {
-                  width: 15px;
-                  height: 12px;
-                  visibility: hidden;
+                    width: 15px;
+                    height: 12px;
+                    visibility: hidden;
                 }
             }
         }
@@ -131,13 +132,14 @@
 
 .dark-network-container {
     background-color: #212021;
-    box-shadow: 0px 123px 89px #000000AD;
+    box-shadow: 0px 123px 89px #000000ad;
 
     .network-options {
         .header-row {
             ion-col {
                 ion-label {
-                    h1, p {
+                    h1,
+                    p {
                         color: #ffffff;
                     }
                 }
@@ -151,11 +153,10 @@
         }
 
         .selected-network {
-            background-color: #312F31;
+            background-color: #312f31;
         }
     }
 }
-
 
 .networkOptions-container {
     position: relative;
@@ -185,7 +186,8 @@
                     justify-content: center;
                     align-items: flex-start;
 
-                    h1, p {
+                    h1,
+                    p {
                         margin: 0;
                     }
 
@@ -260,9 +262,9 @@
                 justify-content: flex-end;
 
                 ion-icon {
-                  width: 15px;
-                  height: 12px;
-                  visibility: hidden;
+                    width: 15px;
+                    height: 12px;
+                    visibility: hidden;
                 }
             }
         }
@@ -281,13 +283,14 @@
 
 .dark-wallet-container {
     background-color: #212021;
-    box-shadow: 0px 123px 89px #000000AD;
+    box-shadow: 0px 123px 89px #000000ad;
 
     .wallet-selection {
         .header-row {
             ion-col {
                 ion-label {
-                    h1, p {
+                    h1,
+                    p {
                         color: #ffffff;
                     }
                 }
@@ -301,7 +304,7 @@
         }
 
         .selected-wallet {
-            background-color: #312F31;
+            background-color: #312f31;
         }
     }
 }
@@ -318,7 +321,8 @@ ion-slide {
     padding: 15px 20px;
 }
 
-ion-slide, .single-slide {
+ion-slide,
+.single-slide {
     min-height: 100%;
     margin: 0;
     display: flex;
@@ -330,7 +334,8 @@ ion-slide, .single-slide {
         margin-bottom: 10px;
         margin-left: 5px;
 
-        h1, p {
+        h1,
+        p {
             margin: 0;
         }
 
@@ -375,17 +380,36 @@ ion-slide, .single-slide {
             }
 
             .change-wallet-col {
-                text-align:right;
+                text-align: right;
 
                 img {
-                    vertical-align:middle;
+                    vertical-align: middle;
                     width: 22px;
                     height: 22px;
                 }
                 .change {
-                    vertical-align:middle;
+                    vertical-align: middle;
                     margin-left: 5px;
                     color: #ffffff;
+                }
+            }
+        }
+    }
+
+    .subwallet-row {
+        .middle-col {
+            .earn-providers {
+                display: flex;
+                align-items: center;
+                padding: 8px;
+                border-radius: 10px;
+                font-weight: bold;
+                margin-top: 10px;
+                background: rgba(0, 0, 0, 0.1);
+
+                .logo {
+                    height: 20px;
+                    margin-right: 5px;
                 }
             }
         }
@@ -408,11 +432,11 @@ ion-slide, .single-slide {
     }
 }
 
-.dark-slides  {
+.dark-slides {
     ion-slide {
         .main-title-row {
             p {
-                color: #9D9D9D;
+                color: #9d9d9d;
                 opacity: 1;
             }
         }
@@ -422,8 +446,16 @@ ion-slide, .single-slide {
 .dark-slide {
     .main-title-row {
         p {
-            color: #9D9D9D;
+            color: #9d9d9d;
             opacity: 1;
+        }
+    }
+
+    .subwallet-row {
+        .middle-col {
+            .earn-providers {
+                background: rgba(255, 255, 255, 0.1);
+            }
         }
     }
 }

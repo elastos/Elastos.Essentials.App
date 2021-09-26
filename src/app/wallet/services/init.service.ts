@@ -25,6 +25,7 @@ import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { CustomNetworkService } from './customnetwork.service';
+import { EarnService } from './earn.service';
 import { ETHTransactionService } from './ethtransaction.service';
 import { IntentService } from './intent.service';
 import { NameResolvingService } from './nameresolving.service';
@@ -56,6 +57,7 @@ export class WalletInitService extends GlobalService {
     private customNetworkService: CustomNetworkService,
     private globalNetworksService: GlobalNetworksService,
     private ethTransactionService: ETHTransactionService,
+    private earnService: EarnService, // IMPORTANT: unused, but keep it here for initialization
     private httpClient: HttpClient
   ) {
     super();

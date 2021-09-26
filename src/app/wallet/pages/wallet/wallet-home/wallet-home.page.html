@@ -96,7 +96,7 @@
                     <div (click)="currencyService.toggleCurrencyDisplay()">
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
-                              *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
+                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
                             <span class="decimals">{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())
                                 }}</span>
                             <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
@@ -137,6 +137,13 @@
                 <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
                     <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
                     <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
+
+                    <div class="earn-providers" (click)="earn($event, subWallet)"
+                        *ngIf="subWallet.getAvailableEarnProviders().length > 0">
+                        <img *ngFor="let earnProvider of subWallet.getAvailableEarnProviders()"
+                            [src]="earnProvider.logo" class="logo">
+                        Earn
+                    </div>
                 </ion-col>
                 <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
                     <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
@@ -144,7 +151,6 @@
                         {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
                         {{ currencyService.selectedCurrency.symbol }}
                     </p>
-
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
                     <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{

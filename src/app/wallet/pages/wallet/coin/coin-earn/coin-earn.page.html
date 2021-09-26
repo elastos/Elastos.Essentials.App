@@ -1,0 +1,59 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+        <ion-row>
+            <div class="network">Heco</div>
+        </ion-row>
+        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode">
+            <ion-col size="2" class="left-col">
+                <div class="icon-container">
+                    <img [src]="subWallet.getMainIcon()">
+                    <div *ngIf="subWallet.getSecondaryIcon()" class="ela-icon">
+                        <img [src]="subWallet.getSecondaryIcon()" />
+                    </div>
+                </div>
+            </ion-col>
+            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
+                <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
+                <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
+
+                <div class="earn-providers" (click)="earn($event, subWallet)"
+                    *ngIf="subWallet.getAvailableEarnProviders().length > 0">
+                    <img *ngFor="let earnProvider of subWallet.getAvailableEarnProviders()" [src]="earnProvider.logo"
+                        class="logo">
+                    Earn
+                </div>
+            </ion-col>
+            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
+                <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
+                <p *ngIf="subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())">
+                    {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
+                    {{ currencyService.selectedCurrency.symbol }}
+                </p>
+            </ion-col>
+            <ion-col offset="2" size="10" class="bottom-col">
+                <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
+                    subWallet.getDisplayableERC20TokenInfo() }}</span>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+        <ion-row>
+            <h1>Available Finance Platforms</h1>
+            <p>
+                The following platforms can manage this coin to let you earn interests. Please keep in mind
+                that these are <b>third party services not related to Elastos Essentials</b>. Do your own
+                verifications first before trusting any platform.
+            </p>
+            <div>
+                filda, etc
+            </div>
+        </ion-row>
+        <ion-row>
+            <h1>On other networks</h1>
+            <div>
+                glide
+            </div>
+        </ion-row>
+
+    </ion-grid>
+</ion-content>

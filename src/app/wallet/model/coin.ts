@@ -71,17 +71,22 @@ export class StandardCoin extends Coin {
 }
 
 export class ERC20Coin extends Coin {
+    private erc20ContractAddress: string;
 
     constructor(
         id: CoinID,
         name: string,
         description: string,
-        private erc20ContractAddress: string,
+        erc20ContractAddress: string,
         networkTemplate: string,
         private isCustom: boolean,
         public initiallyShowInWallet = false // Whether to show this coin as subwallet when a wallet is cfirst used by the user
     ) {
         super(CoinType.ERC20, id, name, description, true, networkTemplate);
+
+        // Make contract addresses always lowercase for easier comparisons later one.
+        if (erc20ContractAddress)
+            this.erc20ContractAddress = erc20ContractAddress.toLowerCase();
     }
 
     /**

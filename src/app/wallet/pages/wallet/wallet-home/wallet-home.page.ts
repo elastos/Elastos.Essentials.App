@@ -293,4 +293,15 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public pickNetNetwork() {
         void this.walletNetworkUIService.chooseActiveNetwork();
     }
+
+    public earn(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.native.go("/wallet/coin-earn", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
+    }
 }

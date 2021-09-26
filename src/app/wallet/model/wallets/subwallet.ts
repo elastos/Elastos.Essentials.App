@@ -2,6 +2,7 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { Transfer } from '../../services/cointransfer.service';
+import { EarnProvider, EarnService } from '../../services/earn.service';
 import { CoinID, CoinType, StandardCoinName } from '../coin';
 import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../providers/transaction.types';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
@@ -298,4 +299,8 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string): Promise<string>;
   public abstract publishTransaction(transaction: string): Promise<string>;
   public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
+
+  public getAvailableEarnProviders(): EarnProvider[] {
+    return EarnService.instance.getAvailableEarnProviders(this);
+  }
 }
