@@ -49,7 +49,7 @@
                 </div>
             </div>
         </ion-row>
-        <ion-row class="available-swap-providers">
+        <ion-row class="available-swap-providers" *ngIf="subWallet.getAvailableSwapProviders().length > 0">
             <h1>Get more tokens</h1>
             The following third party swap services are available to <b>get more {{subWallet.getFriendlyName()}}</b>
             tokens:

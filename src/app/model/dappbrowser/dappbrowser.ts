@@ -97,8 +97,8 @@ export class DAppBrowser {
             // Inject the web3 provider
             Logger.log("dappbrowser", "Executing Web3 provider injection script");
             void dappBrowser.browser.executeScript({
-                code: web3ProviderCode +
-                    "console.log('Elastos Essentials Web3 provider is being created'); \
+                code: web3ProviderCode + "\
+                console.log('Elastos Essentials Web3 provider is being created'); \
                 window.ethereum = new InAppBrowserWeb3Provider();\
                 window.web3 = { \
                     currentProvider: window.ethereum\

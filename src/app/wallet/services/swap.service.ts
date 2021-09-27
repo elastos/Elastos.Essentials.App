@@ -41,6 +41,8 @@ export type SwapProvider = {
  *
  * Analysis:
  *
+ * Uniswap custom linking integration: https://docs.uniswap.org/protocol/V2/guides/interface-integration/custom-interface-linking
+ *
  * Example of anyswap list of swappable tokens on HECO: https://github.com/anyswap/anyswap-frontend/blob/vi-new/src/contexts/Tokens/tokens/huobi.js
  *
  * TODO: UNISWAP/ETHEREUM: https://tokenlists.org/token-list?url=https://gateway.ipfs.io/ipns/tokens.uniswap.org
