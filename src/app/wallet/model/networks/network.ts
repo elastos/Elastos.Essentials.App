@@ -16,6 +16,7 @@ export abstract class Network {
   public onCoinDeleted: Subject<string> = new Subject(); // Event - when a coin is added - provides the coin ID
 
   private localStorageKey = ''
+  private lastAccessTimestamp = 0;
 
   constructor(
     public key: string, // unique identifier
@@ -79,6 +80,8 @@ export abstract class Network {
     this.availableCoins = [...this.availableCoins, ...await this.getCustomERC20Coins()];
 
     await this.initDeletedCustomERC20Coins(this);
+
+    this.lastAccessTimestamp = await LocalStorage.instance.get("custom-erc20-coins-accesstime-" + this.localStorageKey);
 
     Logger.log('wallet', "Available coins for network " + this.key + ":", this.availableCoins);
     Logger.log('wallet', "Deleted coins for network " + this.key + ":", this.deletedERC20Coins);
@@ -190,5 +193,14 @@ export abstract class Network {
     }
 
     this.deletedERC20Coins = deletedERC20Coins;
+  }
+
+  public updateAccessTime(timestamp: number) {
+    this.lastAccessTimestamp = timestamp;
+    void LocalStorage.instance.set("custom-erc20-coins-accesstime-" + this.localStorageKey, this.lastAccessTimestamp);
+  }
+
+  public getLastAccessTime() {
+    return this.lastAccessTimestamp;
   }
 }

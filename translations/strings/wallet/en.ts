@@ -285,6 +285,8 @@ export const en = {
         "coin-list-enable-disable-coins": "Enable/Disable Coins",
         "coin-list-enable-disable-coins-intro": "Toggle what coins you would like to display on your wallet home screen.",
         "erc-20-token": "ERC20 Token",
+        "new-coins": "New Coins",
+        "all-coins": "All Coins",
 
         /***********************
         * Export Mnemonic Page *

@@ -188,6 +188,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     let newAllCoinsList: ERCTokenInfo[] = [];
     let newERC20CoinsList: string[] = [];
     let newERC721CoinsList: string[] = [];
+    const timestamp = (new Date()).valueOf();
 
     let activeNetworkTemplate = GlobalNetworksService.instance.activeNetworkTemplate.value;
     // For each ERC token discovered by the wallet SDK, we check its type and handle it.
@@ -202,7 +203,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
               // add a subwallet as well.
               const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(token.contractAddress);
               if (!erc20Coin) {
-                const newCoin = new ERC20Coin(token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true);
+                const newCoin = new ERC20Coin(token.symbol, token.name, token.contractAddress, activeNetworkTemplate, true, false, timestamp);
                 if (await this.networkWallet.network.addCustomERC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);

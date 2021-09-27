@@ -285,6 +285,8 @@ export const zh = {
                 "coin-list-enable-disable-coins": "开启/关闭 币种",
                 "coin-list-enable-disable-coins-intro": "选择要在钱包主页面显示的币种。",
                 "erc-20-token": "ERC20 币种",
+                "new-coins": "新币种",
+                "all-coins": "全部币种",
 
                 /***********************
                 * Export Mnemonic Page *

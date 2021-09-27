@@ -36,6 +36,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     masterWallet: MasterWallet = null;
     networkWallet: NetworkWallet = null;
     coinList: EditableCoinInfo[] = null;
+    newCoinList: EditableCoinInfo[] = null;
     coinListCache = {};
     payPassword = "";
     singleAddress = false;
@@ -160,7 +161,15 @@ export class CoinListPage implements OnInit, OnDestroy {
                 this.coinList.push({ coin: availableCoin, isOpen: isOpen });
             }
         }
-        Logger.log('wallet', 'coin list', this.coinList);
+
+        const lastAccessTime = this.networkWallet.network.getLastAccessTime();
+        this.newCoinList = this.coinList.filter( (coin) => {
+          return (coin.coin.getCreatedTime() > lastAccessTime)
+        })
+
+        const timestamp = (new Date()).valueOf();
+        this.networkWallet.network.updateAccessTime(timestamp);
+        Logger.log('wallet', 'coin list', this.coinList, this.newCoinList);
     }
 
     async createSubWallet(coin: Coin) {
