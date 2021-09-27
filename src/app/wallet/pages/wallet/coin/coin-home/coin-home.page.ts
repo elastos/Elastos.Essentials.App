@@ -317,6 +317,8 @@ export class CoinHomePage implements OnInit {
           const needsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
           if (needsBackup) {
             await this.showBackupPrompt()
+          } else {
+            this.native.go('/wallet/coin-receive');
           }
         } else {
           this.native.go('/wallet/coin-receive');
