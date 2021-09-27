@@ -9,7 +9,7 @@ import { CoinType } from 'src/app/wallet/model/coin';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
-import { EarnProvider, EarnService } from 'src/app/wallet/services/earn.service';
+import { EarnService } from 'src/app/wallet/services/earn.service';
 import { SwapProvider, SwapService } from 'src/app/wallet/services/swap.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
@@ -18,11 +18,11 @@ import { WalletService } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 
 @Component({
-    selector: 'app-coin-earn',
-    templateUrl: './coin-earn.page.html',
-    styleUrls: ['./coin-earn.page.scss'],
+    selector: 'app-coin-swap',
+    templateUrl: './coin-swap.page.html',
+    styleUrls: ['./coin-swap.page.scss'],
 })
-export class CoinEarnPage implements OnInit {
+export class CoinSwapPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public WalletUtil = WalletUtil;
@@ -30,7 +30,6 @@ export class CoinEarnPage implements OnInit {
 
     public networkWallet: NetworkWallet;
     public subWallet: AnySubWallet;
-    public availableEarnProviders: EarnProvider[] = [];
 
     constructor(
         public route: ActivatedRoute,
@@ -57,16 +56,11 @@ export class CoinEarnPage implements OnInit {
 
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
             this.subWallet = this.networkWallet.getSubWallet(subWalletId);
-            this.availableEarnProviders = this.subWallet.getAvailableEarnProviders();
         }
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant("wallet.wallet-coin-earn-title"));
-    }
-
-    openEarnProvider(provider: EarnProvider) {
-        this.earnService.openEarnProvider(provider);
     }
 
     openSwapProvider(provider: SwapProvider) {

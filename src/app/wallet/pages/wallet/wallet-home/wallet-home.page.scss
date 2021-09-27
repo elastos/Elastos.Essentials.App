@@ -397,8 +397,11 @@ ion-slide,
     }
 
     .subwallet-row {
-        .middle-col {
-            .earn-providers {
+        .providers {
+            .view-transactions,
+            .earn-providers,
+            .swap-providers,
+            .bridge-providers {
                 display: flex;
                 align-items: center;
                 padding: 8px;
@@ -411,6 +414,12 @@ ion-slide,
                     height: 20px;
                     margin-right: 5px;
                 }
+            }
+
+            .view-transactions {
+                justify-content: center;
+                padding: 10px;
+                margin-top: 0;
             }
         }
     }
@@ -452,8 +461,11 @@ ion-slide,
     }
 
     .subwallet-row {
-        .middle-col {
-            .earn-providers {
+        .providers {
+            .view-transactions,
+            .earn-providers,
+            .swap-providers,
+            .bridge-providers {
                 background: rgba(255, 255, 255, 0.1);
             }
         }

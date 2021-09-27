@@ -33,22 +33,6 @@
                     subWallet.getDisplayableERC20TokenInfo() }}</span>
             </ion-col>
         </ion-row>
-        <ion-row class="available-providers">
-            <h1>Finance Platforms</h1>
-            <p>
-                The following platforms can manage this coin to let you earn interests. Please keep in mind
-                that these are <b>third party services not related to Elastos Essentials</b>. Do your own
-                verifications first before trusting any platform.
-            </p>
-            <div class="providers">
-                <div *ngFor="let provider of subWallet.getAvailableEarnProviders()"
-                    class="provider ripple ion-activatable" (click)="openEarnProvider(provider)"
-                    [class.dark-provider]="theme.darkMode">
-                    <img class="logo" [src]="provider.logo"> {{ provider.name }}
-                    <ion-ripple-effect></ion-ripple-effect>
-                </div>
-            </div>
-        </ion-row>
         <ion-row class="available-swap-providers">
             <h1>Get more tokens</h1>
             The following third party swap services are available to <b>get more {{subWallet.getFriendlyName()}}</b>

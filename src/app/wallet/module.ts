@@ -21,26 +21,25 @@
 */
 
 /****************** Angular ******************/
-import { NgModule } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { FormsModule } from '@angular/forms';
+/****************** Components ******************/
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 /****************** Ionic ******************/
 import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-
+import { TranslateModule } from '@ngx-translate/core';
 /****************** Services ******************/
 import { ComponentsModule } from './components/components.module';
-import { LocalStorage } from './services/storage.service';
+import { WalletRoutingModule } from './routing';
 import { Native } from './services/native.service';
 import { PopupProvider } from './services/popup.service';
+import { LocalStorage } from './services/storage.service';
 
-/****************** Components ******************/
-import { CommonModule } from '@angular/common';
-import { WalletRoutingModule } from './routing';
 
 @NgModule({
     declarations: [
@@ -63,7 +62,8 @@ import { WalletRoutingModule } from './routing';
         LocalStorage,
         Native,
         PopupProvider,
-        WebView
+        WebView,
+        InAppBrowser
     ],
     bootstrap: [],
     schemas: []
