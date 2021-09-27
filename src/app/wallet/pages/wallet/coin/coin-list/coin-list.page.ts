@@ -162,6 +162,8 @@ export class CoinListPage implements OnInit, OnDestroy {
             }
         }
 
+        this.sortCoinList();
+
         const lastAccessTime = this.networkWallet.network.getLastAccessTime();
         this.newCoinList = this.coinList.filter( (coin) => {
           return (coin.coin.getCreatedTime() > lastAccessTime)
@@ -170,6 +172,16 @@ export class CoinListPage implements OnInit, OnDestroy {
         const timestamp = (new Date()).valueOf();
         this.networkWallet.network.updateAccessTime(timestamp);
         Logger.log('wallet', 'coin list', this.coinList, this.newCoinList);
+    }
+
+    private sortCoinList() {
+      this.coinList.sort((a, b) => {
+        if (a.isOpen == b.isOpen) {
+          return a.coin.getName() > b.coin.getName() ? 1 : -1;
+        }
+        if (a.isOpen) return -1;
+        if (b.isOpen) return 1;
+      })
     }
 
     async createSubWallet(coin: Coin) {
