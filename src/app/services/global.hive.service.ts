@@ -1,20 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import * as moment from 'moment';
-import { BehaviorSubject, Subject } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, Subject } from "rxjs";
+import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService, IdentityEntry } from 'src/app/services/global.didsessions.service';
-import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Events } from 'src/app/services/events.service';
-import { GlobalService, GlobalServiceManager } from './global.service.manager';
-import { GlobalConfig } from '../config/globalconfig';
-import { resolve } from 'path';
 import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
-import { JSONObject } from '../model/json';
 import { runDelayed } from '../helpers/sleep.helper';
+import { JSONObject } from '../model/json';
+import { GlobalService, GlobalServiceManager } from './global.service.manager';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -58,9 +52,6 @@ export class GlobalHiveService extends GlobalService {
   private clientCreationSubject: Subject<HivePlugin.Client> = null;
 
   constructor(
-    private router: Router,
-    private storage: GlobalStorageService,
-    private events: Events,
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
     private didSessions: GlobalDIDSessionsService
@@ -327,16 +318,22 @@ export class GlobalHiveService extends GlobalService {
 
       status.checkState = VaultLinkStatusCheckState.SUCCESSFULLY_RETRIEVED;
 
-      let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
-      Logger.log("GlobalHiveService", "Currently published vault address: ", currentlyPublishedVaultAddress);
+      // TODO: onUserSignOut will set activeVault to null.
+      if (this.activeVault) {
+        let currentlyPublishedVaultAddress = this.activeVault.getVaultProviderAddress();
+        Logger.log("GlobalHiveService", "Currently published vault address: ", currentlyPublishedVaultAddress);
 
-      if (currentlyPublishedVaultAddress) {
-        status.publishedInfo = {
-          vaultAddress: currentlyPublishedVaultAddress,
-          vaultName: "Unknown Vault Name",
-          vaultVersion: await this.activeVault.getNodeVersion(),
-          activePricingPlan
-        };
+        if (currentlyPublishedVaultAddress) {
+          status.publishedInfo = {
+            vaultAddress: currentlyPublishedVaultAddress,
+            vaultName: "Unknown Vault Name",
+            vaultVersion: await this.activeVault.getNodeVersion(),
+            activePricingPlan
+          };
+        }
+      } else {
+        // User signout.
+        return
       }
     }
 
