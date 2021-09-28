@@ -95,7 +95,10 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
     const accountAddress = await this.subWallet.getTokenAddress();
     for (let i = 0, len = transferEvents.length; i < len; i++) {
       if (-1 === ercTokenContractAddresss.indexOf(transferEvents[i].contractAddress)) {
-        const hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
+        let hasOutgoTx = false;
+        if (transferEvents[i].from) {
+          hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
+        }
         if (hasOutgoTx) {
           ercTokenHasOutgoTxContractAddresss.push(transferEvents[i].contractAddress);
         }
@@ -111,7 +114,10 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
         }
         ercTokens.push(token);
       } else {
-        const hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
+        let hasOutgoTx = false;
+        if (transferEvents[i].from) {
+          hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
+        }
         if (hasOutgoTx && (-1 === ercTokenHasOutgoTxContractAddresss.indexOf(transferEvents[i].contractAddress))) {
           ercTokenHasOutgoTxContractAddresss.push(transferEvents[i].contractAddress);
           const index = ercTokens.findIndex(token => token.contractAddress == transferEvents[i].contractAddress);
