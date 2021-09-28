@@ -59,7 +59,11 @@ export class WalletUtil {
       if (amountString.indexOf('e') != -1) {
         return amount.toFixed(precision).replace(/0*$/g,"");
       } else {
-        return amountString
+        // const maxLength = amountString.indexOf('.') + 11;
+        // if (maxLength < amountString.length) {
+        //   amountString = amountString.substring(0, maxLength)
+        // }
+        return amountString;
       }
     }
 }
