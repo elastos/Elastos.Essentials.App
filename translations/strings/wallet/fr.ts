@@ -286,6 +286,9 @@ export const fr = {
         "coin-list-enable-disable-coins": "Activer/Désactiver des Jetons",
         "coin-list-enable-disable-coins-intro": "Sélectionnez les jetons que vous souhaitez afficher dans le portefeuille actuel.",
         "erc-20-token": "Jeton ERC20",
+        "new-coins": "New Coins",
+        "all-coins": "All Coins",
+        "search-coin": "Search Coins",
 
         /***********************
         * Export Mnemonic Page *

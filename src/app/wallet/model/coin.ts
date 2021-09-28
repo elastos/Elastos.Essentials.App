@@ -36,6 +36,7 @@ export class Coin {
         private description: string,
         private removable: boolean,
         public networkTemplate: string,
+        public timestamp = 0 // 0: builtin coin
     ) { }
 
     public getType(): CoinType {
@@ -57,6 +58,10 @@ export class Coin {
     public canBeRemoved(): boolean {
         return this.removable;
     }
+
+    getCreatedTime(): number {
+        return this.timestamp;
+    }
 }
 
 export class StandardCoin extends Coin {
@@ -74,15 +79,17 @@ export class ERC20Coin extends Coin {
     private erc20ContractAddress: string;
 
     constructor(
-        id: CoinID,
         name: string,
         description: string,
         erc20ContractAddress: string,
         networkTemplate: string,
         private isCustom: boolean,
-        public initiallyShowInWallet = false // Whether to show this coin as subwallet when a wallet is cfirst used by the user
+        public initiallyShowInWallet = false, // Whether to show this coin as subwallet when a wallet is first used by the user
+        public timestamp = 0 // 0: builtin coin
     ) {
-        super(CoinType.ERC20, id, name, description, true, networkTemplate);
+        // The id is tokenSymbol in version 2.2.0, but the tokenSymbol isn't unique.
+        // So we use contract address as id.
+        super(CoinType.ERC20, erc20ContractAddress, name, description, true, networkTemplate, timestamp);
 
         // Make contract addresses always lowercase for easier comparisons later one.
         if (erc20ContractAddress)
@@ -102,7 +109,7 @@ export class ERC20Coin extends Coin {
     }
 
     static fromJson(jsonCoin: any): ERC20Coin {
-        let coin = new ERC20Coin(null, null, null, null, null, null);
+        let coin = new ERC20Coin(null, null, null, null, null);
         Object.assign(coin, jsonCoin);
         return coin;
     }

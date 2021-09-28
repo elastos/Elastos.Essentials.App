@@ -90,7 +90,8 @@ export class WalletCreationService {
               mnemonic,
               mnemonicPassphrase || "",
               payPassword,
-              false
+              false,
+              true
             );
 
             // Get the elastos network wallet instance to know if this wallet is single or multi address, as
@@ -111,6 +112,7 @@ export class WalletCreationService {
               mnemonic,
               mnemonicPassphrase || "",
               payPassword,
+              true,
               true
             );
 

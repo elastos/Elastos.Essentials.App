@@ -203,7 +203,7 @@ export class WalletService {
                     Logger.log('wallet', "Found extended wallet info for master wallet id " + masterId);
 
                     // Create a model instance for each master wallet returned by the SPV SDK.
-                    this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.localStorage, masterId);
+                    this.masterWallets[masterId] = new MasterWallet(this, this.erc721Service, this.localStorage, masterId, false);
                     await this.masterWallets[masterId].prepareAfterCreation();
                 }
             }
@@ -416,7 +416,7 @@ export class WalletService {
         payPassword: string,
         singleAddress: boolean
     ) {
-        await this.importWalletWithMnemonic(masterId, walletName, mnemonicStr, mnemonicPassword, payPassword, singleAddress);
+        await this.importWalletWithMnemonic(masterId, walletName, mnemonicStr, mnemonicPassword, payPassword, singleAddress, false);
 
         // Go to wallet's home page.
         this.native.setRootRouter("/wallet/wallet-home");
@@ -431,7 +431,8 @@ export class WalletService {
         mnemonicStr: string,
         mnemonicPassword: string,
         payPassword: string,
-        singleAddress: boolean
+        singleAddress: boolean,
+        createdBySystem: boolean
     ) {
         Logger.log('wallet', "Importing new master wallet with mnemonic");
 
@@ -445,14 +446,14 @@ export class WalletService {
             Type: WalletAccountType.STANDARD
         };
 
-        await this.addMasterWalletToLocalModel(masterId, walletName, account, false);
+        await this.addMasterWalletToLocalModel(masterId, walletName, account, createdBySystem);
     }
 
-    private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, newWallet: boolean) {
+    private async addMasterWalletToLocalModel(id: WalletID, name: string, walletAccount: WalletAccount, createdBySystem: boolean) {
         Logger.log('wallet', "Adding master wallet to local model", id, name);
 
         // Add a new wallet to our local model
-        this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.localStorage, id, name);
+        this.masterWallets[id] = new MasterWallet(this, this.erc721Service, this.localStorage, id, createdBySystem, name);
 
         // Set some wallet account info
         this.masterWallets[id].account = walletAccount;

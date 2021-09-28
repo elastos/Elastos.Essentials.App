@@ -16,12 +16,15 @@ export class ExtendedMasterWalletInfo {
     name: string;
     /* Wallet theme */
     theme: Theme;
+    /* Created by system when create a new identity */
+    createdBySystem: boolean
 }
 
 export class MasterWallet {
     public id: string = null;
     public name: string = null;
     public theme: Theme = null;
+    public createdBySystem = false;
 
     public account: WalletAccount = {
         Type: WalletAccountType.STANDARD,
@@ -33,10 +36,12 @@ export class MasterWallet {
         public erc721Service: ERC721Service,
         private localStorage: LocalStorage,
         id: string,
+        createdBySystem: boolean,
         name?: string,
-        theme?: Theme
+        theme?: Theme,
     ) {
         this.id = id;
+        this.createdBySystem = createdBySystem;
         this.name = name || 'Anonymous Wallet';
         this.theme = theme || {
             color: '#752fcf',
@@ -69,6 +74,7 @@ export class MasterWallet {
 
         extendedInfo.name = this.name;
         extendedInfo.theme = this.theme;
+        extendedInfo.createdBySystem = this.createdBySystem;
 
         return extendedInfo;
     }
@@ -87,6 +93,7 @@ export class MasterWallet {
         if (extendedInfo) {
             this.name = extendedInfo.name;
             this.theme = extendedInfo.theme;
+            this.createdBySystem = extendedInfo.createdBySystem;
         }
 
         Logger.log("wallet", "Populated master wallet:", this);

@@ -203,7 +203,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public async updateBalance() {
-        Logger.log('wallet', "Updating ERC20 token balance for token: ", this.id);
+        Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
         if (!this.tokenDecimals) {
             await this.fetchTokenDecimals();
         }
@@ -214,13 +214,13 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
 
             // TODO: what's the integer type returned by web3? Are we sure we can directly convert it to BigNumber like this? To be tested
-            const balanceEla = await erc20Contract.methods.balanceOf(tokenAccountAddress).call();
+            const rawBalance = await erc20Contract.methods.balanceOf(tokenAccountAddress).call();
             // The returned balance is an int. Need to devide by the number of decimals used by the token.
-            this.balance = new BigNumber(balanceEla).dividedBy(this.tokenAmountMulipleTimes);
+            this.balance = new BigNumber(rawBalance).dividedBy(this.tokenAmountMulipleTimes);
             await this.saveBalanceToCache();
-            //Logger.log('wallet', this.id + ": raw balance:", balanceEla, " Converted balance: ", this.balance);
+            //Logger.log('wallet', this.coin.getName(), this.id + ": raw balance:", rawBalance, " Converted balance: ", this.balance.toString());
         } catch (error) {
-            Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
+            Logger.log('wallet', 'ERC20 Token (', this.coin.getName(), this.id, ') updateBalance error:', error);
         }
     }
 

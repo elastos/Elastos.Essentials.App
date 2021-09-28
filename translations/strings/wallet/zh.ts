@@ -212,7 +212,7 @@ export const zh = {
                 * Network Switch Component *
                 ************************************/
                 'network-switch-component-title': '网络切换',
-                'network-switch-component-intro': 'To continue, you need to switch the currently active network to a different network.',
+                'network-switch-component-intro': '需要先切换当前网络，才能执行后续操作',
                 'network-switch-component-confirm': '切换网络',
 
                 /************************
@@ -285,6 +285,9 @@ export const zh = {
                 "coin-list-enable-disable-coins": "开启/关闭 币种",
                 "coin-list-enable-disable-coins-intro": "选择要在钱包主页面显示的币种。",
                 "erc-20-token": "ERC20 币种",
+                "new-coins": "新币种",
+                "all-coins": "全部币种",
+                "search-coin": "搜索币种",
 
                 /***********************
                 * Export Mnemonic Page *

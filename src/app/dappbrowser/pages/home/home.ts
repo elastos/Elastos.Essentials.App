@@ -46,6 +46,12 @@ export class HomePage implements InAppBrowserClient {
       if (this.platform.platforms().indexOf('android') >= 0) {
         this.dApps = [
           {
+              icon: '/assets/browser/dapps/feeds.png',
+              title: 'Feeds',
+              description: 'Feeds is a new, decentralized social platform where users remain in full control of the data they generate, and may also profit from it.',
+              url: 'https://feeds.trinity-feeds.app/nav/?page=home'
+          },
+          {
               icon: '/assets/browser/dapps/profile.png',
               title: 'Profile',
               description: 'A better way to be online using Elastos DID',
