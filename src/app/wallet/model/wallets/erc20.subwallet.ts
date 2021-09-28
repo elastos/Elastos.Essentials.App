@@ -218,7 +218,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             // The returned balance is an int. Need to devide by the number of decimals used by the token.
             this.balance = new BigNumber(balanceEla).dividedBy(this.tokenAmountMulipleTimes);
             await this.saveBalanceToCache();
-            Logger.log('wallet', this.id + ": raw balance:", balanceEla, " Converted balance: ", this.balance);
+            //Logger.log('wallet', this.id + ": raw balance:", balanceEla, " Converted balance: ", this.balance);
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.id, ') updateBalance error:', error);
         }

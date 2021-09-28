@@ -125,7 +125,7 @@ export class BridgeService implements InAppBrowserClient {
         }
     }
 
-    public openBridgeProvider(provider: BridgeProvider) {
+    public openBridgeProvider(provider: BridgeProvider, subWallet?: AnySubWallet) {
         // Use the swap url (more accurate), if any, otherwise the default project url
         let targetUrl = provider.bridgeUrl || provider.projectUrl;
 

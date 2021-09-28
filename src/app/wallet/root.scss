@@ -37,7 +37,7 @@ ion-footer {
     padding: 15px 10px;
 
     div {
-         width: 100%;
+        width: 100%;
     }
 }
 
@@ -75,7 +75,8 @@ ion-footer {
             .right-col {
                 justify-content: flex-end;
 
-                img, ion-icon {
+                img,
+                ion-icon {
                     padding: 0 10px;
                 }
 
@@ -86,7 +87,10 @@ ion-footer {
             }
         }
 
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             padding: 0 10px;
             margin: 0;
             line-height: 1;
@@ -178,10 +182,14 @@ ion-footer {
 
         .icon-container {
             position: relative;
+            align-items: center;
+            display: flex;
+            justify-content: center;
 
-            ion-img, img {
-                width: 40px;
-                height: 40px;
+            ion-img,
+            img {
+                width: 90%;
+                height: 90%;
                 object-fit: contain;
             }
 
@@ -208,14 +216,17 @@ ion-footer {
         }
     }
 
-    .middle-col, .right-col, .bottom-col {
+    .middle-col,
+    .right-col,
+    .bottom-col {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
         overflow: hidden;
 
-        h1, p {
+        h1,
+        p {
             margin: 0;
         }
 
@@ -234,7 +245,8 @@ ion-footer {
         }
     }
 
-    .middle-col, .right-col {
+    .middle-col,
+    .right-col {
         padding-bottom: 3px;
     }
 
@@ -281,7 +293,7 @@ ion-footer {
 
     .right-col {
         p {
-            color: #ACACAC;
+            color: #acacac;
             opacity: 1;
         }
     }
@@ -298,7 +310,8 @@ ion-footer {
     background-color: #ffffff;
     box-shadow: 0 3px 15px 0 #ededf0;
 
-    h1, p {
+    h1,
+    p {
         margin: 0;
     }
 
@@ -325,11 +338,12 @@ ion-footer {
         img {
             width: 22px;
             height: 22px;
-            object-fit: contain
+            object-fit: contain;
         }
     }
 
-    .middle-col, .right-col {
+    .middle-col,
+    .right-col {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -451,9 +465,9 @@ ion-footer {
 
 /** General Spinner **/
 .spinner {
-  margin: 30px 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    margin: 30px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

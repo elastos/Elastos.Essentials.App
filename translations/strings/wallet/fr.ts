@@ -471,6 +471,24 @@ export const fr = {
         'advanced-import-msg': '* Espace requis entre chaque mot',
         'paste-mnemonic': 'Coller ou saisir les 12 mots du mnémonique',
 
+        /***************************
+        * Earn, Swap, Bridge pages *
+        ****************************/
+        'view-transactions': 'Voir les transactions',
+        'earn': 'Epargner',
+        'swap': 'Echanger',
+        'bridge': 'Vers d\'autres réseaux',
+        'wallet-coin-earn-title': 'Services d\'épargne',
+        'wallet-coin-swap-title': 'Services d\'échanges',
+        'wallet-coin-bridge-title': 'Services inter-réseaux',
+        'providers-disclaimer': 'Les services listés sur cette page sont des <b>services tiers non liés à Elastos Essentials</b>. Faites vos propres vérifications sur ces plateformes avant de les utiliser.',
+        'finance-platforms': 'Plateformes Financières',
+        'finance-platforms-intro': 'Les plateformes suivantes peuvent gérer ce jeton pour éventuellement faire des bénéfices.',
+        'get-more-tokens': 'Plus de Jetons',
+        'get-more-tokens-intro': 'Les fournisseurs de services tiers suivants vous permettent d\'obtenir <b>plus de jetons {{coinName}}</b> en échangeant d\'autres jetons:',
+        'bridge-tokens': 'Convertir vos Jetons',
+        'bridge-tokens-intro': 'Les fournisseurs de services tiers suivants sont disponibles pour vous permettre de <b>convertir vos {{coinName}}</b> depuis/vers le réseau {{networkName}}, vers/depuis d\'autres réseaux:',
+
         /********************************************** Error ***********************************************/
 
         // Consolidate

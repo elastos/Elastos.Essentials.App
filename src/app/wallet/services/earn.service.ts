@@ -39,6 +39,7 @@ export type EarnProvider = {
     projectUrl: string; // Root project url - ex: filda.io
     depositUrl?: string; // Specific target url to deposit a specific coin
     compoundCoins: CompoundCoinInfo[]; // List of coins that can be staked using the compound protocol
+    additionalCoins?: string[]; // List of ERC20 coins contracts that can earn, but not as compound
 };
 
 /**
@@ -73,19 +74,18 @@ export class EarnService implements InAppBrowserClient {
     private earnProviders: { [networkName: string]: EarnProvider[] } = {
         "heco": [
             {
-                // https://docs.filda.io/english/english-version/filda-token-contracts
-                // https://docs.filda.io/english/english-version/heco-token-contracts
+                // https://docs.filda.io/zhong-wen/xiang-mu-jie-shao/ftoken-zeng-yi-zi-chan/jian-jie-intro
                 logo: "/assets/wallet/earn/filda.png",
                 name: "FilDA",
                 projectUrl: "https://filda.io",
                 depositUrl: "https://filda.io/?coin=${coin}", // Ability to have dynamic url formats
                 compoundCoins: [
-                    // fHT
-                    { cContract: "0x824151251B38056d54A15E56B73c54ba44811aF8" },
-                    // fETH
-                    { cContract: "0x033f8c30bb17b47f6f1f46f3a42cc9771ccbcaae", underlyingERC20Contract: "0x64ff637fb478863b7468bc97d30a5bf3a428a1fd" },
-                    // fUSDT
-                    { cContract: "0xAab0C9561D5703e84867670Ac78f6b5b4b40A7c1", underlyingERC20Contract: "0xa71edc38d189767582c38a3145b5873052c3e47a" },
+                    { cContract: "0x824151251B38056d54A15E56B73c54ba44811aF8" }, // fHT
+                    { cContract: "0x033f8c30bb17b47f6f1f46f3a42cc9771ccbcaae", underlyingERC20Contract: "0x64ff637fb478863b7468bc97d30a5bf3a428a1fd" }, // fETH
+                    { cContract: "0xAab0C9561D5703e84867670Ac78f6b5b4b40A7c1", underlyingERC20Contract: "0xa71edc38d189767582c38a3145b5873052c3e47a" }, // fUSDT
+                ],
+                additionalCoins: [
+                    "0xe36ffd17b2661eb57144ceaef942d95295e637f0" // Filda token itself - can be staked, but not as compound, just in DAO
                 ]
             },
             {
@@ -95,31 +95,12 @@ export class EarnService implements InAppBrowserClient {
                 projectUrl: "https://app.channels.finance",
                 depositUrl: "https://app.channels.finance",
                 compoundCoins: [
-                    // cHTBC
-                    { cContract: "0x8feFb583e077de36F68444a14E68172b01e27dD7", underlyingERC20Contract: "0x66a79d23e58475d2738179ca52cd0b41d73f0bea" },
-                    // cUSDT
-                    { cContract: "0x3dA74C09ccb8faBa3153b7f6189dDA9d7F28156A", underlyingERC20Contract: "0xa71edc38d189767582c38a3145b5873052c3e47a" }
+                    { cContract: "0x8feFb583e077de36F68444a14E68172b01e27dD7", underlyingERC20Contract: "0x66a79d23e58475d2738179ca52cd0b41d73f0bea" }, // cHTBC
+                    { cContract: "0x3dA74C09ccb8faBa3153b7f6189dDA9d7F28156A", underlyingERC20Contract: "0xa71edc38d189767582c38a3145b5873052c3e47a" } // cUSDT
                 ]
             }
         ]
     }
-    // staking capabilities
-    /* let config = {
-
-        crossnetworkrelated: [
-            {
-                // USDT
-                "heco": "0x123",
-                "elastos": "0x234",
-                "bsc": "0x123"
-            },
-            {
-                // BNB
-                "heco": "0xaaa",
-                "bsc": "0xaaa"
-            }
-        ]
-    } */
 
     constructor(
         public httpClient: HttpClient, // InAppBrowserClient implementation
@@ -153,7 +134,7 @@ export class EarnService implements InAppBrowserClient {
             if (subWallet.isStandardSubWallet()) {
                 let possibleProviders = this.earnProviders[networkKey].filter(p => {
                     // Let's find the only coin info, if any, without no underlyingERC20Contract (== main token)
-                    let matchingCoin = p.compoundCoins.find(cc => cc.underlyingERC20Contract === null);
+                    let matchingCoin = p.compoundCoins.find(cc => cc.underlyingERC20Contract === undefined);
                     return !!matchingCoin;
                 });
                 return possibleProviders;
@@ -162,9 +143,17 @@ export class EarnService implements InAppBrowserClient {
                 // ERC20
                 let erc20SubWallet = subWallet as ERC20SubWallet;
                 let possibleProviders = this.earnProviders[networkKey].filter(p => {
+                    // Compound contracts
                     let matchingCoin = p.compoundCoins.find(cc => {
                         return cc.underlyingERC20Contract == erc20SubWallet.coin.getContractAddress()
                     });
+                    if (!matchingCoin) {
+                        // Additional ERC20 coins that can be handled but not using the compound protocol
+                        if ("additionalCoins" in p) {
+                            if (p.additionalCoins.indexOf(erc20SubWallet.coin.getContractAddress()) >= 0)
+                                return true;
+                        }
+                    }
 
                     return !!matchingCoin;
                 });

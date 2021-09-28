@@ -9,9 +9,8 @@ import { CoinType } from 'src/app/wallet/model/coin';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
-import { CurrencyService } from 'src/app/wallet/services/currency.service';
-import { EarnProvider, EarnService } from 'src/app/wallet/services/earn.service';
-import { SwapProvider, SwapService } from 'src/app/wallet/services/swap.service';
+import { BridgeProvider, BridgeService } from 'src/app/wallet/services/bridge.service';
+import { EarnService } from 'src/app/wallet/services/earn.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -19,11 +18,11 @@ import { WalletService } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 
 @Component({
-    selector: 'app-coin-earn',
-    templateUrl: './coin-earn.page.html',
-    styleUrls: ['./coin-earn.page.scss'],
+    selector: 'app-coin-bridge',
+    templateUrl: './coin-bridge.page.html',
+    styleUrls: ['./coin-bridge.page.scss'],
 })
-export class CoinEarnPage implements OnInit {
+export class CoinBridgePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public WalletUtil = WalletUtil;
@@ -31,7 +30,6 @@ export class CoinEarnPage implements OnInit {
 
     public networkWallet: NetworkWallet;
     public subWallet: AnySubWallet;
-    public availableEarnProviders: EarnProvider[] = [];
 
     constructor(
         public route: ActivatedRoute,
@@ -42,8 +40,7 @@ export class CoinEarnPage implements OnInit {
         public uiService: UiService,
         private earnService: EarnService,
         private walletManager: WalletService,
-        private swapService: SwapService,
-        public currencyService: CurrencyService,
+        private bridgeService: BridgeService,
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public theme: GlobalThemeService
@@ -59,19 +56,14 @@ export class CoinEarnPage implements OnInit {
 
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
             this.subWallet = this.networkWallet.getSubWallet(subWalletId);
-            this.availableEarnProviders = this.subWallet.getAvailableEarnProviders();
         }
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("wallet.wallet-coin-earn-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.wallet-coin-bridge-title"));
     }
 
-    openEarnProvider(provider: EarnProvider) {
-        this.earnService.openEarnProvider(provider);
-    }
-
-    openSwapProvider(provider: SwapProvider) {
-        this.swapService.openSwapProvider(provider, this.subWallet);
+    openBridgeProvider(provider: BridgeProvider) {
+        this.bridgeService.openBridgeProvider(provider, this.subWallet);
     }
 }

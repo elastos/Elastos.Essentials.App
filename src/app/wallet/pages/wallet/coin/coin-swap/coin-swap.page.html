@@ -9,15 +9,7 @@
             </ion-col>
         </ion-row>
         <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode">
-            <ion-col size="2" class="left-col">
-                <div class="icon-container">
-                    <img [src]="subWallet.getMainIcon()">
-                    <div *ngIf="subWallet.getSecondaryIcon()" class="ela-icon">
-                        <img [src]="subWallet.getSecondaryIcon()" />
-                    </div>
-                </div>
-            </ion-col>
-            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
+            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 9.5 : 7" class="middle-col">
                 <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
                 <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
             </ion-col>
@@ -33,10 +25,16 @@
                     subWallet.getDisplayableERC20TokenInfo() }}</span>
             </ion-col>
         </ion-row>
+        <ion-row class="disclaimer-row">
+            <ion-col size="1" class="icon">
+                <img src="assets/wallet/icons/disclaimer.svg" />
+            </ion-col>
+            <ion-col size="11" class="disclaimer" [innerHtml]="'wallet.providers-disclaimer' | translate">
+            </ion-col>
+        </ion-row>
         <ion-row class="available-swap-providers">
-            <h1>Get more tokens</h1>
-            The following third party swap services are available to <b>get more {{subWallet.getFriendlyName()}}</b>
-            tokens:
+            <h1>{{ 'wallet.get-more-tokens' | translate }}</h1>
+            <p [innerHtml]="'wallet.get-more-tokens-intro' | translate: { coinName: subWallet.getFriendlyName() }"></p>
             <div class="providers">
                 <div *ngFor="let provider of subWallet.getAvailableSwapProviders()"
                     class="provider ripple ion-activatable" (click)="openSwapProvider(provider)"

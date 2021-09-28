@@ -60,7 +60,7 @@ export class CoinSwapPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("wallet.wallet-coin-earn-title"));
+        this.titleBar.setTitle(this.translate.instant("wallet.wallet-coin-swap-title"));
     }
 
     openSwapProvider(provider: SwapProvider) {

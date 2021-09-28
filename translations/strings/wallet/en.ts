@@ -471,6 +471,24 @@ export const en = {
         'advanced-import-msg': '* Spaces are required between words',
         'paste-mnemonic': 'Paste or Enter 12 Mnemonics',
 
+        /***************************
+        * Earn, Swap, Bridge pages *
+        ****************************/
+        'view-transactions': 'View transactions',
+        'earn': 'Earn',
+        'swap': 'Swap',
+        'bridge': 'Bridge',
+        'wallet-coin-earn-title': 'Earn Providers',
+        'wallet-coin-swap-title': 'Swap Providers',
+        'wallet-coin-bridge-title': 'Bridge Providers',
+        'providers-disclaimer': 'Services listed on this page are <b>third party services that are not related to Elastos Essentials</b>. Do your own verifications before trusting any platform.',
+        'finance-platforms': 'Finance Platforms',
+        'finance-platforms-intro': 'The following platforms can manage this coin to let you earn interests.',
+        'get-more-tokens': 'Get More Tokens',
+        'get-more-tokens-intro': 'The following third party swap services are available to <b>get more {{coinName}} tokens</b>:',
+        'bridge-tokens': 'Bridge your tokens',
+        'bridge-tokens-intro': 'The following third party bridge services are available to <b>transfer {{coinName}}</b> tokens from and to {{networkName}}:',
+
         /********************************************** Error ***********************************************/
 
         // Consolidate

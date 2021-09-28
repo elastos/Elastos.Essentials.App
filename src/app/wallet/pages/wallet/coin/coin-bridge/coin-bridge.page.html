@@ -32,24 +32,14 @@
             <ion-col size="11" class="disclaimer" [innerHtml]="'wallet.providers-disclaimer' | translate">
             </ion-col>
         </ion-row>
-        <ion-row class="available-providers">
-            <h1>{{ 'wallet.finance-platforms' | translate }}</h1>
-            <p [innerHtml]="'wallet.finance-platforms-intro' | translate"></p>
+        <ion-row class="available-bridge-providers">
+            <h1>{{ 'wallet.bridge-tokens' | translate }}</h1>
+            <p
+                [innerHtml]="'wallet.bridge-tokens-intro' | translate:{coinName: subWallet.getFriendlyName(), networkName: networkWallet.network.name}">
+            </p>
             <div class="providers">
-                <div *ngFor="let provider of subWallet.getAvailableEarnProviders()"
-                    class="provider ripple ion-activatable" (click)="openEarnProvider(provider)"
-                    [class.dark-provider]="theme.darkMode">
-                    <img class="logo" [src]="provider.logo"> {{ provider.name }}
-                    <ion-ripple-effect></ion-ripple-effect>
-                </div>
-            </div>
-        </ion-row>
-        <ion-row class="available-swap-providers" *ngIf="subWallet.getAvailableSwapProviders().length > 0">
-            <h1>{{ 'wallet.get-more-tokens' | translate }}</h1>
-            <p [innerHtml]="'wallet.get-more-tokens-intro' | translate: { coinName: subWallet.getFriendlyName() }"></p>
-            <div class="providers">
-                <div *ngFor="let provider of subWallet.getAvailableSwapProviders()"
-                    class="provider ripple ion-activatable" (click)="openSwapProvider(provider)"
+                <div *ngFor="let provider of subWallet.getAvailableBridgeProviders()"
+                    class="provider ripple ion-activatable" (click)="openBridgeProvider(provider)"
                     [class.dark-provider]="theme.darkMode">
                     <img class="logo" [src]="provider.logo"> {{ provider.name }}
                     <ion-ripple-effect></ion-ripple-effect>

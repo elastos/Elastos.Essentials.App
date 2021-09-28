@@ -2,7 +2,7 @@
 
 .container {
   min-height: 100%;
-  padding: 30px 25px;
+  padding: 30px 20px;
 
   ion-input {
     background: #ffffff;
@@ -43,6 +43,28 @@
     }
   }
 
+  .subwallet-row {
+    padding: 7.5px 10px 7.5px 10px;
+  }
+
+  .disclaimer-row {
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    background: #803fd5;
+
+    .icon {
+      img {
+        width: 80%;
+      }
+    }
+
+    .disclaimer {
+      text-align: left;
+      padding-left: 10px;
+    }
+  }
+
   .available-providers,
   .available-swap-providers {
     .providers {
@@ -54,7 +76,7 @@
         font-weight: bold;
         margin-top: 10px;
         border-radius: 10px;
-        padding: 10px;
+        padding: 20px 10px;
         margin-bottom: 7.5px;
         background-color: #ffffff;
         box-shadow: 0 3px 15px 0 #ededf0;

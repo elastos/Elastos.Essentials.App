@@ -292,17 +292,16 @@ export class WalletHomePage implements OnInit, OnDestroy {
         });
     }
 
-    public viewTransactions(subWallet: AnySubWallet) {
+    public viewTransactions(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
         this.goCoinHome(subWallet.networkWallet.id, subWallet.id)
     }
 
     public pickNetNetwork() {
         void this.walletNetworkUIService.chooseActiveNetwork();
-    }
-
-    public subWalletHasDetailsToShow(subWallet: AnySubWallet): boolean {
-        let hasProviders = subWallet.getAvailableEarnProviders().length > 0 || subWallet.getAvailableSwapProviders().length > 0 || subWallet.getAvailableBridgeProviders().length > 0;
-        return hasProviders;
     }
 
     public onSubWalletClicked(subWallet: AnySubWallet) {
@@ -312,10 +311,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             this.shownSubWalletDetails = null;
         }
         else {
-            if (this.subWalletHasDetailsToShow(subWallet))
-                this.shownSubWalletDetails = subWallet;
-            else
-                this.goCoinHome(subWallet.networkWallet.id, subWallet.id);
+            this.shownSubWalletDetails = subWallet;
         }
     }
 
@@ -350,9 +346,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
         event.preventDefault();
         event.stopPropagation();
 
-        /* TODO this.native.go("/wallet/coin-earn", {
-             masterWalletId: subWallet.networkWallet.masterWallet.id,
-             subWalletId: subWallet.id
-         }); */
+        this.native.go("/wallet/coin-bridge", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
     }
 }
