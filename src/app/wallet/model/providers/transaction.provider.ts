@@ -208,6 +208,14 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);
                   newAllCoinsList.push(token);
+                  if (token.hasOutgoTx) {
+                    try {
+                      // Create the sub Wallet (ex: IDChain)
+                      await this.networkWallet.createNonStandardSubWallet(newCoin);
+                    } catch (error) {
+                      Logger.error('wallet', 'onTokenInfoFound createNonStandardSubWallet error: ', error);
+                    }
+                  }
                 }
               }
             } catch (e) {

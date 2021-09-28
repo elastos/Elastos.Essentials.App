@@ -67,6 +67,7 @@ export type ERCTokenInfo = {
   decimals: string;
   contractAddress: string;
   balance: string;
+  hasOutgoTx: boolean;
 }
 
 // For speedup eth transaction.

@@ -88,11 +88,17 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
   /**
    * Can not get the token list directly, So get the token list by token transfer events.
    */
-  private getERCTokensFromTransferEvents(transferEvents: EthTokenTransaction[]) {
+  private async getERCTokensFromTransferEvents(transferEvents: EthTokenTransaction[]) {
     let ercTokens: ERCTokenInfo[] = [];
     let ercTokenContractAddresss = [];
+    let ercTokenHasOutgoTxContractAddresss = [];
+    const accountAddress = await this.subWallet.getTokenAddress();
     for (let i = 0, len = transferEvents.length; i < len; i++) {
       if (-1 === ercTokenContractAddresss.indexOf(transferEvents[i].contractAddress)) {
+        const hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
+        if (hasOutgoTx) {
+          ercTokenHasOutgoTxContractAddresss.push(transferEvents[i].contractAddress);
+        }
         ercTokenContractAddresss.push(transferEvents[i].contractAddress);
         let token: ERCTokenInfo = {
           balance: '',
@@ -101,8 +107,16 @@ export class EVMSubWalletTokenProvider<SubWalletType extends StandardEVMSubWalle
           name: transferEvents[i].tokenName,
           symbol: transferEvents[i].tokenSymbol,
           type: TokenType.ERC_20,
+          hasOutgoTx: hasOutgoTx,
         }
         ercTokens.push(token);
+      } else {
+        const hasOutgoTx = accountAddress === transferEvents[i].from.toLowerCase();
+        if (hasOutgoTx && (-1 === ercTokenHasOutgoTxContractAddresss.indexOf(transferEvents[i].contractAddress))) {
+          ercTokenHasOutgoTxContractAddresss.push(transferEvents[i].contractAddress);
+          const index = ercTokens.findIndex(token => token.contractAddress == transferEvents[i].contractAddress);
+          ercTokens[index].hasOutgoTx = true;
+        }
       }
     }
     //Logger.log('wallet', ' ERC20 Tokens:', ercTokens)
