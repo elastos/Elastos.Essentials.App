@@ -81,8 +81,22 @@ export class EarnService implements InAppBrowserClient {
                 depositUrl: "https://filda.io/?coin=${coin}", // Ability to have dynamic url formats
                 compoundCoins: [
                     { cContract: "0x824151251B38056d54A15E56B73c54ba44811aF8" }, // fHT
+                    { cContract: "0x043aFB65e93500CE5BCbf5Bbb41FC1fDcE2B7518", underlyingERC20Contract: "0xae3a768f9ab104c69a7cd6041fe16ffa235d1810" }, // fHFIL
+                    { cContract: "0xB16Df14C53C4bcfF220F4314ebCe70183dD804c0", underlyingERC20Contract: "0x0298c2b32eae4da002a15f36fdf7615bea3da047" }, // fHUSD
+                    { cContract: "0xF2a308d3Aea9bD16799A5984E20FDBfEf6c3F595", underlyingERC20Contract: "0x66a79d23e58475d2738179ca52cd0b41d73f0bea" }, // fHBTC
                     { cContract: "0x033f8c30bb17b47f6f1f46f3a42cc9771ccbcaae", underlyingERC20Contract: "0x64ff637fb478863b7468bc97d30a5bf3a428a1fd" }, // fETH
+                    { cContract: "0x749E0198f12559E7606987F8e7bD3AA1DE6d236E", underlyingERC20Contract: "0xe499ef4616993730ced0f31fa2703b92b50bb536" }, // fHPT
+                    { cContract: "0xCca471B0d49c0d4835a5172Fd97ddDEA5C979100", underlyingERC20Contract: "0xa2c49cee16a5e5bdefde931107dc1fae9f7773e3" }, // fHDOT
+                    { cContract: "0x09e3d97A7CFbB116B416Dae284f119c1eC3Bd5ea", underlyingERC20Contract: "0xef3cebd77e0c52cb6f60875d9306397b5caca375" }, // fHBCH
+                    { cContract: "0x4937A83Dc1Fa982e435aeB0dB33C90937d54E424", underlyingERC20Contract: "0xecb56cf772b5c9a6907fb7d32387da2fcbfb63b4" }, // fHLTC
                     { cContract: "0xAab0C9561D5703e84867670Ac78f6b5b4b40A7c1", underlyingERC20Contract: "0xa71edc38d189767582c38a3145b5873052c3e47a" }, // fUSDT
+                    { cContract: "0x74f8d9b701bd4d8ee4ec812af82c71eb67b9ec75", underlyingERC20Contract: "0xc2cb6b5357ccce1b99cd22232942d9a225ea4eb1" }, // fHBSV
+                    { cContract: "0xfea846a1284554036ac3191b5dfd786c0f4db611", underlyingERC20Contract: "0x45e97dad828ad735af1df0473fc2735f0fd5330c" }, // fHXTZ
+                    { cContract: "0x73Fa2931e060F7d43eE554fd1De7F61115fE1751", underlyingERC20Contract: "0x202b4936fe1a82a4965220860ae46d7d3939bb25" }, // fAAVE
+                    { cContract: "0xAc9E3AE0C188eb583785246Fef37AEF9ea159fb7", underlyingERC20Contract: "0x22c54ce8321a4015740ee1109d9cbc25815c46e6" }, // fUNI
+                    { cContract: "0x88962975FDE8C7805fE0f38b7c91C18f4d55bb40", underlyingERC20Contract: "0x777850281719d5a96c29812ab72f822e0e09f3da" }, // fSNX
+                    { cContract: "0x5788c014d41ca706de03969e283ee7b93827b7b1", underlyingERC20Contract: "0x25d2e80cb6b86881fd7e07dd263fb79f4abe033c" }, // fMDX
+                    { cContract: "0x92701DA6A28Ca70aA5Dfca2B8Ae2b4B8a22a0C11", underlyingERC20Contract: "0x6514a5ebff7944099591ae3e8a5c0979c83b2571" }, // fNEO
                 ],
                 additionalCoins: [
                     "0xe36ffd17b2661eb57144ceaef942d95295e637f0" // Filda token itself - can be staked, but not as compound, just in DAO
