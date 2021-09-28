@@ -88,17 +88,15 @@
           </ion-col>
         </ion-row>
         <ion-row class="list-title-row" *ngIf="coinList.length > 10">
-          <div class="ion-text-center header">
-            <div class="search-container">
-              <ion-input
-                #search
-                placeholder="{{ 'wallet.search-coin' | translate }}"
-                [(ngModel)]="searchKey"
-                mode="ios"
-                clearInput
-              >
-              </ion-input>
-            </div>
+          <div class="search-container ion-text-center">
+            <ion-input
+              #search
+              placeholder="{{ 'wallet.search-coin' | translate }}"
+              [(ngModel)]="searchKey"
+              mode="ios"
+              clearInput
+            >
+            </ion-input>
           </div>
         </ion-row>
         <ion-row
