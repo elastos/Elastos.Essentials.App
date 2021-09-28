@@ -477,7 +477,7 @@ export const zh = {
                 /***************************
                 * Earn, Swap, Bridge pages *
                 ****************************/
-                'view-transactions': 'View transactions',
+                'view-transactions': 'Transactions & Transfers',
                 'earn': 'Earn',
                 'swap': 'Swap',
                 'bridge': 'Bridge',

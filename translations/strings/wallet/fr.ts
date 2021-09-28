@@ -477,7 +477,7 @@ export const fr = {
         /***************************
         * Earn, Swap, Bridge pages *
         ****************************/
-        'view-transactions': 'Voir les transactions',
+        'view-transactions': 'Transactions & Transferts',
         'earn': 'Epargner',
         'swap': 'Echanger',
         'bridge': 'Vers d\'autres réseaux',
