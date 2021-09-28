@@ -5,6 +5,7 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { DAppBrowser, IABExitData, InAppBrowserClient } from 'src/app/model/dappbrowser/dappbrowser';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -14,6 +15,7 @@ type DAppMenuEntry = {
     title: string;
     description: string;
     url: string;
+    useExternalBrowser: boolean;
 }
 
 @Component({
@@ -36,7 +38,8 @@ export class HomePage implements InAppBrowserClient {
         public httpClient: HttpClient,
         public zone: NgZone,
         private platform: Platform,
-        private globalStartupService: GlobalStartupService
+        private globalStartupService: GlobalStartupService,
+        private globalIntentService: GlobalIntentService,
     ) {
       this.initDapps();
     }
@@ -49,49 +52,57 @@ export class HomePage implements InAppBrowserClient {
               icon: '/assets/browser/dapps/feeds.png',
               title: 'Feeds',
               description: 'Feeds is a new, decentralized social platform where users remain in full control of the data they generate, and may also profit from it.',
-              url: 'https://feeds.trinity-feeds.app/nav/?page=home'
+              url: 'https://feeds.trinity-feeds.app/nav/?page=home',
+              useExternalBrowser: true
           },
           {
               icon: '/assets/browser/dapps/profile.png',
               title: 'Profile',
               description: 'A better way to be online using Elastos DID',
-              url: 'https://profile.site/'
+              url: 'https://profile.site/',
+              useExternalBrowser: false
           },
           {
               icon: '/assets/browser/dapps/glidefinance.svg',
               title: 'Glide Finance',
               description: 'Elastos ecosystem decentralized exchange',
-              url: 'https://glidefinance.io/'
+              url: 'https://glidefinance.io/',
+              useExternalBrowser: false
           },
           {
               icon: '/assets/browser/dapps/filda.png',
               title: 'FilDA',
               description: 'HECO-based lending and borrowing, with ELA support',
-              url: 'https://filda.io/'
+              url: 'https://filda.io/',
+              useExternalBrowser: false
           },
           {
               icon: '/assets/browser/dapps/tokswap.png',
               title: 'TokSwap',
               description: 'Swap your tokens on the Elastos blockchain',
-              url: 'https://tokswap.net/'
+              url: 'https://tokswap.net/',
+              useExternalBrowser: false
           },
           {
               icon: '/assets/browser/dapps/tokbridge.svg',
               title: 'Shadow Tokens',
               description: 'Bridge assets between Elastos and other chains',
-              url: 'https://tokbridge.net/'
+              url: 'https://tokbridge.net/',
+              useExternalBrowser: false
           },
           {
               icon: '/assets/browser/dapps/creda.png',
               title: 'CreDA',
               description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
-              url: 'https://creda.app/'
+              url: 'https://creda.app/',
+              useExternalBrowser: false
           },
           {
               icon: '/assets/browser/dapps/cryptoname.png',
               title: 'Cryptoname',
               description: 'CryptoName is your passport to the crypto world',
-              url: 'https://cryptoname.org/'
+              url: 'https://cryptoname.org/',
+              useExternalBrowser: false
           },
         ];
       } else {
@@ -116,7 +127,11 @@ export class HomePage implements InAppBrowserClient {
     }
 
     public onDAppClicked(app: DAppMenuEntry) {
+      if (app.useExternalBrowser) {
+        this.openWithExternalBrowser(app.url);
+      } else {
         void this.iabOpen(app.url, app.title);
+      }
     }
 
     public onUrlInput(url: string) {
@@ -132,6 +147,10 @@ export class HomePage implements InAppBrowserClient {
     private iabOpen(url: string, title?: string): Promise<DAppBrowser> {
         this.iabRunning = true;
         return DAppBrowser.open(this, url, title);
+    }
+
+    private openWithExternalBrowser(url: string) {
+      void this.globalIntentService.sendIntent('openurl', { url: url });
     }
 
     onExit(data: IABExitData) {
