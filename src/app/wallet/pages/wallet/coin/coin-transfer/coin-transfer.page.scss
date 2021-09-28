@@ -338,26 +338,15 @@
         .btn-container {
             padding: 20px 10px;
         }
+    }
 
-        .syncing-container {
-            padding: 20px;
+    .note {
+      padding: 0 30px;
 
-            ion-card-title {
-                font-weight: 700;
-                font-size: 22px;
-            }
-
-            ion-card-subtitle {
-                font-weight: 600;
-                font-size: 13px;
-            }
-
-            span {
-                font-size: 13px;
-                font-weight: 600;
-                color: #20e3d2;
-            }
-        }
+      p {
+        font-size: 12px;
+        font-weight: 700;
+      }
     }
 }
 
@@ -408,14 +397,12 @@
             }
         }
     }
-    // Footer
-    .footer-container {
-        .syncing-container {
-            ion-card-title {
-                color: white;
-            }
-        }
-    }
+
+    .node {
+      p {
+        color: #ACACAC;
+      }
+  }
 }
 
 /********************** Pay Intent Container **********************/
@@ -658,35 +645,6 @@
 
     .btn-container {
         padding: 20px 10px;
-    }
-
-    .syncing-container {
-        padding: 20px 30px;
-
-        ion-card-title {
-            font-weight: 700;
-            font-size: 22px;
-        }
-
-        ion-card-subtitle {
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        span {
-            font-size: 13px;
-            font-weight: 600;
-            color: #20e3d2;
-        }
-    }
-}
-
-/********************** Send and Recharge Dark Footer **********************/
-.dark-footer {
-    .syncing-container {
-        ion-card-title {
-            color: white;
-        }
     }
 }
 

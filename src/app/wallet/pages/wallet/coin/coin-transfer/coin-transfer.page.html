@@ -151,6 +151,10 @@
             </ion-row>
         </ion-grid>
 
+        <div *ngIf="transferType === 4" class="note">
+          <p> {{ 'wallet.withdraw-note' | translate }} </p>
+        </div>
+
         <!------------------ SEND AND RECHARGE BUTTON ------------------>
 
         <div *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3" class="footer-container ion-no-border"

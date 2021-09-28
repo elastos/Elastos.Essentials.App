@@ -166,6 +166,7 @@ export const zh = {
                 "transfer-all": "全部",
                 "max": "全部",
                 "touch-to-select-a-personal-wallet": "轻触选择个人钱包",
+                "withdraw-note": "提现最小金额为0.0002ELA，且必须是0.00000001的整数倍",
 
                 /********************
                 * Coin Receive Page *

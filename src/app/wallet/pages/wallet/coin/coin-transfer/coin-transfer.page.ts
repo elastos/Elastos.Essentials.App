@@ -526,6 +526,15 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         } else if (!this.networkWallet.subWallets[this.elastosChainCode].isAmountValid(amountBignumber)) {
             return false;
         } else {
+            if (this.transferType === TransferType.WITHDRAW) {
+              if (this.amount < 0.0002) return false;
+
+              const amountString = this.amount.toString();
+              const dotIndex = amountString.indexOf('.');
+              if ((dotIndex + 9) < amountString.length) {
+                return false;
+              }
+            }
             return true;
         }
     }

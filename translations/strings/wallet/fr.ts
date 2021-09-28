@@ -167,6 +167,7 @@ export const fr = {
         "transfer-all": "Tous",
         "max": "MAX",
         "touch-to-select-a-personal-wallet": "Toucher pour choisir un portefeuille personnel",
+        "withdraw-note": "The minimum withdrawal amount is 0.0002 ELA and must be an integral multiple of 0.00000001",
 
         /********************
         * Coin Receive Page *
