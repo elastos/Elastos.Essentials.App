@@ -87,8 +87,22 @@
               <h1>{{ 'wallet.all-coins' | translate }}</h1>
           </ion-col>
         </ion-row>
+        <ion-row class="list-title-row" *ngIf="coinList.length > 10">
+          <div class="ion-text-center header">
+            <div class="search-container">
+              <ion-input
+                #search
+                placeholder="{{ 'wallet.search-coin' | translate }}"
+                [(ngModel)]="searchKey"
+                mode="ios"
+                clearInput
+              >
+              </ion-input>
+            </div>
+          </div>
+        </ion-row>
         <ion-row
-            *ngFor="let item of coinList"
+            *ngFor="let item of getShownCoinList()"
             class="subwallet-row ripple"
             [class.dark-subwallet-row]="theme.darkMode"
             [class.ion-activatable]="item.coin.canBeRemoved()"

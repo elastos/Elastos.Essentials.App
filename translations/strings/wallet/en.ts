@@ -287,6 +287,7 @@ export const en = {
         "erc-20-token": "ERC20 Token",
         "new-coins": "New Coins",
         "all-coins": "All Coins",
+        "search-coin": "Search Coins",
 
         /***********************
         * Export Mnemonic Page *

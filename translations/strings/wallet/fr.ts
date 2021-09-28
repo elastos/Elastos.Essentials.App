@@ -288,6 +288,7 @@ export const fr = {
         "erc-20-token": "Jeton ERC20",
         "new-coins": "New Coins",
         "all-coins": "All Coins",
+        "search-coin": "Search Coins",
 
         /***********************
         * Export Mnemonic Page *
