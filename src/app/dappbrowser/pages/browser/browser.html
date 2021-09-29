@@ -24,7 +24,7 @@
             </ion-col>
         </ion-row>
     </ion-header> -->
-    <browser-titlebar (urlChanged)="onUrlInput($event)" [attr.disabled]="dabRunning"></browser-titlebar>
+    <browser-titlebar (urlChanged)="onUrlInput($event)"></browser-titlebar>
 
     <div  [class.darkContainer]="theme.darkMode">
         <img *ngIf="shot != null" [src]="shot" />
