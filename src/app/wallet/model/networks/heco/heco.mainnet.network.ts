@@ -1,6 +1,9 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
+import { hecoMainnetO3BridgeProvider } from "./earn/bridge.providers";
+import { hecoMainnetChannelsEarnProvider, hecoMainnetFildaEarnProvider } from "./earn/earn.providers";
+import { hecoMainnetAnyswapSwapProvider, hecoMainnetMdexSwapProvider, hecoMainnetO3SwapProvider } from "./earn/swap.providers";
 import { HecoAPI, HecoApiType } from "./heco.api";
 
 export class HECOMainNetNetwork extends EVMNetwork {
@@ -23,6 +26,18 @@ export class HECOMainNetNetwork extends EVMNetwork {
         new ERC20Coin("USDT", "Heco USDT", "0xa71EdC38d189767582C38A3145b5873052c3e47a", MAINNET_TEMPLATE, false, true),
         new ERC20Coin("USDC", "Heco USDC", "0x9362bbef4b8313a8aa9f0c9808b80577aa26b73b", MAINNET_TEMPLATE, false, true),
         new ERC20Coin("DOT", "Heco DOT", "0xa2c49cee16a5e5bdefde931107dc1fae9f7773e3", MAINNET_TEMPLATE, false),
+      ],
+      [
+        hecoMainnetFildaEarnProvider,
+        hecoMainnetChannelsEarnProvider
+      ],
+      [
+        hecoMainnetMdexSwapProvider,
+        hecoMainnetO3SwapProvider,
+        hecoMainnetAnyswapSwapProvider
+      ],
+      [
+        hecoMainnetO3BridgeProvider
       ]
     );
   }

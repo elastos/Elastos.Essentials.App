@@ -1,11 +1,18 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { ERC20Coin } from "../../coin";
+import { elastosMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { ElastosNetworkBase } from "./elastos.base.network";
 
 export class ElastosMainNetNetwork extends ElastosNetworkBase {
   constructor() {
-    super("Elastos");
+    super("Elastos",
+      [],
+      [],
+      [
+        elastosMainnetShadowTokenBridgeProvider
+      ]
+    );
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {

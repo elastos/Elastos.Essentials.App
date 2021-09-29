@@ -1,11 +1,14 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
-import { BridgeProvider, BridgeService } from '../../services/bridge.service';
+import { BridgeService } from '../../services/bridge.service';
 import { Transfer } from '../../services/cointransfer.service';
-import { EarnProvider, EarnService } from '../../services/earn.service';
-import { SwapProvider, SwapService } from '../../services/swap.service';
+import { EarnService } from '../../services/earn.service';
+import { SwapService } from '../../services/swap.service';
 import { CoinID, CoinType, StandardCoinName } from '../coin';
+import { BridgeProvider } from '../earn/bridgeprovider';
+import { EarnProvider } from '../earn/earnprovider';
+import { SwapProvider } from '../earn/swapprovider';
 import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../providers/transaction.types';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 import { MasterWallet } from './masterwallet';

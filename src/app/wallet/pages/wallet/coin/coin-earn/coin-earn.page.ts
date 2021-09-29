@@ -6,12 +6,14 @@ import { Util } from 'src/app/model/util';
 import { Events } from 'src/app/services/events.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
+import { EarnProvider } from 'src/app/wallet/model/earn/earnprovider';
+import { SwapProvider } from 'src/app/wallet/model/earn/swapprovider';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
-import { EarnProvider, EarnService } from 'src/app/wallet/services/earn.service';
-import { SwapProvider, SwapService } from 'src/app/wallet/services/swap.service';
+import { EarnService } from 'src/app/wallet/services/earn.service';
+import { SwapService } from 'src/app/wallet/services/swap.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -48,7 +50,6 @@ export class CoinEarnPage implements OnInit {
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {
-
     }
 
     ngOnInit() {

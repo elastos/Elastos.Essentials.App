@@ -39,7 +39,7 @@
                 <div *ngFor="let provider of subWallet.getAvailableSwapProviders()"
                     class="provider ripple ion-activatable" (click)="openSwapProvider(provider)"
                     [class.dark-provider]="theme.darkMode">
-                    <img class="logo" [src]="provider.logo"> {{ provider.name }}
+                    <img class="logo" [src]="provider.baseProvider.logo"> {{ provider.baseProvider.name }}
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
             </div>

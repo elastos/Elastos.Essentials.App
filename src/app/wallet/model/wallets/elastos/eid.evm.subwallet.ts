@@ -2,6 +2,9 @@ import { Logger } from "src/app/logger";
 import { Util } from "src/app/model/util";
 import { Config } from "src/app/wallet/config/Config";
 import { StandardCoinName } from "../../coin";
+import { BridgeProvider } from "../../earn/bridgeprovider";
+import { EarnProvider } from "../../earn/earnprovider";
+import { SwapProvider } from "../../earn/swapprovider";
 import { NetworkWallet } from "../networkwallet";
 import { ElastosEVMSubWallet } from "./elastos.evm.subwallet";
 
@@ -66,5 +69,23 @@ export class EidSubWallet extends ElastosEVMSubWallet {
       data,
       nonce
     );
+  }
+
+  // We do now EID support such features for the EID chain for now (only ESC), so we override the default
+  // implementation to return nothing
+  public getAvailableEarnProviders(): EarnProvider[] {
+    return [];
+  }
+
+  // We do now EID support such features for the EID chain for now (only ESC), so we override the default
+  // implementation to return nothing
+  public getAvailableSwapProviders(): SwapProvider[] {
+    return [];
+  }
+
+  // We do now EID support such features for the EID chain for now (only ESC), so we override the default
+  // implementation to return nothing
+  public getAvailableBridgeProviders(): BridgeProvider[] {
+    return [];
   }
 }

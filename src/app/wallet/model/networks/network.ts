@@ -4,6 +4,9 @@ import { GlobalNetworksService } from "src/app/services/global.networks.service"
 import { LocalStorage } from "../../services/storage.service";
 import { SPVNetworkConfig } from "../../services/wallet.service";
 import { Coin, CoinID, CoinType, ERC20Coin } from "../coin";
+import { BridgeProvider } from "../earn/bridgeprovider";
+import { EarnProvider } from "../earn/earnprovider";
+import { SwapProvider } from "../earn/swapprovider";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";
@@ -21,7 +24,10 @@ export abstract class Network {
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
-    public logo: string // Path to the network icon
+    public logo: string, // Path to the network icon
+    public earnProviders?: EarnProvider[],
+    public swapProviders?: SwapProvider[],
+    public bridgeProviders?: BridgeProvider[]
   ) {
   }
 
