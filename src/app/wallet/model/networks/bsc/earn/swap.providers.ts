@@ -3,6 +3,7 @@ import { SwapProvider } from "../../../earn/swapprovider";
 
 export const bscMainnetMdexSwapProvider = new SwapProvider(
   mdexBaseProvider,
+  true,
   // TODO: BNB
   [
     "0xe9e7cea3dedca5984780bafc599bd69add087d56", // BUSD

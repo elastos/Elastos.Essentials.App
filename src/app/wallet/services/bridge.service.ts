@@ -66,16 +66,10 @@ export class BridgeService implements InAppBrowserClient {
     // TODO: optimize performance
     public getAvailableBridgeProviders(subWallet: AnySubWallet): BridgeProvider[] {
         let network = subWallet.networkWallet.network;
-        let networkKey = network.key;
 
         if (subWallet.isStandardSubWallet()) {
-            /* TODO let possibleProviders = this.swapProviders.filter(p => {
-                // Let's find the only coin info, if any, without no underlyingERC20Contract (== main token)
-                let matchingCoin = p.swappableTokenContracts.find(cc => cc.underlyingERC20Contract === null);
-                return !!matchingCoin;
-            });
-            return possibleProviders; */
-            return [];
+            let possibleProviders = network.bridgeProviders.filter(p => p.canBridgeNativeToken);
+            return possibleProviders;
         }
         else {
             // ERC20

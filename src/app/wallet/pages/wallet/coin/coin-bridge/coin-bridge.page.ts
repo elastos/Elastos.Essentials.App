@@ -11,6 +11,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
 import { BridgeService } from 'src/app/wallet/services/bridge.service';
+import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { EarnService } from 'src/app/wallet/services/earn.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
@@ -41,6 +42,7 @@ export class CoinBridgePage implements OnInit {
         public uiService: UiService,
         private earnService: EarnService,
         private walletManager: WalletService,
+        public currencyService: CurrencyService,
         private bridgeService: BridgeService,
         private walletEditionService: WalletEditionService,
         private translate: TranslateService,

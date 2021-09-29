@@ -3,6 +3,7 @@ import { BaseEarnSwapProvider } from "./baseearnswapprovider";
 export class SwapProvider {
   constructor(
     public baseProvider: BaseEarnSwapProvider,
+    public canSwapNativeToken: boolean, // Whether this provider can swap from/to the native token of the network he belongs to (Ex: ELA on Elastos network)
     public swappableTokenContracts: string[], // List of coins that can be swapped (contract addresses)
     public swapUrl?: string // Specific target url to swap a specific coin
   ) {

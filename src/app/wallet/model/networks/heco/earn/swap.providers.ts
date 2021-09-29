@@ -6,6 +6,7 @@ import { SwapProvider } from "../../../earn/swapprovider";
 // https://github.com/anyswap/anyswap-frontend/blob/vi-new/src/contexts/Tokens/tokens/huobi.js
 export const hecoMainnetAnyswapSwapProvider = new SwapProvider(
   anyswapBaseProvider,
+  true,
   [
     // TODO: How to handle "HT" ?
     "0x66a79d23e58475d2738179ca52cd0b41d73f0bea", // hBTC
@@ -16,6 +17,7 @@ export const hecoMainnetAnyswapSwapProvider = new SwapProvider(
 
 export const hecoMainnetO3SwapProvider = new SwapProvider(
   o3swapBaseProvider,
+  true,
   [
     "0xe36ffd17b2661eb57144ceaef942d95295e637f0", // Filda
   ],
@@ -24,6 +26,7 @@ export const hecoMainnetO3SwapProvider = new SwapProvider(
 
 export const hecoMainnetMdexSwapProvider = new SwapProvider(
   mdexBaseProvider,
+  true,
   // TODO: HT
   [
     "0x25d2e80cb6b86881fd7e07dd263fb79f4abe033c", // MDX

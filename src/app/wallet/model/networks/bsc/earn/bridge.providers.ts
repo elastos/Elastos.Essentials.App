@@ -3,6 +3,7 @@ import { BridgeProvider } from "../../../earn/bridgeprovider";
 
 export const bscMainnetBinanceBridgeProvider = new BridgeProvider(
   binanceBaseProvider,
+  true,
   [
     "0x55d398326f99059fF775485246999027B3197955", // USDT
     "0x2170ed0880ac9a755fd29b2688956bd959f933f8", // ETH
