@@ -22,12 +22,7 @@
 
 package org.elastos.essentials.plugins.dappbrowser;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import org.json.JSONObject;
-
 import java.lang.reflect.Field;
 
 public class DappBrowserOptions {

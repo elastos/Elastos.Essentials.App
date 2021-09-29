@@ -20,8 +20,6 @@ package org.elastos.essentials.plugins.dappbrowser;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.webkit.WebView;
-import android.widget.EditText;
 
 import org.elastos.essentials.app.R;
 
@@ -36,7 +34,7 @@ public class DappBrowserDialog extends Dialog {
     public DappBrowserDialog(Context context, DappBrowserOptions options) {
         super(context, android.R.style.Theme_NoTitleBar);
         this.context = context;
-        this.setContentView(R.layout.fragments_view);
+        this.setContentView(R.layout.dialog_view);
 
         titleBar = this.findViewById(R.id.titlebar);
         titleBar.initialize(options);
@@ -51,8 +49,6 @@ public class DappBrowserDialog extends Dialog {
             this.dismiss();
         }
         else {
-            // better to go through the in inAppBrowser
-            // because it does a clean up
             if (plugin.webViewHandler.hardwareBack() && plugin.webViewHandler.canGoBack()) {
                 plugin.webViewHandler.goBack();
             }  else {

@@ -24,13 +24,8 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.annotation.TargetApi;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Message;
 import android.webkit.JsPromptResult;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;

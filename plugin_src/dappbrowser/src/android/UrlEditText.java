@@ -17,8 +17,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
-import org.elastos.essentials.app.R;
-
 @SuppressLint("AppCompatCustomView")
 public class UrlEditText extends EditText {
 	private final String TAG = "UrlEditText";

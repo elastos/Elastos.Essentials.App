@@ -1,7 +1,6 @@
 package org.elastos.essentials.plugins.dappbrowser;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
 import android.util.AttributeSet;
