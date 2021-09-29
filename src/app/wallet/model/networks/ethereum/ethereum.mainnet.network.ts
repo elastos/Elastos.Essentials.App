@@ -1,7 +1,7 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
-import { ethereumMainnetBinanceBridgeProvider, ethereumMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
+import { ethereumMainnetBinanceBridgeProvider, ethereumMainnetGlideBridgeProvider, ethereumMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { ethereumMainnetUniswapSwapProvider } from "./earn/swap.providers";
 import { EthereumAPI, EthereumAPIType } from "./ethereum.api";
 
@@ -31,7 +31,8 @@ export class EthereumMainNetNetwork extends EVMNetwork {
       ],
       [
         ethereumMainnetBinanceBridgeProvider,
-        ethereumMainnetShadowTokenBridgeProvider
+        ethereumMainnetShadowTokenBridgeProvider,
+        ethereumMainnetGlideBridgeProvider
       ]
     );
   }

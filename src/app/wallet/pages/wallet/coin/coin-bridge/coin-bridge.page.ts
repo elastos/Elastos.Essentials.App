@@ -12,12 +12,10 @@ import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/wallets/subwallet';
 import { BridgeService } from 'src/app/wallet/services/bridge.service';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
-import { EarnService } from 'src/app/wallet/services/earn.service';
 import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { WalletEditionService } from '../../../../services/walletedition.service';
 
 @Component({
     selector: 'app-coin-bridge',
@@ -40,11 +38,9 @@ export class CoinBridgePage implements OnInit {
         public events: Events,
         private router: Router,
         public uiService: UiService,
-        private earnService: EarnService,
         private walletManager: WalletService,
         public currencyService: CurrencyService,
-        private bridgeService: BridgeService,
-        private walletEditionService: WalletEditionService,
+        public bridgeService: BridgeService,
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {
@@ -59,6 +55,12 @@ export class CoinBridgePage implements OnInit {
 
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
             this.subWallet = this.networkWallet.getSubWallet(subWalletId);
+
+            let test = this.bridgeService.getDestinationNetworksForProvider(
+                this.subWallet.networkWallet.network.bridgeProviders[0],
+                this.subWallet.networkWallet.network);
+
+            console.log("TEST", test);
         }
     }
 

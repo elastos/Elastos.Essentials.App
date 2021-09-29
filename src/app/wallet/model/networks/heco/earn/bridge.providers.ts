@@ -1,3 +1,4 @@
+import { glideBaseProvider } from "../../../earn/baseproviders/glide.provider";
 import { o3swapBaseProvider } from "../../../earn/baseproviders/o3swap.provider";
 import { shadowTokenBaseProvider } from "../../../earn/baseproviders/shadowtoken.provider";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
@@ -18,5 +19,14 @@ export const hecoMainnetShadowTokenBridgeProvider = new BridgeProvider(
   true, // HT
   [
     "0xe36ffd17b2661eb57144ceaef942d95295e637f0" // FilDA
+  ]
+);
+
+export const hecoMainnetGlideBridgeProvider = new BridgeProvider(
+  glideBaseProvider,
+  true, // HT
+  [
+    "0x0298c2b32eae4da002a15f36fdf7615bea3da047", // hUSD
+    "0xa1ecfc2bec06e4b43ddd423b94fef84d0dbc8f5c", // ELA on HuobiChain
   ]
 );

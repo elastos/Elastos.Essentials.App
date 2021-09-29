@@ -25,9 +25,9 @@ export abstract class Network {
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
     public logo: string, // Path to the network icon
-    public earnProviders?: EarnProvider[],
-    public swapProviders?: SwapProvider[],
-    public bridgeProviders?: BridgeProvider[]
+    public earnProviders: EarnProvider[] = [],
+    public swapProviders: SwapProvider[] = [],
+    public bridgeProviders: BridgeProvider[] = []
   ) {
   }
 

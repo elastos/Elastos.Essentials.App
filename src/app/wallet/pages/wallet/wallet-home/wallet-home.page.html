@@ -155,23 +155,35 @@
                     </div>
                     <div class="earn-providers ripple ion-activatable" (click)="earn($event, subWallet)"
                         *ngIf="subWallet.getAvailableEarnProviders().length > 0">
-                        <img *ngFor="let earnProvider of subWallet.getAvailableEarnProviders()"
-                            [src]="earnProvider.baseProvider.logo" class="logo">
-                        {{ 'wallet.earn' | translate }}
+                        <ion-col size="6">
+                            {{ 'wallet.earn' | translate }}
+                        </ion-col>
+                        <ion-col size="6" class="logos">
+                            <img *ngFor="let earnProvider of subWallet.getAvailableEarnProviders()"
+                                [src]="earnProvider.baseProvider.logo" class="logo">
+                        </ion-col>
                         <ion-ripple-effect></ion-ripple-effect>
                     </div>
-                    <div class="swap-providers ripple ion-activatable" (click)="swap($event, subWallet)"
+                    <ion-row class="swap-providers ripple ion-activatable" (click)="swap($event, subWallet)"
                         *ngIf="subWallet.getAvailableSwapProviders().length > 0">
-                        <img *ngFor="let swapProvider of subWallet.getAvailableSwapProviders()"
-                            [src]="swapProvider.baseProvider.logo" class="logo">
-                        {{ 'wallet.swap' | translate }}
+                        <ion-col size="6">
+                            {{ 'wallet.swap' | translate }}
+                        </ion-col>
+                        <ion-col size="6" class="logos">
+                            <img *ngFor="let swapProvider of subWallet.getAvailableSwapProviders()"
+                                [src]="swapProvider.baseProvider.logo" class="logo">
+                        </ion-col>
                         <ion-ripple-effect></ion-ripple-effect>
-                    </div>
+                    </ion-row>
                     <div class="bridge-providers ripple ion-activatable" (click)="bridge($event, subWallet)"
                         *ngIf="subWallet.getAvailableBridgeProviders().length > 0">
-                        <img *ngFor="let bridgeProvider of subWallet.getAvailableBridgeProviders()"
-                            [src]="bridgeProvider.baseProvider.logo" class="logo">
-                        {{ 'wallet.bridge' | translate }}
+                        <ion-col size="6">
+                            {{ 'wallet.bridge' | translate }}
+                        </ion-col>
+                        <ion-col size="6" class="logos">
+                            <img *ngFor="let bridgeProvider of subWallet.getAvailableBridgeProviders()"
+                                [src]="bridgeProvider.baseProvider.logo" class="logo">
+                        </ion-col>
                         <ion-ripple-effect></ion-ripple-effect>
                     </div>
                 </ion-col>

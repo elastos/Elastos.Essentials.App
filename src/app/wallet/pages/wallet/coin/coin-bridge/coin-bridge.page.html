@@ -41,7 +41,16 @@
                 <div *ngFor="let provider of subWallet.getAvailableBridgeProviders()"
                     class="provider ripple ion-activatable" (click)="openBridgeProvider(provider)"
                     [class.dark-provider]="theme.darkMode">
-                    <img class="logo" [src]="provider.baseProvider.logo"> {{ provider.baseProvider.name }}
+                    <img class="logo" [src]="provider.baseProvider.logo">
+                    <ion-grid>
+                        <ion-row>{{ provider.baseProvider.name }}</ion-row>
+                        <ion-row class="networks">
+                            To networks:
+                            <img class="network"
+                                *ngFor="let network of bridgeService.getDestinationNetworksForProvider(provider, subWallet.networkWallet.network)"
+                                [src]="network.logo" />
+                        </ion-row>
+                    </ion-grid>
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
             </div>

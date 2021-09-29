@@ -82,10 +82,22 @@
         box-shadow: 0 3px 15px 0 #ededf0;
 
         .logo {
-          height: 20px;
-          width: 20px;
+          height: 30px;
+          width: 30px;
           object-fit: contain;
           margin-right: 5px;
+        }
+
+        .networks {
+          color: #aaa;
+          display: flex;
+          margin-top: 5px;
+          align-items: center;
+
+          .network {
+            margin-left: 5px;
+            height: 20px;
+          }
         }
       }
 
