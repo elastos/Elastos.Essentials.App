@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
@@ -41,6 +42,7 @@ import { EmptyPage, LauncherRoutingModule } from './routing';
   ],
   providers: [
     //LauncherService
+    InAppBrowser
   ],
   bootstrap: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

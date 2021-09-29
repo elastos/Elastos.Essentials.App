@@ -8,6 +8,9 @@ import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.servi
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Config } from '../../../config/Config';
 import { StandardCoinName } from '../../coin';
+import { BridgeProvider } from '../../earn/bridgeprovider';
+import { EarnProvider } from '../../earn/earnprovider';
+import { SwapProvider } from '../../earn/swapprovider';
 import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
 import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../providers/transaction.types';
 import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
@@ -1056,5 +1059,23 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         try { m += s2.split(".")[1].length } catch (e) { }
 
         return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
+    }
+
+    // Main chain and ID chain don't support such "EVM" features for now, so we override the default
+    // implementation to return nothing
+    public getAvailableEarnProviders(): EarnProvider[] {
+        return [];
+    }
+
+    // Main chain and ID chain don't support such "EVM" features for now, so we override the default
+    // implementation to return nothing
+    public getAvailableSwapProviders(): SwapProvider[] {
+        return [];
+    }
+
+    // Main chain and ID chain don't support such "EVM" features for now, so we override the default
+    // implementation to return nothing
+    public getAvailableBridgeProviders(): BridgeProvider[] {
+        return [];
     }
 }

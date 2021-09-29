@@ -96,7 +96,7 @@
                     <div (click)="currencyService.toggleCurrencyDisplay()">
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
-                              *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
+                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
                             <span class="decimals">{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())
                                 }}</span>
                             <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
@@ -123,9 +123,8 @@
                     <h1>{{ 'wallet.coin-list' | translate }}</h1>
                 </ion-col>
             </ion-row>
-            <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-                *ngFor="let subWallet of getDisplayableSubWallets()"
-                (click)="goCoinHome(networkWallet.id, subWallet.id)">
+            <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
+                *ngFor="let subWallet of getDisplayableSubWallets()" (click)="onSubWalletClicked(subWallet)">
                 <ion-col size="2" class="left-col">
                     <div class="icon-container">
                         <img [src]="subWallet.getMainIcon()">
@@ -144,13 +143,50 @@
                         {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
                         {{ currencyService.selectedCurrency.symbol }}
                     </p>
-
                 </ion-col>
                 <ion-col offset="2" size="10" class="bottom-col">
                     <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
                         subWallet.getDisplayableERC20TokenInfo() }}</span>
                 </ion-col>
-                <ion-ripple-effect></ion-ripple-effect>
+                <ion-col offset="2" size="10" class="providers" [hidden]="!shouldShowSubWalletDetails(subWallet)">
+                    <div class="view-transactions ripple ion-activatable" (click)="viewTransactions($event, subWallet)">
+                        {{ 'wallet.view-transactions' | translate }}
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                    <div class="earn-providers ripple ion-activatable" (click)="earn($event, subWallet)"
+                        *ngIf="subWallet.getAvailableEarnProviders().length > 0">
+                        <ion-col size="6">
+                            {{ 'wallet.earn' | translate }}
+                        </ion-col>
+                        <ion-col size="6" class="logos">
+                            <img *ngFor="let earnProvider of subWallet.getAvailableEarnProviders()"
+                                [src]="earnProvider.baseProvider.logo" class="logo">
+                        </ion-col>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                    <ion-row class="swap-providers ripple ion-activatable" (click)="swap($event, subWallet)"
+                        *ngIf="subWallet.getAvailableSwapProviders().length > 0">
+                        <ion-col size="6">
+                            {{ 'wallet.swap' | translate }}
+                        </ion-col>
+                        <ion-col size="6" class="logos">
+                            <img *ngFor="let swapProvider of subWallet.getAvailableSwapProviders()"
+                                [src]="swapProvider.baseProvider.logo" class="logo">
+                        </ion-col>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </ion-row>
+                    <div class="bridge-providers ripple ion-activatable" (click)="bridge($event, subWallet)"
+                        *ngIf="subWallet.getAvailableBridgeProviders().length > 0">
+                        <ion-col size="6">
+                            {{ 'wallet.bridge' | translate }}
+                        </ion-col>
+                        <ion-col size="6" class="logos">
+                            <img *ngFor="let bridgeProvider of subWallet.getAvailableBridgeProviders()"
+                                [src]="bridgeProvider.baseProvider.logo" class="logo">
+                        </ion-col>
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                </ion-col>
             </ion-row>
 
             <ion-row *ngIf="networkWallet.getNFTs().length" class="list-title-row collectibles-title">

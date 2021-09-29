@@ -53,6 +53,9 @@ const routes: Routes = [
     { path: 'coin-erc20-details', loadChildren: () => import('./pages/wallet/coin/coin-erc20-details/module').then(m => m.CoinERC20DetailsModule) },
     { path: 'coin-nft-home', loadChildren: () => import('./pages/wallet/coin/coin-nft-home/module').then(m => m.CoinNFTHomeModule) },
     { path: 'coin-nft-details', loadChildren: () => import('./pages/wallet/coin/coin-nft-details/module').then(m => m.CoinNFTDetailsModule) },
+    { path: 'coin-earn', loadChildren: () => import('./pages/wallet/coin/coin-earn/module').then(m => m.CoinEarnModule) },
+    { path: 'coin-swap', loadChildren: () => import('./pages/wallet/coin/coin-swap/module').then(m => m.CoinSwapModule) },
+    { path: 'coin-bridge', loadChildren: () => import('./pages/wallet/coin/coin-bridge/module').then(m => m.CoinBridgeModule) },
 
     // Intents
     { path: 'intents', loadChildren: () => import('./pages/intents/module').then(m => m.IntentsModule) },

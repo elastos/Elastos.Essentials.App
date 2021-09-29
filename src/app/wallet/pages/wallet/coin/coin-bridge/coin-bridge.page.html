@@ -1,0 +1,59 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+        <!-- Network info -->
+        <ion-row class="network-row">
+            <ion-col size="12" class="left-col">
+                <img [src]="networkWallet.network.logo">
+                <h1>{{ networkWallet.network.name }}</h1>
+            </ion-col>
+        </ion-row>
+        <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode">
+            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 9.5 : 7" class="middle-col">
+                <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
+                <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
+            </ion-col>
+            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
+                <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
+                <p *ngIf="subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())">
+                    {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
+                    {{ currencyService.selectedCurrency.symbol }}
+                </p>
+            </ion-col>
+            <ion-col offset="2" size="10" class="bottom-col">
+                <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
+                    subWallet.getDisplayableERC20TokenInfo() }}</span>
+            </ion-col>
+        </ion-row>
+        <ion-row class="disclaimer-row">
+            <ion-col size="1" class="icon">
+                <img src="assets/wallet/icons/disclaimer.svg" />
+            </ion-col>
+            <ion-col size="11" class="disclaimer" [innerHtml]="'wallet.providers-disclaimer' | translate">
+            </ion-col>
+        </ion-row>
+        <ion-row class="available-bridge-providers">
+            <h1>{{ 'wallet.bridge-tokens' | translate }}</h1>
+            <p
+                [innerHtml]="'wallet.bridge-tokens-intro' | translate:{coinName: subWallet.getDisplayTokenName(), networkName: networkWallet.network.name}">
+            </p>
+            <div class="providers">
+                <div *ngFor="let provider of subWallet.getAvailableBridgeProviders()"
+                    class="provider ripple ion-activatable" (click)="openBridgeProvider(provider)"
+                    [class.dark-provider]="theme.darkMode">
+                    <img class="logo" [src]="provider.baseProvider.logo">
+                    <ion-grid>
+                        <ion-row>{{ provider.baseProvider.name }}</ion-row>
+                        <ion-row class="networks">
+                            {{ 'wallet.to-networks' | translate }}
+                            <img class="network"
+                                *ngFor="let network of bridgeService.getDestinationNetworksForProvider(provider, subWallet.networkWallet.network)"
+                                [src]="network.logo" />
+                        </ion-row>
+                    </ion-grid>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </div>
+        </ion-row>
+    </ion-grid>
+</ion-content>

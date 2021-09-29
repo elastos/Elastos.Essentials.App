@@ -1,0 +1,49 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+        <!-- Network info -->
+        <ion-row class="network-row">
+            <ion-col size="12" class="left-col">
+                <img [src]="networkWallet.network.logo">
+                <h1>{{ networkWallet.network.name }}</h1>
+            </ion-col>
+        </ion-row>
+        <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode">
+            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 9.5 : 7" class="middle-col">
+                <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
+                <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
+            </ion-col>
+            <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
+                <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
+                <p *ngIf="subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance())">
+                    {{ subWallet.getAmountInExternalCurrency(subWallet.getDisplayBalance()) }}
+                    {{ currencyService.selectedCurrency.symbol }}
+                </p>
+            </ion-col>
+            <ion-col offset="2" size="10" class="bottom-col">
+                <span *ngIf="subWallet.type === CoinType.ERC20" class="synced">{{
+                    subWallet.getDisplayableERC20TokenInfo() }}</span>
+            </ion-col>
+        </ion-row>
+        <ion-row class="disclaimer-row">
+            <ion-col size="1" class="icon">
+                <img src="assets/wallet/icons/disclaimer.svg" />
+            </ion-col>
+            <ion-col size="11" class="disclaimer" [innerHtml]="'wallet.providers-disclaimer' | translate">
+            </ion-col>
+        </ion-row>
+        <ion-row class="available-swap-providers">
+            <h1>{{ 'wallet.get-more-tokens' | translate }}</h1>
+            <p [innerHtml]="'wallet.get-more-tokens-intro' | translate: { coinName: subWallet.getDisplayTokenName() }">
+            </p>
+            <div class="providers">
+                <div *ngFor="let provider of subWallet.getAvailableSwapProviders()"
+                    class="provider ripple ion-activatable" (click)="openSwapProvider(provider)"
+                    [class.dark-provider]="theme.darkMode">
+                    <img class="logo" [src]="provider.baseProvider.logo"> {{ provider.baseProvider.name }}
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>
+            </div>
+        </ion-row>
+    </ion-grid>
+</ion-content>

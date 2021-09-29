@@ -1,5 +1,8 @@
 import { SPVNetworkConfig } from "../../services/wallet.service";
 import { CoinID, ERC20Coin } from "../coin";
+import { BridgeProvider } from "../earn/bridgeprovider";
+import { EarnProvider } from "../earn/earnprovider";
+import { SwapProvider } from "../earn/swapprovider";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { EVMNetworkWallet } from "../wallets/evm.networkwallet";
 import { MasterWallet } from "../wallets/masterwallet";
@@ -18,12 +21,15 @@ export class EVMNetwork extends Network {
     networkTemplateAvailability: string, // For which network template is this network available
     protected chainID: number,
     protected builtInCoins?: ERC20Coin[],
+    earnProviders: EarnProvider[] = [],
+    swapProviders: SwapProvider[] = [],
+    bridgeProviders: BridgeProvider[] = []
   ) {
-    super(key, name, logo);
+    super(key, name, logo, earnProviders, swapProviders, bridgeProviders);
   }
 
   /**
-   * Live update of this network instance info. Used for example when a custom network info is modified 
+   * Live update of this network instance info. Used for example when a custom network info is modified
    * by the user.
    */
   public updateInfo(name: string, chainId: number, rpcUrl: string, accountRpcUrl: string, mainCurrencySymbol: string) {

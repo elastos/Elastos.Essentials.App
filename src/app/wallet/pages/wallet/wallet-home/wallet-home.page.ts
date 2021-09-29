@@ -75,6 +75,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     private updateInterval = null;
 
     public showNetworkOptions = false;
+    public shownSubWalletDetails: AnySubWallet = null;
+
     // Dummy Current Network
     public currentNetwork: Network = null;
 
@@ -290,7 +292,63 @@ export class WalletHomePage implements OnInit, OnDestroy {
         });
     }
 
+    public viewTransactions(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.goCoinHome(subWallet.networkWallet.id, subWallet.id)
+    }
+
     public pickNetNetwork() {
         void this.walletNetworkUIService.chooseActiveNetwork();
+    }
+
+    public onSubWalletClicked(subWallet: AnySubWallet) {
+        // If there is not specific details to show for this wallet, directly show the transactions
+        // list. Otherwise, show details.
+        if (this.shouldShowSubWalletDetails(subWallet)) { // Currently shown --> hide details
+            this.shownSubWalletDetails = null;
+        }
+        else {
+            this.shownSubWalletDetails = subWallet;
+        }
+    }
+
+    public shouldShowSubWalletDetails(subWallet: AnySubWallet): boolean {
+        return this.shownSubWalletDetails && this.shownSubWalletDetails.id === subWallet.id;
+    }
+
+    public earn(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.native.go("/wallet/coin-earn", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
+    }
+
+    public swap(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.native.go("/wallet/coin-swap", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
+    }
+
+    public bridge(event, subWallet: AnySubWallet) {
+        // Prevent from subwallet main div to get the click (do not open transactions list)
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.native.go("/wallet/coin-bridge", {
+            masterWalletId: subWallet.networkWallet.masterWallet.id,
+            subWalletId: subWallet.id
+        });
     }
 }

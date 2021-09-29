@@ -1,0 +1,105 @@
+@import "src/app/wallet/root.scss";
+
+.container {
+  min-height: 100%;
+  padding: 30px 20px;
+
+  ion-input {
+    background: #ffffff;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    --padding-start: 12px;
+  }
+
+  .btn-container {
+    margin-top: 25px;
+  }
+
+  .network-row {
+    border-radius: 17px;
+    padding: 5px 10px;
+    margin-bottom: 7.5px;
+    background-color: transparent;
+
+    ion-col {
+      display: flex;
+      align-items: center;
+    }
+
+    .left-col {
+      justify-content: center;
+
+      img {
+        width: 35px;
+        height: 35px;
+      }
+
+      h1 {
+        margin: 0 0 0 10px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.7px;
+        text-align: left;
+      }
+    }
+  }
+
+  .subwallet-row {
+    padding: 7.5px 10px 7.5px 10px;
+  }
+
+  .disclaimer-row {
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    background: #803fd5;
+
+    .icon {
+      img {
+        width: 80%;
+      }
+    }
+
+    .disclaimer {
+      text-align: left;
+      padding-left: 10px;
+    }
+  }
+
+  .available-providers,
+  .available-swap-providers {
+    .providers {
+      width: 100%;
+
+      .provider {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        margin-top: 10px;
+        border-radius: 10px;
+        padding: 20px 10px;
+        margin-bottom: 7.5px;
+        background-color: #ffffff;
+        box-shadow: 0 3px 15px 0 #ededf0;
+
+        .logo {
+          height: 30px;
+          width: 30px;
+          object-fit: contain;
+          margin-right: 5px;
+        }
+      }
+
+      .dark-provider {
+        background-color: #212021;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.darkContainer {
+  ion-input {
+    background-color: #212021;
+    box-shadow: none;
+  }
+}

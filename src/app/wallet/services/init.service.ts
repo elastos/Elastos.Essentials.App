@@ -22,15 +22,18 @@ import { HECOTestNetNetwork } from '../model/networks/heco/heco.testnet.network'
 import { Network } from '../model/networks/network';
 import { PolygonMainNetNetwork } from '../model/networks/polygon/polygon.mainnet.network';
 import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet.network';
+import { BridgeService } from './bridge.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { CustomNetworkService } from './customnetwork.service';
+import { EarnService } from './earn.service';
 import { ETHTransactionService } from './ethtransaction.service';
 import { IntentService } from './intent.service';
 import { NameResolvingService } from './nameresolving.service';
 import { NavService } from './nav.service';
 import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
+import { SwapService } from './swap.service';
 import { UiService } from './ui.service';
 import { WalletService } from './wallet.service';
 
@@ -56,6 +59,9 @@ export class WalletInitService extends GlobalService {
     private customNetworkService: CustomNetworkService,
     private globalNetworksService: GlobalNetworksService,
     private ethTransactionService: ETHTransactionService,
+    private earnService: EarnService, // IMPORTANT: unused, but keep it here for initialization
+    private swapService: SwapService, // IMPORTANT: unused, but keep it here for initialization
+    private bridgeService: BridgeService, // IMPORTANT: unused, but keep it here for initialization
     private httpClient: HttpClient
   ) {
     super();

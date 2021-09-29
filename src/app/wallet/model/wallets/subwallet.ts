@@ -1,8 +1,14 @@
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
+import { BridgeService } from '../../services/bridge.service';
 import { Transfer } from '../../services/cointransfer.service';
+import { EarnService } from '../../services/earn.service';
+import { SwapService } from '../../services/swap.service';
 import { CoinID, CoinType, StandardCoinName } from '../coin';
+import { BridgeProvider } from '../earn/bridgeprovider';
+import { EarnProvider } from '../earn/earnprovider';
+import { SwapProvider } from '../earn/swapprovider';
 import { GenericTransaction, RawTransactionPublishResult, TransactionInfo } from '../providers/transaction.types';
 import { TimeBasedPersistentCache } from '../timebasedpersistentcache';
 import { MasterWallet } from './masterwallet';
@@ -298,4 +304,16 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public abstract createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string): Promise<string>;
   public abstract publishTransaction(transaction: string): Promise<string>;
   public abstract signAndSendRawTransaction(transaction: string, transfer: Transfer): Promise<RawTransactionPublishResult>;
+
+  public getAvailableEarnProviders(): EarnProvider[] {
+    return EarnService.instance.getAvailableEarnProviders(this);
+  }
+
+  public getAvailableSwapProviders(): SwapProvider[] {
+    return SwapService.instance.getAvailableSwapProviders(this);
+  }
+
+  public getAvailableBridgeProviders(): BridgeProvider[] {
+    return BridgeService.instance.getAvailableBridgeProviders(this);
+  }
 }

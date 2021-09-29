@@ -23,6 +23,7 @@ export type IABExitData = {
     type: "exit";
     mode?: string;
 }
+
 export interface InAppBrowserClient {
     iab: InAppBrowser;
     httpClient: HttpClient;

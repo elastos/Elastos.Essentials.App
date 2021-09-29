@@ -1,0 +1,50 @@
+import { uniswapBaseProvider } from "../../../earn/baseproviders/uniswap.provider";
+import { SwapProvider } from "../../../earn/swapprovider";
+
+export const ethereumMainnetUniswapSwapProvider = new SwapProvider(
+  uniswapBaseProvider,
+  true,
+  [
+    // Gemini list - https://www.gemini.com/uniswap/manifest.json
+    "0x111111111117dc0aa78b770fa6a738034120c302", // 1INCH
+    "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9", // AAVE
+    "0xfF20817765cB7f73d4bde2e66e067E58D11095C2", // AMP
+    "0xba100000625a3754423978a60c9317c58a424e3D", // BAL
+    "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", // BAT
+    "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c", // BNT
+    "0xc00e94Cb662C3520282E6f5717214004A7f26888", // COMP
+    "0xD533a949740bb3306d119CC777fa900bA034cd52", // CRV
+    "0x6B175474E89094C44Da98b954EedeAC495271d0F", // DAI
+    "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c", // ENJ
+    "0xc944e90c64b2c07662a292be6244bdf05cda44a7", // GRT
+    "0x056fd409e1d7a124bd7017459dfea2f387b6d5cd", // GUSD
+    "0xdd974D5C2e2928deA5F71b9825b8b646686BD200", // KNC
+    "0x514910771AF9Ca656af840dff83E8264EcF986CA", // LINK
+    "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd", // LRC
+    "0x0F5D2fB29fb7d3CFeE444a200298f468908cC942", // MANA
+    "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2", // MKR
+    "0x4575f41308EC1483f3d399aa9a2826d74Da13Deb", // OXT
+    "0x45804880De22913dAFE09f4980848ECE6EcbAf78", // PAXG
+    "0x408e41876cCCDC0F92210600ef50372656052a38", // REN
+    "0x3845badAde8e6dFF049820680d1F14bD3903a5d0", // SAND
+    "0x00c83aecc790e8a4453e5dd3b0b4b3680501a7a7", // SKL
+    "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F", // SNX
+    "0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC", // STORJ
+    "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828", // UMA
+    "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984", // UNI
+    "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e", // YFI
+    "0xE41d2489571d322189246DaFA5ebDe1F4699F498", // ZRX
+
+    // Additional tokens:
+    "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
+    "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599", // WBTC
+    "0x2b591e99afe9f32eaa6214f7b7629768c40eeb39", // HEX
+    "0xB8c77482e45F1F44dE1745F52C74426C631bDD52", // BNB
+    "0x4fabb145d64652a948d72533023f6e7a623c7c53", // BUSD
+    "0x6e1A19F235bE7ED8E3369eF73b196C07257494DE", // WFIL
+    "0xe1be5d3f34e89de342ee97e6e90d405884da6c67", // TRX
+  ],
+  "https://app.uniswap.org/#/swap"
+);
