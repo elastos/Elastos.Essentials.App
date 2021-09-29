@@ -1,0 +1,1 @@
+Various script to help generating data or executing automated tasks for the Essentials ionic app.
