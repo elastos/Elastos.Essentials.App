@@ -46,7 +46,8 @@
         </ion-row>
         <ion-row class="available-swap-providers" *ngIf="subWallet.getAvailableSwapProviders().length > 0">
             <h1>{{ 'wallet.get-more-tokens' | translate }}</h1>
-            <p [innerHtml]="'wallet.get-more-tokens-intro' | translate: { coinName: subWallet.getFriendlyName() }"></p>
+            <p [innerHtml]="'wallet.get-more-tokens-intro' | translate: { coinName: subWallet.getDisplayTokenName() }">
+            </p>
             <div class="providers">
                 <div *ngFor="let provider of subWallet.getAvailableSwapProviders()"
                     class="provider ripple ion-activatable" (click)="openSwapProvider(provider)"

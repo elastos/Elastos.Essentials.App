@@ -35,7 +35,7 @@
         <ion-row class="available-bridge-providers">
             <h1>{{ 'wallet.bridge-tokens' | translate }}</h1>
             <p
-                [innerHtml]="'wallet.bridge-tokens-intro' | translate:{coinName: subWallet.getFriendlyName(), networkName: networkWallet.network.name}">
+                [innerHtml]="'wallet.bridge-tokens-intro' | translate:{coinName: subWallet.getDisplayTokenName(), networkName: networkWallet.network.name}">
             </p>
             <div class="providers">
                 <div *ngFor="let provider of subWallet.getAvailableBridgeProviders()"
@@ -45,7 +45,7 @@
                     <ion-grid>
                         <ion-row>{{ provider.baseProvider.name }}</ion-row>
                         <ion-row class="networks">
-                            To networks:
+                            {{ 'wallet.to-networks' | translate }}
                             <img class="network"
                                 *ngFor="let network of bridgeService.getDestinationNetworksForProvider(provider, subWallet.networkWallet.network)"
                                 [src]="network.logo" />

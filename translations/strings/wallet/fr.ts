@@ -491,6 +491,7 @@ export const fr = {
         'get-more-tokens-intro': 'Les fournisseurs de services tiers suivants vous permettent d\'obtenir <b>plus de jetons {{coinName}}</b> en échangeant d\'autres jetons:',
         'bridge-tokens': 'Convertir vos Jetons',
         'bridge-tokens-intro': 'Les fournisseurs de services tiers suivants sont disponibles pour vous permettre de <b>convertir vos {{coinName}}</b> depuis/vers le réseau {{networkName}}, vers/depuis d\'autres réseaux:',
+        'to-networks': 'Vers autres réseaux:',
 
         /********************************************** Error ***********************************************/
 

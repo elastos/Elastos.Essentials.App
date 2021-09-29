@@ -491,6 +491,7 @@ export const en = {
         'get-more-tokens-intro': 'The following third party swap services are available to <b>get more {{coinName}} tokens</b>:',
         'bridge-tokens': 'Bridge your tokens',
         'bridge-tokens-intro': 'The following third party bridge services are available to <b>transfer {{coinName}}</b> tokens from and to {{networkName}}:',
+        'to-networks': 'To networks:',
 
         /********************************************** Error ***********************************************/
 
