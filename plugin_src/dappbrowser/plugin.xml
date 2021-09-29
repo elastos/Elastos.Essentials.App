@@ -42,10 +42,10 @@
         <source-file src="src/android/DappBrowserPlugin.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/DappBrowserOptions.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/WebViewHandler.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
-
-        <source-file src="src/android/InAppBrowser.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser"/>
-        <source-file src="src/android/DappBrowserDialog.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/DappChromeClient.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
+        <source-file src="src/android/DappBrowserClient.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
+
+        <source-file src="src/android/DappBrowserDialog.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
 
         <source-file src="src/android/BuiltInIcon.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/TitleBarActivityType.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
