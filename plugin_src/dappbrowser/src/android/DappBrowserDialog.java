@@ -28,46 +28,36 @@ import org.elastos.essentials.app.R;
 /**
  * Created by Oliver on 22/11/2013.
  */
-public class InAppBrowserDialog extends Dialog {
+public class DappBrowserDialog extends Dialog {
     Context context;
-    public InAppBrowser inAppBrowser = null;
 
-    public TitleBar toolbar;
-    public WebView webView = null;
-    public EditText edittext;
+    public TitleBar titleBar;
 
-    public InAppBrowserDialog(Context context, int theme) {
-        super(context, theme);
+    public DappBrowserDialog(Context context, DappBrowserOptions options) {
+        super(context, android.R.style.Theme_NoTitleBar);
         this.context = context;
         this.setContentView(R.layout.fragments_view);
-        webView = this.findViewById(R.id.webView);
-        toolbar = this.findViewById(R.id.titlebar);
-        edittext = toolbar.findViewById(R.id.txtUrl);
 
-        toolbar.initialize(this, "abc");
+        titleBar = this.findViewById(R.id.titlebar);
+        titleBar.initialize(options);
 
         this.getWindow().setWindowAnimations(R.style.RightInRightOutAnim);
     }
 
-    public void setInAppBroswer(InAppBrowser browser) {
-        this.inAppBrowser = browser;
-    }
-
     public void onBackPressed () {
-        if (this.inAppBrowser == null) {
+        DappBrowserPlugin plugin = DappBrowserPlugin.getInstance();
+
+        if (plugin.getWebView() == null) {
             this.dismiss();
-        } else {
+        }
+        else {
             // better to go through the in inAppBrowser
             // because it does a clean up
-            if (this.inAppBrowser.hardwareBack() && this.inAppBrowser.canGoBack()) {
-                this.inAppBrowser.goBack();
+            if (plugin.webViewHandler.hardwareBack() && plugin.webViewHandler.canGoBack()) {
+                plugin.webViewHandler.goBack();
             }  else {
-                this.inAppBrowser.closeDialog();
+                plugin.webViewHandler.close();
             }
         }
-    }
-
-    public void close() {
-        this.inAppBrowser.closeDialog();
     }
 }

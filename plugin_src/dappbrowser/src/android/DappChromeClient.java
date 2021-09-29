@@ -25,9 +25,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.webkit.JsPromptResult;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
@@ -35,17 +38,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.GeolocationPermissions.Callback;
 
-public class InAppChromeClient extends WebChromeClient {
+public class DappChromeClient extends WebChromeClient {
 
     private CordovaWebView webView;
-    private String LOG_TAG = "InAppChromeClient";
+    private String LOG_TAG = "DappChromeClient";
     private long MAX_QUOTA = 100 * 1024 * 1024;
-    private TitleBar titleBar;
 
-    public InAppChromeClient(CordovaWebView webView, TitleBar titleBar) {
+    public DappChromeClient(CordovaWebView webView) {
         super();
         this.webView = webView;
-        this.titleBar = titleBar;
     }
     /**
      * Handle database quota exceeded notification.
@@ -184,7 +185,7 @@ public class InAppChromeClient extends WebChromeClient {
 
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
-        titleBar.progressBar.setProgress(newProgress, true);
+        DappBrowserPlugin.getInstance().webViewHandler.setProgress(newProgress);
     }
 
 }

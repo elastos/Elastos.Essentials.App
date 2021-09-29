@@ -1,0 +1,32 @@
+<ion-content class="ion-text-center">
+    <!-- <ion-header class="ion-no-border">
+        <ion-row [class.darkContainer]="theme.darkMode">
+            <ion-col size="1.25">
+                <div class="img-btn">
+                    <img [src]="getIconPath(0)" (click)="onGoToLauncher()">
+                </div>
+            </ion-col>
+            <ion-col size="1.25">
+                <div class="img-btn img-btn-mark">
+                    <img [src]="getIconPath(1)" (click)="onGoBack()">
+                </div>
+            </ion-col>
+            <ion-col size="8.25">
+                <ion-title *ngIf="title != null" [ngStyle]="{ 'color': theme.color }">{{ title }}</ion-title>
+                <ion-input *ngIf="title == null" type="text" name="url" [attr.disabled]="false" ngDefaultControl (keyup.enter)="keyEnter()"
+                    placeholder="Input a custom address here" [(ngModel)]="url" clearInput>
+                </ion-input>
+            </ion-col>
+            <ion-col size="1.25">
+                <div class="img-btn img-btn-mark">
+                    <img  [src]="getIconPath(2)" (click)="onMenu()">
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-header> -->
+    <browser-titlebar (urlChanged)="onUrlInput($event)" [attr.disabled]="dabRunning"></browser-titlebar>
+
+    <div  [class.darkContainer]="theme.darkMode">
+        <img *ngIf="shot != null" [src]="shot" />
+    </div>
+</ion-content>

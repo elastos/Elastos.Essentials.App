@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_linear_layout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,17 +12,5 @@
         android:layout_height="50dp"
         android:layout_weight="0">
     </org.elastos.essentials.plugins.dappbrowser.TitleBar>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-        <WebView
-            android:id="@+id/webView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="20sp" >
-        </WebView>
-    </FrameLayout>
 
 </LinearLayout>

@@ -117,7 +117,7 @@ public class InAppBrowser extends CordovaPlugin {
 
     private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR, TITLE);
 
-    private InAppBrowserDialog dialog;
+    private DappBrowserDialog dialog;
     private TitleBar toolbar;
     private WebView inAppWebView;
     private EditText edittext;
@@ -807,14 +807,14 @@ public class InAppBrowser extends CordovaPlugin {
 //                fragment = WebViewFragment.newInstance("abc");
 
 //                // Let's create the main dialog
-                dialog = new InAppBrowserDialog(cordova.getActivity(), android.R.style.Theme_NoTitleBar);
+//                dialog = new DappBrowserDialog(cordova.getActivity(), android.R.style.Theme_NoTitleBar);
 //                dialog.getWindow().getAttributes().windowAnimations = android.R.style.Animation_Dialog;
 //                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 if (fullscreen) {
                     dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 }
                 dialog.setCancelable(true);
-                dialog.setInAppBroswer(getInAppBrowser());
+//                dialog.setInAppBroswer(getInAppBrowser());
 //
 //                // Main container layout
 //                LinearLayout main = new LinearLayout(cordova.getActivity());
@@ -823,9 +823,9 @@ public class InAppBrowser extends CordovaPlugin {
 //                // Toolbar layout
 //                LayoutInflater li = LayoutInflater.from(cordova.getActivity());
 //                toolbar = (TitleBar)li.inflate(R.layout.title_bar, null);
-                toolbar = dialog.toolbar;
-                edittext = dialog.edittext;
-                toolbar.setDarkMode(darkMode);
+                toolbar = dialog.titleBar;
+//                edittext = dialog.edittext;
+//                toolbar.setDarkMode(darkMode);
                 if (title != null) {
                     toolbar.setTitle(title);
                     edittext.setVisibility(View.GONE);
@@ -949,30 +949,30 @@ public class InAppBrowser extends CordovaPlugin {
 
                 // WebView
 //                inAppWebView = new WebView(cordova.getActivity());
-                inAppWebView = dialog.webView;
+//                inAppWebView = dialog.webView;
 //                inAppWebView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 //                inAppWebView.setId(Integer.valueOf(6));
                 // File Chooser Implemented ChromeClient
-                inAppWebView.setWebChromeClient(new InAppChromeClient(thatWebView, toolbar) {
-                    public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
-                    {
-                        LOG.d(LOG_TAG, "File Chooser 5.0+");
-                        // If callback exists, finish it.
-                        if(mUploadCallback != null) {
-                            mUploadCallback.onReceiveValue(null);
-                        }
-                        mUploadCallback = filePathCallback;
-
-                        // Create File Chooser Intent
-                        Intent content = new Intent(Intent.ACTION_GET_CONTENT);
-                        content.addCategory(Intent.CATEGORY_OPENABLE);
-                        content.setType("*/*");
-
-                        // Run cordova startActivityForResult
-                        cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(content, "Select File"), FILECHOOSER_REQUESTCODE);
-                        return true;
-                    }
-                });
+//                inAppWebView.setWebChromeClient(new DappChromeClient(thatWebView, toolbar) {
+//                    public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
+//                    {
+//                        LOG.d(LOG_TAG, "File Chooser 5.0+");
+//                        // If callback exists, finish it.
+//                        if(mUploadCallback != null) {
+//                            mUploadCallback.onReceiveValue(null);
+//                        }
+//                        mUploadCallback = filePathCallback;
+//
+//                        // Create File Chooser Intent
+//                        Intent content = new Intent(Intent.ACTION_GET_CONTENT);
+//                        content.addCategory(Intent.CATEGORY_OPENABLE);
+//                        content.setType("*/*");
+//
+//                        // Run cordova startActivityForResult
+//                        cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(content, "Select File"), FILECHOOSER_REQUESTCODE);
+//                        return true;
+//                    }
+//                });
                 currentClient = new InAppBrowserClient(thatWebView, toolbar, beforeload);
                 inAppWebView.setWebViewClient(currentClient);
                 WebSettings settings = inAppWebView.getSettings();
@@ -1151,7 +1151,7 @@ public class InAppBrowser extends CordovaPlugin {
          */
         public InAppBrowserClient(CordovaWebView webView, TitleBar titleBar, String beforeload) {
             this.webView = webView;
-            this.edittext = titleBar.editUrl;
+//            this.edittext = titleBar.editUrl;
             this.progressBar = titleBar.progressBar;
             this.beforeload = beforeload;
             this.waitForBeforeload = beforeload != null;

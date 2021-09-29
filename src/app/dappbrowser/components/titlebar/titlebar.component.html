@@ -1,17 +1,43 @@
 <ion-header class="ion-no-border" [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode">
     <ion-row>
-        <ion-col size="2">
+        <!-- <ion-col size="2">
             <div class="img-btn">
                 <img [src]="getEssentialsLogoPath()" (click)="homeClicked()">
             </div>
         </ion-col>
         <ion-col size="10">
-            <ion-input 
+            <ion-input
                 type="text" name="url" ngDefaultControl (keyup.enter)="emit()"
                 placeholder="Input a custom address here" [(ngModel)]="_url" class="url-input"
                 inputmode="url" enterkeyhint="go" clearInput
             >
             </ion-input>
+        </ion-col> -->
+
+
+        <ion-col size="1.25">
+            <div class="img-btn">
+                <img [src]="getIconPath(0)" (click)="onIconClicked(0)">
+            </div>
+        </ion-col>
+        <ion-col size="1.25">
+            <div class="img-btn img-btn-mark">
+                <img [src]="getIconPath(1)" (click)="onIconClicked(1)">
+            </div>
+        </ion-col>
+        <ion-col *ngIf="_title != null" size="7">
+            <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
+        </ion-col>
+        <ion-col *ngIf="_title == null" size="8.25">
+            <ion-input type="text" name="url" ngDefaultControl (keyup.enter)="emit()"
+                placeholder="Input a custom address here" [(ngModel)]="_url" class="url-input" inputmode="url"
+                enterkeyhint="go" clearInput>
+            </ion-input>
+        </ion-col>
+        <ion-col size="1.25">
+            <div class="img-btn img-btn-mark">
+                <img [src]="getIconPath(2)" (click)="onIconClicked(2)">
+            </div>
         </ion-col>
     </ion-row>
 </ion-header>

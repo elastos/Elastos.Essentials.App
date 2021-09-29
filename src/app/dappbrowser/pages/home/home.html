@@ -1,6 +1,6 @@
 <ion-content class="ion-text-center">
-    <browser-titlebar (urlChanged)="onUrlInput($event)" [attr.disabled]="iabRunning"></browser-titlebar>
-    <ion-grid *ngIf="!iabRunning" class="container" [class.dark-container]="theme.darkMode">
+    <browser-titlebar (urlChanged)="onUrlInput($event)" [attr.disabled]="dabRunning"></browser-titlebar>
+    <ion-grid *ngIf="!dabRunning" class="container" [class.dark-container]="theme.darkMode">
 
         <ion-row class="header-row">
             <ion-col size="12">
@@ -29,7 +29,7 @@
 
     </ion-grid>
 
-    <ion-grid *ngIf="iabRunning" class="spinner-container">
+    <ion-grid *ngIf="dabRunning" class="spinner-container">
         <ion-spinner name="crescent"></ion-spinner>
     </ion-grid>
 

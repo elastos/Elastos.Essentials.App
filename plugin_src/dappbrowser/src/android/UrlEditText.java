@@ -7,10 +7,14 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import org.elastos.essentials.app.R;
@@ -38,6 +42,20 @@ public class UrlEditText extends EditText {
 
 	private void initEditText() {
 		this.setTextSize(TypedValue.COMPLEX_UNIT_SP, (float) 14);
+		this.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+		this.setImeOptions(EditorInfo.IME_ACTION_GO);
+//		this.setInputType(InputType.TYPE_NULL); // Will not except input... Makes the text NON-EDITABLE
+		this.setOnKeyListener(new View.OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				// If the event is a key-down event on the "enter" button
+				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+					DappBrowserPlugin.getInstance().webViewHandler.navigate(getText().toString());
+					return true;
+				}
+				return false;
+			}
+		});
+
 		addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable paramEditable) {

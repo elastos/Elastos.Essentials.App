@@ -1,19 +1,23 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicStorageModule } from '@ionic/storage';
-import { IonicModule, Platform } from '@ionic/angular';
-import { DAppBrowserRoutingModule } from './routing';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { SharedComponentsModule } from '../components/sharedcomponents.module';
-import { TranslateModule } from '@ngx-translate/core';
-import { HomePage } from './pages/home/home';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { IonicModule, Platform } from '@ionic/angular';
+import { IonicStorageModule } from '@ionic/storage';
+import { TranslateModule } from '@ngx-translate/core';
+import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { BrowserTitleBarComponent } from './components/titlebar/titlebar.component';
+import { BrowserPage } from './pages/browser/browser';
+import { HomePage } from './pages/home/home';
+import { MenuPage } from './pages/menu/menu';
+import { DAppBrowserRoutingModule } from './routing';
 
 @NgModule({
   declarations: [
     HomePage,
+    BrowserPage,
+    MenuPage,
     BrowserTitleBarComponent
   ],
   imports: [

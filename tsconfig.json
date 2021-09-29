@@ -35,6 +35,7 @@
       "elastos-essentials-plugin-passwordmanager",
       "elastos-essentials-plugin-wallet",
       "elastos-essentials-plugin-internal",
+      "elastos-essentials-plugin-dappbrowser",
       "cordova-plugin-camera"
     ],
     "lib": [

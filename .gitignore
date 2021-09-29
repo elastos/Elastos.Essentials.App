@@ -1,6 +1,6 @@
 .sourcemaps/
 node_modules/
-www/
+/www
 .DS_Store
 package-lock.json
 .vscode/

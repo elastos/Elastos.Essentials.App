@@ -47,14 +47,14 @@ public class TitleBar extends FrameLayout {
     FrameLayout flRoot = null;
     PopupWindow menuPopup = null;
     TextView tvAnimationHint = null;
-    public UrlEditText editUrl = null;
+    public UrlEditText txtUrl = null;
     boolean darkMode = false;
 
     // UI model
     AlphaAnimation onGoingProgressAnimation = null;
 
     // Model
-    InAppBrowserDialog dialog = null;
+    DappBrowserDialog dialog = null;
     String appId = null;
     boolean isLauncher = false;
     // Reference count for progress bar activity types. An app can start several
@@ -74,40 +74,19 @@ public class TitleBar extends FrameLayout {
     public TitleBar(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        activityCounters.put(TitleBarActivityType.DOWNLOAD, 0);
-        activityCounters.put(TitleBarActivityType.UPLOAD, 0);
-        activityCounters.put(TitleBarActivityType.LAUNCH, 0);
-        activityCounters.put(TitleBarActivityType.OTHER, 0);
-
-        activityHintTexts.put(TitleBarActivityType.DOWNLOAD, null);
-        activityHintTexts.put(TitleBarActivityType.UPLOAD, null);
-        activityHintTexts.put(TitleBarActivityType.LAUNCH, null);
-        activityHintTexts.put(TitleBarActivityType.OTHER, null);
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.title_bar, this, true);
     }
 
-    public void initialize(InAppBrowserDialog dialog, String appId) {
-        this.dialog = dialog;
-        this.appId = appId;
-
-        progressBar = findViewById(R.id.progressBar);
+    public void initialize(DappBrowserOptions options) {
         btnOuterLeft = findViewById(R.id.btnOuterLeft);
         btnInnerLeft = findViewById(R.id.btnInnerLeft);
 
-        // btnInnerRight = findViewById(R.id.btnInnerRight);
-//        btnOuterRight = findViewById(R.id.btnOuterRight);
+        btnOuterRight = findViewById(R.id.btnOuterRight);
         tvTitle = findViewById(R.id.tvTitle);
         flRoot = findViewById(R.id.flRoot);
-//        tvAnimationHint = findViewById(R.id.tvAnimationHint);
 
-        editUrl = findViewById(R.id.txtUrl);
+        txtUrl = findViewById(R.id.txtUrl);
 
         btnOuterLeft.setOnClickListener(v -> {
             handleOuterLeftClicked();
@@ -117,41 +96,17 @@ public class TitleBar extends FrameLayout {
             handleInnerLeftClicked();
         });
 
-        // btnInnerRight.setOnClickListener(v -> {
-        // handleInnerRightClicked();
-        // });
+        btnOuterRight.setOnClickListener(v -> {
+            handleOuterRightClicked();
+        });
 
-//        btnOuterRight.setOnClickListener(v -> {
-//            handleOuterRightClicked();
-//        });
-
-//        btnOuterLeft.setPaddingDp(12);
-//        btnInnerLeft.setPaddingDp(12);
-        // btnInnerRight.setPaddingDp(12);
-//        btnOuterRight.setPaddingDp(12);
-
-        setAnimationHintText(null);
-
+        darkMode = options.darkmode;
+        setTitle(options.title);
         updateIcons();
-    }
-
-    public void setDarkMode(boolean darkMode) {
-        if (this.darkMode != darkMode) {
-            this.darkMode = darkMode;
-            updateIcons();
-        }
     }
 
     private boolean darkModeUsed() {
         return darkMode;
-    }
-
-    private void goToLauncher() {
-        this.dialog.inAppBrowser.goToLauncher();
-    }
-
-    private void closeApp() {
-        this.dialog.close();
     }
 
     private void toggleMenu() {
@@ -231,26 +186,16 @@ public class TitleBar extends FrameLayout {
         menuPopup = null;
     }
 
-    public void showActivityIndicator(TitleBarActivityType activityType, String hintText) {
-        // NOTE: NON SENSE ON ANDROID - just kept to keep aligned code on android and
-        // ios.
-        // Don't show activity indicators on ios/itunes
-
-        // Increase reference count for this progress animation type
-        activityCounters.put(activityType, activityCounters.get(activityType) + 1);
-        activityHintTexts.put(activityType, hintText);
-        updateAnimation();
-    }
-
-    public void hideActivityIndicator(TitleBarActivityType activityType) {
-        // Decrease reference count for this progress animation type
-        activityCounters.put(activityType, Math.max(0, activityCounters.get(activityType) - 1));
-        updateAnimation();
-    }
-
     public void setTitle(String title) {
-        if (title != null)
-            tvTitle.setText(title/* .toUpperCase() */);
+        if (title != null) {
+            tvTitle.setText(title);
+            tvTitle.setVisibility(View.VISIBLE);
+            txtUrl.setVisibility(View.GONE);
+        }
+        else {
+            txtUrl.setVisibility(View.VISIBLE);
+            tvTitle.setVisibility(View.GONE);
+        }
     }
 
     public boolean setBackgroundColor(String backgroundColor) {
@@ -278,11 +223,9 @@ public class TitleBar extends FrameLayout {
         }
 
         tvTitle.setTextColor(color);
-//        tvAnimationHint.setTextColor(color);
         btnOuterLeft.setColorFilter(color);
         btnInnerLeft.setColorFilter(color);
-        // btnInnerRight.setColorFilter(color);
-//        btnOuterRight.setColorFilter(color);
+        btnOuterRight.setColorFilter(color);
     }
 
     public void setNavigationMode(TitleBarNavigationMode navigationMode) {
@@ -305,9 +248,6 @@ public class TitleBar extends FrameLayout {
             case INNER_LEFT:
                 innerLeftIcon = icon;
                 break;
-            case INNER_RIGHT:
-                innerRightIcon = icon;
-                break;
             case OUTER_RIGHT:
                 outerRightIcon = icon;
                 break;
@@ -327,13 +267,10 @@ public class TitleBar extends FrameLayout {
             case INNER_LEFT:
                 btnInnerLeft.setBadgeCount(badgeCount);
                 break;
-            // case INNER_RIGHT:
-            // btnInnerRight.setBadgeCount(badgeCount);
-            // break;
-//            case OUTER_RIGHT:
-//                if (emptyMenuItems())
-//                    btnOuterRight.setBadgeCount(badgeCount);
-//                break;
+            case OUTER_RIGHT:
+                if (emptyMenuItems())
+                    btnOuterRight.setBadgeCount(badgeCount);
+                break;
             default:
                 // Nothing to do, wrong info received
         }
@@ -365,70 +302,14 @@ public class TitleBar extends FrameLayout {
             setBackgroundColor("#F5F7FE");
             setForegroundMode(TitleBarForegroundMode.DARK);
         }
-        editUrl.setEditColor(darkMode);
+        txtUrl.setEditColor(darkMode);
 
         btnOuterLeft.setImageResource(darkMode ? R.drawable.ic_elastos_darkmode : R.drawable.ic_elastos);
         btnOuterLeft.setVisibility(View.VISIBLE);
         btnInnerLeft.setImageResource(darkMode ? R.drawable.ic_back_darkmode : R.drawable.ic_back);
         btnInnerLeft.setVisibility(View.VISIBLE);
-//        btnOuterRight.setImageResource(darkMode ? R.drawable.ic_vertical_menu_darkmode : R.drawable.ic_vertical_menu);
-//        btnOuterRight.setVisibility(View.VISIBLE);
-
-        // // Navigation icon / Outer left
-        // if (currentNavigationIconIsVisible) {
-        // btnOuterLeft.setVisibility(View.VISIBLE);
-        // if (currentNavigationMode == TitleBarNavigationMode.CLOSE) {
-        // btnOuterLeft.setImageResource(R.drawable.ic_close);
-        // } else if (currentNavigationMode == TitleBarNavigationMode.ACCOUNT) {
-        // btnOuterLeft.setImageResource(R.drawable.ic_account);
-        // } else {
-        // // Default = HOME
-        // btnOuterLeft.setImageResource(R.drawable.ic_elastos_home);
-        // }
-        // }
-        // else {
-        // // Navigation icon not visible - check if there is a configured outer icon
-        // if (outerLeftIcon != null) {
-        // btnOuterLeft.setVisibility(View.VISIBLE);
-        // setImageViewFromIcon(btnOuterLeft, outerLeftIcon);
-        // }
-        // else {
-        // btnOuterLeft.setVisibility(View.GONE);
-        // }
-        // }
-        //
-        // // Inner left
-        // if (innerLeftIcon != null) {
-        // btnInnerLeft.setVisibility(View.VISIBLE);
-        // setImageViewFromIcon(btnInnerLeft, innerLeftIcon);
-        // }
-        // else {
-        // btnInnerLeft.setVisibility(View.GONE);
-        // }
-        //
-        // // Inner right
-        // if (innerRightIcon != null) {
-        // btnInnerRight.setVisibility(View.VISIBLE);
-        // setImageViewFromIcon(btnInnerRight, innerRightIcon);
-        // }
-        // else {
-        // btnInnerRight.setVisibility(View.GONE);
-        // }
-        //
-        // // Menu icon / Outer right
-        // if (menuItems.size() > 0) {
-        // btnOuterRight.setVisibility(View.VISIBLE);
-        // btnOuterRight.setImageResource(R.drawable.ic_menu);
-        // }
-        // else {
-        // if (outerRightIcon != null) {
-        // btnOuterRight.setVisibility(View.VISIBLE);
-        // setImageViewFromIcon(btnOuterRight, outerRightIcon);
-        // }
-        // else {
-        // btnOuterRight.setVisibility(View.GONE);
-        // }
-        // }
+        btnOuterRight.setImageResource(darkMode ? R.drawable.ic_vertical_menu_darkmode : R.drawable.ic_vertical_menu);
+        btnOuterRight.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -493,30 +374,16 @@ public class TitleBar extends FrameLayout {
     }
 
     public void handleOuterLeftClicked() {
-        if (currentNavigationIconIsVisible) {
-            // Action handled by runtime: minimize, or close
-            if (currentNavigationMode == TitleBarNavigationMode.CLOSE) {
-                closeApp();
-            } else {
-                // Default: HOME
-                goToLauncher();
-            }
-        } else {
-            // Action handled by the app
-            handleIconClicked(outerLeftIcon);
-        }
+        DappBrowserPlugin.getInstance().webViewHandler.goToLauncher();
     }
 
     private void handleInnerLeftClicked() {
-        if (currentNavigationIconIsVisible) {
-            if (this.dialog.inAppBrowser.canGoBack()) {
-                this.dialog.inAppBrowser.goBack();
-            }
-            else {
-                closeApp();
-            }
-        } else {
-            handleIconClicked(innerLeftIcon);
+        WebViewHandler webViewHandler = DappBrowserPlugin.getInstance().webViewHandler;
+        if (webViewHandler.canGoBack()) {
+            webViewHandler.goBack();
+        }
+        else {
+            webViewHandler.close();
         }
     }
 
@@ -525,174 +392,22 @@ public class TitleBar extends FrameLayout {
     }
 
     private void handleOuterRightClicked() {
-        if (!emptyMenuItems()) {
-            // Title bar has menu items, so we open the menu
-            toggleMenu();
-        } else {
-            // No menu items: this is a custom icon
-            handleIconClicked(outerRightIcon);
-        }
+        DappBrowserPlugin.getInstance().webViewHandler.setMenuEvent();
+//        if (!emptyMenuItems()) {
+//            // Title bar has menu items, so we open the menu
+//            toggleMenu();
+//        } else {
+//            // No menu items: this is a custom icon
+//            handleIconClicked(outerRightIcon);
+//        }
     }
 
     private boolean emptyMenuItems() {
         return menuItems == null || menuItems.size() == 0;
     }
 
-    public void changeVisibility(TitleBarVisibility titleBarVisibility,
-            NativeStatusBarVisibility nativeStatusBarVisibility) {
-        // Trinity title bar
-        if (titleBarVisibility == TitleBarVisibility.VISIBLE)
-            this.setVisibility(View.VISIBLE);
-        else
-            this.setVisibility(View.GONE);
-
-        // Native status bar
-        // if (nativeStatusBarVisibility == NativeStatusBarVisibility.VISIBLE)
-        // getActivity().setNormalScreenMode();
-        // else
-        // getActivity().setImmersiveScreenMode();
-    }
-
     private Activity getActivity() {
         return ((Activity) this.getContext());
     }
 
-    private void setAnimationHintText(String text) {
-//        if (text == null) {
-//            tvAnimationHint.setVisibility(View.GONE);
-//        } else {
-//            tvAnimationHint.setVisibility(View.VISIBLE);
-//            tvAnimationHint.setText(text);
-//        }
-    }
-
-    /**
-     * Based on the counters for each activity, determines which activity type has
-     * the priority and plays the appropriate animation. If no more animation, the
-     * animation is stopped
-     */
-    private void updateAnimation() {
-        // Check if an animation should be launched, and which one
-        String backgroundColor = null;
-        if (activityCounters.get(TitleBarActivityType.LAUNCH) > 0) {
-            if (darkModeUsed())
-                backgroundColor = "#FFFFFF";
-            else
-                backgroundColor = "#444444";
-            setAnimationHintText(activityHintTexts.get(TitleBarActivityType.LAUNCH));
-        } else if (activityCounters.get(TitleBarActivityType.DOWNLOAD) > 0
-                || activityCounters.get(TitleBarActivityType.UPLOAD) > 0) {
-            backgroundColor = "#ffde6e";
-            if (activityCounters.get(TitleBarActivityType.DOWNLOAD) > 0)
-                setAnimationHintText(activityHintTexts.get(TitleBarActivityType.DOWNLOAD));
-            else
-                setAnimationHintText(activityHintTexts.get(TitleBarActivityType.UPLOAD));
-        } else if (activityCounters.get(TitleBarActivityType.OTHER) > 0) {
-            backgroundColor = "#20e3d2";
-            setAnimationHintText(activityHintTexts.get(TitleBarActivityType.OTHER));
-        } else {
-            setAnimationHintText(null);
-        }
-
-        if (backgroundColor != null) {
-            final String bgColor = backgroundColor;
-            // Animation init delay/context switch seems to be needed otherwise changing
-            // visibility or background color of the progress bar blocks the UI.
-            // Unclear reason for now.
-            new Handler().postDelayed(() -> {
-                ((Activity) getContext()).runOnUiThread(() -> {
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressBar.setBackgroundColor(Color.parseColor(bgColor));
-
-                    // If an animation is already in progress, don't interrupt it and just change
-                    // the background color instead.
-                    // Otherwise, start an animation
-                    if (onGoingProgressAnimation == null) {
-                        animateProgressBarIn();
-                    }
-                });
-            }, 100);
-        } else {
-            // Animation init delay/context switch seems to be needed otherwise changing
-            // visibility or background color of the progress bar blocks the UI.
-            // Unclear reason for now.
-            new Handler().postDelayed(() -> {
-                ((Activity) getContext()).runOnUiThread(() -> {
-                    stopProgressAnimation();
-                    progressBar.setVisibility(View.INVISIBLE);
-                });
-            }, 100);
-        }
-    }
-
-    private boolean hasActiveAnimation() {
-        return activityCounters.get(TitleBarActivityType.DOWNLOAD) > 0
-                || activityCounters.get(TitleBarActivityType.UPLOAD) > 0
-                || activityCounters.get(TitleBarActivityType.LAUNCH) > 0
-                || activityCounters.get(TitleBarActivityType.OTHER) > 0;
-    }
-
-    private void animateProgressBarIn() {
-        if (!hasActiveAnimation())
-            return;
-
-        onGoingProgressAnimation = new AlphaAnimation(0.0f, 1.0f);
-
-        onGoingProgressAnimation.setDuration(1000);
-        onGoingProgressAnimation.setStartOffset(300);
-        onGoingProgressAnimation.setFillAfter(false);
-        onGoingProgressAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                onGoingProgressAnimation = null;
-                animateProgressBarOut();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        progressBar.startAnimation(onGoingProgressAnimation);
-    }
-
-    private void animateProgressBarOut() {
-        onGoingProgressAnimation = new AlphaAnimation(1.0f, 0.0f);
-
-        onGoingProgressAnimation.setDuration(1000);
-        onGoingProgressAnimation.setFillAfter(false);
-        onGoingProgressAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                onGoingProgressAnimation = null;
-                animateProgressBarIn();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        progressBar.startAnimation(onGoingProgressAnimation);
-    }
-
-    private void stopProgressAnimation() {
-        if (onGoingProgressAnimation != null) {
-            progressBar.clearAnimation();
-            progressBar.animate().cancel();
-            onGoingProgressAnimation.cancel();
-            onGoingProgressAnimation = null;
-        }
-    }
 }
