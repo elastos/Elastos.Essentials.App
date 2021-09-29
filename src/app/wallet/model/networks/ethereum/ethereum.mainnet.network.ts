@@ -1,7 +1,7 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
-import { ethereumMainnetBinanceBridgeProvider } from "./earn/bridge.providers";
+import { ethereumMainnetBinanceBridgeProvider, ethereumMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { EthereumAPI, EthereumAPIType } from "./ethereum.api";
 
 // https://rpc.info/#ethereum-rpc
@@ -27,7 +27,8 @@ export class EthereumMainNetNetwork extends EVMNetwork {
       [],
       [],
       [
-        ethereumMainnetBinanceBridgeProvider
+        ethereumMainnetBinanceBridgeProvider,
+        ethereumMainnetShadowTokenBridgeProvider
       ]
     );
   }

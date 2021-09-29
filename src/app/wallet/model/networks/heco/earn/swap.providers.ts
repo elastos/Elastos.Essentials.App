@@ -8,7 +8,6 @@ export const hecoMainnetAnyswapSwapProvider = new SwapProvider(
   anyswapBaseProvider,
   true,
   [
-    // TODO: How to handle "HT" ?
     "0x66a79d23e58475d2738179ca52cd0b41d73f0bea", // hBTC
     "0x64ff637fb478863b7468bc97d30a5bf3a428a1fd", // hETH
   ],
@@ -27,7 +26,6 @@ export const hecoMainnetO3SwapProvider = new SwapProvider(
 export const hecoMainnetMdexSwapProvider = new SwapProvider(
   mdexBaseProvider,
   true,
-  // TODO: HT
   [
     "0x25d2e80cb6b86881fd7e07dd263fb79f4abe033c", // MDX
     "0x22c54ce8321a4015740ee1109d9cbc25815c46e6", // UNI

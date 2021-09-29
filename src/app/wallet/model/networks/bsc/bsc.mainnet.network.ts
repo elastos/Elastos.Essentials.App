@@ -2,7 +2,7 @@ import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
 import { BscAPI, BscApiType } from "./bsc.api";
-import { bscMainnetBinanceBridgeProvider } from "./earn/bridge.providers";
+import { bscMainnetBinanceBridgeProvider, bscMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { bscMainnetMdexSwapProvider } from "./earn/swap.providers";
 
 export class BSCMainNetNetwork extends EVMNetwork {
@@ -27,7 +27,8 @@ export class BSCMainNetNetwork extends EVMNetwork {
         bscMainnetMdexSwapProvider
       ],
       [
-        bscMainnetBinanceBridgeProvider
+        bscMainnetBinanceBridgeProvider,
+        bscMainnetShadowTokenBridgeProvider
       ]
     );
   }

@@ -1,4 +1,5 @@
 import { binanceBaseProvider } from "../../../earn/baseproviders/binance.provider";
+import { shadowTokenBaseProvider } from "../../../earn/baseproviders/shadowtoken.provider";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 
 export const bscMainnetBinanceBridgeProvider = new BridgeProvider(
@@ -38,4 +39,12 @@ export const bscMainnetBinanceBridgeProvider = new BridgeProvider(
     "0xc17C1Bc4F46C7CeA215f4A7b2a4f74A04c1095fA", // SUN
   ],
   "https://www.binance.org/en/bridge"
+);
+
+export const bscMainnetShadowTokenBridgeProvider = new BridgeProvider(
+  shadowTokenBaseProvider,
+  true, // BNB
+  [
+    "0x8b45796da30a87d8459e1b16fbf106b664ee01e1" // Filda on BSC
+  ]
 );

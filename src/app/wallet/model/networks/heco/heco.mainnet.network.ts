@@ -1,7 +1,7 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
-import { hecoMainnetO3BridgeProvider } from "./earn/bridge.providers";
+import { hecoMainnetO3BridgeProvider, hecoMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { hecoMainnetChannelsEarnProvider, hecoMainnetFildaEarnProvider } from "./earn/earn.providers";
 import { hecoMainnetAnyswapSwapProvider, hecoMainnetMdexSwapProvider, hecoMainnetO3SwapProvider } from "./earn/swap.providers";
 import { HecoAPI, HecoApiType } from "./heco.api";
@@ -37,7 +37,8 @@ export class HECOMainNetNetwork extends EVMNetwork {
         hecoMainnetAnyswapSwapProvider
       ],
       [
-        hecoMainnetO3BridgeProvider
+        hecoMainnetO3BridgeProvider,
+        hecoMainnetShadowTokenBridgeProvider
       ]
     );
   }

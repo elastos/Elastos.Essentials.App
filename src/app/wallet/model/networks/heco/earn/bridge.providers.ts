@@ -1,4 +1,5 @@
 import { o3swapBaseProvider } from "../../../earn/baseproviders/o3swap.provider";
+import { shadowTokenBaseProvider } from "../../../earn/baseproviders/shadowtoken.provider";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 
 export const hecoMainnetO3BridgeProvider = new BridgeProvider(
@@ -10,4 +11,12 @@ export const hecoMainnetO3BridgeProvider = new BridgeProvider(
     // TODO
   ],
   "https://o3swap.com/hub"
+);
+
+export const hecoMainnetShadowTokenBridgeProvider = new BridgeProvider(
+  shadowTokenBaseProvider,
+  true, // HT
+  [
+    "0xe36ffd17b2661eb57144ceaef942d95295e637f0" // FilDA
+  ]
 );
