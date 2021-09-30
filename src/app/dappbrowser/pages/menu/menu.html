@@ -1,10 +1,10 @@
 <ion-content>
     <app-titlebar></app-titlebar>
     <ion-grid>
-        <ion-row>
-            <h1>Profile</h1>
-            <img src="/assets/settings/icon/logo.png" />
-            <p>A better way to be online</p>
+        <ion-row *ngIf="browsedAppInfo">
+            <h1>{{browsedAppInfo.title}}</h1>
+            <img [src]="browsedAppInfo.iconUrl" />
+            <p>{{browsedAppInfo.description}}</p>
         </ion-row>
 
         <ion-row>

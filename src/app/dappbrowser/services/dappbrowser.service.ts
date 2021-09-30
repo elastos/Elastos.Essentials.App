@@ -65,9 +65,6 @@ export class DappBrowserService {
     public url: string;
     private activeBrowsedAppInfo: BrowsedAppInfo = null; // Extracted info about a fetched dapp, after it's successfully loaded.
 
-    private domParser = new DOMParser();
-    public head: Document;
-
     constructor(
         public translate: TranslateService,
         private nav: GlobalNavService,
@@ -123,6 +120,7 @@ export class DappBrowserService {
      *
      */
     public async open(url: string, target?: string, title?: string) {
+        console.log("OPEN BROWSER URL", url);
         this.url = url;
 
         if (!target || target == null) {
@@ -197,9 +195,10 @@ export class DappBrowserService {
                 }
                 break;
             case "head":
-                this.head = this.domParser.parseFromString(event.data, "text/html")
+                let htmlHeader = await this.handleHtmlHeader(event);
+
                 if (this.dabClient.onHtmlHead) {
-                    this.dabClient.onHtmlHead(this.head);
+                    this.dabClient.onHtmlHead(htmlHeader);
                 }
                 break;
             case "exit":
@@ -240,8 +239,65 @@ export class DappBrowserService {
     }
 
     private async handleLoadStopEvent(info: DABLoadStop): Promise<void> {
+    }
+
+    private async handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
+        let domParser = new DOMParser();
+        let htmlHeader = domParser.parseFromString(event.data, "text/html");
+        console.log("HEADER", event, htmlHeader, event.data);
+
+        // Extract all the information we can, but mostly the app title, description and icon
+
+        // TITLE
+        let title: string = null;
+        let titleTags = htmlHeader.getElementsByTagName("title");
+        if (titleTags && titleTags.length > 0) {
+            title = titleTags[0].innerText;
+        }
+
+        if (!title) {
+            // No title found, use a placeholder
+            title = "Untitled";
+        }
+
+        // DESCRIPTION
+        let description = ""; // Default description is empty if nothing is found
+        let metas = htmlHeader.getElementsByTagName("meta");
+        if (metas && metas.length > 0) {
+            let descriptionMeta = Array.from(metas).find(m => m.name && m.name.toLowerCase() === "description");
+            if (descriptionMeta)
+                description = descriptionMeta.content;
+        }
+
+        // ICON
+        let iconUrl: string = null;
+        let links = htmlHeader.getElementsByTagName("link");
+        if (links && links.length > 0) {
+            let iconLink = Array.from(links).find(l => l.rel && l.rel.toLowerCase() === "icon");
+            if (iconLink) {
+                iconUrl = iconLink.getAttribute("href");
+                if (iconUrl) {
+                    if (!iconUrl.startsWith("http")) { // Not an absolute url, so we have to concatenate the dapp url
+                        let url = new URL(this.url);
+                        iconUrl = (url.protocol + "//" + url.host + iconUrl);
+                    }
+                }
+            }
+        }
+        iconUrl = iconUrl.toLowerCase();
+
+        Logger.log("dappbrowser", "Extracted website title:", title);
+        Logger.log("dappbrowser", "Extracted website description:", description);
+        Logger.log("dappbrowser", "Extracted website icon URL:", iconUrl);
+
         // Remember this application as browsed permanently.
-        this.activeBrowsedAppInfo = await this.storageService.saveBrowsedAppInfo(info.url, "fake title", "fake desc", "fake icon url");
+        this.activeBrowsedAppInfo = await this.storageService.saveBrowsedAppInfo(
+            this.url,
+            title,
+            description,
+            iconUrl);
+
+        return htmlHeader;
     }
 
     /**

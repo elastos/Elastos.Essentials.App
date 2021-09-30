@@ -63,7 +63,7 @@ export class HomePage implements DappBrowserClient {
                 {
                     icon: '/assets/browser/dapps/feeds.png',
                     title: 'Feeds',
-                    description: 'Feeds is a new, decentralized social platform where users remain in full control of the data they generate, and may also profit from it.',
+                    description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
                     url: 'https://feeds.trinity-feeds.app/nav/?page=home',
                     useExternalBrowser: true
                 },

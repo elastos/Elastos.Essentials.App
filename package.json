@@ -162,7 +162,6 @@
       "@elastosfoundation/elastos-cordova-plugin-did": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-inappbrowser": {},
-      "elastos-essentials-plugin-dappbrowser": {},
       "cordova-plugin-firebasex": {
         "FIREBASE_ANALYTICS_COLLECTION_ENABLED": "true",
         "FIREBASE_PERFORMANCE_COLLECTION_ENABLED": "true",
@@ -185,7 +184,8 @@
         "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "18.1.0",
         "ANDROID_GSON_VERSION": "2.8.7",
         "ANDROID_FIREBASE_PERF_GRADLE_PLUGIN_VERSION": "1.4.0"
-      }
+      },
+      "elastos-essentials-plugin-dappbrowser": {}
     },
     "platforms": [
       "android",

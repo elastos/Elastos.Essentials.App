@@ -38,22 +38,29 @@
 
         .icon-container {
             display: flex;
-            border-radius: 16px;
-            background: #FFF;
+            background: #fff;
             width: 50px;
             height: 50px;
+            border-radius: 30%;
+            overflow: hidden;
         }
 
-        .title {
-            font-size: 14px;
-            margin-bottom: 3px;
-            font-weight: 600;
-        }
+        .middle-col {
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
 
-        .description {
-            font-size: 10px;
-            color: #000000;
-            opacity: 0.7;
+            .title {
+                font-size: 14px;
+                margin-bottom: 3px;
+                font-weight: 600;
+            }
+
+            .description {
+                font-size: 10px;
+                color: #000000;
+                opacity: 0.7;
+            }
         }
 
         .right-col {
@@ -62,8 +69,9 @@
             justify-content: center;
 
             img {
-                width: 14px;
-                height: 14px;
+                width: 30px;
+                height: 30px;
+                padding: 8px;
             }
         }
     }
@@ -73,7 +81,7 @@
     .header-row {
         ion-col {
             h2 {
-                color: #9D9D9D;
+                color: #9d9d9d;
                 opacity: 1;
             }
         }
@@ -83,9 +91,11 @@
         background-color: #212021;
         box-shadow: none;
 
-        .description {
-            color: #ACACAC;
-            opacity: 1;
+        .middle-col {
+            .description {
+                color: #acacac;
+                opacity: 1;
+            }
         }
     }
 }

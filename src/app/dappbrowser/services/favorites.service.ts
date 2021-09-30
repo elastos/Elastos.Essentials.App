@@ -57,7 +57,7 @@ export class FavoritesService {
         let newFavorite: BrowserFavorite = {
             name: appInfo.title,
             description: appInfo.description,
-            icon: '',
+            iconUrl: appInfo.iconUrl,
             url: appInfo.url,
             networks: [] // All networks enabled by default
         };
