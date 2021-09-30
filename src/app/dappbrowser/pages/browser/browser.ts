@@ -72,6 +72,7 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     onExit(mode?: string) {
+        this.dappbrowserService.setClient(null);
         if (mode) {
             void this.nav.goToLauncher();
         }

@@ -60,7 +60,7 @@ export class DappBrowserService {
     private elastosConnectorCode: string = null;
     private activeChainID: number;
     private rpcUrl: string = null;
-    private dabClient: DappBrowserClient;
+    private dabClient: DappBrowserClient = null;
     public title: string = null;
     public url: string;
     private activeBrowsedAppInfo: BrowsedAppInfo = null; // Extracted info about a fetched dapp, after it's successfully loaded.
@@ -153,56 +153,57 @@ export class DappBrowserService {
         switch (event.type) {
             case "loadstart":
                 this.handleLoadStartEvent(event);
-                if (this.dabClient.onLoadStart) {
+                if (this.dabClient != null && this.dabClient.onLoadStart) {
                     this.dabClient.onLoadStart();
                 }
                 break;
             case "loadstop":
                 await this.handleLoadStopEvent(event as DABLoadStop);
-                if (this.dabClient.onLoadStop) {
+                if (this.dabClient != null && this.dabClient.onLoadStop) {
                     this.dabClient.onLoadStop(event as DABLoadStop);
                 }
                 break;
             case "loaderror":
-                if (this.dabClient.onLoadError) {
+                if (this.dabClient != null && this.dabClient.onLoadError) {
                     this.dabClient.onLoadError(event as DABError);
                 }
                 break;
             case "beforeload":
-                if (this.dabClient.onBeforeLoad) {
+                if (this.dabClient != null && this.dabClient.onBeforeLoad) {
                     this.dabClient.onBeforeLoad();
                 }
                 break;
             case "message":
                 await this.handleDABMessage(event as DABMessage);
-                if (this.dabClient.onMessage) {
+                if (this.dabClient != null && this.dabClient.onMessage) {
                     this.dabClient.onMessage(event as DABMessage);
                 }
                 break;
             case "progress":
-                if (this.dabClient.onProgress) {
+                if (this.dabClient != null && this.dabClient.onProgress) {
                     this.dabClient.onProgress(event.progress);
                 }
                 break;
             case "urlchanged":
-                if (this.dabClient.onUrlChanged) {
+                if (this.dabClient != null && this.dabClient.onUrlChanged) {
                     this.dabClient.onUrlChanged(event.url);
                 }
                 break;
             case "menu":
-                if (this.dabClient.onMenu) {
+                if (this.dabClient != null && this.dabClient.onMenu) {
                     this.dabClient.onMenu();
                 }
                 break;
             case "head":
                 let htmlHeader = await this.handleHtmlHeader(event);
-
-                if (this.dabClient.onHtmlHead) {
+                if (this.dabClient != null && this.dabClient.onHtmlHead) {
                     this.dabClient.onHtmlHead(htmlHeader);
                 }
                 break;
             case "exit":
-                this.dabClient.onExit(event.mode);
+                if (this.dabClient != null) {
+                    this.dabClient.onExit(event.mode);
+                }
                 break;
         }
     }

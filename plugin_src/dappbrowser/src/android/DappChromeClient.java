@@ -180,7 +180,9 @@ public class DappChromeClient extends WebChromeClient {
 
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
-        DappBrowserPlugin.getInstance().webViewHandler.setProgress(newProgress);
+        if (DappBrowserPlugin.getInstance().webViewHandler != null) {
+            DappBrowserPlugin.getInstance().webViewHandler.setProgress(newProgress);
+        }
     }
 
 }
