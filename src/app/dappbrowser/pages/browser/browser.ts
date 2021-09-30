@@ -4,6 +4,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs/internal/Subscription';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -24,6 +25,7 @@ export class BrowserPage implements DappBrowserClient {
     public shot: string = null;
 
     private titleBarIconClickedListener: (no: number) => void;
+    private backButtonSub: Subscription;
 
     constructor(
         public translate: TranslateService,
@@ -37,9 +39,6 @@ export class BrowserPage implements DappBrowserClient {
         public dappbrowserService: DappBrowserService,
         private storageService: StorageService
     ) {
-        this.platform.backButton.subscribeWithPriority(5, () => {
-            void this.onGoBack();
-        });
     }
 
     ionViewWillEnter() {
@@ -62,7 +61,14 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     ionViewDidEnter() {
-        void dappBrowser.show();
+        this.backButtonSub = this.platform.backButton.subscribeWithPriority(10000, () => {
+            this.onGoBack();
+        });
+        dappBrowser.show();
+    }
+
+    ionViewWillLeave() {
+        this.backButtonSub.unsubscribe();
     }
 
     onExit(mode?: string) {
