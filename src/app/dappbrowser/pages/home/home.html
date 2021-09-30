@@ -9,6 +9,25 @@
             </ion-col>
         </ion-row>
 
+        <ion-row class="header-row">
+            <ion-col size="12">
+                <h2>Favorites</h2>
+                <p *ngIf="favorites.length == 0">No favorites yet</p>
+                <ion-grid *ngIf="favorites.length > 0">
+                    <ion-row *ngFor="let favorite of favorites">
+                        {{favorite.name}} <img src="/assets/components/titlebar/darkmode/settings.svg"
+                            (click)="openFavoriteSettings(favorite)" />
+                    </ion-row>
+                </ion-grid>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="header-row">
+            <ion-col size="12">
+                <h2>Other dApps</h2>
+            </ion-col>
+        </ion-row>
+
         <ion-row *ngFor="let app of dApps" class="dapp-row" (click)="onDAppClicked(app)">
             <ion-col class="left-col" size="2">
                 <div class="icon-container">
@@ -26,11 +45,9 @@
                     [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
             </ion-col>
         </ion-row>
-
     </ion-grid>
 
     <ion-grid *ngIf="dabRunning" class="spinner-container">
         <ion-spinner name="crescent"></ion-spinner>
     </ion-grid>
-
 </ion-content>

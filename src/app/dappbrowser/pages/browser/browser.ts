@@ -9,6 +9,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
 import { DappBrowserClient, DappBrowserService } from '../../services/dappbrowser.service';
+import { StorageService } from '../../services/storage.service';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
@@ -33,10 +34,11 @@ export class BrowserPage implements DappBrowserClient {
         public zone: NgZone,
         public keyboard: Keyboard,
         private platform: Platform,
-        public dappbrowserService: DappBrowserService
+        public dappbrowserService: DappBrowserService,
+        private storageService: StorageService
     ) {
         this.platform.backButton.subscribeWithPriority(5, () => {
-            this.onGoBack();
+            void this.onGoBack();
         });
     }
 
@@ -50,7 +52,7 @@ export class BrowserPage implements DappBrowserClient {
                     this.onGoToLauncher();
                     break;
                 case 1:
-                    this.onGoBack();
+                    void this.onGoBack();
                     break;
                 case 2:
                     this.onMenu();
@@ -60,15 +62,15 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     ionViewDidEnter() {
-        dappBrowser.show();
+        void dappBrowser.show();
     }
 
     onExit(mode?: string) {
         if (mode) {
-            this.nav.goToLauncher();
+            void this.nav.goToLauncher();
         }
         else {
-            this.nav.navigateBack();
+            void this.nav.navigateBack();
         }
     }
 
@@ -79,7 +81,7 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     public onUrlInput(url: string) {
-        dappBrowser.loadUrl(url);
+        void dappBrowser.loadUrl(url);
     }
 
     keyEnter() {
@@ -94,29 +96,32 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     onGoToLauncher() {
-        dappBrowser.close("goToLauncher");
+        void dappBrowser.close("goToLauncher");
     }
 
     async onGoBack() {
         let canGoBack = await dappBrowser.canGoBack();
         if (canGoBack) {
-            dappBrowser.goBack();
+            void dappBrowser.goBack();
         }
         else {
-            dappBrowser.close();
+            void dappBrowser.close();
         }
     }
 
     onMenu() {
-        this.zone.run(async () => {
+        void this.zone.run(async () => {
             // this.shot = await dappBrowser.getWebViewShot();
             // this.shot = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
         });
 
         dappBrowser.hide();
-        this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
+        void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
     }
-
+    /*
+        onLoadStop(info: DABLoadStop) {
+        }
+     */
     getIconPath(no: number) {
         // Replace built-in icon path placeholders with real picture path
         switch (no) {

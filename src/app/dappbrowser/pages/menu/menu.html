@@ -1,10 +1,47 @@
 <ion-content>
-    <div>Options</div>
-    <ion-footer>
+    <app-titlebar></app-titlebar>
+    <ion-grid>
         <ion-row>
-            <ion-button color="success" (click)="goback()">
-                GoBack
-            </ion-button>
+            <h1>Profile</h1>
+            <img src="/assets/settings/icon/logo.png" />
+            <p>A better way to be online</p>
         </ion-row>
-    </ion-footer>
+
+        <ion-row>
+            <ion-col size="6">
+                Network in use
+            </ion-col>
+            <ion-col size="6">
+                Wallet in use
+            </ion-col>
+        </ion-row>
+
+        <ion-row>
+            <ion-col size="4">
+                Open in external browser
+            </ion-col>
+            <ion-col size="4">
+                Reload
+            </ion-col>
+            <ion-col size="4">
+                Copy url
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col size="4">
+                Share
+            </ion-col>
+            <ion-col size="4">
+                <ion-button (click)="addToFavorites()" *ngIf="!isInFavorites()">
+                    <ion-label>Add to favorites</ion-label>
+                </ion-button>
+                <ion-button (click)="removeFromFavorites()" *ngIf="isInFavorites()">
+                    <ion-label>Remove from favorites</ion-label>
+                </ion-button>
+            </ion-col>
+            <ion-col size="4">
+                <!-- unused -->
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

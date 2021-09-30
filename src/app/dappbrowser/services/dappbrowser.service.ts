@@ -1,18 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { GetCredentialsQuery } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did';
-import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edit-custom-network/edit-custom-network.page';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { BrowsedAppInfo } from '../model/browsedappinfo';
+import { StorageService } from './storage.service';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
@@ -33,17 +33,22 @@ export type DABError = {
     sslerror?: string;
 }
 
+export type DABLoadStop = {
+    type: "loadstop";
+    url: string;
+}
+
 export interface DappBrowserClient {
-    onExit:(mode?: string)=>void;
-    onLoadStart?:()=>void;
-    onLoadStop?:()=>void;
-    onLoadError?:(error: DABError)=>void;
-    onBeforeLoad?:()=>void;
-    onMessage?:(info: DABMessage)=>void;
-    onProgress?:(progress: number)=>void;
-    onUrlChanged?:(url: string)=>void;
-    onMenu?:()=>void;
-    onHtmlHead?:(head: Document)=>void;
+    onExit: (mode?: string) => void;
+    onLoadStart?: () => void;
+    onLoadStop?: (info: DABLoadStop) => void;
+    onLoadError?: (error: DABError) => void;
+    onBeforeLoad?: () => void;
+    onMessage?: (info: DABMessage) => void;
+    onProgress?: (progress: number) => void;
+    onUrlChanged?: (url: string) => void;
+    onMenu?: () => void;
+    onHtmlHead?: (head: Document) => void;
 }
 
 @Injectable({
@@ -58,6 +63,7 @@ export class DappBrowserService {
     private dabClient: DappBrowserClient;
     public title: string = null;
     public url: string;
+    private activeBrowsedAppInfo: BrowsedAppInfo = null; // Extracted info about a fetched dapp, after it's successfully loaded.
 
     private domParser = new DOMParser();
     public head: Document;
@@ -68,10 +74,9 @@ export class DappBrowserService {
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
-        private platform: Platform,
-        private globalStartupService: GlobalStartupService
+        private storageService: StorageService
     ) {
-        this.init()
+        void this.init()
     }
 
     async init() {
@@ -101,6 +106,10 @@ export class DappBrowserService {
         this.dabClient = dabClient;
     }
 
+    public getActiveBrowsedAppInfo(): BrowsedAppInfo {
+        return this.activeBrowsedAppInfo;
+    }
+
     /**
      * Opens a new browser to display the target url.
      *
@@ -113,7 +122,7 @@ export class DappBrowserService {
      * @param title The dApp title to show, if have title the url bar hide, otherwise show url bar.
      *
      */
-    public async open(url: string, target?:string, title?: string) {
+    public async open(url: string, target?: string, title?: string) {
         this.url = url;
 
         if (!target || target == null) {
@@ -135,7 +144,7 @@ export class DappBrowserService {
         }
 
         dappBrowser.addEventListener((ret) => {
-            this.handleEvent(ret);
+            void this.handleEvent(ret);
         });
 
         await dappBrowser.open(url, target, options);
@@ -151,8 +160,9 @@ export class DappBrowserService {
                 }
                 break;
             case "loadstop":
+                await this.handleLoadStopEvent(event as DABLoadStop);
                 if (this.dabClient.onLoadStop) {
-                    this.dabClient.onLoadStop();
+                    this.dabClient.onLoadStop(event as DABLoadStop);
                 }
                 break;
             case "loaderror":
@@ -166,7 +176,7 @@ export class DappBrowserService {
                 }
                 break;
             case "message":
-                this.handleDABMessage(event as DABMessage);
+                await this.handleDABMessage(event as DABMessage);
                 if (this.dabClient.onMessage) {
                     this.dabClient.onMessage(event as DABMessage);
                 }
@@ -198,7 +208,7 @@ export class DappBrowserService {
         }
     }
 
-    private async handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
+    private handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
         // Inject the web3 provider
         Logger.log("dappbrowser", "Executing Web3 provider injection script");
         void dappBrowser.executeScript({
@@ -229,6 +239,11 @@ export class DappBrowserService {
         // TODO: window.ethereum.setAddress() should maybe be called only when receiving a eth_requestAccounts request.
     }
 
+    private async handleLoadStopEvent(info: DABLoadStop): Promise<void> {
+        // Remember this application as browsed permanently.
+        this.activeBrowsedAppInfo = await this.storageService.saveBrowsedAppInfo(info.url, "fake title", "fake desc", "fake icon url");
+    }
+
     /**
      * Handles Web3 requests received from a dApp through the injected web3 provider.
      */
@@ -243,7 +258,7 @@ export class DappBrowserService {
             case "eth_sendTransaction":
                 dappBrowser.hide();
                 await this.handleSendTransaction(message);
-                dappBrowser.show();
+                void dappBrowser.show();
                 break;
             case "eth_requestAccounts":
                 // NOTE: for now, directly return user accounts without asking for permission
@@ -262,7 +277,7 @@ export class DappBrowserService {
             case "elastos_getCredentials":
                 dappBrowser.hide();
                 await this.handleElastosGetCredentials(message);
-                dappBrowser.show();
+                void dappBrowser.show();
                 break;
 
             default:

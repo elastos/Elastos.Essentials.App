@@ -1,0 +1,22 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid>
+        <ion-row>
+            <h1>Profile</h1>
+            <img src="/assets/settings/icon/logo.png" />
+            <p>A better way to be online</p>
+        </ion-row>
+        <ion-row *ngIf="isInFavorites">
+            <button>Remove from favorites</button>
+        </ion-row>
+        <ion-row>
+            <h1>Network Availability</h1>
+            <p>Select which networks are supported by this dApp below to display it only when one of those networks is
+                active. If no networks is selected, the favorite is shown for all networks.</p>
+            <ion-row *ngFor="let network of availableNetworks">
+                {{network.name}}
+                <ion-toggle></ion-toggle>
+            </ion-row>
+        </ion-row>
+    </ion-grid>
+</ion-content>

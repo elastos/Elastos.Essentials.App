@@ -3,13 +3,16 @@ import { Component, NgZone, ViewChild } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
+import { BrowserFavorite } from '../../model/favorite';
 import { DappBrowserClient, DappBrowserService } from '../../services/dappbrowser.service';
+import { FavoritesService } from '../../services/favorites.service';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
@@ -30,8 +33,10 @@ export class HomePage implements DappBrowserClient {
     @ViewChild(BrowserTitleBarComponent, { static: false }) titleBar: BrowserTitleBarComponent;
 
     public dApps: DAppMenuEntry[] = [];
+    public favorites: BrowserFavorite[] = [];
 
-    public dabRunning: Boolean = false;
+    public dabRunning = false;
+    private favoritesSubscription: Subscription = null;
 
     private titleBarIconClickedListener: (no: number) => void;
 
@@ -45,7 +50,8 @@ export class HomePage implements DappBrowserClient {
         private platform: Platform,
         private globalStartupService: GlobalStartupService,
         private globalIntentService: GlobalIntentService,
-        public dappbrowserService: DappBrowserService
+        public dappbrowserService: DappBrowserService,
+        private favoritesService: FavoritesService
     ) {
         this.initDapps();
     }
@@ -117,7 +123,15 @@ export class HomePage implements DappBrowserClient {
     }
 
     ionViewWillEnter() {
-        this.setTheme(this.theme.darkMode)
+        this.setTheme(this.theme.darkMode);
+
+        this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
+            this.favorites = favorites;
+        })
+    }
+
+    ionViewWillLeave() {
+        this.favoritesSubscription.unsubscribe();
     }
 
     public setTheme(darkMode: boolean) {
@@ -131,20 +145,20 @@ export class HomePage implements DappBrowserClient {
 
     ionViewDidEnter() {
         //On _blank mode, after hide for menu.
-        dappBrowser.show();
+        void dappBrowser.show();
 
         this.globalStartupService.setStartupScreenReady();
 
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (no) => {
             switch (no) {
                 case 0:
-                    this.nav.goToLauncher();
+                    void this.nav.goToLauncher();
                     break;
                 case 1:
-                    this.nav.navigateBack();
+                    void this.nav.navigateBack();
                     break;
                 case 2:
-                    this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
+                    void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
                     break;
             }
         });
@@ -170,14 +184,18 @@ export class HomePage implements DappBrowserClient {
             this.dappbrowserService.setClient(this);
             this.dabRunning = true;
         }
-        this.dappbrowserService.open(url, target, title);
+        void this.dappbrowserService.open(url, target, title);
         if (target == "_webview") {
-            this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
+            void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
         }
     }
 
     private openWithExternalBrowser(url: string) {
         void this.globalIntentService.sendIntent('openurl', { url: url });
+    }
+
+    public openFavoriteSettings(favorite: BrowserFavorite) {
+        // TODO
     }
 
     onExit(mode?: string) {
@@ -191,7 +209,7 @@ export class HomePage implements DappBrowserClient {
 
     onMenu() {
         dappBrowser.hide();
-        this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
+        void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
     }
 
     /* public browserMdexTest() {

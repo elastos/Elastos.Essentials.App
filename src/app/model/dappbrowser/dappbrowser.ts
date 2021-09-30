@@ -124,6 +124,10 @@ export class DAppBrowser {
             // TODO: window.ethereum.setAddress() should maybe be called only when receiving a eth_requestAccounts request.
         });
 
+        dappBrowser.browser.on("loadstop").subscribe(ev => {
+            console.log("LOAD STOP", ev);
+        });
+
         dappBrowser.browser.on('message').subscribe((dataFromIAB) => {
             Logger.log("dappbrowser", "Received message", dataFromIAB);
 
