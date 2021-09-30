@@ -35,7 +35,7 @@ export const fr = {
         'text-did-balance-not-enough': "Enregistrer des informations sur la châine d'identité requièrt une faible somme d'ELA pour les frais de transactions. Veuillez d'abord transférer un petit montant (ex: 0,1 ELA) depuis votre portefeuille principal vers le portefeuille EID!",
         'amount-null': "Veuillez saisir un montant pour la transaction",
         "amount-invalid": "Veuillez saisir un montant valide",
-        'eth-insuff-balance': 'Vous n\'avez pas suffisamment d\'ELA/ETHSC pour payer cette transaction de jetons ERC20',
+        'eth-insuff-balance': 'Vous n\'avez pas suffisamment d\'{{ coinName }} pour payer cette transaction de jetons ERC20',
         "sync-completed": "Synchr. terminée",
         "not-a-valid-address": "Adresse invalide",
         "transaction-pending": "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",

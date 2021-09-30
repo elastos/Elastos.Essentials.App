@@ -322,8 +322,8 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     }
 
     if (amount === -1) {//-1: send all.
-      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice)).dividedBy(this.tokenAmountMulipleTimes);
-      amount = this.balance.minus(fee).toNumber();
+      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice))
+      amount = this.balance.minus(fee).dividedBy(this.tokenAmountMulipleTimes).toNumber();
       if (amount <= 0) return null;
     }
 

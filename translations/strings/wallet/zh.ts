@@ -34,7 +34,7 @@ export const zh = {
                 'text-did-balance-not-enough': '在链上写入DID信息需要少量的ELA来支付费用。请先从主钱包中将ELA（例如：0.1 ELA）充值到EID侧链！',
                 'amount-null': "请输入交易金额",
                 "amount-invalid": "请输入正确的金额",
-                'eth-insuff-balance': '您必须有足够的ETHSC来支付gas费，才能发送Elastos ERC20代币',
+                'eth-insuff-balance': '您必须有足够的 {{ coinName }} 来支付gas费，才能发送ERC20代币',
                 "sync-completed": "已完成同步",
                 "not-a-valid-address": "地址无效",
                 "transaction-pending": "前一个交易正在确认中，请等待此交易确认后再执行",

@@ -34,7 +34,7 @@ export const en = {
         'text-did-balance-not-enough': 'Writing DID information on chain requires small amounts of ELA to pay the fees. Please transfer a few ELA (ex: 0.1 ELA) from your main wallet to the EID sidechain first!',
         'amount-null': "Please set an amount",
         "amount-invalid": "Please enter the correct amount",
-        'eth-insuff-balance': 'You must have enough ELA in Smart Chain for gas fees in order to send Elastos ERC20 tokens',
+        'eth-insuff-balance': 'You must have enough {{ coinName }} for gas fees in order to send ERC20 tokens',
         "sync-completed": "Sync completed",
         "not-a-valid-address": "Not a valid address",
         "transaction-pending": "There is already an on going transaction. Please wait for the transaction to be confirmed.",

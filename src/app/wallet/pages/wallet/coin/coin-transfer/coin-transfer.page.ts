@@ -553,8 +553,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (showToast) this.native.toast_trans('wallet.amount-invalid');
         } else {
             if (this.fromSubWallet.type === CoinType.ERC20) {
-                if (this.networkWallet.getMainEvmSubWallet().balance.isLessThan(0.001)) {
-                    if (showToast) this.native.toast_trans('wallet.eth-insuff-balance', 4000);
+                if (!this.networkWallet.getMainEvmSubWallet().isBalanceEnough(new BigNumber(0.0001))) {
+                    if (showToast) {
+                        const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
+                        this.native.toast_trans(message, 4000);
+                    }
                 } else {
                     valuesValid = true;
                 }

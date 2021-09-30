@@ -150,7 +150,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getDisplayAmount(amount: BigNumber): BigNumber {
-        return amount; // Raw value and display value are the same: the number of tokens.
+        return amount.dividedBy(this.tokenAmountMulipleTimes);
     }
 
     // The resurn value is devided by the number of decimals used by the token.
@@ -182,11 +182,11 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     /**
      * Check whether the balance is enough.
-     * @param amount unit is ETHER
+     * @param amount unit is WEI
      */
     public isBalanceEnough(amount: BigNumber) {
         // The fee is ELA/ETHSC, not ERC20 TOKEN. So can send all the balance.
-        return this.balance.gte(amount);
+        return this.balance.gte(amount.multipliedBy(this.tokenAmountMulipleTimes));
     }
 
     private async getERC20TransactionDirection(targetAddress: string): Promise<TransactionDirection> {
@@ -215,10 +215,11 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
             // TODO: what's the integer type returned by web3? Are we sure we can directly convert it to BigNumber like this? To be tested
             const rawBalance = await erc20Contract.methods.balanceOf(tokenAccountAddress).call();
-            // The returned balance is an int. Need to devide by the number of decimals used by the token.
-            this.balance = new BigNumber(rawBalance).dividedBy(this.tokenAmountMulipleTimes);
-            await this.saveBalanceToCache();
-            //Logger.log('wallet', this.coin.getName(), this.id + ": raw balance:", rawBalance, " Converted balance: ", this.balance.toString());
+            if (rawBalance) {
+              this.balance = new BigNumber(rawBalance);
+              await this.saveBalanceToCache();
+              Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.balance.toString());
+            }
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.coin.getName(), this.id, ') updateBalance error:', error);
         }
@@ -355,9 +356,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public async createPaymentTransaction(toAddress: string, amount: number, memo: string, gasPriceArg: string = null, gasLimitArg: string = null): Promise<any> {
-        if (amount === -1) {//-1: send all.
-            amount = this.balance.toNumber();
-        }
         const tokenAccountAddress = await this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
         const erc20Contract = new this.web3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
@@ -368,7 +366,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount, 'gasPrice:', gasPrice);
         // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
-        const amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
+        let amountWithDecimals: BigNumber;
+        if (amount === -1) {//-1: send all.
+          amountWithDecimals = this.balance;
+        } else {
+          amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
+        }
 
         // Incompatibility between our bignumber lib and web3's BN lib. So we must convert by using intermediate strings
         const web3BigNumber = this.web3.utils.toBN(amountWithDecimals.toString(10));
