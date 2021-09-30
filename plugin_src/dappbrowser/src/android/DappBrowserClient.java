@@ -294,7 +294,10 @@ public class DappBrowserClient extends WebViewClient {
         super.onPageFinished(view, url);
 
         // Set the namespace for postMessage()
-        brwoserPlugin.injectDeferredObject("window.webkit={messageHandlers:{cordova_iab:cordova_iab}}", null);
+        brwoserPlugin.injectDeferredObject("window.webkit={messageHandlers:{essentialsExtractor:essentialsExtractor}}", null);
+
+        // Get the head from html
+        brwoserPlugin.injectDeferredObject("window.essentialsExtractor.processHTML(document.getElementsByTagName('head')[0].innerHTML)", null);
 
         // CB-10395 InAppBrowser's WebView not storing cookies reliable to local device storage
         CookieManager.getInstance().flush();

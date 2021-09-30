@@ -64,6 +64,7 @@ public class WebViewHandler {
 
     private static final String MESSAGE_EVENT = "message";
     private static final String PROGRESS_EVENT = "progress";
+    private static final String HEAD_EVENT = "head";
     private static final String URL_CHANGED_EVENT = "urlchanged";
     private static final String MENU_EVENT = "menu";
     private static final String EXIT_EVENT = "exit";
@@ -189,10 +190,24 @@ public class WebViewHandler {
                     LOG.e(LOG_TAG, "data object passed to postMessage has caused a JSON error.");
                 }
             }
+
+            @JavascriptInterface
+            @SuppressWarnings("unused")
+            public void processHTML(String html) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("type", HEAD_EVENT);
+                    obj.put("data", html);
+                    brwoserPlugin.sendEventCallback(obj, true);
+                }
+                catch (JSONException ex) {
+                    LOG.d(LOG_TAG, "Should never happen");;
+                }
+            }
         }
 
         settings.setMediaPlaybackRequiresUserGesture(options.mediaPlaybackRequiresUserAction);
-        webView.addJavascriptInterface(new JsObject(), "cordova_iab");
+        webView.addJavascriptInterface(new JsObject(), "essentialsExtractor");
 
         String overrideUserAgent = brwoserPlugin.getPreferences().getString("OverrideUserAgent", null);
         String appendUserAgent = brwoserPlugin.getPreferences().getString("AppendUserAgent", null);
@@ -465,5 +480,4 @@ public class WebViewHandler {
         String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
         return "data:image/png;base64," + encoded;
     }
-
 }

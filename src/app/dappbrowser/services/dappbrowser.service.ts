@@ -43,6 +43,7 @@ export interface DappBrowserClient {
     onProgress?:(progress: number)=>void;
     onUrlChanged?:(url: string)=>void;
     onMenu?:()=>void;
+    onHtmlHead?:(head: Document)=>void;
 }
 
 @Injectable({
@@ -57,6 +58,9 @@ export class DappBrowserService {
     private dabClient: DappBrowserClient;
     public title: string = null;
     public url: string;
+
+    private domParser = new DOMParser();
+    public head: Document;
 
     constructor(
         public translate: TranslateService,
@@ -180,6 +184,12 @@ export class DappBrowserService {
             case "menu":
                 if (this.dabClient.onMenu) {
                     this.dabClient.onMenu();
+                }
+                break;
+            case "head":
+                this.head = this.domParser.parseFromString(event.data, "text/html")
+                if (this.dabClient.onHtmlHead) {
+                    this.dabClient.onHtmlHead(this.head);
                 }
                 break;
             case "exit":

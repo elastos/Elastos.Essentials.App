@@ -142,7 +142,7 @@ declare namespace DappBrowserPlugin {
     }
 
     type DappBrowserEventType = 'loadstart' | 'loadstop' | 'loaderror' | 'exit' | 'beforeload'
-                                    | 'message' | 'customscheme' | 'progress' | 'urlchanged' | 'menu';
+                                    | 'message' | 'customscheme' | 'progress' | 'urlchanged' | 'menu' | 'head';
     type DappBrowserEvent = {
         /** the event name */
         type: DappBrowserEventType;
