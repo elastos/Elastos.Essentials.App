@@ -26,11 +26,11 @@ export class ExpirationService {
         public native: Native) {
     }
 
-    public async getElementsAboutToExpireOnActiveDID(maxDaysToExpire: number) : Promise<ExpiredItem[]> {
-        let expiredItems : ExpiredItem[] = []
+    public async getElementsAboutToExpireOnActiveDID(maxDaysToExpire: number): Promise<ExpiredItem[]> {
+        let expiredItems: ExpiredItem[] = []
 
-        let did : DID = this.didService.getActiveDid();
-        let didDocument : DIDDocument = did.getDIDDocument();
+        let did: DID = this.didService.getActiveDid();
+        let didDocument: DIDDocument = did.getDIDDocument();
 
         //verify if active DID is about to expire
         let didExpirationItem = this.verifyDIDExpiration(did.getDIDString(), didDocument, maxDaysToExpire)
@@ -53,9 +53,8 @@ export class ExpirationService {
         return expiredItems
     }
 
-    public verifyDIDExpiration(did: string, didDocument: DIDDocument, maxDaysToExpire: number) : ExpiredItem
-    {
-        let daysToActiveDIDExpire : number = this.daysToExpire(didDocument.getExpires())
+    public verifyDIDExpiration(did: string, didDocument: DIDDocument, maxDaysToExpire: number): ExpiredItem {
+        let daysToActiveDIDExpire: number = this.daysToExpire(didDocument.getExpires())
 
         Logger.log("identity", "Days to Active DID expire", daysToActiveDIDExpire)
 
@@ -69,7 +68,7 @@ export class ExpirationService {
         }
     }
 
-    public verifyCredentialExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number): ExpiredItem{
+    public verifyCredentialExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number): ExpiredItem {
 
         // If credential is Self Proclaimed, not verify expiration
         if (credential.getTypes().includes("SelfProclaimedCredential")) return null
@@ -90,21 +89,25 @@ export class ExpirationService {
 
     }
 
-    public async verifyIssuerDIDExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number) : Promise<ExpiredItem>  {
+    public async verifyIssuerDIDExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number): Promise<ExpiredItem> {
         let issuerDID: string = credential.getIssuer();
         if (isNil(issuerDID) || issuerDID === "" || issuerDID === did) return null
 
-        //Get issuer DID document
-        let issuerDocument : DIDDocument = await this.didSyncService.getDIDDocumentFromDID(issuerDID);
+        // Get issuer's DID document
+        let issuerDocument: DIDDocument = await this.didSyncService.getDIDDocumentFromDID(issuerDID);
+        if (!issuerDocument) {
+            // For now, we don't handle this case. Consider the credential as OK.
+            // It is possible that the issuer did not publish his DID (which is useless but could happen).
+            return null;
+        }
 
-        //verify if issuer DID is about to expire
-        let daysToIssuerDIDExpire : number = this.daysToExpire(issuerDocument.getExpires())
+        // Verify if issuer's DID is about to expire
+        let daysToIssuerDIDExpire: number = this.daysToExpire(issuerDocument.getExpires())
 
         Logger.log("identity", `Days to validator DID for ${this.getCredentialID(did, credential)} credential expire in `, daysToIssuerDIDExpire)
 
-
         let issuerExpiredMessage: string = this.constructIssuerMessage(`The validator DID for ${this.getCredentialID(did, credential)} credential`, daysToIssuerDIDExpire);
-        //add new expired item response for this issuer DID
+        // Add new expired item response for this issuer DID
         return {
             id: `${did}_${this.getCredentialID(did, credential)}_${issuerDID}}`,
             did: issuerDID,
@@ -114,19 +117,17 @@ export class ExpirationService {
 
     }
 
-    private daysToExpire(date: Date) : number
-    {
+    private daysToExpire(date: Date): number {
         var expiration = moment(date, moment.ISO_8601);
         var today = moment({});
-        return  expiration.diff(today, 'days')
+        return expiration.diff(today, 'days')
     }
 
-    private getCredentialID(did: string, item: DIDPlugin.VerifiableCredential){
+    private getCredentialID(did: string, item: DIDPlugin.VerifiableCredential) {
         return item.getId().replace(did, "").replace("#", "");
     }
 
-    private constructPersonalMessage(element: string, daysToExpire: number): string
-    {
+    private constructPersonalMessage(element: string, daysToExpire: number): string {
         if (daysToExpire > 1)
             return `${element} is about to expire in ${daysToExpire} days. It's not too late to renew it.`
 
@@ -139,8 +140,7 @@ export class ExpirationService {
         return `${element} is expired. Renew it and continue to use it.`
     }
 
-    private constructIssuerMessage(element: string, daysToExpire: number): string
-    {
+    private constructIssuerMessage(element: string, daysToExpire: number): string {
         if (daysToExpire > 1)
             return `${element} is about to expire in ${daysToExpire} days. Renew your credential soon is possible and continue to use it.`
 
