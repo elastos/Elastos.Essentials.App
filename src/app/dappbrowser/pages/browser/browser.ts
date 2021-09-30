@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -31,8 +32,12 @@ export class BrowserPage implements DappBrowserClient {
         public httpClient: HttpClient,
         public zone: NgZone,
         public keyboard: Keyboard,
+        private platform: Platform,
         public dappbrowserService: DappBrowserService
     ) {
+        this.platform.backButton.subscribeWithPriority(5, () => {
+            this.onGoBack();
+        });
     }
 
     ionViewWillEnter() {
