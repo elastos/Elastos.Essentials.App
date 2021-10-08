@@ -24,6 +24,7 @@ type DAppMenuEntry = {
     description: string;
     url: string;
     useExternalBrowser: boolean;
+    networks: string[]; // List of network keys in which this dapp can run. Empty list = available everywhere.
 }
 
 @Component({
@@ -35,6 +36,7 @@ export class HomePage implements DappBrowserClient {
     @ViewChild(BrowserTitleBarComponent, { static: false }) titleBar: BrowserTitleBarComponent;
 
     public dApps: DAppMenuEntry[] = [];
+    public allDApps: DAppMenuEntry[] = [];
     public favorites: BrowserFavorite[] = [];
 
     public dabRunning = false;
@@ -64,67 +66,77 @@ export class HomePage implements DappBrowserClient {
     initDapps() {
         // Only add builtin dapps for Android.
         if (this.platform.platforms().indexOf('android') >= 0) {
-            this.dApps = [
+            this.allDApps = [
                 {
                     icon: '/assets/browser/dapps/feeds.png',
                     title: 'Feeds',
                     description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
                     url: 'https://feeds.trinity-feeds.app/nav/?page=home',
-                    useExternalBrowser: true
+                    useExternalBrowser: true,
+                    networks: ["elastos"]
                 },
                 {
                     icon: '/assets/browser/dapps/glidefinance.svg',
                     title: 'Glide Finance',
                     description: 'Elastos ecosystem decentralized exchange',
                     url: 'https://glidefinance.io/',
-                    useExternalBrowser: false
+                    useExternalBrowser: false,
+                    networks: ["elastos", "heco", "bsc"]
                 },
                 {
                     icon: '/assets/browser/dapps/profile.png',
                     title: 'Profile',
                     description: 'A better way to be online using Elastos DID',
                     url: 'https://profile.site/',
-                    useExternalBrowser: false
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
                 },
                 {
                     icon: '/assets/browser/dapps/filda.png',
                     title: 'FilDA',
                     description: 'HECO-based lending and borrowing, with ELA support',
                     url: 'https://filda.io/',
-                    useExternalBrowser: false
+                    useExternalBrowser: false,
+                    networks: ["heco", "bsc"]
                 },
                 {
                     icon: '/assets/browser/dapps/tokswap.png',
                     title: 'TokSwap',
                     description: 'Swap your tokens on the Elastos blockchain',
                     url: 'https://tokswap.net/',
-                    useExternalBrowser: false
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
                 },
                 {
                     icon: '/assets/browser/dapps/tokbridge.svg',
                     title: 'Shadow Tokens',
                     description: 'Bridge assets between Elastos and other chains',
                     url: 'https://tokbridge.net/',
-                    useExternalBrowser: false
+                    useExternalBrowser: false,
+                    networks: ["elastos", "heco", "bsc", "ethereum"]
                 },
                 {
                     icon: '/assets/browser/dapps/creda.png',
                     title: 'CreDA',
                     description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
                     url: 'https://creda.app/',
-                    useExternalBrowser: false
+                    useExternalBrowser: false,
+                    networks: ["arbitrum"]
                 },
                 {
                     icon: '/assets/browser/dapps/cryptoname.png',
                     title: 'Cryptoname',
                     description: 'CryptoName is your passport to the crypto world',
                     url: 'https://cryptoname.org/',
-                    useExternalBrowser: false
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
                 },
             ];
         } else {
-            this.dApps = [];
+            this.allDApps = [];
         }
+
+        this.buildFilteredDApps();
     }
 
     ionViewWillEnter() {
@@ -136,6 +148,7 @@ export class HomePage implements DappBrowserClient {
 
         this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
             this.buildFilteredFavorites();
+            this.buildFilteredDApps();
         });
     }
 
@@ -182,6 +195,12 @@ export class HomePage implements DappBrowserClient {
     private buildFilteredFavorites() {
         this.favorites = this.favoritesService.getFavorites().filter(f => {
             return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
+        });
+    }
+
+    private buildFilteredDApps() {
+        this.dApps = this.allDApps.filter(a => {
+            return a.networks.length == 0 || a.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
         });
     }
 

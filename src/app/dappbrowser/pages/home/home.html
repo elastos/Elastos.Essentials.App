@@ -81,6 +81,11 @@
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
+
+        <ion-grid *ngIf="dApps.length == 0" class="no-dapp-row">
+            We currently don't have any interesting dApp to recommend for this network or on this platform.
+            Please manually enter urls above and add them as favorites.
+        </ion-grid>
     </ion-grid>
 
     <ion-grid *ngIf="dabRunning" class="spinner-container">
