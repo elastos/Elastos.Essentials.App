@@ -451,7 +451,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
      */
     @Override
     public void onReset() {
-         webViewHandler.close();
+        if (webViewHandler != null) {
+            webViewHandler.close();
+        }
     }
 
     /**
@@ -479,7 +481,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
      * Stop listener.
      */
     public void onDestroy() {
-        webViewHandler.close();
+        if (webViewHandler != null) {
+            webViewHandler.close();
+        }
     }
 
     /**
@@ -492,7 +496,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         LOG.d(LOG_TAG, "onActivityResult");
         // If RequestCode or Callback is Invalid
-        if(requestCode != WebViewHandler.FILECHOOSER_REQUESTCODE || webViewHandler.mUploadCallback == null) {
+        if(requestCode != WebViewHandler.FILECHOOSER_REQUESTCODE || webViewHandler == null || webViewHandler.mUploadCallback == null) {
             super.onActivityResult(requestCode, resultCode, intent);
             return;
         }
@@ -643,7 +647,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
 
     public WebView getWebView() {
         if (webViewHandler != null) {
-            return  webViewHandler.webView;
+            return webViewHandler.webView;
         }
         else {
             return null;
