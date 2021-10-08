@@ -451,7 +451,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
      */
     @Override
     public void onReset() {
-        // webViewHandler.close();
+         webViewHandler.close();
     }
 
     /**
