@@ -3,7 +3,7 @@ import { Component, NgZone, ViewChild } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -44,8 +44,15 @@ export class MenuPage {
 
     ionViewWillEnter() {
         this.titleBar.setTitle("Options");
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            void this.goback();
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
+        this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, null);
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+            key: "close",
+            iconPath:  BuiltInIcon.CLOSE
+        });
+
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = () => {
+            this.goback();
         });
 
         this.browsedAppInfo = this.dappBrowserService.getActiveBrowsedAppInfo();
