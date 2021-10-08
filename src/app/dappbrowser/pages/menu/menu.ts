@@ -44,15 +44,11 @@ export class MenuPage {
     ) {
     }
 
-    // onExit(data: IABExitData) {
-    //     throw new Error('Method not implemented.');
-    // }
 
     ionViewWillEnter() {
         this.titleBar.setTitle("Options");
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, null);
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
             key: "close",
             iconPath:  BuiltInIcon.CLOSE
         });
