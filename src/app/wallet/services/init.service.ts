@@ -16,6 +16,8 @@ import { ElastosMainNetNetwork } from '../model/networks/elastos/elastos.mainnet
 import { ElastosTestNetNetwork } from '../model/networks/elastos/elastos.testnet.network';
 import { EthereumMainNetNetwork } from '../model/networks/ethereum/ethereum.mainnet.network';
 import { EthereumRopstenNetwork } from '../model/networks/ethereum/ethereum.ropsten.network';
+import { FantomMainNetNetwork } from '../model/networks/fantom/fantom.mainnet.network';
+import { FantomTestNetNetwork } from '../model/networks/fantom/fantom.testnet.network';
 import { FusionMainNetNetwork } from '../model/networks/fusion/fusion.mainnet.network';
 import { HECOMainNetNetwork } from '../model/networks/heco/heco.mainnet.network';
 import { HECOTestNetNetwork } from '../model/networks/heco/heco.testnet.network';
@@ -117,6 +119,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new FusionMainNetNetwork());
         await this.createAndRegisterNetwork(new ArbitrumMainNetNetwork());
         await this.createAndRegisterNetwork(new PolygonMainNetNetwork());
+        await this.createAndRegisterNetwork(new FantomMainNetNetwork());
         return;
       case TESTNET_TEMPLATE:
         await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), true);
@@ -125,6 +128,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new BSCTestNetNetwork());
         // await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
         await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
+        await this.createAndRegisterNetwork(new FantomTestNetNetwork());
         return;
       case "LRW":
         await this.createAndRegisterNetwork(new ElastosLRWNetwork(), true);
