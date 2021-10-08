@@ -68,17 +68,17 @@ export class HomePage implements DappBrowserClient {
                     useExternalBrowser: true
                 },
                 {
-                    icon: '/assets/browser/dapps/profile.png',
-                    title: 'Profile',
-                    description: 'A better way to be online using Elastos DID',
-                    url: 'https://profile.site/',
-                    useExternalBrowser: false
-                },
-                {
                     icon: '/assets/browser/dapps/glidefinance.svg',
                     title: 'Glide Finance',
                     description: 'Elastos ecosystem decentralized exchange',
                     url: 'https://glidefinance.io/',
+                    useExternalBrowser: false
+                },
+                {
+                    icon: '/assets/browser/dapps/profile.png',
+                    title: 'Profile',
+                    description: 'A better way to be online using Elastos DID',
+                    url: 'https://profile.site/',
                     useExternalBrowser: false
                 },
                 {
@@ -202,6 +202,11 @@ export class HomePage implements DappBrowserClient {
         event.preventDefault();
         event.stopPropagation();
 
+        void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/edit-favorite', {
+            state: {
+                favoriteUrl: favorite.url
+            }
+        });
     }
 
     onExit(mode?: string) {
@@ -216,5 +221,16 @@ export class HomePage implements DappBrowserClient {
     onMenu() {
         dappBrowser.hide();
         void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
+    }
+
+    public getShortFavoriteDescription(favorite: BrowserFavorite): string {
+        if (!favorite.description)
+            return "";
+
+        const limit = 50;
+        if (favorite.description.length < limit)
+            return favorite.description;
+        else
+            return favorite.description.substring(0, limit) + "...";
     }
 }

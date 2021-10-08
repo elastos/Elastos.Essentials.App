@@ -1,14 +1,25 @@
 .app {
-  .icon-container {
+  text-align: center;
+
+  .icon-col {
     display: flex;
     justify-content: end;
+    flex-direction: column;
+    align-self: center;
 
-    .icon {
+    .icon-container {
+      display: flex;
+      align-self: end;
       width: 60px;
       height: 60px;
+      background: white;
       border-radius: 30%;
       overflow: hidden;
-      background: white;
+      align-items: center;
+      justify-content: center;
+
+      .icon {
+      }
     }
   }
 
@@ -16,6 +27,7 @@
     justify-content: center;
     display: flex;
     flex-direction: column;
+    text-align: left;
 
     .title {
       font-weight: 600;

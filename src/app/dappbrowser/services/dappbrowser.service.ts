@@ -247,7 +247,7 @@ export class DappBrowserService {
     private async handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
         let domParser = new DOMParser();
         let htmlHeader = domParser.parseFromString(event.data, "text/html");
-        console.log("HEADER", event, htmlHeader, event.data);
+        //console.log("HEADER", event, htmlHeader, event.data);
 
         // Extract all the information we can, but mostly the app title, description and icon
 
@@ -287,7 +287,8 @@ export class DappBrowserService {
                 }
             }
         }
-        iconUrl = iconUrl.toLowerCase();
+        if (iconUrl)
+            iconUrl = iconUrl.toLowerCase();
 
         Logger.log("dappbrowser", "Extracted website title:", title);
         Logger.log("dappbrowser", "Extracted website description:", description);

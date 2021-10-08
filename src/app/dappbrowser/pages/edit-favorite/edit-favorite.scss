@@ -1,0 +1,105 @@
+.app-info {
+  margin: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 10px;
+  border-radius: 28px;
+
+  .icon-container {
+    background: white;
+    width: 120px;
+    height: 120px;
+    border-radius: 24px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .icon {
+    }
+  }
+
+  .title {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .description {
+    font-weight: 500;
+    font-size: 10px;
+  }
+
+  .fav-button {
+    padding: 10px;
+    background: #3e3e3e;
+    border-radius: 10px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 400;
+
+    img {
+      margin-right: 10px;
+    }
+  }
+}
+
+.networks {
+  margin: 10px;
+
+  h1 {
+    font-weight: 600;
+    font-size: 18px;
+    color: #3c3c3c;
+  }
+
+  p {
+    font-weight: 500;
+    font-size: 14px;
+    color: #9d9d9d;
+  }
+
+  .networks-list {
+    .network {
+      .logo {
+        align-items: center;
+        display: flex;
+      }
+
+      .name {
+        align-items: center;
+        display: flex;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.dark-container {
+  .app-info {
+    background: #212021;
+
+    .title {
+      color: #ffffff;
+    }
+
+    .description {
+      color: #acacac;
+    }
+  }
+
+  .networks {
+    h1 {
+      color: #e2e2e2;
+    }
+
+    p {
+      color: #9d9d9d;
+    }
+  }
+}

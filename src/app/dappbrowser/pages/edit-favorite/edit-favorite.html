@@ -1,22 +1,39 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <ion-grid>
-        <ion-row>
-            <h1>Profile</h1>
-            <img src="/assets/settings/icon/logo.png" />
-            <p>A better way to be online</p>
-        </ion-row>
-        <ion-row *ngIf="isInFavorites()">
-            <button>Remove from favorites</button>
-        </ion-row>
-        <ion-row>
+
+    <ion-grid [class.dark-container]="theme.darkMode">
+        <ion-grid class="app-info">
+            <div class="icon-container">
+                <img class="icon" [src]="favorite.iconUrl" />
+            </div>
+            <div class="title">{{favorite.name}}</div>
+            <div class="description">{{favorite.description}}</div>
+
+            <ion-grid class="fav-button ripple ion-activatable" *ngIf="isInFavorites()" (click)="removeFavorite()">
+                <img
+                    [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-no-border-active.svg' : 'assets/browser/icons/dark_mode/icon-fav-no-border-active.svg'" />
+                Remove from favorites
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-grid>
+        </ion-grid>
+
+        <ion-grid class="networks">
             <h1>Network Availability</h1>
             <p>Select which networks are supported by this dApp below to display it only when one of those networks is
-                active. If no networks is selected, the favorite is shown for all networks.</p>
-            <ion-row *ngFor="let network of availableNetworks">
-                {{network.name}}
-                <ion-toggle></ion-toggle>
-            </ion-row>
-        </ion-row>
+                active. If no network is selected, the favorite is shown for all networks.</p>
+            <ion-grid class="networks-list">
+                <ion-row *ngFor="let network of availableNetworks" class="network">
+                    <ion-col size="1" class="logo">
+                        <img [src]="network.logo" />
+                    </ion-col>
+                    <ion-col size="9" class="name">
+                        {{network.name}}
+                    </ion-col>
+                    <ion-col size="1">
+                        <ion-toggle></ion-toggle>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-grid>
     </ion-grid>
 </ion-content>

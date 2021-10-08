@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Util } from 'src/app/model/util';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { BrowserFavorite } from '../../model/favorite';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
     selector: 'page-edit-favorite',
@@ -17,6 +21,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 export class EditFavoritePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
+    public favorite: BrowserFavorite = null;
     public availableNetworks: Network[] = [];
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -27,8 +32,18 @@ export class EditFavoritePage {
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
+        private router: Router,
+        private favoritesService: FavoritesService,
         private walletNetworksService: WalletNetworkService
     ) {
+    }
+
+    ngOnInit() {
+        const navigation = this.router.getCurrentNavigation();
+        if (!Util.isEmptyObject(navigation.extras.state)) {
+            let favoriteUrl = navigation.extras.state.favoriteUrl;
+            this.favorite = this.favoritesService.findFavoriteByUrl(favoriteUrl);
+        }
     }
 
     // onExit(data: IABExitData) {
@@ -36,7 +51,7 @@ export class EditFavoritePage {
     // }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle("Options");
+        this.titleBar.setTitle("Edit favorite");
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             void this.goback();
         });
@@ -51,6 +66,14 @@ export class EditFavoritePage {
     }
 
     public isInFavorites(): boolean {
-        return false; // TODO
+        return true;
+    }
+
+    public async removeFavorite() {
+        // Remove from favorites
+        await this.favoritesService.removeFromFavorites(this.favorite);
+
+        // Exit screen (go back to home)
+        void this.nav.navigateBack();
     }
 }

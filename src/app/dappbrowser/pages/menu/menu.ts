@@ -50,15 +50,17 @@ export class MenuPage {
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, null);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
             key: "close",
-            iconPath:  BuiltInIcon.CLOSE
+            iconPath: BuiltInIcon.CLOSE
         });
 
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = () => {
-            this.goback();
+            void this.goback();
         });
 
         this.browsedAppInfoSub = this.dappBrowserService.activeBrowsedAppInfo.subscribe(browsedApp => {
-            this.browsedAppInfo = browsedApp;
+            this.zone.run(() => {
+                this.browsedAppInfo = browsedApp;
+            });
         });
 
         Logger.log("dappbrowser", "Showing menu for browsed app", this.browsedAppInfo);
