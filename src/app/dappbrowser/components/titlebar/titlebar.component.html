@@ -28,6 +28,9 @@
         <ion-col *ngIf="_title != null" size="7">
             <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
         </ion-col>
+        <ion-col *ngIf="_title != null" size="1.25">
+            <div></div>
+        </ion-col>
         <ion-col *ngIf="_title == null" size="8.25">
             <ion-input type="text" name="url" ngDefaultControl (keyup.enter)="emit()"
                 placeholder="Input a custom address here" [(ngModel)]="_url" class="url-input" inputmode="url"
