@@ -278,13 +278,13 @@ public class DappBrowserClient extends WebViewClient {
 
         // Update the UI if we haven't already
         brwoserPlugin.webViewHandler.setUrlEditText(newloc);
+        progressBar.setVisibility(View.VISIBLE);
 
         try {
             JSONObject obj = new JSONObject();
             obj.put("type", LOAD_START_EVENT);
             obj.put("url", newloc);
             brwoserPlugin.sendEventCallback(obj, true);
-            progressBar.setVisibility(View.VISIBLE);
         } catch (JSONException ex) {
             LOG.e(LOG_TAG, "URI passed in has caused a JSON error.");
         }

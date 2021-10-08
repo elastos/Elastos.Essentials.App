@@ -272,6 +272,8 @@ public class WebViewHandler {
         }
         else {
             webView.setVisibility(View.VISIBLE);
+            //For onBackPressed work
+            webView.requestFocus();
         }
     }
 
@@ -280,6 +282,8 @@ public class WebViewHandler {
             dialog.hide();
         }
         else {
+            //For onBackPressed work
+            brwoserPlugin.webView.getView().requestFocus();
             webView.setVisibility(View.GONE);
         }
     }
@@ -308,6 +312,8 @@ public class WebViewHandler {
                 }
                 webView = null;
                 brwoserPlugin.webViewHandler = null;
+                //For onBackPressed work
+                brwoserPlugin.webView.getView().requestFocus();
 
                 if (callbackContext != null) {
                     callbackContext.success();
