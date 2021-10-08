@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -9,6 +10,8 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { BrowsedAppInfo } from '../../model/browsedappinfo';
 import { DappBrowserService } from '../../services/dappbrowser.service';
 import { FavoritesService } from '../../services/favorites.service';
@@ -23,6 +26,7 @@ export class MenuPage {
 
     public browsedAppInfo: BrowsedAppInfo = null;
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+    private browsedAppInfoSub: Subscription = null;
 
     constructor(
         public translate: TranslateService,
@@ -34,7 +38,9 @@ export class MenuPage {
         private native: GlobalNativeService,
         public favoritesService: FavoritesService,
         public dappBrowserService: DappBrowserService,
-        private walletNetworksService: WalletNetworkService
+        public walletNetworkService: WalletNetworkService,
+        private walletNetworkUIService: WalletNetworkUIService,
+        public walletService: WalletService
     ) {
     }
 
@@ -55,9 +61,16 @@ export class MenuPage {
             this.goback();
         });
 
-        this.browsedAppInfo = this.dappBrowserService.getActiveBrowsedAppInfo();
+        this.browsedAppInfoSub = this.dappBrowserService.activeBrowsedAppInfo.subscribe(browsedApp => {
+            this.browsedAppInfo = browsedApp;
+        });
 
         Logger.log("dappbrowser", "Showing menu for browsed app", this.browsedAppInfo);
+    }
+
+    ionViewWillLeave() {
+        this.browsedAppInfoSub.unsubscribe();
+        this.browsedAppInfoSub = null;
     }
 
     ionViewDidEnter() {
@@ -83,5 +96,25 @@ export class MenuPage {
         let existingFavorite = this.favoritesService.findFavoriteByUrl(this.browsedAppInfo.url);
         await this.favoritesService.removeFromFavorites(existingFavorite);
         this.native.genericToast("Removed from favorites");
+    }
+
+    public pickNetwork() {
+        void this.walletNetworkUIService.chooseActiveNetwork();
+    }
+
+    public openExternal() {
+        // TODO
+    }
+
+    public reloadPage() {
+        // TODO
+    }
+
+    public copyUrl() {
+        // TODO
+    }
+
+    public shareUrl() {
+        // TODO
     }
 }

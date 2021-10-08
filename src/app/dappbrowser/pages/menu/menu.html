@@ -1,70 +1,105 @@
 <ion-content>
     <app-titlebar></app-titlebar>
-    <ion-grid>
-        <ion-row *ngIf="browsedAppInfo">
-            <h1>{{browsedAppInfo.title}}</h1>
-            <img [src]="browsedAppInfo.iconUrl" />
-            <p>{{browsedAppInfo.description}}</p>
-        </ion-row>
+    <ion-grid [class.dark-container]="theme.darkMode">
+        <ion-grid class="box app" *ngIf="browsedAppInfo">
+            <ion-row>
+                <ion-col size="3" class="icon-container">
+                    <img class="icon" [src]="browsedAppInfo.iconUrl" />
+                </ion-col>
+                <ion-col size="8" class="info-container">
+                    <div class="title">{{browsedAppInfo.title}}</div>
+                    <div class="info">{{browsedAppInfo.description}}</div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
 
-        <ion-row>
-            <ion-col size="6">
-                Network in use
-            </ion-col>
-            <ion-col size="6">
-                Wallet in use
-            </ion-col>
-        </ion-row>
+        <ion-grid class="box switches">
+            <div class="header">Active Network and Wallet</div>
 
-        <ion-row class="action-items">
-            <ion-col size="3">
-                <div class="action">
-                    <img
-                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav.svg' : 'assets/browser/icons/dark_mode/icon-fav.svg'" />
-                    Add to Favorites
-                </div>
-            </ion-col>
-            <ion-col size="3">
-                <div class="action">
-                    <img
-                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-external.svg' : 'assets/browser/icons/dark_mode/icon-external.svg'" />
-                    External Browser
-                </div>
-            </ion-col>
-            <ion-col size="3">
-                <div class="action">
-                    <img
-                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
-                    Reload
-                </div>
-            </ion-col>
-            <ion-col size="3">
-                <div class="action">
-                    <img
-                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-copy-link.svg' : 'assets/browser/icons/dark_mode/icon-copy-link.svg'" />
-                    Copy Link
-                </div>
-            </ion-col>
-            <ion-col size="3">
-                <div class="action">
-                    <img
-                        [src]="!theme.darkMode ? '/assets/browser/icons/icon-share-link.svg' : 'assets/browser/icons/dark_mode/icon-share-link.svg'" />
-                    Share
-                </div>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col size="4">
-                <ion-button (click)="addToFavorites()" *ngIf="!isInFavorites()">
-                    <ion-label>Add to favorites</ion-label>
-                </ion-button>
-                <ion-button (click)="removeFromFavorites()" *ngIf="isInFavorites()">
-                    <ion-label>Remove from favorites</ion-label>
-                </ion-button>
-            </ion-col>
-            <ion-col size="4">
-                <!-- unused -->
-            </ion-col>
-        </ion-row>
+            <ion-grid class="switches-container">
+                <ion-row>
+                    <ion-col size="6">
+                        <ion-row class="ripple ion-activatable" (click)="pickNetwork()"
+                            *ngIf="walletNetworkService.activeNetwork.value">
+                            <ion-col size="3" class="logo-container">
+                                <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+                            </ion-col>
+                            <ion-col size="9">
+                                <div class="title">Network</div>
+                                <div class="network">
+                                    {{ walletNetworkService.activeNetwork.value.name }}
+                                </div>
+                            </ion-col>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-row>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-row *ngIf="walletService.activeNetworkWallet.value">
+                            <ion-col size="3" class="logo-container">
+                                <img
+                                    [src]="!theme.darkMode ? '/assets/browser/icons/icon-wallet.svg' : 'assets/browser/icons/dark_mode/icon-wallet.svg'" />
+                            </ion-col>
+                            <ion-col size="9">
+                                <div class="title">Wallet</div>
+                                <div class="network">{{walletService.activeNetworkWallet.value.masterWallet.name}}</div>
+                            </ion-col>
+                        </ion-row>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-grid>
+
+        <ion-grid class="box actions">
+            <div class="header">Actions</div>
+
+            <ion-row class="action-items">
+                <ion-col size="4" class="ripple ion-activatable">
+                    <div class="action" (click)="addToFavorites()" *ngIf="!isInFavorites()">
+                        <img
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav.svg' : 'assets/browser/icons/dark_mode/icon-fav.svg'" />
+                        Add to Favorites
+                    </div>
+                    <div class="action ripple ion-activatable" (click)="removeFromFavorites()" *ngIf="isInFavorites()">
+                        <img
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav.svg' : 'assets/browser/icons/dark_mode/icon-fav.svg'" />
+                        Remove from Favorites
+                        <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+                <ion-col size="4" class="ripple ion-activatable">
+                    <div class="action" (click)="openExternal()">
+                        <img
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-external.svg' : 'assets/browser/icons/dark_mode/icon-external.svg'" />
+                        External Browser
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+                <ion-col size="4" class="ripple ion-activatable">
+                    <div class="action" (click)="reloadPage()">
+                        <img
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
+                        Reload
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+                <ion-col size="4" class="ripple ion-activatable">
+                    <div class="action" (click)="copyUrl()">
+                        <img
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-copy-link.svg' : 'assets/browser/icons/dark_mode/icon-copy-link.svg'" />
+                        Copy Link
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+                <ion-col size="4" class="ripple ion-activatable">
+                    <div class="action" (click)="shareUrl()">
+                        <img
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-share-link.svg' : 'assets/browser/icons/dark_mode/icon-share-link.svg'" />
+                        Share
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
     </ion-grid>
 </ion-content>

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { GetCredentialsQuery } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -63,7 +64,7 @@ export class DappBrowserService {
     private dabClient: DappBrowserClient = null;
     public title: string = null;
     public url: string;
-    private activeBrowsedAppInfo: BrowsedAppInfo = null; // Extracted info about a fetched dapp, after it's successfully loaded.
+    public activeBrowsedAppInfo = new BehaviorSubject<BrowsedAppInfo>(null); // Extracted info about a fetched dapp, after it's successfully loaded.
 
     constructor(
         public translate: TranslateService,
@@ -104,7 +105,7 @@ export class DappBrowserService {
     }
 
     public getActiveBrowsedAppInfo(): BrowsedAppInfo {
-        return this.activeBrowsedAppInfo;
+        return this.activeBrowsedAppInfo.value;
     }
 
     /**
@@ -201,6 +202,7 @@ export class DappBrowserService {
                 }
                 break;
             case "exit":
+                await this.handleDABExit();
                 if (this.dabClient != null) {
                     this.dabClient.onExit(event.mode);
                 }
@@ -292,11 +294,11 @@ export class DappBrowserService {
         Logger.log("dappbrowser", "Extracted website icon URL:", iconUrl);
 
         // Remember this application as browsed permanently.
-        this.activeBrowsedAppInfo = await this.storageService.saveBrowsedAppInfo(
+        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(
             this.url,
             title,
             description,
-            iconUrl);
+            iconUrl));
 
         return htmlHeader;
     }
@@ -340,6 +342,10 @@ export class DappBrowserService {
             default:
                 Logger.warn("dappbrowser", "Unhandled message command", message.data.name);
         }
+    }
+
+    private handleDABExit() {
+        this.activeBrowsedAppInfo.next(null);
     }
 
     /**
