@@ -62,9 +62,9 @@ export class BrowserPage implements DappBrowserClient {
 
     ionViewDidEnter() {
         this.backButtonSub = this.platform.backButton.subscribeWithPriority(10000, () => {
-            this.onGoBack();
+            void this.onGoBack();
         });
-        dappBrowser.show();
+        void dappBrowser.show();
     }
 
     ionViewWillLeave() {

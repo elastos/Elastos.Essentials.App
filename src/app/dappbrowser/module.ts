@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { BrowserTitleBarComponent } from './components/titlebar/titlebar.component';
 import { BrowserPage } from './pages/browser/browser';
+import { EditFavoritePage } from './pages/edit-favorite/edit-favorite';
 import { HomePage } from './pages/home/home';
 import { MenuPage } from './pages/menu/menu';
 import { DAppBrowserRoutingModule } from './routing';
@@ -18,6 +19,7 @@ import { DAppBrowserRoutingModule } from './routing';
     HomePage,
     BrowserPage,
     MenuPage,
+    EditFavoritePage,
     BrowserTitleBarComponent
   ],
   imports: [
@@ -39,4 +41,4 @@ import { DAppBrowserRoutingModule } from './routing';
     InAppBrowser
   ]
 })
-export class DAppBrowserModule {}
+export class DAppBrowserModule { }

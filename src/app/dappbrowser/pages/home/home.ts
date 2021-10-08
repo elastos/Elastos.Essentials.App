@@ -194,8 +194,14 @@ export class HomePage implements DappBrowserClient {
         void this.globalIntentService.sendIntent('openurl', { url: url });
     }
 
-    public openFavoriteSettings(favorite: BrowserFavorite) {
-        // TODO
+    public openFavorite(favorite: BrowserFavorite) {
+        void this.dabOpen(favorite.url, favorite.name);
+    }
+
+    public openFavoriteSettings(event, favorite: BrowserFavorite) {
+        event.preventDefault();
+        event.stopPropagation();
+
     }
 
     onExit(mode?: string) {
@@ -211,38 +217,4 @@ export class HomePage implements DappBrowserClient {
         dappBrowser.hide();
         void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
     }
-
-    /* public browserMdexTest() {
-      let browser = DAppBrowser.open("https://mdex.me", this.iab, this.httpClient);
-    }
-
-    public browserFildaTest() {
-      let browser = DAppBrowser.open("https://filda.io", this.iab, this.httpClient);
-    }
-
-    public browserCredaTest() {
-      let browser = DAppBrowser.open("https://creda.app", this.iab, this.httpClient);
-    }
-
-    public browserElavateTest() {
-      //let browser = DAppBrowser.open("https://elavate.exchange/", this.iab, this.httpClient);
-      let browser = DAppBrowser.open("http://192.168.31.114:3000/", this.iab, this.httpClient);
-    }
-
-    public browserPilotTest() {
-      let browser = DAppBrowser.open("https://p.td/", this.iab, this.httpClient);
-    }
-
-    public browserTokswapTest() {
-      let browser = DAppBrowser.open("https://tokswap.net/", this.iab, this.httpClient);
-    }
-
-    public browserTokbridgeTest() {
-      let browser = DAppBrowser.open("https://tokbridge.net/", this.iab, this.httpClient);
-    }
-
-    public browserOtherTest() {
-      let browser = DAppBrowser.open("http://192.168.31.114:8101", this.iab, this.httpClient);
-      //let browser = DAppBrowser.open("https://o3swap.com/vault", this.iab, this.httpClient);
-    } */
 }

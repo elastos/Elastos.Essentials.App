@@ -5,39 +5,40 @@
         <ion-row class="header-row">
             <ion-col size="12">
                 <h1>Discover dApps</h1>
-                <h2>Central place to find Essentials-compatible dApps.</h2>
+                <h3>Central place to find Essentials-compatible dApps.</h3>
             </ion-col>
         </ion-row>
 
-        <ion-row>
+        <ion-row class="header-row">
             <ion-col size="12">
                 <h2>Favorites</h2>
-                <p *ngIf="favorites.length == 0">No favorites yet</p>
-                <ion-grid *ngIf="favorites.length > 0">
-                    <ion-row *ngFor="let favorite of favorites" class="dapp-row ripple ion-activatable"
-                        (click)="onDAppClicked(app)">
-                        <ion-col class="left-col" size="2">
-                            <div class="icon-container">
-                                <img [src]="favorite.iconUrl">
-                            </div>
-                        </ion-col>
-                        <ion-col class="middle-col" size="8">
-                            <ion-label>
-                                <div class="title">{{favorite.name}}</div>
-                                <div class="description">{{favorite.description}}</div>
-                            </ion-label>
-                        </ion-col>
-                        <ion-col class="right-col" size="2">
-                            <img class="next"
-                                [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
-                            <img class="settings" src="/assets/browser/icons/settings.svg"
-                                (click)="openFavoriteSettings(favorite)" />
-                        </ion-col>
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-row>
-                </ion-grid>
             </ion-col>
         </ion-row>
+
+        <p *ngIf="favorites.length == 0">No favorites yet</p>
+        <div *ngIf="favorites.length > 0">
+            <ion-row *ngFor="let favorite of favorites" class="dapp-row ripple ion-activatable"
+                (click)="openFavorite(favorite)">
+                <ion-col class="left-col" size="2">
+                    <div class="icon-container">
+                        <img [src]="favorite.iconUrl">
+                    </div>
+                </ion-col>
+                <ion-col class="middle-col" size="8">
+                    <ion-label>
+                        <div class="title">{{favorite.name}}</div>
+                        <div class="description">{{favorite.description}}</div>
+                    </ion-label>
+                </ion-col>
+                <ion-col class="right-col" size="2">
+                    <img class="next"
+                        [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+                    <img class="settings" src="/assets/browser/icons/settings.svg"
+                        (click)="openFavoriteSettings($event, favorite)" />
+                </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
+        </div>
 
         <ion-row class="header-row">
             <ion-col size="12">

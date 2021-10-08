@@ -17,7 +17,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 export class EditFavoritePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private availableNetworks: Network[] = [];
+    public availableNetworks: Network[] = [];
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
@@ -48,5 +48,9 @@ export class EditFavoritePage {
 
     async goback() {
         await this.nav.navigateBack();
+    }
+
+    public isInFavorites(): boolean {
+        return false; // TODO
     }
 }
