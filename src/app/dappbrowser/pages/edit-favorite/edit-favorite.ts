@@ -76,4 +76,23 @@ export class EditFavoritePage {
         // Exit screen (go back to home)
         void this.nav.navigateBack();
     }
+
+    onNetworkToggled(event: { detail: { checked: boolean } }, network: Network) {
+        if (event.detail.checked)
+            this.enableNetworkForFavorite(this.favorite, network);
+        else
+            this.disableNetworkForFavorite(this.favorite, network);
+    }
+
+    public isNetworkEnabled(network: Network): boolean {
+        return this.favorite.networks.findIndex(n => n === network.key) >= 0;
+    }
+
+    public enableNetworkForFavorite(favorite: BrowserFavorite, network: Network) {
+        void this.favoritesService.enableNetworkForFavorite(favorite, network);
+    }
+
+    public disableNetworkForFavorite(favorite: BrowserFavorite, network: Network) {
+        void this.favoritesService.disableNetworkForFavorite(favorite, network);
+    }
 }

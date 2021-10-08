@@ -11,6 +11,7 @@
 
     .header-row {
         padding: 15px 5px 0;
+        margin-bottom: 0;
 
         ion-col {
             padding-left: 0;
@@ -27,16 +28,47 @@
             h2,
             h3 {
                 font-size: 18px;
-                margin: 0 0 15px 0;
                 color: #000000;
                 opacity: 0.7;
                 font-weight: 600;
             }
 
+            h2 {
+                margin-bottom: 0;
+                margin-top: 0;
+            }
+
             h3 {
+                margin: 0 0 15px 0;
                 font-size: 14px;
             }
         }
+
+        .network-col {
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #1c1c1c;
+
+            .network-logo,
+            .toggle {
+                height: 16px;
+            }
+
+            .network-logo {
+                margin-right: 5px;
+            }
+
+            .toggle {
+                margin-left: 5px;
+            }
+        }
+    }
+
+    .fav-header,
+    .other-apps-header {
+        margin-bottom: 15px;
     }
 
     .dapp-row {
@@ -54,6 +86,7 @@
 
             .icon-container {
                 align-items: center;
+                justify-content: center;
                 display: flex;
                 background: #fff;
                 width: 50px;
@@ -103,6 +136,10 @@
                 color: #9d9d9d;
                 opacity: 1;
             }
+        }
+
+        .network-col {
+            color: #acacac;
         }
     }
 

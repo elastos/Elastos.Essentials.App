@@ -9,6 +9,8 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
 import { BrowserFavorite } from '../../model/favorite';
 import { DappBrowserClient, DappBrowserService } from '../../services/dappbrowser.service';
@@ -37,6 +39,7 @@ export class HomePage implements DappBrowserClient {
 
     public dabRunning = false;
     private favoritesSubscription: Subscription = null;
+    private networkSubscription: Subscription = null;
 
     private titleBarIconClickedListener: (no: number) => void;
 
@@ -51,6 +54,8 @@ export class HomePage implements DappBrowserClient {
         private globalStartupService: GlobalStartupService,
         private globalIntentService: GlobalIntentService,
         public dappbrowserService: DappBrowserService,
+        public walletNetworkService: WalletNetworkService,
+        private walletNetworkUIService: WalletNetworkUIService,
         private favoritesService: FavoritesService
     ) {
         this.initDapps();
@@ -126,12 +131,17 @@ export class HomePage implements DappBrowserClient {
         this.setTheme(this.theme.darkMode);
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
-            this.favorites = favorites;
-        })
+            this.buildFilteredFavorites();
+        });
+
+        this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
+            this.buildFilteredFavorites();
+        });
     }
 
     ionViewWillLeave() {
         this.favoritesSubscription.unsubscribe();
+        this.networkSubscription.unsubscribe();
     }
 
     public setTheme(darkMode: boolean) {
@@ -161,6 +171,17 @@ export class HomePage implements DappBrowserClient {
                     void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
                     break;
             }
+        });
+    }
+
+    /**
+     * Rebuilds a local list of displayable favorites, based on the whole favorites list, but only
+     * with favorites displayable for the active network. Meaning: favorites for which the current network
+     * was manually enabled, or favorites that don't have any network enabled at all (means "show all").
+     */
+    private buildFilteredFavorites() {
+        this.favorites = this.favoritesService.getFavorites().filter(f => {
+            return f.networks.length == 0 || f.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
         });
     }
 
@@ -232,5 +253,9 @@ export class HomePage implements DappBrowserClient {
             return favorite.description;
         else
             return favorite.description.substring(0, limit) + "...";
+    }
+
+    public pickNetwork() {
+        void this.walletNetworkUIService.chooseActiveNetwork();
     }
 }

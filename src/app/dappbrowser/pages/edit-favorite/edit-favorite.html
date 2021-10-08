@@ -19,6 +19,7 @@
 
         <ion-grid class="networks">
             <h1>Network Availability</h1>
+            {{favorite.networks}}
             <p>Select which networks are supported by this dApp below to display it only when one of those networks is
                 active. If no network is selected, the favorite is shown for all networks.</p>
             <ion-grid class="networks-list">
@@ -30,7 +31,8 @@
                         {{network.name}}
                     </ion-col>
                     <ion-col size="1">
-                        <ion-toggle></ion-toggle>
+                        <ion-toggle [checked]="isNetworkEnabled(network)"
+                            (ionChange)="onNetworkToggled($event, network)"></ion-toggle>
                     </ion-col>
                 </ion-row>
             </ion-grid>

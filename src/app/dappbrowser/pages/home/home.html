@@ -9,14 +9,21 @@
             </ion-col>
         </ion-row>
 
-        <ion-row class="header-row">
-            <ion-col size="12">
+        <ion-row class="header-row fav-header">
+            <ion-col size="6">
                 <h2>Favorites</h2>
+            </ion-col>
+            <ion-col size="6" class="network-col" (click)="pickNetwork()">
+                <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+                {{ walletNetworkService.activeNetwork.value.name }}
+                <img class="toggle"
+                    [src]="!theme.darkMode ? 'assets/wallet/icons/change-wallet.svg' : 'assets/wallet/icons/darkmode/change-wallet.svg'">
             </ion-col>
         </ion-row>
 
         <p *ngIf="favorites.length == 0" class="no-favorite">
-            No favorite yet. Enter a url above and use the menu to add dApps as favorites.
+            No favorite to show for the {{walletNetworkService.activeNetwork.value.name}} network.<br />
+            Enter a url above and use the menu to add dApps as favorites, or enable this network in existing favorites.
         </p>
         <div *ngIf="favorites.length > 0">
             <ion-row *ngFor="let favorite of favorites" class="dapp-row ripple ion-activatable"
@@ -42,9 +49,15 @@
             </ion-row>
         </div>
 
-        <ion-row class="header-row">
-            <ion-col size="12">
+        <ion-row class="header-row other-apps-header">
+            <ion-col size="6">
                 <h2>Other dApps</h2>
+            </ion-col>
+            <ion-col size="6" class="network-col" (click)="pickNetwork()">
+                <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+                {{ walletNetworkService.activeNetwork.value.name }}
+                <img class="toggle"
+                    [src]="!theme.darkMode ? 'assets/wallet/icons/change-wallet.svg' : 'assets/wallet/icons/darkmode/change-wallet.svg'">
             </ion-col>
         </ion-row>
 
