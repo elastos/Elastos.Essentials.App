@@ -55,7 +55,9 @@ export class EscTransactionPage implements OnInit {
   private walletInfo = {};
   public balance: BigNumber; // ELA
   public gasPrice: string;
+  public gasPriceGwei: number;
   public gasLimit: string;
+  public showEditGasPrice = false;
   public hasOpenETHSCChain = false;
   public transactionInfo: ETHTransactionInfo;
 
@@ -111,6 +113,8 @@ export class EscTransactionPage implements OnInit {
     if (!this.gasPrice) {
       this.gasPrice = await this.evmSubWallet.getGasPrice();
     }
+
+    this.gasPriceGwei = parseInt(this.gasPrice) / 1000000000;
 
     if (this.coinTransferService.payloadParam.gas) {
       this.gasLimit = this.coinTransferService.payloadParam.gas;
@@ -212,16 +216,16 @@ export class EscTransactionPage implements OnInit {
     let weiToDisplayCurrencyRatio = new BigNumber("1000000000000000000");
 
     let gas = new BigNumber(this.gasLimit);
-    let gasPrice = new BigNumber(this.coinTransferService.payloadParam.gasPrice || this.gasPrice);
+    let gasPrice = new BigNumber(this.gasPrice);
     let currencyValue = new BigNumber(this.coinTransferService.payloadParam.value || 0).dividedBy(weiToDisplayCurrencyRatio);
     let fees = gas.multipliedBy(gasPrice).dividedBy(weiToDisplayCurrencyRatio);
     let total = currencyValue.plus(fees);
 
-    /* Logger.log('wallet', "gasPrice", gasPrice.toString())
-    Logger.log('wallet', "gas", gas.toString())
-    Logger.log('wallet', "elaEthValue", elaEthValue.toString())
-    Logger.log('wallet', "fees/gas", fees.toString());
-    Logger.log('wallet', "total", total.toString()); */
+    // Logger.log('wallet', "gasPrice", gasPrice.toString())
+    // Logger.log('wallet', "gas", gas.toString())
+    // Logger.log('wallet', "currencyValue", currencyValue.toString())
+    // Logger.log('wallet', "fees/gas", fees.toString());
+    // Logger.log('wallet', "total", total.toString());
 
     return {
       totalAsBigNumber: total,
@@ -289,5 +293,13 @@ export class EscTransactionPage implements OnInit {
         );
       }
     }
+  }
+
+  public editGasPrice() {
+    this.showEditGasPrice = !this.showEditGasPrice;
+  }
+
+  public updateGasprice(event) {
+    this.gasPrice = Math.floor(this.gasPriceGwei * 1000000000).toString();
   }
 }

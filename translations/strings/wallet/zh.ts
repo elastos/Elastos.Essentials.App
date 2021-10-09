@@ -161,7 +161,7 @@ export const zh = {
                 "transfer-receiver-address": "接收地址",
                 "transfer-send-ela": "发送ELA",
                 "balance": "余额",
-                "balance-remaining": "余额 ",
+                "balance-remaining": "余额:",
                 "insufficient-balance": "余额不足",
                 "transfer-all": "全部",
                 "max": "全部",
@@ -404,9 +404,9 @@ export const zh = {
                 "esctransaction-intro": "您将签署并运行智能合约",
                 "esctransaction-approve-token": "Approve Token",
                 "esctransaction-approve-token-intro": "此应用程序或网站将被允许代表您提取和使用您的 {{token}} 代币",
-                "esctransaction-you-are-using": "您正在使用：",
+                "esctransaction-you-are-using": "您正在花费：",
                 "esctransaction-value": "金额:",
-                "esctransaction-fees": "手续费:",
+                "esctransaction-fees": "预估手续费（最多）:",
 
                 /***********************
                 * No Wallet *

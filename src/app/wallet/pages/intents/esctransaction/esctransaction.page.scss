@@ -81,7 +81,7 @@
     .msg-container {
         padding: 20px 20px 5px;
 
-        p, h1, h2 {
+        p, h1 {
             text-align: center;
             font-weight: 500;
         }
@@ -106,12 +106,22 @@
             }
         }
 
-        h2 {
+        ion-row {
             margin: 0;
             font-size: 12px;
             line-height: 1.25;
+            align-items: center;
+
+            div {
+              text-align: right;
+            }
+
+            .div_center {
+              text-align: center;
+            }
 
             span {
+                text-align: right;
                 font-weight: 700;
                 font-size: 18px;
             }

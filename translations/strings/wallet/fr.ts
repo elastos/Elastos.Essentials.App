@@ -162,7 +162,7 @@ export const fr = {
         "transfer-receiver-address": "Adresse de destination",
         "transfer-send-ela": "Envoi d'ELA",
         "balance": "Solde",
-        "balance-remaining": "Solde restant",
+        "balance-remaining": "Solde restant:",
         "insufficient-balance": "Solde insuffisant",
         "transfer-all": "Tous",
         "max": "MAX",
@@ -406,7 +406,7 @@ export const fr = {
         "esctransaction-approve-token-intro": "Cette application ou site web pourra retirer ou dépenser vos {{token}} pour vous.",
         "esctransaction-you-are-using": "Vous utilisez:",
         "esctransaction-value": "Montant:",
-        "esctransaction-fees": "Frais:",
+        "esctransaction-fees": "Frais maximal estimé:",
 
         /***********************
         * No Wallet *
