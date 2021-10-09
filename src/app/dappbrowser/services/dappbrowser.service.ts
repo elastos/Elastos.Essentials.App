@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { GetCredentialsQuery } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
@@ -10,6 +10,8 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Network } from 'src/app/wallet/model/networks/network';
+import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edit-custom-network/edit-custom-network.page';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -67,12 +69,17 @@ export class DappBrowserService {
     public url: string;
     public activeBrowsedAppInfo = new BehaviorSubject<BrowsedAppInfo>(null); // Extracted info about a fetched dapp, after it's successfully loaded.
 
+    private networkSubscription: Subscription = null;
+    private walletSubscription: Subscription = null;
+
     constructor(
         public translate: TranslateService,
         private nav: GlobalNavService,
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
+        private walletNetworkService: WalletNetworkService,
+        private walletService: WalletService,
         private storageService: StorageService
     ) {
         void this.init();
@@ -112,17 +119,6 @@ export class DappBrowserService {
      *
      */
     public async open(url: string, title?: string, target?: string) {
-        // Get the active wallet address
-        let subwallet = WalletService.instance.getActiveNetworkWallet().getMainEvmSubWallet();
-        this.userAddress = await subwallet.createAddress();
-
-        // Get the active netwok chain ID
-        this.activeChainID = WalletService.instance.activeNetworkWallet.value.network.getMainChainID();
-
-        // Get the active network RPC URL
-        this.rpcUrl = WalletService.instance.activeNetworkWallet.value.network.getMainEvmRpcApiUrl();
-
-        console.log("OPEN BROWSER URL", url);
         this.url = url;
 
         if (!target || target == null) {
@@ -157,7 +153,7 @@ export class DappBrowserService {
         Logger.log("dappbrowser", "Received event", event);
         switch (event.type) {
             case "loadstart":
-                this.handleLoadStartEvent(event);
+                await this.handleLoadStartEvent(event);
                 if (this.dabClient != null && this.dabClient.onLoadStart) {
                     this.dabClient.onLoadStart();
                 }
@@ -225,10 +221,6 @@ export class DappBrowserService {
                 currentProvider: window.ethereum\
             };\
             console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3); \
-            \
-            window.ethereum.setChainId("+ this.activeChainID + "); \
-            window.ethereum.setAddress('"+ this.userAddress + "');\
-            window.ethereum.setRPCApiEndpoint("+ this.activeChainID + ", '" + this.rpcUrl + "');\
         "});
 
         // Inject the Elastos connectivity connector
@@ -240,9 +232,53 @@ export class DappBrowserService {
             console.log('Elastos Essentials dapp browser connector is injected', window.elastos); \
         "});
 
-        Logger.log("dappbrowser", "Load start completed");
+        Logger.log("dappbrowser", "Injection completed");
 
         // TODO: window.ethereum.setAddress() should maybe be called only when receiving a eth_requestAccounts request.
+
+        if (!this.networkSubscription) {
+            this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
+                this.sendActiveNetworkToDApp(activeNetwork);
+            });
+        }
+
+        if (!this.walletSubscription) {
+            this.walletSubscription = this.walletService.activeNetworkWallet.subscribe(netWallet => {
+                void this.sendActiveWalletToDApp(netWallet);
+            });
+        }
+
+        // Manually send current network and wallet first (behaviorsubject gets the event only for the first
+        // dapp opened)
+        this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
+        void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
+
+        return;
+    }
+
+    private sendActiveNetworkToDApp(activeNetwork: Network) {
+        // Get the active netwok chain ID
+        this.activeChainID = activeNetwork.getMainChainID();
+
+        // Get the active network RPC URL
+        this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
+
+        void dappBrowser.executeScript({
+            code: " \
+                window.ethereum.setChainId("+ this.activeChainID + "); \
+                window.ethereum.setRPCApiEndpoint("+ this.activeChainID + ", '" + this.rpcUrl + "');\
+            "});
+    }
+
+    private async sendActiveWalletToDApp(networkWallet: NetworkWallet) {
+        // Get the active wallet address
+        let subwallet = networkWallet.getMainEvmSubWallet();
+        this.userAddress = await subwallet.createAddress();
+
+        void dappBrowser.executeScript({
+            code: " \
+                window.ethereum.setAddress('"+ this.userAddress + "');\
+            "});
     }
 
     private async handleLoadStopEvent(info: DABLoadStop): Promise<void> {
@@ -330,11 +366,15 @@ export class DappBrowserService {
                 break;
             case "wallet_switchEthereumChain":
                 Logger.log("dappbrowser", "Received switch ethereum chain request");
+                dappBrowser.hide();
                 await this.handleSwitchEthereumChain(message);
+                void dappBrowser.show();
                 break;
             case "wallet_addEthereumChain":
                 Logger.log("dappbrowser", "Received add ethereum chain request");
+                dappBrowser.hide();
                 await this.handleAddEthereumChain(message);
+                void dappBrowser.show();
                 break;
 
             // ELASTOS CONNECTOR

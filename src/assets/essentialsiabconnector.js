@@ -79145,7 +79145,7 @@
 	                name: handler,
 	                object: data,
 	            };
-	            window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(object));
+	            window.webkit.messageHandlers.essentialsExtractor.postMessage(JSON.stringify(object));
 	        });
 	    }
 	    /**
