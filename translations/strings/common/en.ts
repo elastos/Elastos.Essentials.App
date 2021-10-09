@@ -74,5 +74,6 @@ export const en = {
         // Sharing
         'share-friend': 'Add my friend in Elastos Essentials',
         'share-add-me-as-friend': 'Add me as a friend',
+        'copied-to-clipboard': 'Copied to clipboard',
     }
 }

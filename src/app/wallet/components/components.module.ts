@@ -12,6 +12,7 @@ import { OptionsComponent } from './options/options.component';
 import { TransferWalletChooserComponent } from './transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from './tx-success/tx-success.component';
+import { WalletChooserComponent } from './wallet-chooser/wallet-chooser.component';
 import { WarningComponent } from './warning/warning.component';
 
 @NgModule({
@@ -24,7 +25,8 @@ import { WarningComponent } from './warning/warning.component';
     OptionsComponent,
     WarningComponent,
     TransferWalletChooserComponent,
-    NetworkChooserComponent
+    NetworkChooserComponent,
+    WalletChooserComponent
   ],
   imports: [
     CommonModule,
@@ -46,7 +48,8 @@ import { WarningComponent } from './warning/warning.component';
     WarningComponent,
     ETHTransactionComponent,
     TransferWalletChooserComponent,
-    NetworkChooserComponent
+    NetworkChooserComponent,
+    WalletChooserComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

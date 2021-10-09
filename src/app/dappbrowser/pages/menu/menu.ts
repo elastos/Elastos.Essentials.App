@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -40,7 +42,10 @@ export class MenuPage {
         public dappBrowserService: DappBrowserService,
         public walletNetworkService: WalletNetworkService,
         private walletNetworkUIService: WalletNetworkUIService,
-        public walletService: WalletService
+        public walletService: WalletService,
+        private globalIntentService: GlobalIntentService,
+        private clipboard: Clipboard,
+        private globalNative: GlobalNativeService
     ) {
     }
 
@@ -101,7 +106,7 @@ export class MenuPage {
     }
 
     public openExternal() {
-        // TODO
+        void this.globalIntentService.sendIntent('openurl', { url: this.browsedAppInfo.url });
     }
 
     public reloadPage() {
@@ -109,10 +114,14 @@ export class MenuPage {
     }
 
     public copyUrl() {
-        // TODO
+        void this.clipboard.copy(this.browsedAppInfo.url);
+        this.globalNative.genericToast('common.copied-to-clipboard', 2000, "success");
     }
 
     public shareUrl() {
-        // TODO
+        void this.globalIntentService.sendIntent("share", {
+            title: this.browsedAppInfo.title,
+            url: this.browsedAppInfo.url
+        });
     }
 }

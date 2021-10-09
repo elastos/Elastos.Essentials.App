@@ -151,15 +151,6 @@ export class AppmanagerService {
                         // routerPath: '/identity/credaccessrequest'
                     },
                     {
-                        id: 'contacts',
-                        routerContext: App.CONTACTS,
-                        name: this.translate.instant('launcher.app-contacts'),
-                        description: this.translate.instant('launcher.app-contacts-description'),
-                        icon: '/assets/launcher/apps/app-icons/contacts.svg',
-                        hasWidget: false,
-                        startCall: () => this.contactsInitService.start()
-                    },
-                    {
                         id: 'browser',
                         routerContext: App.DAPP_BROWSER,
                         name: this.translate.instant('launcher.app-browser'),
@@ -167,6 +158,15 @@ export class AppmanagerService {
                         icon: '/assets/launcher/apps/app-icons/browser.svg',
                         hasWidget: false,
                         routerPath: '/dappbrowser/home'
+                    },
+                    {
+                        id: 'contacts',
+                        routerContext: App.CONTACTS,
+                        name: this.translate.instant('launcher.app-contacts'),
+                        description: this.translate.instant('launcher.app-contacts-description'),
+                        icon: '/assets/launcher/apps/app-icons/contacts.svg',
+                        hasWidget: false,
+                        startCall: () => this.contactsInitService.start()
                     }
                 ]
             },

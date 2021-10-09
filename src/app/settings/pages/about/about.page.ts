@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SettingsService } from '../../services/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-about',
@@ -13,14 +13,14 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  public version: string = "";
+  public version = "";
   public sections = [
     {
       type: 'settings.developer',
       links: [
-        {   title: 'Trinity Tech Co. Ltd', link: null },
-        {   title: 'common.website', link: 'https://www.trinity-tech.io' },
-        {   title: 'common.email', link: 'contact@trinity-tech.io' },
+        { title: 'Trinity Tech Co. Ltd', link: null },
+        { title: 'common.website', link: 'https://www.trinity-tech.io' },
+        { title: 'common.email', link: 'contact@trinity-tech.io' },
       ]
     },
     {
@@ -54,10 +54,10 @@ export class AboutPage implements OnInit {
   }
 
   openLink(item) {
-    if(item.title === 'common.email') {
+    if (item.title === 'common.email') {
       return;
     } else {
-      this.globalIntentService.sendIntent('openurl', { url: item.link });
+      void this.globalIntentService.sendIntent('openurl', { url: item.link });
     }
   }
 }

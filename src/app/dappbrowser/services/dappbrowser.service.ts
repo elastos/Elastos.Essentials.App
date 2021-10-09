@@ -276,7 +276,7 @@ export class DappBrowserService {
         let iconUrl: string = null;
         let links = htmlHeader.getElementsByTagName("link");
         if (links && links.length > 0) {
-            let iconLink = Array.from(links).find(l => l.rel && l.rel.toLowerCase() === "icon");
+            let iconLink = Array.from(links).find(l => l.rel && l.rel.toLowerCase().indexOf("icon") > 0);
             if (iconLink) {
                 iconUrl = iconLink.getAttribute("href");
                 if (iconUrl) {

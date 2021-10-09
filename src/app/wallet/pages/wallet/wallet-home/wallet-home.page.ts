@@ -35,6 +35,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
+import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 import { Config } from '../../../config/Config';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { StandardSubWallet } from '../../../model/wallets/standard.subwallet';
@@ -74,13 +75,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     private updateInterval = null;
 
-    public showNetworkOptions = false;
     public shownSubWalletDetails: AnySubWallet = null;
 
     // Dummy Current Network
     public currentNetwork: Network = null;
-
-    public showWalletSelection = false;
 
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -96,6 +94,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         public theme: GlobalThemeService,
         public uiService: UiService,
         private walletNetworkUIService: WalletNetworkUIService,
+        private walletUIService: WalletUIService,
         private storage: LocalStorage,
         private globalStartupService: GlobalStartupService
     ) {
@@ -218,11 +217,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
     }
 
     /**
-     * Shows or hides the active wallet selection UI.
+     * Shows the wallet selector component to pick a different wallet
      */
-    public toggleActiveWalletSelection() {
-        this.showWalletSelection = !this.showWalletSelection;
-        this.showNetworkOptions = false;
+    public pickOtherWallet() {
+        void this.walletUIService.chooseActiveWallet();
     }
 
     public selectActiveWallet(wallet: NetworkWallet) {
@@ -300,7 +298,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.goCoinHome(subWallet.networkWallet.id, subWallet.id)
     }
 
-    public pickNetNetwork() {
+    public pickNetwork() {
         void this.walletNetworkUIService.chooseActiveNetwork();
     }
 

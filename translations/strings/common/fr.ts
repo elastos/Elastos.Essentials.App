@@ -74,5 +74,6 @@ export const fr = {
         // Sharing
         'share-friend': 'Ajouter mon contact dans Elastos Essentials',
         'share-add-me-as-friend': 'Ajoutez moi comme contact',
+        'copied-to-clipboard': 'Copié dans le presse-papier',
     }
 }

@@ -1,0 +1,39 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div class="wallet-container walletSelection-container" [class.dark-wallet-container]="theme.darkMode">
+        <div class="wallet-selection">
+            <ion-row class="header-row">
+                <ion-col size="12">
+                    <ion-label>
+                        <h1>{{ 'wallet.wallets' | translate }}</h1>
+                        <p>{{ 'wallet.explore-your-wallets' | translate }}</p>
+                    </ion-label>
+                </ion-col>
+            </ion-row>
+            <ion-row *ngFor="let netWallet of walletsToShowInList" class="wallet-row"
+                [class.selected-wallet]="netWallet.id === networkWallet.id" (click)="selectWallet(netWallet)">
+                <ion-col size="2" class="color-col">
+                    <div class="color-block" [ngStyle]="
+                        {
+                            'background-image': netWallet.masterWallet.theme ?
+                            'url(' + netWallet.masterWallet.theme.background + ')' :
+                            'url(/assets/wallet/cards/maincards/card-purple.svg)'
+                        }"></div>
+                </ion-col>
+                <ion-col size="8" class="left-col">
+                    <div class="wallet-name">{{ netWallet.masterWallet.name }}</div>
+                    <div class="wallet-amount">{{ uiService.getFixedBalance(netWallet.getDisplayBalance()) }}</div>
+                </ion-col>
+                <ion-col size="2" class="right-col">
+                    <ion-icon name="checkmark"></ion-icon>
+                </ion-col>
+            </ion-row>
+        </div>
+    </div>
+</ion-content>
+
+<ion-footer class="ion-no-border" [class.lightmode]="!theme.darkMode" [class.darkmode]="theme.darkMode">
+    <ion-button (click)="cancelOperation()">
+        <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+    </ion-button>
+</ion-footer>

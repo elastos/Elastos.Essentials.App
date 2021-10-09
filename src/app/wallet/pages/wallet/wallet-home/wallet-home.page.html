@@ -6,21 +6,9 @@
             <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
             </ion-refresher-content>
         </ion-refresher>
-        <!--
-    <ion-row *ngIf="!hideRefresher && !uiService.returnedUser" class="refresh-row" [class.dark-refresh-row]="theme.darkMode">
-        <ion-col size="1.3" class="left-col">
-            <ion-icon name="arrow-down"></ion-icon>
-        </ion-col>
-        <ion-col class="mid-col" size="9.4">
-            <h1>{{ 'wallet.pull-down-to-refresh' | translate }}</h1>
-        </ion-col>
-        <ion-col class="right-col" size="1.3" (click)="closeRefreshBox()">
-            <ion-icon name="close"></ion-icon>
-        </ion-col>
-    </ion-row> -->
 
         <div class="network-container" [class.dark-network-container]="theme.darkMode">
-            <ion-row class="displayed-network" (click)="pickNetNetwork()">
+            <ion-row class="displayed-network" (click)="pickNetwork()">
                 <ion-col offset="2" size="7">
                     <img [src]="currentNetwork.logo">
                     <ion-label>{{ currentNetwork.name }}</ion-label>
@@ -30,40 +18,6 @@
                         [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'">
                 </ion-col>
             </ion-row>
-        </div>
-
-        <div class="wallet-container" *ngIf="showWalletSelection" [class.dark-wallet-container]="theme.darkMode"
-            [class.walletSelection-container]="showNetworkOptions">
-            <div *ngIf="showWalletSelection" class="wallet-selection" (click)="showWalletSelection = false">
-                <ion-row class="header-row">
-                    <ion-col size="12">
-                        <ion-label>
-                            <h1>{{ 'wallet.wallets' | translate }}</h1>
-                            <p>{{ 'wallet.explore-your-wallets' | translate }}</p>
-                        </ion-label>
-                        <img class="arrow-icon"
-                            [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'">
-                    </ion-col>
-                </ion-row>
-                <ion-row *ngFor="let netWallet of getPotentialActiveWallets()" class="wallet-row"
-                    [class.selected-wallet]="netWallet.id === networkWallet.id" (click)="selectActiveWallet(netWallet)">
-                    <ion-col size="2" class="color-col">
-                        <div class="color-block" [ngStyle]="
-                        {
-                            'background-image': netWallet.masterWallet.theme ?
-                            'url(' + netWallet.masterWallet.theme.background + ')' :
-                            'url(/assets/wallet/cards/maincards/card-purple.svg)'
-                        }"></div>
-                    </ion-col>
-                    <ion-col size="8" class="left-col">
-                        <div class="wallet-name">{{ netWallet.masterWallet.name }}</div>
-                        <div class="wallet-amount">{{ uiService.getFixedBalance(netWallet.getDisplayBalance()) }}</div>
-                    </ion-col>
-                    <ion-col size="2" class="right-col">
-                        <ion-icon name="checkmark"></ion-icon>
-                    </ion-col>
-                </ion-row>
-            </div>
         </div>
 
         <ion-grid *ngIf="networkWallet" class="single-slide" [class.dark-slide]="theme.darkMode"
@@ -88,7 +42,7 @@
                         </ion-col>
                         <ion-col size="4" class="right-col">
                             <img src="assets/wallet/icons/darkmode/change-wallet.svg"
-                                *ngIf="getPotentialActiveWallets().length > 1" (click)="toggleActiveWalletSelection()">
+                                *ngIf="getPotentialActiveWallets().length > 1" (click)="pickOtherWallet()">
                             <img src="assets/wallet/icons/dots.svg" (click)="goToWalletSettings(networkWallet)">
                         </ion-col>
                     </ion-row>
