@@ -127,6 +127,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
                 case "loadUrl":
                     this.loadUrl(args, callbackContext);
                     break;
+                case "reload":
+                    this.reload(callbackContext);
+                    break;
                 case "setTitle":
                     this.setTitle(args, callbackContext);
                     break;
@@ -162,6 +165,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
             case "canGoBack":
             case "goBack":
             case "loadUrl":
+            case "reload":
             case "setTitle":
             case "getWebViewShot":
             case "addEventListener":
@@ -391,6 +395,13 @@ public class DappBrowserPlugin extends CordovaPlugin {
         if (webViewHandler != null) {
             final String url = args.getString(0);
             webViewHandler.loadUrl(url);
+        }
+        callbackContext.success();
+    }
+
+    private void reload(CallbackContext callbackContext) throws JSONException {
+        if (webViewHandler != null) {
+            webViewHandler.reload();
         }
         callbackContext.success();
     }

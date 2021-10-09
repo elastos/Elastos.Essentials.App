@@ -18,6 +18,7 @@ import { BrowsedAppInfo } from '../../model/browsedappinfo';
 import { DappBrowserService } from '../../services/dappbrowser.service';
 import { FavoritesService } from '../../services/favorites.service';
 
+declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 @Component({
     selector: 'page-menu',
     templateUrl: 'menu.html',
@@ -29,6 +30,7 @@ export class MenuPage {
     public browsedAppInfo: BrowsedAppInfo = null;
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
     private browsedAppInfoSub: Subscription = null;
+    private needReload = false;
 
     constructor(
         public translate: TranslateService,
@@ -80,6 +82,9 @@ export class MenuPage {
     }
 
     async goback() {
+        if (this.needReload) {
+            dappBrowser.reload();
+        }
         await this.nav.navigateBack();
     }
 

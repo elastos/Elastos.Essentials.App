@@ -228,6 +228,11 @@ declare namespace DappBrowserPlugin {
         loadUrl(url: string): Promise<void>;
 
         /**
+         * Reload url in DappBrowser
+         */
+        reload(): Promise<void>;
+
+        /**
          * set title in DappBrowser
          */
         setTitle(title: string): Promise<void>;

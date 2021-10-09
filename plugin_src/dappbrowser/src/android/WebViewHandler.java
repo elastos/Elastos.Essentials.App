@@ -292,6 +292,10 @@ public class WebViewHandler {
         webView.loadUrl(url);
     }
 
+    public void reload() {
+        webView.reload();
+    }
+
     public void closeWithMode(String mode, CallbackContext callbackContext) {
         hide();
 

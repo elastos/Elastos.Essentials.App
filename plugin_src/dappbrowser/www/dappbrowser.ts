@@ -101,7 +101,7 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 (err) => {
                     reject(err);
                 },
-                'DappBrowser', 'injectStyleCode', [script.code, true]);
+                'DappBrowser', 'injectScriptCode', [script.code, true]);
             });
         }
         else if (script.file) {
@@ -112,7 +112,7 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 (err) => {
                     reject(err);
                 },
-                'DappBrowser', 'injectStyleFile', [script.file, true]);
+                'DappBrowser', 'injectScriptFile', [script.file, true]);
             });
         }
         else {
@@ -132,7 +132,7 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 (err) => {
                     reject(err);
                 },
-                'DappBrowser', 'injectScriptCode', [css.code, true]);
+                'DappBrowser', 'injectStyleCode', [css.code, true]);
             });
         }
         else if (css.file) {
@@ -143,7 +143,7 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 (err) => {
                     reject(err);
                 },
-                'DappBrowser', 'injectScriptFile', [css.file, true]);
+                'DappBrowser', 'injectStyleFile', [css.file, true]);
             });
         }
         else {
@@ -160,6 +160,18 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 reject(err);
             },
             'DappBrowser', 'loadUrl', [url]);
+        });
+    }
+
+    reload(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            exec(() => {
+                resolve();
+            },
+            (err) => {
+                reject(err);
+            },
+            'DappBrowser', 'reload', []);
         });
     }
 
