@@ -51,7 +51,6 @@ export class WalletHelper {
       }
     } while (!subWallet.masterWallet.account.SingleAddress);
 
-    // Logger.log('Wallet', 'TX:', this.masterWallet.id, ' elastosChainCode:', this.id, ' ', txListTotal)
     return txListTotal;
   }
 }

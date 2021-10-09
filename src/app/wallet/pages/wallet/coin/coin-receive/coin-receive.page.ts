@@ -22,7 +22,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     public networkWallet: NetworkWallet = null;
     private masterWalletId = '1';
-    public elastosChainCode: string;
+    public subWalletId: string;
     public tokenName = '';
     public qrcode: string = null;
     public isSingleAddress = false;
@@ -56,9 +56,9 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     async init(): Promise<void> {
         this.masterWalletId = this.coinTransferService.masterWalletId;
-        this.elastosChainCode = this.coinTransferService.elastosChainCode;
+        this.subWalletId = this.coinTransferService.subWalletId;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
-        const subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
+        const subWallet = this.networkWallet.getSubWallet(this.subWalletId);
         this.tokenName = subWallet.getDisplayTokenName();
 
         await this.getAddress();
@@ -66,7 +66,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     }
 
     isSingleAddressSubwallet() {
-        if ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) {
+        if ((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain)) {
             this.isSingleAddress = this.networkWallet.masterWallet.account.SingleAddress;
         } else {
             this.isSingleAddress = true;
@@ -75,11 +75,11 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     copyAddress() {
         void this.native.copyClipboard(this.qrcode);
-        this.native.toast(this.translate.instant("wallet.coin-address-copied", { coinName: this.elastosChainCode }));
+        this.native.toast(this.translate.instant("wallet.coin-address-copied", { coinName: this.subWalletId }));
     }
 
     async getAddress() {
-        this.qrcode = await this.networkWallet.getSubWallet(this.elastosChainCode).createAddress();
+        this.qrcode = await this.networkWallet.getSubWallet(this.subWalletId).createAddress();
         Logger.log('wallet', 'qrcode', this.qrcode);
     }
 
@@ -95,7 +95,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
             '/wallet/coin-address',
             {
                 masterWalletId: this.masterWalletId,
-                elastosChainCode: this.elastosChainCode
+                subWalletId: this.subWalletId
             }
         );
     }

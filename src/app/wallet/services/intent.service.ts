@@ -136,7 +136,7 @@ export class IntentService {
             return false;
         } else {
             this.coinTransferService.reset();
-            this.coinTransferService.elastosChainCode = StandardCoinName.ELA;
+            this.coinTransferService.subWalletId = StandardCoinName.ELA;
             this.coinTransferService.intentTransfer = {
                 action: this.getShortAction(intent.action),
                 intentId: intent.intentId
@@ -178,7 +178,7 @@ export class IntentService {
             case 'crmemberretrieve':
                 Logger.log("wallet", 'CR member retrieve Transaction intent content:', intent.params);
                 this.nextScreen = '/wallet/intents/crmemberregister';
-                this.coinTransferService.elastosChainCode = StandardCoinName.IDChain;
+                this.coinTransferService.subWalletId = StandardCoinName.IDChain;
                 this.coinTransferService.transfer.amount = this.getNumberFromParam(intent.params.amount);
                 this.coinTransferService.transfer.publickey = intent.params.publickey;
                 break;
@@ -191,7 +191,7 @@ export class IntentService {
 
             case 'didtransaction':
                 this.nextScreen = '/wallet/intents/didtransaction';
-                this.coinTransferService.elastosChainCode = StandardCoinName.ETHDID;
+                this.coinTransferService.subWalletId = StandardCoinName.ETHDID;
                 this.coinTransferService.didrequest = intent.params.didrequest;
                 break;
 
@@ -204,9 +204,9 @@ export class IntentService {
 
             case 'pay':
                 this.nextScreen = '/wallet/coin-transfer';
-                const intentelastosChainCode = this.getElastosChainCodeByCurrency(intent.params.currency || 'ELA');
-                if (intentelastosChainCode) {
-                    this.coinTransferService.elastosChainCode = intentelastosChainCode;
+                const intentSubWalletId = this.getSubWalletIdByCurrency(intent.params.currency || 'ELA');
+                if (intentSubWalletId) {
+                    this.coinTransferService.subWalletId = intentSubWalletId;
                 } else {
                     await this.globalIntentService.sendIntentResponse(
                         { message: 'Not support Token:' + intent.params.currency, status: 'error' },
@@ -324,40 +324,40 @@ export class IntentService {
         }
     }
 
-    private getElastosChainCodeByCurrency(currency: string) {
-        let elastosChainCode = StandardCoinName.ELA;
+    private getSubWalletIdByCurrency(currency: string) {
+        let subWalletId = StandardCoinName.ELA;
         switch (currency) {
             case 'ELA':
-                elastosChainCode = StandardCoinName.ELA;
+                subWalletId = StandardCoinName.ELA;
                 break;
             case 'IDChain':
             case 'ELA/ID':
-                elastosChainCode = StandardCoinName.IDChain;
+                subWalletId = StandardCoinName.IDChain;
                 break;
             case 'ETHSC':
             case 'ELA/ETHSC':
-                elastosChainCode = StandardCoinName.ETHSC;
+                subWalletId = StandardCoinName.ETHSC;
                 break;
             case 'ETHDID':
             case 'ELA/ETHDID':
-                elastosChainCode = StandardCoinName.ETHDID;
+                subWalletId = StandardCoinName.ETHDID;
                 break;
             default:
                 if (currency.startsWith('ELA/ETHSC:')) {
                     let elastosNetwork = this.walletNetworkService.getNetworkByKey("elastos");
-                    elastosChainCode = currency.substring(10) as StandardCoinName;
-                    const coin = elastosNetwork.getCoinByID(elastosChainCode);
+                    subWalletId = currency.substring(10) as StandardCoinName;
+                    const coin = elastosNetwork.getCoinByID(subWalletId);
                     if (!coin) {
-                        elastosChainCode = null;
+                        subWalletId = null;
                         Logger.log("wallet", 'Not support coin:', currency);
                     }
                 } else {
-                    elastosChainCode = null;
+                    subWalletId = null;
                     Logger.log("wallet", 'Not support coin:', currency);
                 }
                 break;
         }
-        return elastosChainCode;
+        return subWalletId;
     }
 
     async scan(type: ScanType) {

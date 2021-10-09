@@ -3,7 +3,7 @@
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-row class="main-title-row">
             <ion-col size="12">
-                <p>{{ 'wallet.personal-wallets-with' | translate:{elastosChainCode: options.sourceWallet.getSubWallet(options.elastosChainCode).getDisplayTokenName()} }}</p>
+                <p>{{ 'wallet.personal-wallets-with' | translate:{subwalletSymbol: options.sourceWallet.getSubWallet(options.subWalletId).getDisplayTokenName()} }}</p>
             </ion-col>
         </ion-row>
         <ion-row
@@ -13,14 +13,14 @@
             (click)="walletSelected(networkWallet)"
         >
             <ion-col size="2" class="left-col">
-                <img [src]="options.sourceWallet.getSubWallet(options.elastosChainCode).getMainIcon()">
+                <img [src]="options.sourceWallet.getSubWallet(options.subWalletId).getMainIcon()">
             </ion-col>
             <ion-col size="5" class="middle-col">
                 <h1>{{ networkWallet.masterWallet.name }}</h1>
             </ion-col>
             <ion-col size="5" class="right-col">
-                <h1 *ngIf="networkWallet.getSubWallet(elastosChainCode)">{{ uiService.getFixedBalance(networkWallet.getSubWallet(elastosChainCode).getDisplayBalance()) }}</h1>
-                <h1 *ngIf="!networkWallet.getSubWallet(elastosChainCode)">0.000</h1>
+                <h1 *ngIf="networkWallet.getSubWallet(subWalletId)">{{ uiService.getFixedBalance(networkWallet.getSubWallet(subWalletId).getDisplayBalance()) }}</h1>
+                <h1 *ngIf="!networkWallet.getSubWallet(subWalletId)">0.000</h1>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>

@@ -20,20 +20,20 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
+import { Config } from '../../../config/Config';
+import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
+import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
-import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
-import { TranslateService } from '@ngx-translate/core';
-import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
-import { Config } from '../../../config/Config';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Candidates, VoteContent, VoteType } from 'src/app/wallet/model/SPVWalletPluginBridge';
 
 
 @Component({
@@ -48,7 +48,7 @@ export class DPoSVotePage implements OnInit {
     private sourceSubwallet: MainchainSubWallet = null;
     public voteAmountELA: string;
     public voteAmount: string; // Estimate amount, Balance in SELA
-    public elastosChainCode: string;
+    public subWalletId: string;
     private walletInfo = {};
     public intentTransfer: IntentTransfer;
 
@@ -82,12 +82,12 @@ export class DPoSVotePage implements OnInit {
     }
 
     init() {
-        this.elastosChainCode = this.coinTransferService.elastosChainCode;
+        this.subWalletId = this.coinTransferService.subWalletId;
         this.intentTransfer = this.coinTransferService.intentTransfer;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.masterWalletId = this.coinTransferService.masterWalletId;
 
-        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
         // All balance can be used for voting?
         let voteInEla = this.sourceSubwallet.balance.minus(this.votingFees());
         this.voteAmountELA = voteInEla.toString()
@@ -159,7 +159,7 @@ export class DPoSVotePage implements OnInit {
           const transfer = new Transfer();
           Object.assign(transfer, {
               masterWalletId: this.masterWalletId,
-              elastosChainCode: this.elastosChainCode,
+              subWalletId: this.subWalletId,
               rawTransaction: rawTx,
               payPassword: '',
               action: this.intentTransfer.action,

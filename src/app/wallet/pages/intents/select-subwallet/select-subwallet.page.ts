@@ -5,7 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { CoinType, StandardCoinName } from '../../../model/coin';
+import { CoinType } from '../../../model/coin';
 import { MasterWallet } from '../../../model/wallets/masterwallet';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { CurrencyService } from '../../../services/currency.service';
@@ -23,7 +23,7 @@ export class SelectSubwalletPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   public CoinType = CoinType;
-  public elastosChainCode: StandardCoinName;
+  public subWalletId: string;
 
   private nextScreen = '';
 
@@ -45,8 +45,7 @@ export class SelectSubwalletPage implements OnInit {
   }
 
   ngOnInit() {
-    this.elastosChainCode = this.coinTransferService.elastosChainCode;
-    // this.elastosChainCode = StandardCoinName.ETHSC;
+    this.subWalletId = this.coinTransferService.subWalletId;
   }
 
   ionViewWillEnter() {

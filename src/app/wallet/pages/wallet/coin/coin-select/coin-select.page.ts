@@ -54,16 +54,16 @@ export class CoinSelectPage implements OnInit {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
         // Filter out the subwallet being transferred from
-        if (this.coinTransferService.elastosChainCode !== 'ELA') {
+        if (this.coinTransferService.subWalletId !== 'ELA') {
             this.subWallets = [this.networkWallet.getSubWallet('ELA')];
         } else {
-            this.subWallets = this.networkWallet.subWalletsWithExcludedCoin(this.coinTransferService.elastosChainCode, CoinType.STANDARD);
+            this.subWallets = this.networkWallet.subWalletsWithExcludedCoin(this.coinTransferService.subWalletId, CoinType.STANDARD);
         }
     }
 
     onItem(wallet: AnySubWallet) {
         // Define subwallets to transfer to and from
-        this.coinTransferService.toElastosChainCode = wallet.id;
+        this.coinTransferService.toSubWalletId = wallet.id;
 
         this.native.go("/wallet/coin-transfer");
     }

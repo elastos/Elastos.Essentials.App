@@ -57,7 +57,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
 
     public networkWallet: NetworkWallet;
     public transferType: TransferType;
-    public elastosChainCode: StandardCoinName;
+    public subWalletId: StandardCoinName;
 
     // User inputs
     public toAddress: string;
@@ -119,14 +119,14 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
 
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
         this.transferType = TransferType.WITHDRAW; // From IDChain (DID1) to Mainchain
-        this.elastosChainCode = StandardCoinName.IDChain;
+        this.subWalletId = StandardCoinName.IDChain;
 
-        this.fromSubWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
+        this.fromSubWallet = this.networkWallet.getSubWallet(this.subWalletId);
 
-        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.elastosChainCode].getDisplayBalance());
+        Logger.log('wallet', 'Balance', this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
 
         // Setup page display
-        this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", { coinName: this.elastosChainCode }));
+        this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", { coinName: this.subWalletId }));
         this.toSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ELA);
 
         // Setup params for withdraw transaction
@@ -157,7 +157,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
             const transfer = new Transfer();
             Object.assign(transfer, {
                 masterWalletId: this.networkWallet.id,
-                elastosChainCode: this.elastosChainCode,
+                subWalletId: this.subWalletId,
                 rawTransaction: rawTx,
                 payPassword: '',
                 action: null,
@@ -179,15 +179,15 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
     }
 
     async startTransaction() {
-        const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.elastosChainCode] as MainAndIDChainSubWallet;
+        const mainAndIDChainSubWallet = this.networkWallet.subWallets[this.subWalletId] as MainAndIDChainSubWallet;
         try {
             const index = this.toAddress.indexOf(':');
             if (index !== -1) {
                 this.toAddress = this.toAddress.substring(index + 1);
             }
 
-            const toelastosChainCode = this.toSubWallet ? this.toSubWallet.id : this.elastosChainCode;
-            const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toelastosChainCode, this.toAddress);
+            const toSubWalletId = this.toSubWallet ? this.toSubWallet.id : this.subWalletId;
+            const isAddressValid = await this.isSubWalletAddressValid(this.networkWallet.id, toSubWalletId, this.toAddress);
             if (!isAddressValid) {
                 this.native.toast_trans('wallet.not-a-valid-address');
                 return;
@@ -203,21 +203,21 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         }
     }
 
-    private async isSubWalletAddressValid(masterWalletId: string, elastosChainCode: string, address: string) {
-        let elastosChainCodeTemp = elastosChainCode;
-        switch (elastosChainCodeTemp) {
+    private async isSubWalletAddressValid(masterWalletId: string, subWalletId: string, address: string) {
+        let subWalletIdTemp = subWalletId;
+        switch (subWalletIdTemp) {
             case StandardCoinName.ELA:
             case StandardCoinName.IDChain:
             case StandardCoinName.ETHSC:
                 break;
             default:
-                elastosChainCodeTemp = StandardCoinName.ETHSC;
+                subWalletIdTemp = StandardCoinName.ETHSC;
                 break;
         }
 
         const isAddressValid = await this.walletManager.spvBridge.isSubWalletAddressValid(
             masterWalletId,
-            elastosChainCodeTemp,
+            subWalletIdTemp,
             address
         );
         return isAddressValid;
@@ -226,7 +226,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
     async showConfirm() {
         const txInfo = {
             type: this.transferType,
-            transferFrom: this.elastosChainCode,
+            transferFrom: this.subWalletId,
             transferTo: this.toAddress,
             amount: this.amount,
             precision: this.fromSubWallet.tokenDecimals,

@@ -44,7 +44,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
 
     masterWalletId: string;
     sourceSubwallet: MainchainSubWallet = null;
-    elastosChainCode: string; // ELA
+    subWalletId: string; // ELA
     transfer: Transfer = null;
     intentTransfer: IntentTransfer;
 
@@ -79,9 +79,9 @@ export class CRProposalVoteAgainstPage implements OnInit {
     init() {
         this.transfer = this.coinTransferService.transfer;
         this.intentTransfer = this.coinTransferService.intentTransfer;
-        this.elastosChainCode = this.coinTransferService.elastosChainCode;
+        this.subWalletId = this.coinTransferService.subWalletId;
         this.masterWalletId = this.coinTransferService.masterWalletId;
-        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
         this.balance = this.sourceSubwallet.getDisplayBalance().toString();
 
         void this.hasPendingVoteTransaction();
@@ -148,7 +148,7 @@ export class CRProposalVoteAgainstPage implements OnInit {
             const transfer = new Transfer();
             Object.assign(transfer, {
                 masterWalletId: this.masterWalletId,
-                elastosChainCode: this.elastosChainCode,
+                subWalletId: this.subWalletId,
                 rawTransaction: rawTx,
                 payPassword: '',
                 action: this.intentTransfer.action,

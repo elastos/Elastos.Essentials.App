@@ -27,7 +27,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
-import { StandardCoinName } from '../../../model/coin';
 import { WalletAccount, WalletAccountType } from '../../../model/walletaccount';
 import { AuthService } from '../../../services/auth.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
@@ -50,7 +49,7 @@ export class CRMemberRegisterPage implements OnInit {
 
     balance: BigNumber; // ELA
 
-    elastosChainCode: StandardCoinName; // IDChain
+    subWalletId: string; // IDChain
     hasOpenIDChain = false;
     walletInfo: WalletAccount = new WalletAccount();
 
@@ -92,7 +91,7 @@ export class CRMemberRegisterPage implements OnInit {
     init() {
         this.transfer = this.coinTransferService.transfer;
         this.intentTransfer = this.coinTransferService.intentTransfer;
-        this.elastosChainCode = this.coinTransferService.elastosChainCode;
+        this.subWalletId = this.coinTransferService.subWalletId;
         this.walletInfo = this.coinTransferService.walletInfo;
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
@@ -121,7 +120,7 @@ export class CRMemberRegisterPage implements OnInit {
                 break;
         }
 
-        this.balance = this.networkWallet.getSubWalletBalance(this.elastosChainCode);
+        this.balance = this.networkWallet.getSubWalletBalance(this.subWalletId);
     }
 
     /**
@@ -154,7 +153,7 @@ export class CRMemberRegisterPage implements OnInit {
         // const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWallet.id, StandardCoinName.IDChain, 0, 1);
         // const crPublicKey = crPublickeys.PublicKeys[0];
 
-        // const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWallet.id, this.elastosChainCode,
+        // const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWallet.id, this.subWalletId,
         //         crPublicKey, this.transfer.did, this.transfer.nickname, this.transfer.url, this.transfer.location);
         // const digest = payload.Digest;
 
@@ -166,7 +165,7 @@ export class CRMemberRegisterPage implements OnInit {
         // payload.Signature = await this.walletManager.spvBridge.didSignDigest(this.masterWallet.id,
         //         this.transfer.did, digest, payPassword);
 
-        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRegisterCRTransaction(this.masterWallet.id, this.elastosChainCode,
+        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRegisterCRTransaction(this.masterWallet.id, this.subWalletId,
         //         '', payload, this.depositAmount.toString(), this.transfer.memo);
         // this.walletManager.openPayModal(this.transfer); // TODO: USE signAndSendRawTransaction
     }
@@ -175,12 +174,12 @@ export class CRMemberRegisterPage implements OnInit {
         Logger.log('wallet', 'Calling createUpdateCRTransaction()');
 
         // const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWallet.id,
-        //         this.elastosChainCode, this.transfer.crPublicKey, this.transfer.did, this.transfer.nickname,
+        //         this.subWalletId, this.transfer.crPublicKey, this.transfer.did, this.transfer.nickname,
         //         this.transfer.url, this.transfer.location);
-        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createUpdateCRTransaction(this.masterWallet.id, this.elastosChainCode,
+        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createUpdateCRTransaction(this.masterWallet.id, this.subWalletId,
         //         '', payload, this.transfer.memo);
 
-        // let sourceSubwallet = this.masterWallet.getSubWallet(this.elastosChainCode);
+        // let sourceSubwallet = this.masterWallet.getSubWallet(this.subWalletId);
         // const result = await sourceSubwallet.signAndSendRawTransaction(this.transfer.rawTransaction, this.transfer);
         // await this.globalIntentService.sendIntentResponse(result, this.transfer.intentId);
     }
@@ -188,9 +187,9 @@ export class CRMemberRegisterPage implements OnInit {
     createUnregisterCRTransaction() {
         Logger.log('wallet', 'Calling createUnregisterCRTransaction()');
 
-        // const payload = await this.walletManager.spvBridge.generateUnregisterCRPayload(this.masterWallet.id, this.elastosChainCode,
+        // const payload = await this.walletManager.spvBridge.generateUnregisterCRPayload(this.masterWallet.id, this.subWalletId,
         //         this.transfer.crDID);
-        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createUnregisterCRTransaction(this.masterWallet.id, this.elastosChainCode,
+        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createUnregisterCRTransaction(this.masterWallet.id, this.subWalletId,
         //         '', payload, this.transfer.memo);
         // this.walletManager.openPayModal(this.transfer); // TODO: USE signAndSendRawTransaction
     }
@@ -198,7 +197,7 @@ export class CRMemberRegisterPage implements OnInit {
     createRetrieveCRDepositTransaction() {
         Logger.log('wallet', 'Calling createRetrieveCRDepositTransaction()');
 
-        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRetrieveCRDepositTransaction(this.masterWallet.id, this.elastosChainCode,
+        // this.transfer.rawTransaction  = await this.walletManager.spvBridge.createRetrieveCRDepositTransaction(this.masterWallet.id, this.subWalletId,
         //     this.transfer.crPublicKey, this.transfer.account, this.transfer.memo);
         // this.walletManager.openPayModal(this.transfer); // TODO: USE signAndSendRawTransaction
     }

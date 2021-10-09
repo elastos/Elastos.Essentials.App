@@ -192,7 +192,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         );
     }
 
-    public async createDepositTransaction(toElastosChainCode: StandardCoinName, toAddress: string, amount: number, memo = ""): Promise<string> {
+    public async createDepositTransaction(toSubWalletId: StandardCoinName, toAddress: string, amount: number, memo = ""): Promise<string> {
         let toAmount = 0;
         if (amount == -1) {
             toAmount = Math.floor(this.balance.minus(20000).toNumber());
@@ -204,7 +204,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         if (!utxo) return;
 
         let lockAddres = '';
-        switch (toElastosChainCode) {
+        switch (toSubWalletId) {
             case StandardCoinName.IDChain:
                 lockAddres = Config.IDCHAIN_DEPOSIT_ADDRESS;
                 break;
@@ -215,7 +215,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 lockAddres = Config.ETHDID_DEPOSIT_ADDRESS;
                 break;
             default:
-                Logger.error('wallet', 'createDepositTransaction not support ', toElastosChainCode);
+                Logger.error('wallet', 'createDepositTransaction not support ', toSubWalletId);
                 return null;
         }
 
@@ -223,7 +223,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             this.masterWallet.id,
             this.id,
             JSON.stringify(utxo),
-            toElastosChainCode,
+            toSubWalletId,
             toAmount.toString(),
             toAddress,
             lockAddres,
@@ -280,7 +280,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return txid;
     }
 
-    protected async sendRawTransaction(elastosChainCode: StandardCoinName, payload: string): Promise<string> {
+    protected async sendRawTransaction(subWalletId: StandardCoinName, payload: string): Promise<string> {
         const param = {
             method: 'sendrawtransaction',
             params: [
@@ -288,7 +288,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             ],
         };
 
-        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(elastosChainCode);
+        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(subWalletId);
         const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
         if (rpcApiUrl === null) {
             return await '';
@@ -601,7 +601,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
         return usedUTXO;
     }
 
-    public async getrawtransaction(elastosChainCode: StandardCoinName, txidArray: string[]): Promise<any[]> {
+    public async getrawtransaction(subWalletId: StandardCoinName, txidArray: string[]): Promise<any[]> {
         const paramArray = [];
         for (let i = 0, len = txidArray.length; i < len; i++) {
             const txid = txidArray[i];
@@ -616,7 +616,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             paramArray.push(param);
         }
 
-        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(elastosChainCode);
+        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(subWalletId);
         const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
         if (rpcApiUrl === null) {
             return null;
@@ -868,8 +868,8 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     // return balance in SELA
-    public async callGetBalanceByAddress(elastosChainCode: StandardCoinName, addressArray: string[]): Promise<BigNumber> {
-        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(elastosChainCode);
+    public async callGetBalanceByAddress(subWalletId: StandardCoinName, addressArray: string[]): Promise<BigNumber> {
+        let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForRpc(subWalletId);
         const rpcApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
         if (rpcApiUrl === null) {
             return null;

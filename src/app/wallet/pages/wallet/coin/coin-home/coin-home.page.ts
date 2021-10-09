@@ -63,7 +63,7 @@ export class CoinHomePage implements OnInit {
     public masterWalletInfo = '';
     public networkWallet: NetworkWallet = null;
     public subWallet: AnySubWallet = null;
-    public elastosChainCode: StandardCoinName = null;
+    public subWalletId: StandardCoinName = null;
     public transferList: TransactionInfo[] = [];
     public transactionsLoaded = false;
     private transactions: GenericTransaction[] = []; // raw transactions received from the providers / cache
@@ -129,7 +129,7 @@ export class CoinHomePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.coinTransferService.elastosChainCode = this.elastosChainCode;
+        this.coinTransferService.subWalletId = this.subWalletId;
         this.titleBar.setTitle(this.translate.instant('wallet.coin-transactions'));
         void this.initData();
 
@@ -181,16 +181,16 @@ export class CoinHomePage implements OnInit {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             let masterWalletId = navigation.extras.state.masterWalletId;
-            this.elastosChainCode = navigation.extras.state.elastosChainCode as StandardCoinName;
+            this.subWalletId = navigation.extras.state.subWalletId as StandardCoinName;
 
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
 
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
-            this.coinTransferService.elastosChainCode = this.elastosChainCode;
+            this.coinTransferService.subWalletId = this.subWalletId;
             this.coinTransferService.walletInfo = Util.clone(this.networkWallet.masterWallet.account);
 
-            this.subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
+            this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
         }
     }
 
@@ -230,15 +230,15 @@ export class CoinHomePage implements OnInit {
     }
 
     chainIsELA(): boolean {
-        return this.elastosChainCode === StandardCoinName.ELA;
+        return this.subWalletId === StandardCoinName.ELA;
     }
 
     chainIsDID(): boolean {
-        return this.elastosChainCode === StandardCoinName.IDChain;
+        return this.subWalletId === StandardCoinName.IDChain;
     }
 
     chainIsETHSC(): boolean {
-        return this.elastosChainCode === StandardCoinName.ETHSC;
+        return this.subWalletId === StandardCoinName.ETHSC;
     }
 
     chainIsERC20(): boolean {
@@ -306,7 +306,7 @@ export class CoinHomePage implements OnInit {
             '/wallet/coin-tx-info',
             {
                 masterWalletId: this.networkWallet.id,
-                elastosChainCode: this.elastosChainCode,
+                subWalletId: this.subWalletId,
                 transactionInfo: item
             }
         );
@@ -404,7 +404,7 @@ export class CoinHomePage implements OnInit {
         if ((this.subWallet.type === CoinType.STANDARD) && !this.chainIsETHSC()) {
             // TODO
             // if (this.walletManager.needToCheckUTXOCountForConsolidation) {
-            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.elastosChainCode, 0, 1, '');
+            //     let UTXOsJson = await this.walletManager.spvBridge.getAllUTXOs(this.masterWallet.id, this.subWalletId, 0, 1, '');
             //     Logger.log('wallet', 'UTXOsJson:', UTXOsJson);
             //     const UTXOsCount = this.translate.instant('wallet.text-consolidate-UTXO-counts', {count: UTXOsJson.MaxCount});
             //     if (UTXOsJson.MaxCount >= Config.UTXO_CONSOLIDATE_PROMPT_THRESHOLD) {
@@ -421,12 +421,12 @@ export class CoinHomePage implements OnInit {
 
     async createConsolidateTransaction() {
         // TODO
-        // let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.elastosChainCode, '');
+        // let rawTx = await this.walletManager.spvBridge.createConsolidateTransaction(this.masterWallet.id, this.subWalletId, '');
         // Logger.log('wallet', 'coin-home.page createConsolidateTransaction');
         // const transfer = new Transfer();
         // Object.assign(transfer, {
         //     masterWalletId: this.masterWallet.id,
-        //     elastosChainCode: this.elastosChainCode,
+        //     subWalletId: this.subWalletId,
         //     rawTransaction: rawTx,
         //     payPassword: '',
         //     action: null,

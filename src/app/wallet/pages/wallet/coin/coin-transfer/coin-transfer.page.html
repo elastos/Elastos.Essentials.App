@@ -61,7 +61,7 @@
                     <ion-input *ngIf="!sendMax" type="number" name="amount" ngDefaultControl
                         placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="amount"></ion-input>
                     <ion-input *ngIf="sendMax"
-                        [value]="networkWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)"
+                        [value]="networkWallet.subWallets[subWalletId].getDisplayBalance().toFixed(6)"
                         (ionChange)="resetAmountInput()"></ion-input>
                     <p *ngIf="supportsMaxTransfer()" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}</p>
                 </ion-col>
@@ -85,14 +85,14 @@
                     <ion-input *ngIf="!sendMax" class="amount-input" type="number" name="amount" ngDefaultControl
                         placeholder="{{ 'wallet.amount' | translate }}" [(ngModel)]="amount"></ion-input>
                     <ion-input *ngIf="sendMax" class="amount-input"
-                        [value]="networkWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)"
+                        [value]="networkWallet.subWallets[subWalletId].getDisplayBalance().toFixed(6)"
                         (ionChange)="resetAmountInput()"></ion-input>
                     <p *ngIf="amount && !sendMax">
                         {{ fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(amount)) }}
                     </p>
                     <p *ngIf="sendMax">
                         {{
-                        fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.networkWallet.subWallets[elastosChainCode].getDisplayBalance().toFixed(6)))
+                        fromSubWallet.getAmountInExternalCurrency(convertAmountToBigNumber(this.networkWallet.subWallets[subWalletId].getDisplayBalance().toFixed(6)))
                         }}
                     </p>
                 </ion-col>
@@ -102,7 +102,7 @@
                 <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}
                 </p>
                 <p [class.align-right]="!supportsMaxTransfer()">{{ 'wallet.balance' | translate }}: <strong>{{
-                        uiService.getFixedBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance())
+                        uiService.getFixedBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())
                         }}</strong></p>
             </ion-row>
 
@@ -207,7 +207,7 @@
         </div>
         <div>
             <p>{{ 'wallet.balance' | translate }}: <strong>{{
-                    uiService.getFixedBalance(networkWallet.subWallets[elastosChainCode].getDisplayBalance())
+                    uiService.getFixedBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())
                     }}</strong></p>
         </div>
 

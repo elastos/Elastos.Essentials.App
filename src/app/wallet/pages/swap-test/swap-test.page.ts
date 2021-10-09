@@ -55,7 +55,7 @@ class InternalWeb3Provider extends EssentialsWeb3Provider {
         const transfer = new Transfer();
         Object.assign(transfer, {
             masterWalletId: this.networkWallet.id,
-            elastosChainCode: this.elaEthSubwallet.id,
+            subWalletId: this.elaEthSubwallet.id,
             rawTransaction: rawTx,
             payPassword: '',
             //intentId: this.intentTransfer.intentId, // TODO: currently signAndSendRawTransaction() sends an intent response. We must avoid this

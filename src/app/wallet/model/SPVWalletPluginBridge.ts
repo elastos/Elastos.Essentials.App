@@ -258,11 +258,11 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createSubWallet(masterWalletId: string, elastosChainCode: string): Promise<any> {
+    createSubWallet(masterWalletId: string, subWalletId: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            walletManager.createSubWallet([masterWalletId, elastosChainCode],
+            walletManager.createSubWallet([masterWalletId, subWalletId],
                 (ret) => {
-                    Logger.log("wallet", "Created subwallet in SPVSDK, wallet ID:", masterWalletId, "Chain code:", elastosChainCode);
+                    Logger.log("wallet", "Created subwallet in SPVSDK, wallet ID:", masterWalletId, "Chain code:", subWalletId);
                     resolve(ret);
                 },
                 (err) => { void this.handleError("createSubWallet", err, reject); });
@@ -310,9 +310,9 @@ export class SPVWalletPluginBridge {
     }
 
 
-    destroySubWallet(masterWalletId: string, elastosChainCode: string): Promise<any> {
+    destroySubWallet(masterWalletId: string, subWalletId: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            walletManager.destroySubWallet([masterWalletId, elastosChainCode],
+            walletManager.destroySubWallet([masterWalletId, subWalletId],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("destroySubWallet", err, reject); });
         });
@@ -334,9 +334,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    isSubWalletAddressValid(masterWalletId: string, elastosChainCode: string, address: string): Promise<boolean> {
+    isSubWalletAddressValid(masterWalletId: string, subWalletId: string, address: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            walletManager.isSubWalletAddressValid([masterWalletId, elastosChainCode, address],
+            walletManager.isSubWalletAddressValid([masterWalletId, subWalletId, address],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("isSubWalletAddressValid", err, reject); });
         });
@@ -358,41 +358,41 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createAddress(masterWalletId: string, elastosChainCode: string): Promise<string> {
+    createAddress(masterWalletId: string, subWalletId: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createAddress([masterWalletId, elastosChainCode],
+            walletManager.createAddress([masterWalletId, subWalletId],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createAddress", err, reject); });
         });
     }
 
-    getAllAddresses(masterWalletId: string, elastosChainCode: string, start: number, count: number, internal: boolean): Promise<AllAddresses> {
+    getAllAddresses(masterWalletId: string, subWalletId: string, start: number, count: number, internal: boolean): Promise<AllAddresses> {
         return new Promise((resolve, reject) => {
-            walletManager.getAllAddress([masterWalletId, elastosChainCode, start, count, internal],
+            walletManager.getAllAddress([masterWalletId, subWalletId, start, count, internal],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("getAllAddresses", err, reject); });
         });
     }
 
-    getLastAddresses(masterWalletId: string, elastosChainCode: string, internal: boolean): Promise<string[]> {
+    getLastAddresses(masterWalletId: string, subWalletId: string, internal: boolean): Promise<string[]> {
         return new Promise((resolve, reject) => {
-            walletManager.getLastAddresses([masterWalletId, elastosChainCode, internal],
+            walletManager.getLastAddresses([masterWalletId, subWalletId, internal],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("getLastAddresses", err, reject); });
         });
     }
 
-    updateUsedAddress(masterWalletId: string, elastosChainCode: string, usedAddress: string[]): Promise<void> {
+    updateUsedAddress(masterWalletId: string, subWalletId: string, usedAddress: string[]): Promise<void> {
         return new Promise((resolve, reject) => {
-            walletManager.updateUsedAddress([masterWalletId, elastosChainCode, usedAddress],
+            walletManager.updateUsedAddress([masterWalletId, subWalletId, usedAddress],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("updateUsedAddress", err, reject); });
         });
     }
 
-    getAllPublicKeys(masterWalletId: string, elastosChainCode: string, start: number, count: number): Promise<any> {
+    getAllPublicKeys(masterWalletId: string, subWalletId: string, start: number, count: number): Promise<any> {
         return new Promise((resolve, reject) => {
-            walletManager.getAllPublicKeys([masterWalletId, elastosChainCode, start, count],
+            walletManager.getAllPublicKeys([masterWalletId, subWalletId, start, count],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("getAllPublicKeys", err, reject); });
         });
@@ -400,7 +400,7 @@ export class SPVWalletPluginBridge {
 
     signTransaction(
         masterWalletId: string,
-        elastosChainCode: string,
+        subWalletId: string,
         rawTransaction: string,
         payPassword: string
     ): Promise<SignedTransaction> {
@@ -408,7 +408,7 @@ export class SPVWalletPluginBridge {
             walletManager.signTransaction(
                 [
                     masterWalletId,
-                    elastosChainCode,
+                    subWalletId,
                     rawTransaction,
                     payPassword
                 ],
@@ -419,14 +419,14 @@ export class SPVWalletPluginBridge {
 
     getTransactionSignedInfo(
         masterWalletId: string,
-        elastosChainCode: string,
+        subWalletId: string,
         tx: string,
     ): Promise<string> {
         return new Promise((resolve, reject) => {
             walletManager.getTransactionSignedInfo(
                 [
                     masterWalletId,
-                    elastosChainCode,
+                    subWalletId,
                     tx,
                 ],
                 (ret) => { resolve(ret); },
@@ -436,14 +436,14 @@ export class SPVWalletPluginBridge {
 
     convertToRawTransaction(
         masterWalletId: string,
-        elastosChainCode: string,
+        subWalletId: string,
         tx: string,
     ): Promise<string> {
         return new Promise((resolve, reject) => {
             walletManager.convertToRawTransaction(
                 [
                     masterWalletId,
-                    elastosChainCode,
+                    subWalletId,
                     tx,
                 ],
                 (ret) => { resolve(ret); },
@@ -451,10 +451,10 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createWithdrawTransaction(masterWalletId: string, elastosChainCode: string, inputs: string, amount: string
+    createWithdrawTransaction(masterWalletId: string, subWalletId: string, inputs: string, amount: string
         , mainchainAddress: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createWithdrawTransaction([masterWalletId, elastosChainCode, inputs, amount, mainchainAddress, fee, memo],
+            walletManager.createWithdrawTransaction([masterWalletId, subWalletId, inputs, amount, mainchainAddress, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createWithdrawTransaction", err, reject); });
         });
@@ -462,9 +462,9 @@ export class SPVWalletPluginBridge {
 
     // IDChainSubWallet
 
-    createIdTransaction(masterWalletId: string, elastosChainCode: string, inputs: string, payloadJson: string, memo: string, fee: string): Promise<string> {
+    createIdTransaction(masterWalletId: string, subWalletId: string, inputs: string, payloadJson: string, memo: string, fee: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createIdTransaction([masterWalletId, elastosChainCode, inputs, payloadJson, memo, fee],
+            walletManager.createIdTransaction([masterWalletId, subWalletId, inputs, payloadJson, memo, fee],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createIdTransaction", err, reject); });
         });
@@ -488,7 +488,7 @@ export class SPVWalletPluginBridge {
 
     createTransaction(
         masterWalletId: string,
-        elastosChainCode: string,
+        subWalletId: string,
         inputs: string,
         outputs: string,
         fee: string,
@@ -498,7 +498,7 @@ export class SPVWalletPluginBridge {
             walletManager.createTransaction(
                 [
                     masterWalletId,
-                    elastosChainCode,
+                    subWalletId,
                     inputs,
                     outputs,
                     fee,
@@ -512,7 +512,7 @@ export class SPVWalletPluginBridge {
     // ETHSC
     createTransfer(
         masterWalletId: string,
-        elastosChainCode: string,
+        subWalletId: string,
         toAddress: string,
         amount: string,
         amountUnit: number,
@@ -525,7 +525,7 @@ export class SPVWalletPluginBridge {
             walletManager.createTransfer(
                 [
                     masterWalletId,
-                    elastosChainCode,
+                    subWalletId,
                     toAddress,
                     amount,
                     amountUnit,
@@ -570,9 +570,9 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    // exportETHSCPrivateKey(masterWalletId: string, elastosChainCode: string, payPassWord: string): Promise<any> {
+    // exportETHSCPrivateKey(masterWalletId: string, subWalletId: string, payPassWord: string): Promise<any> {
     //     return new Promise((resolve, reject)=>{
-    //         walletManager.exportETHSCPrivateKey([masterWalletId, elastosChainCode, payPassWord],
+    //         walletManager.exportETHSCPrivateKey([masterWalletId, subWalletId, payPassWord],
     //             (ret) => { resolve(ret); },
     //             (err) => { this.handleError(err, reject);  });
     //     });
@@ -580,9 +580,9 @@ export class SPVWalletPluginBridge {
 
     createDepositTransaction(
         masterWalletId: string,
-        fromElastosChainCode: string,
+        fromSubWalletId: string,
         inputs: string,
-        toElastosChainCode: string,
+        toSubWalletId: string,
         amount: string,
         sideChainAddress: string,
         lockAddress: string,
@@ -593,9 +593,9 @@ export class SPVWalletPluginBridge {
             walletManager.createDepositTransaction(
                 [
                     masterWalletId,
-                    fromElastosChainCode,
+                    fromSubWalletId,
                     inputs,
-                    toElastosChainCode,
+                    toSubWalletId,
                     amount,
                     sideChainAddress,
                     lockAddress,
@@ -607,155 +607,155 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    createCancelProducerTransaction(masterWalletId: string, elastosChainCode: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
+    createCancelProducerTransaction(masterWalletId: string, subWalletId: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createCancelProducerTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
+            walletManager.createCancelProducerTransaction([masterWalletId, subWalletId, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createCancelProducerTransaction", err, reject); });
         });
     }
 
-    createRegisterProducerTransaction(masterWalletId: string, elastosChainCode: string, input: string, payloadJson: string, amount: string, fee: string, memo: string): Promise<string> {
+    createRegisterProducerTransaction(masterWalletId: string, subWalletId: string, input: string, payloadJson: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createRegisterProducerTransaction([masterWalletId, elastosChainCode, input, payloadJson, amount, fee, memo],
+            walletManager.createRegisterProducerTransaction([masterWalletId, subWalletId, input, payloadJson, amount, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createRegisterProducerTransaction", err, reject); });
         });
     }
 
-    generateProducerPayload(masterWalletId: string, elastosChainCode: string, publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
+    generateProducerPayload(masterWalletId: string, subWalletId: string, publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            walletManager.generateProducerPayload([masterWalletId, elastosChainCode, publicKey, nodePublicKey, nickname, url, IPAddress, location, payPasswd],
+            walletManager.generateProducerPayload([masterWalletId, subWalletId, publicKey, nodePublicKey, nickname, url, IPAddress, location, payPasswd],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("generateProducerPayload", err, reject); });
         });
     }
 
-    generateCancelProducerPayload(masterWalletId: string, elastosChainCode: string, publicKey: string, payPasswd: string): Promise<any> {
+    generateCancelProducerPayload(masterWalletId: string, subWalletId: string, publicKey: string, payPasswd: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            walletManager.generateCancelProducerPayload([masterWalletId, elastosChainCode, publicKey, payPasswd],
+            walletManager.generateCancelProducerPayload([masterWalletId, subWalletId, publicKey, payPasswd],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("generateCancelProducerPayload", err, reject); });
         });
     }
 
-    createRetrieveDepositTransaction(masterWalletId: string, elastosChainCode: string, input: string, amount: string, fee: string, memo: string): Promise<string> {
+    createRetrieveDepositTransaction(masterWalletId: string, subWalletId: string, input: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createRetrieveDepositTransaction([masterWalletId, elastosChainCode, input, amount, fee, memo],
+            walletManager.createRetrieveDepositTransaction([masterWalletId, subWalletId, input, amount, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createRetrieveDepositTransaction", err, reject); });
         });
     }
 
-    createUpdateProducerTransaction(masterWalletId: string, elastosChainCode: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
+    createUpdateProducerTransaction(masterWalletId: string, subWalletId: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createUpdateProducerTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
+            walletManager.createUpdateProducerTransaction([masterWalletId, subWalletId, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createUpdateProducerTransaction", err, reject); });
         });
     }
 
-    getOwnerPublicKey(masterWalletId: string, elastosChainCode: string): Promise<string> {
+    getOwnerPublicKey(masterWalletId: string, subWalletId: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.getOwnerPublicKey([masterWalletId, elastosChainCode],
+            walletManager.getOwnerPublicKey([masterWalletId, subWalletId],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("getOwnerPublicKey", err, reject); });
         });
     }
 
-    getOwnerAddress(masterWalletId: string, elastosChainCode: string): Promise<string> {
+    getOwnerAddress(masterWalletId: string, subWalletId: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.getOwnerAddress([masterWalletId, elastosChainCode],
+            walletManager.getOwnerAddress([masterWalletId, subWalletId],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("getOwnerAddress", err, reject); });
         });
     }
 
-    getOwnerDepositAddress(masterWalletId: string, elastosChainCode: string): Promise<string> {
+    getOwnerDepositAddress(masterWalletId: string, subWalletId: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.getOwnerDepositAddress([masterWalletId, elastosChainCode],
+            walletManager.getOwnerDepositAddress([masterWalletId, subWalletId],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("getOwnerDepositAddress", err, reject); });
         });
     }
 
     // CR
-    getCRDepositAddress(masterWalletId: string, elastosChainCode: string): Promise<string> {
+    getCRDepositAddress(masterWalletId: string, subWalletId: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.getCRDepositAddress([masterWalletId, elastosChainCode],
+            walletManager.getCRDepositAddress([masterWalletId, subWalletId],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("getCRDepositAddress", err, reject); });
         });
     }
 
-    generateCRInfoPayload(masterWalletId: string, elastosChainCode: string, publicKey: string,
+    generateCRInfoPayload(masterWalletId: string, subWalletId: string, publicKey: string,
         did: string, nickname: string, url: string, location: number): Promise<any> {
         return new Promise((resolve, reject) => {
-            walletManager.generateCRInfoPayload([masterWalletId, elastosChainCode, publicKey, did, nickname, url, location],
+            walletManager.generateCRInfoPayload([masterWalletId, subWalletId, publicKey, did, nickname, url, location],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("generateCRInfoPayload", err, reject); });
         });
     }
 
-    generateUnregisterCRPayload(masterWalletId: string, elastosChainCode: string, CID: string): Promise<string> {
+    generateUnregisterCRPayload(masterWalletId: string, subWalletId: string, CID: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.generateUnregisterCRPayload([masterWalletId, elastosChainCode, CID],
+            walletManager.generateUnregisterCRPayload([masterWalletId, subWalletId, CID],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("generateUnregisterCRPayload", err, reject); });
         });
     }
 
-    createRegisterCRTransaction(masterWalletId: string, elastosChainCode: string, input: string, payloadJson: string, amount: string, fee: string, memo: string): Promise<string> {
+    createRegisterCRTransaction(masterWalletId: string, subWalletId: string, input: string, payloadJson: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createRegisterCRTransaction([masterWalletId, elastosChainCode, input, payloadJson, amount, fee, memo],
+            walletManager.createRegisterCRTransaction([masterWalletId, subWalletId, input, payloadJson, amount, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createRegisterCRTransaction", err, reject); });
         });
     }
 
-    createUpdateCRTransaction(masterWalletId: string, elastosChainCode: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
+    createUpdateCRTransaction(masterWalletId: string, subWalletId: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createUpdateCRTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
+            walletManager.createUpdateCRTransaction([masterWalletId, subWalletId, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createUpdateCRTransaction", err, reject); });
         });
     }
 
-    createUnregisterCRTransaction(masterWalletId: string, elastosChainCode: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
+    createUnregisterCRTransaction(masterWalletId: string, subWalletId: string, input: string, payloadJson: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createUnregisterCRTransaction([masterWalletId, elastosChainCode, input, payloadJson, fee, memo],
+            walletManager.createUnregisterCRTransaction([masterWalletId, subWalletId, input, payloadJson, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createUnregisterCRTransaction", err, reject); });
         });
     }
 
-    createRetrieveCRDepositTransaction(masterWalletId: string, elastosChainCode: string, input: string, amount: string, fee: string, memo: string): Promise<string> {
+    createRetrieveCRDepositTransaction(masterWalletId: string, subWalletId: string, input: string, amount: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createRetrieveCRDepositTransaction([masterWalletId, elastosChainCode, input, amount, fee, memo],
+            walletManager.createRetrieveCRDepositTransaction([masterWalletId, subWalletId, input, amount, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createRetrieveCRDepositTransaction", err, reject); });
         });
     }
 
-    createVoteTransaction(masterWalletId: string, elastosChainCode: string, inputs: string, voteContents: string, fee: string, memo: string): Promise<string> {
+    createVoteTransaction(masterWalletId: string, subWalletId: string, inputs: string, voteContents: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createVoteTransaction([masterWalletId, elastosChainCode, inputs, voteContents, fee, memo],
+            walletManager.createVoteTransaction([masterWalletId, subWalletId, inputs, voteContents, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createVoteTransaction", err, reject); });
         });
     }
 
-    CRCouncilMemberClaimNodeDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    CRCouncilMemberClaimNodeDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.CRCouncilMemberClaimNodeDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.CRCouncilMemberClaimNodeDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("CRCouncilMemberClaimNodeDigest", err, reject); });
         });
     }
 
-    createCRCouncilMemberClaimNodeTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+    createCRCouncilMemberClaimNodeTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createCRCouncilMemberClaimNodeTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
+            walletManager.createCRCouncilMemberClaimNodeTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createCRCouncilMemberClaimNodeTransaction", err, reject); });
         });
@@ -763,164 +763,164 @@ export class SPVWalletPluginBridge {
 
     // CR proposal
 
-    proposalOwnerDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalOwnerDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalOwnerDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalOwnerDigest", err, reject); });
         });
     }
 
-    proposalCRCouncilMemberDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalCRCouncilMemberDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalCRCouncilMemberDigest", err, reject); });
         });
     }
 
-    createProposalTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+    createProposalTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createProposalTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
+            walletManager.createProposalTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createProposalTransaction", err, reject); });
         });
     }
 
-    proposalReviewDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalReviewDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalReviewDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalReviewDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalReviewDigest", err, reject); });
         });
     }
 
-    createProposalReviewTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+    createProposalReviewTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createProposalReviewTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
+            walletManager.createProposalReviewTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createProposalReviewTransaction", err, reject); });
         });
     }
 
-    proposalTrackingOwnerDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalTrackingOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalTrackingOwnerDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalTrackingOwnerDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalTrackingOwnerDigest", err, reject); });
         });
     }
 
-    proposalTrackingNewOwnerDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalTrackingNewOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalTrackingNewOwnerDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalTrackingNewOwnerDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalTrackingNewOwnerDigest", err, reject); });
         });
     }
 
-    proposalTrackingSecretaryDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalTrackingSecretaryDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalTrackingSecretaryDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalTrackingSecretaryDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalTrackingSecretaryDigest", err, reject); });
         });
     }
 
-    createProposalTrackingTransaction(masterWalletId: string, elastosChainCode: string, input: string, SecretaryGeneralSignedPayload: string, fee: string, memo: string): Promise<string> {
+    createProposalTrackingTransaction(masterWalletId: string, subWalletId: string, input: string, SecretaryGeneralSignedPayload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createProposalTrackingTransaction([masterWalletId, elastosChainCode, input, SecretaryGeneralSignedPayload, fee, memo],
+            walletManager.createProposalTrackingTransaction([masterWalletId, subWalletId, input, SecretaryGeneralSignedPayload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createProposalTrackingTransaction", err, reject); });
         });
     }
 
     // -- Proposal Secretary General Election
-    proposalSecretaryGeneralElectionDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalSecretaryGeneralElectionDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalSecretaryGeneralElectionDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalSecretaryGeneralElectionDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalSecretaryGeneralElectionDigest", err, reject); });
         });
     }
 
-    proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalSecretaryGeneralElectionCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalSecretaryGeneralElectionCRCouncilMemberDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalSecretaryGeneralElectionCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalSecretaryGeneralElectionCRCouncilMemberDigest", err, reject); });
         });
     }
 
-    createSecretaryGeneralElectionTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee, memo: string): Promise<string> {
+    createSecretaryGeneralElectionTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createSecretaryGeneralElectionTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
+            walletManager.createSecretaryGeneralElectionTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createSecretaryGeneralElectionTransaction", err, reject); });
         });
     }
 
     // -- Proposal Change Owner
-    proposalChangeOwnerDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalChangeOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalChangeOwnerDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalChangeOwnerDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalChangeOwnerDigest", err, reject); });
         });
     }
 
-    proposalChangeOwnerCRCouncilMemberDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalChangeOwnerCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalChangeOwnerCRCouncilMemberDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalChangeOwnerCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalChangeOwnerCRCouncilMemberDigest", err, reject); });
         });
     }
 
-    createProposalChangeOwnerTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+    createProposalChangeOwnerTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createProposalChangeOwnerTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
+            walletManager.createProposalChangeOwnerTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createProposalChangeOwnerTransaction", err, reject); });
         });
     }
 
     // -- Proposal Terminate Proposal
-    terminateProposalOwnerDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    terminateProposalOwnerDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.terminateProposalOwnerDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.terminateProposalOwnerDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("terminateProposalOwnerDigest", err, reject); });
         });
     }
 
-    terminateProposalCRCouncilMemberDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    terminateProposalCRCouncilMemberDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.terminateProposalCRCouncilMemberDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.terminateProposalCRCouncilMemberDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("terminateProposalCRCouncilMemberDigest", err, reject); });
         });
     }
 
-    createTerminateProposalTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+    createTerminateProposalTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createTerminateProposalTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
+            walletManager.createTerminateProposalTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createTerminateProposalTransaction", err, reject); });
         });
     }
 
-    proposalWithdrawDigest(masterWalletId: string, elastosChainCode: string, payload: string): Promise<string> {
+    proposalWithdrawDigest(masterWalletId: string, subWalletId: string, payload: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.proposalWithdrawDigest([masterWalletId, elastosChainCode, payload],
+            walletManager.proposalWithdrawDigest([masterWalletId, subWalletId, payload],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("proposalWithdrawDigest", err, reject); reject(err); });
         });
     }
 
-    createProposalWithdrawTransaction(masterWalletId: string, elastosChainCode: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
+    createProposalWithdrawTransaction(masterWalletId: string, subWalletId: string, input: string, payload: string, fee: string, memo: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createProposalWithdrawTransaction([masterWalletId, elastosChainCode, input, payload, fee, memo],
+            walletManager.createProposalWithdrawTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createProposalWithdrawTransaction", err, reject); });
         });

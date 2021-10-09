@@ -20,19 +20,19 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Config } from '../../../config/Config';
+import { VoteContent, VoteType } from '../../../model/SPVWalletPluginBridge';
+import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
+import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
-import { CoinTransferService, Transfer, IntentTransfer } from '../../../services/cointransfer.service';
-import { MainchainSubWallet } from '../../../model/wallets/elastos/mainchain.subwallet';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
-import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TranslateService } from '@ngx-translate/core';
-import { VoteContent, VoteType } from '../../../model/SPVWalletPluginBridge';
 
 
 @Component({
@@ -45,7 +45,7 @@ export class CRmembervotePage implements OnInit {
 
     masterWalletId: string;
     sourceSubwallet: MainchainSubWallet = null;
-    elastosChainCode: string; // ELA
+    subWalletId: string; // ELA
     intentTransfer: IntentTransfer;
     transfer: Transfer = null;
     votecount = 0;
@@ -84,9 +84,9 @@ export class CRmembervotePage implements OnInit {
     init() {
         this.transfer = this.coinTransferService.transfer;
         this.intentTransfer = this.coinTransferService.intentTransfer;
-        this.elastosChainCode = this.coinTransferService.elastosChainCode;
+        this.subWalletId = this.coinTransferService.subWalletId;
         this.masterWalletId = this.coinTransferService.masterWalletId;
-        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.elastosChainCode) as MainchainSubWallet;
+        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
         this.balance = this.sourceSubwallet.getDisplayBalance().toString();
 
         this.parseVotes();
@@ -168,7 +168,7 @@ export class CRmembervotePage implements OnInit {
           const transfer = new Transfer();
           Object.assign(transfer, {
               masterWalletId: this.masterWalletId,
-              elastosChainCode: this.elastosChainCode,
+              subWalletId: this.subWalletId,
               rawTransaction: rawTx,
               payPassword: '',
               action: this.intentTransfer.action,

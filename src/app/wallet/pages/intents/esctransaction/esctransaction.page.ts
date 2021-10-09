@@ -262,7 +262,7 @@ export class EscTransactionPage implements OnInit {
       const transfer = new Transfer();
       Object.assign(transfer, {
         masterWalletId: this.networkWallet.id,
-        elastosChainCode: this.evmSubWallet.id,
+        subWalletId: this.evmSubWallet.id,
         rawTransaction: rawTx,
         payPassword: '',
         action: this.intentTransfer.action,

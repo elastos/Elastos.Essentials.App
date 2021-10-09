@@ -200,8 +200,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.native.go("/wallet/wallet-settings");
     }
 
-    goCoinHome(masterWalletId: string, elastosChainCode: string) {
-        this.native.go("/wallet/coin", { masterWalletId, elastosChainCode });
+    goCoinHome(masterWalletId: string, subWalletId: string) {
+        this.native.go("/wallet/coin", { masterWalletId, subWalletId });
     }
 
     goSelectMasterWallet() {

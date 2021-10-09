@@ -40,7 +40,7 @@ export class CoinTxInfoPage implements OnInit {
     // General Values
     private networkWallet: NetworkWallet = null;
     private mainTokenSymbol = '';
-    public elastosChainCode = '';
+    public subWalletId = '';
     public subWallet: AnySubWallet = null;
     public transactionInfo: TransactionInfo;
     private blockchain_url = Config.BLOCKCHAIN_URL;
@@ -100,8 +100,8 @@ export class CoinTxInfoPage implements OnInit {
             // General Values
             this.transactionInfo = navigation.extras.state.transactionInfo;
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(navigation.extras.state.masterWalletId);
-            this.elastosChainCode = navigation.extras.state.elastosChainCode;
-            this.subWallet = this.networkWallet.getSubWallet(this.elastosChainCode);
+            this.subWalletId = navigation.extras.state.subWalletId;
+            this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
 
             Logger.log('wallet', 'Tx info', this.transactionInfo);
 
@@ -126,7 +126,7 @@ export class CoinTxInfoPage implements OnInit {
 
     async getTransactionDetails() {
         // TODO: To Improve
-        if ((this.networkWallet instanceof ElastosNetworkWallet) && ((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain))) {
+        if ((this.networkWallet instanceof ElastosNetworkWallet) && ((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain))) {
             const transaction = await (this.subWallet as MainAndIDChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
                 this.transactionInfo.confirmStatus = transaction.confirmations;
@@ -146,7 +146,7 @@ export class CoinTxInfoPage implements OnInit {
             }
         } else {
             // Address
-            if ((this.elastosChainCode === StandardCoinName.ETHSC) || (this.elastosChainCode === StandardCoinName.ETHDID)) {
+            if ((this.subWalletId === StandardCoinName.ETHSC) || (this.subWalletId === StandardCoinName.ETHDID)) {
                 const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
                 if (this.direction === TransactionDirection.SENT) {
                     this.targetAddress = await this.getETHSCTransactionTargetAddres(transaction);
@@ -212,7 +212,7 @@ export class CoinTxInfoPage implements OnInit {
         // Only show receiving address, total cost and fees if tx was not received
         if (this.direction !== TransactionDirection.RECEIVED) {
             // For ERC20 Token Transfer
-            if ((this.elastosChainCode === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
+            if ((this.subWalletId === StandardCoinName.ETHSC) && (this.transactionInfo.erc20TokenSymbol)) {
                 if (this.transactionInfo.erc20TokenValue) {
                     this.txDetails.unshift(
                         {
@@ -278,7 +278,7 @@ export class CoinTxInfoPage implements OnInit {
 
             if (this.targetAddress) {
                 // Only show the receiving address for multiable address wallet.
-                if (((this.elastosChainCode === StandardCoinName.ELA) || (this.elastosChainCode === StandardCoinName.IDChain)) && !this.networkWallet.masterWallet.account.SingleAddress) {
+                if (((this.subWalletId === StandardCoinName.ELA) || (this.subWalletId === StandardCoinName.IDChain)) && !this.networkWallet.masterWallet.account.SingleAddress) {
                     this.txDetails.unshift(
                         {
                             type: 'address',
@@ -291,8 +291,8 @@ export class CoinTxInfoPage implements OnInit {
         }
     }
 
-    goWebSite(elastosChainCode, txid) {
-        if (elastosChainCode === StandardCoinName.ELA) {
+    goWebSite(subWalletId, txid) {
+        if (subWalletId === StandardCoinName.ELA) {
             this.native.openUrl(this.blockchain_url + 'tx/' + txid);
         } else {
             this.native.openUrl(this.idchain_url + 'tx/' + txid);

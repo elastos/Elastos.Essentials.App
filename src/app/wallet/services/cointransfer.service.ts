@@ -21,7 +21,6 @@
  */
 
 import { Injectable } from '@angular/core';
-import { StandardCoinName } from '../model/coin';
 import { WalletAccount } from '../model/walletaccount';
 import { WalletID } from '../model/wallets/masterwallet';
 
@@ -40,7 +39,7 @@ export class Transfer {
     crDID: string = null;
     from: string = null;
     fee = 0;
-    elastosChainCode: string = null;
+    subWalletId: string = null;
     votes: any; // TODO
     amount: number;
     publickey: string;
@@ -48,7 +47,7 @@ export class Transfer {
     publicKeys: any;
     didrequest: string;
     // type: string = 'payment-confirm';
-    toElastosChainCode: string;
+    toSubWalletId: string;
     currency: string; // pay
     rate: number;
     payPassword: string;
@@ -95,9 +94,9 @@ export class CoinTransferService {
     public transferType: TransferType;
     public masterWalletId: string;
     // From subwallet
-    public elastosChainCode: StandardCoinName;
+    public subWalletId: string;
     // To subwallet (only for recharging funds)
-    public toElastosChainCode: string;
+    public toSubWalletId: string;
     public walletInfo: WalletAccount;
 
 
@@ -135,8 +134,8 @@ export class CoinTransferService {
         this.walletInfo = new WalletAccount();
         this.transferType = null;
         this.masterWalletId = null;
-        this.elastosChainCode = null;
-        this.toElastosChainCode = null;
+        this.subWalletId = null;
+        this.toSubWalletId = null;
         this.intentTransfer = new IntentTransfer();
         this.payTransfer = new PayTransfer();
         this.publickeys = null;

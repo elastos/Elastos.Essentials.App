@@ -145,8 +145,8 @@ export class AccessPage implements OnInit {
         return value;
     }
 
-    createAddress(elastosChainCode: string) {
-        return this.networkWallet.getSubWallet(elastosChainCode).createAddress();
+    createAddress(subWalletId: string) {
+        return this.networkWallet.getSubWallet(subWalletId).createAddress();
     }
 
     reduceArrayToDict(keyProperty: string) {

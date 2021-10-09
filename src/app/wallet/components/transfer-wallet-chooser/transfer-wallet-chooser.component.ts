@@ -12,7 +12,7 @@ import { WalletService } from '../../services/wallet.service';
 
 export type WalletChooserComponentOptions = {
   sourceWallet: NetworkWallet; // Master wallet from which funds will be transfered
-  elastosChainCode: string; // Target chain ID, used to display available balance for each wallet
+  subWalletId: string; // Target chain ID, used to display available balance for each wallet
   excludeWalletId?: string; // Optional wallet to not show in the list of selectable wallets
 }
 
