@@ -314,6 +314,7 @@ public class WebViewHandler {
                     dialog.dismiss();
                     dialog = null;
                 }
+                webView.destroy();
                 webView = null;
                 brwoserPlugin.webViewHandler = null;
                 //For onBackPressed work
