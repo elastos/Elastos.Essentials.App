@@ -7,6 +7,7 @@ class TranslationsLoader {
         'crcouncilvoting',
         'crcouncilmanager',
         'crproposalvoting',
+        "dappbrowser",
         "developertools",
         "didsessions",
         "dposvoting",
@@ -24,7 +25,7 @@ class TranslationsLoader {
         "fr"
     ];
 
-    static loadedTranslations : {[lang:string]:any} = {};
+    static loadedTranslations: { [lang: string]: any } = {};
     static translationKeyCount: number;
 
     /**
@@ -34,15 +35,15 @@ class TranslationsLoader {
     static async loadAllModulesAndMerge() {
         console.log("Loading all translations");
 
-        let translationsDir = __dirname+"/../src/assets/generated/translations";
-        if(!existsSync(translationsDir))
+        let translationsDir = __dirname + "/../src/assets/generated/translations";
+        if (!existsSync(translationsDir))
             mkdirSync(translationsDir, { recursive: true });
 
         this.translationKeyCount = 0;
         for (let lang of TranslationsLoader.languagesToLoad) {
             TranslationsLoader.loadedTranslations[lang] = {}
             for (let module of TranslationsLoader.modulesWithTranslations) {
-                let translation = await import("./strings/"+module+"/"+lang);
+                let translation = await import("./strings/" + module + "/" + lang);
 
                 TranslationsLoader.loadedTranslations[lang][module] = {};
 
@@ -60,12 +61,12 @@ class TranslationsLoader {
                     }
 
                     TranslationsLoader.loadedTranslations[lang][module][key] = value;
-                    this.translationKeyCount ++;
+                    this.translationKeyCount++;
                 }
                 //Object.assign(TranslationsLoader.loadedTranslations[lang], translation[lang]);
             }
 
-            writeFileSync(translationsDir+"/"+lang+".json", JSON.stringify(TranslationsLoader.loadedTranslations[lang]));
+            writeFileSync(translationsDir + "/" + lang + ".json", JSON.stringify(TranslationsLoader.loadedTranslations[lang]));
         }
 
         console.log("All translations have been loaded. Stats:");
@@ -73,6 +74,6 @@ class TranslationsLoader {
         console.log("   Languages  : ", this.languagesToLoad.length);
         console.log("   Strings    : ", this.translationKeyCount);
     }
-  }
+}
 
 TranslationsLoader.loadAllModulesAndMerge();

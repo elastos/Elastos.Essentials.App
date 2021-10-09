@@ -12,16 +12,14 @@
             <ion-grid class="fav-button ripple ion-activatable" *ngIf="isInFavorites()" (click)="removeFavorite()">
                 <img
                     [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-no-border-active.svg' : 'assets/browser/icons/dark_mode/icon-fav-no-border-active.svg'" />
-                Remove from favorites
+                {{ 'dappbrowser.menu-action-remove-from-favorites' | translate }}
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-grid>
         </ion-grid>
 
         <ion-grid class="networks">
-            <h1>Network Availability</h1>
-            {{favorite.networks}}
-            <p>Select which networks are supported by this dApp below to display it only when one of those networks is
-                active. If no network is selected, the favorite is shown for all networks.</p>
+            <h1>{{ 'dappbrowser.network-availability' | translate }}</h1>
+            <p>{{ 'dappbrowser.network-availability-intro' | translate }}</p>
             <ion-grid class="networks-list">
                 <ion-row *ngFor="let network of availableNetworks" class="network">
                     <ion-col size="1" class="logo">

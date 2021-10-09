@@ -17,7 +17,7 @@
         </ion-grid>
 
         <ion-grid class="box switches">
-            <div class="header">Active Network and Wallet</div>
+            <div class="header">{{ 'dappbrowser.menu-active-net-wallet' | translate }}</div>
 
             <ion-grid class="switches-container">
                 <ion-row>
@@ -28,7 +28,7 @@
                                 <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
                             </ion-col>
                             <ion-col size="9">
-                                <div class="title">Network</div>
+                                <div class="title">{{ 'dappbrowser.network' | translate }}</div>
                                 <div class="network">
                                     {{ walletNetworkService.activeNetwork.value.name }}
                                 </div>
@@ -44,7 +44,7 @@
                                     [src]="!theme.darkMode ? '/assets/browser/icons/icon-wallet.svg' : 'assets/browser/icons/dark_mode/icon-wallet.svg'" />
                             </ion-col>
                             <ion-col size="9">
-                                <div class="title">Wallet</div>
+                                <div class="title">{{ 'dappbrowser.wallet' | translate }}</div>
                                 <div class="network">{{walletService.activeNetworkWallet.value.masterWallet.name}}</div>
                             </ion-col>
                             <ion-ripple-effect></ion-ripple-effect>
@@ -55,19 +55,19 @@
         </ion-grid>
 
         <ion-grid class="box actions">
-            <div class="header">Actions</div>
+            <div class="header">{{ 'dappbrowser.menu-actions' | translate }}</div>
 
             <ion-row class="action-items">
                 <ion-col size="4" class="ripple ion-activatable">
                     <div class="action" (click)="addToFavorites()" *ngIf="browsedAppInfo && !isInFavorites()">
                         <img
                             [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav.svg' : 'assets/browser/icons/dark_mode/icon-fav.svg'" />
-                        Add to Favorites
+                        {{ 'dappbrowser.menu-action-add-to-favorites' | translate }}
                     </div>
                     <div class="action ripple ion-activatable" (click)="removeFromFavorites()" *ngIf="isInFavorites()">
                         <img
                             [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav.svg' : 'assets/browser/icons/dark_mode/icon-fav.svg'" />
-                        Remove from Favorites
+                        {{ 'dappbrowser.menu-action-remove-from-favorites' | translate }}
                         <ion-ripple-effect></ion-ripple-effect>
                     </div>
                     <ion-ripple-effect></ion-ripple-effect>
@@ -76,7 +76,7 @@
                     <div class="action" (click)="openExternal()">
                         <img
                             [src]="!theme.darkMode ? '/assets/browser/icons/icon-external.svg' : 'assets/browser/icons/dark_mode/icon-external.svg'" />
-                        External Browser
+                        {{ 'dappbrowser.menu-action-external-browser' | translate }}
                     </div>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
@@ -84,7 +84,7 @@
                     <div class="action" (click)="reloadPage()">
                         <img
                             [src]="!theme.darkMode ? '/assets/browser/icons/icon-reload.svg' : 'assets/browser/icons/dark_mode/icon-reload.svg'" />
-                        Reload
+                        {{ 'dappbrowser.menu-action-reload' | translate }}
                     </div>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
@@ -92,7 +92,7 @@
                     <div class="action" (click)="copyUrl()">
                         <img
                             [src]="!theme.darkMode ? '/assets/browser/icons/icon-copy-link.svg' : 'assets/browser/icons/dark_mode/icon-copy-link.svg'" />
-                        Copy Link
+                        {{ 'dappbrowser.menu-action-copy-link' | translate }}
                     </div>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
@@ -100,7 +100,7 @@
                     <div class="action" (click)="shareUrl()">
                         <img
                             [src]="!theme.darkMode ? '/assets/browser/icons/icon-share-link.svg' : 'assets/browser/icons/dark_mode/icon-share-link.svg'" />
-                        Share
+                        {{ 'dappbrowser.menu-action-share' | translate }}
                     </div>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>

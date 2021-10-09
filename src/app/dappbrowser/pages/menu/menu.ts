@@ -51,7 +51,7 @@ export class MenuPage {
 
 
     ionViewWillEnter() {
-        this.titleBar.setTitle("Options");
+        this.titleBar.setTitle(this.translate.instant("dappbrowser.menu-title"));
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, null);
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
             key: "close",
@@ -92,13 +92,13 @@ export class MenuPage {
 
     public async addToFavorites() {
         await this.favoritesService.addToFavorites(this.browsedAppInfo);
-        this.native.genericToast("Added to favorites");
+        this.native.genericToast('dappbrowser.added-to-favorites');
     }
 
     public async removeFromFavorites() {
         let existingFavorite = this.favoritesService.findFavoriteByUrl(this.browsedAppInfo.url);
         await this.favoritesService.removeFromFavorites(existingFavorite);
-        this.native.genericToast("Removed from favorites");
+        this.native.genericToast('dappbrowser.removed-from-favorites');
     }
 
     public pickNetwork() {

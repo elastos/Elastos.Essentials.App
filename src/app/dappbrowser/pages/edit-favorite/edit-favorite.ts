@@ -49,7 +49,7 @@ export class EditFavoritePage {
     // }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle("Edit favorite");
+        this.titleBar.setTitle(this.translate.instant("dappbrowser.edit-favorite-title"));
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             void this.goback();
         });

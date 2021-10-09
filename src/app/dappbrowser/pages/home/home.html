@@ -4,14 +4,14 @@
 
         <ion-row class="header-row">
             <ion-col size="12">
-                <h1>Discover dApps</h1>
-                <h3>Central place to find Essentials-compatible dApps.</h3>
+                <h1>{{ 'dappbrowser.home-header' | translate }}</h1>
+                <h3>{{ 'dappbrowser.home-intro' | translate }}</h3>
             </ion-col>
         </ion-row>
 
         <ion-row class="header-row fav-header">
             <ion-col size="6">
-                <h2>Favorites</h2>
+                <h2>{{ 'dappbrowser.favorites' | translate }}</h2>
             </ion-col>
             <ion-col size="6" class="network-col" (click)="pickNetwork()">
                 <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
@@ -22,8 +22,7 @@
         </ion-row>
 
         <p *ngIf="favorites.length == 0" class="no-favorite">
-            No favorite to show for the {{walletNetworkService.activeNetwork.value.name}} network.<br />
-            Enter a url above and use the menu to add dApps as favorites, or enable this network in existing favorites.
+            {{ 'dappbrowser.no-favorite' | translate:{networkName: walletNetworkService.activeNetwork.value.name} }}
         </p>
         <div *ngIf="favorites.length > 0">
             <ion-row *ngFor="let favorite of favorites" class="dapp-row ripple ion-activatable"
@@ -51,7 +50,7 @@
 
         <ion-row class="header-row other-apps-header">
             <ion-col size="6">
-                <h2>Other dApps</h2>
+                <h2>{{ 'dappbrowser.home-other-dapps' | translate }}</h2>
             </ion-col>
             <ion-col size="6" class="network-col" (click)="pickNetwork()">
                 <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
@@ -83,8 +82,7 @@
         </ion-row>
 
         <ion-grid *ngIf="dApps.length == 0" class="no-dapp-row">
-            We currently don't have any interesting dApp to recommend for this network or on this platform.
-            Please manually enter urls above and add them as favorites.
+            {{ 'dappbrowser.home-no-other-dapp' | translate }}
         </ion-grid>
     </ion-grid>
 

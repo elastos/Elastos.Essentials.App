@@ -149,7 +149,7 @@ export class DappBrowserService {
 
         await dappBrowser.open(url, target, options);
         if (target == "_webview") {
-            this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
+            void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
         }
     }
 
