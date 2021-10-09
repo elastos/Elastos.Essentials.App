@@ -75,7 +75,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     copyAddress() {
         void this.native.copyClipboard(this.qrcode);
-        this.native.toast(this.translate.instant("wallet.coin-address-copied", { coinName: this.subWalletId }));
+        this.native.toast(this.translate.instant("wallet.coin-address-copied", { coinName: this.tokenName }));
     }
 
     async getAddress() {
