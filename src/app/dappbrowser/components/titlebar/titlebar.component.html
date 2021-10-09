@@ -31,13 +31,13 @@
         <ion-col *ngIf="_title != null" size="1.25">
             <div></div>
         </ion-col>
-        <ion-col *ngIf="_title == null" size="8.25">
+        <ion-col *ngIf="_title == null" [size]="urlBoxColSize">
             <ion-input type="text" name="url" ngDefaultControl (keyup.enter)="emit()"
                 [placeholder]="'dappbrowser.input-custom-address' | translate" [(ngModel)]="_url" class="url-input"
                 inputmode="url" enterkeyhint="go" clearInput>
             </ion-input>
         </ion-col>
-        <ion-col size="1.25">
+        <ion-col *ngIf="menuVisible" size="1.25">
             <div class="img-btn img-btn-mark">
                 <img [src]="getIconPath(2)" (click)="onIconClicked(2)">
             </div>

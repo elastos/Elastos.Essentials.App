@@ -13,6 +13,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 export class BrowserTitleBarComponent {
     public _url: string = "";
     public _title: string = null;
+    public menuVisible: boolean = true;
+    public urlBoxColSize: number = 8.25;
 
     @Input()
     set url(url: string) {
@@ -81,6 +83,16 @@ export class BrowserTitleBarComponent {
 
     public setUrl(url: string) {
         this._url = url;
+    }
+
+    public setMenuVisible(menuVisible: boolean) {
+        this.menuVisible = menuVisible;
+        if (menuVisible) {
+            this.urlBoxColSize = 8.25;
+        }
+        else {
+            this.urlBoxColSize = 9.25;
+        }
     }
 
     public getIconPath(no: number): string {
