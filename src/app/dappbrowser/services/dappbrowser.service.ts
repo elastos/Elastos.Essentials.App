@@ -4,6 +4,7 @@ import { GetCredentialsQuery } from '@elastosfoundation/elastos-connectivity-sdk
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -74,7 +75,7 @@ export class DappBrowserService {
         public zone: NgZone,
         private storageService: StorageService
     ) {
-        void this.init()
+        void this.init();
     }
 
     async init() {
@@ -88,16 +89,6 @@ export class DappBrowserService {
 
         Logger.log("dappbrowser", "Loading the IAB elastos connector");
         this.elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
-
-        // Get the active wallet address
-        let subwallet = WalletService.instance.getActiveNetworkWallet().getMainEvmSubWallet();
-        this.userAddress = await subwallet.createAddress();
-
-        // Get the active netwok chain ID
-        this.activeChainID = WalletService.instance.activeNetworkWallet.value.network.getMainChainID();
-
-        // Get the active network RPC URL
-        this.rpcUrl = WalletService.instance.activeNetworkWallet.value.network.getMainEvmRpcApiUrl();
     }
 
     public setClient(dabClient: DappBrowserClient) {
@@ -120,7 +111,17 @@ export class DappBrowserService {
      * @param title The dApp title to show, if have title the url bar hide, otherwise show url bar.
      *
      */
-    public async open(url: string, target?: string, title?: string) {
+    public async open(url: string, title?: string, target?: string) {
+        // Get the active wallet address
+        let subwallet = WalletService.instance.getActiveNetworkWallet().getMainEvmSubWallet();
+        this.userAddress = await subwallet.createAddress();
+
+        // Get the active netwok chain ID
+        this.activeChainID = WalletService.instance.activeNetworkWallet.value.network.getMainChainID();
+
+        // Get the active network RPC URL
+        this.rpcUrl = WalletService.instance.activeNetworkWallet.value.network.getMainEvmRpcApiUrl();
+
         console.log("OPEN BROWSER URL", url);
         this.url = url;
 
@@ -147,6 +148,9 @@ export class DappBrowserService {
         });
 
         await dappBrowser.open(url, target, options);
+        if (target == "_webview") {
+            this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
+        }
     }
 
     public async handleEvent(event: DappBrowserPlugin.DappBrowserEvent) {
@@ -216,7 +220,7 @@ export class DappBrowserService {
         void dappBrowser.executeScript({
             code: this.web3ProviderCode + "\
             console.log('Elastos Essentials Web3 provider is being created'); \
-            window.ethereum = new InAppBrowserWeb3Provider();\
+            window.ethereum = new DappBrowserWeb3Provider();\
             window.web3 = { \
                 currentProvider: window.ethereum\
             };\
@@ -231,9 +235,9 @@ export class DappBrowserService {
         Logger.log("dappbrowser", "Executing Elastos connector injection script");
         void dappBrowser.executeScript({
             code: this.elastosConnectorCode + "\
-            console.log('Elastos Essentials in app browser connector is being created'); \
-            window.elastos = new EssentialsIABConnector();\
-            console.log('Elastos Essentials in app browser connector is injected', window.elastos); \
+            console.log('Elastos Essentials dapp browser connector is being created'); \
+            window.elastos = new EssentialsDABConnector();\
+            console.log('Elastos Essentials dapp browser connector is injected', window.elastos); \
         "});
 
         Logger.log("dappbrowser", "Load start completed");

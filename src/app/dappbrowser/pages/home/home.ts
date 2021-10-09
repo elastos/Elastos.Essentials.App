@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -13,7 +12,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
 import { BrowserFavorite } from '../../model/favorite';
-import { DappBrowserClient, DappBrowserService } from '../../services/dappbrowser.service';
+import { DappBrowserService } from '../../services/dappbrowser.service';
 import { FavoritesService } from '../../services/favorites.service';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
@@ -32,7 +31,7 @@ type DAppMenuEntry = {
     templateUrl: 'home.html',
     styleUrls: ['home.scss']
 })
-export class HomePage implements DappBrowserClient {
+export class HomePage { //implements DappBrowserClient // '_blank' mode {
     @ViewChild(BrowserTitleBarComponent, { static: false }) titleBar: BrowserTitleBarComponent;
 
     public dApps: DAppMenuEntry[] = [];
@@ -48,7 +47,6 @@ export class HomePage implements DappBrowserClient {
     constructor(
         public translate: TranslateService,
         private nav: GlobalNavService,
-        public iab: InAppBrowser,
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,
@@ -218,16 +216,13 @@ export class HomePage implements DappBrowserClient {
     }
 
     private dabOpen(url: string, title?: string) {
-        let target = "_webview";
+        // '_blank' mode
         // let target = "_blank";
-        if (target == "_blank") {
-            this.dappbrowserService.setClient(this);
-            this.dabRunning = true;
-        }
-        void this.dappbrowserService.open(url, target, title);
-        if (target == "_webview") {
-            void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
-        }
+        // if (target == "_blank") {
+        //     this.dappbrowserService.setClient(this);
+        //     this.dabRunning = true;
+        // }
+        void this.dappbrowserService.open(url, title);
     }
 
     private openWithExternalBrowser(url: string) {
@@ -249,14 +244,15 @@ export class HomePage implements DappBrowserClient {
         });
     }
 
-    onExit(mode?: string) {
-        this.zone.run(() => {
-            this.dabRunning = false;
-        });
-        if (mode) {
-            void this.nav.goToLauncher();
-        }
-    }
+    // '_blank' mode
+    // onExit(mode?: string) {
+    //     this.zone.run(() => {
+    //         this.dabRunning = false;
+    //     });
+    //     if (mode) {
+    //         void this.nav.goToLauncher();
+    //     }
+    // }
 
     onMenu() {
         dappBrowser.hide();

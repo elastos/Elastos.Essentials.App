@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
@@ -37,8 +36,7 @@ import { DAppBrowserRoutingModule } from './routing';
     HomePage
   ],
   providers: [
-    Platform,
-    InAppBrowser
+    Platform
   ]
 })
 export class DAppBrowserModule { }

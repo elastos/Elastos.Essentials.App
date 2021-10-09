@@ -36,7 +36,6 @@
     "@ionic-native/core": "5.30.0",
     "@ionic-native/file": "5.31.1",
     "@ionic-native/firebase-x": "^5.35.0",
-    "@ionic-native/in-app-browser": "^5.35.0",
     "@ionic-native/ionic-webview": "5.31.1",
     "@ionic-native/keyboard": "5.31.1",
     "@ionic-native/qr-scanner": "5.31.1",
@@ -101,7 +100,6 @@
     "cordova-plugin-app-version": "0.1.12",
     "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-firebasex": "^13.0.1-cli",
-    "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "5.0.0",
     "cordova-plugin-printer": "0.8.0",
@@ -161,7 +159,6 @@
       "elastos-essentials-plugin-internal": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
       "cordova-sqlite-storage": {},
-      "cordova-plugin-inappbrowser": {},
       "cordova-plugin-firebasex": {
         "FIREBASE_ANALYTICS_COLLECTION_ENABLED": "true",
         "FIREBASE_PERFORMANCE_COLLECTION_ENABLED": "true",
@@ -188,8 +185,8 @@
       "elastos-essentials-plugin-dappbrowser": {}
     },
     "platforms": [
-      "android",
-      "ios"
+        "android",
+        "ios"
     ]
   }
 }

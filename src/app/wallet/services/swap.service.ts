@@ -20,10 +20,8 @@
  * SOFTWARE.
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { DAppBrowser, IABExitData, InAppBrowserClient } from 'src/app/model/dappbrowser/dappbrowser';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SwapProvider } from '../model/earn/swapprovider';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
@@ -43,13 +41,13 @@ import { AnySubWallet } from '../model/wallets/subwallet';
 @Injectable({
     providedIn: 'root'
 })
-export class SwapService implements InAppBrowserClient {
+export class SwapService {
     public static instance: SwapService = null;
 
     constructor(
-        public httpClient: HttpClient, // InAppBrowserClient implementation
-        public theme: GlobalThemeService, // InAppBrowserClient implementation
-        public iab: InAppBrowser) {// InAppBrowserClient implementation
+        public theme: GlobalThemeService,
+        public dappbrowserService: DappBrowserService,
+    ) {
 
         SwapService.instance = this;
     }
@@ -84,11 +82,7 @@ export class SwapService implements InAppBrowserClient {
             }
         }
 
-        void DAppBrowser.open(this, targetUrl, provider.baseProvider.name);
+        void this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
     }
 
-    // On DAppBrowser exit
-    onExit(data: IABExitData) {
-
-    }
 }

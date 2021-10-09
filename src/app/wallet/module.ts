@@ -27,7 +27,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 /****************** Ionic ******************/
 import { IonicModule } from '@ionic/angular';
@@ -63,7 +62,6 @@ import { LocalStorage } from './services/storage.service';
         Native,
         PopupProvider,
         WebView,
-        InAppBrowser
     ],
     bootstrap: [],
     schemas: []

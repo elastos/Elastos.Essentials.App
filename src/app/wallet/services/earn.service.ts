@@ -20,11 +20,8 @@
  * SOFTWARE.
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { DAppBrowser, IABExitData, InAppBrowserClient } from 'src/app/model/dappbrowser/dappbrowser';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { EarnProvider } from '../model/earn/earnprovider';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
 import { AnySubWallet } from '../model/wallets/subwallet';
@@ -55,13 +52,12 @@ import { AnySubWallet } from '../model/wallets/subwallet';
 @Injectable({
     providedIn: 'root'
 })
-export class EarnService implements InAppBrowserClient {
+export class EarnService {
     public static instance: EarnService = null;
 
     constructor(
-        public httpClient: HttpClient, // InAppBrowserClient implementation
-        public theme: GlobalThemeService, // InAppBrowserClient implementation
-        public iab: InAppBrowser) {// InAppBrowserClient implementation
+        public dappbrowserService: DappBrowserService,
+        ) {
 
         EarnService.instance = this;
     }
@@ -105,11 +101,6 @@ export class EarnService implements InAppBrowserClient {
         // Use the staking url (more accurate), if any, otherwise the default project url
         let targetUrl = provider.depositUrl || provider.baseProvider.projectUrl;
 
-        void DAppBrowser.open(this, targetUrl, provider.baseProvider.name);
-    }
-
-    // On DAppBrowser exit
-    onExit(data: IABExitData) {
-
+        void this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
     }
 }

@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,7 +29,6 @@ export class BrowserPage implements DappBrowserClient {
     constructor(
         public translate: TranslateService,
         private nav: GlobalNavService,
-        public iab: InAppBrowser,
         public theme: GlobalThemeService,
         public httpClient: HttpClient,
         public zone: NgZone,

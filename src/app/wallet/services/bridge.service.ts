@@ -20,11 +20,8 @@
  * SOFTWARE.
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { DAppBrowser, IABExitData, InAppBrowserClient } from 'src/app/model/dappbrowser/dappbrowser';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { BridgeProvider } from '../model/earn/bridgeprovider';
 import { Network } from '../model/networks/network';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
@@ -40,7 +37,7 @@ import { WalletNetworkService } from './network.service';
 @Injectable({
     providedIn: 'root'
 })
-export class BridgeService implements InAppBrowserClient {
+export class BridgeService {
     public static instance: BridgeService = null;
 
     /**
@@ -58,11 +55,9 @@ export class BridgeService implements InAppBrowserClient {
     ] */
 
     constructor(
-        public httpClient: HttpClient, // InAppBrowserClient implementation
-        public theme: GlobalThemeService, // InAppBrowserClient implementation
         public networkService: WalletNetworkService,
-        public iab: InAppBrowser) {// InAppBrowserClient implementation
-
+        public dappbrowserService: DappBrowserService,
+    ) {
         BridgeService.instance = this;
     }
 
@@ -85,7 +80,7 @@ export class BridgeService implements InAppBrowserClient {
     }
 
     /**
-     * As not all bridge providers can bridge to all networks, this method returns the possible target 
+     * As not all bridge providers can bridge to all networks, this method returns the possible target
      * networks for a provider. Those target networks are found by browsing all networks and checking if they
      * are using the same base provider.
      */
@@ -104,11 +99,6 @@ export class BridgeService implements InAppBrowserClient {
         // Use the swap url (more accurate), if any, otherwise the default project url
         let targetUrl = provider.bridgeUrl || provider.baseProvider.projectUrl;
 
-        void DAppBrowser.open(this, targetUrl, provider.baseProvider.name);
-    }
-
-    // On DAppBrowser exit
-    onExit(data: IABExitData) {
-
+        this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
     }
 }
