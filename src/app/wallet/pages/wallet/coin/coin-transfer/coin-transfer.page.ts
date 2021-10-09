@@ -855,7 +855,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async choosePersonalWallet(excludeCurrentWallet = false) {
         let options: WalletChooserComponentOptions = {
             sourceWallet: this.networkWallet,
-            elastosChainCode: this.elastosChainCode as StandardCoinName
+            elastosChainCode: this.elastosChainCode
         };
 
         if (excludeCurrentWallet) {
