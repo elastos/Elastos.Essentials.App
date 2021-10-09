@@ -62,7 +62,7 @@ export class DAppBrowser {
         let subwallet = WalletService.instance.getActiveNetworkWallet().getMainEvmSubWallet();
         dappBrowser.userAddress = await subwallet.createAddress();
 
-        // Get the active netwok chain ID
+        // Get the active network chain ID
         let activeChainID = WalletService.instance.activeNetworkWallet.value.network.getMainChainID();
 
         // Get the active network RPC URL
@@ -164,11 +164,15 @@ export class DAppBrowser {
                 break;
             case "wallet_switchEthereumChain":
                 Logger.log("dappbrowser", "Received switch ethereum chain request");
+                this.browser.hide();
                 await this.handleSwitchEthereumChain(message);
+                this.browser.show();
                 break;
             case "wallet_addEthereumChain":
                 Logger.log("dappbrowser", "Received add ethereum chain request");
+                this.browser.hide();
                 await this.handleAddEthereumChain(message);
+                this.browser.show();
                 break;
 
             // ELASTOS CONNECTOR

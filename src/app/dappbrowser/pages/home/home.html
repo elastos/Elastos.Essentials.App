@@ -41,7 +41,7 @@
                 </ion-col>
                 <ion-col class="right-col" size="2">
                     <img class="next"
-                        [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+                        [src]="!theme.darkMode ? '/assets/browser/icons/right-arrow.svg' : '/assets/browser/icons/dark_mode/right-arrow.svg'">
                     <img class="settings" src="/assets/browser/icons/settings.svg"
                         (click)="openFavoriteSettings($event, favorite)" />
                 </ion-col>
@@ -75,7 +75,7 @@
             </ion-col>
             <ion-col class="right-col" size="2">
                 <img *ngIf="!app.useExternalBrowser"
-                    [src]="!theme.darkMode ? '/assets/launcher/icons/right-arrow.svg' : '/assets/launcher/icons/dark_mode/right-arrow.svg'">
+                    [src]="!theme.darkMode ? '/assets/browser/icons/right-arrow.svg' : '/assets/browser/icons/dark_mode/right-arrow.svg'">
                 <img *ngIf="app.useExternalBrowser"
                     [src]="!theme.darkMode ? '/assets/browser/icons/icon-external-link.svg' : '/assets/browser/icons/dark_mode/icon-external-link.svg'">
             </ion-col>

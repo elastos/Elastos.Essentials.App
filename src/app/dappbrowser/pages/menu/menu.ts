@@ -14,6 +14,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 import { BrowsedAppInfo } from '../../model/browsedappinfo';
 import { DappBrowserService } from '../../services/dappbrowser.service';
 import { FavoritesService } from '../../services/favorites.service';
@@ -43,6 +44,7 @@ export class MenuPage {
         public walletNetworkService: WalletNetworkService,
         private walletNetworkUIService: WalletNetworkUIService,
         public walletService: WalletService,
+        private walletUIService: WalletUIService,
         private globalIntentService: GlobalIntentService,
         private clipboard: Clipboard,
         private globalNative: GlobalNativeService
@@ -103,6 +105,10 @@ export class MenuPage {
 
     public pickNetwork() {
         void this.walletNetworkUIService.chooseActiveNetwork();
+    }
+
+    public pickWallet() {
+        void this.walletUIService.chooseActiveWallet();
     }
 
     public openExternal() {
