@@ -1,34 +1,34 @@
 export const zh = {
   'dappbrowser': {
     // Title bar
-    'input-custom-address': 'Input a custom address here',
+    'input-custom-address': '在此处输入自定义地址',
 
     // Home
-    'home-header': 'Discover dApps',
-    'home-intro': 'Central place to find Essentials-compatible dApps.',
-    'favorites': 'Favorites',
-    'no-favorite': 'No favorite to show for the {{networkName}} network. Enter a url above and use the menu to add dApps as favorites, or enable this network in existing favorites.',
-    'home-other-dapps': 'Other dApps',
-    'home-no-other-dapp': 'We currently don\'t have any interesting dApp to recommend for this network or on this platform. Please manually enter urls above and add them as favorites.',
+    'home-header': '探索 dApp',
+    'home-intro': '找到与 Essentials 兼容的 dApp.',
+    'favorites': '收藏夹',
+    'no-favorite': '{{networkName}} 网络没有可显示的收藏夹。在上方输入 url 并使用菜单将 dApp 添加为收藏夹，或在现有收藏夹中启用此网络。',
+    'home-other-dapps': '其它 dApp',
+    'home-no-other-dapp': '目前没有任何有趣的 dApp 可以推荐给这个网络或这个平台。请在上方手动输入网址并将其添加为收藏夹。',
 
     // Menu
-    'menu-title': 'Options',
-    'menu-active-net-wallet': 'Active Network and Wallet',
-    'network': 'Network',
-    'wallet': 'Wallet',
-    'menu-actions': 'Actions',
-    'menu-action-add-to-favorites': 'Add to Favorites',
-    'menu-action-remove-from-favorites': 'Remove from Favorites',
-    'menu-action-external-browser': 'External Browser',
-    'menu-action-reload': 'Reload',
-    'menu-action-copy-link': 'Copy Link',
-    'menu-action-share': 'Share',
-    'added-to-favorites': 'Added to Favorites',
-    'removed-from-favorites': 'Removed from Favorites',
+    'menu-title': '选项',
+    'menu-active-net-wallet': '当前网络和钱包',
+    'network': '网络',
+    'wallet': '钱包',
+    'menu-actions': '行动',
+    'menu-action-add-to-favorites': '添加到收藏夹',
+    'menu-action-remove-from-favorites': '从收藏夹中删除',
+    'menu-action-external-browser': '外部浏览器',
+    'menu-action-reload': '重新加载',
+    'menu-action-copy-link': '复制链接',
+    'menu-action-share': '分享',
+    'added-to-favorites': '已添加到收藏夹',
+    'removed-from-favorites': '已从收藏夹中删除',
 
     // Edit favorite
-    'edit-favorite-title': 'Edit Favorite',
-    'network-availability': 'Network Availability',
-    'network-availability-intro': 'Select which networks are supported by this dApp below to display it only when one of those networks is active. If no network is selected, the favorite is shown for all networks.',
+    'edit-favorite-title': '编辑收藏',
+    'network-availability': '网络可用性',
+    'network-availability-intro': '在下方选择此 dApp 支持哪些网络，仅当这些网络之一处于活动状态时才显示它。如果未选择任何网络，则会显示所有网络的收藏夹。',
   }
 };
