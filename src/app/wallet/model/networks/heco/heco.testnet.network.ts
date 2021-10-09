@@ -6,7 +6,7 @@ export class HECOTestNetNetwork extends EVMNetwork {
   constructor() {
     super(
       "heco",
-      "HECO Testnet",
+      "Heco Testnet",
       "assets/wallet/networks/hecochain.png",
       "HT",
       "Huobi Token",

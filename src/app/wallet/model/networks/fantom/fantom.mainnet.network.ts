@@ -6,7 +6,7 @@ export class FantomMainNetNetwork extends EVMNetwork {
   constructor() {
     super(
       "fantom",
-      "FANTOM",
+      "Fantom",
       "assets/wallet/networks/fantom.png",
       "FTM",
       "Fantom Token",
