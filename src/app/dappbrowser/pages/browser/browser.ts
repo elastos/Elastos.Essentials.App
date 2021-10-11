@@ -47,7 +47,7 @@ export class BrowserPage implements DappBrowserClient {
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (no) => {
             switch (no) {
                 case 0:
-                    void this.onGoBack();
+                    void dappBrowser.close();
                     break;
                 case 1:
                     void this.onGoBack();
