@@ -29,7 +29,7 @@ export class BrowserTitleBarComponent {
     emit() {
         Logger.log("browser", "URL bar - request go browse to url:", this._url);
         if (this._url && this._url !== "") {
-            let fixedUrl: string = this._url.toLowerCase();
+            let fixedUrl: string = this._url;
             if (!fixedUrl.startsWith("http"))
                 fixedUrl = "https://" + fixedUrl;
             this.urlChanged.emit(fixedUrl);
@@ -99,7 +99,7 @@ export class BrowserTitleBarComponent {
         // Replace built-in icon path placeholders with real picture path
         switch (no) {
             case 0:
-                return this.theme.darkMode? 'assets/components/titlebar/darkmode/elastos.svg' : 'assets/components/titlebar/elastos.svg';
+                return this.theme.darkMode ? 'assets/components/titlebar/darkmode/elastos.svg' : 'assets/components/titlebar/elastos.svg';
             case 1:
                 return this.theme.darkMode ? 'assets/components/titlebar/darkmode/back.svg' : 'assets/components/titlebar/back.svg';
             case 2:
