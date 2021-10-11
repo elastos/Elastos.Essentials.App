@@ -127,7 +127,8 @@ export class EscTransactionPage implements OnInit {
       }
       try {
         const gasLimit = await this.evmSubWallet.estimateGas(tx);
-        this.gasLimit = Util.ceil(gasLimit).toString();
+        // '* 1.5': Make sure the gasLimit is big enough.
+        this.gasLimit = Util.ceil(gasLimit * 1.5).toString();
       }
       catch (err) {
         Logger.log("wallet", "Can not estimate the gaslimit, set default value 3000000");
