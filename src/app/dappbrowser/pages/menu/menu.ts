@@ -106,12 +106,14 @@ export class MenuPage {
         this.native.genericToast('dappbrowser.removed-from-favorites');
     }
 
-    public pickNetwork() {
-        void this.walletNetworkUIService.chooseActiveNetwork();
+    public async pickNetwork() {
+        if (await this.walletNetworkUIService.chooseActiveNetwork())
+            void this.goback(); // Exit menu after switching the network (most frequent case is user wants to exit)
     }
 
-    public pickWallet() {
-        void this.walletUIService.chooseActiveWallet();
+    public async pickWallet() {
+        if (await this.walletUIService.chooseActiveWallet())
+            void this.goback(); // Exit menu after switching the wallet (most frequent case is user wants to exit)
     }
 
     public openExternal() {

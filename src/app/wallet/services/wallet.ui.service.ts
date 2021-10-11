@@ -44,8 +44,9 @@ export class WalletUIService {
 
     /**
      * Lets user pick a wallet in the list of all available wallets.
+     * Promise resolves after the wallet is chosen, or on cancellation
      */
-    async chooseActiveWallet() {
+    async chooseActiveWallet(): Promise<boolean> {
         let options: WalletChooserComponentOptions = {
             currentNetworkWallet: this.walletService.activeNetworkWallet.value
         };
@@ -54,15 +55,21 @@ export class WalletUIService {
             component: WalletChooserComponent,
             componentProps: options,
         });
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
-        modal.onWillDismiss().then(async (params) => {
-            Logger.log('wallet', 'New wallet selected:', params);
-            if (params.data && params.data.selectedMasterWalletId) {
-                let wallet = this.walletService.getNetworkWalletFromMasterWalletId(params.data.selectedMasterWalletId);
-                void this.walletService.setActiveNetworkWallet(wallet);
-            }
+
+        return new Promise(resolve => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+            modal.onWillDismiss().then(async (params) => {
+                Logger.log('wallet', 'New wallet selected:', params);
+                if (params.data && params.data.selectedMasterWalletId) {
+                    let wallet = this.walletService.getNetworkWalletFromMasterWalletId(params.data.selectedMasterWalletId);
+                    void this.walletService.setActiveNetworkWallet(wallet);
+                    resolve(true);
+                }
+                else
+                    resolve(false);
+            });
+            void modal.present();
         });
-        void modal.present();
     }
 }
 

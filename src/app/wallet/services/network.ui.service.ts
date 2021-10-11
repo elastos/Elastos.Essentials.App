@@ -44,8 +44,9 @@ export class WalletNetworkUIService {
 
     /**
      * Lets user pick a network in the list of all available networks.
+     * Promise resolves when a new network is chosen or when cancelled.
      */
-    async chooseActiveNetwork() {
+    async chooseActiveNetwork(): Promise<boolean> {
         let options: NetworkChooserComponentOptions = {
             currentNetwork: this.networkService.activeNetwork.value
         };
@@ -54,14 +55,20 @@ export class WalletNetworkUIService {
             component: NetworkChooserComponent,
             componentProps: options,
         });
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
-        modal.onWillDismiss().then(async (params) => {
-            Logger.log('wallet', 'New network selected:', params);
-            if (params.data && params.data.selectedNetworkKey) {
-                void this.networkService.setActiveNetwork(this.networkService.getNetworkByKey(params.data.selectedNetworkKey));
-            }
+
+        return new Promise(resolve => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+            modal.onWillDismiss().then(async (params) => {
+                Logger.log('wallet', 'New network selected:', params);
+                if (params.data && params.data.selectedNetworkKey) {
+                    void this.networkService.setActiveNetwork(this.networkService.getNetworkByKey(params.data.selectedNetworkKey));
+                    resolve(true);
+                }
+                else
+                    resolve(false);
+            });
+            void modal.present();
         });
-        void modal.present();
     }
 }
 
