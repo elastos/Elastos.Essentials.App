@@ -316,13 +316,14 @@ export class DappBrowserService {
         let iconUrl: string = null;
         let links = htmlHeader.getElementsByTagName("link");
         if (links && links.length > 0) {
-            let iconLink = Array.from(links).find(l => l.rel && l.rel.toLowerCase().indexOf("icon") > 0);
+            let iconLink = Array.from(links).find(l => l.rel && l.rel.toLowerCase().indexOf("icon") >= 0);
             if (iconLink) {
                 iconUrl = iconLink.getAttribute("href");
                 if (iconUrl) {
                     if (!iconUrl.startsWith("http")) { // Not an absolute url, so we have to concatenate the dapp url
                         let url = new URL(this.url);
-                        iconUrl = (url.protocol + "//" + url.host + iconUrl);
+                        url.pathname = iconUrl;
+                        iconUrl = url.toString();
                     }
                 }
             }

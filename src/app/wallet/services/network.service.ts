@@ -156,7 +156,7 @@ export class WalletNetworkService {
      * Tells if the currently active network is the elastos network.
      */
     public isActiveNetworkElastos(): boolean {
-        return this.activeNetwork.value.key === "elastos";
+        return this.activeNetwork.value && this.activeNetwork.value.key === "elastos";
     }
 }
 
