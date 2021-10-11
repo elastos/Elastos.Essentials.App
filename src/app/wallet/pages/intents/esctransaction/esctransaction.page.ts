@@ -117,11 +117,12 @@ export class EscTransactionPage implements OnInit {
     this.gasPriceGwei = parseInt(this.gasPrice) / 1000000000;
 
     if (this.coinTransferService.payloadParam.gas) {
-      this.gasLimit = this.coinTransferService.payloadParam.gas;
+      this.gasLimit = Util.getDecimalString(this.coinTransferService.payloadParam.gas);
     } else {
       let tx = {
         data: this.coinTransferService.payloadParam.data,
         value: this.coinTransferService.payloadParam.value || "0",
+        from: this.coinTransferService.payloadParam.from, // Must set from for mdex.
         to: this.coinTransferService.payloadParam.to
       }
       try {
