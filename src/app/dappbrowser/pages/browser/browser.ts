@@ -42,11 +42,12 @@ export class BrowserPage implements DappBrowserClient {
     ionViewWillEnter() {
         this.dappbrowserService.setClient(this);
         this.titleBar.setTitle(this.dappbrowserService.title);
+        this.titleBar.setCloseMode(true);
 
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (no) => {
             switch (no) {
                 case 0:
-                    this.onGoToLauncher();
+                    void this.onGoBack();
                     break;
                 case 1:
                     void this.onGoBack();

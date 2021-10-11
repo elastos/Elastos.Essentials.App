@@ -140,6 +140,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     ionViewWillEnter() {
         this.setTheme(this.theme.darkMode);
         this.titleBar.setMenuVisible(false);
+        this.titleBar.setCloseMode(false);
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
             this.buildFilteredFavorites();

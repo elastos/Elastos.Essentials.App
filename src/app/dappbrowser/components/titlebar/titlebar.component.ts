@@ -11,10 +11,11 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./titlebar.component.scss'],
 })
 export class BrowserTitleBarComponent {
-    public _url: string = "";
+    public _url = "";
     public _title: string = null;
-    public menuVisible: boolean = true;
-    public urlBoxColSize: number = 8.25;
+    public menuVisible = true;
+    public urlBoxColSize = 8.25;
+    private closeMode = false; // Whether the top left icon shows a close icon, or a elastos icon.
 
     @Input()
     set url(url: string) {
@@ -95,11 +96,18 @@ export class BrowserTitleBarComponent {
         }
     }
 
+    public setCloseMode(closeMode: boolean) {
+        this.closeMode = closeMode;
+    }
+
     public getIconPath(no: number): string {
         // Replace built-in icon path placeholders with real picture path
         switch (no) {
             case 0:
-                return this.theme.darkMode ? 'assets/components/titlebar/darkmode/elastos.svg' : 'assets/components/titlebar/elastos.svg';
+                if (this.closeMode)
+                    return this.theme.darkMode ? 'assets/components/titlebar/darkmode/close.svg' : 'assets/components/titlebar/close.svg';
+                else
+                    return this.theme.darkMode ? 'assets/components/titlebar/darkmode/elastos.svg' : 'assets/components/titlebar/elastos.svg';
             case 1:
                 return this.theme.darkMode ? 'assets/components/titlebar/darkmode/back.svg' : 'assets/components/titlebar/back.svg';
             case 2:
