@@ -20,7 +20,8 @@ export class ElastosERC20SubWallet extends ERC20SubWallet {
   }
 
   public getSecondaryIcon(): string {
-    return "assets/wallet/coins/eth-purple.svg";
+    return null;
+    //return "assets/wallet/coins/eth-purple.svg";
   }
 
   public getDisplayableERC20TokenInfo(): string {
