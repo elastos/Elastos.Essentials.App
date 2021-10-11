@@ -66,7 +66,7 @@
                     </div>
                     <div class="action ripple ion-activatable" (click)="removeFromFavorites()" *ngIf="isInFavorites()">
                         <img
-                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-filled.svg' : 'assets/browser/icons/dark_mode/icon-fav-filled.svg'" />
+                            [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav-active.svg' : 'assets/browser/icons/dark_mode/icon-fav-active.svg'" />
                         {{ 'dappbrowser.menu-action-remove-from-favorites' | translate }}
                         <ion-ripple-effect></ion-ripple-effect>
                     </div>
