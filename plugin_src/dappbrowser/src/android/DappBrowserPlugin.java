@@ -71,7 +71,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
 
     private CallbackContext callbackContext;
     public WebViewHandler webViewHandler;
-//    public int viewHeight;
+    public int viewHeight;
     static DappBrowserPlugin instance = null;
 
     static DappBrowserPlugin getInstance() {
@@ -80,7 +80,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
 
     @Override
     public void pluginInitialize() {
-//        viewHeight = ((ViewGroup)this.webView.getView()).getHeight();
+        viewHeight = ((ViewGroup)this.webView.getView()).getHeight();
         instance = this;
     }
 
@@ -399,7 +399,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    private void reload(CallbackContext callbackContext) throws JSONException {
+    private void reload(CallbackContext callbackContext) {
         if (webViewHandler != null) {
             webViewHandler.reload();
         }

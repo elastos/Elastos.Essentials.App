@@ -96,7 +96,7 @@ public class WebViewHandler {
         if (target.equals("_webview")) {
             dialog = null;
             viewGroup = (ViewGroup)brwoserPlugin.webView.getView();
-            layoutParams.height = viewGroup.getHeight() - titlebarHeight;
+            layoutParams.height = brwoserPlugin.viewHeight - titlebarHeight;
         }
         else {
             dialog = new DappBrowserDialog(activity, this.options);
