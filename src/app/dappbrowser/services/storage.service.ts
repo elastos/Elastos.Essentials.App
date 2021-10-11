@@ -30,8 +30,6 @@ export class StorageService {
      * Saves information about a browsed dapp for later use (for example when adding to favorites)
      */
     public async saveBrowsedAppInfo(url: string, title: string, description: string, iconUrl: string): Promise<BrowsedAppInfo> {
-        // TODO: also save a local base64 copy of the icon ?
-
         let appInfo: BrowsedAppInfo = {
             url, title, description, iconUrl
         };

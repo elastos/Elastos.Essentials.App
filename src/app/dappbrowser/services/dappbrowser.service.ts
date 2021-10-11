@@ -211,6 +211,9 @@ export class DappBrowserService {
     }
 
     private handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
+        // Updated the browsed url
+        this.url = event.url;
+
         // Inject the web3 provider
         Logger.log("dappbrowser", "Executing Web3 provider injection script");
         void dappBrowser.executeScript({
