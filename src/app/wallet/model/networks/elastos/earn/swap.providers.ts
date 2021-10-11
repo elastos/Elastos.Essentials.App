@@ -10,5 +10,5 @@ export const elastosMainnetGlideSwapProvider = new SwapProvider(
     "0xF9Ca2eA3b1024c0DB31adB224B407441bECC18BB", // Heco-Peg HUSD Token on Elastos (htHUSD)
     // TODO: WELA - Find the right address
   ],
-  "https://eager-ardinghelli-95206e.netlify.app/bridge" // TMP TEST //"https://glidefinance.io/swap?inputCurrency=${inputCurrency}"
+  "https://glidefinance.io/swap?inputCurrency=${inputCurrency}"
 );

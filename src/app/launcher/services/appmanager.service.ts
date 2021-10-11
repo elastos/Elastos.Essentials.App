@@ -16,6 +16,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Tip } from '../model/tip.model';
 import { NotificationsPage } from '../pages/notifications/notifications.page';
 import { TipsPage } from '../pages/tips/tips.page';
@@ -39,6 +40,7 @@ type RunnableApp = {
 type RunnableAppCategory = {
     type: string,
     apps: RunnableApp[];
+    shouldBeDisplayed: () => boolean;
 }
 
 @Injectable({
@@ -80,7 +82,8 @@ export class AppmanagerService {
         private dposVotingInitService: DPoSVotingInitService,
         private walletInitService: WalletInitService,
         private crcouncilVotingInitService: CRCouncilVotingInitService,
-        private contactsInitService: ContactsInitService
+        private contactsInitService: ContactsInitService,
+        private walletNetworkService: WalletNetworkService
     ) { }
 
     public init() {
@@ -129,6 +132,7 @@ export class AppmanagerService {
         this.runnableApps = [
             {
                 type: 'launcher.main',
+                shouldBeDisplayed: () => true,
                 apps: [
                     /* {
                         id: 'wallet',
@@ -141,6 +145,15 @@ export class AppmanagerService {
                         startCall: () => this.walletInitService.start()
                     }, */
                     {
+                        id: 'browser',
+                        routerContext: App.DAPP_BROWSER,
+                        name: this.translate.instant('launcher.app-browser'),
+                        description: this.translate.instant('launcher.app-browser-description'),
+                        icon: '/assets/launcher/apps/app-icons/browser.svg',
+                        hasWidget: false,
+                        routerPath: '/dappbrowser/home'
+                    },
+                    {
                         id: 'identity',
                         routerContext: App.IDENTITY,
                         name: this.translate.instant('launcher.app-identity'),
@@ -149,15 +162,6 @@ export class AppmanagerService {
                         routerPath: '/identity/myprofile/home',
                         hasWidget: false,
                         // routerPath: '/identity/credaccessrequest'
-                    },
-                    {
-                        id: 'browser',
-                        routerContext: App.DAPP_BROWSER,
-                        name: this.translate.instant('launcher.app-browser'),
-                        description: this.translate.instant('launcher.app-browser-description'),
-                        icon: '/assets/launcher/apps/app-icons/browser.svg',
-                        hasWidget: false,
-                        routerPath: '/dappbrowser/home'
                     },
                     {
                         id: 'contacts',
@@ -172,6 +176,7 @@ export class AppmanagerService {
             },
             {
                 type: 'launcher.utilities',
+                shouldBeDisplayed: () => true,
                 apps: [
                     {
                         id: 'scanner',
@@ -203,7 +208,8 @@ export class AppmanagerService {
                 ]
             },
             {
-                type: 'launcher.voting',
+                type: 'launcher.elastos-voting',
+                shouldBeDisplayed: () => this.walletNetworkService.isActiveNetworkElastos(),
                 apps: [
                     {
                         id: 'dpos',

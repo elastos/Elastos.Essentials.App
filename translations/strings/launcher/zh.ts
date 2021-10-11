@@ -26,6 +26,7 @@ export const zh = {
         'main': '主要',
         'utilities': '通用',
         'voting': '投票',
+        'elastos-voting': 'Elastos Voting',
         'other': '其它',
         'backup-title': '身份未备份',
         'backup-message': '保存您身份的纸质密钥是非常重要的一步，因为这是以后恢复它的唯一方法。',
