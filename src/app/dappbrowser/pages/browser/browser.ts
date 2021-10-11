@@ -67,6 +67,7 @@ export class BrowserPage implements DappBrowserClient {
 
     ionViewWillLeave() {
         this.backButtonSub.unsubscribe();
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     onExit(mode?: string) {
