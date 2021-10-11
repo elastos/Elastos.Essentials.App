@@ -30,7 +30,6 @@ export class MenuPage {
     public browsedAppInfo: BrowsedAppInfo = null;
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
     private browsedAppInfoSub: Subscription = null;
-    private needReload = false;
 
     constructor(
         public translate: TranslateService,
@@ -82,9 +81,6 @@ export class MenuPage {
     }
 
     async goback() {
-        if (this.needReload) {
-            dappBrowser.reload();
-        }
         await this.nav.navigateBack();
     }
 
@@ -121,7 +117,8 @@ export class MenuPage {
     }
 
     public reloadPage() {
-        // TODO
+        void dappBrowser.reload();
+        void this.goback();
     }
 
     public copyUrl() {
