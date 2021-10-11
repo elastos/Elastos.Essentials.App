@@ -169,7 +169,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getSecondaryIcon(): string {
-        return "assets/wallet/coins/eth-purple.svg";
+        return null;
+        // TODO: show real token icon for famous tokens, or placeholder image for unknown tokens.
+        //return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAAAJklEQVR42u3MMQEAAAgDINc/9AyhJwQg7byKUCgUCoVCoVAoFN4sl/dP2UHkSR8AAAAASUVORK5CYII=";
     }
 
     /**
@@ -216,9 +218,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             // TODO: what's the integer type returned by web3? Are we sure we can directly convert it to BigNumber like this? To be tested
             const rawBalance = await erc20Contract.methods.balanceOf(tokenAccountAddress).call();
             if (rawBalance) {
-              this.balance = new BigNumber(rawBalance);
-              await this.saveBalanceToCache();
-              Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.balance.toString());
+                this.balance = new BigNumber(rawBalance);
+                await this.saveBalanceToCache();
+                Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.balance.toString());
             }
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.coin.getName(), this.id, ') updateBalance error:', error);
@@ -368,9 +370,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
         let amountWithDecimals: BigNumber;
         if (amount === -1) {//-1: send all.
-          amountWithDecimals = this.balance;
+            amountWithDecimals = this.balance;
         } else {
-          amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
+            amountWithDecimals = new BigNumber(amount).multipliedBy(this.tokenAmountMulipleTimes);
         }
 
         // Incompatibility between our bignumber lib and web3's BN lib. So we must convert by using intermediate strings
