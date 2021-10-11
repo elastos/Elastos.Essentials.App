@@ -3,13 +3,13 @@
 
   .icon-col {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     flex-direction: column;
     align-self: center;
 
     .icon-container {
       display: flex;
-      align-self: end;
+      align-self: flex-end;
       width: 60px;
       height: 60px;
       background: white;
