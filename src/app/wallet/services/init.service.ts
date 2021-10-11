@@ -9,6 +9,8 @@ import { GlobalService, GlobalServiceManager } from 'src/app/services/global.ser
 import { CryptoNameResolver } from '../model/address-resolvers';
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
 import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/arbitrum.mainnet.network';
+import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain/avalanchecchain.mainnet.network';
+import { AvalancheCChainTestNetNetwork } from '../model/networks/avalanchecchain/avalanchecchain.testnet.network';
 import { BSCMainNetNetwork } from '../model/networks/bsc/bsc.mainnet.network';
 import { BSCTestNetNetwork } from '../model/networks/bsc/bsc.testnet.network';
 import { ElastosLRWNetwork } from '../model/networks/elastos/elastos.lrw.network';
@@ -120,6 +122,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new ArbitrumMainNetNetwork());
         await this.createAndRegisterNetwork(new PolygonMainNetNetwork());
         await this.createAndRegisterNetwork(new FantomMainNetNetwork());
+        await this.createAndRegisterNetwork(new AvalancheCChainMainNetNetwork());
         return;
       case TESTNET_TEMPLATE:
         await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), true);
@@ -129,6 +132,7 @@ export class WalletInitService extends GlobalService {
         // await this.createAndRegisterNetwork(new ArbitrumTestNetNetwork());
         await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
         await this.createAndRegisterNetwork(new FantomTestNetNetwork());
+        await this.createAndRegisterNetwork(new AvalancheCChainTestNetNetwork());
         return;
       case "LRW":
         await this.createAndRegisterNetwork(new ElastosLRWNetwork(), true);
