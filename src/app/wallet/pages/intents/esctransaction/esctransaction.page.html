@@ -1,102 +1,105 @@
 <ion-content class="ion-text-center">
-    <app-titlebar title="text-vote-crcouncil"></app-titlebar>
-    <ion-spinner *ngIf="!transactionInfo" ></ion-spinner>
-    <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="transactionInfo">
-        <!-- CARD HEADER -->
-        <div [ngSwitch]="transactionInfo.txType">
-            <ion-card *ngSwitchCase="'token_approve'">
-                <img [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
-                <ion-card-title>{{ 'wallet.esctransaction-approve-token' | translate }}<br/><b>{{transactionInfo.tokenName}}</b></ion-card-title>
-                <ion-card-subtitle>
-                    {{ 'wallet.esctransaction-approve-token-intro' | translate: { token: transactionInfo.tokenName } }}
-                </ion-card-subtitle>
-            </ion-card>
-            <ion-card *ngSwitchDefault="'contract_call'">
-                <img [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
-                <ion-card-title>{{ 'wallet.esctransaction-smart-contract' | translate }}</ion-card-title>
-                <ion-card-subtitle>
-                    {{ 'wallet.esctransaction-intro' | translate }}
-                </ion-card-subtitle>
-            </ion-card>
-        </div>
+  <app-titlebar title="text-vote-crcouncil"></app-titlebar>
+  <ion-spinner *ngIf="!transactionInfo"></ion-spinner>
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="transactionInfo">
+    <!-- CARD HEADER -->
+    <div [ngSwitch]="transactionInfo.txType">
+      <ion-card *ngSwitchCase="'token_approve'">
+        <img
+          [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
+        <ion-card-title>{{ 'wallet.esctransaction-approve-token' | translate
+          }}<br /><b>{{transactionInfo.tokenName}}</b></ion-card-title>
+        <ion-card-subtitle>
+          {{ 'wallet.esctransaction-approve-token-intro' | translate: { token: transactionInfo.tokenName } }}
+        </ion-card-subtitle>
+      </ion-card>
+      <ion-card *ngSwitchDefault="'contract_call'">
+        <img
+          [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
+        <ion-card-title>{{ 'wallet.esctransaction-smart-contract' | translate }}</ion-card-title>
+        <ion-card-subtitle>
+          {{ 'wallet.esctransaction-intro' | translate }}
+        </ion-card-subtitle>
+      </ion-card>
+    </div>
 
-        <!-- Network info -->
-        <ion-row class="network-row">
-            <ion-col size="12" class="left-col">
-                <img [src]="networkWallet.network.logo">
-                <h1>{{ networkWallet.network.name }}</h1>
-            </ion-col>
+    <!-- Network info -->
+    <ion-row class="network-row">
+      <ion-col size="12" class="left-col">
+        <img [src]="networkWallet.network.logo">
+        <h1>{{ networkWallet.network.name }}</h1>
+      </ion-col>
+    </ion-row>
+
+    <!-- TX INFO -->
+    <div class="msg-container">
+      <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
+      <h1><span>{{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().totalAsBigNumber) }}</span> {{
+        getCurrencyInUse() }}</h1>
+
+      <ion-row class="item-row ripple ion-activatable">
+        <ion-col size="5">
+          <div>{{ 'wallet.esctransaction-value' | translate }}</div>
+        </ion-col>
+        <ion-col size="7" class="price">
+          <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().valueAsBigNumber) }}</span> {{
+          getCurrencyInUse() }}
+        </ion-col>
+      </ion-row>
+      <ion-row class="item-row ripple ion-activatable">
+        <ion-col size="5">
+          <div>{{ 'wallet.esctransaction-fees' | translate }}</div>
+        </ion-col>
+        <ion-col size="6" class="price">
+          <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().feesAsBigNumber) }}</span> {{
+          getCurrencyInUse() }}
+        </ion-col>
+        <ion-col size="1" class="edit-gas-col">
+          <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
+        </ion-col>
+      </ion-row>
+
+      <ion-grid class="item-row edit-gas-row ripple ion-activatable" *ngIf="showEditGasPrice">
+        <ion-row>
+          <ion-col size="5" class="title">
+            {{ 'wallet.eth-gasprice' | translate }}
+          </ion-col>
+          <ion-col size="7">
+            <ion-input autosize name="gasPriceGwei" ngDefaultControl [(ngModel)]="gasPriceGwei"
+              (ionChange)="updateGasprice($event)" mode="ios"></ion-input>
+          </ion-col>
         </ion-row>
+        <ion-row>
+          <ion-col size="5" class="title">
+            {{ 'wallet.eth-gaslimit' | translate }}
+          </ion-col>
+          <ion-col size="7">
+            <ion-input autosize name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
+            </ion-input>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
 
-        <!-- TX INFO -->
-        <div class="msg-container">
-            <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
-            <h1><span>{{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().totalAsBigNumber) }}</span> {{ getCurrencyInUse() }}</h1>
+      <ion-row class="item-row ripple ion-activatable">
+        <ion-col size="5">
+          <div>{{ 'wallet.balance-remaining' | translate }}</div>
+        </ion-col>
+        <ion-col size="7" class="price">
+          <span> {{ uiService.getFixedBalance(balance) }}</span> {{ getCurrencyInUse() }}
+        </ion-col>
+      </ion-row>
+    </div>
 
-            <ion-row class="item-row ripple ion-activatable">
-              <ion-col size="5">
-                <div>{{ 'wallet.esctransaction-value' | translate }}</div>
-              </ion-col>
-              <ion-col size="7">
-                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().valueAsBigNumber) }}</span> {{ getCurrencyInUse() }}
-              </ion-col>
-            </ion-row>
-            <ion-row class="item-row ripple ion-activatable">
-              <ion-col size="5">
-                <div>{{ 'wallet.esctransaction-fees' | translate }}</div>
-              </ion-col>
-              <ion-col size="6">
-                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().feesAsBigNumber) }}</span> {{ getCurrencyInUse() }}
-              </ion-col>
-              <ion-col size="1">
-                <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
-              </ion-col>
-            </ion-row>
+    <!-- BUTTONS FOOTER -->
+    <div class="btn cancel ion-activatable ripple" [class.expand]="!balanceIsEnough()" (click)="cancelOperation()">
+      <h3 *ngIf="!balanceIsEnough()">{{ 'wallet.insufficient-balance' | translate }}</h3>
+      <ion-label>{{ 'common.cancel' | translate}}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+    <div *ngIf="balanceIsEnough()" class="btn confirm ion-activatable ripple" (click)="goTransaction()">
+      <ion-label>{{ 'common.confirm' | translate}}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
 
-            <ion-row class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
-              <ion-col size="5">
-                <div>{{ 'wallet.eth-gasprice' | translate }}</div>
-                <ion-input
-                    autosize
-                    name="gasPriceGwei" ngDefaultControl
-                    [(ngModel)]="gasPriceGwei"
-                    (ionChange)="updateGasprice($event)"
-                    mode="ios"
-                >
-                </ion-input>
-              </ion-col>
-              <ion-col size="7">
-                <div class="div_center">{{ 'wallet.eth-gaslimit' | translate }}</div>
-                <ion-input
-                    autosize
-                    name="gasLimit" ngDefaultControl
-                    [(ngModel)]="gasLimit"
-                    mode="ios"
-                >
-                </ion-input>
-              </ion-col>
-            </ion-row>
-
-            <ion-row class="item-row ripple ion-activatable">
-              <ion-col size="5">
-                <div>{{ 'wallet.balance-remaining' | translate }}</div>
-              </ion-col>
-              <ion-col size="7">
-                <span> {{ uiService.getFixedBalance(balance) }}</span> {{ getCurrencyInUse() }}
-              </ion-col>
-            </ion-row>
-        </div>
-
-        <!-- BUTTONS FOOTER -->
-        <div class="btn cancel ion-activatable ripple" [class.expand]="!balanceIsEnough()" (click)="cancelOperation()">
-            <h3 *ngIf="!balanceIsEnough()">{{ 'wallet.insufficient-balance' | translate }}</h3>
-            <ion-label>{{ 'common.cancel' | translate}}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-        <div *ngIf="balanceIsEnough()" class="btn confirm ion-activatable ripple" (click)="goTransaction()">
-            <ion-label>{{ 'common.confirm' | translate}}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-
-    </ion-grid>
+  </ion-grid>
 </ion-content>
