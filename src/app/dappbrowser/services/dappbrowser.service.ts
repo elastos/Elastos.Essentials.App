@@ -53,6 +53,7 @@ export interface DappBrowserClient {
     onUrlChanged?: (url: string) => void;
     onMenu?: () => void;
     onHtmlHead?: (head: Document) => void;
+    onCustomScheme?: (url: string) => void;
 }
 
 @Injectable({
@@ -199,6 +200,11 @@ export class DappBrowserService {
                 let htmlHeader = await this.handleHtmlHeader(event);
                 if (this.dabClient != null && this.dabClient.onHtmlHead) {
                     this.dabClient.onHtmlHead(htmlHeader);
+                }
+                break;
+            case "customscheme":
+                if (this.dabClient != null && this.dabClient.onCustomScheme) {
+                    this.dabClient.onCustomScheme(event.url);
                 }
                 break;
             case "exit":

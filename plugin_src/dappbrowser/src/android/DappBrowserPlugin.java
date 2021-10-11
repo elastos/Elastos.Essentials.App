@@ -236,26 +236,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
     }
 
     private String openInSystem(final String url)  {
-        try {
-            Intent intent = null;
-            intent = new Intent(Intent.ACTION_VIEW);
-            // Omitting the MIME type for file: URLs causes "No Activity found to handle Intent".
-            // Adding the MIME type to http: URLs causes them to not be handled by the downloader.
-            Uri uri = Uri.parse(url);
-            if ("file".equals(uri.getScheme())) {
-                intent.setDataAndType(uri, webView.getResourceApi().getMimeType(uri));
-            } else {
-                intent.setData(uri);
-            }
-            intent.putExtra(Browser.EXTRA_APPLICATION_ID, cordova.getActivity().getPackageName());
-            // CB-10795: Avoid circular loops by preventing it from opening in the current app
-            this.openExternalExcludeCurrentApp(intent);
-            return "";
-            // not catching FileUriExposedException explicitly because buildtools<24 doesn't know about it
-        } catch (java.lang.RuntimeException e) {
-            LOG.d(LOG_TAG, "InAppBrowser: Error loading url "+url+":"+ e.toString());
-            return e.toString();
-        }
+        return openExternal(url);
     }
 
     private String openInCordovaWebView(final String url, String options) throws Exception {
@@ -567,6 +548,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
         try {
             Intent intent = null;
             intent = new Intent(Intent.ACTION_VIEW);
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
             // Omitting the MIME type for file: URLs causes "No Activity found to handle Intent".
             // Adding the MIME type to http: URLs causes them to not be handled by the downloader.
             Uri uri = Uri.parse(url);
@@ -581,7 +563,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
             return "";
             // not catching FileUriExposedException explicitly because buildtools<24 doesn't know about it
         } catch (java.lang.RuntimeException e) {
-            LOG.d(LOG_TAG, "InAppBrowser: Error loading url "+url+":"+ e.toString());
+            LOG.d(LOG_TAG, "DappBrowser: Error loading url "+url+":"+ e.toString());
             return e.toString();
         }
     }

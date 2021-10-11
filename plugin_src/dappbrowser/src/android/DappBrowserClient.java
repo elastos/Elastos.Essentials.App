@@ -47,12 +47,6 @@ public class DappBrowserClient extends WebViewClient {
     private String[] allowedSchemes;
     private DappBrowserPlugin brwoserPlugin;
 
-    /**
-     * Constructor.
-     *
-     * @param webView
-     * @param titleBar
-     */
     public DappBrowserClient(DappBrowserPlugin brwoserPlugin, ProgressBar progressBar, String beforeload) {
         this.webView = webView;
         this.beforeload = beforeload;
@@ -193,27 +187,33 @@ public class DappBrowserClient extends WebViewClient {
         }
         // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
         else if (!url.startsWith("http:") && !url.startsWith("https:") && url.matches("^[A-Za-z0-9+.-]*://.*?$")) {
-            if (allowedSchemes == null) {
-                String allowed = brwoserPlugin.getPreferences().getString("AllowedSchemes", null);
-                if(allowed != null) {
-                    allowedSchemes = allowed.split(",");
-                }
+/** Don't check the allowed list */
+//            if (allowedSchemes == null) {
+//                String allowed = brwoserPlugin.getPreferences().getString("AllowedSchemes", null);
+//                if(allowed != null) {
+//                    allowedSchemes = allowed.split(",");
+//                }
+//            }
+//            if (allowedSchemes != null) {
+//                for (String scheme : allowedSchemes) {
+//                    if (url.startsWith(scheme)) {
+
+            //direct open in system browser
+            brwoserPlugin.openExternal(url);
+
+            try {
+
+                JSONObject obj = new JSONObject();
+                obj.put("type", "customscheme");
+                obj.put("url", url);
+                brwoserPlugin.sendEventCallback(obj, true);
+                override = true;
+            } catch (Exception ex) {
+                LOG.e(LOG_TAG, "Custom Scheme URI passed in has caused a error.");
             }
-            if (allowedSchemes != null) {
-                for (String scheme : allowedSchemes) {
-                    if (url.startsWith(scheme)) {
-                        try {
-                            JSONObject obj = new JSONObject();
-                            obj.put("type", "customscheme");
-                            obj.put("url", url);
-                            brwoserPlugin.sendEventCallback(obj, true);
-                            override = true;
-                        } catch (JSONException ex) {
-                            LOG.e(LOG_TAG, "Custom Scheme URI passed in has caused a JSON error.");
-                        }
-                    }
-                }
-            }
+//                    }
+//                }
+//            }
         }
 
         if (useBeforeload) {
