@@ -32,6 +32,8 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
         else if (subWallet.networkWallet.network instanceof FantomMainNetNetwork)
             return "crypto.FTM.version.OPERA.address";
         // TODO: ELA mainchain, ELA Smart chain: what are the right keys in UD?
+        // TODO: Tron -> crypto.TRX.address
+        // TODO: Avalanche ->crypto.AVAX.address
         // NOTE (2021.10) FSN (fusion) not available in UD
         // NOTE (2021.10) AETH (arbitrum) not available in UD - should we use the ETH address?
         // NOTE (2021.10) MATIC (polygon) native token not available in UD. Only *.MATIC verions of ERC20 tokens.
