@@ -14,7 +14,7 @@ export class AvalancheCChainTestNetNetwork extends EVMNetwork {
       "AVAX",
       "Avalanche Token",
       AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.RPC, TESTNET_TEMPLATE),
-      AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.BROWSER_RPC, TESTNET_TEMPLATE),
+      null,
       TESTNET_TEMPLATE,
       43113
     );
