@@ -478,21 +478,21 @@ export const zh = {
                 /***************************
                 * Earn, Swap, Bridge pages *
                 ****************************/
-                'view-transactions': 'Transactions & Transfers',
+                'view-transactions': '交易和转账',
                 'earn': 'Earn',
                 'swap': 'Swap',
                 'bridge': 'Bridge',
-                'wallet-coin-earn-title': 'Earn Providers',
-                'wallet-coin-swap-title': 'Swap Providers',
-                'wallet-coin-bridge-title': 'Bridge Providers',
-                'providers-disclaimer': 'Services listed on this page are <b>third party services that are not related to Elastos Essentials</b>. Do your own verifications before trusting any platform.',
-                'finance-platforms': 'Finance Platforms',
-                'finance-platforms-intro': 'The following platforms can manage this coin to let you earn interests.',
-                'get-more-tokens': 'Get More Tokens',
-                'get-more-tokens-intro': 'The following third party swap services are available to <b>get more {{coinName}} tokens</b>:',
-                'bridge-tokens': 'Bridge your tokens',
-                'bridge-tokens-intro': 'The following third party bridge services are available to <b>transfer {{coinName}}</b> tokens from and to {{networkName}}:',
-                'to-networks': 'To networks:',
+                'wallet-coin-earn-title': 'Earn 供应商',
+                'wallet-coin-swap-title': 'Swap 供应商',
+                'wallet-coin-bridge-title': 'Bridge 供应商',
+                'providers-disclaimer': '此页面列出的是<b>与Elastos Essentials 无关的第三方服务</b>。在信任任何平台之前请自行验证。',
+                'finance-platforms': '金融平台',
+                'finance-platforms-intro': '以下平台可以管理代币，让您赚取利息。',
+                'get-more-tokens': '获得更多代币',
+                'get-more-tokens-intro': '以下第三方兑换服务可用于兑换<b> {{coinName}} 代币</b>:',
+                'bridge-tokens': '桥接您的代币',
+                'bridge-tokens-intro': '以下第三方桥接服务可用于 {{networkName}} 上<b>交易 {{coinName}}</b> 代币:',
+                'to-networks': '支持的网络:',
 
                 /********************************************** Error ***********************************************/
 
