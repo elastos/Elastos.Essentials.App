@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import Resolution from '@unstoppabledomains/resolution';
 import { Logger } from "src/app/logger";
+import { BSCMainNetNetwork } from '../../networks/bsc/bsc.mainnet.network';
 import { EthereumMainNetNetwork } from '../../networks/ethereum/ethereum.mainnet.network';
+import { FantomMainNetNetwork } from '../../networks/fantom/fantom.mainnet.network';
+import { HECOMainNetNetwork } from '../../networks/heco/heco.mainnet.network';
 import { AnySubWallet } from '../../wallets/subwallet';
 import { Address } from '../addresses/Address';
 import { UnstoppableDomainsAddress } from '../addresses/UnstoppableDomainsAddress';
@@ -20,11 +23,18 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
      * Returns UD's record key to be used for a given Essential's network.
      */
     private resolutionRecordKeyForWallet(subWallet: AnySubWallet): string {
-        /* if (subWallet.networkWallet.network instanceof HECOMainNetNetwork)
-            return "crypto.HT.address";
-        else  */if (subWallet.networkWallet.network instanceof EthereumMainNetNetwork)
+        if (subWallet.networkWallet.network instanceof EthereumMainNetNetwork)
             return "crypto.ETH.address";
-        // TODO: MAKE SURE WITH UD TEAM THAT crypto.HT.address IS THE REAL HT ON HECO + ADD OTHER NETWORKS
+        else if (subWallet.networkWallet.network instanceof HECOMainNetNetwork)
+            return "crypto.HT.address";
+        else if (subWallet.networkWallet.network instanceof BSCMainNetNetwork)
+            return "crypto.BNB.address";
+        else if (subWallet.networkWallet.network instanceof FantomMainNetNetwork)
+            return "crypto.FTM.version.OPERA.address";
+        // TODO: ELA mainchain, ELA Smart chain: what are the right keys in UD?
+        // NOTE (2021.10) FSN (fusion) not available in UD
+        // NOTE (2021.10) AETH (arbitrum) not available in UD - should we use the ETH address?
+        // NOTE (2021.10) MATIC (polygon) native token not available in UD. Only *.MATIC verions of ERC20 tokens.
         return null;
     }
 
@@ -47,15 +57,22 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
         Logger.log('wallet', "Searching name", name, "with key", recordKey, "on unstoppable domains...");
 
         try {
-            const resolution = new Resolution();
+            //let name = "udtestdev-ben.crypto"; // TMP TEST
+            /* const resolution = Resolution.infura("9aa3d95b3bc440fa88ea12eaa4456161", {
+                uns: { network: "rinkeby" }
+            }); */
 
-            let results = await resolution.records(name, [recordKey]); // .allRecords(name);
+            //let results = await resolution/* .records(name, [recordKey]); // */.allRecords(name);
+
+            let resolution = new Resolution();
+            let results = await resolution.records(name, [recordKey]);
             console.log(`Domain ${name} results:`, results);
 
             if (recordKey in results)
                 return [new UnstoppableDomainsAddress(name, results[recordKey])];
         }
         catch (err) {
+            //console.error("TMP", err);
             let errStr = new String(err);
             if (errStr.indexOf("not registered") > 0 || errStr.indexOf("not supported") > 0) {
                 // Silence failure, handled
