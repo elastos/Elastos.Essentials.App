@@ -13,8 +13,6 @@ export class AvalancheCChainAPI {
         switch (type) {
           case AvalancheCChainApiType.RPC: return 'https://api.avax.network/ext/bc/C/rpc';
           case AvalancheCChainApiType.BROWSER_RPC: return 'https://cchain.explorer.avax.network/';
-          // TODO: No account api
-          case AvalancheCChainApiType.ACCOUNT_RPC: return null;
           default:
             throw new Error("AvalancheCChain API - Unknown api type " + type);
         }
@@ -22,8 +20,6 @@ export class AvalancheCChainAPI {
         switch (type) {
           case AvalancheCChainApiType.RPC: return 'https://api.avax-test.network/ext/bc/C/rpc';
           case AvalancheCChainApiType.BROWSER_RPC: return 'https://cchain.explorer.avax-test.network';
-          // TODO: No account api
-          case AvalancheCChainApiType.ACCOUNT_RPC: return null;
           default:
             throw new Error("AvalancheCChain API - Unknown api type " + type);
         }

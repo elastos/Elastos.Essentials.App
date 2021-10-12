@@ -45,7 +45,7 @@ export class FusionEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVM
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl);
 
-      console.log("DEBUG EVM GET TX FUSION", result);
+      Logger.log("wallet", "DEBUG EVM GET TX FUSION", result);
 
       let transactions = result.result as FusionTransaction[];
 

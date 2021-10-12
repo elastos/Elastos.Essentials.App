@@ -13,7 +13,7 @@ const MAX_RESULTS_PER_FETCH = 30;
  * of transactions.
  */
 export class EVMSubWalletProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
-  private canFetchMore = true;
+  protected canFetchMore = true;
 
   constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, protected rpcApiUrl: string, protected accountApiUrl: string) {
     super(provider, subWallet);
