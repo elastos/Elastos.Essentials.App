@@ -45,33 +45,6 @@
         <source-file src="src/android/DappChromeClient.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
         <source-file src="src/android/DappBrowserClient.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
 
-        <source-file src="src/android/DappBrowserDialog.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
-        <source-file src="src/android/TitleBarIconView.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
-        <source-file src="src/android/TitleBar.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
-        <source-file src="src/android/UrlEditText.java" target-dir="src/org/elastos/essentials/plugins/dappbrowser" />
-
-        <resource-file src="src/android/res/dialog_view.xml" target="/res/layout/dialog_view.xml" />
-        <resource-file src="src/android/res/title_bar.xml" target="/res/layout/title_bar.xml" />
-        <resource-file src="src/android/res/title_bar_icon_view.xml" target="/res/layout/title_bar_icon_view.xml" />
-        <resource-file src="src/android/res/styles.xml" target="/res/values/styles.xml" />
-
-        <resource-file src="src/android/res/slide_in_right.xml" target="/res/anim/slide_in_right.xml" />
-        <resource-file src="src/android/res/slide_out_right.xml" target="/res/anim/slide_out_right.xml" />
-        <resource-file src="src/android/res/rounded_edittext.xml" target="/res/drawable/rounded_edittext.xml" />
-
-        <resource-file src="src/android/res/icons/ic_back.xml" target="/res/drawable/ic_back.xml" />
-        <resource-file src="src/android/res/icons/ic_close.xml" target="/res/drawable/ic_close.xml" />
-        <resource-file src="src/android/res/icons/ic_url_lock.xml" target="/res/drawable/ic_url_lock.xml" />
-        <resource-file src="src/android/res/icons/ic_elastos.xml" target="/res/drawable/ic_elastos.xml" />
-        <resource-file src="src/android/res/icons/ic_clear_input.xml" target="/res/drawable/ic_clear_input.xml" />
-        <resource-file src="src/android/res/icons/ic_vertical_menu.xml" target="/res/drawable/ic_vertical_menu.xml" />
-        <resource-file src="src/android/res/icons/ic_back_darkmode.xml" target="/res/drawable/ic_back_darkmode.xml" />
-        <resource-file src="src/android/res/icons/ic_close_darkmode.xml" target="/res/drawable/ic_close_darkmode.xml" />
-        <resource-file src="src/android/res/icons/ic_url_lock_darkmode.xml" target="/res/drawable/ic_url_lock_darkmode.xml" />
-        <resource-file src="src/android/res/icons/ic_elastos_darkmode.xml" target="/res/drawable/ic_elastos_darkmode.xml" />
-        <resource-file src="src/android/res/icons/ic_clear_input_darkmode.xml" target="/res/drawable/ic_clear_input_darkmode.xml" />
-        <resource-file src="src/android/res/icons/ic_vertical_menu_darkmode.xml" target="/res/drawable/ic_vertical_menu_darkmode.xml" />
-
     </platform>
 
     <!-- ios -->

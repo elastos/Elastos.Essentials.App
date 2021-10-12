@@ -131,7 +131,7 @@ declare namespace DappBrowserPlugin {
         transitionstyle?: 'fliphorizontal' | 'crossdissolve' | 'coververtical';
         /** (Android Only) Sets whether the WebView should enable support for the "viewport" HTML meta tag or should use a wide viewport. When the value of the setting is no, the layout width is always set to the width of the WebView control in device-independent (CSS) pixels. When the value is yes and the page contains the viewport meta tag, the value of the width specified in the tag is used. If the page does not contain the tag or does not provide a width, then a wide viewport will be used. (defaults to yes). */
         useWideViewPort?: boolean;
-        /** (iOS Only) Set to yes to use WKWebView engine for the InappBrowser. Omit or set to no (default) to use UIWebView. */
+        /** (iOS Only) Set to yes to use WKWebView engine for the DappBrowser. Omit or set to no (default) to use UIWebView. */
         usewkwebview?: boolean;
         /** (Android Only) Set to yes to show Android browser's zoom controls, set to no to hide them. Default value is yes. */
         showZoomControls?: boolean;

@@ -102,14 +102,17 @@ public class DappBrowserClient extends WebViewClient {
 
         if (beforeload.equals("yes") && method == null) {
             useBeforeload = true;
-        } else if(beforeload.equals("yes")
+        }
+        else if(beforeload.equals("yes")
                 //TODO handle POST requests then this condition can be removed:
                 && !method.equals("POST"))
         {
             useBeforeload = true;
-        } else if(beforeload.equals("get") && (method == null || method.equals("GET"))) {
+        }
+        else if(beforeload.equals("get") && (method == null || method.equals("GET"))) {
             useBeforeload = true;
-        } else if(beforeload.equals("post") && (method == null || method.equals("POST"))) {
+        }
+        else if(beforeload.equals("post") && (method == null || method.equals("POST"))) {
             //TODO handle POST requests
             errorMessage = "beforeload doesn't yet support POST requests";
         }
@@ -144,7 +147,8 @@ public class DappBrowserClient extends WebViewClient {
             } catch (android.content.ActivityNotFoundException e) {
                 LOG.e(LOG_TAG, "Error dialing " + url + ": " + e.toString());
             }
-        } else if (url.startsWith("geo:") || url.startsWith(WebView.SCHEME_MAILTO) || url.startsWith("market:") || url.startsWith("intent:")) {
+        }
+        else if (url.startsWith("geo:") || url.startsWith(WebView.SCHEME_MAILTO) || url.startsWith("market:") || url.startsWith("intent:")) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
@@ -299,7 +303,7 @@ public class DappBrowserClient extends WebViewClient {
         // Get the head from html
         brwoserPlugin.injectDeferredObject("window.essentialsExtractor.processHTML(document.getElementsByTagName('head')[0].innerHTML)", null);
 
-        // CB-10395 InAppBrowser's WebView not storing cookies reliable to local device storage
+        // CB-10395 DappBrowser's WebView not storing cookies reliable to local device storage
         CookieManager.getInstance().flush();
 
         // https://issues.apache.org/jira/browse/CB-11248

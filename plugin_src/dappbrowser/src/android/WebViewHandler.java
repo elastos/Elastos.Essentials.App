@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
@@ -44,6 +45,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
@@ -58,6 +60,8 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class WebViewHandler {
     protected static final String LOG_TAG = "WebViewHandler";
@@ -80,35 +84,12 @@ public class WebViewHandler {
     public ValueCallback<Uri[]> mUploadCallback;
     public final static int FILECHOOSER_REQUESTCODE = 1;
 
-    DappBrowserDialog dialog = null;
-
     public WebViewHandler(DappBrowserPlugin brwoserPlugin, String url, DappBrowserOptions options, String target) throws Exception {
         this.brwoserPlugin = brwoserPlugin;
         this.activity = brwoserPlugin.cordova.getActivity();
         this.options = options;
 
-//        hideKeyboard();
-
-        ViewGroup viewGroup = null;
-        int titlebarHeight = dpToPx(this.options.titlebarheight);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        // Add our webview to our main view/layout
-        if (target.equals("_webview")) {
-            dialog = null;
-            viewGroup = (ViewGroup)brwoserPlugin.webView.getView();
-            layoutParams.height = brwoserPlugin.viewHeight - titlebarHeight;
-        }
-        else {
-            dialog = new DappBrowserDialog(activity, this.options);
-            dialog.setCancelable(true);
-            viewGroup = (ViewGroup)dialog.findViewById(R.id.parent_linear_layout);
-        }
-
-        createWebView(viewGroup, layoutParams);
-
-        if (target.equals("_webview")) {
-            webView.setY(titlebarHeight);
-        }
+        createWebView();
 
         if (options.hidden) {
             hide();
@@ -134,10 +115,15 @@ public class WebViewHandler {
         return px;
     }
 
-    public WebView createWebView(ViewGroup viewGroup, LinearLayout.LayoutParams layoutParams) {
+    public WebView createWebView() {
+        int titlebarHeight = dpToPx(this.options.titlebarheight);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        layoutParams.height = brwoserPlugin.viewHeight - titlebarHeight;
+
         webView = new WebView(this.activity);
         webView.setLayoutParams(layoutParams);
         webView.setId(View.generateViewId());
+        webView.setY(titlebarHeight);
 
         progressBar = new ProgressBar(activity,null, android.R.attr.progressBarStyleHorizontal);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 8);
@@ -246,6 +232,7 @@ public class WebViewHandler {
         webView.requestFocus();
         webView.requestFocusFromTouch();
 
+        ViewGroup viewGroup = (ViewGroup)brwoserPlugin.webView.getView();
         viewGroup.addView(webView);
 
         return webView;
@@ -267,25 +254,15 @@ public class WebViewHandler {
     }
 
     public void show() {
-        if (dialog != null) {
-            dialog.show();
-        }
-        else {
-            webView.setVisibility(View.VISIBLE);
-            //For onBackPressed work
-            webView.requestFocus();
-        }
+        webView.setVisibility(View.VISIBLE);
+        //For onBackPressed work
+        webView.requestFocus();
     }
 
     public void hide() {
-        if (dialog != null) {
-            dialog.hide();
-        }
-        else {
-            //For onBackPressed work
-            brwoserPlugin.webView.getView().requestFocus();
-            webView.setVisibility(View.GONE);
-        }
+        //For onBackPressed work
+        brwoserPlugin.webView.getView().requestFocus();
+        webView.setVisibility(View.GONE);
     }
 
     public void loadUrl(String url) {
@@ -310,10 +287,6 @@ public class WebViewHandler {
         childView.setWebViewClient(new WebViewClient() {
             // NB: wait for about:blank before dismissing
             public void onPageFinished(WebView view, String url) {
-                if (dialog != null && !activity.isFinishing()) {
-                    dialog.dismiss();
-                    dialog = null;
-                }
                 webView.destroy();
                 webView = null;
                 brwoserPlugin.webViewHandler = null;
@@ -407,9 +380,6 @@ public class WebViewHandler {
      * @param url to load
      */
     public void navigate(String url) {
-        InputMethodManager imm = (InputMethodManager)this.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(dialog.titleBar.txtUrl.getWindowToken(), 0);
-
         if (!url.startsWith("http") && !url.startsWith("file:")) {
             this.webView.loadUrl("http://" + url);
         } else {
@@ -420,10 +390,6 @@ public class WebViewHandler {
 
 
     public void setUrlEditText(String text) {
-        if (dialog != null) {
-            dialog.titleBar.txtUrl.setText(text);
-        }
-
         try {
             JSONObject obj = new JSONObject();
             obj.put("type", URL_CHANGED_EVENT);
@@ -463,32 +429,37 @@ public class WebViewHandler {
         }
     }
 
-    public void setTitle(String title) {
-        if (dialog != null) {
-            dialog.titleBar.setTitle(title);
-        }
-    }
-
     public String getWebViewShot() {
         View view = webView;
         if (view.getVisibility() == View.GONE) {
             return "";
         }
-        int i = view.getWidth();
-        int j = view.getHeight();
+
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(),
                 view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
 
-//        view.setDrawingCacheEnabled(true);
-//        Bitmap bitmap = view.getDrawingCache();
-//        view.setDrawingCacheEnabled(false);
-//        return bitmap;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream .toByteArray();
-        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+        float y = webView.getY();
+        webView.setVisibility(View.GONE);
+//        encoded = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+//        byte[] data = Base64.decode(encoded, Base64.NO_WRAP);
+//        Bitmap bitmap1 = BitmapFactory.decodeByteArray(data, 0, data.length);
+//
+//        ImageView imageView = new ImageView(activity);
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//        imageView.setLayoutParams(params);
+//        imageView.setId(View.generateViewId());
+//
+//        ViewGroup viewGroup = (ViewGroup)brwoserPlugin.webView.getView();
+//        viewGroup.addView(imageView);
+//        imageView.setImageBitmap(bitmap1);
+//        imageView.setY(y);
+
         return "data:image/png;base64," + encoded;
     }
 }

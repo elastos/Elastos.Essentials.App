@@ -78,8 +78,8 @@ public class DappChromeClient extends WebChromeClient {
      * If the client returns true, WebView will assume that the client will
      * handle the prompt dialog and call the appropriate JsPromptResult method.
      *
-     * The prompt bridge provided for the InAppBrowser is capable of executing any
-     * oustanding callback belonging to the InAppBrowser plugin. Care has been
+     * The prompt bridge provided for the DappBrowser is capable of executing any
+     * oustanding callback belonging to the DappBrowser plugin. Care has been
      * taken that other callbacks cannot be triggered, and that no other code
      * execution is possible.
      *
@@ -106,7 +106,7 @@ public class DappChromeClient extends WebChromeClient {
             if(defaultValue.startsWith("gap-iab://")) {
                 PluginResult scriptResult;
                 String scriptCallbackId = defaultValue.substring(10);
-                if (scriptCallbackId.matches("^InAppBrowser[0-9]{1,10}$")) {
+                if (scriptCallbackId.matches("^DappBrowser[0-9]{1,10}$")) {
                     if(message == null || message.length() == 0) {
                         scriptResult = new PluginResult(PluginResult.Status.OK, new JSONArray());
                     } else {
@@ -122,14 +122,14 @@ public class DappChromeClient extends WebChromeClient {
                 }
                 else {
                     // Anything else that doesn't look like InAppBrowser0123456789 should end up here
-                    LOG.w(LOG_TAG, "InAppBrowser callback called with invalid callbackId : "+ scriptCallbackId);
+                    LOG.w(LOG_TAG, "DappBrowser callback called with invalid callbackId : "+ scriptCallbackId);
                     result.cancel();
                     return true;
                 }
             }
             else {
                 // Anything else with a gap: prefix should get this message
-                LOG.w(LOG_TAG, "InAppBrowser does not support Cordova API calls: " + url + " " + defaultValue);
+                LOG.w(LOG_TAG, "DappBrowser does not support Cordova API calls: " + url + " " + defaultValue);
                 result.cancel();
                 return true;
             }

@@ -130,9 +130,6 @@ public class DappBrowserPlugin extends CordovaPlugin {
                 case "reload":
                     this.reload(callbackContext);
                     break;
-                case "setTitle":
-                    this.setTitle(args, callbackContext);
-                    break;
                 case "getWebViewShot":
                     this.getWebViewShot(callbackContext);
                     break;
@@ -166,7 +163,6 @@ public class DappBrowserPlugin extends CordovaPlugin {
             case "goBack":
             case "loadUrl":
             case "reload":
-            case "setTitle":
             case "getWebViewShot":
             case "addEventListener":
             case "removeEventListener":
@@ -295,9 +291,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
                 LOG.e(LOG_TAG, "Error dialing " + url + ": " + e.toString());
             }
         }
-        // load in InAppBrowser
+        // load in DappBrowser
         else {
-            LOG.d(LOG_TAG, "loading in InAppBrowser");
+            LOG.d(LOG_TAG, "loading in DappBrowser");
             result = openInDappBrowser(url, options, "_blank");
         }
         return result;
@@ -383,14 +379,6 @@ public class DappBrowserPlugin extends CordovaPlugin {
     private void reload(CallbackContext callbackContext) {
         if (webViewHandler != null) {
             webViewHandler.reload();
-        }
-        callbackContext.success();
-    }
-
-    private void setTitle(JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (webViewHandler != null) {
-            final String title = args.getString(0);
-            webViewHandler.setTitle(title);
         }
         callbackContext.success();
     }
@@ -496,7 +484,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
         webViewHandler.mUploadCallback = null;
     }
     /**
-     * Inject an object (script or style) into the InAppBrowser WebView.
+     * Inject an object (script or style) into the DappBrowser WebView.
      *
      * This is a helper method for the inject{Script|Style}{Code|File} API calls, which
      * provides a consistent method for injecting JavaScript code into the document.

@@ -1,5 +1,5 @@
 ---
-title: Inappbrowser
+title: DappBrowser
 description: Open an in-app browser window.
 ---
 <!--
@@ -23,49 +23,49 @@ description: Open an in-app browser window.
 
 |AppVeyor|Travis CI|
 |:-:|:-:|
-|[![Build status](https://ci.appveyor.com/api/projects/status/github/apache/cordova-plugin-inappbrowser?branch=master)](https://ci.appveyor.com/project/ApacheSoftwareFoundation/cordova-plugin-inappbrowser)|[![Build Status](https://travis-ci.org/apache/cordova-plugin-inappbrowser.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-inappbrowser)|
+|[![Build status](https://ci.appveyor.com/api/projects/status/github/apache/elastos-essentials-plugin-dappbrowser?branch=master)](https://ci.appveyor.com/project/ApacheSoftwareFoundation/elastos-essentials-plugin-dappbrowser)|[![Build Status](https://travis-ci.org/apache/elastos-essentials-plugin-dappbrowser.svg?branch=master)](https://travis-ci.org/apache/elastos-essentials-plugin-dappbrowser)|
 
-# cordova-plugin-inappbrowser
+# elastos-essentials-plugin-dappbrowser
 
 You can show helpful articles, videos, and web resources inside of your app. Users can view web pages without leaving your app.
 
 > To get a few ideas, check out the [sample](#sample) at the bottom of this page or go straight to the [reference](#reference) content.
 
-This plugin provides a web browser view that displays when calling `cordova.InAppBrowser.open()`.
+This plugin provides a web browser view that displays when calling `cordova.DappBrowser.open()`.
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'location=yes');
 
 ### `window.open`
 
-The `cordova.InAppBrowser.open()` function is defined to be a drop-in replacement
+The `cordova.DappBrowser.open()` function is defined to be a drop-in replacement
 for the `window.open()` function.  Existing `window.open()` calls can use the
-InAppBrowser window, by replacing window.open:
+DappBrowser window, by replacing window.open:
 
-    window.open = cordova.InAppBrowser.open;
+    window.open = cordova.DappBrowser.open;
 
 If you change the browsers `window.open` function this way, it can have unintended side
 effects (especially if this plugin is included only as a dependency of another
 plugin).
 
-The InAppBrowser window behaves like a standard web browser,
-and can't access Cordova APIs. For this reason, the InAppBrowser is recommended
+The DappBrowser window behaves like a standard web browser,
+and can't access Cordova APIs. For this reason, the DappBrowser is recommended
 if you need to load third-party (untrusted) content, instead of loading that
-into the main Cordova webview. The InAppBrowser is not subject to the
+into the main Cordova webview. The DappBrowser is not subject to the
 whitelist, nor is opening links in the system browser.
 
-The InAppBrowser provides by default its own GUI controls for the user (back,
+The DappBrowser provides by default its own GUI controls for the user (back,
 forward, done).
 
 ## Installation
 
-    cordova plugin add cordova-plugin-inappbrowser
+    cordova plugin add elastos-essentials-plugin-dappbrowser
 
-If you want all page loads in your app to go through the InAppBrowser, you can
+If you want all page loads in your app to go through the DappBrowser, you can
 simply hook `window.open` during initialization.  For example:
 
     document.addEventListener("deviceready", onDeviceReady, false);
     function onDeviceReady() {
-        window.open = cordova.InAppBrowser.open;
+        window.open = cordova.DappBrowser.open;
     }
 
 ### Preferences
@@ -76,30 +76,30 @@ simply hook `window.open` during initialization.  For example:
 <preference name="InAppBrowserStatusBarStyle" value="lightcontent" />
 ```
 
-## cordova.InAppBrowser.open
+## cordova.DappBrowser.open
 
-Opens a URL in a new `InAppBrowser` instance, the current browser
+Opens a URL in a new `DappBrowser` instance, the current browser
 instance, or the system browser.
 
-    var ref = cordova.InAppBrowser.open(url, target, options);
+    var ref = cordova.DappBrowser.open(url, target, options);
 
-- __ref__: Reference to the `InAppBrowser` window when the target is set to `'_blank'`. _(InAppBrowser)_
+- __ref__: Reference to the `DappBrowser` window when the target is set to `'_blank'`. _(DappBrowser)_
 
 - __url__: The URL to load _(String)_. Call `encodeURI()` on this if the URL contains Unicode characters.
 
 - __target__: The target in which to load the URL, an optional parameter that defaults to `_self`. _(String)_
 
-    - `_self`: Opens in the Cordova WebView if the URL is in the white list, otherwise it opens in the `InAppBrowser`.
-    - `_blank`: Opens in the `InAppBrowser`.
+    - `_self`: Opens in the Cordova WebView if the URL is in the white list, otherwise it opens in the `DappBrowser`.
+    - `_blank`: Opens in the `DappBrowser`.
     - `_system`: Opens in the system's web browser.
 
-- __options__: Options for the `InAppBrowser`. Optional, defaulting to: `location=yes`. _(String)_
+- __options__: Options for the `DappBrowser`. Optional, defaulting to: `location=yes`. _(String)_
 
     The `options` string must not contain any blank space, and each feature's name/value pairs must be separated by a comma. Feature names are case insensitive.
 
     All platforms support:
 
-    - __location__: Set to `yes` or `no` to turn the `InAppBrowser`'s location bar on or off.
+    - __location__: Set to `yes` or `no` to turn the `DappBrowser`'s location bar on or off.
 
     Android supports these additional options:
 
@@ -110,11 +110,11 @@ instance, or the system browser.
     - __closebuttoncaption__: set to a string to use as the close button's caption instead of a X. Note that you need to localize this value yourself.
     - __closebuttoncolor__: set to a valid hex color string, for example: `#00ff00`, and it will change the
     close button color from default, regardless of being a text or default X. Only has effect if user has location set to `yes`.
-    - __footer__: set to `yes` to show a close button in the footer similar to the iOS __Done__ button. 
+    - __footer__: set to `yes` to show a close button in the footer similar to the iOS __Done__ button.
     The close button will appear the same as for the header hence use __closebuttoncaption__ and __closebuttoncolor__ to set its properties.
     - __footercolor__: set to a valid hex color string, for example `#00ff00` or `#CC00ff00` (`#aarrggbb`) , and it will change the footer color from default.
     Only has effect if user has __footer__ set to `yes`.
-    - __hardwareback__: set to `yes` to use the hardware back button to navigate backwards through the `InAppBrowser`'s history. If there is no previous page, the `InAppBrowser` will close.  The default value is `yes`, so you must set it to `no` if you want the back button to simply close the InAppBrowser.
+    - __hardwareback__: set to `yes` to use the hardware back button to navigate backwards through the `DappBrowser`'s history. If there is no previous page, the `DappBrowser` will close.  The default value is `yes`, so you must set it to `no` if you want the back button to simply close the DappBrowser.
     - __hidenavigationbuttons__: set to `yes` to hide the navigation buttons on the location toolbar, only has effect if user has location set to `yes`. The default value is `no`.
     - __hideurlbar__: set to `yes` to hide the url bar on the location toolbar, only has effect if user has location set to `yes`. The default value is `no`.
     - __navigationbuttoncolor__: set to a valid hex color string, for example: `#00ff00`, and it will change the color of both navigation buttons from default. Only has effect if user has location set to `yes` and not hidenavigationbuttons set to `yes`.
@@ -122,9 +122,9 @@ instance, or the system browser.
     - __lefttoright__: Set to `yes` to swap positions of the navigation buttons and the close button. Specifically, navigation buttons go to the right and close button to the left. Default value is `no`.
     - __zoom__: set to `yes` to show Android browser's zoom controls, set to `no` to hide them.  Default value is `yes`.
     - __mediaPlaybackRequiresUserAction__: Set to `yes` to prevent HTML5 audio or video from autoplaying (defaults to `no`).
-    - __shouldPauseOnSuspend__: Set to `yes` to make InAppBrowser WebView to pause/resume with the app to stop background audio (this may be required to avoid Google Play issues like described in [CB-11013](https://issues.apache.org/jira/browse/CB-11013)).
+    - __shouldPauseOnSuspend__: Set to `yes` to make DappBrowser WebView to pause/resume with the app to stop background audio (this may be required to avoid Google Play issues like described in [CB-11013](https://issues.apache.org/jira/browse/CB-11013)).
     - __useWideViewPort__: Sets whether the WebView should enable support for the "viewport" HTML meta tag or should use a wide viewport. When the value of the setting is `no`, the layout width is always set to the width of the WebView control in device-independent (CSS) pixels. When the value is `yes` and the page contains the viewport meta tag, the value of the width specified in the tag is used. If the page does not contain the tag or does not provide a width, then a wide viewport will be used. (defaults to `yes`).
-    - __fullscreen__: Sets whether the InappBrowser WebView is displayed fullscreen or not. In fullscreen mode, the status bar is hidden. Default value is `yes`.
+    - __fullscreen__: Sets whether the DappBrowser WebView is displayed fullscreen or not. In fullscreen mode, the status bar is hidden. Default value is `yes`.
 
     iOS supports these additional options:
 
@@ -138,7 +138,7 @@ instance, or the system browser.
     - __disallowoverscroll__: Set to `yes` or `no` (default is `no`). Turns on/off the the bounce of the WKWebView's UIScrollView.
     - __hidenavigationbuttons__:  set to `yes` or `no` to turn the toolbar navigation buttons on or off (defaults to `no`). Only applicable if toolbar is not disabled.
     - __navigationbuttoncolor__:  set as a valid hex color string, for example: `#00ff00`, to change from the default color. Only applicable if navigation buttons are visible.
-    - __toolbar__:  set to `yes` or `no` to turn the toolbar on or off for the InAppBrowser (defaults to `yes`)
+    - __toolbar__:  set to `yes` or `no` to turn the toolbar on or off for the DappBrowser (defaults to `yes`)
     - __toolbarcolor__: set as a valid hex color string, for example: `#00ff00`, to change from the default color of the toolbar. Only applicable if toolbar is not disabled.
     - __toolbartranslucent__:  set to `yes` or `no` to make the toolbar translucent(semi-transparent)  (defaults to `yes`). Only applicable if toolbar is not disabled.
     - __lefttoright__: Set to `yes` to swap positions of the navigation buttons and the close button. Specifically, close button goes to the right and navigation buttons to the left.
@@ -167,8 +167,8 @@ instance, or the system browser.
 
 ### Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes');
-    var ref2 = cordova.InAppBrowser.open(encodeURI('http://ja.m.wikipedia.org/wiki/ハングル'), '_blank', 'location=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'location=yes');
+    var ref2 = cordova.DappBrowser.open(encodeURI('http://ja.m.wikipedia.org/wiki/ハングル'), '_blank', 'location=yes');
 
 ### OSX Quirks
 
@@ -192,9 +192,9 @@ The example above forces the user agent to contain `iPad`. The other option is t
 
 - Navigation history (`back` and `forward` buttons in LocationBar) is not implemented.
 
-## InAppBrowser
+## DappBrowser
 
-The object returned from a call to `cordova.InAppBrowser.open` when the target is set to `'_blank'`.
+The object returned from a call to `cordova.DappBrowser.open` when the target is set to `'_blank'`.
 
 ### Methods
 
@@ -206,22 +206,22 @@ The object returned from a call to `cordova.InAppBrowser.open` when the target i
 - executeScript
 - insertCSS
 
-## InAppBrowser.addEventListener
+## DappBrowser.addEventListener
 
-> Adds a listener for an event from the `InAppBrowser`. (Only available when the target is set to `'_blank'`)
+> Adds a listener for an event from the `DappBrowser`. (Only available when the target is set to `'_blank'`)
 
     ref.addEventListener(eventname, callback);
 
-- __ref__: reference to the `InAppBrowser` window _(InAppBrowser)_
+- __ref__: reference to the `DappBrowser` window _(DappBrowser)_
 
 - __eventname__: the event to listen for _(String)_
 
-  - __loadstart__: event fires when the `InAppBrowser` starts to load a URL.
-  - __loadstop__: event fires when the `InAppBrowser` finishes loading a URL.
-  - __loaderror__: event fires when the `InAppBrowser` encounters an error when loading a URL.
-  - __exit__: event fires when the `InAppBrowser` window is closed.
-  - __beforeload__: event fires when the `InAppBrowser` decides whether to load an URL or not (only with option `beforeload` set).
-  - __message__: event fires when the `InAppBrowser` receives a message posted from the page loaded inside the `InAppBrowser` Webview.
+  - __loadstart__: event fires when the `DappBrowser` starts to load a URL.
+  - __loadstop__: event fires when the `DappBrowser` finishes loading a URL.
+  - __loaderror__: event fires when the `DappBrowser` encounters an error when loading a URL.
+  - __exit__: event fires when the `DappBrowser` window is closed.
+  - __beforeload__: event fires when the `DappBrowser` decides whether to load an URL or not (only with option `beforeload` set).
+  - __message__: event fires when the `DappBrowser` receives a message posted from the page loaded inside the `DappBrowser` Webview.
 
 - __callback__: the function that executes when the event fires. The function is passed an `InAppBrowserEvent` object as a parameter.
 
@@ -237,7 +237,7 @@ function showHelp(url) {
 
     var options = "location=yes,hidden=yes,beforeload=yes";
 
-    inAppBrowserRef = cordova.InAppBrowser.open(url, target, options);
+    inAppBrowserRef = cordova.DappBrowser.open(url, target, options);
 
     inAppBrowserRef.addEventListener('loadstart', loadStartCallBack);
 
@@ -307,7 +307,7 @@ function beforeloadCallBack(params, callback) {
 
     if (params.url.startsWith("http://www.example.com/")) {
 
-        // Load this URL in the inAppBrowser.
+        // Load this URL in the DappBrowser.
         callback(params.url);
     } else {
 
@@ -354,24 +354,24 @@ function messageCallBack(params){
 
 ### Quick Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'location=yes');
     ref.addEventListener('loadstart', function(event) { alert(event.url); });
 
-## InAppBrowser.removeEventListener
+## DappBrowser.removeEventListener
 
-> Removes a listener for an event from the `InAppBrowser`. (Only available when the target is set to `'_blank'`)
+> Removes a listener for an event from the `DappBrowser`. (Only available when the target is set to `'_blank'`)
 
     ref.removeEventListener(eventname, callback);
 
-- __ref__: reference to the `InAppBrowser` window. _(InAppBrowser)_
+- __ref__: reference to the `DappBrowser` window. _(DappBrowser)_
 
 - __eventname__: the event to stop listening for. _(String)_
 
-  - __loadstart__: event fires when the `InAppBrowser` starts to load a URL.
-  - __loadstop__: event fires when the `InAppBrowser` finishes loading a URL.
-  - __loaderror__: event fires when the `InAppBrowser` encounters an error loading a URL.
-  - __exit__: event fires when the `InAppBrowser` window is closed.
-  - __message__: event fires when the `InAppBrowser` receives a message posted from the page loaded inside the `InAppBrowser` Webview.
+  - __loadstart__: event fires when the `DappBrowser` starts to load a URL.
+  - __loadstop__: event fires when the `DappBrowser` finishes loading a URL.
+  - __loaderror__: event fires when the `DappBrowser` encounters an error loading a URL.
+  - __exit__: event fires when the `DappBrowser` window is closed.
+  - __message__: event fires when the `DappBrowser` receives a message posted from the page loaded inside the `DappBrowser` Webview.
 
 - __callback__: the function to execute when the event fires.
 The function is passed an `InAppBrowserEvent` object.
@@ -385,18 +385,18 @@ The function is passed an `InAppBrowserEvent` object.
 
 ### Quick Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'location=yes');
     var myCallback = function(event) { alert(event.url); }
     ref.addEventListener('loadstart', myCallback);
     ref.removeEventListener('loadstart', myCallback);
 
-## InAppBrowser.close
+## DappBrowser.close
 
-> Closes the `InAppBrowser` window.
+> Closes the `DappBrowser` window.
 
     ref.close();
 
-- __ref__: reference to the `InAppBrowser` window _(InAppBrowser)_
+- __ref__: reference to the `DappBrowser` window _(DappBrowser)_
 
 ### Supported Platforms
 
@@ -407,16 +407,16 @@ The function is passed an `InAppBrowserEvent` object.
 
 ### Quick Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'location=yes');
     ref.close();
 
-## InAppBrowser.show
+## DappBrowser.show
 
-> Displays an InAppBrowser window that was opened hidden. Calling this has no effect if the InAppBrowser was already visible.
+> Displays an DappBrowser window that was opened hidden. Calling this has no effect if the DappBrowser was already visible.
 
     ref.show();
 
-- __ref__: reference to the InAppBrowser window (`InAppBrowser`)
+- __ref__: reference to the DappBrowser window (`DappBrowser`)
 
 ### Supported Platforms
 
@@ -427,17 +427,17 @@ The function is passed an `InAppBrowserEvent` object.
 
 ### Quick Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'hidden=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'hidden=yes');
     // some time later...
     ref.show();
 
-## InAppBrowser.hide
+## DappBrowser.hide
 
-> Hides the InAppBrowser window. Calling this has no effect if the InAppBrowser was already hidden.
+> Hides the DappBrowser window. Calling this has no effect if the DappBrowser was already hidden.
 
     ref.hide();
 
-- __ref__: reference to the InAppBrowser window (`InAppBrowser`)
+- __ref__: reference to the DappBrowser window (`DappBrowser`)
 
 ### Supported Platforms
 
@@ -447,17 +447,17 @@ The function is passed an `InAppBrowserEvent` object.
 
 ### Quick Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank');
     // some time later...
     ref.hide();
 
-## InAppBrowser.executeScript
+## DappBrowser.executeScript
 
-> Injects JavaScript code into the `InAppBrowser` window. (Only available when the target is set to `'_blank'`)
+> Injects JavaScript code into the `DappBrowser` window. (Only available when the target is set to `'_blank'`)
 
     ref.executeScript(details, callback);
 
-- __ref__: reference to the `InAppBrowser` window. _(InAppBrowser)_
+- __ref__: reference to the `DappBrowser` window. _(DappBrowser)_
 
 - __injectDetails__: details of the script to run, specifying either a `file` or `code` key. _(Object)_
   - __file__: URL of the script to inject.
@@ -479,7 +479,7 @@ The function is passed an `InAppBrowserEvent` object.
 
 ### Quick Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'location=yes');
     ref.addEventListener('loadstop', function() {
         ref.executeScript({file: "myscript.js"});
     });
@@ -492,13 +492,13 @@ The function is passed an `InAppBrowserEvent` object.
 
 Due to [MSDN docs](https://msdn.microsoft.com/en-us/library/windows.ui.xaml.controls.webview.invokescriptasync.aspx) the invoked script can return only string values, otherwise the parameter, passed to __callback__ will be `[null]`.
 
-## InAppBrowser.insertCSS
+## DappBrowser.insertCSS
 
-> Injects CSS into the `InAppBrowser` window. (Only available when the target is set to `'_blank'`)
+> Injects CSS into the `DappBrowser` window. (Only available when the target is set to `'_blank'`)
 
     ref.insertCSS(details, callback);
 
-- __ref__: reference to the `InAppBrowser` window _(InAppBrowser)_
+- __ref__: reference to the `DappBrowser` window _(DappBrowser)_
 
 - __injectDetails__: details of the script to run, specifying either a `file` or `code` key. _(Object)_
   - __file__: URL of the stylesheet to inject.
@@ -514,13 +514,13 @@ Due to [MSDN docs](https://msdn.microsoft.com/en-us/library/windows.ui.xaml.cont
 
 ### Quick Example
 
-    var ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes');
+    var ref = cordova.DappBrowser.open('http://apache.org', '_blank', 'location=yes');
     ref.addEventListener('loadstop', function() {
         ref.insertCSS({file: "mystyles.css"});
     });
 __
 
-## <a id="sample"></a>Sample: Show help pages with an InAppBrowser
+## <a id="sample"></a>Sample: Show help pages with an DappBrowser
 
 You can use this plugin to show helpful documentation pages within your app. Users can view online help documents and then close them without leaving the app.
 
@@ -559,7 +559,7 @@ $('#help-select').on('change', function (e) {
 
         case "article":
             url = "https://cordova.apache.org/docs/en/latest/"
-                        + "reference/cordova-plugin-inappbrowser/index.html";
+                        + "reference/elastos-essentials-plugin-dappbrowser/index.html";
             break;
 
         case "video":
@@ -567,7 +567,7 @@ $('#help-select').on('change', function (e) {
             break;
 
         case "search":
-            url = "https://www.google.com/#q=inAppBrowser+plugin";
+            url = "https://www.google.com/#q=DappBrowser+plugin";
             break;
     }
 
@@ -589,7 +589,7 @@ function showHelp(url) {
 
     var options = "location=yes,hidden=yes";
 
-    inAppBrowserRef = cordova.InAppBrowser.open(url, target, options);
+    inAppBrowserRef = cordova.DappBrowser.open(url, target, options);
 
     inAppBrowserRef.addEventListener('loadstart', loadStartCallBack);
 
@@ -678,14 +678,14 @@ function executeScriptCallBack(params) {
 
 ### Local Urls ( source is in the app package )
 ```
-var iab = cordova.InAppBrowser;
+var iab = cordova.DappBrowser;
 
 iab.open('local-url.html');                  // loads in the Cordova WebView
 iab.open('local-url.html', '_self');         // loads in the Cordova WebView
 iab.open('local-url.html', '_system');       // Security error: system browser, but url will not load (iOS)
-iab.open('local-url.html', '_blank');        // loads in the InAppBrowser
-iab.open('local-url.html', 'random_string'); // loads in the InAppBrowser
-iab.open('local-url.html', 'random_string', 'location=no'); // loads in the InAppBrowser, no location bar
+iab.open('local-url.html', '_blank');        // loads in the DappBrowser
+iab.open('local-url.html', 'random_string'); // loads in the DappBrowser
+iab.open('local-url.html', 'random_string', 'location=no'); // loads in the DappBrowser, no location bar
 
 ```
 
@@ -694,28 +694,28 @@ iab.open('local-url.html', 'random_string', 'location=no'); // loads in the InAp
 ### Whitelisted Content
 
 ```
-var iab = cordova.InAppBrowser;
+var iab = cordova.DappBrowser;
 
 iab.open('http://whitelisted-url.com');                  // loads in the Cordova WebView
 iab.open('http://whitelisted-url.com', '_self');         // loads in the Cordova WebView
 iab.open('http://whitelisted-url.com', '_system');       // loads in the system browser
-iab.open('http://whitelisted-url.com', '_blank');        // loads in the InAppBrowser
-iab.open('http://whitelisted-url.com', 'random_string'); // loads in the InAppBrowser
+iab.open('http://whitelisted-url.com', '_blank');        // loads in the DappBrowser
+iab.open('http://whitelisted-url.com', 'random_string'); // loads in the DappBrowser
 
-iab.open('http://whitelisted-url.com', 'random_string', 'location=no'); // loads in the InAppBrowser, no location bar
+iab.open('http://whitelisted-url.com', 'random_string', 'location=no'); // loads in the DappBrowser, no location bar
 
 ```
 
 ### Urls that are not white-listed
 
 ```
-var iab = cordova.InAppBrowser;
+var iab = cordova.DappBrowser;
 
-iab.open('http://url-that-fails-whitelist.com');                  // loads in the InAppBrowser
-iab.open('http://url-that-fails-whitelist.com', '_self');         // loads in the InAppBrowser
+iab.open('http://url-that-fails-whitelist.com');                  // loads in the DappBrowser
+iab.open('http://url-that-fails-whitelist.com', '_self');         // loads in the DappBrowser
 iab.open('http://url-that-fails-whitelist.com', '_system');       // loads in the system browser
-iab.open('http://url-that-fails-whitelist.com', '_blank');        // loads in the InAppBrowser
-iab.open('http://url-that-fails-whitelist.com', 'random_string'); // loads in the InAppBrowser
-iab.open('http://url-that-fails-whitelist.com', 'random_string', 'location=no'); // loads in the InAppBrowser, no location bar
+iab.open('http://url-that-fails-whitelist.com', '_blank');        // loads in the DappBrowser
+iab.open('http://url-that-fails-whitelist.com', 'random_string'); // loads in the DappBrowser
+iab.open('http://url-that-fails-whitelist.com', 'random_string', 'location=no'); // loads in the DappBrowser, no location bar
 
 ```

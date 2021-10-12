@@ -1,5 +1,5 @@
-// Type definitions for Apache Cordova InAppBrowser plugin
-// Project: https://github.com/apache/cordova-plugin-inappbrowser
+// Type definitions for Apache Cordova DappBrowser plugin
+// Project: https://github.com/apache/elastos-essentials-plugin-dappbrowser
 // Definitions by: Microsoft Open Technologies Inc <http://msopentech.com>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 //
@@ -9,20 +9,20 @@
 type channel = "loadstart" | "loadstop" | "loaderror" | "exit" | "message" | "customscheme";
 
 /**
- * The object returned from a call to cordova.InAppBrowser.open.
- * NOTE: The InAppBrowser window behaves like a standard web browser, and can't access Cordova APIs.
+ * The object returned from a call to cordova.DappBrowser.open.
+ * NOTE: The DappBrowser window behaves like a standard web browser, and can't access Cordova APIs.
  */
-interface InAppBrowser {
+interface DappBrowser {
 
     /**
-     * Opens a URL in a new InAppBrowser instance, the current browser instance, or the system browser.
+     * Opens a URL in a new DappBrowser instance, the current browser instance, or the system browser.
      * @param  url     The URL to load.
      * @param  target  The target in which to load the URL, an optional parameter that defaults to _self.
-     * @param  options Options for the InAppBrowser. Optional, defaulting to: location=yes.
+     * @param  options Options for the DappBrowser. Optional, defaulting to: location=yes.
      *                 The options string must not contain any blank space, and each feature's
      *                 name/value pairs must be separated by a comma. Feature names are case insensitive.
      */
-    open(url: string, target?: string, options?: string): InAppBrowser;
+    open(url: string, target?: string, options?: string): DappBrowser;
 
     onloadstart(type: Event): void;
     onloadstop(type: InAppBrowserEvent): void;
@@ -30,17 +30,17 @@ interface InAppBrowser {
     onexit(type: InAppBrowserEvent): void;
     // addEventListener overloads
     /**
-     * Adds a listener for an event from the InAppBrowser.
-     * @param type      loadstart: event fires when the InAppBrowser starts to load a URL.
-     *                  loadstop: event fires when the InAppBrowser finishes loading a URL.
-     *                  loaderror: event fires when the InAppBrowser encounters an error when loading a URL.
-     *                  exit: event fires when the InAppBrowser window is closed.
+     * Adds a listener for an event from the DappBrowser.
+     * @param type      loadstart: event fires when the DappBrowser starts to load a URL.
+     *                  loadstop: event fires when the DappBrowser finishes loading a URL.
+     *                  loaderror: event fires when the DappBrowser encounters an error when loading a URL.
+     *                  exit: event fires when the DappBrowser window is closed.
      * @param callback  the function that executes when the event fires. The function is
      *                  passed an InAppBrowserEvent object as a parameter.
      */
     addEventListener(type: channel, callback: InAppBrowserEventListenerOrEventListenerObject): void;
     /**
-     * Adds a listener for an event from the InAppBrowser.
+     * Adds a listener for an event from the DappBrowser.
      * @param type      any custom event that might occur.
      * @param callback  the function that executes when the event fires. The function is
      *                  passed an InAppBrowserEvent object as a parameter.
@@ -48,27 +48,27 @@ interface InAppBrowser {
     addEventListener(type: string, callback: InAppBrowserEventListenerOrEventListenerObject): void;
     // removeEventListener overloads
     /**
-     * Removes a listener for an event from the InAppBrowser.
+     * Removes a listener for an event from the DappBrowser.
      * @param type      The event to stop listening for.
-     *                  loadstart: event fires when the InAppBrowser starts to load a URL.
-     *                  loadstop: event fires when the InAppBrowser finishes loading a URL.
-     *                  loaderror: event fires when the InAppBrowser encounters an error when loading a URL.
-     *                  exit: event fires when the InAppBrowser window is closed.
+     *                  loadstart: event fires when the DappBrowser starts to load a URL.
+     *                  loadstop: event fires when the DappBrowser finishes loading a URL.
+     *                  loaderror: event fires when the DappBrowser encounters an error when loading a URL.
+     *                  exit: event fires when the DappBrowser window is closed.
      * @param callback  the function that executes when the event fires. The function is
      *                  passed an InAppBrowserEvent object as a parameter.
      */
     removeEventListener(type: channel, callback: InAppBrowserEventListenerOrEventListenerObject): void;
-    /** Closes the InAppBrowser window. */
+    /** Closes the DappBrowser window. */
     close(): void;
-    /** Hides the InAppBrowser window. Calling this has no effect if the InAppBrowser was already hidden. */
+    /** Hides the DappBrowser window. Calling this has no effect if the DappBrowser was already hidden. */
     hide(): void;
     /**
-     * Displays an InAppBrowser window that was opened hidden. Calling this has no effect
-     * if the InAppBrowser was already visible.
+     * Displays an DappBrowser window that was opened hidden. Calling this has no effect
+     * if the DappBrowser was already visible.
      */
     show(): void;
     /**
-     * Injects JavaScript code into the InAppBrowser window.
+     * Injects JavaScript code into the DappBrowser window.
      * @param script    Details of the script to run, specifying either a file or code key.
      * @param callback  The function that executes after the JavaScript code is injected.
      *                  If the injected script is of type code, the callback executes with
@@ -78,7 +78,7 @@ interface InAppBrowser {
      */
     executeScript(script: { code: string } | { file: string }, callback: (result: any) => void): void;
     /**
-     * Injects CSS into the InAppBrowser window.
+     * Injects CSS into the DappBrowser window.
      * @param css       Details of the script to run, specifying either a file or code key.
      * @param callback  The function that executes after the CSS is injected.
      */
@@ -105,5 +105,5 @@ interface InAppBrowserEvent extends Event {
 }
 
 interface Cordova {
-    InAppBrowser: InAppBrowser;
+    DappBrowser: DappBrowser;
 }
