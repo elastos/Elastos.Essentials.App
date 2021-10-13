@@ -29,6 +29,7 @@ import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet
 import { BridgeService } from './bridge.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
+import { CurrencyV2Service } from './currency.v2.service';
 import { CustomNetworkService } from './customnetwork.service';
 import { EarnService } from './earn.service';
 import { ETHTransactionService } from './ethtransaction.service';
@@ -55,6 +56,7 @@ export class WalletInitService extends GlobalService {
     private events: Events,
     private navService: NavService,
     private currencyService: CurrencyService,
+    private currencyV2Service: CurrencyV2Service,
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
@@ -91,6 +93,7 @@ export class WalletInitService extends GlobalService {
 
     // Do not await.
     void this.currencyService.init();
+    await this.currencyV2Service.init();
     // Do not await.
     void this.contactsService.init();
     void this.ethTransactionService.init();
@@ -104,6 +107,10 @@ export class WalletInitService extends GlobalService {
 
     await this.walletManager.init();
     await this.intentService.init();
+
+
+    // TMP TEST
+    //await this.currencyV2Service.getTokenUSDValue(null, null);
   }
 
   public async onUserSignOut(): Promise<void> {

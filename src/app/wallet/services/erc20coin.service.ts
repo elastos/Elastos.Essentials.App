@@ -108,9 +108,9 @@ export class ERC20CoinService {
         }
     }
 
-    public async getERC20Coin(address: string, ethAccountAddress: string) {
+    public async getERC20Coin(address: string, ethAccountAddress: string): Promise<ERC20Coin> {
         const coinInfo = await this.getCoinInfo(address, ethAccountAddress);
-        const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinName, address, this.prefs.getNetworkTemplate(), false);
+        const newCoin = new ERC20Coin(coinInfo.coinSymbol, coinInfo.coinName, address, coinInfo.coinDecimals, this.prefs.getNetworkTemplate(), false);
         return newCoin;
     }
 }

@@ -10,6 +10,7 @@ import { SwapProvider } from "../earn/swapprovider";
 import { ERC20SubWallet } from "../wallets/erc20.subwallet";
 import { MasterWallet } from "../wallets/masterwallet";
 import { NetworkWallet } from "../wallets/networkwallet";
+import { UniswapCurrencyProvider } from "./uniswap.currencyprovider";
 
 export abstract class Network {
   private availableCoins: Coin[] = null;
@@ -208,5 +209,13 @@ export abstract class Network {
 
   public getLastAccessTime() {
     return this.lastAccessTimestamp;
+  }
+
+  /**
+   * To be overriden by each network. By default, no provider is returned, meaning that ERC20 tokens 
+   * won't be able to get a USD pricing.
+   */
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return null;
   }
 }
