@@ -79,7 +79,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     description: 'Elastos ecosystem decentralized exchange',
                     url: 'https://glidefinance.io/',
                     useExternalBrowser: false,
-                    networks: ["elastos", "heco", "bsc"]
+                    networks: ["elastos"]
                 },
                 {
                     icon: '/assets/browser/dapps/profile.png',
