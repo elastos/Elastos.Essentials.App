@@ -51,11 +51,9 @@ export interface DappBrowserClient {
     onMessage?: (info: DABMessage) => void;
     onProgress?: (progress: number) => void;
     onUrlChanged?: (url: string) => void;
-    onMenu?: () => void;
     onHtmlHead?: (head: Document) => void;
     onCustomScheme?: (url: string) => void;
 }
-
 @Injectable({
     providedIn: 'root'
 })
@@ -113,7 +111,6 @@ export class DappBrowserService {
      * @param url The dApp URL to show.
      * @param [target="_webview"]  The target in which to load the URL, an optional parameter that defaults to _webview.
      *                 _self: Opens in the WebView if the URL is in the white list, otherwise it opens in the DappBrowser.
-     *                 _blank: Opens in the DappBrowser.
      *                 _webview: Opens in the Webview.
      *                 _system: Opens in the system's web browser.
      * @param title The dApp title to show, if have title the url bar hide, otherwise show url bar.
@@ -189,11 +186,6 @@ export class DappBrowserService {
             case "urlchanged":
                 if (this.dabClient != null && this.dabClient.onUrlChanged) {
                     this.dabClient.onUrlChanged(event.url);
-                }
-                break;
-            case "menu":
-                if (this.dabClient != null && this.dabClient.onMenu) {
-                    this.dabClient.onMenu();
                 }
                 break;
             case "head":

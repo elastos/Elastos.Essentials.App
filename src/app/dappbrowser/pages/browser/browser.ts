@@ -67,6 +67,12 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     ionViewWillLeave() {
+        void this.zone.run(async () => {
+            this.shot = await dappBrowser.getWebViewShot();
+        });
+
+        dappBrowser.hide();
+
         this.backButtonSub.unsubscribe();
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
@@ -91,17 +97,6 @@ export class BrowserPage implements DappBrowserClient {
         void dappBrowser.loadUrl(url);
     }
 
-    keyEnter() {
-        // if (this.url && this.url !== "") {
-        //     let fixedUrl: string = this.url.toLowerCase();
-        //     if (!fixedUrl.startsWith("http"))
-        //         fixedUrl = "https://" + fixedUrl;
-
-        //     this.keyboard.hide();
-        //     dappBrowser.loadUrl(fixedUrl);
-        // }
-    }
-
     onGoToLauncher() {
         void dappBrowser.close("goToLauncher");
     }
@@ -117,12 +112,6 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     onMenu() {
-        void this.zone.run(async () => {
-            // this.shot = await dappBrowser.getWebViewShot();
-            // this.shot = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
-        });
-
-        dappBrowser.hide();
         void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
     }
     /*

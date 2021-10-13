@@ -61,6 +61,8 @@ import org.apache.cordova.CallbackContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 
 public class WebViewHandler {
@@ -207,9 +209,9 @@ public class WebViewHandler {
 
         //Toggle whether this is enabled or not!
         Bundle appSettings = this.activity.getIntent().getExtras();
-        boolean enableDatabase = appSettings == null ? true : appSettings.getBoolean("InAppBrowserStorageEnabled", true);
+        boolean enableDatabase = appSettings == null ? true : appSettings.getBoolean("DappBrowserStorageEnabled", true);
         if (enableDatabase) {
-            String databasePath = this.activity.getApplicationContext().getDir("inAppBrowserDB", Context.MODE_PRIVATE).getPath();
+            String databasePath = this.activity.getApplicationContext().getDir("dappBrowserDB", Context.MODE_PRIVATE).getPath();
             settings.setDatabasePath(databasePath);
             settings.setDatabaseEnabled(true);
         }
@@ -417,18 +419,6 @@ public class WebViewHandler {
         }
     }
 
-    public void setMenuEvent() {
-        try {
-            JSONObject obj = new JSONObject();
-            obj.put("type", MENU_EVENT);
-//            obj.put("data", data);
-
-            brwoserPlugin.sendEventCallback(obj, true);
-        } catch (JSONException ex) {
-            LOG.d(LOG_TAG, "Should never happen");
-        }
-    }
-
     public String getWebViewShot() {
         View view = webView;
         if (view.getVisibility() == View.GONE) {
@@ -444,21 +434,6 @@ public class WebViewHandler {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream .toByteArray();
         String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-        float y = webView.getY();
-        webView.setVisibility(View.GONE);
-//        encoded = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
-//        byte[] data = Base64.decode(encoded, Base64.NO_WRAP);
-//        Bitmap bitmap1 = BitmapFactory.decodeByteArray(data, 0, data.length);
-//
-//        ImageView imageView = new ImageView(activity);
-//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-//        imageView.setLayoutParams(params);
-//        imageView.setId(View.generateViewId());
-//
-//        ViewGroup viewGroup = (ViewGroup)brwoserPlugin.webView.getView();
-//        viewGroup.addView(imageView);
-//        imageView.setImageBitmap(bitmap1);
-//        imageView.setY(y);
 
         return "data:image/png;base64," + encoded;
     }

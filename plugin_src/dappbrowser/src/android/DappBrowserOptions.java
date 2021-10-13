@@ -42,10 +42,7 @@ public class DappBrowserOptions {
     public boolean hidden = false;
     public boolean disallowoverscroll = false;
     public boolean hidenavigationbuttons = false;
-    public String closebuttoncolor = null;
     public boolean lefttoright = false;
-    public String toolbarcolor = null;
-    public boolean toolbartranslucent = true;
     public String beforeload = "";
 
     public boolean showZoomControls = false;
@@ -54,7 +51,6 @@ public class DappBrowserOptions {
     public boolean hadwareBackButton = true;
 
     public boolean darkmode = false;
-    public String title = null;
 
     static DappBrowserOptions parseOptions(String options) throws Exception {
         DappBrowserOptions obj = new DappBrowserOptions();
@@ -67,15 +63,18 @@ public class DappBrowserOptions {
                 String key = fields[i].getName();
 
                 if (json.has(key)) {
-                    String typeName = fields[i].getGenericType().getTypeName();
-                    if (typeName.equals("boolean")) {
-                        fields[i].setBoolean(obj, json.getBoolean(key));
-                    }
-                    else if (typeName.equals("int")) {
-                        fields[i].setInt(obj, json.getInt(key));
-                    }
-                    else if (typeName.equals("java.lang.String")) {
-                        fields[i].set(obj, json.getString(key));
+                    String typeName = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                        typeName = fields[i].getGenericType().getTypeName();
+                        if (typeName.equals("boolean")) {
+                            fields[i].setBoolean(obj, json.getBoolean(key));
+                        }
+                        else if (typeName.equals("int")) {
+                            fields[i].setInt(obj, json.getInt(key));
+                        }
+                        else if (typeName.equals("java.lang.String")) {
+                            fields[i].set(obj, json.getString(key));
+                        }
                     }
                 }
             }
