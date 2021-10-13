@@ -75,6 +75,6 @@ export const zh = {
         // Sharing
         'share-friend': '在 Elastos Essentials 中添加我为好友',
         'share-add-me-as-friend': '加我为好友',
-        'copied-to-clipboard': 'Copied to clipboard',
+        'copied-to-clipboard': '已复制',
     }
 }
