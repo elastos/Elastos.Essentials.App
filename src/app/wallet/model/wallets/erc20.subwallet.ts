@@ -385,7 +385,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             try {
                 // Estimate gas cost
                 let gasTemp = await method.estimateGas();
-                gasLimit = Util.ceil(gasTemp).toString();
+                // '* 1.5': Make sure the gaslimit is big enough.
+                gasLimit = Util.ceil(gasTemp * 1.5).toString();
             } catch (error) {
                 Logger.log('wallet', 'estimateGas error:', error);
             }

@@ -206,6 +206,8 @@ export abstract class Network {
     void LocalStorage.instance.set("custom-erc20-coins-accesstime-" + this.localStorageKey, this.lastAccessTimestamp);
   }
 
+  // The last time that the user viewed the coin list screen.
+  // We decide whether to display newly discovered tokens based on this time.
   public getLastAccessTime() {
     return this.lastAccessTimestamp;
   }

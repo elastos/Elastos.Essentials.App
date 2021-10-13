@@ -50,7 +50,8 @@ export class EidSubWallet extends ElastosEVMSubWallet {
     try {
       // Estimate gas cost
       let gasLimitTemp = await method.estimateGas();
-      gasLimit = Util.ceil(gasLimitTemp);
+      //'* 1.5': Make sure the gaslimit is big enough.
+      gasLimit = Util.ceil(gasLimitTemp * 1.5);
     } catch (error) {
       Logger.warn('wallet', 'estimateGas error:', error);
     }

@@ -315,9 +315,11 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
         return null;
       }
       if (amount === -1) {
+        // TODO: User will lost small amount if use 'estimateGas * 1.5'.
         gasLimit = estimateGas.toString();
       } else {
-        gasLimit = Util.ceil(estimateGas).toString();
+        // '* 1.5':Make sue the gaslimit is big enough.
+        gasLimit = Util.ceil(estimateGas * 1.5).toString();
       }
     }
 
