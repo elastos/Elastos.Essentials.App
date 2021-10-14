@@ -145,6 +145,9 @@ export class DappBrowserService {
         if (target == "_webview") {
             void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
         }
+
+        // Remember this application as browsed permanently.
+        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
     }
 
     public async handleEvent(event: DappBrowserPlugin.DappBrowserEvent) {
@@ -208,7 +211,7 @@ export class DappBrowserService {
         }
     }
 
-    private handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
+    private async handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
         // Updated the browsed url
         this.url = event.url;
 
@@ -253,6 +256,9 @@ export class DappBrowserService {
         // dapp opened)
         this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
         void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
+
+        // Remember this application as browsed permanently.
+        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
 
         return;
     }

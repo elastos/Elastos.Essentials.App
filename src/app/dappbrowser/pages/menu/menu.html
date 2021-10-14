@@ -2,7 +2,7 @@
     <app-titlebar></app-titlebar>
     <ion-grid [class.dark-container]="theme.darkMode">
         <ion-grid class="box app">
-            <ion-row *ngIf="browsedAppInfo">
+            <ion-row *ngIf="appMetaLoaded()">
                 <ion-col size="3" class="icon-col">
                     <div class="icon-container">
                         <img class="icon" [src]="browsedAppInfo.iconUrl" />
@@ -13,7 +13,7 @@
                     <div class="info">{{browsedAppInfo.description}}</div>
                 </ion-col>
             </ion-row>
-            <ion-spinner name="crescent" *ngIf="!browsedAppInfo"></ion-spinner>
+            <ion-spinner name="crescent" *ngIf="!appMetaLoaded()"></ion-spinner>
         </ion-grid>
 
         <ion-grid class="box switches">
@@ -59,7 +59,7 @@
 
             <ion-row class="action-items">
                 <ion-col size="4" class="ripple ion-activatable">
-                    <div class="action" (click)="addToFavorites()" *ngIf="browsedAppInfo && !isInFavorites()">
+                    <div class="action" (click)="addToFavorites()" *ngIf="appMetaLoaded() && !isInFavorites()">
                         <img
                             [src]="!theme.darkMode ? '/assets/browser/icons/icon-fav.svg' : 'assets/browser/icons/dark_mode/icon-fav.svg'" />
                         {{ 'dappbrowser.menu-action-add-to-favorites' | translate }}
