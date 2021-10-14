@@ -132,4 +132,11 @@ export class MenuPage {
             url: this.browsedAppInfo.url
         });
     }
+
+    /**
+     * Tells if the HTML header was loaded yet or not.
+     */
+    public appMetaLoaded(): boolean {
+        return this.browsedAppInfo && this.browsedAppInfo.title !== "";
+    }
 }
