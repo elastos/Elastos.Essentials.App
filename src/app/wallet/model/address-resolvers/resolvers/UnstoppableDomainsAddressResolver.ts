@@ -2,9 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import Resolution from '@unstoppabledomains/resolution';
 import { Logger } from "src/app/logger";
 import { BSCMainNetNetwork } from '../../networks/bsc/bsc.mainnet.network';
+import { ElastosMainNetNetwork } from '../../networks/elastos/elastos.mainnet.network';
 import { EthereumMainNetNetwork } from '../../networks/ethereum/ethereum.mainnet.network';
 import { FantomMainNetNetwork } from '../../networks/fantom/fantom.mainnet.network';
 import { HECOMainNetNetwork } from '../../networks/heco/heco.mainnet.network';
+import { EscSubWallet } from '../../wallets/elastos/esc.evm.subwallet';
+import { MainchainSubWallet } from '../../wallets/elastos/mainchain.subwallet';
 import { AnySubWallet } from '../../wallets/subwallet';
 import { Address } from '../addresses/Address';
 import { UnstoppableDomainsAddress } from '../addresses/UnstoppableDomainsAddress';
@@ -23,7 +26,15 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
      * Returns UD's record key to be used for a given Essential's network.
      */
     private resolutionRecordKeyForWallet(subWallet: AnySubWallet): string {
-        if (subWallet.networkWallet.network instanceof EthereumMainNetNetwork)
+        if (subWallet.networkWallet.network instanceof ElastosMainNetNetwork) {
+            if (subWallet instanceof EscSubWallet)
+                return "crypto.ELA.version.ESC.address";
+            else if (subWallet instanceof MainchainSubWallet)
+                return "crypto.ELA.version.ELA.address";
+            else
+                return null;
+        }
+        else if (subWallet.networkWallet.network instanceof EthereumMainNetNetwork)
             return "crypto.ETH.address";
         else if (subWallet.networkWallet.network instanceof HECOMainNetNetwork)
             return "crypto.HT.address";
@@ -41,7 +52,7 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
     }
 
     /**
-     * Supported record keys list: https://github.com/unstoppabledomains/dot-crypto/blob/master/src/supported-keys/supported-keys.json
+     * Supported record keys list: https://github.com/unstoppabledomains/uns/blob/main/resolver-keys.json
      *
      * ben.crypto:
             crypto.BTC.address: "bc1qah84mry5mzp5ady8gdygzlrs0sc330qehgn969"
