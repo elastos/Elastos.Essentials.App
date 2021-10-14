@@ -59,6 +59,10 @@ export class EditFavoritePage {
         this.availableNetworks = this.walletNetworksService.getAvailableNetworks();
     }
 
+    ionViewWillLeave() {
+      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
     async goback() {
         await this.nav.navigateBack();
     }

@@ -75,6 +75,7 @@ export class MenuPage {
     ionViewWillLeave() {
         this.browsedAppInfoSub.unsubscribe();
         this.browsedAppInfoSub = null;
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     ionViewDidEnter() {

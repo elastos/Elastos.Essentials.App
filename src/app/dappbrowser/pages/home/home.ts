@@ -155,6 +155,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     ionViewWillLeave() {
         this.favoritesSubscription.unsubscribe();
         this.networkSubscription.unsubscribe();
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
     public setTheme(darkMode: boolean) {
