@@ -107,13 +107,13 @@ public class WebViewHandler {
 
     public int pxToDp(int px) {
         DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
-        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        int dp = Math.round(px / ((float)displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
         return dp;
     }
 
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        int px = Math.round(dp * ((float)displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
     }
 

@@ -29,7 +29,13 @@
 
     ion-header {
         ion-row {
-            padding: 4px 3px;
+            height:100%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 0;
 
             ion-col {
                 .img-btn {
