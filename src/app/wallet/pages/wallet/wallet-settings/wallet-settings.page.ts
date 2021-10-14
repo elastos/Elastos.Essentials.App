@@ -125,7 +125,7 @@ export class WalletSettingsPage implements OnInit {
         // with this later on.
         let did1SubWallet = this.networkWallet.getSubWallet(StandardCoinName.IDChain);
         // Cross chain transaction need 20000 for fee.
-        if (did1SubWallet && did1SubWallet.balance.gt(20000)) {
+        if (did1SubWallet && did1SubWallet.getRawBalance().gt(20000)) {
             this.settings.push({
                 type: 'wallet-did1-transfer',
                 route: null,
@@ -178,7 +178,7 @@ export class WalletSettingsPage implements OnInit {
             cssClass: 'wallet-warning-component',
             component: WarningComponent,
             componentProps: {
-              warning: 'delete',
+                warning: 'delete',
             },
             translucent: false
         });

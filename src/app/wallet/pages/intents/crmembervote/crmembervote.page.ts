@@ -36,9 +36,9 @@ import { WalletService } from '../../../services/wallet.service';
 
 
 @Component({
-  selector: 'app-crmembervote',
-  templateUrl: './crmembervote.page.html',
-  styleUrls: ['./crmembervote.page.scss'],
+    selector: 'app-crmembervote',
+    templateUrl: './crmembervote.page.html',
+    styleUrls: ['./crmembervote.page.scss'],
 })
 export class CRmembervotePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -70,8 +70,8 @@ export class CRmembervotePage implements OnInit {
     }
 
     ionViewWillEnter() {
-      this.titleBar.setTitle(this.translate.instant('wallet.crcouncilvote-title'));
-      this.titleBar.setNavigationMode(null);
+        this.titleBar.setTitle(this.translate.instant('wallet.crcouncilvote-title'));
+        this.titleBar.setNavigationMode(null);
     }
 
     ionViewDidEnter() {
@@ -135,12 +135,12 @@ export class CRmembervotePage implements OnInit {
     /**
      * Balance needs to be greater than 0.0002ELA (or 0.1?).
      */
-     votingFees(): number {
+    votingFees(): number {
         return 20000; // SELA: 0.0002ELA
     }
 
     checkValue() {
-        const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
+        const stakeAmount = this.sourceSubwallet.getRawBalance().minus(this.votingFees());
         if (stakeAmount.isNegative()) {
             Logger.log('wallet', 'CRmembervotePage: Not enough balance:', this.sourceSubwallet.getDisplayBalance());
             this.native.toast_trans('wallet.insufficient-balance');
@@ -153,8 +153,8 @@ export class CRmembervotePage implements OnInit {
         Logger.log('wallet', 'Creating vote CR transaction');
 
         let crVoteContent: VoteContent = {
-          Type: VoteType.CRC,
-          Candidates: this.transfer.votes
+            Type: VoteType.CRC,
+            Candidates: this.transfer.votes
         }
 
         const voteContent = [crVoteContent];
@@ -165,23 +165,23 @@ export class CRmembervotePage implements OnInit {
         );
         await this.native.hideLoading();
         if (rawTx) {
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.masterWalletId,
-              subWalletId: this.subWalletId,
-              rawTransaction: rawTx,
-              payPassword: '',
-              action: this.intentTransfer.action,
-              intentId: this.intentTransfer.intentId,
-          });
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.masterWalletId,
+                subWalletId: this.subWalletId,
+                rawTransaction: rawTx,
+                payPassword: '',
+                action: this.intentTransfer.action,
+                intentId: this.intentTransfer.intentId,
+            });
 
-          const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         } else {
-          await this.globalIntentService.sendIntentResponse(
-            { txid: null, status: 'error' },
-            this.intentTransfer.intentId
-          );
+            await this.globalIntentService.sendIntentResponse(
+                { txid: null, status: 'error' },
+                this.intentTransfer.intentId
+            );
         }
     }
 }

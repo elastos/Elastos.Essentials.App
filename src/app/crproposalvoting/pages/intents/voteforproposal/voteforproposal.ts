@@ -63,7 +63,7 @@ export class VoteForProposalPage {
             Logger.error('crproposal', 'VoteForProposalPage ionViewDidEnter error:', err);
         }
 
-        const stakeAmount = this.voteService.sourceSubwallet.balance.minus(this.votingFees());
+        const stakeAmount = this.voteService.sourceSubwallet.getRawBalance().minus(this.votingFees());
         if (!stakeAmount.isNegative()) {
             this.maxVotes = Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
         }
@@ -131,15 +131,15 @@ export class VoteForProposalPage {
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
-          Type: VoteType.CRCProposal,
-          Candidates: votes
+            Type: VoteType.CRCProposal,
+            Candidates: votes
         }
 
         const voteContent = [crVoteContent];
         const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
             voteContent,
             '', //memo
-            );
+        );
 
         try {
             await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);

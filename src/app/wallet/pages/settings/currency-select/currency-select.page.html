@@ -6,12 +6,9 @@
                 <p>{{ 'wallet.available-currencies' | translate }}</p>
             </ion-col>
         </ion-row>
-        <ion-row
-            class="subwallet-row ripple ion-activatable"
-            [class.dark-subwallet-row]="theme.darkMode"
-            *ngFor="let currency of currencyService.currencies"
-            (click)="currencyService.saveCurrency(currency)"
-        >
+        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+            *ngFor="let currency of currencyService.getDisplayableCurrencies()"
+            (click)="currencyService.saveCurrency(currency)">
             <ion-col size="2" class="left-col">
                 <img [src]="currency.icon">
             </ion-col>
@@ -20,7 +17,8 @@
                 <p>{{ currency.name | translate }}</p>
             </ion-col>
             <ion-col size="2" class="right-col">
-                <ion-icon *ngIf="currencyService.selectedCurrency.symbol === currency.symbol" name="checkmark" mode="ios"></ion-icon>
+                <ion-icon *ngIf="currencyService.selectedCurrency.symbol === currency.symbol" name="checkmark"
+                    mode="ios"></ion-icon>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>

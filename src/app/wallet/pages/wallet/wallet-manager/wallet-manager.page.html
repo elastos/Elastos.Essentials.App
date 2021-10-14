@@ -4,17 +4,13 @@
         <p *ngIf="!forIntent">
             {{ 'wallet.wallet-manager-intro' | translate }}
         </p>
-        <ion-row
-            *ngFor="let networkWallet of walletManager.getNetworkWalletsList()"
-            class="card-row ripple ion-activatable"
-            [ngStyle]="
+        <ion-row *ngFor="let networkWallet of walletManager.getNetworkWalletsList()"
+            class="card-row ripple ion-activatable" [ngStyle]="
             {
                 'background-image': networkWallet.masterWallet.theme ?
                 'url(' + networkWallet.masterWallet.theme.background + ')' :
                 'url(/assets/wallet/cards/maincards/card-purple.svg)'
-            }"
-            (click)="goWalletSettings(networkWallet);$event.stopPropagation();"
-        >
+            }" (click)="goWalletSettings(networkWallet);$event.stopPropagation();">
             <ion-row class="card-label-row">
                 <ion-row class="top-row">
                     <ion-col size="10" class="left-col">
@@ -26,18 +22,20 @@
                 </ion-row>
                 <h2></h2>
                 <h3>{{ 'wallet.total-amount' | translate }}</h3>
-                <h4 *ngIf="!currencyService.useCurrency">{{ WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span
-                    class="dot"
-                    *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
-                  <span class="decimals">{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance()) }}</span>
-                    <span class="ela">  {{ networkWallet.getDisplayTokenName() }}</span>
+                <h4 *ngIf="!currencyService.useCurrency">{{
+                    WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
+                        *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
+                    <span class="decimals">{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance()) }}</span>
+                    <span class="ela"> {{ networkWallet.getDisplayTokenName() }}</span>
                 </h4>
                 <h4 *ngIf="currencyService.useCurrency">{{
-                  WalletUtil.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance())) }}<span class="dot"
-                    *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))">.</span>
-                  <span class="decimals">{{
-                    WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance())) }}</span>
-                    <span class="ela">  {{ currencyService.selectedCurrency.symbol }}</span>
+                    WalletUtil.getWholeBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))
+                    }}<span class="dot"
+                        *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))">.</span>
+                    <span class="decimals">{{
+                        WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))
+                        }}</span>
+                    <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                 </h4>
             </ion-row>
             <ion-ripple-effect></ion-ripple-effect>

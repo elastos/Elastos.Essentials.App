@@ -29,7 +29,6 @@ import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet
 import { BridgeService } from './bridge.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
-import { CurrencyV2Service } from './currency.v2.service';
 import { CustomNetworkService } from './customnetwork.service';
 import { EarnService } from './earn.service';
 import { ETHTransactionService } from './ethtransaction.service';
@@ -40,6 +39,7 @@ import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
 import { SwapService } from './swap.service';
 import { UiService } from './ui.service';
+import { UniswapCurrencyService } from './uniswap.currency.service';
 import { WalletService } from './wallet.service';
 
 @Injectable({
@@ -56,7 +56,7 @@ export class WalletInitService extends GlobalService {
     private events: Events,
     private navService: NavService,
     private currencyService: CurrencyService,
-    private currencyV2Service: CurrencyV2Service,
+    private uniswapCurrencyService: UniswapCurrencyService,
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
@@ -93,7 +93,7 @@ export class WalletInitService extends GlobalService {
 
     // Do not await.
     void this.currencyService.init();
-    await this.currencyV2Service.init();
+    await this.uniswapCurrencyService.init();
     // Do not await.
     void this.contactsService.init();
     void this.ethTransactionService.init();

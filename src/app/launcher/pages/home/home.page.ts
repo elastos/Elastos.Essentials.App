@@ -330,6 +330,9 @@ export class HomePage implements OnInit {
   }
 
   public getFriendlyBalance(balance: BigNumber): string {
+    if (!balance)
+      return "";
+
     return balance.decimalPlaces(4).toString();
   }
 }

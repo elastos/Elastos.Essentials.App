@@ -297,7 +297,7 @@ export class CoinHomePage implements OnInit {
 
         //At least all transactions of today must be loaded.
         if (this.todaysTransactions == transactions.length) {
-          this.fetchMoreTransactions();
+            this.fetchMoreTransactions();
         }
     }
 
@@ -314,39 +314,39 @@ export class CoinHomePage implements OnInit {
 
     async receiveFunds() {
         if (this.networkWallet.masterWallet.createdBySystem) {
-          const needsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
-          if (needsBackup) {
-            await this.showBackupPrompt()
-          } else {
-            this.native.go('/wallet/coin-receive');
-          }
+            const needsBackup = !(await this.didSessions.activeIdentityWasBackedUp());
+            if (needsBackup) {
+                await this.showBackupPrompt()
+            } else {
+                this.native.go('/wallet/coin-receive');
+            }
         } else {
-          this.native.go('/wallet/coin-receive');
+            this.native.go('/wallet/coin-receive');
         }
     }
 
     async showBackupPrompt() {
-      this.popover = await this.popoverCtrl.create({
-          mode: 'ios',
-          cssClass: 'wallet-warning-component',
-          component: WarningComponent,
-          componentProps: {
-            warning: 'bakcup',
-          },
-          translucent: false
-      });
+        this.popover = await this.popoverCtrl.create({
+            mode: 'ios',
+            cssClass: 'wallet-warning-component',
+            component: WarningComponent,
+            componentProps: {
+                warning: 'bakcup',
+            },
+            translucent: false
+        });
 
-      this.popover.onWillDismiss().then((params) => {
-          this.popover = null;
+        this.popover.onWillDismiss().then((params) => {
+            this.popover = null;
 
-          if (params && params.data && params.data.confirm) {
-            void this.globalNav.navigateTo("identitybackup", "/identity/backupdid");
-          } else {
-            this.native.go('/wallet/coin-receive');
-          }
-      });
+            if (params && params.data && params.data.confirm) {
+                void this.globalNav.navigateTo("identitybackup", "/identity/backupdid");
+            } else {
+                this.native.go('/wallet/coin-receive');
+            }
+        });
 
-      return await this.popover.present();
+        return await this.popover.present();
     }
 
     sendFunds() {
@@ -389,7 +389,7 @@ export class CoinHomePage implements OnInit {
         }
 
         void this.initData(true);
-        this.currencyService.fetch();
+        // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();
         }, 1000);

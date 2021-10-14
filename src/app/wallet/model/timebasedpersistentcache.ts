@@ -25,13 +25,14 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    * @param name Name used to uniquely identify this cache on disk.
    * @param maxItemsOnDisk Maximum number of items that are saved to disk. Older items are deleted.
    */
-  constructor(public name: string, private maxItemsOnDisk = 100) {}
+  private constructor(public name: string, private maxItemsOnDisk, private storeGlobally: boolean) { }
 
   /**
    * Returns a cache with data already loaded from disk if any, or an empty cache otherwise.
+   * If storeGlobally is true, data on disk is not sandbox for the active DID, it's shared by everyone.
    */
-  public static async loadOrCreate<T extends JSONObject>(name: string): Promise<TimeBasedPersistentCache<T>> {
-    let cache = new TimeBasedPersistentCache<T>(name);
+  public static async loadOrCreate<T extends JSONObject>(name: string, storeGlobally = false): Promise<TimeBasedPersistentCache<T>> {
+    let cache = new TimeBasedPersistentCache<T>(name, 100, storeGlobally);
     await cache.load();
     return cache;
   }
@@ -59,7 +60,7 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
 
     // Sort the cache by time value. TBD: inefficient: better to directly insert at the right index.
     this.items.sort((a, b) => {
-      // timeValue == 0: the transaction is pending, waitting for confirm.
+      // timeValue == 0: the transaction is pending, waiting for confirm.
       if (a.timeValue === 0) {
         return -1;
       }
@@ -90,7 +91,7 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
   /**
    * Retrieves a cache item by key.
    */
-  public get(itemKey: string): JSONObject | undefined {
+  public get(itemKey: string): CacheEntry<T> | undefined {
     return this.items.find(i => i.key == itemKey);
   }
 
@@ -114,20 +115,20 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
   public async save(): Promise<void> {
     // Keep at most maxItemsOnDisk items.
     let itemsToSave = this.items.slice(0, Math.min(this.items.length, this.maxItemsOnDisk));
-    await GlobalStorageService.instance.setSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name, itemsToSave);
+    await GlobalStorageService.instance.setSetting(this.storeGlobally ? null : GlobalDIDSessionsService.signedInDIDString, "cache", this.name, itemsToSave);
   }
 
   /**
    * Loads the cache from disk.
    */
   public async load(): Promise<void> {
-    this.items = await GlobalStorageService.instance.getSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name, []);
+    this.items = await GlobalStorageService.instance.getSetting(this.storeGlobally ? null : GlobalDIDSessionsService.signedInDIDString, "cache", this.name, []);
   }
 
   /**
    * Delete cache.
    */
   public async delete() {
-    await GlobalStorageService.instance.deleteSetting(GlobalDIDSessionsService.signedInDIDString, "cache", this.name);
+    await GlobalStorageService.instance.deleteSetting(this.storeGlobally ? null : GlobalDIDSessionsService.signedInDIDString, "cache", this.name);
   }
 }

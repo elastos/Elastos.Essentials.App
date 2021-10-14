@@ -5,20 +5,16 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { Pair, Trade } from 'custom-uniswap-v2-sdk';
-import { Logger } from 'src/app/logger';
 import Web3 from 'web3';
 import { ERC20Coin } from '../model/coin';
 import { Network } from '../model/networks/network';
 import { LocalStorage } from './storage.service';
 
-/**
- * TEMP: Proof of concept for a uniswap contracts-based pricing mechanism.
- */
 @Injectable({
   providedIn: 'root'
 })
-export class CurrencyV2Service {
-  public static instance: CurrencyV2Service = null;
+export class UniswapCurrencyService {
+  public static instance: UniswapCurrencyService = null;
 
   private stopService = false;
 
@@ -26,31 +22,11 @@ export class CurrencyV2Service {
     private http: HttpClient,
     private storage: LocalStorage
   ) {
-    CurrencyV2Service.instance = this;
+    UniswapCurrencyService.instance = this;
   }
 
   init(): Promise<void> {
     this.stopService = false;
-    /*  WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
-         if (activeNetwork) {
-           this.tokenSymbol = activeNetwork.getMainTokenSymbol();
-           this.fetch();
-         }
-     });
-
-     this.tokenSymbol = WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
-     await this.getSavedPrices();
-     await this.getSavedCurrency();
-     await this.getSavedCurrencyDisplayPreference();
-
-     // Wait a moment before fetching latest prices, to not struggle the main essentials boot sequence.
-     runDelayed(() => {
-       if (!this.stopService) {
-         this.fetch();
-       }
-     }, 10000);
-
-     Logger.log('wallet', "Currency service initialization complete"); */
     return;
   }
 
@@ -102,9 +78,9 @@ export class CurrencyV2Service {
 
     let currencyAmountOut = CurrencyAmount.fromRawAmount(stableCoinUSDToken, Web3.utils.toWei("10")); // Fictive trade: purchase 10 USD worth of the token
     let trades = Trade.bestTradeExactOut(tradingPairs, evaluatedToken, currencyAmountOut, { maxHops: 3, maxNumResults: 1 });
-    Logger.log('walletdebug', "TRADES:", trades);
+    //Logger.log('walletdebug', "TRADES:", trades);
     if (trades.length > 0) {
-      trades.forEach(trade => {
+      /* trades.forEach(trade => {
         Logger.log('walletdebug', "------");
         Logger.log('walletdebug', "TRADE:", trade);
         Logger.log('walletdebug', "TRADE ROUTE MIDPRICE:", trade.route.midPrice.toSignificant(6)) // 201.306
@@ -112,7 +88,7 @@ export class CurrencyV2Service {
         Logger.log('walletdebug', "TRADE IN AMOUNT:", trade.inputAmount.toSignificant(6)) // 201.306
         Logger.log('walletdebug', "TRADE OUT AMOUNT:", trade.outputAmount.toSignificant(6)) // 201.306
         Logger.log('walletdebug', "TRADE PRICE IMPACT:", trade.priceImpact.toSignificant(6), "%") // 201.306
-      });
+      }); */
 
       return parseFloat(trades[0].executionPrice.toSignificant(6)); // NOTE: For display only! Not accurate
     }
@@ -129,7 +105,7 @@ export class CurrencyV2Service {
   /**
      * Fetches information about a liquidity pair and constructs a pair from the given two tokens.
      */
-  async fetchPairData(tokenA: Token, tokenB: Token, provider: JsonRpcProvider, factoryAddress: string, initCodeHash: string): Promise<Pair> {
+  private async fetchPairData(tokenA: Token, tokenB: Token, provider: JsonRpcProvider, factoryAddress: string, initCodeHash: string): Promise<Pair> {
     try {
       var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
       let _ref = await new Contract(address, IUniswapV2Pair.abi, provider).getReserves();
