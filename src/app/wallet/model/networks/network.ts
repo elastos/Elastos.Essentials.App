@@ -180,9 +180,23 @@ export abstract class Network {
     }
 
     const customCoins: ERC20Coin[] = [];
+    let someCoinsWereRemoved = false;
     for (let rawCoin of rawCoinList) {
       let coin = ERC20Coin.fromJson(rawCoin);
-      customCoins.push(coin);
+
+      // Legacy support: we didn't save coins decimals earlier. So we delete custom coins from disk if we don't have the info.
+      // Users have to re-add them manually.
+      if (coin.decimals == -1) {
+        someCoinsWereRemoved = true;
+      }
+      else {
+        customCoins.push(coin);
+      }
+    }
+
+    if (someCoinsWereRemoved) {
+      // Some coins were "repaired", so we save our list.
+      await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, customCoins);
     }
 
     return customCoins;
@@ -212,7 +226,7 @@ export abstract class Network {
   }
 
   /**
-   * To be overriden by each network. By default, no provider is returned, meaning that ERC20 tokens 
+   * To be overriden by each network. By default, no provider is returned, meaning that ERC20 tokens
    * won't be able to get a USD pricing.
    */
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

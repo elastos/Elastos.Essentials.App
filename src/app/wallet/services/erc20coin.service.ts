@@ -77,9 +77,9 @@ export class ERC20CoinService {
         return contractCode === '0x' ? false : true;
     }
 
-    public async getCoinDecimals(address: string, ethAccountAddress: string) {
+    public async getCoinDecimals(address: string) {
         let coinDecimals = 0;
-        const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc20ABI, address, { from: ethAccountAddress });
+        const erc20Contract = new (this.getWeb3()).eth.Contract(this.erc20ABI, address);
         if (erc20Contract) {
             coinDecimals = await erc20Contract.methods.decimals().call();
             Logger.log('wallet', 'Coin decimals:', coinDecimals);

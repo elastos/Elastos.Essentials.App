@@ -1,12 +1,16 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
+import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
+import { HecoMainnetUniswapCurrencyProvider } from "./currency/heco.uniswap.currency.provider";
 import { hecoMainnetGlideBridgeProvider, hecoMainnetO3BridgeProvider, hecoMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { hecoMainnetChannelsEarnProvider, hecoMainnetFildaEarnProvider } from "./earn/earn.providers";
 import { hecoMainnetAnyswapSwapProvider, hecoMainnetMdexSwapProvider, hecoMainnetO3SwapProvider } from "./earn/swap.providers";
 import { HecoAPI, HecoApiType } from "./heco.api";
 
 export class HECOMainNetNetwork extends EVMNetwork {
+  private uniswapCurrencyProvider: HecoMainnetUniswapCurrencyProvider = null;
+
   constructor() {
     super(
       "heco",
@@ -42,5 +46,11 @@ export class HECOMainNetNetwork extends EVMNetwork {
         hecoMainnetGlideBridgeProvider
       ]
     );
+
+    this.uniswapCurrencyProvider = new HecoMainnetUniswapCurrencyProvider();
+  }
+
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return this.uniswapCurrencyProvider;
   }
 }
