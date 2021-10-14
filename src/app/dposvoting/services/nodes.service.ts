@@ -715,7 +715,7 @@ export class NodesService {
                 node.Location = 'China';
                 break;
             case 'llamamama':
-                node.Location = 'United States';
+                node.Location = 'South Korea';
                 break;
             case 'The land of abundance':
                 node.Location = 'China';
@@ -763,6 +763,7 @@ export class NodesService {
                 node.Location = 'China';
                 break;
             case 'Dragonela':
+            case 'Dragonela 2.0':
                 node.imageUrl = 'https://elanodes.com/wp-content/uploads/custom/images/dragonela.png';
                 node.Location = 'United States';
                 break;
@@ -787,7 +788,27 @@ export class NodesService {
                 node.Location = 'Canada';
                 break;
             case 'CloudSea':
-                node.Location = 'Canada'
+                node.Location = 'Canada';
+                break;
+            case 'Glide':
+                node.imageUrl = 'https://elanodes.com/logos/Glide1.png';
+                node.Location = 'United States';
+                break;
+            case 'ElaboxSN1':
+                node.imageUrl = 'https://elanodes.com/logos/ElaboxSN1.png';
+                node.Location = 'France';
+                break;
+            case 'ElaboxSN2':
+                node.imageUrl = 'https://elanodes.com/logos/ElaboxSN1.png';
+                node.Location = 'Malta';
+                break;
+            case 'elanode.eth':
+                node.Location = 'Germany';
+                break;
+            case 'Elastos.info':
+                node.imageUrl = 'https://elanodes.com/logos/Elastos.info.png';
+                node.Location = 'Japan';
+                break;
         }
 
         if (node.state !== 'Active') {
