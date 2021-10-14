@@ -11,7 +11,8 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
     styleUrls: ['./titlebar.component.scss'],
 })
 export class BrowserTitleBarComponent {
-    public _url = "";
+    public _url: string = "http://192.168.8.214:3000/";
+    // public _url: string = "https://o3swap.com/ ";
     public _title: string = null;
     public menuVisible = true;
     public urlBoxColSize = 8.25;

@@ -125,6 +125,7 @@ export class DappBrowserService {
 
         var options: any = {
             titlebar: true,
+            titlebarheight: 50,
             darkMode: this.theme.darkMode,
             hidden: (target == "_webview"),
         }

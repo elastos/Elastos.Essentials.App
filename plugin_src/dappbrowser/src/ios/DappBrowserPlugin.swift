@@ -32,7 +32,6 @@
     private var _beforeload: String = "";
     private var _waitForBeforeload: Bool = false;
     private var _previousStatusBarStyle: NSInteger = -1;
-    var dappViewController: DappViewController!;
     var webViewHandler: WebViewHandler!
 //    var webContainer: UIView!
 
@@ -41,7 +40,7 @@
     static let kDappBrowserTargetSelf = "_self"
     static let kDappBrowserTargetSystem = "_system"
     static let kDappBrowserTargetBlank = "_blank"
-    
+
 
     static func getInstance() -> DappBrowserPlugin {
         return instance!;
@@ -145,7 +144,7 @@
                 if (self.isSystemUrl(absoluteUrl!)) {
                     target = DappBrowserPlugin.kDappBrowserTargetSystem;
                 }
-                
+
                 do {
                     if (target == DappBrowserPlugin.kDappBrowserTargetSelf) {
                         self.openInCordovaWebView(absoluteUrl!, withOptions:options);
@@ -153,7 +152,7 @@
                     else if (target == DappBrowserPlugin.kDappBrowserTargetSystem) {
                         self.openInSystem(absoluteUrl!);
                     } else { // _blank or anything else
-                        try self.openInInAppBrowser(url: absoluteUrl!, withOptions:options);
+                        try self.openInDappBrowser(url: absoluteUrl!, withOptions:options);
                     }
                 } catch let error {
                     self.error(command, error.localizedDescription);
@@ -167,7 +166,7 @@
         self.commandDelegate?.send(pluginResult, callbackId: command.callbackId)
     }
 
-    func openInInAppBrowser(url: URL, withOptions options: String) throws {
+    func openInDappBrowser(url: URL, withOptions options: String) throws {
         let browserOptions = try DappBrowserOptions.parseOptions(options);
 
         let dataStore = WKWebsiteDataStore.default();
@@ -230,13 +229,12 @@
 
         // use of beforeload event
 //        _waitForBeforeload = browserOptions.beforeload != "";
-        
+
         self.webViewHandler.setData(browserOptions, url);
 //        if (self.webViewHandler.webView != nil) {
 //            self.webViewHandler.createViews(self.viewController.view);
 //        }
-        self.dappViewController = DappViewController(self.webViewHandler);
-        
+
         if (!browserOptions.hidden) {
 //            self.webViewHandler.webView.isHidden = false;
             self.show(nil, withNoAnimate:browserOptions.hidden);
@@ -251,7 +249,7 @@
     }
 
     @objc func show(_ command: CDVInvokedUrlCommand?, withNoAnimate noAnimate: Bool) {
-        
+
         var initHidden = false;
         if (command == nil && noAnimate == true){
             initHidden = true;
@@ -261,11 +259,6 @@
 //            NSLog("Tried to show IAB after it was closed.");
 //            return;
 //        }
-
-        DispatchQueue.main.async {
-            self.dappViewController.transitioningDelegate = SlideAnimator.getInstance();
-            self.viewController.present(self.dappViewController, animated: true, completion: nil)
-        }
     }
 
     @objc func hide(_ command: CDVInvokedUrlCommand) {
@@ -314,17 +307,17 @@
 
     @objc func loadAfterBeforeload(_ command: CDVInvokedUrlCommand) {
         let urlStr = command.arguments[0] as? String;
-        
+
         if (self.webViewHandler == nil) {
             NSLog("Tried to invoke loadAfterBeforeload on DAB after it was closed.");
             return;
         }
-        
+
         if (urlStr == nil) {
             NSLog("loadAfterBeforeload called with nil argument, ignoring.");
             return;
         }
-        
+
         self.webViewHandler.loadAfterBeforeload(urlStr!);
     }
 
@@ -344,7 +337,7 @@
         if (jsWrapper != nil) {
             let jsonData = try? JSONSerialization.data(withJSONObject:[source], options: []);
             let sourceArrayString = String.init(data: jsonData!, encoding: .utf8);
-            
+
             if ((sourceArrayString) != nil) {
                 let startIndex = sourceArrayString!.index(sourceArrayString!.startIndex, offsetBy: 1)
                 let endIndex =  sourceArrayString!.index(sourceArrayString!.endIndex, offsetBy: -2)
@@ -378,7 +371,7 @@
         guard let source = command.arguments[0] as? String else {
             return;
         }
-        
+
         var jsWrapper: String? = nil;
 
         if (command.callbackId != nil && command.callbackId != "INVALID") {
@@ -391,7 +384,7 @@
         guard let source = command.arguments[0] as? String else {
             return;
         }
-        
+
         var jsWrapper: String? = nil;
 
         if (command.callbackId != nil && command.callbackId != "INVALID") {
@@ -407,7 +400,7 @@
         guard let source = command.arguments[0] as? String else {
             return;
         }
-        
+
         var jsWrapper: String? = nil;
 
         if (command.callbackId != nil && command.callbackId != "INVALID") {
@@ -423,7 +416,7 @@
         guard let source = command.arguments[0] as? String else {
             return;
         }
-        
+
         var jsWrapper: String? = nil;
 
         if (command.callbackId != nil && command.callbackId != "INVALID") {
@@ -438,32 +431,32 @@
     public func sendEventCallback(_ ret: [String: Any?]) {
         if (self.callbackId != nil) {
             let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: ret);
-            
+
             pluginResult.setKeepCallbackAs(ret["type"] as! String != "exit");
 
             self.commandDelegate?.send(pluginResult, callbackId: self.callbackId);
         }
     }
-    
+
     public func setUrlEditText(_ text: String) {
 //        self.dappViewController.titlebar.txtUrl.text = text;
     }
 
  }
- 
+
  extension DappBrowserPlugin : WKScriptMessageHandler {
      @objc func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        
+
         if (message.name != WebViewHandler.DAB_BRIDGE_NAME) {
             return;
         }
-         
+
         var pluginResult: CDVPluginResult? = nil;
-    
+
         if(message.body is [String: Any]){
             let messageContent = message.body as! [String: Any];
             let scriptCallbackId = messageContent["id"] as! String;
-    
+
             pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: []);
             if(messageContent["d"] != nil){
                 let scriptResult = messageContent["d"] as! String;
@@ -477,7 +470,7 @@
                 catch {
                     pluginResult = CDVPluginResult.init(status: CDVCommandStatus_JSON_EXCEPTION)
                 }
-                
+
              }
 
             self.commandDelegate.send(pluginResult, callbackId:scriptCallbackId);
@@ -496,4 +489,4 @@
          }
      }
 }
- 
+

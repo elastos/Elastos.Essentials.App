@@ -39,6 +39,7 @@ export class BrowserPage implements DappBrowserClient {
     ) {
     }
 
+
     ionViewWillEnter() {
         this.dappbrowserService.setClient(this);
         this.titleBar.setTitle(this.dappbrowserService.title);
@@ -75,6 +76,10 @@ export class BrowserPage implements DappBrowserClient {
 
         this.backButtonSub.unsubscribe();
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
+    onLoadStart() {
+
     }
 
     onExit(mode?: string) {

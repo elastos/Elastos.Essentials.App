@@ -82,6 +82,7 @@ export class MenuPage {
     }
 
     async goback() {
+        dappBrowser.reload();
         await this.nav.navigateBack();
     }
 

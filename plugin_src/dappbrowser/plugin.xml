@@ -25,7 +25,6 @@
     <license>Apache 2.0</license>
     <keywords>cordova,dapp,browser,dappbrowser</keywords>
 
-
     <js-module src="www/dappbrowser.js" name="dappbrowser">
         <clobbers target="dappBrowser" />
     </js-module>
@@ -62,32 +61,10 @@
         <source-file src="src/ios/DappBrowserOptions.swift" />
         <source-file src="src/ios/WebViewHandler.swift" />
 
-        <source-file src="src/ios/DappViewController.swift" />
-        <source-file src="src/ios/DappViewController.xib" />
 
-        <source-file src="src/ios/UrlEditText.swift" />
-        <source-file src="src/ios/SlideAnimator.swift" />
-
-        <source-file src="src/ios/TitleBarIconView.swift" />
-        <source-file src="src/ios/TitleBarView.swift" />
-        <source-file src="src/ios/TitleBarIconView.xib" />
-        <source-file src="src/ios/TitleBarView.xib" />
-
-        <!-- <source-file src="src/ios/TitleBarMenuView.swift" />
-         <source-file src="src/ios/TitleBarMenuItemView.swift" />
-         <source-file src="src/ios/TitleBarMenuView.xib" />
-         <source-file src="src/ios/TitleBarMenuItemView.xib" /> -->
-
-        <resource-file src="src/ios/res/ic_back.png" />
-        <resource-file src="src/ios/res/ic_elastos.png" />
-        <resource-file src="src/ios/res/ic_vertical_menu.png" />
-        <resource-file src="src/ios/res/ic_back_darkmode.png" />
-        <resource-file src="src/ios/res/ic_elastos_darkmode.png" />
-        <resource-file src="src/ios/res/ic_vertical_menu_darkmode.png" />
 
         <header-file src="src/ios/DappBrowser-Bridging-Header.h" type="BridgingHeader" />
 
-        <!-- <framework src="CoreGraphics.framework" /> -->
     </platform>
 
     <hook src="hooks/before_plugin_install/build_ts.js" type="before_plugin_install" />
