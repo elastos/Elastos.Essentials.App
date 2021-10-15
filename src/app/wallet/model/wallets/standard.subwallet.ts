@@ -35,20 +35,24 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
     public abstract getDisplayTokenName(): string;
 
     public getDisplayBalance(): BigNumber {
-        return this.getDisplayAmount(this.balance);
+        return this.getDisplayAmount(this.getRawBalance());
     }
 
     public getDisplayAmount(amount: BigNumber): BigNumber {
         return amount.dividedBy(this.tokenAmountMulipleTimes);
     }
 
+    public getUSDBalance(): BigNumber {
+        return CurrencyService.instance.getMainTokenValue(this.getBalance(), this.networkWallet.network, 'USD');
+    }
+
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
-        return CurrencyService.instance.getCurrencyBalance(value);
+        return CurrencyService.instance.getMainTokenValue(value);
     }
 
     // Check whether the balance is enough. amount unit is ELA or WEI
     public isBalanceEnough(amount: BigNumber) {
-        return this.balance.gt(amount.multipliedBy(this.tokenAmountMulipleTimes));
+        return this.getRawBalance().gt(amount.multipliedBy(this.tokenAmountMulipleTimes));
     }
 
     public isStandardSubWallet(): boolean {

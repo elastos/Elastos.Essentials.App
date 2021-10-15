@@ -206,7 +206,7 @@ export class NodesService {
         let depositAmount = 50000000000; // 5000 ELA
         let fee = 10000;
         let amount = depositAmount + fee;
-        if (this.voteService.sourceSubwallet.balance.lt(amount)) {
+        if (this.voteService.sourceSubwallet.getRawBalance().lt(amount)) {
             await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'dposregistration.reg-dpos-balance-not-enough');
             return false;
         }

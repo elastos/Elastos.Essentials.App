@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { CurrencyService } from '../../services/currency.service';
 import { LocalStorage } from '../../services/storage.service';
 import { Coin, CoinID, CoinType, StandardCoinName } from '../coin';
 import { Network } from '../networks/network';
@@ -101,20 +102,44 @@ export abstract class NetworkWallet {
         }
     }
 
-    public getDisplayBalance(): BigNumber {
-        // Sum all subwallets balances to get the master wallet total balance
-        // Only standard ELA wallets are summed up as ERC20 wallets amounts use their own currency
-        // and canno't be stacked on top of ELA as we don't have a exchange rate for now.
-        let balance = new BigNumber(0);
+    /**
+     * Valuation of one native token in USD
+     */
+    /* public nativeTokenUSDValue(): BigNumber {
+
+    } */
+
+    private getDisplayBalanceInCurrency(currencySymbol: string): BigNumber {
+        let usdBalance = new BigNumber(0);
         for (let subWallet of Object.values(this.subWallets)) {
-            if (subWallet.isStandardSubWallet()) {
-                if (!subWallet.balance.isNaN()) {
-                    balance = balance.plus(subWallet.balance.dividedBy(subWallet.tokenAmountMulipleTimes));
-                }
+            if (!subWallet.getBalance().isNaN()) {
+                let subWalletUSDBalance = subWallet.getUSDBalance();
+                usdBalance = usdBalance.plus(subWalletUSDBalance);
             }
         }
 
-        return balance;
+        // Convert USD balance to currency (ex: CNY) balance
+        return CurrencyService.instance.usdToCurrencyAmount(usdBalance, currencySymbol);
+    }
+
+    /**
+     * This methods returns the whole wallet valuation in number of NATIVE TOKEN.
+     * To get this, we sum all subwallets balances USD value to get the master wallet total balance.
+     * Then convert back to native currency value
+     */
+    public getDisplayBalance(): BigNumber {
+        let usdBalance = this.getDisplayBalanceInCurrency('USD');
+
+        // Convert USD balance back to native token
+        let nativeTokenUSDPrice = CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.network, 'USD');
+        return usdBalance.dividedBy(nativeTokenUSDPrice);
+    }
+
+    /**
+     * Returns the whole balance balance, for the active currency.
+     */
+    public getDisplayBalanceInActiveCurrency(): BigNumber {
+        return this.getDisplayBalanceInCurrency(CurrencyService.instance.selectedCurrency.symbol);
     }
 
     public abstract getDisplayTokenName(): string;
@@ -130,7 +155,7 @@ export abstract class NetworkWallet {
 
     public getSubWalletBalance(coinId: CoinID): BigNumber {
         Logger.log("wallet", "getSubWalletBalance", coinId, this.subWallets)
-        return this.subWallets[coinId].balance;
+        return this.subWallets[coinId].getRawBalance();
     }
 
     public hasSubWallet(coinId: CoinID): boolean {

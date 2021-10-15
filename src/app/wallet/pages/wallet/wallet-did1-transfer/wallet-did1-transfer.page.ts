@@ -134,7 +134,7 @@ export class WalletDID1TransferPage implements OnInit, OnDestroy {
         this.toAddress = await this.toSubWallet.createAddress();
         // Cross chain need 20000 SELA.
         // this.amount = this.fromSubWallet.getDisplayAmount(this.fromSubWallet.balance.minus(20000)).toNumber();
-        this.amount = this.fromSubWallet.getDisplayAmount(this.fromSubWallet.balance).toNumber();
+        this.amount = this.fromSubWallet.getDisplayAmount(this.fromSubWallet.getRawBalance()).toNumber();
 
         Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
         Logger.log('wallet', 'Transferring To..', this.toSubWallet);

@@ -43,7 +43,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public id: CoinID = null;
   public tokenDecimals: number;
   public tokenAmountMulipleTimes: BigNumber; // 10 ^ tokenDecimal
-  public balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
+  protected balance: BigNumber = new BigNumber(NaN); // raw balance. Will be sELA for standard wallets, or a token number for ERC20 coins.
   public lastBlockTime: string = null;
 
   public balanceCache: TimeBasedPersistentCache<any> = null;
@@ -105,6 +105,26 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     this.balanceCache.set('balance', this.balance, timestamp);
     await this.balanceCache.save();
   }
+
+  public getRawBalance(): BigNumber {
+    return this.balance;
+  }
+
+  /**
+   * Returns the subwallet balance. The raw "balance" value is divided by the multiple to get a readable value.
+   * Ex: returns 5 ELA, 3 MDX, etc
+   */
+  public getBalance(): BigNumber {
+    if (this.balance.isNaN())
+      return new BigNumber(0);
+
+    return this.balance.dividedBy(this.tokenAmountMulipleTimes);
+  }
+
+  /**
+   * Returns the suwallet balance evaluated in USD.
+   */
+  public abstract getUSDBalance(): BigNumber;
 
   /**
    * If we get the transactions from cache, then we need update the transactions in 3s.

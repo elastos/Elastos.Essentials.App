@@ -12,6 +12,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import Web3 from 'web3';
 import { Config } from '../../config/Config';
 import { Transfer } from '../../services/cointransfer.service';
+import { CurrencyService } from '../../services/currency.service';
 import { Coin, CoinID, CoinType, ERC20Coin } from '../coin';
 import { EthTransaction, SignedETHSCTransaction } from '../evm.types';
 import { RawTransactionPublishResult, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../providers/transaction.types';
@@ -146,7 +147,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getDisplayBalance(): BigNumber {
-        return this.getDisplayAmount(this.balance);
+        return this.getDisplayAmount(this.getRawBalance());
     }
 
     public getDisplayAmount(amount: BigNumber): BigNumber {
@@ -159,9 +160,11 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
-        // No way to compute the actual value in currency for this token - would require to be bound to an exchange
-        // to get its valuation, which we have not for now.
-        return null;
+        return CurrencyService.instance.getERC20TokenValue(value, this.coin);
+    }
+
+    public getUSDBalance(): BigNumber {
+        return CurrencyService.instance.getERC20TokenValue(this.getBalance(), this.coin, this.networkWallet.network, 'USD');
     }
 
     public getMainIcon(): string {
@@ -188,7 +191,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
      */
     public isBalanceEnough(amount: BigNumber) {
         // The fee is ELA/ETHSC, not ERC20 TOKEN. So can send all the balance.
-        return this.balance.gte(amount.multipliedBy(this.tokenAmountMulipleTimes));
+        return this.getRawBalance().gte(amount.multipliedBy(this.tokenAmountMulipleTimes));
     }
 
     private async getERC20TransactionDirection(targetAddress: string): Promise<TransactionDirection> {
@@ -220,7 +223,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             if (rawBalance) {
                 this.balance = new BigNumber(rawBalance);
                 await this.saveBalanceToCache();
-                Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.balance.toString());
+                Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.getRawBalance().toString());
             }
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.coin.getName(), this.id, ') updateBalance error:', error);

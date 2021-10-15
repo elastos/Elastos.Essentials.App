@@ -285,7 +285,7 @@ export class CoinNFTHomePage implements OnInit {
         }
 
         await this.initData();
-        this.currencyService.fetch();
+        // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();
         }, 1000);

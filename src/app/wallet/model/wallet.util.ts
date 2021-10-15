@@ -22,48 +22,48 @@
 import BigNumber from 'bignumber.js';
 
 export class WalletUtil {
-    static isInvalidWalletName(text): boolean {
-        if (text.length > 30) {
-            return true;
-        }
-        return false;
-        //var pPattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
-        //return pPattern.test(text);
+  static isInvalidWalletName(text): boolean {
+    if (text.length > 30) {
+      return true;
+    }
+    return false;
+    //var pPattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+    //return pPattern.test(text);
+  }
+
+  public static getWholeBalance(balance: BigNumber): string {
+    if (!balance || balance.isNaN()) {
+      return '...';
+    }
+    return balance.dividedToIntegerBy(1).toString();
+  }
+
+  public static getDecimalBalance(balance: BigNumber): string {
+    if (!balance || balance.isNaN()) {
+      return '';
     }
 
-    public static getWholeBalance(balance: BigNumber): string {
-        if (!balance || balance.isNaN()) {
-            return '...';
-        }
-        return balance.dividedToIntegerBy(1).toString();
+    const decimalBalance = balance.modulo(1);
+    if (decimalBalance.gt(0.001)) {
+      const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, 5);
+      return fixedDecimalBalance;
+    } else if (decimalBalance.isZero()) {
+      return '';
+    } else {
+      return '000';
     }
+  }
 
-    public static getDecimalBalance(balance: BigNumber): string {
-        if (!balance || balance.isNaN()) {
-            return '';
-        }
-
-        const decimalBalance = balance.modulo(1);
-        if (decimalBalance.gt(0.001)) {
-          const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, 5);
-          return fixedDecimalBalance;
-        } else if (decimalBalance.isZero()) {
-          return '';
-        } else {
-          return '000';
-        }
+  public static getAmountWithoutScientificNotation(amount: BigNumber | number, precision: number): string {
+    let amountString = amount.toString();
+    if (amountString.indexOf('e') != -1) {
+      return amount.toFixed(precision).replace(/0*$/g, "");
+    } else {
+      // const maxLength = amountString.indexOf('.') + 11;
+      // if (maxLength < amountString.length) {
+      //   amountString = amountString.substring(0, maxLength)
+      // }
+      return amountString;
     }
-
-    public static getAmountWithoutScientificNotation (amount: BigNumber | number, precision: number): string {
-      let amountString = amount.toString();
-      if (amountString.indexOf('e') != -1) {
-        return amount.toFixed(precision).replace(/0*$/g,"");
-      } else {
-        // const maxLength = amountString.indexOf('.') + 11;
-        // if (maxLength < amountString.length) {
-        //   amountString = amountString.substring(0, maxLength)
-        // }
-        return amountString;
-      }
-    }
+  }
 }

@@ -1,18 +1,18 @@
-import { Component, OnInit, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { CandidatesService } from '../../services/candidates.service';
-import { ToastController } from '@ionic/angular';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { App } from 'src/app/model/app.enum';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
-import { App } from 'src/app/model/app.enum'
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { VoteService } from 'src/app/vote/services/vote.service';
+import { CandidatesService } from '../../services/candidates.service';
 
 @Component({
     selector: 'app-vote',
@@ -43,7 +43,7 @@ export class VotePage implements OnInit, OnDestroy {
 
     ngOnInit() {
         Logger.log('crcouncil', 'My Candidates', this.candidatesService.selectedCandidates);
-        let elaamount = this.voteService.networkWallet.subWallets.ELA.balance;
+        let elaamount = this.voteService.networkWallet.subWallets.ELA.getRawBalance();
         const fees = 0.001;// it is enough.
         this.totalEla = Math.floor(elaamount.toNumber() / 100000000 - fees);
         Logger.log('crcouncil', 'ELA Balance', this.totalEla);

@@ -76,12 +76,11 @@ export class StandardCoin extends Coin {
 }
 
 export class ERC20Coin extends Coin {
-    private erc20ContractAddress: string;
-
     constructor(
         name: string,
         description: string,
-        erc20ContractAddress: string,
+        private erc20ContractAddress: string,
+        public decimals: number,
         networkTemplate: string,
         private isCustom: boolean,
         public initiallyShowInWallet = false, // Whether to show this coin as subwallet when a wallet is first used by the user
@@ -104,12 +103,16 @@ export class ERC20Coin extends Coin {
         return this.erc20ContractAddress;
     }
 
+    getDecimals(): number {
+        return this.decimals;
+    }
+
     coinIsCustom(): boolean {
         return this.isCustom;
     }
 
     static fromJson(jsonCoin: any): ERC20Coin {
-        let coin = new ERC20Coin(null, null, null, null, null);
+        let coin = new ERC20Coin(null, null, null, -1, null, null);
         Object.assign(coin, jsonCoin);
         return coin;
     }

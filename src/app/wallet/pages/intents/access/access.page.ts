@@ -114,7 +114,7 @@ export class AccessPage implements OnInit {
                 break;
             case 'elaamount':
                 // for now just return the amount of ELA Chain, not include IDChain
-                value = this.networkWallet.subWallets.ELA.balance.toString();
+                value = this.networkWallet.subWallets.ELA.getRawBalance().toString();
                 break;
             case 'ethaddress':
                 value = await this.createAddress(StandardCoinName.ETHSC);

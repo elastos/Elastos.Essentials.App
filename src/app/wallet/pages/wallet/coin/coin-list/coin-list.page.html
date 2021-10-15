@@ -24,11 +24,11 @@
             <span class="ela"> {{ networkWallet.getDisplayTokenName() }}</span>
           </h4>
           <h4 *ngIf="currencyService.useCurrency">{{
-            WalletUtil.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance())) }}<span
+            WalletUtil.getWholeBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance())) }}<span
               class="dot"
-              *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))">.</span>
+              *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))">.</span>
             <span class="decimals">{{
-              WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
+              WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))
               }}</span>
             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
           </h4>

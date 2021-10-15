@@ -7,7 +7,7 @@
             </ion-refresher-content>
         </ion-refresher>
 
-        <div class="network-container" [class.dark-network-container]="theme.darkMode">
+        <div class="network-container" [class.dark-network-container]="theme.darkMode" *ngIf="currentNetwork">
             <ion-row class="displayed-network" (click)="pickNetwork()">
                 <ion-col offset="2" size="7">
                     <img [src]="currentNetwork.logo">
@@ -56,11 +56,11 @@
                             <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
                         </h4>
                         <h4 *ngIf="currencyService.useCurrency">{{
-                            WalletUtil.getWholeBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
+                            WalletUtil.getWholeBalance(networkWallet.getDisplayBalanceInActiveCurrency())
                             }}<span class="dot"
-                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))">.</span>
+                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))">.</span>
                             <span class="decimals">{{
-                                WalletUtil.getDecimalBalance(currencyService.getCurrencyBalance(networkWallet.getDisplayBalance()))
+                                WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))
                                 }}</span>
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>

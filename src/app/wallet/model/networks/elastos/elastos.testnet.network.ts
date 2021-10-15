@@ -10,7 +10,7 @@ export class ElastosTestNetNetwork extends ElastosNetworkBase {
 
   public getBuiltInERC20Coins(): ERC20Coin[] {
     let availableCoins: ERC20Coin[] = [];
-    availableCoins.push(new ERC20Coin("TTECH", "Trinity Tech", "0xFDce7FB4050CD43C654C6ceCeAd950343990cE75", TESTNET_TEMPLATE, false));
+    availableCoins.push(new ERC20Coin("TTECH", "Trinity Tech", "0xFDce7FB4050CD43C654C6ceCeAd950343990cE75", 0, TESTNET_TEMPLATE, false));
     return availableCoins;
   }
 

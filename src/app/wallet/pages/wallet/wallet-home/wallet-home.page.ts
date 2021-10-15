@@ -234,7 +234,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     async updateCurrentWalletInfo() {
         await this.networkWallet.update();
-        this.currencyService.fetch();
+        // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
     }
 
     startUpdateInterval() {

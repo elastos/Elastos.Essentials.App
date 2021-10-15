@@ -89,7 +89,7 @@ export class DPoSVotePage implements OnInit {
 
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainchainSubWallet;
         // All balance can be used for voting?
-        let voteInEla = this.sourceSubwallet.balance.minus(this.votingFees());
+        let voteInEla = this.sourceSubwallet.getRawBalance().minus(this.votingFees());
         this.voteAmountELA = voteInEla.toString()
         this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
         void this.hasPendingVoteTransaction();
@@ -129,7 +129,7 @@ export class DPoSVotePage implements OnInit {
      */
     async goTransaction() {
         Logger.log('wallet', 'Creating vote transaction.');
-        const stakeAmount = this.sourceSubwallet.balance.minus(this.votingFees());
+        const stakeAmount = this.sourceSubwallet.getRawBalance().minus(this.votingFees());
         if (stakeAmount.isNegative()) {
             Logger.log('wallet', 'DPoSVotePage: Not enough balance:', this.sourceSubwallet.getDisplayBalance());
             this.native.toast_trans('wallet.insufficient-balance');
@@ -140,39 +140,39 @@ export class DPoSVotePage implements OnInit {
 
         // TODO: We should include others voting?
         for (let i = 0, len = this.coinTransferService.publickeys.length; i < len; i++) {
-          candidates[this.coinTransferService.publickeys[i]] = this.voteAmountELA;
+            candidates[this.coinTransferService.publickeys[i]] = this.voteAmountELA;
         }
 
         let dposVoteContent: VoteContent = {
-          Type: VoteType.Delegate,
-          Candidates: candidates
+            Type: VoteType.Delegate,
+            Candidates: candidates
         }
 
         const voteContent = [dposVoteContent];
         await this.native.showLoading(this.translate.instant('common.please-wait'));
         const rawTx = await this.sourceSubwallet.createVoteTransaction(
-                voteContent,
-                '', // Memo, not necessary
-            );
+            voteContent,
+            '', // Memo, not necessary
+        );
         await this.native.hideLoading();
         if (rawTx) {
-          const transfer = new Transfer();
-          Object.assign(transfer, {
-              masterWalletId: this.masterWalletId,
-              subWalletId: this.subWalletId,
-              rawTransaction: rawTx,
-              payPassword: '',
-              action: this.intentTransfer.action,
-              intentId: this.intentTransfer.intentId,
-          });
+            const transfer = new Transfer();
+            Object.assign(transfer, {
+                masterWalletId: this.masterWalletId,
+                subWalletId: this.subWalletId,
+                rawTransaction: rawTx,
+                payPassword: '',
+                action: this.intentTransfer.action,
+                intentId: this.intentTransfer.intentId,
+            });
 
-          const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-          await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
+            const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
+            await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
         } else {
-          await this.globalIntentService.sendIntentResponse(
-            { txid: null, status: 'error' },
-            this.intentTransfer.intentId
-          );
+            await this.globalIntentService.sendIntentResponse(
+                { txid: null, status: 'error' },
+                this.intentTransfer.intentId
+            );
         }
     }
 }

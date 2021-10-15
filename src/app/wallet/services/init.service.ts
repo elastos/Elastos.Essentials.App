@@ -39,6 +39,7 @@ import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
 import { SwapService } from './swap.service';
 import { UiService } from './ui.service';
+import { UniswapCurrencyService } from './uniswap.currency.service';
 import { WalletService } from './wallet.service';
 
 @Injectable({
@@ -55,6 +56,7 @@ export class WalletInitService extends GlobalService {
     private events: Events,
     private navService: NavService,
     private currencyService: CurrencyService,
+    private uniswapCurrencyService: UniswapCurrencyService,
     private contactsService: ContactsService,
     private prefs: WalletPrefsService,
     private uiService: UiService,
@@ -91,6 +93,7 @@ export class WalletInitService extends GlobalService {
 
     // Do not await.
     void this.currencyService.init();
+    await this.uniswapCurrencyService.init();
     // Do not await.
     void this.contactsService.init();
     void this.ethTransactionService.init();
@@ -104,6 +107,10 @@ export class WalletInitService extends GlobalService {
 
     await this.walletManager.init();
     await this.intentService.init();
+
+
+    // TMP TEST
+    //await this.currencyV2Service.getTokenUSDValue(null, null);
   }
 
   public async onUserSignOut(): Promise<void> {
