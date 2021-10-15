@@ -1,11 +1,15 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { ERC20Coin } from "../../coin";
+import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
+import { ElastosMainnetUniswapCurrencyProvider } from "./currency/elastos.uniswap.currency.provider";
 import { elastosMainnetGlideBridgeProvider, elastosMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { elastosMainnetGlideSwapProvider } from "./earn/swap.providers";
 import { ElastosNetworkBase } from "./elastos.base.network";
 
 export class ElastosMainNetNetwork extends ElastosNetworkBase {
+  private uniswapCurrencyProvider: ElastosMainnetUniswapCurrencyProvider = null;
+
   constructor() {
     super("Elastos",
       [],
@@ -17,6 +21,12 @@ export class ElastosMainNetNetwork extends ElastosNetworkBase {
         elastosMainnetShadowTokenBridgeProvider
       ]
     );
+
+    this.uniswapCurrencyProvider = new ElastosMainnetUniswapCurrencyProvider();
+  }
+
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return this.uniswapCurrencyProvider;
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {

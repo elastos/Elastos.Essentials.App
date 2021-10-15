@@ -1,12 +1,16 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
+import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
+import { EthereumMainnetUniswapCurrencyProvider } from "./currency/eth.uniswap.currency.provider";
 import { ethereumMainnetBinanceBridgeProvider, ethereumMainnetGlideBridgeProvider, ethereumMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
 import { ethereumMainnetUniswapSwapProvider } from "./earn/swap.providers";
 import { EthereumAPI, EthereumAPIType } from "./ethereum.api";
 
 // https://rpc.info/#ethereum-rpc
 export class EthereumMainNetNetwork extends EVMNetwork {
+  private uniswapCurrencyProvider: EthereumMainnetUniswapCurrencyProvider = null;
+
   constructor() {
     super(
       "ethereum",
@@ -35,5 +39,11 @@ export class EthereumMainNetNetwork extends EVMNetwork {
         ethereumMainnetGlideBridgeProvider
       ]
     );
+
+    this.uniswapCurrencyProvider = new EthereumMainnetUniswapCurrencyProvider();
+  }
+
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return this.uniswapCurrencyProvider;
   }
 }

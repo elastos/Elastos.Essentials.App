@@ -4,8 +4,9 @@ import { Contract } from "@ethersproject/contracts";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
+import BigNumber from 'bignumber.js';
 import { Pair, Trade } from 'custom-uniswap-v2-sdk';
-import Web3 from 'web3';
+import { Logger } from 'src/app/logger';
 import { ERC20Coin } from '../model/coin';
 import { Network } from '../model/networks/network';
 import { LocalStorage } from './storage.service';
@@ -53,7 +54,7 @@ export class UniswapCurrencyService {
     if (!currencyProvider)
       return 0;
 
-    //Logger.log('walletdebug', "getTokenUSDValue", erc20coin.getName(), erc20coin.getContractAddress());
+    Logger.log('walletdebug', "getTokenUSDValue", erc20coin.getName(), erc20coin.getContractAddress());
 
     let chainId = network.getMainChainID();
     let swapFactoryAddress = currencyProvider.getFactoryAddress();
@@ -76,13 +77,17 @@ export class UniswapCurrencyService {
     await this.fetchAndAddPair(evaluatedToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
     // USD stable coin against wrapped native token (ex: USDT <-> WBNB).
     await this.fetchAndAddPair(stableCoinUSDToken, wrappedNativeCoinToken, tradingPairs, etherjsProvider, swapFactoryAddress, swapFactoryInitCodeHash);
-    //Logger.log('walletdebug', "Computed Trading Pairs:", tradingPairs);
+    Logger.log('walletdebug', "Computed Trading Pairs:", tradingPairs);
 
-    let currencyAmountOut = CurrencyAmount.fromRawAmount(stableCoinUSDToken, Web3.utils.toWei("10")); // Fictive trade: purchase 10 USD worth of the token
+    if (tradingPairs.length == 0)
+      return 0; // No appropriate pairs could be built - should not happen
+
+    let readableAmountOut = 0.001; // 10 USDT
+    let currencyAmountOut = CurrencyAmount.fromRawAmount(stableCoinUSDToken, new BigNumber(readableAmountOut).times(new BigNumber(10).pow(stableCoinUSDToken.decimals)).toString()); // Fictive trade: purchase 10 USD worth of the token
     let trades = Trade.bestTradeExactOut(tradingPairs, evaluatedToken, currencyAmountOut, { maxHops: 3, maxNumResults: 1 });
-    //Logger.log('walletdebug', "TRADES:", trades);
+    Logger.log('walletdebug', "TRADES:", trades);
     if (trades.length > 0) {
-      /* trades.forEach(trade => {
+      trades.forEach(trade => {
         Logger.log('walletdebug', "------");
         Logger.log('walletdebug', "TRADE:", trade);
         Logger.log('walletdebug', "TRADE ROUTE MIDPRICE:", trade.route.midPrice.toSignificant(6)) // 201.306
@@ -90,7 +95,7 @@ export class UniswapCurrencyService {
         Logger.log('walletdebug', "TRADE IN AMOUNT:", trade.inputAmount.toSignificant(6)) // 201.306
         Logger.log('walletdebug', "TRADE OUT AMOUNT:", trade.outputAmount.toSignificant(6)) // 201.306
         Logger.log('walletdebug', "TRADE PRICE IMPACT:", trade.priceImpact.toSignificant(6), "%") // 201.306
-      }); */
+      });
 
       return parseFloat(trades[0].executionPrice.toSignificant(6)); // NOTE: For display only! Not accurate
     }
@@ -116,6 +121,7 @@ export class UniswapCurrencyService {
       var balances = tokenA.sortsBefore(tokenB) ? [reserves0, reserves1] : [reserves1, reserves0];
       let currencyAmount0 = CurrencyAmount.fromRawAmount(tokenA, balances[0]);
       let currencyAmount1 = CurrencyAmount.fromRawAmount(tokenB, balances[1]);
+
       return new Pair(currencyAmount0, currencyAmount1, factoryAddress, initCodeHash);
     } catch (e) {
       return null;

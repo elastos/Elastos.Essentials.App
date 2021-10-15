@@ -1,10 +1,14 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
+import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { ArbitrumAPI, ArbitrumApiType } from "./arbitrum.api";
+import { ArbitrumMainnetUniswapCurrencyProvider } from "./currency/arb.uniswap.currency.provider";
 import { arbitrumMainnetUniswapSwapProvider } from "./earn/swap.providers";
 
 export class ArbitrumMainNetNetwork extends EVMNetwork {
+  private uniswapCurrencyProvider: ArbitrumMainnetUniswapCurrencyProvider = null;
+
   constructor() {
     super(
       "arbitrum",
@@ -29,5 +33,11 @@ export class ArbitrumMainNetNetwork extends EVMNetwork {
       ],
       []
     );
+
+    this.uniswapCurrencyProvider = new ArbitrumMainnetUniswapCurrencyProvider();
+  }
+
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return this.uniswapCurrencyProvider;
   }
 }
