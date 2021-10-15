@@ -10,7 +10,7 @@ import { WalletNetworkService } from './network.service';
 import { LocalStorage } from './storage.service';
 import { UniswapCurrencyService } from './uniswap.currency.service';
 
-const TOKEN_VALUE_REFRESH_DELAY = 20; //(60 * 5); // 5 minutes - Number of seconds without refreshing a token price if alerady in cache
+const TOKEN_VALUE_REFRESH_DELAY = (60 * 5); // 5 minutes - Number of seconds without refreshing a token price if alerady in cache
 
 type DisplayableCurrency = {
   symbol: string;
