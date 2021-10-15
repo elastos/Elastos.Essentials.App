@@ -47,6 +47,8 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   // List of running timers
   private runningTasks: Map<any, void>;
 
+  public fetchTransactionTimestamp = 0;
+
   constructor(protected networkWallet: NetworkWallet) {
     this._transactionsListChanged = new Map();
     this._transactionFetchStatusChanged = new Map();
@@ -107,6 +109,8 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     // Not fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
+
+    this.fetchTransactionTimestamp = (new Date()).valueOf();
   }
 
   /**
