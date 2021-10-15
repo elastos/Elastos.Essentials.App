@@ -7,7 +7,7 @@
             </ion-refresher-content>
         </ion-refresher>
 
-        <div class="network-container" [class.dark-network-container]="theme.darkMode">
+        <div class="network-container" [class.dark-network-container]="theme.darkMode" *ngIf="currentNetwork">
             <ion-row class="displayed-network" (click)="pickNetwork()">
                 <ion-col offset="2" size="7">
                     <img [src]="currentNetwork.logo">
