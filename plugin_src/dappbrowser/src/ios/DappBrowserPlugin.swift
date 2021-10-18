@@ -105,14 +105,15 @@
 
 
     @objc override func onReset() {
-//        self.cloes(nil);
+        if (self.webViewHandler != nil) {
+            self.webViewHandler.close();
+        }
     }
 
     @objc func close(_ command: CDVInvokedUrlCommand) {
         if (self.webViewHandler != nil) {
             let mode = command.arguments[0] as? String;
             self.webViewHandler.close();
-
         }
 
         // Things are cleaned up in browserExit.
