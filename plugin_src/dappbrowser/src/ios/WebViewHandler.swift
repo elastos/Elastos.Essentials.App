@@ -29,42 +29,42 @@ import SwiftJWT
     static let LOAD_STOP_EVENT = "loadstop";
     static let LOAD_ERROR_EVENT = "loaderror";
     static let BEFORELOAD = "beforeload";
-     
+
     static let MESSAGE_EVENT = "message";
     static let PROGRESS_EVENT = "progress";
     static let HEAD_EVENT = "head";
     static let URL_CHANGED_EVENT = "urlchanged";
     static let EXIT_EVENT = "exit";
-     
+
     var webView: WKWebView!
     var progressView: UIProgressView!
     var spinner: UIActivityIndicatorView!
-    
+
     var brwoserPlugin: DappBrowserPlugin;
     var alertTitle: String;
-    
+
     var settings: [String : Any]!;
     var options: DappBrowserOptions!;
     var inputUrl: URL!;
     var currentURL: URL?;
-    
+
     var waitForBeforeload = false;
-    
+
     static let DAB_BRIDGE_NAME = "essentialsExtractor";
 
     init(_ brwoserPlugin: DappBrowserPlugin, _ url: String, _ options: DappBrowserOptions) {
-        
-        
+
+
         self.brwoserPlugin = brwoserPlugin;
         self.options = options;
         self.waitForBeforeload = options.beforeload != "";
         self.settings = brwoserPlugin.commandDelegate.settings as? [String : Any];
         self.alertTitle = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String;
-        
+
         super.init();
-        
+
         self.createWebView(brwoserPlugin.viewController.view);
-        
+
         if (options.hidden) {
            hide();
         }
@@ -75,14 +75,14 @@ import SwiftJWT
         if (options.loadurl) {
            loadUrl(url);
         }
-        
+
     }
-    
+
 
     func settingForKey(_ key: String) -> Any? {
         return settings[key.lowercased()];
     }
-     
+
      func cleanData() {
          let dataStore = WKWebsiteDataStore.default();
          if (options.cleardata) {
@@ -193,9 +193,9 @@ import SwiftJWT
         if (self.webView == nil) {
             return;
         }
-        
+
         cleanData();
-        
+
         webContainer.addSubview(self.webView!)
 
         //Add self as an observer of estimatedProgress
@@ -203,8 +203,8 @@ import SwiftJWT
 
         self.webView.navigationDelegate = self;
         self.webView.uiDelegate = self;
-        self.webView.backgroundColor = UIColor.white;
-
+//        self.webView.backgroundColor = UIColor.white;
+//
         if (self.settingForKey("OverrideUserAgent") != nil) {
             self.webView.customUserAgent = self.settingForKey("OverrideUserAgent") as? String;
         }
@@ -238,12 +238,11 @@ import SwiftJWT
         self.spinner.isOpaque = false;
         self.spinner.isUserInteractionEnabled = false;
         webView.addSubview(self.spinner)
-        self.spinner.stopAnimating();
-        
+//        self.spinner.stopAnimating();
+
         let frame =  CGRect(x: 0, y: 0, width: webViewBounds.width, height: 4.0);
         self.progressView = UIProgressView.init(frame: frame)
         webView.addSubview(self.progressView)
-        
     }
 
     @objc override func observeValue(forKeyPath keyPath: String?, of object: Any?, change:  [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -273,18 +272,18 @@ import SwiftJWT
             self.webView.load(request);
         }
     }
-    
+
     public func loadAfterBeforeload(_ urlStr: String) {
         if (self.options.beforeload == "") {
             NSLog("unexpected loadAfterBeforeload called without feature beforeload=get|post");
         }
-        
+
         let url = URL.init(string: urlStr);
         if (url == nil) {
             NSLog("loadAfterBeforeload called with nil url, ignoring.");
             return;
         }
-        
+
         self.waitForBeforeload = false;
         self.navigate(to: url!);
     }
@@ -295,9 +294,9 @@ import SwiftJWT
         guard self.webView != nil else {
             return;
         }
-        
+
         self.currentURL = nil;
-        
+
         self.webView.configuration.userContentController.removeScriptMessageHandler(forName: WebViewHandler.DAB_BRIDGE_NAME);
 //        self.webView.configuration = nil;
 
@@ -305,7 +304,7 @@ import SwiftJWT
         self.webView.removeFromSuperview();
         self.webView.uiDelegate = nil;
         self.webView.navigationDelegate = nil;
-        
+
         self.webView.removeFromSuperview();
         self.webView = nil;
         self.brwoserPlugin.webViewHandler = nil;
@@ -326,7 +325,7 @@ import SwiftJWT
      public func reload() {
          webView.reload();
      }
-     
+
      public func goBack() {
          if (webView.canGoBack) {
              webView.goBack();
@@ -336,11 +335,11 @@ import SwiftJWT
      public func canGoBack() -> Bool {
          return webView.canGoBack;
      }
-     
+
      public func setUrlEditText(_ text: String) {
          self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.URL_CHANGED_EVENT, "url":text]);
      }
-     
+
      public func getWebViewShot() -> String {
          let renderer = UIGraphicsImageRenderer(bounds: webView.bounds)
          let image = renderer.image { rendererContext in webView.layer.render(in: rendererContext.cgContext) }
@@ -361,7 +360,7 @@ extension WebViewHandler: WKNavigationDelegate {
             self.spinner.startAnimating();
         }
     }
-    
+
     @objc func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         let url = navigationAction.request.url;
         let mainDocumentURL = navigationAction.request.mainDocumentURL;
@@ -405,8 +404,8 @@ extension WebViewHandler: WKNavigationDelegate {
 
         //if is an app store, tel, sms, mailto or geo link, let the system handle it, otherwise it fails to load it
         let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
-//        if (allowedSchemes.contains(url!.scheme!)) {
-        if (true) {  /** Don't check the allowed list */
+        if (allowedSchemes.contains(url!.scheme!)) {
+//        if (true) {  /** Don't check the allowed list */
             webView.stopLoading();
             self.brwoserPlugin.openInSystem(url!);
             shouldStart = false;
@@ -443,7 +442,14 @@ extension WebViewHandler: WKNavigationDelegate {
         webView.scrollView.contentInset = .zero;
 
         self.spinner.stopAnimating();
-        
+
+        webView.evaluateJavaScript("document.getElementsByTagName('head')[0].innerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
+            if error == nil {
+                let html = value as? String
+                self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.HEAD_EVENT, "data":value]);
+            }
+        })
+
         self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_STOP_EVENT, "url":webView.url?.absoluteString as Any?]);
     }
 
@@ -454,7 +460,7 @@ extension WebViewHandler: WKNavigationDelegate {
         self.spinner.stopAnimating();
 
 //        self.addressLabel.text = NSLocalizedString("Load Error", nil);
-        
+
         self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_ERROR_EVENT, "url":webView.url?.absoluteString as Any?, "message": error.localizedDescription]);
     }
 
@@ -466,11 +472,11 @@ extension WebViewHandler: WKNavigationDelegate {
         self.webView(webView, failedNavigation: "didFailProvisionalNavigation", withError: error);
     }
 }
- 
+
 extension WebViewHandler: WKUIDelegate {
-    
+
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        
+
         func okHandler(alerAction:UIAlertAction) {
             completionHandler();
         }
@@ -479,7 +485,7 @@ extension WebViewHandler: WKUIDelegate {
     }
 
     func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-        
+
         func okHandler(alerAction:UIAlertAction) {
             completionHandler(true);
         }
@@ -487,7 +493,7 @@ extension WebViewHandler: WKUIDelegate {
         func cancelHandler(alerAction:UIAlertAction) {
             completionHandler(false);
         }
-        
+
         self.alertDialog(self.alertTitle, message, okHandler, needCancel: true, cancelHandler);
     }
 
@@ -501,13 +507,13 @@ extension WebViewHandler: WKUIDelegate {
                 completionHandler(alertController.textFields![0].text);
             });
         alertController.addAction(okAlertAction)
-        
+
         let cancelAlertAction = UIAlertAction(title: "cancel".localized, style: UIAlertAction.Style.cancel,
             handler: {_ in
                 completionHandler(nil);
             });
         alertController.addAction(cancelAlertAction)
-        
+
         alertController.addTextField(configurationHandler: { textField in
             textField.text = defaultText;
         });
@@ -515,13 +521,13 @@ extension WebViewHandler: WKUIDelegate {
         DispatchQueue.main.async {
             self.getViewController().present(alertController, animated: true, completion: nil)
         }
-      
+
     }
-    
+
     func getViewController() -> UIViewController {
         return self.brwoserPlugin.viewController!;
     }
-    
+
     func alertDialog(_ title: String, _ msg: String, _ okHandler: ((UIAlertAction) -> Void)? = nil,
                      needCancel cancel: Bool  = false, _ cancelHandler: ((UIAlertAction) -> Void)? = nil) {
 
@@ -531,13 +537,13 @@ extension WebViewHandler: WKUIDelegate {
 
         let okAlertAction = UIAlertAction(title: "ok".localized, style: UIAlertAction.Style.default, handler: okHandler)
         alertController.addAction(okAlertAction);
-        
+
         if (cancel) {
             let cancelAlertAction = UIAlertAction(title: "cancel".localized, style:
                                                     UIAlertAction.Style.cancel, handler: cancelHandler)
             alertController.addAction(cancelAlertAction)
         }
-        
+
         DispatchQueue.main.async {
             self.getViewController().present(alertController, animated: true, completion: nil)
         }
