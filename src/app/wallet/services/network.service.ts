@@ -91,6 +91,11 @@ export class WalletNetworkService {
             Logger.log("wallet", "WalletNetworkService - Reloading network:", savedNetwork);
             await this.notifyNetworkChange(savedNetwork);
         }
+
+        // Order networks list alphabetically
+        this.networks.sort((a, b) => {
+          return a.name > b.name ? 1 : -1;
+        })
     }
 
     /**
