@@ -369,7 +369,6 @@ extension WebViewHandler: WKNavigationDelegate {
 
         if (isTopLevelNavigation) {
             self.currentURL = url;
-            self.setUrlEditText(url!.absoluteString);
         }
 
         var shouldStart: Bool = true;
@@ -403,14 +402,15 @@ extension WebViewHandler: WKNavigationDelegate {
         }
 
         //if is an app store, tel, sms, mailto or geo link, let the system handle it, otherwise it fails to load it
-        let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
-        if (allowedSchemes.contains(url!.scheme!)) {
-//        if (true) {  /** Don't check the allowed list */
+//        let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
+        let allowedSchemes = ["https", "http"];
+        if (!allowedSchemes.contains(url!.scheme!)) {
             webView.stopLoading();
             self.brwoserPlugin.openInSystem(url!);
             shouldStart = false;
         }
         else if ((self.brwoserPlugin.callbackId != nil) && isTopLevelNavigation) {
+            self.setUrlEditText(url!.absoluteString);
             // Send a loadstart event for each top-level navigation (includes redirects).
             self.brwoserPlugin.sendEventCallback(["type": WebViewHandler.LOAD_START_EVENT, "url":url?.absoluteString as Any]);
         }

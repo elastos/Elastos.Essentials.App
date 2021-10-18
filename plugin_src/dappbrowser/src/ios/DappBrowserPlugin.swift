@@ -54,7 +54,7 @@
 
         self.commandDelegate?.send(result, callbackId: command.callbackId)
     }
-     
+
      func success(_ command: CDVInvokedUrlCommand, _ retAsBool: Bool) {
          let result = CDVPluginResult(status: CDVCommandStatus_OK,
                                       messageAs: retAsBool);
@@ -116,7 +116,7 @@
         }
 
         // Things are cleaned up in browserExit.
-        
+
         self.success(command);
     }
 
@@ -178,10 +178,10 @@
     }
 
     func openInSystem(_ url: URL) {
-        if (UIApplication.shared.canOpenURL(url)) {
+//        if (UIApplication.shared.canOpenURL(url)) {
             NotificationCenter.default.post(Notification.init(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url));
             UIApplication.shared.open(url);
-        }
+//        }
     }
 
     @objc func loadAfterBeforeload(_ command: CDVInvokedUrlCommand) {
@@ -199,8 +199,8 @@
 
         self.webViewHandler.loadAfterBeforeload(urlStr!);
     }
-     
-     
+
+
      @objc func show(_ command: CDVInvokedUrlCommand) {
          if (self.webViewHandler != nil) {
              self.webViewHandler.show()
@@ -208,14 +208,14 @@
          self.success(command);
      }
 
-    
+
      @objc func hide(_ command: CDVInvokedUrlCommand) {
          if (self.webViewHandler != nil) {
              self.webViewHandler.hide();
          }
          self.success(command);
      }
-     
+
      @objc func canGoBack(_ command: CDVInvokedUrlCommand) {
          var canGoBack = false;
          if (self.webViewHandler != nil) {
@@ -225,14 +225,14 @@
          self.success(command, canGoBack);
      }
 
-    
+
      @objc func goBack(_ command: CDVInvokedUrlCommand) {
          if (self.webViewHandler != nil) {
              self.webViewHandler.goBack();
          }
          self.success(command);
      }
-     
+
      @objc func getWebViewShot(_ command: CDVInvokedUrlCommand) {
          var ret = "";
          if (webViewHandler != nil) {
@@ -240,7 +240,7 @@
          }
          self.success(command, ret);
      }
-     
+
      @objc func addEventListener(_ command: CDVInvokedUrlCommand) {
          self.callbackId = command.callbackId;
          // Don't return any result now
@@ -249,7 +249,7 @@
          self.commandDelegate?.send(result, callbackId: command.callbackId)
      }
 
-    
+
      @objc func removeEventListener(_ command: CDVInvokedUrlCommand) {
          self.callbackId = nil;
          let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
