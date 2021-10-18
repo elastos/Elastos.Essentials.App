@@ -10,6 +10,8 @@ import { NetworkWallet } from "../wallets/networkwallet";
 import { Network } from "./network";
 
 export class EVMNetwork extends Network {
+  protected averageBlocktime = 5; // Unit Second
+
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
@@ -46,7 +48,7 @@ export class EVMNetwork extends Network {
   }
 
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {
-    let wallet = new EVMNetworkWallet(masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName);
+    let wallet = new EVMNetworkWallet(masterWallet, this, this.getMainTokenSymbol(), this.mainTokenFriendlyName, this.averageBlocktime);
     await wallet.initialize();
     if (startBackgroundUpdates)
       void wallet.startBackgroundUpdates();

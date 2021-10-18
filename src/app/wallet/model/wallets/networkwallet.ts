@@ -144,6 +144,8 @@ export abstract class NetworkWallet {
 
     public abstract getDisplayTokenName(): string;
 
+    public abstract getAverageBlocktime(): number;
+
     /**
      * Update balance and transaction list.
      */

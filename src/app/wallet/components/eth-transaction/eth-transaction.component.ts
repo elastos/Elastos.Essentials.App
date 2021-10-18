@@ -7,6 +7,7 @@ import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { ETHTransactionStatus } from '../../model/evm.types';
 import { ETHTransactionService, ETHTransactionSpeedup, ETHTransactionStatusInfo } from '../../services/ethtransaction.service';
 
+
 @Component({
   selector: 'app-eth-transaction',
   templateUrl: './eth-transaction.component.html',
@@ -17,6 +18,7 @@ export class ETHTransactionComponent implements OnInit {
   public publicationSuccessful = false;
   public publicationFailed = false;
   private publicationStatusSub: Subscription;
+  public publicationStatus: ETHTransactionStatus;
   // public gasPrice: number = null;
   public gasPrice: string = null;// GWEI
   // public gasLimit: string = null;
@@ -41,7 +43,8 @@ export class ETHTransactionComponent implements OnInit {
     // Listen to publication event
     this.publicationStatusSub = ETHTransactionService.instance.ethTransactionStatus.subscribe((status)=>{
       Logger.log('wallet', 'ETHTransactionComponent status:', status)
-      switch (status.status) {
+      this.publicationStatus = status.status;
+      switch (this.publicationStatus) {
         case ETHTransactionStatus.PACKED:
           this.zone.run(() => {
             this.publishing = false;
@@ -53,6 +56,14 @@ export class ETHTransactionComponent implements OnInit {
           }, 3000);
           break;
         case ETHTransactionStatus.UNPACKED:
+          this.zone.run(() => {
+            this.gasPrice = new BigNumber(status.gasPrice).dividedBy(this.GWEI).toFixed(1);
+            this.gasLimit = status.gasLimit;
+            this.publishing = false;
+            this.publicationFailed = true;
+          });
+          break;
+        case ETHTransactionStatus.ERROR:
           this.zone.run(() => {
             this.gasPrice = new BigNumber(status.gasPrice).dividedBy(this.GWEI).toFixed(1);
             this.gasLimit = status.gasLimit;

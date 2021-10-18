@@ -21,5 +21,7 @@ export class FantomMainNetNetwork extends EVMNetwork {
         new ERC20Coin("LINK", "ChainLink", "0xb3654dc3d10ea7645f8319668e8f54d2574fbdc8", 18, MAINNET_TEMPLATE, false, true)
       ]
     );
+
+    this.averageBlocktime = 5 // 1;
   }
 }

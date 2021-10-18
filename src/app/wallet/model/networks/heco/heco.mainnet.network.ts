@@ -48,6 +48,7 @@ export class HECOMainNetNetwork extends EVMNetwork {
     );
 
     this.uniswapCurrencyProvider = new HecoMainnetUniswapCurrencyProvider();
+    this.averageBlocktime = 5 // 3;
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

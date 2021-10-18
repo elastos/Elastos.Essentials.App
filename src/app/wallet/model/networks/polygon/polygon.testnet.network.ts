@@ -13,7 +13,9 @@ export class PolygonTestNetNetwork extends EVMNetwork {
       PolygonAPI.getApiUrl(PolygonAPIType.RPC, TESTNET_TEMPLATE),
       PolygonAPI.getApiUrl(PolygonAPIType.ACCOUNT_RPC, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
-      80001
+      80001,
     );
+
+    this.averageBlocktime = 5;
   }
 }

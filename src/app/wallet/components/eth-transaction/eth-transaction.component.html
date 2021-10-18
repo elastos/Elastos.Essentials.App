@@ -19,7 +19,8 @@
 
     <ion-row class="item-row ripple ion-activatable" *ngIf="publicationFailed">
       <ion-col size="12">
-        <h1>{{ 'wallet.eth-transaction-fail' | translate }}</h1>
+        <h1 *ngIf="publicationStatus == 'unpacked'">{{ 'wallet.eth-transaction-pending' | translate }}</h1>
+        <h1 *ngIf="publicationStatus == 'error'">{{ 'wallet.eth-transaction-fail' | translate }}</h1>
         <h2>{{ 'wallet.eth-transaction-speedup-prompt' | translate }}</h2>
       </ion-col>
     </ion-row>

@@ -37,6 +37,7 @@ export class BSCMainNetNetwork extends EVMNetwork {
     );
 
     this.uniswapCurrencyProvider = new BscMainnetUniswapCurrencyProvider();
+    this.averageBlocktime = 5 // 3;
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

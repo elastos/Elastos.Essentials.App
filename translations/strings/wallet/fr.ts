@@ -242,6 +242,7 @@ export const fr = {
         "eth-sending-transaction": "Transaction is sending",
         "eth-transaction-wait": "Please wait...",
         "eth-transaction-fail": "Transaction failed",
+        "eth-transaction-pending": "Transaction not confirmed",
         "eth-transaction-speedup-prompt": "You can speedup the transaction by increasing the gas price",
         "eth-transaction-speedup": "Speedup",
         "eth-gasprice": "Gas Price(GWEI)",

@@ -13,7 +13,9 @@ export class ArbitrumTestNetNetwork extends EVMNetwork {
       ArbitrumAPI.getApiUrl(ArbitrumApiType.RPC, TESTNET_TEMPLATE),
       ArbitrumAPI.getApiUrl(ArbitrumApiType.EXPLORER, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
-      421611
+      421611,
     );
+
+    this.averageBlocktime = 15 //;
   }
 }

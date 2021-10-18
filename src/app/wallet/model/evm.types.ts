@@ -75,6 +75,7 @@ export enum ETHTransactionStatus {
   CANCEL = 'cancel',
   PACKED = 'packed',
   UNPACKED = 'unpacked',
+  ERROR = 'error'
 }
 export enum ETHSCTransferType {
   DEPOSIT = "crossChainEthDeposit",

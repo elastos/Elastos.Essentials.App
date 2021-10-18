@@ -23,5 +23,7 @@ export class PolygonMainNetNetwork extends EVMNetwork {
         new ERC20Coin("UNI", "Uniswap", "0xb33eaad8d922b1083446dc23f610c2567fb5180f", 18, MAINNET_TEMPLATE, false, true),
       ]
     );
+
+    this.averageBlocktime = 5 // 2;
   }
 }

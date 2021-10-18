@@ -23,6 +23,7 @@ export type ETHTransactionSpeedup = {
 
 class ETHTransactionManager {
   private checkTimes = 0;
+  private waitforTimes = 20; // seconds
   private defaultGasLimit = '200000';
 
   constructor(
@@ -68,6 +69,8 @@ class ETHTransactionManager {
         void this.emitEthTransactionStatusChange(status);
         return;
       }
+
+      this.waitforTimes = subwallet.getAverageBlocktime() * 3;
       if (this.needToSpeedup(result)) {
         let defaultGasprice = await subwallet.getGasPrice();
         let status: ETHTransactionStatusInfo = {
@@ -81,7 +84,7 @@ class ETHTransactionManager {
       } else {
         setTimeout(() => {
           void this.checkPublicationStatusAndUpdate(subwallet, result.txid);
-        }, 3000);
+        }, 5000);
       }
     }
     catch (err) {
@@ -132,7 +135,7 @@ class ETHTransactionManager {
       this.emitEthTransactionStatusChange(status);
     } else {
       this.checkTimes++;
-      if (this.checkTimes < 15) {
+      if (this.checkTimes < this.waitforTimes) {
         setTimeout(() => {
           void this.checkPublicationStatusAndUpdate(subwallet, txid);
         }, 1000);

@@ -15,7 +15,8 @@ export class EVMNetworkWallet extends NetworkWallet {
         public masterWallet: MasterWallet,
         public network: EVMNetwork,
         public displayToken: string, // Ex: "HT", "BSC"
-        public mainSubWalletFriendlyName: string // Ex: "Huobi Token"
+        public mainSubWalletFriendlyName: string, // Ex: "Huobi Token"
+        public averageBlocktime = 5 // Unit Second
     ) {
         super(masterWallet, network, displayToken);
     }
@@ -41,5 +42,9 @@ export class EVMNetworkWallet extends NetworkWallet {
 
     public getDisplayTokenName(): string {
         return this.displayToken;
+    }
+
+    public getAverageBlocktime(): number {
+        return this.averageBlocktime;
     }
 }

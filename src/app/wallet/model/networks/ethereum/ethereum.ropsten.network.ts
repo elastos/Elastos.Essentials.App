@@ -14,7 +14,9 @@ export class EthereumRopstenNetwork extends EVMNetwork {
       EthereumAPI.getApiUrl(EthereumAPIType.RPC, "ropsten"),
       EthereumAPI.getApiUrl(EthereumAPIType.EXPLORER, "ropsten"),
       TESTNET_TEMPLATE,
-      3
+      3,
     );
+
+    this.averageBlocktime = 15;
   }
 }

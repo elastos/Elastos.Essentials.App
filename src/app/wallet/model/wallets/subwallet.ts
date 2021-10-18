@@ -188,6 +188,12 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
   public abstract getDisplayTokenName(): string;
 
   /**
+   */
+   public getAverageBlocktime(): number {
+     return this.networkWallet.getAverageBlocktime();
+   }
+
+  /**
    * Converts a given value in this wallet in the external currency chosen by user (USD, BTC, CNY, etc).
    * In case the subwallet is not able to compute this value (ex: ERC20 coins for now), the returned
    * value is null.

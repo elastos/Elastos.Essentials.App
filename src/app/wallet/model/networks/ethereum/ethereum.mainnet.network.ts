@@ -41,6 +41,7 @@ export class EthereumMainNetNetwork extends EVMNetwork {
     );
 
     this.uniswapCurrencyProvider = new EthereumMainnetUniswapCurrencyProvider();
+    this.averageBlocktime = 15;
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

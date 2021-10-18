@@ -20,6 +20,8 @@ export class FusionMainNetNetwork extends EVMNetwork {
       32659,
       []
     );
+
+    this.averageBlocktime = 5;
   }
 
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {

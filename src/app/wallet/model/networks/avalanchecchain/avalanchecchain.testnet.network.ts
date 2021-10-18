@@ -16,8 +16,10 @@ export class AvalancheCChainTestNetNetwork extends EVMNetwork {
       AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.RPC, TESTNET_TEMPLATE),
       null,
       TESTNET_TEMPLATE,
-      43113
+      43113,
     );
+
+    this.averageBlocktime = 5 // 2;
   }
 
   public async createNetworkWallet(masterWallet: MasterWallet, startBackgroundUpdates = true): Promise<NetworkWallet> {

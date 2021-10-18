@@ -241,6 +241,7 @@ export const zh = {
                 "eth-sending-transaction": "交易发送中",
                 "eth-transaction-wait": "请稍候...",
                 "eth-transaction-fail": "交易失败",
+                "eth-transaction-pending": "交易确认中...",
                 "eth-transaction-speedup-prompt": "您可以通过增加燃料价格对交易进行加速",
                 "eth-transaction-speedup": "加速交易",
                 "eth-gasprice": "燃料价格(GWEI)",

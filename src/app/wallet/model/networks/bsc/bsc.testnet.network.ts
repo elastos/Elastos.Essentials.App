@@ -13,7 +13,9 @@ export class BSCTestNetNetwork extends EVMNetwork {
       BscAPI.getApiUrl(BscApiType.RPC, TESTNET_TEMPLATE),
       BscAPI.getApiUrl(BscApiType.EXPLORER, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
-      97
+      97,
     );
+
+    this.averageBlocktime = 5 // 3;
   }
 }

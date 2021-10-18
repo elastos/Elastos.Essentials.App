@@ -13,7 +13,9 @@ export class FantomTestNetNetwork extends EVMNetwork {
       FantomAPI.getApiUrl(FantomApiType.RPC, TESTNET_TEMPLATE),
       FantomAPI.getApiUrl(FantomApiType.ACCOUNT_RPC, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
-      4002
+      4002,
     );
+
+    this.averageBlocktime = 5 // 1;
   }
 }

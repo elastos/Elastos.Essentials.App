@@ -64,6 +64,10 @@ export class ElastosEVMSubWallet extends StandardEVMSubWallet {
       return "";
   }
 
+  public getAverageBlocktime(): number {
+    return 5;
+  }
+
   /* protected async getTransactionName(transaction: EthTransaction, translate: TranslateService): Promise<string> {
         const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction.to);
         switch (direction) {

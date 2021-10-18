@@ -35,6 +35,7 @@ export class ArbitrumMainNetNetwork extends EVMNetwork {
     );
 
     this.uniswapCurrencyProvider = new ArbitrumMainnetUniswapCurrencyProvider();
+    this.averageBlocktime = 15 //;
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

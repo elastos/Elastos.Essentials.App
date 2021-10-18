@@ -77,4 +77,8 @@ export class ElastosNetworkWallet extends NetworkWallet {
   public getDisplayTokenName(): string {
     return 'ELA';
   }
+
+  public getAverageBlocktime(): number {
+    return 120;
+  }
 }

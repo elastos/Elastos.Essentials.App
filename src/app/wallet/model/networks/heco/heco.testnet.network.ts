@@ -13,7 +13,9 @@ export class HECOTestNetNetwork extends EVMNetwork {
       HecoAPI.getApiUrl(HecoApiType.RPC, TESTNET_TEMPLATE),
       HecoAPI.getApiUrl(HecoApiType.ACCOUNT_RPC, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
-      256
+      256,
     );
+
+    this.averageBlocktime = 5;
   }
 }
