@@ -42,7 +42,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             Logger.error('wallet', 'newFromSerializedSubWallet id is null');
             return null;
         }
-        const coin = networkWallet.network.getCoinByID(serializedSubWallet.id) as ERC20Coin;
+        // Use the contract address as id for ERC20 subwallet.
+        const coin = networkWallet.network.getERC20CoinByContractAddress(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
             const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id, false);
             // subWallet.initFromSerializedSubWallet(serializedSubWallet);

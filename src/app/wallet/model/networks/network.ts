@@ -182,15 +182,18 @@ export abstract class Network {
     const customCoins: ERC20Coin[] = [];
     let someCoinsWereRemoved = false;
     for (let rawCoin of rawCoinList) {
-      let coin = ERC20Coin.fromJson(rawCoin);
+      // Use the contract address as id.
+      if ((rawCoin.id as string).startsWith('0x')) {
+        let coin = ERC20Coin.fromJson(rawCoin);
 
-      // Legacy support: we didn't save coins decimals earlier. So we delete custom coins from disk if we don't have the info.
-      // Users have to re-add them manually.
-      if (coin.decimals == -1) {
-        someCoinsWereRemoved = true;
-      }
-      else {
-        customCoins.push(coin);
+        // Legacy support: we didn't save coins decimals earlier. So we delete custom coins from disk if we don't have the info.
+        // Users have to re-add them manually.
+        if (coin.decimals == -1) {
+          someCoinsWereRemoved = true;
+        }
+        else {
+          customCoins.push(coin);
+        }
       }
     }
 

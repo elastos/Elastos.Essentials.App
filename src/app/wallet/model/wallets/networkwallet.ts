@@ -316,6 +316,8 @@ export abstract class NetworkWallet {
         // In case of newly created wallet we don't have extended info from local storage yet,
         // which is normal.
         if (extendedInfo) {
+            let needUpdateExtendedInfo = false;
+
             for (let serializedSubWallet of extendedInfo.subWallets) {
                 // NOTE: for now, we save the standard subwallets but we don't restore them from extended info
                 // as they are always rebuilt by default by the network wallet. Later this COULD be a problem
@@ -324,6 +326,10 @@ export abstract class NetworkWallet {
                     let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
                     if (subWallet) {
                         this.subWallets[serializedSubWallet.id] = subWallet;
+                    } else {
+                      // Need to update extendedInfo to delete the invalid subwallet.
+                      // (The subWallets use the token name as id in the old version(< 2.3.0))
+                      needUpdateExtendedInfo = true;
                     }
                 }
             }
@@ -336,6 +342,10 @@ export abstract class NetworkWallet {
                         this.nfts.push(nft);
                     }
                 }
+            }
+
+            if (needUpdateExtendedInfo) {
+              void this.save()
             }
         }
     }
