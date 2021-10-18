@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { BrowserTitleBarComponent } from '../../components/titlebar/titlebar.component';
 import { DappBrowserClient, DappBrowserService } from '../../services/dappbrowser.service';
 import { StorageService } from '../../services/storage.service';
@@ -35,7 +36,8 @@ export class BrowserPage implements DappBrowserClient {
         public keyboard: Keyboard,
         private platform: Platform,
         public dappbrowserService: DappBrowserService,
-        private storageService: StorageService
+        private storageService: StorageService,
+        private walletNetworkUIService: WalletNetworkUIService
     ) {
     }
 
@@ -44,8 +46,10 @@ export class BrowserPage implements DappBrowserClient {
         this.dappbrowserService.setClient(this);
         this.titleBar.setTitle(this.dappbrowserService.title);
         this.titleBar.setCloseMode(true);
+        this.titleBar.setMenuVisible(true);
 
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (no) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (no) => {
             switch (no) {
                 case 0:
                     void dappBrowser.close();
@@ -54,6 +58,11 @@ export class BrowserPage implements DappBrowserClient {
                     void this.onGoBack();
                     break;
                 case 2:
+                    dappBrowser.hide();
+                    await this.walletNetworkUIService.chooseActiveNetwork();
+                    void dappBrowser.show();
+                    break;
+                case 3:
                     this.onMenu();
                     break;
             }

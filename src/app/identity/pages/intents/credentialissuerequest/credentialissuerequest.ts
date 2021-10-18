@@ -1,16 +1,16 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { DIDService } from '../../../services/did.service';
-import { UXService } from '../../../services/ux.service';
-import { PopupProvider } from '../../../services/popup';
-import { AuthService } from '../../../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
-import { DIDURL } from '../../../model/didurl.model';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { CredIssueIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDURL } from '../../../model/didurl.model';
+import { AuthService } from '../../../services/auth.service';
+import { DIDService } from '../../../services/did.service';
+import { PopupProvider } from '../../../services/popup';
+import { UXService } from '../../../services/ux.service';
 
 // TODO: Verify and show clear errors in case data is missing in credentials (expiration date, issuer, etc).
 // TODO: Resolve issuer's DID and try to display more user friendly information about the issuer
@@ -57,12 +57,12 @@ export class CredentialIssueRequestPage {
 
   public receivedIntent: CredIssueIdentityIntent = null;
   public displayableCredential: IssuedCredential = null; // Displayable reworked material
-  public preliminaryChecksCompleted: boolean = false;
+  public preliminaryChecksCompleted = false;
 
-  public showIdentifier: boolean = false;
-  public showReceiver: boolean = false;
-  public showExpiration: boolean = false;
-  public showValues: boolean = false;
+  public showIdentifier = false;
+  public showReceiver = false;
+  public showExpiration = false;
+  public showValues = false;
 
   constructor(
     private zone: NgZone,
@@ -81,7 +81,7 @@ export class CredentialIssueRequestPage {
     this.titleBar.setTitle(this.translate.instant('identity.credential-issue'));
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CLOSE);
 
-    this.zone.run(async () => {
+    this.zone.run(() => {
       this.receivedIntent = this.intentService.getReceivedIntent();
       this.organizeDisplayableInformation();
       this.runPreliminaryChecks();
@@ -119,7 +119,7 @@ export class CredentialIssueRequestPage {
 
     this.displayableCredential = {
       // The received identitier should NOT start with #, but DID SDK credentials start with #.
-      identifier: new DIDURL("#"+this.receivedIntent.params.identifier).getFragment(),
+      identifier: new DIDURL("#" + this.receivedIntent.params.identifier).getFragment(),
       receiver: this.receivedIntent.params.subjectdid,
       expirationDate: null,
       values: displayableEntries,
@@ -129,8 +129,8 @@ export class CredentialIssueRequestPage {
       this.displayableCredential.expirationDate = new Date(this.receivedIntent.params.expirationDate);
     else {
       let now = new Date().getTime();
-      let fiveDaysAsMs = 5*24*60*60*1000;
-      this.displayableCredential.expirationDate = new Date(now+fiveDaysAsMs);
+      let fiveDaysAsMs = 5 * 24 * 60 * 60 * 1000;
+      this.displayableCredential.expirationDate = new Date(now + fiveDaysAsMs);
     }
   }
 
@@ -142,34 +142,36 @@ export class CredentialIssueRequestPage {
     return value;
   }
 
-  async acceptRequest() {
+  acceptRequest() {
     // Save the credentials to user's DID.
     // NOTE: For now we save all credentials, we can't select them individually.
-    AuthService.instance.checkPasswordThenExecute(async ()=>{
+    // eslint-disable-next-line require-await
+    void AuthService.instance.checkPasswordThenExecute(async () => {
       Logger.log('Identity', "CredIssueRequest - issuing credential");
 
       let validityDays = (this.displayableCredential.expirationDate.getTime() - Date.now()) / 1000 / 60 / 60 / 24;
 
       this.didService.getActiveDid().pluginDid.issueCredential(
         this.displayableCredential.receiver,
-        "#"+this.displayableCredential.identifier,
+        "#" + this.displayableCredential.identifier,
         this.receivedIntent.params.types,
         validityDays,
         this.receivedIntent.params.properties,
         this.authService.getCurrentUserPassword(),
-        (issuedCredential)=>{
-          this.popup.ionicAlert(this.translate.instant('identity.credential-issued'), this.translate.instant('identity.credential-issued-success'),this.translate.instant('common.done')).then(async ()=>{
-            Logger.log('Identity', "Sending credissue intent response for intent id "+this.receivedIntent.intentId)
+        (issuedCredential) => {
+          void this.popup.ionicAlert(this.translate.instant('identity.credential-issued'), this.translate.instant('identity.credential-issued-success'), this.translate.instant('common.done')).then(async () => {
+            Logger.log('Identity', "Sending credissue intent response for intent id " + this.receivedIntent.intentId)
             let credentialAsString = await issuedCredential.toString();
             await this.appServices.sendIntentResponse("credissue", {
               credential: credentialAsString
             }, this.receivedIntent.intentId);
           })
-        }, async (err)=>{
-          await this.popup.ionicAlert(this.translate.instant('common.error'), this.translate.instant('identity.credential-issued-error')+JSON.stringify(err), this.translate.instant('common.close'));
-          this.rejectRequest();
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        }, async (err) => {
+          await this.popup.ionicAlert(this.translate.instant('common.error'), this.translate.instant('identity.credential-issued-error') + JSON.stringify(err), this.translate.instant('common.close'));
+          void this.rejectRequest();
         });
-    }, ()=>{
+    }, () => {
       // Cancelled
     });
   }

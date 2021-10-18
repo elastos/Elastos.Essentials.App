@@ -279,6 +279,8 @@ export class CurrencyService {
       shouldFetch = true;
     }
 
+    // Logger.log("walletdebug", "Should fetch?", shouldFetch);
+
     if (shouldFetch && !this.tokenFetchOnGoing) {
       this.tokenFetchOnGoing = true;
       void this.uniswapCurrencyService.getTokenUSDValue(network, coin).then(value => {

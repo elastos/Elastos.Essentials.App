@@ -42,7 +42,6 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
             return "crypto.BNB.address";
         else if (subWallet.networkWallet.network instanceof FantomMainNetNetwork)
             return "crypto.FTM.version.OPERA.address";
-        // TODO: ELA mainchain, ELA Smart chain: what are the right keys in UD?
         // TODO: Tron -> crypto.TRX.address
         // TODO: Avalanche ->crypto.AVAX.address
         // NOTE (2021.10) FSN (fusion) not available in UD

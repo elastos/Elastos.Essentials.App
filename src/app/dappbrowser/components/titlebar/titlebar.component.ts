@@ -4,6 +4,7 @@ import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 
 @Component({
     selector: 'browser-titlebar',
@@ -42,6 +43,7 @@ export class BrowserTitleBarComponent {
         public popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
+        private networkService: WalletNetworkService
     ) { }
 
 
@@ -89,7 +91,7 @@ export class BrowserTitleBarComponent {
     public setMenuVisible(menuVisible: boolean) {
         this.menuVisible = menuVisible;
         if (menuVisible) {
-            this.urlBoxColSize = 8.25;
+            this.urlBoxColSize = 7;
         }
         else {
             this.urlBoxColSize = 9.25;
@@ -111,6 +113,8 @@ export class BrowserTitleBarComponent {
             case 1:
                 return this.theme.darkMode ? 'assets/components/titlebar/darkmode/back.svg' : 'assets/components/titlebar/back.svg';
             case 2:
+                return this.networkService.activeNetwork.value.logo;
+            case 3:
                 return this.theme.darkMode ? 'assets/components/titlebar/darkmode/vertical_menu.svg' : 'assets/components/titlebar/vertical_menu.svg';
         }
     }

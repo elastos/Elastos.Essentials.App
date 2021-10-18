@@ -181,7 +181,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                 case 1:
                     void this.nav.navigateBack();
                     break;
-                case 2:
+                case 3:
                     void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
                     break;
             }
