@@ -212,7 +212,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
             // BLANK - or anything else
             else {
                 LOG.d(LOG_TAG, "in blank or webview");
-                result = openInDappBrowser(url, options, target);
+                result = openInDappBrowser(url, options);
             }
 
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
@@ -224,9 +224,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
         }
     }
 
-    private String openInDappBrowser(final String url, String options, String target) throws Exception {
+    private String openInDappBrowser(final String url, String options) throws Exception {
         DappBrowserOptions browserOptions = DappBrowserOptions.parseOptions(options);
-        this.webViewHandler = new WebViewHandler(this, url, browserOptions, target);
+        this.webViewHandler = new WebViewHandler(this, url, browserOptions);
 
         return "";
     }
@@ -294,7 +294,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
         // load in DappBrowser
         else {
             LOG.d(LOG_TAG, "loading in DappBrowser");
-            result = openInDappBrowser(url, options, "_blank");
+            result = openInDappBrowser(url, options);
         }
         return result;
     }

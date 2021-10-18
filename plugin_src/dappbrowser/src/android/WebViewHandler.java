@@ -72,7 +72,6 @@ public class WebViewHandler {
     private static final String PROGRESS_EVENT = "progress";
     private static final String HEAD_EVENT = "head";
     private static final String URL_CHANGED_EVENT = "urlchanged";
-    private static final String MENU_EVENT = "menu";
     private static final String EXIT_EVENT = "exit";
 
     public WebView webView;
@@ -86,7 +85,7 @@ public class WebViewHandler {
     public ValueCallback<Uri[]> mUploadCallback;
     public final static int FILECHOOSER_REQUESTCODE = 1;
 
-    public WebViewHandler(DappBrowserPlugin brwoserPlugin, String url, DappBrowserOptions options, String target) throws Exception {
+    public WebViewHandler(DappBrowserPlugin brwoserPlugin, String url, DappBrowserOptions options) {
         this.brwoserPlugin = brwoserPlugin;
         this.activity = brwoserPlugin.cordova.getActivity();
         this.options = options;

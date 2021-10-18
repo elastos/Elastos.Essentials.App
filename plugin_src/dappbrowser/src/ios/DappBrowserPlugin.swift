@@ -30,10 +30,9 @@
     var intentListener:  ((String, String?, String, Int64)->(Void))? = nil;
 
     private var _beforeload: String = "";
-    private var _waitForBeforeload: Bool = false;
+//    private var _waitForBeforeload: Bool = false;
     private var _previousStatusBarStyle: NSInteger = -1;
     var webViewHandler: WebViewHandler!
-//    var webContainer: UIView!
 
     static var instance: DappBrowserPlugin?;
 
@@ -41,16 +40,12 @@
     static let kDappBrowserTargetSystem = "_system"
     static let kDappBrowserTargetBlank = "_blank"
 
-
     static func getInstance() -> DappBrowserPlugin {
         return instance!;
     }
 
     override func pluginInitialize() {
         DappBrowserPlugin.instance = self;
-        self.webViewHandler = WebViewHandler(self);
-//        _callbackIdPattern = nil;
-//        _exitMode = nil;
     }
 
     //---------------------------------------------------------
@@ -59,6 +54,13 @@
 
         self.commandDelegate?.send(result, callbackId: command.callbackId)
     }
+     
+     func success(_ command: CDVInvokedUrlCommand, _ retAsBool: Bool) {
+         let result = CDVPluginResult(status: CDVCommandStatus_OK,
+                                      messageAs: retAsBool);
+
+         self.commandDelegate?.send(result, callbackId: command.callbackId)
+     }
 
     func success(_ command: CDVInvokedUrlCommand, _ retAsString: String) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
@@ -107,18 +109,18 @@
     }
 
     @objc func close(_ command: CDVInvokedUrlCommand) {
-        if (self.webViewHandler.webView == nil) {
-            NSLog("IAB.close() called but it was already closed.");
-            return;
+        if (self.webViewHandler != nil) {
+            let mode = command.arguments[0] as? String;
+            self.webViewHandler.close();
+
         }
 
         // Things are cleaned up in browserExit.
-        self.webViewHandler.close();
+        
         self.success(command);
     }
 
-    func isSystemUrl(_ url: URL) -> Bool
-    {
+    func isSystemUrl(_ url: URL) -> Bool {
         if (url.absoluteString == "itunes.apple.com") {
             return true;
         }
@@ -129,9 +131,7 @@
     @objc func open(_ command: CDVInvokedUrlCommand) {
         let url = command.arguments[0] as? String;
         var target = command.arguments[1] as? String ?? DappBrowserPlugin.kDappBrowserTargetSelf;
-        let options = command.arguments[1] as? String ?? "";
-
-        self.callbackId = command.callbackId;
+        let options = command.arguments[2] as? String ?? "";
 
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR,
                                        messageAs: "incorrect number of arguments");
@@ -151,8 +151,8 @@
                     }
                     else if (target == DappBrowserPlugin.kDappBrowserTargetSystem) {
                         self.openInSystem(absoluteUrl!);
-                    } else { // _blank or anything else
-                        try self.openInDappBrowser(url: absoluteUrl!, withOptions:options);
+                    } else { // _webview or anything else
+                        try self.openInDappBrowser(url: url!, withOptions:options);
                     }
                 } catch let error {
                     self.error(command, error.localizedDescription);
@@ -162,133 +162,12 @@
             }
         }
 
-        pluginResult!.setKeepCallbackAs(true);
         self.commandDelegate?.send(pluginResult, callbackId: command.callbackId)
     }
 
-    func openInDappBrowser(url: URL, withOptions options: String) throws {
+    func openInDappBrowser(url: String, withOptions options: String) throws {
         let browserOptions = try DappBrowserOptions.parseOptions(options);
-
-        let dataStore = WKWebsiteDataStore.default();
-        if (browserOptions.cleardata) {
-            let dateFrom = Date.init(timeIntervalSince1970: 0);
-            dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), modifiedSince:dateFrom, completionHandler:{() in
-                NSLog("Removed all WKWebView data");
-                self.webViewHandler.webView.configuration.processPool = WKProcessPool(); // create new process pool to flush all data
-            });
-        }
-
-        var isAtLeastiOS11 = false;
-        if #available(iOS 11.0, *) {
-            isAtLeastiOS11 = true;
-        }
-
-        if (browserOptions.clearcache) {
-            if(isAtLeastiOS11){
-                // Deletes all cookies
-                let cookieStore = dataStore.httpCookieStore;
-                cookieStore.getAllCookies({(cookies) in
-                    for cookie in cookies {
-                        cookieStore.delete(cookie, completionHandler:nil);
-                    }
-                });
-            }
-            else{
-                // https://stackoverflow.com/a/31803708/777265
-                // Only deletes domain cookies (not session cookies)
-                dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
-                    completionHandler:{(records) in
-                        for record  in records {
-                             let dataTypes = record.dataTypes;
-                            if (dataTypes.contains(WKWebsiteDataTypeCookies)) {
-                                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes,
-                                                                        for:[record],
-                                       completionHandler:{() in});
-                            }
-                         }
-                    });
-            }
-        }
-
-        if (browserOptions.clearsessioncache) {
-            if (isAtLeastiOS11) {
-                // Deletes session cookies
-                let cookieStore = dataStore.httpCookieStore;
-                cookieStore.getAllCookies({(cookies) in
-                    for cookie in cookies {
-                        if(cookie.isSessionOnly){
-                            cookieStore.delete(cookie, completionHandler:nil);
-                        }
-                    }
-                });
-            }
-            else{
-                NSLog("clearsessioncache not available below iOS 11.0");
-            }
-        }
-
-        // use of beforeload event
-//        _waitForBeforeload = browserOptions.beforeload != "";
-
-        self.webViewHandler.setData(browserOptions, url);
-//        if (self.webViewHandler.webView != nil) {
-//            self.webViewHandler.createViews(self.viewController.view);
-//        }
-
-        if (!browserOptions.hidden) {
-//            self.webViewHandler.webView.isHidden = false;
-            self.show(nil, withNoAnimate:browserOptions.hidden);
-        }
-    }
-
-    @objc func show(_ command: CDVInvokedUrlCommand) {
-        if (self.webViewHandler.webView != nil) {
-            self.webViewHandler.webView.isHidden = false;
-        }
-        self.success(command);
-    }
-
-    @objc func show(_ command: CDVInvokedUrlCommand?, withNoAnimate noAnimate: Bool) {
-
-        var initHidden = false;
-        if (command == nil && noAnimate == true){
-            initHidden = true;
-        }
-
-//        if (self.dappViewController == nil) {
-//            NSLog("Tried to show IAB after it was closed.");
-//            return;
-//        }
-    }
-
-    @objc func hide(_ command: CDVInvokedUrlCommand) {
-        if (self.webViewHandler.webView != nil) {
-            self.webViewHandler.webView.isHidden = true;
-        }
-        self.success(command);
-//        self.show(command, withNoAnimate:false);
-
-//        // Set tmpWindow to hidden to make main webview responsive to touch again
-//        // https://stackoverflow.com/questions/4544489/how-to-remove-a-uiwindow
-//        self->tmpWindow.hidden = YES;
-//        self->tmpWindow = nil;
-
-//        if (self.dappViewController == nil) {
-//            NSLog("Tried to hide IAB after it was closed.");
-//            return;
-//        }
-//        if (_previousStatusBarStyle == -1) {
-//            NSLog("Tried to hide IAB while already hidden");
-//            return;
-//        }
-//
-//        _previousStatusBarStyle = UIApplication.shared.statusBarStyle;
-
-        // Run later to avoid the "took a long time" log message.
-//        DispatchQueue.main.async {
-//            self.dappViewController.transitioningDelegate = SlideAnimator.getInstance();
-//            self.dappViewController.dismiss(animated: true, completion: nil);
-//        }
+        self.webViewHandler = WebViewHandler(self, url, browserOptions);
     }
 
     func openInCordovaWebView(_ url: URL, withOptions options: String) {
@@ -320,6 +199,63 @@
 
         self.webViewHandler.loadAfterBeforeload(urlStr!);
     }
+     
+     
+     @objc func show(_ command: CDVInvokedUrlCommand) {
+         if (self.webViewHandler != nil) {
+             self.webViewHandler.show()
+         }
+         self.success(command);
+     }
+
+    
+     @objc func hide(_ command: CDVInvokedUrlCommand) {
+         if (self.webViewHandler != nil) {
+             self.webViewHandler.hide();
+         }
+         self.success(command);
+     }
+     
+     @objc func canGoBack(_ command: CDVInvokedUrlCommand) {
+         var canGoBack = false;
+         if (self.webViewHandler != nil) {
+             canGoBack = self.webViewHandler.canGoBack()
+         }
+
+         self.success(command, canGoBack);
+     }
+
+    
+     @objc func goBack(_ command: CDVInvokedUrlCommand) {
+         if (self.webViewHandler != nil) {
+             self.webViewHandler.goBack();
+         }
+         self.success(command);
+     }
+     
+     @objc func getWebViewShot(_ command: CDVInvokedUrlCommand) {
+         var ret = "";
+         if (webViewHandler != nil) {
+             ret = webViewHandler.getWebViewShot();
+         }
+         self.success(command, ret);
+     }
+     
+     @objc func addEventListener(_ command: CDVInvokedUrlCommand) {
+         self.callbackId = command.callbackId;
+         // Don't return any result now
+         let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
+         result?.setKeepCallbackAs(true);
+         self.commandDelegate?.send(result, callbackId: command.callbackId)
+     }
+
+    
+     @objc func removeEventListener(_ command: CDVInvokedUrlCommand) {
+         self.callbackId = nil;
+         let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
+         result?.setKeepCallbackAs(false);
+         self.commandDelegate?.send(result, callbackId: command.callbackId)
+     }
 
     // This is a helper method for the inject{Script|Style}{Code|File} API calls, which
     // provides a consistent method for injecting JavaScript code into the document.
@@ -340,7 +276,7 @@
 
             if ((sourceArrayString) != nil) {
                 let startIndex = sourceArrayString!.index(sourceArrayString!.startIndex, offsetBy: 1)
-                let endIndex =  sourceArrayString!.index(sourceArrayString!.endIndex, offsetBy: -2)
+                let endIndex =  sourceArrayString!.index(sourceArrayString!.endIndex, offsetBy: -1)
                 let sourceString = String(sourceArrayString![startIndex..<endIndex])
 
                 let jsToInject = String(format:jsWrapper!, sourceString);
@@ -352,19 +288,20 @@
         }
     }
 
-
     //Synchronus helper for javascript evaluation
     func evaluateJavaScript(_ script: String) {
-        self.webViewHandler.webView.evaluateJavaScript(script, completionHandler: { (result, error) in
-            if (error == nil) {
-                if (result != nil) {
-//                    print("evaluateJavaScript result : \(result)");
+        if (webViewHandler != nil) {
+            self.webViewHandler.webView.evaluateJavaScript(script, completionHandler: { (result, error) in
+                if (error == nil) {
+                    if (result != nil) {
+                        NSLog("evaluateJavaScript result : \(result)");
+                    }
                 }
-            }
-            else {
-                NSLog("evaluateJavaScript error : %@ : %@", error!.localizedDescription, script);
-            }
-        });
+                else {
+                    NSLog("evaluateJavaScript error : %@ : %@", error!.localizedDescription, script);
+                }
+            });
+        }
     }
 
     @objc func injectScriptCode(_ command: CDVInvokedUrlCommand) {
@@ -438,10 +375,6 @@
         }
     }
 
-    public func setUrlEditText(_ text: String) {
-//        self.dappViewController.titlebar.txtUrl.text = text;
-    }
-
  }
 
  extension DappBrowserPlugin : WKScriptMessageHandler {
@@ -474,13 +407,13 @@
              }
 
             self.commandDelegate.send(pluginResult, callbackId:scriptCallbackId);
-         }
+        }
         else if(self.callbackId != nil){
              // Send a message event
             let messageContent = message.body as! String;
             do {
                 let decodedResult = try JSONSerialization.jsonObject(with: messageContent.data(using: .utf8)!, options:[]);
-                let dResult = ["type": "message", "data": decodedResult];
+                let dResult = ["type": WebViewHandler.MESSAGE_EVENT, "data": decodedResult];
                 self.sendEventCallback(dResult);
             }
             catch let error {

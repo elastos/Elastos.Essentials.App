@@ -20,4 +20,5 @@
   * SOFTWARE.
   */
 
+#import <Cordova/CDV.h>
 #import "CDVWKProcessPoolFactory.h"

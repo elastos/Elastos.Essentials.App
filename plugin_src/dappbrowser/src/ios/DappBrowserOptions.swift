@@ -22,66 +22,49 @@
 
 import Foundation
 
+@objc(DappBrowserOptions)
 class DappBrowserOptions: NSObject {
-    
-    public var toolbar = true;
-    public var cleardata = false;
-    public var clearcache = false;
-    public var clearsessioncache = false;
-    public var hidespinner = false;
 
-    public var enableviewportscale = false;
-    public var mediaplaybackrequiresuseraction = false;
-    public var allowinlinemediaplayback = false;
-    public var hidden = false;
-    public var disallowoverscroll = false;
-    public var hidenavigationbuttons = false;
-    public var closebuttoncolor: String? = nil;
-    public var lefttoright = false;
-    public var toolbarcolor: String? = nil;
-    public var toolbartranslucent = true;
-    public var beforeload = "";
+    @objc public var toolbar = true;
+    @objc public var titlebarheight = 0;
+    @objc public var progressbar = true;
+    @objc public var loadurl = true;
 
-    public var darkmode = false;
-    public var title: String? = nil;
-    
-    
-    static func parseOptions(_ options: String) throws -> DappBrowserOptions {
+    @objc public var cleardata = false;
+    @objc public var clearcache = false;
+    @objc public var clearsessioncache = false;
+    @objc public var hidespinner = false;
+
+    @objc public var enableviewportscale = false;
+    @objc public var mediaplaybackrequiresuseraction = false;
+    @objc public var allowinlinemediaplayback = false;
+    @objc public var hidden = false;
+    @objc public var disallowoverscroll = false;
+    @objc public var hidenavigationbuttons = false;
+    @objc public var lefttoright = false;
+    @objc public var beforeload = "";
+
+    static func parseOptions(_ options: String?) throws -> DappBrowserOptions {
         let obj = DappBrowserOptions();
-        
-//        let data = options.data(using: String.Encoding.utf8);
-//        let json = try JSONSerialization.jsonObject(with: data!,
-//                                                            options: []) as! [String: Any];
 
-        // NOTE: this parsing does not handle quotes within values
-        let pairs = options.components(separatedBy: ",");
+        if (options != nil && options != "") {
+            let data = options!.data(using: String.Encoding.utf8);
+            let json = try JSONSerialization.jsonObject(with: data!,
+                                                                options: []) as! [String: Any];
 
-        // parse keys and values, set the properties
-        for pair in pairs {
-            let keyvalue = pair.components(separatedBy: "=");
-
-            if (keyvalue.count == 2) {
-                let key = keyvalue[0].lowercased();
-                let value = keyvalue[1];
-                let value_lc = value.lowercased();
-
-                let isBoolean = value_lc == "yes" || value_lc == "no";
+            let fields = Mirror(reflecting: obj).children
+            for (key, value) in fields {
+                guard let key = key else { continue }
                 
-                let numberFormatter = NumberFormatter();
-                numberFormatter.allowsFloats = true;
-                let numberValue = numberFormatter.number(from: value_lc);
-                let isNumber = numberValue != nil;
-
-                // set the property according to the key name
-                if (obj.responds(to: NSSelectorFromString(key))) {
-                    if (isNumber) {
-                        obj.setValue(numberValue, forKey: key);
+                if (json[key] != nil) {
+                    if (value is Bool) {
+                        obj.setValue(json[key] as! Bool, forKey: key);
                     }
-                    else if (isBoolean) {
-                        obj.setValue(value_lc == "yes", forKey:key);
+                    else if (value is Int) {
+                        obj.setValue(json[key] as! Int, forKey: key);
                     }
-                    else {
-                        obj.setValue(value, forKey:key);
+                    else if (value is String) {
+                        obj.setValue(json[key] as! String, forKey: key);
                     }
                 }
             }

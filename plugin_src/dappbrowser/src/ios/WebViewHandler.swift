@@ -25,6 +25,17 @@ import SwiftJWT
 
  class WebViewHandler:  NSObject {
 
+    static let LOAD_START_EVENT = "loadstart";
+    static let LOAD_STOP_EVENT = "loadstop";
+    static let LOAD_ERROR_EVENT = "loaderror";
+    static let BEFORELOAD = "beforeload";
+     
+    static let MESSAGE_EVENT = "message";
+    static let PROGRESS_EVENT = "progress";
+    static let HEAD_EVENT = "head";
+    static let URL_CHANGED_EVENT = "urlchanged";
+    static let EXIT_EVENT = "exit";
+     
     var webView: WKWebView!
     var progressView: UIProgressView!
     var spinner: UIActivityIndicatorView!
@@ -33,39 +44,112 @@ import SwiftJWT
     var alertTitle: String;
     
     var settings: [String : Any]!;
-    var browserOptions: DappBrowserOptions!;
+    var options: DappBrowserOptions!;
     var inputUrl: URL!;
     var currentURL: URL?;
     
     var waitForBeforeload = false;
     
-    static let DAB_BRIDGE_NAME = "essentials_dab";
+    static let DAB_BRIDGE_NAME = "essentialsExtractor";
 
-    init(_ brwoserPlugin: DappBrowserPlugin) {
+    init(_ brwoserPlugin: DappBrowserPlugin, _ url: String, _ options: DappBrowserOptions) {
+        
+        
         self.brwoserPlugin = brwoserPlugin;
+        self.options = options;
+        self.waitForBeforeload = options.beforeload != "";
+        self.settings = brwoserPlugin.commandDelegate.settings as? [String : Any];
         self.alertTitle = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String;
+        
+        super.init();
+        
+        self.createWebView(brwoserPlugin.viewController.view);
+        
+        if (options.hidden) {
+           hide();
+        }
+        else {
+           show();
+        }
+
+        if (options.loadurl) {
+           loadUrl(url);
+        }
+        
     }
     
-    func setData(_ options: DappBrowserOptions, _ url: URL) {
-        self.browserOptions = options;
-        self.inputUrl = url;
-        self.waitForBeforeload = browserOptions.beforeload != "";
-        
-        self.settings = brwoserPlugin.commandDelegate.settings as? [String : Any];
-    }
 
     func settingForKey(_ key: String) -> Any? {
         return settings[key.lowercased()];
     }
+     
+     func cleanData() {
+         let dataStore = WKWebsiteDataStore.default();
+         if (options.cleardata) {
+             let dateFrom = Date.init(timeIntervalSince1970: 0);
+             dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), modifiedSince:dateFrom, completionHandler:{ [self]() in
+                 NSLog("Removed all WKWebView data");
+                 self.webView.configuration.processPool = WKProcessPool(); // create new process pool to flush all data
+             });
+         }
 
-    func createViews(_ webContainer: UIView) -> WKWebView? {
+         var isAtLeastiOS11 = false;
+         if #available(iOS 11.0, *) {
+             isAtLeastiOS11 = true;
+         }
+
+         if (options.clearcache) {
+             if(isAtLeastiOS11){
+                 // Deletes all cookies
+                 let cookieStore = dataStore.httpCookieStore;
+                 cookieStore.getAllCookies({(cookies) in
+                     for cookie in cookies {
+                         cookieStore.delete(cookie, completionHandler:nil);
+                     }
+                 });
+             }
+             else{
+                 // https://stackoverflow.com/a/31803708/777265
+                 // Only deletes domain cookies (not session cookies)
+                 dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
+                     completionHandler:{(records) in
+                         for record  in records {
+                              let dataTypes = record.dataTypes;
+                             if (dataTypes.contains(WKWebsiteDataTypeCookies)) {
+                                 WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes,
+                                                                         for:[record],
+                                        completionHandler:{() in});
+                             }
+                          }
+                     });
+             }
+         }
+
+         if (options.clearsessioncache) {
+             if (isAtLeastiOS11) {
+                 // Deletes session cookies
+                 let cookieStore = dataStore.httpCookieStore;
+                 cookieStore.getAllCookies({(cookies) in
+                     for cookie in cookies {
+                         if(cookie.isSessionOnly){
+                             cookieStore.delete(cookie, completionHandler:nil);
+                         }
+                     }
+                 });
+             }
+             else{
+                 NSLog("clearsessioncache not available below iOS 11.0");
+             }
+         }
+     }
+
+    func createWebView(_ webContainer: UIView) {
         // We create the views in code for primarily for ease of upgrades and not requiring an external .xib to be included
 
         var webViewBounds = webContainer.bounds;
-//        let height = 50 + UIApplication.shared.statusBarFrame.size.height;
-//        webViewBounds.origin.y += height
-//        webViewBounds.size.height -= height;
-        let userContentController = WKUserContentController();
+        let height = CGFloat(options.titlebarheight) + UIApplication.shared.statusBarFrame.size.height;
+        webViewBounds.origin.y += height
+        webViewBounds.size.height -= height;
 
         let configuration = WKWebViewConfiguration();
 
@@ -75,16 +159,16 @@ import SwiftJWT
             userAgent = String(format:"%@ %@", userAgent!, self.settingForKey("AppendUserAgent") as! String);
         }
         configuration.applicationNameForUserAgent = userAgent;
-        configuration.userContentController = userContentController;
+        configuration.userContentController = WKUserContentController();
         configuration.processPool = CDVWKProcessPoolFactory.shared().sharedProcessPool();
 
         configuration.userContentController.add(self.brwoserPlugin, name:WebViewHandler.DAB_BRIDGE_NAME);
 
         //WKWebView options
-        configuration.allowsInlineMediaPlayback = browserOptions.allowinlinemediaplayback;
+        configuration.allowsInlineMediaPlayback = options.allowinlinemediaplayback;
         if #available(iOS 10.0, *) {
-            configuration.ignoresViewportScaleLimits = browserOptions.enableviewportscale;
-            if(browserOptions.mediaplaybackrequiresuseraction){
+            configuration.ignoresViewportScaleLimits = options.enableviewportscale;
+            if(options.mediaplaybackrequiresuseraction){
                 configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypes.all
             }else{
                 configuration.mediaTypesRequiringUserActionForPlayback = [];
@@ -92,7 +176,7 @@ import SwiftJWT
             }
         }
         else{ // iOS 9
-            configuration.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction;
+            configuration.mediaPlaybackRequiresUserAction = options.mediaplaybackrequiresuseraction;
         }
 
         if #available(iOS 13.0, *) {
@@ -105,18 +189,17 @@ import SwiftJWT
             }
         }
 
-
         self.webView = WKWebView.init(frame: webViewBounds, configuration: configuration);
         if (self.webView == nil) {
-            return nil;
+            return;
         }
         
+        cleanData();
+        
         webContainer.addSubview(self.webView!)
-//        webContainer.sendSubviewToBack(self.webView);
 
         //Add self as an observer of estimatedProgress
         self.webView.addObserver(self, forKeyPath:"estimatedProgress", options:NSKeyValueObservingOptions.new, context:nil);
-
 
         self.webView.navigationDelegate = self;
         self.webView.uiDelegate = self;
@@ -155,21 +238,19 @@ import SwiftJWT
         self.spinner.isOpaque = false;
         self.spinner.isUserInteractionEnabled = false;
         webView.addSubview(self.spinner)
-//        self.spinner.stopAnimating();
+        self.spinner.stopAnimating();
         
         let frame =  CGRect(x: 0, y: 0, width: webViewBounds.width, height: 4.0);
         self.progressView = UIProgressView.init(frame: frame)
         webView.addSubview(self.progressView)
         
-        self.navigate(to: self.inputUrl);
-        
-        return self.webView;
     }
 
     @objc override func observeValue(forKeyPath keyPath: String?, of object: Any?, change:  [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if ((keyPath == "estimatedProgress") && (object as? NSObject == self.webView)) {
             self.progressView.alpha = 1.0;
             self.progressView.setProgress(Float(self.webView.estimatedProgress), animated: true);
+            self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.PROGRESS_EVENT, "data":Float(self.webView.estimatedProgress) * 100]);
 
             if(self.webView.estimatedProgress >= 1.0) {
                 UIView.animate(withDuration: 0.3, delay:0.3, options:.curveEaseOut, animations:{() in
@@ -180,37 +261,6 @@ import SwiftJWT
         else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context);
         }
-    }
-
-    public func browserExit(_ exitMode: String? = nil) {
-        self.brwoserPlugin.sendEventCallback(["type":"exit", "mode":exitMode]);
-
-        guard self.webView != nil else {
-            return;
-        }
-
-        self.webView.configuration.userContentController.removeScriptMessageHandler(forName: WebViewHandler.DAB_BRIDGE_NAME);
-//        self.webView.configuration = nil;
-
-        self.webView.stopLoading();
-        self.webView.removeFromSuperview();
-        self.webView.uiDelegate = nil;
-        self.webView.navigationDelegate = nil;
-        self.webView = nil;
-
-//        // Set tmpWindow to hidden to make main webview responsive to touch again
-//        // Based on https://stackoverflow.com/questions/4544489/how-to-remove-a-uiwindow
-//        self->tmpWindow.hidden = YES;
-//        self->tmpWindow = nil;
-
-//        if (IsAtLeastiOSVersion(@"7.0")) {
-//            if (_previousStatusBarStyle != -1) {
-//                [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle];
-//
-//            }
-//        }
-//
-//        _previousStatusBarStyle = -1; // this value was reset before reapplying it. caused statusbar to stay black on ios7
     }
 
 
@@ -225,7 +275,7 @@ import SwiftJWT
     }
     
     public func loadAfterBeforeload(_ urlStr: String) {
-        if (self.browserOptions.beforeload == "") {
+        if (self.options.beforeload == "") {
             NSLog("unexpected loadAfterBeforeload called without feature beforeload=get|post");
         }
         
@@ -239,13 +289,65 @@ import SwiftJWT
         self.navigate(to: url!);
     }
 
-    public func close() {
+    public func close(_ exitMode: String? = nil) {
+        self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.EXIT_EVENT, "mode":exitMode]);
+
+        guard self.webView != nil else {
+            return;
+        }
+        
         self.currentURL = nil;
+        
+        self.webView.configuration.userContentController.removeScriptMessageHandler(forName: WebViewHandler.DAB_BRIDGE_NAME);
+//        self.webView.configuration = nil;
+
+        self.webView.stopLoading();
+        self.webView.removeFromSuperview();
+        self.webView.uiDelegate = nil;
+        self.webView.navigationDelegate = nil;
+        
         self.webView.removeFromSuperview();
         self.webView = nil;
-        self.browserExit();
+        self.brwoserPlugin.webViewHandler = nil;
     }
 
+     public func show() {
+         webView.isHidden = false;
+     }
+
+     public func hide() {
+         webView.isHidden = true;
+     }
+
+     public func loadUrl(_ url: String) {
+         self.navigate(to: URL(string: url)!);
+     }
+
+     public func reload() {
+         webView.reload();
+     }
+     
+     public func goBack() {
+         if (webView.canGoBack) {
+             webView.goBack();
+         }
+     }
+
+     public func canGoBack() -> Bool {
+         return webView.canGoBack;
+     }
+     
+     public func setUrlEditText(_ text: String) {
+         self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.URL_CHANGED_EVENT, "url":text]);
+     }
+     
+     public func getWebViewShot() -> String {
+         let renderer = UIGraphicsImageRenderer(bounds: webView.bounds)
+         let image = renderer.image { rendererContext in webView.layer.render(in: rendererContext.cgContext) }
+         let data = image.pngData();
+         guard let encoded = data?.base64EncodedString() else { return "" };
+         return "data:image/png;base64," + encoded;
+     }
  }
 
 extension WebViewHandler: WKNavigationDelegate {
@@ -254,8 +356,8 @@ extension WebViewHandler: WKNavigationDelegate {
 
         // loading url, start spinner, update back/forward
 
-//        NSLog(self.browserOptions.hidespinner ? @"Yes" : @"No");
-        if(!self.browserOptions.hidespinner) {
+//        NSLog(self.options.hidespinner ? @"Yes" : @"No");
+        if(!self.options.hidespinner) {
             self.spinner.startAnimating();
         }
     }
@@ -268,7 +370,7 @@ extension WebViewHandler: WKNavigationDelegate {
 
         if (isTopLevelNavigation) {
             self.currentURL = url;
-            self.brwoserPlugin.setUrlEditText(url!.absoluteString);
+            self.setUrlEditText(url!.absoluteString);
         }
 
         var shouldStart: Bool = true;
@@ -276,7 +378,7 @@ extension WebViewHandler: WKNavigationDelegate {
         let httpMethod = navigationAction.request.httpMethod;
         var errorMessage: String? = nil;
 
-        let beforeload = self.browserOptions.beforeload;
+        let beforeload = self.options.beforeload;
         if(beforeload == "post"){
             //TODO handle POST requests by preserving POST data then remove this condition
             errorMessage = "beforeload doesn't yet support POST requests";
@@ -291,26 +393,27 @@ extension WebViewHandler: WKNavigationDelegate {
 
         // When beforeload, on first URL change, initiate JS callback. Only after the beforeload event, continue.
         if (self.waitForBeforeload && useBeforeLoad) {
-            self.brwoserPlugin.sendEventCallback(["type":"beforeload", "url":url?.absoluteString as Any]);
+            self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.BEFORELOAD, "url":url?.absoluteString as Any]);
             decisionHandler(WKNavigationActionPolicy.cancel);
             return;
         }
 
         if(errorMessage != nil){
             NSLog(errorMessage!);
-            self.brwoserPlugin.sendEventCallback(["type":"loaderror", "url":url?.absoluteString as Any, "code": "-1", "message": errorMessage as Any]);
+            self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_ERROR_EVENT, "url":url?.absoluteString as Any, "code": "-1", "message": errorMessage as Any]);
         }
 
         //if is an app store, tel, sms, mailto or geo link, let the system handle it, otherwise it fails to load it
         let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
-        if (allowedSchemes.contains(url!.scheme!)) {
+//        if (allowedSchemes.contains(url!.scheme!)) {
+        if (true) {  /** Don't check the allowed list */
             webView.stopLoading();
             self.brwoserPlugin.openInSystem(url!);
             shouldStart = false;
         }
         else if ((self.brwoserPlugin.callbackId != nil) && isTopLevelNavigation) {
             // Send a loadstart event for each top-level navigation (includes redirects).
-            self.brwoserPlugin.sendEventCallback(["type":"loadstart", "url":url?.absoluteString as Any]);
+            self.brwoserPlugin.sendEventCallback(["type": WebViewHandler.LOAD_START_EVENT, "url":url?.absoluteString as Any]);
         }
 
         if (useBeforeLoad) {
@@ -336,12 +439,12 @@ extension WebViewHandler: WKNavigationDelegate {
     @objc func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         // update url, stop spinner, update back/forward
 
-        self.brwoserPlugin.setUrlEditText(self.currentURL!.absoluteString);
+        self.setUrlEditText(self.currentURL!.absoluteString);
         webView.scrollView.contentInset = .zero;
 
         self.spinner.stopAnimating();
         
-        self.brwoserPlugin.sendEventCallback(["type":"loadstop", "url":webView.url?.absoluteString as Any?]);
+        self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_STOP_EVENT, "url":webView.url?.absoluteString as Any?]);
     }
 
     @objc func webView(_ webView: WKWebView, failedNavigation delegateName: String, withError error: Error) {
@@ -352,7 +455,7 @@ extension WebViewHandler: WKNavigationDelegate {
 
 //        self.addressLabel.text = NSLocalizedString("Load Error", nil);
         
-        self.brwoserPlugin.sendEventCallback(["type":"loaderror", "url":webView.url?.absoluteString as Any?, "message": error.localizedDescription]);
+        self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_ERROR_EVENT, "url":webView.url?.absoluteString as Any?, "message": error.localizedDescription]);
     }
 
     @objc func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
