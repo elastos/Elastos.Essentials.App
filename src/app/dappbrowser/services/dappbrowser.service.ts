@@ -12,6 +12,7 @@ import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwor
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { Network } from 'src/app/wallet/model/networks/network';
 import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
+import { SignTypedDataIntentResult } from 'src/app/wallet/pages/intents/signtypeddata/signtypeddata.page';
 import { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/settings/edit-custom-network/edit-custom-network.page';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -373,6 +374,11 @@ export class DappBrowserService {
                 // NOTE: for now, directly return user accounts without asking for permission
                 await this.handleRequestAccounts(message);
                 break;
+            case "eth_signTypedData":
+                dappBrowser.hide();
+                await this.handleSignTypedData(message);
+                void dappBrowser.show();
+                break;
             case "wallet_switchEthereumChain":
                 Logger.log("dappbrowser", "Received switch ethereum chain request");
                 dappBrowser.hide();
@@ -435,6 +441,19 @@ export class DappBrowserService {
             [this.userAddress]
         );
         return;
+    }
+
+    /**
+     * Sign data with wallet private key according to EIP 712.
+     */
+    private async handleSignTypedData(message: DABMessage): Promise<void> {
+        let rawData: { payload: string, useV4: boolean } = message.data.object
+        let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/signtypeddata", rawData);
+
+        this.sendWeb3IABResponse(
+            message.data.id,
+            response.result.signedData
+        );
     }
 
     private async handleSwitchEthereumChain(message: DABMessage): Promise<void> {

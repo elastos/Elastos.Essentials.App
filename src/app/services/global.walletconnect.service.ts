@@ -6,6 +6,7 @@ import { Logger } from '../logger';
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
 import { NetworkWallet } from '../wallet/model/wallets/networkwallet';
+import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/signtypeddata.page';
 import { EditCustomNetworkIntentResult } from '../wallet/pages/settings/edit-custom-network/edit-custom-network.page';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
@@ -405,6 +406,9 @@ export class GlobalWalletConnectService extends GlobalService {
     else if (request.method === "wallet_addEthereumChain") {
       await this.handleAddNetworkRequest(connector, request);
     }
+    else if (request.method.startsWith("eth_signTypedData")) {
+      await this.handleSignTypedDataRequest(connector, request);
+    }
     else {
       try {
         Logger.log("walletconnect", "Sending esctransaction intent", request);
@@ -589,6 +593,42 @@ export class GlobalWalletConnectService extends GlobalService {
         error: {
           code: -1,
           message: "Network not added"
+        }
+      });
+    }
+  }
+
+  private async handleSignTypedDataRequest(connector: WalletConnect, request: JsonRpcRequest) {
+    let useV4: boolean;
+    switch (request.method) {
+      case "eth_signTypedData_v3":
+        useV4 = false;
+        break;
+      case "eth_signTypedData":
+      case "eth_signTypedData_v4":
+      default:
+        useV4 = true;
+        break;
+    }
+
+    let rawData: { payload: string, useV4: boolean } = {
+      payload: request.params[1],
+      useV4
+    };
+    let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.elastos.net/signtypeddata", rawData);
+
+    if (response && response.result) {
+      connector.approveRequest({
+        id: request.id,
+        result: response.result.signedData
+      });
+    }
+    else {
+      connector.rejectRequest({
+        id: request.id,
+        error: {
+          code: -1,
+          message: "Errored or cancelled"
         }
       });
     }

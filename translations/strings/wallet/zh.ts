@@ -410,6 +410,13 @@ export const zh = {
                 "esctransaction-fees": "预估手续费（最多）:",
 
                 /***********************
+        * Sign Typed Data Page *
+        ************************/
+                "signtypeddata-title": "Sign data",
+                "signtypeddata-subtitle": "Sign data",
+                "signtypeddata-intro": "The calling application requires you to sign some data with your wallet in order to continue. Please confirm.",
+
+                /***********************
                 * No Wallet *
                 ************************/
                 "intent-no-wallet-title": "没有钱包",

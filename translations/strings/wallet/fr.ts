@@ -410,6 +410,13 @@ export const fr = {
         "esctransaction-fees": "Frais maximal estimé:",
 
         /***********************
+        * Sign Typed Data Page *
+        ************************/
+        "signtypeddata-title": "Signature de données",
+        "signtypeddata-subtitle": "Signature",
+        "signtypeddata-intro": "L'application a besoin de signer certaines informations avec la signature de votre portefeuille. Veuillez confirmer pour continuer.",
+
+        /***********************
         * No Wallet *
         ************************/
         "intent-no-wallet-title": "Aucun Portefeuille",

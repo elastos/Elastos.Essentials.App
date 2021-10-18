@@ -570,13 +570,13 @@ export class SPVWalletPluginBridge {
         });
     }
 
-    // exportETHSCPrivateKey(masterWalletId: string, subWalletId: string, payPassWord: string): Promise<any> {
-    //     return new Promise((resolve, reject)=>{
-    //         walletManager.exportETHSCPrivateKey([masterWalletId, subWalletId, payPassWord],
-    //             (ret) => { resolve(ret); },
-    //             (err) => { this.handleError(err, reject);  });
-    //     });
-    // }
+    exportETHSCPrivateKey(masterWalletId: string, subWalletId: string, payPassWord: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            walletManager.exportETHSCPrivateKey([masterWalletId, subWalletId, payPassWord],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("exportETHSCPrivateKey", err, reject); });
+        });
+    }
 
     createDepositTransaction(
         masterWalletId: string,

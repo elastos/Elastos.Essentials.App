@@ -198,8 +198,11 @@ export class IntentService {
             case 'esctransaction':
                 this.nextScreen = '/wallet/intents/esctransaction';
                 this.coinTransferService.payloadParam = intent.params.payload.params[0];
-                // this.coinTransferService.amount = intent.params.amount;
+                break;
 
+            case 'signtypeddata':
+                this.nextScreen = '/wallet/intents/signtypeddata';
+                navigationState = JSON.parse(JSON.stringify(intent));
                 break;
 
             case 'pay':
@@ -243,6 +246,7 @@ export class IntentService {
         // if (intentRequiresWalletSelection) {
         this.coinTransferService.masterWalletId = this.activeWallet.id;
         this.coinTransferService.walletInfo = this.activeWallet.account;
+
         this.native.setRootRouter(this.nextScreen, navigationState);
         // }
         // else {

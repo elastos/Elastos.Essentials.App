@@ -409,6 +409,13 @@ export const en = {
         "esctransaction-fees": "Estimated Max Fee:",
 
         /***********************
+        * Sign Typed Data Page *
+        ************************/
+        "signtypeddata-title": "Sign data",
+        "signtypeddata-subtitle": "Sign data",
+        "signtypeddata-intro": "The calling application requires you to sign some data with your wallet in order to continue. Please confirm.",
+
+        /***********************
         * No Wallet *
         ************************/
         "intent-no-wallet-title": "No Wallet",

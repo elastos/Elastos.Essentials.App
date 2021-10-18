@@ -13,6 +13,7 @@ import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
 import { EscTransactionPage } from './esctransaction/esctransaction.page';
 import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
+import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
 
 @NgModule({
     declarations: [
@@ -24,6 +25,7 @@ import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
         DPoSVotePage,
         EscTransactionPage,
         SelectSubwalletPage,
+        SignTypedDataPage
     ],
     imports: [
         SharedComponentsModule,
@@ -31,10 +33,12 @@ import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
         FormsModule,
         IonicModule,
         TranslateModule,
+        RouterModule,
         RouterModule.forChild([
             { path: 'access', component: AccessPage },
             { path: 'didtransaction', component: DidTransactionPage },
             { path: 'esctransaction', component: EscTransactionPage },
+            { path: 'signtypeddata', component: SignTypedDataPage },
             { path: 'crmembervote', component: CRmembervotePage },
             { path: 'dposvote', component: DPoSVotePage },
             { path: 'crmemberregister', component: CRMemberRegisterPage },
@@ -46,4 +50,4 @@ import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class IntentsModule {}
+export class IntentsModule { }
