@@ -22,7 +22,24 @@
                 </ion-col>
                 <ion-col size="8" class="left-col">
                     <div class="wallet-name">{{ netWallet.masterWallet.name }}</div>
-                    <div class="wallet-amount">{{ uiService.getFixedBalance(netWallet.getDisplayBalance()) }}</div>
+                    <div class="wallet-amount">
+                      <h4 *ngIf="!currencyService.useCurrency">{{
+                        WalletUtil.getWholeBalance(netWallet.getDisplayBalance()) }}<span class="dot"
+                            *ngIf="!netWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(netWallet.getDisplayBalance())">.</span>
+                        <span>{{ WalletUtil.getDecimalBalance(netWallet.getDisplayBalance())
+                            }}</span>
+                        <span>{{ netWallet.getDisplayTokenName() }}</span>
+                      </h4>
+                      <h4 *ngIf="currencyService.useCurrency">{{
+                          WalletUtil.getWholeBalance(netWallet.getDisplayBalanceInActiveCurrency())
+                          }}<span class="dot"
+                              *ngIf="!netWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(netWallet.getDisplayBalance()))">.</span>
+                          <span>{{
+                              WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(netWallet.getDisplayBalance()))
+                              }}</span>
+                          <span> {{ currencyService.selectedCurrency.symbol }}</span>
+                      </h4>
+                    </div>
                 </ion-col>
                 <ion-col size="2" class="right-col">
                     <ion-icon name="checkmark"></ion-icon>

@@ -5,6 +5,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from '../../model/coin';
+import { WalletUtil } from '../../model/wallet.util';
 import { NetworkWallet } from '../../model/wallets/networkwallet';
 import { CurrencyService } from '../../services/currency.service';
 import { UiService } from '../../services/ui.service';
@@ -26,6 +27,9 @@ export class WalletChooserComponent implements OnInit {
   public options: WalletChooserComponentOptions = null;
   public networkWallet: NetworkWallet;
   public walletsToShowInList: NetworkWallet[];
+
+  // Helper
+  public WalletUtil = WalletUtil;
 
   constructor(
     private navParams: NavParams,

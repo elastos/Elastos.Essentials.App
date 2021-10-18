@@ -254,7 +254,7 @@ export class CurrencyService {
     else {
       // Return the currently cached value
       let tokenUsdtValue = quantity.multipliedBy(tokenValue.data.usdValue);
-      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol).decimalPlaces(2);
+      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol).decimalPlaces(3);
     }
   }
 
@@ -297,7 +297,7 @@ export class CurrencyService {
     else {
       // Return the currently cached value
       let tokenUsdtValue = quantity.multipliedBy(tokenValue.data.usdValue);
-      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol).decimalPlaces(2);
+      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol).decimalPlaces(3);
     }
   }
 
