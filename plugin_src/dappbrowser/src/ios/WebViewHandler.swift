@@ -86,65 +86,65 @@ import SwiftJWT
         return settings[key.lowercased()];
     }
 
-     func cleanData() {
-         let dataStore = WKWebsiteDataStore.default();
-         if (options.cleardata) {
-             let dateFrom = Date.init(timeIntervalSince1970: 0);
-             dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), modifiedSince:dateFrom, completionHandler:{ [self]() in
-                 NSLog("Removed all WKWebView data");
-                 self.webView.configuration.processPool = WKProcessPool(); // create new process pool to flush all data
+    func cleanData() {
+     let dataStore = WKWebsiteDataStore.default();
+     if (options.cleardata) {
+         let dateFrom = Date.init(timeIntervalSince1970: 0);
+         dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), modifiedSince:dateFrom, completionHandler:{ [self]() in
+             NSLog("Removed all WKWebView data");
+             self.webView.configuration.processPool = WKProcessPool(); // create new process pool to flush all data
+         });
+     }
+
+     var isAtLeastiOS11 = false;
+     if #available(iOS 11.0, *) {
+         isAtLeastiOS11 = true;
+     }
+
+     if (options.clearcache) {
+         if(isAtLeastiOS11){
+             // Deletes all cookies
+             let cookieStore = dataStore.httpCookieStore;
+             cookieStore.getAllCookies({(cookies) in
+                 for cookie in cookies {
+                     cookieStore.delete(cookie, completionHandler:nil);
+                 }
              });
          }
-
-         var isAtLeastiOS11 = false;
-         if #available(iOS 11.0, *) {
-             isAtLeastiOS11 = true;
-         }
-
-         if (options.clearcache) {
-             if(isAtLeastiOS11){
-                 // Deletes all cookies
-                 let cookieStore = dataStore.httpCookieStore;
-                 cookieStore.getAllCookies({(cookies) in
-                     for cookie in cookies {
-                         cookieStore.delete(cookie, completionHandler:nil);
-                     }
-                 });
-             }
-             else{
-                 // https://stackoverflow.com/a/31803708/777265
-                 // Only deletes domain cookies (not session cookies)
-                 dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
-                     completionHandler:{(records) in
-                         for record  in records {
-                              let dataTypes = record.dataTypes;
-                             if (dataTypes.contains(WKWebsiteDataTypeCookies)) {
-                                 WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes,
-                                                                         for:[record],
-                                        completionHandler:{() in});
-                             }
-                          }
-                     });
-             }
-         }
-
-         if (options.clearsessioncache) {
-             if (isAtLeastiOS11) {
-                 // Deletes session cookies
-                 let cookieStore = dataStore.httpCookieStore;
-                 cookieStore.getAllCookies({(cookies) in
-                     for cookie in cookies {
-                         if(cookie.isSessionOnly){
-                             cookieStore.delete(cookie, completionHandler:nil);
+         else{
+             // https://stackoverflow.com/a/31803708/777265
+             // Only deletes domain cookies (not session cookies)
+             dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
+                 completionHandler:{(records) in
+                     for record  in records {
+                          let dataTypes = record.dataTypes;
+                         if (dataTypes.contains(WKWebsiteDataTypeCookies)) {
+                             WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes,
+                                                                     for:[record],
+                                    completionHandler:{() in});
                          }
-                     }
+                      }
                  });
-             }
-             else{
-                 NSLog("clearsessioncache not available below iOS 11.0");
-             }
          }
      }
+
+     if (options.clearsessioncache) {
+         if (isAtLeastiOS11) {
+             // Deletes session cookies
+             let cookieStore = dataStore.httpCookieStore;
+             cookieStore.getAllCookies({(cookies) in
+                 for cookie in cookies {
+                     if(cookie.isSessionOnly){
+                         cookieStore.delete(cookie, completionHandler:nil);
+                     }
+                 }
+             });
+         }
+         else{
+             NSLog("clearsessioncache not available below iOS 11.0");
+         }
+     }
+    }
 
     func createWebView(_ webContainer: UIView) {
         // We create the views in code for primarily for ease of upgrades and not requiring an external .xib to be included
@@ -233,14 +233,14 @@ import SwiftJWT
         self.spinner.clearsContextBeforeDrawing = false;
         self.spinner.clipsToBounds = false;
         self.spinner.contentMode =  UIView.ContentMode.scaleToFill;
-        self.spinner.frame = CGRect(x: self.webView.frame.midX, y: self.webView.frame.midY, width: 20.0, height: 20.0);
+        self.spinner.frame = CGRect(x: webViewBounds.width / 2 - 10, y: webViewBounds.height / 2 - 10, width: 20.0, height: 20.0);
         self.spinner.isHidden = false;
         self.spinner.hidesWhenStopped = true;
         self.spinner.isMultipleTouchEnabled = false;
         self.spinner.isOpaque = false;
         self.spinner.isUserInteractionEnabled = false;
-        webView.addSubview(self.spinner)
         self.spinner.stopAnimating();
+        webView.addSubview(self.spinner);
 
         let frame =  CGRect(x: 0, y: 0, width: webViewBounds.width, height: 4.0);
         self.progressView = UIProgressView.init(frame: frame)
