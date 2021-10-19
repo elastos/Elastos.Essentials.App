@@ -75,12 +75,12 @@ export class SwapService {
         let targetUrl = provider.swapUrl || provider.baseProvider.projectUrl;
 
         // Check if the url contains specific tag that we can replace for better UX (ex: directly open the right screen)
-        if (subWallet) {
-            if (subWallet instanceof ERC20SubWallet) {
-                targetUrl = targetUrl.replace("${inputCurrency}", subWallet.coin.getContractAddress());
-                targetUrl = targetUrl.replace("${theme}", this.theme.darkMode ? "dark" : "light");
-            }
+        var inputCurrency = "";
+        if (subWallet && subWallet instanceof ERC20SubWallet) {
+            inputCurrency = subWallet.coin.getContractAddress();
         }
+        targetUrl = targetUrl.replace("${inputCurrency}", inputCurrency);
+        targetUrl = targetUrl.replace("${theme}", this.theme.darkMode ? "dark" : "light");
 
         void this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
     }
