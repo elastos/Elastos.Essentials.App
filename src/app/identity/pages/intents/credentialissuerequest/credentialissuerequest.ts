@@ -14,8 +14,6 @@ import { UXService } from '../../../services/ux.service';
 
 // TODO: Verify and show clear errors in case data is missing in credentials (expiration date, issuer, etc).
 // TODO: Resolve issuer's DID and try to display more user friendly information about the issuer
-// TODO: check if the credentials have not already been imported to avoid duplicates? (or update them if something has changed)
-
 
 // Displayable version of a verifiable credential subject entry (a credential can contain several information
 // in its subject).
@@ -60,7 +58,7 @@ export class CredentialIssueRequestPage {
   public preliminaryChecksCompleted = false;
 
   public showIdentifier = false;
-  public showReceiver = false;
+  public showReceiver = true;
   public showExpiration = false;
   public showValues = false;
 
@@ -111,7 +109,7 @@ export class CredentialIssueRequestPage {
       let displayableEntry: IssuedCredentialItem = {
         name: propertyEntryKey,
         value: propertyEntryValue,
-        showData: false
+        showData: true
       }
 
       displayableEntries.push(displayableEntry);
@@ -136,7 +134,7 @@ export class CredentialIssueRequestPage {
 
   getDisplayableEntryValue(value: any) {
     if (value instanceof Object) {
-      return JSON.stringify(value);
+      return JSON.stringify(value, null, "&nbsp;").replace(/(?:\r\n|\r|\n)/g, '<br/>');
     }
 
     return value;
