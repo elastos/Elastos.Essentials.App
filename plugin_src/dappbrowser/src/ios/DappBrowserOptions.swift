@@ -29,6 +29,7 @@ class DappBrowserOptions: NSObject {
     @objc public var titlebarheight = 0;
     @objc public var progressbar = true;
     @objc public var loadurl = true;
+    @objc public var backgroundcolor = "#FFFFFF";
 
     @objc public var cleardata = false;
     @objc public var clearcache = false;

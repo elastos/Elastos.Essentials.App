@@ -65,6 +65,10 @@ import SwiftJWT
 
         self.createWebView(brwoserPlugin.viewController.view);
 
+        //Set Background Color
+        self.webView.isOpaque = false
+        self.webView.backgroundColor = UIColor.init(hex: options.backgroundcolor);
+
         if (options.hidden) {
            hide();
         }
@@ -77,7 +81,6 @@ import SwiftJWT
         }
 
     }
-
 
     func settingForKey(_ key: String) -> Any? {
         return settings[key.lowercased()];
@@ -203,8 +206,7 @@ import SwiftJWT
 
         self.webView.navigationDelegate = self;
         self.webView.uiDelegate = self;
-//        self.webView.backgroundColor = UIColor.white;
-//
+
         if (self.settingForKey("OverrideUserAgent") != nil) {
             self.webView.customUserAgent = self.settingForKey("OverrideUserAgent") as? String;
         }
@@ -238,7 +240,7 @@ import SwiftJWT
         self.spinner.isOpaque = false;
         self.spinner.isUserInteractionEnabled = false;
         webView.addSubview(self.spinner)
-//        self.spinner.stopAnimating();
+        self.spinner.stopAnimating();
 
         let frame =  CGRect(x: 0, y: 0, width: webViewBounds.width, height: 4.0);
         self.progressView = UIProgressView.init(frame: frame)
@@ -346,6 +348,10 @@ import SwiftJWT
          let data = image.pngData();
          guard let encoded = data?.base64EncodedString() else { return "" };
          return "data:image/png;base64," + encoded;
+     }
+
+     public func setAlpha(_ alpha: CGFloat) {
+         self.webView.alpha = alpha
      }
  }
 

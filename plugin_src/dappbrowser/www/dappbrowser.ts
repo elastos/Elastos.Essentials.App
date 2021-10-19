@@ -223,6 +223,18 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
         });
     }
 
+    setAlpha(alpha: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            exec(() => {
+                resolve();
+            },
+            (err) => {
+                reject(err);
+            },
+            'DappBrowser', 'setAlpha', []);
+        });
+    }
+
     addEventListener(callback: (event: DappBrowserPlugin.DappBrowserEvent) => void) {
         function _onReceiveIntent(ret) {
             if ((typeof (ret.params) == "string") && (ret.params.length > 0)) {

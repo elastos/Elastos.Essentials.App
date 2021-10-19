@@ -30,6 +30,7 @@ public class DappBrowserOptions {
     public int titlebarheight = 50;
     public boolean progressbar = true;
     public boolean loadurl = true;
+    public String backgroundcolor = "#FFFFFF";
 
     public boolean cleardata = false;
     public boolean clearcache = false;

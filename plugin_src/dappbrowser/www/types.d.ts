@@ -111,6 +111,8 @@ declare namespace DappBrowserPlugin {
         titlebarheight?: number;
         /** Set to true or false to turn the DappBrowser's progressbar on or off. */
         progressbar?: boolean;
+        /** Set background Color, It is a hex string */
+        backgroundcolor?: string;
 
         /** Set to true or false to load url on or off, when open. */
         loadurl?: boolean;
@@ -170,7 +172,6 @@ declare namespace DappBrowserPlugin {
          * @param {string} url     The URL to load.
          * @param {string} [target="_webview"]  The target in which to load the URL, an optional parameter that defaults to _webview.
          *                 _self: Opens in the WebView if the URL is in the white list, otherwise it opens in the DappBrowser.
-         *                 _blank: Opens in the DappBrowser.
          *                 _webview: Opens in the Webview.
          *                 _system: Opens in the system's web browser.
          * @param {string | DappBrowserOptions} [options] Options for the DappBrowser. Optional, defaulting to: location=yes.
@@ -251,6 +252,11 @@ declare namespace DappBrowserPlugin {
          *  Get webview screen shot, will retutrn the base64 image string.
          */
         getWebViewShot(): Promise<string>;
+
+        /**
+         *  Set webview alpha, alpha vaule from=0.0, to=1.0
+         */
+        setAlpha(alpha: number): Promise<void>;
 
         /**
          *

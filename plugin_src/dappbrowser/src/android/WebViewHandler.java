@@ -92,6 +92,9 @@ public class WebViewHandler {
 
         createWebView();
 
+        //Set Background Color
+        webView.setBackgroundColor(Color.parseColor(options.backgroundcolor));
+
         if (options.hidden) {
             hide();
         }
@@ -436,4 +439,9 @@ public class WebViewHandler {
 
         return "data:image/png;base64," + encoded;
     }
+
+    public void setAlpha(float alpha) {
+        webView.setAlpha(alpha);
+    }
+
 }

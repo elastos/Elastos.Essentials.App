@@ -133,6 +133,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
                 case "getWebViewShot":
                     this.getWebViewShot(callbackContext);
                     break;
+                case "setAlpha":
+                    this.setAlpha(args, callbackContext);
+                    break;
 
                 case "addEventListener":
                     this.addEventListener(callbackContext);
@@ -164,6 +167,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
             case "loadUrl":
             case "reload":
             case "getWebViewShot":
+            case "setAlpha":
             case "addEventListener":
             case "removeEventListener":
                 break;
@@ -406,6 +410,14 @@ public class DappBrowserPlugin extends CordovaPlugin {
         }
         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, ret);
         callbackContext.sendPluginResult(pluginResult);
+    }
+
+    private void setAlpha(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if (webViewHandler != null) {
+            final double alpha = args.getDouble(0);
+            webViewHandler.setAlpha((float)alpha);
+        }
+        callbackContext.success();
     }
 
     private void addEventListener(CallbackContext callbackContext) {

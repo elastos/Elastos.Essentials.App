@@ -54,7 +54,7 @@
 
         self.commandDelegate?.send(result, callbackId: command.callbackId)
     }
-
+     
      func success(_ command: CDVInvokedUrlCommand, _ retAsBool: Bool) {
          let result = CDVPluginResult(status: CDVCommandStatus_OK,
                                       messageAs: retAsBool);
@@ -117,7 +117,7 @@
         }
 
         // Things are cleaned up in browserExit.
-
+        
         self.success(command);
     }
 
@@ -200,8 +200,8 @@
 
         self.webViewHandler.loadAfterBeforeload(urlStr!);
     }
-
-
+     
+     
      @objc func show(_ command: CDVInvokedUrlCommand) {
          if (self.webViewHandler != nil) {
              self.webViewHandler.show()
@@ -209,10 +209,25 @@
          self.success(command);
      }
 
-
+    
      @objc func hide(_ command: CDVInvokedUrlCommand) {
          if (self.webViewHandler != nil) {
              self.webViewHandler.hide();
+         }
+         self.success(command);
+     }
+     
+     @objc func loadUrl(_ command: CDVInvokedUrlCommand) {
+         let url = command.arguments[0] as? String;
+         if (url != nil && self.webViewHandler != nil) {
+             self.webViewHandler.loadUrl(url!);
+         }
+         self.success(command);
+     }
+     
+     @objc func reload(_ command: CDVInvokedUrlCommand) {
+         if (self.webViewHandler != nil) {
+             self.webViewHandler.reload();
          }
          self.success(command);
      }
@@ -226,14 +241,14 @@
          self.success(command, canGoBack);
      }
 
-
+    
      @objc func goBack(_ command: CDVInvokedUrlCommand) {
          if (self.webViewHandler != nil) {
              self.webViewHandler.goBack();
          }
          self.success(command);
      }
-
+     
      @objc func getWebViewShot(_ command: CDVInvokedUrlCommand) {
          var ret = "";
          if (webViewHandler != nil) {
@@ -241,7 +256,15 @@
          }
          self.success(command, ret);
      }
-
+     
+     @objc func setAlpha(_ command: CDVInvokedUrlCommand) {
+         let alpha = command.arguments[0] as? CGFloat;
+         if (alpha != nil && self.webViewHandler != nil) {
+             self.webViewHandler.setAlpha(alpha!);
+         }
+         self.success(command);
+     }
+     
      @objc func addEventListener(_ command: CDVInvokedUrlCommand) {
          self.callbackId = command.callbackId;
          // Don't return any result now
@@ -250,7 +273,7 @@
          self.commandDelegate?.send(result, callbackId: command.callbackId)
      }
 
-
+    
      @objc func removeEventListener(_ command: CDVInvokedUrlCommand) {
          self.callbackId = nil;
          let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
