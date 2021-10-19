@@ -88,6 +88,9 @@ export const en = {
         "available-currencies": "Available Currencies",
         "united-states-dollar": "United States Dollar",
         "chinese-yuan": "Chinese Yuan",
+        "euro": "Euro",
+        "british-pound": "British Pound",
+        "japanese-yen":"Japanese Yen",
         "bitcoin": "Bitcoin",
 
         /**********************

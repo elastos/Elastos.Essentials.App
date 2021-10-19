@@ -89,6 +89,9 @@ export const fr = {
         "available-currencies": "Devises affichables",
         "united-states-dollar": "Dollar Américain",
         "chinese-yuan": "Yuan Chinois",
+        "euro": "Euro",
+        "british-pound": "British Pound",
+        "japanese-yen":"Japanese Yen",
         "bitcoin": "Bitcoin",
 
         /**********************

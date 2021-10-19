@@ -20,19 +20,34 @@ type DisplayableCurrency = {
 
 export const displayableCurrencies: DisplayableCurrency[] = [
   {
-    symbol: 'USD',
-    name: 'wallet.united-states-dollar',
-    icon: '/assets/wallet/currencies/usd.png'
-  },
-  {
     symbol: 'CNY',
     name: 'wallet.chinese-yuan',
-    icon: '/assets/wallet/currencies/cny.png'
+    icon: '/assets/wallet/currencies/cny.svg'
+  },
+  {
+    symbol: 'EUR',
+    name: 'wallet.euro',
+    icon: '/assets/wallet/currencies/eur.svg'
+  },
+  {
+    symbol: 'GBP',
+    name: 'wallet.british-pound',
+    icon: '/assets/wallet/currencies/gbp.svg'
+  },
+  {
+    symbol: 'JPY',
+    name: 'wallet.japanese-yen',
+    icon: '/assets/wallet/currencies/jpy.svg'
+  },
+  {
+    symbol: 'USD',
+    name: 'wallet.united-states-dollar',
+    icon: '/assets/wallet/currencies/usd.svg'
   },
   {
     symbol: 'BTC',
     name: 'wallet.bitcoin',
-    icon: '/assets/wallet/currencies/btc.png'
+    icon: '/assets/wallet/currencies/btc.svg'
   }
 ];
 
@@ -67,6 +82,9 @@ export class CurrencyService {
   public useCurrency = false;
 
   public selectedCurrency: DisplayableCurrency;
+
+  private elaphantPriceUrl = 'https://api-price.elaphant.app/api/1/cmc?limit=600';
+  private usdExchangeRateUrl = 'https://currencies.trinity-tech.io/latest?from=USD';
 
   constructor(
     private http: HttpClient,
@@ -167,7 +185,7 @@ export class CurrencyService {
   private fetchTokenStatsFromElaphant(symbol: string): Promise<ElaphantPriceAPITokenStats> {
     Logger.log("wallet", "Fetching elaphant api prices for symbol", symbol);
     return new Promise(resolve => {
-      this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=600').subscribe((res: ElaphantPriceAPITokenStats[]) => {
+      this.http.get<any>(this.elaphantPriceUrl).subscribe((res: ElaphantPriceAPITokenStats[]) => {
         if (res) {
           let tokenStats = res.find((coin) => coin.symbol === symbol);
           resolve(tokenStats);
@@ -257,6 +275,9 @@ export class CurrencyService {
         }
         void this.pricesCache.save();
 
+        // Update USD exchange rate.
+        await this.computeExchangeRatesFromCurrenciesService();
+
         this.tokenFetchOnGoing = false;
       });
     }
@@ -322,8 +343,45 @@ export class CurrencyService {
     this.exchangeRates["USD"] = 1.0;
     this.exchangeRates["CNY"] = parseFloat(tokenStats.price_cny) / parseFloat(tokenStats.price_usd);
     this.exchangeRates["BTC"] = parseFloat(tokenStats.price_btc) / parseFloat(tokenStats.price_usd);
-
+    // Logger.log('wallet', 'computeExchangeRatesFromElaphantTokenStats ', this.exchangeRates)
     void this.saveExchangeRates();
+  }
+
+  /**
+   * Get USD exchange from currencies service.
+   */
+   private async computeExchangeRatesFromCurrenciesService() {
+    let rates = await this.fetchUSDExchangeRate();
+    if (rates) {
+      for (let i = 0; i < displayableCurrencies.length; i++) {
+        if (rates[displayableCurrencies[i].symbol]) {
+          this.exchangeRates[displayableCurrencies[i].symbol] = rates[displayableCurrencies[i].symbol]
+        }
+      }
+      Logger.log('wallet', 'computeExchangeRatesFromCurrenciesService ', this.exchangeRates)
+      void this.saveExchangeRates();
+    }
+  }
+
+
+  /**
+   * Fetches prices from the elaphant api and returns only a target item
+   */
+   private fetchUSDExchangeRate() {
+    return new Promise(resolve => {
+      this.http.get<any>(this.usdExchangeRateUrl).subscribe((res: CurrenciesExchangeRate) => {
+        if (res) {
+          Logger.log('wallet', 'Fetch USD exchange rate successfully')
+          resolve(res.rates);
+        }
+        else {
+          resolve(null);
+        }
+      }, (err) => {
+        Logger.error('wallet', 'Fetch USD exchange rate err', err);
+        resolve(null);
+      });
+    })
   }
 }
 
@@ -354,3 +412,12 @@ type ElaphantPriceAPITokenStats = {
   total_supply: string;
   _id: string;
 };
+
+type CurrenciesExchangeRate = {
+  amount: number;
+  base: string;
+  date: string;
+  rates:{
+    [symbol: string]: string
+  };
+}

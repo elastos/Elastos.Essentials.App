@@ -20,10 +20,19 @@
     }
   }
 
-  .subwallet-row {    
+  .subwallet-row {
+    .left-col {
+      justify-content: center;
+
+      img {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
     .right-col {
       justify-content: center;
-  
+
       ion-icon {
         width: 25px;
         height: 25px;
