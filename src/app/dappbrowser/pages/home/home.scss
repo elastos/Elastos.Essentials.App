@@ -93,12 +93,13 @@
                 height: 50px;
                 border-radius: 30%;
                 overflow: hidden;
+                border: solid 2px white;
 
                 img {
                     max-width: 100%;
                     max-height: 100%;
                     border: 0;
-                    padding: 5px;
+                    padding: 0;
                 }
             }
         }
