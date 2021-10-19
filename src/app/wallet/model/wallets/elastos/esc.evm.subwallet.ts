@@ -8,7 +8,7 @@ export class EscSubWallet extends ElastosEVMSubWallet {
     super(networkWallet, StandardCoinName.ETHSC);
   }
 
-  protected async initialize() {
+  public async initialize() {
     await super.initialize();
 
     this.withdrawContractAddress = Config.ETHSC_WITHDRAW_ADDRESS.toLowerCase();

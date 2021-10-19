@@ -13,7 +13,7 @@ export class EidSubWallet extends ElastosEVMSubWallet {
     super(networkWallet, StandardCoinName.ETHDID);
   }
 
-  protected async initialize() {
+  public async initialize() {
     await super.initialize();
 
     this.withdrawContractAddress = Config.ETHDID_WITHDRAW_ADDRESS.toLowerCase();

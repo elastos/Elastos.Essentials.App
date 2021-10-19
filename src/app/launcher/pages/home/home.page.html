@@ -95,7 +95,7 @@
                   {{ networkWallet.getDisplayTokenName() }}
                 </div>
                 <div *ngIf="currencyService.useCurrency" class="balance">
-                  {{ getFriendlyBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance())) }}
+                  {{ getFriendlyBalance(networkWallet.getDisplayBalanceInActiveCurrency()) }}
                   {{ currencyService.selectedCurrency.symbol }}
                 </div>
               </ion-row>

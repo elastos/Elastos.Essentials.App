@@ -34,8 +34,9 @@ export abstract class ElastosNetworkBase extends Network {
     return wallet;
   }
 
-  public createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates = true): ERC20SubWallet {
+  public async createERC20SubWallet(networkWallet: NetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     let subWallet = new ElastosERC20SubWallet(networkWallet, coinID);
+    await subWallet.initialize();
     if (startBackgroundUpdates)
       void subWallet.startBackgroundUpdates();
     return subWallet;

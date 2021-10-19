@@ -31,12 +31,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     protected spvConfigEVMCode: string = null; // Ex: ETHHECO, ETHSC
 
-    public static newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
-        const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
-        return Promise.resolve(subWallet);
+    public static async newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
+        const subWallet = await networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
+        return subWallet;
     }
 
-    public static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): ERC20SubWallet {
+    public static async newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<ERC20SubWallet> {
         Logger.log('wallet', "Initializing ERC20 subwallet from serialized sub wallet", serializedSubWallet);
         if (!serializedSubWallet.id) {
             Logger.error('wallet', 'newFromSerializedSubWallet id is null');
@@ -45,8 +45,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         // Use the contract address as id for ERC20 subwallet.
         const coin = networkWallet.network.getERC20CoinByContractAddress(serializedSubWallet.id) as ERC20Coin;
         if (coin) {
-            const subWallet = networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id, false);
-            // subWallet.initFromSerializedSubWallet(serializedSubWallet);
+            const subWallet = await networkWallet.network.createERC20SubWallet(networkWallet, serializedSubWallet.id, false);
             return subWallet;
         } else {
             Logger.error('wallet', 'newFromSerializedSubWallet error, this coin is not a known coin for this network.');
@@ -54,7 +53,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         }
     }
 
-    constructor(
+    public constructor(
         public networkWallet: NetworkWallet,
         id: CoinID,
         private rpcApiUrl: string,
@@ -63,11 +62,15 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         super(networkWallet, id, CoinType.ERC20);
 
         this.spvConfigEVMCode = this.networkWallet.network.getEVMSPVConfigName();
-        void this.initialize();
     }
 
-    private async initialize() {
+    public async initialize(): Promise<void> {
         this.coin = this.networkWallet.network.getCoinByID(this.id) as ERC20Coin;
+        this.tokenDecimals = this.coin.decimals;
+        this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals);
+
+        await super.initialize();
+
         // Get Web3 and the ERC20 contract ready
         const trinityWeb3Provider = new EssentialsWeb3Provider(this.rpcApiUrl);
         this.web3 = new Web3(trinityWeb3Provider);
@@ -77,7 +80,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         // First retrieve the number of decimals used by this token. this is needed for a good display,
         // as we need to convert the balance integer using the number of decimals.
-        await this.fetchTokenDecimals();
+        // NOT NEEDED ANY MORE - SAVED WHEN ADDING TOKENS - await this.fetchTokenDecimals();
 
         runDelayed(() => this.updateBalance(), 5000);
     }
@@ -144,7 +147,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
             //Logger.log('wallet', "Got ERC20 token decimals from cache", this.id, "Decimals: ", this.tokenDecimals);
         }
 
-        this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
+        this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals);
     }
 
     public getDisplayBalance(): BigNumber {
@@ -161,11 +164,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
-        return CurrencyService.instance.getERC20TokenValue(value, this.coin);
+        return CurrencyService.instance.getERC20TokenValue(value, this.coin, this.networkWallet.network);
     }
 
     public getUSDBalance(): BigNumber {
-        return CurrencyService.instance.getERC20TokenValue(this.getBalance(), this.coin, this.networkWallet.network, 'USD');
+        let usdBalance = CurrencyService.instance.getERC20TokenValue(this.getBalance(), this.coin, this.networkWallet.network, 'USD');
+        return usdBalance;
     }
 
     public getMainIcon(): string {
@@ -211,7 +215,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     public async updateBalance() {
         Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
         if (!this.tokenDecimals) {
-            await this.fetchTokenDecimals();
+            Logger.error("wallet", "Token decimals unknown for token " + this.coin.getID());
+            return;
         }
 
         try {

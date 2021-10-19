@@ -25,7 +25,7 @@ export class SubWalletBuilder {
     /**
      * Restored wallet from local storage info.
      */
-    static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): SubWallet<any> {
+    static newFromSerializedSubWallet(networkWallet: NetworkWallet, serializedSubWallet: SerializedSubWallet): Promise<SubWallet<any>> {
         if (!serializedSubWallet)
             return null; // Should never happen, but happened because of some other bugs.
 

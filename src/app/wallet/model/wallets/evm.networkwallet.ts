@@ -32,6 +32,7 @@ export class EVMNetworkWallet extends NetworkWallet {
             this.network.getMainEvmRpcApiUrl(),
             this.mainSubWalletFriendlyName
         );
+        await this.mainTokenSubWallet.initialize();
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
         await this.masterWallet.walletManager.spvBridge.createSubWallet(this.masterWallet.id, this.network.getEVMSPVConfigName());
     }

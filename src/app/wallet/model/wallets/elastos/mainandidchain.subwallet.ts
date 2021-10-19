@@ -12,7 +12,7 @@ import { BridgeProvider } from '../../earn/bridgeprovider';
 import { EarnProvider } from '../../earn/earnprovider';
 import { SwapProvider } from '../../earn/swapprovider';
 import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
-import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../providers/transaction.types';
+import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../providers/transaction.types';
 import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
 import { NetworkWallet } from '../networkwallet';
 import { StandardSubWallet } from '../standard.subwallet';
@@ -33,6 +33,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     private votingAmountSELA = 0; // ELA
     private votingUtxoArray: Utxo[] = null;
 
+    private getTransactionsTime = 0;
     private ownerAddress: string = null;
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
@@ -561,25 +562,25 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     private async getPendingTransaction() {
-        const twoMinutesago = moment().add(-2, 'minutes').valueOf();
+        return await [];
+        /* TODO const twoMinutesago = moment().add(-2, 'minutes').valueOf();
         // It takes several seconds for getTransactionByRPC.
-        if ((this.networkWallet.getTransactionDiscoveryProvider().fetchTransactionTimestamp < twoMinutesago)) {
+        if ((this.paginatedTransactions === null) || (this.getTransactionsTime < twoMinutesago)) {
           // Update transactions to get the pending transactions.
-          await this.fetchNewestTransactions();
+          await this.getTransactionsByRpc(this.timestampEnd);
         }
 
-        let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
         let pendingTransactions = [];
-        for (let i = 0, len = transaction.length; i < len; i++) {
-          if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
-            pendingTransactions.push(transaction[i].txid);
+        for (let i = 0, len = this.paginatedTransactions.txhistory.length; i < len; i++) {
+          if (this.paginatedTransactions.txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+            pendingTransactions.push(this.paginatedTransactions.txhistory[i].txid);
           } else {
             // the transactions list is sorted by block height.
             break;
           }
         }
         Logger.log('wallet', 'Pending Transactions:', pendingTransactions);
-        return pendingTransactions;
+        return pendingTransactions; */
     }
 
     private async getUTXOUsedInPendingTransaction() {

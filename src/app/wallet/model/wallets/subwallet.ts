@@ -66,6 +66,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
    */
   public abstract getUniqueIdentifierOnNetwork(): string;
 
+  public async initialize(): Promise<void> {
+    await this.loadBalanceFromCache();
+  }
+
   /**
    * Starts updates in background.
    * All the initializations here are not mandatory during initializations and can deliver
@@ -74,7 +78,6 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
    * This method can be overriden by subwallet implementations.
    */
   public startBackgroundUpdates(): Promise<void> {
-    void this.loadBalanceFromCache();
     return;
   }
 
@@ -189,9 +192,9 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
 
   /**
    */
-   public getAverageBlocktime(): number {
-     return this.networkWallet.getAverageBlocktime();
-   }
+  public getAverageBlocktime(): number {
+    return this.networkWallet.getAverageBlocktime();
+  }
 
   /**
    * Converts a given value in this wallet in the external currency chosen by user (USD, BTC, CNY, etc).

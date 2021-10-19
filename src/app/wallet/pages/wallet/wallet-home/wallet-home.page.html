@@ -58,9 +58,9 @@
                         <h4 *ngIf="currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(networkWallet.getDisplayBalanceInActiveCurrency())
                             }}<span class="dot"
-                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))">.</span>
+                                *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalanceInActiveCurrency())">.</span>
                             <span class="decimals">{{
-                                WalletUtil.getDecimalBalance(currencyService.getMainTokenValue(networkWallet.getDisplayBalance()))
+                                WalletUtil.getDecimalBalance(networkWallet.getDisplayBalanceInActiveCurrency())
                                 }}</span>
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>

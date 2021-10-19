@@ -27,6 +27,7 @@ export class ExtendedNetworkWalletInfo {
 export abstract class NetworkWallet {
     public id: string = null;
     protected transactionDiscoveryProvider: TransactionProvider<any> = null;
+    private initializationComplete = false;
 
     public subWallets: {
         [k: string]: SubWallet<any>
@@ -55,6 +56,8 @@ export abstract class NetworkWallet {
 
         // Prepare ERC20, NFT subwallets and other info
         await this.populateWithExtendedInfo(await LocalStorage.instance.getExtendedNetworWalletInfo(this.id, GlobalNetworksService.instance.activeNetworkTemplate.value, this.network.key));
+
+        this.initializationComplete = true;
     }
 
     protected abstract createTransactionDiscoveryProvider(): TransactionProvider<any>;
@@ -110,6 +113,9 @@ export abstract class NetworkWallet {
     } */
 
     private getDisplayBalanceInCurrency(currencySymbol: string): BigNumber {
+        if (!this.initializationComplete)
+            return new BigNumber(0);
+
         let usdBalance = new BigNumber(0);
         for (let subWallet of Object.values(this.subWallets)) {
             if (!subWallet.getBalance().isNaN()) {
@@ -310,7 +316,7 @@ export abstract class NetworkWallet {
      * This includes everything the SPV plugin could not save and that we saved in our local
      * storage instead.
      */
-    public populateWithExtendedInfo(extendedInfo: ExtendedNetworkWalletInfo) {
+    public async populateWithExtendedInfo(extendedInfo: ExtendedNetworkWalletInfo): Promise<void> {
         Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
 
         // In case of newly created wallet we don't have extended info from local storage yet,
@@ -323,7 +329,7 @@ export abstract class NetworkWallet {
                 // as they are always rebuilt by default by the network wallet. Later this COULD be a problem
                 // if we want to save some information about those standard subwallets, in extended infos.
                 if (serializedSubWallet.type !== "STANDARD") {
-                    let subWallet = SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
+                    let subWallet = await SubWalletBuilder.newFromSerializedSubWallet(this, serializedSubWallet);
                     if (subWallet) {
                         this.subWallets[serializedSubWallet.id] = subWallet;
                     } else {

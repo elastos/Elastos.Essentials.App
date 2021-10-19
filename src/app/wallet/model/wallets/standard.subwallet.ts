@@ -47,7 +47,7 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
-        return CurrencyService.instance.getMainTokenValue(value);
+        return CurrencyService.instance.getMainTokenValue(value, this.networkWallet.network);
     }
 
     // Check whether the balance is enough. amount unit is ELA or WEI
@@ -62,9 +62,6 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
     /* protected abstract getTransactionName(transaction: TransactionType, translate: TranslateService): Promise<string>;
 
     protected abstract getTransactionIconPath(transaction: TransactionType): Promise<string>; */
-
-
-
 
     // Signs raw transaction and sends the signed transaction to the SPV SDK for publication.
     public signAndSendRawTransaction(transaction: string, transfer: Transfer, navigateHomeAfterCompletion = true): Promise<RawTransactionPublishResult> {

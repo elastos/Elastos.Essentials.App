@@ -41,6 +41,11 @@ export class ElastosNetworkWallet extends NetworkWallet {
     // this.subWallets[StandardCoinName.ETHSC] = this.mainTokenSubWallet;
     this.subWallets[StandardCoinName.ETHDID] = new EidSubWallet(this);
 
+    await this.subWallets[StandardCoinName.ELA].initialize();
+    await this.mainTokenSubWallet.initialize();
+    await this.subWallets[StandardCoinName.IDChain].initialize();
+    await this.subWallets[StandardCoinName.ETHDID].initialize();
+
     // TODO: No ETHSC in LRW
     // Remove it if there is ETHSC in LRW.
     let networkConfig: SPVNetworkConfig = {};

@@ -55,8 +55,9 @@ export class EVMNetwork extends Network {
     return wallet;
   }
 
-  public createERC20SubWallet(networkWallet: EVMNetworkWallet, coinID: CoinID, startBackgroundUpdates = true): ERC20SubWallet {
+  public async createERC20SubWallet(networkWallet: EVMNetworkWallet, coinID: CoinID, startBackgroundUpdates = true): Promise<ERC20SubWallet> {
     let subWallet = new ERC20SubWallet(networkWallet, coinID, networkWallet.network.getMainEvmRpcApiUrl(), "");
+    await subWallet.initialize();
     if (startBackgroundUpdates)
       void subWallet.startBackgroundUpdates();
     return subWallet;

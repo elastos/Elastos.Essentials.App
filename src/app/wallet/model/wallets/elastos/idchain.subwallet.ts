@@ -14,7 +14,9 @@ export class IDChainSubWallet extends MainAndIDChainSubWallet {
         super(networkWallet, StandardCoinName.IDChain);
     }
 
-    protected initialize() {
+    public async initialize(): Promise<void> {
+        await super.initialize();
+
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
             if (!this.masterWallet.account.SingleAddress) {

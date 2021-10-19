@@ -36,7 +36,9 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
     void this.initialize();
   }
 
-  protected initialize() {
+  public async initialize(): Promise<void> {
+    await super.initialize();
+
     this.initWeb3();
     this.tokenDecimals = 18;
     this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
@@ -375,7 +377,7 @@ export class StandardEVMSubWallet extends StandardSubWallet<EthTransaction> {
   }
 
   public async estimateGas(tx): Promise<number> {
-    let gasLimit= await this.web3.eth.estimateGas(tx);
+    let gasLimit = await this.web3.eth.estimateGas(tx);
     return gasLimit;
   }
 
