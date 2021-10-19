@@ -23,6 +23,7 @@ export class GlobalEthereumRPCService {
             params: [
                 txHash
             ],
+            jsonrpc: "2.0",
             id: '1'
         };
 
@@ -56,6 +57,7 @@ export class GlobalEthereumRPCService {
                 address,
                 'latest'
             ],
+            jsonrpc: "2.0",
             id: '1'
         };
 
@@ -70,6 +72,7 @@ export class GlobalEthereumRPCService {
                 address,
                 'latest'
             ],
+            jsonrpc: "2.0",
             id: '1'
         };
 
@@ -83,6 +86,7 @@ export class GlobalEthereumRPCService {
             params: [
                 txHash
             ],
+            jsonrpc: "2.0",
             id: '1'
         };
 
@@ -98,6 +102,7 @@ export class GlobalEthereumRPCService {
             params: [
                 txHash
             ],
+            jsonrpc: "2.0",
             id: '1'
         };
 
@@ -113,6 +118,7 @@ export class GlobalEthereumRPCService {
                 params: [
                     txid
                 ],
+                jsonrpc: "2.0",
                 id: i.toString()
             };
             paramArray.push(param);
@@ -129,6 +135,7 @@ export class GlobalEthereumRPCService {
             to,
             value
           }],
+          jsonrpc: "2.0",
           id: '1'
       };
       let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
