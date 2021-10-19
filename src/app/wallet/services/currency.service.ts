@@ -166,17 +166,17 @@ export class CurrencyService {
    */
   private fetchTokenStatsFromElaphant(symbol: string): Promise<ElaphantPriceAPITokenStats> {
     Logger.log("wallet", "Fetching elaphant api prices for symbol", symbol);
-    this.tokenFetchOnGoing = true;
     return new Promise(resolve => {
       this.http.get<any>('https://api-price.elaphant.app/api/1/cmc?limit=600').subscribe((res: ElaphantPriceAPITokenStats[]) => {
-        this.tokenFetchOnGoing = false;
         if (res) {
           let tokenStats = res.find((coin) => coin.symbol === symbol);
           resolve(tokenStats);
         }
+        else {
+          resolve(null);
+        }
       }, (err) => {
         Logger.error('wallet', 'Fetch CMC Stats err', err);
-        this.tokenFetchOnGoing = false;
         resolve(null);
       });
     })
@@ -231,7 +231,8 @@ export class CurrencyService {
     }
 
     if (shouldFetch && !this.tokenFetchOnGoing) {
-      void this.fetchTokenStatsFromElaphant(network.getMainTokenSymbol()).then(tokenStats => {
+      this.tokenFetchOnGoing = true;
+      void this.fetchTokenStatsFromElaphant(network.getMainTokenSymbol()).then(async tokenStats => {
         if (tokenStats) {
           this.computeExchangeRatesFromElaphantTokenStats(tokenStats);
 
@@ -240,11 +241,23 @@ export class CurrencyService {
           }, currentTime);
         }
         else {
-          this.pricesCache.set(cacheKey, {
-            usdValue: 0
-          }, currentTime);
+          Logger.log("No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying other methods");
+          if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
+            // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
+            let usdValue = await this.getERC20TokenValue(new BigNumber(1), network.getUniswapCurrencyProvider().getWrappedNativeCoin(), network, 'USD');
+            this.pricesCache.set(cacheKey, {
+              usdValue: usdValue.toNumber()
+            }, currentTime);
+          }
+          else {
+            this.pricesCache.set(cacheKey, {
+              usdValue: 0
+            }, currentTime);
+          }
         }
         void this.pricesCache.save();
+
+        this.tokenFetchOnGoing = false;
       });
     }
 
