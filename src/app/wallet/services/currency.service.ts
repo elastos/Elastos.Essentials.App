@@ -220,7 +220,7 @@ export class CurrencyService {
    */
   public usdToCurrencyAmount(usdValue: BigNumber, currencySymbol = this.selectedCurrency.symbol): BigNumber {
     currencySymbol = currencySymbol.toUpperCase();
-    return new BigNumber(usdValue.multipliedBy(this.exchangeRates[currencySymbol] ?? 0));
+    return new BigNumber(usdValue.multipliedBy(this.exchangeRates[currencySymbol] || 0));
   }
 
   /**
@@ -350,7 +350,7 @@ export class CurrencyService {
   /**
    * Get USD exchange from currencies service.
    */
-   private async computeExchangeRatesFromCurrenciesService() {
+  private async computeExchangeRatesFromCurrenciesService() {
     let rates = await this.fetchUSDExchangeRate();
     if (rates) {
       for (let i = 0; i < displayableCurrencies.length; i++) {
@@ -367,7 +367,7 @@ export class CurrencyService {
   /**
    * Fetches prices from the elaphant api and returns only a target item
    */
-   private fetchUSDExchangeRate() {
+  private fetchUSDExchangeRate() {
     return new Promise(resolve => {
       this.http.get<any>(this.usdExchangeRateUrl).subscribe((res: CurrenciesExchangeRate) => {
         if (res) {
@@ -417,7 +417,7 @@ type CurrenciesExchangeRate = {
   amount: number;
   base: string;
   date: string;
-  rates:{
+  rates: {
     [symbol: string]: string
   };
 }

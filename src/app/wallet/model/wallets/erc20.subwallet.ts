@@ -169,7 +169,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
     public getUSDBalance(): BigNumber {
         let usdBalance = CurrencyService.instance.getERC20TokenValue(this.getBalance(), this.coin, this.networkWallet.network, 'USD');
-        return usdBalance;
+        return usdBalance || new BigNumber(0);
     }
 
     public getMainIcon(): string {

@@ -43,7 +43,7 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
     }
 
     public getUSDBalance(): BigNumber {
-        return CurrencyService.instance.getMainTokenValue(this.getBalance(), this.networkWallet.network, 'USD');
+        return CurrencyService.instance.getMainTokenValue(this.getBalance(), this.networkWallet.network, 'USD') || new BigNumber(0);
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
