@@ -138,7 +138,10 @@ export abstract class NetworkWallet {
 
         // Convert USD balance back to native token
         let nativeTokenUSDPrice = CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.network, 'USD');
-        return usdBalance.dividedBy(nativeTokenUSDPrice);
+        if (nativeTokenUSDPrice)
+            return usdBalance.dividedBy(nativeTokenUSDPrice);
+        else
+            return new BigNumber(0);
     }
 
     /**
@@ -283,8 +286,6 @@ export abstract class NetworkWallet {
         let accountAddress = await this.getMainEvmSubWallet().createAddress();
         if (nft.type == NFTType.ERC721) {
             let assets = await this.masterWallet.erc721Service.fetchAllAssets(accountAddress, nft.contractAddress);
-            console.log("ASSETS", assets);
-
             nft.assets = assets; // can be null (couldn't fetch assets) or empty (0 assets)
         }
     }
@@ -333,9 +334,9 @@ export abstract class NetworkWallet {
                     if (subWallet) {
                         this.subWallets[serializedSubWallet.id] = subWallet;
                     } else {
-                      // Need to update extendedInfo to delete the invalid subwallet.
-                      // (The subWallets use the token name as id in the old version(< 2.3.0))
-                      needUpdateExtendedInfo = true;
+                        // Need to update extendedInfo to delete the invalid subwallet.
+                        // (The subWallets use the token name as id in the old version(< 2.3.0))
+                        needUpdateExtendedInfo = true;
                     }
                 }
             }
@@ -351,7 +352,7 @@ export abstract class NetworkWallet {
             }
 
             if (needUpdateExtendedInfo) {
-              void this.save()
+                void this.save()
             }
         }
     }
