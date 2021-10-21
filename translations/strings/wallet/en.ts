@@ -89,6 +89,7 @@ export const en = {
         "united-states-dollar": "United States Dollar",
         "chinese-yuan": "Chinese Yuan",
         "euro": "Euro",
+        "czk-koruna": "Czech Koruna",
         "british-pound": "British Pound",
         "japanese-yen":"Japanese Yen",
         "bitcoin": "Bitcoin",
