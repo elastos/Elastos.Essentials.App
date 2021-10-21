@@ -25,6 +25,11 @@ export const displayableCurrencies: DisplayableCurrency[] = [
     icon: '/assets/wallet/currencies/cny.svg'
   },
   {
+    symbol: 'CZK',
+    name: 'wallet.czk-koruna',
+    icon: '/assets/wallet/currencies/czk.svg'
+  },
+  {
     symbol: 'EUR',
     name: 'wallet.euro',
     icon: '/assets/wallet/currencies/eur.svg'

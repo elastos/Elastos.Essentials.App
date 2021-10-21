@@ -88,6 +88,7 @@ export const zh = {
                 "available-currencies": "支持的货币",
                 "united-states-dollar": "美元",
                 "chinese-yuan": "人民币",
+                "czk-koruna": "捷克克朗",
                 "euro": "欧元",
                 "british-pound": "英镑",
                 "japanese-yen":"日元",
