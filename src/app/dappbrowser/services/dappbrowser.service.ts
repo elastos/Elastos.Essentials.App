@@ -155,12 +155,12 @@ export class DappBrowserService {
         Logger.log("dappbrowser", "Received event", event);
         switch (event.type) {
             case "loadstart":
-                await this.handleLoadStartEvent(event);
                 if (this.dabClient != null && this.dabClient.onLoadStart) {
                     this.dabClient.onLoadStart();
                 }
                 break;
             case "loadstop":
+                await this.injectWeb3Provider(event);
                 await this.handleLoadStopEvent(event as DABLoadStop);
                 if (this.dabClient != null && this.dabClient.onLoadStop) {
                     this.dabClient.onLoadStop(event as DABLoadStop);
@@ -212,7 +212,7 @@ export class DappBrowserService {
         }
     }
 
-    private async handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
+    private async injectWeb3Provider(event: DappBrowserPlugin.DappBrowserEvent) {
         // Updated the browsed url
         this.url = event.url;
 
