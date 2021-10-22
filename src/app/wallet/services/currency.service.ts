@@ -10,7 +10,7 @@ import { WalletNetworkService } from './network.service';
 import { LocalStorage } from './storage.service';
 import { UniswapCurrencyService } from './uniswap.currency.service';
 
-const TOKEN_VALUE_REFRESH_DELAY = (60 * 5); // 5 minutes - Number of seconds without refreshing a token price if alerady in cache
+const TOKEN_VALUE_REFRESH_DELAY = 20;//(60 * 5); // 5 minutes - Number of seconds without refreshing a token price if alerady in cache
 
 type DisplayableCurrency = {
   symbol: string;
@@ -264,8 +264,8 @@ export class CurrencyService {
           }, currentTime);
         }
         else {
-          Logger.log("No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying other methods");
           if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
+            Logger.log("wallet", "No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying through uniswap");
             // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
             let usdValue = await this.getERC20TokenValue(new BigNumber(1), network.getUniswapCurrencyProvider().getWrappedNativeCoin(), network, 'USD');
             this.pricesCache.set(cacheKey, {
@@ -273,6 +273,7 @@ export class CurrencyService {
             }, currentTime);
           }
           else {
+            Logger.log("wallet", "No currency in elaphant API for", network.getMainTokenSymbol(), ".");
             this.pricesCache.set(cacheKey, {
               usdValue: 0
             }, currentTime);
@@ -318,7 +319,7 @@ export class CurrencyService {
       shouldFetch = true;
     }
 
-    // Logger.log("walletdebug", "Should fetch?", shouldFetch);
+    //Logger.log("walletdebug", "Should fetch?", cacheKey, shouldFetch, tokenValue.data.usdValue);
 
     if (shouldFetch && !this.tokenFetchOnGoing) {
       this.tokenFetchOnGoing = true;

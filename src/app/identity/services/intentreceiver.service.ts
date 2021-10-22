@@ -6,7 +6,7 @@ import { Events } from 'src/app/services/events.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
-import { AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, SetHiveProviderIdentityIntent } from '../model/identity.intents';
+import { AppIdCredIssueIdentityIntent, CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, RequestCredentialsIntent, SetHiveProviderIdentityIntent } from '../model/identity.intents';
 import { AppIDService } from './appid.service';
 import { Native } from './native';
 import { PopupProvider } from './popup';
@@ -90,6 +90,17 @@ export class IntentReceiverService {
                 if (this.checkCredAccessIntentParams(intent)) {
                     await this.uxService.loadIdentityAndShow(false);
                     void this.native.setRootRouter("/identity/intents/credaccessrequest");
+                }
+                else {
+                    // Something wrong happened while trying to handle the intent: send intent response with error
+                    void this.showErrorAndExitFromIntent(intent);
+                }
+                break;
+            case "requestcredentials":
+                Logger.log('identity', "Received request credentials intent request");
+                if (this.checkRequestCredentialsIntentParams(intent)) {
+                    await this.uxService.loadIdentityAndShow(false);
+                    void this.native.setRootRouter("/identity/intents/requestcredentials");
                 }
                 else {
                     // Something wrong happened while trying to handle the intent: send intent response with error
@@ -245,6 +256,20 @@ export class IntentReceiverService {
         credAccessIntent.params.realm = credAccessIntent.params.realm || "no-realm";
         credAccessIntent.jwtExpirationDays = credAccessIntent.jwtExpirationDays || 1;
         this.receivedIntent = credAccessIntent;
+
+        return true;
+    }
+
+    private checkRequestCredentialsIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
+        Logger.log('identity', "Checking requestcredentials intent parameters");
+        if (Util.isEmptyObject(intent.params)) {
+            Logger.error('identity', "Invalid requestcredentials parameters received. No params.", intent.params);
+            return false;
+        }
+
+        let requestCredentialsIntent: RequestCredentialsIntent = intent;
+        // TODO: check some internal field here
+        this.receivedIntent = requestCredentialsIntent;
 
         return true;
     }

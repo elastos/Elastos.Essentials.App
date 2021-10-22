@@ -12,6 +12,7 @@ import { CredentialDeleteRequestPage } from './credentialdeleterequest/credentia
 import { CredentialImportRequestPage } from './credentialimportrequest/credentialimportrequest';
 import { CredentialIssueRequestPage } from './credentialissuerequest/credentialissuerequest';
 import { RegisterApplicationProfileRequestPage } from './regappprofilerequest/regappprofilerequest';
+import { RequestCredentialsPage } from './requestcredentials/requestcredentials';
 import { SetHiveProviderRequestPage } from './sethiveproviderrequest/sethiveproviderrequest';
 import { SignDigestPage } from './signdigest/signdigest';
 import { SignRequestPage } from './signrequest/signrequest';
@@ -19,6 +20,7 @@ import { SignRequestPage } from './signrequest/signrequest';
 @NgModule({
     declarations: [
         AppIdCredentialIssueRequestPage,
+        RequestCredentialsPage,
         CredentialAccessRequestPage,
         CredentialImportRequestPage,
         CredentialIssueRequestPage,
@@ -38,6 +40,7 @@ import { SignRequestPage } from './signrequest/signrequest';
         RouterModule.forChild([
             { path: 'appidcredissuerequest', component: AppIdCredentialIssueRequestPage },
             { path: 'credaccessrequest', component: CredentialAccessRequestPage },
+            { path: 'requestcredentials', component: RequestCredentialsPage },
             { path: 'credissuerequest', component: CredentialIssueRequestPage },
             { path: 'credimportrequest', component: CredentialImportRequestPage },
             { path: 'creddeleterequest', component: CredentialDeleteRequestPage },

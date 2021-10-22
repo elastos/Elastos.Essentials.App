@@ -1,3 +1,5 @@
+import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+
 /**
  * Base identity intent
  */
@@ -29,15 +31,28 @@ export type AppIdCredIssueIdentityIntent = IdentityIntent<AppIdCredIssueIdentity
 
 /**
  * Credential access
+ * @deprecated
  */
 export type CredAccessIdentityIntentParams = IdentityIntentParams & {
-    claims: {},
+    claims: any,
     publisheddid: boolean,
     customization: IdentityIntentCustomization,
     nonce: string,
     realm: string,
 }
+/**
+ * @deprecated
+ */
 export type CredAccessIdentityIntent = IdentityIntent<CredAccessIdentityIntentParams> & {
+}
+
+export type RequestCredentialsIntentParams = IdentityIntentParams & {
+    request: ConnSDKDID.CredentialDisclosureRequest;
+}
+/**
+ * Request credentials (v2 version of Credential access)
+ */
+export type RequestCredentialsIntent = IdentityIntent<RequestCredentialsIntentParams> & {
 }
 
 /**
