@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
@@ -11,11 +13,11 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
     templateUrl: './titlebar.component.html',
     styleUrls: ['./titlebar.component.scss'],
 })
-export class BrowserTitleBarComponent {
+export class BrowserTitleBarComponent extends TitleBarComponent {
     public _url = "";
     public _title: string = null;
-    public menuVisible = true;
     public urlBoxColSize = 8.25;
+    private browserMode = true; // Whether dappbrowser page or home page
     private closeMode = false; // Whether the top left icon shows a close icon, or a elastos icon.
 
     @Input()
@@ -24,9 +26,6 @@ export class BrowserTitleBarComponent {
     }
 
     @Output() urlChanged = new EventEmitter<string>();
-
-
-    private itemClickedListeners: ((no: number) => void)[] = [];
 
     emit() {
         Logger.log("browser", "URL bar - request go browse to url:", this._url);
@@ -39,59 +38,25 @@ export class BrowserTitleBarComponent {
     }
 
     constructor(
-        public theme: GlobalThemeService,
+        public themeService: GlobalThemeService,
         public popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
         private networkService: WalletNetworkService
-    ) { }
-
-
-    onIconClicked(no: number) {
-        // Custom icon, call the icon listener
-        this.itemClickedListeners.forEach((listener) => {
-            listener(no);
-        });
-    }
-
-    /**
-     * Adds a listener to be notified when an icon is clicked. This works for both flat icons
-     * (setIcon()) and menu items (setupMenuItems()). Use the icon "key" field to know which
-     * icon was clicked.
-     *
-     * @param onItemClicked Callback called when an item is clicked.
-     */
-    public addOnItemClickedListener(onItemClicked: (no: number) => void) {
-        this.itemClickedListeners.push(onItemClicked);
-    }
-
-    /**
-     * Remove a listener.
-     *
-     * @param onItemClicked Callback called when an item is clicked.
-     */
-    public removeOnItemClickedListener(onItemClicked: (no: number) => void) {
-        this.itemClickedListeners.splice(this.itemClickedListeners.indexOf(onItemClicked), 1);
-    }
-
-    /**
-     * Sets the main title bar title information. Pass null to clear the previous title.
-     * Apps are responsible for managing this title from their internal screens.
-     *
-     * @param title Main title to show on the title bar. If title is not provided, the title bar shows the default title (the app name)
-     */
-    public setTitle(title: string) {
-        this._title = title;
+    ) {
+        super(themeService, popoverCtrl, globalNav,globalNotifications);
     }
 
     public setUrl(url: string) {
         this._url = url;
     }
 
-    public setMenuVisible(menuVisible: boolean) {
-        this.menuVisible = menuVisible;
-        if (menuVisible) {
+    public setBrowserMode(browserMode: boolean) {
+        this.browserMode = browserMode;
+        if (browserMode) {
             this.urlBoxColSize = 7;
+            this.setIcon(TitleBarIconSlot.INNER_RIGHT, { key: "network", iconPath: BuiltInIcon.NETWORK });
+            this.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "menu", iconPath: BuiltInIcon.VERTICAL_MENU });
         }
         else {
             this.urlBoxColSize = 9.25;
@@ -100,26 +65,21 @@ export class BrowserTitleBarComponent {
 
     public setCloseMode(closeMode: boolean) {
         this.closeMode = closeMode;
-    }
-
-    public getIconPath(no: number): string {
-        // Replace built-in icon path placeholders with real picture path
-        switch (no) {
-            case 0:
-                if (this.closeMode)
-                    return this.theme.darkMode ? 'assets/components/titlebar/darkmode/close.svg' : 'assets/components/titlebar/close.svg';
-                else
-                    return this.theme.darkMode ? 'assets/components/titlebar/darkmode/elastos.svg' : 'assets/components/titlebar/elastos.svg';
-            case 1:
-                return this.theme.darkMode ? 'assets/components/titlebar/darkmode/back.svg' : 'assets/components/titlebar/back.svg';
-            case 2:
-                return this.networkService.activeNetwork.value.logo;
-            case 3:
-                return this.theme.darkMode ? 'assets/components/titlebar/darkmode/vertical_menu.svg' : 'assets/components/titlebar/vertical_menu.svg';
+        if (closeMode) {
+            this.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
         }
     }
 
-    public homeClicked() {
-        void this.globalNav.navigateHome();
+    getIconPath(iconSlot: TitleBarIconSlot) {
+        if (this.icons[iconSlot].iconPath == BuiltInIcon.NETWORK) {
+            return this.networkService.activeNetwork.value.logo;
+        }
+        else {
+            return super.getIconPath(iconSlot);
+        }
+    }
+
+    onIconClicked(iconSlot: TitleBarIconSlot) {
+        this.listenableIconClicked(this.icons[iconSlot]);
     }
 }

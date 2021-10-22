@@ -1,13 +1,13 @@
-<ion-header class="ion-no-border" [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode">
-    <ion-row>
+<ion-header class="ion-no-border" [class.darkContainer]="themeService.darkMode" [class.lightContainer]="!themeService.darkMode">
+    <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
         <ion-col size="1.25">
             <div class="img-btn">
-                <img [src]="getIconPath(0)" (click)="onIconClicked(0)">
+                <img *ngIf="icons[0].visible" [src]="getIconPath(0)" (click)="onIconClicked(0)">
             </div>
         </ion-col>
         <ion-col size="1.25">
             <div class="img-btn img-btn-mark">
-                <img [src]="getIconPath(1)" (click)="onIconClicked(1)">
+                <img *ngIf="icons[1].visible" [src]="getIconPath(1)" (click)="onIconClicked(1)">
             </div>
         </ion-col>
         <ion-col *ngIf="_title != null" size="7">
@@ -20,12 +20,12 @@
             </ion-input>
         </ion-col>
 
-        <ion-col *ngIf="menuVisible" size="1.25">
+        <ion-col *ngIf="browserMode" size="1.25">
             <div class="img-btn img-btn-mark">
                 <img [src]="getIconPath(2)" (click)="onIconClicked(2)">
             </div>
         </ion-col>
-        <ion-col *ngIf="menuVisible" size="1.25">
+        <ion-col *ngIf="browserMode" size="1.25">
             <div class="img-btn img-btn-mark">
                 <img [src]="getIconPath(3)" (click)="onIconClicked(3)">
             </div>
