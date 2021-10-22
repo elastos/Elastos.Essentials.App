@@ -17,7 +17,7 @@ export class BrowserTitleBarComponent extends TitleBarComponent {
     public _url = "";
     public _title: string = null;
     public urlBoxColSize = 8.25;
-    private browserMode = true; // Whether dappbrowser page or home page
+    public browserMode = true; // Whether dappbrowser page or home page
     private closeMode = false; // Whether the top left icon shows a close icon, or a elastos icon.
 
     @Input()
