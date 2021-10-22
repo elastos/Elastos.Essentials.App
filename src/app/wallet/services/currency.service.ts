@@ -16,43 +16,51 @@ type DisplayableCurrency = {
   symbol: string;
   name: string;
   icon: string;
+  decimalplace: number; // The higher the price, the more decimal places.
 };
 
 export const displayableCurrencies: DisplayableCurrency[] = [
   {
     symbol: 'CNY',
     name: 'wallet.chinese-yuan',
-    icon: '/assets/wallet/currencies/cny.svg'
+    icon: '/assets/wallet/currencies/cny.svg',
+    decimalplace: 2
   },
   {
     symbol: 'CZK',
     name: 'wallet.czk-koruna',
-    icon: '/assets/wallet/currencies/czk.svg'
+    icon: '/assets/wallet/currencies/czk.svg',
+    decimalplace: 2
   },
   {
     symbol: 'EUR',
     name: 'wallet.euro',
-    icon: '/assets/wallet/currencies/eur.svg'
+    icon: '/assets/wallet/currencies/eur.svg',
+    decimalplace: 2
   },
   {
     symbol: 'GBP',
     name: 'wallet.british-pound',
-    icon: '/assets/wallet/currencies/gbp.svg'
+    icon: '/assets/wallet/currencies/gbp.svg',
+    decimalplace: 2
   },
   {
     symbol: 'JPY',
     name: 'wallet.japanese-yen',
-    icon: '/assets/wallet/currencies/jpy.svg'
+    icon: '/assets/wallet/currencies/jpy.svg',
+    decimalplace: 2
   },
   {
     symbol: 'USD',
     name: 'wallet.united-states-dollar',
-    icon: '/assets/wallet/currencies/usd.svg'
+    icon: '/assets/wallet/currencies/usd.svg',
+    decimalplace: 2
   },
   {
     symbol: 'BTC',
     name: 'wallet.bitcoin',
-    icon: '/assets/wallet/currencies/btc.svg'
+    icon: '/assets/wallet/currencies/btc.svg',
+    decimalplace: 6
   }
 ];
 
@@ -264,13 +272,17 @@ export class CurrencyService {
           }, currentTime);
         }
         else {
-          Logger.log("No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying other methods");
+          Logger.log("wallet", "No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying other methods");
           if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
             // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
             let usdValue = await this.getERC20TokenValue(new BigNumber(1), network.getUniswapCurrencyProvider().getWrappedNativeCoin(), network, 'USD');
-            this.pricesCache.set(cacheKey, {
-              usdValue: usdValue.toNumber()
-            }, currentTime);
+            if (usdValue) {
+                this.pricesCache.set(cacheKey, {
+                  usdValue: usdValue.toNumber()
+                }, currentTime);
+            } else {
+                Logger.log("wallet", "Can't get ", network.getMainTokenSymbol(), " price from uniswap");
+            }
           }
           else {
             this.pricesCache.set(cacheKey, {
@@ -293,7 +305,7 @@ export class CurrencyService {
     else {
       // Return the currently cached value
       let tokenUsdtValue = quantity.multipliedBy(tokenValue.data.usdValue);
-      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol).decimalPlaces(3);
+      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol);
     }
   }
 
@@ -336,7 +348,7 @@ export class CurrencyService {
     else {
       // Return the currently cached value
       let tokenUsdtValue = quantity.multipliedBy(tokenValue.data.usdValue);
-      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol).decimalPlaces(3);
+      return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol);
     }
   }
 

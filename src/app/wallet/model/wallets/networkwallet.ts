@@ -144,6 +144,17 @@ export abstract class NetworkWallet {
             return new BigNumber(0);
     }
 
+    // The higher the price, the more decimal places.
+    public getDecimalPlaces() {
+        let decimalPlaces = 3;
+        let nativeTokenUSDPrice = CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.network, 'USD');
+        if (nativeTokenUSDPrice) {
+            const digit = nativeTokenUSDPrice.dividedToIntegerBy(1).toString().length;
+            decimalPlaces = digit < 3 ? 3 : digit + 1;
+        }
+        return decimalPlaces;
+    }
+
     /**
      * Returns the whole balance balance, for the active currency.
      */

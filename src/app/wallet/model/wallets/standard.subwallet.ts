@@ -47,7 +47,16 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
-        return CurrencyService.instance.getMainTokenValue(value, this.networkWallet.network);
+        let amount = CurrencyService.instance.getMainTokenValue(value, this.networkWallet.network);
+        if (amount) {
+            let decimalplace = 3;
+            if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
+                decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
+            }
+            return amount.decimalPlaces(decimalplace);
+        } else {
+            return amount;
+        }
     }
 
     // Check whether the balance is enough. amount unit is ELA or WEI
