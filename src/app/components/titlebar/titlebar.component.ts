@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { AppTheme, GlobalThemeService } from '../../services/global.theme.service';
+import { AppTheme, GlobalThemeService } from 'src/app/services/global.theme.service';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode, TitleBarSlotItem, TitleBarTheme } from './titlebar.types';
 
@@ -36,13 +36,13 @@ export class TitleBarComponent {
         TitleBarComponent.makeDefaultIcon()  // outer right
     ];
 
-    private itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
+    protected itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
 
     public menuItems: TitleBarMenuItem[] = [];
 
     constructor(
         public themeService: GlobalThemeService,
-        private popoverCtrl: PopoverController,
+        protected popoverCtrl: PopoverController,
         public globalNav: GlobalNavService,
         public globalNotifications: GlobalNotificationsService,
     ) {
@@ -255,7 +255,7 @@ export class TitleBarComponent {
             this.setIcon(TitleBarIconSlot.INNER_LEFT, null);
     }
 
-    private listenableIconClicked(icon: TitleBarSlotItem | TitleBarMenuItem) {
+    protected listenableIconClicked(icon: TitleBarSlotItem | TitleBarMenuItem) {
         // Custom icon, call the icon listener
         this.itemClickedListeners.forEach((listener) => {
             listener(icon);

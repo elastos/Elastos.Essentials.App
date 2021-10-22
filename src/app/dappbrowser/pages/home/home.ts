@@ -3,6 +3,7 @@ import { Component, NgZone, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -42,7 +43,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     private favoritesSubscription: Subscription = null;
     private networkSubscription: Subscription = null;
 
-    private titleBarIconClickedListener: (no: number) => void;
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
         public translate: TranslateService,
@@ -139,7 +140,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
     ionViewWillEnter() {
         this.setTheme(this.theme.darkMode);
-        this.titleBar.setMenuVisible(false);
+        this.titleBar.setBrowserMode(false);
         this.titleBar.setCloseMode(false);
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
@@ -173,16 +174,13 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
         this.globalStartupService.setStartupScreenReady();
 
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (no) => {
-            switch (no) {
-                case 0:
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            switch (icon.iconPath) {
+                case BuiltInIcon.ELASTOS:
                     void this.nav.goToLauncher();
                     break;
-                case 1:
+                case BuiltInIcon.BACK:
                     void this.nav.navigateBack();
-                    break;
-                case 3:
-                    void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
                     break;
             }
         });
@@ -246,16 +244,6 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             }
         });
     }
-
-    // '_blank' mode
-    // onExit(mode?: string) {
-    //     this.zone.run(() => {
-    //         this.dabRunning = false;
-    //     });
-    //     if (mode) {
-    //         void this.nav.goToLauncher();
-    //     }
-    // }
 
     onMenu() {
         dappBrowser.hide();
