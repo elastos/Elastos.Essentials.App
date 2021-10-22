@@ -261,11 +261,9 @@ export class CoinHomePage implements OnInit {
 
         //if (this.start >= this.transactions.length) {
         if (this.subWallet.canFetchMoreTransactions()) {
-            console.log("DEBUG coinhome can fetch more");
             this.canFetchMore = true;
         }
         else {
-            console.log("DEBUG coinhome can NOT fetch more");
             this.canFetchMore = false;
         }
         /* } else {

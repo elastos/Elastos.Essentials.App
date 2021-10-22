@@ -89,7 +89,7 @@ export class CurrencyService {
   //public tokenStats: ElaphantPriceAPITokenStats;
   private exchangeRates: ExchangeRateCache = {};
   private pricesCache: TimeBasedPersistentCache<CachedTokenPrice>; // Cache that contains latest prices for all tokens (native and ERC)
-  private tokenFetchOnGoing = false;
+  //private tokenFetchOnGoing = false;
 
   // Use currency as main wallet total amount
   public useCurrency = false;
@@ -126,6 +126,8 @@ export class CurrencyService {
     await this.getSavedPrices();
     await this.getSavedCurrency();
     await this.getSavedCurrencyDisplayPreference();
+    // Update USD exchange rate.
+    await this.computeExchangeRatesFromCurrenciesService();
 
     // Wait a moment before fetching latest prices, to not struggle the main essentials boot sequence.
     /* runDelayed(() => {
@@ -251,53 +253,9 @@ export class CurrencyService {
     if (quantity.eq(0))
       return new BigNumber(0);
 
-    // return cache if not expired
+    // Return cache if existing
     let cacheKey = network.key + network.getMainTokenSymbol();
     let tokenValue = this.pricesCache.get(cacheKey);
-    let currentTime = Date.now() / 1000;
-    let shouldFetch = false;
-    if (!tokenValue || currentTime - tokenValue.timeValue > TOKEN_VALUE_REFRESH_DELAY) {
-      // Item expired or missing, we will have to fetch fresh data
-      shouldFetch = true;
-    }
-
-    if (shouldFetch && !this.tokenFetchOnGoing) {
-      this.tokenFetchOnGoing = true;
-      void this.fetchTokenStatsFromElaphant(network.getMainTokenSymbol()).then(async tokenStats => {
-        if (tokenStats) {
-          this.computeExchangeRatesFromElaphantTokenStats(tokenStats);
-
-          this.pricesCache.set(cacheKey, {
-            usdValue: parseFloat(tokenStats.price_usd)
-          }, currentTime);
-        }
-        else {
-          Logger.log("wallet", "No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying other methods");
-          if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
-            // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
-            let usdValue = await this.getERC20TokenValue(new BigNumber(1), network.getUniswapCurrencyProvider().getWrappedNativeCoin(), network, 'USD');
-            if (usdValue) {
-                this.pricesCache.set(cacheKey, {
-                  usdValue: usdValue.toNumber()
-                }, currentTime);
-            } else {
-                Logger.log("wallet", "Can't get ", network.getMainTokenSymbol(), " price from uniswap");
-            }
-          }
-          else {
-            this.pricesCache.set(cacheKey, {
-              usdValue: 0
-            }, currentTime);
-          }
-        }
-        void this.pricesCache.save();
-
-        // Update USD exchange rate.
-        await this.computeExchangeRatesFromCurrenciesService();
-
-        this.tokenFetchOnGoing = false;
-      });
-    }
 
     if (!tokenValue) {
       return null;
@@ -307,6 +265,41 @@ export class CurrencyService {
       let tokenUsdtValue = quantity.multipliedBy(tokenValue.data.usdValue);
       return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol);
     }
+  }
+
+  public async fetchMainTokenValue(quantity: BigNumber, network?: Network, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+    let cacheKey = network.key + network.getMainTokenSymbol();
+    let currentTime = Date.now() / 1000;
+
+    //void this.pricesCache.delete(); // DEV
+    //return;
+
+    let tokenStats = await this.fetchTokenStatsFromElaphant(network.getMainTokenSymbol());
+    if (tokenStats) {
+      this.pricesCache.set(cacheKey, {
+        usdValue: parseFloat(tokenStats.price_usd)
+      }, currentTime);
+    }
+    else {
+      Logger.log("wallet", "No currency in elaphant API for", network.getMainTokenSymbol(), ". Trying other methods");
+      if (network.getMainEvmRpcApiUrl() && network.getUniswapCurrencyProvider()) {
+        // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
+        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(network, network.getUniswapCurrencyProvider().getWrappedNativeCoin());
+        if (usdValue) {
+          this.pricesCache.set(cacheKey, {
+            usdValue
+          }, currentTime);
+        } else {
+          Logger.log("wallet", "Can't get", network.getMainTokenSymbol(), "price from uniswap");
+        }
+      }
+      else {
+        this.pricesCache.set(cacheKey, {
+          usdValue: 0
+        }, currentTime);
+      }
+    }
+    void this.pricesCache.save();
   }
 
   // ERC20 tokens
@@ -323,24 +316,6 @@ export class CurrencyService {
     // return cache if not expired
     let cacheKey = network.key + coin.getContractAddress();
     let tokenValue = this.pricesCache.get(cacheKey);
-    let currentTime = Date.now() / 1000;
-    let shouldFetch = false;
-    if (!tokenValue || currentTime - tokenValue.timeValue > TOKEN_VALUE_REFRESH_DELAY) {
-      // Item expired or missing, we will have to fetch fresh data
-      shouldFetch = true;
-    }
-
-    // Logger.log("walletdebug", "Should fetch?", shouldFetch);
-
-    if (shouldFetch && !this.tokenFetchOnGoing) {
-      this.tokenFetchOnGoing = true;
-      void this.uniswapCurrencyService.getTokenUSDValue(network, coin).then(value => {
-        this.tokenFetchOnGoing = false;
-        this.pricesCache.set(cacheKey, {
-          usdValue: value
-        }, currentTime);
-      });
-    }
 
     if (!tokenValue) {
       return null;
@@ -352,16 +327,58 @@ export class CurrencyService {
     }
   }
 
+  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: Network, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+    let cacheKey = network.key + coin.getContractAddress();
+    this.queueUniswapTokenFetch(cacheKey, network, coin);
+    return;
+  }
+
   /**
-   * From a token's valuation in BTC/CNY/USD from elaphant, we "compute" the BTC/USD and CNY/USD exchange
-   * rates used for display.
+   * If not already in queue, queue the given coin to be fetched when the current fetch is over.
+   * Goal: not overload the RPC API with too many coins balance fetch at once.
    */
-  private computeExchangeRatesFromElaphantTokenStats(tokenStats: ElaphantPriceAPITokenStats) {
-    this.exchangeRates["USD"] = 1.0;
-    this.exchangeRates["CNY"] = parseFloat(tokenStats.price_cny) / parseFloat(tokenStats.price_usd);
-    this.exchangeRates["BTC"] = parseFloat(tokenStats.price_btc) / parseFloat(tokenStats.price_usd);
-    // Logger.log('wallet', 'computeExchangeRatesFromElaphantTokenStats ', this.exchangeRates)
-    void this.saveExchangeRates();
+  private uniswapTokenFetchQueue: {
+    [cacheKey: string]: {
+      network: Network;
+      coin: ERC20Coin;
+    }
+  } = {};
+  private onGoingUniswapTokenFetch: string = null; // Cache key of the token being fetched, if any.
+  private queueUniswapTokenFetch(cacheKey: string, network: Network, coin: ERC20Coin) {
+    if (cacheKey in this.uniswapCurrencyService || cacheKey === this.onGoingUniswapTokenFetch) {
+      this.checkFetchNextUniswapToken();
+      return; // Token fetch is already queued, don't queue again.
+    }
+
+    // Add to queue
+    this.uniswapTokenFetchQueue[cacheKey] = { network, coin };
+
+    // Check if a fetch should be started
+    this.checkFetchNextUniswapToken();
+  }
+
+  private checkFetchNextUniswapToken() {
+    if (this.onGoingUniswapTokenFetch === null) {
+      // No on going fetch, check if there is something to fetch
+      let queueFetches = Object.keys(this.uniswapTokenFetchQueue);
+      if (queueFetches.length > 0) {
+        let cacheKey = queueFetches[0];
+        let { network, coin } = this.uniswapTokenFetchQueue[cacheKey];
+
+        this.onGoingUniswapTokenFetch = cacheKey;
+        void this.uniswapCurrencyService.getTokenUSDValue(network, coin).then(value => {
+          this.onGoingUniswapTokenFetch = null;
+          delete this.uniswapTokenFetchQueue[cacheKey];
+
+          let currentTime = Date.now() / 1000;
+          this.pricesCache.set(cacheKey, {
+            usdValue: value
+          }, currentTime);
+
+          this.checkFetchNextUniswapToken();
+        });
+      }
+    }
   }
 
   /**

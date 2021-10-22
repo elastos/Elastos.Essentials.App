@@ -42,7 +42,6 @@ export class TimeBasedPersistentCache<T extends JSONObject> {
    * If set() is called again with an existing key, the existing item is overwritten.
    */
   public set(itemKey: string, data: T, timeValue = 0) {
-
     let existingIndex = this.items.findIndex(i => i.key == itemKey);
 
     let newEntry = {
