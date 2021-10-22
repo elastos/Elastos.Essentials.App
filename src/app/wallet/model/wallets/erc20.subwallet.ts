@@ -30,6 +30,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     private tokenAddress = '';
 
     protected spvConfigEVMCode: string = null; // Ex: ETHHECO, ETHSC
+    private fetchTokenValueTimer: any = null;
 
     public static async newFromCoin(networkWallet: NetworkWallet, coin: Coin): Promise<ERC20SubWallet> {
         const subWallet = await networkWallet.network.createERC20SubWallet(networkWallet, coin.getID());
@@ -83,6 +84,30 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
         // NOT NEEDED ANY MORE - SAVED WHEN ADDING TOKENS - await this.fetchTokenDecimals();
 
         runDelayed(() => this.updateBalance(), 5000);
+    }
+
+    public async startBackgroundUpdates(): Promise<void> {
+        await super.startBackgroundUpdates();
+        void this.fetchAndRearmTokenValue();
+        return;
+    }
+
+    public async stopBackgroundUpdates(): Promise<void> {
+        await super.stopBackgroundUpdates();
+        clearTimeout(this.fetchTokenValueTimer);
+        return;
+    }
+
+    private async fetchAndRearmTokenValue(): Promise<void> {
+        await this.fetchTokenValue();
+
+        this.fetchTokenValueTimer = setTimeout(() => {
+            void this.fetchAndRearmTokenValue();
+        }, 30000);
+    }
+
+    private async fetchTokenValue(): Promise<void> {
+        await CurrencyService.instance.fetchERC20TokenValue(this.getDisplayBalance(), this.coin, this.networkWallet.network, 'USD');
     }
 
     public getUniqueIdentifierOnNetwork(): string {
@@ -164,7 +189,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
-        let amount =  CurrencyService.instance.getERC20TokenValue(value, this.coin, this.networkWallet.network);
+        let amount = CurrencyService.instance.getERC20TokenValue(value, this.coin, this.networkWallet.network);
         if (amount) {
             let decimalplace = 3;
             if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
