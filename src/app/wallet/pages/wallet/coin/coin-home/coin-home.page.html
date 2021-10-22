@@ -38,7 +38,7 @@
                             }}<span class="dot"
                                 *ngIf="!networkWallet.subWallets[subWalletId].getDisplayBalance().isZero() && !networkWallet.subWallets[subWalletId].getDisplayBalance().isNaN() && WalletUtil.getDecimalBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())">.</span>
                             <span class="decimals">{{
-                                WalletUtil.getDecimalBalance(networkWallet.subWallets[subWalletId].getDisplayBalance())
+                                WalletUtil.getDecimalBalance(networkWallet.subWallets[subWalletId].getDisplayBalance(), networkWallet.getDecimalPlaces())
                                 }}</span>
                             <span class="ela"> {{ getCoinBalanceCurrency() }}</span>
                         </h4>

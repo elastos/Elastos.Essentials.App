@@ -164,7 +164,16 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
     }
 
     public getAmountInExternalCurrency(value: BigNumber): BigNumber {
-        return CurrencyService.instance.getERC20TokenValue(value, this.coin, this.networkWallet.network);
+        let amount =  CurrencyService.instance.getERC20TokenValue(value, this.coin, this.networkWallet.network);
+        if (amount) {
+            let decimalplace = 3;
+            if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
+                decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
+            }
+            return amount.decimalPlaces(decimalplace);
+        } else {
+            return amount;
+        }
     }
 
     public getUSDBalance(): BigNumber {

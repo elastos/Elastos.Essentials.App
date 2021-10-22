@@ -91,7 +91,7 @@
                 </ion-row>
                 <div class="total">{{ 'wallet.total-amount' | translate }}</div>
                 <div *ngIf="!currencyService.useCurrency" class="balance">
-                  {{ getFriendlyBalance(networkWallet.getDisplayBalance()) }}
+                  {{ getFriendlyBalance(networkWallet.getDisplayBalance(), networkWallet.getDecimalPlaces()) }}
                   {{ networkWallet.getDisplayTokenName() }}
                 </div>
                 <div *ngIf="currencyService.useCurrency" class="balance">
