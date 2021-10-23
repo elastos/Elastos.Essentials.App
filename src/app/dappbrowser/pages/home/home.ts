@@ -145,11 +145,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
             this.buildFilteredFavorites();
+            this.buildFilteredDApps();
+            this.buildFilteredDAppsWithFavorites();
         });
 
         this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
             this.buildFilteredFavorites();
             this.buildFilteredDApps();
+            this.buildFilteredDAppsWithFavorites();
         });
     }
 
@@ -201,6 +204,47 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         this.dApps = this.allDApps.filter(a => {
             return a.networks.length == 0 || a.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
         });
+    }
+
+    private buildFilteredDAppsWithFavorites() {
+        this.dApps = this.dApps.filter(a => {
+            let urlA = this.getUrlDomain(a.url);
+            return this.favorites.filter(favorite => {
+                let urlB = this.getUrlDomain(favorite.url)
+                return this.isSameUrl(urlA, urlB);
+            }).length === 0
+        });
+    }
+
+    private getUrlDomain(url: string) {
+        if (!url) return '';
+
+        let newUrl = url.toLowerCase();
+        let index = newUrl.indexOf('://');
+        if (index > 0) {
+            newUrl = newUrl.substring(index + 3);
+        }
+
+        if (newUrl.startsWith('www.')) {
+            newUrl = newUrl.substring(4);
+        }
+        return newUrl;
+    }
+
+    private isSameUrl(urlA: string, urlB: string) {
+        if ((urlA.length === 0 || urlB.length === 0) && (urlA.length != urlB.length)) return false;
+
+        let urlIsSame = false;
+        if (urlA.length >= urlB.length) {
+            if (urlA.startsWith(urlB)) {
+                urlIsSame = true;
+            }
+        } else {
+            if (urlB.startsWith(urlA)) {
+                urlIsSame = true;
+            }
+        }
+        return urlIsSame;
     }
 
     public onDAppClicked(app: DAppMenuEntry) {
