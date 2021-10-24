@@ -63,6 +63,8 @@ export class NodesService {
     // Empty List - Used to loop dummy items while data is being fetched
     public emptyList = [];
 
+    private initOngoning = false;
+
     // Storage
     private firstVisit = false;
     public _votes: Vote[] = [
@@ -132,15 +134,24 @@ export class NodesService {
 
     async init() {
         Logger.log("dposvoting", "Initializing the nodes service");
+        if (this.initOngoning) return;
 
+        this.initOngoning = true;
         for (let i = 0; i < 20; i++) {
             this.emptyList.push('');
         }
 
-        // await this.getVisit();
-        await this.getStoredVotes();
-        await this.fetchStats();
-        await this.fetchNodes();
+        try {
+            // await this.getVisit();
+            await this.getStoredVotes();
+            await this.fetchStats();
+            await this.fetchNodes();
+        }
+        catch (err) {
+            Logger.warn('dposvoting', 'Initialize node error:', err)
+        }
+        this.initOngoning = false;
+
         if (!this.isFetchingRewardOrDone) {
             this.isFetchingRewardOrDone = true
             // Too slow, don't await
