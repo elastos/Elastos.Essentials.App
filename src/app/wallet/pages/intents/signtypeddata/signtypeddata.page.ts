@@ -114,7 +114,7 @@ export class SignTypedDataPage implements OnInit {
    */
   async cancelOperation() {
     await this.globalIntentService.sendIntentResponse(
-      null,
+      { data: null },
       this.receivedIntent.intentId
     );
   }
@@ -130,19 +130,31 @@ export class SignTypedDataPage implements OnInit {
     let dataToSign = JSON.parse(this.payloadToBeSigned);
     let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
     let signedData: string = null;
-    if (this.useV4) {
-      signedData = signTypedData_v4(privateKey, {
-        data: dataToSign
-      });
-    }
-    else {
-      signedData = signTypedData(privateKey, {
-        data: dataToSign
-      });
-    }
 
-    void this.globalIntentService.sendIntentResponse({
-      signedData
-    }, this.receivedIntent.intentId);
+    try {
+      if (this.useV4) {
+        signedData = signTypedData_v4(privateKey, {
+          data: dataToSign
+        });
+      }
+      else {
+        signedData = signTypedData(privateKey, {
+          data: dataToSign
+        });
+      }
+
+      void this.globalIntentService.sendIntentResponse({
+        signedData
+      }, this.receivedIntent.intentId);
+    }
+    catch (e) {
+      // Sign method can throw exception in case some provided content has an invalid format
+      // i.e.: array value, with "address" type. In such case, we fail silently.
+
+      await this.globalIntentService.sendIntentResponse(
+        { data: null },
+        this.receivedIntent.intentId
+      );
+    }
   }
 }
