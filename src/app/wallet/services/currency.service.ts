@@ -153,6 +153,7 @@ export class CurrencyService {
   private async loadExchangeRates(): Promise<void> {
     let defaultRates: ExchangeRateCache = {};
     this.exchangeRates = await this.globalStorage.getSetting(null, "wallet", "exchangerates", defaultRates);
+    this.exchangeRates['USD'] = 1;
   }
 
   private async saveExchangeRates(): Promise<void> {
