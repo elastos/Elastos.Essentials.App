@@ -2932,27 +2932,31 @@
    * Source code inspired by the Trust Wallet provider (https://github.com/trustwallet/trust-web3-provider/blob/master/src/index.js).
    */
   class DappBrowserWeb3Provider extends events {
-      constructor() {
+      constructor(chainId, rpcUrl, address) {
           super();
-          this.address = "";
+          this.address = null;
           this.ready = false;
           this.idMapping = new IdMapping(); // Helper class to create and retrieve payload IDs for requests and responses.
           this.callbacks = new Map();
           this.wrapResults = new Map();
-          this.chainId = 20;
+          this.chainId = null;
           this.rpcUrls = {
           // List of chainId -> rpcUrl set by Essentials.
           };
           console.log("Creating an Essentials DappBrowserWeb3Provider");
-          this.emitConnect(this.chainId);
+          this.chainId = chainId;
+          this.setRPCApiEndpoint(chainId, rpcUrl);
+          this.address = address;
+          this.ready = !!(this.chainId && this.address);
+          this.emitConnect(chainId);
       }
       /**
        * Sets the active wallet chain ID and informs listeners about the change.
        */
       setChainId(chainId) {
-          console.log("Setting chain ID to:", this.chainId);
           this.chainId = chainId;
           this.ready = !!(this.chainId && this.address);
+          console.log("Setting chain ID to:", this.chainId);
           this.emit("chainChanged", this.chainId);
           this.emit("networkChanged", this.chainId);
       }
@@ -2960,10 +2964,10 @@
        * Sets the active wallet address and informs listeners about the change.
        */
       setAddress(address) {
-          console.log("Setting address to:", address);
           const lowerAddress = (address || "").toLowerCase();
           this.address = lowerAddress;
           this.ready = !!(this.chainId && this.address);
+          console.log("Setting address to:", address);
           this.emit("accountsChanged", [address]);
           /* TODO
           for (var i = 0; i < window.frames.length; i++) {
