@@ -130,6 +130,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     useExternalBrowser: false,
                     networks: ["elastos"]
                 },
+                {
+                    icon: '/assets/browser/dapps/elk.svg',
+                    title: 'ElkDex by ElkFinance',
+                    description: 'Elk Finance is a decentralized network for cross-chain liquidity. The Elk ecosystem introduces a seamless process for anyone exchanging cryptocurrencies. Our motto is Any chain, anytime, anywhere.™',
+                    url: 'https://app.elk.finance/',
+                    useExternalBrowser: false,
+                    networks: ["elastos", "heco", "bsc", "arbitrum", "avalanchecchain", "fantom", "polygon"]
+                },
             ];
         } else {
             this.allDApps = [];
