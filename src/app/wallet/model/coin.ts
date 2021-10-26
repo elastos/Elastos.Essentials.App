@@ -114,6 +114,10 @@ export class ERC20Coin extends Coin {
     static fromJson(jsonCoin: any): ERC20Coin {
         let coin = new ERC20Coin(null, null, null, -1, null, null);
         Object.assign(coin, jsonCoin);
+
+        // Backward compatibility: fix wrong decimal type (string instead of number)
+        coin.decimals = parseInt("" + coin.decimals);
+
         return coin;
     }
 }
