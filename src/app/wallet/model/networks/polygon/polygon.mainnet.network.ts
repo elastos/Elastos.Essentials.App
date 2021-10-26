@@ -1,9 +1,13 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
+import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
+import { PolygonMainnetUniswapCurrencyProvider } from "./currency/polygon.uniswap.currency.provider";
 import { PolygonAPI, PolygonAPIType } from "./polygon.api";
 
 export class PolygonMainNetNetwork extends EVMNetwork {
+  private uniswapCurrencyProvider: PolygonMainnetUniswapCurrencyProvider = null;
+
   constructor() {
     super(
       "polygon",
@@ -24,6 +28,11 @@ export class PolygonMainNetNetwork extends EVMNetwork {
       ]
     );
 
+    this.uniswapCurrencyProvider = new PolygonMainnetUniswapCurrencyProvider();
     this.averageBlocktime = 5 // 2;
+  }
+
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return this.uniswapCurrencyProvider;
   }
 }
