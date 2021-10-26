@@ -11,6 +11,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -268,6 +269,8 @@ public class DappBrowserClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
+        view.evaluateJavascript(brwoserPlugin.webViewHandler.options.atdocumentstartscript, null);
+
         String newloc = "";
         if (url.startsWith("http:") || url.startsWith("https:") || url.startsWith("file:")) {
             newloc = url;
@@ -301,7 +304,7 @@ public class DappBrowserClient extends WebViewClient {
         brwoserPlugin.injectDeferredObject("window.webkit={messageHandlers:{essentialsExtractor:essentialsExtractor}}", null);
 
         // Get the head from html
-        brwoserPlugin.injectDeferredObject("window.essentialsExtractor.processHTML(document.getElementsByTagName('head')[0].innerHTML)", null);
+        brwoserPlugin.injectDeferredObject("window.essentialsExtractor.processHTML((!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML)", null);
 
         // CB-10395 DappBrowser's WebView not storing cookies reliable to local device storage
         CookieManager.getInstance().flush();

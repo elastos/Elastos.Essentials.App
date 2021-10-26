@@ -44,6 +44,7 @@ class DappBrowserOptions: NSObject {
     @objc public var hidenavigationbuttons = false;
     @objc public var lefttoright = false;
     @objc public var beforeload = "";
+    @objc public var atdocumentstartscript = "";
 
     static func parseOptions(_ options: String?) throws -> DappBrowserOptions {
         let obj = DappBrowserOptions();
