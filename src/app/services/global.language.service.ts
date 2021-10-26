@@ -37,6 +37,11 @@ export class GlobalLanguageService extends GlobalService {
       code: 'zh',
       icon: '/assets/icon/chinese.png',
     },
+    {
+      name: 'Italia',
+      code: 'it',
+      icon: '/assets/icon/italia.png',
+    },
     /*{
       name: 'Deutsche',
       code: 'de',
