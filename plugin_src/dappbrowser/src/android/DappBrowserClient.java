@@ -47,6 +47,8 @@ public class DappBrowserClient extends WebViewClient {
     private Activity activity;
     private String[] allowedSchemes;
     private DappBrowserPlugin brwoserPlugin;
+    private Boolean injected = false;
+    public String originUrl;
 
     public DappBrowserClient(DappBrowserPlugin brwoserPlugin, ProgressBar progressBar, String beforeload) {
         this.webView = webView;
@@ -269,7 +271,9 @@ public class DappBrowserClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        view.evaluateJavascript(brwoserPlugin.webViewHandler.options.atdocumentstartscript, null);
+
+        injected = false;
+        this.originUrl = url;
 
         String newloc = "";
         if (url.startsWith("http:") || url.startsWith("https:") || url.startsWith("file:")) {
@@ -295,7 +299,7 @@ public class DappBrowserClient extends WebViewClient {
         } catch (JSONException ex) {
             LOG.e(LOG_TAG, "URI passed in has caused a JSON error.");
         }
-    }
+   }
 
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
@@ -418,5 +422,12 @@ public class DappBrowserClient extends WebViewClient {
 
         // By default handle 401 like we'd normally do!
         super.onReceivedHttpAuthRequest(view, handler, host, realm);
+    }
+
+    public void onLoadResource (WebView view, String url) {
+        if (!injected && !url.equals(this.originUrl)) {
+            brwoserPlugin.injectDeferredObject(brwoserPlugin.webViewHandler.options.atdocumentstartscript, null);
+            injected = true;
+        }
     }
 }
