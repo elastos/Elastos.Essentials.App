@@ -166,6 +166,10 @@ class WebViewHandler:  NSObject {
        configuration.processPool = CDVWKProcessPoolFactory.shared().sharedProcessPool();
 
        configuration.userContentController.add(self.brwoserPlugin, name:WebViewHandler.DAB_BRIDGE_NAME);
+       
+       //Inject the js script at document start
+       let atDocumentStartScript = WKUserScript(source: options.atdocumentstartscript, injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: true)
+       configuration.userContentController.addUserScript(atDocumentStartScript);
 
        //WKWebView options
        configuration.allowsInlineMediaPlayback = options.allowinlinemediaplayback;
@@ -448,7 +452,7 @@ extension WebViewHandler: WKNavigationDelegate {
 
        self.spinner.stopAnimating();
 
-       webView.evaluateJavaScript("document.getElementsByTagName('head')[0].innerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
+       webView.evaluateJavaScript("(!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
            if error == nil {
                let html = value as? String
                self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.HEAD_EVENT, "data":value]);
@@ -476,6 +480,10 @@ extension WebViewHandler: WKNavigationDelegate {
    @objc func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
        self.webView(webView, failedNavigation: "didFailProvisionalNavigation", withError: error);
    }
+    
+//    @objc func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+//        _ = "webViewWebContentProcessDidTerminate";
+//    }
 }
 
 extension WebViewHandler: WKUIDelegate {

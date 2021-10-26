@@ -70,7 +70,7 @@ public class WebViewHandler {
 
     private static final String MESSAGE_EVENT = "message";
     private static final String PROGRESS_EVENT = "progress";
-    private static final String HEAD_EVENT = "head";
+    public static final String HEAD_EVENT = "head";
     private static final String URL_CHANGED_EVENT = "urlchanged";
     private static final String EXIT_EVENT = "exit";
 
