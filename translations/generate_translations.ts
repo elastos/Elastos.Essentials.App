@@ -22,7 +22,8 @@ class TranslationsLoader {
     static languagesToLoad = [
         "en",
         "zh",
-        "fr"
+        "fr",
+        "it"
     ];
 
     static loadedTranslations: { [lang: string]: any } = {};
