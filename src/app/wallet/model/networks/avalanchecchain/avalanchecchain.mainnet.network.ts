@@ -3,9 +3,13 @@ import { AvalancheCChainNetworkWallet } from "../../wallets/avalanchecchain/aval
 import { MasterWallet } from "../../wallets/masterwallet";
 import { NetworkWallet } from "../../wallets/networkwallet";
 import { EVMNetwork } from "../evm.network";
+import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { AvalancheCChainAPI, AvalancheCChainApiType } from "./avalanchecchain.api";
+import { AvalancheMainnetUniswapCurrencyProvider } from "./currency/avalanche.uniswap.currency.provider";
 
 export class AvalancheCChainMainNetNetwork extends EVMNetwork {
+  private uniswapCurrencyProvider: AvalancheMainnetUniswapCurrencyProvider = null;
+
   constructor() {
     super(
       "avalanchecchain",
@@ -19,6 +23,7 @@ export class AvalancheCChainMainNetNetwork extends EVMNetwork {
       43114,
     );
 
+    this.uniswapCurrencyProvider = new AvalancheMainnetUniswapCurrencyProvider();
     this.averageBlocktime = 5 // 2;
   }
 
@@ -28,5 +33,9 @@ export class AvalancheCChainMainNetNetwork extends EVMNetwork {
     if (startBackgroundUpdates)
       void wallet.startBackgroundUpdates();
     return wallet;
+  }
+
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return this.uniswapCurrencyProvider;
   }
 }
