@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { GetCredentialsQuery } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did';
+import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
@@ -417,6 +418,11 @@ export class DappBrowserService {
                 await this.handleElastosGetCredentials(message);
                 void dappBrowser.show();
                 break;
+            case "elastos_signData":
+                dappBrowser.hide();
+                await this.handleElastosSignData(message);
+                void dappBrowser.show();
+                break;
 
             default:
                 Logger.warn("dappbrowser", "Unhandled message command", message.data.name);
@@ -561,13 +567,36 @@ export class DappBrowserService {
 
             if (!res || !res.result || !res.result.presentation) {
                 console.warn("Missing presentation. The operation was maybe cancelled.");
-                // TODO: SEND IAB ERROR
+                this.sendElastosConnectorIABError(message.data.id, "Missing presentation. The operation was maybe cancelled.");
                 return;
             }
 
             this.sendElastosConnectorIABResponse(
                 message.data.id,
                 res.result.presentation
+            );
+        }
+        catch (e) {
+            this.sendElastosConnectorIABError(message.data.id, e);
+        }
+    }
+
+    private async handleElastosSignData(message: DABMessage): Promise<void> {
+        try {
+            let query = message.data.object as { data: string, jwtExtra?: any, signatureFieldName?: string };
+
+            let res: { result: DID.SignedData };
+            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/didsign", query);
+
+            if (!res || !res.result) {
+                console.warn("Missing signature data. The operation was maybe cancelled.");
+                this.sendElastosConnectorIABError(message.data.id, "Missing signature data. The operation was maybe cancelled.");
+                return;
+            }
+
+            this.sendElastosConnectorIABResponse(
+                message.data.id,
+                res.result
             );
         }
         catch (e) {
