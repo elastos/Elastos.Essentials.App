@@ -75,6 +75,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["elastos"]
                 },
                 {
+                    icon: '/assets/browser/dapps/cyberrepublic.svg',
+                    title: 'Cyber Republic',
+                    description: 'Cyber Republic (CR) is the community that has naturally formed around Elastos.',
+                    url: 'https://www.cyberrepublic.org/',
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
+                },
+                {
                     icon: '/assets/browser/dapps/glidefinance.png',
                     title: 'Glide Finance',
                     description: 'Elastos ecosystem decentralized exchange',
