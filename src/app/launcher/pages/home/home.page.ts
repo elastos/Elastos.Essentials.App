@@ -330,8 +330,9 @@ export class HomePage implements OnInit {
   }
 
   public getFriendlyBalance(balance: BigNumber, decimalplace = -1): string {
-    if (!balance)
-      return "";
+    if (!balance || balance.isNaN()) {
+        return '...';
+    }
 
     if (decimalplace == -1) {
         decimalplace = this.currencyService.selectedCurrency.decimalplace;
