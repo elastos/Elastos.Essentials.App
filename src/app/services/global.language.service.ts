@@ -33,7 +33,7 @@ export class GlobalLanguageService extends GlobalService {
       icon: '/assets/icon/french.jpg',
     },
     {
-      name: 'Italia',
+      name: 'Italiano',
       code: 'it',
       icon: '/assets/icon/italia.png',
     },
