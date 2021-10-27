@@ -29,10 +29,10 @@ export const it = {
         'privacy-intro-setting': 'Più opzioni sulla privacy',
 
         // Other
-        'light-mode-on': 'MODALITÀ LUCE ATTIVA',
+        'light-mode-on': 'MODALITÀ CHIARO ATTIVA',
         'dark-mode-on': 'MODALITÀ SCURO ATTIVA',
         'dark': 'SCURO',
-        'light': 'LUCE',
+        'light': 'CHIARO',
         'log-out': 'Disconnettiti',
         'help': 'Aiuto',
 
@@ -94,9 +94,9 @@ export const it = {
         'startupscreen-home-title': 'Essentials Home',
         'startupscreen-home-description': 'Schermata predefinita con tutte le funzionalità e i widget.',
         'startupscreen-wallets-title': 'Portafogli',
-        'startupscreen-wallets-description': 'Visualizza il tuo portafoglio attivo come schermata iniziale. Se i tuoi fondi sono la tua priorità.',
+        'startupscreen-wallets-description': 'Se i tuoi fondi sono la tua priorità. Visualizza il tuo portafoglio attivo come schermata iniziale.',
         'startupscreen-dapps-title': 'Portale DApps',
-        'startupscreen-dapps-description': 'Non puoi fare a meno di navigare nelle dApps? Questa è modalità fa per te.',
+        'startupscreen-dapps-description': 'Non puoi fare a meno di navigare nelle dApps? Questa è la modalità che fa per te.',
 
         /*********** Privacy page **********/
         'privacy': 'Privacy',
