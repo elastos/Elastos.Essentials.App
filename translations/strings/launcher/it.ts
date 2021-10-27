@@ -29,7 +29,7 @@ export const it = {
         'elastos-voting': 'Votazioni Elastos',
         'other': 'Altro',
         'backup-title': 'Backup dell\'Identità non eseguito',
-        'backup-message': 'Il salvataggio della "chiave cartacea" della tua identità è essenziale e molto importate, poiché è l\'unico modo per recuperarla in un secondo momento.',
+        'backup-message': 'Il salvataggio della "chiave cartacea" della tua identità è essenziale e molto importante, poiché è l\'unico modo per recuperarla in un secondo momento.',
         'backup-button': 'Esegui il backup adesso',
         'active-wallet-connect-sessions': 'Sessioni Wallet Connect Attive',
         'active-network': 'Rete Attiva',
