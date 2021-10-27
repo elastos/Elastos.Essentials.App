@@ -60,7 +60,7 @@ export const it = {
         "hive-not-configured-configure": "Configura",
         "collectibles": "Collezioni",
         "networks": "Reti",
-        "choose-active-network": "Scelta della rete attiva",
+        "choose-active-network": "Scegli la rete attiva",
         "change-wallet": "Cambia portafoglio",
         "wallets": "Portafogli",
         "explore-your-wallets": "Esplora i tuoi portafogli",
@@ -106,7 +106,7 @@ export const it = {
         * Coin Home Page *
         ******************/
         "coin-overview": "Token {{coinName}} - Anteprima",
-        "coin-new-transactions-today": "{{todaysTransactions}} NUOVA/E TRANSAZIONE/I OGGI",
+        "coin-new-transactions-today": "{{todaysTransactions}} NUOVE/A TRANSAZIONI/E OGGI",
         "coin-balance": "Saldo",
         "coin-action-recharge": "TRASFERISCI",
         "coin-action-withdraw": "TRASFERISCI",
@@ -257,7 +257,7 @@ export const it = {
         * Wallet Settings Page *
         ************************/
         "wallet-settings-title": "Impostazioni del portafoglio",
-        "wallet-settings-backup-wallet": "Backup Wallet",
+        "wallet-settings-backup-wallet": "Backup del Portafoglio",
         "wallet-settings-backup-wallet-subtitle": "Visualizza il tuo mnemonico per salvarlo in un luogo sicuro.",
         "wallet-settings-change-name": "Cambia nome",
         "wallet-settings-change-name-subtitle": "Organizza i tuoi portafogli assegnando loro un nome personalizzato.",
@@ -271,7 +271,7 @@ export const it = {
         "wallet-settings-migrate-did1-subtitle": "Trasferisci l'ELA rimanente dalla sidechain DID 1.0 deprecata alla catena principale",
         "wallet-settings-migrate-did1-intro": "Questa è un'operazione una tantum. Questo trasferimento migrerà tutti i tuoi fondi rimanenti dall'ormai deprecato sidechain DID 1.0 Elastos alla mainchain Elastos. Successivamente, il subwallet DID 1.0 scomparirà dal tuo portafoglio.",
         "delete-wallet-confirm-title": "Elimina portafoglio",
-        "delete-wallet-confirm-subtitle": "Il tuo portafoglio verrà eliminato da questo dispositivo. Puoi reimportarlo in un secondo momento, ma assicurati di eseguire prima il backup del tuoo mnemonico.",
+        "delete-wallet-confirm-subtitle": "Il tuo portafoglio verrà eliminato da questo dispositivo. Puoi reimportarlo in un secondo momento, ma assicurati di eseguire prima il backup del tuo mnemonico.",
 
         /************************
         * Wallet Edit Name Page *
@@ -454,7 +454,7 @@ export const it = {
         /*****************
         * Mnemonic Pages *
         *****************/
-        'mnemonic-prompt1': 'Ecco le tue 12 parole segrete (mnemonico). Se li perdi, perdi il portafoglio, quindi scrivili da qualche parte ',
+        'mnemonic-prompt1': 'Ecco le tue 12 parole segrete (mnemonico). Se le perdi, perdi il portafoglio, quindi scrivile da qualche parte ',
         'mnemonic-prompt2': 'in ordine',
         'mnemonic-prompt3': ', e al sicuro!',
         'back-to-setting': 'Torna alle impostazioni',
@@ -473,7 +473,7 @@ export const it = {
         "memory-written-down": "L'ho scritto",
         "mnemonic-verify-sucess": "Mnemonico verificato e confermato",
         "mnemonic-verify-fail": "Il mnemonico non è corretto, inseriscilo di nuovo.",
-        "mnemonic-input-passphrase": "Inserisci la Passphrase associata al tuo Mnemonico",
+        "mnemonic-input-passphrase": "Inserisci la Passphrase da associare al tuo Mnemonico",
         "mnemonic-reinput-passphrase": "Inserisci di nuovo la Passphrase",
         "help:create-password": "Questa è una password opzionale che aumenta la sicurezza del mnemonico. Pensala come la tredicesima parola del mnemonico. Nota che questa password non può essere recuperata se la dimentichi. Inserendo la Passphrase sbagliata, in futuro quando importi il ​​tuo portafoglio non genererà un errore ma creerà un indirizzo di portafoglio diverso e non vedrai i tuoi fondi.",
         "help:import-password": "La Passphrase è una parola a tua scelta che è fortemente associata al tuo mnemonico. Ignora questa opzione se non hai utilizzato una Passphrase durante la creazione del tuo portafoglio.",
@@ -493,7 +493,7 @@ export const it = {
         'view-transactions': 'Transazioni & Trasferimenti',
         'earn': 'Guadagna (Earn)',
         'swap': 'Scambia (Swap)',
-        'bridge': 'Scambia verso altre reit (Bridge)',
+        'bridge': 'Scambia verso altre reti (Bridge)',
         'wallet-coin-earn-title': 'Servizi per Guadagnare',
         'wallet-coin-swap-title': 'Servizi per Scambiare',
         'wallet-coin-bridge-title': 'Servizi per Scambiare verso altre reti',
