@@ -82,6 +82,7 @@
         .left-col {
             align-items: center;
             display: flex;
+            align-self: start;
             flex-direction: column-reverse;
 
             .icon-container {

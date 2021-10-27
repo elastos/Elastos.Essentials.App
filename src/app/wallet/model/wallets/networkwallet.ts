@@ -37,6 +37,8 @@ export abstract class NetworkWallet {
 
     public subWalletsListChange = new Subject<SubWallet<any>>(); // Subwallet added or created
 
+    private fetchMainTokenTimer: any = null;
+
     constructor(
         public masterWallet: MasterWallet,
         public network: Network,
@@ -72,6 +74,8 @@ export abstract class NetworkWallet {
             void subWallet.startBackgroundUpdates();
         }
 
+        void this.fetchAndRearmMainTokenValue();
+
         this.getTransactionDiscoveryProvider().start();
 
         return;
@@ -83,7 +87,25 @@ export abstract class NetworkWallet {
      * switching to another user or network for instance.
      */
     public async stopBackgroundUpdates(): Promise<void> {
+        for (let subWallet of this.getSubWallets()) {
+            void subWallet.stopBackgroundUpdates();
+        }
+
+        clearTimeout(this.fetchMainTokenTimer);
+
         await this.getTransactionDiscoveryProvider().stop();
+    }
+
+    private async fetchAndRearmMainTokenValue(): Promise<void> {
+        await this.fetchMainTokenValue();
+
+        this.fetchMainTokenTimer = setTimeout(() => {
+            void this.fetchAndRearmMainTokenValue();
+        }, 30000);
+    }
+
+    private async fetchMainTokenValue(): Promise<void> {
+        await CurrencyService.instance.fetchMainTokenValue(new BigNumber(1), this.network, 'USD');
     }
 
     /**
@@ -142,6 +164,17 @@ export abstract class NetworkWallet {
             return usdBalance.dividedBy(nativeTokenUSDPrice);
         else
             return new BigNumber(0);
+    }
+
+    // The higher the price, the more decimal places.
+    public getDecimalPlaces() {
+        let decimalPlaces = 3;
+        let nativeTokenUSDPrice = CurrencyService.instance.getMainTokenValue(new BigNumber(1), this.network, 'USD');
+        if (nativeTokenUSDPrice) {
+            const digit = nativeTokenUSDPrice.dividedToIntegerBy(1).toString().length;
+            decimalPlaces = digit < 3 ? 3 : digit + 1;
+        }
+        return decimalPlaces;
     }
 
     /**

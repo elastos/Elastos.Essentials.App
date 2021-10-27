@@ -1,9 +1,13 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
+import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
+import { FantomMainnetUniswapCurrencyProvider } from "./currency/fantom.uniswap.currency.provider";
 import { FantomAPI, FantomApiType } from "./fantom.api";
 
 export class FantomMainNetNetwork extends EVMNetwork {
+  private uniswapCurrencyProvider: FantomMainnetUniswapCurrencyProvider = null;
+
   constructor() {
     super(
       "fantom",
@@ -22,6 +26,11 @@ export class FantomMainNetNetwork extends EVMNetwork {
       ]
     );
 
+    this.uniswapCurrencyProvider = new FantomMainnetUniswapCurrencyProvider();
     this.averageBlocktime = 5 // 1;
+  }
+
+  public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return this.uniswapCurrencyProvider;
   }
 }

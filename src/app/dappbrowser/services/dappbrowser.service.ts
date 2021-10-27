@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { GetCredentialsQuery } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/did';
+import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
@@ -89,13 +90,6 @@ export class DappBrowserService {
         // NOTE: Make sure to load everything before creating the browser, to be able to synchronously
         // inject the code in the "loadstart" event. Otherwise, the target dapp code loads partially
         // or fully before our injection and the web3 provider is sometimes not found.
-
-        // Prepare our web3 provider bridge and elastos connectors for injection
-        Logger.log("dappbrowser", "Loading the IAB web3 provider");
-        this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
-
-        Logger.log("dappbrowser", "Loading the IAB elastos connector");
-        this.elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
     }
 
     public setClient(dabClient: DappBrowserClient) {
@@ -124,10 +118,41 @@ export class DappBrowserService {
             target = "_webview";
         }
 
+        let activeNetwork = WalletNetworkService.instance.activeNetwork.value;
+
+        // Get the active network chain ID
+        this.activeChainID = activeNetwork.getMainChainID();
+
+        // Get the active network RPC URL
+        this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
+
+        // Get the active wallet address
+        let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
+        this.userAddress = await subwallet.createAddress();
+
+        // Prepare our web3 provider bridge and elastos connectors for injection
+        Logger.log("dappbrowser", "Loading the IAB web3 provider");
+        this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
+        this.web3ProviderCode = this.web3ProviderCode + `
+        console.log('Elastos Essentials Web3 provider is being created');
+        window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
+        window.web3 = {
+            currentProvider: window.ethereum
+        };
+        console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3);`;
+
+        Logger.log("dappbrowser", "Loading the IAB elastos connector");
+        this.elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
+        this.elastosConnectorCode = this.elastosConnectorCode + "\
+        console.log('Elastos Essentials dapp browser connector is being created'); \
+        window.elastos = new EssentialsDABConnector();\
+        console.log('Elastos Essentials dapp browser connector is injected', window.elastos);";
+
         var options: any = {
             titlebarheight: 50,
             backgroundcolor: "#bfbfbf",
             hidden: (target == "_webview"),
+            atdocumentstartscript: this.web3ProviderCode + this.elastosConnectorCode, // Inject the web3 provider and connector at document start
         }
 
         if (title && title != null) {
@@ -155,12 +180,12 @@ export class DappBrowserService {
         Logger.log("dappbrowser", "Received event", event);
         switch (event.type) {
             case "loadstart":
+                await this.handleLoadStartEvent(event);
                 if (this.dabClient != null && this.dabClient.onLoadStart) {
                     this.dabClient.onLoadStart();
                 }
                 break;
             case "loadstop":
-                await this.injectWeb3Provider(event);
                 await this.handleLoadStopEvent(event as DABLoadStop);
                 if (this.dabClient != null && this.dabClient.onLoadStop) {
                     this.dabClient.onLoadStop(event as DABLoadStop);
@@ -216,31 +241,63 @@ export class DappBrowserService {
         // Updated the browsed url
         this.url = event.url;
 
-        // Inject the web3 provider
-        Logger.log("dappbrowser", "Executing Web3 provider injection script");
-        void dappBrowser.executeScript({
-            code: this.web3ProviderCode + "\
-            console.log('Elastos Essentials Web3 provider is being created'); \
-            window.ethereum = new DappBrowserWeb3Provider();\
-            window.web3 = { \
-                currentProvider: window.ethereum\
-            };\
-            console.log('Elastos Essentials Web3 provider is injected', window.ethereum, window.web3); \
-        "});
+
+
+        // // Inject the web3 provider
+        // Logger.log("dappbrowser", "Executing Web3 provider injection script");
+        // void dappBrowser.executeScript({code: this.web3ProviderCode});
 
         // Inject the Elastos connectivity connector
         Logger.log("dappbrowser", "Executing Elastos connector injection script");
-        void dappBrowser.executeScript({
-            code: this.elastosConnectorCode + "\
-            console.log('Elastos Essentials dapp browser connector is being created'); \
-            window.elastos = new EssentialsDABConnector();\
-            console.log('Elastos Essentials dapp browser connector is injected', window.elastos); \
-        "});
-
+        void dappBrowser.executeScript({ code: this.elastosConnectorCode });
         Logger.log("dappbrowser", "Injection completed");
 
-        // TODO: window.ethereum.setAddress() should maybe be called only when receiving a eth_requestAccounts request.
+        // Manually send current network and wallet first (behaviorsubject gets the event only for the first
+        // dapp opened)
+        //console.log("ACTIVE NETWORK", WalletNetworkService.instance.activeNetwork.value)
+        //this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
+        //void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
 
+        // Remember this application as browsed permanently.
+        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
+
+        return;
+    }
+
+    private sendActiveNetworkToDApp(activeNetwork: Network) {
+        // Get the active network chain ID
+        this.activeChainID = activeNetwork.getMainChainID();
+
+        // Get the active network RPC URL
+        this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
+
+        Logger.log("dappbrowser", "Sending active network to dapp", activeNetwork.key, this.activeChainID, this.rpcUrl);
+
+        void dappBrowser.executeScript({
+            code: `
+                window.ethereum.setRPCApiEndpoint(${this.activeChainID}, '${this.rpcUrl}');
+                window.ethereum.setChainId(${this.activeChainID});
+            `});
+    }
+
+    private async sendActiveWalletToDApp(networkWallet: NetworkWallet) {
+        // Get the active wallet address
+        let subwallet = networkWallet.getMainEvmSubWallet();
+        this.userAddress = await subwallet.createAddress();
+
+        Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
+
+        void dappBrowser.executeScript({
+            code: " \
+                window.ethereum.setAddress('"+ this.userAddress + "');\
+            "});
+    }
+
+    private async handleLoadStartEvent(event: DappBrowserPlugin.DappBrowserEvent) {
+        await this.injectWeb3Provider(event);
+    }
+
+    private handleLoadStopEvent(event: DABLoadStop): Promise<void> {
         if (!this.networkSubscription) {
             this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
                 this.sendActiveNetworkToDApp(activeNetwork);
@@ -253,43 +310,7 @@ export class DappBrowserService {
             });
         }
 
-        // Manually send current network and wallet first (behaviorsubject gets the event only for the first
-        // dapp opened)
-        this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
-        void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
-
-        // Remember this application as browsed permanently.
-        this.activeBrowsedAppInfo.next(await this.storageService.saveBrowsedAppInfo(this.url, "", "", ""));
-
         return;
-    }
-
-    private sendActiveNetworkToDApp(activeNetwork: Network) {
-        // Get the active netwok chain ID
-        this.activeChainID = activeNetwork.getMainChainID();
-
-        // Get the active network RPC URL
-        this.rpcUrl = activeNetwork.getMainEvmRpcApiUrl();
-
-        void dappBrowser.executeScript({
-            code: " \
-                window.ethereum.setChainId("+ this.activeChainID + "); \
-                window.ethereum.setRPCApiEndpoint("+ this.activeChainID + ", '" + this.rpcUrl + "');\
-            "});
-    }
-
-    private async sendActiveWalletToDApp(networkWallet: NetworkWallet) {
-        // Get the active wallet address
-        let subwallet = networkWallet.getMainEvmSubWallet();
-        this.userAddress = await subwallet.createAddress();
-
-        void dappBrowser.executeScript({
-            code: " \
-                window.ethereum.setAddress('"+ this.userAddress + "');\
-            "});
-    }
-
-    private async handleLoadStopEvent(info: DABLoadStop): Promise<void> {
     }
 
     private async handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
@@ -395,6 +416,11 @@ export class DappBrowserService {
             case "elastos_getCredentials":
                 dappBrowser.hide();
                 await this.handleElastosGetCredentials(message);
+                void dappBrowser.show();
+                break;
+            case "elastos_signData":
+                dappBrowser.hide();
+                await this.handleElastosSignData(message);
                 void dappBrowser.show();
                 break;
 
@@ -541,13 +567,36 @@ export class DappBrowserService {
 
             if (!res || !res.result || !res.result.presentation) {
                 console.warn("Missing presentation. The operation was maybe cancelled.");
-                // TODO: SEND IAB ERROR
+                this.sendElastosConnectorIABError(message.data.id, "Missing presentation. The operation was maybe cancelled.");
                 return;
             }
 
             this.sendElastosConnectorIABResponse(
                 message.data.id,
                 res.result.presentation
+            );
+        }
+        catch (e) {
+            this.sendElastosConnectorIABError(message.data.id, e);
+        }
+    }
+
+    private async handleElastosSignData(message: DABMessage): Promise<void> {
+        try {
+            let query = message.data.object as { data: string, jwtExtra?: any, signatureFieldName?: string };
+
+            let res: { result: DID.SignedData };
+            res = await GlobalIntentService.instance.sendIntent("https://did.elastos.net/didsign", query);
+
+            if (!res || !res.result) {
+                console.warn("Missing signature data. The operation was maybe cancelled.");
+                this.sendElastosConnectorIABError(message.data.id, "Missing signature data. The operation was maybe cancelled.");
+                return;
+            }
+
+            this.sendElastosConnectorIABResponse(
+                message.data.id,
+                res.result
             );
         }
         catch (e) {

@@ -520,7 +520,7 @@ class DIDPublishingManager {
     }
 
     public async savePersistentInfoAndEmitStatus(persistentInfo: PersistentInfo) {
-        console.log("DEBUG savePersistentInfoAndEmitStatus", persistentInfo);
+        //console.log("DEBUG savePersistentInfoAndEmitStatus", persistentInfo);
         await this.savePersistentInfo(persistentInfo);
         this.emitPublicationStatusChangeFromPersistentInfo();
     }

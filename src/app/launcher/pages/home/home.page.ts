@@ -329,10 +329,14 @@ export class HomePage implements OnInit {
     void this.walletNetworkUIService.chooseActiveNetwork();
   }
 
-  public getFriendlyBalance(balance: BigNumber): string {
-    if (!balance)
-      return "";
+  public getFriendlyBalance(balance: BigNumber, decimalplace = -1): string {
+    if (!balance || balance.isNaN()) {
+        return '...';
+    }
 
-    return balance.decimalPlaces(4).toString();
+    if (decimalplace == -1) {
+        decimalplace = this.currencyService.selectedCurrency.decimalplace;
+    }
+    return balance.decimalPlaces(decimalplace).toString();
   }
 }

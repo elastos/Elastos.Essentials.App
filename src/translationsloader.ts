@@ -1,7 +1,7 @@
 import { Logger } from "./app/logger";
 
 export class TranslationsLoader {
-    private static supportedLanguages = ['en', 'zh', 'fr'];
+    private static supportedLanguages = ['en', 'zh', 'fr', 'it'];
 
     public static async getTranslations(lang: string): Promise<{ [key: string]: string }> {
         // Fallback to english if the target language is not supported.

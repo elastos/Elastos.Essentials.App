@@ -79171,10 +79171,18 @@
 
 	class DIDOperations {
 	    static async getCredentials(query) {
-	        console.log("getCredentials Request received", query);
+	        console.log("getCredentials request received", query);
 	        let response = await essentialsBridge.postMessage("elastos_getCredentials", query);
 	        console.log("getCredentials Response received", response);
 	        return VerifiablePresentation.parse(JSON.stringify(response));
+	    }
+	    static async signData(data, jwtExtra, signatureFieldName) {
+	        console.log("signData request received", data, jwtExtra, signatureFieldName);
+	        let response = await essentialsBridge.postMessage("elastos_signData", {
+	            data, jwtExtra, signatureFieldName
+	        });
+	        console.log("signData Response received", response);
+	        return response;
 	    }
 	}
 
@@ -79196,11 +79204,14 @@
 	    async getCredentials(query) {
 	        return DIDOperations.getCredentials(query);
 	    }
+	    issueCredential(holder, types, subject, identifier, expirationDate) {
+	        throw new Error("Method not implemented.");
+	    }
 	    importCredentials(credentials, options) {
 	        throw new Error("Method not implemented.");
 	    }
 	    signData(data, jwtExtra, signatureFieldName) {
-	        throw new Error("Method not implemented.");
+	        return DIDOperations.signData(data, jwtExtra, signatureFieldName);
 	    }
 	    deleteCredentials(credentialIds, options) {
 	        throw new Error("Method not implemented.");

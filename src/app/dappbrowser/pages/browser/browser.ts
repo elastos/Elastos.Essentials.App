@@ -4,6 +4,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -24,7 +25,7 @@ export class BrowserPage implements DappBrowserClient {
 
     public shot: string = null;
 
-    private titleBarIconClickedListener: (no: number) => void;
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
     private backButtonSub: Subscription;
 
     constructor(
@@ -46,23 +47,23 @@ export class BrowserPage implements DappBrowserClient {
         this.dappbrowserService.setClient(this);
         this.titleBar.setTitle(this.dappbrowserService.title);
         this.titleBar.setCloseMode(true);
-        this.titleBar.setMenuVisible(true);
+        this.titleBar.setBrowserMode(true);
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (no) => {
-            switch (no) {
-                case 0:
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+            switch (icon.iconPath) {
+                case BuiltInIcon.CLOSE:
                     void dappBrowser.close();
                     break;
-                case 1:
+                case BuiltInIcon.BACK:
                     void this.onGoBack();
                     break;
-                case 2:
+                case BuiltInIcon.NETWORK:
                     dappBrowser.hide();
                     await this.walletNetworkUIService.chooseActiveNetwork();
                     void dappBrowser.show();
                     break;
-                case 3:
+                case BuiltInIcon.VERTICAL_MENU:
                     this.onMenu();
                     break;
             }
@@ -127,20 +128,5 @@ export class BrowserPage implements DappBrowserClient {
 
     onMenu() {
         void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
-    }
-    /*
-        onLoadStop(info: DABLoadStop) {
-        }
-     */
-    getIconPath(no: number) {
-        // Replace built-in icon path placeholders with real picture path
-        switch (no) {
-            case 0:
-                return this.theme.darkMode ? 'assets/components/titlebar/darkmode/elastos.svg' : 'assets/components/titlebar/elastos.svg';
-            case 1:
-                return this.theme.darkMode ? 'assets/components/titlebar/darkmode/back.svg' : 'assets/components/titlebar/back.svg';
-            case 2:
-                return this.theme.darkMode ? 'assets/components/titlebar/darkmode/vertical_menu.svg' : 'assets/components/titlebar/vertical_menu.svg';
-        }
     }
 }

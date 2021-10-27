@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 import BigNumber from 'bignumber.js';
+import { CurrencyService } from '../services/currency.service';
 
 export class WalletUtil {
   static isInvalidWalletName(text): boolean {
@@ -38,14 +39,23 @@ export class WalletUtil {
     return balance.dividedToIntegerBy(1).toString();
   }
 
-  public static getDecimalBalance(balance: BigNumber): string {
+  public static getDecimalBalance(balance: BigNumber, decimalplace = -1): string {
     if (!balance || balance.isNaN()) {
       return '';
     }
 
+    if (decimalplace == -1) {
+        decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
+        if (!decimalplace) {
+            decimalplace = 3;
+        }
+    }
+    let minBalanceToShow = 1 / Math.pow(10, decimalplace);
     const decimalBalance = balance.modulo(1);
-    if (decimalBalance.gt(0.001)) {
-      const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, 5);
+    if (decimalBalance.gt(minBalanceToShow)) {
+      let endIndex = decimalplace + 2;
+
+      const fixedDecimalBalance = decimalBalance.toNumber().toString().slice(2, endIndex);
       return fixedDecimalBalance;
     } else if (decimalBalance.isZero()) {
       return '';

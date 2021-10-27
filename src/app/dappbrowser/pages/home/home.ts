@@ -3,6 +3,7 @@ import { Component, NgZone, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -42,7 +43,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     private favoritesSubscription: Subscription = null;
     private networkSubscription: Subscription = null;
 
-    private titleBarIconClickedListener: (no: number) => void;
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
         public translate: TranslateService,
@@ -71,6 +72,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
                     url: 'https://feeds.trinity-feeds.app/nav/?page=home',
                     useExternalBrowser: true,
+                    networks: ["elastos"]
+                },
+                {
+                    icon: '/assets/browser/dapps/cyberrepublic.svg',
+                    title: 'Cyber Republic',
+                    description: 'Cyber Republic (CR) is the community that has naturally formed around Elastos.',
+                    url: 'https://www.cyberrepublic.org/',
+                    useExternalBrowser: false,
                     networks: ["elastos"]
                 },
                 {
@@ -129,6 +138,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     useExternalBrowser: false,
                     networks: ["elastos"]
                 },
+                {
+                    icon: '/assets/browser/dapps/elk.svg',
+                    title: 'ElkDex by ElkFinance',
+                    description: 'Elk Finance is a decentralized network for cross-chain liquidity. The Elk ecosystem introduces a seamless process for anyone exchanging cryptocurrencies. Our motto is Any chain, anytime, anywhere.™',
+                    url: 'https://app.elk.finance/',
+                    useExternalBrowser: false,
+                    networks: ["elastos", "heco", "bsc", "arbitrum", "avalanchecchain", "fantom", "polygon"]
+                },
             ];
         } else {
             this.allDApps = [];
@@ -139,16 +156,19 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
     ionViewWillEnter() {
         this.setTheme(this.theme.darkMode);
-        this.titleBar.setMenuVisible(false);
+        this.titleBar.setBrowserMode(false);
         this.titleBar.setCloseMode(false);
 
         this.favoritesSubscription = this.favoritesService.favoritesSubject.subscribe(favorites => {
             this.buildFilteredFavorites();
+            this.buildFilteredDApps();
+            this.buildFilteredDAppsWithFavorites();
         });
 
         this.networkSubscription = this.walletNetworkService.activeNetwork.subscribe(network => {
             this.buildFilteredFavorites();
             this.buildFilteredDApps();
+            this.buildFilteredDAppsWithFavorites();
         });
     }
 
@@ -173,16 +193,13 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
 
         this.globalStartupService.setStartupScreenReady();
 
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (no) => {
-            switch (no) {
-                case 0:
+        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            switch (icon.iconPath) {
+                case BuiltInIcon.ELASTOS:
                     void this.nav.goToLauncher();
                     break;
-                case 1:
+                case BuiltInIcon.BACK:
                     void this.nav.navigateBack();
-                    break;
-                case 3:
-                    void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/menu');
                     break;
             }
         });
@@ -203,6 +220,47 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         this.dApps = this.allDApps.filter(a => {
             return a.networks.length == 0 || a.networks.indexOf(this.walletNetworkService.activeNetwork.value.key) >= 0;
         });
+    }
+
+    private buildFilteredDAppsWithFavorites() {
+        this.dApps = this.dApps.filter(a => {
+            let urlA = this.getUrlDomain(a.url);
+            return this.favorites.filter(favorite => {
+                let urlB = this.getUrlDomain(favorite.url)
+                return this.isSameUrl(urlA, urlB);
+            }).length === 0
+        });
+    }
+
+    private getUrlDomain(url: string) {
+        if (!url) return '';
+
+        let newUrl = url.toLowerCase();
+        let index = newUrl.indexOf('://');
+        if (index > 0) {
+            newUrl = newUrl.substring(index + 3);
+        }
+
+        if (newUrl.startsWith('www.')) {
+            newUrl = newUrl.substring(4);
+        }
+        return newUrl;
+    }
+
+    private isSameUrl(urlA: string, urlB: string) {
+        if ((urlA.length === 0 || urlB.length === 0) && (urlA.length != urlB.length)) return false;
+
+        let urlIsSame = false;
+        if (urlA.length >= urlB.length) {
+            if (urlA.startsWith(urlB)) {
+                urlIsSame = true;
+            }
+        } else {
+            if (urlB.startsWith(urlA)) {
+                urlIsSame = true;
+            }
+        }
+        return urlIsSame;
     }
 
     public onDAppClicked(app: DAppMenuEntry) {
@@ -246,16 +304,6 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
             }
         });
     }
-
-    // '_blank' mode
-    // onExit(mode?: string) {
-    //     this.zone.run(() => {
-    //         this.dabRunning = false;
-    //     });
-    //     if (mode) {
-    //         void this.nav.goToLauncher();
-    //     }
-    // }
 
     onMenu() {
         dappBrowser.hide();

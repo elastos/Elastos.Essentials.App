@@ -81,6 +81,10 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     return;
   }
 
+  public stopBackgroundUpdates(): Promise<void> {
+    return;
+  }
+
   public toSerializedSubWallet(): SerializedSubWallet {
     return SerializedSubWallet.fromSubWallet(this);
   }
