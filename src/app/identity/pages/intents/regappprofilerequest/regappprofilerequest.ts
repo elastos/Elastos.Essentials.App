@@ -1,20 +1,20 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
-import { DIDService } from '../../../services/did.service';
-import { UXService } from '../../../services/ux.service';
+import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { DIDURL } from '../../../model/didurl.model';
-import { AuthService } from '../../../services/auth.service';
-import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
-import { ProfileService } from '../../../services/profile.service';
-import { DIDSyncService } from '../../../services/didsync.service';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
-import { RegAppProfileIdentityIntent } from '../../../model/identity.intents';
-import { IntentReceiverService } from '../../../services/intentreceiver.service';
-import { Logger } from 'src/app/logger';
 import { Subscription } from 'rxjs';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { Events } from 'src/app/services/events.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { DIDURL } from '../../../model/didurl.model';
+import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
+import { RegAppProfileIdentityIntent } from '../../../model/identity.intents';
+import { AuthService } from '../../../services/auth.service';
+import { DIDService } from '../../../services/did.service';
+import { DIDSyncService } from '../../../services/didsync.service';
+import { IntentReceiverService } from '../../../services/intentreceiver.service';
+import { ProfileService } from '../../../services/profile.service';
+import { UXService } from '../../../services/ux.service';
 
 // TODO: Show credential(s) content that will be created to the user. He needs to make sure for example
 // that no shared credential will overwrite existing ones like "name" or "email"...
@@ -75,7 +75,7 @@ export class RegisterApplicationProfileRequestPage {
     // Listen to publication result event to know when the wallet app returns from the "didtransaction" intent
     // request initiated by publish() on a did document.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.publishresultSubscription = this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent)=>{
+    this.publishresultSubscription = this.events.subscribe("diddocument:publishresultpopupclosed", async (result: DIDDocumentPublishEvent) => {
       Logger.log("identity", "diddocument:publishresultpopupclosed event received in regappprofile request", result);
       if (result.published) {
         await this.sendIntentResponse();
@@ -108,7 +108,7 @@ export class RegisterApplicationProfileRequestPage {
 
   acceptRequest() {
     // Prompt password if needed
-    void AuthService.instance.checkPasswordThenExecute(async ()=>{
+    void AuthService.instance.checkPasswordThenExecute(async () => {
       let password = AuthService.instance.getCurrentUserPassword();
 
       // Create the main application profile credential
@@ -118,19 +118,19 @@ export class RegisterApplicationProfileRequestPage {
       await this.createIndependantCredentials(password);
 
       // Publish new credential if permitted
-      if(this.shouldPublishOnSidechain) {
+      if (this.shouldPublishOnSidechain) {
         await this.didSyncService.publishActiveDIDDIDDocument(password);
       } else {
         await this.sendIntentResponse();
       }
-    }, ()=>{
+    }, () => {
       // Cancelled
     });
   }
 
   async sendIntentResponse() {
     // Send the intent response as everything is completed
-    await this.appServices.sendIntentResponse("registerapplicationprofile", {}, this.receivedIntent.intentId);
+    await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
   }
 
   async createMainApplicationProfileCredential(password: string) {
@@ -143,17 +143,17 @@ export class RegisterApplicationProfileRequestPage {
     let customCredentialTypes = [
       "ApplicationProfileCredential"
     ];
-    this.receivedIntent.params.customcredentialtypes.map((type)=>customCredentialTypes.push(type));
+    this.receivedIntent.params.customcredentialtypes.map((type) => customCredentialTypes.push(type));
 
     // Map each parameter provided by the app as a custom parameter for the main credential
     let props = {};
-    Object.keys(this.receivedIntent.params).map((key)=>{
+    Object.keys(this.receivedIntent.params).map((key) => {
       // Skip non-user keys
       if (key == "identifier" || key == "sharedclaims" || key == "customcredentialtypes" || key == "connectactiontitle")
         return;
 
       let value = this.receivedIntent.params[key];
-      Logger.log("identity", "Including field in app profile credential: key:",key," value:",value);
+      Logger.log("identity", "Including field in app profile credential: key:", key, " value:", value);
       props[key] = value;
     });
 
@@ -166,7 +166,7 @@ export class RegisterApplicationProfileRequestPage {
     Logger.log("identity", "Credential properties:", props);
 
     // Create and append the new ApplicationProfileCredential credential to the local store.
-    let credentialId = new DIDURL("#"+credentialTitle);
+    let credentialId = new DIDURL("#" + credentialTitle);
     let createdCredential = await this.didService.getActiveDid().upsertCredential(credentialId, props, password, true, customCredentialTypes);
 
     // Add this credential to the DID document.
@@ -183,9 +183,9 @@ export class RegisterApplicationProfileRequestPage {
       Object.keys(sharedClaim).map(async (key) => {
         let value = sharedClaim[key];
 
-        Logger.log("identity", "Creating independant credential with key "+key+" and value:", value);
-        let credentialId = new DIDURL("#"+key);
-        let createdCredential: DIDPlugin.VerifiableCredential = await this.didService.getActiveDid().upsertCredential(credentialId, {key:value}, password, true);
+        Logger.log("identity", "Creating independant credential with key " + key + " and value:", value);
+        let credentialId = new DIDURL("#" + key);
+        let createdCredential: DIDPlugin.VerifiableCredential = await this.didService.getActiveDid().upsertCredential(credentialId, { key: value }, password, true);
         this.credentials.push(createdCredential);
         // Add this credential to the DID document.
         await this.didService.getActiveDid().getDIDDocument().updateOrAddCredential(createdCredential, password);
@@ -195,6 +195,6 @@ export class RegisterApplicationProfileRequestPage {
   }
 
   async rejectRequest() {
-    await this.appServices.sendIntentResponse("registerapplicationprofile", {status: 'cancelled'}, this.receivedIntent.intentId);
+    await this.appServices.sendIntentResponse({ status: 'cancelled' }, this.receivedIntent.intentId);
   }
 }

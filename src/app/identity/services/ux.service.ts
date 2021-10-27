@@ -1,10 +1,10 @@
 import { Injectable, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { DIDService } from './did.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { Events } from 'src/app/services/events.service';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { DIDService } from './did.service';
 
 
 enum MessageType {
@@ -96,7 +96,7 @@ export class UXService {
         }
     }
 
-    public sendIntentResponse(action, result, intentId, navigateBack = true): Promise<void> {
+    public sendIntentResponse(result: any, intentId: number, navigateBack = true): Promise<void> {
         return this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     }
 }

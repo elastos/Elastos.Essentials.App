@@ -239,20 +239,20 @@ export class CredentialDeleteRequestPage {
   private finalizeRequest(deletedCredentialsIds: string[]) {
     void this.popupProvider.ionicAlert(this.translate.instant('identity.creddelete-success-title'), this.translate.instant('identity.creddelete-success'), this.translate.instant('identity.creddelete-success-done')).then(async () => {
       Logger.log('Identity', "Sending creddelete intent response for intent id " + this.receivedIntent.intentId)
-      await this.appServices.sendIntentResponse("creddelete", {
+      await this.appServices.sendIntentResponse({
         deletedcredentialsids: deletedCredentialsIds
       }, this.receivedIntent.intentId);
     })
   }
 
   async rejectRequest() {
-    await this.appServices.sendIntentResponse("creddelete", {
+    await this.appServices.sendIntentResponse({
       deletedcredentialsids: []
     }, this.receivedIntent.intentId);
   }
 
   async failingRequest() {
-    await this.appServices.sendIntentResponse("creddelete", {
+    await this.appServices.sendIntentResponse({
       deletedcredentialsids: []
     }, this.receivedIntent.intentId);
   }

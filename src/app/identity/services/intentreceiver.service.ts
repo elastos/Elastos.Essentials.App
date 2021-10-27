@@ -59,7 +59,7 @@ export class IntentReceiverService {
                 if (this.checkAppIdCredIssueIntentParams(intent)) {
                     if (!GlobalDIDSessionsService.signedInDIDString) {
                         Logger.log("identity", "No signed in identity. Returning no app id credential");
-                        await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
+                        await this.uxService.sendIntentResponse({}, intent.intentId);
                     }
                     else {
                         await this.uxService.loadIdentityAndShow(false);
@@ -239,7 +239,7 @@ export class IntentReceiverService {
 
         Logger.error('identity', errorMessage);
 
-        await this.uxService.sendIntentResponse(intent.action, {}, intent.intentId);
+        await this.uxService.sendIntentResponse({}, intent.intentId);
     }
 
     private checkCredAccessIntentParams(intent: EssentialsIntentPlugin.ReceivedIntent) {
@@ -488,13 +488,13 @@ export class IntentReceiverService {
             if (status.didString == didString) {
                 if (status.status == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED) {
                     pubStatusSub.unsubscribe();
-                    void this.uxService.sendIntentResponse(intent.action, {
+                    void this.uxService.sendIntentResponse({
                         txid: status.txId
                     }, intent.intentId);
                 }
                 else if (status.status == DIDPublicationStatus.FAILED_TO_PUBLISH) {
                     pubStatusSub.unsubscribe();
-                    void this.uxService.sendIntentResponse(intent.action, {
+                    void this.uxService.sendIntentResponse({
                         txid: null
                     }, intent.intentId);
                 }
@@ -510,7 +510,7 @@ export class IntentReceiverService {
                 Logger.log("identity", "(intent) DID publication complete, sending intent response");
 
                 publicationStatus.unsubscribe();
-                void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+                void this.uxService.sendIntentResponse({
                     txid: status.txId
                 }, this.receivedIntent.intentId);
             }
@@ -518,7 +518,7 @@ export class IntentReceiverService {
                 Logger.warn("identity", "(intent) DID publication failure, sending intent response");
 
                 publicationStatus.unsubscribe();
-                void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+                void this.uxService.sendIntentResponse({
                     txid: null
                 }, this.receivedIntent.intentId);
             }
@@ -531,7 +531,7 @@ export class IntentReceiverService {
         if (!publicationStarted) {
             Logger.warn("identity", "(intent) DID publication cancelled, sending intent response");
             publicationStatus.unsubscribe();
-            void this.uxService.sendIntentResponse(this.receivedIntent.action, {
+            void this.uxService.sendIntentResponse({
                 txid: null
             }, this.receivedIntent.intentId);
         }

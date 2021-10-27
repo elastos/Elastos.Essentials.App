@@ -1,29 +1,29 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { DIDService } from '../../../services/did.service';
-import { Profile } from '../../../model/profile.model';
-import { UXService } from '../../../services/ux.service';
-import { AuthService } from '../../../services/auth.service';
-import { VerifiableCredential } from '../../../model/verifiablecredential.model';
-import { TranslateService } from '@ngx-translate/core';
-import { ProfileService } from '../../../services/profile.service';
-import { ExpirationService, ExpiredItem } from '../../../services/expiration.service';
-import { DIDDocument } from '../../../model/diddocument.model';
-import { BasicCredentialsService } from '../../../services/basiccredentials.service';
-import { DIDSyncService } from '../../../services/didsync.service';
-import { DID } from '../../../model/did.model';
 import { AlertController, PopoverController } from '@ionic/angular';
-import { SuccessComponent } from '../../../components/success/success.component';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { CredAccessIdentityIntent } from '../../../model/identity.intents';
-import { IntentReceiverService } from '../../../services/intentreceiver.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { TranslateService } from '@ngx-translate/core';
 import { isNil } from 'lodash-es';
-import { Logger } from 'src/app/logger';
+import { Subscription } from 'rxjs';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { PopupProvider } from 'src/app/identity/services/popup';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { SuccessComponent } from '../../../components/success/success.component';
+import { DID } from '../../../model/did.model';
+import { DIDDocument } from '../../../model/diddocument.model';
+import { CredAccessIdentityIntent } from '../../../model/identity.intents';
+import { Profile } from '../../../model/profile.model';
+import { VerifiableCredential } from '../../../model/verifiablecredential.model';
+import { AuthService } from '../../../services/auth.service';
+import { BasicCredentialsService } from '../../../services/basiccredentials.service';
+import { DIDService } from '../../../services/did.service';
+import { DIDSyncService } from '../../../services/didsync.service';
+import { ExpirationService, ExpiredItem } from '../../../services/expiration.service';
+import { IntentReceiverService } from '../../../services/intentreceiver.service';
+import { ProfileService } from '../../../services/profile.service';
+import { UXService } from '../../../services/ux.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -42,14 +42,14 @@ type RequestDapp = {
   jwtExpirationDays: any
 }
 
-type IssuerDisplayEntry  = {
+type IssuerDisplayEntry = {
   did: string,
   name: string,
   avatar: string
 }
 
 type IssuerInfo = {
-  displayItem : IssuerDisplayEntry,
+  displayItem: IssuerDisplayEntry,
   isExpired: boolean,
   canBeDelivered: boolean,
   errorMessage: string
@@ -211,8 +211,8 @@ export class CredentialAccessRequestPage {
     Logger.log('Identity', 'Creating credentialaccessrequest page layout');
     return new Promise((resolve) => {
       const customization = this.receivedIntent.params.customization
-      if(customization) {
-        if('primarycolorlightmode' in customization && 'primarycolordarkmode' in customization) {
+      if (customization) {
+        if ('primarycolorlightmode' in customization && 'primarycolordarkmode' in customization) {
           !this.theme.darkMode ?
             this.requestDappColor = customization.primarycolorlightmode :
             this.requestDappColor = customization.primarycolordarkmode
@@ -228,8 +228,8 @@ export class CredentialAccessRequestPage {
       const publisheddidParams = this.receivedIntent.params.publisheddid;
       Logger.log('publisheddid params', this.receivedIntent.params.publisheddid);
 
-      if(publisheddidParams) {
-        if(this.publishStatusFetched && !this.didNeedsToBePublished) {
+      if (publisheddidParams) {
+        if (this.publishStatusFetched && !this.didNeedsToBePublished) {
           this.publishingDidRequired = false;
         } else {
           void this.alertDidNeedsPublishing();
@@ -283,8 +283,8 @@ export class CredentialAccessRequestPage {
       let hasRelatedCredential: boolean = (relatedCredential != null);
 
       let issuerInfo: IssuerInfo = {
-        canBeDelivered : hasRelatedCredential,
-        isExpired : false,
+        canBeDelivered: hasRelatedCredential,
+        isExpired: false,
         displayItem: null,
         errorMessage: ""
       };
@@ -295,33 +295,31 @@ export class CredentialAccessRequestPage {
         let credentialTypes: string[] = relatedCredential.pluginVerifiableCredential.getTypes();
 
         //Check if this credential is expired when validated
-        if (!credentialTypes.includes("SelfProclaimedCredential"))  {
-          let expirationInfo : ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
+        if (!credentialTypes.includes("SelfProclaimedCredential")) {
+          let expirationInfo: ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
           isExpired = expirationInfo.daysToExpire <= 0;
         }
 
         // Check if accepts self proclaimed credentials are accepted or
         // In case of validated credential, if credential issuer match with claim request
         if (!this.acceptsSelfProclaimedCredentials(claim.iss)) {
-          if (credentialTypes.includes("SelfProclaimedCredential"))  {
+          if (credentialTypes.includes("SelfProclaimedCredential")) {
             issuerInfo.canBeDelivered = false;
             issuerInfo.errorMessage = "Credential issuer is required";
           } else {
             let issuerDid: string = relatedCredential.pluginVerifiableCredential.getIssuer()
-            let issuerExpirationInfo : ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
+            let issuerExpirationInfo: ExpiredItem = this.expirationService.verifyCredentialExpiration(did, relatedCredential.pluginVerifiableCredential, 0);
             let issuerisExpired: boolean = issuerExpirationInfo.daysToExpire <= 0;
             let issuerIsAccepted: boolean = this.acceptsIssuer(claim.iss, issuerDid);
             issuerInfo.displayItem = await this.profileService.getIssuerDisplayEntryFromID(issuerDid)
             issuerInfo.isExpired = issuerisExpired
             issuerInfo.canBeDelivered = issuerIsAccepted && !issuerisExpired
 
-            if (issuerisExpired)
-            {
-                issuerInfo.errorMessage = "Credential issuer DID is expired"
+            if (issuerisExpired) {
+              issuerInfo.errorMessage = "Credential issuer DID is expired"
             }
 
-            if (!issuerIsAccepted)
-            {
+            if (!issuerIsAccepted) {
               issuerInfo.errorMessage = "Credential issuer is not the same requested"
             }
           }
@@ -331,7 +329,7 @@ export class CredentialAccessRequestPage {
       let claimRequest: ClaimRequest = {
         name: key,
         value: claimValue,
-        credential: (relatedCredential?relatedCredential.pluginVerifiableCredential:null),
+        credential: (relatedCredential ? relatedCredential.pluginVerifiableCredential : null),
         canBeDelivered: hasRelatedCredential,
         issuer: issuerInfo,
         selected: true,
@@ -364,8 +362,8 @@ export class CredentialAccessRequestPage {
 
   addDIDToMandatoryItems() {
     let did: string = this.did.getDIDString();
-    let didDocument : DIDDocument = this.did.getDIDDocument();
-    let expiredState: ExpiredItem = this.expirationService.verifyDIDExpiration(did, didDocument , 0);
+    let didDocument: DIDDocument = this.did.getDIDDocument();
+    let expiredState: ExpiredItem = this.expirationService.verifyDIDExpiration(did, didDocument, 0);
     Logger.log('Identity', "expiredState", expiredState)
 
     let claimRequest: ClaimRequest = {
@@ -394,7 +392,7 @@ export class CredentialAccessRequestPage {
       message: this.translate.instant('identity.credaccess-alert-publish-required-msg'),
       backdropDismiss: false,
       buttons: [
-       {
+        {
           text: this.translate.instant('identity.credaccess-alert-publish-required-btn'),
           handler: () => {
             this.zone.run(() => {
@@ -417,7 +415,7 @@ export class CredentialAccessRequestPage {
    * key format: "my-key" (credential fragment)
    */
   findCredential(key: string): VerifiableCredential {
-    return this.credentials.find((c)=>{
+    return this.credentials.find((c) => {
       return c.pluginVerifiableCredential.getFragment() == key;
     })
   }
@@ -448,8 +446,8 @@ export class CredentialAccessRequestPage {
    */
   acceptsSelfProclaimedCredentials(iss: any): boolean {
     let response = true
-    if (!isNil(iss) && iss instanceof Object){
-      response =  iss["selfproclaimed"];
+    if (!isNil(iss) && iss instanceof Object) {
+      response = iss["selfproclaimed"];
     }
 
     Logger.log('Identity', "acceptsSelfProclaimedCredentials", iss, response)
@@ -457,9 +455,9 @@ export class CredentialAccessRequestPage {
     return response;
   }
 
-   /**
-   * Check if credential issuer match with requested
-   */
+  /**
+  * Check if credential issuer match with requested
+  */
   acceptsIssuer(iss: any, issuerDid: string): boolean {
     Logger.log('Identity', "acceptsIssuer", iss, issuerDid)
 
@@ -512,7 +510,7 @@ export class CredentialAccessRequestPage {
       let selectedCredentials = this.buildDeliverableCredentialsList();
 
       // Create and send the verifiable presentation that embeds the selected credentials
-      void AuthService.instance.checkPasswordThenExecute(async ()=>{
+      void AuthService.instance.checkPasswordThenExecute(async () => {
         let presentation: DIDPlugin.VerifiablePresentation = null;
         let currentDidString: string = this.didService.getActiveDid().getDIDString();
         presentation = await this.didService.getActiveDid().createVerifiablePresentationFromCredentials(selectedCredentials, this.authService.getCurrentUserPassword(), this.receivedIntent.params.nonce, this.receivedIntent.params.realm);
@@ -528,7 +526,7 @@ export class CredentialAccessRequestPage {
         // TODO: Currently adding elastos://credaccess/ in front of the JWT because of CR website requirement. But we should cleanup this and pass only the JWT itself
         if (this.receivedIntent.originalJwtRequest) {
           Logger.log('Identity', 'Intent is called by external intent', this.receivedIntent.originalJwtRequest);
-          payload["req"] = "elastos://credaccess/"+this.receivedIntent.originalJwtRequest;
+          payload["req"] = "elastos://credaccess/" + this.receivedIntent.originalJwtRequest;
 
           let parsedJwt = await didManager.parseJWT(false, this.receivedIntent.originalJwtRequest);
           if (parsedJwt) {
@@ -546,22 +544,22 @@ export class CredentialAccessRequestPage {
           this.authService.getCurrentUserPassword()
         );
 
-        Logger.log('Identity', "Sending credaccess intent response for intent id "+ this.receivedIntent.intentId);
+        Logger.log('Identity', "Sending credaccess intent response for intent id " + this.receivedIntent.intentId);
         try {
           if (this.receivedIntent.originalJwtRequest) {
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             setTimeout(async () => {
-              await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.receivedIntent.intentId);
+              await this.appServices.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
               this.showSpinner = false;
             }, 1000);
 
           } else {
-            await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.receivedIntent.intentId);
+            await this.appServices.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
             this.showSpinner = false;
           }
         }
         catch (e) {
-          this.popup = await this.popupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. "+e);
+          this.popup = await this.popupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. " + e);
           this.showSpinner = false;
         }
       }, () => {
@@ -572,28 +570,28 @@ export class CredentialAccessRequestPage {
   }
 
   async rejectRequest() {
-    await this.appServices.sendIntentResponse("credaccess", { did:null, presentation: null }, this.receivedIntent.intentId);
+    await this.appServices.sendIntentResponse({ did: null, presentation: null }, this.receivedIntent.intentId);
   }
 
   async showSuccess(jwtToken) {
     this.popup = await this.popoverCtrl.create({
-        backdropDismiss: false,
-        mode: 'ios',
-        cssClass: 'successComponent',
-        component: SuccessComponent,
+      backdropDismiss: false,
+      mode: 'ios',
+      cssClass: 'successComponent',
+      component: SuccessComponent,
     });
-/*     this.popup.onWillDismiss().then(async () => {
-      await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.requestDapp.intentId);
-    }); */
+    /*     this.popup.onWillDismiss().then(async () => {
+          await this.appServices.sendIntentResponse("credaccess", {jwt: jwtToken}, this.requestDapp.intentId);
+        }); */
     return await this.popup.present();
-}
+  }
 
   sanitize(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   getDappIcon() {
-    if(this.requestDappIcon) {
+    if (this.requestDappIcon) {
       return this.sanitize(this.requestDappIcon);
     } else {
       return 'assets/identity/icon/elastos-icon.svg'
@@ -601,7 +599,7 @@ export class CredentialAccessRequestPage {
   }
 
   getDappName() {
-    if(this.requestDappName) {
+    if (this.requestDappName) {
       return this.requestDappName;
     } else {
       return this.receivedIntent.params.appPackageId;
@@ -609,7 +607,7 @@ export class CredentialAccessRequestPage {
   }
 
   getIntro() {
-    if(!this.canDeliver) {
+    if (!this.canDeliver) {
       return this.translate.instant('identity.credaccess-missing');
     } else if (this.publishingDidRequired) {
       return this.translate.instant('identity.credaccess-publish-required');
@@ -619,11 +617,11 @@ export class CredentialAccessRequestPage {
   }
 
   getCredIcon(item: ClaimRequest): any {
-    if(item.name === 'avatar') {
+    if (item.name === 'avatar') {
       if (this.avatarDataUrl)
         return this.avatarDataUrl;
       else
-      return `/assets/identity/smallIcons/nofill/name.svg`;
+        return `/assets/identity/smallIcons/nofill/name.svg`;
     } else {
       const imgName = item.name === "did" ? "finger-print" : item.name;
       const theme = this.theme.darkMode ? "dark" : "light";
@@ -632,7 +630,7 @@ export class CredentialAccessRequestPage {
   }
 
   getItemValueDisplay(item: ClaimRequest) {
-    if(!item.canBeDelivered) {
+    if (!item.canBeDelivered) {
       return this.translate.instant('identity.missing');
     } else if (item.canBeDelivered && !item.issuer.canBeDelivered) {
       return this.translate.instant(item.issuer.errorMessage)

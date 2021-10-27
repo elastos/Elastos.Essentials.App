@@ -10,8 +10,7 @@ export type IdentityIntent<T> = {
     action: string;
     intentId: number;
     originalJwtRequest?: string;
-    jwtExpirationDays?: number;
-    from: string; // "internal"|"external";
+    from: EssentialsIntentPlugin.IntentSource;
     params: T;
 }
 export type IdentityIntentCustomization = {
@@ -44,6 +43,7 @@ export type CredAccessIdentityIntentParams = IdentityIntentParams & {
  * @deprecated
  */
 export type CredAccessIdentityIntent = IdentityIntent<CredAccessIdentityIntentParams> & {
+    jwtExpirationDays?: number;
 }
 
 export type RequestCredentialsIntentParams = IdentityIntentParams & {

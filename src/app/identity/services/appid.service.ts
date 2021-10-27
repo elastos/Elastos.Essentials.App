@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { TranslateService } from "@ngx-translate/core";
 import { GlobalConfig } from "src/app/config/globalconfig";
 import { Logger } from "src/app/logger";
 import { AuthService } from "./auth.service";
@@ -85,7 +84,7 @@ export class AppIDService {
           let navigateBack = await this.uxService.isIntentResponseGoingOutsideEssentials(intentParams);
           Logger.log('identity', "Navigate back? ", navigateBack);
 
-          await this.uxService.sendIntentResponse("appidcredissue", {
+          await this.uxService.sendIntentResponse({
             credential: credentialAsString
           }, this.intentId, navigateBack);
         }, (err) => {
@@ -100,6 +99,6 @@ export class AppIDService {
   }
 
   public async rejectExternalRequest() {
-    await this.uxService.sendIntentResponse("appidcredissue", {}, this.intentId);
+    await this.uxService.sendIntentResponse({}, this.intentId);
   }
 }

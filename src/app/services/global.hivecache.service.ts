@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { GlobalConfig } from '../config/globalconfig';
 import { Logger } from '../logger';
 import { GlobalHiveService } from './global.hive.service';
 
@@ -28,7 +27,7 @@ export class GlobalHiveCacheService {
   public getAssetByUrl(key: string, hiveScriptUrl?: string): BehaviorSubject<any> {
     // Already in cache? Return the cached data.
     if (this.cache.has(key)) {
-      console.log("DEBUG HIVE CACHE RETURN FROM KEY", key);
+      //console.log("DEBUG HIVE CACHE RETURN FROM KEY", key);
       return this.cache.get(key);
     }
 

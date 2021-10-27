@@ -1,20 +1,19 @@
 import { Component, ViewChild } from '@angular/core';
-import { DIDService } from '../../../services/did.service';
-import { UXService } from '../../../services/ux.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../../services/auth.service';
-import { DIDDocumentPublishEvent } from '../../../model/eventtypes.model';
-import { ProfileService } from '../../../services/profile.service';
-import { DIDSyncService } from '../../../services/didsync.service';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarNavigationMode, TitleBarIconSlot, BuiltInIcon, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { SetHiveProviderIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
-import { Subscription } from 'rxjs';
 import { Events } from 'src/app/services/events.service';
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { AuthService } from '../../../services/auth.service';
+import { DIDService } from '../../../services/did.service';
+import { DIDSyncService } from '../../../services/didsync.service';
+import { ProfileService } from '../../../services/profile.service';
+import { UXService } from '../../../services/ux.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -65,12 +64,12 @@ export class SetHiveProviderRequestPage {
   }
 
   ionViewWillLeave() {
-      this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
   }
 
   acceptRequest() {
     // Prompt password if needed
-    void AuthService.instance.checkPasswordThenExecute(async ()=>{
+    void AuthService.instance.checkPasswordThenExecute(async () => {
       let password = AuthService.instance.getCurrentUserPassword();
 
       // Create the main application profile credential
@@ -86,14 +85,14 @@ export class SetHiveProviderRequestPage {
         }
       });
       await this.didSyncService.publishActiveDIDDIDDocument(password);
-    }, ()=>{
+    }, () => {
       // Cancelled
     });
   }
 
   async sendIntentResponse(status: string) {
     // Send the intent response as everything is completed
-    await this.appServices.sendIntentResponse(this.receivedIntent.action, {status: status}, this.receivedIntent.intentId);
+    await this.appServices.sendIntentResponse({ status: status }, this.receivedIntent.intentId);
   }
 
   async addOrUpdateService(password: string) {
@@ -101,8 +100,8 @@ export class SetHiveProviderRequestPage {
 
     let service: DIDPlugin.Service = await this.didService.getActiveDid().getDIDDocument().getService('#hivevault');
     if (service) {
-        Logger.log("identity", 'The #hivevault service already exists, updating it');
-        await this.didService.getActiveDid().getDIDDocument().removeService('#hivevault', password);
+      Logger.log("identity", 'The #hivevault service already exists, updating it');
+      await this.didService.getActiveDid().getDIDDocument().removeService('#hivevault', password);
     }
 
     service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', this.receivedIntent.params.address);

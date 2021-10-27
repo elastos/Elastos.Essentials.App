@@ -1,15 +1,15 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { DIDService } from '../../../services/did.service';
-import { UXService } from '../../../services/ux.service';
-import { PopupProvider } from '../../../services/popup';
-import { AuthService } from '../../../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AppIDService } from '../../../services/appid.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { AppIdCredIssueIdentityIntent } from '../../../model/identity.intents';
+import { AppIDService } from '../../../services/appid.service';
+import { AuthService } from '../../../services/auth.service';
+import { DIDService } from '../../../services/did.service';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
+import { PopupProvider } from '../../../services/popup';
+import { UXService } from '../../../services/ux.service';
 
 // Displayable version of a verifiable credential. Can contain one or more IssuedCredentialItem that
 // are displayable version of verifiable credential subject entries.
@@ -74,7 +74,7 @@ export class AppIdCredentialIssueRequestPage {
     }
 
     checkIntentSenderAppDid() {
-        if (this.receivedIntent.from == "internal") { // TODO: use appmanager enum when ready
+        if (this.receivedIntent.from == EssentialsIntentPlugin.IntentSource.Internal) { // TODO: use appmanager enum when ready
             // Intent received from essentials itself. Everything is ok.
         }
         else {

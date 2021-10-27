@@ -1,8 +1,8 @@
-import { DIDURL } from './didurl.model';
-import { LocalStorage } from '../services/localstorage';
-import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
-import { DIDHelper } from '../helpers/did.helper';
 import { Logger } from 'src/app/logger';
+import { DIDHelper } from '../helpers/did.helper';
+import { LocalStorage } from '../services/localstorage';
+import { DIDURL } from './didurl.model';
+import { ApiNoAuthorityException } from "./exceptions/apinoauthorityexception.exception";
 
 export class DIDDocument {
     constructor(
@@ -52,7 +52,7 @@ export class DIDDocument {
             this.pluginDidDocument.createJWT(properties, validityDays, storePass, (jwtToken) => {
                 resolve(jwtToken);
             }, (err) => {
-                Logger.error('identity', "Delete credential exception", err);
+                Logger.error('identity', "CreateJWT exception", err);
                 reject(DIDHelper.reworkedPluginException(err));
             });
         });
@@ -171,7 +171,7 @@ export class DIDDocument {
     }
 
     public signDigest(digest: string, storePass: string): Promise<string> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.pluginDidDocument.signDigest(storePass, digest,
                 (ret) => {
                     resolve(ret)
