@@ -11,12 +11,10 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import org.json.JSONException;
@@ -254,6 +252,11 @@ public class DappBrowserClient extends WebViewClient {
      */
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        //Check whether injected, if not will inject web3 provider
+        if (!injected) {
+            injectWeb3ProviderScript(request.getUrl().toString());
+        }
+
         return shouldInterceptRequest(request.getUrl().toString(), super.shouldInterceptRequest(view, request), request.getMethod());
     }
 
@@ -425,7 +428,11 @@ public class DappBrowserClient extends WebViewClient {
     }
 
     public void onLoadResource (WebView view, String url) {
-        if (!injected && !url.equals(this.originUrl)) {
+        super.onLoadResource(view, url);
+    }
+
+    private synchronized void injectWeb3ProviderScript(String url) {
+        if (!injected && (this.originUrl != null) && !url.equals(this.originUrl)) {
             brwoserPlugin.injectDeferredObject(brwoserPlugin.webViewHandler.options.atdocumentstartscript, null);
             injected = true;
         }
