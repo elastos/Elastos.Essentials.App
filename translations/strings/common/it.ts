@@ -4,7 +4,7 @@ export const it = {
 
         // Generic actions
         'delete': 'Elimina',
-        'cancel': 'Cancella',
+        'cancel': 'Annulla',
         'begin': 'Inizia',
         'continue': 'Continua',
         'go-back': 'Torna Indietro',
@@ -63,7 +63,7 @@ export const it = {
         'email': 'Email',
         'website': 'Sito Web',
         'your-mnemonic': 'La tua Mnemonic',
-        'your-mnemonic-prompt1': 'Queste sono le tue 12 parole di sicurezza (mnemonic). Se perdi queste parole, perdi la tua identità. Tienile scritte ',
+        'your-mnemonic-prompt1': 'Queste sono le tue 12 parole di sicurezza (mnemonico). Se perdi queste parole, perdi la tua identità. Tienile scritte ',
         'your-mnemonic-prompt2': 'in ordine',
         'your-mnemonic-prompt3': ', e al sicuro!',
 
