@@ -83,46 +83,6 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["elastos"]
                 },
                 {
-                    icon: '/assets/browser/dapps/glidefinance.png',
-                    title: 'Glide Finance',
-                    description: 'Elastos ecosystem decentralized exchange',
-                    url: 'https://glidefinance.io/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/profile.png',
-                    title: 'Profile',
-                    description: 'A better way to be online using Elastos DID',
-                    url: 'https://profile.site/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/filda.png',
-                    title: 'FilDA',
-                    description: 'HECO-based lending and borrowing, with ELA support',
-                    url: 'https://filda.io/',
-                    useExternalBrowser: false,
-                    networks: ["heco", "bsc"]
-                },
-                {
-                    icon: '/assets/browser/dapps/tokswap.png',
-                    title: 'TokSwap',
-                    description: 'Swap your tokens on the Elastos blockchain',
-                    url: 'https://tokswap.net/',
-                    useExternalBrowser: false,
-                    networks: ["elastos"]
-                },
-                {
-                    icon: '/assets/browser/dapps/tokbridge.svg',
-                    title: 'Shadow Tokens',
-                    description: 'Bridge assets between Elastos and other chains',
-                    url: 'https://tokbridge.net/',
-                    useExternalBrowser: false,
-                    networks: ["elastos", "heco", "bsc", "ethereum"]
-                },
-                {
                     icon: '/assets/browser/dapps/creda.png',
                     title: 'CreDA',
                     description: 'Turn data into wealth - Elastos DID powered DeFi dApp',
@@ -131,10 +91,10 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["arbitrum"]
                 },
                 {
-                    icon: '/assets/browser/dapps/cryptoname.png',
-                    title: 'Cryptoname',
-                    description: 'CryptoName is your passport to the crypto world',
-                    url: 'https://cryptoname.org/',
+                    icon: '/assets/browser/dapps/glidefinance.png',
+                    title: 'Glide Finance',
+                    description: 'Elastos ecosystem decentralized exchange',
+                    url: 'https://glidefinance.io/',
                     useExternalBrowser: false,
                     networks: ["elastos"]
                 },
@@ -145,6 +105,62 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     url: 'https://app.elk.finance/',
                     useExternalBrowser: false,
                     networks: ["elastos", "heco", "bsc", "avalanchecchain", "fantom", "polygon"]
+                },
+                {
+                    icon: '/assets/browser/dapps/filda.png',
+                    title: 'FilDA',
+                    description: 'HECO-based lending and borrowing, with ELA support',
+                    url: 'https://filda.io/',
+                    useExternalBrowser: false,
+                    networks: ["heco", "bsc"]
+                },
+                {
+                    icon: '/assets/browser/dapps/profile.png',
+                    title: 'Profile',
+                    description: 'A better way to be online using Elastos DID',
+                    url: 'https://profile.site/',
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
+                },
+                {
+                    icon: '/assets/browser/dapps/mdex.png',
+                    title: 'Mdex',
+                    description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
+                    url: 'https://ht.mdex.co/#/referral?id=Jl6hUtKB/',
+                    useExternalBrowser: false,
+                    networks: ["heco"]
+                },
+                {
+                    icon: '/assets/browser/dapps/mdex.png',
+                    title: 'Mdex',
+                    description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
+                    url: 'https://bsc.mdex.co/#/referral?id=OgsPHM3z/',
+                    useExternalBrowser: false,
+                    networks: ["bsc"]
+                },
+                {
+                    icon: '/assets/browser/dapps/tokbridge.svg',
+                    title: 'Shadow Tokens',
+                    description: 'Bridge assets between Elastos and other chains',
+                    url: 'https://tokbridge.net/',
+                    useExternalBrowser: false,
+                    networks: ["elastos", "heco", "bsc", "ethereum"]
+                },
+                {
+                    icon: '/assets/browser/dapps/tokswap.png',
+                    title: 'TokSwap',
+                    description: 'Swap your tokens on the Elastos blockchain',
+                    url: 'https://tokswap.net/',
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
+                },
+                {
+                    icon: '/assets/browser/dapps/cryptoname.png',
+                    title: 'Cryptoname',
+                    description: 'CryptoName is your passport to the crypto world',
+                    url: 'https://cryptoname.org/',
+                    useExternalBrowser: false,
+                    networks: ["elastos"]
                 },
             ];
         } else {
