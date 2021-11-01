@@ -69,14 +69,13 @@ export class ExpirationService {
     }
 
     public verifyCredentialExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number): ExpiredItem {
-
         // If credential is Self Proclaimed, not verify expiration
-        if (credential.getTypes().includes("SelfProclaimedCredential")) return null
+        if (credential.getTypes().includes("SelfProclaimedCredential"))
+            return null;
 
         let daysToCredentialExpire: number = this.daysToExpire(credential.getExpirationDate())
 
         Logger.log("identity", `Days to ${this.getCredentialID(did, credential)} expire`, daysToCredentialExpire)
-
 
         let credentialExpiredMessage = this.constructPersonalMessage(`Your ${this.getCredentialID(did, credential)} credential`, daysToCredentialExpire)
         //add new expired item response for this credential
@@ -86,7 +85,6 @@ export class ExpirationService {
             message: credentialExpiredMessage,
             daysToExpire: daysToCredentialExpire
         }
-
     }
 
     public async verifyIssuerDIDExpiration(did: string, credential: DIDPlugin.VerifiableCredential, maxDaysToExpire: number): Promise<ExpiredItem> {

@@ -10,6 +10,8 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { BasicCredentialsService } from '../../services/basiccredentials.service';
+import { DIDService } from '../../services/did.service';
+import { ExpirationService } from '../../services/expiration.service';
 import { ProfileService } from '../../services/profile.service';
 
 class CredentialDisplayEntry {
@@ -25,6 +27,7 @@ export class CredentialComponent {
     public _credential: CredentialDisplayEntry = null;
     public iconSrc = transparentPixelIconDataUrl();
     public checkBoxColor = '#565bdb';
+    public isExpired = false;
 
     @Input("selectable") public selectable = false; // Whether to show the selection checkbox or not
     @Input("selected") public selected = false; // On/off checkbox model - defined by the parent
@@ -48,7 +51,8 @@ export class CredentialComponent {
         private profileService: ProfileService,
         private basicCredentialService: BasicCredentialsService,
         private translate: TranslateService,
-        private hiveCache: GlobalHiveCacheService
+        private hiveCache: GlobalHiveCacheService,
+        private expirationService: ExpirationService
     ) {
         theme.activeTheme.subscribe((activeTheme) => {
             //this.setTitleBarTheme(activeTheme);
@@ -61,6 +65,13 @@ export class CredentialComponent {
     private async updateCredential(credential: DIDPlugin.VerifiableCredential) {
         if (credential) {
             this._credential = new CredentialDisplayEntry(credential);
+
+            // Check if the credential is expired
+            let expirationInfo = this.expirationService.verifyCredentialExpiration(DIDService.instance.getActiveDid().pluginDid.getDIDString(), credential, 0);
+            let isExpired = false;
+            if (expirationInfo) // hacky case, but null expirationInfo means we should not check the expiration... (legacy)
+                isExpired = expirationInfo.daysToExpire <= 0;
+
             await this.prepareIcon();
         }
         else {

@@ -1,6 +1,7 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { NoMatchRecommendation } from '@elastosfoundation/elastos-connectivity-sdk-js/typings/did';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import jsonpath from "jsonpath";
@@ -8,6 +9,7 @@ import { isNil } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
@@ -28,22 +30,23 @@ import { UXService } from '../../../services/ux.service';
 
 /**
  * TODO BPI:
- * - Check expired credentials
+ *
+ * DONE - Check expired credentials
  * DONE - Create a customizable credential component to use in credentials list + request screen
- * - Display according to DisplayableCredential when possible
- * - Check claim issuers and display UI messages if KO
- *    - Show on UI for each claim
+ * DONE - Check claim issuers and display UI messages if KO
+ * DONE   - Show on UI for each claim
  * - For external credentials, display issuer avatar/name/did string or placeholders
- * - When min and max are one, selecting an unselected credential should unselect the selected one.
- * - Cleanup old code
  * - Test with UI customization
  * - Design + integration
+ * - Cleanup old code
  *
  * - Save profile credentials with DisplayableCredential implementation
+ *    - Display according to DisplayableCredential when possible
  * - Add related credential types to profile credentials (just the type, nothing else for now)
  * - Allow to add multiple emails, addresses, etc to profile.
+ *    - When min and max are one, selecting an unselected credential should unselect the selected one.
  * - Replace "verified" by "from third party"
- * - Fix credentials list screen blinking like crazy (lots of refresh)
+ * (low) - Fix credentials list screen blinking like crazy (lots of refresh)
  */
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -76,6 +79,7 @@ type IssuerInfo = {
 type CredentialDisplayEntry = {
   credential: VerifiableCredential;
   selected: boolean;
+  expired: boolean;
 }
 
 type ClaimDisplayEntry = {
@@ -138,7 +142,8 @@ export class RequestCredentialsPage {
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private globalIntentService: GlobalIntentService,
-    private intentService: IntentReceiverService
+    private intentService: IntentReceiverService,
+    private dappbrowserService: DappBrowserService
   ) {
   }
 
@@ -260,11 +265,27 @@ export class RequestCredentialsPage {
 
       // Rebuild a list of real credential objects from json results
       let matchingCredentials: CredentialDisplayEntry[] = matchingCredentialJsons.map(jsonCred => {
+        let credential = this.credentials.find(c => c.pluginVerifiableCredential.getId() === jsonCred.id);
+
+        // Check if the credential is expired
+        let expirationInfo = this.expirationService.verifyCredentialExpiration(this.did.pluginDid.getDIDString(), credential.pluginVerifiableCredential, 0);
+        let isExpired = false;
+        if (expirationInfo) // hacky case, but null expirationInfo means we should not check the expiration... (legacy)
+          isExpired = expirationInfo.daysToExpire <= 0;
+
+        // Check if the issuers can match (credential issuer must be in claim's issuers list, if provided)
+        if (claim.issuers) {
+          let matchingIssuer = claim.issuers.find(i => i === credential.pluginVerifiableCredential.getIssuer());
+          if (!matchingIssuer)
+            return null;
+        }
+
         return {
-          credential: this.credentials.find(c => c.pluginVerifiableCredential.getId() === jsonCred.id),
-          selected: true
+          credential: credential,
+          selected: true,
+          expired: isExpired
         };
-      });
+      }).filter(c => c !== null);
 
       let organizedClaim: ClaimDisplayEntry = {
         claim,
@@ -671,5 +692,17 @@ export class RequestCredentialsPage {
    */
   public shouldShowValidationButtonSpinner(): boolean {
     return this.sendingResponse || !this.publishStatusFetched;
+  }
+
+  /**
+   * Tells if some "no match" recommendations were provided in the claim to guide user
+   * or not.
+   */
+  public claimHasNoMatchRecommendations(claim: ClaimDisplayEntry): boolean {
+    return claim.claim.noMatchRecommendations && claim.claim.noMatchRecommendations.length > 0;
+  }
+
+  public openRecommendation(recommendation: NoMatchRecommendation) {
+    void this.dappbrowserService.open(recommendation.url, recommendation.title);
   }
 }
