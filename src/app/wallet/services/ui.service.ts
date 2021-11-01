@@ -33,14 +33,14 @@ export class UiService {
       return '';
     }
 
-    return subwallet.getFriendlyName();
+    return subwallet.getDisplayTokenName();
   }
 
   getSubwalletSubtitle(subwallet: AnySubWallet): string {
     if (!subwallet) {
       return '';
     }
-    return subwallet.getDisplayTokenName();
+    return subwallet.getFriendlyName();
   }
 
   /**
