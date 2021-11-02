@@ -512,6 +512,11 @@ export const en = {
         'bridge-tokens-intro': 'The following third party bridge services are available to <b>transfer {{coinName}}</b> tokens from and to {{networkName}}:',
         'to-networks': 'To networks:',
 
+        /***************************
+        * Block chain upgrade *
+        ****************************/
+        'blockchain-updating-prompt': 'Elastos blockchains are being upgraded. Please try again in a few minutes (max 20 minutes)',
+
         /********************************************** Error ***********************************************/
 
         // Consolidate

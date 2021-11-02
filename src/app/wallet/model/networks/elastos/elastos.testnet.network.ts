@@ -6,6 +6,10 @@ import { ElastosNetworkBase } from "./elastos.base.network";
 export class ElastosTestNetNetwork extends ElastosNetworkBase {
   constructor() {
     super("Elastos Testnet");
+
+    // Remove it if block height > 807000
+    // Use new protocol after 1032840.
+    this.blockHeightForCrossChainV2 = 807000;
   }
 
   public getBuiltInERC20Coins(): ERC20Coin[] {

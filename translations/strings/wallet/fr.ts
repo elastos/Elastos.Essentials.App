@@ -513,6 +513,11 @@ export const fr = {
         'bridge-tokens-intro': 'Les fournisseurs de services tiers suivants sont disponibles pour vous permettre de <b>convertir vos {{coinName}}</b> depuis/vers le réseau {{networkName}}, vers/depuis d\'autres réseaux:',
         'to-networks': 'Vers autres réseaux:',
 
+        /***************************
+        * Block chain upgrade *
+        ****************************/
+        'blockchain-updating-prompt': 'Les blockchains Elastos sont en cours de mise à niveau. Veuillez réessayer dans quelques minutes (max 20 minutes)',
+
         /********************************************** Error ***********************************************/
 
         // Consolidate

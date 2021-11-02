@@ -12,6 +12,9 @@ import { NetworkWallet } from "../../wallets/networkwallet";
 import { Network } from "../network";
 
 export abstract class ElastosNetworkBase extends Network {
+  // Remove it if block height > 1032840 (testnet:807000)
+  protected blockHeightForCrossChainV2 = 0;
+
   constructor(
     displayName: string,
     earnProviders?: EarnProvider[],
@@ -53,4 +56,9 @@ export abstract class ElastosNetworkBase extends Network {
   public abstract getMainChainID(): number;
 
   public abstract updateSPVNetworkConfig(onGoingConfig: SPVNetworkConfig);
+
+  // Remove it if block height > 1032840 (testnet:807000)
+  public getcrossChainV2BlockHeight() {
+    return this.blockHeightForCrossChainV2;
+  }
 }

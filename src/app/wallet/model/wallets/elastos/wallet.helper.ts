@@ -14,41 +14,40 @@ export class WalletHelper {
     let startIndex = 0
     let txListTotal: PaginatedTransactions<ElastosTransaction>[] = [];
 
-    /* if (internalAddress) {
-      Logger.log("wallet", 'get Transaction for internal Address');
-    } else {
-      Logger.log("wallet", 'get Transaction for external Address');
-    } */
-
+    let maxAddressCount = subWallet.getAddressCount(internalAddress);
+    let count = 150;
     let addressArray = null;
+
     do {
-      addressArray = await subWallet.masterWallet.walletManager.spvBridge.getAllAddresses(
-        subWallet.masterWallet.id, subWallet.id, startIndex, 150, internalAddress);
-      if (addressArray.Addresses.length === 0) {
-        break;
-      }
-      if ((startIndex === 0) && !internalAddress && (subWallet.id === StandardCoinName.ELA)) {
-        // OwnerAddress: for register dpos node, CRC.
-        const ownerAddress = await WalletHelper.getOwnerAddress(subWallet);
-        addressArray.Addresses.push(ownerAddress);
-      }
-
-      startIndex += addressArray.Addresses.length;
-
-      try {
-        const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(subWallet.id as StandardCoinName, addressArray.Addresses, transactionLimit, 0, timestamp);
-        if (txRawList && txRawList.length > 0) {
-          for (let i = 0, len = txRawList.length; i < len; i++) {
-            txListTotal.push({
-              total: txRawList[i].result.totalcount,
-              transactions: txRawList[i].result.txhistory
-            });
-          }
+        if (startIndex + count > maxAddressCount) {
+            count = maxAddressCount - startIndex;
+            if (count <= 0) {
+                break;
+            }
         }
-      } catch (e) {
-        Logger.log("wallet", 'getTransactionByAddress exception:', e);
-        throw e;
-      }
+        addressArray = await subWallet.masterWallet.walletManager.spvBridge.getAddresses(
+                subWallet.masterWallet.id, subWallet.id, startIndex, count, internalAddress);
+        if ((startIndex === 0) && !internalAddress && (subWallet.id === StandardCoinName.ELA)) {
+            // OwnerAddress: for register dpos node, CRC.
+            const ownerAddress = await WalletHelper.getOwnerAddress(subWallet);
+            addressArray.push(ownerAddress);
+        }
+
+        startIndex += addressArray.length;
+        try {
+            const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(subWallet.id as StandardCoinName, addressArray, transactionLimit, 0, timestamp);
+            if (txRawList && txRawList.length > 0) {
+                for (let i = 0, len = txRawList.length; i < len; i++) {
+                    txListTotal.push({
+                        total: txRawList[i].result.totalcount,
+                        transactions: txRawList[i].result.txhistory
+                    });
+                }
+            }
+        } catch (e) {
+            Logger.log("wallet", 'getTransactionByAddress exception:', e);
+            throw e;
+        }
     } while (!subWallet.masterWallet.account.SingleAddress);
 
     return txListTotal;

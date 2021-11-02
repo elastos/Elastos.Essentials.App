@@ -95,10 +95,10 @@ export class MainchainSubWallet extends MainAndIDChainSubWallet {
      * for a given mnemonic.
      */
     public async getRootPaymentAddress(): Promise<string> {
-        let allAddresses = await this.masterWallet.walletManager.spvBridge.getAllAddresses(this.masterWallet.id, this.id, 0, 1, false);
-        if (!allAddresses || !allAddresses.Addresses || allAddresses.Addresses.length == 0)
+        let allAddresses = await this.masterWallet.walletManager.spvBridge.getAddresses(this.masterWallet.id, this.id, 0, 1, false);
+        if (!allAddresses || allAddresses.length == 0)
             return null;
 
-        return allAddresses.Addresses[0];
+        return allAddresses[0];
     }
 }

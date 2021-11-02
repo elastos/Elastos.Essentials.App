@@ -150,7 +150,7 @@ export class CRMemberRegisterPage implements OnInit {
     createRegisterCRTransaction() {
         Logger.log('wallet', 'Calling createRegisterCRTransaction()');
 
-        // const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWallet.id, StandardCoinName.IDChain, 0, 1);
+        // const crPublickeys = await this.walletManager.spvBridge.getPublicKeys(this.masterWallet.id, StandardCoinName.IDChain, 0, 1, false);
         // const crPublicKey = crPublickeys.PublicKeys[0];
 
         // const payload = await this.walletManager.spvBridge.generateCRInfoPayload(this.masterWallet.id, this.subWalletId,
