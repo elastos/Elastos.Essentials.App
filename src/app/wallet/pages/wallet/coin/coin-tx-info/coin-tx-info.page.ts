@@ -190,7 +190,7 @@ export class CoinTxInfoPage implements OnInit {
             {
                 type: 'confirmations',
                 title: 'wallet.tx-info-confirmations',
-                value: this.transactionInfo.confirmStatus,
+                value: this.transactionInfo.confirmStatus === -1 ? '' : this.transactionInfo.confirmStatus,
                 show: false,
             },
             {

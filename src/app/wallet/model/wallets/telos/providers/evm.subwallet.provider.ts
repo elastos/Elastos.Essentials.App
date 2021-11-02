@@ -30,7 +30,7 @@ type TelosTransaction = {
   "value": string; // ie "100000000000000000",
   "nonce": string; // ie "0",
   "gas_price": string; // ie "624761473981",
-  //"gas_limit": "40000",
+  "gas_limit": string; // ie "40000",
   "status": number; // ie 1,
   //"itxs": [],
   "epoch": number; // ie 1635821300,
@@ -53,13 +53,16 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVMS
   }
 
   // https://rpc1.us.telos.net/evm_explorer/get_transactions?address=0x123
+  // TODO: No parameters in get_transactions for now.
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
     const accountAddress = await this.subWallet.createAddress();
 
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
     if (afterTransaction) {
-      throw new Error("Telos EVM provider: afterTransaction not yet supported");
+      // TODO: No parameters in get_transactions for now.
+      //throw new Error("Telos EVM provider: afterTransaction not yet supported");
+      return;
     }
 
     let txListUrl = `${this.accountApiUrl}/evm_explorer/get_transactions`;
@@ -71,19 +74,17 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVMS
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl) as TelosTransactionsResponse;
 
-      console.log("TELOS result", result)
-
       let transactions: EthTransaction[] = [];
       let telosTransactions = result.transactions;
       for (let telosTransaction of telosTransactions) {
         let transaction: EthTransaction = {
           blockHash: telosTransaction.block_hash,
           blockNumber: "" + telosTransaction.block, // TODO: block or block_num ?
-          confirmations: "0", // TODO: not in the api?
+          confirmations: "-1", // TODO: not in the api?
           contractAddress: null, // TODO: no such info in the api ?
           cumulativeGasUsed: "", // TODO
           from: telosTransaction.from,
-          gas: "", // TODO
+          gas: telosTransaction.gas_limit,
           gasPrice: telosTransaction.gas_price,
           gasUsed: "" + telosTransaction.gasused,
           hash: telosTransaction.hash,
@@ -95,7 +96,7 @@ export class TelosEvmSubWalletProvider extends EVMSubWalletProvider<StandardEVMS
           transactionIndex: telosTransaction.trx_index,
           txreceipt_status: "",
           value: telosTransaction.value,
-          Direction: TransactionDirection.RECEIVED, // TODO
+          Direction: (telosTransaction.to === accountAddress) ? TransactionDirection.RECEIVED : TransactionDirection.SENT,
           isERC20TokenTransfer: false // TODO
         };
 
