@@ -26,6 +26,8 @@ import { HECOTestNetNetwork } from '../model/networks/heco/heco.testnet.network'
 import { Network } from '../model/networks/network';
 import { PolygonMainNetNetwork } from '../model/networks/polygon/polygon.mainnet.network';
 import { PolygonTestNetNetwork } from '../model/networks/polygon/polygon.testnet.network';
+import { TelosMainNetNetwork } from '../model/networks/telos/telos.mainnet.network';
+import { TelosTestNetNetwork } from '../model/networks/telos/telos.testnet.network';
 import { BridgeService } from './bridge.service';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
@@ -130,6 +132,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new PolygonMainNetNetwork());
         await this.createAndRegisterNetwork(new FantomMainNetNetwork());
         await this.createAndRegisterNetwork(new AvalancheCChainMainNetNetwork());
+        await this.createAndRegisterNetwork(new TelosMainNetNetwork());
         return;
       case TESTNET_TEMPLATE:
         await this.createAndRegisterNetwork(new ElastosTestNetNetwork(), true);
@@ -140,6 +143,7 @@ export class WalletInitService extends GlobalService {
         await this.createAndRegisterNetwork(new PolygonTestNetNetwork());
         await this.createAndRegisterNetwork(new FantomTestNetNetwork());
         await this.createAndRegisterNetwork(new AvalancheCChainTestNetNetwork());
+        await this.createAndRegisterNetwork(new TelosTestNetNetwork());
         return;
       case "LRW":
         await this.createAndRegisterNetwork(new ElastosLRWNetwork(), true);
