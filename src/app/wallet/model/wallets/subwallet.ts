@@ -97,6 +97,11 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
     return false;
   }
 
+  public getAddressCount(internal = false): number {
+    if (internal) return 0;
+    else return 1;
+  }
+
   private async loadBalanceFromCache() {
     if (!this.balanceKeyInCache) {
       this.balanceKeyInCache = this.masterWallet.id + '-' + this.getUniqueIdentifierOnNetwork() + '-balance';

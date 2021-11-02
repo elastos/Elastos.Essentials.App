@@ -11,6 +11,7 @@ import { ElastosNetworkBase } from "./elastos.base.network";
 export class ElastosMainNetNetwork extends ElastosNetworkBase {
   private uniswapCurrencyProvider: ElastosMainnetUniswapCurrencyProvider = null;
 
+
   constructor() {
     super("Elastos",
       [
@@ -28,6 +29,10 @@ export class ElastosMainNetNetwork extends ElastosNetworkBase {
     );
 
     this.uniswapCurrencyProvider = new ElastosMainnetUniswapCurrencyProvider();
+
+    // Remove it if block height > 1032840
+    // Use new protocol after 1032840.
+    this.blockHeightForCrossChainV2 = 1032840;
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

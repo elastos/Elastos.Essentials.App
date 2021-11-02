@@ -89,7 +89,7 @@ export class CRCouncilRegistrationPage implements OnInit {
         this.did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
         this.masterWalletId = this.voteService.masterWalletId;
 
-        const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1);
+        const crPublickeys = await this.walletManager.spvBridge.getPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1, false);
         this.crPublicKey = crPublickeys.PublicKeys[0];
 
         //Get cr ower info
@@ -246,7 +246,7 @@ export class CRCouncilRegistrationPage implements OnInit {
     async retrieve() {
         Logger.log('crcouncilregistration', 'Calling retrieve()', this.crInfo);
 
-        // const crPublickeys = await this.walletManager.spvBridge.getAllPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1);
+        // const crPublickeys = await this.walletManager.spvBridge.getPublicKeys(this.masterWalletId, StandardCoinName.IDChain, 0, 1, false);
         // const crPublicKey = crPublickeys.PublicKeys[0];
 
         let depositAddress = await this.walletManager.spvBridge.getCRDepositAddress(this.masterWalletId, StandardCoinName.ELA);

@@ -360,41 +360,25 @@ export class SPVWalletPluginBridge {
 
     createAddress(masterWalletId: string, subWalletId: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletManager.createAddress([masterWalletId, subWalletId],
-                (ret) => { resolve(ret); },
+            walletManager.getAddresses([masterWalletId, subWalletId, 0, 1, false],
+                (ret) => { resolve(ret[0]); },
                 (err) => { void this.handleError("createAddress", err, reject); });
         });
     }
 
-    getAllAddresses(masterWalletId: string, subWalletId: string, start: number, count: number, internal: boolean): Promise<AllAddresses> {
+    getAddresses(masterWalletId: string, subWalletId: string, start: number, count: number, internal: boolean): Promise<string[]> {
         return new Promise((resolve, reject) => {
-            walletManager.getAllAddress([masterWalletId, subWalletId, start, count, internal],
+            walletManager.getAddresses([masterWalletId, subWalletId, start, count, internal],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getAllAddresses", err, reject); });
+                (err) => { void this.handleError("getAddresses", err, reject); });
         });
     }
 
-    getLastAddresses(masterWalletId: string, subWalletId: string, internal: boolean): Promise<string[]> {
+    getPublicKeys(masterWalletId: string, subWalletId: string, start: number, count: number, internal: boolean): Promise<any> {
         return new Promise((resolve, reject) => {
-            walletManager.getLastAddresses([masterWalletId, subWalletId, internal],
+            walletManager.getPublicKeys([masterWalletId, subWalletId, start, count, internal],
                 (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getLastAddresses", err, reject); });
-        });
-    }
-
-    updateUsedAddress(masterWalletId: string, subWalletId: string, usedAddress: string[]): Promise<void> {
-        return new Promise((resolve, reject) => {
-            walletManager.updateUsedAddress([masterWalletId, subWalletId, usedAddress],
-                (ret) => { resolve(ret); },
-                (err) => { void this.handleError("updateUsedAddress", err, reject); });
-        });
-    }
-
-    getAllPublicKeys(masterWalletId: string, subWalletId: string, start: number, count: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            walletManager.getAllPublicKeys([masterWalletId, subWalletId, start, count],
-                (ret) => { resolve(ret); },
-                (err) => { void this.handleError("getAllPublicKeys", err, reject); });
+                (err) => { void this.handleError("getPublicKeys", err, reject); });
         });
     }
 
@@ -414,6 +398,22 @@ export class SPVWalletPluginBridge {
                 ],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("signTransaction", err, reject); });
+        });
+    }
+
+    signDigest(masterWalletId: string, subWalletId: string, address: string, digest: string, payPassword: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.signDigest([masterWalletId, subWalletId, address, digest, payPassword],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("signDigest", err, reject); });
+        });
+    }
+
+    verifyDigest(masterWalletId: string, subWalletId: string, publicKey: string, digest: string, signature: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.verifyDigest([masterWalletId, subWalletId, publicKey, digest, signature],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("verifyDigest", err, reject); });
         });
     }
 
@@ -475,14 +475,6 @@ export class SPVWalletPluginBridge {
             walletManager.didSign([masterWalletId, did, message, payPassword],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("didSign", err, reject); });
-        });
-    }
-
-    didSignDigest(masterWalletId: string, did: string, digest: string, payPassword: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            walletManager.didSignDigest([masterWalletId, did, digest, payPassword],
-                (ret) => { resolve(ret); },
-                (err) => { void this.handleError("didSignDigest", err, reject); });
         });
     }
 
@@ -581,6 +573,7 @@ export class SPVWalletPluginBridge {
     createDepositTransaction(
         masterWalletId: string,
         fromSubWalletId: string,
+        version: number,
         inputs: string,
         toSubWalletId: string,
         amount: string,
@@ -594,6 +587,7 @@ export class SPVWalletPluginBridge {
                 [
                     masterWalletId,
                     fromSubWalletId,
+                    version,
                     inputs,
                     toSubWalletId,
                     amount,
@@ -923,6 +917,25 @@ export class SPVWalletPluginBridge {
             walletManager.createProposalWithdrawTransaction([masterWalletId, subWalletId, input, payload, fee, memo],
                 (ret) => { resolve(ret); },
                 (err) => { void this.handleError("createProposalWithdrawTransaction", err, reject); });
+        });
+    }
+
+    // BTCSubwallet
+    getLegacyAddresses(masterWalletId: string, index: number, count: number, internal: boolean): Promise<string> {
+        return new Promise((resolve, reject) => {
+            walletManager.getLegacyAddresses([masterWalletId, index, count, internal],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("getLegacyAddresses", err, reject); });
+        });
+    }
+
+    createBTCTransaction(
+        masterWalletId: string, inputs: string, outputs: string, changeAddress: string, feePerKB: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            walletManager.createBTCTransaction(
+                [masterWalletId, inputs, outputs, changeAddress, feePerKB],
+                (ret) => { resolve(ret); },
+                (err) => { void this.handleError("createBTCTransaction", err, reject); });
         });
     }
 

@@ -512,6 +512,11 @@ export const zh = {
                 'bridge-tokens-intro': '以下第三方桥接服务可用于 {{networkName}} 上<b>交易 {{coinName}}</b> 代币:',
                 'to-networks': '支持的网络:',
 
+                /***************************
+                * Block chain upgrade *
+                ****************************/
+                'blockchain-updating-prompt': 'Elastos 主链正在升级. 请稍等几分钟后再试 (最多20分钟)',
+
                 /********************************************** Error ***********************************************/
 
                 // Consolidate

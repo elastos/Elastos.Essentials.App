@@ -24,6 +24,7 @@ export class CoinAddressPage {
     public masterWalletId: string;
     public subWalletId: string;
     public curCount = 0;
+    private maxCount = 0;
 
     constructor(
         public walletManager: WalletService,
@@ -43,6 +44,7 @@ export class CoinAddressPage {
             // General Values
             this.masterWalletId = navigation.extras.state.masterWalletId;
             this.subWalletId = navigation.extras.state.subWalletId;
+            this.maxCount = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId).getAddressCount(false);
             void this.getAddressList(null);
         }
     }
@@ -52,19 +54,17 @@ export class CoinAddressPage {
     }
 
     async getAddressList(infiniteScroll: any) {
-        const allAddresses = await this.walletManager.spvBridge.getAllAddresses(this.masterWalletId, this.subWalletId, this.curCount, AddressCount, false);
-        const addresses = allAddresses['Addresses'];
-        const maxCount = allAddresses['MaxCount'];
+        const allAddresses = await this.walletManager.spvBridge.getAddresses(this.masterWalletId, this.subWalletId, this.curCount, AddressCount, false);
         let disabled = true;
-        if (addresses) {
+        if (allAddresses) {
             if (this.curCount !== 0) {
-                this.addressList = this.addressList.concat(addresses);
+                this.addressList = this.addressList.concat(allAddresses);
             } else {
-                this.addressList = addresses;
+                this.addressList = allAddresses;
             }
 
             this.curCount = this.curCount + AddressCount;
-            if (this.curCount < maxCount) {
+            if (this.curCount < this.maxCount) {
                 disabled = false;
             }
         }

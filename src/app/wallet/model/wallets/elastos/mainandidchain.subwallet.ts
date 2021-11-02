@@ -12,8 +12,9 @@ import { BridgeProvider } from '../../earn/bridgeprovider';
 import { EarnProvider } from '../../earn/earnprovider';
 import { SwapProvider } from '../../earn/swapprovider';
 import { InvalidVoteCandidatesHelper } from '../../invalidvotecandidates.helper';
+import { ElastosNetworkBase } from '../../networks/elastos/elastos.base.network';
 import { ElastosTransaction, RawTransactionType, RawVoteContent, TransactionDetail, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType, Utxo, UtxoForSDK, UtxoType } from '../../providers/transaction.types';
-import { AllAddresses, Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
+import { Candidates, VoteContent, VoteType } from '../../SPVWalletPluginBridge';
 import { NetworkWallet } from '../networkwallet';
 import { StandardSubWallet } from '../standard.subwallet';
 import { ElastosTransactionsHelper } from './transactions.helper';
@@ -33,8 +34,10 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     private votingAmountSELA = 0; // ELA
     private votingUtxoArray: Utxo[] = null;
 
-    private getTransactionsTime = 0;
     private ownerAddress: string = null;
+
+    private externalAddressCount = 110; // Addresses for user.
+    private internalAddressCount = 105;
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
 
@@ -62,6 +65,16 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             }
             await this.updateBalance();
         }, 1000);
+    }
+
+    public getAddressCount(internal: boolean): number {
+        if (this.masterWallet.account.SingleAddress) {
+            if (internal) return 0;
+            else return 1;
+        } else {
+            if (internal) return this.internalAddressCount;
+            else return this.externalAddressCount;
+        }
     }
 
     public async getTransactionInfo(transaction: ElastosTransaction, translate: TranslateService): Promise<TransactionInfo> {
@@ -219,9 +232,25 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
                 return null;
         }
 
+        let version = 1;
+        // Remove it if block height > 1032840 (testnet:807000)
+        let blockHeight = await GlobalElastosAPIService.instance.getBlockCount(this.id as StandardCoinName);
+        let crossChainV2BlockHeight = await (this.networkWallet.network as ElastosNetworkBase).getcrossChainV2BlockHeight();
+        Logger.log('wallet', 'blockHeight:', blockHeight, ' crossChainV2BlockHeight:', crossChainV2BlockHeight)
+        if (blockHeight < crossChainV2BlockHeight - 5) {
+            version = 0;
+        } else if (blockHeight >= crossChainV2BlockHeight){
+            version = 1;
+        } else {
+            await this.masterWallet.walletManager.popupProvider.ionicAlert('wallet.blockchain-updating-prompt');
+            return null;
+        }
+        Logger.log('wallet', 'createDepositTransaction version:', version);
+
         return this.masterWallet.walletManager.spvBridge.createDepositTransaction(
             this.masterWallet.id,
             this.id,
+            version,
             JSON.stringify(utxo),
             toSubWalletId,
             toAmount.toString(),
@@ -538,23 +567,27 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      * If the last address is used, the spvsdk will create new addresses.
      */
     protected async checkAddresses(internal: boolean) {
-        let addressArrayUsed = []
+        const checkCount = 10;
+        let startIndex = this.externalAddressCount;
+        if (!internal) startIndex = this.internalAddressCount - checkCount;
 
+        let findTx = false;
         try {
             do {
-                let addressArray = await this.masterWallet.walletManager.spvBridge.getLastAddresses(this.masterWallet.id, this.id, internal);
-                addressArrayUsed = []
+                findTx = false;
+                let addressArray = await this.masterWallet.walletManager.spvBridge.getAddresses(this.masterWallet.id, this.id, startIndex, checkCount, internal);
                 const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
                 if (txRawList && txRawList.length > 0) {
-                    for (let i = 0, len = txRawList.length; i < len; i++) {
-                        addressArrayUsed.push(txRawList[i].result.txhistory[0].address);
-                    }
+                    findTx = true;
+                    startIndex += checkCount;
                 }
+            } while (findTx);
 
-                if (addressArrayUsed.length > 0) {
-                    await this.masterWallet.walletManager.spvBridge.updateUsedAddress(this.masterWallet.id, this.id, addressArrayUsed);
-                }
-            } while (addressArrayUsed.length > 0);
+            if (internal) {
+                this.internalAddressCount = startIndex;
+            } else {
+                this.externalAddressCount = startIndex;
+            }
         } catch (e) {
             Logger.error("wallet", 'checkAddresses exception:', e);
             throw e;
@@ -775,7 +808,6 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
      */
     public async getBalanceByRPC() {
         let totalBalance = new BigNumber(0);
-
         let balance: BigNumber;
         // The Single Address Wallet should use the external address.
         if (!this.masterWallet.account.SingleAddress) {
@@ -835,22 +867,25 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     private async getBalanceByAddress(internalAddress: boolean) {
-        let requestAddressCount = 1;
-
         let startIndex = 0;
         let totalBalance = new BigNumber(0);
-        let addressArray: AllAddresses = null;
+        let addressArray: string[] = null;
+        let maxAddressCount = this.getAddressCount(internalAddress);
+        let count = 150;
+
         do {
-            addressArray = await this.masterWallet.walletManager.spvBridge.getAllAddresses(
-                this.masterWallet.id, this.id, startIndex, 150, internalAddress);
-            if (addressArray.Addresses.length === 0) {
-                requestAddressCount = startIndex;
-                break;
+            if (startIndex + count > maxAddressCount) {
+                count = maxAddressCount - startIndex;
+                if (count <= 0) {
+                    break;
+                }
             }
-            startIndex += addressArray.Addresses.length;
+            addressArray = await this.masterWallet.walletManager.spvBridge.getAddresses(
+                this.masterWallet.id, this.id, startIndex, count, internalAddress);
+            startIndex += addressArray.length;
 
             try {
-                const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray.Addresses);
+                const balance = await this.callGetBalanceByAddress(this.id as StandardCoinName, addressArray);
                 if (balance === null) {
                     Logger.warn("wallet", 'Can not get balance by rpc.', this.id);
                     return null
@@ -992,29 +1027,33 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
     }
 
     async getAllUtxoByAddress(internalAddress: boolean, type: UtxoType): Promise<Utxo[]> {
-        let requestAddressCount = 1;
-
         let startIndex = 0;
         let utxoArray: Utxo[] = null;
         let addressArray = null;
+        let maxAddressCount = this.getAddressCount(internalAddress);
+        let count = 150;
+
         do {
-            addressArray = await this.masterWallet.walletManager.spvBridge.getAllAddresses(
-                this.masterWallet.id, this.id, startIndex, 150, internalAddress);
-            if (addressArray.Addresses.length === 0) {
-                requestAddressCount = startIndex;
-                break;
+            if (startIndex + count > maxAddressCount) {
+                count = maxAddressCount - startIndex;
+                if (count <= 0) {
+                    break;
+                }
             }
+            addressArray = await this.masterWallet.walletManager.spvBridge.getAddresses(
+                this.masterWallet.id, this.id, startIndex, count, internalAddress);
+
             // The ownerAddress is different with the external address even in single address wallet.
             if ((startIndex === 0) && !internalAddress && (this.id === StandardCoinName.ELA)) {
                 // OwnerAddress: for register dpos node, CRC.
                 const ownerAddress = await this.getOwnerAddress();
-                addressArray.Addresses.push(ownerAddress);
+                addressArray.push(ownerAddress);
             }
 
-            startIndex += addressArray.Addresses.length;
+            startIndex += addressArray.length;
 
             try {
-                let utxos = await GlobalElastosAPIService.instance.getAllUtxoByAddress(this.id as StandardCoinName, addressArray.Addresses, type);
+                let utxos = await GlobalElastosAPIService.instance.getAllUtxoByAddress(this.id as StandardCoinName, addressArray, type);
                 if (utxos && utxos.length > 0) {
                     if (utxoArray)
                         utxoArray = [...utxoArray, ...utxos];
@@ -1027,7 +1066,7 @@ export abstract class MainAndIDChainSubWallet extends StandardSubWallet<ElastosT
             }
         } while (!this.masterWallet.account.SingleAddress);
 
-        Logger.log("wallet", 'request Address count:', requestAddressCount, ' utxoArray:', utxoArray);
+        Logger.log("wallet", ' utxoArray:', utxoArray);
         return utxoArray;
     }
 
