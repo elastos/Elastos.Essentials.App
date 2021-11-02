@@ -14,7 +14,7 @@ export class TelosMainNetNetwork extends EVMNetwork {
       "TLOS",
       "Telos",
       TelosAPI.getApiUrl(TelosAPIType.RPC, MAINNET_TEMPLATE),
-      null,
+      TelosAPI.getApiUrl(TelosAPIType.ACCOUNT_RPC, MAINNET_TEMPLATE),
       MAINNET_TEMPLATE,
       40,
       [

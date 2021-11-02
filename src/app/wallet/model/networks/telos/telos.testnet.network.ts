@@ -14,7 +14,7 @@ export class TelosTestNetNetwork extends EVMNetwork {
       "TLOS",
       "Telos",
       TelosAPI.getApiUrl(TelosAPIType.RPC, TESTNET_TEMPLATE),
-      null,
+      TelosAPI.getApiUrl(TelosAPIType.ACCOUNT_RPC, TESTNET_TEMPLATE),
       TESTNET_TEMPLATE,
       41,
       [

@@ -17,7 +17,7 @@ export type EthTransaction = GenericTransaction & {
   input: string;
   isError: string;
   nonce: string;
-  timeStamp: string;
+  timeStamp: string; // Unix timestamp, seconds
   to: string;
   transactionIndex: string;
   txreceipt_status: string;
