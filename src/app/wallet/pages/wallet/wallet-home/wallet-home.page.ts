@@ -26,6 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Events } from 'src/app/services/events.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
@@ -80,6 +81,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     // Dummy Current Network
     public currentNetwork: Network = null;
 
+    private sendTransactionSubscription: Subscription = null;
+
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -96,7 +99,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private walletNetworkUIService: WalletNetworkUIService,
         private walletUIService: WalletUIService,
         private storage: LocalStorage,
-        private globalStartupService: GlobalStartupService
+        private globalStartupService: GlobalStartupService,
+        private events: Events,
     ) {
     }
 
@@ -116,6 +120,12 @@ export class WalletHomePage implements OnInit, OnDestroy {
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
             this.currentNetwork = activeNetwork;
         });
+
+        this.sendTransactionSubscription = this.events.subscribe("wallet:transactionsent", () => {
+            // Update balance and transactions.
+            this.restartUpdateInterval();
+            void this.updateCurrentWalletInfo();
+        });
     }
 
     ngOnDestroy() {
@@ -132,6 +142,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
         if (this.subWalletsListChangeSubscription) {
             this.subWalletsListChangeSubscription.unsubscribe();
             this.subWalletsListChangeSubscription = null;
+        }
+
+        if (this.sendTransactionSubscription) {
+            this.sendTransactionSubscription.unsubscribe();
+            this.sendTransactionSubscription = null;
         }
     }
 

@@ -107,8 +107,10 @@ export abstract class StandardSubWallet<TransactionType extends GenericTransacti
 
                 await this.masterWallet.walletManager.native.hideLoading();
 
-                if (navigateHomeAfterCompletion)
+                if (navigateHomeAfterCompletion) {
                     await this.masterWallet.walletManager.native.setRootRouter('/wallet/wallet-home');
+                    this.masterWallet.walletManager.events.publish('wallet:transactionsent', {subwalletid: this.id, txid: txid});
+                }
 
                 let published = true;
                 let status = 'published';

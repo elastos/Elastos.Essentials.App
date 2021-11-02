@@ -216,6 +216,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                             }
                             await this.globalIntentService.sendIntentResponse(result, this.intentId);
                         }
+                        this.events.publish('wallet:transactionsent', {subwalletid: this.subWalletId, txid: status.txId});
                         break;
                     case ETHTransactionStatus.CANCEL:
                         if (this.intentId) {
