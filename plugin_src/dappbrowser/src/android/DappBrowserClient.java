@@ -191,7 +191,7 @@ public class DappBrowserClient extends WebViewClient {
             }
         }
         // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
-        else if (!url.startsWith("http:") && !url.startsWith("https:") && url.matches("^[A-Za-z0-9+.-]*://.*?$")) {
+        else if (!url.startsWith("http:") && !url.startsWith("https:") /*&& url.matches("^[A-Za-z0-9+.-]*://.*?$")*/) {
 /** Don't check the allowed list */
 //            if (allowedSchemes == null) {
 //                String allowed = brwoserPlugin.getPreferences().getString("AllowedSchemes", null);
@@ -302,7 +302,7 @@ public class DappBrowserClient extends WebViewClient {
         } catch (JSONException ex) {
             LOG.e(LOG_TAG, "URI passed in has caused a JSON error.");
         }
-   }
+    }
 
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
