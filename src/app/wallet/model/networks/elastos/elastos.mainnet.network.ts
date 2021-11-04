@@ -3,8 +3,9 @@ import { SPVNetworkConfig } from "../../../services/wallet.service";
 import { ERC20Coin } from "../../coin";
 import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { ElastosMainnetUniswapCurrencyProvider } from "./currency/elastos.uniswap.currency.provider";
-import { elastosMainnetGlideBridgeProvider, elastosMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
-import { elastosMainnetGlideSwapProvider } from "./earn/swap.providers";
+import { elastosMainnetElkBridgeProvider, elastosMainnetGlideBridgeProvider, elastosMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
+import { elastosMainnetElkEarnProvider } from "./earn/earn.providers";
+import { elastosMainnetElkSwapProvider, elastosMainnetGlideSwapProvider } from "./earn/swap.providers";
 import { ElastosNetworkBase } from "./elastos.base.network";
 
 export class ElastosMainNetNetwork extends ElastosNetworkBase {
@@ -12,13 +13,17 @@ export class ElastosMainNetNetwork extends ElastosNetworkBase {
 
   constructor() {
     super("Elastos",
-      [],
       [
-        elastosMainnetGlideSwapProvider
+        elastosMainnetElkEarnProvider
+      ],
+      [
+        elastosMainnetGlideSwapProvider,
+        elastosMainnetElkSwapProvider
       ],
       [
         elastosMainnetGlideBridgeProvider,
-        elastosMainnetShadowTokenBridgeProvider
+        elastosMainnetShadowTokenBridgeProvider,
+        elastosMainnetElkBridgeProvider
       ]
     );
 

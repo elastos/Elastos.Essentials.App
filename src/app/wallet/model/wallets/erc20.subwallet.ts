@@ -103,7 +103,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction> {
 
         this.fetchTokenValueTimer = setTimeout(() => {
             void this.fetchAndRearmTokenValue();
-        }, 30000);
+        }, 60000);
     }
 
     private async fetchTokenValue(): Promise<void> {

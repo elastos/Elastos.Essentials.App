@@ -1,4 +1,5 @@
 import { channelsBaseProvider } from "../../../earn/baseproviders/channels.provider";
+import { elkBaseProvider } from "../../../earn/baseproviders/elk.provider";
 import { fildaBaseProvider } from "../../../earn/baseproviders/filda.provider";
 import { EarnProvider } from "../../../earn/earnprovider";
 
@@ -60,4 +61,15 @@ export const hecoMainnetChannelsEarnProvider = new EarnProvider(channelsBaseProv
     "0xd5F9bdc2e6c8EE0484a6293ce7FA97d96a5e1012" // CAN token itself
   ],
   "https://app.channels.finance"
+);
+
+export const hecoMainnetElkEarnProvider = new EarnProvider(elkBaseProvider,
+  // compound coins
+  [
+  ],
+  // additional coins - must be lowercase
+  [
+    "0xe1c110e1b1b4a1ded0caf3e42bfbdbb7b5d7ce1c" // ELK token itself
+  ],
+  "https://app.elk.finance/#/stake"
 );

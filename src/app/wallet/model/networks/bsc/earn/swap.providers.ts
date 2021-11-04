@@ -1,3 +1,4 @@
+import { elkBaseProvider } from "../../../earn/baseproviders/elk.provider";
 import { mdexBaseProvider } from "../../../earn/baseproviders/mdex.provider";
 import { SwapProvider } from "../../../earn/swapprovider";
 
@@ -26,5 +27,16 @@ export const bscMainnetMdexSwapProvider = new SwapProvider(
     "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c", // WBNB
     "0x4338665cbb7b2485a8855a139b75d5e34ab0db94", // LTC
   ],
+  [],
   "https://bsc.mdex.co/#/swap?inputCurrency=${inputCurrency}"
-)
+);
+
+export const bscMainnetElkSwapProvider = new SwapProvider(
+  elkBaseProvider,
+  true,
+  [],
+  [
+    "https://raw.githubusercontent.com/elkfinance/tokens/main/bsc.tokenlist.json"
+  ],
+  "https://app.elk.finance/#/swap?inputCurrency=${inputCurrency}"
+);

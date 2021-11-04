@@ -81,5 +81,6 @@ export const arbitrumMainnetUniswapSwapProvider = new SwapProvider(
     "0x0F61B24272AF65EACF6adFe507028957698e032F", // ZIPT
     "0xA970AF1a584579B618be4d69aD6F73459D112F95", // SUSD
   ],
+  [],
   "https://app.uniswap.org/#/swap"
 );

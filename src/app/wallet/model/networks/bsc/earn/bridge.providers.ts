@@ -1,4 +1,5 @@
 import { binanceBaseProvider } from "../../../earn/baseproviders/binance.provider";
+import { elkBaseProvider } from "../../../earn/baseproviders/elk.provider";
 import { shadowTokenBaseProvider } from "../../../earn/baseproviders/shadowtoken.provider";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 
@@ -46,5 +47,13 @@ export const bscMainnetShadowTokenBridgeProvider = new BridgeProvider(
   true, // BNB
   [
     "0x8b45796da30a87d8459e1b16fbf106b664ee01e1" // Filda on BSC
+  ]
+);
+
+export const bscMainnetElkBridgeProvider = new BridgeProvider(
+  elkBaseProvider,
+  false,
+  [
+    "0xe1c110e1b1b4a1ded0caf3e42bfbdbb7b5d7ce1c", // ELK
   ]
 );

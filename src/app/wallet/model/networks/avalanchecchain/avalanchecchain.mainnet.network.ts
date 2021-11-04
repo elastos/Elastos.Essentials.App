@@ -6,6 +6,9 @@ import { EVMNetwork } from "../evm.network";
 import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { AvalancheCChainAPI, AvalancheCChainApiType } from "./avalanchecchain.api";
 import { AvalancheMainnetUniswapCurrencyProvider } from "./currency/avalanche.uniswap.currency.provider";
+import { avalancheMainnetElkBridgeProvider } from "./earn/bridge.providers";
+import { avalancheMainnetElkEarnProvider } from "./earn/earn.providers";
+import { avalancheMainnetElkSwapProvider } from "./earn/swap.providers";
 
 export class AvalancheCChainMainNetNetwork extends EVMNetwork {
   private uniswapCurrencyProvider: AvalancheMainnetUniswapCurrencyProvider = null;
@@ -21,6 +24,16 @@ export class AvalancheCChainMainNetNetwork extends EVMNetwork {
       null,
       MAINNET_TEMPLATE,
       43114,
+      [],
+      [
+        avalancheMainnetElkEarnProvider
+      ],
+      [
+        avalancheMainnetElkSwapProvider
+      ],
+      [
+        avalancheMainnetElkBridgeProvider
+      ]
     );
 
     this.uniswapCurrencyProvider = new AvalancheMainnetUniswapCurrencyProvider();

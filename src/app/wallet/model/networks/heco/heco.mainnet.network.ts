@@ -3,9 +3,9 @@ import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
 import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { HecoMainnetUniswapCurrencyProvider } from "./currency/heco.uniswap.currency.provider";
-import { hecoMainnetGlideBridgeProvider, hecoMainnetO3BridgeProvider, hecoMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
-import { hecoMainnetChannelsEarnProvider, hecoMainnetFildaEarnProvider } from "./earn/earn.providers";
-import { hecoMainnetAnyswapSwapProvider, hecoMainnetMdexSwapProvider, hecoMainnetO3SwapProvider } from "./earn/swap.providers";
+import { hecoMainnetElkBridgeProvider, hecoMainnetGlideBridgeProvider, hecoMainnetO3BridgeProvider, hecoMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
+import { hecoMainnetChannelsEarnProvider, hecoMainnetElkEarnProvider, hecoMainnetFildaEarnProvider } from "./earn/earn.providers";
+import { hecoMainnetAnyswapSwapProvider, hecoMainnetElkSwapProvider, hecoMainnetMdexSwapProvider, hecoMainnetO3SwapProvider } from "./earn/swap.providers";
 import { HecoAPI, HecoApiType } from "./heco.api";
 
 export class HECOMainNetNetwork extends EVMNetwork {
@@ -33,17 +33,20 @@ export class HECOMainNetNetwork extends EVMNetwork {
       ],
       [
         hecoMainnetFildaEarnProvider,
+        hecoMainnetElkEarnProvider,
         hecoMainnetChannelsEarnProvider
       ],
       [
         hecoMainnetMdexSwapProvider,
         hecoMainnetO3SwapProvider,
-        hecoMainnetAnyswapSwapProvider
+        hecoMainnetAnyswapSwapProvider,
+        hecoMainnetElkSwapProvider
       ],
       [
         hecoMainnetO3BridgeProvider,
         hecoMainnetShadowTokenBridgeProvider,
-        hecoMainnetGlideBridgeProvider
+        hecoMainnetGlideBridgeProvider,
+        hecoMainnetElkBridgeProvider
       ]
     );
 

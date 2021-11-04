@@ -5,6 +5,7 @@ export class SwapProvider {
     public baseProvider: BaseEarnSwapProvider,
     public canSwapNativeToken: boolean, // Whether this provider can swap from/to the native token of the network he belongs to (Ex: ELA on Elastos network)
     public swappableTokenContracts: string[], // List of coins that can be swapped (contract addresses)
+    public swappableTokenLists: string[], // List ok "token list" compatible urls from where we can fetch the list of swappable tokens
     public swapUrl?: string // Specific target url to swap a specific coin
   ) {
     // Make sure all providers use lowercase contract addresses

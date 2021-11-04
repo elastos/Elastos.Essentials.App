@@ -109,7 +109,7 @@ export class WalletInitService extends GlobalService {
 
     await this.walletManager.init();
     await this.intentService.init();
-
+    await this.swapService.init();
 
     // TMP TEST
     //await this.currencyV2Service.getTokenUSDValue(null, null);

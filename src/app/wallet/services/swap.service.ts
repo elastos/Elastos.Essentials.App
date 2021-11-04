@@ -20,12 +20,41 @@
  * SOFTWARE.
  */
 
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import moment from 'moment';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
+import { Logger } from 'src/app/logger';
+import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
 import { SwapProvider } from '../model/earn/swapprovider';
+import { Network } from '../model/networks/network';
 import { ERC20SubWallet } from '../model/wallets/erc20.subwallet';
 import { AnySubWallet } from '../model/wallets/subwallet';
+import { WalletNetworkService } from './network.service';
+
+type TokenListCacheEntry = {
+    fetchTime: number; // Unix timestamp
+    tokenAddresses: string[]; // List of swappable token addresses
+}
+
+type TokenListResponse = {
+    keywords: string[]; // ie elkk, defi...
+    logoURI: string;
+    name: string; // List name - ie "Elk ELASTOS Tokens"
+    timestamp: string; // last updated - ie "2021-10-17T15:43:53+00:00"
+    tokens: {
+        address: string; // ie "0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C"
+        chainId: number; // ie 20
+        decimals: number; // ie 18
+        logoURI: string; // ie "https://raw.githubusercontent.com/elkfinance/tokens/main/logos/elastos/0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C/logo.png"
+        name: string; // ie "Elk",
+        symbol: string; // ie "ELK"
+    }[]
+}
+
+const TOKEN_LIST_CACHE_REFRESH_MIN_TIME = (1 * 24 * 60 * 60); // Min duration between updates of a token list content, seconds
 
 /**
  * Service responsible for managing token swap features (swap internally inside a network - not bridge)
@@ -47,9 +76,17 @@ export class SwapService {
     constructor(
         public theme: GlobalThemeService,
         public dappbrowserService: DappBrowserService,
+        private networkService: WalletNetworkService,
+        private storage: GlobalStorageService,
+        private http: HttpClient
     ) {
-
         SwapService.instance = this;
+    }
+
+    public init() {
+        this.networkService.activeNetwork.subscribe(activeNetwork => {
+            this.onActiveNetworkChanged(activeNetwork);
+        });
     }
 
     // TODO: optimize performance
@@ -85,4 +122,52 @@ export class SwapService {
         void this.dappbrowserService.open(targetUrl, provider.baseProvider.name);
     }
 
+    /**
+     * Handle network changes so that we can refresh token lists tokens sometimes.
+     */
+    private onActiveNetworkChanged(network: Network) {
+        void this.updateTokenLists(network);
+    }
+
+    private async updateTokenLists(network: Network) {
+        let activeUserDID = GlobalDIDSessionsService.signedInDIDString;
+        let currentTime = moment().unix();
+
+        for (let provider of network.swapProviders) {
+            for (let tokenListUrl of provider.swappableTokenLists) {
+                let listCacheKey = network.key + tokenListUrl;
+                let cacheEntry = await this.storage.getSetting<TokenListCacheEntry>(activeUserDID, "wallet", listCacheKey, null);
+                if (!cacheEntry || moment.unix(cacheEntry.fetchTime).add(TOKEN_LIST_CACHE_REFRESH_MIN_TIME, "seconds").isBefore(currentTime)) {
+                    // No cache, or expired cache: fetch the tokens list
+                    Logger.log("wallet", "Fetching swap tokens list for", provider.baseProvider.name, "on network", network.name, tokenListUrl);
+                    try {
+                        let tokenListResponse = await this.http.get<TokenListResponse>(tokenListUrl).toPromise();
+                        if (tokenListResponse) {
+                            let tokensToSave = tokenListResponse.tokens.map(t => t.address.toLowerCase());
+
+                            cacheEntry = {
+                                fetchTime: currentTime,
+                                tokenAddresses: tokensToSave
+                            }
+
+                            Logger.log("wallet", "Saving swap tokens list to cache", cacheEntry);
+                            await this.storage.setSetting(activeUserDID, "wallet", listCacheKey, cacheEntry);
+                        }
+                    }
+                    catch (e) {
+                        debugger;
+                        Logger.warn("wallet", "Token list fetch failed:", e);
+                    }
+                }
+
+                // Append token lists to provider's token addresses
+                if (cacheEntry) {
+                    cacheEntry.tokenAddresses.forEach(addr => {
+                        if (provider.swappableTokenContracts.indexOf(addr) < 0)
+                            provider.swappableTokenContracts.push(addr);
+                    });
+                }
+            }
+        }
+    }
 }

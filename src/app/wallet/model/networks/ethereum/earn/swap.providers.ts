@@ -46,5 +46,6 @@ export const ethereumMainnetUniswapSwapProvider = new SwapProvider(
     "0x6e1A19F235bE7ED8E3369eF73b196C07257494DE", // WFIL
     "0xe1be5d3f34e89de342ee97e6e90d405884da6c67", // TRX
   ],
+  [],
   "https://app.uniswap.org/#/swap"
 );

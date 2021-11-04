@@ -1,3 +1,4 @@
+import { elkBaseProvider } from "../../../earn/baseproviders/elk.provider";
 import { glideBaseProvider } from "../../../earn/baseproviders/glide.provider";
 import { SwapProvider } from "../../../earn/swapprovider";
 
@@ -10,5 +11,17 @@ export const elastosMainnetGlideSwapProvider = new SwapProvider(
     "0xF9Ca2eA3b1024c0DB31adB224B407441bECC18BB", // Heco-Peg HUSD Token on Elastos (htHUSD)
     // TODO: WELA - Find the right address
   ],
+  [
+  ],
   "https://glidefinance.io/swap?inputCurrency=${inputCurrency}"
+);
+
+export const elastosMainnetElkSwapProvider = new SwapProvider(
+  elkBaseProvider,
+  true,
+  [],
+  [
+    "https://raw.githubusercontent.com/elkfinance/tokens/main/elastos.tokenlist.json"
+  ],
+  "https://app.elk.finance/#/swap?inputCurrency=${inputCurrency}"
 );

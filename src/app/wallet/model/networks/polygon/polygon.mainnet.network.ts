@@ -3,6 +3,9 @@ import { ERC20Coin } from "../../coin";
 import { EVMNetwork } from "../evm.network";
 import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { PolygonMainnetUniswapCurrencyProvider } from "./currency/polygon.uniswap.currency.provider";
+import { polygonMainnetElkBridgeProvider } from "./earn/bridge.providers";
+import { polygonMainnetElkEarnProvider } from "./earn/earn.providers";
+import { polygonMainnetElkSwapProvider } from "./earn/swap.providers";
 import { PolygonAPI, PolygonAPIType } from "./polygon.api";
 
 export class PolygonMainNetNetwork extends EVMNetwork {
@@ -25,6 +28,15 @@ export class PolygonMainNetNetwork extends EVMNetwork {
         new ERC20Coin("USDC", "USDC", "0x2791bca1f2de4661ed88a30c99a7a9449aa84174", 6, MAINNET_TEMPLATE, false, true),
         new ERC20Coin("LINK", "ChainLink", "0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39", 18, MAINNET_TEMPLATE, false, true),
         new ERC20Coin("UNI", "Uniswap", "0xb33eaad8d922b1083446dc23f610c2567fb5180f", 18, MAINNET_TEMPLATE, false, true),
+      ],
+      [
+        polygonMainnetElkEarnProvider
+      ],
+      [
+        polygonMainnetElkSwapProvider
+      ],
+      [
+        polygonMainnetElkBridgeProvider
       ]
     );
 

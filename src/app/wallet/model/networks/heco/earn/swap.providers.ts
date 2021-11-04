@@ -1,4 +1,5 @@
 import { anyswapBaseProvider } from "../../../earn/baseproviders/anyswap.provider";
+import { elkBaseProvider } from "../../../earn/baseproviders/elk.provider";
 import { mdexBaseProvider } from "../../../earn/baseproviders/mdex.provider";
 import { o3swapBaseProvider } from "../../../earn/baseproviders/o3swap.provider";
 import { SwapProvider } from "../../../earn/swapprovider";
@@ -11,6 +12,7 @@ export const hecoMainnetAnyswapSwapProvider = new SwapProvider(
     "0x66a79d23e58475d2738179ca52cd0b41d73f0bea", // hBTC
     "0x64ff637fb478863b7468bc97d30a5bf3a428a1fd", // hETH
   ],
+  [],
   "https://huobi.anyswap.exchange/swap?inputCurrency=${inputCurrency}&theme=${theme}"
 );
 
@@ -20,6 +22,7 @@ export const hecoMainnetO3SwapProvider = new SwapProvider(
   [
     "0xe36ffd17b2661eb57144ceaef942d95295e637f0", // Filda
   ],
+  [],
   "https://o3swap.com/swap"
 );
 
@@ -43,5 +46,16 @@ export const hecoMainnetMdexSwapProvider = new SwapProvider(
     "0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f", // WHT
     "0xa2f3c2446a3e20049708838a779ff8782ce6645a", // XRP
   ],
+  [],
   "https://ht.mdex.co/#/swap?inputCurrency=${inputCurrency}"
+);
+
+export const hecoMainnetElkSwapProvider = new SwapProvider(
+  elkBaseProvider,
+  true,
+  [],
+  [
+    "https://raw.githubusercontent.com/elkfinance/tokens/main/heco.tokenlist.json"
+  ],
+  "https://app.elk.finance/#/swap?inputCurrency=${inputCurrency}"
 );

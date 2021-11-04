@@ -4,8 +4,9 @@ import { EVMNetwork } from "../evm.network";
 import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { BscAPI, BscApiType } from "./bsc.api";
 import { BscMainnetUniswapCurrencyProvider } from "./currency/bsc.uniswap.currency.provider";
-import { bscMainnetBinanceBridgeProvider, bscMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
-import { bscMainnetMdexSwapProvider } from "./earn/swap.providers";
+import { bscMainnetBinanceBridgeProvider, bscMainnetElkBridgeProvider, bscMainnetShadowTokenBridgeProvider } from "./earn/bridge.providers";
+import { bscMainnetElkEarnProvider } from "./earn/earn.providers";
+import { bscMainnetElkSwapProvider, bscMainnetMdexSwapProvider } from "./earn/swap.providers";
 
 export class BSCMainNetNetwork extends EVMNetwork {
   private uniswapCurrencyProvider: BscMainnetUniswapCurrencyProvider = null;
@@ -26,13 +27,17 @@ export class BSCMainNetNetwork extends EVMNetwork {
         new ERC20Coin("ADA", "Binance ADA", "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47", 18, MAINNET_TEMPLATE, false),
         new ERC20Coin("USDT", "Binance USDT", "0x55d398326f99059ff775485246999027b3197955", 18, MAINNET_TEMPLATE, false, true)
       ],
-      [],
       [
-        bscMainnetMdexSwapProvider
+        bscMainnetElkEarnProvider
+      ],
+      [
+        bscMainnetMdexSwapProvider,
+        bscMainnetElkSwapProvider
       ],
       [
         bscMainnetBinanceBridgeProvider,
-        bscMainnetShadowTokenBridgeProvider
+        bscMainnetShadowTokenBridgeProvider,
+        bscMainnetElkBridgeProvider
       ]
     );
 

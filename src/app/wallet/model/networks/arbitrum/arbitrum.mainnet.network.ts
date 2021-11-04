@@ -4,6 +4,8 @@ import { EVMNetwork } from "../evm.network";
 import { UniswapCurrencyProvider } from "../uniswap.currencyprovider";
 import { ArbitrumAPI, ArbitrumApiType } from "./arbitrum.api";
 import { ArbitrumMainnetUniswapCurrencyProvider } from "./currency/arb.uniswap.currency.provider";
+import { arbitrumMainnetElkBridgeProvider } from "./earn/bridge.providers";
+import { arbitrumMainnetElkEarnProvider } from "./earn/earn.providers";
 import { arbitrumMainnetUniswapSwapProvider } from "./earn/swap.providers";
 
 export class ArbitrumMainNetNetwork extends EVMNetwork {
@@ -27,11 +29,15 @@ export class ArbitrumMainNetNetwork extends EVMNetwork {
         new ERC20Coin("SUSHI", "Sushi Token", "0xd4d42f0b6def4ce0383636770ef773390d85c61a", 18, MAINNET_TEMPLATE, false),
         new ERC20Coin("COMP", "Compound", "0x354a6da3fcde098f8389cad84b0182725c6c91de", 18, MAINNET_TEMPLATE, false),
       ],
-      [],
+      [
+        arbitrumMainnetElkEarnProvider
+      ],
       [
         arbitrumMainnetUniswapSwapProvider
       ],
-      []
+      [
+        arbitrumMainnetElkBridgeProvider
+      ]
     );
 
     this.uniswapCurrencyProvider = new ArbitrumMainnetUniswapCurrencyProvider();
