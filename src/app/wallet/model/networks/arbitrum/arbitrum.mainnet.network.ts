@@ -6,7 +6,7 @@ import { ArbitrumAPI, ArbitrumApiType } from "./arbitrum.api";
 import { ArbitrumMainnetUniswapCurrencyProvider } from "./currency/arb.uniswap.currency.provider";
 import { arbitrumMainnetElkBridgeProvider } from "./earn/bridge.providers";
 import { arbitrumMainnetElkEarnProvider } from "./earn/earn.providers";
-import { arbitrumMainnetUniswapSwapProvider } from "./earn/swap.providers";
+import { arbitrumMainnetElkSwapProvider, arbitrumMainnetUniswapSwapProvider } from "./earn/swap.providers";
 
 export class ArbitrumMainNetNetwork extends EVMNetwork {
   private uniswapCurrencyProvider: ArbitrumMainnetUniswapCurrencyProvider = null;
@@ -34,7 +34,7 @@ export class ArbitrumMainNetNetwork extends EVMNetwork {
       ],
       [
         arbitrumMainnetUniswapSwapProvider,
-        arbitrumMainnetUniswapSwapProvider
+        arbitrumMainnetElkSwapProvider
       ],
       [
         arbitrumMainnetElkBridgeProvider

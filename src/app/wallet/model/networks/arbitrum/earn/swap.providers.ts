@@ -1,3 +1,4 @@
+import { elkBaseProvider } from "../../../earn/baseproviders/elk.provider";
 import { uniswapBaseProvider } from "../../../earn/baseproviders/uniswap.provider";
 import { SwapProvider } from "../../../earn/swapprovider";
 
@@ -83,4 +84,14 @@ export const arbitrumMainnetUniswapSwapProvider = new SwapProvider(
   ],
   [],
   "https://app.uniswap.org/#/swap"
+);
+
+export const arbitrumMainnetElkSwapProvider = new SwapProvider(
+  elkBaseProvider,
+  true,
+  [],
+  [
+    "https://raw.githubusercontent.com/elkfinance/tokens/main/arbitrum.tokenlist.json"
+  ],
+  "https://app.elk.finance/#/swap?inputCurrency=${inputCurrency}"
 );
