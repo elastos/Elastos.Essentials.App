@@ -33,6 +33,7 @@ export class ArbitrumMainNetNetwork extends EVMNetwork {
         arbitrumMainnetElkEarnProvider
       ],
       [
+        arbitrumMainnetUniswapSwapProvider,
         arbitrumMainnetUniswapSwapProvider
       ],
       [
