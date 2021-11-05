@@ -96,8 +96,6 @@ export class WalletAssetPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.showRefresher();
-
         this.currentNetwork = this.networkService.activeNetwork.value;
         this.currentActiveWallet = this.walletManager.activeNetworkWallet.value;
     }
