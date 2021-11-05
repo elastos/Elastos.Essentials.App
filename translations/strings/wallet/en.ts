@@ -346,6 +346,12 @@ export const en = {
         'delete-network-prompt-title': 'Delete network ?',
         'delete-network-prompt-text': 'Do you really want to delete this network ?',
 
+        /***********************
+        * Asset Overview Page *
+        ************************/
+        'wallet-asset-title': 'Assets Overview',
+        "wallet-asset-networks-count": "{{ networksCount }} Networks",
+
         /********************************************** Intent Screens ***********************************************/
 
         /************************

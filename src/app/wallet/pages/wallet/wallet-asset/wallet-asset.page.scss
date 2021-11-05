@@ -1,0 +1,171 @@
+@import "src/app/wallet/root.scss";
+
+ion-slides {
+    min-height: 100%;
+}
+
+ion-slide {
+    padding: 15px 7.5px;
+}
+
+.single-slide {
+    padding: 15px 20px;
+}
+
+ion-slide,
+.single-slide {
+    min-height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 50px;
+
+    .card-label-row {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+
+        .overview-img {
+            margin-bottom: 20px;
+
+            img {
+                width: 40px;
+                height: px;
+            }
+        }
+
+        .title {
+            margin-bottom: 10px;
+            font-size: 20;
+        }
+
+        .bigFont {
+            font-size: 40px;
+        }
+
+        .smallFont {
+            font-size: 24px;
+        }
+    }
+    .subwallet-row {
+        .left-title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: hidden;
+            text-align: left;
+            padding-left: 10px;
+            margin-bottom: 10px;
+
+            h1,  p {
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: 0.7px;
+            }
+
+            p {
+                font-size: 13px;
+                font-weight: 400;
+                padding: 3px 0 0;
+            }
+        }
+
+        .img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .arrow-icon {
+                height: 16px;
+                width: 16px;
+            }
+        }
+    }
+
+    .network-row {
+        border-radius: 17px;
+        padding: 7.5px 10px 7.5px 0;
+        margin: 0 7.5px 7.5px 7.5px;
+        background-color: #ffffff;
+        box-shadow: 0 3px 15px 0 #ededf0;
+
+        .left-title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: hidden;
+            text-align: left;
+            padding-left: 10px;
+
+            h1, p {
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: 0.7px;
+            }
+
+            p {
+                font-size: 13px;
+                font-weight: 400;
+                padding: 3px 0 0;
+            }
+        }
+    }
+
+    .collectibles-title {
+        margin-top: 9.5px;
+    }
+}
+
+.sticky-btn {
+    position: sticky;
+    top: 10px;
+    left: 7.5%;
+    width: 85%;
+    z-index: 10;
+
+    ion-icon {
+        color: white;
+    }
+}
+
+.dark-slides {
+    ion-slide {
+        .main-title-row {
+            p {
+                color: #9d9d9d;
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.dark-slide {
+    .main-title-row {
+        p {
+            color: #9d9d9d;
+            opacity: 1;
+        }
+    }
+
+    .network-row {
+        background-color: #151515;
+        box-shadow: none;
+
+        .subwallet-row {
+            background-color: #151515;
+        }
+    }
+}

@@ -346,6 +346,12 @@ export const zh = {
                 'delete-network-prompt-title': '删除网络 ?',
                 'delete-network-prompt-text': '确定需要删除此网络 ?',
 
+                /***********************
+                * Asset Overview Page *
+                ************************/
+                'wallet-asset-title': '资产总览',
+                "wallet-asset-networks-count": "{{ networksCount }} 个网络",
+
                 /********************************************** Intent Screens ***********************************************/
 
                 /************************

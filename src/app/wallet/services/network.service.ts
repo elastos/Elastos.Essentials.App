@@ -122,11 +122,15 @@ export class WalletNetworkService {
         this.priorityNetworkChangeCallback = null;
     }
 
-    public async setActiveNetwork(network: Network) {
+    public async setActiveNetwork(network: Network, startBackgroundUpdates = true) {
         Logger.log("wallet", "Setting active network to", network);
 
-        // Save choice to local storage
-        await this.localStorage.set('activenetwork', network.key);
+        if (startBackgroundUpdates) {
+            // Save choice to local storage
+            await this.localStorage.set('activenetwork', network.key);
+        }
+
+        network.setStartBackgroundUpdates(startBackgroundUpdates);
 
         await this.notifyNetworkChange(network);
     }

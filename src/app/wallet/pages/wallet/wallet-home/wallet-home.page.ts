@@ -156,9 +156,15 @@ export class WalletHomePage implements OnInit, OnDestroy {
             key: "settings",
             iconPath: BuiltInIcon.SETTINGS
         });
+        this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
+            key: "asset",
+            iconPath: !this.theme.darkMode ? '/assets/wallet/settings/wallet.svg' : '/assets/wallet/settings/darkmode/wallet.svg',
+        });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             if (icon.key === 'settings') {
                 this.native.go('/wallet/settings');
+            } else if (icon.key === 'asset') {
+                this.native.go('/wallet/wallet-asset');
             }
         });
     }

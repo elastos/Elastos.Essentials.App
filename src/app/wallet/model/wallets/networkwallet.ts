@@ -197,6 +197,15 @@ export abstract class NetworkWallet {
         }
     }
 
+    /**
+     * Update balance.
+     */
+    public async updateBalance() {
+        for (let subWallet of Object.values(this.subWallets)) {
+            await subWallet.updateBalance();
+        }
+    }
+
     public getSubWalletBalance(coinId: CoinID): BigNumber {
         Logger.log("wallet", "getSubWalletBalance", coinId, this.subWallets)
         return this.subWallets[coinId].getRawBalance();
