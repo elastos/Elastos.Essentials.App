@@ -1,21 +1,20 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { ToastController, AlertController } from "@ionic/angular";
-import { CandidatesService } from "../../services/candidates.service";
-import { Candidate } from "../../model/candidates.model";
-import { NavigationExtras } from "@angular/router";
-
+import { AlertController, ToastController } from "@ionic/angular";
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNavService } from "src/app/services/global.nav.service";
-import { TranslateService } from '@ngx-translate/core';
-import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
 import { Logger } from "src/app/logger";
-import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
-import { GlobalStorageService } from "src/app/services/global.storage.service";
-import { VoteService } from "src/app/vote/services/vote.service";
 import { App } from "src/app/model/app.enum";
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from "src/app/components/titlebar/titlebar.types";
+import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
+import { GlobalIntentService } from "src/app/services/global.intent.service";
+import { GlobalNavService } from "src/app/services/global.nav.service";
+import { GlobalStorageService } from "src/app/services/global.storage.service";
+import { GlobalThemeService } from 'src/app/services/global.theme.service';
+import { VoteService } from "src/app/vote/services/vote.service";
+import { Candidate } from "../../model/candidates.model";
+import { CandidatesService } from "../../services/candidates.service";
+
 
 
 @Component({
@@ -53,39 +52,39 @@ export class CandidatesPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-        await this.candidatesService.init();
-        if (this.candidatesService.candidates.length) {
+
+        if (this.candidatesService.votingTermIndex != -1) {
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-candidates'));
-        } else if (this.candidatesService.crmembers.length) {
+        } else if (this.candidatesService.currentTermIndex != -1) {
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
         } else {
             this.titleBar.setTitle(this.translate.instant('launcher.app-cr-council'));
         }
 
-        let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
-        for (let crmember of this.candidatesService.crmembers) {
-            if (crmember.did == did) {
-                this.crmemberInfo = crmember;
-                this.addEditIcon();
-                break;
-            }
-        }
+        // let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
+        // for (let crmember of this.candidatesService.crmembers) {
+        //     if (crmember.did == did) {
+        //         this.crmemberInfo = crmember;
+        //         this.addEditIcon();
+        //         break;
+        //     }
+        // }
     }
 
     ionViewWillLeave() {
       this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    addEditIcon() {
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT });
-        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-            await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilvoting/crnode', {
-                queryParams: {
-                    crmember: this.crmemberInfo
-                }
-            });
-        });
-    }
+    // addEditIcon() {
+    //     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT });
+    //     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+    //         await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilvoting/crnode', {
+    //             queryParams: {
+    //                 crmember: this.crmemberInfo
+    //             }
+    //         });
+    //     });
+    // }
 
     doRefresh(event) {
         setTimeout(() => {
@@ -167,5 +166,12 @@ export class CandidatesPage implements OnInit {
 
     async deleteStorage(): Promise<void> {
         await this.storage.setSetting(GlobalDIDSessionsService.signedInDIDString, 'crcouncil', 'votes', []);
+    }
+
+    async onShowMemberInfo(did: string) {
+        await this.candidatesService.getCRMemeberInfo(did);
+        if (this.candidatesService.selectedMember != null) {
+            this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
+        }
     }
 }

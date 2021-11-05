@@ -6,7 +6,7 @@ export const zh = {
         'council-members': 'CR 委员会成员',
         'my-candidates': '我的候选人',
         'vote-history': '投票历史',
-        'votes': '投票',
+        'votes': '票',
         'votes-remaining': '剩余票数',
         'dist-votes': '分配投票',
         'pledge-ela': '抵押 ELA',
@@ -40,6 +40,23 @@ export const zh = {
         'cr-member-info-no-available' : 'CR委员信息获取失败, 请稍后再试',
         'pledge-some-ELA-to-candidates': '请给您的候选人分配一些ELA',
         'not-allow-pledge-more-than-own': '您分配的ELA不能超过您拥有的ELA',
+
+        /********** Member **********/
+        'crmember-profile': '委员会成员信息',
+        'impeachment-progress': '弹劾进度',
+        'current': '当前',
+        'impeachment': '弹劾',
+        'about-member': '关于',
+        'performance-record': '履职情况',
+        'member-did': '委员会成员DID',
+        'member-url': '委员会成员URL',
+        'member-profile': '委员会成员简介',
+        'update': '更新',
+        'claim-dpos-node': '绑定DPoS节点',
+
+        /********** Impeach **********/
+        'impeach-council-member': '弹劾委员会成员',
+        'member-name': '委员会成员昵称',
 
         /********** Location code **********
         * Location code - list of international phone number country code / country name.

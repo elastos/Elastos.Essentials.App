@@ -6,7 +6,7 @@ export const en = {
         'council-members': 'CR Council Members',
         'my-candidates': 'My Candidates',
         'vote-history': 'Vote History',
-        'votes': 'votes',
+        'votes': ' Votes',
         'votes-remaining': 'Votes Remaining',
         'dist-votes': 'Distribute Votes',
         'pledge-ela': 'Pledge ELA',
@@ -40,6 +40,23 @@ export const en = {
         'cr-member-info-no-available' : 'The CRC Council\'s info is not available at this time, please try again later',
         'pledge-some-ELA-to-candidates': 'Please pledge some ELA to your candidates',
         'not-allow-pledge-more-than-own': 'You are not allowed to pledge more ELA than you own',
+
+        /********** Member **********/
+        'crmember-profile': 'Council Member Profile',
+        'impeachment-progress': 'Impeachment progress',
+        'current': 'Current',
+        'impeachment': 'Impeachment',
+        'about-member': 'About Member',
+        'performance-record': 'Performance Record',
+        'member-did': 'Council Member DID',
+        'member-url': 'Council Member URL',
+        'member-profile': 'Council Member Profile',
+        'update': 'Update',
+        'claim-dpos-node': 'Claim DPos Node',
+
+        /********** Impeach **********/
+        'impeach-council-member': 'Impeach Council Member',
+        'member-name': 'Council Member Name',
 
         /********** Location code **********
         * Location code - list of international phone number country code / country name.

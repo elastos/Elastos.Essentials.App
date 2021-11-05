@@ -39,6 +39,7 @@ export class TitleBarComponent {
     protected itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
 
     public menuItems: TitleBarMenuItem[] = [];
+    public menuComponent: any = TitlebarmenuitemComponent;
 
     constructor(
         public themeService: GlobalThemeService,
@@ -237,6 +238,13 @@ export class TitleBarComponent {
     }
 
     /**
+     * Setting customs Menu Componet to replace the default componet
+    */
+    public setMenuComponent(component: any) {
+        this.menuComponent = component;
+    }
+
+    /**
      * Changes the top left inner icon appearance and behaviour. See @TitleBarNavigationMode for available
      * navigation modes.
      *
@@ -294,7 +302,7 @@ export class TitleBarComponent {
     async openMenu(ev) {
         this.menu = await this.popoverCtrl.create({
             mode: 'ios',
-            component: TitlebarmenuitemComponent,
+            component: this.menuComponent,
             componentProps: {
                 items: this.menuItems
             },

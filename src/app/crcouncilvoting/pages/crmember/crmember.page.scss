@@ -1,0 +1,166 @@
+@import "src/app/vote/root.scss";
+
+ion-row {
+    background-color: #ffffff;
+}
+
+ion-list {
+    background-color: #ffffff;
+}
+
+ion-col {
+    margin: 0px;
+}
+
+.id-row {
+    margin-top: 29px;
+    .avatar {
+        width: 78px;
+        height: 78px;
+    }
+
+    .name {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 29px;
+    }
+
+    .location {
+        color: #ACACAC;
+    }
+
+    .status {
+        padding: 5px 10px;
+        border-radius: 10px;
+        height: 22;
+        font-size: 10px;
+        font-weight: 600;
+        background-color: #74ffde;
+    }
+}
+
+.impeachment-row {
+    margin-top: 24px;
+    height: 153px;
+    border-radius: 21px;
+    display: flex;
+    // flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f7fe;
+
+    .progress-container {
+        padding-left: 10px !important;
+    }
+
+    .progress-wrapper {
+        width: 102px;
+        height: 102px;
+
+        .ratio {
+            position: absolute;
+            top: 50%;
+            bottom: auto;
+            left: 50%;
+            transform: translateY(-50%) translateX(-50%);
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 22px;
+        }
+
+        round-progress {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+
+    ion-row {
+        background-color: #f5f7fe;
+    }
+
+    #impeachemnt-title {
+        margin-top: 0px;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    h4 {
+        font-weight: 500;
+        font-size: 14px;
+    }
+}
+
+ion-segment {
+    margin-top: 24px;
+    padding: 7px 5px;
+    height: 47px;
+    color: #ffffff;
+    background-color: #f5f7fe;
+
+    ion-segment-button {
+        color: #732cce;
+
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 142%;
+    }
+}
+
+.voteResult {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #00D88A;
+    height: 22;
+    font-size: 10px;
+    color: #03B776;
+    background-color: rgba(116, 255, 222, 0.15);
+}
+
+.footer-space {
+    background-color: #ffffff;
+    height: 113px;
+}
+
+.darkContainer {
+    ion-row {
+        background-color: #121212;
+    }
+
+    ion-list {
+        background-color: #121212;
+    }
+
+    .id-row {
+        .status {
+            color: #000000;
+        }
+    }
+
+    .impeachment-row {
+        background-color: #212021;
+        ion-row {
+            background-color: #212021;
+        }
+    }
+
+    ion-segment {
+        color: #474747;
+        background-color: #252525;
+
+        ion-segment-button {
+            color: #FFFFFF;
+        }
+    }
+
+    .voteResult {
+        border: 1px solid #235C48;
+        color: #3FAB85;
+    }
+
+    .footer-space {
+        background-color: #121212;
+    }
+}
+

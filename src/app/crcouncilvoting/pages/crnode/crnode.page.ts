@@ -13,6 +13,7 @@ import { VoteService } from 'src/app/vote/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { CandidatesService } from '../../services/candidates.service';
 
 
 @Component({
@@ -25,7 +26,7 @@ export class CRNodePage implements OnInit {
 
     public masterWalletId: string;
     public nodePublicKey: string;
-    public crmemberInfo: any;
+    public crmemberInfo: any = {};
 
     constructor(
         public translate: TranslateService,
@@ -37,13 +38,9 @@ export class CRNodePage implements OnInit {
         private route: ActivatedRoute,
         private zone: NgZone,
         private popup: PopupService,
+        public candidatesService: CandidatesService,
     ) {
-        this.route.queryParams.subscribe((data: { crmember: any }) => {
-            this.zone.run(() => {
-                this.crmemberInfo = data.crmember;
-                this.nodePublicKey = this.crmemberInfo.dpospublickey;
-            });
-        });
+
     }
 
     ngOnInit() {
@@ -51,8 +48,10 @@ export class CRNodePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('crcouncilmanager.crnode-manager'));
+        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.claim-dpos-node'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
+        this.crmemberInfo = this.candidatesService.selectedMember;
+        this.nodePublicKey = this.crmemberInfo.dpospublickey;
     }
 
     async goTransaction() {

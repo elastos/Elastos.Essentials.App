@@ -1,0 +1,58 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <div [class.darkContainer]="theme.darkMode">
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="member.didName">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.member-name' | translate }}</h5>
+                    <h4>{{ member.didName }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="member.did">
+                <ion-col>
+                    <h5>{{ 'crcouncilvoting.member-did'  | translate }}</h5>
+                    <h4>{{ member.did }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'crproposalvoting.vote-number' | translate }}</h5>
+                    <h5 id="max-votes-label">
+                        <span>{{ 'crproposalvoting.max-votes-pre' | translate }}</span>
+                        <span>{{ maxVotes }}</span>
+                        <span>{{ 'crproposalvoting.max-votes-suf' | translate }}</span>
+                    </h5>
+                </ion-col>
+                <ion-col class="right-col">
+                    <ion-input id="max-votes" type="number" name="amount" ngDefaultControl [(ngModel)]="amount">
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <div *ngIf="signingAndTransacting">
+            <ion-spinner></ion-spinner>
+        </div>
+
+        <ion-footer *ngIf="!signingAndTransacting">
+            <ion-row>
+                <ion-col class="left-col">
+                    <div class="btn-container align-center" id="cancel" (click)="cancel()">
+                        {{ 'common.cancel' | translate }}
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+                <ion-col class="right-col">
+                    <div class="btn-container align-center" id="confirm" (click)="goTransaction()">
+                        {{ 'common.confirm' | translate }}
+                    </div>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </ion-col>
+            </ion-row>
+        </ion-footer>
+    </div>
+
+</ion-content>
