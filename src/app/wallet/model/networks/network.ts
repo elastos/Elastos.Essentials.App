@@ -22,7 +22,7 @@ export abstract class Network {
   private localStorageKey = ''
   private lastAccessTimestamp = 0;
 
-  private startBackgroundUpdates = false;
+  private startBackgroundUpdates = true;
 
   constructor(
     public key: string, // unique identifier
