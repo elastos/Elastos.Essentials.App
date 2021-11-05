@@ -94,7 +94,7 @@ export class ImpeachCRMemberPage {
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
         let votes = {};
-        votes[this.member.did] = voteAmount; // Vote with everything
+        votes[this.member.cid] = voteAmount; // Vote with everything
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
@@ -111,7 +111,7 @@ export class ImpeachCRMemberPage {
 
 
         try {
-            await this.voteService.signAndSendRawTransaction(rawTx, App.CRPROPOSAL_VOTING);
+            await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/crmember");
         }
         catch (e) {
             await this.popupProvider.ionicAlert('crcouncilvoting.impeach-council-member', "Sorry, unable to vote. Your crproposal can't be vote for now. ");

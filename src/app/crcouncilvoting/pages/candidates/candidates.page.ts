@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { AlertController, ToastController } from "@ionic/angular";
+import { ToastController } from "@ionic/angular";
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -7,7 +7,6 @@ import { TitleBarIcon, TitleBarMenuItem } from "src/app/components/titlebar/titl
 import { Logger } from "src/app/logger";
 import { App } from "src/app/model/app.enum";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
-import { GlobalIntentService } from "src/app/services/global.intent.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
@@ -31,16 +30,13 @@ export class CandidatesPage implements OnInit {
     public addingCandidates = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
-    public crmemberInfo: any;
 
     constructor(
         public candidatesService: CandidatesService,
         private storage: GlobalStorageService,
         private globalNav: GlobalNavService,
-        private globalIntentService: GlobalIntentService,
         public theme: GlobalThemeService,
         private toastCtrl: ToastController,
-        private alertCtrl: AlertController,
         private voteService: VoteService,
         public translate: TranslateService
     ) { }
@@ -60,31 +56,11 @@ export class CandidatesPage implements OnInit {
         } else {
             this.titleBar.setTitle(this.translate.instant('launcher.app-cr-council'));
         }
-
-        // let did = GlobalDIDSessionsService.signedInDIDString.replace("did:elastos:", "");
-        // for (let crmember of this.candidatesService.crmembers) {
-        //     if (crmember.did == did) {
-        //         this.crmemberInfo = crmember;
-        //         this.addEditIcon();
-        //         break;
-        //     }
-        // }
     }
 
     ionViewWillLeave() {
       this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
-
-    // addEditIcon() {
-    //     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT });
-    //     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
-    //         await this.voteService.selectWalletAndNavTo(App.CRCOUNCIL_MANAGER, '/crcouncilvoting/crnode', {
-    //             queryParams: {
-    //                 crmember: this.crmemberInfo
-    //             }
-    //         });
-    //     });
-    // }
 
     doRefresh(event) {
         setTimeout(() => {

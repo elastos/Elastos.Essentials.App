@@ -114,7 +114,7 @@ export class VoteService {
         this.clearRoute();
     }
 
-    public async signAndSendRawTransaction(rawTx: any, context?: string): Promise<void> {
+    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<void> {
 
         const transfer = new Transfer();
         Object.assign(transfer, {
@@ -132,7 +132,7 @@ export class VoteService {
         }
 
         if (context) {
-            void this.nav.navigateRoot(context, null, { state: { refreash: true } });
+            void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
         }
         else {
             void this.nav.goToLauncher();
