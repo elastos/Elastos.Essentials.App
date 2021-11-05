@@ -138,12 +138,18 @@ export abstract class NetworkWallet {
         if (!this.initializationComplete)
             return new BigNumber(0);
 
+        let canGetBalance = false;
         let usdBalance = new BigNumber(0);
         for (let subWallet of Object.values(this.subWallets)) {
             if (!subWallet.getBalance().isNaN()) {
+                canGetBalance = true;
                 let subWalletUSDBalance = subWallet.getUSDBalance();
                 usdBalance = usdBalance.plus(subWalletUSDBalance);
             }
+        }
+
+        if (!canGetBalance) {
+            return new BigNumber(NaN);
         }
 
         // Convert USD balance to currency (ex: CNY) balance

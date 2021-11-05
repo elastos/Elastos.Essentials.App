@@ -123,7 +123,7 @@ export abstract class SubWallet<TransactionType extends GenericTransaction> {
    */
   public getBalance(): BigNumber {
     if (this.balance.isNaN())
-      return new BigNumber(0);
+      return this.balance;
 
     return this.balance.dividedBy(this.tokenAmountMulipleTimes);
   }

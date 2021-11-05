@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import { Logger } from '../logger';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 
 @Injectable({
@@ -27,7 +28,13 @@ export class GlobalEthereumRPCService {
             id: '1'
         };
 
-        return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        try {
+            return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        }
+        catch (err) {
+            Logger.error('RPCService', 'getETHSCTransactionByHash: http post error:', err);
+            return null;
+        }
     }
 
     /* public async eth_blockNumber(elastosChainCode: StandardCoinName): Promise<number> {
@@ -61,8 +68,14 @@ export class GlobalEthereumRPCService {
             id: '1'
         };
 
-        let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-        return new BigNumber(balanceString);
+        try {
+            let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return new BigNumber(balanceString);
+        }
+        catch (err) {
+            Logger.error('RPCService', 'eth_getBalance: http post error:', err);
+            return null;
+        }
     }
 
     public async getETHSCNonce(rpcApiUrl: string, address: string): Promise<number> {
@@ -76,8 +89,14 @@ export class GlobalEthereumRPCService {
             id: '1'
         };
 
-        let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-        return parseInt(result);
+        try {
+            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return parseInt(result);
+        }
+        catch (err) {
+            Logger.error('RPCService', 'getETHSCNonce: http post error:', err);
+            return -1;
+        }
     }
 
     public eth_getTransactionByHash(rpcApiUrl: string, txHash: string) {
@@ -90,7 +109,13 @@ export class GlobalEthereumRPCService {
             id: '1'
         };
 
-        return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        try {
+            return this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        }
+        catch (err) {
+            Logger.error('RPCService', 'eth_getTransactionByHash: http post error:', err);
+            return null;
+        }
     }
 
     public eth_sendRawTransaction(rpcApiUrl: string, txHash: string) {
@@ -124,21 +149,34 @@ export class GlobalEthereumRPCService {
             paramArray.push(param);
         }
 
-        return this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
+        try {
+            return this.globalJsonRPCService.httpPost(rpcApiUrl, paramArray);
+        }
+        catch (err) {
+            Logger.error('RPCService', 'eth_getTransactionReceipt: http post error:', err);
+            return null;
+        }
     }
 
     public async eth_estimateGas(rpcApiUrl: string, from: string, to: string, value: string): Promise<number> {
-      const param = {
-          method: 'eth_estimateGas',
-          params: [{
-            from,
-            to,
-            value
-          }],
-          jsonrpc: "2.0",
-          id: '1'
-      };
-      let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-      return parseInt(result);
+        const param = {
+            method: 'eth_estimateGas',
+            params: [{
+                from,
+                to,
+                value
+            }],
+            jsonrpc: "2.0",
+            id: '1'
+        };
+
+        try {
+            let result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return parseInt(result);
+        }
+        catch (err) {
+            Logger.error('RPCService', 'eth_estimateGas: http post error:', err);
+            return -1;
+        }
     }
 }
