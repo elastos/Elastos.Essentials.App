@@ -1,5 +1,6 @@
 
 import { Injectable } from '@angular/core';
+import BigNumber from 'bignumber.js';
 import moment from 'moment';
 
 @Injectable()
@@ -203,7 +204,7 @@ export class Util {
      */
      public static getDecimalString(numberString: string) {
         if (numberString.startsWith('0x')) {
-            return parseInt(numberString, 16).toString();
+            return (new BigNumber(numberString)).toFixed();
         } else {
             return numberString;
         }
