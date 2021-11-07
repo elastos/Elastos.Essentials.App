@@ -155,6 +155,14 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     networks: ["elastos"]
                 },
                 {
+                    icon: '/assets/browser/dapps/tin.jpg',
+                    title: 'Tin.network',
+                    description: 'Manage your DeFi assets and liabilities in one simple interface',
+                    url: 'https://tin.network/',
+                    useExternalBrowser: false,
+                    networks: []
+                },
+                {
                     icon: '/assets/browser/dapps/cryptoname.png',
                     title: 'Cryptoname',
                     description: 'CryptoName is your passport to the crypto world',
