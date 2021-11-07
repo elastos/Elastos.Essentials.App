@@ -20,7 +20,7 @@
 * SOFTWARE.
 */
 
-import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { BigNumber } from 'bignumber.js';
@@ -28,8 +28,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/global.theme.service';
-import { Network } from 'src/app/wallet/model/networks/network';
-import { NetworkWallet } from 'src/app/wallet/model/wallets/networkwallet';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AnySubWallet } from '../../../model/wallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
@@ -64,16 +62,12 @@ export type AssetInfo = {
     templateUrl: './wallet-asset.page.html',
     styleUrls: ['./wallet-asset.page.scss'],
 })
-export class WalletAssetPage implements OnInit, OnDestroy {
+export class WalletAssetPage implements OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', { static: false }) slider: IonSlides;
 
     public assetsInfo:AssetInfo = {};
     public totalAmount = '';
-
-    // Reset network and masterwallet when quit this page.
-    public currentNetwork: Network = null;
-    private currentActiveWallet: NetworkWallet = null;
 
     private updateOnGoing = false;
     private exitPage = false;
@@ -93,11 +87,6 @@ export class WalletAssetPage implements OnInit, OnDestroy {
         private storage: LocalStorage,
         private zone: NgZone,
     ) {
-    }
-
-    ngOnInit() {
-        this.currentNetwork = this.networkService.activeNetwork.value;
-        this.currentActiveWallet = this.walletManager.activeNetworkWallet.value;
     }
 
     ngOnDestroy() {
@@ -121,12 +110,6 @@ export class WalletAssetPage implements OnInit, OnDestroy {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-    }
-
-    resetNetworkAndWallet() {
-        // Reset network and networkWallet.
-        void this.networkService.setActiveNetwork(this.currentNetwork);
-        void this.walletManager.setActiveNetworkWallet(this.currentActiveWallet);
     }
 
     handleItem(key: string) {
@@ -153,19 +136,19 @@ export class WalletAssetPage implements OnInit, OnDestroy {
         let networks = this.networkService.getAvailableNetworks();
 
         for (let i = 0; i < networks.length && !this.exitPage; i++) {
-            await this.networkService.setActiveNetwork(networks[i], update);
+            let masterWalletList = this.walletManager.getMasterWalletsList();
+            for (let j = 0; j < masterWalletList.length && !this.exitPage; j++) {
+                let networkWallet = await networks[i].createNetworkWallet(masterWalletList[j], false);
 
-            let networkwalletList = this.walletManager.getNetworkWalletsList();
-            for (let j = 0; j < networkwalletList.length && !this.exitPage; j++) {
                 try {
                     // TODO: updateBalance too slow.
                     if (update) {
-                        await networkwalletList[j].updateBalance();
+                        await networkWallet.updateBalance();
                     }
 
-                    if (!this.assetsInfo[networkwalletList[j].masterWallet.id]) {
-                        this.assetsInfo[networkwalletList[j].masterWallet.id] = {
-                            name: networkwalletList[j].masterWallet.name,
+                    if (!this.assetsInfo[networkWallet.masterWallet.id]) {
+                        this.assetsInfo[networkWallet.masterWallet.id] = {
+                            name: networkWallet.masterWallet.name,
                             networks : {},
                             networksCount: 0,
                             balance: new BigNumber(0),
@@ -174,7 +157,7 @@ export class WalletAssetPage implements OnInit, OnDestroy {
                         }
                     }
 
-                    let showSubwalets = networkwalletList[j].getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+                    let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
 
                     let subWallets = [];
                     for (let index = 0; index < showSubwalets.length; index++) {
@@ -185,27 +168,27 @@ export class WalletAssetPage implements OnInit, OnDestroy {
                     }
 
                     if (Object.keys(subWallets).length > 0) {
-                        let balanceBigNumber = networkwalletList[j].getDisplayBalanceInActiveCurrency();
+                        let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
 
                         this.zone.run(() => {
-                            this.assetsInfo[networkwalletList[j].masterWallet.id].networks[networks[i].name] = {
+                            this.assetsInfo[networkWallet.masterWallet.id].networks[networks[i].name] = {
                                 name: networks[i].name,
                                 balance: balanceBigNumber,
                                 balanceString: this.getAmountForDisplay(balanceBigNumber),
                                 subWallets: subWallets,
                             }
-                            this.assetsInfo[networkwalletList[j].masterWallet.id].networksCount = Object.keys(this.assetsInfo[networkwalletList[j].masterWallet.id].networks).length;
+                            this.assetsInfo[networkWallet.masterWallet.id].networksCount = Object.keys(this.assetsInfo[networkWallet.masterWallet.id].networks).length;
 
-                            this.updateNetworkWalletAssets(this.assetsInfo[networkwalletList[j].masterWallet.id]);
+                            this.updateNetworkWalletAssets(this.assetsInfo[networkWallet.masterWallet.id]);
                             this.updateTotalAssets();
                         })
                     } else {
                         // Remove old info if the network has no asset.
-                        if (this.assetsInfo[networkwalletList[j].masterWallet.id].networks[networks[i].name]) {
-                            delete this.assetsInfo[networkwalletList[j].masterWallet.id].networks[networks[i].name];
-                            this.assetsInfo[networkwalletList[j].masterWallet.id].networksCount--;
+                        if (this.assetsInfo[networkWallet.masterWallet.id].networks[networks[i].name]) {
+                            delete this.assetsInfo[networkWallet.masterWallet.id].networks[networks[i].name];
+                            this.assetsInfo[networkWallet.masterWallet.id].networksCount--;
 
-                            this.updateNetworkWalletAssets(this.assetsInfo[networkwalletList[j].masterWallet.id]);
+                            this.updateNetworkWalletAssets(this.assetsInfo[networkWallet.masterWallet.id]);
                             this.updateTotalAssets();
                         }
                     }
@@ -216,8 +199,6 @@ export class WalletAssetPage implements OnInit, OnDestroy {
             }
         }
         this.updateOnGoing = false;
-
-        this.resetNetworkAndWallet();
     }
 
     private updateTotalAssets() {

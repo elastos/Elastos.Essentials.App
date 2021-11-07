@@ -22,8 +22,6 @@ export abstract class Network {
   private localStorageKey = ''
   private lastAccessTimestamp = 0;
 
-  private startBackgroundUpdates = true;
-
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
@@ -240,12 +238,4 @@ export abstract class Network {
     return null;
   }
 
-  // Do not start background updates when we update assets overview for all networks and wallets.
-  public setStartBackgroundUpdates(startBackgroundUpdates: boolean) {
-      this.startBackgroundUpdates = startBackgroundUpdates;
-  }
-
-  public getStartBackgroundUpdates() {
-    return this.startBackgroundUpdates;
-  }
 }

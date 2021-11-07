@@ -237,8 +237,7 @@ export class WalletService {
 
                 let networkWallet: NetworkWallet = null;
                 try {
-                    let startBackgroundUpdates = activatedNetwork.getStartBackgroundUpdates();
-                    networkWallet = await activatedNetwork.createNetworkWallet(masterWallet, startBackgroundUpdates);
+                    networkWallet = await activatedNetwork.createNetworkWallet(masterWallet);
                     if (networkWallet)
                         this.networkWallets[masterWallet.id] = networkWallet;
                 }
