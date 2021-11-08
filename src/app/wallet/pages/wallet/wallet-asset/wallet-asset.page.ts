@@ -41,7 +41,7 @@ export type NetworkAssetInfo = {
     name: string,
     balance: BigNumber,
     balanceString: string,
-    subWallets : AnySubWallet[],
+    subWallets: AnySubWallet[],
 }
 
 export type NetworkWalletAssetInfo = {
@@ -66,7 +66,7 @@ export class WalletAssetPage implements OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('slider', { static: false }) slider: IonSlides;
 
-    public assetsInfo:AssetInfo = {};
+    public assetsInfo: AssetInfo = {};
     public totalAmount = '';
 
     private updateOnGoing = false;
@@ -149,11 +149,11 @@ export class WalletAssetPage implements OnDestroy {
                     if (!this.assetsInfo[networkWallet.masterWallet.id]) {
                         this.assetsInfo[networkWallet.masterWallet.id] = {
                             name: networkWallet.masterWallet.name,
-                            networks : {},
+                            networks: {},
                             networksCount: 0,
                             balance: new BigNumber(0),
-                            balanceString:'',
-                            show:true,
+                            balanceString: '0',
+                            show: false,
                         }
                     }
 
@@ -218,7 +218,7 @@ export class WalletAssetPage implements OnDestroy {
         networkWalletInfo.balanceString = this.getAmountForDisplay(networkWalletTotalBalance);
     }
 
-    private getAmountForDisplay(amount:BigNumber) {
+    private getAmountForDisplay(amount: BigNumber) {
         let decimalplace = 3;
         if (CurrencyService.instance.selectedCurrency && CurrencyService.instance.selectedCurrency.decimalplace) {
             decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
