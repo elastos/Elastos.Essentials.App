@@ -26,9 +26,7 @@
     </ion-row>
   </ion-grid>
 
-  <div class="footer">
-    <ion-button color="tertiary" (click)="switchNetwork()">
-      {{ 'wallet.network-switch-component-confirm' | translate }}
-    </ion-button>
-  </div>
+  <ion-button color="tertiary" (click)="switchNetwork()" expand="block">
+    {{ 'wallet.network-switch-component-confirm' | translate }}
+  </ion-button>
 </ion-content>

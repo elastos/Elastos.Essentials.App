@@ -1,7 +1,8 @@
 ion-grid {
     padding: 10px 20px;
 
-    ion-icon, ion-spinner {
+    ion-icon,
+    ion-spinner {
         width: 25px;
         height: 25px;
         color: #565bdb;
@@ -25,7 +26,7 @@ ion-grid {
             padding: 0px 20px;
             font-size: 12px;
             font-weight: 600;
-        };
+        }
     }
 
     .networks {
@@ -42,7 +43,7 @@ ion-grid {
             }
 
             ion-label {
-              margin-top: 10px;
+                margin-top: 10px;
             }
         }
 
@@ -55,15 +56,6 @@ ion-grid {
     }
 }
 
-.footer {
-    p {
-        padding: 0px 20px;
-        font-size: 14px;
-        font-weight: 500;
-        text-align: center;
-
-        span {
-            font-size: 12px;
-        }
-    };
+ion-button {
+    margin: 0 20px;
 }
