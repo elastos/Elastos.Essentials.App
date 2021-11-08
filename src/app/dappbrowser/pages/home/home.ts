@@ -126,7 +126,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     icon: '/assets/browser/dapps/mdex.png',
                     title: 'Mdex',
                     description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
-                    url: 'https://ht.mdex.co/#/referral?id=Jl6hUtKB/',
+                    url: 'https://ht.mdex.co/#/referral?id=Jl6hUtKB',
                     useExternalBrowser: false,
                     networks: ["heco"]
                 },
@@ -134,7 +134,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
                     icon: '/assets/browser/dapps/mdex.png',
                     title: 'Mdex',
                     description: 'An AMM-based decentralized transaction protocol that integrates DEX, IMO & DAO',
-                    url: 'https://bsc.mdex.co/#/referral?id=OgsPHM3z/',
+                    url: 'https://bsc.mdex.co/#/referral?id=OgsPHM3z',
                     useExternalBrowser: false,
                     networks: ["bsc"]
                 },
