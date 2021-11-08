@@ -85,6 +85,10 @@ export class CurrencyService {
 
   private stopService = false;
 
+  private networkMainTokenPrice = {};
+  private updateInterval = null;
+  private elaphantPricefetched = false;
+
   //private tokenSymbol = 'ELA';
   //public tokenStats: ElaphantPriceAPITokenStats;
   private exchangeRates: ExchangeRateCache = {};
@@ -112,16 +116,11 @@ export class CurrencyService {
   async init() {
     this.stopService = false;
 
+    this.loadAllTokenSymbol();
+
     // Load or create a cache and store this cache globally to share fetched values among several DID users.
     this.pricesCache = await TimeBasedPersistentCache.loadOrCreate("tokenprices", true);
 
-    /*  WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
-       if (activeNetwork) {
-         this.fetch();
-       }
-     }); */
-
-    //this.tokenSymbol = WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
     await this.loadExchangeRates();
     await this.getSavedPrices();
     await this.getSavedCurrency();
@@ -129,22 +128,31 @@ export class CurrencyService {
     // Update USD exchange rate.
     await this.computeExchangeRatesFromCurrenciesService();
 
-    // Wait a moment before fetching latest prices, to not struggle the main essentials boot sequence.
-    /* runDelayed(() => {
-      if (!this.stopService) {
-        this.fetch();
-      }
-    }, 10000); */
+    this.updateInterval = setInterval(() => {
+        void this.fetchTokenStatsFromElaphant();
+    }, 60000);// 60s
 
     Logger.log('wallet', "Currency service initialization complete");
   }
 
   stop() {
     this.stopService = true;
+    if (this.updateInterval) {
+        clearInterval(this.updateInterval);
+        this.updateInterval = null;
+    }
   }
 
   public getDisplayableCurrencies(): DisplayableCurrency[] {
     return displayableCurrencies;
+  }
+
+  private loadAllTokenSymbol() {
+    let networks = this.walletNetworkService.getAvailableNetworks();
+    for (let i = 0; i < networks.length; i++) {
+        let tokenSymbol = networks[i].getMainTokenSymbol()
+        this.networkMainTokenPrice[tokenSymbol] = null;
+    }
   }
 
   /**
@@ -198,20 +206,30 @@ export class CurrencyService {
   /**
    * Fetches prices from the elaphant api and returns only a target item
    */
-  private fetchTokenStatsFromElaphant(symbol: string): Promise<ElaphantPriceAPITokenStats> {
-    Logger.log("wallet", "Fetching elaphant api prices for symbol", symbol);
+  private fetchTokenStatsFromElaphant(): Promise<boolean> {
+    Logger.log("wallet", "Fetching elaphant api prices");
+
     return new Promise(resolve => {
       this.http.get<any>(this.elaphantPriceUrl).subscribe((res: ElaphantPriceAPITokenStats[]) => {
         if (res) {
-          let tokenStats = res.find((coin) => coin.symbol === symbol);
-          resolve(tokenStats);
+            for (let tokenSymbol in this.networkMainTokenPrice) {
+                let tokenStats = res.find((coin) => coin.symbol === tokenSymbol);
+                if (tokenStats) {
+                    this.networkMainTokenPrice[tokenSymbol] = tokenStats;
+                } else {
+                    this.networkMainTokenPrice[tokenSymbol] = null;
+                }
+            }
+            this.elaphantPricefetched = true;
+            // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
+            resolve(true);
         }
         else {
-          resolve(null);
+            resolve(false);
         }
       }, (err) => {
         Logger.error('wallet', 'Fetch CMC Stats err', err);
-        resolve(null);
+        resolve(false);
       });
     })
   }
@@ -275,7 +293,11 @@ export class CurrencyService {
     //void this.pricesCache.delete(); // DEV
     //return;
 
-    let tokenStats = await this.fetchTokenStatsFromElaphant(network.getMainTokenSymbol());
+    if (!this.elaphantPricefetched) {
+        await this.fetchTokenStatsFromElaphant();
+    }
+
+    let tokenStats = this.networkMainTokenPrice[network.getMainTokenSymbol()];
     if (tokenStats) {
       this.pricesCache.set(cacheKey, {
         usdValue: parseFloat(tokenStats.price_usd)
