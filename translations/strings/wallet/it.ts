@@ -115,7 +115,7 @@ export const it = {
         "coin-transactions": "Transazioni",
         "coin-no-transactions": "Nessuna Transazione",
         "coin-op-received-token": "Ricevuti",
-        "coin-op-sent-token": "Invia",
+        "coin-op-sent-token": "Inviati",
         "coin-op-transfered-token": "Trasferito",
         "coin-op-vote": "Vita",
         "coin-op-identity": "Pubblicazione Identità",
@@ -159,7 +159,7 @@ export const it = {
         "coin-transfer-recharge-title": "Trasferimento di denaro",
         "coin-transfer-withdraw-title": "Trasferimento di denaro",
         "payment-title": 'Pagamento',
-        "transfer-from": "Trasferito da",
+        "transfer-from": "Trasferisci da",
         "transfer-to": "Trasferire a",
         "transfer-amount": "Importo del trasferimento",
         "transfer-receiver-address": "Indirizzo del destinatario",
@@ -349,8 +349,8 @@ export const it = {
         /***********************
         * Asset Overview Page *
         ************************/
-        'wallet-asset-title': 'Assets Overview',
-        "wallet-asset-networks-count": "{{ networksCount }} Networks",
+        'wallet-asset-title': 'Panoramica dei Bilanci',
+        "wallet-asset-networks-count": "{{ networksCount }} Reti",
 
 
         /********************************************** Intent Screens ***********************************************/
